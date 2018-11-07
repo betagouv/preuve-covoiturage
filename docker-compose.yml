@@ -18,7 +18,7 @@ services:
     image: "node:10"
     volumes:
     - ./api:/code
-    command: bash -c "yarn && node /code/src/app.js"
+    command: bash -c "yarn && npx nodemon /code/src/app.js"
     ports:
     - 8080:8080
     networks:
