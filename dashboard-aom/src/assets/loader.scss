@@ -1,0 +1,28 @@
+@import 'variables';
+
+#loader-container{
+  position: fixed;
+  left:0;
+  top:0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1cfcb;
+  z-index: 5000;
+  transition: 1s ease-in-out all;
+  opacity: 1;
+  text-align: justify; //testing
+}
+
+.hide{
+  transition: 1s ease-in-out all;
+  opacity: 0 !important;
+}
+
+
+#loader-container>div{
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  margin-top: 46vh;
+}
+

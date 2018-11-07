@@ -1,0 +1,29 @@
+{
+  "name": "preuve-covoiturage-api",
+  "version": "0.0.1",
+  "description": "Preuve de Covoiturage API",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betagouv/preuve-covoiturage-api.git"
+  },
+  "keywords": [
+    "betagouv",
+    "covoiturage",
+    "api"
+  ],
+  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/betagouv/preuve-covoiturage-api/issues"
+  },
+  "homepage": "https://github.com/betagouv/preuve-covoiturage-api#readme",
+  "dependencies": {
+    "mongoose": "^5.3.10",
+    "passport": "^0.4.0",
+    "restify": "^7.2.2"
+  }
+}

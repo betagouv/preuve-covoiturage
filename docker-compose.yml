@@ -1,0 +1,63 @@
+version: '3.5'
+services:
+  mongo:
+    image: "mongo:4.0"
+    ports:
+    - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "mongo"
+      MONGO_INITDB_ROOT_PASSWORD: "mongo"
+      MONGO_INITDB_DATABASE: "pdc-collector"
+    volumes:
+    - ./db/mongo:/data/db
+    networks:
+    - front
+    - back
+
+  api:
+    image: "node:10"
+    volumes:
+    - ./api:/code
+    command: bash -c "yarn && node /code/src/app.js"
+    ports:
+    - 8080:8080
+    networks:
+    - front
+    - api
+    - back
+    depends_on:
+    - mongo
+
+  aom:
+    image: "node:10"
+    volumes:
+    - ./dashboard-aom:/code
+    working_dir: "/code"
+    command: bash -c "yarn && npx ng serve --host 0.0.0.0"
+    ports:
+    - 4200:4200
+    networks:
+    - front
+    - api
+    depends_on:
+    - api
+
+#  registry:
+#    image: "node:10"
+#    volumes:
+#    - ./dashboard-registry/src:/code/src
+#    - ./dashboard-registry/node_modules:/code/node_modules
+#    working_dir: "/code/src"
+#    command: bash -c "yarn && npx ng serve --host 0.0.0.0"
+#    ports:
+#    - 4201:4200
+#    networks:
+#    - front
+#    - api
+#    depends_on:
+#    - api
+
+networks:
+  front:
+  api:
+  back:

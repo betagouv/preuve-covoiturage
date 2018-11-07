@@ -1,0 +1,9 @@
+<app-header [hidden]="hideHeader"></app-header>
+<div id="loader-container" [class.hide]="loaded" [style.z-index]="smallLoader? '1029': 'inherit'" *ngIf="!hideLoader" >
+  <div>
+    <loaders-css   [loader]="'ball-scale'" [loaderClass]="'aom-loader'"></loaders-css>
+  </div>
+</div>
+<main [hidden]="!loaded">
+  <router-outlet></router-outlet>
+</main>
