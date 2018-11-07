@@ -22,8 +22,15 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage-api#readme",
   "dependencies": {
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "generate-password": "^1.4.1",
+    "helmet": "^3.14.0",
+    "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.3.10",
     "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
     "restify": "^7.2.2"
   }
 }
