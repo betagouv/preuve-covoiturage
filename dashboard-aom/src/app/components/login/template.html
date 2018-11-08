@@ -14,18 +14,15 @@
 <section class="section">
   <div class="container">
     <div class="columns">
-    <div class="column is-one-third is-offset-one-third">
+    <div class="column is-one-third-desktop is-offset-one-third-desktop is-half-tablet is-offset-one-quarter-tablet ">
       <div class="box">
         <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
           <div class="field" [ngClass]="{ 'has-error': f.submitted && !email.valid }">
             <p class="control has-icons-left has-icons-right">
               <input id="email" class="input showvalidity" type="email" placeholder="Email" name="email" [(ngModel)]="model.email" #email="ngModel" required pattern="[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}">
               <span class="icon is-small is-left">
-            <i class="fas fa-envelope"></i>
-          </span>
-              <span class="icon is-small is-right">
-            <i class="fas fa-check"></i>
-          </span>
+                <fa-icon icon="envelope"></fa-icon>
+              </span>
             </p>
             <div *ngIf="f.submitted && !email.pristine && !email.valid"  class="help-block">L'email est obligatoire</div>
           </div>
@@ -33,8 +30,8 @@
             <p class="control has-icons-left">
               <input id="password" class="input showvalidity" type="password" name="password" placeholder="Mot de Passe" [(ngModel)]="model.password" #password="ngModel" required>
               <span class="icon is-small is-left">
-          <i class="fas fa-lock"></i>
-          </span>
+                <fa-icon icon="lock"></fa-icon>
+              </span>
             </p>
             <div *ngIf="f.submitted && !password.valid" class="help-block">Le mot de passe est obligatoire</div>
 

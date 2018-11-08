@@ -1,4 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
-@import 'assets/variables.scss';
-@import '~bulma/css/bulma.min.css';
-@import 'assets/loader.scss';
+
+
+//@import '~template.data.gouv.fr/dist/style/main.min.css'; // pas le bon chemin vers les fichiers font / icon ...
+@import 'assets/scss/font-awesome';
+@import 'assets/css/beta.gouv.css';
+@import 'assets/scss/beta.gouv.surcharge.scss';
+@import 'assets/scss/bulma';
+@import 'assets/scss/variables';
+@import 'assets/scss/loader';

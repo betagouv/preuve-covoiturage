@@ -18,7 +18,13 @@ import {
   HTTP_INTERCEPTORS, HttpClient, HttpClientModule
 } from '@angular/common/http';
 import {HttpErrorInterceptor} from './applicativeService/interceptor/HttpErrorInterceptor';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+// import { far } from '@fortawesome/free-regular-svg-icons';
 
+
+library.add(fas);
 
 @NgModule({
   declarations: [
@@ -33,6 +39,7 @@ import {HttpErrorInterceptor} from './applicativeService/interceptor/HttpErrorIn
     AppRoutingModule,
     LoadersCssModule,
     HttpClientModule,
+    FontAwesomeModule,
   ],
   exports: [
     HeaderComponent
