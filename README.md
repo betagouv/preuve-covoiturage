@@ -17,3 +17,7 @@ l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 
 1. Start the services: `docker-compose up`
 
+### Misc
+
+Thanks to the POP project for the NodeJS framework starter.
+Checkout their project on [Plateforme ouverte du Patrimoine](https://beta.gouv.fr/startup/pop.html)
