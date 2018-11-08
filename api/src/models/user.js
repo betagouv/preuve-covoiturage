@@ -9,9 +9,8 @@ const UserSchema = new Schema({
     required: true,
     trim: true
   },
-  institution: { type: String, required: true },
-  nom: { type: String },
-  prenom: { type: String },
+  lastname: { type: String },
+  firstname: { type: String },
   group: { type: String, required: true },
   role: { type: String, required: true },
   password: { type: String, required: true },
@@ -19,7 +18,7 @@ const UserSchema = new Schema({
   lastConnectedAt: { type: Date }
 });
 
-UserSchema.pre("save", function(next) {
+UserSchema.pre("save", function (next) {
   if (this.isModified("password") || this.isNew) {
     bcrypt.hash(this.password, 10, (e, hash) => {
       this.password = hash;
@@ -30,15 +29,15 @@ UserSchema.pre("save", function(next) {
   }
 });
 
-UserSchema.method("toJSON", function() {
+UserSchema.method("toJSON", function () {
   var user = this.toObject();
   delete user.password;
   delete user.__v;
   return user;
 });
 
-UserSchema.methods.comparePassword = function(passw, cb) {
-  bcrypt.compare(passw, this.password, function(err, res) {
+UserSchema.methods.comparePassword = function (passw, cb) {
+  bcrypt.compare(passw, this.password, function (err, res) {
     if (err) {
       return cb(err);
     }

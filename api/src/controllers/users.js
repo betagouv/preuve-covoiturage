@@ -1,10 +1,11 @@
-const server = require('../server');
+const express = require("express");
+const router = express.Router();
 const passport = require("passport");
-// const { capture } = require("./../sentry.js");
+const { capture } = require("./../sentry.js");
 require("../passport")(passport);
 const User = require("../models/user");
 
-server.get("/", passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.get("/", passport.authenticate("jwt", { session: false }), async (req, res) => {
   const query = {};
   if (req.query.group && req.query.group !== "admin") {
     query.group = req.query.group;
@@ -12,10 +13,10 @@ server.get("/", passport.authenticate("jwt", { session: false }), async (req, re
   try {
     users = await User.find(query);
   } catch (e) {
-    // capture(e);
+    capture(e);
     return res.status(500).send({ e });
   }
   res.status(200).send(users);
 });
 
-module.exports = server;
+module.exports = router;

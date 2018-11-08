@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3'
 services:
   mongo:
     image: "mongo:4.0"
@@ -15,12 +15,15 @@ services:
     - back
 
   api:
-    image: "node:10"
+    build: "./docker/api"
     volumes:
     - ./api:/code
-    command: bash -c "yarn && npx nodemon /code/src/app.js"
+    working_dir: "/code"
+    command: "nodemon"
     ports:
     - 8080:8080
+    environment:
+      DB_ENDPOINT: "mongodb://mongo:mongo@mongo/pdc-collector?authSource=admin"
     networks:
     - front
     - api
