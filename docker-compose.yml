@@ -32,12 +32,12 @@ services:
     - mongo
 
   aom:
-    image: "node:10"
+    build: "./docker/aom"
     tty: true
     volumes:
     - ./dashboard-aom:/code
     working_dir: "/code"
-#    command: bash -c "yarn"
+    command: "yarn"
     ports:
     - 4200:4200
     networks:
