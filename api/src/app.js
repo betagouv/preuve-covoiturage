@@ -1,19 +1,31 @@
+const express = require("express");
+const helmet = require("helmet");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const passport = require("passport");
 const { PORT } = require("./config.js");
-const server = require('./server');
+// const { capture } = require("./sentry.js");
 
-require('./mongo');
+require("./passport")(passport);
+require("./mongo");
 
-function respond(req, res, next) {
-  res.send('hello ' + req.params.name);
-  next();
-}
+const app = express();
 
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
+app.use(bodyParser.json({ limit: "50mb" }));
 
-server.use("/auth", require("./controllers/auth"));
-server.use("/users", require("./controllers/users"));
+// secure apps by setting various HTTP headers
+app.use(helmet());
 
-server.listen(PORT, function () {
-  console.log('%s listening at %s', server.name, server.url);
+// enable CORS - Cross Origin Resource Sharing
+app.use(cors());
+
+app.use(passport.initialize());
+
+app.get("/", (_req, res) => {
+  res.send("PDC API listening.");
 });
+
+app.use("/auth", require("./controllers/auth"));
+app.use("/users", require("./controllers/users"));
+
+app.listen(PORT, () => console.log("Listening on port " + PORT));
