@@ -21,11 +21,7 @@ app.use(cors());
 
 app.use(passport.initialize());
 
-app.get("/", (_req, res) => {
-  res.send("PDC API listening.");
-});
-
-app.use("/auth", require("./controllers/auth"));
-app.use("/users", require("./controllers/users"));
+app.use("/auth", require("./auth/authController"));
+app.use("/users", require("./users/userController"));
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));

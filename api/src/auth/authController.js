@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const generator = require("generate-password");
 require("../passport")(passport);
-const User = require("../models/user");
+const User = require("../users/userModel");
 const config = require("../config.js");
 
 router.use(bodyParser.urlencoded({ extended: false }));

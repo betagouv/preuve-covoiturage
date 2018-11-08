@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const { capture } = require("./../sentry.js");
+const { capture } = require("../sentry.js");
 require("../passport")(passport);
-const User = require("../models/user");
+const User = require("./userModel");
 
 router.get("/", passport.authenticate("jwt", { session: false }), async (req, res) => {
   const query = {};
