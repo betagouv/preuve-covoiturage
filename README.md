@@ -25,7 +25,7 @@ We're trying to split up services as much as possible.
 
 1. Clone the repository and `cd` to it
 2. Run `make install` to setup all dependencies on all microservices
-3. Run `make start` to start the backend
+3. Run `make backend` to start the backend
 4. Run `make aom` to start the AOM front and `ng serve --host 0.0.0.0` when
    the container has started
 

@@ -1,4 +1,4 @@
-start:
+backend:
 	@docker-compose down
 	@docker-compose up api
 
