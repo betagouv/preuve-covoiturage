@@ -51,9 +51,13 @@ export class HttpApiInterceptor implements HttpInterceptor {
       return next.handle(clonedRequest).pipe(tap((event: HttpEvent<any>) => {
         if (event instanceof HttpResponse) {
           // do stuff with response if you want
+          console.log(event);
         }
       }, (err: any) => {
         if (err instanceof HttpErrorResponse) {
+          if (err.error['msg']) {
+            MessageService.error(err.error['msg']);
+          }
           if (err.status === 401 || err.status === 403 ) {
             this.tokenService.clear();
             Logged.set(false);
