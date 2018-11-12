@@ -18,7 +18,7 @@ export class PingService {
 
     return this
         .http
-        .get( '/api/ping' ).pipe(
+        .get( '/ping' ).pipe(
         catchError( ( error: Response ) => {
           let status = 500;
           if ( error.status === 401 || error.status === 403 ) { // unauthorized or forbidden //
@@ -27,38 +27,15 @@ export class PingService {
           return observableOf({ status : status });
         }),
         map( response => {
-          // console.log(response)
           if ( 401 === response['status']  || 403 === response['status']) {
-            // this.loggerService.log("Ping", "url "+url, "router.url "+this.router.url)
-            this.router.navigate(['/']);
+            this.router.navigate(['/login']);
             return true;
           } else {
-            if (url === '/') {
-              this.router.navigate(['/search']);
-            }
+            this.router.navigate(['/login']);
             const logged = true;
             Logged.set(logged);
             return logged;
           }
-        }));
-
-
-  }
-
-  public pingHome(): Observable<void> {
-
-    return this
-        .http
-        .get( '/api/ping' ).pipe(
-        map(response => {
-          if ( 401 !== response['status']  &&  403 !== response['status']) {
-            this.loggerService.log('Loggin set true')
-            Logged.set(true);
-            this.router.navigate(['/search']);
-          } else {
-            Logged.set(false);
-          }
-
         }));
 
 
