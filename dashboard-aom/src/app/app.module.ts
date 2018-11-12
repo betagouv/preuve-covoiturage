@@ -21,7 +21,8 @@ import {HttpErrorInterceptor} from './applicativeService/interceptor/HttpErrorIn
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-// import { far } from '@fortawesome/free-regular-svg-icons';
+import {HeaderBag} from "./applicativeService/interceptor/header-bag";
+import {MessageComponent} from "./applicativeService/message/component";
 
 
 library.add(fas);
@@ -32,6 +33,7 @@ library.add(fas);
     HomeComponent,
     LoginComponent,
     HeaderComponent,
+    MessageComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,8 @@ library.add(fas);
     FontAwesomeModule,
   ],
   exports: [
-    HeaderComponent
+    HeaderComponent,
+    MessageComponent
   ],
   providers: [
     {
@@ -50,6 +53,7 @@ library.add(fas);
       useClass: HttpErrorInterceptor,
       multi: true,
     },
+    HeaderBag,
     AuthGuard,
     Logged,
     LoggerService,

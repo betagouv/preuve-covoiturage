@@ -1,0 +1,7 @@
+<div class="container" id="message">
+	<div [ngClass]="hidden ? 'is-hidden' : ''" class="notification is-{{type}}">
+	        {{ message }}
+		<a *ngIf="type === 'cookie'" href="https://domaine/politique-cookies/">En savoir plus.</a>
+		<button class="delete" (click)="close()" ></button>
+	</div>
+</div>
