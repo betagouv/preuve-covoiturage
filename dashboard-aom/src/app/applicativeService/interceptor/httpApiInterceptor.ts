@@ -1,5 +1,5 @@
 
-import {tap} from 'rxjs/operators';
+import {concatMap, tap} from 'rxjs/operators';
 import {
   HTTP_INTERCEPTORS, HttpResponse, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor,
   HttpRequest, HttpHeaders
@@ -15,7 +15,7 @@ import {MessageService} from "../message/service";
 
 
 @Injectable()
-export class HttpErrorInterceptor implements HttpInterceptor {
+export class HttpApiInterceptor implements HttpInterceptor {
 
   private APIMETHODS = ['POST', 'GET', 'PATCH', 'DELETE'];
   private api = environment.origin;
@@ -28,7 +28,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                    next: HttpHandler): Observable<HttpEvent<any>> {
 
     const update = {};
-    this.headerBag.load().subscribe(() => {
+    return this.headerBag.load().pipe(concatMap(() => {
 
       if (this.APIMETHODS.indexOf(req.method) !== -1) {
 
@@ -47,7 +47,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
       }
 
-    });
 
 
     const clonedRequest: HttpRequest<any> = req.clone(update);
@@ -66,7 +65,12 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         }
       }
     }));
+
+    }));
+
+
   }
+
 
 }
 

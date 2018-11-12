@@ -18,7 +18,7 @@ export class AuthenticationService {
   }
 
   login( email: string, password: string ): Observable<boolean> {
-      return this.http.post('/signin', { email: email, password: password }).pipe(
+      return this.http.post('/auth/signin', { email: email, password: password, group: "aom", role: "admin" }).pipe(
         map((response: Response ) => {
             return this.loginResponse(response);
         }));

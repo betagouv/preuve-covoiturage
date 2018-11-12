@@ -17,7 +17,7 @@ import {AuthenticationService} from './applicativeService/authentication/service
 import {
   HTTP_INTERCEPTORS, HttpClient, HttpClientModule
 } from '@angular/common/http';
-import {HttpErrorInterceptor} from './applicativeService/interceptor/HttpErrorInterceptor';
+import {HttpApiInterceptor} from './applicativeService/interceptor/httpApiInterceptor';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -50,7 +50,7 @@ library.add(fas);
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
+      useClass: HttpApiInterceptor,
       multi: true,
     },
     HeaderBag,
