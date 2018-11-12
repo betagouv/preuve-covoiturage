@@ -4,14 +4,17 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const { PORT } = require("./config.js");
-// const { capture } = require("./sentry.js");
+const Sentry = require("./sentry.js");
 
 require("./passport")(passport);
 require("./mongo");
 
 const app = express();
 
-app.use(bodyParser.json({ limit: "50mb" }));
+// plugin Sentry - before other middlewares
+app.use(Sentry.Handlers.requestHandler());
+
+app.use(bodyParser.json({ limit: "2mb" }));
 
 // secure apps by setting various HTTP headers
 app.use(helmet());
@@ -21,11 +24,14 @@ app.use(cors());
 
 app.use(passport.initialize());
 
-app.get("/", (_req, res) => {
-  res.send("PDC API listening.");
+app.get('/', function mainHandler(req, res) {
+  throw new Error('Broke!');
 });
 
-app.use("/auth", require("./controllers/auth"));
-app.use("/users", require("./controllers/users"));
+app.use("/auth", require("./auth/authController"));
+app.use("/users", require("./users/userController"));
+
+// plugin Sentry error - after routes, before other middlewares
+app.use(Sentry.Handlers.errorHandler());
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));

@@ -5,11 +5,15 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const generator = require("generate-password");
 require("../passport")(passport);
-const User = require("../models/user");
+const User = require("../users/userModel");
 const config = require("../config.js");
 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
+
+router.get("/ping", passport.authenticate('jwt', { session: false }), (req, res) => {
+  return res.json({});
+});
 
 router.post("/signup", (req, res) => {
   if (
@@ -217,7 +221,7 @@ router.post("/signin", (req, res) => {
             user.save();
             res.status(200).json({
               success: true,
-              token: "JWT " + token,
+              token,
               user
             });
           } else {

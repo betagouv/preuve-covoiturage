@@ -1,4 +1,4 @@
-start:
+backend:
 	@docker-compose down
 	@docker-compose up api
 
@@ -6,6 +6,9 @@ aom:
 	@echo "Type the following command when the container has started"
 	@echo "> ng serve --host 0.0.0.0"
 	@docker-compose run -p 4200:4200 aom bash
+
+edit:
+	@docker-compose up editor
 
 install: wipe fix
 	@docker-compose down
