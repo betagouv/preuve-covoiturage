@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  origin: 'http://localhost/app_dev.php',
+  origin: 'http://localhost:8080',
 };
 
 /*
