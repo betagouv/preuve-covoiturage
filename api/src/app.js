@@ -14,7 +14,7 @@ const app = express();
 // plugin Sentry - before other middlewares
 app.use(Sentry.Handlers.requestHandler());
 
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.json({ limit: "2mb" }));
 
 // secure apps by setting various HTTP headers
 app.use(helmet());

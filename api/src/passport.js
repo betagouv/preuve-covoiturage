@@ -5,24 +5,21 @@ const config = require("./config");
 // load up the user model
 const User = require("./users/userModel");
 
-module.exports = function(passport) {
+module.exports = function (passport) {
   const opts = {};
-  opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("JWT");
+  opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("Bearer");
   opts.secretOrKey = config.secret;
   passport.use(
-    new JwtStrategy(opts, function(jwtPayload, done) {
-      User.findOne(
-        {
-          _id: jwtPayload._id
-        },
-        function(err, user) {
+    new JwtStrategy(opts, function (jwtPayload, next) {
+      User.findOne({ _id: jwtPayload._id }, function (err, user) {
           if (err) {
-            return done(err, false);
+            return next(err, false);
           }
+
           if (user) {
-            done(null, user);
+            next(null, user);
           } else {
-            done(null, false);
+            next(null, false);
           }
         }
       );

@@ -11,6 +11,10 @@ const config = require("../config.js");
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
+router.get("/ping", passport.authenticate('jwt', { session: false }), (req, res) => {
+  return res.json({});
+});
+
 router.post("/signup", (req, res) => {
   if (
     !req.body.email ||
@@ -217,7 +221,7 @@ router.post("/signin", (req, res) => {
             user.save();
             res.status(200).json({
               success: true,
-              token: "JWT " + token,
+              token,
               user
             });
           } else {
