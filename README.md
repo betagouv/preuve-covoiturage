@@ -36,16 +36,7 @@ We're trying to split up services as much as possible.
 
 ### API documentation
 
-We're using the OpenAPI 3.0.2 standard for documentation. To edit the
-`openapi.yaml` file:
-
-1. start the Swagger Editor container `make edit`
-2. navigate to [http://localhost:8080/](http://localhost:8080)
-
-Resources:
-
-- [Comprehensive spec at Swagger.io](https://swagger.io/specification/)
-- [Full blown spec](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md)
+La documentation est sur [Postman](https://documenter.getpostman.com/view/856020/RzZ9HzgR).
 
 ### Misc
 
