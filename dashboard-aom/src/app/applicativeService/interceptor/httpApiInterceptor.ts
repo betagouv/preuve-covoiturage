@@ -47,27 +47,24 @@ export class HttpApiInterceptor implements HttpInterceptor {
 
       }
 
-
-
-    const clonedRequest: HttpRequest<any> = req.clone(update);
-    return next.handle(clonedRequest).pipe(tap((event: HttpEvent<any>) => {
-      if (event instanceof HttpResponse) {
-        // do stuff with response if you want
-      }
-    }, (err: any) => {
-      if (err instanceof HttpErrorResponse) {
-        if (err.status === 401 || err.status === 403 ) {
-          this.tokenService.clear();
-          Logged.set(false);
+      const clonedRequest: HttpRequest<any> = req.clone(update);
+      return next.handle(clonedRequest).pipe(tap((event: HttpEvent<any>) => {
+        if (event instanceof HttpResponse) {
+          // do stuff with response if you want
         }
-        if (err.status === 404) {
-          MessageService.error("Une erreur est survenue");
+      }, (err: any) => {
+        if (err instanceof HttpErrorResponse) {
+          if (err.status === 401 || err.status === 403 ) {
+            this.tokenService.clear();
+            Logged.set(false);
+          }
+          if (err.status === 404) {
+            MessageService.error("Une erreur est survenue");
+          }
         }
-      }
-    }));
+      }));
 
     }));
-
 
   }
 
