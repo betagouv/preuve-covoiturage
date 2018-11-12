@@ -60,6 +60,11 @@ services:
 #    depends_on:
 #    - api
 
+  editor:
+    image: "swaggerapi/swagger-editor"
+    ports:
+      - 8080:8080
+
 networks:
   front:
   api:

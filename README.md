@@ -25,15 +25,27 @@ We're trying to split up services as much as possible.
 
 1. Clone the repository and `cd` to it
 2. Run `make install` to setup all dependencies on all microservices
-3. Run `make backend` to start the backend
-4. Run `make aom` to start the AOM front and `ng serve --host 0.0.0.0` when
+
+### Development workflow
+
+1. Run `make backend` to start the backend
+2. Run `make aom` to start the AOM front and `ng serve --host 0.0.0.0` when
    the container has started
 
 `Ctrl-C` to kill the process
 
-### Development workflow
+### API documentation
 
-1. Start the services: `docker-compose up`
+We're using the OpenAPI 3.0.2 standard for documentation. To edit the
+`openapi.yaml` file:
+
+1. start the Swagger Editor container `make edit`
+2. navigate to [http://localhost:8080/](http://localhost:8080)
+
+Resources:
+
+- [Comprehensive spec at Swagger.io](https://swagger.io/specification/)
+- [Full blown spec](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md)
 
 ### Misc
 
