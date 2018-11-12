@@ -31,7 +31,6 @@ export class PingService {
             this.router.navigate(['/login']);
             return true;
           } else {
-            this.router.navigate(['/login']);
             const logged = true;
             Logged.set(logged);
             return logged;
