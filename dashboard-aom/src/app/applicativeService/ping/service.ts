@@ -18,7 +18,7 @@ export class PingService {
 
     return this
         .http
-        .get( '/ping' ).pipe(
+        .get( '/auth/ping' ).pipe(
         catchError( ( error: Response ) => {
           let status = 500;
           if ( error.status === 401 || error.status === 403 ) { // unauthorized or forbidden //
