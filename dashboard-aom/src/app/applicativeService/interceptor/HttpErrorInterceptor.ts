@@ -11,6 +11,7 @@ import {Logged} from '../authguard/logged';
 import {environment} from '../../../environments/environment';
 import {HeaderBag} from './header-bag';
 import {TokenService} from '../token/service';
+import {MessageService} from "../message/service";
 
 
 @Injectable()
@@ -27,19 +28,27 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                    next: HttpHandler): Observable<HttpEvent<any>> {
 
     const update = {};
-    if (this.APIMETHODS.indexOf(req.method) !== -1) {
-      if (!(req.method === 'GET' && req.url.substring(0, 4) === 'http') ) {
+    this.headerBag.load().subscribe(() => {
+
+      if (this.APIMETHODS.indexOf(req.method) !== -1) {
+
         update['url'] = this.api + req.url;
+
         const httpHeaders = {};
         const headers = this.headerBag.get([]);
+
         for (const i in headers) {
           if (headers.hasOwnProperty(i)) {
             httpHeaders[headers[i].name] = headers[i].value;
           }
         }
+
         update['headers'] = new HttpHeaders(httpHeaders);
+
       }
-    }
+
+    });
+
 
     const clonedRequest: HttpRequest<any> = req.clone(update);
     return next.handle(clonedRequest).pipe(tap((event: HttpEvent<any>) => {
@@ -53,7 +62,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           Logged.set(false);
         }
         if (err.status === 404) {
-          this.router.navigate(['/404']);
+          MessageService.error("Une erreur est survenue");
         }
       }
     }));
