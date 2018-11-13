@@ -2634,6 +2634,11 @@ file-loader@2.0.0:
     loader-utils "^1.0.2"
     schema-utils "^1.0.0"
 
+file-saver@^2.0.0-rc.4:
+  version "2.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.0-rc.4.tgz#aaefae8145193257050a0d92d90941516b4b759b"
+  integrity sha512-6Runcc5CffLF9Rpf/MLc3db9eOi2f7b+DvBXpSpJ/hEy+olM+Bw0kx/bOnnp1X4QgOkFZe8ojrM4iZ0JCWmVMQ==
+
 filename-regex@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
@@ -4614,6 +4619,13 @@ neo-async@^2.5.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.0.tgz#b9d15e4d71c6762908654b5183ed38b753340835"
   integrity sha512-MFh0d/Wa7vkKO3Y3LlacqAEeHK0mckVqzDieUKTT+KGxi+zIpeVsFxymkIiRpbpDziHc290Xr9A1O4Om7otoRA==
+
+ngx-filesaver@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ngx-filesaver/-/ngx-filesaver-2.1.1.tgz#4e3d1cf710cf0e420c9279aa2132e2c31f066043"
+  integrity sha512-rK01fv+ZgkIzvG4TIvojduPylmRuFeb33lYdWbJ2PE502xaQx9wpk7EmhFJf6hu7pVeOCIOpWpVDljfd0a0icA==
+  dependencies:
+    tslib "^1.9.0"
 
 ngx-progressbar@^2.1.1:
   version "2.1.1"

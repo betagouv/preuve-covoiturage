@@ -23,6 +23,9 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import {HeaderBag} from "./applicativeService/interceptor/header-bag";
 import {MessageComponent} from "./applicativeService/message/component";
+import {AomService} from "./service/aomService";
+import { FileSaverModule } from 'ngx-filesaver';
+
 
 
 library.add(fas);
@@ -42,6 +45,7 @@ library.add(fas);
     LoadersCssModule,
     HttpClientModule,
     FontAwesomeModule,
+    FileSaverModule
   ],
   exports: [
     HeaderComponent,
@@ -60,7 +64,8 @@ library.add(fas);
     TokenService,
     PingService,
     AuthenticationService,
-    HttpClient
+    HttpClient,
+    AomService
   ],
   bootstrap: [AppComponent]
 })

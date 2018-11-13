@@ -28,6 +28,8 @@
     "bulma": "^0.7.2",
     "bulma-scss": "https://github.com/j1mc/bulma-scss",
     "core-js": "^2.5.4",
+    "file-saver": "^2.0.0-rc.4",
+    "ngx-filesaver": "^2.1.1",
     "ngx-progressbar": "^2.1.1",
     "rxjs": "~6.3.3",
     "template.data.gouv.fr": "^1.1.8",
