@@ -30,6 +30,7 @@ app.get('/', function mainHandler(req, res) {
 
 app.use("/auth", require("./auth/authController"));
 app.use("/users", require("./users/userController"));
+app.use("/aom", require("./aom/aomController"));
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
