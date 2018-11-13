@@ -19,8 +19,14 @@ export class AomService {
 
 
   getCsv() {
-
     return this.http.get('/aom/csv', { responseType: 'blob'});
   }
+
+  getPreuveKeyValues() {
+    return this.http.get('/aom/values');
+  }
+
+
+
 
 }

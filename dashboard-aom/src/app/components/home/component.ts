@@ -10,35 +10,18 @@ import {FileSaverService} from "ngx-filesaver";
 export class HomeComponent implements OnInit {
 
     private aomService;
-    private preuveKeyValues: any = [
-      {
-        name: "Cocovoit",
-        preuves: 545,
-        level: 2
-      },
-      {
-        name: "MaxiCovoit",
-        preuves: 123,
-        level: 4
-      },
-      {
-        name: "SuperCovoit",
-        preuves: 345,
-        level: 3
-      },
-
-    ];
+    private preuveKeyValues: any = [];
 
     constructor(aomService: AomService,private fileSaverService: FileSaverService) {
       this.aomService = aomService;
     }
 
     ngOnInit() {
-      // this.aomService.preuveKeyValues().subscribe(res => {
-      //
-      //   this.preuveKeyValues = res;
-      //
-      // });
+      this.aomService.getPreuveKeyValues().subscribe(res => {
+
+        this.preuveKeyValues = res;
+
+      });
     }
 
     getCsv() {
