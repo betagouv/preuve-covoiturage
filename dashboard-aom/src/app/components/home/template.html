@@ -11,15 +11,47 @@
   </div>
 </section>
 
+<section class="section">
+  <div class="container">
+    <h1 class="title">
+      Les chiffres du mois de novembre
+   </h1>
+    <div class="columns">
+      <div class="column is-inline-flex">
+        <div *ngFor='let operator of preuveKeyValues ' class="box">
+          <article class="media">
+            <div class="media-content">
+              <h2 class="subtitle has-text-centered">
+                {{operator.name}}
+              </h2>
+              <div class="content">
+                <p>
+                  <span class="preuveNumber">{{operator.preuves}}</span> preuves
+                  <br>
+                  <br>
+                  Niveau de preuve : <span class="operatorLevel">{{operator.level}}</span>
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <section class="section">
   <div class="container">
+    <h1 class="title">
+      Toutes les données
+    </h1>
     <div class="columns">
       <div class="column is-one-third-desktop is-offset-one-third-desktop is-half-tablet is-offset-one-quarter-tablet ">
-        <div class="box">
-          <h1 class="title">
+        <div class="box has-text-centered">
+          <h2 class="subtitle">
             Les données en CSV
-          </h1>
+          </h2>
           <button class="button is-success" (click)="getCsv()">Télécharger</button>
         </div>
       </div>
