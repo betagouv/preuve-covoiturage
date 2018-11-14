@@ -6,7 +6,7 @@ const ProofSchema = new Schema({
   validated: { type: Boolean, default: false },
   lastConnectedAt: { type: Date },
   operator: {
-    type: UserSchema,
+    type: Object,
   }
 });
 

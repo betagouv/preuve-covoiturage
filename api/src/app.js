@@ -14,23 +14,21 @@ const app = express();
 // plugin Sentry - before other middlewares
 app.use(Sentry.Handlers.requestHandler());
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: "2mb" }));
-
-// secure apps by setting various HTTP headers
 app.use(helmet());
-
-// enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 
 app.use(passport.initialize());
 
-app.get('/', function mainHandler(req, res) {
-  throw new Error('Broke!');
-});
+// Route definitions
+// auth is the middleware declared on each group of routes
+const auth = passport.authenticate("jwt", { session: false });
 
 app.use("/auth", require("./auth/authController"));
-app.use("/users", require("./users/userController"));
-app.use("/aom", passport.authenticate('jwt', {session: false}), require("./aom/aomController"));
+app.use("/users", auth, require("./users/userController"));
+app.use("/aom", auth, require("./aom/aomController"));
+app.use("/proofs", auth, require("./proofs/proofController"));
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
