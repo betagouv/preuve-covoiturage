@@ -29,8 +29,16 @@ app.use("/auth", require("./auth/authController"));
 app.use("/users", auth, require("./users/userController"));
 app.use("/aom", auth, require("./aom/aomController"));
 app.use("/proofs", auth, require("./proofs/proofController"));
+app.use("/stats", auth, require("./stats/statsController"));
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
+app.use((err, req, res, next) => {
+  // The error id is attached to `res.sentry` to be returned
+  // and optionally displayed to the user for support.
+  res.statusCode = 500;
+  res.end(res.sentry + '\n');
+});
+
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));

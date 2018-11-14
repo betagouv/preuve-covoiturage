@@ -7,8 +7,6 @@ class CsvConverter {
    * Build CsvConverter with array of data.
    * Each row is an array.
    *
-   *
-   *
    * @param data
    * @param config
    */
@@ -19,6 +17,11 @@ class CsvConverter {
     }, config);
   }
 
+  /**
+   * convert with headers
+   *
+   * @returns {Promise<void>}
+   */
   async convert() {
     if (!this.data.length) {
       throw new Error("No data to convert");

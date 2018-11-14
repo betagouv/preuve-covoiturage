@@ -1,32 +1,19 @@
-import {map} from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-import {Response, ResponseContentType} from '@angular/http';
-import { HttpClient } from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Router} from '@angular/router';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {LoggerService} from "../applicativeService/logger/service";
-
-
-
 
 @Injectable()
 export class AomService {
 
-  constructor(private http: HttpClient, private loggerService: LoggerService
-  ) {
-    this.loggerService = loggerService;
-  }
+    constructor(private http: HttpClient, private loggerService: LoggerService) {
+        this.loggerService = loggerService;
+    }
 
+    getCsv() {
+        return this.http.get('/proofs/download?format=csv', {responseType: 'blob'});
+    }
 
-  getCsv() {
-    return this.http.get('/aom/csv', { responseType: 'blob'});
-  }
-
-  getPreuveKeyValues() {
-    return this.http.get('/aom/values');
-  }
-
-
-
-
+    getPreuveKeyValues() {
+        return this.http.get('/stats/dummy');
+    }
 }
