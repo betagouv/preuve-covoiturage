@@ -15,7 +15,11 @@ const UserSchema = new Schema({
   role: { type: String, required: true },
   password: { type: String, required: true },
   hasResetPassword: { type: Boolean, default: true },
-  lastConnectedAt: { type: Date }
+  lastConnectedAt: { type: Date },
+  aomInfo: {
+    name:{ type: String, unique: true, required: true },
+    insee: [String]
+  }
 });
 
 UserSchema.pre("save", function (next) {
