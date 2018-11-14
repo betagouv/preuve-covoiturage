@@ -1,0 +1,16 @@
+{
+  "name": "@pdc/config",
+  "version": "1.0.0",
+  "description": "Configuration loader",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pdc",
+    "config"
+  ],
+  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
+  "license": "AGPL-3.0"
+}

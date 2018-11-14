@@ -1,7 +1,7 @@
 {
-  "name": "preuve-covoiturage-api",
+  "name": "@pdc/preuve-covoiturage",
   "version": "0.0.1",
-  "description": "Preuve de Covoiturage API",
+  "description": "Preuve de Covoiturage",
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage-api#readme",
   "dependencies": {
+    "@pdc/config": "./packages/config",
     "@sentry/node": "^4.3.0",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
@@ -30,7 +31,9 @@
     "express": "^4.16.4",
     "generate-password": "^1.4.1",
     "helmet": "^3.14.0",
+    "js-yaml": "^3.12.0",
     "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
     "mongoose": "^5.3.10",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0"

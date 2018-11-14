@@ -1,0 +1,21 @@
+headers:
+  - name: Nom de l'opérateur
+    type: ascii
+  - name: id du passager ou conducteur
+    type: int
+  - name: latitude au départ
+    type: int
+  - name: longitude au départ
+    type: int
+  - name: date depart
+    type: int
+  - name: insee départ
+    type: int
+  - name: lat arrivée
+    type: int
+  - name: lon arrivée
+    type: int
+  - name: date arrivée
+    type: int
+  - name: insee arrivée
+    type: int

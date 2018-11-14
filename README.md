@@ -26,6 +26,21 @@ We're trying to split up services as much as possible.
 1. Clone the repository and `cd` to it
 2. Run `make install` to setup all dependencies on all microservices
 
+### Configuration
+
+#### Secrets configuration
+
+For all **secrets**, use the `.env` file which is **NOT COMMITED** to Git.
+
+For none secret values configuring the system, commit the ENV vars in `docker-compose.yml`
+
+For _static_ application configuration (INSEE codes, timeout, etc.) edit/add the `.yml` files in `config/` folder.
+
+```js
+const config = require("@pdc/config");
+console.log(config.camelCasedFileName);
+```
+
 ### Development workflow
 
 1. Run `make backend` to start the backend
