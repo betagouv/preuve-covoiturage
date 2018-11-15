@@ -34,9 +34,12 @@ app.use("/stats", auth, require("./stats/statsController"));
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
 
-// error handler
+// error handler - keep the next argument
+// otherwise Express doesn't use it as error handler
 app.use((err, req, res, next) => {
-  res.status(500).json({ error: err.message, }).close();
+  res
+    .status(500)
+    .json({ error: err.message });
 });
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));
