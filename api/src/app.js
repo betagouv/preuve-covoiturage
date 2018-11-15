@@ -33,12 +33,10 @@ app.use("/stats", auth, require("./stats/statsController"));
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
-app.use((err, req, res, next) => {
-  // The error id is attached to `res.sentry` to be returned
-  // and optionally displayed to the user for support.
-  res.statusCode = 500;
-  res.end(res.sentry + '\n');
-});
 
+// error handler
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: err.message, }).close();
+});
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));
