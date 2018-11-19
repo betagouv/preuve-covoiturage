@@ -5,6 +5,9 @@
 "@pdc/config@./packages/config":
   version "1.0.0"
 
+"@pdc/middlewares@./packages/middlewares":
+  version "1.0.0"
+
 "@pdc/promisify@./packages/promisify":
   version "1.0.0"
 
