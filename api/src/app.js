@@ -7,7 +7,7 @@ const { PORT } = require("./config.js");
 const Sentry = require("./sentry.js");
 
 // middlewares
-const { aom } = require("@pdc/middlewares");
+// const { aom } = require("@pdc/middlewares");
 // const { operator } = require("@pdc/middlewares");
 
 require("./passport")(passport);
@@ -35,7 +35,7 @@ const auth = passport.authenticate("jwt", { session: false });
 
 app.use("/auth", require("./auth/authController"));
 app.use("/users", auth, require("./users/userController"));
-app.use("/aom", [auth, aom], require("./aom/aomController"));
+app.use("/aom", auth, require("./aom/aomController"));
 app.use("/proofs", auth, require("./proofs/proofController"));
 app.use("/stats", auth, require("./stats/statsController"));
 
