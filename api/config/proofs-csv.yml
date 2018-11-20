@@ -29,3 +29,6 @@ headers:
   - name: insee arrivée
     path: end.insee
     type: int
+  - name: Niveau de preuve
+    path: trust_level
+    type: int
