@@ -23,7 +23,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import {HeaderBag} from "./applicativeService/interceptor/header-bag";
 import {MessageComponent} from "./applicativeService/message/component";
-import {OperatorService} from "./service/aomService";
+import {OperatorService} from "./service/operatorService";
 import { FileSaverModule } from 'ngx-filesaver';
 
 
