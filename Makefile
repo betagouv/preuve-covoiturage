@@ -7,6 +7,11 @@ aom:
 	@echo "> ng serve --host 0.0.0.0"
 	@docker-compose run -p 4200:4200 aom bash
 
+aom:
+	@echo "Type the following command when the container has started"
+	@echo "> ng serve --host 0.0.0.0"
+	@docker-compose run -p 4400:4400 operator bash
+
 edit:
 	@docker-compose up editor
 
