@@ -1,4 +1,3 @@
-const { assign } = require("lodash");
 const Aom = require("./aomModel");
 
 const aomService = {
@@ -22,7 +21,7 @@ const aomService = {
       return await Aom.findOneAndDelete({ _id: id });
     }
 
-    return await Aom.findAndModify({ _id: id }, { deletedAt: Date.now() });
+    return await Aom.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
   }
 };
 

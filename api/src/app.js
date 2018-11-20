@@ -36,6 +36,7 @@ const auth = passport.authenticate("jwt", { session: false });
 app.use("/auth", require("./auth/authController"));
 app.use("/users", auth, require("./users/userController"));
 app.use("/aom", auth, require("./aom/aomController"));
+app.use("/operators", auth, require("./operators/operatorController"));
 app.use("/proofs", auth, require("./proofs/proofController"));
 app.use("/stats", auth, require("./stats/statsController"));
 
