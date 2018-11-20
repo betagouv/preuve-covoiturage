@@ -24,6 +24,7 @@
   "dependencies": {
     "@pdc/config": "./packages/config",
     "@pdc/middlewares": "./packages/middlewares",
+    "@pdc/permissions": "./packages/permissions",
     "@pdc/promisify": "./packages/promisify",
     "@pdc/proof-helpers": "./packages/proof-helpers",
     "@sentry/node": "^4.3.0",

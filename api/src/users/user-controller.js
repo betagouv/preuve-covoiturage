@@ -1,35 +1,59 @@
 const router = require("express").Router();
-const User = require("./userModel");
+const User = require("./user-model");
+const userService = require("./user-service");
 
-router.get("/", async (req, res) => {
-  const query = {};
-
-  res.json(await User.find(query));
-});
-
-router.post("/", async (req, res) => {
-  res.json({ todo: 'create user' });
-});
-
-router.get("/me", (req, res) => {
-  res.json({
-    user: req.user
-  });
-});
-
-router.get("/:id", async (req, res) => {
-    const { id } = req.params;
-
-    res.json(await User.find({ _id: id }));
+router.get("/me", (req, res, next) => {
+  try {
+    res.json({ user: req.user });
+  } catch (e) {
+    next(e);
   }
-);
-
-router.put("/:id", async (req, res) => {
-  res.json({ todo: 'update user' });
 });
 
-router.delete("/:id", async (req, res) => {
-  res.json({ todo: 'delete user' });
+router.get("/:id", async (req, res, next) => {
+  try {
+    res.json(await userService.find({ _id: req.params.id }));
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    res.json(await userService.update(req.params.id, req.body));
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const deleted = userService.delete(req.params.id, !!req.query.force);
+
+    res.json({
+      id: res.params.id,
+      deleted,
+      force: res.params.query.force,
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get("/", async (req, res, next) => {
+  try {
+    res.json(await userService.find({}));
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  try {
+    res.json(await userService.create(req.body));
+  } catch (e) {
+    next(e);
+  }
 });
 
 // FIX ME

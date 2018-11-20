@@ -4,7 +4,7 @@ const passport = require("passport");
 const generator = require("generate-password");
 const config = require("../config.js");
 
-const User = require("../users/userModel");
+const User = require("../users/user-model");
 
 require("../passport")(passport);
 

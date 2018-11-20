@@ -9,17 +9,23 @@ const UserSchema = new Schema({
     required: true,
     trim: true
   },
-  lastname: { type: String },
-  firstname: { type: String },
-  group: { type: String, required: true },
+  lastname: String,
+  firstname: String,
+  phone: String,
+  group: {
+    type: String,
+    required: true,
+    enum: ['aom', 'operator', 'registry'],
+  },
   role: { type: String, required: true },
+  permissions: { type: [String], required: true },
   password: { type: String, required: true },
   hasResetPassword: { type: Boolean, default: true },
   lastConnectedAt: { type: Date },
-  aomInfo: {
-    name:{ type: String, unique: true, required: true },
-    insee: [String]
-  }
+
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  deletedAt: { type: Date },
 });
 
 UserSchema.pre("save", function (next) {
