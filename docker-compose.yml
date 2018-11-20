@@ -47,6 +47,21 @@ services:
     depends_on:
     - api
 
+  operator:
+    build: "./docker/operator"
+    tty: true
+    volumes:
+      - ./dashboard-operator:/code
+    working_dir: "/code"
+    command: "yarn"
+    ports:
+      - 4400:4400
+    networks:
+      - front
+      - api
+    depends_on:
+      - api
+
 #  registry:
 #    image: "node:8"
 #    volumes:

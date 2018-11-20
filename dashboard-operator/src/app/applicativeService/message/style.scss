@@ -1,0 +1,24 @@
+@import "./../../../assets/scss/variables.scss";
+
+
+.notification{
+  display: block;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; // todo : should be from variable.scss
+  font-size: 15px;
+  font-weight: 200;
+  line-height: 20px;
+  position: fixed;
+  top: 3.25rem;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  margin-bottom: 0;
+
+  &.cookie{
+    background: #333;
+    color: #bbb;
+  }
+}
+
