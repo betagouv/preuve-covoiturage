@@ -22,6 +22,12 @@ const aomService = {
     }
 
     return await Aom.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
+  },
+
+  async search({ lat, lng, insee }) {
+    // TODO create a real searching algorithm
+
+    return await Aom.findOne({});
   }
 };
 

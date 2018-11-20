@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const _ = require("lodash");
 const Proof = require("./proof-model");
-const { CsvConverter } = require("@pdc/proof-helpers");
-const config = require("@pdc/config");
+const proofService = require("./proof-service");
+const aomService = require("../aom/aom-service");
 
 /**
  * Download a collection of proofs in a format (default csv)
@@ -11,7 +11,6 @@ const config = require("@pdc/config");
  */
 router.get("/download", async (req, res, next) => {
   try {
-    // Build the query
     const query = {};
 
     if (_.has(req, 'aom.siren')) {
@@ -22,30 +21,9 @@ router.get("/download", async (req, res, next) => {
       query["operator.siren"] = req.operator.siren;
     }
 
-    const results = await Proof.find(query);
-
-    // convert to an array based on configuration file
-    let _arr = [];
-    const proofs = results.map((proof) => {
-      _arr = [];
-      config.proofsCsv.headers.forEach((cfg) => {
-        _arr.push(_.get(proof, cfg.path, ""));
-      });
-
-      return _arr;
-    });
-
-    // output in required format
-    switch (req.query.format || 'csv') {
-      case 'csv':
-        const csv = new CsvConverter(proofs, config.proofsCsv);
-        const data = await csv.convert();
-        res.set('Content-type', 'text/csv').send(data);
-        break;
-
-      default:
-        throw new Error('Unsupported format');
-    }
+    res
+      .set('Content-type', 'text/csv')
+      .send(await proofService.convert(await Proof.find(query), 'csv'));
   } catch (e) {
     next(e);
   }
@@ -53,25 +31,23 @@ router.get("/download", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const { id } = req.params;
-
-    res.json(await Proof.find({ _id: id }));
+    res.json(await proofService.find({ _id: req.params.id }));
   } catch (e) {
     next(e);
   }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
   try {
-    res.json({ todo: 'update proof' });
+    res.json(await proofService.update(req.params.id, req.body));
   } catch (e) {
     next(e);
   }
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
-    res.json({ todo: 'delete proof' });
+    res.json(await proofService.delete(req.params.id));
   } catch (e) {
     next(e);
   }
@@ -79,7 +55,7 @@ router.delete("/:id", (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    res.json(await Proof.find({}));
+    res.json(await proofService.find({}));
   } catch (e) {
     next(e);
   }
@@ -87,10 +63,20 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const proof = new Proof(req.body);
-    await proof.save();
+    const data = _.assign(
+      req.body,
+      { operator: req.operator },
+      {
+        // TODO add insee and geo for start and end
+        // if journey is not fully done within the AOM boundaries
+        aom: await aomService.search({
+          lat: req.body.start.lat,
+          lng: req.body.start.lng,
+        })
+      },
+    );
 
-    res.json({ proof });
+    res.json(await proofService.create(data));
   } catch (e) {
     next(e);
   }
