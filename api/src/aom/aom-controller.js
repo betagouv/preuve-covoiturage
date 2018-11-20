@@ -1,34 +1,34 @@
 const router = require("express").Router();
-const operatorService = require("./operatorService");
+const aomService = require("./aom-service");
 
 /**
- * get an Operator by ID
+ * get an AOM by ID
  */
 router.get("/:id", async (req, res, next) => {
   try {
-    res.json(await operatorService.find({ _id: req.params.id }));
+    res.json(await aomService.find({ _id: req.params.id }));
   } catch (e) {
     next(e);
   }
 });
 
 /**
- * update an Operator by ID
+ * update an AOM by ID
  */
 router.put("/:id", async (req, res, next) => {
   try {
-    res.json(await operatorService.update(req.params.id, req.body));
+    res.json(await aomService.update(req.params.id, req.body));
   } catch (e) {
     next(e);
   }
 });
 
 /**
- * Soft delete or force delete an Operator
+ * Soft delete or force delete an AOM
  */
 router.delete("/:id", async (req, res, next) => {
   try {
-    const deleted = operatorService.delete(req.params.id, !!req.query.force);
+    const deleted = aomService.delete(req.params.id, !!req.query.force);
 
     res.json({
       id: res.params.id,
@@ -41,22 +41,22 @@ router.delete("/:id", async (req, res, next) => {
 });
 
 /**
- * List all Operators
+ * List all AOMs
  */
 router.get("/", async (req, res, next) => {
   try {
-    res.json(await operatorService.find({}));
+    res.json(await aomService.find({}));
   } catch (e) {
     next(e);
   }
 });
 
 /**
- * Create a new Operator
+ * Create a new AOM
  */
 router.post("/", async (req, res, next) => {
   try {
-    res.json(await operatorService.create(req.body));
+    res.json(await aomService.create(req.body));
   } catch (e) {
     next(e);
   }

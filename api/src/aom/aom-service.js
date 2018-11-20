@@ -1,4 +1,4 @@
-const Aom = require("./aomModel");
+const Aom = require("./aom-model");
 
 const aomService = {
   find(query = {}) {

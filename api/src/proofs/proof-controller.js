@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const _ = require("lodash");
-const Proof = require("./proofModel");
+const Proof = require("./proof-model");
 const { CsvConverter } = require("@pdc/proof-helpers");
 const config = require("@pdc/config");
 

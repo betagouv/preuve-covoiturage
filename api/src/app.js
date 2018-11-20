@@ -33,11 +33,11 @@ app.use(passport.initialize());
 // auth is the middleware declared on each group of routes
 const auth = passport.authenticate("jwt", { session: false });
 
-app.use("/auth", require("./auth/authController"));
+app.use("/auth", require("./auth/auth-controller"));
 app.use("/users", auth, require("./users/user-controller"));
-app.use("/aom", auth, require("./aom/aomController"));
-app.use("/operators", auth, require("./operators/operatorController"));
-app.use("/proofs", auth, require("./proofs/proofController"));
+app.use("/aom", auth, require("./aom/aom-controller"));
+app.use("/operators", auth, require("./operators/operator-controller"));
+app.use("/proofs", auth, require("./proofs/proof-controller"));
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());

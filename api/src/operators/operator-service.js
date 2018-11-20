@@ -1,4 +1,4 @@
-const Operator = require("./operatorModel");
+const Operator = require("./operator-model");
 
 const operatorService = {
   find(query = {}) {
