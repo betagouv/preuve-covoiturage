@@ -49,6 +49,11 @@ console.log(config.camelCasedFileName);
 
 `Ctrl-C` to kill the process
 
+3. Run `make operator` to start the Operator front and `ng serve --host 0.0.0.0 --port 4400` when
+the container has started
+
+`Ctrl-C` to kill the process
+
 ### API documentation
 
 La documentation est sur [Postman](https://documenter.getpostman.com/view/856020/RzZ9HzgR).
