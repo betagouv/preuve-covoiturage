@@ -5,7 +5,6 @@ export class Proof {
   private lastname: string;
   private firstname: string;
   private numero: number;
-  private operator: string;
   private operator_id: string;
   private start: Trip;
   private end: Trip;
@@ -19,7 +18,6 @@ export class Proof {
     this.lastname     = obj && obj.lastname      || null;
     this.firstname    = obj && obj.firstname     || null;
     this.numero       = obj && obj.numero        || null;
-    this.operator     = obj && obj.operator      || null;
     this.operator_id  = obj && obj.operator_id   || null;
     this.start        = obj && obj.start         || new Trip();
     this.end          = obj && obj.end           || new Trip();
