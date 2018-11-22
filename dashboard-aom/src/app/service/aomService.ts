@@ -13,7 +13,7 @@ export class AomService {
         return this.http.get('/proofs/download?format=csv', {responseType: 'blob'});
     }
 
-    getPreuveKeyValues() {
-        return this.http.get('/stats/dummy');
+    getAom() {
+        return this.http.get('/aom');
     }
 }

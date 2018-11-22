@@ -21,3 +21,9 @@
 @import '~bulma-scss/grid/_all.scss';
 
 @import '~bulma-scss/layout/_all.scss';
+
+//fix
+
+html{
+  overflow-y: auto
+}

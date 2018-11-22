@@ -9,4 +9,9 @@ export class OperatorService {
         this.loggerService = loggerService;
     }
 
+
+    public sendProof(proof):any {
+      return this.http.post("/proofs", proof);
+    }
+
 }
