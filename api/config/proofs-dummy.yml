@@ -1,9 +1,0 @@
-- name: Cocovoit
-  preuves: 545
-  level: 2
-- name: Maxivoit
-  preuves: 3123
-  level: 4
-- name: SuperCovoit
-  preuves: 10123
-  level: 1
