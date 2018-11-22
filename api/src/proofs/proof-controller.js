@@ -63,17 +63,33 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
+    // the list of all touched AOM during the journey
+    // journey_span for each AOM is a percentage of the journey
+    // which is done in each AOM
+    const queries = [
+      req.body.start,
+      req.body.end,
+    ].reduce((p, c) => {
+      const query = {};
+      if (_.has(c, 'lat')) query.lat = c.lat;
+      if (_.has(c, 'lng')) query.lng = c.lng;
+      if (_.has(c, 'insee')) query.insee = c.insee;
+      if (Object.keys(query).length) p.push(query);
+
+      return p;
+    }, []);
+
+    const aomList = (await Promise.all(queries.map(aomService.search)))
+      .map(i => i.toJSON())
+      .map(i => _.assign(i, {
+        id: `${i._id}`,
+        journey_span: 100,
+      }));
+
     const data = _.assign(
       req.body,
       { operator: req.operator },
-      {
-        // TODO add insee and geo for start and end
-        // if journey is not fully done within the AOM boundaries
-        aom: await aomService.search({
-          lat: req.body.start.lat,
-          lng: req.body.start.lng,
-        })
-      },
+      { aom: _.uniqBy(aomList, "id") },
     );
 
     res.json(await proofService.create(data));

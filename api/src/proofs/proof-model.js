@@ -28,6 +28,11 @@ const AomSchema = new Schema({
   aom_id: Schema.Types.ObjectId,
   name: String,
   siren: String,
+  journey_span: {
+    type: Number,
+    min: 0,
+    max: 100,
+  }
 });
 
 /**
@@ -63,7 +68,7 @@ const ProofSchema = new Schema({
   operator: OperatorSchema,
 
   // system's data about the aom
-  aom: AomSchema,
+  aom: [AomSchema],
 
 });
 
