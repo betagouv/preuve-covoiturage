@@ -3,6 +3,7 @@ const Proof = require("./proof-model");
 const { CsvConverter } = require("@pdc/proof-helpers");
 const config = require("@pdc/config");
 const aomService = require("../aom/aom-service");
+const Schema = require("mongoose").Schema;
 
 const proofService = {
   find(query = {}) {

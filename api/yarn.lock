@@ -5,9 +5,6 @@
 "@pdc/config@./packages/config":
   version "1.0.0"
 
-"@pdc/middlewares@./packages/middlewares":
-  version "1.0.0"
-
 "@pdc/permissions@./packages/permissions":
   version "1.0.0"
 

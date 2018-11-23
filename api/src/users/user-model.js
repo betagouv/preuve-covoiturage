@@ -23,6 +23,9 @@ const UserSchema = new Schema({
   hasResetPassword: { type: Boolean, default: true },
   lastConnectedAt: { type: Date },
 
+  operator: Schema.Types.ObjectId,
+  aom: Schema.Types.ObjectId,
+
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   deletedAt: { type: Date },
@@ -53,6 +56,16 @@ UserSchema.methods.comparePassword = function (passw, cb) {
     }
     cb(null, res);
   });
+};
+
+UserSchema.methods.setOperator = async function (operator) {
+  this.operator = operator;
+  return this;
+};
+
+UserSchema.methods.unsetOperator = async function () {
+  this.operator = null;
+  return this;
 };
 
 module.exports = mongoose.model("User", UserSchema);
