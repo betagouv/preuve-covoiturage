@@ -10,16 +10,16 @@ import {FileSaverService} from "ngx-filesaver";
 export class HomeComponent implements OnInit {
 
     private aomService;
-    private preuveKeyValues: any = [];
+    private aom: any;
 
     constructor(aomService: AomService,private fileSaverService: FileSaverService) {
       this.aomService = aomService;
     }
 
     ngOnInit() {
-      this.aomService.getPreuveKeyValues().subscribe(res => {
+      this.aomService.getAom().subscribe(res => {
 
-        this.preuveKeyValues = res;
+        this.aom = res[0];
 
       });
     }

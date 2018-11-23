@@ -11,11 +11,215 @@
   </div>
 </section>
 
+
 <section class="section">
   <div class="container">
-    <h1 class="title">
-      blablabla
-   </h1>
+    <h1 class="title has-text-centered">
+      Ajouter une Preuve de covoiturage
+    </h1>
+    <div class="columns">
+      <div class="column is-one-third-desktop is-offset-one-third-desktop is-half-tablet is-offset-one-quarter-tablet ">
+        <!--<div class="box">-->
+          <form name="form" (ngSubmit)="f.form.valid && sendProof()" #f="ngForm" novalidate>
+
+            <div class="tile is-vertical">
+
+              <article class="tile is-child">
+                <p class="subtitle is-5 has-text-centered">Opérateur</p>
+
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !operator.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Nom</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <select class="showvalidity" name="operator" id="operator" [(ngModel)]="proof.operator_id" #operator="ngModel">
+                        <option *ngFor="let operator of operatorList " value="{{operator.id}}">{{operator.name}}</option>
+                      </select>
+                    </p>
+                    <div *ngIf="f.submitted && !operator.pristine && !operator.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="tile is-child">
+                <p class="subtitle is-5 has-text-centered">Occupant.e du véhicule</p>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !email.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Email</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="email" class="input showvalidity" type="email" placeholder="Email" name="email" [(ngModel)]="proof.email" #email="ngModel" required pattern="[a-zA-Z0-9.-]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}">
+                      <span class="icon is-small is-left">
+                      <fa-icon icon="envelope"></fa-icon>
+                      </span>
+                    </p>
+                    <div *ngIf="f.submitted && !email.pristine && !email.valid"  class="help-block">L'email est obligatoire</div>
+                  </div>
+                </div>
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !lastname.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Nom</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="lastname" class="input showvalidity" type="text" placeholder="Ecrivez votre nom ici" name="lastname" [(ngModel)]="proof.lastname" #lastname="ngModel">
+                    </p>
+                    <div *ngIf="f.submitted && !lastname.pristine && !lastname.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !firstname.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Prénom</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="firstname" class="input showvalidity" type="text" placeholder="Ecrivez votre prénom ici" name="firstname" [(ngModel)]="proof.firstname" #firstname="ngModel">
+                    </p>
+                    <div *ngIf="f.submitted && !firstname.pristine && !firstname.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !numero.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Numéro</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="numero" class="input showvalidity" type="text" placeholder="Rentrez votre numéro ici" name="numero" [(ngModel)]="proof.numero" #numero="ngModel" require pattern="^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$">
+                    </p>
+                    <div *ngIf="f.submitted && !numero.pristine && !numero.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+              </article>
+
+              <!--DEPART-->
+              <article class="tile is-child">
+                <p class="subtitle is-5 has-text-centered">Départ</p>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !inseeStart.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Insee</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="inseeStart" class="input showvalidity" type="text" placeholder="Numéro Insee au départ" name="inseeStart" [(ngModel)]="proof.start.insee" #inseeStart="ngModel" require pattern="[0-9]{5}">
+                    </p>
+                    <div *ngIf="f.submitted && !inseeStart.pristine && !inseeStart.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !literalStart.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Adresse</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="literalStart" class="input showvalidity" type="text" placeholder="Adresse postale" name="literalStart" [(ngModel)]="proof.start.literal" #literalStart="ngModel" require pattern="[0-9]{5}">
+                    </p>
+                    <div *ngIf="f.submitted && !literalStart.pristine && !literalStart.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !dateStart.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Date</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="dateStart" class="input showvalidity" type="date"  name="dateStart" [(ngModel)]="proof.start.date" #dateStart="ngModel" require >
+                    </p>
+                    <div *ngIf="f.submitted && !dateStart.pristine && !dateStart.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !hourStart.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Heure</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="hourStart" class="input showvalidity" type="time" name="hourStart" [(ngModel)]="proof.start.time" #hourStart="ngModel" require >
+                    </p>
+                    <div *ngIf="f.submitted && !hourStart.pristine && !hourStart.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+              </article>
+
+              <!--ARRIVEE-->
+              <article class="tile is-child">
+                <p class="subtitle is-5 has-text-centered">Arrivée</p>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !inseeArrival.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Insee</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="inseeArrival" class="input showvalidity" type="text" placeholder="Numéro Insee à l'arrivée" name="inseeArrival" [(ngModel)]="proof.end.insee" #inseeArrival="ngModel" require pattern="[0-9]{5}">
+                    </p>
+                    <div *ngIf="f.submitted && !inseeArrival.pristine && !inseeArrival.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !literalEnd.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Adresse</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="literalEnd" class="input showvalidity" type="text" placeholder="Adresse postale" name="literalEnd" [(ngModel)]="proof.end.literal" #literalEnd="ngModel" require pattern="[0-9]{5}">
+                    </p>
+                    <div *ngIf="f.submitted && !literalEnd.pristine && !literalEnd.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+
+
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !dateArrival.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Date</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="dateArrival" class="input showvalidity" type="date" placeholder="Date à l'arrivée" name="dateArrival" [(ngModel)]="proof.end.date" #dateArrival="ngModel" require >
+                    </p>
+                    <div *ngIf="f.submitted && !dateArrival.pristine && !dateArrival.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !hourArrival.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Heure</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="hourArrival" class="input showvalidity" type="time" placeholder="Heure à l'arrivée" name="hourArrival" [(ngModel)]="proof.end.time" #hourArrival="ngModel" require >
+                    </p>
+                    <div *ngIf="f.submitted && !hourArrival.pristine && !hourArrival.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+              </article>
+
+              <article>
+                <div class="field">
+                  <p class="control" style="text-align: center">
+                    <button type="submit" (click)="sendProof()" [disabled]="loading" [ngClass]="{'is-loading' : loading}" class="button is-success">
+                      Envoyer
+                    </button>
+                  </p>
+                </div>
+                <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+              </article>
+            </div>
+
+
+          </form>
+        </div>
+      <!--</div>-->
+    </div>
   </div>
 </section>
+
 

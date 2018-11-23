@@ -24,6 +24,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
     "@ngx-pwa/local-storage": "^6.2.0",
+    "angular-moment-picker": "^0.10.2",
     "angular2-loaders-css": "^2.0.1",
     "bulma": "^0.7.2",
     "bulma-scss": "https://github.com/j1mc/bulma-scss",
