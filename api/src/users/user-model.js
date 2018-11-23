@@ -68,4 +68,14 @@ UserSchema.methods.unsetOperator = async function () {
   return this;
 };
 
+UserSchema.methods.setAom = async function (aom) {
+  this.aom = aom;
+  return this;
+};
+
+UserSchema.methods.unsetAom = async function () {
+  this.aom = null;
+  return this;
+};
+
 module.exports = mongoose.model("User", UserSchema);

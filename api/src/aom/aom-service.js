@@ -1,4 +1,6 @@
+const { ObjectId } = require("mongoose").Types;
 const Aom = require("./aom-model");
+const User = require("../users/user-model");
 
 const aomService = {
   find(query = {}) {
@@ -28,7 +30,26 @@ const aomService = {
     // TODO create a real searching algorithm
 
     return await Aom.findOne({});
-  }
+  },
+
+  async addUser(id, userId) {
+    const aom = await Aom.findOne({ _id: id });
+    const user = await User.findOne({ _id: userId });
+    await user.setAom(aom);
+
+    return await user.save();
+  },
+
+  async removeUser(id, userId) {
+    const user = await User.findOne({ _id: userId });
+    await user.unsetAom();
+
+    return await user.save();
+  },
+
+  async users(id) {
+    return await User.find({ "aom": ObjectId(id) });
+  },
 };
 
 module.exports = aomService;

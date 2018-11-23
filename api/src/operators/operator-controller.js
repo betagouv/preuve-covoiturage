@@ -24,7 +24,7 @@ router.post("/:id/users/remove", async (req, res, next) => {
 });
 
 /**
- * List all user from an operator
+ * List all users from an operator
  */
 router.get("/:id/users", async (req, res, next) => {
   try {
