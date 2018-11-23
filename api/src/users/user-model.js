@@ -15,7 +15,7 @@ const UserSchema = new Schema({
   group: {
     type: String,
     required: true,
-    enum: ['aom', 'operator', 'registry'],
+    enum: ['aom', 'operators', 'registry'],
   },
   role: { type: String, required: true },
   permissions: { type: [String], required: true },

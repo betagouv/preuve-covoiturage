@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
  * start and end positions schemas
  */
 const PositionSchema = new Schema({
-  lat: String,
-  lng: String,
+  lat: Number,
+  lng: Number,
   date: Date,
   insee: String,
   literal: String,
