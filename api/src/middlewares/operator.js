@@ -1,4 +1,4 @@
-const { has } = require("lodash");
+const { has } = require('lodash');
 
 const operator = function operator(req, res, next) {
   if (!req.user) {

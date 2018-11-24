@@ -1,4 +1,4 @@
-const { has } = require("lodash");
+const { has } = require('lodash');
 
 const aom = function aom(req, res, next) {
   if (!req.user) {

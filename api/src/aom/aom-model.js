@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
 
 const AomSchema = new Schema({
   name: { type: String, required: true },
@@ -15,16 +16,16 @@ const AomSchema = new Schema({
     },
     count: {
       type: Number,
-      default: 0
+      default: 0,
     },
     avg_level: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   deletedAt: { type: Date },
 });
 
-module.exports = mongoose.model("Aom", AomSchema);
+module.exports = mongoose.model('Aom', AomSchema);

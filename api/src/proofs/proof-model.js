@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
 
 /**
  * start and end positions schemas
@@ -32,7 +33,7 @@ const AomSchema = new Schema({
     type: Number,
     min: 0,
     max: 100,
-  }
+  },
 });
 
 /**
@@ -53,8 +54,8 @@ const ProofSchema = new Schema({
   passengers_count: { type: Number, default: 0 },
   start: PositionSchema,
   end: PositionSchema,
-  distance: { type: Number, default: 0, },
-  duration: { type: Number, default: 0, },
+  distance: { type: Number, default: 0 },
+  duration: { type: Number, default: 0 },
   trust_level: { type: Number, default: 0 },
 
   // system's data
@@ -72,4 +73,4 @@ const ProofSchema = new Schema({
 
 });
 
-module.exports = mongoose.model("Proof", ProofSchema);
+module.exports = mongoose.model('Proof', ProofSchema);

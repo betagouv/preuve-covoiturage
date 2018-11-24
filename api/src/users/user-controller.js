@@ -1,8 +1,7 @@
-const router = require("express").Router();
-const User = require("./user-model");
-const userService = require("./user-service");
+const router = require('express').Router();
+const userService = require('./user-service');
 
-router.get("/me", (req, res, next) => {
+router.get('/me', (req, res, next) => {
   try {
     res.json({ user: req.user });
   } catch (e) {
@@ -10,7 +9,7 @@ router.get("/me", (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
     res.json(await userService.find({ _id: req.params.id }));
   } catch (e) {
@@ -18,7 +17,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
   try {
     res.json(await userService.update(req.params.id, req.body));
   } catch (e) {
@@ -26,7 +25,7 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const deleted = userService.delete(req.params.id, !!req.query.force);
 
@@ -40,7 +39,7 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     res.json(await userService.find({}));
   } catch (e) {
@@ -48,7 +47,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     res.json(await userService.create(req.body));
   } catch (e) {

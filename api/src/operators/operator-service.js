@@ -1,6 +1,6 @@
-const { ObjectId } = require("mongoose").Types;
-const Operator = require("./operator-model");
-const User = require("../users/user-model");
+const { ObjectId } = require('mongoose').Types;
+const Operator = require('./operator-model');
+const User = require('../users/user-model');
 
 const operatorService = {
   find(query = {}) {
@@ -8,7 +8,7 @@ const operatorService = {
   },
 
   async update(id, data) {
-    return await Operator.findOneAndUpdate({ _id: id }, data, { new: true });
+    return Operator.findOneAndUpdate({ _id: id }, data, { new: true });
   },
 
   async create(data) {
@@ -20,10 +20,10 @@ const operatorService = {
 
   async delete(id, force = false) {
     if (force) {
-      return await Operator.findOneAndDelete({ _id: id });
+      return Operator.findOneAndDelete({ _id: id });
     }
 
-    return await Operator.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
+    return Operator.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
   },
 
   async addUser(id, userId) {
@@ -31,18 +31,18 @@ const operatorService = {
     const user = await User.findOne({ _id: userId });
     await user.setOperator(operator);
 
-    return await user.save();
+    return user.save();
   },
 
   async removeUser(id, userId) {
     const user = await User.findOne({ _id: userId });
     await user.unsetOperator();
 
-    return await user.save();
+    return user.save();
   },
 
   async users(id) {
-    return await User.find({ "operator": ObjectId(id) });
+    return User.find({ operator: ObjectId(id) });
   },
 };
 

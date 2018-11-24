@@ -1,13 +1,14 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const bcrypt = require("bcrypt");
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
+const { Schema } = mongoose;
 
 const UserSchema = new Schema({
   email: {
     type: String,
     unique: true,
     required: true,
-    trim: true
+    trim: true,
   },
   lastname: String,
   firstname: String,
@@ -31,51 +32,52 @@ const UserSchema = new Schema({
   deletedAt: { type: Date },
 });
 
-UserSchema.pre("save", function (next) {
-  if (this.isModified("password") || this.isNew) {
+UserSchema.pre('save', function save(next) {
+  if (this.isModified('password') || this.isNew) {
     bcrypt.hash(this.password, 10, (e, hash) => {
       this.password = hash;
       next();
     });
   } else {
-    return next();
+    next();
   }
 });
 
-UserSchema.method("toJSON", function () {
-  var user = this.toObject();
+UserSchema.method('toJSON', function toJSON() {
+  const user = this.toObject();
   delete user.password;
   delete user.__v;
   return user;
 });
 
-UserSchema.methods.comparePassword = function (passw, cb) {
-  bcrypt.compare(passw, this.password, function (err, res) {
+UserSchema.methods.comparePassword = function comparePassword(passw, cb) {
+  bcrypt.compare(passw, this.password, (err, res) => {
     if (err) {
-      return cb(err);
+      cb(err);
+    } else {
+      cb(null, res);
     }
-    cb(null, res);
   });
 };
 
-UserSchema.methods.setOperator = async function (operator) {
+UserSchema.methods.setOperator = async function setOperator(operator) {
   this.operator = operator;
   return this;
 };
 
-UserSchema.methods.unsetOperator = async function () {
+UserSchema.methods.unsetOperator = async function unsetOperator() {
   this.operator = null;
   return this;
 };
 
-UserSchema.methods.setAom = async function (aom) {
+UserSchema.methods.setAom = async function setAom(aom) {
   this.aom = aom;
   return this;
 };
 
-UserSchema.methods.unsetAom = async function () {
+UserSchema.methods.unsetAom = async function unsetAom() {
   this.aom = null;
   return this;
 };
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model('User', UserSchema);

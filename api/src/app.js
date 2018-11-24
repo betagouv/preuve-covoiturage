@@ -1,17 +1,17 @@
-const express = require("express");
-const helmet = require("helmet");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const passport = require("passport");
-const { PORT } = require("./config.js");
-const Sentry = require("./sentry.js");
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const { PORT } = require('./config.js');
+const Sentry = require('./sentry.js');
 
 // middlewares
 // const { aom } = require("@pdc/middlewares");
 // const { operator } = require("@pdc/middlewares");
 
-require("./passport")(passport);
-require("./mongo");
+require('./passport')(passport);
+require('./mongo');
 
 const app = express();
 
@@ -19,7 +19,7 @@ const app = express();
 app.use(Sentry.Handlers.requestHandler());
 
 // handle body content-type conversion
-app.use(bodyParser.json({ limit: "2mb" }));
+app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // protect with typical headers and enable cors
@@ -31,13 +31,13 @@ app.use(passport.initialize());
 
 // Route definitions
 // auth is the middleware declared on each group of routes
-const auth = passport.authenticate("jwt", { session: false });
+const auth = passport.authenticate('jwt', { session: false });
 
-app.use("/auth", require("./auth/auth-controller"));
-app.use("/users", auth, require("./users/user-controller"));
-app.use("/aom", auth, require("./aom/aom-controller"));
-app.use("/operators", auth, require("./operators/operator-controller"));
-app.use("/proofs", auth, require("./proofs/proof-controller"));
+app.use('/auth', require('./auth/auth-controller'));
+app.use('/users', auth, require('./users/user-controller'));
+app.use('/aom', auth, require('./aom/aom-controller'));
+app.use('/operators', auth, require('./operators/operator-controller'));
+app.use('/proofs', auth, require('./proofs/proof-controller'));
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
@@ -45,6 +45,7 @@ app.use(Sentry.Handlers.errorHandler());
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler
 // https://expressjs.com/en/guide/error-handling.html
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   let output;
 
@@ -60,4 +61,4 @@ app.use((err, req, res, next) => {
   output.json({ name: err.name, message: err.message });
 });
 
-app.listen(PORT, () => console.log("Listening on port " + PORT));
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

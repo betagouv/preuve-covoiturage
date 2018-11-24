@@ -1,6 +1,6 @@
-const { ObjectId } = require("mongoose").Types;
-const Aom = require("./aom-model");
-const User = require("../users/user-model");
+const { ObjectId } = require('mongoose').Types;
+const Aom = require('./aom-model');
+const User = require('../users/user-model');
 
 const aomService = {
   find(query = {}) {
@@ -8,7 +8,7 @@ const aomService = {
   },
 
   async update(id, data) {
-    return await Aom.findOneAndUpdate({ _id: id }, data, { new: true });
+    return Aom.findOneAndUpdate({ _id: id }, data, { new: true });
   },
 
   async create(data) {
@@ -20,16 +20,16 @@ const aomService = {
 
   async delete(id, force = false) {
     if (force) {
-      return await Aom.findOneAndDelete({ _id: id });
+      return Aom.findOneAndDelete({ _id: id });
     }
 
-    return await Aom.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
+    return Aom.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
   },
 
   async search({ lat, lng, insee }) {
     // TODO create a real searching algorithm
 
-    return await Aom.findOne({});
+    return Aom.findOne({});
   },
 
   async addUser(id, userId) {
@@ -37,18 +37,18 @@ const aomService = {
     const user = await User.findOne({ _id: userId });
     await user.setAom(aom);
 
-    return await user.save();
+    return user.save();
   },
 
   async removeUser(id, userId) {
     const user = await User.findOne({ _id: userId });
     await user.unsetAom();
 
-    return await user.save();
+    return user.save();
   },
 
   async users(id) {
-    return await User.find({ "aom": ObjectId(id) });
+    return User.find({ aom: ObjectId(id) });
   },
 };
 
