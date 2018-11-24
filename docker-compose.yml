@@ -19,9 +19,10 @@ services:
     volumes:
     - ./api:/code
     working_dir: "/code"
-    command: "nodemon"
+    command: "nodemon --inspect=0.0.0.0:9229"
     ports:
     - 8080:8080
+    - 9229:9229
     env_file: .env
     environment:
       CONFIG_DIR: '/code/config'
