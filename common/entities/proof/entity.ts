@@ -6,11 +6,12 @@ export class Proof {
   private firstname: string;
   private numero: number;
   private operator_id: string;
-  private start: Trip;
-  private end: Trip;
+  private start: Journey;
+  private end: Journey;
   private is_driver: null;
   private traveler_hash: string; // todo: Temporary, it should be done in the backend !
   private trust_level: boolean; // todo: Temporary, should this be fixed to 0 or 1 ?
+  private trip_id: boolean; // connection made by operator ( should be in documentation )
 
   constructor(obj?: any) {
     this.id           = obj && obj.id            || null;
@@ -19,17 +20,18 @@ export class Proof {
     this.firstname    = obj && obj.firstname     || null;
     this.numero       = obj && obj.numero        || null;
     this.operator_id  = obj && obj.operator_id   || null;
-    this.start        = obj && obj.start         || new Trip();
-    this.end          = obj && obj.end           || new Trip();
+    this.start        = obj && obj.start         || new Journey();
+    this.end          = obj && obj.end           || new Journey();
     this.is_driver    = obj && obj.is_driver     || null;
     this.traveler_hash= obj && obj.traveler_hash || null;
     this.trust_level  = obj && obj.trust_level   || null;
+    this.trip_id  = obj && obj.trip_id   || null;
   }
 
 
 }
 
-export class Trip {
+export class Journey {
 
 
   private insee: string;
