@@ -1,0 +1,29 @@
+@import '~bulma-scss/utilities/_all';
+@import '~bulma-scss/base/_all';
+
+//elements
+@import '~bulma-scss/elements/_box.scss';
+//@import '~bulma-scss/elements/_button.scss';
+@import '~bulma-scss/elements/_container.scss';
+@import '~bulma-scss/elements/_content.scss';
+@import '~bulma-scss/elements/_form.scss';
+@import '~bulma-scss/elements/_icon.scss';
+@import '~bulma-scss/elements/_image.scss';
+@import '~bulma-scss/elements/_notification.scss';
+@import '~bulma-scss/elements/_other.scss';
+@import '~bulma-scss/elements/_progress.scss';
+@import '~bulma-scss/elements/_table.scss';
+@import '~bulma-scss/elements/_tag.scss';
+@import '~bulma-scss/elements/_title.scss';
+
+@import '~bulma-scss/components/_all.scss';
+
+@import '~bulma-scss/grid/_all.scss';
+
+@import '~bulma-scss/layout/_all.scss';
+
+//fix
+
+html{
+  overflow-y: auto
+}
