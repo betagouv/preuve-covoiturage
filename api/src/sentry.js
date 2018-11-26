@@ -1,4 +1,5 @@
-const Sentry = require("@sentry/node");
+const Sentry = require('@sentry/node');
+const { version } = require('../package.json');
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,

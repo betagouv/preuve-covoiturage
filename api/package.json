@@ -4,7 +4,7 @@
   "description": "Preuve de Covoiturage",
   "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -40,5 +40,25 @@
     "mongoose": "^5.3.10",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "mocha": "^5.2.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "mongo": true,
+      "mocha": true
+    },
+    "extends": "airbnb",
+    "rules": {
+      "no-underscore-dangle": "off"
+    }
   }
 }

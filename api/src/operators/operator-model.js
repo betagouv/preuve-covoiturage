@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
 
 const OperatorSchema = new Schema({
   nom_commercial: { type: String, required: true },
@@ -23,4 +24,4 @@ const OperatorSchema = new Schema({
   deletedAt: { type: Date },
 });
 
-module.exports = mongoose.model("Operator", OperatorSchema);
+module.exports = mongoose.model('Operator', OperatorSchema);

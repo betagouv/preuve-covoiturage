@@ -1,9 +1,9 @@
-const _ = require("lodash");
-const Proof = require("./proof-model");
-const { CsvConverter } = require("@pdc/proof-helpers");
-const config = require("@pdc/config");
-const aomService = require("../aom/aom-service");
-const Schema = require("mongoose").Schema;
+const _ = require('lodash');
+const { Schema } = require('mongoose');
+const { CsvConverter } = require('@pdc/proof-helpers');
+const config = require('@pdc/config');
+const aomService = require('../aom/aom-service');
+const Proof = require('./proof-model');
 
 const proofService = {
   find(query = {}) {
@@ -30,26 +30,25 @@ const proofService = {
   },
 
   async delete(id) {
-    return await Proof.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
+    return Proof.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
   },
 
   async convert(docs, format = 'csv') {
     // convert to an array based on configuration file
-    let _arr = [];
+    let arr = [];
     const proofs = docs.map((proof) => {
-      _arr = [];
+      arr = [];
       config.proofsCsv.headers.forEach((cfg) => {
-        _arr.push(_.get(proof, cfg.path, ""));
+        arr.push(_.get(proof, cfg.path, ''));
       });
 
-      return _arr;
+      return arr;
     });
 
     // output in required format
     switch (format) {
       case 'csv':
-        const csv = new CsvConverter(proofs, config.proofsCsv);
-        return await csv.convert();
+        return (new CsvConverter(proofs, config.proofsCsv)).convert();
 
       default:
         throw new Error('Unsupported format');
@@ -88,9 +87,9 @@ const proofService = {
         journey_span: 100, // TODO
       }));
 
-    return await Proof.findOneAndUpdate({ "_id": `${proof._id}` }, _.assign(
+    return Proof.findOneAndUpdate({ _id: `${proof._id}` }, _.assign(
       proof,
-      { aom: _.uniqBy(aomList, "id") },
+      { aom: _.uniqBy(aomList, 'id') },
     ));
   },
 
@@ -106,11 +105,11 @@ const proofService = {
     }
 
     if (proof instanceof Schema.Types.ObjectId || _.isString(proof)) {
-      return await Proof.findOne({ "_id": proof });
+      return Proof.findOne({ _id: proof });
     }
 
-    throw new Error("Unsupported Proof format, please pass a Proof object or a _id as String");
-  }
+    throw new Error('Unsupported Proof format, please pass a Proof object or a _id as String');
+  },
 };
 
 module.exports = proofService;

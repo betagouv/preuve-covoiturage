@@ -1,10 +1,10 @@
-const router = require("express").Router();
-const operatorService = require("./operator-service");
+const router = require('express').Router();
+const operatorService = require('./operator-service');
 
 /**
  * Add a user to an operator
  */
-router.post("/:id/users/add", async (req, res, next) => {
+router.post('/:id/users/add', async (req, res, next) => {
   try {
     res.json(await operatorService.addUser(req.params.id, req.body.user));
   } catch (e) {
@@ -15,7 +15,7 @@ router.post("/:id/users/add", async (req, res, next) => {
 /**
  * Remove a user to an operator
  */
-router.post("/:id/users/remove", async (req, res, next) => {
+router.post('/:id/users/remove', async (req, res, next) => {
   try {
     res.json(await operatorService.removeUser(req.params.id, req.body.user));
   } catch (e) {
@@ -26,7 +26,7 @@ router.post("/:id/users/remove", async (req, res, next) => {
 /**
  * List all users from an operator
  */
-router.get("/:id/users", async (req, res, next) => {
+router.get('/:id/users', async (req, res, next) => {
   try {
     res.json(await operatorService.users(req.params.id));
   } catch (e) {
@@ -37,7 +37,7 @@ router.get("/:id/users", async (req, res, next) => {
 /**
  * get an Operator by ID
  */
-router.get("/:id", async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
     res.json(await operatorService.find({ _id: req.params.id }));
   } catch (e) {
@@ -48,7 +48,7 @@ router.get("/:id", async (req, res, next) => {
 /**
  * update an Operator by ID
  */
-router.put("/:id", async (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
   try {
     res.json(await operatorService.update(req.params.id, req.body));
   } catch (e) {
@@ -59,7 +59,7 @@ router.put("/:id", async (req, res, next) => {
 /**
  * Soft delete or force delete an Operator
  */
-router.delete("/:id", async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const deleted = operatorService.delete(req.params.id, !!req.query.force);
 
@@ -76,7 +76,7 @@ router.delete("/:id", async (req, res, next) => {
 /**
  * List all Operators
  */
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     res.json(await operatorService.find({}));
   } catch (e) {
@@ -87,7 +87,7 @@ router.get("/", async (req, res, next) => {
 /**
  * Create a new Operator
  */
-router.post("/", async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     res.json(await operatorService.create(req.body));
   } catch (e) {
