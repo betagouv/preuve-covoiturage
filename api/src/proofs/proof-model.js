@@ -50,7 +50,7 @@ const ProofSchema = new Schema({
     type: String,
     required: [true, 'An operator ID is required, please see: https://github.com/betagouv/preuve-covoiturage/wiki/Op%C3%A9rateurs-de-covoiturage'],
   },
-  id_driver: { type: Boolean },
+  is_driver: { type: Boolean },
   passengers_count: { type: Number, default: 0 },
   start: PositionSchema,
   end: PositionSchema,
