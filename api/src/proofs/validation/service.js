@@ -1,5 +1,6 @@
 const proofExists = require('./proof-exists');
 
+// require tests above and add here
 const tests = {
   proofExists,
 };
