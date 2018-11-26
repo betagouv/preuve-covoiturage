@@ -3,8 +3,8 @@ const { version } = require('../package.json');
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  release: "pdc-api@" + require("../package.json").version,
-  environment: process.env.SENTRY_ENV || process.env.NODE_ENV,
+  release: `pdc-api@${version}`,
+  environment: process.env.CENTRY,
 });
 
 module.exports = Sentry;
