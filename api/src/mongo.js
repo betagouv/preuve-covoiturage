@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 const { mongoUrl } = require('./config.js');
 
-mongoose.connect(mongoUrl, { useNewUrlParser: true });
-mongoose.set('useCreateIndex', true);
+mongoose.connect(mongoUrl, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+});
+
 mongoose.Promise = global.Promise; // Get the default connection
 const db = mongoose.connection;
 

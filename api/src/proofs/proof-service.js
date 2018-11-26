@@ -4,6 +4,8 @@ const { CsvConverter } = require('@pdc/proof-helpers');
 const config = require('@pdc/config');
 const aomService = require('../aom/aom-service');
 const Proof = require('./proof-model');
+const proofEvent = require('./events');
+const validationService = require('./validation/service');
 
 const proofService = {
   find(query = {}) {
@@ -11,10 +13,8 @@ const proofService = {
   },
 
   async update(id, data) {
-    const proof = await Proof.findOneAndUpdate({ _id: id }, data, { new: true });
-
-    // TODO move this to background job
-    this.enrich(proof);
+    const proof = await Proof.findByIdAndUpdate(id, data, { new: true });
+    proofEvent.emit('change', this, proof);
 
     return proof;
   },
@@ -23,14 +23,13 @@ const proofService = {
     const proof = new Proof(data);
     await proof.save();
 
-    // TODO move this to background job
-    this.enrich(proof);
+    proofEvent.emit('change', this, proof);
 
     return proof;
   },
 
   async delete(id) {
-    return Proof.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
+    return Proof.findByIdAndUpdate(id, { deletedAt: Date.now() });
   },
 
   async convert(docs, format = 'csv') {
@@ -58,11 +57,11 @@ const proofService = {
   /**
    * Enrich a proof with additional data
    *
-   * @param proof
+   * @param userProof
    * @returns {Promise<*>}
    */
-  async enrich(proof) {
-    proof = (await this.getProof(proof)).toJSON();
+  async enrich(userProof) {
+    const proof = (await this.getProof(userProof)).toJSON();
 
     // the list of all touched AOM during the journey
     // journey_span for each AOM is a percentage of the journey
@@ -87,10 +86,37 @@ const proofService = {
         journey_span: 100, // TODO
       }));
 
-    return Proof.findOneAndUpdate({ _id: `${proof._id}` }, _.assign(
-      proof,
-      { aom: _.uniqBy(aomList, 'id') },
-    ));
+    return Proof.findByIdAndUpdate(proof._id, { aom: _.uniqBy(aomList, 'id') }, { new: true });
+  },
+
+  async validate(proof) {
+    // TODO get the list of all tests from the proofs/validation/* folder
+    // run all tests and get results as 'validation_name': true|false
+    // compute a class from the validation tests
+
+    // update the proof with validation data :
+    // - validated: true|false
+    // - validation: {
+    //   'validation_name': true|false,
+    //   ...
+    // }
+
+    // run tests (could be made dynamic)
+    const validation = {
+      proof_exists: await validationService.proofExists(proof),
+      // ...
+    };
+
+    // compute the validation state based on the results of
+    // all tests
+    const validated = validationService.isValid(validation);
+
+    // find and update proof
+    return Proof.findOneAndUpdate(proof._id, {
+      validated,
+      validation,
+      validatedAt: validated ? Date.now() : null,
+    }, { new: true });
   },
 
   /**

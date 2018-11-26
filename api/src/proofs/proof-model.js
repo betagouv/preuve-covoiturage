@@ -61,8 +61,10 @@ const ProofSchema = new Schema({
   // system's data
   validated: { type: Boolean, default: false },
   validatedAt: { type: Date, default: null },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  validation: { type: Schema.Types.Mixed, default: {} },
+  validation_class: { type: String, default: null, enum: ['A', 'B', 'C', 'D', null] },
+  createdAt: { type: Date, default: Date.now() },
+  updatedAt: { type: Date, default: Date.now() },
   deletedAt: { type: Date, default: null },
 
   // system's data about the operator
@@ -71,6 +73,14 @@ const ProofSchema = new Schema({
   // system's data about the aom
   aom: [AomSchema],
 
+});
+
+ProofSchema.method('toJSON', function toJSON() {
+  const proof = this.toObject();
+  proof._id = `${proof._id}`;
+  delete proof.__v;
+
+  return proof;
 });
 
 module.exports = mongoose.model('Proof', ProofSchema);
