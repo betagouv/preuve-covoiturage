@@ -1,4 +1,4 @@
-<header class="navbar" role="navigation">
+<nav class="navbar" role="navigation">
   <div class="navbar-brand">
     <a class="navbar-item" routerLink="/">
       <img class="navbar__logo" src="assets/icons/logo-marianne.svg"
@@ -10,4 +10,25 @@
     <nav>
     </nav>
   </div>
-</header>
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-end">
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          <span class="icon is-small">
+              <fa-icon icon="cog"></fa-icon>
+          </span>
+        </a>
+        <div class="navbar-dropdown is-right">
+          <a class="navbar-item">
+            Paramètres
+          </a>
+          <a class="navbar-item" (click)="logOut()">
+            Se déconnecter
+          </a>
+          <!--<hr class="navbar-divider">-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+</nav>

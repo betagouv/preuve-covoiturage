@@ -28,7 +28,7 @@
                 <p class="subtitle is-5 has-text-centered">Opérateur</p>
 
                 <!-- todo: This should come from data of operator account-->
-                <p> {{operatorList[proof.operator_id]}} </p>
+                <p class="subtitle is-6 has-text-centered"><b>{{operatorName}}</b></p>
 
                 <!-- todo: this will be used for particular user declarations -->
                 <!--<div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !operator.valid }">-->
@@ -108,7 +108,7 @@
                   </div>
                   <div class="field-body">
                     <p class="control has-icons-left has-icons-right">
-                      <input id="journey_id" class="input showvalidity" type="text" placeholder="id du trajet" name="journey_id" [(ngModel)]="proof.journey_id" #journey_id="ngModel" require pattern="[0-9]{5}">
+                      <input id="journey_id" class="input showvalidity" type="text" placeholder="id du trajet" name="journey_id" [(ngModel)]="proof.journey_id" #journey_id="ngModel" require >
                     </p>
                     <div *ngIf="f.submitted && !journey_id.pristine && !journey_id.valid"  class="help-block">Champs obligatoire</div>
                   </div>
