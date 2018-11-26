@@ -44,7 +44,7 @@ export class AuthenticationService {
     this.tokenService.clear();
     Logged.set(false);
     if (returnHome) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/login']);
     }
     return this;
 
