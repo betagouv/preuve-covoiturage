@@ -2,7 +2,6 @@ const router = require("express").Router();
 const _ = require("lodash");
 const Proof = require("./proof-model");
 const proofService = require("./proof-service");
-const aomService = require("../aom/aom-service");
 
 /**
  * Download a collection of proofs in a format (default csv)
@@ -63,36 +62,10 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    // the list of all touched AOM during the journey
-    // journey_span for each AOM is a percentage of the journey
-    // which is done in each AOM
-    const queries = [
-      req.body.start,
-      req.body.end,
-    ].reduce((p, c) => {
-      const query = {};
-      if (_.has(c, 'lat')) query.lat = c.lat;
-      if (_.has(c, 'lng')) query.lng = c.lng;
-      if (_.has(c, 'insee')) query.insee = c.insee;
-      if (Object.keys(query).length) p.push(query);
-
-      return p;
-    }, []);
-
-    const aomList = (await Promise.all(queries.map(aomService.search)))
-      .map(i => i.toJSON())
-      .map(i => _.assign(i, {
-        id: `${i._id}`,
-        journey_span: 100,
-      }));
-
-    const data = _.assign(
+    res.json(await proofService.create(_.assign(
       req.body,
-      { operator: req.operator },
-      { aom: _.uniqBy(aomList, "id") },
-    );
-
-    res.json(await proofService.create(data));
+      { operator: req.operator }
+    )));
   } catch (e) {
     next(e);
   }

@@ -15,13 +15,16 @@ const UserSchema = new Schema({
   group: {
     type: String,
     required: true,
-    enum: ['aom', 'operator', 'registry'],
+    enum: ['aom', 'operators', 'registry'],
   },
   role: { type: String, required: true },
   permissions: { type: [String], required: true },
   password: { type: String, required: true },
   hasResetPassword: { type: Boolean, default: true },
   lastConnectedAt: { type: Date },
+
+  operator: Schema.Types.ObjectId,
+  aom: Schema.Types.ObjectId,
 
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
@@ -53,6 +56,26 @@ UserSchema.methods.comparePassword = function (passw, cb) {
     }
     cb(null, res);
   });
+};
+
+UserSchema.methods.setOperator = async function (operator) {
+  this.operator = operator;
+  return this;
+};
+
+UserSchema.methods.unsetOperator = async function () {
+  this.operator = null;
+  return this;
+};
+
+UserSchema.methods.setAom = async function (aom) {
+  this.aom = aom;
+  return this;
+};
+
+UserSchema.methods.unsetAom = async function () {
+  this.aom = null;
+  return this;
 };
 
 module.exports = mongoose.model("User", UserSchema);

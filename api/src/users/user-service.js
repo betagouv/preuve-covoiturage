@@ -29,7 +29,7 @@ const userService = {
     }
 
     return await User.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() });
-  }
+  },
 };
 
 module.exports = userService;
