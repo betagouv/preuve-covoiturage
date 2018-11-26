@@ -5,7 +5,7 @@ const config = require('@pdc/config');
 const aomService = require('../aom/aom-service');
 const Proof = require('./proof-model');
 const proofEvent = require('./events');
-const validationService = require('./validation/service');
+const { isValid, ...validationTests } = require('./validation/service');
 
 const proofService = {
   find(query = {}) {
@@ -90,29 +90,20 @@ const proofService = {
   },
 
   async validate(proof) {
-    // TODO get the list of all tests from the proofs/validation/* folder
-    // run all tests and get results as 'validation_name': true|false
-    // compute a class from the validation tests
+    // run tests
+    const validation = await Object.keys(validationTests).reduce(async (list, k) => {
+      // eslint-disable-next-line no-param-reassign
+      list[_.snakeCase(k)] = await validationTests[k](proof);
 
-    // update the proof with validation data :
-    // - validated: true|false
-    // - validation: {
-    //   'validation_name': true|false,
-    //   ...
-    // }
-
-    // run tests (could be made dynamic)
-    const validation = {
-      proof_exists: await validationService.proofExists(proof),
-      // ...
-    };
+      return list;
+    }, {});
 
     // compute the validation state based on the results of
     // all tests
-    const validated = validationService.isValid(validation);
+    const validated = isValid(validation);
 
     // find and update proof
-    return Proof.findOneAndUpdate(proof._id, {
+    return Proof.findByIdAndUpdate(proof._id, {
       validated,
       validation,
       validatedAt: validated ? Date.now() : null,
