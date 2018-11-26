@@ -13,14 +13,15 @@ import {operatorList} from "../../tmp_constants/operator";
 
 export class HomeComponent implements OnInit {
 
-    private operator;
+    private operatorService;
     public proof = new Proof();
     public loading = false;
     public operatorList;
+    public operator;
 
-    constructor(operator: OperatorService) {
-      this.operatorList = operatorList; // todo: should be fetched in database
-      this.operator = operator;
+    constructor(operatorService: OperatorService) {
+      this.operatorList = operatorList; // todo: temporary
+      this.operatorService = operatorService;
       if( false === environment.production)
         this.proof = new Proof(
           {
@@ -29,8 +30,9 @@ export class HomeComponent implements OnInit {
             firstname: "samuel",
             numero: "0673924353",
             traveler_hash: "ojo0forj3434f43ferferf343",
-            operator_id: "2",
+            operator_id: 2,
             trust_level: 1,
+            journey_id: 235,
             start: {
               insee: "64AA4",
               literal: "25 rue de lyon 69003 lyon",
@@ -49,11 +51,16 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
+      this.operatorService.getOperator().subscribe((response) => {
+
+        this.operator = response;
+
+      });
     }
 
     sendProof() {
       this.loading = true;
-      this.operator.sendProof(this.proof).subscribe((response) => {
+      this.operatorService.sendProof(this.proof).subscribe((response) => {
         this.loading = false;
       });
     }

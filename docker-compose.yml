@@ -37,7 +37,7 @@ services:
     tty: true
     volumes:
     - ./dashboard-aom:/code
-    - ./common:/common
+#      - ./common:/common <-- PLUS TARD
     working_dir: "/code"
     command: "yarn"
     ports:
@@ -53,7 +53,7 @@ services:
     tty: true
     volumes:
       - ./dashboard-operator:/code
-      - ./common:/common
+#      - ./common:/common <-- PLUS TARD
     working_dir: "/code"
     command: "yarn"
     ports:

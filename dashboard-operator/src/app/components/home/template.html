@@ -27,20 +27,23 @@
               <article class="tile is-child">
                 <p class="subtitle is-5 has-text-centered">Opérateur</p>
 
+                <!-- todo: This should come from data of operator account-->
+                <p> {{operatorList[proof.operator_id]}} </p>
 
-                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !operator.valid }">
-                  <div class="field-label is-normal">
-                    <label class="label">Nom</label>
-                  </div>
-                  <div class="field-body">
-                    <p class="control has-icons-left has-icons-right">
-                      <select class="showvalidity" name="operator" id="operator" [(ngModel)]="proof.operator_id" #operator="ngModel">
-                        <option *ngFor="let operator of operatorList " value="{{operator.id}}">{{operator.name}}</option>
-                      </select>
-                    </p>
-                    <div *ngIf="f.submitted && !operator.pristine && !operator.valid"  class="help-block">Champs obligatoire</div>
-                  </div>
-                </div>
+                <!-- todo: this will be used for particular user declarations -->
+                <!--<div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !operator.valid }">-->
+                  <!--<div class="field-label is-normal">-->
+                    <!--<label class="label">Nom</label>-->
+                  <!--</div>-->
+                  <!--<div class="field-body">-->
+                    <!--<p class="control has-icons-left has-icons-right">-->
+                      <!--<select class="showvalidity" name="operator" id="operator" [(ngModel)]="proof.operator_id" #operator="ngModel">-->
+                        <!--<option *ngFor="let operator of operatorList " value="{{operator.id}}">{{operator.name}}</option>-->
+                      <!--</select>-->
+                    <!--</p>-->
+                    <!--<div *ngIf="f.submitted && !operator.pristine && !operator.valid"  class="help-block">Champs obligatoire</div>-->
+                  <!--</div>-->
+                <!--</div>-->
               </article>
 
               <article class="tile is-child">
@@ -96,9 +99,25 @@
                 </div>
               </article>
 
+              <!--TRAJET-->
+              <article class="tile is-child">
+                <p class="subtitle is-5 has-text-centered">Trajet</p>
+                <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !journey_id.valid }">
+                  <div class="field-label is-normal">
+                    <label class="label">Id du trajet</label>
+                  </div>
+                  <div class="field-body">
+                    <p class="control has-icons-left has-icons-right">
+                      <input id="journey_id" class="input showvalidity" type="text" placeholder="id du trajet" name="journey_id" [(ngModel)]="proof.journey_id" #journey_id="ngModel" require pattern="[0-9]{5}">
+                    </p>
+                    <div *ngIf="f.submitted && !journey_id.pristine && !journey_id.valid"  class="help-block">Champs obligatoire</div>
+                  </div>
+                </div>
+              </article>
+
               <!--DEPART-->
               <article class="tile is-child">
-                <p class="subtitle is-5 has-text-centered">Départ</p>
+                <p class="subtitle is-6 has-text-centered">Départ</p>
 
                 <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !inseeStart.valid }">
                   <div class="field-label is-normal">
@@ -151,7 +170,7 @@
 
               <!--ARRIVEE-->
               <article class="tile is-child">
-                <p class="subtitle is-5 has-text-centered">Arrivée</p>
+                <p class="subtitle is-6 has-text-centered">Arrivée</p>
 
                 <div class="field is-horizontal" [ngClass]="{ 'has-error': f.submitted && !inseeArrival.valid }">
                   <div class="field-label is-normal">

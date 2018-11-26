@@ -14,4 +14,8 @@ export class OperatorService {
       return this.http.post("/proofs", proof);
     }
 
+    public getOperator():any {
+      return this.http.get("/operator");
+    }
+
 }
