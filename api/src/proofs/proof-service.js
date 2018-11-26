@@ -90,7 +90,7 @@ const proofService = {
   },
 
   async validate(proof) {
-    // run tests
+    // run tests and order in list of testnames with results
     const validation = await Object.keys(validationTests).reduce(async (list, k) => {
       // eslint-disable-next-line no-param-reassign
       list[_.snakeCase(k)] = await validationTests[k](proof);
