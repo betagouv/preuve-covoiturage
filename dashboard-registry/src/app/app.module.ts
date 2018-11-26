@@ -24,6 +24,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import {HeaderBag} from "./common/applicativeService/interceptor/header-bag";
 import {MessageComponent} from "./common/applicativeService/message/component";
 import {RegistryService} from "./services/registryService";
+import {ProofService} from "./services/proofService";
 import { FileSaverModule } from 'ngx-filesaver';
 
 
@@ -65,7 +66,8 @@ library.add(fas);
     PingService,
     AuthenticationService,
     HttpClient,
-    RegistryService
+    RegistryService,
+    ProofService,
   ],
   bootstrap: [AppComponent]
 })

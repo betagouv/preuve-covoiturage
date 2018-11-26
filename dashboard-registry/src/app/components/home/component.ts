@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {RegistryService} from "../../services/registryService";
 import {Proof} from "../../common/entities/proof/entity";
 import {environment} from "../../../environments/environment";
+import {ProofService} from "../../services/proofService";
 
 
 
@@ -12,12 +13,17 @@ import {environment} from "../../../environments/environment";
 
 export class HomeComponent implements OnInit {
 
-    private registryService;
+    private proofService;
 
-    constructor(registryService: RegistryService) {
+    constructor(proofService: ProofService) {
+      this.proofService = proofService;
     }
-    ngOnInit() {
 
+
+    ngOnInit() {
+      this.proofService.get().subscribe((proofs => {
+        console.log(proofs);
+      }));
     }
 
 
