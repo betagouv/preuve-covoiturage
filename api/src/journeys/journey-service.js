@@ -1,49 +1,52 @@
 const _ = require('lodash');
-const { Schema } = require('mongoose');
-const { CsvConverter } = require('@pdc/journey-helpers');
+const { CsvConverter } = require('@pdc/proof-helpers');
 const config = require('@pdc/config');
-const aomService = require('../aom/aom-service');
 const Journey = require('./journey-model');
 const journeyEvents = require('./events');
-const { isValidJourney, ...journeyValidationTests } = require('validation/service');
-const { setClass, ...classTests } = require('class/service');
+const { isValidJourney, ...journeyValidationTests } = require('./validation/service');
+const { setClass, ...classTests } = require('./class/service');
 
 
 
 const journeyService = {
 
   async create(proof) {
-    let journey = await Journey.find({journey_id: proof.journey_id, operator: { operator_id: proof.operator_id}})
+    console.log("create")
+    // try{
+      let journey = await Journey.find(
+        {
+          "journey_id": proof.journey_id,
+          // "operator.operator_id": proof.operator_id todo: not working
+        }
+      )
+    // }
+    // catch(e) {
+    //   console.log(e)
+    //   debugger;
+    // }
 
+    console.log("journey", journey, journey.length)
     //todo: check if proof is not already in journey.proofs
 
-    if (journey) {
-
+    if (journey.length > 0) {
       //ADD TO JOURNEY
-
+      console.log("add to journey")
       if (proof.is_driver) {
-
         journey.driver.append({
           driver_id: proof._id,
           start: proof.start,
           end: proof.end,
         });
-
       } else {
-
         journey.passengers.append({
           passenger_id: proof._id,
           start: PositionSchema,
           end: PositionSchema,
         });
-
       }
-
-
     } else {
-
       //CREATE JOURNEY
-
+      console.log("create journey")
       journey = new Journey(
         {
           journey_id: proof.journey_id,
@@ -56,34 +59,25 @@ const journeyService = {
           }
         }
       );
-
-
       if (proof.is_driver) {
-
         journey.driver.append({
           driver_id: proof._id,
           start: proof.start,
           end: proof.end,
         });
-
       } else {
-
         journey.passengers.append({
           passenger_id: proof._id,
           start: PositionSchema,
           end: PositionSchema,
         });
-
       }
-
     }
-
     journey.proofs.append(proof);
     await journey.save();
     journeyEvents.emit('change', journey.journey_id);
     return journey;
   },
-
 
   find(query = {}) {
     return Journey.find(query);
@@ -124,7 +118,7 @@ const journeyService = {
 
 
   async validateClass(journey) {
-
+    console.log("validateClass")
     // run tests and order in list of testnames with results
     const validation = await Object.keys(classTests).reduce(async (list, k) => {
       // eslint-disable-next-line no-param-reassign
@@ -149,6 +143,7 @@ const journeyService = {
 
 
   async validate(journey) {
+    console.log("validate")
     // run tests and order in list of testnames with results
     const validation = await Object.keys(journeyValidationTests).reduce(async (list, k) => {
       // eslint-disable-next-line no-param-reassign

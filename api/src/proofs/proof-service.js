@@ -5,6 +5,9 @@ const config = require('@pdc/config');
 const aomService = require('../aom/aom-service');
 const Proof = require('./proof-model');
 const proofEvents = require('./events');
+const journeyService = require('../journeys/journey-service');
+const { isValid, ...proofValidationTests } = require('./validation/service');
+
 
 const proofService = {
   find(query = {}) {
@@ -22,7 +25,7 @@ const proofService = {
     const proof = new Proof(data);
     await proof.save();
 
-    proofEvents.emit('change', proof);
+    proofEvents.emit('change',this, proof);
 
     return proof;
   },
@@ -60,6 +63,7 @@ const proofService = {
    * @returns {Promise<*>}
    */
   async enrich(userProof) {
+    console.log("enrich")
     const proof = (await this.getProof(userProof)).toJSON();
 
     // the list of all touched AOM during the journey
@@ -108,10 +112,11 @@ const proofService = {
   },
 
   async validate(proof) {
+    console.log("validate")
     // run tests and order in list of testnames with results
-    const validation = await Object.keys(validationTests).reduce(async (list, k) => {
+    const validation = await Object.keys(proofValidationTests).reduce(async (list, k) => {
       // eslint-disable-next-line no-param-reassign
-      list[_.snakeCase(k)] = await validationTests[k](proof);
+      list[_.snakeCase(k)] = await proofValidationTests[k](proof);
 
       return list;
     }, {});
@@ -121,12 +126,26 @@ const proofService = {
     const validated = isValid(validation);
 
     // find and update proof
-    return Journey.findByIdAndUpdate(proof._id, {
-      validated,
-      validation,
-      validatedAt: validated ? Date.now() : null,
+    return Proof.findByIdAndUpdate(proof._id, {
+      validation: {
+        validated: validated,
+        tests: validation,
+        validatedAt: validated ? Date.now() : null,
+      }
     }, {new: true});
   },
+
+  async processProof(proof) {
+    console.log("processProof")
+    await this.enrich(proof);
+    try{
+      await this.validate(proof);
+    }
+    catch(e) {
+      debugger;
+    }
+    await journeyService.create(proof);
+  }
 
 };
 

@@ -1,0 +1,8 @@
+headers:
+  - name: Nom de l'opérateur
+    path: operator.name
+    type: ascii
+  - name: Niveau de preuve
+    path: validation.validation_class
+    type: ascii
+

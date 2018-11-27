@@ -38,6 +38,7 @@ app.use('/users', auth, require('./users/user-controller'));
 app.use('/aom', auth, require('./aom/aom-controller'));
 app.use('/operators', auth, require('./operators/operator-controller'));
 app.use('/proofs', auth, require('./proofs/proof-controller'));
+app.use('/journeys', auth, require('./journeys/journey-controller'));
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());

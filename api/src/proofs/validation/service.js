@@ -1,8 +1,7 @@
 const proofExists = require('./proof-exists');
-const hasDriverAndPassenger = require('./has-driver-and-passenger');
 
 // require tests above and add here
-const tests = {
+const proofValidationTests = {
   proofExists
 };
 
@@ -21,7 +20,7 @@ const proofValidationService = {
 
     return false;
   },
-  ...tests,
+  ...proofValidationTests,
 };
 
-module.exports = validationService;
+module.exports = proofValidationService;
