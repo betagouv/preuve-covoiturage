@@ -36,6 +36,13 @@ const AomSchema = new Schema({
   },
 });
 
+
+const ProofValidationSchema = new Schema({
+  validated: { type: Boolean, default: false },
+  validatedAt: { type: Date, default: null },
+  tests: { type: Schema.Types.Mixed, default: {} },
+});
+
 /**
  * Proof schema
  */
@@ -59,10 +66,7 @@ const ProofSchema = new Schema({
   trust_level: { type: Number, default: 0 },
 
   // system's data
-  validated: { type: Boolean, default: false },
-  validatedAt: { type: Date, default: null },
-  validation: { type: Schema.Types.Mixed, default: {} },
-  validation_class: { type: String, default: null, enum: ['A', 'B', 'C', 'D', null] },
+  validation: ProofValidationSchema,
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
   deletedAt: { type: Date, default: null },
@@ -84,3 +88,8 @@ ProofSchema.method('toJSON', function toJSON() {
 });
 
 module.exports = mongoose.model('Proof', ProofSchema);
+module.exports.ProofSchema = ProofSchema;
+module.exports.OperatorSchema = OperatorSchema;
+module.exports.AomSchema = AomSchema;
+module.exports.PositionSchema = PositionSchema;
+

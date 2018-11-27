@@ -4,8 +4,7 @@ const { CsvConverter } = require('@pdc/proof-helpers');
 const config = require('@pdc/config');
 const aomService = require('../aom/aom-service');
 const Proof = require('./proof-model');
-const proofEvent = require('./events');
-const { isValid, ...validationTests } = require('./validation/service');
+const proofEvents = require('./events');
 
 const proofService = {
   find(query = {}) {
@@ -14,7 +13,7 @@ const proofService = {
 
   async update(id, data) {
     const proof = await Proof.findByIdAndUpdate(id, data, { new: true });
-    proofEvent.emit('change', this, proof);
+    proofEvents.emit('change', proof);
 
     return proof;
   },
@@ -23,7 +22,7 @@ const proofService = {
     const proof = new Proof(data);
     await proof.save();
 
-    proofEvent.emit('change', this, proof);
+    proofEvents.emit('change', proof);
 
     return proof;
   },
@@ -89,26 +88,6 @@ const proofService = {
     return Proof.findByIdAndUpdate(proof._id, { aom: _.uniqBy(aomList, 'id') }, { new: true });
   },
 
-  async validate(proof) {
-    // run tests and order in list of testnames with results
-    const validation = await Object.keys(validationTests).reduce(async (list, k) => {
-      // eslint-disable-next-line no-param-reassign
-      list[_.snakeCase(k)] = await validationTests[k](proof);
-
-      return list;
-    }, {});
-
-    // compute the validation state based on the results of
-    // all tests
-    const validated = isValid(validation);
-
-    // find and update proof
-    return Proof.findByIdAndUpdate(proof._id, {
-      validated,
-      validation,
-      validatedAt: validated ? Date.now() : null,
-    }, { new: true });
-  },
 
   /**
    * get the Proof object from database
@@ -127,6 +106,28 @@ const proofService = {
 
     throw new Error('Unsupported Proof format, please pass a Proof object or a _id as String');
   },
+
+  async validate(proof) {
+    // run tests and order in list of testnames with results
+    const validation = await Object.keys(validationTests).reduce(async (list, k) => {
+      // eslint-disable-next-line no-param-reassign
+      list[_.snakeCase(k)] = await validationTests[k](proof);
+
+      return list;
+    }, {});
+
+    // compute the validation state based on the results of
+    // all tests
+    const validated = isValid(validation);
+
+    // find and update proof
+    return Journey.findByIdAndUpdate(proof._id, {
+      validated,
+      validation,
+      validatedAt: validated ? Date.now() : null,
+    }, {new: true});
+  },
+
 };
 
 module.exports = proofService;

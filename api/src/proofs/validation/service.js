@@ -3,16 +3,14 @@ const hasDriverAndPassenger = require('./has-driver-and-passenger');
 
 // require tests above and add here
 const tests = {
-  proofExists,
-  hasDriverAndPassenger
+  proofExists
 };
 
-const validationService = {
+const proofValidationService = {
   isValid(results) {
     // TODO define if the tests make it a valid proof or not
     if (
-      false === results["proof-exists"] ||
-      false === results["has-driver-and-passenger"]
+      false === results["proof-exists"]
     ) {
       return false;
     }
