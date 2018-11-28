@@ -1,14 +1,26 @@
-const EventEmitter = require('events');
 const journeyService = require('./journey-service');
-const journeyEvents = new EventEmitter();
 
-// Asynchronous event handling
-journeyEvents.on('change', async (journey_id) => {
-  console.log("journey change")
+// const onCreateOrUpdate = async (journey) => {
+//   setImmediate(async () => {
+//
+//   });
+// };
+
+const onUpsert = async (journey) => {
   setImmediate(async () => {
-    await journeyService.validateClass(journey_id);
-    await journeyService.validate(journey_id);
-  });
-});
+    // TODO clear planned step1 and step2 validations
 
-module.exports = journeyEvents;
+    await journeyService.validate(journey);
+
+    // TODO set a test in 24 hours
+    // TODO set a test in 48 hours
+
+    return journey;
+  });
+};
+
+module.exports = {
+  // create: onCreateOrUpdate,
+  // update: onCreateOrUpdate,
+  upsert: onUpsert,
+};

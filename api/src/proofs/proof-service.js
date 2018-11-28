@@ -2,12 +2,9 @@ const _ = require('lodash');
 const { Schema } = require('mongoose');
 const { CsvConverter } = require('@pdc/proof-helpers');
 const config = require('@pdc/config');
+const eventBus = require('../events/bus');
 const aomService = require('../aom/aom-service');
 const Proof = require('./proof-model');
-const proofEvents = require('./events');
-const journeyService = require('../journeys/journey-service');
-const { isValid, ...proofValidationTests } = require('./validation/service');
-
 
 const proofService = {
   find(query = {}) {
@@ -16,7 +13,8 @@ const proofService = {
 
   async update(id, data) {
     const proof = await Proof.findByIdAndUpdate(id, data, { new: true });
-    proofEvents.emit('change', proof);
+
+    eventBus.emit('proof.update', proof);
 
     return proof;
   },
@@ -25,12 +23,14 @@ const proofService = {
     const proof = new Proof(data);
     await proof.save();
 
-    proofEvents.emit('change',this, proof);
+    eventBus.emit('proof.create', proof);
 
     return proof;
   },
 
   async delete(id) {
+    eventBus.emit('proof.delete', id);
+
     return Proof.findByIdAndUpdate(id, { deletedAt: Date.now() });
   },
 
@@ -63,7 +63,6 @@ const proofService = {
    * @returns {Promise<*>}
    */
   async enrich(userProof) {
-    console.log("enrich")
     const proof = (await this.getProof(userProof)).toJSON();
 
     // the list of all touched AOM during the journey
@@ -92,7 +91,6 @@ const proofService = {
     return Proof.findByIdAndUpdate(proof._id, { aom: _.uniqBy(aomList, 'id') }, { new: true });
   },
 
-
   /**
    * get the Proof object from database
    *
@@ -110,42 +108,6 @@ const proofService = {
 
     throw new Error('Unsupported Proof format, please pass a Proof object or a _id as String');
   },
-
-  async validate(proof) {
-    console.log("validate")
-    // run tests and order in list of testnames with results
-    const validation = await Object.keys(proofValidationTests).reduce(async (list, k) => {
-      // eslint-disable-next-line no-param-reassign
-      list[_.snakeCase(k)] = await proofValidationTests[k](proof);
-
-      return list;
-    }, {});
-
-    // compute the validation state based on the results of
-    // all tests
-    const validated = isValid(validation);
-
-    // find and update proof
-    return Proof.findByIdAndUpdate(proof._id, {
-      validation: {
-        validated: validated,
-        tests: validation,
-        validatedAt: validated ? Date.now() : null,
-      }
-    }, {new: true});
-  },
-
-  async processProof(proof) {
-    console.log("processProof")
-    await this.enrich(proof);
-    try{
-      await this.validate(proof);
-    }
-    catch(e) {
-      debugger;
-    }
-    await journeyService.create(proof);
-  }
 
 };
 

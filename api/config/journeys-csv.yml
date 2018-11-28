@@ -3,6 +3,5 @@ headers:
     path: operator.name
     type: ascii
   - name: Niveau de preuve
-    path: validation.validation_class
+    path: validation.rank
     type: ascii
-

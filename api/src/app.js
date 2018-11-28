@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const { PORT } = require('./config.js');
 const Sentry = require('./sentry.js');
+const eventBus = require('./events/bus');
+const proofEvents = require('./proofs/events');
+const journeyEvents = require('./journeys/events');
 
 // middlewares
 // const { aom } = require("@pdc/middlewares");
@@ -39,6 +42,11 @@ app.use('/aom', auth, require('./aom/aom-controller'));
 app.use('/operators', auth, require('./operators/operator-controller'));
 app.use('/proofs', auth, require('./proofs/proof-controller'));
 app.use('/journeys', auth, require('./journeys/journey-controller'));
+
+// configure events for each model
+// ! singular names here ;)
+eventBus.register('proof', proofEvents);
+eventBus.register('journey', journeyEvents);
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());

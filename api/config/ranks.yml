@@ -1,0 +1,16 @@
+common:
+  tests:
+    - proof_exists
+    - has_operator
+ranks:
+  - name: A
+    tests:
+      - has_driver
+  - name: B
+    tests:
+      - has_driver
+      - has_passenger
+  - name: C
+    tests:
+      - has_driver
+      - has_passenger

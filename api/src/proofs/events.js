@@ -1,13 +1,17 @@
-const EventEmitter = require('events');
-const proofEvents = new EventEmitter();
 const proofService = require('./proof-service');
+const journeyService = require('../journeys/journey-service');
 
-
-// Asynchronous event handling
-proofEvents.on('change', async (service, proof) => {
+const onCreateOrUpdate = async (proof) => {
   setImmediate(async () => {
-    await service.processProof(proof);
-  });
-});
+    // compute some additional data
+    await proofService.enrich(proof);
 
-module.exports = proofEvents;
+    // create or add to a journey to match with other proofs
+    await journeyService.upsert(proof);
+  });
+};
+
+module.exports = {
+  create: onCreateOrUpdate,
+  update: onCreateOrUpdate,
+};

@@ -1,51 +1,11 @@
 const mongoose = require('mongoose');
+const OperatorSchema = require('../database/schemas/operator');
+const PositionSchema = require('../database/schemas/position');
+const AomSchema = require('../database/schemas/aom');
+const ClassSchema = require('../database/schemas/class');
 
 const { Schema } = mongoose;
 
-/**
- * start and end positions schemas
- */
-const PositionSchema = new Schema({
-  lat: Number,
-  lng: Number,
-  date: Date,
-  insee: String,
-  literal: String,
-});
-
-/**
- * Local operator schema
- */
-const OperatorSchema = new Schema({
-  operator_id: Schema.Types.ObjectId,
-  name: String,
-  siren: String,
-});
-
-/**
- * Local AOM schema
- */
-const AomSchema = new Schema({
-  aom_id: Schema.Types.ObjectId,
-  name: String,
-  siren: String,
-  journey_span: {
-    type: Number,
-    min: 0,
-    max: 100,
-  },
-});
-
-
-const ProofValidationSchema = new Schema({
-  validated: { type: Boolean, default: false },
-  validatedAt: { type: Date, default: null },
-  tests: { type: Schema.Types.Mixed, default: {} },
-});
-
-/**
- * Proof schema
- */
 const ProofSchema = new Schema({
   // operator's data
   traveler_hash: {
@@ -66,9 +26,15 @@ const ProofSchema = new Schema({
   trust_level: { type: Number, default: 0 },
 
   // system's data
-  validation: ProofValidationSchema,
-  createdAt: { type: Date, default: Date.now() },
-  updatedAt: { type: Date, default: Date.now() },
+  validation: {
+    validated: { type: Boolean, default: false },
+    validatedAt: { type: Date, default: null },
+    class: ClassSchema,
+  },
+
+  // set by timestamps: true
+  // createdAt: { type: Date, default: Date.now() },
+  // updatedAt: { type: Date, default: Date.now() },
   deletedAt: { type: Date, default: null },
 
   // system's data about the operator
@@ -77,7 +43,7 @@ const ProofSchema = new Schema({
   // system's data about the aom
   aom: [AomSchema],
 
-});
+}, { timestamps: true });
 
 ProofSchema.method('toJSON', function toJSON() {
   const proof = this.toObject();
@@ -89,7 +55,3 @@ ProofSchema.method('toJSON', function toJSON() {
 
 module.exports = mongoose.model('Proof', ProofSchema);
 module.exports.ProofSchema = ProofSchema;
-module.exports.OperatorSchema = OperatorSchema;
-module.exports.AomSchema = AomSchema;
-module.exports.PositionSchema = PositionSchema;
-
