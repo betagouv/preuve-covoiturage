@@ -1,0 +1,1502 @@
+{
+	"info": {
+		"_postman_id": "b880f660-fef9-4403-b5dd-83f105781ae6",
+		"name": "Preuve de covoiturage",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Ping",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/ping",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup AOM",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "aom@example.com",
+									"type": "text"
+								},
+								{
+									"key": "group",
+									"value": "aom",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "aom",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/signup",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup Operator 1",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "op1@example.com",
+									"type": "text"
+								},
+								{
+									"key": "group",
+									"value": "operator",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "operator",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/signup",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup Operator 2",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "op2@example.com",
+									"type": "text"
+								},
+								{
+									"key": "group",
+									"value": "operator",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "operator",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/signup",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "769b0a00-3411-4427-81e1-63abc5812303",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bd61411f-a18b-4aea-b537-2828d529672c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "me",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/users/me",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/users/",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/users/5be9913100fc7d021f38745f",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"5be9913100fc7d021f38745f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/users/",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "role",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "group",
+									"value": "operators",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/users/5bf7949b35cbef01bfb2cf40",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"5bf7949b35cbef01bfb2cf40"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/users/5be9913100fc7d021f38745f",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								"5be9913100fc7d021f38745f"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0d867dcb-df3b-45e1-95e9-10429766ab78",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9538c5e3-2e11-4623-b461-ab2f5daf7f5c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Proofs",
+			"item": [
+				{
+					"name": "Create",
+					"item": [
+						{
+							"name": "Journey 1 - driver",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ca8c4bef-99ab-4e40-9ceb-0ff1d17c3cd5",
+										"exec": [
+											"pm.environment.set(\"LAST_PROOF_ID\", pm.response.json()._id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"traveler_hash\": \"18fb870e0833f99c4cd72a6f73f108b024f9dd6b\",\n  \"journey_id\": \"7da33f49740772bd4c0f244cc0fff335ffc6d639\",\n  \"operator_id\": \"fe96dd39756ac41b74283a9292652d366d73931f\",\n  \"is_driver\": true,\n  \"passengers_count\": 1,\n  \"start\": {\n    \"lat\": 48.7946982,\n    \"lng\": 2.428298,\n    \"date\": \"2018-11-19T10:01:06.565Z\",\n    \"insee\": \"94140\",\n    \"literal\": \"Alfortville\"\n  },\n  \"end\": {\n    \"lat\": \"48.732417\",\n    \"lng\": \"2.266960\",\n    \"date\": \"2018-11-19T10:38:06.565Z\",\n    \"insee\": \"91377\",\n    \"literal\": \"Massy\"\n  },\n  \"distance\": 21500,\n  \"duration\": 2220,\n  \"trust_level\": 1\n}\n"
+								},
+								"url": {
+									"raw": "{{HOST}}/proofs",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"proofs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Journey 1 - passenger 1",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"traveler_hash\": \"55fc4ba84b48423d9f91594d9694b27b74ced079\",\n  \"journey_id\": \"7da33f49740772bd4c0f244cc0fff335ffc6d639\",\n  \"operator_id\": \"fe96dd39756ac41b74283a9292652d366d73931f\",\n  \"is_driver\": false,\n  \"passengers_count\": 1,\n  \"start\": {\n    \"lat\": \"48.7946982\",\n    \"lng\": \"2.428298\",\n    \"date\": \"2018-11-19T10:01:06.565Z\",\n    \"insee\": \"94140\",\n    \"literal\": \"Alfortville\"\n  },\n  \"end\": {\n    \"lat\": \"48.732417\",\n    \"lng\": \"2.266960\",\n    \"date\": \"2018-11-19T10:38:06.565Z\",\n    \"insee\": \"91377\",\n    \"literal\": \"Massy\"\n  },\n  \"distance\": 21500,\n  \"duration\": 2220,\n  \"trust_level\": 1\n}\n"
+								},
+								"url": {
+									"raw": "{{HOST}}/proofs",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"proofs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Journey 1 - driver - ERR traveler_hash",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"journey_id\": \"7da33f49740772bd4c0f244cc0fff335ffc6d639\",\n  \"operator_id\": \"fe96dd39756ac41b74283a9292652d366d73931f\",\n  \"is_driver\": true,\n  \"passengers_count\": 1,\n  \"start\": {\n    \"lat\": \"48.7946982\",\n    \"lng\": \"2.428298\",\n    \"date\": \"2018-11-19T10:01:06.565Z\",\n    \"insee\": \"94140\",\n    \"literal\": \"Alfortville\"\n  },\n  \"end\": {\n    \"lat\": \"48.732417\",\n    \"lng\": \"2.266960\",\n    \"date\": \"2018-11-19T10:38:06.565Z\",\n    \"insee\": \"91377\",\n    \"literal\": \"Massy\"\n  },\n  \"distance\": 21500,\n  \"duration\": 2220,\n  \"trust_level\": 1\n}\n"
+								},
+								"url": {
+									"raw": "{{HOST}}/proofs",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"proofs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Journey 1 - driver - ERR operator_id",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"traveler_hash\": \"18fb870e0833f99c4cd72a6f73f108b024f9dd6b\",\n  \"journey_id\": \"7da33f49740772bd4c0f244cc0fff335ffc6d639\",\n  \"is_driver\": true,\n  \"passengers_count\": 1,\n  \"start\": {\n    \"lat\": \"48.7946982\",\n    \"lng\": \"2.428298\",\n    \"date\": \"2018-11-19T10:01:06.565Z\",\n    \"insee\": \"94140\",\n    \"literal\": \"Alfortville\"\n  },\n  \"end\": {\n    \"lat\": \"48.732417\",\n    \"lng\": \"2.266960\",\n    \"date\": \"2018-11-19T10:38:06.565Z\",\n    \"insee\": \"91377\",\n    \"literal\": \"Massy\"\n  },\n  \"distance\": 21500,\n  \"duration\": 2220,\n  \"trust_level\": 1\n}\n"
+								},
+								"url": {
+									"raw": "{{HOST}}/proofs",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"proofs"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/proofs",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"proofs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/proofs/{{LAST_PROOF_ID}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"proofs",
+								"{{LAST_PROOF_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/proofs/1",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"proofs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/proofs/1",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"proofs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/proofs/download",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"proofs",
+								"download"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cf09b573-82e0-4625-b19c-c6abf0278983",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a9a1a72f-c031-4b4e-9b9a-20671258b2e2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Aom",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/aom",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Cyber AOM",
+									"type": "text"
+								},
+								{
+									"key": "siren",
+									"value": "12345678901234",
+									"type": "text"
+								},
+								{
+									"key": "insee",
+									"value": "[10001, 10002, 10003, 10004, 10005]",
+									"type": "text"
+								},
+								{
+									"key": "proofs_count",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "proofs_avg_level",
+									"value": "4",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/aom",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/aom/5bf2db76853e7a049490fcfe",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom",
+								"5bf2db76853e7a049490fcfe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "siren",
+									"value": "123456789",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/aom/5bf2db76853e7a049490fcfe",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom",
+								"5bf2db76853e7a049490fcfe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/aom/1",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user",
+									"value": "5be55024a69d7000139a99fe",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/aom/5bf2db76853e7a049490fcfe/users/add",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom",
+								"5bf2db76853e7a049490fcfe",
+								"users",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user",
+									"value": "5be55024a69d7000139a99fe",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/aom/5bf2db76853e7a049490fcfe/users/remove",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom",
+								"5bf2db76853e7a049490fcfe",
+								"users",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/aom/5bf2db76853e7a049490fcfe/users",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aom",
+								"5bf2db76853e7a049490fcfe",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cf09b573-82e0-4625-b19c-c6abf0278983",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a9a1a72f-c031-4b4e-9b9a-20671258b2e2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Operators",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/operators",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "nom_commercial",
+									"value": "Auto-soliste SAS",
+									"type": "text"
+								},
+								{
+									"key": "raison_sociale",
+									"value": "Auto-soliste",
+									"type": "text"
+								},
+								{
+									"key": "siren",
+									"value": "43210987654321",
+									"type": "text"
+								},
+								{
+									"key": "vat",
+									"value": "FR5408745499",
+									"type": "text"
+								},
+								{
+									"key": "address.street",
+									"value": "1 rue du covoiturage",
+									"type": "text"
+								},
+								{
+									"key": "address.postcode",
+									"value": "69001",
+									"type": "text"
+								},
+								{
+									"key": "address.city",
+									"value": "Lyon",
+									"type": "text"
+								},
+								{
+									"key": "address.country",
+									"value": "France",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/operators",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "read",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/operators/5bf41a4d66fdd1006cdbfeb7",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators",
+								"5bf41a4d66fdd1006cdbfeb7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "contact.email",
+									"value": "covoiturage@example.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/operators/5bf41a4d66fdd1006cdbfeb7",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators",
+								"5bf41a4d66fdd1006cdbfeb7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/operators/1",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user",
+									"value": "5bf7949b35cbef01bfb2cf40",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/operators/5bf41a4d66fdd1006cdbfeb7/users/add",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators",
+								"5bf41a4d66fdd1006cdbfeb7",
+								"users",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user",
+									"value": "5bf7949b35cbef01bfb2cf40",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOST}}/operators/5bf41a4d66fdd1006cdbfeb7/users/remove",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators",
+								"5bf41a4d66fdd1006cdbfeb7",
+								"users",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{HOST}}/operators/5bf41a4d66fdd1006cdbfeb7/users",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"operators",
+								"5bf41a4d66fdd1006cdbfeb7",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cf09b573-82e0-4625-b19c-c6abf0278983",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a9a1a72f-c031-4b4e-9b9a-20671258b2e2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Journeys",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/proofs",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"proofs"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Signin AOM",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "54a49338-ad5b-4b70-b6d5-80f675242cdf",
+						"exec": [
+							"pm.environment.set(\"TOKEN\", pm.response.json().token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "aom@example.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "aom",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/auth/signin",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signin Operator 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "54a49338-ad5b-4b70-b6d5-80f675242cdf",
+						"exec": [
+							"pm.environment.set(\"TOKEN\", pm.response.json().token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "op1@example.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "operator",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/auth/signin",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signin Operator 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "54a49338-ad5b-4b70-b6d5-80f675242cdf",
+						"exec": [
+							"pm.environment.set(\"TOKEN\", pm.response.json().token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "op2@example.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "operator",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{HOST}}/auth/signin",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
