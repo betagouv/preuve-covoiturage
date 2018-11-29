@@ -1,5 +1,20 @@
+
+# these are executed in order.  each must pass for the next to be run
+stages:
+  - precache # warm up cache for default Node.js version
+  - lint # lint code and docs
+  - test # all tests
+
 language: node_js
-node_js: 
-  - "8"
+node_js: '8'
 cache: yarn
-script: cd api && yarn test
+install: yarn
+before_script: cd api
+jobs:
+  include:
+    - stage: precache
+      install: true
+    - stage: lint
+      script: yarn lint
+    - stage: test
+      script: yarn test
