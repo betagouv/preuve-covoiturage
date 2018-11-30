@@ -7,19 +7,16 @@ aom:
 	@echo "> ng serve --host 0.0.0.0"
 	@docker-compose run -p 4200:4200 aom bash
 
-operator:
+ope:
 	@echo "Type the following command when the container has started"
 	@echo "> ng serve --host 0.0.0.0 --port 4400"
 	@docker-compose run -p 4400:4400 operator bash
 
-registry:
+reg:
 	@echo "Type the following command when the container has started"
 	@echo "> ng serve --host 0.0.0.0 --port 4600"
 	@docker-compose run -p 4600:4600 registry bash
 
-
-edit:
-	@docker-compose up editor
 
 install: wipe fix
 	@docker-compose down

@@ -37,8 +37,7 @@ services:
     build: "./docker/aom"
     tty: true
     volumes:
-    - ./dashboard-aom:/code
-#      - ./common:/common <-- PLUS TARD
+      - ./aom:/code
     working_dir: "/code"
     command: "yarn"
     ports:
@@ -49,12 +48,11 @@ services:
     depends_on:
     - api
 
-  operator:
+  ope:
     build: "./docker/operator"
     tty: true
     volumes:
-      - ./dashboard-operator:/code
-#      - ./common:/common <-- PLUS TARD
+      - ./ope:/code
     working_dir: "/code"
     command: "yarn"
     ports:
@@ -65,12 +63,11 @@ services:
     depends_on:
       - api
 
-  registry:
+  reg:
     build: "./docker/registry"
     tty: true
     volumes:
-      - ./dashboard-registry:/code
-    #      - ./common:/common <-- PLUS TARD
+      - ./reg:/code
     working_dir: "/code"
     command: "yarn"
     ports:
@@ -81,9 +78,8 @@ services:
     depends_on:
       - api
 
-
-
 networks:
   front:
   api:
   back:
+
