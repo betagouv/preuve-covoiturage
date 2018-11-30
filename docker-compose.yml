@@ -17,7 +17,7 @@ services:
   api:
     build: "./docker/api"
     volumes:
-    - ./api:/code
+    - ./back-api:/code
     working_dir: "/code"
     command: "nodemon --inspect=0.0.0.0:9229"
     ports:
@@ -37,9 +37,9 @@ services:
     build: "./docker/aom"
     tty: true
     volumes:
-      - ./aom:/code
+      - ./front-aom:/code
     working_dir: "/code"
-    command: "yarn"
+    command: "ng serve --host 0.0.0.0"
     ports:
     - 4200:4200
     networks:
@@ -52,9 +52,9 @@ services:
     build: "./docker/operator"
     tty: true
     volumes:
-      - ./ope:/code
+      - ./front-ope:/code
     working_dir: "/code"
-    command: "yarn"
+    command: "ng serve --host 0.0.0.0"
     ports:
       - 4400:4400
     networks:
@@ -67,9 +67,9 @@ services:
     build: "./docker/registry"
     tty: true
     volumes:
-      - ./reg:/code
+      - ./front-reg:/code
     working_dir: "/code"
-    command: "yarn"
+    command: "ng serve --host 0.0.0.0"
     ports:
       - 4600:4600
     networks:

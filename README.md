@@ -43,9 +43,10 @@ console.log(config.camelCasedFileName);
 
 ### Development workflow
 
-1. Run `make backend` to start the backend
-2. Run `make aom` to start the AOM front and `ng serve --host 0.0.0.0` when
-   the container has started
+1. Run `docker-compose up api` to start the backend
+2. Run `docker-compose up aom` to start the AOM front
+3. Run `docker-compose up reg` to start the registry front
+4. Run `docker-compose up ope` to start the operator front
 
 `Ctrl-C` to kill the process
 

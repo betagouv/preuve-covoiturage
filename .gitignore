@@ -4,3 +4,7 @@ node_modules
 db/mongo
 
 yarn-error.log
+back-api
+front-aom
+front-ope
+front-reg
