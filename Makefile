@@ -32,13 +32,13 @@ install: wipe fix
 
 wipe: fix
 	@rm -rf api/node_modules
-	@rm -rf dashboard-aom/node_modules
-	@rm -rf dashboard-operator/node_modules
-	@rm -rf dashboard-registry/node_modules
+	@rm -rf aom/node_modules
+	@rm -rf ope/node_modules
+	@rm -rf reg/node_modules
 
 fix:
 	@sudo chown -R $(shell whoami): api
-	@sudo chown -R $(shell whoami): dashboard-aom
-	@sudo chown -R $(shell whoami): dashboard-operator
-	@sudo chown -R $(shell whoami): dashboard-registry
+	@sudo chown -R $(shell whoami): aom
+	@sudo chown -R $(shell whoami): ope
+	@sudo chown -R $(shell whoami): reg
 

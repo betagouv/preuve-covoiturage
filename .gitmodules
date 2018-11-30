@@ -1,3 +1,12 @@
 [submodule "api"]
 	path = api
 	url = git@github.com:betagouv/preuve-covoiturage-api.git
+[submodule "aom"]
+	path = aom
+	url = git@github.com:betagouv/preuve-covoiturage-aom.git
+[submodule "ope"]
+	path = ope
+	url = git@github.com:betagouv/preuve-covoiturage-ope.git
+[submodule "reg"]
+	path = reg
+	url = git@github.com:betagouv/preuve-covoiturage-reg.git
