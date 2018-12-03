@@ -1,4 +1,4 @@
-install: wipe fix
+install:
 	@docker-compose down
 	@docker-compose build --force-rm
 	@git clone git@github.com:betagouv/preuve-covoiturage-api.git back-api
@@ -7,9 +7,28 @@ install: wipe fix
 	@git clone git@github.com:betagouv/preuve-covoiturage-ope.git front-ope
 	@docker-compose run api yarn
 	@docker-compose run aom yarn
-	@docker-compose run ope yarn
-	@docker-compose run reg yarn
+	@docker-compose run operator yarn
+	@docker-compose run registry yarn
 	@echo "Installation completed"
+
+backend:
+	@docker-compose down
+	@docker-compose up api
+
+aom:
+	@echo "Type the following command when the container has started"
+	@echo "> ng serve --host 0.0.0.0"
+	@docker-compose run -p 4200:4200 aom bash
+
+ope:
+	@echo "Type the following command when the container has started"
+	@echo "> ng serve --host 0.0.0.0 --port 4400"
+	@docker-compose run -p 4400:4400 ope bash
+
+reg:
+	@echo "Type the following command when the container has started"
+	@echo "> ng serve --host 0.0.0.0 --port 4600"
+	@docker-compose run -p 4600:4600 reg bash
 
 wipe: fix
 	@rm -rf back-api/node_modules
