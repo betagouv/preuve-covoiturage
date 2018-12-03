@@ -18,6 +18,10 @@ wipe: fix
 	@rm -rf front-reg/node_modules
 
 fix:
+	mkdir -p back-api
+	mkdir -p front-aom
+	mkdir -p front-ope
+	mkdir -p front-reg
 	sudo chown -R $(shell whoami): back-api
 	sudo chown -R $(shell whoami): front-aom
 	sudo chown -R $(shell whoami): front-ope
