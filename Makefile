@@ -21,9 +21,7 @@ aom:
 	@docker-compose run -p 4200:4200 aom bash
 
 ope:
-	@echo "Type the following command when the container has started"
-	@echo "> ng serve --host 0.0.0.0 --port 4400"
-	@docker-compose run -p 4400:4400 ope bash
+	@docker-compose run -p 4400:4400 ope bash -c "ng serve --host 0.0.0.0 --port 4400"
 
 reg:
 	@echo "Type the following command when the container has started"
