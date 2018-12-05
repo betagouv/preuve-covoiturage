@@ -11,6 +11,10 @@ install:
 	@docker-compose run reg yarn
 	@echo "Installation completed"
 
+backend:
+	@docker-compose down
+	@docker-compose up api
+
 aom:
 	@echo "Type the following command when the container has started"
 	@echo "> ng serve --host 0.0.0.0"
