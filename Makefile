@@ -11,10 +11,6 @@ install:
 	@docker-compose run registry yarn
 	@echo "Installation completed"
 
-backend:
-	@docker-compose down
-	@docker-compose up api
-
 aom:
 	@echo "Type the following command when the container has started"
 	@echo "> ng serve --host 0.0.0.0"
@@ -35,6 +31,10 @@ wipe: fix
 	@rm -rf front-reg/node_modules
 
 fix:
+	mkdir -p back-api
+	mkdir -p front-aom
+	mkdir -p front-ope
+	mkdir -p front-reg
 	sudo chown -R $(shell whoami): back-api
 	sudo chown -R $(shell whoami): front-aom
 	sudo chown -R $(shell whoami): front-ope
