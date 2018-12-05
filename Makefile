@@ -7,8 +7,8 @@ install:
 	@git clone git@github.com:betagouv/preuve-covoiturage-ope.git front-ope
 	@docker-compose run api yarn
 	@docker-compose run aom yarn
-	@docker-compose run operator yarn
-	@docker-compose run registry yarn
+	@docker-compose run ope yarn
+	@docker-compose run reg yarn
 	@echo "Installation completed"
 
 aom:
