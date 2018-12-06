@@ -26,6 +26,8 @@ services:
     env_file: .env
     environment:
       CONFIG_DIR: '/code/config'
+      APP_SUPERUSER_EMAIL: admin@example.com
+      APP_SUPERUSER_PASSWORD: admin
     networks:
     - front
     - api
