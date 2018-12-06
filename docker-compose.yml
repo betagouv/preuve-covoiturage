@@ -33,11 +33,11 @@ services:
     depends_on:
     - mongo
 
-  aom:
-    build: "./docker/aom"
+  dashboard:
+    build: "./docker/dashboard"
     tty: true
     volumes:
-      - ./front-aom:/code
+      - ./dashboard:/code
     working_dir: "/code"
     command: "ng serve --host 0.0.0.0"
     ports:
@@ -47,36 +47,6 @@ services:
     - api
     depends_on:
     - api
-
-  ope:
-    build: "./docker/operator"
-    tty: true
-    volumes:
-      - ./front-ope:/code
-    working_dir: "/code"
-    command: "ng serve --host 0.0.0.0"
-    ports:
-      - 4400:4400
-    networks:
-      - front
-      - api
-    depends_on:
-      - api
-
-  reg:
-    build: "./docker/registry"
-    tty: true
-    volumes:
-      - ./front-reg:/code
-    working_dir: "/code"
-    command: "ng serve --host 0.0.0.0"
-    ports:
-      - 4600:4600
-    networks:
-      - front
-      - api
-    depends_on:
-      - api
 
 networks:
   front:
