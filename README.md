@@ -17,9 +17,9 @@ We're trying to split up services as much as possible.
 | Service        | slug       | URL                   | Folder         | Port          |
 |----------------|------------|-----------------------|----------------|---------------|
 | MongoDB        | `mongo`    | mongodb://mongo:27017 | -              | 27017         |
-| API            | `api`      | http://localhost:8080 | /api           | 8080 (docker) |
-| AOM Front      | `aom`      | http://localhost:4200 | /dashboard-aom | 4200          |
-| Registry Front | `registry` |                       | /dashboard-aom |               |
+| Redis          | `redis`    | http://localhost:6379 | -              | 6379          |
+| API            | `api`      | http://localhost:8080 | /back-api      | 8080          |
+| Dashboard      | `dash`     | http://localhost:4200 | /dashboard     | 4200          |
 
 ### Installation
 
@@ -37,31 +37,19 @@ For none secret values configuring the system, commit the ENV vars in `docker-co
 For _static_ application configuration (INSEE codes, timeout, etc.) edit/add the `.yml` files in `config/` folder.
 
 ```js
-const config = require("@pdc/config");
+// relative path depends on the location of your file
+const config = require("../../packages/config");
 console.log(config.camelCasedFileName);
 ```
 
 ### Development workflow
 
 1. Run `docker-compose up api` to start the backend
-2. Run `docker-compose up aom` to start the AOM front
-3. Run `docker-compose up reg` to start the registry front
-4. Run `docker-compose up ope` to start the operator front
-
-`Ctrl-C` to kill the process
-
-3. Run `make operator` to start the Operator front and `ng serve --host 0.0.0.0 --port 4400` when
-the container has started
+2. Run `docker-compose up dashboard` to start the dashboard
 
 `Ctrl-C` to kill the process
 
 ### API documentation
 
-La documentation est sur [Postman](https://documenter.getpostman.com/view/856020/RzZ9HzgR).
-
-### Misc
-
-Thanks to the POP project for the NodeJS framework starter.
-Checkout their project on 
-[Plateforme ouverte du Patrimoine](https://beta.gouv.fr/startup/pop.html)
+_coming soon ;)_
 
