@@ -6,3 +6,4 @@ db/mongo
 yarn-error.log
 back-api
 dashboard
+!docker/dashboard
