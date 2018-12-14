@@ -5,14 +5,24 @@ qu'un covoiturage a bien eu lieu. L'objectif de l'outil est l'incitation des
 utilisateurs à pratiquer le covoiturage courte distance pour réduire
 l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 
+[http://covoiturage.beta.gouv.fr/](http://covoiturage.beta.gouv.fr/)
+
 ### Requirements
 
 - `docker` && `docker-compose`
 - `make`
 
-### Architecture
+### Sub-repositories
 
-We're trying to split up services as much as possible.
+The API and Dashboard repositories are separated from the main one. Running `make install`
+will clone them both at the right place.
+
+The general documentation will be consolidated here. Issues arecreated on the corresponding repos
+
+- Dashboard: [repo](https://github.com/betagouv/preuve-covoiturage-dashboard), [issues](https://github.com/betagouv/preuve-covoiturage-dashboard/issues)
+- API : [repo](https://github.com/betagouv/preuve-covoiturage-api), [issues](https://github.com/betagouv/preuve-covoiturage-api/issues)
+
+### Architecture
 
 | Service        | slug       | URL                   | Folder         | Port          |
 |----------------|------------|-----------------------|----------------|---------------|
