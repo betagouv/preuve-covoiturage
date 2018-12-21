@@ -3,43 +3,55 @@ services:
   mongo:
     image: "mongo:3.6"
     ports:
-    - 27017:27017
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: "mongo"
       MONGO_INITDB_ROOT_PASSWORD: "mongo"
       MONGO_INITDB_DATABASE: "pdc-collector"
     volumes:
-    - ./db/mongo:/data/db
+      - ./db/mongo:/data/db
     networks:
-    - front
-    - back
+      - front
+      - back
 
   redis:
     image: "redis:4"
     networks:
       - back
 
+  arena:
+    build: "./docker/arena"
+    volumes:
+      - ./docker/arena/index.json:/opt/arena/src/server/config/index.json
+    ports:
+      - 4567:4567
+    networks:
+      - front
+      - back
+    depends_on:
+      - redis
+
   api:
     build: "./docker/api"
     volumes:
-    - ./back-api:/code
+      - ./back-api:/code
     working_dir: "/code"
     command: "nodemon --inspect=0.0.0.0:9229"
     ports:
-    - 8080:8080
-    - 9229:9229
+      - 8080:8080
+      - 9229:9229
     env_file: .env
     environment:
       CONFIG_DIR: '/code/config'
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin
     networks:
-    - front
-    - api
-    - back
+      - front
+      - api
+      - back
     depends_on:
-    - mongo
-    - redis
+      - mongo
+      - redis
 
   dashboard:
     build: "./docker/dashboard"
@@ -49,12 +61,12 @@ services:
     working_dir: "/code"
     command: "ng serve --host 0.0.0.0"
     ports:
-    - 4200:4200
+      - 4200:4200
     networks:
-    - front
-    - api
+      - front
+      - api
     depends_on:
-    - api
+      - api
 
 networks:
   front:

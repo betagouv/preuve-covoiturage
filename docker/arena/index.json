@@ -1,0 +1,10 @@
+{
+  "queues": [
+    {
+      "name": "journeys",
+      "port": 6379,
+      "host": "redis",
+      "hostId": "Local"
+    }
+  ]
+}
