@@ -14,6 +14,11 @@ services:
     - front
     - back
 
+  redis:
+    image: "redis:4"
+    networks:
+      - back
+
   api:
     build: "./docker/api"
     volumes:
@@ -34,6 +39,7 @@ services:
     - back
     depends_on:
     - mongo
+    - redis
 
   dashboard:
     build: "./docker/dashboard"
