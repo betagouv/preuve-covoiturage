@@ -53,6 +53,27 @@ services:
       - mongo
       - redis
 
+  worker:
+    build: "./docker/api"
+    volumes:
+      - ./back-api:/code
+    working_dir: "/code"
+    command: "nodemon --inspect=0.0.0.0:9229 src/worker.js"
+    ports:
+      - 9230:9229
+    env_file: .env
+    environment:
+      CONFIG_DIR: '/code/config'
+      MQ_WORKER: 'true'
+    networks:
+      - front
+      - api
+      - back
+    depends_on:
+      - mongo
+      - redis
+      - api
+
   dashboard:
     build: "./docker/dashboard"
     tty: true
