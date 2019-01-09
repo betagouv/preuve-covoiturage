@@ -19,18 +19,6 @@ services:
     networks:
       - back
 
-  arena:
-    build: "./docker/arena"
-    volumes:
-      - ./docker/arena/index.json:/opt/arena/src/server/config/index.json
-    ports:
-      - 4567:4567
-    networks:
-      - front
-      - back
-    depends_on:
-      - redis
-
   api:
     build: "./docker/api"
     volumes:
