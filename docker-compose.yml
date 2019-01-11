@@ -31,6 +31,8 @@ services:
     env_file: .env
     environment:
       CONFIG_DIR: '/code/config'
+      API_URL: 'http://localhost:8080'
+      APP_URL: 'http://localhost:4200'
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin
     networks:
