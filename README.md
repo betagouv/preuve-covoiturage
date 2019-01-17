@@ -30,6 +30,7 @@ The general documentation will be consolidated here. Issues arecreated on the co
 | Redis           | `redis`    | http://localhost:6379       | -              | 6379          |
 | Arena (bg jobs) | `arena`    | http://localhost:8080/arena | -              | 8080          |
 | API             | `api`      | http://localhost:8080       | /back-api      | 8080          |
+| OpenAPI Editor  | `editor`   | http://localhost:8081       | -              | 8081          |
 | Dashboard       | `dash`     | http://localhost:4200       | /dashboard     | 4200          |
 
 ### Installation
