@@ -34,7 +34,7 @@ services:
       API_URL: 'http://localhost:8080'
       APP_URL: 'http://localhost:4200'
       APP_SUPERUSER_EMAIL: admin@example.com
-      APP_SUPERUSER_PASSWORD: admin
+      APP_SUPERUSER_PASSWORD: admin1234
     networks:
       - front
       - api
