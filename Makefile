@@ -3,6 +3,7 @@ install:
 	@docker-compose build --force-rm
 	@git clone git@github.com:betagouv/preuve-covoiturage-api.git back-api
 	@git clone git@github.com:betagouv/preuve-covoiturage-dashboard.git dashboard
+	@git clone git@github.com:betagouv/preuve-covoiturage-doc.git doc
 	@docker-compose run api yarn
 	@docker-compose run dashboard yarn
 	@echo "Installation completed"
@@ -23,4 +24,5 @@ fix:
 	mkdir -p dashboard
 	sudo chown -R $(shell whoami): back-api
 	sudo chown -R $(shell whoami): dashboard
+	sudo chown -R $(shell whoami): doc
 
