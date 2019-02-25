@@ -61,6 +61,11 @@ console.log(config.camelCasedFileName);
 
 `Ctrl-C` to kill the process
 
+
+### Seeding
+
+Run `make seed` to fill database
+
 ### API documentation
 
 _coming soon ;)_

@@ -13,7 +13,10 @@ api:
 
 dash:
 	@docker-compose up dashboard
-#	@docker-compose run -p 4200:4200 dashboard bash -c "ng serve --host 0.0.0.0"
+
+seed:
+	@docker-compose exec api bash -c "yarn seed"
+
 
 wipe: fix
 	@rm -rf back-api/node_modules
