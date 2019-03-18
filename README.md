@@ -62,11 +62,26 @@ console.log(config.camelCasedFileName);
 `Ctrl-C` to kill the process
 
 
-### Seeding
+### CLI commands
 
-Run `make seed` to fill database
+##### inside the `api` container
+
+- `yarn seed` Seed the database (based on the NODE_ENV var)
+- `yarn process {?safe_journey_id}` re-process a safe-journey to a journey
+- `yarn migrate` run up migrations
+- `yarn lint`
+- `yarn test` run the tests
+
+##### outside the `api` container
+
+- `yarn mig:up` run up migrations
+- `yarn mig:down` run down migrations
+- `yarn mig:status` show the migrations status
+- `yarn docker-test` run unit and functional tests
+- `yarn docker-test-unit` run unit tests
+- `yarn docker-test-func` run functional tests
 
 ### API documentation
 
-_coming soon ;)_
-
+- [Documentation (French)](https://registre-preuve-de-covoiturage.gitbook.io/produit/)
+- [OpenAPI documentation](https://api-staging.covoiturage.beta.gouv.fr/openapi/)
