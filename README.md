@@ -68,6 +68,7 @@ console.log(config.camelCasedFileName);
 
 - `yarn seed` Seed the database (based on the NODE_ENV var)
 - `yarn process {?safe_journey_id}` re-process a safe-journey to a journey
+- `yarn process-trip {?journey_id}` re-process a journey to consolidate trips
 - `yarn migrate` run up migrations
 - `yarn lint`
 - `yarn test` run the tests
