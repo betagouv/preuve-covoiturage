@@ -10,17 +10,6 @@ l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 ### Requirements
 
 - `docker` && `docker-compose`
-- `make`
-
-### Sub-repositories
-
-The API and Dashboard repositories are separated from the main one. Running `make install`
-will clone them both at the right place.
-
-The general documentation will be consolidated here. Issues arecreated on the corresponding repos
-
-- Dashboard: [repo](https://github.com/betagouv/preuve-covoiturage-dashboard), [issues](https://github.com/betagouv/preuve-covoiturage-dashboard/issues)
-- API : [repo](https://github.com/betagouv/preuve-covoiturage-api), [issues](https://github.com/betagouv/preuve-covoiturage-api/issues)
 
 ### Architecture
 
@@ -29,14 +18,31 @@ The general documentation will be consolidated here. Issues arecreated on the co
 | MongoDB         | `mongo`    | mongodb://mongo:27017       | -              | 27017         |
 | Redis           | `redis`    | http://localhost:6379       | -              | 6379          |
 | Arena (bg jobs) | `arena`    | http://localhost:8080/arena | -              | 8080          |
-| API             | `api`      | http://localhost:8080       | /back-api      | 8080          |
+| API             | `api`      | http://localhost:8080       | /api           | 8080          |
 | OpenAPI Editor  | `editor`   | http://localhost:8081       | -              | 8081          |
 | Dashboard       | `dash`     | http://localhost:4200       | /dashboard     | 4200          |
 
 ### Installation
 
 1. Clone the repository and `cd` to it
-2. Run `make install` to setup all dependencies on all microservices
+2. `cp .env.example .env`
+3. Edit the `.env` file
+4. `docker-compose build`
+5. `docker-compose run api yarn`
+6. `docker-compose run dashboard yarn`
+7. `docker-compose run api yarn migrate`
+8. `docker-compose run api yarn seed`
+
+### Run the stack
+
+1. `docker-compose up`
+2. [Access the dashboard](http://localhost:4200)
+3. Connect with one of the following test users:
+   - admin with `admin@example.com` / `admin1234`
+   - aom with `aom@example.com` / `aom1234`
+   - operator with `operator@example.com` / `operator`
+
+`Ctrl-C` to kill the process
 
 ### Configuration
 
@@ -53,14 +59,6 @@ For _static_ application configuration (INSEE codes, timeout, etc.) edit/add the
 const config = require("../../packages/config");
 console.log(config.camelCasedFileName);
 ```
-
-### Development workflow
-
-1. Run `docker-compose up api` to start the backend
-2. Run `docker-compose up dashboard` to start the dashboard
-
-`Ctrl-C` to kill the process
-
 
 ### CLI commands
 
@@ -86,3 +84,4 @@ console.log(config.camelCasedFileName);
 
 - [Documentation (French)](https://registre-preuve-de-covoiturage.gitbook.io/produit/)
 - [OpenAPI documentation](https://api-staging.covoiturage.beta.gouv.fr/openapi/)
+
