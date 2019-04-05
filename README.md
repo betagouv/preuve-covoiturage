@@ -60,6 +60,21 @@ const config = require("../../packages/config");
 console.log(config.camelCasedFileName);
 ```
 
+### Access the database in the docker container
+
+To access the MongoDB instance, you must start the container first and then
+enter it to access the mongo shell.
+
+1. `(local)$ docker-compose up -d mongo`
+2. `(local)$ docker-compose exec mongo bash`
+3. `(docker)$ mongo -u mongo -p mongo --authenticationDatabase=admin`
+4. `(mongo shell)> use pdc-local`
+
+If you have mongo shell or a GUI like Compass, you can connect directly to
+the server on port 27017:
+
+1. `(local)$ mongo -u mongo -p mongo --host localhost:27017 --authenticationDatabase=admin`
+
 ### CLI commands
 
 ##### inside the `api` container
