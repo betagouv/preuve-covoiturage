@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const aomService = require('./service');
+const statService = require('../stats/service');
 const can = require('../../middlewares/can');
 const { apiUrl } = require('../../packages/url/url');
 
@@ -31,6 +32,32 @@ router.post('/:id/users/remove', can('aom.users.remove'), async (req, res, next)
 router.get('/:id/users', can('aom.users.list'), async (req, res, next) => {
   try {
     res.json(await aomService.users(req.params.id));
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * Display stats for this AOM
+ */
+router.get('/:id/stats', can('aom.stats'), async (req, res, next) => {
+  try {
+    res.json({
+      collected: await statService.journeysCollected(req.params.id),
+      distance: await statService.distance(req.params.id),
+      duration: await statService.duration(req.params.id),
+      classes: {
+        a: await statService.class('A', req.params.id),
+        b: await statService.class('B', req.params.id),
+        c: await statService.class('C', req.params.id),
+      },
+      unvalidated: {
+        total: [],
+        month: [],
+        day: [],
+      },
+
+    });
   } catch (e) {
     next(e);
   }

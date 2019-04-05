@@ -2,6 +2,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { CommonModule } from '@angular/common';
+import { PasswordModule } from 'primeng/password';
+import { CardModule } from 'primeng/card';
 
 
 /* Shared modules */
@@ -22,12 +27,17 @@ import { AuthPageConfirmEmailComponent } from './pages/confirmEmail/component';
 @NgModule({
 
   imports: [
+    CommonModule,
     FormsModule,
     FormModule,
     AuthRoutingModule,
     ToastModule,
     MessageModule,
-
+    InputTextModule,
+    ButtonModule,
+    MessageModule,
+    PasswordModule,
+    CardModule,
   ],
   declarations: [
     AuthHeaderComponent,

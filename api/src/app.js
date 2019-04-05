@@ -13,6 +13,7 @@ const signResponse = require('./middlewares/sign-response');
 const dataWrap = require('./middlewares/data-wrap');
 const swaggerDocument = require('./static/openapi.json');
 
+require('./definitions');
 require('./passport')(passport);
 require('./mongo');
 

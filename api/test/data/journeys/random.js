@@ -9,7 +9,7 @@ const fakerLon = () => faker.random.number({ min: -1.28048, max: 6.23631, precis
 const phoneNumber = () => {
   let number = phoneUtil.parseAndKeepRawInput(faker.phone.phoneNumber(), 'FR');
   while (!phoneUtil.isValidNumber(number)) {
-    number = faker.phone.phoneNumber();
+    number = phoneUtil.parseAndKeepRawInput(faker.phone.phoneNumber(), 'FR');
   }
 
   return phoneUtil.format(number, PhoneNumberFormat.E164);

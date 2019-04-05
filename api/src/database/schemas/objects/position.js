@@ -41,6 +41,6 @@ const PositionSchema = new Schema({
     uppercase: true,
     match: regex.postcode,
   }],
-}, { _id: false });
+}, { _id: false, id: false });
 
 module.exports = PositionSchema;

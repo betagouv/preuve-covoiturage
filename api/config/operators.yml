@@ -23,6 +23,7 @@ roles:
       - journey.read
       - journey.create
       - journey.list
+      - journey.import
       - profile.read
       - profile.update
       - profile.password

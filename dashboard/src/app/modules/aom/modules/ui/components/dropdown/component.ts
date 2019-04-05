@@ -53,7 +53,7 @@ export class AomDropdownComponent implements OnInit {
 
   public filter(event) {
     if (event && event.query) {
-      const regexp = new RegExp(event.query);
+      const regexp = new RegExp(event.query, 'i');
       this.filteredAoms = this.aoms.filter(item => regexp.test(item.value));
     } else {
       this.filteredAoms = this.aoms.slice();

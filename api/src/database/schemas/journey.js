@@ -8,6 +8,6 @@ const JourneySchema = new Schema(Object.assign(
   {},
   journeyOperator,
   journeySystem,
-), { timestamps: true });
+), { timestamps: true, id: false });
 
 module.exports = JourneySchema;

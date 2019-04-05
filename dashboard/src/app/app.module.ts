@@ -10,9 +10,10 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SliderModule } from 'primeng/slider';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
-/* Libs */
-
+import { MenuModule } from 'primeng/menu';
+import { TieredMenuModule } from 'primeng/tieredmenu';
 
 /* Local services */
 import { HttpApiInterceptor } from './applicativeService/interceptor/httpApiInterceptor';
@@ -27,16 +28,13 @@ import { CleanService } from './services/cleanService';
 import { TableService } from './services/tableService';
 import { DropdownService } from './services/dropdownService';
 /* Local component */
-import { DeclarationComponent } from './main/pages/declaration/component';
 import { NotDeletedPipe } from './filters/notDeleted/pipe';
-import { IncitationsComponent } from './main/pages/incitations/component';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 // Layout
 import { LayoutComponent } from './layout/main/component';
 import { HeaderComponent } from './layout/components/header/component';
 import { MenuComponent } from './layout/components/menu/component';
-
 /* Feature modules */
 import { OperatorModule } from './modules/operator/operator.module';
 import { UserModule } from './modules/user/user.module';
@@ -45,10 +43,13 @@ import { JourneyModule } from './modules/journeys/journey.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HomeModule } from './modules/home/home.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
-
+import { RegistryModule } from './modules/registry/registry.module';
+import { IncentiveModule } from './modules/incentive/incentive.module';
 /* Shared modules */
 import { FormModule } from './shared/form/form.module';
 import { GraphicModule } from './shared/graphic/graphic.module';
+
+/* Libs */
 
 
 @NgModule({
@@ -63,14 +64,8 @@ import { GraphicModule } from './shared/graphic/graphic.module';
     HeaderComponent,
     MenuComponent,
 
-    // proof declaration
-    DeclarationComponent,
-
     // pipes
     NotDeletedPipe,
-
-    // pages
-    IncitationsComponent,
 
   ],
   imports: [
@@ -89,6 +84,8 @@ import { GraphicModule } from './shared/graphic/graphic.module';
     JourneyModule,
     HomeModule,
     StatisticsModule,
+    RegistryModule,
+    IncentiveModule,
 
     // Common module
     FormModule,
@@ -99,7 +96,10 @@ import { GraphicModule } from './shared/graphic/graphic.module';
     MultiSelectModule,
     SliderModule,
     ToastModule,
+    TooltipModule,
     ConfirmDialogModule,
+    MenuModule,
+    TieredMenuModule,
   ],
   providers: [
     {

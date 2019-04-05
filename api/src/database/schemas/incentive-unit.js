@@ -23,6 +23,6 @@ const IncentiveUnitSchema = new Schema({
     default: 0,
     required: true,
   },
-});
+}, { id: false });
 
 module.exports = IncentiveUnitSchema;

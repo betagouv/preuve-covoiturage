@@ -13,7 +13,12 @@ export class TableService {
   }
 
   createColumn(field) {
-    return { field, header: this.getKey(field) };
+    let header = this.getKey(field);
+
+    // capitalize
+    header = header.substring(0, 1).toUpperCase() + header.substring(1);
+
+    return { field, header: this.getKey(header) };
   }
 
   createLabel(field) {

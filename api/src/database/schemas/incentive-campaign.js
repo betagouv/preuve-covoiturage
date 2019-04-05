@@ -27,6 +27,6 @@ const IncentiveCampaignSchema = new Schema({
   policies: [ObjectId], // IncentivePolicy
   trips: [ObjectId],
   deletedAt: { type: Date },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = IncentiveCampaignSchema;

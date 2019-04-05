@@ -6,7 +6,7 @@ const { Schema } = mongoose;
 const ApplicationSchema = new Schema({
   name: { type: String, max: 255, trim: true },
   permissions: [String],
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 // eslint-disable-next-line func-names
 ApplicationSchema.method('toJSON', function () {

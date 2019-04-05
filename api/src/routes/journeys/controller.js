@@ -5,8 +5,10 @@ const journeyService = require('./service');
 const can = require('../../middlewares/can');
 const jwtUser = require('../../middlewares/jwt-user');
 const jwtServer = require('../../middlewares/jwt-server');
+const acceptCsv = require('../../middlewares/accept-csv');
 const { apiUrl } = require('../../packages/url/url');
 const { importMaxFileSizeMb } = require('../../config');
+const Journey = require('./model');
 
 // Upload middleware
 const upload = multer({
@@ -14,6 +16,48 @@ const upload = multer({
   limits: {
     fileSize: parseInt(importMaxFileSizeMb, 10) * 1024 * 1024, // 5MB
   },
+});
+
+router.get('/aom', jwtUser, can('journey.list'), async (req, res, next) => {
+  try {
+    const aoms = await Journey
+      .aggregate([
+        {
+          $unwind: {
+            path: '$aom',
+            preserveNullAndEmptyArrays: false,
+          },
+        }, {
+          $project: {
+            _id: '$aom._id',
+            name: '$aom.name',
+          },
+        }, {
+          $group: {
+            _id: {
+              _id: '$_id',
+              name: '$name',
+            },
+            count: {
+              $sum: 1,
+            },
+          },
+        }, {
+          $sort: {
+            '_id.name': 1,
+          },
+        },
+      ])
+      .exec();
+
+    res.json(aoms.map(aom => ({
+      _id: aom._id._id,
+      name: aom._id.name,
+      count: aom.count,
+    })));
+  } catch (e) {
+    next(e);
+  }
 });
 
 router.get('/process/:id', jwtUser, can('journey.process'), async (req, res, next) => {
@@ -43,7 +87,7 @@ router.delete('/:id', jwtUser, can('journey.delete'), async (req, res, next) => 
   }
 });
 
-router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
+router.get('/', jwtUser, ...acceptCsv, can('journey.list'), async (req, res, next) => {
   try {
     // filter by operator
     const operator = _.get(req, 'user.operator');
@@ -97,7 +141,11 @@ router.post('/import', upload.single('csv'), jwtUser, can('journey.import'), asy
       _.set(req, 'body.operator', _.get(req, 'user.operator._id').toString());
     }
 
-    res.json(await journeyService.import(req.body, req.file));
+    const results = await journeyService.import(req.body, req.file);
+
+    res
+      .status(results.failed.length ? 400 : 200)
+      .json(results);
   } catch (e) {
     next(e);
   }

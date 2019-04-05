@@ -17,7 +17,6 @@ const toJSON = (schema, doc) => {
   const picked = schema ? _.difference(
     Object.keys(schema),
     listKeys('hidden', true, schema, [
-      'id',
       '__v',
       'password',
       'token',

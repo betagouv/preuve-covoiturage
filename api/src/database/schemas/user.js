@@ -62,8 +62,8 @@ const UserSchema = new Schema({
   },
 
   hasResetPassword: { type: Boolean, default: false },
-  forgottenReset: { type: String, index: true },
-  forgottenToken: { type: String, crypt: true },
+  forgottenReset: { type: String, index: true, hidden: true },
+  forgottenToken: { type: String, crypt: true, hidden: true },
   forgottenAt: { type: Date },
 
   lastConnectedAt: { type: Date },
@@ -74,6 +74,6 @@ const UserSchema = new Schema({
   options: { type: Object, default: {} },
 
   deletedAt: { type: Date },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = UserSchema;

@@ -5,8 +5,9 @@ import { AuthGuard } from '~/applicativeService/authguard/service';
 import { LayoutComponent } from '~/layout/main/component';
 
 import { OperatorListComponent } from './pages/list/component';
-import { TokenComponent } from './pages/token/component';
 import { OperatorSettingsComponent } from './pages/settings/component';
+import { OperatorJourneyImportComponent } from './pages/journeyImport/component';
+import { OperatorTokenPageComponent } from './pages/token/component';
 
 const routes: Routes = [
   {
@@ -28,7 +29,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: TokenComponent,
+        component: OperatorTokenPageComponent,
         data: { groups: ['operators'] },
       },
     ],
@@ -43,8 +44,14 @@ const routes: Routes = [
         component: OperatorSettingsComponent,
         data: { groups: ['operators'] },
       },
+      {
+        path : 'journey-import',
+        component: OperatorJourneyImportComponent,
+        data: { groups: ['operators'] },
+      },
     ],
   },
+
 ];
 
 @NgModule({

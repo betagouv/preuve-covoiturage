@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
+import { User } from '~/entities/database/user/user';
 
 import { TokenService } from '../token/service';
 import { Logged } from '../authguard/logged';
@@ -24,10 +25,14 @@ export class AuthenticationService {
     this.loggerService = loggerService;
   }
 
+  check(): boolean {
+    return !!this.getUser();
+  }
+
   login(email: string, password: string): Observable<boolean> {
     return this.http.post(`${this.endPoint}/signin`, { email, password }).pipe(
-        map((response: ApiResponse) => this.loginResponse(response.data)),
-      );
+      map((response: ApiResponse) => this.loginResponse(response.data)),
+    );
   }
 
   loginResponse(response: object) {
@@ -52,6 +57,12 @@ export class AuthenticationService {
 
   hasAnyGroup(groups: string[]): string {
     const user = this.getUser();
+    if (!user) return null;
+
+    // no groups mean all
+    if (!groups.length) {
+      return user.group;
+    }
 
     if (user && groups.includes(user.group)) {
       Logged.set(true);
@@ -81,22 +92,29 @@ export class AuthenticationService {
     return false;
   }
 
-  logout(returnHome = false) {
-    // clear token remove user from local storage to log user out
+  logout(returnToHome: boolean = false) {
+    this.clearUser();
     TokenService.clear();
     Logged.set(false);
-    if (returnHome) {
+    if (returnToHome) {
       this.router.navigate(['/signin']);
     }
+
     return this;
   }
 
-  getUser() {
-    if (null === this.user) {
+  // make sure the user is still in the localStorage
+  // do not user this.user to get it, so it logs the user
+  // out when the localStorage user key is missing
+  getUser(): User {
+    try {
       this.user = JSON.parse(localStorage.getItem('user'));
+      this.user.fullName = `${this.user.firstname} ${this.user.lastname}`.trim();
+
       return this.user;
+    } catch (e) {
+      return null;
     }
-    return this.user;
   }
 
   setUser(user: any) {
@@ -106,6 +124,28 @@ export class AuthenticationService {
 
   clearUser() {
     localStorage.removeItem('user');
+  }
+
+  getCompany() {
+    const user = this.getUser();
+    if (!user) return {};
+
+    if (user.company && user.company.name) {
+      switch (user.group) {
+        case 'operators' :
+          user.company.link = '/dashboard/operator';
+          user.company.icon = 'tablet';
+          break;
+        case 'aom' :
+          user.company.link = '/dashboard/aom';
+          user.company.icon = 'home';
+          break;
+        default:
+          break;
+      }
+    }
+
+    return user.company || {};
   }
 
   sendEmailForPasswordReset(email: string) {

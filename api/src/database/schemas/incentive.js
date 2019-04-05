@@ -38,6 +38,6 @@ const IncentiveSchema = new Schema({
     required: true,
   },
   deletedAt: { type: Date },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = IncentiveSchema;

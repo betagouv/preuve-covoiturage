@@ -18,6 +18,6 @@ const StatSchema = new Schema({
     type: Number,
     required: true,
   },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = StatSchema;

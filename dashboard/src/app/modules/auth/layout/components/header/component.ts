@@ -1,10 +1,10 @@
-import { Component , Injectable } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 
 
 @Component({
-  selector : 'app-auth-header',
-  templateUrl : 'template.html',
-  styleUrls : ['style.scss'],
+  selector: 'app-auth-header',
+  templateUrl: 'template.html',
+  styleUrls: ['style.scss'],
 })
 
 @Injectable()

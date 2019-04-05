@@ -19,6 +19,6 @@ const IncentiveParameterSchema = new Schema({
     default: false,
     required: true,
   },
-});
+}, { id: false });
 
 module.exports = IncentiveParameterSchema;

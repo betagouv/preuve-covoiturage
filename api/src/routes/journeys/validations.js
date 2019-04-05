@@ -8,7 +8,7 @@ const _ = require('lodash');
  * @returns {boolean}
  */
 const strictHas = (obj, path) => _.has(obj, path)
-  && !_.isEmpty(_.get(obj, path, ''))
+  && _.get(obj, path, '') !== ''
   && !_.isNil(_.get(obj, path));
 
 /**

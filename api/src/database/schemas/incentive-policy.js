@@ -12,7 +12,7 @@ const IncentiveTimeFilterSchema = new Schema({
     type: String,
     required: true,
   },
-});
+}, { id: false });
 
 const IncentivePolicySchema = new Schema({
   aom: {
@@ -57,6 +57,6 @@ const IncentivePolicySchema = new Schema({
     required: true,
   },
   deletedAt: { type: Date },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = IncentivePolicySchema;

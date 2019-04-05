@@ -7,7 +7,7 @@ import {
 
 import { TranslationService } from '~/services/translationService';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
-import { User } from '~/entities/database/user';
+import { User } from '~/entities/database/user/user';
 
 
 import { UserService } from '../../../../services/userService';

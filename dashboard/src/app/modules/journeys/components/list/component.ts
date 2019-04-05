@@ -1,16 +1,16 @@
+import { saveAs } from 'file-saver';
 import { Component, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { LazyLoadEvent } from 'primeng/api';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
-import { HEADERS } from '~/config/headers';
 import { Journey } from '~/entities/database/journey';
 import { TranslationService } from '~/services/translationService';
 import { TableService } from '~/services/tableService';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 
 import { JourneyService } from '../../services/journeyService';
-
+import { JOURNEY_HEADER } from '../../config/header';
 
 @Component({
   selector: 'app-journeys',
@@ -32,36 +32,57 @@ import { JourneyService } from '../../services/journeyService';
 })
 
 export class JourneyListComponent {
+  private filters;
+
   journeys;
-  headList = HEADERS.journeys.main.journey;
-  selectedHeadList = HEADERS.journeys.selection.journey;
-  driverPassengerHeadList = HEADERS.journeys.main.driverPassenger;
+  headList = JOURNEY_HEADER.main.journey;
+  selectedHeadList = JOURNEY_HEADER.selection.journey;
+  driverPassengerHeadList = JOURNEY_HEADER.main.driverPassenger;
+  sortList = JOURNEY_HEADER.sort.journey;
+
   columns = [];
   selectedColumns = [];
   subColumns = [];
   subTableTitles = ['Conducteur', 'Passager'];
   total = 30;
   perPage = 10;
-  loading;
+  loading = true;
+
+  exportItems = [{
+    label: 'CSV',
+    icon: 'pi pi-file',
+    command: () => {
+      this.export('csv');
+    },
+  }, {
+    label: 'JSON',
+    icon: 'pi pi-file',
+    command: () => {
+      this.export('json');
+    },
+  }];
 
   @ViewChild('dt') dt;
 
   constructor(
-       private journeyService: JourneyService,
-       private authentificationService: AuthenticationService,
-       private translationService: TranslationService,
-       private ts: TableService,
-   ) {
+    private journeyService: JourneyService,
+    private authentificationService: AuthenticationService,
+    private translationService: TranslationService,
+    private ts: TableService,
+  ) {
     this.setColumns();
   }
 
-
   applyFilters(mainFilters) {
-    Object.keys(mainFilters).forEach((key) => {
-      this.dt.filter(mainFilters[key]['value'], mainFilters[key]['colName'], mainFilters[key]['filterType']);
-    });
-    const filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
-    this.get(filters);
+    Object
+      .keys(mainFilters)
+      .forEach((key) => {
+        this.dt.filter(mainFilters[key]['value'], mainFilters[key]['colName'], mainFilters[key]['filterType']);
+      });
+
+    this.filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
+
+    this.get(this.filters);
   }
 
   private setColumns() {
@@ -80,10 +101,11 @@ export class JourneyListComponent {
     return [a, b];
   }
 
-
-  private get(filters:any[any] = []) {
+  private get(filters: any[any] = []) {
     this.loading = true;
-    this.journeyService.get(filters).subscribe(
+    this.journeyService
+      .get(filters)
+      .subscribe(
         (response: ApiResponse) => {
           this.setTotal(response.meta);
           this.journeys = response.data;
@@ -92,13 +114,23 @@ export class JourneyListComponent {
         (error) => {
           // FIX: do nothing ?
         },
-    );
+      );
   }
 
+  getSortableField(field) {
+    if (this.sortList.indexOf(field) !== -1) {
+      if (field === 'passenger.start.date') {
+        return 'passenger.start.datetime';
+      }
+      return field;
+    }
+    return null;
+  }
 
   getValue(journey: Journey, keyString) {
     return this.translationService.getTableValue(journey, keyString);
   }
+
 
   getKey(title: string) {
     return this.translationService.getTableKey(title);
@@ -108,21 +140,38 @@ export class JourneyListComponent {
     return this.authentificationService.hasPermission(permission);
   }
 
+  hasAnyGroup(groups: string[]) {
+    const group = this.authentificationService.hasAnyGroup(groups);
+    return !!group;
+  }
+
   loadLazy(event: LazyLoadEvent) {
     const filters = this.journeyService.formatFiltersFromLazyEvent(event);
     this.get(filters);
   }
 
+  export(type) {
+    this.journeyService
+      .export(type, this.filters)
+      .subscribe((res) => {
+        saveAs(res, `journeys.${type}`);
+      });
+  }
+
   delete(root, id) {
     this.journeyService.delete(id).subscribe(
-        () => {
-          this.get();
-        },
-        (error) => {
-          // FIX: do nothing ?
-        },
+      () => {
+        this.get();
+      },
+      (error) => {
+        // FIX: do nothing ?
+      },
     );
     event.stopPropagation();
+  }
+
+  isNaN(value) {
+    return isNaN(value);
   }
 
   private setTotal(meta) {

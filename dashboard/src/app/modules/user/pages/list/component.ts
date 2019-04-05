@@ -5,7 +5,7 @@ import {
   DialogService,
  } from 'primeng/api';
 
-import { User } from '~/entities/database/user';
+import { User } from '~/entities/database/user/user';
 import { ROLES } from '~/config/roles';
 import { GROUPS } from '~/config/groups';
 import { AuthenticationService } from '~/applicativeService/authentication/service';

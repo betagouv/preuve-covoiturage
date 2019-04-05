@@ -1,0 +1,241 @@
+  <div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-10">
+    <div class="p-grid">
+      <div class="p-col-12 p-md-4">
+        <label class="has-text-grey">Nom commercial</label>
+      </div>
+      <div class="p-col-12 p-md-8">
+        <p>{{operator.nom_commercial}}</p>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <label class="has-text-grey">Raison sociale</label>
+      </div>
+      <div class="p-col-12 p-md-8">
+        <p>{{operator.raison_sociale}}</p>
+      </div>
+
+      <div class="p-col-12">
+        <p-fieldset legend="Responsable de traitement">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Prénom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_controller.firstname}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Nom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_controller.lastname}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Téléphone</label>
+            </div>
+
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_controller.phone}}</p>
+            </div>
+
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Email</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_controller.email}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="p-col-12">
+        <p-fieldset legend="Délégué à la protection des données">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Prénom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_dpo.firstname}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Nom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_dpo.lastname}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Téléphone</label>
+            </div>
+
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_dpo.phone}}</p>
+            </div>
+
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Email</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.rgpd_dpo.email}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="p-col-12">
+        <p-fieldset legend="Responsable technique">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Prénom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.technical.firstname}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Nom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.technical.lastname}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Téléphone</label>
+            </div>
+
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.technical.phone}}</p>
+            </div>
+
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Email</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.contacts.technical.email}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="p-col-12">
+        <p-fieldset legend="Entreprise">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Siren</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.company.siren}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Naf établissement</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.company.naf_etablissement}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Naf entreprise</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.company.naf_entreprise}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Nature juridique</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.company.nature_juridique}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Clé nic</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.company.cle_nic}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">RNA</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.company.rna}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">N° TVA intracommunautaire</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.company.vat_intra}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="p-col-12">
+        <p-fieldset legend="Adresse">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Rue</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.address.street}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Code Postal</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.address.postcode}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Cedex</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.address.cedex}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Ville</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.address.city}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Pays</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.address.country}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+
+      <div class="p-col-12">
+        <p-fieldset legend="Banque">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Nom de l'établissement</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.bank.bank_name}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Nom du titulaire</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.bank.client_name}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Iban</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.bank.iban}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Bic</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{operator.bank.bic}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+
+    </div>
+  </div>
+</div>
+<br>
+<div class="p-grid p-justify-center" *ngIf="hasRole('admin')">
+  <p-button label="Modifier" (click)="edit(operator)"></p-button>
+</div>
+
+
+
+
+
+

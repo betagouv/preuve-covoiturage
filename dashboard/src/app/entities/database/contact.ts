@@ -1,6 +1,6 @@
 /* tslint:disable:variable-name*/
 
-import { User } from './user';
+import { User } from './user/user';
 
 export class Contact {
   phone: number;

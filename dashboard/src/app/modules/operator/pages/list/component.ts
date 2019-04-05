@@ -9,13 +9,15 @@ import { AuthenticationService } from '~/applicativeService/authentication/servi
 import { TranslationService } from '~/services/translationService';
 import { TableService } from '~/services/tableService';
 import { Operator } from '~/entities/database/operator';
-import { HEADERS } from '~/config/headers';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 
+import { OPERATOR_HEADERS } from '../../config/header';
+
+
 import { OperatorService } from '../../services/operatorService';
-import { OperatorCreationDialogComponent } from '../../modules/dialog/components/creation/component';
-import { OperatorEditionDialogComponent } from '../../modules/dialog/components/edition/component';
+import { OperatorCreationDialogComponent } from '../../modules/operators/dialog/components/creation/component';
+import { OperatorEditionDialogComponent } from '../../modules/operators/dialog/components/edition/component';
 
 @Component({
   templateUrl: 'template.html',
@@ -24,8 +26,8 @@ import { OperatorEditionDialogComponent } from '../../modules/dialog/components/
 
 export class OperatorListComponent implements OnInit {
   operators;
-  headList: string[] = HEADERS.operators.main;
-  selectedHeadList: string[] = HEADERS.operators.selection;
+  headList: string[] = OPERATOR_HEADERS.operators.main;
+  selectedHeadList: string[] = OPERATOR_HEADERS.operators.selection;
   columns = [];
   selectedColumns = [];
   operator: Operator = new Operator();

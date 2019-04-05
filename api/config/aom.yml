@@ -15,6 +15,7 @@ roles:
       - aom.read
       - aom.update
       - aom.delete
+      - aom.stats
       - operator.list
       - operator.read
       - operator.create
@@ -49,6 +50,7 @@ roles:
   - slug: user
     name: User
     permissions:
+      - aom.stats
       - user.list
       - journey.read
       - journey.list
@@ -56,3 +58,13 @@ roles:
       - profile.update
       - profile.password
       - profile.delete
+      - incentive.list
+      - incentive.read
+      - incentive-parameter.list
+      - incentive-parameter.read
+      - incentive-unit.list
+      - incentive-unit.read
+      - incentive-policy.list
+      - incentive-policy.read
+      - incentive-campaign.list
+      - incentive-campaign.read

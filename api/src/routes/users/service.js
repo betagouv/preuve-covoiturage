@@ -18,18 +18,53 @@ const generateToken = require('../../packages/random/token');
 
 const service = serviceFactory(User, {
   async signin({ email, password }) {
-    const user = await User.findOne({ email }).exec();
-    if (!user) {
+    const userDoc = await User.findOne({ email }).exec();
+    if (!userDoc) {
       throw new ForbiddenError();
     }
 
-    if (!await user.comparePassword(password)) {
+    if (!await userDoc.comparePassword(password)) {
       throw new ForbiddenError();
     }
 
-    const token = jwt.sign({ _id: user._id }, config.jwtSecret, { expiresIn: '1d' });
-    user.set({ lastConnectedAt: Date.now() });
-    user.save();
+    const token = jwt.sign({ _id: userDoc._id }, config.jwtSecret, { expiresIn: '1d' });
+    userDoc.set({ lastConnectedAt: Date.now() });
+    userDoc.save();
+
+    const user = userDoc.toJSON();
+
+    // retrieve the company
+    switch (user.group) {
+      case 'operators':
+        user.company = await Operator
+          .findById(user.operator, {
+            company: 0,
+            applications: 0,
+            createdAt: 0,
+            updatedAt: 0,
+          })
+          .exec();
+
+        if (user.company && user.company.toJSON()) {
+          user.company = user.company.toJSON();
+          user.company.name = user.company.nom_commercial;
+        }
+
+        break;
+      case 'aom':
+        user.company = await Aom
+          .findById(user.aom, {
+            company: 0,
+            network_id: 0,
+            geometry: 0,
+            createdAt: 0,
+            updatedAt: 0,
+          })
+          .exec();
+        break;
+      default:
+        user.company = null;
+    }
 
     return { token, user };
   },

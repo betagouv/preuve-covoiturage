@@ -60,7 +60,7 @@ const AomSchema = new Schema({
     },
   },
   deletedAt: { type: Date },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 AomSchema.index({ geometry: '2dsphere' });
 

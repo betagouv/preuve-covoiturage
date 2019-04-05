@@ -42,6 +42,6 @@ const OperatorSchema = new Schema({
   applications: [ApplicationSchema],
 
   deletedAt: { type: Date },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = OperatorSchema;

@@ -1,29 +1,18 @@
+@import "~src/assets/scss/variables";
 
-.hero {
-  &__container {
-    margin-top: 0rem;
-    padding: 0 0.75rem;
-  }
-  &__left {
-    background-color: #e8e8e8;
-    @media (min-width: 768px) {
-      min-height: calc(100vh - 3.25rem);
-      //border-right: 1px solid #999;
-
-    }
-  }
-  &__right {
-    overflow-y: hidden;
-  }
+.layout__flex-grid {
+  display: flex;
+  margin: auto 0 0;
+  height: calc(100vh - #{$navbar-height});
 }
 
-.right-column{
-  background-color: #eeeeee;
-  //border-left: 1px solid #999;
-  min-height: calc(100vh - 3.25rem);
+.layout__sidebar {
+  width: 250px;
+  background: #f4f4f4;
 }
 
-.column-header{
-  padding-bottom: 1rem;
+.layout__main {
+  flex: 4;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
-

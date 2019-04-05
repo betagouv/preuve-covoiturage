@@ -1,15 +1,13 @@
 <app-header></app-header>
-<section class="hero">
-  <div class="columns hero__container">
 
-    <div class="column is-2 hero__left">
-      <app-menu></app-menu>
-    </div>
+<div class="layout__flex-grid">
+  <aside class="layout__sidebar">
+    <app-menu></app-menu>
+  </aside>
 
-    <div class="column hero__right" >
-      <p-toast></p-toast>
-      <p-confirmDialog></p-confirmDialog>
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</section>
+  <section class="layout__main">
+    <p-toast></p-toast>
+    <p-confirmDialog></p-confirmDialog>
+    <router-outlet></router-outlet>
+  </section>
+</div>

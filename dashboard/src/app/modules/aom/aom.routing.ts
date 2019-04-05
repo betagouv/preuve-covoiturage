@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuard } from '~/applicativeService/authguard/service';
 import { LayoutComponent } from '~/layout/main/component';
+import { AomStatisticsComponent } from '~/modules/aom/pages/statistics/component';
 
 import { AomListComponent } from './pages/list/component';
 import { AomSettingsComponent } from './pages/settings/component';
@@ -28,6 +29,11 @@ const routes: Routes = [
       {
         path : '',
         component: AomSettingsComponent,
+        data: { groups: ['aom'] },
+      },
+      {
+        path : 'statistics',
+        component: AomStatisticsComponent,
         data: { groups: ['aom'] },
       },
     ],

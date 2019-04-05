@@ -1,0 +1,18 @@
+<div *ngIf="!loaded" class="absolute-center">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+
+<div *ngIf="loaded" >
+  <h1 class="has-text-centered">Statistiques</h1>
+
+  <h3 class="subtitle has-text-centered">Résumé</h3>
+
+  <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
+
+
+  <h3 class="subtitle has-text-centered">Détails</h3>
+
+  <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
+
+
+</div>

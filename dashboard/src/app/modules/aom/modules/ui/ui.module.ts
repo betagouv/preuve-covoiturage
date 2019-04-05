@@ -10,6 +10,7 @@ import { FieldsetModule } from 'primeng/fieldset';
 
 /* Local components */
 import { AomDropdownComponent } from './components/dropdown/component';
+import { AomMultipleDropdownComponent } from './components/multipleDropdown/component';
 
 /* Local services */
 import { AomService } from '../../services/aomService';
@@ -30,10 +31,12 @@ import { AomViewComponent } from './components/view/component';
   declarations: [
     AomDropdownComponent,
     AomViewComponent,
+    AomMultipleDropdownComponent,
   ],
   exports: [
     AomDropdownComponent,
     AomViewComponent,
+    AomMultipleDropdownComponent,
   ],
 })
 export class AomUIModule { }

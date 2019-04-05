@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { PATH_FR } from '../translations/path_fr';
+import { DATES } from '~/config/dates';
+import { PATH_FR } from '~/translations/path_fr';
+
 
 @Injectable()
 export class TranslationService {
-  static tableExceptions = ['passenger.start.date', 'passenger.start.time'];
+  static tableExceptions = ['passenger.start.date', 'passenger.start.time', 'passenger.start.day'];
 
 
   /**
@@ -77,10 +79,13 @@ export class TranslationService {
     switch (keyString) {
       case 'passenger.start.date' :
         const date = new Date(bodyElement['passenger']['start']['datetime']);
-        return date.toLocaleDateString();
+        return date.toLocaleDateString('fr-FR');
       case 'passenger.start.time' :
         const time = new Date(bodyElement['passenger']['start']['datetime']);
-        return time.toLocaleTimeString();
+        return time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute:'2-digit' });
+      case 'passenger.start.day' :
+        const day = new Date(bodyElement['passenger']['start']['datetime']);
+        return DATES.fr.dayNames[day.getDay()] || '';
     }
   }
 
@@ -90,12 +95,17 @@ export class TranslationService {
       return d.toLocaleString();
     }
 
+    if (key === 'start' || key === 'end') {
+      const d = new Date(value);
+      return d.toLocaleDateString('fr-FR');
+    }
+
     if (key === 'rank' && value === 'Z') {
       return 'Non validé';
     }
 
     if (key === 'distance') {
-      return value / 1000; // tslint:disable-line:no-magic-numbers
+      return (value / 1000).toFixed(1); // tslint:disable-line:no-magic-numbers
     }
 
     return value;

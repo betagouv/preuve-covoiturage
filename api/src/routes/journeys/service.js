@@ -6,7 +6,7 @@ const NotFoundError = require('../../packages/errors/not-found');
 const BadRequestError = require('../../packages/errors/bad-request');
 const InternalServerError = require('../../packages/errors/internal-server');
 const { pathToPosition, findTown, findAomFromPosition } = require('./lib/position');
-const importers = require('../../packages/importers');
+const importer = require('../../packages/importer');
 const Journey = require('./model');
 const SafeJourney = require('./safe-model');
 const Operator = require('../operators/model');
@@ -153,14 +153,14 @@ const journeyService = serviceFactory(Journey, {
   },
 
   /**
-   * @param fields
-   * @param file
+   * @param {Object} fields
+   * @param {MulterFile} file
    * @returns {Promise<void>}
    */
-  async import({ type, operator }, file) {
-    if (!importers.validation.isCsvFile(file)) {
-      throw new BadRequestError('Missing CSV file');
-    }
+  async import({ operator }, file) {
+    const lines = importer.read(file);
+
+    importer.validate(file, lines);
 
     if (!operator || !_.isString(operator)) {
       throw new BadRequestError('Operator must be an ID');
@@ -172,16 +172,7 @@ const journeyService = serviceFactory(Journey, {
       throw new NotFoundError('Wrong Operator');
     }
 
-    switch (type) {
-      case 'idvroom':
-        return importers.idvroom(journeyService, op, file);
-
-      case 'blablalines':
-        return importers.blablalines(journeyService, op, file);
-
-      default:
-        return importers.base(journeyService, op, file);
-    }
+    return importer.exec(journeyService, op, lines);
   },
 
   async process({ safe_journey_id }) {
