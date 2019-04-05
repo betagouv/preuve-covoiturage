@@ -9,12 +9,36 @@
 
   <h3 class="subtitle has-text-centered">Résumé</h3>
 
-  <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
-
+  <div class="p-grid p-justify-center" *ngIf="data.resume">
+    <div class="p-col-12 p-sm-8 p-md-6">
+      <div class="p-grid p-justify-center">
+        <div class="p-col-12 p-sm-6 p-xl-4 " *ngFor="let resumeData of data.resume">
+          <p-card [style]="{ 'padding': '2em', 'min-height': '140px'}" class="resumeCard has-text-centered">
+            <img *ngIf="resumeData.img" src="assets/icons/{{resumeData.img}}" alt="">
+            <h4 class="title">{{resumeData.title}}</h4>
+            <app-stat-number [unit]="resumeData.unit" [number]="resumeData.lastValue"></app-stat-number>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <h3 class="subtitle has-text-centered">Détails</h3>
 
-  <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
-
-
+  <div class="p-grid p-justify-center" *ngIf="data.details">
+    <div class="p-col-12 p-sm-8 p-md-6">
+      <div class="p-grid p-justify-center">
+        <div class="p-col-12 p-xl-6" *ngFor="let detailsData of data.details">
+          <p-card [style]="{ 'padding': '2em'}" class="detailsCard">
+            <div class="titleContainer">
+              <h4>{{detailsData.title}}</h4>
+              <p-selectButton *ngIf="detailsData.cumul" [options]="types" [(ngModel)]="accumulate[detailsData.name]"></p-selectButton>
+            </div>
+            <p-chart *ngIf="!accumulate[detailsData.name]" [type]="detailsData.type" [data]="detailsData" [options]="detailsData.options"></p-chart>
+            <p-chart *ngIf="accumulate[detailsData.name]" [type]="detailsData.type" [data]="accumulatedData[detailsData.name]" [options]="detailsData.options"></p-chart>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

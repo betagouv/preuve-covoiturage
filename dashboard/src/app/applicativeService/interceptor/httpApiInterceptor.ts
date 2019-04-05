@@ -28,28 +28,16 @@ export class HttpApiInterceptor implements HttpInterceptor {
     if (this.APIMETHODS.indexOf(req.method) !== -1) {
       update['url'] = this.api + req.url;
 
-      const globalHeaders = HeaderBag.get([])
-        .reduce(
-          (bag, { name, value }) => {
-            bag[name] = value;
+      const httpHeaders = {};
+      const headers = HeaderBag.get([]);
 
-            return bag;
-          },
-          {},
-        );
+      for (const i in headers) {
+        if (headers.hasOwnProperty(i)) {
+          httpHeaders[headers[i].name] = headers[i].value;
+        }
+      }
 
-      const headers = req.headers
-        .keys()
-        .reduce(
-          (p, c) => {
-            p[c] = req.headers.get(c);
-
-            return p;
-          },
-          globalHeaders,
-        );
-
-      update['headers'] = new HttpHeaders(headers);
+      update['headers'] = new HttpHeaders(httpHeaders);
     }
 
     const clonedRequest: HttpRequest<any> = req.clone(update);

@@ -2,6 +2,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 /* External modules */
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -11,7 +12,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
-import { SplitButtonModule } from 'primeng/splitbutton';
+
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
@@ -21,15 +22,21 @@ import { AomUIModule } from '~/modules/aom/modules/ui/ui.module';
 import { TranslationService } from '~/shared/services/translationService';
 import { TableService } from '~/shared/services/tableService';
 
+
 /* Local modules */
 import { JourneyRoutingModule } from './journey.routing';
 import { JourneyUIModule } from './modules/ui/ui.module';
+
+
 /* Local components */
 import { JourneyListComponent } from './components/list/component';
 import { JourneyListPageComponent } from './pages/list/component';
 import { JourneyFilterComponent } from './components/filter/component';
+
+
 /* Local services */
 import { JourneyService } from './services/journeyService';
+
 
 @NgModule({
   imports: [
@@ -48,7 +55,6 @@ import { JourneyService } from './services/journeyService';
     OperatorUIModule,
     AomUIModule,
     InputTextModule,
-    SplitButtonModule,
   ],
   providers: [
     JourneyService,
@@ -65,5 +71,4 @@ import { JourneyService } from './services/journeyService';
     JourneyUIModule,
   ],
 })
-export class JourneyModule {
-}
+export class JourneyModule { }

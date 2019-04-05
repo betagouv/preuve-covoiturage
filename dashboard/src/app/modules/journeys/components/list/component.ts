@@ -1,7 +1,6 @@
-import { saveAs } from 'file-saver';
 import { Component, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, SortEvent } from 'primeng/api';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { Journey } from '~/entities/database/journey';
@@ -32,8 +31,6 @@ import { JOURNEY_HEADER } from '../../config/header';
 })
 
 export class JourneyListComponent {
-  private filters;
-
   journeys;
   headList = JOURNEY_HEADER.main.journey;
   selectedHeadList = JOURNEY_HEADER.selection.journey;
@@ -47,20 +44,6 @@ export class JourneyListComponent {
   total = 30;
   perPage = 10;
   loading = true;
-
-  exportItems = [{
-    label: 'CSV',
-    icon: 'pi pi-file',
-    command: () => {
-      this.export('csv');
-    },
-  }, {
-    label: 'JSON',
-    icon: 'pi pi-file',
-    command: () => {
-      this.export('json');
-    },
-  }];
 
   @ViewChild('dt') dt;
 
@@ -80,9 +63,9 @@ export class JourneyListComponent {
         this.dt.filter(mainFilters[key]['value'], mainFilters[key]['colName'], mainFilters[key]['filterType']);
       });
 
-    this.filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
+    const filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
 
-    this.get(this.filters);
+    this.get(filters);
   }
 
   private setColumns() {
@@ -101,20 +84,19 @@ export class JourneyListComponent {
     return [a, b];
   }
 
+
   private get(filters: any[any] = []) {
     this.loading = true;
-    this.journeyService
-      .get(filters)
-      .subscribe(
-        (response: ApiResponse) => {
-          this.setTotal(response.meta);
-          this.journeys = response.data;
-          this.loading = false;
-        },
-        (error) => {
-          // FIX: do nothing ?
-        },
-      );
+    this.journeyService.get(filters).subscribe(
+      (response: ApiResponse) => {
+        this.setTotal(response.meta);
+        this.journeys = response.data;
+        this.loading = false;
+      },
+      (error) => {
+        // FIX: do nothing ?
+      },
+    );
   }
 
   getSortableField(field) {
@@ -148,14 +130,6 @@ export class JourneyListComponent {
   loadLazy(event: LazyLoadEvent) {
     const filters = this.journeyService.formatFiltersFromLazyEvent(event);
     this.get(filters);
-  }
-
-  export(type) {
-    this.journeyService
-      .export(type, this.filters)
-      .subscribe((res) => {
-        saveAs(res, `journeys.${type}`);
-      });
   }
 
   delete(root, id) {

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
 
 import { ApiService } from '~/shared/services/apiService';
 
 @Injectable()
-export class JourneyService extends ApiService {
+export class JourneyService extends ApiService{
   public endPoint = '/journeys';
 
   public messages = {
@@ -17,13 +16,9 @@ export class JourneyService extends ApiService {
     return this.post(journey);
   }
 
-  export(type, filters) {
-    return this.get(filters, {
-      headers: new HttpHeaders({
-        Accept: (type === 'csv') ? 'text/csv' : 'application/json',
-      }),
-      responseType: 'blob',
-    });
+  getCsv() {
+    return this.http
+        .get(`${this.endPoint}/download`, { responseType: 'blob' });
   }
 
   listAom() {

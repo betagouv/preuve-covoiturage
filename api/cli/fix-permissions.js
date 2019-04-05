@@ -25,12 +25,10 @@ const User = require('../src/routes/users/model');
     const promises = [];
     const users = await User.find({}).exec();
     users.forEach((user) => {
-      const { _id, email, role, group, permissions } = user.toObject();
+      const { _id, email, role, group, permissions } = user;
       const confPerms = Permissions.getFromRole(group, role);
-      const perms = Object.values(permissions);
-      if (_.difference(confPerms, perms).length !== 0
-        || confPerms.length !== perms.length) {
-        console.log(_id.toString(), email, _.difference(confPerms, perms));
+      if (_.difference(permissions, confPerms).length !== 0) {
+        console.log(_id.toString(), email, _.difference(permissions, confPerms));
 
         promises.push(User.findByIdAndUpdate({
           _id: user._id,

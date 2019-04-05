@@ -1,3 +1,3 @@
 export const JOURNEY_DISTANCE = {
-  max: 100000,
+  max: 50000,
 };

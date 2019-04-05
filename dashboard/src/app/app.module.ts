@@ -26,6 +26,7 @@ import { TableService } from './shared/services/tableService';
 import { DropdownService } from './shared/services/dropdownService';
 /* Local component */
 import { NotDeletedPipe } from './filters/notDeleted/pipe';
+import { IncitationsComponent } from './main/pages/incitations/component';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 // Layout
@@ -55,6 +56,9 @@ import { GraphicModule } from './shared/modules/graphic/graphic.module';
 
     // pipes
     NotDeletedPipe,
+
+    // pages
+    IncitationsComponent,
 
   ],
   imports: [

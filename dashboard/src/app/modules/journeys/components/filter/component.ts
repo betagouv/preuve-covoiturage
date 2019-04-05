@@ -61,12 +61,12 @@ export class JourneyFilterComponent implements OnInit {
   showDayFilter = JOURNEY_MAIN.showDayFilter;
   showTimeFilter = JOURNEY_MAIN.showTimeFilter;
 
-  distanceMax = JOURNEY_DISTANCE.max;
   distanceRange = [];
   distanceTimeout: any;
 
   ages = [];
 
+  aomSelected: object = null;
   aomFiltered: any[] = [];
   aomList: any[] = [];
 
@@ -230,7 +230,6 @@ export class JourneyFilterComponent implements OnInit {
     this.maxTime = '';
     this.classes = [];
     this.operatorIds = [];
-    this.aomIds = [];
     this.ages = [];
   }
 

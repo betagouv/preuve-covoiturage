@@ -25,9 +25,9 @@ export class ApiService {
   /**
    * filters is Array of [ [ key, value, comparaison ] ]
    */
-  get(filters:any[any] = [], options = {}): any {
+  get(filters:any[any] = []): any {
     const params = this.getUrlParams(filters);
-    return this.http.get(`${this.endPoint}${params}`, options);
+    return this.http.get(`${this.endPoint}${params}`);
   }
 
   post(item: any): Observable<any> {

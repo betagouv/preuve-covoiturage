@@ -17,3 +17,31 @@
   color: #c8c8c8;
 }
 
+.card {
+  padding: 2em;
+}
+
+.resumeCard {
+  img {
+    max-width: 50px;
+    height: 50px;
+  }
+
+  .title {
+    color: #848484;
+  }
+}
+
+.detailsCard {
+  .titleContainer {
+    height: 85px;
+
+    h4 {
+      margin-top: 0;
+    }
+  }
+
+  p-selectButton {
+    float: right;
+  }
+}

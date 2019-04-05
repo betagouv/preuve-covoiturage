@@ -12,8 +12,4 @@ export class AomService extends ApiService{
     deleted: 'L\'AOM a bien été supprimé.',
     updated: 'L\'AOM a bien été mis à jour',
   };
-
-  getStats(aomId:string) {
-    return this.http.get(`${this.endPoint}/${aomId}/stats`);
-  }
 }

@@ -1,4 +1,4 @@
-<div class="app-journeys-filters__wrapper">
+<div class="main__container app-journeys-filters__wrapper">
   <p-card>
 
     <!--Header -->
@@ -54,6 +54,14 @@
       </div>
     </div>
 
+    <!-- Filter by AOM -->
+    <div *ngIf="hasAnyGroup(['registry'])">
+      <h3>AOM</h3>
+      <app-aom-multiple-dropdown
+          (aomIdsChange)="onAomChange($event)">
+      </app-aom-multiple-dropdown>
+    </div>
+
     <!-- More filters -->
     <div *ngIf="showMoreFilters" class="p-grid">
       <div class="p-col-4">
@@ -79,25 +87,12 @@
             <div class="p-grid p-justify-center">
               <div class="p-col-10">
                 <p-slider [(ngModel)]="distanceRange" [step]="1000" [style]="{'width':'100%'}" [range]="true"
-                          (onChange)="onDistanceChange($event)" [min]="0" [max]="distanceMax"></p-slider>
+                          (onChange)="onDistanceChange($event)" [min]="0" [max]="50000"></p-slider>
                 <br>
                 <p class="has-text-centered"> {{distanceRange[0] ? distanceRange[0] / 1000 : 0}}
                   - {{distanceRange[1] ? distanceRange[1] / 1000 : '&#8734;'}} km </p>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Filter by AOM -->
-      <div class="p-col-4" *ngIf="hasAnyGroup(['registry'])">
-        <div class="p-grid">
-          <div class="p-col-12 has-text-centered">
-            <p class="filter-label">Aoms</p>
-            <app-aom-multiple-dropdown
-                [aomIds]="aomIds"
-                (aomIdsChange)="onAomChange($event)">
-            </app-aom-multiple-dropdown>
           </div>
         </div>
       </div>
@@ -129,9 +124,10 @@
       </div>
       <div class="p-col-4" *ngIf="hasAnyGroup(['registry', 'aom'])">
         <div class="p-grid">
-          <div class="p-col-12 has-text-centered">
-            <p class="filter-label">Opérateurs</p>
+          <div class="p-col-12">
+            <p class="filter-label has-text-centered">Opérateurs</p>
             <app-operator-multiple-dropdown
+                [style]="{ 'width': '100%'}"
                 [operatorIds]="operatorIds"
                 (operatorIdsChange)="onOperatorChange($event)">
             </app-operator-multiple-dropdown>
