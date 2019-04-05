@@ -1,0 +1,46 @@
+<nav class="navbar navbar is-fixed-top is-light" role="navigation" >
+  <div class="navbar-brand">
+    <a class="navbar-item" routerLink="/dashboard/home">
+      <img class="navbar__logo" src="assets/icons/logo-marianne.svg"
+           alt="template.beta.gouv.fr" width="60"/>
+    </a>
+    <a class="navbar-item" routerLink="/dashboard/home">
+      <img src="assets/icons/betagouvfr.png" class="navbar__gouvfr" alt="beta.gouv.fr" />
+    </a>
+    <a role="button"  [ngClass]="{ 'is-active': navbarBurgerActive}" class="navbar-burger burger" (click)="toggleMobileNav()" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div id="navbarBasicExample"  [ngClass]="{ 'is-active': navbarMenuActive}" class="navbar-menu">
+    <div class="navbar-end">
+      <div *ngIf="hasAnyGroup(['aom', 'registry', 'operators'])" class="navbar-item has-dropdown is-hoverable">
+        <a class="is-hidden-touch navbar-link is-hoverable is-arrowless">
+          <span class="is-hidden-touch icon is-small">
+              <fa-icon icon="bars"></fa-icon>
+          </span>
+          <span class="is-hidden-desktop">
+              Paramètres
+          </span>
+        </a>
+        <div class="navbar-dropdown is-right">
+          <a class="navbar-item"  routerLinkActive="is-active" routerLink="/dashboard/profil">
+            Profil
+          </a>
+          <a class="navbar-item"  *ngIf="hasAnyGroup(['aom'])" routerLinkActive="is-active" routerLink="/dashboard/aom">
+            Aom
+          </a>
+          <a class="navbar-item"  *ngIf="hasAnyGroup(['operators'])" routerLinkActive="is-active" routerLink="/dashboard/operator">
+            Opérateur
+          </a>
+          <a class="navbar-item" (click)="logOut()">
+            Se déconnecter
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</nav>
+

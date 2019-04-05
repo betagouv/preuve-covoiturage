@@ -1,0 +1,29 @@
+
+.hero {
+  &__container {
+    margin-top: 0rem;
+    padding: 0 0.75rem;
+  }
+  &__left {
+    background-color: #e8e8e8;
+    @media (min-width: 768px) {
+      min-height: calc(100vh - 3.25rem);
+      //border-right: 1px solid #999;
+
+    }
+  }
+  &__right {
+    overflow-y: hidden;
+  }
+}
+
+.right-column{
+  background-color: #eeeeee;
+  //border-left: 1px solid #999;
+  min-height: calc(100vh - 3.25rem);
+}
+
+.column-header{
+  padding-bottom: 1rem;
+}
+

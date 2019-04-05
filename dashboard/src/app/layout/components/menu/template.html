@@ -1,0 +1,34 @@
+<aside class="menu">
+  <p class="menu-label">
+    General
+  </p>
+  <ul class="menu-list">
+    <li><a routerLink="/dashboard/journeys" routerLinkActive="is-active">Trajets</a></li>
+    <li *ngIf="hasAnyGroup(['operators'])"><a routerLink="/dashboard/incitations" routerLinkActive="is-active">Incitations</a></li>
+  </ul>
+  <p class="menu-label" *ngIf="hasAnyGroup(['operators', 'registry'])">
+    Administration
+  </p>
+  <ul class="menu-list">
+    <li>
+      <a *ngIf="hasAnyGroup(['operators'])" routerLink="/admin/tokens" routerLinkActive="is-active"  >
+        <span>Tokens</span>
+      </a>
+    </li>
+    <li>
+      <a *ngIf="hasAnyGroup(['registry'])" routerLinkActive="is-active" routerLink="/admin/users">
+        <span>Utilisateurs</span>
+      </a>
+    </li>
+    <li>
+      <a *ngIf="hasAnyGroup(['registry'])" routerLinkActive="is-active" routerLink="/admin/operators">
+        <span>Opérateurs</span>
+      </a>
+    </li>
+    <li>
+      <a *ngIf="hasAnyGroup(['registry'])" routerLinkActive="is-active" routerLink="/admin/aoms">
+        <span>AOMs</span>
+      </a>
+    </li>
+  </ul>
+</aside>

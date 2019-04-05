@@ -1,0 +1,7 @@
+<div *ngIf="operatorId">
+  <p>Upload des trajets de covoiturage au format CSV</p>
+  <br>
+  <p-fileUpload multiple="multiple" name="csv" [url]="journeysEndPoint + '/import'" chooseLabel="ajouter" uploadLabel="uploader" cancelLabel="annuler" accept=".csv" showUploadButton="true" showCancelButton="true" maxFileSize="1000000"
+               (onError)="onError($event)" (onUpload)="onUpload($event)"   (onBeforeSend)="beforeSend($event)"  (onBeforeUpload)="beforeUpload($event)" ></p-fileUpload>
+
+</div>

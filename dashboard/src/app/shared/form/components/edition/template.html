@@ -1,0 +1,25 @@
+<!--<span *ngIf="!showInput">{{_inputValue}}</span>-->
+
+<form class="is-flex" (ngSubmit)="onSubmit()" [formGroup]="form">
+
+  <app-input *ngFor="let input of inputGroups[0].inputs" [fgn]="inputGroups[0]['key']" [form]="form" [input]="input"
+             [submitted]="submitted" [inputClass]="'is-static'" (blur)="onSubmit()" style="width:100%"></app-input>
+  <!--<span>
+    <button type="submit" [disabled]="!form.valid"
+            class="button is-small is-white">
+        <fa-icon icon="save"></fa-icon>
+    </button>
+  </span>
+  <span class="button is-small is-white" (click)="showInput = !showInput">
+      <fa-icon icon="times"></fa-icon>
+  </span>-->
+
+</form>
+
+<!--<span *ngIf="!showInput" (click)="showInput = !showInput" class="button is-small is-white" >
+    <fa-icon icon="pen"></fa-icon>
+</span>-->
+
+
+
+

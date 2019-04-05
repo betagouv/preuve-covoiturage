@@ -1,0 +1,137 @@
+<p-card>
+
+  <h2 class="title is-6">Filtres</h2>
+  <div class="p-grid">
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <p>Date départ min</p>
+          <p-calendar [inputStyle]="{'width':'100%'}" [locale]="fr" dateFormat="dd/mm/yy" [defaultDate]="defaultMinDate"
+                      [(ngModel)]="minDate" (onSelect)="onDateChange()"></p-calendar>
+        </div>
+        <div class="p-col-6">
+          <p>Date départ max</p>
+          <p-calendar [inputStyle]="{'width':'100%'}" [locale]="fr" dateFormat="dd/mm/yy" [defaultDate]="defaultMaxDate"
+                      [(ngModel)]="maxDate" (onSelect)="onDateChange()"></p-calendar>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-4" *ngIf="showTimeFilter">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <p>Heure min</p>
+          <p-calendar [inputStyle]="{'width':'100%'}" [timeOnly]="true" [stepMinute]='60'
+                      [defaultDate]="defaultHourDate" [(ngModel)]="minTime" (onSelect)="onTimeChange()"></p-calendar>
+        </div>
+        <div class="p-col-6">
+          <p>Heure max</p>
+          <p-calendar [inputStyle]="{'width':'100%'}" [timeOnly]="true" [stepMinute]='60'
+                      [defaultDate]="defaultHourDate" [(ngModel)]="maxTime" (onSelect)="onTimeChange()"></p-calendar>
+        </div>
+
+      </div>
+    </div>
+    <div class="p-col-4" *ngIf="showDayFilter">
+      <p>Jour</p>
+      <p-multiSelect (onChange)="onDayChange()" [options]="days" defaultLabel="Selection" [filter]="false"
+                     [displaySelectedLabel]="false" [(ngModel)]="selectedDays"
+                     [panelStyle]="{minWidth:'12em'}"></p-multiSelect>
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <p>Insee départ</p>
+          <input class="input" style="width: 12rem" pInputText type="text" (input)="filterText($event, 'passenger.start.insee')"
+                 [value]="dt.filters['passenger.start.insee'] ? dt.filters['passenger.start.insee'].value : ''">
+        </div>
+        <div class="p-col-6">
+          <p>Insee arrivée</p>
+          <input class="input" style="width: 12rem" pInputText type="text" (input)="filterText($event, 'passenger.end.insee')"
+                 [value]="dt.filters['passenger.end.insee'] ? dt.filters['passenger.end.insee'].value : ''">
+        </div>
+      </div>
+    </div>
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <p>Distance</p>
+          <div class="p-grid p-justify-center">
+            <div class="p-col-10">
+              <p class="has-text-centered"> {{distanceRange[0] ? distanceRange[0] / 1000 : 0}}
+                - {{distanceRange[1] ? distanceRange[1] / 1000 : '&#8734;'}} km </p>
+              <p-slider [(ngModel)]="distanceRange" [step]="1000" [style]="{'width':'100%'}" [range]="true"
+                        (onChange)="onDistanceChange($event)" [min]="0" [max]="50000"></p-slider>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <p>Classes</p>
+          <div class="p-grid">
+            <div class="p-col-2">
+              <p-checkbox name="class" label="A" value="A" [(ngModel)]="classes"
+                          (onChange)="onClassChange()"></p-checkbox>
+            </div>
+            <div class="p-col-2">
+              <p-checkbox name="class" label="B" value="B" [(ngModel)]="classes"
+                          (onChange)="onClassChange()"></p-checkbox>
+            </div>
+            <div class="p-col-2">
+              <p-checkbox name="class" label="C" value="C" [(ngModel)]="classes"
+                          (onChange)="onClassChange()"></p-checkbox>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <p>Opérateurs</p>
+          <app-operator-multiple-dropdown [operatorIds]="operatorIds"
+                                          (operatorIdsChange)="onOperatorChange($event)"></app-operator-multiple-dropdown>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-4">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <p>Age des passagers</p>
+          <div class="p-grid">
+            <div class="p-col-3">
+              <p-checkbox name="age" label="Majeur" value="true" [(ngModel)]="ages"
+                          (onChange)="onAgeChange()"></p-checkbox>
+            </div>
+            <div class="p-col-3">
+              <p-checkbox name="age" label="Mineur" value="false" [(ngModel)]="ages"
+                          (onChange)="onAgeChange()"></p-checkbox>
+            </div>
+            <div class="p-col-3">
+              <p-checkbox name="age" label="Non communiqué" value="nc" [(ngModel)]="ages"
+                          (onChange)="onAgeChange()"></p-checkbox>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <br>
+
+  <p-button [label]="'Filter'" (onClick)="apply()"></p-button>
+  &nbsp;
+  <p-button [label]="'Réinitialiser'" (onClick)="reset()"></p-button>
+
+
+</p-card>
+

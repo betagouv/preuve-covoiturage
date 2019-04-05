@@ -1,0 +1,10 @@
+<p-autoComplete
+  [suggestions]="filteredAoms"
+  [(ngModel)]="aom"
+  [dropdown]="true"
+  (completeMethod)="filter($event)"
+  [forceSelection]="true"
+  field="value"
+  (onSelect)="onSelect($event)"
+  >
+</p-autoComplete>

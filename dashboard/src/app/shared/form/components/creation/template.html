@@ -1,0 +1,31 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+
+  <div class="tile is-vertical">
+    <article class="tile is-child">
+        <div *ngFor="let inputGroup of inputGroups" >
+          <p *ngIf="inputGroup.title" class="title is-6 has-text-grey has-text-centered">
+            {{inputGroup.title}}
+          </p>
+            <app-input *ngFor="let input of inputGroup.inputs" [fgn]="inputGroup['key']" [form]="form" [input]="input" [submitted]="submitted"></app-input>
+
+        </div>
+    </article>
+
+
+    <article>
+      <div class="field">
+        <p class="control" style="text-align: center">
+          <button type="submit" [disabled]="!form.valid || loading" [ngClass]="{'is-loading' : loading}"
+          class="button is-success">
+          Envoyer
+          </button>
+        </p>
+      </div>
+    </article>
+  </div>
+
+</form>
+
+
+
+

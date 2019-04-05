@@ -1,0 +1,38 @@
+.column{
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+.box{
+  margin-bottom: 0px;
+  margin: 5px;
+}
+
+.preuveNumber{
+  font-weight: bold;
+}
+
+section {
+  table{
+    table-layout: fixed;
+  }
+  & > table {
+    margin: auto;
+  }
+}
+
+
+.table th{
+  vertical-align: middle;
+}
+
+tbody{
+  background-color: #f9f9f9;
+  border: 1px solid #e2e2e2;
+}
+
+tr{
+  width: 100%;
+  border-bottom: 1px solid #dadada;
+}

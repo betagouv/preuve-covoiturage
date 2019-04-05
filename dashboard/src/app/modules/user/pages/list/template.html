@@ -1,0 +1,57 @@
+<!--Liste des utilisateurs -->
+
+<section class="section">
+    <h1 class="has-text-centered title is-3">Liste des utilisateurs</h1>
+
+    <p-table #dt [columns]="selectedColumns" [value]="users" dataKey="_id" [paginator]="true" [rows]="perPage"  [resizableColumns]="true" [lazy]="true" (onLazyLoad)="loadLazy($event)" [totalRecords]="total" [loading]="loading">
+      <ng-template pTemplate="caption">
+        <div style="display: flex; justify-content: space-between;">
+          <div class="is-pulled-left">
+            <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="header"
+                           selectedItemsLabel="{0} colonnes sélectionnées" [style]="{minWidth: '200px'}"
+                          defaultLabel="Sélectionner des colonnes"></p-multiSelect>
+          </div>
+          <div class="is-pulled-right">
+            <button class="button" (click)="create()">Ajouter un utilisateur</button>
+          </div>
+        </div>
+
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.field" pResizableColumn>
+        <span>
+        {{col.header}}
+        </span>
+            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+          </th>
+          <th></th>
+        </tr>
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field" style="overflow: inherit">
+            <input class="input" *ngSwitchDefault pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+            <p-multiSelect *ngSwitchCase="'group'" [options]="groups" defaultLabel="Tous" (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+            <p-multiSelect *ngSwitchCase="'role'" [options]="roles" defaultLabel="Tous" (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns" class="ui-resizable-column">
+            <div class="is-ellipsis" title="{{getValue(rowData, col.field)}}">{{getValue(rowData, col.field)}}</div>
+          </td>
+          <td>
+            <span *ngIf="hasPermission('user.update')" class="button is-small is-white" (click)="edit(rowData)">
+                    <fa-icon title="éditer" icon="pencil-alt"></fa-icon>
+            </span>
+            <span *ngIf="hasPermission('user.delete')" (click)="delete(rowData)"
+                  class="button is-small is-white">
+              <fa-icon title="supprimer" icon="trash-alt"></fa-icon>
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+</section>

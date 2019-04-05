@@ -1,0 +1,155 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-12 p-md-10">
+    <div class="p-grid">
+      <div class="p-col-12 p-md-4">
+        <label class="has-text-grey">Nom</label>
+      </div>
+      <div class="p-col-12 p-md-8">
+        <p>{{aom.shortname}}</p>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <label class="has-text-grey">Nom complet</label>
+      </div>
+      <div class="p-col-12 p-md-8">
+        <p>{{aom.name}}</p>
+      </div>
+
+      <div class="p-col-12">
+        <p-fieldset legend="Contacts">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Téléphone</label>
+            </div>
+
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.contacts.phone}}</p>
+            </div>
+
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Email</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.contacts.email}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="p-col-12">
+        <p-fieldset legend="Structure">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Siren</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.company.siren}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Naf établissement</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.company.naf_etablissement}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Naf entreprise</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.company.naf_entreprise}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Nature juridique</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.company.nature_juridique}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Clé nic</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.company.cle_nic}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">RNA</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.company.rna}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">N° TVA intracommunautaire</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.company.vat_intra}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="p-col-12">
+        <p-fieldset legend="Adresse">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Rue</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.address.street}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Code Postal</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.address.postcode}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Cedex</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.address.cedex}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Ville</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.address.city}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Pays</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.address.country}}</p>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+
+      <div class="p-col-12">
+        <p-fieldset legend="Insee">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Code INSEE principal</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <p>{{aom.insee_main}}</p>
+            </div>
+
+            <div class="p-col-12 p-md-4">
+              <label class="has-text-grey">Codes INSEE</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+              <span *ngFor="let insee of aom.insee; let i = index">{{insee}}<span
+                  *ngIf="i !== aom.insee.length - 1">, </span></span>
+            </div>
+          </div>
+        </p-fieldset>
+      </div>
+
+    </div>
+  </div>
+</div>
+<br>
+<div class="p-grid p-justify-center" *ngIf="hasRole('admin')">
+  <p-button label="Modifier" (click)="edit(aom)"></p-button>
+</div>
+
+
+
+
+
+

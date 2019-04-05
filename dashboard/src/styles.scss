@@ -1,0 +1,70 @@
+/* You can add global styles to this file, and also import other style files */
+
+@font-face {
+  font-family: "SourceSansPro";
+  src: url("assets/fonts/SourceSansPro/SourceSansPro-Regular.otf") format('opentype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "SourceSansPro";
+  src: url("assets/fonts/SourceSansPro/SourceSansPro-Bold.otf") format('opentype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "SourceSansPro";
+  src: url("assets/fonts/SourceSansPro/SourceSansPro-It.otf") format('opentype');
+  font-style: italic;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Evolventa";
+  src: url("assets/fonts/Evolventa/Evolventa-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Evolventa";
+  src: url("assets/fonts/Evolventa/Evolventa-Bold.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@import 'assets/scss/variables';
+@import 'assets/scss/font-awesome';
+@import 'assets/scss/bulma';
+@import 'assets/scss/loader';
+@import "~primeicons/primeicons.css";
+@import "~primeng/resources/themes/nova-light/theme.css";
+@import "~primeng/resources/primeng.min.css";
+@import "~primeflex/primeflex.scss";
+
+html {
+  background-color: #fdfdfd;
+}
+
+body {
+  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Evolventa", "Trebuchet MS", sans-serif;
+}
+
+.is-ellipsis{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.button.is-white{
+  background-color: transparent;
+}

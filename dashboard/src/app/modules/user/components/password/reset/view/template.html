@@ -1,0 +1,14 @@
+<div class="field is-horizontal">
+  <div class="field-label">
+    <label class="label">Mot de passe</label>
+  </div>
+  <div class="field-body">
+    <div class="field">
+      <button class="button" (click)="showPwdResetModal = true">
+        Modifier mon mot de passe.
+      </button>
+    </div>
+  </div>
+</div>
+<app-pwd-reset-dialog [showModal]="showPwdResetModal" (answer)="showPwdResetModal = false"></app-pwd-reset-dialog>
+

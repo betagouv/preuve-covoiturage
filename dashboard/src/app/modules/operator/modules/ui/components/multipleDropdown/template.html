@@ -1,0 +1,12 @@
+<p-autoComplete
+  [suggestions]="filteredOperators"
+  [(ngModel)]="selectedOperators"
+  (completeMethod)="filter($event)"
+  field="value"
+  (onSelect)="onSelect()"
+  (onUnselect)="unSelect()"
+  [multiple]="true"
+  [dropdown]="true"
+>
+</p-autoComplete>
+

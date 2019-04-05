@@ -1,0 +1,47 @@
+<!--Liste des tokens -->
+<section class="section" *ngIf="tokens.length > 0" style="overflow-x: auto;">
+  <h1 class="has-text-centered title is-4">Liste des tokens</h1>
+
+  <table class="table is-striped">
+    <thead>
+    <tr style="border: none;">
+      <th>
+        <app-token-creation (return)="get()"></app-token-creation>
+      </th>
+    </tr>
+    <tr>
+      <th *ngFor="let head of headList">
+        <span>{{getKey(head)}}</span>
+      </th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let token of tokens">
+      <td *ngFor="let head of headList">
+        <span>{{getValue(token, head)}}</span>
+      </td>
+      <td>
+          <span *ngIf="hasPermission('operator.app.delete')" (click)="delete(token)"
+                class="button icon">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="has-text-centered" *ngIf="!loading && tokens.length === 0">
+  <br>
+  <br>
+  <div class="columns">
+    <div class="column is-half is-offset-one-quarter">
+      <p>
+        Créer votre premier Token
+      </p>
+      <br>
+      <app-token-creation (return)="get()"></app-token-creation>
+    </div>
+  </div>
+</section>
