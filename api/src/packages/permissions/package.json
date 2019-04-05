@@ -1,0 +1,21 @@
+{
+  "name": "@pdc/permissions",
+  "version": "1.0.0",
+  "description": "Permissions util",
+  "main": "permissions.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pdc",
+    "permissions"
+  ],
+  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
+  "license": "AGPL-3.0",
+  "eslintConfig": {
+    "rules": {
+      "import/no-extraneous-dependencies": "off"
+    }
+  }
+}

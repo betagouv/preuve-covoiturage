@@ -1,0 +1,3 @@
+web: node src/app.js
+worker: MQ_WORKER=true node src/worker.js
+postdeploy: yarn migrate && yarn seed && yarn fix-permissions

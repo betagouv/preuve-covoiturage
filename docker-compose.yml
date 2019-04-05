@@ -22,7 +22,7 @@ services:
   api:
     build: "./docker/api"
     volumes:
-      - ./back-api:/code
+      - ./api:/code
     working_dir: "/code"
     command: "nodemon --inspect=0.0.0.0:9229"
     ports:
@@ -47,7 +47,7 @@ services:
   worker:
     build: "./docker/api"
     volumes:
-      - ./back-api:/code
+      - ./api:/code
     working_dir: "/code"
     command: "nodemon --inspect=0.0.0.0:9229 src/worker.js"
     ports:
