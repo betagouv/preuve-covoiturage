@@ -20,7 +20,7 @@ jobs:
       REDIS_URL: redis://127.0.0.1:6379
 
     steps:
-      - checkout;
+      - checkout:
         path: ~/repo/api
 
       - restore_cache:
