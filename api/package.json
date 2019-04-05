@@ -1,6 +1,6 @@
 {
   "name": "@pdc/preuve-covoiturage",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Preuve de Covoiturage",
   "main": "src/app.js",
   "scripts": {
