@@ -24,6 +24,7 @@ import { TableService } from '~/shared/services/tableService';
 
 
 
+
 /* Local modules */
 import { JourneyRoutingModule } from './journey.routing';
 import { JourneyUIModule } from './modules/ui/ui.module';
