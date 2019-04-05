@@ -10,7 +10,7 @@ jobs:
       - image: circleci/mongo:4.0
       - image: circleci/redis:4
 
-    working_directory: ~/repo/api
+    working_directory: ~/repo/
 
     parallelism: 1
 
