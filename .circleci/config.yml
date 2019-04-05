@@ -10,7 +10,7 @@ jobs:
       - image: circleci/mongo:4.0
       - image: circleci/redis:4
 
-    working_directory: ~/repo/
+    working_directory: ~/repo/api
 
     parallelism: 1
 
@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - checkout:
-          path: ~/repo/api
+          path: ~/repo
 
       - restore_cache:
           keys:
