@@ -3,8 +3,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { Meta } from '~/entities/responses/meta';
-import { TableService } from '~/services/tableService';
-import { TranslationService } from '~/services/translationService';
+import { TableService } from '~/shared/services/tableService';
+import { TranslationService } from '~/shared/services/translationService';
 import { IncentiveCampaign } from '~/entities/database/Incentive/incentiveCampaign';
 
 import { INCENTIVE_HEADERS } from '../../../config/header';

@@ -11,7 +11,6 @@ import { AuthLayoutMainComponent } from './layout/main/component';
 const routes: Routes = [
   {
     path: '', component: AuthLayoutMainComponent, children: [
-      { path: '', redirectTo: '/signin', pathMatch: 'full' }, // todo: this should redirect to dashboard when ping is reinstated
       { path: 'signin', component: AuthPageSigninComponent },
       { path: 'reset-password/:reset/:token', component: AuthPageNewPasswordComponent },
       { path: 'forgotten-password', component: AuthPageForgottenPasswordComponent },

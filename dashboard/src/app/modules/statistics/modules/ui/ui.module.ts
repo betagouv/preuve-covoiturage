@@ -5,9 +5,10 @@ import { CardModule } from 'primeng/card';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
 
-import { StatisticsResumeComponent } from '~/modules/statistics/modules/ui/components/resume/component';
-import { StatisticsGraphsComponent } from '~/modules/statistics/modules/ui/components/graphs/component';
-import { StatisticsNumberComponent } from '~/modules/statistics/modules/ui/components/number/component';
+import { StatisticsResumeComponent } from './components/resume/component';
+import { StatisticsGraphsComponent } from './components/graphs/component';
+import { StatisticsNumberComponent } from './components/number/component';
+import { StatisticsService } from '../../services/statisticsService';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { StatisticsNumberComponent } from '~/modules/statistics/modules/ui/compo
     FormsModule,
   ],
   providers: [
+    StatisticsService,
   ],
   declarations: [
     StatisticsResumeComponent,

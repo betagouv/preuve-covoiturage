@@ -98,7 +98,7 @@ export class IncentivePoliciesCreatePageComponent implements OnInit {
           (response) => {
             this.loading = false;
             this.reset();
-            this.router.navigate(['/dashboard/incentive-policies']);
+            this.router.navigate(['/dashboard/incentives/policies']);
           },
           () => {
             this.loading = false;

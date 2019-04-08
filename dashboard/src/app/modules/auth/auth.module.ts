@@ -8,10 +8,8 @@ import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
 
-
 /* Shared modules */
-import { FormModule } from '~/shared/form/form.module';
-
+import { FormModule } from '~/shared/modules/form/form.module';
 
 import { AuthHeaderComponent } from './layout/components/header/component';
 import { AuthPageSigninComponent } from './pages/signin/component';

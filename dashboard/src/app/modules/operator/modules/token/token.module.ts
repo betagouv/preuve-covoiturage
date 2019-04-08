@@ -9,7 +9,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 
 /* Shared modules */
-import { GraphicModule } from '~/shared/graphic/graphic.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 
 /* Local components */
 import { OperatorCopyComponent } from './components/copy/component';

@@ -4,8 +4,8 @@ import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Company, Aom, Address } from '~/entities/database/aom';
 import { regexp } from '~/entities/validators';
 
-import { AddressForm } from '~/shared/form/components/address/form';
-import { CompanyForm } from '~/shared/form/components/company/form';
+import { AddressForm } from '~/shared/modules/form/components/address/form';
+import { CompanyForm } from '~/shared/modules/form/components/company/form';
 
 @Component({
   selector: 'app-aom-form',

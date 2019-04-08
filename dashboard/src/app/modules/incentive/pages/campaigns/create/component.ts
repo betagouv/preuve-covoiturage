@@ -232,7 +232,7 @@ export class IncentiveCampaignsCreatePageComponent {
         (response) => {
           this.loading = false;
           this.reset();
-          this.router.navigate(['/dashboard/incentive-campaigns']);
+          this.router.navigate(['/dashboard/incentives/campaigns']);
         },
         () => {
           this.loading = false;

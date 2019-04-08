@@ -133,11 +133,11 @@ export class AuthenticationService {
     if (user.company && user.company.name) {
       switch (user.group) {
         case 'operators' :
-          user.company.link = '/dashboard/operator';
+          user.company.link = '/dashboard/operators/settings';
           user.company.icon = 'tablet';
           break;
         case 'aom' :
-          user.company.link = '/dashboard/aom';
+          user.company.link = '/dashboard/aoms/settings';
           user.company.icon = 'home';
           break;
         default:

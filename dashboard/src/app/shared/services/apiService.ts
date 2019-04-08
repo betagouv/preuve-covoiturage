@@ -8,12 +8,11 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
 
 @Injectable()
 export class ApiService {
-  private filters = {};
   public http: HttpClient;
   public messageService: MessageService;
   public endPoint: string;
   public messages = {
-    created: 'La resource a bien été crée.',
+    created: 'La resource a bien été créée.',
     deleted: 'La resource a bien été supprimée.',
     updated: 'La resource a bien été mise à jour',
   };

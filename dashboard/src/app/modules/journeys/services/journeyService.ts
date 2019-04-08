@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 
-import { ApiService } from '~/services/apiService';
+import { ApiService } from '~/shared/services/apiService';
 
 @Injectable()
 export class JourneyService extends ApiService {

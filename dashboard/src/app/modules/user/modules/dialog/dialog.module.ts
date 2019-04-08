@@ -15,13 +15,13 @@ import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/ap
 
 /* Shared modules */
 import { AomUIModule } from '~/modules/aom/modules/ui/ui.module';
-import { FormModule } from '~/shared/form/form.module';
-import { GraphicModule } from '~/shared/graphic/graphic.module';
+import { FormModule } from '~/shared/modules/form/form.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 import { OperatorUIModule } from '~/modules/operator/modules/operators/ui/ui.module';
 /* Other services */
 import { OperatorService } from '~/modules/operator/services/operatorService';
 import { AomService } from '~/modules/aom/services/aomService';
-import { DropdownService } from '~/services/dropdownService';
+import { DropdownService } from '~/shared/services/dropdownService';
 
 /* Local components */
 import { UserFormComponent } from './components/form/component';

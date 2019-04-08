@@ -5,8 +5,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { IncentivePolicy } from '~/entities/database/Incentive/incentivePolicy';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { Meta } from '~/entities/responses/meta';
-import { TableService } from '~/services/tableService';
-import { TranslationService } from '~/services/translationService';
+import { TableService } from '~/shared/services/tableService';
+import { TranslationService } from '~/shared/services/translationService';
 
 import { INCENTIVE_HEADERS } from '../../../config/header';
 import { IncentivePolicyService } from '../../../services/incentivePolicyService';

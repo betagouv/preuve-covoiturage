@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ApiService } from '~/services/apiService';
+import { ApiService } from '~/shared/services/apiService';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { IncentiveParameter } from '~/entities/database/Incentive/incentiveParameter';
 

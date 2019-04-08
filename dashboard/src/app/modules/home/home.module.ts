@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 /* External modules */
 
 /* Shared modules */
-import { GraphicModule } from '~/shared/graphic/graphic.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 
 /* Local modules */
 import { HomeRoutingModule } from './home.routing';

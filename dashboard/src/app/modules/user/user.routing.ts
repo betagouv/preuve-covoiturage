@@ -1,36 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { AuthGuard } from '~/applicativeService/authguard/service';
-import { LayoutComponent } from '~/layout/main/component';
-
 import { UserListComponent } from './pages/list/component';
 import { UserSettingsComponent } from './pages/settings/component';
 
 const routes: Routes = [
   {
-    path: 'admin/users',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    children: [
-      {
-        path: '',
-        component: UserListComponent,
-        data: { groups: ['registry'] },
-      },
-    ],
+    path: 'admin',
+    component: UserListComponent,
+    data: { groups: ['registry'] },
   },
   {
-    path: 'dashboard/profile',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    children: [
-      {
-        path : '',
-        component: UserSettingsComponent,
-        data: { groups: ['users'] },
-      },
-    ],
+    path : 'settings',
+    component: UserSettingsComponent,
+    data: { groups: ['users'] },
   },
 ];
 

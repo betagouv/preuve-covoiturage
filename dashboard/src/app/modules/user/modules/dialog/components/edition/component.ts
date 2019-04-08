@@ -5,7 +5,7 @@ import {
 } from 'primeng/api';
 
 
-import { TranslationService } from '~/services/translationService';
+import { TranslationService } from '~/shared/services/translationService';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { User } from '~/entities/database/user/user';
 
