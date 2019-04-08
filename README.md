@@ -30,8 +30,10 @@ l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 4. `docker-compose build`
 5. `docker-compose run api yarn`
 6. `docker-compose run dashboard yarn`
-7. `docker-compose run api yarn migrate`
-8. `docker-compose run api yarn seed`
+7. `docker-compose run worker yarn`
+8. `docker-compose run api yarn migrate`
+9. `docker-compose run api yarn seed`
+`
 
 ### Run the stack
 
