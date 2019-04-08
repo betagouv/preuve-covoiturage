@@ -14,7 +14,6 @@
     "mig:up": "cd .. && docker-compose exec api npx migrate-mongo up",
     "mig:down": "cd .. && docker-compose exec api npx migrate-mongo down",
     "mig:status": "cd .. && docker-compose exec api npx migrate-mongo status",
-    "precommit": "yarn lint",
     "seed": "node cli/seed.js",
     "process": "node cli/process-safe-journey.js",
     "process-trip": "node cli/process-trip.js",
@@ -81,7 +80,6 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "git-pre-commit": "^2.1",
     "mocha": "^6.0"
   },
   "eslintConfig": {
