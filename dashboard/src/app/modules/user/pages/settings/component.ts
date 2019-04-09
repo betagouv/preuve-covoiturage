@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { User } from '~/entities/database/user/user';
 import { PROFIL_DATA } from '~/config/user/profilData';
-import { TranslationService } from '~/services/translationService';
+import { TranslationService } from '~/shared/services/translationService';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { EditResponse } from '~/entities/responses/editResponse';
 

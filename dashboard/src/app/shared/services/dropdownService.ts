@@ -6,8 +6,8 @@ import { OperatorService } from '~/modules/operator/services/operatorService';
 import { AomService } from '~/modules/aom/services/aomService';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 
-import { GROUPS } from '../config/groups';
-import { ROLES } from '../config/roles';
+import { GROUPS } from '../../config/groups';
+import { ROLES } from '../../config/roles';
 
 
 /*

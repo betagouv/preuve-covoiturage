@@ -8,7 +8,7 @@ import { MessageModule } from 'primeng/message';
 import { InputMaskModule } from 'primeng/inputmask';
 import { ButtonModule } from 'primeng/button';
 
-import { GraphicModule } from '~/shared/graphic/graphic.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 
 import { AddressFormComponent } from './components/address/component';
 import { BankFormComponent } from './components/bank/component';

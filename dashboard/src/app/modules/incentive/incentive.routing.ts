@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { AuthGuard } from '~/applicativeService/authguard/service';
-import { LayoutComponent } from '~/layout/main/component';
 import { IncentiveCampaignsListPageComponent } from '~/modules/incentive/pages/campaigns/list/component';
 
 import { IncentivePoliciesCreatePageComponent } from './pages/policies/create/component';
@@ -11,36 +9,24 @@ import { IncentiveCampaignsCreatePageComponent } from './pages/campaigns/create/
 
 const routes: Routes = [
   {
-    path: 'dashboard/incentive-policies',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    data: { groups: ['aom', 'registry'] },
-    children: [
-      {
-        path: '',
-        component: IncentivePoliciesListPageComponent,
-      },
-      {
-        path: 'new',
-        component: IncentivePoliciesCreatePageComponent,
-      },
-    ],
+    path: 'policies',
+    pathMatch: 'full',
+    component: IncentivePoliciesListPageComponent,
   },
   {
-    path: 'dashboard/incentive-campaigns',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    data: { groups: ['aom', 'registry'] },
-    children: [
-      {
-        path: '',
-        component: IncentiveCampaignsListPageComponent,
-      },
-      {
-        path: 'new',
-        component: IncentiveCampaignsCreatePageComponent,
-      },
-    ],
+    path: 'policies/new',
+    pathMatch: 'full',
+    component: IncentivePoliciesCreatePageComponent,
+  },
+  {
+    path: 'campaigns',
+    pathMatch: 'full',
+    component: IncentiveCampaignsListPageComponent,
+  },
+  {
+    path: 'campaigns/new',
+    pathMatch: 'full',
+    component: IncentiveCampaignsCreatePageComponent,
   },
 ];
 

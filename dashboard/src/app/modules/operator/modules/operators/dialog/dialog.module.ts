@@ -15,8 +15,8 @@ import {
 } from 'primeng/api';
 
 /* Shared modules */
-import { FormModule } from '~/shared/form/form.module';
-import { GraphicModule } from '~/shared/graphic/graphic.module';
+import { FormModule } from '~/shared/modules/form/form.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 
 /* Local components */
 import { OperatorCreationDialogComponent } from './components/creation/component';

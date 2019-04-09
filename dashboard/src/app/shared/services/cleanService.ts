@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { LoggerService } from '../applicativeService/logger/service';
+import { LoggerService } from '../../applicativeService/logger/service';
 
 @Injectable()
 export class CleanService {

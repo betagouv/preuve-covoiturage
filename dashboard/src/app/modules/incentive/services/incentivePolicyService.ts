@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ApiService } from '~/services/apiService';
+import { ApiService } from '~/shared/services/apiService';
 
 @Injectable()
 export class IncentivePolicyService extends ApiService {

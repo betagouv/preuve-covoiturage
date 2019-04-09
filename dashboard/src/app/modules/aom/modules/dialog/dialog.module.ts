@@ -18,8 +18,8 @@ import {
 } from 'primeng/api';
 
 /* Shared modules */
-import { FormModule } from '~/shared/form/form.module';
-import { GraphicModule } from '~/shared/graphic/graphic.module';
+import { FormModule } from '~/shared/modules/form/form.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 import { UserUIModule } from '~/modules/user/modules/ui/ui.module';
 
 /* Local components */

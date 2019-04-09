@@ -2,9 +2,9 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { Company, Operator, Bank, Address } from '~/entities/database/operator';
-import { AddressForm } from '~/shared/form/components/address/form';
-import { BankForm } from '~/shared/form/components/bank/form';
-import { CompanyForm } from '~/shared/form/components/company/form';
+import { AddressForm } from '~/shared/modules/form/components/address/form';
+import { BankForm } from '~/shared/modules/form/components/bank/form';
+import { CompanyForm } from '~/shared/modules/form/components/company/form';
 
 @Component({
   selector: 'app-operator-form',

@@ -12,7 +12,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 
 /* Shared modules */
-import { FormModule } from '~/shared/form/form.module';
+import { FormModule } from '~/shared/modules/form/form.module';
 
 /* Other services */
 

@@ -9,8 +9,8 @@ import { User } from '~/entities/database/user/user';
 import { ROLES } from '~/config/roles';
 import { GROUPS } from '~/config/groups';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
-import { TranslationService } from '~/services/translationService';
-import { TableService } from '~/services/tableService';
+import { TranslationService } from '~/shared/services/translationService';
+import { TableService } from '~/shared/services/tableService';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 

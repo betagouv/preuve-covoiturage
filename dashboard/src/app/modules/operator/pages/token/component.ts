@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, DialogService } from 'primeng/api';
 
-import { TranslationService } from '~/services/translationService';
+import { TranslationService } from '~/shared/services/translationService';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { Token } from '~/entities/database/token';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
-import { TableService } from '~/services/tableService';
+import { TableService } from '~/shared/services/tableService';
 import { Meta } from '~/entities/responses/meta';
 
 import { OperatorTokenService } from '../../services/operatorTokenService';

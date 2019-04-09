@@ -5,8 +5,8 @@ import { LazyLoadEvent } from 'primeng/api';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { Journey } from '~/entities/database/journey';
-import { TranslationService } from '~/services/translationService';
-import { TableService } from '~/services/tableService';
+import { TranslationService } from '~/shared/services/translationService';
+import { TableService } from '~/shared/services/tableService';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 
 import { JourneyService } from '../../services/journeyService';

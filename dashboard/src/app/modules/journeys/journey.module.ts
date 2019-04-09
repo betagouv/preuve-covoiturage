@@ -14,10 +14,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SplitButtonModule } from 'primeng/splitbutton';
 
 /* Shared modules */
-import { FormModule } from '~/shared/form/form.module';
-import { GraphicModule } from '~/shared/graphic/graphic.module';
+import { FormModule } from '~/shared/modules/form/form.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 import { OperatorUIModule } from '~/modules/operator/modules/operators/ui/ui.module';
 import { AomUIModule } from '~/modules/aom/modules/ui/ui.module';
+import { TranslationService } from '~/shared/services/translationService';
+import { TableService } from '~/shared/services/tableService';
 
 /* Local modules */
 import { JourneyRoutingModule } from './journey.routing';
@@ -50,6 +52,8 @@ import { JourneyService } from './services/journeyService';
   ],
   providers: [
     JourneyService,
+    TranslationService,
+    TableService,
   ],
   declarations: [
     JourneyListComponent,
