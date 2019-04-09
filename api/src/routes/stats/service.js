@@ -100,8 +100,8 @@ module.exports = {
     async journeysCollectedPerMonth(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
         },
       }, {
         $group: {
@@ -140,9 +140,9 @@ module.exports = {
     async journeysCollectedPerWeek(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          week: { $week: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          week: { $week: '$passenger.start.datetime' },
         },
       }, {
         $group: {
@@ -182,9 +182,9 @@ module.exports = {
     async journeysCollectedPerDay(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          day: { $dayOfMonth: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          day: { $dayOfMonth: '$passenger.start.datetime' },
         },
       }, {
         $group: {
@@ -224,9 +224,9 @@ module.exports = {
     async journeysCollectedPerDayOfWeek(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          isoDayOfWeek: { $isoDayOfWeek: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          isoDayOfWeek: { $isoDayOfWeek: '$passenger.start.datetime' },
         },
       }, {
         $group: {
@@ -298,8 +298,8 @@ module.exports = {
     async distancePerMonth(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
           distance: '$passenger.distance',
         },
       }, {
@@ -338,9 +338,9 @@ module.exports = {
     async distancePerWeek(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          week: { $week: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          week: { $week: '$passenger.start.datetime' },
           distance: '$passenger.distance',
         },
       }, {
@@ -381,9 +381,9 @@ module.exports = {
     async distancePerDay(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          day: { $dayOfMonth: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          day: { $dayOfMonth: '$passenger.start.datetime' },
           distance: '$passenger.distance',
         },
       }, {
@@ -424,9 +424,9 @@ module.exports = {
     async distancePerDayOfWeek(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          isoDayOfWeek: { $isoDayOfWeek: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          isoDayOfWeek: { $isoDayOfWeek: '$passenger.start.datetime' },
           distance: '$passenger.distance',
         },
       }, {
@@ -499,8 +499,8 @@ module.exports = {
     async durationPerMonth(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
           duration: '$passenger.duration',
         },
       }, {
@@ -539,9 +539,9 @@ module.exports = {
     async durationPerWeek(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          week: { $week: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          week: { $week: '$passenger.start.datetime' },
           duration: '$passenger.duration',
         },
       }, {
@@ -582,9 +582,9 @@ module.exports = {
     async durationPerDay(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          day: { $dayOfMonth: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          day: { $dayOfMonth: '$passenger.start.datetime' },
           duration: '$passenger.duration',
         },
       }, {
@@ -626,9 +626,9 @@ module.exports = {
     async durationPerDayOfWeek(aom) {
       const aggregation = [{
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          isoDayOfWeek: { $isoDayOfWeek: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          isoDayOfWeek: { $isoDayOfWeek: '$passenger.start.datetime' },
           duration: '$passenger.duration',
         },
       }, {
@@ -721,8 +721,8 @@ module.exports = {
         },
       }, {
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
         },
       }, {
         $group: {
@@ -764,9 +764,9 @@ module.exports = {
         },
       }, {
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          week: { $week: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          week: { $week: '$passenger.start.datetime' },
         },
       }, {
         $group: {
@@ -810,9 +810,9 @@ module.exports = {
         },
       }, {
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          day: { $dayOfMonth: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          day: { $dayOfMonth: '$passenger.start.datetime' },
         },
       }, {
         $group: {
@@ -859,9 +859,9 @@ module.exports = {
         },
       }, {
         $project: {
-          year: { $year: '$createdAt' },
-          month: { $month: '$createdAt' },
-          isoDayOfWeek: { $isoDayOfWeek: '$createdAt' },
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          isoDayOfWeek: { $isoDayOfWeek: '$passenger.start.datetime' },
         },
       }, {
         $group: {
