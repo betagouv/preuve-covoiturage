@@ -17,7 +17,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
 import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
-import { AomStatisticsComponent } from '~/modules/aom/pages/statistics/component';
+// import { AomStatisticsComponent } from '~/modules/aom/pages/statistics/component';
 import { StatisticsUIModule } from '~/modules/statistics/modules/ui/ui.module';
 import { TableService } from '~/shared/services/tableService';
 import { TranslationService } from '~/shared/services/translationService';
@@ -59,7 +59,7 @@ import { AomService } from './services/aomService';
   declarations: [
     AomListComponent,
     AomSettingsComponent,
-    AomStatisticsComponent,
+    // AomStatisticsComponent,
   ],
   exports: [
     AomListComponent,
