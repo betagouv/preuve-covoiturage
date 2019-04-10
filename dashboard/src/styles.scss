@@ -111,6 +111,11 @@ label {
   }
 }
 
+span.required {
+  font-weight: normal;
+  color: #d00;
+}
+
 // table
 .options-column {
   width: 80px;

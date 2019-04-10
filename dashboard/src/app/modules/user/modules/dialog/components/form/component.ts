@@ -12,15 +12,7 @@ import { User } from '~/entities/database/user/user';
 })
 
 export class UserFormComponent implements OnInit {
-  @Input('user')
-  set userInput(user: User) {
-    if (user) {
-      this.userForm.patchValue(user);
-    }
-  }
-
   @Output() answer = new EventEmitter();
-
   public roles = [
     {
       label: 'Utilisateur',
@@ -31,7 +23,6 @@ export class UserFormComponent implements OnInit {
       value: 'admin',
     },
   ];
-
   public groups = [
     {
       label: 'Aom',
@@ -46,15 +37,14 @@ export class UserFormComponent implements OnInit {
       value: 'registry',
     },
   ];
-
   public userForm = this.fb.group({
-    firstname: ['', Validators.required],
-    lastname: ['', Validators.required],
-    email: ['', [Validators.required, Validators.pattern(regexp.email)]],
-    phone: ['', [Validators.required]],
+    firstname: [null, Validators.required],
+    lastname: [null, Validators.required],
+    email: [null, [Validators.required, Validators.pattern(regexp.email)]],
+    phone: [null],
     role: ['user', Validators.required],
-    password: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
-    group: [''],
+    password: [null, [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
+    group: [null, Validators.required],
     aom: [null],
     operator: [null],
   });
@@ -64,8 +54,15 @@ export class UserFormComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() {
-    this.onChanges();
+  @Input('user')
+  set userInput(user: User) {
+    if (user) {
+      this.userForm.patchValue(user);
+    }
+  }
+
+  ngOnInit(): void {
+    // nada
   }
 
   onSubmit() {
@@ -96,21 +93,6 @@ export class UserFormComponent implements OnInit {
       });
 
     this.answer.emit(user);
-  }
-
-  onChanges() {
-    // this.userForm.get('group')
-    //   .valueChanges
-    //   .subscribe(() => {
-    //     this.userForm.patchValue({
-    //       aom: null,
-    //       operator: null,
-    //     });
-    //   });
-  }
-
-  isAdmin(): boolean {
-    return this.userForm.value.role === 'admin';
   }
 
   isAom(): boolean {
