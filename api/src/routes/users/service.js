@@ -182,6 +182,7 @@ const service = serviceFactory(User, {
     payload.email = data.email;
     payload.firstname = data.firstname;
     payload.lastname = data.lastname;
+    payload.group = data.group;
     payload.role = data.role;
     payload.status = invite ? 'invited' : 'pending';
     payload.password = data.password || generateToken();
@@ -191,7 +192,6 @@ const service = serviceFactory(User, {
     const ao = invite ? connectedUser.aom : data.aom;
 
     if (op) {
-      payload.group = 'operators';
       const operator = await operatorService.findOne(op);
 
       if (operator) {
@@ -199,7 +199,6 @@ const service = serviceFactory(User, {
         payload.organisation = operator.name;
       }
     } else if (ao) {
-      payload.group = 'aom';
       const aom = await aomService.findOne(ao);
 
       if (aom) {
