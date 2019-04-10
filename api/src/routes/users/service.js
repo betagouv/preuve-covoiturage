@@ -206,6 +206,8 @@ const service = serviceFactory(User, {
         payload.aom = aom._id;
         payload.organisation = aom.name;
       }
+    } else {
+      payload.group = 'registry';
     }
 
     // create the new user
