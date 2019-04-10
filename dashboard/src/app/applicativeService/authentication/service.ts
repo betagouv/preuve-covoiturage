@@ -161,6 +161,6 @@ export class AuthenticationService {
   }
 
   checkEmailToken(reset: string, token: string) {
-    return this.http.post(`${this.endPoint}/confirm`, { reset, token });
+    return this.http.post(`${this.endPoint}/reset`, { reset, token });
   }
 }

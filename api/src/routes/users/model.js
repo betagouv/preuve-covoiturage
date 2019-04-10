@@ -47,7 +47,7 @@ module.exports = modelFactory('User', {
         fullname: doc.fullname,
         requester,
         organisation,
-        link: appUrl(`/invitation/${reset}/${token}`),
+        link: appUrl(`/confirm-email/${reset}/${token}`),
       });
     },
     async forgotten(schema, doc, reset, token) {
