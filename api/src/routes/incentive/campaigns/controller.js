@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 const router = require('express').Router();
-const UnauthorizedError = require('../../../packages/errors/unauthorized');
+const ForbiddenError = require('../../../packages/errors/forbidden');
 const policiesService = require('../policies/service');
 const campaignService = require('./service');
 const can = require('../../../middlewares/can');
@@ -43,7 +43,7 @@ router.post('/', can('incentive-campaign.create'), async (req, res, next) => {
     const aom = _.get(req, 'user.aom');
 
     if (!aom) {
-      throw new UnauthorizedError('Your are not an AOM!');
+      throw new ForbiddenError('Your are not an AOM!');
     }
 
     const campaign = await campaignService.create({
@@ -71,7 +71,7 @@ router.post('/simulation', can('incentive-campaign.create'), async (req, res, ne
     const aom = _.get(req, 'user.aom');
 
     if (!aom) {
-      throw new UnauthorizedError('Your are not an AOM!');
+      throw new ForbiddenError('Your are not an AOM!');
     }
 
     const campaign = {
