@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const aom = require('./aom');
 const identity = require('./objects/identity');
 const position = require('./objects/position');
 const rank = require('./objects/rank');
@@ -68,6 +69,7 @@ const TripSchema = new Schema({
     type: String,
     index: true,
   },
+  aom: [aom],
   status: {
     type: String,
     enum: ['pending', 'active', 'error'],

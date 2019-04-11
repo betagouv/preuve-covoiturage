@@ -2,23 +2,25 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const IncentiveParameterSchema = new Schema({
-  varname: {
+module.exports = new Schema({
+  name: {
     type: String,
     required: true,
   },
-  label: {
+  short_name: {
     type: String,
     required: true,
   },
-  helper: String, // facultatif
+  description: String,
   aom: Schema.Types.ObjectId, // facultatif
-  formula: String, // facultatif
-  internal: {
+  financial: {
     type: Boolean,
-    default: false,
+    default: true,
+    required: true,
+  },
+  precision: {
+    type: Number,
+    default: 0,
     required: true,
   },
 }, { id: false });
-
-module.exports = IncentiveParameterSchema;
