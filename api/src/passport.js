@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { ExtractJwt } = require('passport-jwt');
 const JwtStrategy = require('passport-jwt').Strategy;
-const NotFoundError = require('./packages/errors/not-found');
+const NotFoundError = require('./shared/packages/errors/not-found');
 const config = require('./config');
 
 // load the models

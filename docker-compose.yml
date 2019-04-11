@@ -23,6 +23,7 @@ services:
     build: "./docker/api"
     volumes:
       - ./api:/code
+      - ./api/src/shared:/code/src/services/acquisition/shared
     working_dir: "/code"
     command: "nodemon --inspect=0.0.0.0:9229"
     ports:
@@ -88,4 +89,3 @@ networks:
   front:
   api:
   back:
-
