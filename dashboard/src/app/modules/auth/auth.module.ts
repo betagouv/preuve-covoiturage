@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
-
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
 
@@ -31,6 +31,7 @@ import { AuthPageConfirmEmailComponent } from './pages/confirmEmail/component';
     AuthRoutingModule,
     ToastModule,
     MessageModule,
+    MessagesModule,
     InputTextModule,
     ButtonModule,
     MessageModule,
@@ -53,4 +54,5 @@ import { AuthPageConfirmEmailComponent } from './pages/confirmEmail/component';
   ],
 
 })
-export class AuthModule { }
+export class AuthModule {
+}

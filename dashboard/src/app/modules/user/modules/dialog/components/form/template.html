@@ -12,7 +12,7 @@
     <!-- First name -->
     <div class="ui-g-12 ui-md-6">
       <div class="ui-g-12 ui-md-4">
-        <label>Prénom</label>
+        <label>Prénom&nbsp;<span class="required">*</span></label>
       </div>
       <div class="ui-g-12 ui-md-8">
         <input type="text" autocomplete="nope" pInputText formControlName="firstname">
@@ -27,7 +27,7 @@
     <!-- Last name -->
     <div class="ui-g-12 ui-md-6">
       <div class="ui-g-12 ui-md-4">
-        <label>Nom</label>
+        <label>Nom&nbsp;<span class="required">*</span></label>
       </div>
       <div class="ui-g-12 ui-md-8">
         <input type="text" autocomplete="nope" pInputText formControlName="lastname">
@@ -45,7 +45,7 @@
     <!-- Email -->
     <div class="ui-g-12 ui-md-6">
       <div class="ui-g-12 ui-md-4">
-        <label>Email</label>
+        <label>Email&nbsp;<span class="required">*</span></label>
       </div>
       <div class="ui-g-12 ui-md-8">
         <input type="email" autocomplete="nope" pInputText formControlName="email">
@@ -83,7 +83,7 @@
   <div class="ui-g ui-fluid">
     <div class="ui-g-12 ui-md-6">
       <div class="ui-g-12 ui-md-4">
-        <label>Mot de passe</label>
+        <label>Mot de passe&nbsp;<span class="required">*</span></label>
       </div>
       <div class="ui-g-12 ui-md-8">
         <input type="password" autocomplete="nope" pInputText formControlName="password">
@@ -97,7 +97,7 @@
   </div>
 
   <div class="ui-g">
-    <h4>Rôles</h4>
+    <h4>Rôles&nbsp;<span class="required">*</span></h4>
   </div>
 
   <!-- Role -->
@@ -119,7 +119,7 @@
   <!-- Group -->
   <div class="ui-g ui-fluid">
     <div class="ui-g-6">
-      <h4>Groupe</h4>
+      <h4>Groupe&nbsp;<span class="required">*</span></h4>
 
       <p *ngFor="let group of groups" class="form__radio-button-wrapper">
         <label>
@@ -143,6 +143,6 @@
   </div>
 
   <div class="ui-g ui-fluid form__actions">
-    <p-button label="Enregistrer"></p-button>
+    <p-button label="Enregistrer" [disabled]="!userForm.valid"></p-button>
   </div>
 </form>

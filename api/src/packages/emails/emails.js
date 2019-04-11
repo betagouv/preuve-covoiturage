@@ -47,11 +47,10 @@ module.exports = {
   invite: ({ email, fullname, requester, organisation, link }) => {
     const template = `
         Bonjour ${fullname},<br>
-        Vous avez été invité•e par ${requester} pour accéder au Registre de
+        Vous avez été invité•e ${requester ? `par ${requester} pour` : ''} accéder au Registre de
         preuve de covoiturage.<br>
         <br>
-        Organisation: ${organisation}<br>
-        <br>
+        ${organisation ? `Organisation: ${organisation}<br><br>` : ''}
         Veuillez cliquer sur le lien suivant et choisir votre mot de passe
         pour créer votre compte.<br>
         <br>
