@@ -41,12 +41,6 @@ export class HeaderComponent implements OnInit {
   }
 
   logOut() {
-    this.authenticationService.logout(true);
-  }
-
-  hasAnyGroup(groups: string[]) {
-    const group = this.authenticationService.hasAnyGroup(groups);
-    this.setTitles(group);
-    return !!group;
+    this.authenticationService.logout({ toLogin: true });
   }
 }

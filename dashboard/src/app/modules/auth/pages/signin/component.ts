@@ -38,6 +38,13 @@ export class AuthPageSigninComponent {
           });
           break;
 
+        case 'expired':
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Votre session a expiré, veuillez vous reconnecter.',
+          });
+          break;
+
         case 'unauthorized':
           this.messageService.add({
             severity: 'error',

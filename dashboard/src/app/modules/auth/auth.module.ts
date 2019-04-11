@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
+
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
 

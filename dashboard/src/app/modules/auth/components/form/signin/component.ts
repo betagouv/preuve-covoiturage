@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
@@ -22,12 +22,15 @@ export class AuthFormSigninComponent implements OnInit {
   loading = false;
   error = '';
   submitted = false;
+  private params;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
   ) {
+    this.params = route.snapshot.queryParams;
   }
 
   ngOnInit(): void {
@@ -52,10 +55,14 @@ export class AuthFormSigninComponent implements OnInit {
         (result) => {
           this.loading = false;
           if (result) {
-            this.router.navigate(['/dashboard/home']);
+            if (this.params && this.params.r) {
+              this.router.navigate([this.params.r]);
+            } else {
+              this.router.navigate(['/dashboard/home']);
+            }
           }
         },
-        (error) => {
+        () => {
           this.error = 'L\'email et/ou le mot de passe ne sont pas valides';
           this.loading = false;
         },
