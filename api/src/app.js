@@ -9,13 +9,12 @@ const { PORT, sessionSecret } = require('./config.js');
 const { appUrl } = require('./packages/url');
 const Sentry = require('./sentry.js');
 const eventBus = require('./events/bus');
-const journeyEvents = require('./routes/journeys/events');
 const signResponse = require('./middlewares/sign-response');
 const dataWrap = require('./middlewares/data-wrap');
 const swaggerDocument = require('./static/openapi.json');
 
 require('./definitions');
-require('./passport')(passport);
+// require('./passport')(passport);
 require('./mongo');
 
 // require after above passport
@@ -57,26 +56,26 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // default response
-app.use('/auth', require('./routes/auth/controller'));
-app.use('/stats', require('./routes/stats/controller'));
-app.use('/profile', jwtUser, require('./routes/profile/controller'));
-app.use('/users', jwtUser, require('./routes/users/controller'));
-app.use('/aom', jwtUser, require('./routes/aom/controller'));
-app.use('/operators', jwtUser, require('./routes/operators/controller'));
-app.use('/trips', jwtUser, require('./routes/trips/controller'));
-app.use('/incentive/incentives', jwtUser, require('./routes/incentive/incentives/controller'));
-app.use('/incentive/parameters', jwtUser, require('./routes/incentive/parameters/controller'));
-app.use('/incentive/campaigns', jwtUser, require('./routes/incentive/campaigns/controller'));
-app.use('/incentive/policies', jwtUser, require('./routes/incentive/policies/controller'));
-app.use('/incentive/units', jwtUser, require('./routes/incentive/units/controller'));
-app.use('/journeys', require('./routes/journeys/controller'));
+// app.use('/auth', require('./routes/auth/controller'));
+// app.use('/stats', require('./routes/stats/controller'));
+// app.use('/profile', jwtUser, require('./routes/profile/controller'));
+// app.use('/users', jwtUser, require('./routes/users/controller'));
+// app.use('/aom', jwtUser, require('./routes/aom/controller'));
+// app.use('/operators', jwtUser, require('./routes/operators/controller'));
+// app.use('/trips', jwtUser, require('./routes/trips/controller'));
+// app.use('/incentive/incentives', jwtUser, require('./routes/incentive/incentives/controller'));
+// app.use('/incentive/parameters', jwtUser, require('./routes/incentive/parameters/controller'));
+// app.use('/incentive/campaigns', jwtUser, require('./routes/incentive/campaigns/controller'));
+// app.use('/incentive/policies', jwtUser, require('./routes/incentive/policies/controller'));
+// app.use('/incentive/units', jwtUser, require('./routes/incentive/units/controller'));
+app.use('/journeys', require('./services/acquisition/transports/http'));
 
 // Arena access for queues
-app.use('/arena', require('./routes/bull-arena/controller'));
+// app.use('/arena', require('./routes/bull-arena/controller'));
 
 // configure events for each model
 // ! singular names here ;)
-eventBus.register('journey', journeyEvents);
+
 
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
