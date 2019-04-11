@@ -1,0 +1,15 @@
+{
+  "name": "@pdc/service-organization",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@pdc/shared": "0.0.1",
+    "@pdc/service-user": "0.0.1",
+    "@pdc/service-stats": "0.0.1",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.4",
+    "express": "^4.16.4",
+    "bcrypt": "^3.0.2",
+    "jsonwebtoken": "^8.3.0"
+  }
+}

@@ -1,25 +1,42 @@
 {
-  "name": "@pdc/api",
-  "private": "true",
-  "repository": "git@github.com:betagouv/preuve-covoiturage.git",
-  "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
-  "contributors": [
-    "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-    "Nicolas Mérigot <nicolas.mergiot@beta.gouv.fr>",
-    "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
+  "name": "@pdc/proxy",
+  "version": "0.0.1",
+  "description": "Preuve de Covoiturage",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "lint": "eslint --ignore-path .gitignore .",
+    "test": "NODE_ENV=test mocha -t 5000",
+    "docker-test": "cd .. && docker-compose run -e PORT=0 -e NODE_ENV=test -T api yarn test",
+    "docker-test-unit": "yarn docker-test -g 'Unit tests:'",
+    "docker-test-func": "yarn docker-test -g 'Functional tests:'",
+    "migrate": "npx migrate-mongo up",
+    "mig:up": "cd .. && docker-compose exec api npx migrate-mongo up",
+    "mig:down": "cd .. && docker-compose exec api npx migrate-mongo down",
+    "mig:status": "cd .. && docker-compose exec api npx migrate-mongo status",
+    "seed": "node cli/seed.js",
+    "process": "node cli/process-safe-journey.js",
+    "process-trip": "node cli/process-trip.js",
+    "fix-permissions": "node cli/fix-permissions.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betagouv/preuve-covoiturage-api.git"
+  },
+  "keywords": [
+    "betagouv",
+    "covoiturage",
+    "api",
+    "carpooling"
   ],
-  "workspaces": [
-    "proxy",
-    "shared",
-    "services/*"
-  ],
+  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/betagouv/preuve-covoiturage/issues"
+    "url": "https://github.com/betagouv/preuve-covoiturage-api/issues"
   },
-  "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
+  "homepage": "https://github.com/betagouv/preuve-covoiturage-api#readme",
   "dependencies": {
-    "@sentry/node": "^5.0.7",
+    "@sentry/node": "^4.3.0",
     "api-query-params": "^4.9.0",
     "axios": "^0.18.0",
     "bcrypt": "^3.0.2",
@@ -77,5 +94,16 @@
       "no-underscore-dangle": "off",
       "object-curly-newline": "off"
     }
+  },
+  "nodemonConfig": {
+    "ignore": [
+      ".circleci/*",
+      "cli/*",
+      "config/*",
+      "documentation/*",
+      "node_modules/*",
+      "test/*"
+    ],
+    "delay": "200"
   }
 }
