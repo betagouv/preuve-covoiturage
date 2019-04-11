@@ -106,9 +106,9 @@ const service = serviceFactory(User, {
     return user.save();
   },
 
-  async forgottenPassword({ email, invite }) {
+  async forgottenPassword({ email, invite }, userCache = null) {
     // search for user
-    const user = await User.findOne({ email }).exec();
+    const user = userCache || await User.findOne({ email }).exec();
     if (!user) {
       throw new NotFoundError();
     }
@@ -128,12 +128,7 @@ const service = serviceFactory(User, {
       user.forgotten(reset, token);
     }
 
-    // debug only
-    if (process.env.NODE_ENV === 'local') {
-      return { reset, token };
-    }
-
-    return { message: `Reset link sent to ${email}` };
+    return user;
   },
 
   async resetPassword({ reset, token, password }) {
@@ -172,7 +167,7 @@ const service = serviceFactory(User, {
     return user;
   },
 
-  async create(data) {
+  async create(data, connectedUser = {}, invite = false) {
     // check if the user exists already
     if (await User.findOne({ email: data.email }).exec()) {
       throw new ConflictError();
@@ -182,72 +177,49 @@ const service = serviceFactory(User, {
       throw new BadRequestError('Cannot assign operator and AOM at the same time');
     }
 
-    // create the new user
-    const user = new User(data);
-    user.permissions = Permissions.getFromRole(user.group, user.role);
-
-    // bind to operator if given in the request
-    if (data.group === 'operators' && !_.isNil(data.operator)) {
-      const op = await operatorService.findOne(data.operator);
-      if (op) user.operator = op._id;
-    }
-
-    // bind to aom if given in the request
-    if (data.group === 'aom' && !_.isNil(data.aom)) {
-      const aom = await aomService.findOne(data.aom);
-      if (aom) user.aom = aom._id;
-    }
-
-    return user.save();
-  },
-
-  /**
-   * Invite a user
-   * Required fields :
-   * - firstname
-   * - lastname
-   * - email
-   * - role
-   * - operator/aom
-   *
-   * @param data
-   * @returns {Promise<void>}
-   */
-  async invite(data) {
-    const existing = await User.findOne({ email: data.email }).exec();
-
-    if (existing) {
-      throw new ConflictError('User already invited');
-    }
-
     const payload = {};
 
     payload.email = data.email;
     payload.firstname = data.firstname;
     payload.lastname = data.lastname;
     payload.role = data.role;
-    payload.status = 'invited';
-    payload.password = generateToken();
+    payload.status = invite ? 'invited' : 'pending';
+    payload.password = data.password || generateToken();
+    payload.requester = connectedUser.fullname;
 
-    if (data.operator) {
+    const op = invite ? connectedUser.operator : data.operator;
+    const ao = invite ? connectedUser.aom : data.aom;
+
+    if (op) {
       payload.group = 'operators';
-      payload.operator = data.operator;
-      payload.organisation = await operatorService.findOne(data.operator);
-    } else if (data.aom) {
+      const operator = await operatorService.findOne(op);
+
+      if (operator) {
+        payload.operator = operator._id;
+        payload.organisation = operator.name;
+      }
+    } else if (ao) {
       payload.group = 'aom';
-      payload.aom = data.aom;
-      payload.organisation = await aomService.findOne(data.aom);
-      payload.role = data.role;
+      const aom = await aomService.findOne(ao);
+
+      if (aom) {
+        payload.aom = aom._id;
+        payload.organisation = aom.name;
+      }
     }
 
-    await this.create(payload);
+    // create the new user
+    const user = new User(payload);
+    user.permissions = Permissions.getFromRole(user.group, user.role);
+
+    await user.save();
 
     // generate new token for a password reset on first access
     return this.forgottenPassword({
-      email: data.email,
+      email: payload.email,
       invite: {
-        requester: data.requester,
-        organisation: _.get(payload.organisation, 'name'),
+        requester: payload.requester,
+        organisation: payload.organisation,
       },
     });
   },

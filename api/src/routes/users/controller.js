@@ -6,21 +6,7 @@ const { apiUrl } = require('../../packages/url/url');
 
 router.post('/invite', can('user.invite'), async (req, res, next) => {
   try {
-    const data = {};
-
-    data.email = req.body.email;
-    data.firstname = req.body.firstname;
-    data.lastname = req.body.lastname;
-    data.role = req.body.role;
-    data.requester = req.user.fullname;
-
-    if (req.user.operator) {
-      data.operator = req.user.operator;
-    } else if (req.user.aom) {
-      data.aom = req.user.aom;
-    }
-
-    res.json(await userService.invite(data));
+    res.json(await userService.create(req.body, req.user, true));
   } catch (e) {
     next(e);
   }
@@ -100,7 +86,7 @@ router.get('/', can('user.list'), async (req, res, next) => {
 
 router.post('/', can('user.create'), async (req, res, next) => {
   try {
-    const user = await userService.create(req.body);
+    const user = await userService.create(req.body, req.user);
     res
       .set('Location', apiUrl(`users/${user._id.toString()}`))
       .status(201)

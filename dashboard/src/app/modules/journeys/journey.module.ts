@@ -2,6 +2,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 /* External modules */
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -24,12 +25,15 @@ import { TableService } from '~/shared/services/tableService';
 /* Local modules */
 import { JourneyRoutingModule } from './journey.routing';
 import { JourneyUIModule } from './modules/ui/ui.module';
+
 /* Local components */
 import { JourneyListComponent } from './components/list/component';
 import { JourneyListPageComponent } from './pages/list/component';
 import { JourneyFilterComponent } from './components/filter/component';
+
 /* Local services */
 import { JourneyService } from './services/journeyService';
+
 
 @NgModule({
   imports: [
