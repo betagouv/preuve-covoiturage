@@ -60,6 +60,7 @@
     "json2csv": "^4.3.5",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
+    "mathjs": "^5.8.0",
     "migrate-mongo": "^5.0.1",
     "moment": "^2.22.2",
     "mongoose": "^5.4",

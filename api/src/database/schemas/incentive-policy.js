@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
+const UnitSchema = require('./objects/incentive-unit');
+const ParameterSchema = require('./objects/incentive-parameter');
 
 const IncentiveTimeFilterSchema = new Schema({
   start: {
@@ -17,7 +19,6 @@ const IncentiveTimeFilterSchema = new Schema({
 const IncentivePolicySchema = new Schema({
   aom: {
     type: ObjectId,
-    required: true,
   },
   name: {
     type: String,
@@ -34,18 +35,17 @@ const IncentivePolicySchema = new Schema({
       min: Number,
       max: Number,
     },
-    minRank: Number,
+    rank: [{
+      type: String,
+    }],
   },
-  parameters: [{
-    parameter: ObjectId, // IncentiveParameter
-    value: Schema.Types.Mixed,
-  }],
+  parameters: [ParameterSchema],
   formula: {
     type: String,
     required: true,
   },
   unit: {
-    type: ObjectId,
+    type: UnitSchema,
     required: true,
   },
   status: {

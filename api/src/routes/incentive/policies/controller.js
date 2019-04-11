@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const router = require('express').Router();
 const policyService = require('./service');
 const can = require('../../../middlewares/can');
@@ -59,7 +60,11 @@ router.get('/', can('incentive-policy.list'), async (req, res, next) => {
  */
 router.post('/', can('incentive-policy.create'), async (req, res, next) => {
   try {
-    const policy = await policyService.create(req.body);
+    const aom = _.get(req, 'user.aom');
+    const policy = await policyService.create({
+      aom,
+      ...req.body,
+    });
 
     res
       .set('Location', apiUrl(`incentive/policies/${policy._id.toString()}`))

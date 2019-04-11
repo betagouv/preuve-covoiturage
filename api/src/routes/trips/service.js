@@ -59,6 +59,7 @@ const createFromJourney = async (journey) => {
     operator_id: journey.operator._id,
     operator_journey_id: journey.operator_journey_id,
     status: 'pending',
+    aom: journey.aom,
     start: reduceStartDate(journey),
     people: mapPeople(journey),
   })).save();

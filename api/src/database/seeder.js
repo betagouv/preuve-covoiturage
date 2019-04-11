@@ -3,8 +3,6 @@ const aomSeeder = require('./seeds/aom');
 const superAdmin = require('./seeds/super-admin');
 const dummyAom = require('./seeds/dummy-aom');
 const dummyOperator = require('./seeds/dummy-operator');
-const incentiveParameters = require('./seeds/incentive/incentive-parameters');
-const incentiveUnits = require('./seeds/incentive/incentive-units');
 
 const config = {
   local: [
@@ -12,36 +10,26 @@ const config = {
     superAdmin,
     dummyAom,
     dummyOperator,
-    incentiveParameters,
-    incentiveUnits,
   ],
   dev: [
     aomSeeder,
     superAdmin,
     dummyAom,
     dummyOperator,
-    incentiveParameters,
-    incentiveUnits,
   ],
   test: [
     aomSeeder,
     superAdmin,
     dummyAom,
     dummyOperator,
-    incentiveParameters,
-    incentiveUnits,
   ],
   production: [
     superAdmin,
-    incentiveParameters,
-    incentiveUnits,
   ],
   insee: [
   ],
   default: [
     superAdmin,
-    incentiveParameters,
-    incentiveUnits,
   ],
 };
 
