@@ -1,0 +1,10 @@
+{
+  "name": "@pdc/service-policy",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@pdc/shared": "0.0.1",
+    "mongoose": "^5.4",
+    "express": "^4.16.4"
+  }
+}
