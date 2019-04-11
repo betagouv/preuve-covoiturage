@@ -32,5 +32,6 @@ import { StatisticsService } from '../../services/statisticsService';
     StatisticsNumberComponent,
   ],
 })
+
 export class StatisticsUIModule {
 }
