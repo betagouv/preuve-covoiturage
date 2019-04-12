@@ -2,7 +2,7 @@
 const assert = require('assert');
 // const parse = require('csv-parse');
 // const { promisify } = require('util');
-const { regex } = require('../../../src/packages/mongo/schema-validation');
+const { regex } = require('@pdc/shared/providers/mongo/schema-validation');
 
 // const asyncParse = promisify(parse);
 

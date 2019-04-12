@@ -1,9 +1,9 @@
 const assert = require('assert');
-const assertThrows = require('../../lib/assert-throws');
-const NotFoundError = require('../../../src/packages/errors/not-found');
-const BadRequestError = require('../../../src/packages/errors/bad-request');
+const assertThrows = require('@pdc/shared/test/lib/assert-throws');
+const NotFoundError = require('@pdc/shared/errors/not-found');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
 
-const { town } = require('../../../src/packages/geo/geo');
+const { town } = require('@pdc/package-geo/geo');
 
 describe('find Town common', () => {
   it('missing args', () => assertThrows(TypeError, town));

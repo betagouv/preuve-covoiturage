@@ -1,6 +1,6 @@
 const assert = require('assert');
-const assertThrows = require('../../lib/assert-throws');
-const { validators } = require('../../../src/packages/mongo/schema-validation');
+const { validators } = require('@pdc/shared/providers/mongo/schema-validation');
+const assertThrows = require('../../../shared/test/lib/assert-throws');
 
 describe('position', () => {
   const yep = obj => assert(validators.position.validator(obj));
