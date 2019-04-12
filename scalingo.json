@@ -24,6 +24,15 @@
     },
     "MJ_DEBUG_NAME": {
       "value": "Review App"
+    },
+    "APP_SUPERUSER_EMAIL": {
+      "value": "admin@example.com"
+    },
+    "APP_SUPERUSER_PASSWORD": {
+      "value": "admin1234"
     }
+  },
+  "scripts": {
+    "postdeploy": "yarn migrate && yarn seed && yarn fix-permissions"
   }
 }
