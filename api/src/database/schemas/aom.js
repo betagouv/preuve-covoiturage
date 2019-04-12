@@ -12,7 +12,6 @@ const AomSchema = new Schema({
     trim: true,
     default: '',
     uppercase: true,
-    minlength: 1,
     maxlength: 12,
   },
   insee: [{
