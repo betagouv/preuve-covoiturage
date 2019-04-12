@@ -6,11 +6,11 @@ import { Router } from '@angular/router';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { User } from '~/entities/database/user/user';
+import { OrganisationCompany } from '~/entities/database/organisationCompany';
 
 import { TokenService } from '../token/service';
 import { Logged } from '../authguard/logged';
 import { LoggerService } from '../logger/service';
-import { OrganisationCompany } from '~/entities/database/organisationCompany';
 
 @Injectable()
 export class AuthenticationService {

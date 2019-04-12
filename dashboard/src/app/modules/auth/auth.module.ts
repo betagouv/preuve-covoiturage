@@ -11,6 +11,7 @@ import { CardModule } from 'primeng/card';
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
+import { AutofocusDirective } from '~/shared/directives/autofocus.directive';
 
 import { AuthHeaderComponent } from './layout/components/header/component';
 import { AuthPageSigninComponent } from './pages/signin/component';
@@ -49,6 +50,7 @@ import { AuthPageConfirmEmailComponent } from './pages/confirmEmail/component';
     AuthPageForgottenPasswordComponent,
     AuthPageSigninComponent,
     AuthPageConfirmEmailComponent,
+    AutofocusDirective,
   ],
   exports: [
     AuthRoutingModule,
