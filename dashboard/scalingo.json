@@ -1,0 +1,23 @@
+{
+  "name": "Preuve de covoiturage",
+  "description": "beta.gouv.fr - Registre de preuve de covoiturage - Review App",
+  "repository": "https://github.com/betagouv/preuve-covoiturage",
+  "website": "http://covoiturage.beta.gouv.fr",
+  "env": {
+    "NODE_ENV": {
+      "value": "review"
+    },
+    "APP_URL": {
+      "generator": "url"
+    }
+  },
+  "scripts": {
+
+  },
+  "formation": {
+    "web": {
+      "amount": 1,
+      "size": "S"
+    }
+  }
+}

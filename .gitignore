@@ -6,3 +6,5 @@ db/mongo
 yarn-error.log
 doc
 !docker/dashboard
+dashboard/src/environments/environment.review.ts
+
