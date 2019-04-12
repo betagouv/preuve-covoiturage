@@ -11,11 +11,13 @@ import { MessageModule } from 'primeng/message';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
-import { DialogService, DynamicDialogConfig, DynamicDialogRef, } from 'primeng/api';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/api';
+
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
 import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 import { UserUIModule } from '~/modules/user/modules/ui/ui.module';
+
 /* Local components */
 import { AomFormComponent } from './components/form/component';
 import { AomCreationDialogComponent } from './components/creation/component';

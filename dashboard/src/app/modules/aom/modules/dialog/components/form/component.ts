@@ -13,7 +13,7 @@ import { CompanyForm } from '~/shared/modules/form/components/company/form';
 })
 
 export class AomFormComponent implements OnInit {
-  inseeMessage: string = '';
+  inseeMessage = '';
 
   @Output() answer = new EventEmitter();
 
