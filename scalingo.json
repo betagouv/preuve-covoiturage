@@ -10,9 +10,6 @@
     "API_URL": {
       "generator": "url"
     },
-    "APP_URL": {
-      "generator": "url"
-    },
     "MJ_FROM_NAME": {
       "value": "🚗 [review] Preuve de covoiturage"
     },
