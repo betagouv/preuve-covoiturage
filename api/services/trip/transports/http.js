@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const tripService = require('./service');
-const can = require('../../middlewares/can');
-// const { apiUrl } = require('@pdc/shared/packages/url/url');
+const can = require('@pdc/shared/middlewares/can');
+const tripService = require('../service');
+// const { apiUrl } = require('@pdc/shared/providers/url/url');
 
 router.get('/:id', can('trip.read'), async (req, res, next) => {
   try {

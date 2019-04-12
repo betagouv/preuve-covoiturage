@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const can = require('@pdc/shared/middlewares/can');
-const { apiUrl } = require('@pdc/shared/packages/url/url');
+const { apiUrl } = require('@pdc/shared/helpers/url/url');
 const applications = require('./applicationhttp');
 const operatorService = require('../operator');
 

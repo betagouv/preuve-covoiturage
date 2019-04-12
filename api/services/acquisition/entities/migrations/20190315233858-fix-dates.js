@@ -1,7 +1,7 @@
 /* eslint-disable no-console,no-undef,camelcase */
 const _ = require('lodash');
 const moment = require('moment');
-const { journeysQueue } = require('../../worker/queues');
+const { journeysQueue } = require('@pdc/shared/worker/queues');
 
 module.exports = {
   async up(db) {

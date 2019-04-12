@@ -3,7 +3,7 @@ const aom = require('@pdc/service-organization/entities/models/aom');
 const identity = require('@pdc/shared/entities/schemas/identity');
 const position = require('@pdc/shared/entities/schemas/position');
 const rank = require('@pdc/shared/entities/schemas/rank');
-const { validators } = require('@pdc/shared/packages/mongo/schema-validation');
+const { validators } = require('@pdc/shared/providers/mongo/schema-validation');
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;

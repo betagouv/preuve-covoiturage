@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
 const mongoose = require('mongoose');
-const { regex } = require('@pdc/shared/packages/mongo/schema-validation');
+const { regex } = require('@pdc/shared/providers/mongo/schema-validation');
 
 const { Schema } = mongoose;
 

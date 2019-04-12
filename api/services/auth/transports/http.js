@@ -5,7 +5,7 @@ const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 const jwtServer = require('@pdc/shared/middlewares/jwt-server');
 const userService = require('@pdc/service-user/service');
 
-require('@pdc/shared/packages/passport/passport')(passport);
+require('@pdc/shared/providers/passport/passport')(passport);
 
 router.get('/ping', jwtUser, (req, res, next) => {
   try {

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const router = require('express').Router();
-const BadRequestError = require('@pdc/shared/packages/errors/bad-request');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
 const can = require('@pdc/shared/middlewares/can');
 
 const applicationService = require('../application');

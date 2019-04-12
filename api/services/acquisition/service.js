@@ -1,11 +1,12 @@
 /* eslint-disable camelcase */
 const _ = require('lodash');
 const { ObjectId } = require('mongoose').Types;
-const serviceFactory = require('@pdc/shared/packages/mongo/service-factory');
+const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
 const NotFoundError = require('@pdc/shared/errors/not-found');
 const BadRequestError = require('@pdc/shared/errors/bad-request');
 const InternalServerError = require('@pdc/shared/errors/internal-server');
-const importer = require('../../packages/importer/importer');
+const eventBus = require('@pdc/proxy/bus');
+const importer = require('@pdc/package-importer/importer');
 const Operator = require('@pdc/service-organization/entities/models/operator');
 const operatorService = require('@pdc/service-organization/operator');
 const tripService = require('@pdc/service-trip/service');
@@ -13,7 +14,6 @@ const Journey = require('./entities/models/journey');
 const SafeJourney = require('./entities/models/safe-journey');
 const { pathToPosition, findTown, findAomFromPosition } = require('./lib/position');
 const validator = require('./entities/validation/validator');
-const eventBus = require('../../events/bus');
 
 const journeyService = serviceFactory(Journey, {
   async update(id, data) {

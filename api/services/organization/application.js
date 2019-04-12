@@ -3,11 +3,11 @@ const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { ObjectId } = require('mongoose').Types;
-const BadRequestError = require('@pdc/shared/packages/errors/bad-request');
-const NotFoundError = require('@pdc/shared/packages/errors/not-found');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
+const NotFoundError = require('@pdc/shared/errors/not-found');
 const operatorService = require('./operator');
 const Operator = require('./entities/models/operator');
-const config = require('@pdc/shared/config/config');
+const config = require('@pdc/proxy/config');
 
 const applicationService = {
   async find(op) {

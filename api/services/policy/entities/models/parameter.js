@@ -1,4 +1,4 @@
-const modelFactory = require('@pdc/shared/packages/mongo/model-factory');
+const modelFactory = require('@pdc/shared/providers/mongo/model-factory');
 const IncentiveParameterSchema = require('../schemas/parameter');
 
 module.exports = modelFactory('IncentiveParameter', {
