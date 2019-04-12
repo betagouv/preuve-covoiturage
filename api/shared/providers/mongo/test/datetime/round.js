@@ -1,5 +1,5 @@
 const assert = require('assert');
-const round = require('@pdc/shared/providers/mongo/round-time');
+const round = require('../../round-time');
 
 const equal = (act, exp) => {
   const actTime = act.getTime ? act.getTime() : null;
