@@ -1,7 +1,8 @@
 import { Component, Injectable, OnInit, ViewEncapsulation } from '@angular/core';
-import { environment } from '../../../../../environments/environment';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
+
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-menu',

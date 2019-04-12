@@ -31,6 +31,8 @@ import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 import { IncentiveCampaignConfirmationComponent } from '~/modules/incentive/components/campaign/confirmation/component';
 import { IncentiveCampaignsListPageComponent } from '~/modules/incentive/pages/campaigns/list/component';
 import { IncentiveCampaignSummaryComponent } from '~/modules/incentive/components/campaign/summary/component';
+import { TranslationService } from '~/shared/services/translationService';
+import { TableService } from '~/shared/services/tableService';
 
 /* Local modules */
 import { IncentiveRoutingModule } from './incentive.routing';
@@ -61,8 +63,6 @@ import { IncentiveFilterService } from './services/incentiveFilterService';
 import { IncentiveParameterService } from './services/incentiveParameterService';
 import { IncentivePolicyService } from './services/incentivePolicyService';
 import { IncentiveUnitService } from './services/incentiveUnitService';
-import { TranslationService } from '~/shared/services/translationService';
-import { TableService } from '~/shared/services/tableService';
 
 @NgModule({
   imports: [
