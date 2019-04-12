@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const assert = require('assert');
-const BadRequestError = require('../../src/packages/errors/bad-request');
+const BadRequestError = require('api/shared/errors/bad-request');
 
 /**
  * Extract the useful response from API response structure

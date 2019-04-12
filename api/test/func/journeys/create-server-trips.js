@@ -3,10 +3,10 @@
 const _ = require('lodash');
 const supertest = require('supertest');
 const faker = require('faker');
+const app = require('@pdc/proxy/app');
 const insee = require('../../data/insee');
-const app = require('../../../src/app');
-const assertResponse = require('../../lib/assert-response');
-const { signin } = require('../../lib/signin');
+const assertResponse = require('../../../shared/test/lib/assert-response');
+const { signin } = require('../../../shared/test/lib/signin');
 const tripGenerator = require('../../data/journeys/trip');
 
 const request = supertest(app);

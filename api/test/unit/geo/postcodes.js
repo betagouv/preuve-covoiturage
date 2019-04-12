@@ -1,10 +1,10 @@
 /* eslint-disable max-len */
 const assert = require('assert');
-const assertThrows = require('../../lib/assert-throws');
+const assertThrows = require('@pdc/shared/test/lib/assert-throws');
 // const NotFoundError = require('../../../src/packages/errors/not-found');
-const BadRequestError = require('../../../src/packages/errors/bad-request');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
 
-const { postcodes } = require('../../../src/packages/geo/geo');
+const { postcodes } = require('@pdc/package-geo/geo');
 
 describe('Postcodes :: common errors', () => {
   it('missing args', () => assertThrows(TypeError, postcodes));

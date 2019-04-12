@@ -2,7 +2,7 @@
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
 const app = require('../../src/app');
-const assertResponse = require('../lib/assert-response');
+const assertResponse = require('./assert-response');
 const { jwtSecret } = require('../../src/config');
 
 const request = supertest(app);

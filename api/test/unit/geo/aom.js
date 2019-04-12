@@ -1,9 +1,9 @@
 const assert = require('assert');
 const mongoose = require('mongoose');
-const assertThrows = require('../../lib/assert-throws');
-const BadRequestError = require('../../../src/packages/errors/bad-request');
+const assertThrows = require('@pdc/shared/test/lib/assert-throws');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
 
-const { aom } = require('../../../src/packages/geo/geo');
+const { aom } = require('@pdc/package-geo/geo');
 
 describe('find AOM common', () => {
   it('missing args', () => assertThrows(TypeError, aom));
