@@ -1,5 +1,5 @@
 const passport = require('passport');
-const UnauthorizedError = require('@pdc/shared/packages/errors/unauthorized');
+const UnauthorizedError = require('../errors/unauthorized');
 const Token = require('../routes/operators/applications/token');
 
 const jwtServer = async (req, res, next) => {

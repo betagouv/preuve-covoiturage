@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { validation } = require('@pdc/shared/packages/config/config');
+const { validation } = require('../../../../packages/config/config');
 const validations = require('./validations');
 
 

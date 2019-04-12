@@ -1,6 +1,6 @@
 {
-  "name": "@pdc/emails",
-  "version": "1.0.0",
+  "name": "@pdc/package-email",
+  "version": "0.0.1",
   "description": "Transactional emails",
   "main": "emails.js",
   "private": true,
@@ -12,10 +12,5 @@
     "config"
   ],
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-  "license": "AGPL-3.0",
-  "eslintConfig": {
-    "rules": {
-      "import/no-extraneous-dependencies": "off"
-    }
-  }
+  "license": "AGPL-3.0"
 }
