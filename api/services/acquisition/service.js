@@ -2,10 +2,10 @@
 const _ = require('lodash');
 const { ObjectId } = require('mongoose').Types;
 const serviceFactory = require('@pdc/shared/packages/mongo/service-factory');
-const NotFoundError = require('@pdc/shared/packages/errors/not-found');
-const BadRequestError = require('@pdc/shared/packages/errors/bad-request');
-const InternalServerError = require('@pdc/shared/packages/errors/internal-server');
-const importer = require('@pdc/shared/packages/importer');
+const NotFoundError = require('@pdc/shared/errors/not-found');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
+const InternalServerError = require('@pdc/shared/errors/internal-server');
+const importer = require('../../packages/importer/importer');
 const Operator = require('@pdc/service-organization/entities/models/operator');
 const operatorService = require('@pdc/service-organization/operator');
 const tripService = require('@pdc/service-trip/service');

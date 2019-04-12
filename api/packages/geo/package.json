@@ -1,6 +1,6 @@
 {
-  "name": "@pdc/geo",
-  "version": "1.0.0",
+  "name": "@pdc/package-geo",
+  "version": "0.0.1",
   "description": "Geo utils",
   "main": "geo.js",
   "private": true,
@@ -12,10 +12,5 @@
     "geo"
   ],
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-  "license": "AGPL-3.0",
-  "eslintConfig": {
-    "rules": {
-      "import/no-extraneous-dependencies": "off"
-    }
-  }
+  "license": "AGPL-3.0"
 }

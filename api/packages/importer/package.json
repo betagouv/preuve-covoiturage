@@ -1,6 +1,6 @@
 {
-  "name": "@pdc/importers",
-  "version": "1.0.0",
+  "name": "@pdc/package-importer",
+  "version": "0.0.1",
   "description": "Operator's data importers",
   "main": "importer.js",
   "private": true,
@@ -12,10 +12,5 @@
     "importer"
   ],
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-  "license": "AGPL-3.0",
-  "eslintConfig": {
-    "rules": {
-      "import/no-extraneous-dependencies": "off"
-    }
-  }
+  "license": "AGPL-3.0"
 }
