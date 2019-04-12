@@ -1,5 +1,5 @@
-const BadRequestError = require('@pdc/shared/packages/errors/bad-request');
-const NotFoundError = require('@pdc/shared/packages/errors/not-found');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
+const NotFoundError = require('@pdc/shared/errors/not-found');
 const { journeysQueue } = require('../queue');
 
 const onCreate = ({ journey, operator }) => {

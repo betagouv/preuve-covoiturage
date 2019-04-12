@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const statService = require('@pdc/service-stats/service');
 const can = require('@pdc/shared/middlewares/can');
-const { apiUrl } = require('@pdc/shared/packages/url/url');
+const { apiUrl } = require('@pdc/shared/helpers/url/url');
 const aomService = require('../aom');
 
 /**

@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const moment = require('moment');
 const router = require('express').Router();
-const ForbiddenError = require('@pdc/shared/packages/packages/errors/forbidden');
-const UnauthorizedError = require('@pdc/shared/packages/errors/unauthorized');
+const ForbiddenError = require('@pdc/shared/errors/forbidden');
+const UnauthorizedError = require('@pdc/shared/errors/unauthorized');
 const can = require('@pdc/shared/middlewares/can');
-const { apiUrl } = require('@pdc/shared/packages/url/url');
+const { apiUrl } = require('@pdc/shared/helpers/url/url');
 const policiesService = require('../policy');
 const campaignService = require('../campaign');
 const { processCampaign } = require('../kernel/kernel');

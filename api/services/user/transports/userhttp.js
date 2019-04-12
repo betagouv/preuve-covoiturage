@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const userService = require('./service');
-const NotFoundError = require('@pdc/shared/packages/errors/not-found');
-const can = require('../../middlewares/can');
-const { apiUrl } = require('@pdc/shared/packages/url/url');
+const NotFoundError = require('@pdc/shared/errors/not-found');
+const can = require('@pdc/shared/middlewares/can');
+const { apiUrl } = require('@pdc/shared/helpers/url/url');
+const userService = require('../service');
 
 router.post('/invite', can('user.invite'), async (req, res, next) => {
   try {

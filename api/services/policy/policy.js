@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const serviceFactory = require('@pdc/shared/packages/mongo/service-factory');
+const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
 const IncentivePolicy = require('./entities/models/policy');
 const baseParametersOriginal = require('./entities/seeds/incentive-parameters');
 const baseUnits = require('./entities/seeds/incentive-units');

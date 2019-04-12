@@ -5,6 +5,7 @@
   "dependencies": {
     "@pdc/shared": "0.0.1",
     "@pdc/service-trip": "0.0.1",
+    "mathjs": "^5.8.0",
     "mongoose": "^5.4",
     "express": "^4.16.4",
     "lodash": "^4.17.11",

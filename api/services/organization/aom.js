@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const { ObjectId } = require('mongoose').Types;
-const serviceFactory = require('@pdc/shared/packages/mongo/service-factory');
+const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
 const User = require('@pdc/service-user/entities/models/user');
 const Aom = require('./entities/models/aom');
 
