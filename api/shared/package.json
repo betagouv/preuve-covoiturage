@@ -7,7 +7,7 @@
     "@pdc/service-organization": "0.0.1",
     "@pdc/service-user": "0.0.1",
     "@pdc/service-trip": "0.0.1",
-    "@pdc/proxy": "0.0.1",
+    "@pdc/package-config": "0.0.1",
     "lodash": "^4.17.11",
     "mongoose": "^5.4",
     "normalize-url": "^4.1.0",
@@ -23,6 +23,8 @@
     "bcrypt": "^3.0.2",
     "moment": "^2.22.2",
     "google-libphonenumber": "^3.2.2",
-    "ibantools": "^2.0.0"
+    "ibantools": "^2.0.0",
+    "jsonwebtoken": "^8.3.0",
+    "supertest": "^4.0"
   }
 }

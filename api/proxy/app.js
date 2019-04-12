@@ -11,7 +11,7 @@ const signResponse = require('@pdc/shared/middlewares/sign-response');
 const dataWrap = require('@pdc/shared/middlewares/data-wrap');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 
-const { PORT, sessionSecret } = require('./config.js');
+const { PORT, sessionSecret } = require('@pdc/shared/config.js');
 const swaggerDocument = require('./static/openapi.json');
 require('./definitions');
 // require('./passport')(passport);

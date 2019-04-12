@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const { ObjectId } = require('mongoose').Types;
 const BadRequestError = require('@pdc/shared/errors/bad-request');
 const NotFoundError = require('@pdc/shared/errors/not-found');
-const config = require('@pdc/proxy/config');
+const config = require('@pdc/shared/config');
 const operatorService = require('./operator');
 const Operator = require('./entities/models/operator');
 

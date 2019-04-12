@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
-const app = require('../../src/app');
-const assertResponse = require('./assert-response');
-const { jwtSecret } = require('../../src/config');
+const app = require('@pdc/proxy/app');
+const assertResponse = require('@pdc/shared/test/lib/assert-response');
+const { jwtSecret } = require('@pdc/shared/config');
 
 const request = supertest(app);
 

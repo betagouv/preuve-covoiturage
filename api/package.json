@@ -27,23 +27,27 @@
     "test": "NODE_ENV=test mocha -t 5000",
     "lint": "eslint --ignore-path .gitignore ."
   },
-  "devDependencies": {
+  "dependencies": {
     "@pdc/proxy": "0.0.1",
     "@pdc/shared": "0.0.1",
     "@pdc/package-geo": "0.0.1",
-    "chai": "^4.2.0",
-    "eslint": "^5.9.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1",
-    "mocha": "^6.0",
+    "@pdc/service-acquisition": "0.0.1",
+    "@pdc/service-trip": "0.0.1",
     "faker": "^4.1.0",
     "google-libphonenumber": "^3.2.2",
     "lodash": "^4.17.11",
     "supertest": "^4.0",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "mocha": "^6.0"
   },
   "eslintConfig": {
     "env": {

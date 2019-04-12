@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 const supertest = require('supertest');
 const app = require('@pdc/proxy/app');
-const assertResponse = require('../../../shared/test/lib/assert-response');
-const { signin } = require('../../../shared/test/lib/signin');
+const assertResponse = require('@pdc/shared/test/lib/assert-response');
+const { signin } = require('../../lib/signin');
 
 const request = supertest(app);
 
