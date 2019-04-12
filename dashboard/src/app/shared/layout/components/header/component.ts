@@ -3,6 +3,8 @@ import { Component, Injectable, OnInit } from '@angular/core';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { Logged } from '~/applicativeService/authguard/logged';
 import { TITLES } from '~/config/navbar';
+import { OrganisationCompany } from '~/entities/database/organisationCompany';
+import { User } from '~/entities/database/user/user';
 
 @Component({
   selector: 'app-header',
@@ -14,8 +16,8 @@ import { TITLES } from '~/config/navbar';
 export class HeaderComponent implements OnInit {
   public logged: boolean;
   public title: string;
-  public user: object;
-  public company: object;
+  public user: User;
+  public company: OrganisationCompany;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -27,7 +29,6 @@ export class HeaderComponent implements OnInit {
     this.company = this.authenticationService.getCompany();
     this.setTitles();
 
-    // observe 'logged' value
     Logged
       .get()
       .subscribe((logged: boolean) => {

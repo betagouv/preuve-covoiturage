@@ -14,12 +14,12 @@
             tooltipPosition="bottom">
           <a [routerLink]="company.link">
             <fa-icon [icon]="company.icon" *ngIf="company.icon"></fa-icon>
-            {{ company.nicename }}
+            {{ company.acronym }}
           </a>
         </li>
         <li *ngIf="user"
             class="nav__item"
-            [pTooltip]="user.fullName"
+            [pTooltip]="user.fullname"
             tooltipPosition="bottom">
           <a routerLink="/dashboard/users/settings">
             <fa-icon icon="user"></fa-icon>

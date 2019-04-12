@@ -10,6 +10,7 @@ import { User } from '~/entities/database/user/user';
 import { TokenService } from '../token/service';
 import { Logged } from '../authguard/logged';
 import { LoggerService } from '../logger/service';
+import { OrganisationCompany } from '~/entities/database/organisationCompany';
 
 @Injectable()
 export class AuthenticationService {
@@ -114,7 +115,7 @@ export class AuthenticationService {
   getUser(): User {
     try {
       this.user = JSON.parse(localStorage.getItem('user'));
-      this.user.fullName = `${this.user.firstname} ${this.user.lastname}`.trim();
+      this.user.fullname = `${this.user.firstname} ${this.user.lastname}`.trim();
 
       return this.user;
     } catch (e) {
@@ -131,9 +132,9 @@ export class AuthenticationService {
     localStorage.removeItem('user');
   }
 
-  getCompany() {
+  getCompany(): OrganisationCompany {
     const user = this.getUser();
-    if (!user) return {};
+    if (!user) return null;
 
     if (user.company && user.company.name) {
       switch (user.group) {
@@ -148,9 +149,13 @@ export class AuthenticationService {
         default:
           break;
       }
+
+      if (!user.company.acronym || user.company.acronym === '') {
+        user.company.acronym = user.company.nicename;
+      }
     }
 
-    return user.company || {};
+    return user.company || null;
   }
 
   sendEmailForPasswordReset(email: string) {

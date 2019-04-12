@@ -1,3 +1,5 @@
+import { OrganisationCompany } from '~/entities/database/organisationCompany';
+
 export class User {
   public _id: string;
   public email: string;
@@ -11,17 +13,13 @@ export class User {
   public aom: string;
   public operator: string;
   public permissions: [string];
-  public company: {
-    name: string,
-    link: string,
-    icon: string,
-  };
+  public company: OrganisationCompany;
 
   constructor(obj?: any) {
     this._id = obj && obj._id || null;
     this.lastname = obj && obj.lastname || null;
     this.firstname = obj && obj.firstname || null;
-    this.fullname = obj && obj.fullname || null;
+    this.fullname = obj && obj.fullName || null;
     this.password = obj && obj.password || null;
     this.phone = obj && obj.phone || null;
     this.group = obj && obj.group || null;
