@@ -7,7 +7,7 @@ module.exports = modelFactory('Operator', {
     nicename: {
       get(schema, doc) {
         return doc.nom_commercial;
-      }
-    }
-  }
+      },
+    },
+  },
 });
