@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const statService = require('./service');
+const statService = require('../service');
 
 router.get('/', async (req, res, next) => {
   try {
