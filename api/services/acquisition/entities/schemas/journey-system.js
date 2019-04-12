@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const rank = require('@pdc/shared/entities/schemas/rank');
-const aom = require('@pdc/service-organization/entities/models/aom');
+const aom = require('@pdc/service-organization/entities/schemas/aom');
 
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Types;
