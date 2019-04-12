@@ -31,8 +31,5 @@
     "APP_SUPERUSER_PASSWORD": {
       "value": "admin1234"
     }
-  },
-  "scripts": {
-    "postdeploy": "yarn migrate && yarn seed && yarn fix-permissions"
   }
 }

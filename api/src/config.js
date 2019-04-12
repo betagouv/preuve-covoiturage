@@ -23,8 +23,6 @@ function getMongoConfig(mongoUrl) {
 const mongoUrl = process.env.MONGO_URL || `mongodb://mongo:mongo@mongo/pdc-${process.env.NODE_ENV}?authSource=admin`;
 const mongoConfig = getMongoConfig(mongoUrl);
 
-console.log('mongoConfig', JSON.stringify(mongoConfig));
-
 /**
  * System configuration
  * - Application exposed port
