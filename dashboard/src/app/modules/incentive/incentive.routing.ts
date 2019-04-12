@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { IncentiveCampaignsListPageComponent } from '~/modules/incentive/pages/campaigns/list/component';
 
@@ -39,4 +39,5 @@ const routes: Routes = [
   ],
 })
 
-export class IncentiveRoutingModule { }
+export class IncentiveRoutingModule {
+}

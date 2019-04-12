@@ -61,6 +61,8 @@ import { IncentiveFilterService } from './services/incentiveFilterService';
 import { IncentiveParameterService } from './services/incentiveParameterService';
 import { IncentivePolicyService } from './services/incentivePolicyService';
 import { IncentiveUnitService } from './services/incentiveUnitService';
+import { TranslationService } from '~/shared/services/translationService';
+import { TableService } from '~/shared/services/tableService';
 
 @NgModule({
   imports: [
@@ -95,6 +97,8 @@ import { IncentiveUnitService } from './services/incentiveUnitService';
     IncentiveCampaignService,
     IncentiveFilterService,
     IncentiveUnitService,
+    TranslationService,
+    TableService,
   ],
   declarations: [
     IncentiveCampaignsCreatePageComponent,
