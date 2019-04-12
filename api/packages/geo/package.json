@@ -11,6 +11,12 @@
     "pdc",
     "geo"
   ],
+  "dependencies": {
+    "@pdc/shared" : "0.0.1",
+    "@pdc/service-organization": "0.0.1",
+    "lodash": "^4.17.11",
+    "axios": "^0.18.0"
+  },
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
   "license": "AGPL-3.0"
 }

@@ -11,6 +11,10 @@
     "pdc",
     "config"
   ],
+  "dependencies": {
+    "@pdc/shared": "0.0.1",
+    "node-mailjet": "^3.3.1"
+  },
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
   "license": "AGPL-3.0"
 }
