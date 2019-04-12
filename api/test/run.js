@@ -1,10 +1,10 @@
 /* eslint-disable global-require */
 const mongoose = require('mongoose');
-const seeder = require('../src/database/seeder');
-const queues = require('../src/worker/queues');
-const app = require('../src/app');
+const seeder = require('@pdc/shared/entities/seeder');
+const queues = require('@pdc/shared/worker/queues');
+const app = require('@pdc/proxy/app');
 
-const { mongoUrl } = require('../src/config.js');
+const { mongoUrl } = require('@pdc/shared/config');
 
 before(async () => {
   await mongoose.disconnect();
@@ -34,18 +34,16 @@ after(async () => {
  * Unit tests
  */
 describe('Unit tests: geo', async () => {
-  require('../packages/geo/geo/aom');
-  require('../packages/geo/geo/postcodes');
-  // require('./unit/geo/town');
+  require('@pdc/package-geo/geo');
 });
 
 describe('Unit tests: validation', async () => {
-  require('../shared/providers/mongo/test/validation/regex');
-  require('../shared/providers/mongo/test/validation/validators');
+  require('@pdc/shared/providers/mongo/test/validation/regex');
+  require('@pdc/shared/providers/mongo/test/validation/validators');
 });
 
 describe('Unit tests: datetime', async () => {
-  require('../shared/providers/mongo/test/datetime/round');
+  require('@pdc/shared/providers/mongo/test/datetime/round');
 });
 
 /**
