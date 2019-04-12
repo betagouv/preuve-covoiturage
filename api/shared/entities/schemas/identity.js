@@ -1,4 +1,4 @@
-const { regex, setters, validators } = require('@pdc/shared/packages/mongo/schema-validation');
+const { regex, setters, validators } = require('../../providers/mongo/schema-validation');
 
 module.exports = {
   firstname: {

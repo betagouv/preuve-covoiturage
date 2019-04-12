@@ -1,6 +1,6 @@
 const passport = require('passport');
+const Token = require('@pdc/service-organization/entities/models/token');
 const UnauthorizedError = require('../errors/unauthorized');
-const Token = require('../routes/operators/applications/token');
 
 const jwtServer = async (req, res, next) => {
   // check for the token in the blacklist

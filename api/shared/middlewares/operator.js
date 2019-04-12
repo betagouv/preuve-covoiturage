@@ -1,7 +1,7 @@
 const { has } = require('lodash');
-const UnauthorizedError = require('@pdc/shared/packages/errors/unauthorized');
-const ForbiddenError = require('@pdc/shared/packages/errors/forbidden');
-const { isSuperAdmin, isOperator } = require('../routes/users/helpers');
+const { isSuperAdmin, isOperator } = require('@pdc/service-user/helpers');
+const UnauthorizedError = require('../errors/unauthorized');
+const ForbiddenError = require('../errors/forbidden');
 
 const operator = function operator(req, res, next) {
   if (!req.user) {
