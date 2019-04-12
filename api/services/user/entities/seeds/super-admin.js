@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-const User = require('../../routes/users/model');
-const userService = require('../../routes/users/service');
+const User = require('../models/user');
+const userService = require('../../service');
 
 /**
  * Get email or password from process.env variables

@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const userService = require('../users/service');
-const can = require('../../middlewares/can');
+const can = require('@pdc/shared/middlewares/can');
+const userService = require('../service');
 
 // show my profile
 router.get('/', can('profile.read'), (req, res, next) => {

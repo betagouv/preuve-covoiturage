@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 const bcrypt = require('bcrypt');
 const modelFactory = require('@pdc/shared/packages/mongo/model-factory');
-const UserSchema = require('../../database/schemas/user');
 const emails = require('@pdc/shared/packages/emails');
 const { appUrl } = require('@pdc/shared/packages/url');
+const UserSchema = require('../schemas/user');
 
 module.exports = modelFactory('User', {
   schema: UserSchema,
