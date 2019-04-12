@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const router = require('express').Router();
-const incentivePolicyService = require('../policies/service');
-const can = require('../../../middlewares/can');
+const can = require('@pdc/shared/middlewares/can');
+const incentivePolicyService = require('../policy');
 
 // /**
 //  * get an Parameter by ID

@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
-const UnitSchema = require('./objects/incentive-unit');
-const ParameterSchema = require('./objects/incentive-parameter');
+const UnitSchema = require('../schemas/unit');
+const ParameterSchema = require('../schemas/parameter');
 
 const IncentiveTimeFilterSchema = new Schema({
   start: {
