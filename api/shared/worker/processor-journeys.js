@@ -4,7 +4,7 @@ const SafeJourney = require('@pdc/service-acquisition/entities/models/safe-journ
 const journeyService = require('@pdc/service-acquisition/service');
 const tripService = require('@pdc/service-trip/service');
 const { journeysQueue } = require('./queues');
-const NotFoundError = require('@pdc/shared/packages/errors/not-found');
+const NotFoundError = require('../errors/not-found');
 
 const onCreate = async (db, job) => {
   const safeJourney = await SafeJourney.findById(job.data.safe_journey_id).exec();

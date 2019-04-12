@@ -1,5 +1,5 @@
 const aqp = require('api-query-params');
-const paginate = require('../paginate');
+const paginate = require('../../helpers/paginate/paginate');
 
 function mapQuery(options = {}) {
   let skip;
