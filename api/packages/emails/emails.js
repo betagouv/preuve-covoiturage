@@ -1,4 +1,4 @@
-const { emailsQueue } = require('../../worker/queues');
+const { emailsQueue } = require('@pdc/shared/worker/queues');
 
 /**
  * Send the action to emailsQueue

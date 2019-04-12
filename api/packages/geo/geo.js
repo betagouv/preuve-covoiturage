@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 const _ = require('lodash');
-const NotFoundError = require('../errors/not-found');
-const BadRequestError = require('../errors/bad-request');
-const Aom = require('../../routes/aom/model');
-const { validate } = require('../mongo/schema-validation');
+const NotFoundError = require('@pdc/shared/errors/not-found');
+const BadRequestError = require('@pdc/shared//errors/bad-request');
+const Aom = require('@pdc/service-organization/entities/models/aom');
+const { validate } = require('@pdc/shared/providers/mongo/schema-validation');
 const geoApi = require('./providers/fr.gouv.api.geo');
 const addressApi = require('./providers/fr.gouv.data.api-adresse');
 const nominatimApi = require('./providers/org.openstreetmap.nominatim');

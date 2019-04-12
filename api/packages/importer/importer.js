@@ -3,9 +3,9 @@ const _ = require('lodash');
 const fs = require('fs');
 const chardet = require('chardet');
 const parse = require('csv-parse/lib/sync');
+const Journey = require('@pdc/service-acquisition/entities/models/journey');
 const cast = require('./lib/cast');
 const validators = require('./validators');
-const Journey = require('../../routes/journeys/model');
 
 /**
  * CSV authorized headers

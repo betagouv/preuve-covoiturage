@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const axios = require('axios');
-const NotFoundError = require('../../errors/not-found');
-const BadRequestError = require('../../errors/bad-request');
-const { validate } = require('../../mongo/schema-validation');
+const NotFoundError = require('@pdc/shared/errors/not-found');
+const BadRequestError = require('@pdc/shared/errors/bad-request');
+const { validate } = require('@pdc/shared/providers/mongo/schema-validation');
 
 const domain = 'https://api-adresse.data.gouv.fr';
 
