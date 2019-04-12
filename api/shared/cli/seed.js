@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const { mongoUrl } = require('../src/config');
-const seeder = require('../src/database/seeder');
+const { mongoUrl } = require('../config');
+const seeder = require('../entities/seeder');
 
 (async () => {
   try {
