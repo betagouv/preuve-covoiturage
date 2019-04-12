@@ -5,20 +5,20 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const swaggerUi = require('swagger-ui-express');
+
+const Sentry = require('@pdc/shared/packages/sentry/sentry');
+const signResponse = require('@pdc/shared/middlewares/sign-response');
+const dataWrap = require('@pdc/shared/middlewares/data-wrap');
+const jwtUser = require('@pdc/shared/middlewares/jwt-user');
+
 const { PORT, sessionSecret } = require('./config.js');
 const { appUrl } = require('./packages/url');
-const Sentry = require('./sentry.js');
-const eventBus = require('./events/bus');
-const signResponse = require('./middlewares/sign-response');
-const dataWrap = require('./middlewares/data-wrap');
+
 const swaggerDocument = require('./static/openapi.json');
 
 require('./definitions');
 // require('./passport')(passport);
 require('./mongo');
-
-// require after above passport
-const jwtUser = require('./middlewares/jwt-user');
 
 const app = express();
 
@@ -56,19 +56,19 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // default response
-// app.use('/auth', require('./routes/auth/controller'));
-// app.use('/stats', require('./routes/stats/controller'));
-// app.use('/profile', jwtUser, require('./routes/profile/controller'));
-// app.use('/users', jwtUser, require('./routes/users/controller'));
-// app.use('/aom', jwtUser, require('./routes/aom/controller'));
-// app.use('/operators', jwtUser, require('./routes/operators/controller'));
-// app.use('/trips', jwtUser, require('./routes/trips/controller'));
-// app.use('/incentive/incentives', jwtUser, require('./routes/incentive/incentives/controller'));
-// app.use('/incentive/parameters', jwtUser, require('./routes/incentive/parameters/controller'));
-// app.use('/incentive/campaigns', jwtUser, require('./routes/incentive/campaigns/controller'));
-// app.use('/incentive/policies', jwtUser, require('./routes/incentive/policies/controller'));
-// app.use('/incentive/units', jwtUser, require('./routes/incentive/units/controller'));
-app.use('/journeys', require('./services/acquisition/transports/http'));
+app.use('/auth', require('@pdc/service-auth/transports/http'));
+app.use('/stats', require('@pdc/service-stats/transports/http'));
+app.use('/profile', jwtUser, require('@pdc/service-user/transports/profilehttp'));
+app.use('/users', jwtUser, require('@pdc/service-user/transports/userhttp'));
+app.use('/aom', jwtUser, require('@pdc/service-organization/transports/aomhttp'));
+app.use('/operators', jwtUser, require('@pdc/service-organization/transports/operatorhttp'));
+app.use('/trips', jwtUser, require('@pdc/service-trip/transports/http'));
+app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive/transports/http'));
+app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy/transports/parameterhttp'));
+app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy/transports/campaignhttp'));
+app.use('/incentive/policies', jwtUser, require('@pdc/service-policy/transports/policyhttp'));
+app.use('/incentive/units', jwtUser, require('@pdc/service-policy/transports/unithttp'));
+app.use('/journeys', require('@pdc/service-acquisition/transports/http'));
 
 // Arena access for queues
 // app.use('/arena', require('./routes/bull-arena/controller'));

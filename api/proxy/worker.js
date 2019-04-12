@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-const db = require('./mongo');
 const sendEmail = require('@pdc/shared/packages/emails/connect');
-const { journeysQueue, emailsQueue } = require('./worker/queues');
-const journeysProcessor = require('./worker/processor-journeys');
-const emailsProcessor = require('./worker/processor-emails');
+const { journeysQueue, emailsQueue } = require('@pdc/shared/worker/queues');
+const journeysProcessor = require('@pdc/shared/worker/processor-journeys');
+const emailsProcessor = require('@pdc/shared/worker/processor-emails');
+const db = require('./mongo');
 
 console.log('Starting 🐮 worker');
 
