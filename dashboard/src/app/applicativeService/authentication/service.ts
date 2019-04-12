@@ -11,7 +11,6 @@ import { TokenService } from '../token/service';
 import { Logged } from '../authguard/logged';
 import { LoggerService } from '../logger/service';
 
-
 @Injectable()
 export class AuthenticationService {
   private user = null;
@@ -54,7 +53,6 @@ export class AuthenticationService {
     return true;
   }
 
-
   hasAnyGroup(groups: string[]): string {
     const user = this.getUser();
     if (!user) return null;
@@ -85,19 +83,26 @@ export class AuthenticationService {
   hasRole(role: string): boolean {
     const user = this.getUser();
 
-    if (user && user.role === role) {
-      return true;
-    }
-
-    return false;
+    return user && user.role === role;
   }
 
-  logout(returnToHome: boolean = false) {
+  logout(opt: { toLogin?: boolean, redirectTo?: string } = {}) {
+    const options = { toLogin: false, redirectTo: null, ...opt };
+
+    // clear the Token, user object and connection state
     this.clearUser();
     TokenService.clear();
     Logged.set(false);
-    if (returnToHome) {
-      this.router.navigate(['/signin']);
+
+    if (options.toLogin) {
+      const extras = options.redirectTo ? {
+        queryParams: {
+          flash: 'expired',
+          r: options.redirectTo,
+        },
+      } : {};
+
+      this.router.navigate(['/signin'], extras);
     }
 
     return this;

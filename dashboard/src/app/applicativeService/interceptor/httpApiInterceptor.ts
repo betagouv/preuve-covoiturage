@@ -70,23 +70,35 @@ export class HttpApiInterceptor implements HttpInterceptor {
       ),
       catchError((error: HttpErrorResponse) => {
         switch (error.status) {
+          /**
+           * 401 Unauthorized
+           * The user isn't connected
+           */
           case UNAUTHORIZED:
+            this.authentificationService.logout({
+              toLogin: true,
+              redirectTo: this.router.url,
+            });
+            break;
+
+          /**
+           * 403 Forbidden
+           * The user doesn't have the right to access the ressource
+           */
           case FORBIDDEN:
             this.messageService.add({
               severity: 'error',
               summary: 'Vous n\'êtes pas connecté ou bien vous n\'avez pas les droits',
             });
-            // TokenService.clear();
-            // this.authentificationService.clearUser();
-            // Logged.set(false);
-            // this.router.navigate(['/signin']);
             break;
+
           case NOTFOUND:
             this.messageService.add({
               severity: 'error',
               summary: 'La resource demandée n\'a pas été trouvée',
             });
             break;
+
           default:
             this.messageService.add({
               severity: 'error',
