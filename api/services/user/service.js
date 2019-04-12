@@ -8,13 +8,13 @@ const ForbiddenError = require('@pdc/shared/packages/errors/forbidden');
 const ConflictError = require('@pdc/shared/packages/errors/conflict');
 const InternalServerError = require('@pdc/shared/packages/errors/internal-server');
 const Permissions = require('@pdc/shared/packages/permissions');
-const config = require('../../config.js');
-const User = require('./model');
-const Aom = require('../aom/model');
-const Operator = require('../operators/model');
-const operatorService = require('../operators/service');
-const aomService = require('../aom/service');
+const config = require('@pdc/shared/config/config');
+const Aom = require('@pdc/service-organization/entities/models/aom');
 const generateToken = require('@pdc/shared/packages/random/token');
+const Operator = require('@pdc/service-organization/entities/models/operator');
+const operatorService = require('@pdc/service-organization/operator');
+const aomService = require('@pdc/service-organization/aom');
+const User = require('./entities/models/user');
 
 const service = serviceFactory(User, {
   async signin({ email, password }) {
