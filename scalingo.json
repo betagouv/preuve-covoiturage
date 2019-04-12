@@ -1,5 +1,5 @@
 {
-  "name": "Preuve de covoiturage API",
+  "name": "Preuve de covoiturage",
   "description": "beta.gouv.fr - Registre de preuve de covoiturage - Review App",
   "repository": "https://github.com/betagouv/preuve-covoiturage",
   "website": "http://covoiturage.beta.gouv.fr",
@@ -8,6 +8,9 @@
       "value": "review"
     },
     "API_URL": {
+      "generator": "url"
+    },
+    "APP_URL": {
       "generator": "url"
     },
     "MJ_FROM_NAME": {
@@ -24,20 +27,6 @@
     },
     "MJ_DEBUG_NAME": {
       "value": "Review App"
-    }
-  },
-  "addons": [
-    "mongodb:mongo-sandbox",
-    "redis:redis-sandbox"
-  ],
-  "formation": {
-    "web": {
-      "amount": 1,
-      "size": "S"
-    },
-    "worker": {
-      "amount": 1,
-      "size": "S"
     }
   }
 }

@@ -1,5 +1,7 @@
+// APP_URL is rewritten to API_URL on deploy by the yarn scaling-prebuild script
+
 export const environment = {
   production: true,
   name: 'review',
-  apiUrl: \"${API_URL}\",
+  apiUrl: \"${APP_URL}\",
 };
