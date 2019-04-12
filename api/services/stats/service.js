@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const mongoose = require('mongoose');
-const Stat = require('./model');
-const journey = require('../journeys/model');
+const journey = require('@pdc/service-acquisition/entities/models/journey');
+const Stat = require('./entities/models/stat');
 
 // const { Date } = require('mongoose').Types;
 
