@@ -27,8 +27,8 @@
     }
   },
   "addons": [
-    "mongodb:sandbox",
-    "redis:free"
+    "mongodb:mongo-sandbox",
+    "redis:redis-sandbox"
   ],
   "formation": {
     "web": {
