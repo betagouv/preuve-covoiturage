@@ -34,18 +34,18 @@ after(async () => {
  * Unit tests
  */
 describe('Unit tests: geo', async () => {
-  require('./unit/geo/aom');
-  require('./unit/geo/postcodes');
+  require('../packages/geo/geo/aom');
+  require('../packages/geo/geo/postcodes');
   // require('./unit/geo/town');
 });
 
 describe('Unit tests: validation', async () => {
-  require('./unit/validation/regex');
-  require('./unit/validation/validators');
+  require('../shared/providers/mongo/test/validation/regex');
+  require('../shared/providers/mongo/test/validation/validators');
 });
 
 describe('Unit tests: datetime', async () => {
-  require('./unit/datetime/round');
+  require('../shared/providers/mongo/test/datetime/round');
 });
 
 /**
