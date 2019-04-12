@@ -43,7 +43,7 @@ export class UserFormComponent implements OnInit {
     email: [null, [Validators.required, Validators.pattern(regexp.email)]],
     phone: [null],
     role: ['user', Validators.required],
-    password: [null, [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
+    password: [null, [Validators.minLength(password.min), Validators.maxLength(password.max)]],
     group: [null, Validators.required],
     aom: [null],
     operator: [null],
