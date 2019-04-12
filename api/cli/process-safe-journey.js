@@ -1,7 +1,7 @@
 /* eslint-disable camelcase,no-console */
 const mongoose = require('mongoose');
 const { mongoUrl } = require('../src/config');
-const SafeJourney = require('../src/routes/journeys/safe-model');
+const SafeJourney = require('@pdc/service-acquisition/entities/models/safe-journey');
 const { journeysQueue } = require('../src/worker/queues');
 
 const { ObjectId } = mongoose.Types;

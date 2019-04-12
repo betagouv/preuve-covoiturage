@@ -1,13 +1,13 @@
 const _ = require('lodash');
 const { ExtractJwt } = require('passport-jwt');
 const JwtStrategy = require('passport-jwt').Strategy;
-const config = require('@pdc/proxy/config');
 
 // load the models
 const User = require('@pdc/service-user/entities/models/user');
 // const Operator = require('./routes/operators/model');
 const operatorService = require('@pdc/service-organization/operator');
 const applicationService = require('@pdc/service-organization/application');
+const config = require('../../config');
 
 const NotFoundError = require('../../errors/not-found');
 

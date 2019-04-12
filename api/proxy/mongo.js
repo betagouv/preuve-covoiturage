@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const mongoose = require('mongoose');
-const { mongoUrl } = require('./config.js');
+const { mongoUrl } = require('@pdc/shared/config.js');
 
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,

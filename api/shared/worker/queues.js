@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const Queue = require('bull');
-const config = require('@pdc/proxy/config');
+const config = require('../config');
 const Sentry = require('../providers/sentry/sentry');
 
 /**

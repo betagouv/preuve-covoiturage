@@ -4,9 +4,9 @@ const _ = require('lodash');
 const supertest = require('supertest');
 const faker = require('faker');
 const app = require('@pdc/proxy/app');
+const assertResponse = require('@pdc/shared/test/lib/assert-response');
 const insee = require('../../data/insee');
-const assertResponse = require('../../../shared/test/lib/assert-response');
-const { signin } = require('../../../shared/test/lib/signin');
+const { signin } = require('../../lib/signin');
 const tripGenerator = require('../../data/journeys/trip');
 
 const request = supertest(app);
@@ -85,9 +85,9 @@ describe('Trips', () => {
         if (!safeId) return false;
 
         const { ObjectId } = require('mongoose').Types;
-        const SafeJourney = require('../../../src/routes/journeys/safe-model');
-        const journeyService = require('../../../src/routes/journeys/service');
-        const tripService = require('../../../src/routes/trips/service');
+        const SafeJourney = require('@pdc/service-acquisition/entities/models/safe-journey');
+        const journeyService = require('@pdc/service-acquisition/service');
+        const tripService = require('@pdc/service-trip/service');
 
         const safe = await SafeJourney.findOne({ _id: ObjectId(safeId) }).exec();
         // console.log(safe ? safe.toObject().operator : safe);

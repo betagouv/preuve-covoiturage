@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const config = require('../../../packages/config/config');
+const config = require('@pdc/package-config/config');
 
 const Permissions = {
   types: ['aom', 'operators', 'registry'],

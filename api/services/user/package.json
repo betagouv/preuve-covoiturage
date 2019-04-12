@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@pdc/shared": "0.0.1",
-    "@pdc/proxy": "0.0.1",
     "@pdc/service-organization": "0.0.1",
     "@pdc/package-email" : "0.0.1",
     "mongoose": "^5.4",

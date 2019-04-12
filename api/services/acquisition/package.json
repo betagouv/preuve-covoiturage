@@ -8,7 +8,6 @@
     "@pdc/service-trip": "0.0.1",
     "@pdc/package-importer": "0.0.1",
     "@pdc/package-geo": "0.0.1",
-    "@pdc/proxy": "0.0.1",
     "lodash": "^4.17.11",
     "mongoose": "^5.4",
     "moment": "^2.22.2",
