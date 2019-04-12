@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 const { camelCase } = require('lodash');
 
 // recommended : set the CONFIG_DIR as env variable
-const configFolder = path.resolve(__dirname, process.env.CONFIG_DIR || '../../../config');
+const configFolder = path.resolve(__dirname, process.env.CONFIG_DIR || '../../config');
 const config = {};
 
 // Load all .yml files from the config/ folder

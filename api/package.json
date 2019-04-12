@@ -20,6 +20,10 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "scripts": {
+    "start": "yarn workspace @pdc/proxy start",
+    "dev": "yarn workspace @pdc/proxy dev",
+    "worker": "yarn workspace @pdc/proxy worker",
+    "worker-dev": "yarn workspace @pdc/proxy worker-dev",
     "test": "NODE_ENV=test mocha -t 5000",
     "lint": "eslint --ignore-path .gitignore ."
   },
