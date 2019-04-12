@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const _ = require('lodash');
 const source = require('./incentive-units.json');
-const IncentiveUnit = require('../../../routes/incentive/units/model');
+const IncentiveUnit = require('../models/unit');
 
 module.exports = async function incentiveUnit() {
   const existing = await IncentiveUnit.find({}, 'short_name').exec();

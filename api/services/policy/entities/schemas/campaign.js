@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const policySchema = require('./incentive-policy');
+const policySchema = require('../models/policy');
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;

@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const router = require('express').Router();
-const policyService = require('./service');
-const can = require('../../../middlewares/can');
+const can = require('@pdc/shared/middlewares/can');
 const { apiUrl } = require('@pdc/shared/packages/url/url');
+const policyService = require('../policy');
 
 /**
  * get an Policy by ID

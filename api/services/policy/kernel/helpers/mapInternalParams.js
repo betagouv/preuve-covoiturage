@@ -1,4 +1,4 @@
-const internalParams = require('../../database/seeds/incentive/incentive-parameters');
+const internalParams = require('../../entities/seeds/incentive-parameters');
 
 function mapInternalParam(param, { policy, trip, tripStakeholder }) {
   return param.getter(tripStakeholder, { policy, trip });

@@ -3,11 +3,11 @@ const moment = require('moment');
 const router = require('express').Router();
 const ForbiddenError = require('@pdc/shared/packages/packages/errors/forbidden');
 const UnauthorizedError = require('@pdc/shared/packages/errors/unauthorized');
-const policiesService = require('../policies/service');
-const campaignService = require('./service');
-const can = require('../../../middlewares/can');
+const can = require('@pdc/shared/middlewares/can');
 const { apiUrl } = require('@pdc/shared/packages/url/url');
-const { processCampaign } = require('../../../incentive/kernel');
+const policiesService = require('../policy');
+const campaignService = require('../campaign');
+const { processCampaign } = require('../kernel/kernel');
 
 /**
  * get an Campaign by ID

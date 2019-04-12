@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const serviceFactory = require('@pdc/shared/packages/mongo/service-factory');
-const IncentivePolicy = require('./model');
-const baseParametersOriginal = require('../../../database/seeds/incentive/incentive-parameters');
-const baseUnits = require('../../../database/seeds/incentive/incentive-units');
+const IncentivePolicy = require('./entities/models/policy');
+const baseParametersOriginal = require('./entities/seeds/incentive-parameters');
+const baseUnits = require('./entities/seeds/incentive-units');
 
 const baseParameters = _.map(baseParametersOriginal, param => _.omit(param, ['getter']));
 

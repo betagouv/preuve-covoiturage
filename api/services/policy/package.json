@@ -4,7 +4,11 @@
   "private": true,
   "dependencies": {
     "@pdc/shared": "0.0.1",
+    "@pdc/service-trip": "0.0.1",
     "mongoose": "^5.4",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "chai": "^4.2.0"
   }
 }
