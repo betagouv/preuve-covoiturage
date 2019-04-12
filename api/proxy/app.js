@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const swaggerUi = require('swagger-ui-express');
 
-const Sentry = require('@pdc/shared/packages/sentry/sentry');
+const Sentry = require('@pdc/shared/providers/sentry/sentry');
 const signResponse = require('@pdc/shared/middlewares/sign-response');
 const dataWrap = require('@pdc/shared/middlewares/data-wrap');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
