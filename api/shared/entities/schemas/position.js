@@ -1,7 +1,7 @@
 const { Schema } = require('mongoose');
-const { regex, validators } = require('@pdc/shared/packages/mongo/schema-validation');
-const round = require('@pdc/shared/packages/mongo/round-time');
-const toUtc = require('@pdc/shared/packages/mongo/to-utc');
+const { regex, validators } = require('../../providers/mongo/schema-validation');
+const round = require('../../providers/mongo/round-time');
+const toUtc = require('../../providers/mongo/to-utc');
 const aom = require('./aom');
 
 const PositionSchema = new Schema({

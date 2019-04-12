@@ -1,14 +1,15 @@
 const _ = require('lodash');
 const { ExtractJwt } = require('passport-jwt');
 const JwtStrategy = require('passport-jwt').Strategy;
-const NotFoundError = require('./shared/packages/errors/not-found');
-const config = require('./config');
+const config = require('@pdc/proxy/config');
 
 // load the models
-const User = require('./routes/users/model');
+const User = require('@pdc/service-user/entities/models/user');
 // const Operator = require('./routes/operators/model');
-const operatorService = require('./routes/operators/service');
-const applicationService = require('./routes/operators/applications/service');
+const operatorService = require('@pdc/service-organization/operator');
+const applicationService = require('@pdc/service-organization/application');
+
+const NotFoundError = require('../../errors/not-found');
 
 module.exports = (passport) => {
   const opts = {};

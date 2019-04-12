@@ -1,6 +1,6 @@
-const UnauthorizedError = require('@pdc/shared/packages/errors/unauthorized');
-const ForbiddenError = require('@pdc/shared/packages/errors/forbidden');
-const { isSuperAdmin } = require('../routes/users/helpers');
+const { isSuperAdmin } = require('@pdc/service-user/helpers');
+const UnauthorizedError = require('../errors/unauthorized');
+const ForbiddenError = require('../errors/forbidden');
 
 const superAdmin = function superAdmin(req, res, next) {
   if (!req.user) {

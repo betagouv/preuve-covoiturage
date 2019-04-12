@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
-const Journey = require('../routes/journeys/model');
-const SafeJourney = require('../routes/journeys/safe-model');
-const journeyService = require('../routes/journeys/service');
-const tripService = require('../routes/trips/service');
+const Journey = require('@pdc/service-acquisition/entities/models/journey');
+const SafeJourney = require('@pdc/service-acquisition/entities/models/safe-journey');
+const journeyService = require('@pdc/service-acquisition/service');
+const tripService = require('@pdc/service-trip/service');
 const { journeysQueue } = require('./queues');
 const NotFoundError = require('@pdc/shared/packages/errors/not-found');
 

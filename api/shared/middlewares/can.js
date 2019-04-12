@@ -1,6 +1,6 @@
-const UnauthorizedError = require('@pdc/shared/packages/errors/unauthorized');
-const ForbiddenError = require('@pdc/shared/packages/errors/forbidden');
-const { isSuperAdmin } = require('../routes/users/helpers');
+const { isSuperAdmin } = require('@pdc/service-user/helpers');
+const UnauthorizedError = require('../errors/unauthorized');
+const ForbiddenError = require('../errors/forbidden');
 
 const can = (...perms) => (req, res, next) => {
   if (!Array.isArray(perms)) {

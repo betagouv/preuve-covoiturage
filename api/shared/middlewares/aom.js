@@ -1,7 +1,7 @@
 const { has } = require('lodash');
-const UnauthorizedError = require('@pdc/shared/packages/errors/unauthorized');
-const ForbiddenError = require('@pdc/shared/packages/errors/forbidden');
-const { isSuperAdmin, isAom } = require('../routes/users/helpers');
+const { isSuperAdmin, isAom } = require('@pdc/service-user/helpers');
+const UnauthorizedError = require('../errors/unauthorized');
+const ForbiddenError = require('../errors/forbidden');
 
 const aom = function aom(req, res, next) {
   if (!req.user) {
