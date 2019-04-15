@@ -8,6 +8,12 @@
     "Nicolas Mérigot <nicolas.mergiot@beta.gouv.fr>",
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
+  "keywords": [
+    "betagouv",
+    "covoiturage",
+    "api",
+    "carpooling"
+  ],
   "workspaces": [
     "proxy",
     "shared",
@@ -27,9 +33,11 @@
     "test": "NODE_ENV=test mocha -t 5000",
     "lint": "eslint --ignore-path .gitignore ."
   },
+  "dependencies": {
+    "@pdc/shared": "0.0.1"
+  },
   "devDependencies": {
     "@pdc/proxy": "0.0.1",
-    "@pdc/shared": "0.0.1",
     "@pdc/package-geo": "0.0.1",
     "@pdc/service-acquisition": "0.0.1",
     "@pdc/service-trip": "0.0.1",
@@ -58,5 +66,16 @@
       "no-underscore-dangle": "off",
       "object-curly-newline": "off"
     }
+  },
+  "nodemonConfig": {
+    "ignore": [
+      ".circleci/*",
+      "cli/*",
+      "config/*",
+      "documentation/*",
+      "node_modules/*",
+      "test/*"
+    ],
+    "delay": "200"
   }
 }
