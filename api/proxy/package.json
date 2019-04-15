@@ -13,8 +13,8 @@
     "mig:down": "cd .. && docker-compose exec api npx migrate-mongo down",
     "mig:status": "cd .. && docker-compose exec api npx migrate-mongo status",
     "seed": "node cli/seed.js",
-    "process": "node cli/process-safe-journey.js",
-    "process-trip": "node cli/process-trip.js",
+    "process": "yarn workspace @pdc/service-acquisition process",
+    "process-trip": "yarn workspace @pdc/service-acquisition process-trip",
     "fix-permissions": "node cli/fix-permissions.js"
   },
   "dependencies": {
