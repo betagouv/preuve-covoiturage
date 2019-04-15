@@ -10,6 +10,7 @@
     "watch-node": "nodemon dist/kernel.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
     "test": "mocha",
+    "coverage": "nyc mocha",
     "watch-test": "yarn test -- --watchAll",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
@@ -23,6 +24,22 @@
       "ts-node/register"
     ],
     "spec": "src/**/*.spec.ts"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
