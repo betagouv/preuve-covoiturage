@@ -12,7 +12,7 @@ const dataWrap = require('@pdc/shared/middlewares/data-wrap');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 
 const { PORT, sessionSecret } = require('@pdc/shared/config.js');
-const { appUrl } = require('./packages/url');
+const { appUrl } = require('@pdc/shared/helpers/url/url');
 
 const swaggerDocument = require('./static/openapi.json');
 
@@ -71,7 +71,7 @@ app.use('/incentive/units', jwtUser, require('@pdc/service-policy/transports/uni
 app.use('/journeys', require('@pdc/service-acquisition/transports/http'));
 
 // Arena access for queues
-// app.use('/arena', require('./routes/bull-arena/controller'));
+app.use('/arena', require('./routes/bull-arena/controller'));
 
 // configure events for each model
 // ! singular names here ;)
