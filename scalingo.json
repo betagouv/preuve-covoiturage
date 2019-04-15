@@ -19,17 +19,21 @@
     "SESSION_SECRET": {
       "generator": "secret"
     },
-    "MJ_DEBUG_EMAIL": {
-      "value": "jonathan.fallon@beta.gouv.fr"
-    },
-    "MJ_DEBUG_NAME": {
-      "value": "Review App"
-    },
     "APP_SUPERUSER_EMAIL": {
       "value": "admin@example.com"
     },
     "APP_SUPERUSER_PASSWORD": {
       "value": "admin1234"
+    }
+  },
+  "formation": {
+    "web": {
+      "amount": 1,
+      "size": "S"
+    },
+    "worker": {
+      "amount": 1,
+      "size": "S"
     }
   }
 }
