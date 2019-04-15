@@ -2,6 +2,7 @@
   "name": "@pdc/service-incentive",
   "version": "0.0.1",
   "private": true,
+  "license": "AGPL-3.0",
   "dependencies": {
     "@pdc/shared": "0.0.1",
     "@pdc/service-policy": "0.0.1",

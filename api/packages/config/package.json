@@ -4,6 +4,7 @@
   "description": "Configuration loader",
   "main": "config.js",
   "private": true,
+  "license": "AGPL-3.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
