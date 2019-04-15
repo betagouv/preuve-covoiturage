@@ -2,6 +2,7 @@
   "name": "@pdc/proxy",
   "version": "0.0.1",
   "description": "Proxy",
+  "license": "AGPL-3.0",
   "scripts": {
     "start": "node ./app.js",
     "dev": "nodemon --inspect=0.0.0.0:9229 ./app.js",
