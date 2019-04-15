@@ -31,6 +31,8 @@
     "worker": "yarn workspace @pdc/proxy worker",
     "worker-dev": "yarn workspace @pdc/proxy worker-dev",
     "seed": "yarn workspace @pdc/proxy seed",
+    "migrate": "yarn workspace @pdc/proxy migrate",
+    "fix-permissions": "yarn workspace @pdc/proxy fix-permissions",
     "test": "NODE_ENV=test mocha -t 5000",
     "lint": "eslint --ignore-path .gitignore ."
   },
