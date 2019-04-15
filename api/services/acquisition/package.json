@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "license": "AGPL-3.0",
+  "scripts": {
+    "process": "node cli/process-safe-journey.js",
+    "process-trip": "node cli/process-trip.js"
+  },
   "dependencies": {
     "@pdc/shared": "0.0.1",
     "@pdc/service-organization": "0.0.1",
