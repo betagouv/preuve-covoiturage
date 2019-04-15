@@ -27,7 +27,7 @@
     "test": "NODE_ENV=test mocha -t 5000",
     "lint": "eslint --ignore-path .gitignore ."
   },
-  "dependencies": {
+  "devDependencies": {
     "@pdc/proxy": "0.0.1",
     "@pdc/shared": "0.0.1",
     "@pdc/package-geo": "0.0.1",
@@ -38,9 +38,7 @@
     "lodash": "^4.17.11",
     "supertest": "^4.0",
     "jsonwebtoken": "^8.3.0",
-    "mongoose": "^5.4"
-  },
-  "devDependencies": {
+    "mongoose": "^5.4",
     "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
