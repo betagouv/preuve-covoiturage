@@ -19,12 +19,6 @@
     "SESSION_SECRET": {
       "generator": "secret"
     },
-    "MJ_DEBUG_EMAIL": {
-      "value": "jonathan.fallon@beta.gouv.fr"
-    },
-    "MJ_DEBUG_NAME": {
-      "value": "Review App"
-    },
     "APP_SUPERUSER_EMAIL": {
       "value": "admin@example.com"
     },
