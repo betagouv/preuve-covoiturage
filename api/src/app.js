@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const swaggerUi = require('swagger-ui-express');
 const { PORT, sessionSecret } = require('./config.js');
+const { appUrl } = require('./packages/url');
 const Sentry = require('./sentry.js');
 const eventBus = require('./events/bus');
 const journeyEvents = require('./routes/journeys/events');
@@ -34,7 +35,7 @@ app.use(require('express-session')({ secret: sessionSecret, resave: false, saveU
 // protect with typical headers and enable cors
 app.use(helmet());
 app.use(cors({
-  origin: process.env.APP_URL || '*',
+  origin: appUrl('', { allowNull: true }) || '*',
   optionsSuccessStatus: 200,
 }));
 app.use(signResponse);
