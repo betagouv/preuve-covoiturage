@@ -1,8 +1,9 @@
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { CallInterface } from '../interfaces/CallInterface';
+import { ActionInterface } from '../interfaces/ActionInterface';
 
-export abstract class Action {
-  protected signature: string;
+export abstract class Action implements ActionInterface {
+  public signature: string;
 
   protected middlewares: MiddlewareInterface[] = [];
 
