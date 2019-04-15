@@ -47,7 +47,7 @@ export class MenuComponent implements OnInit {
         label: 'INCITATIONS',
         icon: 'pi pi-fw pi-briefcase',
         // hide for now in production and staging
-        visible: (['dev', 'local'].indexOf(environment.name) > -1) && this.hasAnyGroup(['registry', 'aom']),
+        visible: (['dev', 'local', 'review'].indexOf(environment.name) > -1) && this.hasAnyGroup(['registry', 'aom']),
         items: [
           {
             label: 'Politiques', icon: 'pi pi-fw pi-copy', routerLink: '/dashboard/incentives/policies',
