@@ -24,6 +24,7 @@ describe('Action', () => {
         result: 0,
     };
     action.cast({
+        method: '',
         context: {
           internal: true
         },
@@ -58,6 +59,7 @@ describe('Action', () => {
         result: 0,
     };
     action.cast({
+        method: '',
         context: {
           internal: true
         },
@@ -91,6 +93,7 @@ describe('Action', () => {
         result: '',
     };
     action.cast({
+        method: '',
         context: {
           internal: true
         },
