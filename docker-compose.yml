@@ -42,7 +42,6 @@ services:
     depends_on:
       - mongo
       - redis
-      - worker
 
   worker:
     build: "./docker/api"
