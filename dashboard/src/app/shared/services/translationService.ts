@@ -3,11 +3,9 @@ import { Injectable } from '@angular/core';
 import { DATES } from '~/config/dates';
 import { PATH_FR } from '~/translations/path_fr';
 
-
 @Injectable()
 export class TranslationService {
   static tableExceptions = ['passenger.start.date', 'passenger.start.time', 'passenger.start.day'];
-
 
   /**
    * Translates value according to object string path to correct value format
@@ -20,10 +18,8 @@ export class TranslationService {
       return this.manageValueExceptions(keyString, bodyElement);
     }
 
-
     const keyStrings = keyString.split('.');
     let value = bodyElement[keyStrings[0]];
-
 
     /*
      *  Iterate over path to get value
@@ -41,14 +37,12 @@ export class TranslationService {
       value = this.manageExceptions(keyStrings[keyStrings.length - 1], value);
     }
 
-
     /*
      * Get translation of value
      */
     if (PATH_FR[keyString] && 'values' in PATH_FR[keyString] && value in PATH_FR[keyString]['values']) {
       return PATH_FR[keyString]['values'][value];
     }
-
 
     return value;
   }
@@ -63,7 +57,6 @@ export class TranslationService {
     return key;
   }
 
-
   /**
    * Get last value of path, ex: 'conductor.distance'
    */
@@ -74,7 +67,6 @@ export class TranslationService {
     return this.getTableKey(lastValue);
   }
 
-
   private manageValueExceptions(keyString, bodyElement) {
     switch (keyString) {
       case 'passenger.start.date' :
@@ -82,7 +74,7 @@ export class TranslationService {
         return date.toLocaleDateString('fr-FR');
       case 'passenger.start.time' :
         const time = new Date(bodyElement['passenger']['start']['datetime']);
-        return time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute:'2-digit' });
+        return time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
       case 'passenger.start.day' :
         const day = new Date(bodyElement['passenger']['start']['datetime']);
         return DATES.fr.dayNames[day.getDay()] || '';

@@ -1,4 +1,12 @@
-  <div class="p-grid p-justify-center">
+<div class="p-grid p-justify-center" *ngIf="hasRole('admin')">
+  <div class="p-col-12 p-md-10">
+    <p class="has-text-right">
+      <p-button label="Modifier" (click)="edit(operator)"></p-button>
+    </p>
+  </div>
+</div>
+
+<div class="p-grid p-justify-center">
   <div class="p-col-12 p-md-10">
     <div class="p-grid">
       <div class="p-col-12 p-md-4">
@@ -229,13 +237,3 @@
     </div>
   </div>
 </div>
-<br>
-<div class="p-grid p-justify-center" *ngIf="hasRole('admin')">
-  <p-button label="Modifier" (click)="edit(operator)"></p-button>
-</div>
-
-
-
-
-
-

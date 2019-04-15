@@ -1,32 +1,32 @@
-.column{
+.column {
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.preuveNumber{
+.preuveNumber {
   font-weight: bold;
 }
 
 section {
-  table{
+  table {
     table-layout: fixed;
   }
+
   & > table {
     margin: auto;
   }
 }
 
-
-.table th{
+.table th {
   vertical-align: middle;
 }
 
-tbody{
+tbody {
   background-color: #f9f9f9;
   border: 1px solid #e2e2e2;
 }
 
-tr{
+tr {
   width: 100%;
   border-bottom: 1px solid #dadada;
 }

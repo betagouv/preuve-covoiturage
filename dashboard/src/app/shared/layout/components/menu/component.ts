@@ -2,9 +2,11 @@ import { Component, Injectable, OnInit, ViewEncapsulation } from '@angular/core'
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 
+import { environment } from '../../../../../environments/environment';
+
 @Component({
   selector: 'app-menu',
-  templateUrl: 'template.html',
+  template: '<p-menu [model]="items" id="mainMenu"></p-menu>',
   styleUrls: ['style.scss'],
   encapsulation: ViewEncapsulation.None,
 })
@@ -44,7 +46,8 @@ export class MenuComponent implements OnInit {
       {
         label: 'INCITATIONS',
         icon: 'pi pi-fw pi-briefcase',
-        visible: this.hasAnyGroup(['hide']),
+        // hide for now in production and staging
+        visible: (['dev', 'local', 'review'].indexOf(environment.name) > -1) && this.hasAnyGroup(['registry', 'aom']),
         items: [
           {
             label: 'Politiques', icon: 'pi pi-fw pi-copy', routerLink: '/dashboard/incentives/policies',
@@ -78,7 +81,8 @@ export class MenuComponent implements OnInit {
             visible: this.hasAnyGroup(['registry']),
           },
         ],
-      }];
+      },
+    ];
   }
 
   hasAnyGroup(groups: string[]) {

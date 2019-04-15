@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 import { Component, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, MessageService } from 'primeng/api';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { Journey } from '~/entities/database/journey';
@@ -32,14 +32,11 @@ import { JOURNEY_HEADER } from '../../config/header';
 })
 
 export class JourneyListComponent {
-  private filters;
-
   journeys;
   headList = JOURNEY_HEADER.main.journey;
   selectedHeadList = JOURNEY_HEADER.selection.journey;
   driverPassengerHeadList = JOURNEY_HEADER.main.driverPassenger;
   sortList = JOURNEY_HEADER.sort.journey;
-
   columns = [];
   selectedColumns = [];
   subColumns = [];
@@ -47,7 +44,6 @@ export class JourneyListComponent {
   total = 30;
   perPage = 10;
   loading = true;
-
   exportItems = [{
     label: 'CSV',
     icon: 'pi pi-file',
@@ -61,13 +57,14 @@ export class JourneyListComponent {
       this.export('json');
     },
   }];
-
   @ViewChild('dt') dt;
+  private filters;
 
   constructor(
     private journeyService: JourneyService,
     private authentificationService: AuthenticationService,
     private translationService: TranslationService,
+    private messageService: MessageService,
     private ts: TableService,
   ) {
     this.setColumns();
@@ -85,36 +82,8 @@ export class JourneyListComponent {
     this.get(this.filters);
   }
 
-  private setColumns() {
-    for (const head of this.headList) {
-      this.columns.push(this.ts.createColumn(head));
-    }
-    for (const head of this.selectedHeadList) {
-      this.selectedColumns.push(this.ts.createColumn(head));
-    }
-    for (const head of this.driverPassengerHeadList) {
-      this.subColumns.push(this.ts.createColumn(head));
-    }
-  }
-
   getSubArray(a, b) {
     return [a, b];
-  }
-
-  private get(filters: any[any] = []) {
-    this.loading = true;
-    this.journeyService
-      .get(filters)
-      .subscribe(
-        (response: ApiResponse) => {
-          this.setTotal(response.meta);
-          this.journeys = response.data;
-          this.loading = false;
-        },
-        (error) => {
-          // FIX: do nothing ?
-        },
-      );
   }
 
   getSortableField(field) {
@@ -130,7 +99,6 @@ export class JourneyListComponent {
   getValue(journey: Journey, keyString) {
     return this.translationService.getTableValue(journey, keyString);
   }
-
 
   getKey(title: string) {
     return this.translationService.getTableKey(title);
@@ -159,19 +127,43 @@ export class JourneyListComponent {
   }
 
   delete(root, id) {
-    this.journeyService.delete(id).subscribe(
-      () => {
-        this.get();
-      },
-      (error) => {
-        // FIX: do nothing ?
-      },
-    );
-    event.stopPropagation();
+    this.journeyService
+      .delete(id)
+      .subscribe(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Trajet supprimé',
+        });
+      });
   }
 
   isNaN(value) {
     return isNaN(value);
+  }
+
+  private setColumns() {
+    for (const head of this.headList) {
+      this.columns.push(this.ts.createColumn(head));
+    }
+    for (const head of this.selectedHeadList) {
+      this.selectedColumns.push(this.ts.createColumn(head));
+    }
+    for (const head of this.driverPassengerHeadList) {
+      this.subColumns.push(this.ts.createColumn(head));
+    }
+  }
+
+  private get(filters: any[any] = []) {
+    this.loading = true;
+    this.journeyService
+      .get(filters)
+      .subscribe(
+        (response: ApiResponse) => {
+          this.setTotal(response.meta);
+          this.journeys = response.data;
+          this.loading = false;
+        },
+      );
   }
 
   private setTotal(meta) {

@@ -6,7 +6,14 @@ const { Schema } = mongoose;
 
 const AomSchema = new Schema({
   name: { type: String, trim: true, required: true },
-  shortname: { type: String, trim: true },
+  shortname: { type: String, trim: true, default: '' },
+  acronym: {
+    type: String,
+    trim: true,
+    default: '',
+    uppercase: true,
+    maxlength: 12,
+  },
   insee: [{
     type: String,
     trim: true,

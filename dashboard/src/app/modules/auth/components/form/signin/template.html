@@ -1,7 +1,11 @@
 <form (ngSubmit)="onSubmit()">
   <div class="p-grid ui-fluid" [formGroup]="signinForm">
     <div class="p-col-12">
-      <input type="email" pInputText formControlName="email" placeholder="Email">
+      <input type="email"
+             pInputText
+             formControlName="email"
+             placeholder="Email"
+             appAutofocus>
       <p-message
           severity="error"
           [text]="signinForm.controls['email'].errors['pattern'] ? 'L\'email est invalide.' : ''"

@@ -3,7 +3,6 @@ import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 /* PrimeNg */
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
@@ -11,19 +10,13 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 
-
 /* Local services */
 import { HttpApiInterceptor } from './applicativeService/interceptor/httpApiInterceptor';
 import { HeaderBag } from './applicativeService/interceptor/header-bag';
 import { Logged } from './applicativeService/authguard/logged';
 import { AuthGuard } from './applicativeService/authguard/service';
 import { AuthenticationService } from './applicativeService/authentication/service';
-import { TokenService } from './applicativeService/token/service';
 import { LoggerService } from './applicativeService/logger/service';
-import { TranslationService } from './shared/services/translationService';
-import { CleanService } from './shared/services/cleanService';
-import { TableService } from './shared/services/tableService';
-import { DropdownService } from './shared/services/dropdownService';
 /* Local component */
 import { NotDeletedPipe } from './filters/notDeleted/pipe';
 import { AppComponent } from './app.component';
@@ -32,10 +25,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from './shared/layout/components/header/component';
 import { MenuComponent } from './shared/layout/components/menu/component';
 import { LayoutComponent } from './shared/layout/main/component';
-
 /* Feature modules */
 /* Shared modules */
-import { FormModule } from './shared/modules/form/form.module';
 import { GraphicModule } from './shared/modules/graphic/graphic.module';
 
 /* Libs */
@@ -55,7 +46,6 @@ import { GraphicModule } from './shared/modules/graphic/graphic.module';
 
     // pipes
     NotDeletedPipe,
-
   ],
   imports: [
     BrowserModule,

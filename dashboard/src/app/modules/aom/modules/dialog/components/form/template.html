@@ -6,92 +6,101 @@
     <div class="p-col-12 p-md-4">
       <input type="text" pInputText formControlName="shortname">
     </div>
+
     <div class="p-col-12 p-md-2">
       <label>Nom complet</label>
     </div>
     <div class="p-col-12 p-md-4">
       <input type="text" pInputText formControlName="name">
       <p-message
-        severity="error"
-        [text]="aomForm.controls['name'].errors['required'] ? 'Le nom est obligatoire.' : ''"
-        *ngIf="!aomForm.controls['name'].valid&&aomForm.controls['name'].dirty">
+          severity="error"
+          [text]="aomForm.controls['name'].errors['required'] ? 'Le nom est obligatoire.' : ''"
+          *ngIf="!aomForm.controls['name'].valid&&aomForm.controls['name'].dirty">
       </p-message>
     </div>
+
+    <div class="p-col-12 p-md-2" pTooltip="Acronyme de l'AOM, par exemple :
+      - IDFM : Ile-de-France Mobilités
+      - CAPCA : Communauté d'Agglomération Privas Centre Ardèche">
+      <label>Acronyme</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <input type="text" pInputText formControlName="acronym">
+    </div>
+
     <div class="p-col-12 p-md-2">
       <label>Codes INSEE</label>
     </div>
     <div class="p-col-12 p-md-4">
       <p-chips
-        [addOnTab]="true"
-        formControlName="insee"
-        [allowDuplicate]="false"
-        (onAdd)="onInseeAdded($event)"
-        ></p-chips>
+          [addOnTab]="true"
+          formControlName="insee"
+          [allowDuplicate]="false"
+          (onAdd)="onInseeAdded($event)"
+      ></p-chips>
       <p-message
-        severity="error"
-        [text]="inseeMessage"
-        *ngIf="inseeMessage !== ''"
-        >
+          severity="error"
+          [text]="inseeMessage"
+          *ngIf="inseeMessage !== ''">
       </p-message>
     </div>
+
     <div class="p-col-12 p-md-2">
       <label>Code INSEE principal</label>
     </div>
     <div class="p-col-12 p-md-4">
       <p-dropdown
-        [options]="aomInsee"
-        formControlName="insee_main"
-        ></p-dropdown>
+          [options]="aomInsee"
+          formControlName="insee_main"
+      ></p-dropdown>
     </div>
   </div>
-  <div class="p-grid ui-fluid" [formGroup]="aomForm.get('contact')">
 
+  <div class="p-grid ui-fluid" [formGroup]="aomForm.get('contact')">
     <div class="p-col-12 p-md-2">
       <label>Téléphone</label>
     </div>
     <div class="p-col-12 p-md-4">
-      <p-inputMask formControlName="phone" ></p-inputMask>
+      <input pInputText formControlName="phone">
     </div>
 
     <div class="p-col-12 p-md-2">
       <label>Email</label>
     </div>
-
     <div class="p-col-12 p-md-4">
       <input type="text" pInputText formControlName="email">
       <p-message
-        severity="error"
-        [text]="aomFormContact.controls['email'].errors['pattern'] ? 'L\'email est invalide.' : ''"
-        *ngIf="!aomFormContact.controls['email'].valid&&aomFormContact.controls['email'].dirty">
+          severity="error"
+          [text]="aomFormContact.controls['email'].errors['pattern'] ? 'L\'email est invalide.' : ''"
+          *ngIf="!aomFormContact.controls['email'].valid&&aomFormContact.controls['email'].dirty">
       </p-message>
     </div>
 
-
-    <div class="p-col-12 p-md-1">
-      <label>Délégué à la protection des données</label>
+    <div class="p-col-12 p-md-4">
+      <label>Délégué(e) à la protection des données</label>
     </div>
-    <div class="p-col-12 p-md-3">
+    <div class="p-col-12 p-md-8">
       <app-user-dropdown
-        [userId]="aomForm.get('contact').get('rgpd_dpo')"
+          [userId]="aomForm.get('contact').get('rgpd_dpo')"
       ></app-user-dropdown>
     </div>
 
-    <div class="p-col-12 p-md-1">
+    <div class="p-col-12 p-md-4">
       <label>Responsable de traitement</label>
     </div>
-    <div class="p-col-12 p-md-3">
+    <div class="p-col-12 p-md-8">
       <app-user-dropdown
-        [userId]="aomForm.get('contact').get('rgpd_controller')"
+          [userId]="aomForm.get('contact').get('rgpd_controller')"
       ></app-user-dropdown>
     </div>
 
-    <div class="p-col-12 p-md-1">
+    <div class="p-col-12 p-md-4">
       <label>Responsable technique</label>
     </div>
 
-    <div class="p-col-12 p-md-3">
+    <div class="p-col-12 p-md-8">
       <app-user-dropdown
-        [userId]="aomForm.get('contact').get('technical')"
+          [userId]="aomForm.get('contact').get('technical')"
       ></app-user-dropdown>
     </div>
   </div>

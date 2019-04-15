@@ -17,6 +17,12 @@ const config = {
     dummyAom,
     dummyOperator,
   ],
+  review: [
+    aomSeeder,
+    superAdmin,
+    dummyAom,
+    dummyOperator,
+  ],
   test: [
     aomSeeder,
     superAdmin,
