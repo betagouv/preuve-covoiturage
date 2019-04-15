@@ -38,3 +38,6 @@ journeysQueue.on('failed', (job, err) => {
   console.log(`🐮/journeys: failed ${job.id} ${job.data.type}`, err.message);
   Sentry.captureException(err);
 });
+
+
+module.export = journeysQueue;
