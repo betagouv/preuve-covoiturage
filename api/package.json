@@ -30,6 +30,7 @@
     "dev": "yarn workspace @pdc/proxy dev",
     "worker": "yarn workspace @pdc/proxy worker",
     "worker-dev": "yarn workspace @pdc/proxy worker-dev",
+    "seed": "yarn workspace @pdc/proxy seed",
     "test": "NODE_ENV=test mocha -t 5000",
     "lint": "eslint --ignore-path .gitignore ."
   },
@@ -41,19 +42,19 @@
     "@pdc/package-geo": "0.0.1",
     "@pdc/service-acquisition": "0.0.1",
     "@pdc/service-trip": "0.0.1",
-    "faker": "^4.1.0",
-    "google-libphonenumber": "^3.2.2",
-    "lodash": "^4.17.11",
-    "supertest": "^4.0",
-    "jsonwebtoken": "^8.3.0",
-    "mongoose": "^5.4",
     "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "mocha": "^6.0"
+    "mocha": "^6.0",
+    "faker": "^4.1.0",
+    "google-libphonenumber": "^3.2.2",
+    "lodash": "^4.17.11",
+    "supertest": "^4.0",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.4"
   },
   "eslintConfig": {
     "env": {
