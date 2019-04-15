@@ -21,7 +21,3 @@ const onCreate = ({ journey, operator }) => {
 module.exports = {
   create: onCreate,
 };
-
-// TODO !!!
-// const journeyEvents = require('./routes/journeys/events');
-// eventBus.register('journey', journeyEvents);
