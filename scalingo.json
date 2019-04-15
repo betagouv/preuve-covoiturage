@@ -31,5 +31,15 @@
     "APP_SUPERUSER_PASSWORD": {
       "value": "admin1234"
     }
+  },
+  "formation": {
+    "web": {
+      "amount": 1,
+      "size": "S"
+    },
+    "worker": {
+      "amount": 1,
+      "size": "S"
+    }
   }
 }
