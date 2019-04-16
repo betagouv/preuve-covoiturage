@@ -20,6 +20,14 @@ function getMongoConfig(mongoUrl) {
   };
 }
 
+function getHttpPost(port, def = 8080) {
+  if (process.env.NODE_ENV === 'test') {
+    return 0;
+  }
+
+  return port || def;
+}
+
 const mongoUrl = process.env.MONGO_URL || `mongodb://mongo:mongo@mongo/pdc-${process.env.NODE_ENV}?authSource=admin`;
 const mongoConfig = getMongoConfig(mongoUrl);
 
@@ -32,7 +40,7 @@ const mongoConfig = getMongoConfig(mongoUrl);
  * - Session secret key
  */
 module.exports = {
-  PORT: process.env.PORT || 8080,
+  PORT: getHttpPost(process.env.PORT),
   mongoDatabase: mongoConfig.database,
   mongoUrl,
   redisUrl: process.env.REDIS_URL || 'redis://redis:6379',
