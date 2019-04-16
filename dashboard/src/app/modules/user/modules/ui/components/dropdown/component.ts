@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { UserService } from '../../../../services/userService';
-import { OPERATOR_MAIN } from '../../../../config/main';
+import { USER_MAIN } from '../../../../config/main';
 
 @Component({
   selector: 'app-user-dropdown',
@@ -43,7 +43,7 @@ export class UserDropdownComponent implements OnInit {
   }
 
   public getUsers() {
-    this.userService.get([['limit', OPERATOR_MAIN.operator_query_limit]]).subscribe((response) => {
+    this.userService.get([['limit', USER_MAIN.user_query_limit]]).subscribe((response) => {
       this.users = response.data.map((item) => {
         const normalizedItem = {
           key: item._id,
@@ -56,7 +56,7 @@ export class UserDropdownComponent implements OnInit {
 
   public filter(event) {
     if (event && event.query) {
-      const regexp = new RegExp(event.query);
+      const regexp = new RegExp(event.query, 'i');
       this.filteredUsers = this.users.filter(item => regexp.test(item.value));
     } else {
       this.filteredUsers = this.users.slice();

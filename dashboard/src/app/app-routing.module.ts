@@ -1,20 +1,62 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
-import { LayoutComponent } from '~/layout/main/component';
+import { LayoutComponent } from '~/shared/layout/main/component';
 
 import { AuthGuard } from './applicativeService/authguard/service';
-import { DeclarationComponent } from './main/pages/declaration/component';
-import { HomeComponent } from './modules/home/pages/home/component';
-import { IncitationsComponent } from './main/pages/incitations/component';
 
 const routes: Routes = [
-
-  { path: 'dashboard', component: LayoutComponent, canActivate: [AuthGuard],
-    children: [
-          { path : 'declaration', component: DeclarationComponent, data: { groups: ['operators', 'registry'] } },
-          { path : 'incitations', component: IncitationsComponent, data: { groups: ['operators', 'registry'] } },
-    ],
+  { path: '', redirectTo: '/dashboard/home', pathMatch: 'full' },
+  {
+    path: '',
+    loadChildren: './modules/auth/auth.module#AuthModule',
+  },
+  {
+    path: 'dashboard/journeys',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: './modules/journeys/journey.module#JourneyModule',
+  },
+  {
+    path: 'dashboard/incentives',
+    component: LayoutComponent,
+    data: { groups: ['aom', 'registry'] },
+    canActivate: [AuthGuard],
+    loadChildren: './modules/incentive/incentive.module#IncentiveModule',
+  },
+  {
+    path: 'dashboard/operators',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: './modules/operator/operator.module#OperatorModule',
+  },
+  {
+    path: 'dashboard/aoms',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: './modules/aom/aom.module#AomModule',
+  },
+  {
+    path: 'dashboard/users',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: './modules/user/user.module#UserModule',
+  },
+  {
+    path: 'dashboard/registry',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: './modules/registry/registry.module#RegistryModule',
+  },
+  {
+    path: 'dashboard/home',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    loadChildren: './modules/home/home.module#HomeModule',
+  },
+  {
+    path: 'stats',
+    loadChildren: './modules/statistics/statistics.module#StatisticsModule',
   },
 ];
 
@@ -22,4 +64,6 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+
+export class AppRoutingModule {
+}

@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
+import { JourneyService } from '~/modules/journeys/services/journeyService';
+import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { MAIN } from '~/config/main';
-import { HEADERS } from '~/config/headers';
 import { DATES } from '~/config/dates';
 
 import { JOURNEY_HOUR } from '../../config/hour';
 import { JOURNEY_FILTER_DAYS } from '../../config/days';
 import { JOURNEY_MAIN } from '../../config/main';
 import { JOURNEY_DISTANCE } from '../../config/distance';
+import { JOURNEY_HEADER } from '../../config/header';
 
 @Component({
   selector: 'app-journeys-filter',
@@ -15,17 +17,27 @@ import { JOURNEY_DISTANCE } from '../../config/distance';
   styleUrls: ['style.scss'],
 })
 
-export class JourneyFilterComponent implements OnInit{
-  @Input() columns;
+export class JourneyFilterComponent implements OnInit {
+  constructor(
+    private authenticationService: AuthenticationService,
+    private journeyService: JourneyService,
+  ) {
+    this.journeyService = journeyService;
+  }
+
+  @Input()
+  columns;
 
   dt;
+  showMoreFilters;
+
   @Input()
   set data(val) {
     this.dt = val;
   }
 
-  @Output() applyFilters = new EventEmitter();
-
+  @Output()
+  applyFilters = new EventEmitter();
 
   minDate = '';
   maxDate = '';
@@ -41,31 +53,55 @@ export class JourneyFilterComponent implements OnInit{
   classes = [];
   operatorIds = [];
 
+  aomIds = [];
+
   days = JOURNEY_FILTER_DAYS;
   selectedDays = [];
 
   showDayFilter = JOURNEY_MAIN.showDayFilter;
   showTimeFilter = JOURNEY_MAIN.showTimeFilter;
 
+  distanceMax = JOURNEY_DISTANCE.max;
   distanceRange = [];
   distanceTimeout: any;
 
   ages = [];
+
+  aomFiltered: any[] = [];
+  aomList: any[] = [];
 
   /*
    * Saved filters before applyed to query
    */
   filters = {};
 
-
   fr = DATES.fr;
-
 
   ngOnInit(): void {
     this.defaultMinDate = MAIN.startDate;
     this.defaultMaxDate = new Date();
     this.defaultHourDate = new Date(JOURNEY_HOUR.defaultDate);
     this.resetVar();
+
+    this.journeyService
+      .listAom()
+      .subscribe((response: any[]) => {
+        this.aomList = (response['data'] || [])
+          .map(aom => ({
+            value: aom._id._id,
+            label: `${aom._id.name} (${aom.count})`,
+          }));
+      });
+  }
+
+  filterAom(event) {
+    this.aomFiltered = this.aomList
+      .filter(i => (new RegExp(event.query, 'i').test(i.label)));
+  }
+
+  selectAom(selection) {
+    if (!selection || !selection.value) return;
+    this.addFilter(selection.value, 'aom', 'in');
   }
 
   onDistanceChange(event) {
@@ -74,16 +110,24 @@ export class JourneyFilterComponent implements OnInit{
     }
 
     this.distanceTimeout = setTimeout(
-        () => {
-          this.addFilter(this.distanceRange, 'passenger.distance', 'gt&lt');
-        },
-        250, // tslint:disable-line:no-magic-numbers
+      () => {
+        this.addFilter(this.distanceRange, 'passenger.distance', 'gt&lt');
+      },
+      250, // tslint:disable-line:no-magic-numbers
     );
   }
 
   onDateChange() {
-    const isoMinDate = new Date(this.minDate).toISOString();
-    const isoMaxDate = new Date(this.maxDate).toISOString();
+    let isoMinDate: string;
+    let isoMaxDate: string;
+
+    if (this.minDate) {
+      isoMinDate = new Date(this.minDate).toISOString();
+    }
+
+    if (this.maxDate) {
+      isoMaxDate = new Date(this.maxDate).toISOString();
+    }
 
     if (this.minDate && this.maxDate) {
       this.addFilter([isoMinDate, isoMaxDate], 'passenger.start.datetime', 'gt&lt');
@@ -131,6 +175,11 @@ export class JourneyFilterComponent implements OnInit{
     this.addFilter(this.operatorIds, 'operator._id', 'in');
   }
 
+  onAomChange(aomIds) {
+    this.aomIds = aomIds;
+    this.addFilter(this.aomIds, 'aom._id', 'in');
+  }
+
   onAgeChange() {
     const allAges = ['true', 'false'];
     if (this.ages.indexOf('nc') !== -1) {
@@ -157,6 +206,10 @@ export class JourneyFilterComponent implements OnInit{
     };
   }
 
+  hasAnyGroup(groups: string[]) {
+    return !!this.authenticationService.hasAnyGroup(groups);
+  }
+
   apply() {
     this.applyFilters.emit(this.filters);
   }
@@ -177,10 +230,11 @@ export class JourneyFilterComponent implements OnInit{
     this.maxTime = '';
     this.classes = [];
     this.operatorIds = [];
+    this.aomIds = [];
     this.ages = [];
   }
 
-  private getColumnIndexFromName(colName) {
-    return HEADERS.journeys.main.journey.indexOf(colName);
+  getColumnIndexFromName(colName) {
+    return JOURNEY_HEADER.main.journey.indexOf(colName);
   }
 }

@@ -1,19 +1,19 @@
-.resumeBox{
-  min-height: 140px;
+@import "~src/assets/scss/variables";
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
 
-
-.detailsBox{
-  .titleContainer{
-    height: 85px;
-  }
-  p-selectButton{
-    float: right;
-  }
+.stats__wrapper {
+  overflow: hidden;
+  overflow-y: scroll;
+  height: calc(100vh - #{$navbar-height});
 }
 
-
-img{
-  max-width: 40px;
-  height: 40px;
+.subtitle {
+  color: #c8c8c8;
 }
+

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const UnitSchema = require('./objects/incentive-unit');
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
@@ -22,7 +23,7 @@ const IncentiveSchema = new Schema({
     required: true,
   },
   unit: {
-    type: ObjectId, // IncentiveUnit
+    type: UnitSchema, // IncentiveUnit
     required: true,
   },
   amount: {
@@ -38,6 +39,6 @@ const IncentiveSchema = new Schema({
     required: true,
   },
   deletedAt: { type: Date },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = IncentiveSchema;

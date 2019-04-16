@@ -18,15 +18,15 @@ const schema = {
   remaining_fee: { type: Number, min: 0, default: 0 },
 };
 
-const PassengerSchema = new mongoose.Schema(Object.assign({}, schema, {
+const PassengerSchema = new Schema(Object.assign({}, schema, {
   contribution: { type: Number, min: 0, default: 0 },
   seats: { type: Number, min: 1, default: 1 },
-}));
+}), { _id: false, id: false });
 
-const DriverSchema = new mongoose.Schema(Object.assign({}, schema, {
+const DriverSchema = new Schema(Object.assign({}, schema, {
   revenue: { type: Number, min: 0, default: 0 },
   expense: { type: Number, min: 0, default: 0 },
-}));
+}), { _id: false, id: false });
 
 module.exports = {
   journey_id: { type: String, trim: true, unique: true },

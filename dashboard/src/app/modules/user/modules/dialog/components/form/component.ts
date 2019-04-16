@@ -1,26 +1,18 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { password, regexp } from '~/entities/validators';
-import { User } from '~/entities/database/user';
-
+import { User } from '~/entities/database/user/user';
 
 @Component({
   selector: 'app-user-form',
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class UserFormComponent implements OnInit {
-  @Input('user')
-  set userInput(user: User) {
-    console.log({ user });
-    if (user) {
-      this.userForm.patchValue(user);
-    }
-  }
   @Output() answer = new EventEmitter();
-
   public roles = [
     {
       label: 'Utilisateur',
@@ -31,7 +23,6 @@ export class UserFormComponent implements OnInit {
       value: 'admin',
     },
   ];
-
   public groups = [
     {
       label: 'Aom',
@@ -46,17 +37,16 @@ export class UserFormComponent implements OnInit {
       value: 'registry',
     },
   ];
-
   public userForm = this.fb.group({
-    firstname: ['', Validators.required],
-    lastname: ['', Validators.required],
-    email: ['', [Validators.required, Validators.pattern(regexp.email)]],
-    phone: ['', [Validators.required, Validators.pattern(regexp.phone)]],
-    role: ['', Validators.required],
-    password: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
-    group: [''],
-    aom: [''],
-    operator: [''],
+    firstname: [null, Validators.required],
+    lastname: [null, Validators.required],
+    email: [null, [Validators.required, Validators.pattern(regexp.email)]],
+    phone: [null],
+    role: ['user', Validators.required],
+    password: [null, [Validators.minLength(password.min), Validators.maxLength(password.max)]],
+    group: [null, Validators.required],
+    aom: [null],
+    operator: [null],
   });
 
   constructor(
@@ -64,31 +54,45 @@ export class UserFormComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() {
-    this.onChanges();
+  @Input('user')
+  set userInput(user: User) {
+    if (user) {
+      this.userForm.patchValue(user);
+    }
+  }
+
+  ngOnInit(): void {
+    // nada
   }
 
   onSubmit() {
     const user = {};
-    Object.keys(this.userForm.controls).forEach((prop) => {
-      if (this.userForm.controls[prop].dirty) {
-        user[prop] = this.userForm.value[prop];
-      }
-    });
-    this.answer.emit(user);
-  }
 
-  onChanges() {
-    this.userForm.get('group').valueChanges.subscribe(() => {
-      this.userForm.patchValue({
-        aom: null,
-        operator: null,
+    // clean up unwanted values
+    switch (this.userForm.value['group']) {
+      case 'aom':
+        this.userForm.patchValue({ operator: null });
+        this.userForm.get('operator').markAsDirty();
+        break;
+      case 'operators':
+        this.userForm.patchValue({ aom: null });
+        this.userForm.get('aom').markAsDirty();
+        break;
+      case 'registry':
+        this.userForm.patchValue({ aom: null, operator: null });
+        this.userForm.get('operator').markAsDirty();
+        this.userForm.get('aom').markAsDirty();
+        break;
+    }
+
+    Object.keys(this.userForm.controls)
+      .forEach((prop) => {
+        if (this.userForm.controls[prop].dirty) {
+          user[prop] = this.userForm.value[prop];
+        }
       });
-    });
-  }
 
-  isAdmin():boolean {
-    return this.userForm.value.role === 'admin';
+    this.answer.emit(user);
   }
 
   isAom(): boolean {

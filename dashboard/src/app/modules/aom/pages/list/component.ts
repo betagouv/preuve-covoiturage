@@ -6,9 +6,9 @@ import {
  } from 'primeng/api';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
-import { TranslationService } from '~/services/translationService';
+import { TranslationService } from '~/shared/services/translationService';
 import { Aom } from '~/entities/database/aom';
-import { TableService } from '~/services/tableService';
+import { TableService } from '~/shared/services/tableService';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 

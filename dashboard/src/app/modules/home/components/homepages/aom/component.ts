@@ -7,7 +7,4 @@ import { Component, Injectable } from '@angular/core';
 })
 
 @Injectable()
-export class AomHomePageComponent {
-
-
-}
+export class AomHomePageComponent {}

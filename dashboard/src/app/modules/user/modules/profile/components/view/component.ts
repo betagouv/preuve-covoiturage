@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 
-import { User } from '~/entities/database/user';
+import { User } from '~/entities/database/user/user';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 

@@ -16,7 +16,7 @@ module.exports = modelFactory('Journey', {
 
         if (doc.isModified('journey_id') || isNew) {
           const opSlug = slugify(_.get(docObj.operator, 'nom_commercial', '')).toLowerCase();
-          if (!_.isEmpty(opSlug)) {
+          if (opSlug !== '') {
             // eslint-disable-next-line no-param-reassign
             doc.journey_id = `${opSlug}:${doc.journey_id}`;
           }

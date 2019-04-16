@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { FormBuilder, Validators } from '@angular/forms';
 
-import { InputGroup } from '~/entities/form/inputGroup';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
-import { User } from '~/entities/database/user';
-import { EmailInputBase } from '~/entities/form/emailInputBase';
+import { regexp } from '~/entities/validators';
+import { User } from '~/entities/database/user/user';
 
 @Component({
   selector: 'app-auth-form-forgotten-password',
@@ -13,62 +12,48 @@ import { EmailInputBase } from '~/entities/form/emailInputBase';
 })
 
 export class AuthFormForgottenPasswordComponent implements OnInit {
-  public inputGroups: InputGroup<any>[] = [];
+  public forgottenPasswordForm = this.fb.group({
+    email: ['', [Validators.required, Validators.pattern(regexp.email)]],
+  });
+
   public success: string;
-  public form;
   public loading = false;
+  submitted = false;
 
   constructor(
-      private router: Router,
-      private authenticationService: AuthenticationService,
-      private messageService: MessageService,
+    private fb: FormBuilder,
+    private router: Router,
+    private authenticationService: AuthenticationService,
   ) {
-
   }
 
   ngOnInit(): void {
-    this.authenticationService.logout();
-    const mainInputs = [
-      new EmailInputBase({
-        key: 'email',
-        placeholder: 'Email',
-        value: null,
-        required: true,
-      }),
-
-
-    ];
-
-    this.inputGroups = [
-
-      new InputGroup({
-        key : 'main',
-        inputs: mainInputs,
-      }),
-
-
-    ];
+    //
   }
 
-  sendEmailForNewPassword(user:User) {
+  onSubmit() {
+    const user = new User();
+    Object.keys(this.forgottenPasswordForm.controls).forEach((prop) => {
+      if (this.forgottenPasswordForm.controls[prop].dirty) {
+        user[prop] = this.forgottenPasswordForm.value[prop];
+      }
+    });
+    this.sendEmailForNewPassword(user);
+    this.submitted = true;
+  }
+
+  sendEmailForNewPassword(user: User) {
     this.loading = true;
     this.authenticationService.sendEmailForPasswordReset(user.email)
-          .subscribe(
-              (response) => {
-                this.loading = false;
-                this.messageService.add({
-                  severity: 'success',
-                  summary: `Un email vous a été envoyé pour réinitialiser votre mot de passe !`,
-                });
-                setTimeout(() => {
-                  this.router.navigate(['/signin']);
-                },
-                           4000); // tslint:disable-line:no-magic-numbers
-              },
-              (error) => {
-                this.loading = false;
-                // fix: do nothhing ?;
-              },
-          );
+      .subscribe(
+        () => {
+          this.loading = false;
+          this.router.navigate(['/signin'], { queryParams: { flash: 'password-sent' } });
+        },
+        () => {
+          this.loading = false;
+          // fix: do nothhing ?;
+        },
+      );
   }
 }

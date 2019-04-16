@@ -38,7 +38,7 @@ module.exports = async function dummyAom() {
       lastname: 'Example',
       password: 'aom1234',
       group: 'aom',
-      role: 'user',
+      role: 'admin',
       status: 'invited',
       aom: aom._id,
     });

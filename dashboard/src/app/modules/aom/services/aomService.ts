@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 
-import { ApiService } from '~/services/apiService';
-
+import { ApiService } from '~/shared/services/apiService';
 
 @Injectable()
-export class AomService extends ApiService{
+export class AomService extends ApiService {
   public endPoint = '/aom';
 
   public messages = {
     created: 'L\'AOM a bien été crée.',
-    deleted: 'L\'AOM a bien été supprimé.',
-    updated: 'L\'AOM a bien été mis à jour',
+    deleted: 'L\'AOM a bien été supprimée.',
+    updated: 'L\'AOM a bien été mise à jour',
   };
+
+  getStats(aomId: string) {
+    return this.http.get(`${this.endPoint}/${aomId}/stats`);
+  }
 }

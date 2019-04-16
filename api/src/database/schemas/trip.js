@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const aom = require('./aom');
 const identity = require('./objects/identity');
 const position = require('./objects/position');
 const rank = require('./objects/rank');
@@ -45,7 +46,7 @@ const PersonSchema = new Schema({
     tests: { type: Schema.Types.Mixed, default: {} },
     rank,
   },
-}, { _id: false });
+}, { _id: false, id: false });
 
 const IncentiveSchema = new Schema({
   incentive_id: { type: ObjectId },
@@ -57,7 +58,7 @@ const IncentiveSchema = new Schema({
     trim: true,
     lowercase: true,
   },
-}, { _id: false });
+}, { _id: false, id: false });
 
 const TripSchema = new Schema({
   operator_id: {
@@ -68,6 +69,7 @@ const TripSchema = new Schema({
     type: String,
     index: true,
   },
+  aom: [aom],
   status: {
     type: String,
     enum: ['pending', 'active', 'error'],
@@ -78,6 +80,6 @@ const TripSchema = new Schema({
   start: Date,
   people: [PersonSchema],
   incentives: [IncentiveSchema],
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = TripSchema;

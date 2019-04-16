@@ -8,6 +8,6 @@ module.exports = {
     name: { type: String, trim: true },
     shortname: { type: String, trim: true },
     span: { type: Number, min: 0, default: 0 },
-  }),
+  }, { id: false }),
   required: false,
 };

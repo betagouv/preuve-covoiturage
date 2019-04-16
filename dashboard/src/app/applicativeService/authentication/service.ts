@@ -5,11 +5,12 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
+import { User } from '~/entities/database/user/user';
+import { OrganisationCompany } from '~/entities/database/organisationCompany';
 
 import { TokenService } from '../token/service';
 import { Logged } from '../authguard/logged';
 import { LoggerService } from '../logger/service';
-
 
 @Injectable()
 export class AuthenticationService {
@@ -24,10 +25,14 @@ export class AuthenticationService {
     this.loggerService = loggerService;
   }
 
+  check(): boolean {
+    return !!this.getUser();
+  }
+
   login(email: string, password: string): Observable<boolean> {
     return this.http.post(`${this.endPoint}/signin`, { email, password }).pipe(
-        map((response: ApiResponse) => this.loginResponse(response.data)),
-      );
+      map((response: ApiResponse) => this.loginResponse(response.data)),
+    );
   }
 
   loginResponse(response: object) {
@@ -49,9 +54,14 @@ export class AuthenticationService {
     return true;
   }
 
-
   hasAnyGroup(groups: string[]): string {
     const user = this.getUser();
+    if (!user) return null;
+
+    // no groups mean all
+    if (!groups.length) {
+      return user.group;
+    }
 
     if (user && groups.includes(user.group)) {
       Logged.set(true);
@@ -74,29 +84,43 @@ export class AuthenticationService {
   hasRole(role: string): boolean {
     const user = this.getUser();
 
-    if (user && user.role === role) {
-      return true;
-    }
-
-    return false;
+    return user && user.role === role;
   }
 
-  logout(returnHome = false) {
-    // clear token remove user from local storage to log user out
+  logout(opt: { toLogin?: boolean, redirectTo?: string } = {}) {
+    const options = { toLogin: false, redirectTo: null, ...opt };
+
+    // clear the Token, user object and connection state
+    this.clearUser();
     TokenService.clear();
     Logged.set(false);
-    if (returnHome) {
-      this.router.navigate(['/signin']);
+
+    if (options.toLogin) {
+      const extras = options.redirectTo ? {
+        queryParams: {
+          flash: 'expired',
+          r: options.redirectTo,
+        },
+      } : {};
+
+      this.router.navigate(['/signin'], extras);
     }
+
     return this;
   }
 
-  getUser() {
-    if (null === this.user) {
+  // make sure the user is still in the localStorage
+  // do not user this.user to get it, so it logs the user
+  // out when the localStorage user key is missing
+  getUser(): User {
+    try {
       this.user = JSON.parse(localStorage.getItem('user'));
+      this.user.fullname = `${this.user.firstname} ${this.user.lastname}`.trim();
+
       return this.user;
+    } catch (e) {
+      return null;
     }
-    return this.user;
   }
 
   setUser(user: any) {
@@ -106,6 +130,32 @@ export class AuthenticationService {
 
   clearUser() {
     localStorage.removeItem('user');
+  }
+
+  getCompany(): OrganisationCompany {
+    const user = this.getUser();
+    if (!user) return null;
+
+    if (user.company && user.company.name) {
+      switch (user.group) {
+        case 'operators' :
+          user.company.link = '/dashboard/operators/settings';
+          user.company.icon = 'tablet';
+          break;
+        case 'aom' :
+          user.company.link = '/dashboard/aoms/settings';
+          user.company.icon = 'home';
+          break;
+        default:
+          break;
+      }
+
+      if (!user.company.acronym || user.company.acronym === '') {
+        user.company.acronym = user.company.nicename;
+      }
+    }
+
+    return user.company || null;
   }
 
   sendEmailForPasswordReset(email: string) {
@@ -121,6 +171,6 @@ export class AuthenticationService {
   }
 
   checkEmailToken(reset: string, token: string) {
-    return this.http.post(`${this.endPoint}/confirm`, { reset, token });
+    return this.http.post(`${this.endPoint}/reset`, { reset, token });
   }
 }

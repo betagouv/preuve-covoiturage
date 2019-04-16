@@ -38,7 +38,7 @@ const applicationService = {
   async create(op, { name }) {
     const operator = await operatorService.findOne(op);
 
-    if (!name || _.isEmpty(name)) {
+    if (!name || name === '') {
       throw new BadRequestError('Name is required');
     }
 

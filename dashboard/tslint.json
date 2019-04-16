@@ -85,7 +85,7 @@
     "no-sparse-arrays": true,
     "ban": true,
     "no-invalid-this": true,
-    "no-magic-numbers": [true, 0, 1, 2, 3, 4, 5, -1, -2, 100],
+//    "no-magic-numbers": [true, 0, 1, 2, 3, 4, 5, -1, -2, 100],
     "no-duplicate-variable": true,
     "linebreak-style": [true, "LF"],
     "no-consecutive-blank-lines": [true, 2],

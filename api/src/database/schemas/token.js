@@ -8,6 +8,6 @@ const TokenSchema = new Schema({
     type: String,
     required: true,
   },
-}, { timestamps: true });
+}, { timestamps: true, id: false });
 
 module.exports = TokenSchema;

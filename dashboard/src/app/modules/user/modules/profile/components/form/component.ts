@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { User } from '~/entities/database/user';
+import { User } from '~/entities/database/user/user';
 import { regexp } from '~/entities/validators';
 
 

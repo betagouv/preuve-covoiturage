@@ -1,5 +1,5 @@
 /* tslint:disable:variable-name*/
-import { User } from './user';
+import { User } from './user/user';
 import { Operator } from './operator';
 import { Validation } from './validation';
 import { CarUserJourney } from './carUserJourney';

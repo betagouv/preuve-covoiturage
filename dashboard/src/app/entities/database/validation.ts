@@ -1,7 +1,7 @@
 export class Validation {
-  public validated: false;
-  public validatedAt: null;
-  public rank: null;
+  public validated: boolean;
+  public validatedAt: Date;
+  public rank: { 'A', 'B', 'C', 'Z' };
 
   constructor(obj?: any) {
     this.validated = obj && obj.validated || null;

@@ -1,47 +1,20 @@
-<app-stat-header></app-stat-header>
+<app-stats-header></app-stats-header>
 
-<br><br><br>
-
-<h1 class="title is-1 has-text-centered">Statistiques</h1>
-
-
-<br><br>
-
-<h5 class="subtitle is-8 has-text-centered">Résumé</h5>
-
-<div class="p-grid p-justify-center" *ngIf="data.resume">
-    <div class="p-col-12 p-sm-8 p-md-6">
-        <div class="p-grid p-justify-center">
-            <div class="p-col-12 p-sm-6 p-xl-4 " *ngFor="let resumeData of data.resume">
-                <div class="box resumeBox has-text-centered">
-                    <img *ngIf="resumeData.img" src="assets/icons/{{resumeData.img}}" alt="">
-                    <h1 class="is-8">{{resumeData.title}}</h1>
-                    <app-stat-number [unit]="resumeData.unit" [number]="resumeData.lastValue"></app-stat-number>
-                </div>
-            </div>
-        </div>
-    </div>
+<div *ngIf="!loaded" class="absolute-center">
+  <p-progressSpinner></p-progressSpinner>
 </div>
 
-<br><br><br><br>
+<div *ngIf="loaded" class="stats__wrapper">
+  <h1 class="has-text-centered">Statistiques</h1>
 
-<h5 class="subtitle is-8 has-text-centered">Détails</h5>
+  <h3 class="subtitle has-text-centered">Résumé</h3>
 
-<div class="p-grid p-justify-center" *ngIf="data.details">
-    <div class="p-col-12 p-sm-8 p-md-6">
-        <div class="p-grid p-justify-center">
-            <div class="p-col-12 p-xl-6" *ngFor="let detailsData of data.details">
-                <div class="box detailsBox" >
-                    <div class="titleContainer">
-                        <span class="title is-5">{{detailsData.title}}</span>
-                        <br>
-                        <br>
-                        <p-selectButton *ngIf="detailsData.cumul" [options]="types" [(ngModel)]="accumulate[detailsData.name]" ></p-selectButton>
-                    </div>
-                    <p-chart *ngIf="!accumulate[detailsData.name]" [type]="detailsData.type" [data]="detailsData" [options]="detailsData.options"></p-chart>
-                    <p-chart *ngIf="accumulate[detailsData.name]" [type]="detailsData.type" [data]="accumulatedData[detailsData.name]" [options]="detailsData.options"></p-chart>
-                </div>
-            </div>
-        </div>
-    </div>
+  <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
+
+
+  <h3 class="subtitle has-text-centered">Détails</h3>
+
+  <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
+
+
 </div>

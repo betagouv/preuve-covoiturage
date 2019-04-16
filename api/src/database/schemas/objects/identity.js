@@ -23,5 +23,5 @@ module.exports = {
     trim: true,
   },
   company: { type: String, trim: true },
-  over_18: { type: Boolean },
+  over_18: { type: Boolean, default: null },
 };

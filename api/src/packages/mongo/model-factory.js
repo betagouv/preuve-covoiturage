@@ -3,6 +3,7 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const toJSON = require('./to-json');
+const toCSV = require('./to-csv');
 const listKeys = require('./list-keys');
 
 const middlewares = {
@@ -30,8 +31,10 @@ const saveAndUpdateHook = async (schema, doc) => {
   const isNew = isDoc ? false : !!doc.isNew;
 
   // encrypt all 'crypt' fields
+  // on the first level only !
+  // does not support nested objects/schemas
   return Promise.all(
-    listKeys('crypt', true, schema.tree, ['password'])
+    listKeys('crypt', true, schema.obj, ['password'])
       .map(async (field) => {
         if (!_.has(docObj, field)) return field;
         if ((isDoc && doc.isModified(field)) || !isDoc || isNew) {
@@ -131,7 +134,7 @@ const modelFactory = (modelName, {
   // });
 
   // add methods
-  _.map(_.assign({ toJSON }, methods), (fn, name) => {
+  _.map(_.assign({ toJSON, toCSV }, methods), (fn, name) => {
     S.method(name, function (...args) {
       return fn(schema, this, ...args);
     });

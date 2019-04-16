@@ -4,7 +4,7 @@ import {
   DynamicDialogConfig,
 } from 'primeng/api';
 
-import { TranslationService } from '~/services/translationService';
+import { TranslationService } from '~/shared/services/translationService';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { Aom } from '~/entities/database/aom';
 import { EditResponse } from '~/entities/responses/editResponse';

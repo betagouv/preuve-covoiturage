@@ -1,19 +1,15 @@
-<section class="section">
-  <div class="container">
-    <div class="columns">
-    <div class="has-text-centered column is-one-third-desktop is-offset-one-third-desktop is-half-tablet is-offset-one-quarter-tablet ">
-      <img src="assets/icons/car.svg" alt="logo" width="200">
-      <div class="title is-5">
-        <label>Bienvenue sur le Registre de Preuve de Covoiturage</label>
-      </div>
-      <div class="box">
-        <app-auth-form-signin></app-auth-form-signin>
-        <br>
-        <a routerLink="/forgotten-password" ><p>Mot de passe oublié ? </p></a>
-        <a href="mailto:{{contactEmail}}"><p>Demander la création d'un compte</p></a>
-        <a [href]="mainSiteLink"><p>Retour sur covoiturage.beta.gouv.fr</p></a>
-      </div>
-    </div>
-    </div>
+<section class="auth__wrapper">
+  <div class="has-text-centered">
+    <img src="assets/icons/car.svg" alt="logo" width="200">
+
+    <h3>Registre de Preuve de Covoiturage</h3>
+
+    <app-auth-form-signin></app-auth-form-signin>
+
+    <p>
+      <a routerLink="/forgotten-password">Mot de passe oublié&nbsp;?</a><br>
+      <a href="mailto:{{contactEmail}}">Demander la création d'un compte</a><br>
+      <a href="http://covoiturage.beta.gouv.fr">Retour sur covoiturage.beta.gouv.fr</a>
+    </p>
   </div>
 </section>

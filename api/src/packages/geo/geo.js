@@ -125,7 +125,7 @@ const town = async ({ lon, lat, insee, literal }) => {
     }
   }
 
-  if (!_.isNil(literal) && !_.isEmpty(literal)) {
+  if (!_.isNil(literal) && literal !== '') {
     // beurk...
     try {
       // use international search first

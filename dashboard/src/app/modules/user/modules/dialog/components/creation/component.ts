@@ -4,7 +4,7 @@ import {
   DynamicDialogConfig,
 } from 'primeng/api';
 
-import { User } from '~/entities/database/user';
+import { User } from '~/entities/database/user/user';
 
 import { UserService } from '../../../../services/userService';
 

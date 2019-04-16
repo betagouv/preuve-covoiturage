@@ -5,7 +5,7 @@ export const PATH_FR = {
     name: 'Opérateur',
   },
   operator_class: {
-    name: 'Classe de l\'opérateur',
+    name: 'Classe',
   },
 
   // AOM
@@ -33,11 +33,20 @@ export const PATH_FR = {
   'passenger.start.time': {
     name: 'Heure départ',
   },
+  'passenger.start.day' : {
+    name: 'Jour',
+  },
   'passenger.start.insee': {
     name: 'Insee de départ',
   },
   'passenger.end.insee': {
     name: 'Insee à l\'arrivée',
+  },
+  'passenger.start.town': {
+    name: 'Commune de départ',
+  },
+  'passenger.end.town': {
+    name: 'Commune d\'arrivée',
   },
   'passenger.start.lat': {
     name: 'Latitude de départ',
@@ -55,7 +64,7 @@ export const PATH_FR = {
     name: 'Durée',
   },
   'passenger.distance': {
-    name: 'Distance',
+    name: 'Distance ( km )',
   },
   'passenger.seats': {
     name: 'Nombre de places réservées',
@@ -229,5 +238,21 @@ export const PATH_FR = {
     name: 'BIC',
   },
 
+  // POLICIES
+  status: {
+    name: 'Statut',
+    values: {
+      active: 'actif',
+      draft: 'brouillon',
+    },
+  },
+
+  // CAMPAIGNS
+  start: {
+    name: 'Début',
+  },
+  end: {
+    name: 'Fin',
+  },
 
 };

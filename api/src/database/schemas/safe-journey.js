@@ -6,6 +6,6 @@ const { Schema } = mongoose;
 const SafeJourneySchema = new Schema(Object.assign(
   { duplicatedAt: Date },
   journeyOperator,
-), { timestamps: true });
+), { timestamps: true, id: false });
 
 module.exports = SafeJourneySchema;

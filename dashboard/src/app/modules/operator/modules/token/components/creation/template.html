@@ -1,0 +1,19 @@
+  <form (ngSubmit)="onSubmit()" [formGroup]="tokenForm">
+
+    <div class="p-grid p-justify-center">
+      <br>
+      <br>
+      <div class="p-col-12 p-md-2">
+        <p>Nom</p>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <input pInputText formControlName="name" required >
+      </div>
+      <br>
+      <br>
+      <div class="p-col-12">
+        <p-button type="submit" [disabled]="!tokenForm.valid || loading" label="Générer"></p-button>
+      </div>
+    </div>
+
+  </form>

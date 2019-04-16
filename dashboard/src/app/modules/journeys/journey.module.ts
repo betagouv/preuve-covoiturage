@@ -9,25 +9,27 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SliderModule } from 'primeng/slider';
 import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
-import { FileUploadModule } from 'primeng/fileupload';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
-
+import { InputTextModule } from 'primeng/inputtext';
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 /* Shared modules */
-import { FormModule } from '~/shared/form/form.module';
-import { GraphicModule } from '~/shared/graphic/graphic.module';
-import { OperatorUIModule } from '~/modules/operator/modules/ui/ui.module';
+import { FormModule } from '~/shared/modules/form/form.module';
+import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
+import { OperatorUIModule } from '~/modules/operator/modules/operators/ui/ui.module';
+import { AomUIModule } from '~/modules/aom/modules/ui/ui.module';
+import { TranslationService } from '~/shared/services/translationService';
+import { TableService } from '~/shared/services/tableService';
 
 /* Local modules */
 import { JourneyRoutingModule } from './journey.routing';
+import { JourneyUIModule } from './modules/ui/ui.module';
 
 /* Local components */
 import { JourneyListComponent } from './components/list/component';
 import { JourneyListPageComponent } from './pages/list/component';
-import { JourneyUploadComponent } from './components/upload/component';
 import { JourneyFilterComponent } from './components/filter/component';
-
 
 /* Local services */
 import { JourneyService } from './services/journeyService';
@@ -45,23 +47,27 @@ import { JourneyService } from './services/journeyService';
     MultiSelectModule,
     SliderModule,
     CalendarModule,
-    FileUploadModule,
     CardModule,
     CheckboxModule,
     OperatorUIModule,
+    AomUIModule,
+    InputTextModule,
+    SplitButtonModule,
   ],
   providers: [
     JourneyService,
+    TranslationService,
+    TableService,
   ],
   declarations: [
     JourneyListComponent,
     JourneyListPageComponent,
-    JourneyUploadComponent,
     JourneyFilterComponent,
   ],
   exports: [
     JourneyListPageComponent,
-    JourneyUploadComponent,
+    JourneyUIModule,
   ],
 })
-export class JourneyModule { }
+export class JourneyModule {
+}

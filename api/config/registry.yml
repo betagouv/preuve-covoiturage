@@ -16,6 +16,7 @@ roles:
       - aom.create
       - aom.update
       - aom.delete
+      - aom.stats
       - operator.users.add
       - operator.users.remove
       - operator.users.list

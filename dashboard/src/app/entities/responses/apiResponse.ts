@@ -1,7 +1,8 @@
+import { Meta } from '~/entities/responses/meta';
 
 export class ApiResponse {
   data: any;
-  meta: object;
+  meta: Meta;
 
 
   constructor(obj) {
