@@ -20,6 +20,7 @@
   "dependencies": {
     "@pdc/shared": "0.0.1",
     "@pdc/package-email": "0.0.1",
+    "@pdc/package-express-errors": "0.0.1",
     "@pdc/service-acquisition": "0.0.1",
     "@pdc/service-auth": "0.0.1",
     "@pdc/service-incentive": "0.0.1",

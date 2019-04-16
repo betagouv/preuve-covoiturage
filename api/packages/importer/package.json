@@ -20,6 +20,5 @@
     "chardet": "^0.7.0",
     "csv-parse": "^4.3.1"
   },
-  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-  "license": "AGPL-3.0"
+  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>"
 }

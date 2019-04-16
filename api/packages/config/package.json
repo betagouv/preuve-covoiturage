@@ -16,6 +16,5 @@
     "js-yaml": "^3.12.0",
     "lodash": "^4.17.11"
   },
-  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-  "license": "AGPL-3.0"
+  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>"
 }

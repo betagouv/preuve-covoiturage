@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const swaggerUi = require('swagger-ui-express');
+const expressErrorHandler = require('@pdc/package-express-errors');
 
 const Sentry = require('@pdc/shared/providers/sentry/sentry');
 const signResponse = require('@pdc/shared/middlewares/sign-response');
@@ -80,59 +81,12 @@ app.use('/arena', require('./routes/bull-arena/controller'));
 // ! singular names here ;)
 eventBus.register('journey', journeyBus);
 
-
 // plugin Sentry error - after routes, before other middlewares
 app.use(Sentry.Handlers.errorHandler());
 
-// error handler - !! keep the next argument !!
-// otherwise Express doesn't use it as error handler
-// https://expressjs.com/en/guide/error-handling.html
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  let output;
-
-  switch (err.name) {
-    case 'MongoError':
-      switch (err.message.match(/^([A-Z0-9])+/)[0]) {
-        case 'E11000':
-          output = res.status(409);
-          break;
-        default:
-          output = res.status(500);
-      }
-      break;
-
-    case 'BadRequestError':
-    case 'ValidationError':
-      output = res.status(400);
-      break;
-
-    case 'UnauthorizedError':
-      output = res.status(401);
-      break;
-
-    case 'ForbiddenError':
-      output = res.status(403);
-      break;
-
-    case 'NotFoundError':
-      output = res.status(404);
-      break;
-
-    case 'ConflictError':
-      output = res.status(409);
-      break;
-
-    case 'InternalServerError':
-      output = res.status(500);
-      break;
-
-    default:
-      output = res.status(500);
-  }
-
-  output.json({ name: err.name, message: err.message });
-});
+// general error handler
+// keep last
+app.use(expressErrorHandler);
 
 // export the http.Server object
 // eslint-disable-next-line no-console

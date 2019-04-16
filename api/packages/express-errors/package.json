@@ -1,8 +1,8 @@
 {
-  "name": "@pdc/package-email",
+  "name": "@pdc/package-express-errors",
   "version": "0.0.1",
-  "description": "Transactional emails",
-  "main": "emails.js",
+  "description": "Error handler",
+  "main": "express-errors.js",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -10,11 +10,12 @@
   },
   "keywords": [
     "pdc",
-    "config"
+    "errors",
+    "express"
   ],
   "dependencies": {
-    "@pdc/shared": "0.0.1",
-    "node-mailjet": "^3.3.1"
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.11"
   },
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>"
 }
