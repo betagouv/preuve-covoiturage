@@ -11,6 +11,9 @@ const signResponse = require('@pdc/shared/middlewares/sign-response');
 const dataWrap = require('@pdc/shared/middlewares/data-wrap');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 
+const eventBus = require('@pdc/shared/bus');
+const journeyBus = require('@pdc/service-acquisition/transports/bus');
+
 const { PORT, sessionSecret } = require('@pdc/shared/config.js');
 const { appUrl } = require('@pdc/shared/helpers/url/url');
 
@@ -75,6 +78,7 @@ app.use('/arena', require('./routes/bull-arena/controller'));
 
 // configure events for each model
 // ! singular names here ;)
+eventBus.register('journey', journeyBus);
 
 
 // plugin Sentry error - after routes, before other middlewares

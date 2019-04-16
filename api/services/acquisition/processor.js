@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
-const Journey = require('@pdc/service-acquisition/entities/models/journey');
-const SafeJourney = require('@pdc/service-acquisition/entities/models/safe-journey');
-const journeyService = require('@pdc/service-acquisition/service');
 const tripService = require('@pdc/service-trip/service');
-const { journeysQueue } = require('./queues');
-const NotFoundError = require('../errors/not-found');
+const NotFoundError = require('@pdc/shared/errors/not-found');
+const Journey = require('./entities/models/journey');
+const SafeJourney = require('./entities/models/safe-journey');
+const journeyService = require('./service');
+const journeysQueue = require('./queue');
 
 const onCreate = async (db, job) => {
   const safeJourney = await SafeJourney.findById(job.data.safe_journey_id).exec();

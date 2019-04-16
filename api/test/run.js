@@ -1,10 +1,14 @@
 /* eslint-disable global-require */
 const mongoose = require('mongoose');
 const seeder = require('@pdc/shared/entities/seeder');
-const queues = require('@pdc/shared/worker/queues');
+const journeyQueues = require('@pdc/service-acquisition/queue');
+const emailsQueues = require('@pdc/shared/worker/queues-emails');
+
 const app = require('@pdc/proxy/app');
 
 const { mongoUrl } = require('@pdc/shared/config');
+
+const queues = { journeyQueues, emailsQueues };
 
 before(async () => {
   await mongoose.disconnect();
