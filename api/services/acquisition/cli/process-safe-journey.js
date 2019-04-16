@@ -1,7 +1,7 @@
 /* eslint-disable camelcase,no-console */
 const mongoose = require('mongoose');
 const { mongoUrl } = require('@pdc/shared/config');
-const { journeysQueue } = require('@pdc/shared/worker/queues');
+const journeysQueue = require('../queue');
 const SafeJourney = require('../entities/models/safe-journey');
 
 const { ObjectId } = mongoose.Types;
