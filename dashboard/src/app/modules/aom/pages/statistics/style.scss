@@ -3,8 +3,7 @@
 .absolute-center {
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, 0);
+  left: calc(50% + 68px);
 }
 
 .subtitle {

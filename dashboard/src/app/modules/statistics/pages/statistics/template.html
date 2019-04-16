@@ -1,20 +1,29 @@
 <app-stats-header></app-stats-header>
 
 <div *ngIf="!loaded" class="absolute-center">
-  <p-progressSpinner></p-progressSpinner>
+    <p-progressSpinner></p-progressSpinner>
 </div>
 
 <div *ngIf="loaded" class="stats__wrapper">
-  <h1 class="has-text-centered">Statistiques</h1>
+    <h1 class="has-text-centered">Statistiques</h1>
 
-  <h3 class="subtitle has-text-centered">Résumé</h3>
+    <h3 class="subtitle has-text-centered">Résumé</h3>
 
-  <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
+    <div class="p-grid p-justify-center">
+        <div class="p-col-12 p-md-6">
+            <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
+        </div>
+    </div>
+
+    <br><br>
 
 
-  <h3 class="subtitle has-text-centered">Détails</h3>
+    <h3 class="subtitle has-text-centered">Détails</h3>
 
-  <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
-
+    <div class="p-grid p-justify-center">
+        <div class="p-col-12 p-md-6">
+            <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
+        </div>
+    </div>
 
 </div>

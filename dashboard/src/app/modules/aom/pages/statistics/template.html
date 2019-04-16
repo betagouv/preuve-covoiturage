@@ -7,12 +7,19 @@
 
   <h3 class="subtitle has-text-centered">Résumé</h3>
 
-  <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
+  <div class="p-grid p-justify-center">
+    <div class="p-col-12 p-md-6">
+      <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
+    </div>
+  </div>
 
-
+  <br><br>
   <h3 class="subtitle has-text-centered">Détails</h3>
 
-  <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
-
+  <div class="p-grid p-justify-center">
+    <div class="p-col-12 p-md-6">
+      <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
+    </div>
+  </div>
 
 </div>
