@@ -1,6 +1,6 @@
 const supertest = require('supertest');
-const app = require('../../../src/app');
-const assertResponse = require('../../lib/assert-response');
+const app = require('@pdc/proxy/app');
+const assertResponse = require('../../../shared/test/lib/assert-response');
 const { superAdmin, signin } = require('../../lib/signin');
 
 const request = supertest(app);

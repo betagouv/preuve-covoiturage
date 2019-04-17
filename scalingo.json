@@ -19,6 +19,12 @@
     "SESSION_SECRET": {
       "generator": "secret"
     },
+    "MJ_DEBUG_EMAIL": {
+      "value": "contact@covoiturage.beta.gouv.fr"
+    },
+    "MJ_DEBUG_NAME": {
+      "value": "[review] Preuve de covoiturage"
+    },
     "APP_SUPERUSER_EMAIL": {
       "value": "admin@example.com"
     },
