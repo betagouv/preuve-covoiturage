@@ -2,7 +2,7 @@
   "openapi": "3.0.2",
   "info": {
     "version": "v1",
-    "title": "Registre National de Preuve de Covoiturage",
+    "title": "Registre de Preuve de Covoiturage",
     "description": "Le registre de preuve de covoiturage est à la fois un label et une\nplate-forme technique pour\n\ndistribuer à grande échelle des incitations monétaires ou non monétaires,\nsans risque de\n\nfraude massive.\n",
     "license": {
       "name": "GNU Affero General Public License v3.0"
