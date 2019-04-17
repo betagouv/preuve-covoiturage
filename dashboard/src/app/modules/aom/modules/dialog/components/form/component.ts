@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 
-import { Address, Aom, Company } from '~/entities/database/aom';
+import { Address, Aom, Company, Contact } from '~/entities/database/aom';
 import { regexp } from '~/entities/validators';
 
 import { AddressForm } from '~/shared/modules/form/components/address/form';
 import { CompanyForm } from '~/shared/modules/form/components/company/form';
+import { ContactsForm } from '~/shared/modules/form/components/contacts/form';
 
 @Component({
   selector: 'app-aom-form',
@@ -25,13 +26,7 @@ export class AomFormComponent implements OnInit {
     insee_main: [''],
     address: this.fb.group(new AddressForm(new Address())),
     company: this.fb.group(new CompanyForm(new Company())),
-    contact: this.fb.group({
-      phone: [''],
-      email: ['', Validators.pattern(regexp.email)],
-      rgpd_dpo: [''],
-      rgpd_controller: [''],
-      technical: [''],
-    }),
+    contacts: this.fb.group(new ContactsForm(new Contact())),
   });
 
   constructor(
@@ -60,7 +55,7 @@ export class AomFormComponent implements OnInit {
   }
 
   get aomFormContact() {
-    return <FormArray>this.aomForm.get('contact');
+    return <FormArray>this.aomForm.get('contacts');
   }
 
   ngOnInit() {

@@ -4,6 +4,7 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
 import { STAT_MAIN } from '~/modules/statistics/config/stat_main';
 
 import { StatisticsService } from '../../services/statisticsService';
+import {MAIN} from "~/config/main";
 
 @Component({
   templateUrl: 'template.html',
@@ -15,6 +16,8 @@ export class StatisticsPageComponent implements OnInit {
   apiData = {};
 
   statList = STAT_MAIN.main;
+  gitbookLinkStats = MAIN.gitbookLinkStats;
+
 
   constructor(private statisticsService: StatisticsService) {
   }

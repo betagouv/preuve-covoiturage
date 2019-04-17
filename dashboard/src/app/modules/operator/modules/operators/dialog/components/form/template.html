@@ -13,6 +13,10 @@
       <input type="text" pInputText formControlName="raison_sociale">
     </div>
   </div>
+  <br>
+
+  <app-contacts-form [parentForm]="operatorForm.get('contacts')"></app-contacts-form>
+  <br>
 
   <app-company-form [parentForm]="operatorForm.get('company')"></app-company-form>
   <br/>
