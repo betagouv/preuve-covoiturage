@@ -79,6 +79,7 @@ export const STAT_STYLE = {
             time: {
               unit: 'week',
               locale: 'fr',
+              min: STAT_MAIN.min_date,
             },
           }],
         },
@@ -179,6 +180,7 @@ export const STAT_STYLE = {
             time: {
               unit: 'week',
               locale: 'fr',
+              min: STAT_MAIN.min_date,
             },
           }],
         },
@@ -215,6 +217,7 @@ export const STAT_STYLE = {
             time: {
               unit: 'week',
               locale: 'fr',
+              min: STAT_MAIN.min_date,
             },
           }],
         },
@@ -251,6 +254,7 @@ export const STAT_STYLE = {
             time: {
               unit: 'week',
               locale: 'fr',
+              min: STAT_MAIN.min_date,
             },
           }],
         },
@@ -287,6 +291,7 @@ export const STAT_STYLE = {
             time: {
               unit: 'week',
               locale: 'fr',
+              min: STAT_MAIN.min_date,
             },
           }],
         },
