@@ -29,17 +29,15 @@ export class UserDropdownComponent implements OnInit {
   }
 
   public getUser() {
-    if (this.userId) {
-      this.userService.getOne(this.userId.value).subscribe((response) => {
-        if (response[0]) {
-          const item = response[0];
-          this.user = {
-            key: item._id,
-            value: `${item.firstname} ${item.lastname}`,
-          };
-        }
-      });
-    }
+    this.userService.getOne(this.userId.value).subscribe((response) => {
+      if (response) {
+        const item = response;
+        this.user = {
+          key: item._id,
+          value: `${item.firstname} ${item.lastname}`,
+        };
+      }
+    });
   }
 
   public getUsers() {

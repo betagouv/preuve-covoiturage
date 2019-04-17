@@ -5,6 +5,8 @@ import { Company, Operator, Bank, Address } from '~/entities/database/operator';
 import { AddressForm } from '~/shared/modules/form/components/address/form';
 import { BankForm } from '~/shared/modules/form/components/bank/form';
 import { CompanyForm } from '~/shared/modules/form/components/company/form';
+import { ContactsForm } from '~/shared/modules/form/components/contacts/form';
+import { Contact } from '~/entities/database/contact';
 
 @Component({
   selector: 'app-operator-form',
@@ -27,6 +29,7 @@ export class OperatorFormComponent implements OnInit {
     address: this.fb.group(new AddressForm(new Address())),
     company: this.fb.group(new CompanyForm(new Company())),
     bank: this.fb.group(new BankForm(new Bank())),
+    contacts: this.fb.group(new ContactsForm(new Contact())),
   });
 
   constructor(
