@@ -1,5 +1,10 @@
 const { regex, setters, validators } = require('../../providers/mongo/schema-validation');
 
+const CardSchema = new Schema({
+  name: { type: String },
+  number: { type: String, required: true },
+});
+
 module.exports = {
   firstname: {
     type: String,
@@ -24,4 +29,8 @@ module.exports = {
   },
   company: { type: String, trim: true },
   over_18: { type: Boolean, default: null },
+  cards: {
+    type: [CardSchema],
+    required: false,
+  },
 };
