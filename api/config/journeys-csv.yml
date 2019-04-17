@@ -1,7 +1,0 @@
-headers:
-  - name: Nom de l'opérateur
-    path: operator.name
-    type: ascii
-  - name: Niveau de preuve
-    path: validation.rank
-    type: ascii
