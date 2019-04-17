@@ -10,7 +10,6 @@ roles:
       - user.delete
       - aom.users.add
       - aom.users.remove
-      - aom.users.list
       - aom.list
       - aom.read
       - aom.update
@@ -18,7 +17,6 @@ roles:
       - aom.stats
       - operator.list
       - operator.read
-      - operator.create
       - journey.read
       - journey.list
       - profile.read
