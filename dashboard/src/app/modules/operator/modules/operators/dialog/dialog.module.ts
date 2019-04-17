@@ -2,12 +2,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-
 /* External modules */
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
-
 import {
   DialogService,
   DynamicDialogRef,
@@ -22,7 +20,6 @@ import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
 import { OperatorCreationDialogComponent } from './components/creation/component';
 import { OperatorFormComponent } from './components/form/component';
 import { OperatorEditionDialogComponent } from './components/edition/component';
-
 /* Local services */
 import { OperatorService } from '../../../services/operatorService';
 

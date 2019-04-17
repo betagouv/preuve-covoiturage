@@ -1,4 +1,4 @@
-/* tslint:disable:variable-name*/
+  /* tslint:disable:variable-name*/
 import { Company } from './company';
 import { Address } from './address';
 import { Bank } from './bank';
