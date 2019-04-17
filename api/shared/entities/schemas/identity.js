@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const { regex, setters, validators } = require('../../providers/mongo/schema-validation');
 
+const { Schema } = mongoose;
+
 const CardSchema = new Schema({
   name: { type: String },
   number: { type: String, required: true },
