@@ -9,6 +9,7 @@ roles:
       - user.update
       - user.delete
       - aom.users.add
+      - aom.users.list
       - aom.users.remove
       - aom.list
       - aom.read
