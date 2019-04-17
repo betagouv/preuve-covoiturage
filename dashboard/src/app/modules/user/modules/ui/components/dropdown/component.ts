@@ -22,8 +22,8 @@ export class UserDropdownComponent implements OnInit {
   }
 
   public ngOnInit() {
-    if (this.userId && this.userId.value && this.userId.value._id) {
-      this.getUser(this.userId.value._id);
+    if (this.userId && this.userId.value) {
+      this.getUser(this.userId.value);
     }
     this.getUsers();
   }
