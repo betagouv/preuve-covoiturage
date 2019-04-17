@@ -22,14 +22,14 @@ export class UserDropdownComponent implements OnInit {
   }
 
   public ngOnInit() {
-    if (this.userId) {
-      this.getUser();
+    if (this.userId && this.userId.value && this.userId.value._id) {
+      this.getUser(this.userId.value._id);
     }
     this.getUsers();
   }
 
-  public getUser() {
-    this.userService.getOne(this.userId.value).subscribe((response) => {
+  public getUser(userId: string) {
+    this.userService.getOne(userId).subscribe((response) => {
       if (response) {
         const item = response;
         this.user = {
