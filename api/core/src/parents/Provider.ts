@@ -1,10 +1,12 @@
 import { ActionInterface } from '../interfaces/ActionInterface';
 import { ActionConstructorInterface } from '../interfaces/ActionConstructorInterface';
 import { CallInterface } from '../interfaces/CallInterface';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 export abstract class Provider {
     private actionInstance : Map<string, ActionInterface> = new Map();
     protected actions: ActionConstructorInterface[] = [];
+    protected middlewares: MiddlewareInterface[] = [];
     
     public boot() {
         this.actions.forEach(action => {
@@ -21,7 +23,7 @@ export abstract class Provider {
         return call;
     }
 
-    public call(method: string, parameters: {[prop: string]: any}) {
+    public call(method: string, parameters: {[prop: string]: any}): {[prop: string]: any} {
         const result = {};
         this.resolve({
             method,
