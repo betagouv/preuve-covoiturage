@@ -41,7 +41,7 @@ service.find = async (query) => {
     (await User.find({ _id: { $in: contacts } }).exec())
       .forEach((userDoc) => {
         const user = userDoc.toObject();
-        Object.keys(item.contacts).map((key) => {
+        Object.keys(item.contacts).forEach((key) => {
           const val = item.contacts[key];
           if (user._id.toString() === val.toString()) {
             item.contacts[key] = _.pick(user, [
@@ -61,7 +61,7 @@ service.find = async (query) => {
   return {
     meta,
     data: await Promise.all(promises),
-  }
+  };
 };
 
 module.exports = service;
