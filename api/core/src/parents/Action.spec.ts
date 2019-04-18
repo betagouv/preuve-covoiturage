@@ -1,3 +1,4 @@
+// tslint:disable no-shadowed-variable max-classes-per-file
 import { describe } from 'mocha';
 import { expect } from 'chai';
 
@@ -8,31 +9,31 @@ describe('Action', () => {
   it('should work', () => {
     class BasicAction extends Action {
       protected handle(call: CallInterface):void {
-        let result = 0;
+        let count = 0;
         if ('add' in call.parameters) {
-            const { add } = call.parameters;
-            add.forEach(param => {
-                result += param;
-              });
+          const { add } = call.parameters;
+          add.forEach((param) => {
+            count += param;
+          });
         }
-        call.result.result = result;
+        call.result.result = count;
         return;
       }
     }
-    const action = new BasicAction;
+    const action = new BasicAction();
     const result = {
-        result: 0,
+      result: 0,
     };
     action.cast({
-        method: '',
-        context: {
-          internal: true
-        },
-        parameters: {
-            add: [1, 1],
-        },
-        result,
-      });
+      result,
+      method: '',
+      context: {
+        internal: true,
+      },
+      parameters: {
+        add: [1, 1],
+      },
+    });
     expect(result.result).equal(2);
   });
 
@@ -43,65 +44,65 @@ describe('Action', () => {
         next();
       }];
       protected handle(call: CallInterface):void {
-        let { result } = call.result;
+        let { result:count } = call.result;
         if ('add' in call.parameters) {
-            const { add } = call.parameters;
-            add.forEach(param => {
-                result += param;
-              });
+          const { add } = call.parameters;
+          add.forEach((param) => {
+            count += param;
+          });
         }
-        call.result.result = result;
+        call.result.result = count;
         return;
       }
     }
-    const action = new BasicAction;
+    const action = new BasicAction();
     const result = {
-        result: 0,
+      result: 0,
     };
     action.cast({
-        method: '',
-        context: {
-          internal: true
-        },
-        parameters: {
-            add: [1, 1],
-        },
-        result,
-      });
+      result,
+      method: '',
+      context: {
+        internal: true,
+      },
+      parameters: {
+        add: [1, 1],
+      },
+    });
     expect(result.result).equal(1);
   });
 
   it('should work with ordered middleware', () => {
     class BasicAction extends Action {
       protected middlewares = [(call: CallInterface, next: Function) => {
-        call.result.result += "hello ";
+        call.result.result += 'hello ';
         next();
-        call.result.result += "?";
+        call.result.result += '?';
       }, (call: CallInterface, next: Function) => {
-        call.result.result += "world ";
+        call.result.result += 'world ';
         next();
-        call.result.result += "!";
+        call.result.result += '!';
       }];
       protected handle(call: CallInterface):void {
-        let { result } = call.result;
+        const { result } = call.result;
         call.result.result += call.parameters.name;
         return;
       }
     }
-    const action = new BasicAction;
+    const action = new BasicAction();
     const result = {
-        result: '',
+      result: '',
     };
     action.cast({
-        method: '',
-        context: {
-          internal: true
-        },
-        parameters: {
-            name: "Sam",
-        },
-        result,
-      });
-    expect(result.result).equal("hello world Sam!?");
+      result,
+      method: '',
+      context: {
+        internal: true,
+      },
+      parameters: {
+        name: 'Sam',
+      },
+    });
+    expect(result.result).equal('hello world Sam!?');
   });
 });

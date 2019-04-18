@@ -11,27 +11,26 @@ let request;
 let httpTransport;
 
 before(() => {
-    const Kernel = {
-        providers: [],
-        handle(call: RPCCallType): Promise<RPCResponseType> {
-            const response = {
-                id: 1,
-                jsonrpc: '2.0',
-                result: 'hello world',
-            };
-            return new Promise((resolve, reject) => {
-                if ('method' in call && call.method === 'error') {
-                    reject();
-                }
-                resolve(response);
-            });
-        }
-    }
-    httpTransport = new HttpTransport(Kernel);
-    
-    httpTransport.up();
-    
-    request = supertest(httpTransport.server);    
+  const kernel = {
+    providers: [],
+    async handle(call: RPCCallType): Promise<RPCResponseType> {
+      if ('method' in call && call.method === 'error') {
+        throw new Error('wrong!');
+      }
+
+      const response = {
+        id: 1,
+        jsonrpc: '2.0',
+        result: 'hello world',
+      };
+      return response;
+    },
+  };
+  httpTransport = new HttpTransport(kernel);
+
+  httpTransport.up();
+
+  request = supertest(httpTransport.server);
 });
 
 describe('Http kernel', () => {
@@ -46,12 +45,12 @@ describe('Http kernel', () => {
         .set('Content-Type', 'application/json');
     expect(response.status).equal(200);
     expect(response.body).to.deep.equal({
-        id: 1,
-        jsonrpc: '2.0',
-        result: 'hello world'
+      id: 1,
+      jsonrpc: '2.0',
+      result: 'hello world',
     });
   });
- 
+
   it('should fail if missing accept header', async () => {
     const response = await request.post('/')
         .send({
@@ -62,7 +61,7 @@ describe('Http kernel', () => {
         .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
   });
- 
+
   it('should fail if missing content type header', async () => {
     const response = await request.post('/')
         .send({
@@ -88,7 +87,7 @@ describe('Http kernel', () => {
 
   it('should fail if json is misformed', async () => {
     const response = await request.post('/')
-        .send("{ \"id\": 1, jsonrpc: \"2.0\", \"method\": \"test\"}")
+        .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
@@ -108,5 +107,5 @@ describe('Http kernel', () => {
 });
 
 after(() => {
-    httpTransport.down();
+  httpTransport.down();
 });
