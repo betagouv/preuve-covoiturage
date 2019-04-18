@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
+const _ = require('lodash');
 const { ObjectId } = require('mongoose').Types;
 const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
 const User = require('@pdc/service-user/entities/models/user');
 const Aom = require('./entities/models/aom');
 
-module.exports = serviceFactory(Aom, {
+const service = serviceFactory(Aom, {
   async addUser(id, userId) {
     const aom = await Aom.findOne({ _id: id });
     const user = await User.findOne({ _id: userId });
@@ -24,3 +25,42 @@ module.exports = serviceFactory(Aom, {
     return User.find({ aom: ObjectId(id) });
   },
 });
+
+
+/**
+ * Extend Aom.find to add contact details
+ */
+const baseFind = service.find;
+service.find = async (query) => {
+  const { meta, data } = await baseFind(query);
+  const promises = data.map(async (itemDoc) => {
+    const item = itemDoc.toObject();
+    if (!item.contacts) return item;
+
+    const contacts = Object.values(item.contacts) || [];
+    (await User.find({ _id: { $in: contacts } }).exec())
+      .forEach((userDoc) => {
+        const user = userDoc.toObject();
+        Object.keys(item.contacts).map((key) => {
+          const val = item.contacts[key];
+          if (user._id.toString() === val.toString()) {
+            item.contacts[key] = _.pick(user, [
+              'firstname',
+              'lastname',
+              'email',
+              'phone',
+            ]);
+          }
+        });
+      });
+
+    return item;
+  });
+
+  return {
+    meta,
+    data: await Promise.all(promises),
+  }
+};
+
+module.exports = service;

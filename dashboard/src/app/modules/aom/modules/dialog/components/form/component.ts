@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 
-import { Address, Aom, Company, Contact } from '~/entities/database/aom';
+import { Address, Aom, Company, ContactList } from '~/entities/database/aom';
 import { regexp } from '~/entities/validators';
 
 import { AddressForm } from '~/shared/modules/form/components/address/form';
@@ -26,7 +26,7 @@ export class AomFormComponent implements OnInit {
     insee_main: [''],
     address: this.fb.group(new AddressForm(new Address())),
     company: this.fb.group(new CompanyForm(new Company())),
-    contacts: this.fb.group(new ContactsForm(new Contact())),
+    contacts: this.fb.group(new ContactsForm(new ContactList())),
   });
 
   constructor(
