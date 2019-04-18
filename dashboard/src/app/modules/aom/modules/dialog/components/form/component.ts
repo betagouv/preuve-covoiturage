@@ -46,22 +46,22 @@ export class AomFormComponent implements OnInit {
     this.aom = aom;
 
     // reformat contacts
-    this.aom.contacts = <ContactList>Object
-      .keys(this.aom.contacts || {})
-      .reduce(
-        (p, k) => {
-          const val = this.aom.contacts[k];
-          p[k] = {
-            key: val._id,
-            value: `${val.firstname} ${val.lastname}`,
-          };
-
-          return p;
-        },
-        {},
-      );
-
     if (this.aom) {
+      this.aom.contacts = <ContactList>Object
+        .keys(this.aom.contacts || {})
+        .reduce(
+          (p, k) => {
+            const val = this.aom.contacts[k];
+            p[k] = {
+              key: val._id,
+              value: `${val.firstname} ${val.lastname}`,
+            };
+
+            return p;
+          },
+          {},
+        );
+
       this.aomForm.patchValue(this.aom);
     }
   }
@@ -79,7 +79,7 @@ export class AomFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.aom._id) {
+    if (this.aom && this.aom._id) {
       this.aomService
         .getUsers(this.aom._id)
         .subscribe((response: ApiResponse) => {
