@@ -1,6 +1,6 @@
 export interface RPCCallInterface {
-    id?: string | number | null;
-    jsonrpc: string,
-    method: string,
-    params?: any[] | object,
+  id?: string | number | null;
+  jsonrpc: string;
+  method: string;
+  params?: any[] | object;
 }

@@ -4,35 +4,35 @@ import { CallInterface } from '../interfaces/CallInterface';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 export abstract class Provider {
-    private actionInstance : Map<string, ActionInterface> = new Map();
-    protected actions: ActionConstructorInterface[] = [];
-    protected middlewares: MiddlewareInterface[] = [];
-    
-    public boot() {
-        this.actions.forEach(action => {
-            const actionInstance = new action;
-            this.actionInstance.set(actionInstance.signature, actionInstance);
-        });
-    }
+  private actionInstance: Map<string, ActionInterface> = new Map();
+  protected actions: ActionConstructorInterface[] = [];
+  protected middlewares: MiddlewareInterface[] = [];
 
-    public resolve(call: CallInterface): CallInterface {
-        if (!this.actionInstance.has(call.method)) {
-            throw new Error('Unkmown method');
-        }
-        this.actionInstance.get(call.method).cast(call);
-        return call;
-    }
+  public boot() {
+    this.actions.forEach((action) => {
+      const actionInstance = new action();
+      this.actionInstance.set(actionInstance.signature, actionInstance);
+    });
+  }
 
-    public call(method: string, parameters: {[prop: string]: any}): {[prop: string]: any} {
-        const result = {};
-        this.resolve({
-            method,
-            parameters,
-            result,
-            context: {
-                internal: true,
-            },
-        });
-        return result;
+  public resolve(call: CallInterface): CallInterface {
+    if (!this.actionInstance.has(call.method)) {
+      throw new Error('Unkmown method');
     }
+    this.actionInstance.get(call.method).cast(call);
+    return call;
+  }
+
+  public call(method: string, parameters: {[prop: string]: any}): {[prop: string]: any} {
+    const result = {};
+    this.resolve({
+      method,
+      parameters,
+      result,
+      context: {
+        internal: true,
+      },
+    });
+    return result;
+  }
 }
