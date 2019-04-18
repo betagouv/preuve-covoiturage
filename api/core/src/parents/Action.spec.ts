@@ -3,7 +3,7 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 
 import { Action } from './Action';
-import { CallInterface } from '../interfaces/CallInterface';
+import { CallInterface } from '../interfaces/communication/CallInterface';
 
 describe('Action', () => {
   it('should work', () => {
@@ -24,7 +24,7 @@ describe('Action', () => {
     const result = {
       result: 0,
     };
-    action.cast({
+    action.call({
       result,
       method: '',
       context: {
@@ -59,7 +59,7 @@ describe('Action', () => {
     const result = {
       result: 0,
     };
-    action.cast({
+    action.call({
       result,
       method: '',
       context: {
@@ -85,7 +85,9 @@ describe('Action', () => {
       }];
       protected handle(call: CallInterface):void {
         const { result } = call.result;
-        call.result.result += call.parameters.name;
+        if ('name' in call.parameters) {
+          call.result.result += call.parameters.name;
+        }
         return;
       }
     }
@@ -93,7 +95,7 @@ describe('Action', () => {
     const result = {
       result: '',
     };
-    action.cast({
+    action.call({
       result,
       method: '',
       context: {

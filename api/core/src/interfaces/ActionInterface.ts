@@ -1,7 +1,7 @@
-import { CallInterface } from './CallInterface';
+import { CallInterface } from './communication/CallInterface';
 
 export interface ActionInterface {
   signature: string;
-  cast(call: CallInterface):void;
+  call(call: CallInterface):void;
 }
 
