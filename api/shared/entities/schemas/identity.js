@@ -4,9 +4,22 @@ const { regex, setters, validators } = require('../../providers/mongo/schema-val
 const { Schema } = mongoose;
 
 const CardSchema = new Schema({
-  name: { type: String },
-  number: { type: String, required: true },
-});
+  name: {
+    type: String,
+    lowercase: true,
+    trim: true,
+    minlength: 2,
+    maxlength: 128,
+    set: setters.cardName,
+  },
+  number: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 2,
+    maxlength: 64,
+  },
+}, { id: false, _id: false });
 
 module.exports = {
   firstname: {
@@ -32,7 +45,7 @@ module.exports = {
   },
   company: { type: String, trim: true },
   over_18: { type: Boolean, default: null },
-  cards: {
+  card: {
     type: CardSchema,
     required: false,
   },
