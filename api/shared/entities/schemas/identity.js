@@ -33,7 +33,7 @@ module.exports = {
   company: { type: String, trim: true },
   over_18: { type: Boolean, default: null },
   cards: {
-    type: [CardSchema],
+    type: CardSchema,
     required: false,
   },
 };
