@@ -45,6 +45,7 @@ service.find = async (query) => {
           const val = item.contacts[key];
           if (user._id.toString() === val.toString()) {
             item.contacts[key] = _.pick(user, [
+              '_id',
               'firstname',
               'lastname',
               'email',

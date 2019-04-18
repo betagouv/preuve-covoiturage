@@ -1,3 +1,4 @@
+/* tslint:disable:variable-name */
 import { Contact } from './contact';
 
 export class ContactList {

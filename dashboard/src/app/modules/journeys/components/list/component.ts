@@ -114,7 +114,7 @@ export class JourneyListComponent {
   }
 
   loadLazy(event: LazyLoadEvent) {
-    const eventBeforeFormat = this.setDefault(event)
+    const eventBeforeFormat = this.setDefault(event);
     const filters = this.journeyService.formatFiltersFromLazyEvent(eventBeforeFormat);
     this.get(filters);
   }

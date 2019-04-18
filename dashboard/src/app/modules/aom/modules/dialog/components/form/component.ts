@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 import { Address, Aom, Company, ContactList } from '~/entities/database/aom';
 import { regexp } from '~/entities/validators';
@@ -7,6 +7,10 @@ import { regexp } from '~/entities/validators';
 import { AddressForm } from '~/shared/modules/form/components/address/form';
 import { CompanyForm } from '~/shared/modules/form/components/company/form';
 import { ContactsForm } from '~/shared/modules/form/components/contacts/form';
+import { User } from '~/entities/database/user/user';
+
+import { AomService } from '~/modules/aom/services/aomService';
+import { ApiResponse } from '~/entities/responses/apiResponse';
 
 @Component({
   selector: 'app-aom-form',
@@ -15,6 +19,8 @@ import { ContactsForm } from '~/shared/modules/form/components/contacts/form';
 
 export class AomFormComponent implements OnInit {
   inseeMessage = '';
+  users: User[] = [];
+  aom: Aom;
 
   @Output() answer = new EventEmitter();
 
@@ -30,36 +36,59 @@ export class AomFormComponent implements OnInit {
   });
 
   constructor(
+    private aomService: AomService,
     private fb: FormBuilder,
   ) {
   }
 
   @Input('aom')
   set aomInput(aom: Aom) {
-    if (aom) {
-      this.aomForm.patchValue(aom);
+    this.aom = aom;
+
+    // reformat contacts
+    this.aom.contacts = <ContactList>Object
+      .keys(this.aom.contacts || {})
+      .reduce(
+        (p, k) => {
+          const val = this.aom.contacts[k];
+          p[k] = {
+            key: val._id,
+            value: `${val.firstname} ${val.lastname}`,
+          };
+
+          return p;
+        },
+        {},
+      );
+
+    if (this.aom) {
+      this.aomForm.patchValue(this.aom);
     }
   }
 
   get aomInsee() {
     const insee = this.aomForm.value.insee;
     if (insee && insee.length > 0) {
-      return insee.map(item => Object.create(
-        {
-          label: item,
-          value: item,
-        },
-      ));
+      return insee.map(item => ({
+        label: item,
+        value: item,
+      }));
     }
+
     return [];
   }
 
-  get aomFormContact() {
-    return <FormArray>this.aomForm.get('contacts');
-  }
-
-  ngOnInit() {
-    //
+  ngOnInit(): void {
+    if (this.aom._id) {
+      this.aomService
+        .getUsers(this.aom._id)
+        .subscribe((response: ApiResponse) => {
+          this.users = response.data.map(item => ({
+            key: item._id,
+            value: `${item.firstname} ${item.lastname}`,
+          }));
+        });
+    }
   }
 
   onSubmit() {

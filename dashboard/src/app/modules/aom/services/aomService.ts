@@ -12,6 +12,10 @@ export class AomService extends ApiService {
     updated: 'L\'AOM a bien été mise à jour',
   };
 
+  getUsers(aomId: string) {
+    return this.http.get(`${this.endPoint}/${aomId}/users`);
+  }
+
   getStats(aomId: string) {
     return this.http.get(`${this.endPoint}/${aomId}/stats`);
   }
