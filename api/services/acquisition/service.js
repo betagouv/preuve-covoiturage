@@ -158,6 +158,10 @@ const journeyService = serviceFactory(Journey, {
    * @returns {Promise<void>}
    */
   async import({ operator }, file) {
+    if (!file) {
+      throw new BadRequestError('No file provided');
+    }
+
     const lines = importer.read(file);
 
     importer.validate(file, lines);
