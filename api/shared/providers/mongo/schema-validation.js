@@ -109,7 +109,7 @@ const setters = {
   },
   cardName(v) {
     return slugify(v);
-  }
+  },
 };
 
 /**
