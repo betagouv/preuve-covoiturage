@@ -1,37 +1,43 @@
+import { ContextInterface } from '~/interfaces/communication/ContextInterface';
+import { ParamsType } from '~/types/ParamsType';
+import { ResultType } from '~/types/ResultType';
+
 import { ActionInterface } from '../interfaces/ActionInterface';
 import { ActionConstructorInterface } from '../interfaces/ActionConstructorInterface';
-import { CallInterface } from '../interfaces/CallInterface';
+import { CallInterface } from '../interfaces/communication/CallInterface';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 export abstract class Provider {
-  private actionInstance: Map<string, ActionInterface> = new Map();
+  public readonly signature: string;
+  public readonly version: string;
+
   protected actions: ActionConstructorInterface[] = [];
   protected middlewares: MiddlewareInterface[] = [];
+
+  private actionInstances: Map<string, ActionInterface> = new Map();
 
   public boot() {
     this.actions.forEach((action) => {
       const actionInstance = new action();
-      this.actionInstance.set(actionInstance.signature, actionInstance);
+      this.actionInstances.set(actionInstance.signature, actionInstance);
     });
   }
 
   public resolve(call: CallInterface): CallInterface {
-    if (!this.actionInstance.has(call.method)) {
+    if (!this.actionInstances.has(call.method)) {
       throw new Error('Unkmown method');
     }
-    this.actionInstance.get(call.method).cast(call);
+    this.actionInstances.get(call.method).call(call);
     return call;
   }
 
-  public call(method: string, parameters: {[prop: string]: any}): {[prop: string]: any} {
+  public async call(method: string, parameters: ParamsType, context: ContextInterface = { internal: true }): Promise<ResultType> {
     const result = {};
     this.resolve({
       method,
       parameters,
       result,
-      context: {
-        internal: true,
-      },
+      context,
     });
     return result;
   }

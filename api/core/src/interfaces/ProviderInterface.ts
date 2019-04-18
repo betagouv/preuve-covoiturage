@@ -1,7 +1,11 @@
-import { CallInterface } from '../interfaces/CallInterface';
+import { ParamsType } from '~/types/ParamsType';
+import { ResultType } from '~/types/ResultType';
+
+import { ContextInterface } from './communication/ContextInterface';
 
 export interface ProviderInterface {
+  readonly signature: string;
+  readonly version: string;
   boot():void;
-  resolve(call: CallInterface): CallInterface;
-  call(method: string, parameters: {[prop: string]: any}): {[prop: string]: any};
+  call(method: string, parameters: ParamsType, context: ContextInterface): Promise<ResultType>;
 }

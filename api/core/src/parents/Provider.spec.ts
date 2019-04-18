@@ -4,7 +4,7 @@ import { expect } from 'chai';
 
 import { Provider } from './Provider';
 import { Action } from './Action';
-import { CallInterface } from '../interfaces/CallInterface';
+import { CallInterface } from '../interfaces/communication/CallInterface';
 
 describe('Provider', () => {
   it('should work', () => {
@@ -42,7 +42,7 @@ describe('Provider', () => {
     }).result.result).equal(2);
   });
 
-  it('should work with call', () => {
+  it('should work with call', async () => {
     class BasicAction extends Action {
       public signature = 'add';
       protected handle(call: CallInterface):void {
@@ -64,7 +64,7 @@ describe('Provider', () => {
 
     const provider = new BasicProvider();
     provider.boot();
-
-    expect(provider.call('add', { add: [1, 1] })).to.deep.equal({ result: 2 });
+    const r = await provider.call('add', { add: [1, 1] });
+    expect(r).to.deep.equal({ result: 2 });
   });
 });

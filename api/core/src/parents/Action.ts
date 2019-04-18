@@ -1,10 +1,10 @@
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
-import { CallInterface } from '../interfaces/CallInterface';
+import { CallInterface } from '../interfaces/communication/CallInterface';
 import { ActionInterface } from '../interfaces/ActionInterface';
 import { callStack } from '../helpers/callStack';
 
 export abstract class Action implements ActionInterface {
-  public signature: string;
+  public readonly signature: string;
 
   protected middlewares: MiddlewareInterface[] = [];
 
@@ -12,7 +12,7 @@ export abstract class Action implements ActionInterface {
     throw new Error('No implementation found');
   }
 
-  public cast(call: CallInterface):void {
+  public call(call: CallInterface):void {
     callStack(call, ...this.middlewares, this.handle);
   }
 }
