@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { STAT_MAIN } from '~/modules/statistics/config/stat_main';
+import { MAIN } from '~/config/main';
 
 import { StatisticsService } from '../../services/statisticsService';
-import {MAIN} from "~/config/main";
 
 @Component({
   templateUrl: 'template.html',

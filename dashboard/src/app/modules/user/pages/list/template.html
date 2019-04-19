@@ -17,17 +17,20 @@
     </ng-template>
     <ng-template pTemplate="header" let-columns>
       <tr>
-        <th *ngFor="let col of columns" [pSortableColumn]="col.field" pResizableColumn>
+        <th *ngFor="let col of columns" [pSortableColumn]="getSortableField(col.field)" pResizableColumn>
         <span>
         {{col.header}}
         </span>
-          <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+          <p-sortIcon *ngIf="sortList.indexOf(col.field) !== -1"  [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
         </th>
         <th class="options-column"></th>
       </tr>
       <tr>
         <th *ngFor="let col of columns" [ngSwitch]="col.field" style="overflow: inherit">
-          <input *ngSwitchDefault pInputText class="width-max" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+          <input *ngSwitchCase="'email'" pInputText class="width-max" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+          <input *ngSwitchCase="'firstname'" pInputText class="width-max" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+          <input *ngSwitchCase="'lastname'" pInputText class="width-max" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+          <input *ngSwitchCase="'phone'" pInputText class="width-max" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
           <p-multiSelect [style]="{width:'100%'}" [panelStyle]="{width:'100%'}" *ngSwitchCase="'group'" [options]="groups" defaultLabel="Tous" (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
           <p-multiSelect [style]="{width:'100%'}" [panelStyle]="{width:'100%'}" *ngSwitchCase="'role'" [options]="roles" defaultLabel="Tous" (onChange)="dt.filter($event.value, col.field, 'in')"></p-multiSelect>
         </th>
