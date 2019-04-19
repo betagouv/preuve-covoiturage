@@ -31,7 +31,7 @@ passport.use(new LocalStrategy(async (username, password, done) => {
 // serializing, and querying the user record by ID from the database when
 // deserializing.
 passport.serializeUser((user, cb) => {
-  cb(null, user.id);
+  cb(null, user ? user._id.toString() : null);
 });
 
 passport.deserializeUser((id, cb) => {
