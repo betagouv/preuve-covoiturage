@@ -4,6 +4,8 @@ import { RPCCallType } from './types/RPCCallType';
 import { RPCResponseType } from './types/RPCResponseType';
 import { RPCCallInterface } from './interfaces/communication/RPCCallInterface';
 import { RPCResponseInterface } from './interfaces/communication/RPCResponseInterface';
+
+import { resolveMethodFromString } from './helpers/resolveMethod';
 import { HttpProvider } from './providers/HttpProvider';
 
 export class Kernel implements KernelInterface {
@@ -30,17 +32,20 @@ export class Kernel implements KernelInterface {
   }
 
   protected async resolve(call: RPCCallInterface): Promise<RPCResponseInterface> {
-    if (!this.registry.has(call.method)) {
+    const { method, service } = resolveMethodFromString(<string>call.method);
+
+    if (!this.registry.has(service)) {
       throw new Error('Unknown service');
     }
+
     try {
-      const response = await this.registry.get(call.method).call(call.method, call.params, null);
+      const response = await this.registry.get(service).call(method, call.params, null);
       return {
         id: call.id,
         result: response,
         jsonrpc: '2.0',
       };
-    } catch(e) {
+    } catch (e) {
       return {
         id: call.id,
         error: {

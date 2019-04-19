@@ -1,9 +1,11 @@
 import axios from 'axios';
 
-import { ProviderInterface } from '~/interfaces/ProviderInterface';
-import { ResultType } from '~/types/ResultType';
-import { ParamsType } from '~/types/ParamsType';
-import { ContextInterface } from '~/interfaces/communication/ContextInterface';
+import { ProviderInterface } from '../interfaces/ProviderInterface';
+import { ResultType } from '../types/ResultType';
+import { ParamsType } from '../types/ParamsType';
+import { ContextInterface } from '../interfaces/communication/ContextInterface';
+import { resolveMethodFromObject } from '../helpers/resolveMethod';
+import { ServiceException } from '../Exceptions/ServiceException';
 
 export class HttpProvider implements ProviderInterface {
   readonly signature: string;
@@ -27,16 +29,30 @@ export class HttpProvider implements ProviderInterface {
     });
   }
 
-  async public call(method: string, params: ParamsType, context: ContextInterface): Promise<ResultType> {
-    const response = await this.client.post({
-      method,
-      params,
-      context,
-      jsonrpc: '2.0',
-    });
-    if (!response.result) {
-      throw new Error(response.error.message);
+  public async call(method: string, params: ParamsType, context: ContextInterface): Promise<ResultType> {
+    try {
+      const response = await this.client.post('/', {
+        params,
+        context,
+        id: null,
+        method: resolveMethodFromObject({
+          method,
+          service: this.signature,
+          version: this.version,
+        }),
+        jsonrpc: '2.0',
+      });
+
+      if (!('data' in response) || !('result' in response.data)) {
+        throw new ServiceException(response.data.error);
+      }
+
+      return response.data.result;
+    } catch (e) {
+      if (e.serviceError) {
+        throw new Error(e.message);
+      }
+      throw new Error('An error occured');
     }
-    return response.result;
   }
 }

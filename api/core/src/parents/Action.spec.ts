@@ -1,6 +1,6 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
 import { describe } from 'mocha';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 
 import { Action } from './Action';
 import { CallInterface } from '../interfaces/communication/CallInterface';
@@ -106,5 +106,24 @@ describe('Action', () => {
       },
     });
     expect(result.result).equal('hello world Sam!?');
+  });
+
+  it('should raise an error if no handle method is defined', () => {
+    class BasicAction extends Action {}
+    const action = new BasicAction();
+    assert.throw(
+      () => action.call({
+        result: {},
+        method: '',
+        context: {
+          internal: true,
+        },
+        parameters: {
+          name: 'Sam',
+        },
+      }),
+      Error,
+      'No implementation found',
+      );
   });
 });

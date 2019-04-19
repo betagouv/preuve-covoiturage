@@ -36,15 +36,15 @@ export class HttpTransport implements TransportInterface {
         try {
           const call = JSON.parse(data);
           this.kernel.handle(call)
-                    .then((results) => {
-                        res.setHeader('content-type', 'application/json');
-                        res.statusCode = 200;
-                        res.end(JSON.stringify(results));
-                    })
-                    .catch((e) => {
-                      res.statusCode = 500;
-                      res.end(`An error occured : ${e ? e.message : ''}`);
-                    });
+            .then((results) => {
+              res.setHeader('content-type', 'application/json');
+              res.statusCode = 200;
+              res.end(JSON.stringify(results));
+            })
+            .catch((e) => {
+              res.statusCode = 500;
+              res.end(`An error occured : ${e ? e.message : ''}`);
+            });
         } catch (e) {
           res.statusCode = 415;
           res.end('Wrong request');
