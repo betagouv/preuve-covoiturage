@@ -68,7 +68,7 @@ module.exports = [
           'passenger.identity.email',
           'passenger.identity.company',
           'passenger.identity.card.number',
-          
+
           'driver.start.literal',
           'driver.end.literal',
           'passenger.start.literal',
