@@ -57,7 +57,7 @@ module.exports = {
       citycode: data.citycode || null,
       city: data.city || null,
       postcode: data.postcode || [],
-      country: 'France',
+      country: (data.citycode && data.city && data.postcode) ? 'France' : null,
     };
   },
 

@@ -57,11 +57,17 @@ const town = async ({ lon, lat, insee, literal }) => {
     throw new BadRequestError('lon/lat or INSEE or literal must be provided');
   }
 
+  if (!_.isNil(insee)) validate('insee', insee);
+  if (!_.isNil(lon)) validate('lon', lon);
+  if (!_.isNil(lat)) validate('lat', lat);
+
   if (!_.isNil(lon) && !_.isNil(lat)) {
     // beurk...
     try {
       const { citycode, city, postcode, country } = await addressApi.reverse({ lon, lat });
       return {
+        lon,
+        lat,
         insee: citycode,
         town: city,
         postcodes: cleanPostcodes(postcode),
@@ -71,6 +77,8 @@ const town = async ({ lon, lat, insee, literal }) => {
       try {
         const { citycode, city, postcode, country } = await geoApi.reverse({ lon, lat });
         return {
+          lon,
+          lat,
           insee: citycode,
           town: city,
           postcodes: cleanPostcodes(postcode),
@@ -80,6 +88,8 @@ const town = async ({ lon, lat, insee, literal }) => {
         try {
           const { citycode, city, postcode, country } = await nominatimApi.reverse({ lon, lat });
           return {
+            lon,
+            lat,
             insee: citycode,
             town: city,
             postcodes: cleanPostcodes(postcode),
@@ -87,9 +97,12 @@ const town = async ({ lon, lat, insee, literal }) => {
           };
         } catch (g) {
           return {
+            lon,
+            lat,
             insee: null,
             town: null,
             postcodes: [],
+            country: null,
           };
         }
       }
@@ -100,7 +113,10 @@ const town = async ({ lon, lat, insee, literal }) => {
     // beurk...
     try {
       const { city, citycode, postcode, country } = await geoApi.insee(insee);
+
       return {
+        lon: null,
+        lat: null,
         insee: citycode,
         town: city,
         postcodes: cleanPostcodes(postcode),
@@ -110,6 +126,8 @@ const town = async ({ lon, lat, insee, literal }) => {
       try {
         const { city, citycode, postcode, country } = await addressApi.insee(insee);
         return {
+          lon: null,
+          lat: null,
           insee: citycode,
           town: city,
           postcodes: cleanPostcodes(postcode),
@@ -117,9 +135,12 @@ const town = async ({ lon, lat, insee, literal }) => {
         };
       } catch (f) {
         return {
+          lon: null,
+          lat: null,
           insee: null,
           town: null,
           postcodes: [],
+          country: null,
         };
       }
     }
@@ -131,9 +152,9 @@ const town = async ({ lon, lat, insee, literal }) => {
       // use international search first
       const res = await komootApi.search(literal);
       return {
-        insee: null,
         lon: res.lon,
         lat: res.lat,
+        insee: null,
         town: res.city,
         postcodes: cleanPostcodes(res.postcode),
         country: res.country,
@@ -151,9 +172,9 @@ const town = async ({ lon, lat, insee, literal }) => {
         };
       } catch (f) {
         return {
-          insee,
           lon,
           lat,
+          insee,
           town: null,
           postcodes: [],
           country: null,
