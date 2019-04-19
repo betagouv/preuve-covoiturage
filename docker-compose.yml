@@ -50,7 +50,7 @@ services:
     working_dir: "/code"
     command: "yarn worker-dev"
     ports:
-      - 9230:9229
+      - 9230:9230
     env_file: .env
     environment:
       CONFIG_DIR: '/code/config'

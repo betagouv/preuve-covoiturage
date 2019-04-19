@@ -29,7 +29,7 @@
     "start": "yarn workspace @pdc/proxy start",
     "dev": "nodemon --inspect=0.0.0.0:9229 ./proxy/app.js",
     "worker": "yarn workspace @pdc/proxy worker",
-    "worker-dev": "yarn workspace @pdc/proxy worker-dev",
+    "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./proxy/worker.js",
     "seed": "yarn workspace @pdc/proxy seed",
     "migrate": "yarn workspace @pdc/proxy migrate",
     "process": "yarn workspace @pdc/proxy process",
