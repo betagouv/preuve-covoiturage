@@ -61,7 +61,7 @@ const findTown = async ({ journey, path, position }) => {
   const jrn = Object.assign({}, journey);
 
   return geo
-    .town({ lon: pos.lon, lat: pos.lat, literal: pos.literal })
+    .town({ lon: pos.lon, lat: pos.lat, insee: pos.insee, literal: pos.literal })
     .then(processTownResponse({ jrn, path, pos }));
   // if (
   //   (_.get(position, 'lat', null) !== null
