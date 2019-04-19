@@ -36,7 +36,7 @@ after(async () => {
 describe('Unit tests: geo', async () => {
   require('./unit/geo/aom');
   require('./unit/geo/postcodes');
-  // require('./unit/geo/town');
+  require('./unit/geo/town');
 });
 
 describe('Unit tests: validation', async () => {

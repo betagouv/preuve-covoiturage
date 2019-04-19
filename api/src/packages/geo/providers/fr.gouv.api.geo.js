@@ -12,12 +12,15 @@ module.exports = {
       throw BadRequestError('Wrong Insee format');
     }
 
-    const { data } = await axios.get(`${domain}/communes/${code}`);
+    let { data } = await axios.get(`${domain}/communes/${code}`);
+    if (Array.isArray(data)) {
+      data = data.shift();
+    }
 
     return {
-      citycode: _.get(data[0], 'code', null),
-      city: _.get(data[0], 'nom', null),
-      postcode: _.get(data[0], 'codesPostaux', null),
+      citycode: _.get(data, 'code', null),
+      city: _.get(data, 'nom', null),
+      postcode: _.get(data, 'codesPostaux', null),
       country: 'France',
     };
   },
@@ -31,16 +34,19 @@ module.exports = {
       throw new BadRequestError('Wrong lon format');
     }
 
-    const { data } = await axios.get(`${domain}/communes?lon=${lon}&lat=${lat}&fields=nom,code,codesPostaux&format=json`);
-
+    let { data } = await axios.get(`${domain}/communes?lon=${lon}&lat=${lat}&fields=nom,code,codesPostaux&format=json`);
     if (!data.length) {
       throw new NotFoundError(`Not found on Geo (${lat}, ${lon})`);
     }
 
+    if (Array.isArray(data)) {
+      data = data.shift();
+    }
+
     return {
-      citycode: _.get(data[0], 'code', null),
-      city: _.get(data[0], 'nom', null),
-      postcode: _.get(data[0], 'codesPostaux', null),
+      citycode: _.get(data, 'code', null),
+      city: _.get(data, 'nom', null),
+      postcode: _.get(data, 'codesPostaux', null),
       country: 'France',
     };
   },
