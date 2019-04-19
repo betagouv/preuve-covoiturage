@@ -38,7 +38,7 @@ after(async () => {
  * Unit tests
  */
 describe('Unit tests: geo', async () => {
-  require('@pdc/package-geo/geo');
+  require('@pdc/package-geo/test/geo');
 });
 
 describe('Unit tests: validation', async () => {
