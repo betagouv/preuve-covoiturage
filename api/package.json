@@ -1,6 +1,6 @@
 {
   "name": "@pdc/api",
-  "private": "true",
+  "private": true,
   "repository": "git@github.com:betagouv/preuve-covoiturage.git",
   "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
   "contributors": [
