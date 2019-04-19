@@ -1,3 +1,3 @@
-import { RPCCallInterface } from '../interfaces/communication/RPCCallInterface';
+import { RPCSingleCallType } from './RPCSingleCallType';
 
-export type RPCCallType = RPCCallInterface | RPCCallInterface[];
+export type RPCCallType = RPCSingleCallType | RPCSingleCallType[];

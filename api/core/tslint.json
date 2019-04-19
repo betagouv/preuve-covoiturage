@@ -9,7 +9,6 @@
       },
       "forin": true,
       "import-spacing": true,
-      "interface-over-type-literal": true,
       "member-ordering": [
         true,
         {

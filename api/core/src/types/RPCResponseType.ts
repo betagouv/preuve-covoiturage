@@ -1,3 +1,3 @@
-import { RPCResponseInterface } from '../interfaces/communication/RPCResponseInterface';
+import { RPCSingleResponseType } from './RPCSingleResponseType';
 
-export type RPCResponseType = RPCResponseInterface | RPCResponseInterface[];
+export type RPCResponseType = RPCSingleResponseType | RPCSingleResponseType[];
