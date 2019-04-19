@@ -12,6 +12,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 import { SplitButtonModule } from 'primeng/splitbutton';
 
 /* Shared modules */
@@ -52,6 +53,7 @@ import { JourneyService } from './services/journeyService';
     OperatorUIModule,
     AomUIModule,
     InputTextModule,
+    ButtonModule,
     SplitButtonModule,
   ],
   providers: [
