@@ -31,57 +31,53 @@ module.exports = [
       .map(i => (i.toCSV ? i.toCSV() : i))
       .map(flat);
 
-    const anon = data.map((line) => {
-      // filter out empty objects
-      // remove entries from list of keys
-      return Object
-        .keys(line)
-        .reduce((acc, key) => {
-          const val = line[key];
+    const anon = data.map(line => Object
+      .keys(line)
+      .reduce((acc, key) => {
+        const val = line[key];
 
-          // remove GDPR data by keys
-          // QUICK solution to be refactored
-          // as a 'personal' key in the JSON Schema
-          // #migrateme
-          if (_.isObject(val) || [
-            '_id',
-            'createdAt',
-            'updatedAt',
-            'deletedAt',
-            'operator._id',
-            'name',
-            'safe_journey_id',
-            'trip_id',
-            'status',
-            'validation.rank',
-            'validation.step',
-            'validation.tests.hasProofs',
-            'validation.validated',
-            'validation.validatedAt',
+        // remove GDPR data by keys
+        // QUICK solution to be refactored
+        // as a 'personal' key in the JSON Schema
+        // #migrateme
+        if (_.isObject(val) || [
+          '_id',
+          'createdAt',
+          'updatedAt',
+          'deletedAt',
+          'operator._id',
+          'name',
+          'safe_journey_id',
+          'trip_id',
+          'status',
+          'validation.rank',
+          'validation.step',
+          'validation.tests.hasProofs',
+          'validation.validated',
+          'validation.validatedAt',
 
-            'driver.identity.firstname',
-            'driver.identity.lastname',
-            'driver.identity.phone',
-            'driver.identity.email',
-            'driver.identity.card.number',
-            'passenger.identity.firstname',
-            'passenger.identity.lastname',
-            'passenger.identity.phone',
-            'passenger.identity.email',
-            'passenger.identity.card.number',
-            'driver.start.literal',
-            'driver.end.literal',
-            'passenger.start.literal',
-            'passenger.end.literal',
-          ].indexOf(key) > -1) {
-            return acc;
-          }
-
-          acc[key] = val;
-
+          'driver.identity.firstname',
+          'driver.identity.lastname',
+          'driver.identity.phone',
+          'driver.identity.email',
+          'driver.identity.card.number',
+          'passenger.identity.firstname',
+          'passenger.identity.lastname',
+          'passenger.identity.phone',
+          'passenger.identity.email',
+          'passenger.identity.card.number',
+          'driver.start.literal',
+          'driver.end.literal',
+          'passenger.start.literal',
+          'passenger.end.literal',
+        ].indexOf(key) > -1) {
           return acc;
-        }, {});
-    });
+        }
+
+        acc[key] = val;
+
+        return acc;
+      }, {}));
 
     res.setHeader('Cache-Control', 'must-revalidate');
     res.setHeader('Pragma', 'must-revalidate');
