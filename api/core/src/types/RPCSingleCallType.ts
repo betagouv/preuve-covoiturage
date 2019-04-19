@@ -1,8 +1,8 @@
-import { ParamsType } from '../../types/ParamsType';
+import { ParamsType } from './ParamsType';
 
-export interface RPCCallInterface {
+export type RPCSingleCallType = {
   id?: string | number | null;
   jsonrpc: string;
   method: string;
   params?: ParamsType;
-}
+};

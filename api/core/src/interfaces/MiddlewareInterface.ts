@@ -1,3 +1,3 @@
-import { CallInterface } from './communication/CallInterface';
+import { CallType } from '../types/CallType';
 
-export type MiddlewareInterface = (call: CallInterface, next: Function) => void;
+export type MiddlewareInterface = (call: CallType, next: Function) => void;

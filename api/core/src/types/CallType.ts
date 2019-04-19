@@ -1,11 +1,11 @@
 import { ParamsType } from '~/types/ParamsType';
 import { ResultType } from '~/types/ResultType';
 
-import { ContextInterface } from './ContextInterface';
+import { ContextType } from './ContextType';
 
-export interface CallInterface {
+export type CallType = {
   method: string;
-  context: ContextInterface;
+  context: ContextType;
   parameters: ParamsType;
   result: ResultType;
-}
+};

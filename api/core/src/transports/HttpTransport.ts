@@ -14,10 +14,10 @@ export class HttpTransport implements TransportInterface {
   up() {
     this.server = http.createServer((req, res) => {
       if (
-                !('content-type' in req.headers && 'accept' in req.headers)
-                || (req.headers['content-type'] !== 'application/json')
-                || (req.headers.accept !== 'application/json')
-            ) {
+          !('content-type' in req.headers && 'accept' in req.headers)
+          || (req.headers['content-type'] !== 'application/json')
+          || (req.headers.accept !== 'application/json')
+        ) {
         res.statusCode = 415;
         res.end('Wrong content type header');
       }

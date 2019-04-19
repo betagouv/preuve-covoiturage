@@ -3,12 +3,12 @@ import { describe } from 'mocha';
 import { expect, assert } from 'chai';
 
 import { Action } from './Action';
-import { CallInterface } from '../interfaces/communication/CallInterface';
+import { CallType } from '../types/CallType';
 
 describe('Action', () => {
   it('should work', () => {
     class BasicAction extends Action {
-      protected handle(call: CallInterface):void {
+      protected handle(call: CallType):void {
         let count = 0;
         if ('add' in call.parameters) {
           const { add } = call.parameters;
@@ -39,11 +39,11 @@ describe('Action', () => {
 
   it('should work with middleware', () => {
     class BasicAction extends Action {
-      protected middlewares = [(call: CallInterface, next: Function) => {
+      protected middlewares = [(call: CallType, next: Function) => {
         call.result.result = -1;
         next();
       }];
-      protected handle(call: CallInterface):void {
+      protected handle(call: CallType):void {
         let { result:count } = call.result;
         if ('add' in call.parameters) {
           const { add } = call.parameters;
@@ -74,16 +74,16 @@ describe('Action', () => {
 
   it('should work with ordered middleware', () => {
     class BasicAction extends Action {
-      protected middlewares = [(call: CallInterface, next: Function) => {
+      protected middlewares = [(call: CallType, next: Function) => {
         call.result.result += 'hello ';
         next();
         call.result.result += '?';
-      }, (call: CallInterface, next: Function) => {
+      }, (call: CallType, next: Function) => {
         call.result.result += 'world ';
         next();
         call.result.result += '!';
       }];
-      protected handle(call: CallInterface):void {
+      protected handle(call: CallType):void {
         const { result } = call.result;
         if ('name' in call.parameters) {
           call.result.result += call.parameters.name;

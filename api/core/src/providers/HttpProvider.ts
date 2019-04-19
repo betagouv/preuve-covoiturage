@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
-import { ContextInterface } from '../interfaces/communication/ContextInterface';
+import { ContextType } from '../types/ContextType';
 import { resolveMethodFromObject } from '../helpers/resolveMethod';
 import { ServiceException } from '../Exceptions/ServiceException';
 
@@ -29,7 +29,7 @@ export class HttpProvider implements ProviderInterface {
     });
   }
 
-  public async call(method: string, params: ParamsType, context: ContextInterface): Promise<ResultType> {
+  public async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
     try {
       const response = await this.client.post('/', {
         params,

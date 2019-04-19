@@ -2,8 +2,8 @@ import { KernelInterface } from './interfaces/KernelInterface';
 import { ProviderInterface } from './interfaces/ProviderInterface';
 import { RPCCallType } from './types/RPCCallType';
 import { RPCResponseType } from './types/RPCResponseType';
-import { RPCCallInterface } from './interfaces/communication/RPCCallInterface';
-import { RPCResponseInterface } from './interfaces/communication/RPCResponseInterface';
+import { RPCSingleCallType } from './types/RPCSingleCallType';
+import { RPCSingleResponseType } from './types/RPCSingleResponseType';
 
 import { resolveMethodFromString } from './helpers/resolveMethod';
 import { HttpProvider } from './providers/HttpProvider';
@@ -31,7 +31,7 @@ export class Kernel implements KernelInterface {
     }
   }
 
-  protected async resolve(call: RPCCallInterface): Promise<RPCResponseInterface> {
+  protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType> {
     const { method, service } = resolveMethodFromString(<string>call.method);
 
     if (!this.registry.has(service)) {
@@ -58,15 +58,16 @@ export class Kernel implements KernelInterface {
   }
 
   async handle(call: RPCCallType): Promise<RPCResponseType> {
-    function hasMultipleCall(c: RPCCallType): c is RPCCallInterface[] {
-      return (<RPCCallInterface[]>c).forEach !== undefined;
+    // DO VALIDATION
+    function hasMultipleCall(c: RPCCallType): c is RPCSingleCallType[] {
+      return (<RPCCallType[]>c).forEach !== undefined;
     }
 
     if (!hasMultipleCall(call)) {
       return this.resolve(call);
     }
 
-    const promises: Promise<RPCResponseInterface>[] = [];
+    const promises: Promise<RPCSingleResponseType>[] = [];
     call.forEach((c) => {
       promises.push(this.resolve(c));
     });

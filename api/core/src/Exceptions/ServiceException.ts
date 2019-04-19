@@ -1,10 +1,10 @@
-import { RPCErrorInterface } from '../interfaces/communication/RPCErrorInterface';
+import { RPCErrorType } from '../types/RPCErrorType';
 
 export class ServiceException extends Error {
   serviceError = true;
-  rpcError: RPCErrorInterface;
+  rpcError: RPCErrorType;
 
-  constructor(rpcError: RPCErrorInterface) {
+  constructor(rpcError: RPCErrorType) {
     super(rpcError.message);
     this.rpcError = rpcError;
   }

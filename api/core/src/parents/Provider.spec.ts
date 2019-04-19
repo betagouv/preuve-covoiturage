@@ -4,13 +4,13 @@ import { expect, assert } from 'chai';
 
 import { Provider } from './Provider';
 import { Action } from './Action';
-import { CallInterface } from '../interfaces/communication/CallInterface';
+import { CallType } from '../types/CallType';
 
 describe('Provider', () => {
   it('should work', () => {
     class BasicAction extends Action {
       public signature = 'add';
-      protected handle(call: CallInterface):void {
+      protected handle(call: CallType):void {
         let result = 0;
         if ('add' in call.parameters) {
           const { add } = call.parameters;
@@ -45,7 +45,7 @@ describe('Provider', () => {
   it('should work with call', async () => {
     class BasicAction extends Action {
       public signature = 'add';
-      protected handle(call: CallInterface):void {
+      protected handle(call: CallType):void {
         let result = 0;
         if ('add' in call.parameters) {
           const { add } = call.parameters;

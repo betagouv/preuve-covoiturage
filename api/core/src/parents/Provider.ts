@@ -1,10 +1,10 @@
-import { ContextInterface } from '~/interfaces/communication/ContextInterface';
+import { ContextType } from '~/types/ContextType';
 import { ParamsType } from '~/types/ParamsType';
 import { ResultType } from '~/types/ResultType';
 
 import { ActionInterface } from '../interfaces/ActionInterface';
 import { ActionConstructorInterface } from '../interfaces/ActionConstructorInterface';
-import { CallInterface } from '../interfaces/communication/CallInterface';
+import { CallType } from '../types/CallType';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 export abstract class Provider {
@@ -23,7 +23,7 @@ export abstract class Provider {
     });
   }
 
-  public resolve(call: CallInterface): CallInterface {
+  public resolve(call: CallType): CallType {
     if (!this.actionInstances.has(call.method)) {
       throw new Error('Unkmown method');
     }
@@ -31,7 +31,7 @@ export abstract class Provider {
     return call;
   }
 
-  public async call(method: string, parameters: ParamsType, context: ContextInterface = { internal: true }): Promise<ResultType> {
+  public async call(method: string, parameters: ParamsType, context: ContextType = { internal: true }): Promise<ResultType> {
     const result = {};
     this.resolve({
       method,
