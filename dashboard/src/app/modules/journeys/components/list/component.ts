@@ -44,19 +44,19 @@ export class JourneyListComponent {
   total = 30;
   perPage = 10;
   loading = true;
-  exportItems = [{
-    label: 'CSV',
-    icon: 'pi pi-file',
-    command: () => {
-      this.export('csv');
-    },
-  }, {
-    label: 'JSON',
-    icon: 'pi pi-file',
-    command: () => {
-      this.export('json');
-    },
-  }];
+  // exportItems = [{
+  //   label: 'CSV',
+  //   icon: 'pi pi-file',
+  //   command: () => {
+  //     this.export('csv');
+  //   },
+  // },{
+  //   label: 'JSON',
+  //   icon: 'pi pi-file',
+  //   command: () => {
+  //     this.export('json');
+  //   },
+  // }];
   @ViewChild('dt') dt;
   private filters;
 
