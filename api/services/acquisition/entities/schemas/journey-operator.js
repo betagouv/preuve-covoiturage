@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const identity = require('@pdc/shared/entities/schemas/identity');
+const IdentitySchema = require('@pdc/shared/entities/schemas/identity');
 const position = require('@pdc/shared/entities/schemas/position');
 const rank = require('@pdc/shared/entities/schemas/rank');
 const { validators } = require('@pdc/shared/providers/mongo/schema-validation');
@@ -8,7 +8,7 @@ const { Schema } = mongoose;
 
 const schema = {
   _id: { auto: false },
-  identity,
+  identity: { type: IdentitySchema },
   start: { type: position, validate: validators.position, required: true },
   end: { type: position, validate: validators.position, required: true },
   distance: { type: Number, min: 0, default: 0 },

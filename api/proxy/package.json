@@ -7,7 +7,7 @@
     "start": "node ./app.js",
     "dev": "nodemon --inspect=0.0.0.0:9229 ./app.js",
     "worker": "node ./worker.js",
-    "worker-dev": "nodemon --inspect=0.0.0.0:9229 ./worker.js",
+    "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./worker.js",
     "migrate": "npx migrate-mongo up",
     "mig:up": "cd ../.. && docker-compose exec api npx migrate-mongo up",
     "mig:down": "cd ../.. && docker-compose exec api npx migrate-mongo down",
