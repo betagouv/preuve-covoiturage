@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  LazyLoadEvent,
-  ConfirmationService,
-  DialogService,
- } from 'primeng/api';
+import { ConfirmationService, DialogService, LazyLoadEvent } from 'primeng/api';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { TranslationService } from '~/shared/services/translationService';
@@ -19,7 +15,6 @@ import { AOM_HEADERS } from '../../config/header';
 
 @Component({
   templateUrl: 'template.html',
-  styleUrls: ['style.scss'],
 })
 
 export class AomListComponent implements OnInit {
@@ -36,27 +31,18 @@ export class AomListComponent implements OnInit {
   loading = true;
 
   constructor(
-      private aomService: AomService,
-      private authentificationService: AuthenticationService,
-      private translationService: TranslationService,
-      private ts: TableService,
-      private confirmationService: ConfirmationService,
-      private dialogService: DialogService,
+    private aomService: AomService,
+    private authentificationService: AuthenticationService,
+    private translationService: TranslationService,
+    private ts: TableService,
+    private confirmationService: ConfirmationService,
+    private dialogService: DialogService,
   ) {
     this.setColumns();
   }
 
   ngOnInit() {
-    // FIX: do nothing ?
-  }
-
-  private setColumns() {
-    for (const head of this.headList) {
-      this.columns.push(this.ts.createColumn(head));
-    }
-    for (const head of this.selectedHeadList) {
-      this.selectedColumns.push(this.ts.createColumn(head));
-    }
+    //
   }
 
   get(filters: any[any] = []) {
@@ -99,7 +85,7 @@ export class AomListComponent implements OnInit {
     const config = {
       ...DIALOGSTYLE,
       header: 'Éditer un AOM',
-      data : {
+      data: {
         id: aom._id,
       },
     };
@@ -125,6 +111,15 @@ export class AomListComponent implements OnInit {
   loadLazy(event: LazyLoadEvent) {
     const filters = this.aomService.formatFiltersFromLazyEvent(event);
     this.get(filters);
+  }
+
+  private setColumns() {
+    for (const head of this.headList) {
+      this.columns.push(this.ts.createColumn(head));
+    }
+    for (const head of this.selectedHeadList) {
+      this.selectedColumns.push(this.ts.createColumn(head));
+    }
   }
 
   private setTotal(meta) {

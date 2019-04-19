@@ -29,6 +29,7 @@ export class UserListComponent implements OnInit {
   user: User = new User();
   headList: string[] = USER_HEADERS.main;
   selectedHeadList: string[] = USER_HEADERS.selection;
+  sortList: string[] = USER_HEADERS.sort;
   rolesList: string[] = ROLES;
   groupsList: string[] = GROUPS;
   columns = [];
@@ -144,6 +145,12 @@ export class UserListComponent implements OnInit {
     this.get(filters);
   }
 
+  getSortableField(field) {
+    if (this.sortList.indexOf(field) !== -1) {
+      return field;
+    }
+    return null;
+  }
 
   /* PRIVATES */
 

@@ -1,7 +1,7 @@
 /* tslint:disable:variable-name*/
 
 import { Address } from './address';
-import { Contact } from './contact';
+import { ContactList } from './contactList';
 import { CGU } from './cgu';
 import { Company } from './company';
 import { Geometry } from './geometry';
@@ -18,7 +18,7 @@ class Aom {
   network_id: number;
   company: Company;
   address: Address;
-  contacts: Contact;
+  contacts: ContactList;
   cgu: CGU;
   geometry: Geometry;
 
@@ -34,10 +34,10 @@ class Aom {
     this.network_id = obj && obj.network_id || null;
     this.company = obj && obj.company || new Company();
     this.address = obj && obj.address || new Address();
-    this.contacts = obj && obj.contacts || new Contact();
+    this.contacts = obj && obj.contacts || new ContactList();
     this.cgu = obj && obj.cgu || new CGU();
     this.geometry = obj && obj.geometry || null;
   }
 }
 
-export { Company, Aom, Address, Contact, CGU, Geometry };
+export { Company, Aom, Address, ContactList, CGU, Geometry };
