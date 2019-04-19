@@ -1,6 +1,6 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
 import { describe } from 'mocha';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 
 import { Provider } from './Provider';
 import { Action } from './Action';
@@ -66,5 +66,22 @@ describe('Provider', () => {
     provider.boot();
     const r = await provider.call('add', { add: [1, 1] });
     expect(r).to.deep.equal({ result: 2 });
+  });
+
+  it('should raise an error if no action is unknown', async () => {
+    class BasicProvider extends Provider {
+      protected actions = [];
+    }
+
+    const provider = new BasicProvider();
+    provider.boot();
+
+    // TODO refactor with chai as promised
+    try {
+      await provider.call('add', { add: [1, 1] });
+    } catch (e) {
+      expect(e).to.be.a('error');
+      expect(e.message).equal('Unkmown method');
+    }
   });
 });
