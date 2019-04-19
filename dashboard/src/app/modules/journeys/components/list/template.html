@@ -5,11 +5,12 @@
     <h3 *ngIf="total" style="margin-top: 0.3em;">{{total}} résultats</h3>
   </div>
   <div class="ui-g-6 has-text-right">
-    <p-splitButton
+    <!-- <p-splitButton
         label="Exporter"
         [model]="exportItems"
         styleClass="has-text-left">
-    </p-splitButton>
+    </p-splitButton> -->
+    <p-button label="Exporter" icon="pi pi-file" (onClick)="export('csv')"></p-button>
   </div>
 </div>
 
