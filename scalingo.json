@@ -1,5 +1,5 @@
 {
-  "name": "Preuve de covoiturage",
+  "name": "Registre de preuve de covoiturage",
   "description": "beta.gouv.fr - Registre de preuve de covoiturage - Review App",
   "repository": "https://github.com/betagouv/preuve-covoiturage",
   "website": "http://covoiturage.beta.gouv.fr",
@@ -11,7 +11,7 @@
       "generator": "url"
     },
     "MJ_FROM_NAME": {
-      "value": "🚗 [review] Preuve de covoiturage"
+      "value": "🚗 [review] Registre de preuve de covoiturage"
     },
     "JWT_SECRET": {
       "generator": "secret"
@@ -23,7 +23,7 @@
       "value": "contact@covoiturage.beta.gouv.fr"
     },
     "MJ_DEBUG_NAME": {
-      "value": "[review] Preuve de covoiturage"
+      "value": "[review] Registre de preuve de covoiturage"
     },
     "APP_SUPERUSER_EMAIL": {
       "value": "admin@example.com"

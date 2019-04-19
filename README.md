@@ -1,6 +1,6 @@
-# Preuve de covoiturage
+# Registre de Preuve de covoiturage
 
-Preuve de covoiturage est un projet beta.gouv.fr qui a pour but de certifier
+Le registre de preuve de covoiturage est un projet beta.gouv.fr qui a pour but de certifier
 qu'un covoiturage a bien eu lieu. L'objectif de l'outil est l'incitation des
 utilisateurs à pratiquer le covoiturage courte distance pour réduire
 l'auto-solisme et réduire l'emprunte écologique des déplacements courts.

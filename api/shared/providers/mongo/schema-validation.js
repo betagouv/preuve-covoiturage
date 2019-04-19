@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-escape */
 const _ = require('lodash');
+const slugify = require('slugify');
 const { PhoneNumberFormat } = require('google-libphonenumber');
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 const { electronicFormatIBAN, isValidIBAN, isValidBIC } = require('ibantools');
@@ -105,6 +106,9 @@ const setters = {
   },
   bic(v) {
     return v.replace(/[^0-9A-Z]/ig, '');
+  },
+  cardName(v) {
+    return slugify(v);
   },
 };
 

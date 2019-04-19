@@ -1,6 +1,6 @@
 {
   "name": "@pdc/api",
-  "private": "true",
+  "private": true,
   "repository": "git@github.com:betagouv/preuve-covoiturage.git",
   "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
   "contributors": [
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "scripts": {
     "start": "yarn workspace @pdc/proxy start",
-    "dev": "yarn workspace @pdc/proxy dev",
+    "dev": "nodemon --inspect=0.0.0.0:9229 ./proxy/app.js",
     "worker": "yarn workspace @pdc/proxy worker",
     "worker-dev": "yarn workspace @pdc/proxy worker-dev",
     "seed": "yarn workspace @pdc/proxy seed",
