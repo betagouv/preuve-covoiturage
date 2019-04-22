@@ -76,9 +76,9 @@ module.exports = [
     getter: tripStakeholder => tripStakeholder.seats,
   },
   {
-    varname: 'parKM',
+    varname: 'par_km',
     label: 'Montant fixe par km parcouru',
-    helper: 'Vous pouvez indiquer ici une valeur fixe utilisable dans la formule',
+    helper: 'Valeur définie au lancement de la campagne',
     internal: false,
   },
 ];
