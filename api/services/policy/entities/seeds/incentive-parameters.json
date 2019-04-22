@@ -6,9 +6,9 @@
     "internal": true
   },
   {
-    "varname": "parKM",
+    "varname": "par_km",
     "label": "Montant fixe par km parcouru",
-    "helper": "Vous pouvez indiquer ici une valeur fixe utilisable dans la formule",
+    "helper": "Valeur définie à la création de la campagne",
     "internal": false
   }
 ]
