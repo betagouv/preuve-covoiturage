@@ -15,34 +15,34 @@ router.get('/:id', can('incentive-policy.read'), async (req, res, next) => {
   }
 });
 
-/**
- * update an Policy by ID
- */
-router.put('/:id', can('incentive-policy.update'), async (req, res, next) => {
-  // if not used by other AOM
+// /**
+//  * update an Policy by ID
+//  */
+// router.put('/:id', can('incentive-policy.update'), async (req, res, next) => {
+//   // if not used by other AOM
+//
+//   try {
+//     res.json(await policyService.update(req.params.id, req.body));
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
-  try {
-    res.json(await policyService.update(req.params.id, req.body));
-  } catch (e) {
-    next(e);
-  }
-});
-
-/**
- * Soft delete or force delete an Policy
- */
-router.delete('/:id', can('incentive-policy.delete'), async (req, res, next) => {
-  // if not used by other AOM -- find policy other aom
-
-  try {
-    res.json({
-      id: req.params.id,
-      deleted: !!await policyService.delete(req.params.id),
-    });
-  } catch (e) {
-    next(e);
-  }
-});
+// /**
+//  * Soft delete or force delete an Policy
+//  */
+// router.delete('/:id', can('incentive-policy.delete'), async (req, res, next) => {
+//   // if not used by other AOM -- find policy other aom
+//
+//   try {
+//     res.json({
+//       id: req.params.id,
+//       deleted: !!await policyService.delete(req.params.id),
+//     });
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
 /**
  * List all Policys
