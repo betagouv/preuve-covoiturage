@@ -2,6 +2,7 @@ const inRange = require('./inRange');
 const hasRank = require('./hasRank');
 const betweenTime = require('./betweenTime');
 const isWeekday = require('./isWeekday');
+const hasInsee = require('./hasInsee');
 
 function generateTripStakeholderFilter(policy) {
   const func = [];
@@ -16,6 +17,9 @@ function generateTripStakeholderFilter(policy) {
   }
   if ('rank' in policy.rules && policy.rules.rank !== null) {
     func.push(tripStakeholder => hasRank({ tripStakeholder, rank: policy.rules.rank }));
+  }
+  if ('insee' in policy.rules && policy.rules.insee !== null) {
+    func.push(tripStakeholder => hasInsee({ tripStakeholder, insee: policy.rules.insee }));
   }
 
   return (tripStakeholder) => {
