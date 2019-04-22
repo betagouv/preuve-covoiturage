@@ -22,12 +22,14 @@ const fakeTrip = {
         aom: {
           _id: 'aom',
         },
+        insee: 69001,
       },
       end: {
         datetime: moment({ year: 2018, month: 1, day: 10, hour: 10, minute: 0 }).toDate(),
         aom: {
           _id: 'aom',
         },
+        insee: 69028,
       },
       distance: 17.35,
       duration: 20,
