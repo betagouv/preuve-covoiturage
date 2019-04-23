@@ -1,9 +1,9 @@
-import { ResultType } from '~/types/ResultType';
-
+import { ResultType } from './ResultType';
 import { RPCErrorType } from './RPCErrorType';
+import { IdType } from './IdType';
 
 export type RPCSingleResponseType = {
-  id: string | number | null;
+  id: IdType;
   jsonrpc: string;
   result?: ResultType;
   error?: RPCErrorType;

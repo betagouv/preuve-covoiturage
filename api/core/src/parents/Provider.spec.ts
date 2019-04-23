@@ -1,60 +1,41 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
 import { describe } from 'mocha';
-import { expect, assert } from 'chai';
+import chai, { expect } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
 import { Provider } from './Provider';
 import { Action } from './Action';
-import { CallType } from '../types/CallType';
+import { ResultType } from '../types/ResultType';
+import { ParamsType } from '../types/ParamsType';
+import { ContextType } from '../types/ContextType';
+
+chai.use(chaiAsPromised);
+
+const kernel = {
+  providers: [],
+  services: [],
+  boot() {},
+  async handle(call) {
+    return {
+      id: null,
+      jsonrpc: '2.0',
+    };
+  },
+};
 
 describe('Provider', () => {
-  it('should work', () => {
-    class BasicAction extends Action {
-      public signature = 'add';
-      protected handle(call: CallType):void {
-        let result = 0;
-        if ('add' in call.parameters) {
-          const { add } = call.parameters;
-          add.forEach((param) => {
-            result += param;
-          });
-        }
-        call.result.result = result;
-        return;
-      }
-    }
-
-    class BasicProvider extends Provider {
-      protected actions = [BasicAction];
-    }
-
-    const provider = new BasicProvider();
-    provider.boot();
-
-    expect(provider.resolve({
-      method: 'add',
-      result: {},
-      context: {
-        internal: true,
-      },
-      parameters: {
-        add: [1, 1],
-      },
-    }).result.result).equal(2);
-  });
-
   it('should work with call', async () => {
     class BasicAction extends Action {
-      public signature = 'add';
-      protected handle(call: CallType):void {
-        let result = 0;
-        if ('add' in call.parameters) {
-          const { add } = call.parameters;
+      public readonly signature: string = 'add';
+      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+        let count = 0;
+        if ('add' in params) {
+          const { add } = params;
           add.forEach((param) => {
-            result += param;
+            count += param;
           });
         }
-        call.result.result = result;
-        return;
+        return count;
       }
     }
 
@@ -62,10 +43,10 @@ describe('Provider', () => {
       protected actions = [BasicAction];
     }
 
-    const provider = new BasicProvider();
+    const provider = new BasicProvider(kernel);
     provider.boot();
     const r = await provider.call('add', { add: [1, 1] });
-    expect(r).to.deep.equal({ result: 2 });
+    expect(r).to.equal(2);
   });
 
   it('should raise an error if no action is unknown', async () => {
@@ -73,15 +54,15 @@ describe('Provider', () => {
       protected actions = [];
     }
 
-    const provider = new BasicProvider();
+    const provider = new BasicProvider(kernel);
     provider.boot();
 
-    // TODO refactor with chai as promised
     try {
       await provider.call('add', { add: [1, 1] });
+      expect(true).to.equal(false);
     } catch (e) {
-      expect(e).to.be.a('error');
-      expect(e.message).equal('Unkmown method');
+      expect(e).to.be.a.instanceOf(Error);
+      expect(e.message).to.equal('Unkmown method');
     }
   });
 });

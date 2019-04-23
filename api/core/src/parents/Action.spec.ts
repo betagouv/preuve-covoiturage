@@ -1,129 +1,134 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
 import { describe } from 'mocha';
-import { expect, assert } from 'chai';
+import chai, { expect } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
 import { Action } from './Action';
 import { CallType } from '../types/CallType';
+import { ResultType } from '../types/ResultType';
+import { ParamsType } from '../types/ParamsType';
+import { ContextType } from '../types/ContextType';
+
+chai.use(chaiAsPromised);
+const kernel = {
+  providers: [],
+  services: [],
+  boot() {},
+  async handle(call) {
+    return {
+      id: null,
+      jsonrpc: '2.0',
+    };
+  },
+}
 
 describe('Action', () => {
-  it('should work', () => {
+  it('should work', async () => {
     class BasicAction extends Action {
-      protected handle(call: CallType):void {
+      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
         let count = 0;
-        if ('add' in call.parameters) {
-          const { add } = call.parameters;
+        if ('add' in params) {
+          const { add } = params;
           add.forEach((param) => {
             count += param;
           });
         }
-        call.result.result = count;
-        return;
+        console.log({ count });
+        return count;
       }
     }
-    const action = new BasicAction();
-    const result = {
+    const action = new BasicAction(kernel);
+    const result = await action.call({
       result: 0,
-    };
-    action.call({
-      result,
       method: '',
+      params: {
+        add: [1, 1],
+      },
       context: {
         internal: true,
       },
-      parameters: {
-        add: [1, 1],
-      },
     });
-    expect(result.result).equal(2);
+    expect(result).equal(2);
   });
 
-  it('should work with middleware', () => {
+  it('should work with middleware', async () => {
     class BasicAction extends Action {
-      protected middlewares = [(call: CallType, next: Function) => {
-        call.result.result = -1;
-        next();
+      protected middlewares = [async (call: CallType, next: Function) => {
+        await next();
+        call.result -= 1;
       }];
-      protected handle(call: CallType):void {
-        let { result:count } = call.result;
-        if ('add' in call.parameters) {
-          const { add } = call.parameters;
+      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+        let count = 0;
+        if ('add' in params) {
+          const { add } = params;
           add.forEach((param) => {
             count += param;
           });
         }
-        call.result.result = count;
-        return;
+        return count;
       }
     }
-    const action = new BasicAction();
-    const result = {
+    const action = new BasicAction(kernel);
+    const result = await action.call({
       result: 0,
-    };
-    action.call({
-      result,
       method: '',
+      params: {
+        add: [1, 1],
+      },
       context: {
         internal: true,
       },
-      parameters: {
-        add: [1, 1],
-      },
     });
-    expect(result.result).equal(1);
+    expect(result).equal(1);
   });
 
-  it('should work with ordered middleware', () => {
+  it('should work with ordered middleware', async () => {
     class BasicAction extends Action {
-      protected middlewares = [(call: CallType, next: Function) => {
-        call.result.result += 'hello ';
-        next();
-        call.result.result += '?';
-      }, (call: CallType, next: Function) => {
-        call.result.result += 'world ';
-        next();
-        call.result.result += '!';
+      protected middlewares = [async (call: CallType, next: Function) => {
+        await next();
+        call.result = `hello ${call.result}?`;
+      }, async (call: CallType, next: Function) => {
+        await next();
+        call.result = `world ${call.result}!`;
       }];
-      protected handle(call: CallType):void {
-        const { result } = call.result;
-        if ('name' in call.parameters) {
-          call.result.result += call.parameters.name;
+      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+        let result = '';
+        if ('name' in params) {
+          result = params.name;
         }
-        return;
+        return result;
       }
     }
-    const action = new BasicAction();
-    const result = {
+    const action = new BasicAction(kernel);
+    const result = await action.call({
       result: '',
-    };
-    action.call({
-      result,
       method: '',
-      context: {
-        internal: true,
-      },
-      parameters: {
+      params: {
         name: 'Sam',
       },
+      context: {
+        internal: true,
+      },
     });
-    expect(result.result).equal('hello world Sam!?');
+    expect(result).equal('hello world Sam!?');
   });
 
   it('should raise an error if no handle method is defined', () => {
     class BasicAction extends Action {}
-    const action = new BasicAction();
-    assert.throw(
-      () => action.call({
-        result: {},
-        method: '',
-        context: {
-          internal: true,
-        },
-        parameters: {
+    const action = new BasicAction(kernel);
+    return (<any>expect(action.call({
+      result: {},
+      method: '',
+      params: {
+        params: {
           name: 'Sam',
         },
-      }),
-      Error,
-      'No implementation found',
-      );
+      },
+      context: {
+        internal: true,
+      },
+    })).to).eventually
+    .be.rejectedWith('No implementation found')
+    .and.be.an.instanceOf(Error);
   });
 });

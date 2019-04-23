@@ -1,18 +1,32 @@
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { CallType } from '../types/CallType';
+import { ResultType } from '../types/ResultType';
+import { ParamsType } from '../types/ParamsType';
+import { ContextType } from '../types/ContextType';
 import { ActionInterface } from '../interfaces/ActionInterface';
-import { callStack } from '../helpers/callStack';
+import { compose } from '../helpers/compose';
+import { KernelInterface } from '~/interfaces/KernelInterface';
 
 export abstract class Action implements ActionInterface {
   public readonly signature: string;
 
   protected middlewares: MiddlewareInterface[] = [];
+  protected kernel: KernelInterface;
 
-  protected handle(call: CallType):void {
+  constructor(kernel: KernelInterface) {
+    this.kernel = kernel;
+  }
+
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     throw new Error('No implementation found');
   }
 
-  public call(call: CallType):void {
-    callStack(call, ...this.middlewares, this.handle);
+  public async call(call: CallType):Promise<ResultType> {
+    const composer = compose([...this.middlewares, async (call:CallType) => {
+      const result = await this.handle(call.params, call.context);
+      call.result = result;
+    }]);
+    await composer(call);
+    return call.result;
   }
 }

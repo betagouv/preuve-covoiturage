@@ -5,10 +5,22 @@ import chaiNock from 'chai-nock';
 import chaiAsPromised from 'chai-as-promised';
 
 import { HttpProvider } from './HttpProvider';
-
+import { httpProviderFactory } from '../helpers/httpProviderFactory';
 
 chai.use(chaiNock);
 chai.use(chaiAsPromised);
+
+const kernel = {
+  providers: [],
+  services: [],
+  boot() {},
+  async handle(call) {
+    return {
+      id: null,
+      jsonrpc: '2.0',
+    };
+  },
+}
 
 describe('Http provider', () => {
   it('works', () => {
@@ -28,7 +40,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new HttpProvider('service', url);
+    const provider = new (httpProviderFactory('service', url))(kernel);
     provider.boot();
     provider.call('method', { param: true }, { internal: true });
 
@@ -37,10 +49,12 @@ describe('Http provider', () => {
       jsonrpc: '2.0',
       method: 'service@latest:method',
       params: {
-        param: true,
-      },
-      context: {
-        internal: true,
+        _context: {
+          internal: true,
+        },
+        params: {
+          param: true,
+        },
       },
     });
   });
@@ -62,7 +76,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new HttpProvider('service', url);
+    const provider = new (httpProviderFactory('service', url))(kernel);
     provider.boot();
     provider.call('method', { param: true }, { internal: true });
 
@@ -89,7 +103,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new HttpProvider('service', url);
+    const provider = new (httpProviderFactory('service', url))(kernel);
     provider.boot();
     const promise = provider.call('method', { param: true }, { internal: true });
     return (<any>assert).isRejected(promise, Error, 'An error occured');
@@ -114,7 +128,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new HttpProvider('service', url);
+    const provider = new (httpProviderFactory('service', url))(kernel);
     provider.boot();
     const promise = provider.call('method', { param: true }, { internal: true });
     return (<any>assert).isRejected(promise, Error, 'wrong!');
