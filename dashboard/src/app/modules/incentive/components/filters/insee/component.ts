@@ -57,12 +57,7 @@ export class IncentiveInseeFilterComponent implements OnInit {
    * if insee is in whiteList and blackList return false
    */
   isPossible(inseeList:any) {
-    console.log(inseeList, inseeList.whiteList, inseeList.blackList);
     if (inseeList.whiteList && inseeList.blackList) {
-      console.log('yo',
-                  inseeList.whiteList.start.filter(value => inseeList.blackList.start.includes(value)),
-                  inseeList.whiteList.start.filter(value => inseeList.blackList.start.includes(value)).length,
-      );
       if (inseeList.whiteList.start && inseeList.blackList.start &&
         inseeList.whiteList.start.length > 0 && inseeList.blackList.start.length > 0 &&
         inseeList.whiteList.start.filter(value => inseeList.blackList.start.includes(value)).length > 0) {

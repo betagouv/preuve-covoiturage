@@ -24,7 +24,7 @@ import {
   DynamicDialogRef,
   DynamicDialogConfig,
 } from 'primeng/api';
-import { MessagesModule } from 'primeng/primeng';
+import { MessagesModule } from 'primeng/messages';
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
