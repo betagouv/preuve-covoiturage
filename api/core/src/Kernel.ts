@@ -11,7 +11,7 @@ import { ProviderInterface } from './interfaces/ProviderInterface';
 import { ServiceProviderConstructorInterface } from './interfaces/ServiceProviderConstructorInterface';
 import { ProviderConstructorInterface } from './interfaces/ProviderConstructorInterface';
 import { TransportInterface } from './interfaces/TransportInterface';
-import { TransportConstructorInterface} from './interfaces/TransportConstructorInterface';
+import { TransportConstructorInterface } from './interfaces/TransportConstructorInterface';
 
 export class Kernel implements KernelInterface {
   serviceRegistry: Map<string, ServiceProviderInterface> = new Map();
@@ -29,21 +29,21 @@ export class Kernel implements KernelInterface {
   }
 
   public boot() {
-    this.providers.forEach(async (ProviderContructor) => {
-      const provider = new ProviderContructor(this);
+    this.providers.forEach(async (providerContructor) => {
+      const provider = new providerContructor(this);
       await provider.boot();
       this.providerRegistry.set(provider.signature, provider);
     });
 
-    this.services.forEach(async (ServiceProviderConstructor) => {
-      const serviceProvider = new ServiceProviderConstructor(this);
+    this.services.forEach(async (serviceProviderConstructor) => {
+      const serviceProvider = new serviceProviderConstructor(this);
       await serviceProvider.boot();
       this.serviceRegistry.set(serviceProvider.signature, serviceProvider);
     });
   }
 
-  public up(TransportConstructor: TransportConstructorInterface) {
-    this.transport = new TransportConstructor(this);
+  public up(transportConstructor: TransportConstructorInterface) {
+    this.transport = new transportConstructor(this);
     return this.transport.up();
   }
 
