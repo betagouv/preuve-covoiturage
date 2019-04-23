@@ -1,11 +1,9 @@
-import { ParamsType } from '~/types/ParamsType';
-import { ResultType } from '~/types/ResultType';
-
-import { ContextType } from '../types/ContextType';
+import { KernelInterface } from "./KernelInterface";
 
 export interface ProviderInterface {
   readonly signature: string;
-  readonly version: string;
-  boot():void;
-  call(method: string, parameters: ParamsType, context: ContextType): Promise<ResultType>;
+
+  // constructor(kernel: KernelInterface):void;
+
+  boot():Promise<void> | void;
 }

@@ -1,8 +1,10 @@
+import { ParamsWithContextType } from './ParamsWithContextType';
 import { ParamsType } from './ParamsType';
+import { IdType } from './IdType';
 
 export type RPCSingleCallType = {
-  id?: string | number | null;
+  id?: IdType;
   jsonrpc: string;
   method: string;
-  params?: ParamsType;
+  params?: ParamsType | ParamsWithContextType;
 };

@@ -1,44 +1,56 @@
-import { ContextType } from '~/types/ContextType';
-import { ParamsType } from '~/types/ParamsType';
-import { ResultType } from '~/types/ResultType';
+import { ContextType } from '../types/ContextType';
+import { ResultType } from '../types/ResultType';
+import { CallType } from '../types/CallType';
+import { ParamsType } from '../types/ParamsType';
 
 import { ActionInterface } from '../interfaces/ActionInterface';
 import { ActionConstructorInterface } from '../interfaces/ActionConstructorInterface';
-import { CallType } from '../types/CallType';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
+import { KernelInterface } from '../interfaces/KernelInterface';
 
-export abstract class Provider {
+import { compose } from '../helpers/compose';
+
+export abstract class Provider implements ServiceProviderInterface {
   public readonly signature: string;
   public readonly version: string;
 
+  protected kernel: KernelInterface;
   protected actions: ActionConstructorInterface[] = [];
   protected middlewares: MiddlewareInterface[] = [];
 
-  private actionInstances: Map<string, ActionInterface> = new Map();
+  protected actionInstances: Map<string, ActionInterface> = new Map();
+
+  constructor(kernel: KernelInterface) {
+    this.kernel = kernel;
+  }
 
   public boot() {
     this.actions.forEach((action) => {
-      const actionInstance = new action();
+      const actionInstance = new action(this.kernel);
       this.actionInstances.set(actionInstance.signature, actionInstance);
     });
   }
 
-  public resolve(call: CallType): CallType {
+  protected async resolve(call: CallType): Promise<ResultType> {
     if (!this.actionInstances.has(call.method)) {
       throw new Error('Unkmown method');
     }
-    this.actionInstances.get(call.method).call(call);
-    return call;
+    const composer = compose([...this.middlewares, async (call:CallType) => {
+      const result = await this.actionInstances.get(call.method).call(call);
+      call.result = result;
+    }]);
+    await composer(call);
+    return call.result;
   }
 
-  public async call(method: string, parameters: ParamsType, context: ContextType = { internal: true }): Promise<ResultType> {
-    const result = {};
-    this.resolve({
+  public async call(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<ResultType> {
+    const call = {
       method,
-      parameters,
-      result,
+      params,
       context,
-    });
-    return result;
+      result: null,
+    };
+    return this.resolve(call);
   }
 }

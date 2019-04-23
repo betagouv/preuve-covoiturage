@@ -1,8 +1,15 @@
-import { ProviderInterface } from './ProviderInterface';
 import { RPCCallType } from '../types/RPCCallType';
 import { RPCResponseType } from '../types/RPCResponseType';
 
+import { KernelInterface } from './KernelInterface';
+import { ServiceProviderConstructorInterface } from './ServiceProviderConstructorInterface';
+import { ProviderConstructorInterface } from './ProviderConstructorInterface';
+import { ProviderInterface } from './ProviderInterface';
+
 export interface KernelInterface {
-  providers: ProviderInterface[];
+  providers: ProviderConstructorInterface[];
+  services: ServiceProviderConstructorInterface[];
+  boot():Promise<void> | void;
   handle(call: RPCCallType): Promise<RPCResponseType>;
 }
+

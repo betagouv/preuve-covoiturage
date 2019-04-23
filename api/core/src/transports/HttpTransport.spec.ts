@@ -12,7 +12,9 @@ let httpTransport;
 
 before(() => {
   const kernel = {
+    services: [],
     providers: [],
+    boot() {},
     async handle(call: RPCCallType): Promise<RPCResponseType> {
       if ('method' in call && call.method === 'error') {
         throw new Error('wrong!');

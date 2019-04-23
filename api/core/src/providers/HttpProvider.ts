@@ -1,21 +1,22 @@
 import axios from 'axios';
 
-import { ProviderInterface } from '../interfaces/ProviderInterface';
+import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 import { resolveMethodFromObject } from '../helpers/resolveMethod';
 import { ServiceException } from '../Exceptions/ServiceException';
+import { KernelInterface } from '~/interfaces/KernelInterface';
 
-export class HttpProvider implements ProviderInterface {
+export class HttpProvider implements ServiceProviderInterface {
   readonly signature: string;
   readonly version: string;
-  private readonly url: string;
+  protected readonly url: string;
   private client;
+  private kernel: KernelInterface;
 
-  constructor(signature, url) {
-    this.signature = signature;
-    this.url = url;
+  constructor(kernel: KernelInterface) {
+    this.kernel = kernel;
   }
 
   public boot() {
@@ -28,12 +29,13 @@ export class HttpProvider implements ProviderInterface {
       },
     });
   }
-
   public async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
     try {
       const response = await this.client.post('/', {
-        params,
-        context,
+        params: {
+          params,
+          _context: context,
+        },
         id: null,
         method: resolveMethodFromObject({
           method,
