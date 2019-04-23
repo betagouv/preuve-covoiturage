@@ -4,7 +4,7 @@ import nock from 'nock';
 import chaiNock from 'chai-nock';
 import chaiAsPromised from 'chai-as-promised';
 
-import { httpProviderFactory } from '../helpers/httpProviderFactory';
+import { httpServiceProviderFactory } from '../helpers/httpServiceProviderFactory';
 
 chai.use(chaiNock);
 chai.use(chaiAsPromised);
@@ -40,7 +40,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpProviderFactory('service', url))(kernel);
+    const provider = new (httpServiceProviderFactory('service', url))(kernel);
     provider.boot();
     provider.call('method', { param: true }, { internal: true });
 
@@ -76,7 +76,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpProviderFactory('service', url))(kernel);
+    const provider = new (httpServiceProviderFactory('service', url))(kernel);
     provider.boot();
     provider.call('method', { param: true }, { internal: true });
 
@@ -103,7 +103,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpProviderFactory('service', url))(kernel);
+    const provider = new (httpServiceProviderFactory('service', url))(kernel);
     provider.boot();
     const promise = provider.call('method', { param: true }, { internal: true });
     return (<any>assert).isRejected(promise, Error, 'An error occured');
@@ -128,7 +128,7 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpProviderFactory('service', url))(kernel);
+    const provider = new (httpServiceProviderFactory('service', url))(kernel);
     provider.boot();
     const promise = provider.call('method', { param: true }, { internal: true });
     return (<any>assert).isRejected(promise, Error, 'wrong!');
