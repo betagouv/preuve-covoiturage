@@ -1,7 +1,7 @@
-import { HttpProvider } from '../providers/HttpProvider';
+import { HttpProvider } from '../serviceProviders/HttpProvider';
 import { ServiceProviderConstructorInterface } from '../interfaces/ServiceProviderConstructorInterface';
 
-export function httpProviderFactory(signature: string, url: string, version?: string): ServiceProviderConstructorInterface {
+export function httpServiceProviderFactory(signature: string, url: string, version?: string): ServiceProviderConstructorInterface {
   return class extends HttpProvider {
     readonly signature: string = signature;
     readonly version: string = version;
