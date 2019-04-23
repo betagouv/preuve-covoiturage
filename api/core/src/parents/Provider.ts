@@ -36,9 +36,9 @@ export abstract class Provider implements ServiceProviderInterface {
     if (!this.actionInstances.has(call.method)) {
       throw new Error('Unkmown method');
     }
-    const composer = compose([...this.middlewares, async (call:CallType) => {
-      const result = await this.actionInstances.get(call.method).call(call);
-      call.result = result;
+    const composer = compose([...this.middlewares, async (cl:CallType) => {
+      const result = await this.actionInstances.get(cl.method).call(cl);
+      cl.result = result;
     }]);
     await composer(call);
     return call.result;

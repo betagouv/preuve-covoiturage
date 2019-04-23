@@ -13,14 +13,14 @@ chai.use(chaiAsPromised);
 const kernel = {
   providers: [],
   services: [],
-  boot() {},
+  boot() { return; },
   async handle(call) {
     return {
       id: null,
       jsonrpc: '2.0',
     };
   },
-}
+};
 
 describe('Http provider', () => {
   it('works', () => {

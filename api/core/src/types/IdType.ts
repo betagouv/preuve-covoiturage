@@ -1,1 +1,1 @@
-export type IdType =  string | number | null;
+export type IdType = string | number | null;

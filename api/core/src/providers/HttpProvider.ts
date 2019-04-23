@@ -1,12 +1,13 @@
 import axios from 'axios';
 
+import { KernelInterface } from '~/interfaces/KernelInterface';
+
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 import { resolveMethodFromObject } from '../helpers/resolveMethod';
 import { ServiceException } from '../Exceptions/ServiceException';
-import { KernelInterface } from '~/interfaces/KernelInterface';
 
 export class HttpProvider implements ServiceProviderInterface {
   readonly signature: string;

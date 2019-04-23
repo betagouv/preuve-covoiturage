@@ -14,7 +14,7 @@ before(() => {
   const kernel = {
     services: [],
     providers: [],
-    boot() {},
+    boot() { return; },
     async handle(call: RPCCallType): Promise<RPCResponseType> {
       if ('method' in call && call.method === 'error') {
         throw new Error('wrong!');

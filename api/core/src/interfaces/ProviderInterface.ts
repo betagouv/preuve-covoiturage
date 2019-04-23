@@ -1,4 +1,4 @@
-import { KernelInterface } from "./KernelInterface";
+import { KernelInterface } from './KernelInterface';
 
 export interface ProviderInterface {
   readonly signature: string;

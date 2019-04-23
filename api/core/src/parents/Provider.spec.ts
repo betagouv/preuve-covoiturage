@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 const kernel = {
   providers: [],
   services: [],
-  boot() {},
+  boot() { return; },
   async handle(call) {
     return {
       id: null,
