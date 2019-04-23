@@ -4,7 +4,6 @@ import nock from 'nock';
 import chaiNock from 'chai-nock';
 import chaiAsPromised from 'chai-as-promised';
 
-import { HttpProvider } from './HttpProvider';
 import { httpProviderFactory } from '../helpers/httpProviderFactory';
 
 chai.use(chaiNock);
@@ -20,6 +19,7 @@ const kernel = {
       jsonrpc: '2.0',
     };
   },
+  get() { throw new Error(); },
 };
 
 describe('Http provider', () => {

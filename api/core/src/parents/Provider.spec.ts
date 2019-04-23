@@ -9,6 +9,8 @@ import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 
+import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
+
 chai.use(chaiAsPromised);
 
 const kernel = {
@@ -21,6 +23,7 @@ const kernel = {
       jsonrpc: '2.0',
     };
   },
+  get() { throw new Error(); },
 };
 
 describe('Provider', () => {
@@ -61,8 +64,8 @@ describe('Provider', () => {
       await provider.call('add', { add: [1, 1] });
       expect(true).to.equal(false);
     } catch (e) {
-      expect(e).to.be.a.instanceOf(Error);
-      expect(e.message).to.equal('Unkmown method');
+      expect(e).to.be.a.instanceOf(MethodNotFoundException);
+      expect(e.message).to.equal('Method not found');
     }
   });
 });
