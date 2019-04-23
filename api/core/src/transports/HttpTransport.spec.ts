@@ -27,6 +27,7 @@ before(() => {
       };
       return response;
     },
+    get() { throw new Error(); },
   };
   httpTransport = new HttpTransport(kernel);
 

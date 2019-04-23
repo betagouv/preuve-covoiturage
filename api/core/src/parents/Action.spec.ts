@@ -20,6 +20,7 @@ const kernel = {
       jsonrpc: '2.0',
     };
   },
+  get() { throw new Error(); },
 };
 
 describe('Action', () => {

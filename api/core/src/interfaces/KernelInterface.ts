@@ -11,5 +11,6 @@ export interface KernelInterface {
   services: ServiceProviderConstructorInterface[];
   boot():Promise<void> | void;
   handle(call: RPCCallType): Promise<RPCResponseType>;
+  get(name: string):ProviderInterface;
 }
 

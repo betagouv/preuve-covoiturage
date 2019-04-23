@@ -10,6 +10,7 @@ import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface
 import { KernelInterface } from '../interfaces/KernelInterface';
 
 import { compose } from '../helpers/compose';
+import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
 
 export abstract class Provider implements ServiceProviderInterface {
   public readonly signature: string;
@@ -34,7 +35,7 @@ export abstract class Provider implements ServiceProviderInterface {
 
   protected async resolve(call: CallType): Promise<ResultType> {
     if (!this.actionInstances.has(call.method)) {
-      throw new Error('Unkmown method');
+      throw new MethodNotFoundException(`Unknown method ${call.method}`);
     }
     const composer = compose([...this.middlewares, async (cl:CallType) => {
       const result = await this.actionInstances.get(cl.method).call(cl);
