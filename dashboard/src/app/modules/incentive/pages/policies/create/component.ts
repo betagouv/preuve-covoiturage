@@ -6,6 +6,7 @@ import {
 import { Router } from '@angular/router';
 
 import { IncentivePolicyService } from '../../../services/incentivePolicyService';
+import { environment } from '../../../../../../environments/environment';
 
 
 @Component({
@@ -68,6 +69,9 @@ export class IncentivePoliciesCreatePageComponent implements OnInit {
         },
       },
     ];
+    if (!environment.production) {
+      this.maxActivableIndex = 5;
+    }
   }
 
   setActiveIndex(stepIndex: number) {
