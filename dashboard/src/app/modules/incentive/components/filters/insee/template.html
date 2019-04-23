@@ -1,0 +1,32 @@
+<div class="p-grid ui-fluid container">
+  <div class="p-col-12">
+    <p-messages [(value)]="msgs"></p-messages>
+
+    <h4>Liste blanche</h4>
+    <span><i>Les trajets dont les insees font partie de cette liste.</i></span>
+    <br>
+    <br>
+    <p>Insee au départ</p>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId" (selectedInseeChange)="setInsees($event, 'whiteList', 'start')" ></app-aom-insee-multiple-dropdown>
+
+    <p>Insee à l'arrivée</p>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId" (selectedInseeChange)="setInsees($event, 'whiteList', 'end')" ></app-aom-insee-multiple-dropdown>
+
+    <br>
+    <br>
+    <h4>Liste noire</h4>
+    <span><i>Les trajets dont les insees ne font pas partie de cette liste.</i></span>
+    <br>
+    <br>
+
+    <p>Insee au départ</p>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId" (selectedInseeChange)="setInsees($event, 'blackList', 'start')" ></app-aom-insee-multiple-dropdown>
+
+    <p>Insee à l'arrivée</p>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId" (selectedInseeChange)="setInsees($event, 'blackList', 'end')" ></app-aom-insee-multiple-dropdown>
+
+    <br>
+    <br>
+  </div>
+</div>
+<p-button (onClick)="onSubmit()" [disabled]="error" label="Enregistrer"></p-button>

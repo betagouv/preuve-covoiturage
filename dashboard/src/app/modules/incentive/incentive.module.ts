@@ -24,6 +24,7 @@ import {
   DynamicDialogRef,
   DynamicDialogConfig,
 } from 'primeng/api';
+import { MessagesModule } from 'primeng/primeng';
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
@@ -33,6 +34,8 @@ import { IncentiveCampaignsListPageComponent } from '~/modules/incentive/pages/c
 import { IncentiveCampaignSummaryComponent } from '~/modules/incentive/components/campaign/summary/component';
 import { TranslationService } from '~/shared/services/translationService';
 import { TableService } from '~/shared/services/tableService';
+import { IncentiveInseeFilterComponent } from '~/modules/incentive/components/filters/insee/component';
+import { AomInseeUIModule } from '~/modules/aom/modules/insee/ui/ui.module';
 
 /* Local modules */
 import { IncentiveRoutingModule } from './incentive.routing';
@@ -87,6 +90,8 @@ import { IncentiveUnitService } from './services/incentiveUnitService';
     MessageModule,
     SelectButtonModule,
     TableModule,
+    AomInseeUIModule,
+    MessagesModule,
   ],
   providers: [
     DialogService,
@@ -111,6 +116,7 @@ import { IncentiveUnitService } from './services/incentiveUnitService';
     IncentiveUnitCreationComponent,
     IncentiveParameterCreationComponent,
     IncentiveFilterFormComponent,
+    IncentiveInseeFilterComponent,
     IncentiveWeekdayFilterComponent,
     IncentiveTimeFilterComponent,
     IncentiveRangeFilterComponent,
@@ -132,6 +138,7 @@ import { IncentiveUnitService } from './services/incentiveUnitService';
     IncentiveTimeFilterComponent,
     IncentiveRangeFilterComponent,
     IncentiveRankFilterComponent,
+    IncentiveInseeFilterComponent,
     IncentivePolicyConfirmationComponent,
     IncentivePolicyPickerComponent,
     IncentiveCampaignConfirmationComponent,
