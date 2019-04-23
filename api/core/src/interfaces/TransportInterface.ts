@@ -3,7 +3,7 @@ import { KernelInterface } from './KernelInterface';
 export interface TransportInterface {
   kernel: KernelInterface;
 
-  up():void;
+  up():Promise<void>;
 
-  down():void;
+  down():Promise<void>;
 }

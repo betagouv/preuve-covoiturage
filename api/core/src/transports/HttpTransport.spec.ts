@@ -6,37 +6,40 @@ import { HttpTransport } from './HttpTransport';
 import { RPCCallType } from '../types/RPCCallType';
 import { RPCResponseType } from '../types/RPCResponseType';
 
-
 let request;
 let httpTransport;
 
-before(() => {
-  const kernel = {
-    services: [],
-    providers: [],
-    boot() { return; },
-    async handle(call: RPCCallType): Promise<RPCResponseType> {
-      if ('method' in call && call.method === 'error') {
-        throw new Error('wrong!');
-      }
-
-      const response = {
-        id: 1,
-        jsonrpc: '2.0',
-        result: 'hello world',
-      };
-      return response;
-    },
-    get() { throw new Error(); },
-  };
-  httpTransport = new HttpTransport(kernel);
-
-  httpTransport.up();
-
-  request = supertest(httpTransport.server);
-});
-
 describe('Http kernel', () => {
+  before(() => {
+    const kernel = {
+      services: [],
+      providers: [],
+      boot() { return; },
+      async handle(call: RPCCallType): Promise<RPCResponseType> {
+        if ('method' in call && call.method === 'error') {
+          throw new Error('wrong!');
+        }
+
+        const response = {
+          id: 1,
+          jsonrpc: '2.0',
+          result: 'hello world',
+        };
+        return response;
+      },
+      get() { throw new Error(); },
+    };
+    httpTransport = new HttpTransport(kernel);
+
+    httpTransport.up();
+
+    request = supertest(httpTransport.server);
+  });
+
+  after(() => {
+    httpTransport.down();
+  });
+
   it('should work', async () => {
     const response = await request.post('/')
         .send({
@@ -107,8 +110,4 @@ describe('Http kernel', () => {
         .set('Content-Type', 'application/json');
     expect(response.status).equal(500);
   });
-});
-
-after(() => {
-  httpTransport.down();
 });
