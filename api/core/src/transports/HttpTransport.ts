@@ -11,7 +11,7 @@ export class HttpTransport implements TransportInterface {
     this.kernel = kernel;
   }
 
-  up() {
+  async up() {
     this.server = http.createServer((req, res) => {
       if (
           !('content-type' in req.headers && 'accept' in req.headers)
@@ -59,7 +59,7 @@ export class HttpTransport implements TransportInterface {
     this.server.listen(8080);
   }
 
-  down() {
+  async down() {
     this.server.close();
   }
 }

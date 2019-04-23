@@ -45,13 +45,13 @@ export class Kernel implements KernelInterface {
     return this.providerRegistry.get(name);
   }
 
-  public up(transportConstructor: TransportConstructorInterface) {
-    this.transport = new transportConstructor(this);
+  public async up(transportConstructor: TransportConstructorInterface, opts?: object) {
+    this.transport = new transportConstructor(this, opts);
     return this.transport.up();
   }
 
-  public down() {
-    this.transport.down();
+  public async down() {
+    return this.transport.down();
   }
 
   protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType> {
