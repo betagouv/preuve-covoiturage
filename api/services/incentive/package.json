@@ -7,6 +7,7 @@
     "@pdc/shared": "0.0.1",
     "@pdc/service-policy": "0.0.1",
     "mongoose": "^5.4",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "lodash": "^4.17.11"
   }
 }
