@@ -7,7 +7,6 @@ import { TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 import {
   DialogService,
-  ConfirmationService,
 } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -52,7 +51,6 @@ import { AomService } from './services/aomService';
   providers: [
     AomService,
     DialogService,
-    ConfirmationService,
     TranslationService,
     TableService,
   ],

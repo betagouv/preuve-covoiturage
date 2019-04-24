@@ -8,7 +8,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { ConfirmationService, DialogService } from 'primeng/api';
+import { DialogService } from 'primeng/api';
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
@@ -52,7 +52,6 @@ import { OperatorTokenService } from './services/operatorTokenService';
     OperatorService,
     OperatorTokenService,
     DialogService,
-    ConfirmationService,
     TranslationService,
     TableService,
   ],
