@@ -9,7 +9,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { ConfirmationService, DialogService } from 'primeng/api';
+import { DialogService } from 'primeng/api';
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
@@ -51,7 +51,6 @@ import { ProfileService } from './services/profileService';
     UserService,
     ProfileService,
     DialogService,
-    ConfirmationService,
     TranslationService,
     TableService,
   ],
