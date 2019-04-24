@@ -33,7 +33,6 @@ export class StatisticsResumeComponent implements OnInit {
 
   private loadResumeGraphs() {
     const stats = STAT_STYLE.resume.filter(statConfig => this.statNames.indexOf(statConfig.name) !== -1);
-    console.log(stats);
     for (const obj of stats) {
       if (obj.name === 'aomTotal') {
         this.loadAomResumeGraph(obj);

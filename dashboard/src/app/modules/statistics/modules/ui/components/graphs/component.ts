@@ -101,18 +101,18 @@ export class StatisticsGraphsComponent implements OnInit {
     datas['A'] = this.statisticsService.getDataFromPathString('classes.a.total', this.apiData);
     datas['B'] = this.statisticsService.getDataFromPathString('classes.b.total', this.apiData);
     datas['C'] = this.statisticsService.getDataFromPathString('classes.c.total', this.apiData);
-    datas['unvalidated'] = this.statisticsService.getDataFromPathString('unvalidated.total', this.apiData);
+    // datas['unvalidated'] = this.statisticsService.getDataFromPathString('unvalidated.total', this.apiData);
 
     values['A'] = this.getValues(datas['A'], config);
     values['B'] = this.getValues(datas['B'], config);
     values['C'] = this.getValues(datas['C'], config);
-    values['unvalidated'] = this.getValues(datas['unvalidated'], config);
+    // values['unvalidated'] = this.getValues(datas['unvalidated'], config);
 
     const lastValues = [
       values['A'][values['A'].length - 1],
       values['B'][values['B'].length - 1],
       values['C'][values['C'].length - 1],
-      values['unvalidated'][values['unvalidated'].length - 1],
+      // values['unvalidated'][values['unvalidated'].length - 1],
     ];
 
     const graphData = {
@@ -120,7 +120,6 @@ export class StatisticsGraphsComponent implements OnInit {
       type: config.type,
       title: config.title,
       options: config.options,
-      img: config.img || null,
       unit: config.unit || '',
       datasets: [
         {
