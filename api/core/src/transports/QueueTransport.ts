@@ -23,7 +23,18 @@ export class QueueTransport implements TransportInterface {
     this.services.forEach((signature) => {
       const queue = bullFactory(`${env}-${signature}`, redisUrl);
       this.queues.push(queue);
-      queue.process(job => this.kernel.handle(job.data));
+      queue.process(job => this.kernel.handle({
+        jsonrpc: '2.0',
+        id: 1,
+        method: job.data.method,
+        params: {
+          params: job.data.params.params,
+          _context: {
+            ...job.data.params._context,
+            transport: 'queue',
+          },
+        },
+      }));
     });
   }
 

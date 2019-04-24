@@ -39,13 +39,7 @@ describe('Config provider', () => {
       },
       get() { throw new Error(); },
     });
-    try {
-      await configProvider.boot();
-      expect(true).to.equal(false);
-    } catch (e) {
-      expect(e).to.be.instanceOf(Error);
-      expect(e.message).to.equal('');
-    }
+    return expect(() => configProvider.boot()).to.throws(Error, '');
   });
 
   it('should work', async () => {

@@ -1,6 +1,7 @@
 import { describe } from 'mocha';
 import { expect, assert } from 'chai';
 
+import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
 import { resolveMethodFromString, resolveMethodFromObject } from './resolveMethod';
 
 describe('Helpers: resolve method', () => {
@@ -19,9 +20,23 @@ describe('Helpers: resolve method', () => {
   });
 
   it('from string works raise error', () => {
-    assert.throw(() => resolveMethodFromString(':method'), Error, 'Invalid method string (:method)');
-    assert.throw(() => resolveMethodFromString('service:'), Error, 'Invalid method string (service:)');
-    assert.throw(() => resolveMethodFromString('service:0.0.1'), Error, 'Invalid method string (service:0.0.1)');
+    assert.throw(
+      () => resolveMethodFromString(':method'),
+      MethodNotFoundException,
+      'Method not found',
+    ); // Invalid method string (:method)
+
+    assert.throw(
+      () => resolveMethodFromString('service:'),
+      MethodNotFoundException,
+      'Method not found',
+    ); // Invalid method string (service:)
+
+    assert.throw(
+      () => resolveMethodFromString('service:0.0.1'),
+      MethodNotFoundException,
+      'Method not found',
+    ); // Invalid method string (service:0.0.1)
   });
 
   it('from object works', () => {
@@ -37,13 +52,13 @@ describe('Helpers: resolve method', () => {
   it('from object works raise error', () => {
     assert.throw(
       () => resolveMethodFromObject({ service: 'service', method: '' }),
-      Error,
-      `Invalid method object (service:service, method:, version:undefined)`,
+      MethodNotFoundException,
+      'Method not found', // Invalid method object (service:service, method:, version:undefined)
     );
     assert.throw(
       () => resolveMethodFromObject({ service: '', method: 'method' }),
-      Error,
-      `Invalid method object (service:, method:method, version:undefined)`,
+      MethodNotFoundException,
+      'Method not found', // Invalid method object (service:, method:method, version:undefined)
       );
   });
 });

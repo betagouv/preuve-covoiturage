@@ -19,37 +19,32 @@ const kernel = {
 };
 
 describe('Env provider', () => {
-  it('should work', async () => {
+  before(() => {
     mockFs({
       [`${process.cwd()}/.env`]: 'HELLO=world\n',
     });
+  });
 
-    const envProvider = new EnvProvider(kernel);
-    await envProvider.boot();
-    expect(envProvider.get('HELLO')).to.equal('world');
+  after(() => {
     mockFs.restore();
   });
 
-  it('should raise exception if key is not found', async () => {
-    mockFs({
-      [`${process.cwd()}/.env`]: '',
-    });
+  it('should work', async () => {
     const envProvider = new EnvProvider(kernel);
     await envProvider.boot();
-    try {
-      envProvider.get('HELLO');
-      expect(true).to.equal(false);
-    } catch (e) {
-      expect(e).to.be.instanceOf(Error);
-      expect(e.message).to.equal('Unknown env key HELLO');
-    }
-    mockFs.restore();
+    expect(envProvider.get('HELLO')).to.equal('world');
+  });
+
+  it('should raise exception if key is not found', async () => {
+    const envProvider = new EnvProvider(kernel);
+    await envProvider.boot();
+    expect(() => envProvider.get('HELLO2')).throws(Error, 'Unknown env key HELLO2');
   });
 
   it('should return fallback if key not found', async () => {
     const envProvider = new EnvProvider(kernel);
     await envProvider.boot();
-    expect(envProvider.get('HELLO', 'world')).to.equal('world');
+    expect(envProvider.get('HELLO2', 'world')).to.equal('world');
   });
 });
 

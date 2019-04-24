@@ -1,10 +1,14 @@
 import { describe } from 'mocha';
 import sinon from 'sinon';
-import { expect } from 'chai';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
 import * as Bull from '../helpers/bullFactory';
 import { queueServiceProviderFactory } from '../helpers/queueServiceProviderFactory';
 
+chai.use(chaiAsPromised);
+
+const { expect, assert } = chai;
 const kernel = {
   providers: [],
   services: [],
@@ -41,17 +45,20 @@ const sandbox = sinon.createSandbox();
 
 describe('Queue provider', () => {
   beforeEach(() => {
-    sandbox.stub(Bull, 'bullFactory').callsFake(() => ({
-      async add(name, opts) {
-        if (name !== 'basic@0.0.1:nope') {
-          return {
-            name,
-            opts,
-          };
-        }
-        throw new Error('Nope');
-      },
-    }));
+    sandbox.stub(Bull, 'bullFactory').callsFake(
+      // @ts-ignore
+      () => ({
+      // @ts-ignore
+        async add(name, opts) {
+          if (name !== 'basic@0.0.1:nope') {
+            return {
+              name,
+              opts,
+            };
+          }
+          throw new Error('Nope');
+        },
+      }));
   });
   afterEach(() => {
     sandbox.restore();
@@ -72,13 +79,11 @@ describe('Queue provider', () => {
   it('raise error if fail', async () => {
     const queueProvider = new (queueServiceProviderFactory('basic', '0.0.1'))(kernel);
     await queueProvider.boot();
-    try {
-      await queueProvider.call('nope', { add: [1, 2] }, { internal: true });
-      expect(true).to.equal(false);
-    } catch (e) {
-      expect(e).to.be.instanceOf(Error);
-      expect(e.message).to.be.equal('An error occured');
-    }
+    return (<any>assert).isRejected(
+      queueProvider.call('nope', { add: [1, 2] }, { internal: true }),
+      Error,
+      'An error occured',
+    );
   });
 });
 

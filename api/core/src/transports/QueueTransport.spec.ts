@@ -1,3 +1,4 @@
+// tslint:disable no-invalid-this
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
@@ -10,10 +11,7 @@ const kernel = {
   services: [],
   boot() { return; },
   async handle(call) {
-    return {
-      id: null,
-      jsonrpc: '2.0',
-    };
+    return call;
   },
   get(key:string) {
     if (key === 'env') {
@@ -41,11 +39,17 @@ const sandbox = sinon.createSandbox();
 
 describe('Queue provider', () => {
   beforeEach(() => {
-    sandbox.stub(Bull, 'bullFactory').callsFake(name => ({
-      name,
-      async process(fn) { return; },
-      async close() { return; },
-    }));
+    sandbox.stub(Bull, 'bullFactory').callsFake(
+      // @ts-ignore
+      name => ({
+        name,
+        async process(fn) { this.fn = fn; return; },
+        async close() { return; },
+        async add(call) {
+          const fn = this.fn;
+          return fn(call);
+        },
+      }));
   });
   afterEach(() => {
     sandbox.restore();
@@ -55,6 +59,38 @@ describe('Queue provider', () => {
     await queueTransport.up();
     expect(queueTransport.queues.length).to.equal(1);
     expect(queueTransport.queues[0].name).to.equal('prod-hello');
+    const response = await queueTransport.queues[0].add({
+      data: {
+        id: null,
+        jsonrpc: '2.0',
+        method: 'myservice@latest:method',
+        params: {
+          params: {
+            hello: 'world',
+          },
+          _context: {
+            transport: 'http',
+            user: 'me',
+            internal: false,
+          },
+        },
+      },
+    });
+    expect(response).to.deep.equal({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'myservice@latest:method',
+      params: {
+        params: {
+          hello: 'world',
+        },
+        _context: {
+          transport: 'queue',
+          user: 'me',
+          internal: false,
+        },
+      },
+    });
     await queueTransport.down();
   });
 });
