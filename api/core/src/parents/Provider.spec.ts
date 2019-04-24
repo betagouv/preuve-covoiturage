@@ -1,6 +1,6 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
 import { describe } from 'mocha';
-import chai, { expect } from 'chai';
+import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import { Provider } from './Provider';
@@ -12,6 +12,8 @@ import { ContextType } from '../types/ContextType';
 import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
 
 chai.use(chaiAsPromised);
+
+const { expect, assert } = chai;
 
 const kernel = {
   providers: [],
@@ -58,14 +60,7 @@ describe('Provider', () => {
     }
 
     const provider = new BasicProvider(kernel);
-    provider.boot();
-
-    try {
-      await provider.call('add', { add: [1, 1] });
-      expect(true).to.equal(false);
-    } catch (e) {
-      expect(e).to.be.a.instanceOf(MethodNotFoundException);
-      expect(e.message).to.equal('Method not found');
-    }
+    await provider.boot();
+    return (<any>assert).isRejected(provider.call('add', { add: [1, 1] }), MethodNotFoundException, 'Method not found');
   });
 });

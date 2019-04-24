@@ -34,7 +34,6 @@ describe('Action', () => {
             count += param;
           });
         }
-        console.log({ count });
         return count;
       }
     }

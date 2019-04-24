@@ -1,6 +1,6 @@
 {
   "name": "@pdc/core",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -19,6 +19,9 @@
     "serve-debug": "nodemon --inspect dist/kernel.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\""
   },
+  "bin": {
+    "cli": "./dist/Cli.js"
+  },
   "mocha": {
     "require": [
       "ts-node/register"
@@ -32,7 +35,8 @@
     "exclude": [
       "src/**/*.spec.ts",
       "src/interfaces/**",
-      "src/types/**"
+      "src/types/**",
+      "src/Exceptions/**"
     ],
     "extension": [
       ".ts"
@@ -49,8 +53,10 @@
   "devDependencies": {
     "@types/bull": "^3.5.11",
     "@types/chai": "^4.1.7",
+    "@types/commander": "^2.12.2",
     "@types/mocha": "^5.2.6",
-    "@types/node": "^11.13.4",
+    "@types/node": "^11.13.7",
+    "@types/sinon": "^7.0.11",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-nock": "^1.1.0",

@@ -1,3 +1,5 @@
+import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
+
 const regexp = new RegExp('^([a-z]*)@?([\.0-9]*|latest):([a-z]*)$');
 export function resolveMethodFromString(method: string): { service: string, method: string, version?: string } {
   try {
@@ -11,7 +13,7 @@ export function resolveMethodFromString(method: string): { service: string, meth
       version: v ? v : 'latest',
     };
   } catch (e) {
-    throw new Error(`Invalid method string (${method})`);
+    throw new MethodNotFoundException(`Invalid method string (${method})`);
   }
 }
 export function resolveMethodFromObject(method: { service: string, method: string, version?: string }): string {
@@ -21,7 +23,9 @@ export function resolveMethodFromObject(method: { service: string, method: strin
       method.service.length === 0 ||
       method.method.length === 0
     ) {
-    throw new Error(`Invalid method object (service:${method.service}, method:${method.method}, version:${method.version})`);
+    throw new MethodNotFoundException(
+      `Invalid method object (service:${method.service}, method:${method.method}, version:${method.version})`,
+    );
   }
   return `${method.service}@${('version' in method && method.version) ? method.version : 'latest'}:${method.method}`;
 }

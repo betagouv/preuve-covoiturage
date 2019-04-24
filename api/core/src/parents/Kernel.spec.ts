@@ -3,11 +3,11 @@ import { describe } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { ProviderInterface } from './interfaces/ProviderInterface';
+import { ProviderInterface } from '../interfaces/ProviderInterface';
 
 import { Kernel } from './Kernel';
-import { Provider } from './parents/Provider';
-import { Action } from './parents/Action';
+import { Provider } from './Provider';
+import { Action } from './Action';
 
 chai.use(chaiAsPromised);
 

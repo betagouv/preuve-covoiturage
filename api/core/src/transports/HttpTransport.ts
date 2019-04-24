@@ -45,7 +45,7 @@ export class HttpTransport implements TransportInterface {
               res.statusCode = 500;
               res.end(`An error occured : ${e ? e.message : ''}`);
             });
-        } catch (e) {
+        } catch (err) {
           res.statusCode = 415;
           res.end('Wrong request');
         }
