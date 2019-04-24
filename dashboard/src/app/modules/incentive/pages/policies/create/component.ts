@@ -6,7 +6,7 @@ import {
 import { Router } from '@angular/router';
 
 import { IncentivePolicyService } from '../../../services/incentivePolicyService';
-
+  
 
 @Component({
   templateUrl: 'template.html',
@@ -23,10 +23,11 @@ export class IncentivePoliciesCreatePageComponent implements OnInit {
     name: ['', Validators.required],
     description: [''],
     rules: this.fb.group({
-      weekday: [],
-      time: [],
-      range: [],
-      rank: [],
+      weekday: null,
+      time: null,
+      range: null,
+      rank: null,
+      insee: null,
     }),
     parameters: [[], Validators.required],
     formula: ['', Validators.required],

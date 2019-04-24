@@ -20,10 +20,7 @@ export class RankFilter {
   ];
 
   public static import(data) {
-    if (data) {
-      return data;
-    }
-    return [];
+    return data && data.length > 0 ? data : null;
   }
 
   public static getFormComponent() {

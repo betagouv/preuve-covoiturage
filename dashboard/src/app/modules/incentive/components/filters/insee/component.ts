@@ -14,19 +14,18 @@ import { AuthenticationService } from '~/applicativeService/authentication/servi
 
 export class IncentiveInseeFilterComponent implements OnInit {
   public filter;
-  public filterControl = this.fb.control([], Validators.required);
+  public filterForm = this.fb.group({
+    whiteList: this.fb.group({
+      start: this.fb.control([]),
+      end: this.fb.control([]),
+    }),
+    blackList: this.fb.group({
+      start: this.fb.control([]),
+      end: this.fb.control([]),
+    }),
+  });
   aomId: string;
-  private inseeList: {
-    whiteList?: {
-      start?: string,
-      end?: string,
-    },
-    blackList?: {
-      start?:string,
-      black?:string,
-    },
-  } = {};
-  msgs:Message[] = [];
+  msgs: Message[] = [];
   error = false;
 
   constructor(
@@ -39,48 +38,42 @@ export class IncentiveInseeFilterComponent implements OnInit {
 
   ngOnInit(): void {
     this.aomId = this.authentificationService.getUser().aom;
-    if (this.config.data && 'value' in this.config.data) {
-      this.filterControl.patchValue(this.config.data.value);
+    if (this.config.data && 'value' in this.config.data && this.config.data.value) {
+      this.filterForm.patchValue(this.config.data.value);
     }
     this.filter = this.config.data.filter;
   }
 
   setInsees(insees: string[], listName: string, position: string) {
-    if (!this.inseeList[listName]) this.inseeList[listName] = {};
-    this.inseeList[listName][position] = insees;
-    if (this.isPossible(this.inseeList)) {
-      this.filterControl.setValue(this.inseeList);
-    }
+    this.filterForm.controls[listName]['controls'][position].setValue(insees);
+    this.isPossible();
   }
 
   /**
-   * if insee is in whiteList and blackList return false
+   * if insee is in whiteList and blackList show error
    */
-  isPossible(inseeList:any) {
-    if (inseeList.whiteList && inseeList.blackList) {
-      if (inseeList.whiteList.start && inseeList.blackList.start &&
-        inseeList.whiteList.start.length > 0 && inseeList.blackList.start.length > 0 &&
-        inseeList.whiteList.start.filter(value => inseeList.blackList.start.includes(value)).length > 0) {
-        this.showError('Vous ne pouvez pas avoir le même code insee au départ dans la liste blanche et la liste noire');
-        return false;
-      }
-      if (inseeList.whiteList.end && inseeList.blackList.end &&
-        inseeList.whiteList.end.length > 0 && inseeList.blackList.end.length > 0 &&
-        inseeList.whiteList.end.filter(value => inseeList.blackList.end.includes(value)).length > 0) {
-        this.error = true;
-        this.showError('Vous ne pouvez pas avoir le même code insee à l\'arrivée dans la liste blanche et la liste noire');
-        return false;
-      }
+  isPossible() {
+    if (this.filterForm.value.whiteList.start.length > 0 && this.filterForm.value.blackList.start.length > 0 &&
+        this.filterForm.value.whiteList.start.filter(value => this.filterForm.value.blackList.start.includes(value)).length > 0) {
+      this.showError('Vous ne pouvez pas avoir le même code insee au départ dans la liste blanche et la liste noire');
+      return;
+    }
+    if (this.filterForm.value.whiteList.end.length > 0 && this.filterForm.value.blackList.end.length > 0 &&
+        this.filterForm.value.whiteList.end.filter(value => this.filterForm.value.blackList.end.includes(value)).length > 0) {
+      this.error = true;
+      this.showError('Vous ne pouvez pas avoir le même code insee à l\'arrivée dans la liste blanche et la liste noire');
+      return;
     }
     this.resetError();
-    return true;
   }
 
-  private showError(msg:string) {
+  private showError(msg: string) {
     this.error = true;
     this.msgs.push(
-      { severity:'error', summary:'Erreur',
-        detail: msg });
+      {
+        severity: 'error', summary: 'Erreur',
+        detail: msg,
+      });
   }
 
   private resetError() {
@@ -89,6 +82,6 @@ export class IncentiveInseeFilterComponent implements OnInit {
   }
 
   onSubmit() {
-    this.ref.close(this.filter.export(this.filterControl.value));
+    this.ref.close(this.filter.export(this.filterForm.value));
   }
 }

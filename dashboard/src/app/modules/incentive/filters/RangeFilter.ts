@@ -20,10 +20,11 @@ export class RangeFilter {
   }
 
   public static export(data) {
-    return {
-      min: data[0],
-      max: data[1],
-    };
+    return data.length > 0 ?
+      {
+        min: data[0],
+        max: data[1],
+      } : null;
   }
 
   public static toString(data):string {

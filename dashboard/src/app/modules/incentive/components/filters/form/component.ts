@@ -44,8 +44,9 @@ export class IncentiveFilterFormComponent implements OnInit {
 
     const ref = this.dialogService.open(incentiveFilter.getFormComponent(), config);
 
-    ref.onClose.subscribe((data) => {
-      if (!(!data || data.length === 0)) {
+
+    ref.onClose.subscribe((data:any) => {
+      if (data) {
         const patch = {
           [key]: data,
         };

@@ -9,7 +9,17 @@ export class InseeFilter {
     if (data) {
       return data;
     }
-    return [];
+    return {
+      whiteList: {
+        start: [],
+        end: [],
+      },
+      blackList: {
+        start: [],
+        end: [],
+      },
+
+    };
   }
 
   public static getFormComponent() {
@@ -17,22 +27,30 @@ export class InseeFilter {
   }
 
   public static export(data) {
+    if (
+      data.whiteList.start.length === 0 &&
+      data.whiteList.end.length === 0 &&
+      data.blackList.start.length === 0 &&
+      data.blackList.end.length === 0
+    ) {
+      return null;
+    }
     return data;
   }
 
   public static toString(data):string {
-    let text = `Les trajets dont : \n`;
-    if (data.whitelist && data.whitelist.start) {
-      text += `les codes INSEEs de départs sont : ${data.whitelist.start.sort().join(', ')} \n`;
+    let text = `Les trajets dont : <br>`;
+    if (data.whiteList.start.length > 0) {
+      text += `&nbsp; - les codes INSEEs de départ sont : ${data.whiteList.start.sort().join(', ')} <br>`;
     }
-    if (data.whitelist && data.whitelist.end) {
-      text += `les codes INSEEs d'arrivées sont : ${data.whitelist.end.sort().join(', ')} \n`;
+    if (data.whiteList.end.length > 0) {
+      text += `&nbsp; - les codes INSEEs d'arrivée sont : ${data.whiteList.end.sort().join(', ')} <br>`;
     }
-    if (data.blackList && data.blackList.start) {
-      text += `les codes INSEEs de départs ne sont pas : ${data.blackList.start.sort().join(', ')} \n`;
+    if (data.blackList.start.length > 0) {
+      text += `&nbsp; - les codes INSEEs de départ ne sont pas : ${data.blackList.start.sort().join(', ')} <br>`;
     }
-    if (data.blackList && data.blackList.end) {
-      text += `les codes INSEEs d'arrivées sont : ${data.blackList.end.sort().join(', ')}`;
+    if (data.blackList.end.length > 0) {
+      text += `&nbsp; - les codes INSEEs d'arrivée ne sont pas : ${data.blackList.end.sort().join(', ')}`;
     }
     return text;
   }
