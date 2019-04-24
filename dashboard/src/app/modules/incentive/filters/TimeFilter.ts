@@ -43,16 +43,17 @@ export class TimeFilter {
   }
 
   public static export(data) {
-    return data.map(({ start, end }) => { // tslint:disable-line
-      return {
-        start: `${start.getHours()}:${start.getMinutes()}`,
-        end: `${end.getHours()}:${end.getMinutes()}`,
-      };
-    });
+    return data.length > 0 ?
+      data.map(({ start, end }) => { // tslint:disable-line
+        return {
+          start: `${start.getHours()}:${start.getMinutes()}`,
+          end: `${end.getHours()}:${end.getMinutes()}`,
+        };
+      }) : null;
   }
 
   public static toString(data):string {
-    let base = 'Les trajets effectué entre (au choix) : ';
+    let base = 'Les trajets effectués entre (au choix) : ';
     data.forEach(({ start, end }) => {
       base += `\n${start} et ${end}`;
     });

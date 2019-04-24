@@ -26,6 +26,18 @@ export class AomInseeMultipleDropdownComponent implements OnInit {
       this.getInsees(id);
     }
   }
+
+  @Input()
+  set selectedInseesInput(selectedInsees: string[]) {
+    this.selectedInsees = [];
+    selectedInsees.forEach((insee: string) => {
+      this.selectedInsees.push({
+        key: insee,
+        value: insee,
+      });
+    });
+  }
+
   @Output() selectedInseeChange = new EventEmitter();
 
   public ngOnInit() {

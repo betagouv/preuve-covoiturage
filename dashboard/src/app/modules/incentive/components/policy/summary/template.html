@@ -19,7 +19,7 @@
   <div class="p-col-12">
     <ul>
       <li *ngFor='let filter of incentiveFilters'>
-        <b>{{ filter }}</b>
+        <b><span [innerHTML]="filter"></span></b>
       </li>
     </ul>
   </div>
