@@ -6,7 +6,7 @@ import {
 import { Router } from '@angular/router';
 
 import { IncentivePolicyService } from '../../../services/incentivePolicyService';
-  
+
 
 @Component({
   templateUrl: 'template.html',
