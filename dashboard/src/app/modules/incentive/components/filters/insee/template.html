@@ -7,10 +7,10 @@
     <br>
     <br>
     <p>Insee au départ</p>
-    <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.controls.whiteList.controls.start.value" (selectedInseeChange)="setInsees($event, 'whiteList', 'start')" ></app-aom-insee-multiple-dropdown>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.whiteList.start" (selectedInseeChange)="setInsees($event, 'whiteList', 'start')" ></app-aom-insee-multiple-dropdown>
 
     <p>Insee à l'arrivée</p>
-    <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.controls.whiteList.controls.end.value" (selectedInseeChange)="setInsees($event, 'whiteList', 'end')" ></app-aom-insee-multiple-dropdown>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.whiteList.end" (selectedInseeChange)="setInsees($event, 'whiteList', 'end')" ></app-aom-insee-multiple-dropdown>
 
     <br>
     <br>
@@ -20,10 +20,10 @@
     <br>
 
     <p>Insee au départ</p>
-    <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.controls.blackList.controls.start.value"  (selectedInseeChange)="setInsees($event, 'blackList', 'start')" ></app-aom-insee-multiple-dropdown>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.blackList.start"  (selectedInseeChange)="setInsees($event, 'blackList', 'start')" ></app-aom-insee-multiple-dropdown>
 
     <p>Insee à l'arrivée</p>
-    <app-aom-insee-multiple-dropdown [aomId]="aomId"  [selectedInseesInput]="filterForm.controls.blackList.controls.end.value"  (selectedInseeChange)="setInsees($event, 'blackList', 'end')" ></app-aom-insee-multiple-dropdown>
+    <app-aom-insee-multiple-dropdown [aomId]="aomId"  [selectedInseesInput]="filterForm.value.blackList.end"  (selectedInseeChange)="setInsees($event, 'blackList', 'end')" ></app-aom-insee-multiple-dropdown>
 
     <br>
     <br>
