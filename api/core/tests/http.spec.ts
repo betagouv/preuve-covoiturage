@@ -8,6 +8,7 @@ import { HttpTransport } from '~/transports/HttpTransport';
 import { Kernel } from '~/Kernel';
 import { ServiceProviderConstructorInterface } from '~/interfaces/ServiceProviderConstructorInterface';
 import { httpServiceProviderFactory } from '~/helpers/httpServiceProviderFactory';
+import { KernelInterface } from '~/interfaces/KernelInterface';
 
 class MathKernel extends Kernel {
   services: ServiceProviderConstructorInterface[] = [
@@ -22,8 +23,9 @@ class StringKernel extends Kernel {
   ];
 }
 
-let mathKernel;
-let stringKernel;
+let mathKernel: KernelInterface;
+let stringKernel: KernelInterface;
+
 function makeRPCCall(port: number, req: { method: string, params?: any }[]) {
   let data;
 
