@@ -8,6 +8,7 @@ import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
+import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 
 chai.use(chaiAsPromised);
 const kernel = {
@@ -86,7 +87,7 @@ describe('Action', () => {
 
   it('should work with ordered middleware', async () => {
     class BasicAction extends Action {
-      protected middlewares = [async (call: CallType, next: Function) => {
+      protected middlewares: MiddlewareInterface[] = [async (call: CallType, next: Function) => {
         await next();
         call.result = `hello ${call.result}?`;
       }, async (call: CallType, next: Function) => {
