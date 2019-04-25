@@ -10,7 +10,6 @@ import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 
 chai.use(chaiAsPromised);
 const kernel = {
