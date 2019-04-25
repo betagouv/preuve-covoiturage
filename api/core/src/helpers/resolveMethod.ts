@@ -1,4 +1,4 @@
-import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
+import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 
 const regexp = new RegExp('^([a-z]*)@?([\.0-9]*|latest):([a-z]*)$');
 export function resolveMethodFromString(method: string): { service: string, method: string, version?: string } {

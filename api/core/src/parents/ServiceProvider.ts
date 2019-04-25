@@ -10,7 +10,7 @@ import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface
 import { KernelInterface } from '../interfaces/KernelInterface';
 
 import { compose } from '../helpers/compose';
-import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
+import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 
 export abstract class ServiceProvider implements ServiceProviderInterface {
   public readonly signature: string;

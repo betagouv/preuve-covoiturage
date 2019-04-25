@@ -3,7 +3,7 @@ import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 import { ParamsType } from '~/types/ParamsType';
 import { ContextType } from '~/types/ContextType';
 import { ResultType } from '~/types/ResultType';
-import { InvalidParamsException } from '~/Exceptions/InvalidParamsException';
+import { InvalidParamsException } from '~/exceptions/InvalidParamsException';
 
 export class AddAction extends Action {
     public readonly signature: string = 'add';
@@ -20,5 +20,4 @@ export class AddAction extends Action {
       });
       return result;
     }
-  
 }

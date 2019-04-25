@@ -9,7 +9,7 @@ import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 
-import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
+import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 
 chai.use(chaiAsPromised);
 
