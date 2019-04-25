@@ -9,7 +9,7 @@ import { ResultType } from '~/types/ResultType';
 import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 import { ForbiddenException } from '~/Exceptions/ForbiddenException';
 
-import { CanMiddleware } from './CanMiddleware';
+import { canMiddleware } from './canMiddleware';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -34,7 +34,7 @@ describe('can middleware', () => {
   it('works: matching 1 permission', async () => {
     const permissions: string[] = ['test.ok'];
     const call: CallType = callFactory(permissions);
-    const mw: MiddlewareInterface = CanMiddleware(permissions);
+    const mw: MiddlewareInterface = canMiddleware(permissions);
 
     await expect(mw(call, noop)).to.become(undefined);
   });
@@ -42,7 +42,7 @@ describe('can middleware', () => {
   it('works: matching all permissions', async () => {
     const permissions: string[] = ['test.perm1', 'test.perm2'];
     const call: CallType = callFactory(permissions);
-    const mw: MiddlewareInterface = CanMiddleware(permissions);
+    const mw: MiddlewareInterface = canMiddleware(permissions);
 
     await expect(mw(call, noop)).to.become(undefined);
   });
@@ -50,14 +50,14 @@ describe('can middleware', () => {
   it('works: no method permissions', async () => {
     const permissions: string[] = ['test.ok', 'whatever'];
     const call: CallType = callFactory(permissions);
-    const mw: MiddlewareInterface = CanMiddleware();
+    const mw: MiddlewareInterface = canMiddleware();
 
     await expect(mw(call, noop)).to.be.become(undefined);
   });
 
   it('fails: no user permissions', async () => {
     const call: CallType = callFactory([]);
-    const mw: MiddlewareInterface = CanMiddleware(['test.ok']);
+    const mw: MiddlewareInterface = canMiddleware(['test.ok']);
 
     await expect(mw(call, noop)).to.be.rejectedWith(ForbiddenException);
   });
@@ -65,7 +65,7 @@ describe('can middleware', () => {
   it('fails: different permission', async () => {
     const permissions: string[] = ['test.ok'];
     const call: CallType = callFactory(permissions);
-    const mw: MiddlewareInterface = CanMiddleware(['test.not-ok']);
+    const mw: MiddlewareInterface = canMiddleware(['test.not-ok']);
 
     await expect(mw(call, noop)).to.be.rejectedWith(ForbiddenException);
   });
@@ -73,7 +73,7 @@ describe('can middleware', () => {
   it('fails: not matching all permissions', async () => {
     const permissions: string[] = ['test.perm1', 'test.perm2'];
     const call: CallType = callFactory(permissions);
-    const mw: MiddlewareInterface = CanMiddleware(['test.perm1']);
+    const mw: MiddlewareInterface = canMiddleware(['test.perm1']);
 
     await expect(mw(call, noop)).to.be.rejectedWith(ForbiddenException);
   });
@@ -81,7 +81,7 @@ describe('can middleware', () => {
   it('fails: same length, different perms', async () => {
     const permissions: string[] = ['test.perm1', 'test.perm3'];
     const call: CallType = callFactory(permissions);
-    const mw: MiddlewareInterface = CanMiddleware(['test.perm1', 'test.perm2']);
+    const mw: MiddlewareInterface = canMiddleware(['test.perm1', 'test.perm2']);
 
     await expect(mw(call, noop)).to.be.rejectedWith(ForbiddenException);
   });
