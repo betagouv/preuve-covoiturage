@@ -6,9 +6,11 @@ import { KernelInterface } from '../interfaces/KernelInterface';
 export class HttpTransport implements TransportInterface {
   server: http.Server;
   kernel: KernelInterface;
+  opts: string[];
 
-  constructor(kernel: KernelInterface) {
+  constructor(kernel: KernelInterface, opts: string[] = []) {
     this.kernel = kernel;
+    this.opts = opts;
   }
 
   async up() {
@@ -21,6 +23,7 @@ export class HttpTransport implements TransportInterface {
         res.statusCode = 415;
         res.end('Wrong content type header');
       }
+      // Add Host/Origin check
 
       if (req.method !== 'POST') {
         res.statusCode = 405;
@@ -31,9 +34,13 @@ export class HttpTransport implements TransportInterface {
       req.on('data', (chunk) => {
         data += chunk;
       });
-
       req.on('end', () => {
         try {
+          // Add Lenght check
+          if (Number(req.headers['content-length']) !== data.length) {
+            throw new Error();
+          }
+
           const call = JSON.parse(data);
           this.kernel.handle(call)
             .then((results) => {
@@ -56,7 +63,10 @@ export class HttpTransport implements TransportInterface {
         res.end();
       });
     });
-    this.server.listen(8080);
+    const [ optsPort ] = this.opts;
+    const port = optsPort ? Number(optsPort) : 8080;
+
+    this.server.listen(port);
   }
 
   async down() {

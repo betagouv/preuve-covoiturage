@@ -31,7 +31,7 @@ describe('Http provider', () => {
       200,
       {
         jsonrpc: '2.0',
-        id: null,
+        id: 1,
         result: 'hello world',
       },
       {
@@ -45,7 +45,7 @@ describe('Http provider', () => {
     provider.call('method', { param: true }, { internal: true });
 
     return (<any>expect(nockRequest).to.have.been).requestedWith({
-      id: null,
+      id: 1,
       jsonrpc: '2.0',
       method: 'service@latest:method',
       params: {
@@ -67,7 +67,7 @@ describe('Http provider', () => {
       200,
       {
         jsonrpc: '2.0',
-        id: null,
+        id: 1,
         result: 'hello world',
       },
       {
@@ -94,7 +94,7 @@ describe('Http provider', () => {
       500,
       {
         jsonrpc: '2.0',
-        id: null,
+        id: 1,
         result: 'hello world',
       },
       {
@@ -117,7 +117,7 @@ describe('Http provider', () => {
       200,
       {
         jsonrpc: '2.0',
-        id: null,
+        id: 1,
         error: {
           message: 'wrong!',
         },

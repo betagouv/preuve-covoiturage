@@ -36,7 +36,7 @@ export class HttpProvider implements ServiceProviderInterface {
           params,
           _context: context,
         },
-        id: null,
+        id: 1,
         method: resolveMethodFromObject({
           method,
           service: this.signature,

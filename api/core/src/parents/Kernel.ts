@@ -86,7 +86,7 @@ export abstract class Kernel implements KernelInterface {
     return this.providerRegistry.get(name);
   }
 
-  public async up(transportConstructor: TransportConstructorInterface, opts?: object) {
+  public async up(transportConstructor: TransportConstructorInterface, opts?: string[]) {
     this.transport = new transportConstructor(this, opts);
     return this.transport.up();
   }
@@ -97,6 +97,11 @@ export abstract class Kernel implements KernelInterface {
 
   protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType> {
     try {
+      const keys = Reflect.ownKeys(call).filter((k: string) => ['jsonrpc', 'method', 'id', 'params'].indexOf(k) < 0);
+      if (keys.length > 0) {
+        throw new InvalidRequestException('Illegal property');
+      }
+
       if (!('jsonrpc' in call) || call.jsonrpc !== '2.0') {
         throw new InvalidRequestException('jsonrpc must be equal to 2.0');
       }
@@ -115,7 +120,19 @@ export abstract class Kernel implements KernelInterface {
         throw new MethodNotFoundException(`Unknown service ${service}`);
       }
 
-      const response = await this.serviceRegistry.get(service).call(method, call.params, null);
+      let context = null;
+      let params = null;
+
+      if ('params' in call) {
+        params = call.params;
+        if ('_context' in call.params) {
+          context = call.params._context;
+          params = call.params.params;
+        }
+      }
+
+      const response = await this.serviceRegistry.get(service).call(method, params, context);
+
       return {
         id: call.id,
         result: response,
