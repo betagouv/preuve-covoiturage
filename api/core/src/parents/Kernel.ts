@@ -15,8 +15,8 @@ import { CommandInterface } from '../interfaces/CommandInterface';
 import { resolveMethodFromString } from '../helpers/resolveMethod';
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
-import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
-import { InvalidRequestException } from '../Exceptions/InvalidRequestException';
+import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
+import { InvalidRequestException } from '../exceptions/InvalidRequestException';
 import { CommandConstructorInterface } from '../interfaces/CommandConstructorInterface';
 
 export abstract class Kernel implements KernelInterface {

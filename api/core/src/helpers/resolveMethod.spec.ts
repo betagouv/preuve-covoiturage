@@ -1,7 +1,7 @@
 import { describe } from 'mocha';
 import { expect, assert } from 'chai';
 
-import { MethodNotFoundException } from '../Exceptions/MethodNotFoundException';
+import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 import { resolveMethodFromString, resolveMethodFromObject } from './resolveMethod';
 
 describe('Helpers: resolve method', () => {

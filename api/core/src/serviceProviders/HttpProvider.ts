@@ -6,7 +6,7 @@ import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 import { resolveMethodFromObject } from '../helpers/resolveMethod';
-import { ServiceException } from '../Exceptions/ServiceException';
+import { ServiceException } from '../exceptions/ServiceException';
 
 export class HttpProvider implements ServiceProviderInterface {
   readonly signature: string;
