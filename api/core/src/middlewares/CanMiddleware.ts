@@ -1,23 +1,22 @@
-import { MiddlewareInterface } from "~/interfaces/MiddlewareInterface";
-import { CallType } from "~/types/CallType";
-import { ForbiddenException } from "~/Exceptions/ForbiddenException";
+import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
+import { CallType } from '~/types/CallType';
+import { ForbiddenException } from '~/Exceptions/ForbiddenException';
 
-export function CanMiddleware(methodPerms: string[] = []) {
-    return async <MiddlewareInterface>(call: CallType, next: Function) => {
-        const { permissions } = call.context.user;
+// tslint:disable-next-line
+export function CanMiddleware(methodPerms: string[] = []): MiddlewareInterface {
+  return async (call: CallType, next: Function): Promise<void> => {
+    const { permissions } = call.context.user;
 
-        if (methodPerms.length !== permissions.length) {
-            throw new ForbiddenException('Invalid permissions');
-        }
-
-        const pass = methodPerms.reduce((p, c) => {
-            return p && (permissions || []).indexOf(c) > -1;
-        }, true);
-
-        if (!pass) {
-            throw new ForbiddenException('Invalid permissions');
-        }
-
-        await next();
+    if (methodPerms.length !== permissions.length) {
+      throw new ForbiddenException('Invalid permissions');
     }
+
+    const pass = methodPerms.reduce((p, c) => p && (permissions || []).indexOf(c) > -1, true);
+
+    if (!pass) {
+      throw new ForbiddenException('Invalid permissions');
+    }
+
+    await next();
+  };
 }
