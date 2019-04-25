@@ -9,18 +9,18 @@ import { EnvProvider } from '../providers/EnvProvider';
 export class QueueTransport implements TransportInterface {
   queues: Queue[] = [];
   kernel: KernelInterface;
-  services: string[];
+  opts: string[];
 
-  constructor(kernel: KernelInterface, options: { services: string[] }) {
+  constructor(kernel: KernelInterface, opts: string[] = []) {
     this.kernel = kernel;
-    this.services = options.services;
+    this.opts = opts;
   }
 
   async up() {
     const redisUrl = (<ConfigProvider>this.kernel.get('config')).get('redisUrl');
     const env = (<EnvProvider>this.kernel.get('env')).get('NODE_ENV');
 
-    this.services.forEach((signature) => {
+    this.opts.forEach((signature) => {
       const queue = bullFactory(`${env}-${signature}`, redisUrl);
       this.queues.push(queue);
       queue.process(job => this.kernel.handle({

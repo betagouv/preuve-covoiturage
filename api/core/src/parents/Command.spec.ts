@@ -32,7 +32,6 @@ describe('Queue provider', () => {
         { signature: '-h, --hi', description: 'hi' },
       ];
       public async call(name, opts):Promise<ResultType> {
-        console.log('I have been called', { name, opts });
         if (name === 'crash') {
           throw new Error();
         }
@@ -58,7 +57,8 @@ describe('Queue provider', () => {
       expect(data).to.equal('Hello john!');
       done();
     });
-    console.log(kernel.get().parse(['', '', 'hello', 'john']));
+
+    command.commander.parse(['', '', 'hello', 'john']);
   });
 });
 

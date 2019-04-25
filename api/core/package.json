@@ -9,24 +9,26 @@
     "serve": "node dist/kernel.js",
     "watch-node": "nodemon dist/kernel.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
-    "test": "mocha",
-    "coverage": "nyc --all --reporter=text mocha",
+    "test": "mocha src/**/*.spec.ts",
+    "test:integration": "mocha tests/**/*.spec.ts",
+    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts tests/**/*.spec.ts",
     "watch-test": "yarn test -- --watchAll",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "debug": "yarn build && yarn watch-debug",
     "serve-debug": "nodemon --inspect dist/kernel.js",
-    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\""
+    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
+    "cli": "ts-node ./src/Cli.ts"
   },
   "bin": {
     "cli": "./dist/Cli.js"
   },
   "mocha": {
     "require": [
-      "ts-node/register"
-    ],
-    "spec": "src/**/*.spec.ts"
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
   },
   "nyc": {
     "include": [
@@ -69,6 +71,7 @@
     "sinon": "^7.3.2",
     "supertest": "^4.0.2",
     "ts-node": "^8.1.0",
+    "tsconfig-paths": "^3.8.0",
     "tslint": "^5.15.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-eslint-rules": "^5.4.0",

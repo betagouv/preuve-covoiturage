@@ -16,7 +16,7 @@ export abstract class Command implements CommandInterface {
 
   constructor(kernel: KernelInterface) {
     this.kernel = kernel;
-    this.commander = (<CommandProvider>kernel.get('commander'));
+    this.commander = (<CommandProvider>kernel.get('command'));
   }
 
   public boot() {

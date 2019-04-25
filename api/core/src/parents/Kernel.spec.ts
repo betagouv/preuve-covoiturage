@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 
 import { Kernel } from './Kernel';
-import { Provider } from './Provider';
+import { ServiceProvider } from './ServiceProvider';
 import { Action } from './Action';
 
 chai.use(chaiAsPromised);
@@ -32,7 +32,7 @@ class ProviderBasedAction extends Action {
     return (<any>this.kernel.get('config')).response;
   }
 }
-class BasicServiceProvider extends Provider {
+class BasicServiceProvider extends ServiceProvider {
   public readonly signature: string = 'math';
   actions = [BasicAction, ProviderBasedAction];
 }

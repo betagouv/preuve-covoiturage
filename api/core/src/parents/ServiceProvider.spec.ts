@@ -3,7 +3,7 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { Provider } from './Provider';
+import { ServiceProvider } from './ServiceProvider';
 import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
@@ -44,7 +44,7 @@ describe('Provider', () => {
       }
     }
 
-    class BasicProvider extends Provider {
+    class BasicProvider extends ServiceProvider {
       protected actions = [BasicAction];
     }
 
@@ -55,7 +55,7 @@ describe('Provider', () => {
   });
 
   it('should raise an error if no action is unknown', async () => {
-    class BasicProvider extends Provider {
+    class BasicProvider extends ServiceProvider {
       protected actions = [];
     }
 

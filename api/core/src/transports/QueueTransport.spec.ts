@@ -55,7 +55,7 @@ describe('Queue provider', () => {
     sandbox.restore();
   });
   it('works', async () => {
-    const queueTransport = new QueueTransport(kernel, { services: ['hello'] });
+    const queueTransport = new QueueTransport(kernel, ['hello']);
     await queueTransport.up();
     expect(queueTransport.queues.length).to.equal(1);
     expect(queueTransport.queues[0].name).to.equal('prod-hello');
