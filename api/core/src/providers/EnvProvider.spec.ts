@@ -16,6 +16,8 @@ const kernel = {
     };
   },
   get() { throw new Error(); },
+  async up() { return; },
+  async down() { return; },
 };
 
 describe('Env provider', () => {

@@ -21,6 +21,8 @@ const kernel = {
     };
   },
   get() { return this.env; },
+  async up() { return; },
+  async down() { return; },
 };
 
 kernel.boot();
@@ -38,6 +40,8 @@ describe('Config provider', () => {
         };
       },
       get() { throw new Error(); },
+      async up() { return; },
+      async down() { return; },
     });
     return expect(() => configProvider.boot()).to.throws(Error, '');
   });

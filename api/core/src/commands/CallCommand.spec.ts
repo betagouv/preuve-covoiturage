@@ -26,6 +26,8 @@ const kernel = {
     }
     return this.commander;
   },
+  async up() { return; },
+  async down() { return; },
 };
 
 describe('Command: Call', () => {
