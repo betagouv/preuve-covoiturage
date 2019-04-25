@@ -6,6 +6,7 @@ import { ServiceProviderConstructorInterface } from './ServiceProviderConstructo
 import { ProviderConstructorInterface } from './ProviderConstructorInterface';
 import { CommandConstructorInterface } from './CommandConstructorInterface';
 import { ProviderInterface } from './ProviderInterface';
+import { TransportConstructorInterface } from './TransportConstructorInterface';
 
 export interface KernelInterface {
   services: ServiceProviderConstructorInterface[];
@@ -15,4 +16,7 @@ export interface KernelInterface {
   boot():Promise<void> | void;
   handle(call: RPCCallType): Promise<RPCResponseType>;
   get(name: string):ProviderInterface;
+
+  up(transportConstructor: TransportConstructorInterface, opts?: string[]): Promise<void>;
+  down(): Promise<void>;
 }

@@ -28,6 +28,8 @@ describe('Http kernel', () => {
         return response;
       },
       get() { throw new Error(); },
+      async up() { return; },
+      async down() { return; },
     };
     httpTransport = new HttpTransport(kernel);
 

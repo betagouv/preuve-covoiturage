@@ -33,6 +33,12 @@ const kernel = {
       };
     }
   },
+  async up() {
+    return;
+  },
+  async down() {
+    return;
+  },
 };
 
 const sandbox = sinon.createSandbox();
