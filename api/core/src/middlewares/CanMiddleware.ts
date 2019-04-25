@@ -5,6 +5,11 @@ import { ForbiddenException } from '~/Exceptions/ForbiddenException';
 // tslint:disable-next-line
 export function CanMiddleware(methodPerms: string[] = []): MiddlewareInterface {
   return async (call: CallType, next: Function): Promise<void> => {
+    // no defined method permissions is a pass
+    if (!methodPerms.length) {
+      return next();
+    }
+
     const { permissions } = call.context.user;
 
     if (methodPerms.length !== permissions.length) {

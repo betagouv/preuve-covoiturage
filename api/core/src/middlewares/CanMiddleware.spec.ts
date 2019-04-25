@@ -47,6 +47,21 @@ describe('can middleware', () => {
     await expect(mw(call, noop)).to.become(undefined);
   });
 
+  it('works: no method permissions', async () => {
+    const permissions: string[] = ['test.ok', 'whatever'];
+    const call: CallType = callFactory(permissions);
+    const mw: MiddlewareInterface = CanMiddleware();
+
+    await expect(mw(call, noop)).to.be.become(undefined);
+  });
+
+  it('fails: no user permissions', async () => {
+    const call: CallType = callFactory([]);
+    const mw: MiddlewareInterface = CanMiddleware(['test.ok']);
+
+    await expect(mw(call, noop)).to.be.rejectedWith(ForbiddenException);
+  });
+
   it('fails: different permission', async () => {
     const permissions: string[] = ['test.ok'];
     const call: CallType = callFactory(permissions);
