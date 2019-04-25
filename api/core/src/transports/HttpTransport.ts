@@ -16,10 +16,10 @@ export class HttpTransport implements TransportInterface {
   async up() {
     this.server = http.createServer((req, res) => {
       if (
-          !('content-type' in req.headers && 'accept' in req.headers)
-          || (req.headers['content-type'] !== 'application/json')
-          || (req.headers.accept !== 'application/json')
-        ) {
+        !('content-type' in req.headers && 'accept' in req.headers)
+        || (req.headers['content-type'] !== 'application/json')
+        || (req.headers.accept !== 'application/json')
+      ) {
         res.statusCode = 415;
         res.end('Wrong content type header');
       }
@@ -63,7 +63,7 @@ export class HttpTransport implements TransportInterface {
         res.end();
       });
     });
-    const [ optsPort ] = this.opts;
+    const [optsPort] = this.opts;
     const port = optsPort ? Number(optsPort) : 8080;
 
     this.server.listen(port);

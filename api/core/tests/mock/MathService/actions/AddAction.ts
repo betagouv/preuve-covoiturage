@@ -6,19 +6,18 @@ import { ResultType } from '~/types/ResultType';
 import { InvalidParamsException } from '~/Exceptions/InvalidParamsException';
 
 export class AddAction extends Action {
-    public readonly signature: string = 'add';
+  public readonly signature: string = 'add';
 
-    protected middlewares: MiddlewareInterface[] = [];
+  protected middlewares: MiddlewareInterface[] = [];
 
-    protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
-      if (!Array.isArray(params)) {
-        throw new InvalidParamsException();
-      }
-      let result = 0;
-      params.forEach((add: number) => {
-          result += add;
-      });
-      return result;
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
+    if (!Array.isArray(params)) {
+      throw new InvalidParamsException();
     }
-  
+    let result = 0;
+    params.forEach((add: number) => {
+      result += add;
+    });
+    return result;
+  }
 }

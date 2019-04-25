@@ -3,12 +3,13 @@ import { describe } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
+import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
+
 import { Action } from './Action';
 import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 
 chai.use(chaiAsPromised);
 const kernel = {
