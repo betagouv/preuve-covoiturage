@@ -77,8 +77,8 @@ workflows:
   version: 1
   backend-tests:
     jobs:
-      #      - api-js
+      - api-js
       - api-core
-#  frontend-tests:
-#    jobs:
-#      - front-angular
+  frontend-tests:
+    jobs:
+      - front-angular
