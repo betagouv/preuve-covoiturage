@@ -37,8 +37,6 @@ export class IncentiveTimeFilterComponent implements OnInit {
   ngOnInit(): void {
     this.filter = this.config.data.filter;
 
-    console.log('filter', this.filter);
-
     if (this.config.data && 'value' in this.config.data) {
       const value = this.config.data.value;
       if (value.length > 0) {

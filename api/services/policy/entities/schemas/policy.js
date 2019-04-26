@@ -38,6 +38,24 @@ const IncentivePolicySchema = new Schema({
     rank: [{
       type: String,
     }],
+    insee: {
+      whiteList: {
+        start: [{
+          type: String,
+        }],
+        end: [{
+          type: String,
+        }],
+      },
+      blackList: {
+        start: [{
+          type: String,
+        }],
+        end: [{
+          type: String,
+        }],
+      },
+    },
   },
   parameters: [ParameterSchema],
   formula: {

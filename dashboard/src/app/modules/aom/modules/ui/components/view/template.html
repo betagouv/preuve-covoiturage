@@ -29,9 +29,9 @@
       </div>
 
       <div class="p-col-12">
-        <p-fieldset legend="Contacts">
+        <p-fieldset legend="Contacts" *ngIf="aom.contacts.rgpd_controller || aom.contacts.rgpd_dpo || aom.contacts.technical">
           <div class="p-grid">
-            <div class="p-col-12">
+            <div class="p-col-12"  *ngIf="aom.contacts.rgpd_controller">
               <p-fieldset legend="Responsable de traitement">
                 <div class="p-grid">
                   <div class="p-col-12 p-md-4">
@@ -63,7 +63,7 @@
                 </div>
               </p-fieldset>
             </div>
-            <div class="p-col-12">
+            <div class="p-col-12"  *ngIf="aom.contacts.rgpd_dpo">
               <p-fieldset legend="Délégué à la protection des données">
                 <div class="p-grid">
                   <div class="p-col-12 p-md-4">
@@ -95,7 +95,7 @@
                 </div>
               </p-fieldset>
             </div>
-            <div class="p-col-12">
+            <div class="p-col-12"  *ngIf="aom.contacts.technical">
               <p-fieldset legend="Responsable technique">
                 <div class="p-grid">
                   <div class="p-col-12 p-md-4">

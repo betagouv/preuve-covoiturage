@@ -50,6 +50,6 @@ export class WeekDayFilter {
 
   public static toString(data):string {
     const weekdaystring = data.map(wd => WeekDayFilter.weekdays.find(lb => lb.key === wd)).map(wd => wd.label).join(', ');
-    return `Les trajets effectué le : ${weekdaystring}`;
+    return `Les trajets effectués le : ${weekdaystring}`;
   }
 }

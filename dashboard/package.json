@@ -8,6 +8,7 @@
     "build": "ng build --configuration=$NODE_ENV",
     "test": "ng test",
     "lint": "ng lint",
+    "do-nothing": "echo 'do-nothing worker script'",
     "e2e": "ng e2e"
   },
   "private": true,
