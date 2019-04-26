@@ -1,7 +1,3 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2.1
 jobs:
   api-js:
@@ -26,7 +22,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      # - run: yarn lint
+      - run: yarn lint
       - run: yarn seed
       - run: yarn test
 
@@ -47,9 +43,30 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn test
 
+  front-angular:
+    docker:
+      - image: circleci/node:8
+    working_directory: ~/repo/dashboard
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn lint
+      - run: yarn build --configuration=production
+
 workflows:
   version: 1
   backend-tests:
     jobs:
       - api-js
       - api-core
+  frontend-tests:
+    jobs:
+      - front-angular
