@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  "api/core":
     docker:
       - image: circleci/node:8
       # - image: circleci/mongo:4.0
