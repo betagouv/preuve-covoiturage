@@ -12,9 +12,7 @@ import { ServiceProvider as MathServiceProvider } from './mock/MathService/Servi
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
 class MathKernel extends Kernel {
-  services: ServiceProviderConstructorInterface[] = [
-    MathServiceProvider,
-  ];
+  services: ServiceProviderConstructorInterface[] = [MathServiceProvider];
 }
 
 class StringKernel extends Kernel {
@@ -27,7 +25,7 @@ class StringKernel extends Kernel {
 let mathKernel: KernelInterface;
 let stringKernel: KernelInterface;
 
-function makeRPCCall(port: number, req: { method: string, params?: any }[]) {
+function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
   let data;
 
   if (req.length === 1) {
@@ -39,7 +37,7 @@ function makeRPCCall(port: number, req: { method: string, params?: any }[]) {
     };
   } else {
     data = [];
-    for (const i in req) {
+    for (const i of Object.keys(req)) {
       data.push({
         jsonrpc: '2.0',
         method: req[i].method,
@@ -55,7 +53,7 @@ function makeRPCCall(port: number, req: { method: string, params?: any }[]) {
     },
   });
 }
-describe(('Http only integration'), (() => {
+describe('Http only integration', () => {
   before(async () => {
     mathKernel = new MathKernel();
     await mathKernel.boot();
@@ -72,14 +70,18 @@ describe(('Http only integration'), (() => {
   });
 
   it('should works', async () => {
-    const responseMath = await makeRPCCall(8080, [{ method: 'math:add', params: [1, 1] }]);
+    const responseMath = await makeRPCCall(8080, [
+      { method: 'math:add', params: [1, 1] },
+    ]);
     expect(responseMath.data).to.deep.equal({
       jsonrpc: '2.0',
       id: 0,
       result: 2,
     });
 
-    const responseString = await makeRPCCall(8081, [{ method: 'string:hello', params: { name: 'sam' } }]);
+    const responseString = await makeRPCCall(8081, [
+      { method: 'string:hello', params: { name: 'sam' } },
+    ]);
     expect(responseString.data).to.deep.equal({
       jsonrpc: '2.0',
       id: 0,
@@ -88,7 +90,9 @@ describe(('Http only integration'), (() => {
   });
 
   it('should works with internal service call', async () => {
-    const response = await makeRPCCall(8081, [{ method: 'string:result', params: { name: 'sam', add: [1, 1] } }]);
+    const response = await makeRPCCall(8081, [
+      { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
+    ]);
     expect(response.data).to.deep.equal({
       jsonrpc: '2.0',
       id: 0,
@@ -114,4 +118,4 @@ describe(('Http only integration'), (() => {
       },
     ]);
   });
-}));
+});
