@@ -52,8 +52,9 @@ jobs:
           command: |
             ./cc-test-reporter before-build
             yarn coverage-ci
-            ./cc-test-reporter format-coverage -t lcov --prefix /repo/api/core
-            ./cc-test-reporter upload-coverage --exit-code $?
+            ./cc-test-reporter after-build --exit-code $?
+#            ./cc-test-reporter format-coverage -t lcov --prefix /repo/api/core
+#            ./cc-test-reporter upload-coverage --exit-code $?
 
   front-angular:
     docker:
