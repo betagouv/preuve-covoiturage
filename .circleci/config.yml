@@ -31,16 +31,16 @@ jobs:
       - image: circleci/node:8
     working_directory: ~/repo/api/core
     steps:
-      - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
       - checkout:
           path: ~/repo
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
       - run: yarn
       - save_cache:
           paths:
