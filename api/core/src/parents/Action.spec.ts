@@ -3,6 +3,8 @@ import { describe } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
+import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
+
 import { Action } from './Action';
 import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
@@ -86,7 +88,7 @@ describe('Action', () => {
 
   it('should work with ordered middleware', async () => {
     class BasicAction extends Action {
-      protected middlewares = [async (call: CallType, next: Function) => {
+      protected middlewares: MiddlewareInterface[] = [async (call: CallType, next: Function) => {
         await next();
         call.result = `hello ${call.result}?`;
       }, async (call: CallType, next: Function) => {

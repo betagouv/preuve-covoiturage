@@ -1,166 +1,178 @@
 {
-    "extends": ["tslint-config-airbnb", "tslint-eslint-rules", "tslint-import-group-ordering"],
-    "rules": {
-      "arrow-return-shorthand": true,
-      "callable-types": true,
-      "class-name": true,
-      "deprecation": {
-        "severity": "warn"
-      },
-      "forin": true,
-      "import-spacing": true,
-      "member-ordering": [
-        true,
-        {
-          "order": ["public-static-field", "public-instance-field", "public-static-method", "public-instance-method"]
-        }
-      ],
-      "no-arg": true,
-      "no-bitwise": true,
-      "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
-      "no-debugger": true,
-      "no-duplicate-super": true,
-      "no-empty": true,
-      "no-empty-interface": true,
-      "no-inferrable-types": [true, "ignore-params"],
-      "no-misused-new": true,
-      "no-non-null-assertion": true,
-      "no-shadowed-variable": true,
-      "no-string-throw": true,
-      "no-switch-case-fall-through": true,
-      "no-trailing-whitespace": true,
-      "no-unnecessary-initializer": true,
-      "no-unused-expression": true,
-      "no-use-before-declare": true,
-      "quotemark": [true, "single", "avoid-escape", "jsx-double"],
-      "typedef-whitespace": [
-        true,
-        {
-          "call-signature": "nospace",
-          "index-signature": "nospace",
-          "parameter": "nospace",
-          "property-declaration": "nospace",
-          "variable-declaration": "nospace"
-        }
-      ],
-      "unified-signatures": true,
-      "variable-name": [true, "check-format", "ban-keywords", "allow-leading-underscore"],
-      "no-this-assignment": [
-        true,
-        {
-          "allowed-names": ["^self$"],
-          "allow-destructuring": true
-        }
-      ],
-      "prefer-for-of": true,
-      "ban-comma-operator": true,
-      "no-duplicate-switch-case": true,
-      "no-invalid-template-strings": true,
-      "prefer-object-spread": true,
-      "use-default-type-parameter": true,
-      "max-classes-per-file": [true, 2],
-      "no-default-export": true,
-      "array-type": [true, "array"],
-      "encoding": true,
-      "new-parens": true,
-      "no-irregular-whitespace": true,
-      "no-redundant-jsdoc": true,
-      "no-unnecessary-callback-wrapper": true,
-      "prefer-method-signature": true,
-      "prefer-template": [true, "allow-single-concat"],
-      "no-duplicate-parameter-names": true,
-      "no-typeof-undefined": true,
-      "no-unnecessary-override": true,
-      "prefer-type-cast": true,
-      "no-accessor-recursion": true,
-      "no-collapsible-if": true,
-      "no-unnecessary-else": true,
-      "no-else-after-return": [true, "allow-else-if"],
-      "no-static-this": true,
-      "no-sparse-arrays": true,
-      "ban": true,
-      "no-invalid-this": true,
-      "no-duplicate-variable": true,
-      "linebreak-style": [true, "LF"],
-      "no-consecutive-blank-lines": [true, 2],
-      "no-conditional-assignment": true,
-      "no-constant-condition": true,
-      "no-control-regex": true,
-      "no-duplicate-case": true,
-      "no-empty-character-class": true,
-      "no-ex-assign": true,
-      "no-extra-boolean-cast": true,
-      "no-extra-semi": true,
-      "no-inner-declarations": [true, "functions"],
-      "no-invalid-regexp": true,
-      "no-regex-spaces": true,
-      "no-unexpected-multiline": true,
-      "no-unsafe-finally": true,
-      "use-isnan": true,
-      "no-multi-spaces": true,
-      "ter-no-proto": true,
-      "ter-no-script-url": true,
-      "ter-no-self-compare": true,
-      "block-spacing": [true, "always"],
-      "ter-computed-property-spacing": [true, "never"],
-      "ter-func-call-spacing": [true, "never"],
-      "ter-padded-blocks": [
-        true,
-        {
-          "blocks": "never",
-          "classes": "never",
-          "switches": "never"
-        }
-      ],
-      "ter-no-tabs": true,
-      "ter-arrow-body-style": [
-        true,
-        "as-needed",
-        {
-          "requireReturnForObjectLiteral": false
-        }
-      ],
-      "no-parameter-reassignment": true,
-      "max-line-length": [true, 140],
-      "no-return-await": true,
-      "promise-function-async": true,
-      "no-implicit-dependencies": [true, "dev", ["~"]],
-      "prefer-conditional-expression": true,
-      "newline-per-chained-call": false,
-      "import-group-ordering": {
-        "severity": "warning",
-        "options": {
-          "imports-groups": [
-            {
-              "name": "dependencies"
-            },
-            {
-              "name": "common"
-            },
-            {
-              "name": "other"
-            }
-          ],
-          "matching-rules": [
-            {
-              "type": "project",
-              "matches": "^~",
-              "imports-group": "common"
-            },
-            {
-              "type": "dependencies",
-              "imports-group": "dependencies",
-              "disable-native-nodejs-modules": true,
-              "from-package.json": true
-            },
-            {
-              "type": "project",
-              "matches": "^\\.",
-              "imports-group": "other"
-            }
-          ]
-        }
+  "extends": [
+    "tslint-config-airbnb",
+    "tslint-eslint-rules",
+    "tslint-import-group-ordering"
+  ],
+  "rules": {
+    "arrow-return-shorthand": true,
+    "callable-types": true,
+    "class-name": true,
+    "deprecation": {
+      "severity": "warn"
+    },
+    "forin": true,
+    "import-spacing": true,
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "public-static-field",
+          "public-instance-field",
+          "public-static-method",
+          "public-instance-method"
+        ]
+      }
+    ],
+    "no-arg": true,
+    "no-bitwise": true,
+    "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
+    "no-debugger": true,
+    "no-duplicate-super": true,
+    "no-empty": true,
+    "no-empty-interface": true,
+    "no-inferrable-types": [true, "ignore-params"],
+    "no-misused-new": true,
+    "no-non-null-assertion": true,
+    "no-shadowed-variable": true,
+    "no-string-throw": true,
+    "no-switch-case-fall-through": true,
+    "no-trailing-whitespace": true,
+    "no-unnecessary-initializer": true,
+    "no-unused-expression": true,
+    "no-use-before-declare": true,
+    "quotemark": [true, "single", "avoid-escape", "jsx-double"],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ],
+    "unified-signatures": true,
+    "variable-name": [
+      true,
+      "check-format",
+      "ban-keywords",
+      "allow-leading-underscore"
+    ],
+    "no-this-assignment": [
+      true,
+      {
+        "allowed-names": ["^self$"],
+        "allow-destructuring": true
+      }
+    ],
+    "prefer-for-of": true,
+    "ban-comma-operator": true,
+    "no-duplicate-switch-case": true,
+    "no-invalid-template-strings": true,
+    "prefer-object-spread": true,
+    "use-default-type-parameter": true,
+    "max-classes-per-file": [true, 2],
+    "no-default-export": true,
+    "array-type": [true, "array"],
+    "encoding": true,
+    "new-parens": true,
+    "no-irregular-whitespace": true,
+    "no-redundant-jsdoc": true,
+    "no-unnecessary-callback-wrapper": true,
+    "prefer-method-signature": true,
+    "prefer-template": [true, "allow-single-concat"],
+    "no-duplicate-parameter-names": true,
+    "no-typeof-undefined": true,
+    "no-unnecessary-override": true,
+    "prefer-type-cast": true,
+    "no-accessor-recursion": true,
+    "no-collapsible-if": true,
+    "no-unnecessary-else": true,
+    "no-else-after-return": [true, "allow-else-if"],
+    "no-static-this": true,
+    "no-sparse-arrays": true,
+    "ban": true,
+    "no-invalid-this": true,
+    "no-duplicate-variable": true,
+    "linebreak-style": [true, "LF"],
+    "no-consecutive-blank-lines": [true, 2],
+    "no-conditional-assignment": true,
+    "no-constant-condition": true,
+    "no-control-regex": true,
+    "no-duplicate-case": true,
+    "no-empty-character-class": true,
+    "no-ex-assign": true,
+    "no-extra-boolean-cast": true,
+    "no-extra-semi": true,
+    "no-inner-declarations": [true, "functions"],
+    "no-invalid-regexp": true,
+    "no-regex-spaces": true,
+    "no-unexpected-multiline": true,
+    "no-unsafe-finally": true,
+    "use-isnan": true,
+    "no-multi-spaces": true,
+    "ter-no-proto": true,
+    "ter-no-script-url": true,
+    "ter-no-self-compare": true,
+    "block-spacing": [true, "always"],
+    "ter-computed-property-spacing": [true, "never"],
+    "ter-func-call-spacing": [true, "never"],
+    "ter-padded-blocks": [
+      true,
+      {
+        "blocks": "never",
+        "classes": "never",
+        "switches": "never"
+      }
+    ],
+    "ter-no-tabs": true,
+    "ter-arrow-body-style": [
+      true,
+      "as-needed",
+      {
+        "requireReturnForObjectLiteral": false
+      }
+    ],
+    "no-parameter-reassignment": true,
+    "max-line-length": [true, 140],
+    "no-return-await": true,
+    "promise-function-async": true,
+    "no-implicit-dependencies": [true, "dev", ["~"]],
+    "prefer-conditional-expression": true,
+    "newline-per-chained-call": false,
+    "import-group-ordering": {
+      "severity": "warning",
+      "options": {
+        "imports-groups": [
+          {
+            "name": "dependencies"
+          },
+          {
+            "name": "common"
+          },
+          {
+            "name": "other"
+          }
+        ],
+        "matching-rules": [
+          {
+            "type": "project",
+            "matches": "^~",
+            "imports-group": "common"
+          },
+          {
+            "type": "dependencies",
+            "imports-group": "dependencies",
+            "from-package.json": true
+          },
+          {
+            "type": "project",
+            "matches": "^\\.",
+            "imports-group": "other"
+          }
+        ]
       }
     }
   }
-  
+}
