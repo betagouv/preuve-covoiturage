@@ -47,3 +47,9 @@ jobs:
     working_directory: ~/repo/api/core
     steps:
       - run: yarn test
+
+workflows:
+  version: 1
+  api-core:
+    jobs:
+      - api-core
