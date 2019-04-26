@@ -12,7 +12,7 @@ module.exports = [
     } else {
       // change limit and skip values for CSV export
       req.query.limit = _.get(req, 'query.limit', 1000);
-      req.query.skip = _.get(req, 'query.skip', 1000);
+      req.query.skip = _.get(req, 'query.skip', 0);
 
       next();
     }
