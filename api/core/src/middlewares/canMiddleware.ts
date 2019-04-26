@@ -1,6 +1,6 @@
 import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 import { CallType } from '~/types/CallType';
-import { ForbiddenException } from '~/Exceptions/ForbiddenException';
+import { ForbiddenException } from '~/exceptions/ForbiddenException';
 
 export function canMiddleware(methodPerms: string[] = []): MiddlewareInterface {
   return async (call: CallType, next: Function): Promise<void> => {

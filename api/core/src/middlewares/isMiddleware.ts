@@ -1,7 +1,7 @@
 import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 import { CallType } from '~/types/CallType';
-import { ForbiddenException } from '~/Exceptions/ForbiddenException';
-import { InvalidParamsException } from '~/Exceptions/InvalidParamsException';
+import { ForbiddenException } from '~/exceptions/ForbiddenException';
+import { InvalidParamsException } from '~/exceptions/InvalidParamsException';
 import { reduceRoles } from '~/helpers/reducers/reduceRoles';
 
 export function isMiddleware(...roles: string[]): MiddlewareInterface {

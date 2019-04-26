@@ -6,7 +6,7 @@ import { CallType } from '~/types/CallType';
 import { ContextType } from '~/types/ContextType';
 import { ParamsType } from '~/types/ParamsType';
 import { ResultType } from '~/types/ResultType';
-import { ForbiddenException } from '~/Exceptions/ForbiddenException';
+import { ForbiddenException } from '~/exceptions/ForbiddenException';
 
 import { isAdminMiddleware } from './isAdminMiddleware';
 
@@ -30,7 +30,7 @@ const callFactory = (group: string, role: string): CallType => ({
   result: <ResultType>null,
 });
 
-describe('is middleware', () => {
+describe('isAdmin middleware', () => {
   it('works: super admin', async () => {
     const call: CallType = callFactory('registry', 'admin');
 

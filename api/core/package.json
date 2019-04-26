@@ -38,7 +38,7 @@
       "src/**/*.spec.ts",
       "src/interfaces/**",
       "src/types/**",
-      "src/Exceptions/**"
+      "src/exceptions/**"
     ],
     "extension": [
       ".ts"

@@ -7,7 +7,7 @@ import { ContextType } from '~/types/ContextType';
 import { ParamsType } from '~/types/ParamsType';
 import { ResultType } from '~/types/ResultType';
 import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
-import { ForbiddenException } from '~/Exceptions/ForbiddenException';
+import { ForbiddenException } from '~/exceptions/ForbiddenException';
 
 import { canMiddleware } from './canMiddleware';
 
