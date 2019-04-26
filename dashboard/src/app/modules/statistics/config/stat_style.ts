@@ -91,7 +91,7 @@ export const STAT_STYLE = {
     new StatConfig({
       name: 'classes',
       type: 'doughnut',
-      labels: ['A', 'B', 'C', 'Non validés'],
+      labels: ['A', 'B', 'C'],
       title: 'Nombre de trajets par classes',
       style: {
         backgroundColor: [

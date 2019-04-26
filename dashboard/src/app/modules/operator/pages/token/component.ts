@@ -98,7 +98,6 @@ export class OperatorTokenPageComponent implements OnInit {
   public delete(token: Token) {
     const id = token._id;
     const name = token.name;
-
     this.confirmationService.confirm({
       message: `Etes vous sûr de vouloir supprimer le token du serveur ${name} ?`,
       accept: () => {
