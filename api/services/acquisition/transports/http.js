@@ -20,41 +20,44 @@ const upload = multer({
 
 router.get('/aom', jwtUser, can('journey.list'), async (req, res, next) => {
   try {
-    const aoms = await Journey
-      .aggregate([
-        {
-          $unwind: {
-            path: '$aom',
-            preserveNullAndEmptyArrays: false,
+    const aoms = await Journey.aggregate([
+      {
+        $unwind: {
+          path: '$aom',
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $project: {
+          _id: '$aom._id',
+          name: '$aom.name',
+        },
+      },
+      {
+        $group: {
+          _id: {
+            _id: '$_id',
+            name: '$name',
           },
-        }, {
-          $project: {
-            _id: '$aom._id',
-            name: '$aom.name',
-          },
-        }, {
-          $group: {
-            _id: {
-              _id: '$_id',
-              name: '$name',
-            },
-            count: {
-              $sum: 1,
-            },
-          },
-        }, {
-          $sort: {
-            '_id.name': 1,
+          count: {
+            $sum: 1,
           },
         },
-      ])
-      .exec();
+      },
+      {
+        $sort: {
+          '_id.name': 1,
+        },
+      },
+    ]).exec();
 
-    res.json(aoms.map(aom => ({
-      _id: aom._id._id,
-      name: aom._id.name,
-      count: aom.count,
-    })));
+    res.json(
+      aoms.map(aom => ({
+        _id: aom._id._id,
+        name: aom._id.name,
+        count: aom.count,
+      })),
+    );
   } catch (e) {
     next(e);
   }
@@ -80,7 +83,7 @@ router.delete('/:id', jwtUser, can('journey.delete'), async (req, res, next) => 
   try {
     res.json({
       id: req.params.id,
-      deleted: !!await journeyService.softDelete(req.params.id),
+      deleted: !!(await journeyService.softDelete(req.params.id)),
     });
   } catch (e) {
     next(e);
@@ -101,7 +104,26 @@ router.get('/', jwtUser, ...acceptCsv, can('journey.list'), async (req, res, nex
       req.query.filter = _.assign(req.query.filter, { 'aom._id': aom });
     }
 
-    res.json(await journeyService.find(req.query));
+    if (req.get('Accept') === 'text/csv') {
+      res.setHeader('Content-disposition', 'attachment; filename=journeys.csv');
+      res.writeHead(200, {
+        'Content-Type': 'text/plain',
+        'Transfer-Encoding': 'chunked',
+      });
+      res.flushHeaders();
+
+      const csv = require('csv');
+      const flat = require('flat');
+      const transformer = doc => flat(doc.toJSON());
+
+      Journey.find()
+        .cursor()
+        .pipe(csv.transform(transformer))
+        .pipe(csv.stringify({ header: true }))
+        .pipe(res);
+    } else {
+      res.json(await journeyService.find(req.query));
+    }
   } catch (e) {
     next(e);
   }
@@ -134,21 +156,25 @@ router.post('/push', jwtServer, can('journey.create'), async (req, res, next) =>
   }
 });
 
-router.post('/import', upload.single('csv'), jwtUser, can('journey.import'), async (req, res, next) => {
-  try {
-    // get operator from connected user
-    if (!_.get(req, 'body.operator') && _.get(req, 'user.operator')) {
-      _.set(req, 'body.operator', _.get(req, 'user.operator._id').toString());
+router.post(
+  '/import',
+  upload.single('csv'),
+  jwtUser,
+  can('journey.import'),
+  async (req, res, next) => {
+    try {
+      // get operator from connected user
+      if (!_.get(req, 'body.operator') && _.get(req, 'user.operator')) {
+        _.set(req, 'body.operator', _.get(req, 'user.operator._id').toString());
+      }
+
+      const results = await journeyService.import(req.body, req.file);
+
+      res.status(results.failed.length ? 400 : 200).json(results);
+    } catch (e) {
+      next(e);
     }
-
-    const results = await journeyService.import(req.body, req.file);
-
-    res
-      .status(results.failed.length ? 400 : 200)
-      .json(results);
-  } catch (e) {
-    next(e);
-  }
-});
+  },
+);
 
 module.exports = router;
