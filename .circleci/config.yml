@@ -7,10 +7,10 @@ jobs:
   build:
     docker:
       - image: circleci/node:8
-      - image: circleci/mongo:4.0
-      - image: circleci/redis:4
+      # - image: circleci/mongo:4.0
+      # - image: circleci/redis:4
 
-    working_directory: ~/repo/api
+    working_directory: ~/repo/api/core
 
     parallelism: 1
 
@@ -38,6 +38,6 @@ jobs:
 
       # - run: yarn lint
 
-      - run: yarn seed
+      # - run: yarn seed
 
       - run: yarn test
