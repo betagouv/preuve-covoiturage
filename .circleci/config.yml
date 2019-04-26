@@ -4,38 +4,31 @@
 #
 version: 2.1
 jobs:
-  build:
+  api-js:
     docker:
       - image: circleci/node:8
-      # - image: circleci/mongo:4.0
-      # - image: circleci/redis:4
-
+      - image: circleci/mongo:4.0
+      - image: circleci/redis:4
     working_directory: ~/repo/api
-
     parallelism: 1
-
     environment:
       NODE_ENV: test
       MONGO_URL: mongodb://127.0.0.1:27017/pdc-test
       REDIS_URL: redis://127.0.0.1:6379
-
     steps:
       - checkout:
           path: ~/repo
-
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-
       - run: yarn
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
       # - run: yarn lint
-      # - run: yarn seed
+      - run: yarn seed
+      - run: yarn test
 
   api-core:
     docker:
@@ -56,6 +49,7 @@ jobs:
 
 workflows:
   version: 1
-  api-core:
+  backend-tests:
     jobs:
+      - api-js
       - api-core
