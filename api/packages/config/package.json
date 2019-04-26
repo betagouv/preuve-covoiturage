@@ -4,7 +4,7 @@
   "description": "Configuration loader",
   "main": "config.js",
   "private": true,
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,5 +17,5 @@
     "lodash": "^4.17.11"
   },
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-  "license": "AGPL-3.0"
+  "license": "Apache-2.0"
 }

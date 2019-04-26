@@ -4,7 +4,7 @@
   "description": "Geo utils",
   "main": "geo.js",
   "private": true,
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "scripts": {
     "test": "npx mocha"
   },
@@ -20,5 +20,5 @@
     "mongoose": "^5.4"
   },
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
-  "license": "AGPL-3.0"
+  "license": "Apache-2.0"
 }

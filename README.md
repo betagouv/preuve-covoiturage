@@ -102,3 +102,8 @@ the server on port 27017:
 - [Documentation (French)](https://registre-preuve-de-covoiturage.gitbook.io/produit/)
 - [OpenAPI documentation](https://api-staging.covoiturage.beta.gouv.fr/openapi/)
 
+# License
+
+DINSIC, 2017-2019.
+
+The source code is published under [Apache license 2.0](https://choosealicense.com/licenses/apache-2.0/).
