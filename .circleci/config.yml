@@ -31,6 +31,12 @@ jobs:
       - image: circleci/node:8
     working_directory: ~/repo/api/core
     steps:
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+          # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
       - checkout:
           path: ~/repo
       - restore_cache:
@@ -42,7 +48,13 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn lint
-      - run: yarn test
+      - run:
+          name: yarn tests with coverage
+          command: |
+            ./cc-test-reporter before-build
+            yarn coverage
+            ./cc-test-reporter format-coverage -t lcov --prefix /repo/api/core
+            ./cc-test-reporter upload-coverage --exit-code $?
 
   front-angular:
     docker:
