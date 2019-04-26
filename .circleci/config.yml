@@ -40,6 +40,10 @@ jobs:
       # - run: yarn seed
 
   api-core:
-    working_directory: ~/repo/api
+    docker:
+      - image: circleci/node:8
+      # - image: circleci/mongo:4.0
+      # - image: circleci/redis:4
+    working_directory: ~/repo/api/core
     steps:
       - run: yarn test
