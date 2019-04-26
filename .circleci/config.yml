@@ -2,15 +2,15 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
 jobs:
-  "api/core":
+  build:
     docker:
       - image: circleci/node:8
       # - image: circleci/mongo:4.0
       # - image: circleci/redis:4
 
-    working_directory: ~/repo/api/core
+    working_directory: ~/repo/api
 
     parallelism: 1
 
@@ -29,7 +29,7 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: yarn install
+      - run: yarn
 
       - save_cache:
           paths:
@@ -37,7 +37,9 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # - run: yarn lint
-
       # - run: yarn seed
 
+  api-core:
+    working_directory: ~/repo/api
+    steps:
       - run: yarn test
