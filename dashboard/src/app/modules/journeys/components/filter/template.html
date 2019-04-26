@@ -55,18 +55,20 @@
     </div>
 
     <!-- More filters -->
+
+    <!-- INSEE -->
     <div *ngIf="showMoreFilters" class="p-grid">
       <div class="p-col-4">
         <div class="p-grid">
           <div class="p-col-6">
-            <p class="filter-label">Insee départ</p>
-            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.start.insee')"
-                   [value]="dt.filters['passenger.start.insee'] ? dt.filters['passenger.start.insee'].value : ''">
+            <p class="filter-label">Commune départ</p>
+            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.start.town')"
+                   [value]="dt.filters['passenger.start.town'] ? dt.filters['passenger.start.town'].value : ''">
           </div>
           <div class="p-col-6">
-            <p class="filter-label">Insee arrivée</p>
-            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.end.insee')"
-                   [value]="dt.filters['passenger.end.insee'] ? dt.filters['passenger.end.insee'].value : ''">
+            <p class="filter-label">Commune arrivée</p>
+            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.end.town')"
+                   [value]="dt.filters['passenger.end.town'] ? dt.filters['passenger.end.town'].value : ''">
           </div>
         </div>
       </div>

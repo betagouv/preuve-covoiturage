@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { STAT_MAIN } from '~/modules/statistics/config/stat_main';
+import { MAIN } from '~/config/main';
 
 import { StatisticsService } from '../../services/statisticsService';
 
@@ -15,6 +16,8 @@ export class StatisticsPageComponent implements OnInit {
   apiData = {};
 
   statList = STAT_MAIN.main;
+  gitbookLinkStats = MAIN.gitbookLinkStats;
+
 
   constructor(private statisticsService: StatisticsService) {
   }

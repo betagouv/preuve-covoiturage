@@ -114,7 +114,8 @@ export class JourneyListComponent {
   }
 
   loadLazy(event: LazyLoadEvent) {
-    const filters = this.journeyService.formatFiltersFromLazyEvent(event);
+    const eventBeforeFormat = this.setDefault(event);
+    const filters = this.journeyService.formatFiltersFromLazyEvent(eventBeforeFormat);
     this.get(filters);
   }
 
@@ -165,6 +166,15 @@ export class JourneyListComponent {
         },
       );
   }
+
+  private setDefault(event: LazyLoadEvent) {
+    if (!event.sortField) {
+      event.sortField = 'passenger.start.datetime';
+      event.sortOrder = -1;
+    }
+    return event;
+  }
+
 
   private setTotal(meta) {
     if (meta.hasOwnProperty('pagination')) {

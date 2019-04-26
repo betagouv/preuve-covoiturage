@@ -1,8 +1,8 @@
-/* tslint:disable:variable-name*/
+  /* tslint:disable:variable-name*/
 import { Company } from './company';
 import { Address } from './address';
 import { Bank } from './bank';
-import { Contact } from './contact';
+import { ContactList } from './contactList';
 
 class Operator {
   public _id: string;
@@ -10,7 +10,7 @@ class Operator {
   public nom_commercial: string;
   public raison_sociale: string;
   public company: Company;
-  public contacts: Contact;
+  public contacts: ContactList;
   public bank: Bank;
   public createdAt: string;
   public updatedAt: string;
@@ -22,7 +22,7 @@ class Operator {
     this.raison_sociale = obj && obj.raison_sociale || null;
     this.company = obj && obj.company || new Company();
     this.bank = obj && obj.bank || new Bank();
-    this.contacts = obj && obj.contacts || new Contact();
+    this.contacts = obj && obj.contacts || new ContactList();
     this.createdAt = obj && obj.createdAt || null;
     this.updatedAt = obj && obj.updatedAt || null;
   }

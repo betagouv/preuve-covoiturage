@@ -24,7 +24,7 @@ services:
     volumes:
       - ./api:/code
     working_dir: "/code"
-    command: "nodemon --inspect=0.0.0.0:9229"
+    command: "yarn dev"
     ports:
       - 8080:8080
       - 9229:9229
@@ -42,16 +42,15 @@ services:
     depends_on:
       - mongo
       - redis
-      - worker
 
   worker:
     build: "./docker/api"
     volumes:
       - ./api:/code
     working_dir: "/code"
-    command: "nodemon --inspect=0.0.0.0:9229 src/worker.js"
+    command: "yarn worker-dev"
     ports:
-      - 9230:9229
+      - 9230:9230
     env_file: .env
     environment:
       CONFIG_DIR: '/code/config'
@@ -88,4 +87,3 @@ networks:
   front:
   api:
   back:
-

@@ -5,6 +5,7 @@ import { STAT_MAIN } from '~/modules/statistics/config/stat_main';
 import { AomService } from '~/modules/aom/services/aomService';
 import { AuthenticationService } from '~/applicativeService/authentication/service';
 import { Aom } from '~/entities/database/aom';
+import { MAIN } from '~/config/main';
 
 
 @Component({
@@ -18,8 +19,12 @@ export class AomStatisticsComponent implements OnInit {
   aom: Aom = new Aom();
 
   statList = STAT_MAIN.aom;
+  gitbookLinkStats = MAIN.gitbookLinkStats;
 
-  constructor(private aomService: AomService, private authenticationService: AuthenticationService) {
+  constructor(
+    private aomService: AomService,
+    private authenticationService: AuthenticationService,
+  ) {
   }
 
   ngOnInit(): void {

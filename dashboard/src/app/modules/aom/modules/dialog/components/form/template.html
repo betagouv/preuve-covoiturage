@@ -56,61 +56,14 @@
     </div>
   </div>
 
-  <div class="p-grid ui-fluid" [formGroup]="aomForm.get('contact')">
-    <div class="p-col-12 p-md-2">
-      <label>Téléphone</label>
-    </div>
-    <div class="p-col-12 p-md-4">
-      <input pInputText formControlName="phone">
-    </div>
+  <app-contacts-form [parentForm]="aomForm.get('contacts')" [users]="users"></app-contacts-form>
+  <br>
 
-    <div class="p-col-12 p-md-2">
-      <label>Email</label>
-    </div>
-    <div class="p-col-12 p-md-4">
-      <input type="text" pInputText formControlName="email">
-      <p-message
-          severity="error"
-          [text]="aomFormContact.controls['email'].errors['pattern'] ? 'L\'email est invalide.' : ''"
-          *ngIf="!aomFormContact.controls['email'].valid&&aomFormContact.controls['email'].dirty">
-      </p-message>
-    </div>
-
-    <div class="p-col-12 p-md-4">
-      <label>Délégué(e) à la protection des données</label>
-    </div>
-    <div class="p-col-12 p-md-8">
-      <app-user-dropdown
-          [userId]="aomForm.get('contact').get('rgpd_dpo')"
-      ></app-user-dropdown>
-    </div>
-
-    <div class="p-col-12 p-md-4">
-      <label>Responsable de traitement</label>
-    </div>
-    <div class="p-col-12 p-md-8">
-      <app-user-dropdown
-          [userId]="aomForm.get('contact').get('rgpd_controller')"
-      ></app-user-dropdown>
-    </div>
-
-    <div class="p-col-12 p-md-4">
-      <label>Responsable technique</label>
-    </div>
-
-    <div class="p-col-12 p-md-8">
-      <app-user-dropdown
-          [userId]="aomForm.get('contact').get('technical')"
-      ></app-user-dropdown>
-    </div>
-  </div>
-
-  <app-company-form [parentForm]="aomForm.get('company')"></app-company-form>
+  <app-company-form [parentForm]="aomForm.get('company')" [users]="users"></app-company-form>
   <br/>
 
-  <app-address-form [parentForm]="aomForm.get('address')"></app-address-form>
+  <app-address-form [parentForm]="aomForm.get('address')" [users]="users"></app-address-form>
   <br/>
-
 
   <p-button (onClick)="onSubmit" label="Enregistrer"></p-button>
 </form>

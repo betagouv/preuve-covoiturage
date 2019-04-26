@@ -21,6 +21,11 @@ export const USER_HEADERS = {
     'operator.nom_commercial',
     'aom.name',
   ],
+  sort: [
+    'email',
+    'firstname',
+    'lastname',
+  ],
 
 
 };

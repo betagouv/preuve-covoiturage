@@ -31,21 +31,104 @@
       <div class="p-col-12">
         <p-fieldset legend="Contacts">
           <div class="p-grid">
-            <div class="p-col-12 p-md-4">
-              <label class="has-text-grey">Téléphone</label>
-            </div>
+            <div class="p-col-12">
+              <p-fieldset legend="Responsable de traitement">
+                <div class="p-grid">
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Prénom</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_controller.firstname}}</p>
+                  </div>
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Nom</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_controller.lastname}}</p>
+                  </div>
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Téléphone</label>
+                  </div>
 
-            <div class="p-col-12 p-md-8">
-              <p>{{aom.contacts.phone}}</p>
-            </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_controller.phone}}</p>
+                  </div>
 
-            <div class="p-col-12 p-md-4">
-              <label class="has-text-grey">Email</label>
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Email</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_controller.email}}</p>
+                  </div>
+                </div>
+              </p-fieldset>
             </div>
-            <div class="p-col-12 p-md-8">
-              <p>{{aom.contacts.email}}</p>
+            <div class="p-col-12">
+              <p-fieldset legend="Délégué à la protection des données">
+                <div class="p-grid">
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Prénom</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_dpo.firstname}}</p>
+                  </div>
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Nom</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_dpo.lastname}}</p>
+                  </div>
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Téléphone</label>
+                  </div>
+
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_dpo.phone}}</p>
+                  </div>
+
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Email</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.rgpd_dpo.email}}</p>
+                  </div>
+                </div>
+              </p-fieldset>
+            </div>
+            <div class="p-col-12">
+              <p-fieldset legend="Responsable technique">
+                <div class="p-grid">
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Prénom</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.technical.firstname}}</p>
+                  </div>
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Nom</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.technical.lastname}}</p>
+                  </div>
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Téléphone</label>
+                  </div>
+
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.technical.phone}}</p>
+                  </div>
+
+                  <div class="p-col-12 p-md-4">
+                    <label class="has-text-grey">Email</label>
+                  </div>
+                  <div class="p-col-12 p-md-8">
+                    <p>{{aom.contacts.technical.email}}</p>
+                  </div>
+                </div>
+              </p-fieldset>
             </div>
           </div>
+
         </p-fieldset>
       </div>
       <div class="p-col-12">

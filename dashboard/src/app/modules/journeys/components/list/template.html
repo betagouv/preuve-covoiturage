@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<p-table #dt [columns]="selectedColumns" [value]="journeys" dataKey="_id" [paginator]="true" [rows]="perPage" [lazy]="true" (onLazyLoad)="loadLazy($event)" [totalRecords]="total" [loading]="loading">
+<p-table #dt [columns]="selectedColumns" [value]="journeys" dataKey="_id" [paginator]="true" [rows]="perPage" [lazy]="true" (onLazyLoad)="loadLazy($event)" [totalRecords]="total" [loading]="loading" >
 
   <ng-template *ngIf="hasAnyGroup(['registry'])" pTemplate="caption">
     <div style="text-align:left">

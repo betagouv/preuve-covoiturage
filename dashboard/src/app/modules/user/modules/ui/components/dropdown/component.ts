@@ -1,57 +1,22 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-
-import { UserService } from '../../../../services/userService';
-import { USER_MAIN } from '../../../../config/main';
 
 @Component({
   selector: 'app-user-dropdown',
   templateUrl: 'template.html',
-  styleUrls: ['style.scss'],
 })
 
 export class UserDropdownComponent implements OnInit {
   @Input() userId: FormControl;
-  public user;
-  public users = [];
-  public filteredUsers = [];
+  @Input() users: { key: string, value: string }[];
 
-  constructor(
-      private userService: UserService,
-  ) {
-  }
+  public user: { key: string, value: string } = null;
+  public filteredUsers: { key: string, value: string }[] = [];
 
   public ngOnInit() {
-    if (this.userId) {
-      this.getUser();
+    if (this.userId && this.userId.value) {
+      this.user = this.userId.value;
     }
-    this.getUsers();
-  }
-
-  public getUser() {
-    if (this.userId) {
-      this.userService.getOne(this.userId.value).subscribe((response) => {
-        if (response[0]) {
-          const item = response[0];
-          this.user = {
-            key: item._id,
-            value: `${item.firstname} ${item.lastname}`,
-          };
-        }
-      });
-    }
-  }
-
-  public getUsers() {
-    this.userService.get([['limit', USER_MAIN.user_query_limit]]).subscribe((response) => {
-      this.users = response.data.map((item) => {
-        const normalizedItem = {
-          key: item._id,
-          value: `${item.firstname} ${item.lastname}`,
-        };
-        return normalizedItem;
-      });
-    });
   }
 
   public filter(event) {
