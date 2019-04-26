@@ -51,7 +51,7 @@ jobs:
           name: yarn tests with coverage
           command: |
             ./cc-test-reporter before-build
-            yarn coverage
+            yarn coverage-ci
             ./cc-test-reporter format-coverage -t lcov --prefix /repo/api/core
             ./cc-test-reporter upload-coverage --exit-code $?
 
@@ -77,8 +77,8 @@ workflows:
   version: 1
   backend-tests:
     jobs:
-      - api-js
+#      - api-js
       - api-core
-  frontend-tests:
-    jobs:
-      - front-angular
+#  frontend-tests:
+#    jobs:
+#      - front-angular
