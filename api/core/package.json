@@ -11,6 +11,7 @@
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
     "test": "mocha src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
+    "coverage-ci": "nyc --all --reporter=lcov mocha src/**/*.spec.ts tests/**/*.spec.ts",
     "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts tests/**/*.spec.ts",
     "watch-test": "yarn test -- --watchAll",
     "build-ts": "tsc",
