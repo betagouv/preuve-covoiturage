@@ -2,7 +2,7 @@
   "name": "@pdc/service-organization",
   "version": "0.0.1",
   "private": true,
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "@pdc/shared": "0.0.1",
     "@pdc/service-user": "0.0.1",

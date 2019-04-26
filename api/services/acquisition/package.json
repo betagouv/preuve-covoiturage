@@ -2,11 +2,7 @@
   "name": "@pdc/service-acquisition",
   "version": "0.0.1",
   "private": true,
-  "license": "AGPL-3.0",
-  "scripts": {
-    "process": "node cli/process-safe-journey.js",
-    "process-trip": "node cli/process-trip.js"
-  },
+  "license": "Apache-2.0",
   "dependencies": {
     "@pdc/package-geo": "0.0.1",
     "@pdc/package-importer": "0.0.1",
