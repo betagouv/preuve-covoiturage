@@ -34,12 +34,12 @@ module.exports = (Model, methods) => _.assign(
     },
 
     /**
-     * Return a Mongo cursor for piping
-     *
-     * @param object query
-     */
+       * Return a Mongo cursor for piping
+       *
+       * @param object query
+       */
     findCursor(query) {
-      const { filter, limit, skip, sort, projection } = { ...mapQuery(query) };
+      const { filter, limit, skip, sort, projection } = { ...mapQuery({ disablePaginate: true, ...query }) };
       return Model.find(filter)
         .skip(skip)
         .limit(limit)
