@@ -2,6 +2,7 @@ const _ = require('lodash');
 const multer = require('multer');
 const flat = require('flat');
 const csv = require('csv');
+const slugify = require('slugify');
 const router = require('express').Router();
 
 const can = require('@pdc/shared/middlewares/can');
@@ -13,8 +14,9 @@ const { apiUrl } = require('@pdc/shared/helpers/url/url');
 const ForbiddenError = require('@pdc/shared/errors/forbidden');
 
 const journeyService = require('../service');
-const { importMaxFileSizeMb } = require('../config');
 const Journey = require('../entities/models/journey');
+const { importMaxFileSizeMb } = require('../config');
+const { anonymize } = require('../lib/anonymize');
 
 // Upload middleware
 const upload = multer({
@@ -96,7 +98,7 @@ router.delete('/:id', jwtUser, can('journey.delete'), async (req, res, next) => 
   }
 });
 
-router.get('/', jwtUser, ...acceptCsv, can('journey.list'), async (req, res, next) => {
+router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
   try {
     // filter by operator
     const operator = _.get(req, 'user.operator');
@@ -115,23 +117,31 @@ router.get('/', jwtUser, ...acceptCsv, can('journey.list'), async (req, res, nex
         throw new ForbiddenError('You are not allowed to export CSV files');
       }
 
-      res.setHeader('Content-disposition', 'attachment; filename=journeys.csv');
+      res.setHeader(
+        'Content-disposition',
+        `attachment; filename=${slugify(req.baseUrl)}-${Date.now()}.csv`,
+      );
+
       res.writeHead(200, {
-        'Content-Type': 'text/plain',
+        'Content-Type': 'text/csv;charset=utf-8',
         'Transfer-Encoding': 'chunked',
       });
+
       res.flushHeaders();
 
-      const transformer = doc => flat(doc.toJSON());
+      const transformer = doc => anonymize(flat(doc.toJSON()));
 
-      Journey.find()
-        .cursor()
+      // update limits
+      req.query.limit = _.get(req, 'query.limit', 50000);
+      req.query.skip = _.get(req, 'query.skip', 0);
+
+      journeyService
+        .findCursor(req.query)
         .pipe(csv.transform(transformer))
         .pipe(csv.stringify({ header: true }))
         .pipe(res);
-    } else {
-      res.json(await journeyService.find(req.query));
     }
+    res.json(await journeyService.find(req.query));
   } catch (e) {
     next(e);
   }
