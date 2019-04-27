@@ -1,11 +1,17 @@
 const _ = require('lodash');
 const multer = require('multer');
+const flat = require('flat');
+const csv = require('csv');
 const router = require('express').Router();
+
 const can = require('@pdc/shared/middlewares/can');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 const jwtServer = require('@pdc/shared/middlewares/jwt-server');
+const { isSuperAdmin } = require('@pdc/service-user/helpers');
 const acceptCsv = require('@pdc/shared/middlewares/accept-csv');
 const { apiUrl } = require('@pdc/shared/helpers/url/url');
+const ForbiddenError = require('@pdc/shared/errors/forbidden');
+
 const journeyService = require('../service');
 const { importMaxFileSizeMb } = require('../config');
 const Journey = require('../entities/models/journey');
@@ -105,6 +111,10 @@ router.get('/', jwtUser, ...acceptCsv, can('journey.list'), async (req, res, nex
     }
 
     if (req.get('Accept') === 'text/csv') {
+      if (!req.user || !isSuperAdmin(req.user)) {
+        throw new ForbiddenError('You are not allowed to export CSV files');
+      }
+
       res.setHeader('Content-disposition', 'attachment; filename=journeys.csv');
       res.writeHead(200, {
         'Content-Type': 'text/plain',
@@ -112,8 +122,6 @@ router.get('/', jwtUser, ...acceptCsv, can('journey.list'), async (req, res, nex
       });
       res.flushHeaders();
 
-      const csv = require('csv');
-      const flat = require('flat');
       const transformer = doc => flat(doc.toJSON());
 
       Journey.find()
