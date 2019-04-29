@@ -4,18 +4,21 @@ const paginate = require('../../helpers/paginate/paginate');
 function mapQuery(options = {}) {
   let skip;
   let projection;
-  const { page, fields, ...query } = options;
+  const { page, fields, disablePaginate, ...query } = options;
   let { filter, limit, sort } = options;
 
-  ({ skip, limit } = paginate({ limit, page }));
+  if (!disablePaginate) {
+    ({ skip, limit } = paginate({ limit, page }));
+  }
 
-  ({
+  ({ filter, limit, sort, skip, projection } = aqp({
+    ...query,
     filter,
     limit,
     sort,
     skip,
-    projection,
-  } = aqp({ ...query, filter, limit, sort, skip, fields }));
+    fields,
+  }));
 
   filter = Object.assign({ deletedAt: null }, filter || {});
   sort = sort || {};
