@@ -39,7 +39,9 @@ module.exports = (Model, methods) => _.assign(
        * @param object query
        */
     findCursor(query) {
-      const { filter, limit, skip, sort, projection } = { ...mapQuery({ disablePaginate: true, ...query }) };
+      const { filter, limit, skip, sort, projection } = {
+        ...mapQuery({ disablePaginate: true, ...query }),
+      };
       return Model.find(filter)
         .skip(skip)
         .limit(limit)

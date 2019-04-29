@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const excluded = key => [
   '_id',
   'createdAt',
