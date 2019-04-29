@@ -8,14 +8,16 @@ import { CompanyForm } from '~/shared/modules/form/components/company/form';
 import { ContactsForm } from '~/shared/modules/form/components/contacts/form';
 import { ContactList } from '~/entities/database/contactList';
 import { User } from '~/entities/database/user/user';
+import { ApiResponse } from '~/entities/responses/apiResponse';
+import { OperatorService } from '~/modules/operator/services/operatorService';
 
 @Component({
   selector: 'app-operator-form',
   templateUrl: 'template.html',
 })
 
-export class OperatorFormComponent implements OnInit {
-  @Input() users: User[];
+export class OperatorFormComponent {
+  users: User[];
   @Output() answer = new EventEmitter();
   public operatorForm = this.fb.group({
     nom_commercial: ['', Validators.required],
@@ -28,18 +30,24 @@ export class OperatorFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private operatorService: OperatorService,
   ) {
   }
 
   @Input('operator')
   set operatorInput(operator: Operator) {
     if (operator) {
+      this.setUsers(operator);
       this.operatorForm.patchValue(operator);
     }
   }
 
-  ngOnInit() {
-    //
+  setUsers(operator) {
+    this.operatorService
+          .getUsers(operator._id)
+          .subscribe((response: ApiResponse) => {
+            this.users = response.data;
+          });
   }
 
   onSubmit() {
