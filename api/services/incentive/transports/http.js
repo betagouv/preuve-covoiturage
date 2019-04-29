@@ -46,7 +46,6 @@ router.get('/:id', can('incentive.read'), async (req, res, next) => {
  * List all Incentives
  */
 router.get('/', can('incentive.list'), async (req, res, next) => {
-
   let ret = [];
 
   try {
