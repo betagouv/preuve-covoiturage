@@ -45,7 +45,7 @@ export class WeekDayFilter {
   }
 
   public static export(data) {
-    return data;
+    return (data && data.length > 0) ? data : null;
   }
 
   public static toString(data):string {

@@ -20,7 +20,7 @@
     </section>
 
     <section *ngIf='activeIndex === 2'>
-      <app-incentive-filter-form [incentiveFiltersForm]="policyForm.get('rules')" (submit)='incentiveFilterSet()'></app-incentive-filter-form>
+      <app-incentive-filter-form [incentiveFiltersForm]="policyForm.get('rules')" ></app-incentive-filter-form>
     </section>
   </div>
   <div class="p-col-10" *ngIf="activeIndex === 3">

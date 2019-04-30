@@ -82,9 +82,6 @@ export class IncentivePoliciesCreatePageComponent implements OnInit {
     if (this.maxActivableIndex < 2) this.maxActivableIndex = 3;
   }
 
-  incentiveFilterSet() {
-    // if (this.maxActivableIndex < 3) this.maxActivableIndex = 3;
-  }
 
   reset() {
     this.policyForm.reset();

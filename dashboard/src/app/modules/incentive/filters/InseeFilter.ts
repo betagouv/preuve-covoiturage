@@ -61,13 +61,23 @@ export class InseeFilter {
       text += `&nbsp; - les codes INSEEs de départ sont parmi : ${data.whiteList.or.start.sort().join(', ')} <br>`;
     }
     if (data.whiteList.or.end.length > 0) {
-      text += `&nbsp; - les codes INSEEs d'arrivée sont parmi : ${data.whiteList.or.end.sort().join(', ')} <br>`;
+      if (data.whiteList.or.start.length > 0) {
+        text += `&nbsp; &nbsp; OU`;
+      } else {
+        text += `&nbsp; -`;
+      }
+      text += ` les codes INSEEs d'arrivée sont parmi : ${data.whiteList.or.end.sort().join(', ')} <br>`;
     }
     if (data.blackList.or.start.length > 0) {
       text += `&nbsp; - les codes INSEEs de départ ne sont pas parmi : ${data.blackList.or.start.sort().join(', ')} <br>`;
     }
     if (data.blackList.or.end.length > 0) {
-      text += `&nbsp; - les codes INSEEs d'arrivée ne sont pas parmi : ${data.blackList.or.end.sort().join(', ')} <br>`;
+      if (data.blackList.or.start.length > 0) {
+        text += `&nbsp; &nbsp; OU`;
+      } else {
+        text += `&nbsp; -`;
+      }
+      text += ` les codes INSEEs d'arrivée ne sont pas parmi : ${data.blackList.or.end.sort().join(', ')} <br>`;
     }
     if (data.whiteList.and.start.length > 0 && data.whiteList.and.end.length > 0) {
       text += `&nbsp; - les codes INSEEs de départ sont parmi : ${data.whiteList.and.start.sort().join(', ')} <br>`;
