@@ -20,7 +20,7 @@ export class RankFilter {
   ];
 
   public static import(data) {
-    return data && data.length > 0 ? data : null;
+    return data;
   }
 
   public static getFormComponent() {
@@ -28,7 +28,7 @@ export class RankFilter {
   }
 
   public static export(data) {
-    return data;
+    return data && data.length > 0 ? data : null;
   }
 
   public static toString(data):string {

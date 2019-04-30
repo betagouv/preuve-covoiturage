@@ -18,7 +18,6 @@ import { IncentiveFilterService } from '../../../services/incentiveFilterService
 export class IncentiveFilterFormComponent implements OnInit {
   public incentiveFilters: any[];
   @Input() incentiveFiltersForm: FormGroup;
-  @Output() submit = new EventEmitter();
 
   constructor(
        private dialogService: DialogService,
@@ -46,14 +45,13 @@ export class IncentiveFilterFormComponent implements OnInit {
 
 
     ref.onClose.subscribe((data:any) => {
-      if (data) {
-        const patch = {
-          [key]: data,
-        };
-        this.incentiveFiltersForm.patchValue(patch);
-
-        this.submit.emit();
+      const patch = {
+        [key]: data,
+      };
+      if (!data) {
+        patch[key] = null;
       }
+      this.incentiveFiltersForm.patchValue(patch);
     });
   }
   getIncentiveStringDescription(key) {
