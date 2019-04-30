@@ -12,13 +12,20 @@ describe('incentive: filter insee', () => {
     let result;
 
 
+    /*
+     * OR
+     */
+
     // WHITELIST
 
     result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
-          start: [69001, 69002, 69047],
+          or: {
+            start: [69001, 69002, 69047],
+
+          },
         },
       },
     });
@@ -29,7 +36,10 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          start: [69003, 69002, 69047],
+          or: {
+            start: [69003, 69002, 69047],
+
+          },
         },
       },
     });
@@ -41,7 +51,9 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          end: [69001, 69028, 69047],
+          or: {
+            end: [69001, 69028, 69047],
+          },
         },
       },
     });
@@ -52,7 +64,9 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          end: [69001, 69029, 69047],
+          or: {
+            end: [69001, 69029, 69047],
+          },
         },
       },
     });
@@ -63,7 +77,9 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          end: [69001, 69028, 69047],
+          or: {
+            end: [69001, 69028, 69047],
+          },
         },
       },
     });
@@ -74,8 +90,11 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          start: [69001, 69028, 69047],
-          end: [69001, 69028, 69047],
+          or: {
+            start: [69001, 69028, 69047],
+            end: [69001, 69028, 69047],
+          },
+
         },
       },
     });
@@ -86,25 +105,30 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          start: [69001, 69028, 69047],
-          end: [69001, 69029, 69047],
+          or: {
+            start: [69001, 69028, 69047],
+            end: [69001, 69029, 69047],
+          },
+
         },
       },
     });
 
-    expect(result).to.equal(false);
+    expect(result).to.equal(true);
 
     result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
-          start: [69002, 69028, 69047],
-          end: [69001, 69028, 69047],
+          or: {
+            start: [69002, 69028, 69047],
+            end: [69001, 69028, 69047],
+          },
         },
       },
     });
 
-    expect(result).to.equal(false);
+    expect(result).to.equal(true);
 
     // BLACK LIST
 
@@ -112,7 +136,10 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          start: [69001, 69002, 69047],
+          or: {
+            start: [69001, 69002, 69047],
+
+          },
         },
       },
     });
@@ -123,7 +150,10 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          start: [69003, 69002, 69047],
+          or: {
+            start: [69003, 69002, 69047],
+
+          },
         },
       },
     });
@@ -135,7 +165,10 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          end: [69001, 69028, 69047],
+          or: {
+            end: [69001, 69028, 69047],
+
+          },
         },
       },
     });
@@ -146,7 +179,10 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          end: [69001, 69029, 69047],
+          or: {
+            end: [69001, 69029, 69047],
+
+          },
         },
       },
     });
@@ -157,7 +193,10 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          end: [69001, 69028, 69047],
+          or: {
+            end: [69001, 69028, 69047],
+
+          },
         },
       },
     });
@@ -168,8 +207,11 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          start: [69001, 69028, 69047],
-          end: [69001, 69028, 69047],
+          or: {
+            start: [69001, 69028, 69047],
+            end: [69001, 69028, 69047],
+          },
+
         },
       },
     });
@@ -180,8 +222,11 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          start: [69002, 69028, 69047],
-          end: [69001, 69029, 69047],
+          or: {
+            start: [69002, 69028, 69047],
+            end: [69001, 69029, 69047],
+
+          },
         },
       },
     });
@@ -192,8 +237,11 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         blackList: {
-          start: [69001, 69028, 69047],
-          end: [69001, 69029, 69047],
+          or: {
+            start: [69001, 69028, 69047],
+            end: [69001, 69029, 69047],
+          },
+
         },
       },
     });
@@ -207,10 +255,14 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          start: [69001, 69028, 69047],
+          or: {
+            start: [69001, 69028, 69047],
+          },
         },
         blackList: {
-          end: [69003, 69034, 69049],
+          or: {
+            end: [69003, 69034, 69049],
+          },
         },
       },
     });
@@ -221,14 +273,84 @@ describe('incentive: filter insee', () => {
       tripStakeholder,
       insee: {
         whiteList: {
-          end: [69001, 69028, 69047],
+          or: {
+            end: [69001, 69028, 69047],
+          },
         },
         blackList: {
-          start: [69001, 69028, 69047],
+          or: {
+            start: [69001, 69028, 69047],
+          },
         },
       },
     });
 
     expect(result).to.equal(false);
+
+
+    /*
+     * AND
+     */
+
+    // WHITELIST
+
+    result = hasInsee({
+      tripStakeholder,
+      insee: {
+        whiteList: {
+          and: {
+            start: [69001, 69002, 69047],
+            end: [69001, 69002, 69028],
+          },
+        },
+      },
+    });
+
+    expect(result).to.equal(true);
+
+    result = hasInsee({
+      tripStakeholder,
+      insee: {
+        whiteList: {
+          and: {
+            start: [69002],
+            end: [69028],
+          },
+        },
+      },
+    });
+
+    expect(result).to.equal(false);
+
+
+    // BLACKLIST
+
+    result = hasInsee({
+      tripStakeholder,
+      insee: {
+        blackList: {
+          and: {
+            start: [69001, 69002, 69047],
+            end: [69001, 69002, 69028],
+          },
+        },
+      },
+    });
+
+    expect(result).to.equal(false);
+
+    result = hasInsee({
+      tripStakeholder,
+      insee: {
+        blackList: {
+          and: {
+            start: [69003, 69002, 69047],
+            end: [69001, 69002, 69028],
+          },
+        },
+      },
+    });
+
+    expect(result).to.equal(true);
   });
 });
