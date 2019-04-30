@@ -40,20 +40,40 @@ const IncentivePolicySchema = new Schema({
     }],
     insee: {
       whiteList: {
-        start: [{
-          type: String,
-        }],
-        end: [{
-          type: String,
-        }],
+        and: {
+          start: [{
+            type: String,
+          }],
+          end: [{
+            type: String,
+          }],
+        },
+        or: {
+          start: [{
+            type: String,
+          }],
+          end: [{
+            type: String,
+          }],
+        },
       },
       blackList: {
-        start: [{
-          type: String,
-        }],
-        end: [{
-          type: String,
-        }],
+        and: {
+          start: [{
+            type: String,
+          }],
+          end: [{
+            type: String,
+          }],
+        },
+        or: {
+          start: [{
+            type: String,
+          }],
+          end: [{
+            type: String,
+          }],
+        },
       },
     },
   },
