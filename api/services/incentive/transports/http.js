@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const _ = require('lodash');
 const can = require('@pdc/shared/middlewares/can');
 const incentiveService = require('../service');
 
@@ -45,15 +46,29 @@ router.get('/:id', can('incentive.read'), async (req, res, next) => {
  * List all Incentives
  */
 router.get('/', can('incentive.list'), async (req, res, next) => {
-  // filter by AOM
+  let ret = [];
 
   try {
-    res.json(await incentiveService.find(req.query));
+    // filter by operator
+    const operator = _.get(req, 'user.operator');
+    if (operator) {
+      req.query.filter = _.assign(req.query.filter, { 'operator._id': operator });
+      ret = await incentiveService.find(req.query);
+    }
+
+    // filter by AOM
+    const aom = _.get(req, 'user.aom');
+    if (aom) {
+      req.query.filter = _.assign(req.query.filter, { 'aom._id': aom });
+      ret = await incentiveService.find(req.query).map(({ target, ...keys }) => keys);
+    }
+
+    res.json(ret);
   } catch (e) {
     next(e);
   }
 });
-
+//
 // /**
 //  * Create a new Incentive
 //  */

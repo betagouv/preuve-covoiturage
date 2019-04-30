@@ -5,9 +5,6 @@
   "main": "geo.js",
   "private": true,
   "license": "AGPL-3.0",
-  "scripts": {
-    "test": "npx mocha"
-  },
   "keywords": [
     "pdc",
     "geo"

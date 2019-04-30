@@ -42,8 +42,8 @@ describe('Unit tests: geo', async () => {
 });
 
 describe('Unit tests: validation', async () => {
-  require('@pdc/shared/providers/mongo/test/validation/regex');
-  require('@pdc/shared/providers/mongo/test/validation/validators');
+  require('@pdc/shared/providers/mongo/schemas/regex.spec');
+  require('@pdc/shared/providers/mongo/schemas/validators.spec');
 });
 
 describe('Unit tests: datetime', async () => {
