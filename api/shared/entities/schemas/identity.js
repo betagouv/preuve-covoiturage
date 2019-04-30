@@ -7,6 +7,7 @@ const CardSchema = new Schema(
   {
     name: {
       type: String,
+      required: true,
       lowercase: true,
       trim: true,
       minlength: 2,
