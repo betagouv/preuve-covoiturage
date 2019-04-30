@@ -39,13 +39,11 @@
     "lint": "eslint --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@pdc/shared": "0.0.1"
-  },
-  "devDependencies": {
     "@pdc/proxy": "0.0.1",
     "@pdc/package-geo": "0.0.1",
     "@pdc/service-acquisition": "0.0.1",
     "@pdc/service-trip": "0.0.1",
+    "@pdc/shared": "0.0.1",
     "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
