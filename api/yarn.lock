@@ -3396,7 +3396,7 @@ mobius1-selectr@2.4.2:
   resolved "https://registry.yarnpkg.com/mobius1-selectr/-/mobius1-selectr-2.4.2.tgz#b8a619c8a0ed6234590e5e5a9e979e15d9b4b89a"
   integrity sha512-yfy1sLxIDlgZjhThuG6gBsI4L2pJHRNaHth/hwPN5ESH5n2qkhfay/OnVmwhhDVYeui54NKIWeu6zWcobVcYtQ==
 
-mocha@^6.0:
+mocha@^6.1.4:
   version "6.1.4"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-6.1.4.tgz#e35fada242d5434a7e163d555c705f6875951640"
   integrity sha512-PN8CIy4RXsIoxoFJzS4QNnCH4psUCPWc4/rPrst/ecSJJbLBkubMiyGCP2Kj/9YnWbotFqAoeXyXMucj7gwCFg==
