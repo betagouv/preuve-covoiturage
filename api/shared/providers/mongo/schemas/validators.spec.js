@@ -1,6 +1,7 @@
 const assert = require('assert');
-const { validators } = require('../../schema-validation');
-const assertThrows = require('../../../../test/lib/assert-throws');
+const validators = require('./validators');
+const setters = require('./setters');
+const assertThrows = require('../../../test/lib/assert-throws');
 
 describe('position', () => {
   const yep = obj => assert(validators.position.validator(obj));
@@ -72,4 +73,13 @@ describe('phone', () => {
   it('nope: wrong length', () => nope('45 24 7000'));
   it('nope: French mobile out of range 070', () => nope('0701021870'));
   it('nope: French mobile out of range 079', () => nope('0791021870'));
+});
+
+describe('travel pass', () => {
+  const yep = obj => assert(validators.cardName.validator(setters.cardName(obj)));
+  const nope = obj => assertThrows(Error, validators.cardName.validator, obj);
+
+  it('yep navigo', () => yep('Navigo'));
+
+  it('nope unknown', () => nope('Unknown'));
 });

@@ -1,0 +1,4 @@
+/**
+ * Mongoose getters
+ */
+module.exports = {};

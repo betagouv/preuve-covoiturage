@@ -1,10 +1,5 @@
-// const fs = require('fs');
 const assert = require('assert');
-// const parse = require('csv-parse');
-// const { promisify } = require('util');
-const { regex } = require('../../schema-validation');
-
-// const asyncParse = promisify(parse);
+const regex = require('./regex');
 
 const yep = (r, n) => assert(r.test(n));
 const nope = (r, n) => assert(!r.test(n));
@@ -37,33 +32,6 @@ describe('phone', () => {
   it('nope: 00000', () => nope(regex.phone, '0000000000'));
   it('nope: wrong length', () => nope(regex.phone, '45 24 7000'));
 });
-
-// describe('email', () => {
-//   const yepDiagnosis = [
-//     'ISEMAIL_VALID',
-//     'ISEMAIL_RFC5321_QUOTEDSTRING',
-//     'ISEMAIL_RFC5321_ADDRESSLITERAL',
-//     'ISEMAIL_DNSWARN_NO_RECORD',
-//     'ISEMAIL_DNSWARN_NO_MX_RECORD',
-//   ];
-//
-//   it('load data', async () => {
-//     const emails = await asyncParse(
-//       fs.readFileSync(`${__dirname}/../../data/emails.csv`),
-//       { delimiter: ',' }
-//     );
-//     // eslint-disable-next-line no-unused-vars
-//     emails.forEach(([email, cat, diag]) => {
-//       describe(email, () => {
-//         if (yepDiagnosis.indexOf(diag) > -1) {
-//           it('yep', () => yep(regex.email, email));
-//         } else {
-//           it('nope', () => nope(regex.email, email));
-//         }
-//       });
-//     });
-//   });
-// });
 
 describe('insee', () => {
   it('yep', () => yep(regex.insee, '01001'));
