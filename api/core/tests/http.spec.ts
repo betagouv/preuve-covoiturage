@@ -1,29 +1,34 @@
+// tslint:disable max-classes-per-file
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import axios from 'axios';
 
 import { HttpTransport } from '~/transports/HttpTransport';
 import { Kernel } from '~/Kernel';
-import { ServiceProviderConstructorInterface } from '~/interfaces/ServiceProviderConstructorInterface';
-import { httpServiceProviderFactory } from '~/helpers/httpServiceProviderFactory';
 import { KernelInterface } from '~/interfaces/KernelInterface';
+import { httpHandlerFactory } from '~/serviceHandlers/HttpHandler';
+import { TransportInterface } from '~/interfaces/TransportInterface';
+import { injectable } from '~/Container';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
+@injectable()
 class MathKernel extends Kernel {
-  services: ServiceProviderConstructorInterface[] = [MathServiceProvider];
+  name = 'math';
+  serviceProviders = [MathServiceProvider];
 }
 
+@injectable()
 class StringKernel extends Kernel {
-  services: ServiceProviderConstructorInterface[] = [
+  name = 'string';
+  serviceProviders = [
     StringServiceProvider,
-    httpServiceProviderFactory('math', 'http://127.0.0.1:8080'),
+  ];
+  handlers = [
+    httpHandlerFactory('math', 'http://127.0.0.1:8080'),
   ];
 }
-
-let mathKernel: KernelInterface;
-let stringKernel: KernelInterface;
 
 function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
   let data;
@@ -53,20 +58,25 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
     },
   });
 }
+let mathTransport: TransportInterface;
+let stringTransport: TransportInterface;
+
 describe('Http only integration', () => {
   before(async () => {
-    mathKernel = new MathKernel();
+    const mathKernel = new MathKernel();
     await mathKernel.boot();
-    await mathKernel.up(HttpTransport, ['8080']);
+    mathTransport = new HttpTransport(mathKernel);
+    await mathTransport.up(['8080']);
 
-    stringKernel = new StringKernel();
+    const stringKernel = new StringKernel();
     await stringKernel.boot();
-    await stringKernel.up(HttpTransport, ['8081']);
+    stringTransport = new HttpTransport(stringKernel);
+    await stringTransport.up(['8081']);
   });
 
   after(async () => {
-    await mathKernel.down();
-    await stringKernel.down();
+    await mathTransport.down();
+    await stringTransport.down();
   });
 
   it('should works', async () => {

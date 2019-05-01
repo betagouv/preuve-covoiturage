@@ -4,16 +4,13 @@ import { CommandProvider } from '../providers/CommandProvider';
 
 export class CliTransport implements TransportInterface {
   kernel: KernelInterface;
-  opts: string[];
 
-  constructor(kernel: KernelInterface, opts: string[] = []) {
+  constructor(kernel: KernelInterface) {
     this.kernel = kernel;
-    this.opts = opts;
   }
 
-  async up() {
-    const commander = <CommandProvider>this.kernel.get('command');
-    commander.parse(this.opts);
+  async up(opts: string[] = []) {
+    this.kernel.getContainer().get<CommandProvider>(CommandProvider).parse(opts);
   }
 
   async down() {

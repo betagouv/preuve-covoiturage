@@ -4,48 +4,38 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import * as Bull from '../helpers/bullFactory';
-import { queueServiceProviderFactory } from '../helpers/queueServiceProviderFactory';
+import { queueHandlerFactory } from './QueueHandler';
+import { EnvProvider } from '../providers/EnvProvider';
+import { ConfigProvider } from '../providers/ConfigProvider';
 
 chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
-const kernel = {
-  providers: [],
-  services: [],
-  boot() { return; },
-  async handle(call) {
-    return {
-      id: null,
-      jsonrpc: '2.0',
-    };
-  },
-  get(key:string) {
-    if (key === 'env') {
-      return {
-        signature: 'env',
-        boot() { return; },
-        get() {
-          return 'prod';
-        },
-      };
-    }
-    if (key === 'config') {
-      return {
-        signature: 'config',
-        boot() { return; },
-        get() {
-          return 'redis://localhost';
-        },
-      };
-    }
-  },
-  async up() { return; },
-  async down() { return; },
-};
+
+class FakeEnvProvider extends EnvProvider {
+  boot() {
+    return;
+  }
+
+  get(key: string, fallback?: any): any {
+    return 'prod';
+  }
+}
+
+class FakeConfigProvider extends ConfigProvider {
+  boot() {
+    return;
+  }
+  get(key: string, fallback?: any): any {
+    return 'redis://localhost';
+  }
+}
+const envProvider = new FakeEnvProvider();
+const configProvider = new FakeConfigProvider(envProvider);
 
 const sandbox = sinon.createSandbox();
 
-describe('Queue provider', () => {
+describe('Queue handler', () => {
   beforeEach(() => {
     sandbox.stub(Bull, 'bullFactory').callsFake(
       // @ts-ignore
@@ -66,9 +56,12 @@ describe('Queue provider', () => {
     sandbox.restore();
   });
   it('works', async () => {
-    const queueProvider = new (queueServiceProviderFactory('basic', '0.0.1'))(kernel);
-    await queueProvider.boot();
-    const result = await queueProvider.call('method', { add: [1, 2] }, { internal: true });
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
+    const result = await queueProvider.call({
+      method: 'method',
+      params: { add: [1, 2] },
+      context: { internal: true },
+    });
     expect(result).to.deep.equal({
       name: 'basic@0.0.1:method',
       opts: {
@@ -79,10 +72,13 @@ describe('Queue provider', () => {
     });
   });
   it('raise error if fail', async () => {
-    const queueProvider = new (queueServiceProviderFactory('basic', '0.0.1'))(kernel);
-    await queueProvider.boot();
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
     return (<any>assert).isRejected(
-      queueProvider.call('nope', { add: [1, 2] }, { internal: true }),
+      queueProvider.call({
+        method: 'nope',
+        params: { add: [1, 2] },
+        context: { internal: true },
+      }),
       Error,
       'An error occured',
     );

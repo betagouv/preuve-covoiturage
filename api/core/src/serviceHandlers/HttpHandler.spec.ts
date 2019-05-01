@@ -4,27 +4,12 @@ import nock from 'nock';
 import chaiNock from 'chai-nock';
 import chaiAsPromised from 'chai-as-promised';
 
-import { httpServiceProviderFactory } from '../helpers/httpServiceProviderFactory';
+import { httpHandlerFactory } from './HttpHandler';
 
 chai.use(chaiNock);
 chai.use(chaiAsPromised);
 
-const kernel = {
-  providers: [],
-  services: [],
-  boot() { return; },
-  async handle(call) {
-    return {
-      id: null,
-      jsonrpc: '2.0',
-    };
-  },
-  get() { throw new Error(); },
-  async up() { return; },
-  async down() { return; },
-};
-
-describe('Http provider', () => {
+describe('Http handler', () => {
   it('works', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
@@ -42,9 +27,12 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpServiceProviderFactory('service', url))(kernel);
-    provider.boot();
-    provider.call('method', { param: true }, { internal: true });
+    const provider = new (httpHandlerFactory('service', url))();
+    provider.call({
+      method: 'service@latest:method',
+      params: { param: true },
+      context: { internal: true },
+    });
 
     return (<any>expect(nockRequest).to.have.been).requestedWith({
       id: 1,
@@ -78,9 +66,12 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpServiceProviderFactory('service', url))(kernel);
-    provider.boot();
-    provider.call('method', { param: true }, { internal: true });
+    const provider = new (httpHandlerFactory('service', url))();
+    provider.call({
+      method: 'service@latest:method',
+      params: { param: true },
+      context: { internal: true },
+    });
 
     return (<any>expect(nockRequest).to.have.been).requestedWithHeadersMatch({
       accept: 'application/json',
@@ -105,9 +96,12 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpServiceProviderFactory('service', url))(kernel);
-    provider.boot();
-    const promise = provider.call('method', { param: true }, { internal: true });
+    const provider = new (httpHandlerFactory('service', url))();
+    const promise = provider.call({
+      method: 'service@latest:method',
+      params: { param: true },
+      context: { internal: true },
+    });
     return (<any>assert).isRejected(promise, Error, 'An error occured');
   });
 
@@ -130,9 +124,12 @@ describe('Http provider', () => {
       },
     );
 
-    const provider = new (httpServiceProviderFactory('service', url))(kernel);
-    provider.boot();
-    const promise = provider.call('method', { param: true }, { internal: true });
+    const provider = new (httpHandlerFactory('service', url))();
+    const promise = provider.call({
+      method: 'service@latest:method',
+      params: { param: true },
+      context: { internal: true },
+    });
     return (<any>assert).isRejected(promise, Error, 'wrong!');
   });
 });

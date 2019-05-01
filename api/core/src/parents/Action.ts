@@ -1,22 +1,14 @@
-import { KernelInterface } from '~/interfaces/KernelInterface';
-
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { ActionInterface } from '../interfaces/ActionInterface';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { compose } from '../helpers/compose';
 
-export abstract class Action implements ActionInterface {
+export abstract class Action implements HandlerInterface {
   public readonly signature: string;
-
-  protected middlewares: MiddlewareInterface[] = [];
-  protected kernel: KernelInterface;
-
-  constructor(kernel: KernelInterface) {
-    this.kernel = kernel;
-  }
+  public readonly middlewares: MiddlewareInterface[] = [];
 
   protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     throw new Error('No implementation found');

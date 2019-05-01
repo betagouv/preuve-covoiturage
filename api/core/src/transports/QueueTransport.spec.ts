@@ -1,49 +1,71 @@
-// tslint:disable no-invalid-this
+// tslint:disable max-classes-per-file no-invalid-this
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
+import { ParamsType } from '~/types/ParamsType';
+import { ContextType } from '~/types/ContextType';
+import { ResultType } from '~/types/ResultType';
+import { ServiceProvider } from '~/parents/ServiceProvider';
+import { NewableType } from '~/types/NewableType';
+import { HandlerInterface } from '~/interfaces/HandlerInterface';
+
 import * as Bull from '../helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
-
-const kernel = {
-  providers: [],
-  services: [],
-  boot() { return; },
-  async handle(call) {
-    return call;
-  },
-  get(key:string) {
-    if (key === 'env') {
-      return {
-        signature: 'env',
-        boot() { return; },
-        get() {
-          return 'prod';
-        },
-      };
-    }
-    if (key === 'config') {
-      return {
-        signature: 'config',
-        boot() { return; },
-        get() {
-          return 'redis://localhost';
-        },
-      };
-    }
-  },
-  async up() {
-    return;
-  },
-  async down() {
-    return;
-  },
-};
+import { Kernel } from '../parents/Kernel';
+import { Action } from '../parents/Action';
+import { handler } from '../Container';
 
 const sandbox = sinon.createSandbox();
 
-describe('Queue provider', () => {
+@handler({
+  service: 'math',
+  method: 'minus',
+})
+class BasicAction extends Action {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+    let count = 0;
+    if ('minus' in params) {
+      const { add } = params;
+      add.forEach((param) => {
+        count -= param;
+      });
+    } else {
+      throw new Error('Please provide add param');
+    }
+    return count;
+  }
+}
+
+@handler({
+  service: 'math',
+  method: 'add',
+})
+class BasicTwoAction extends Action {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+    let count = 0;
+    if ('add' in params) {
+      const { add } = params;
+      add.forEach((param) => {
+        count += param;
+      });
+    } else {
+      throw new Error('Please provide add param');
+    }
+    return count;
+  }
+}
+
+class BasicServiceProvider extends ServiceProvider {
+  readonly handlers: NewableType<HandlerInterface>[] = [BasicAction, BasicTwoAction];
+}
+
+class BasicKernel extends Kernel {
+  serviceProviders = [BasicServiceProvider];
+}
+
+
+describe('Queue transport', () => {
   beforeEach(() => {
     sandbox.stub(Bull, 'bullFactory').callsFake(
       // @ts-ignore
@@ -61,18 +83,20 @@ describe('Queue provider', () => {
     sandbox.restore();
   });
   it('works', async () => {
-    const queueTransport = new QueueTransport(kernel, ['hello']);
-    await queueTransport.up();
+    const kernel = new BasicKernel();
+    await kernel.boot();
+    const queueTransport = new QueueTransport(kernel);
+    await queueTransport.up(['redis://localhost', 'prod']);
     expect(queueTransport.queues.length).to.equal(1);
-    expect(queueTransport.queues[0].name).to.equal('prod-hello');
+    expect(queueTransport.queues[0].name).to.equal('prod-math');
     const response = await queueTransport.queues[0].add({
       data: {
         id: null,
         jsonrpc: '2.0',
-        method: 'myservice@latest:method',
+        method: 'math@latest:add',
         params: {
           params: {
-            hello: 'world',
+            add: [1, 2],
           },
           _context: {
             transport: 'http',
@@ -85,17 +109,7 @@ describe('Queue provider', () => {
     expect(response).to.deep.equal({
       id: 1,
       jsonrpc: '2.0',
-      method: 'myservice@latest:method',
-      params: {
-        params: {
-          hello: 'world',
-        },
-        _context: {
-          transport: 'queue',
-          user: 'me',
-          internal: false,
-        },
-      },
+      result: 3,
     });
     await queueTransport.down();
   });

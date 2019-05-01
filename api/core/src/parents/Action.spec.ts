@@ -12,20 +12,6 @@ import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 
 chai.use(chaiAsPromised);
-const kernel = {
-  providers: [],
-  services: [],
-  boot() { return; },
-  async handle(call) {
-    return {
-      id: null,
-      jsonrpc: '2.0',
-    };
-  },
-  get() { throw new Error(); },
-  async up() { return; },
-  async down() { return; },
-};
 
 describe('Action', () => {
   it('should work', async () => {
@@ -41,7 +27,7 @@ describe('Action', () => {
         return count;
       }
     }
-    const action = new BasicAction(kernel);
+    const action = new BasicAction();
     const result = await action.call({
       result: 0,
       method: '',
@@ -57,7 +43,7 @@ describe('Action', () => {
 
   it('should work with middleware', async () => {
     class BasicAction extends Action {
-      protected middlewares = [async (call: CallType, next: Function) => {
+      public readonly middlewares = [async (call: CallType, next: Function) => {
         await next();
         call.result -= 1;
       }];
@@ -72,7 +58,7 @@ describe('Action', () => {
         return count;
       }
     }
-    const action = new BasicAction(kernel);
+    const action = new BasicAction();
     const result = await action.call({
       result: 0,
       method: '',
@@ -88,7 +74,7 @@ describe('Action', () => {
 
   it('should work with ordered middleware', async () => {
     class BasicAction extends Action {
-      protected middlewares: MiddlewareInterface[] = [async (call: CallType, next: Function) => {
+      public readonly middlewares: MiddlewareInterface[] = [async (call: CallType, next: Function) => {
         await next();
         call.result = `hello ${call.result}?`;
       }, async (call: CallType, next: Function) => {
@@ -103,7 +89,7 @@ describe('Action', () => {
         return result;
       }
     }
-    const action = new BasicAction(kernel);
+    const action = new BasicAction();
     const result = await action.call({
       result: '',
       method: '',
@@ -119,7 +105,7 @@ describe('Action', () => {
 
   it('should raise an error if no handle method is defined', () => {
     class BasicAction extends Action {}
-    const action = new BasicAction(kernel);
+    const action = new BasicAction();
     return (<any>expect(action.call({
       result: {},
       method: '',

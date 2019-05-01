@@ -2,6 +2,8 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import supertest from 'supertest';
 
+import { Kernel } from '~/parents/Kernel';
+
 import { HttpTransport } from './HttpTransport';
 import { RPCCallType } from '../types/RPCCallType';
 import { RPCResponseType } from '../types/RPCResponseType';
@@ -9,12 +11,9 @@ import { RPCResponseType } from '../types/RPCResponseType';
 let request;
 let httpTransport;
 
-describe('Http kernel', () => {
+describe('Http transport', () => {
   before(() => {
-    const kernel = {
-      services: [],
-      providers: [],
-      boot() { return; },
+    class BasicKernel extends Kernel {
       async handle(call: RPCCallType): Promise<RPCResponseType> {
         if ('method' in call && call.method === 'error') {
           throw new Error('wrong!');
@@ -26,11 +25,11 @@ describe('Http kernel', () => {
           result: 'hello world',
         };
         return response;
-      },
-      get() { throw new Error(); },
-      async up() { return; },
-      async down() { return; },
-    };
+      }
+    }
+
+    const kernel = new BasicKernel();
+
     httpTransport = new HttpTransport(kernel);
 
     httpTransport.up();

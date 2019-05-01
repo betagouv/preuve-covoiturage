@@ -5,11 +5,19 @@ import { ContextType } from '~/types/ContextType';
 import { ResultType } from '~/types/ResultType';
 import { InvalidParamsException } from '~/exceptions/InvalidParamsException';
 import { RPCSingleResponseType } from '~/types/RPCSingleResponseType';
+import { handler } from '~/Container';
+import { Kernel } from '~/parents/Kernel';
 
+@handler({
+  service: 'string',
+  method: 'result',
+})
 export class ResultAction extends Action {
-  public readonly signature: string = 'result';
+  public readonly middlewares: MiddlewareInterface[] = [];
 
-  protected middlewares: MiddlewareInterface[] = [];
+  constructor(private kernel: Kernel) {
+    super();
+  }
 
   protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     if (Array.isArray(params) || !('name' in params) || !('add' in params) || (!Array.isArray(params.add))) {
@@ -21,6 +29,9 @@ export class ResultAction extends Action {
       id: 1,
       params: params.add,
     });
-    return `Hello world ${params.name}, result is ${addResult.result}`;
+    if (addResult && 'result' in addResult) {
+      return `Hello world ${params.name}, result is ${addResult.result}`;
+    }
+    throw new Error('Something goes wrong');
   }
 }
