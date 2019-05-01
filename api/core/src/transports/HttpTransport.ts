@@ -6,14 +6,12 @@ import { KernelInterface } from '../interfaces/KernelInterface';
 export class HttpTransport implements TransportInterface {
   server: http.Server;
   kernel: KernelInterface;
-  opts: string[];
 
-  constructor(kernel: KernelInterface, opts: string[] = []) {
+  constructor(kernel: KernelInterface) {
     this.kernel = kernel;
-    this.opts = opts;
   }
 
-  async up() {
+  async up(opts: string[] = []) {
     this.server = http.createServer((req, res) => {
       if (
         !('content-type' in req.headers && 'accept' in req.headers)
@@ -63,7 +61,7 @@ export class HttpTransport implements TransportInterface {
         res.end();
       });
     });
-    const [optsPort] = this.opts;
+    const [optsPort] = opts;
     const port = optsPort ? Number(optsPort) : 8080;
 
     this.server.listen(port);

@@ -1,57 +1,62 @@
-import { ContextType } from '../types/ContextType';
-import { ResultType } from '../types/ResultType';
-import { CallType } from '../types/CallType';
-import { ParamsType } from '../types/ParamsType';
+import {
+  ContainerModule,
+  ContainerModuleConfigurator,
+  Container,
+  ContainerInterface,
+  Bind,
+  Unbind,
+  IsBound,
+  Rebind,
+} from '~/Container';
 
-import { ActionInterface } from '../interfaces/ActionInterface';
-import { ActionConstructorInterface } from '../interfaces/ActionConstructorInterface';
-import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import { HandlerInterface } from '~/interfaces/HandlerInterface';
+
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
-import { KernelInterface } from '../interfaces/KernelInterface';
-
-import { compose } from '../helpers/compose';
-import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
+import { NewableType } from '../types/NewableType';
 
 export abstract class ServiceProvider implements ServiceProviderInterface {
-  public readonly signature: string;
-  public readonly version: string;
+  readonly alias: any[] = [];
+  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
 
-  protected kernel: KernelInterface;
-  protected actions: ActionConstructorInterface[] = [];
-  protected middlewares: MiddlewareInterface[] = [];
+  readonly handlers: NewableType<HandlerInterface>[] = [];
+  protected container: ContainerInterface;
 
-  protected actionInstances: Map<string, ActionInterface> = new Map();
-
-  constructor(kernel: KernelInterface) {
-    this.kernel = kernel;
+  constructor(container?: ContainerInterface) {
+    this.container = new Container();
+    if (container) {
+      this.container.parent = container;
+    }
   }
 
-  public boot() {
-    this.actions.forEach((action) => {
-      const actionInstance = new action(this.kernel);
-      this.actionInstances.set(actionInstance.signature, actionInstance);
+  public async boot() {
+    this.container.load(
+      new ContainerModule(
+        (bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind) => this.register({ bind, unbind, isBound, rebind }),
+      ),
+    );
+
+    this.handlers.forEach((handler) => {
+      this.getContainer().setHandler(handler);
+    });
+
+    for (const serviceProviderConstructor of this.serviceProviders) {
+      const serviceProvider = new serviceProviderConstructor(this.getContainer());
+      await serviceProvider.boot();
+    }
+  }
+
+  public register(module: ContainerModuleConfigurator):void {
+    this.alias.forEach((def) => {
+      if (Array.isArray(def)) {
+        const [target, alias] = def;
+        module.bind(alias).to(target);
+      } else {
+        module.bind(def).toSelf();
+      }
     });
   }
 
-  protected async resolve(call: CallType): Promise<ResultType> {
-    if (!this.actionInstances.has(call.method)) {
-      throw new MethodNotFoundException(`Unknown method ${call.method}`);
-    }
-    const composer = compose([...this.middlewares, async (cl:CallType) => {
-      const result = await this.actionInstances.get(cl.method).call(cl);
-      cl.result = result;
-    }]);
-    await composer(call);
-    return call.result;
-  }
-
-  public async call(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<ResultType> {
-    const call = {
-      method,
-      params,
-      context,
-      result: null,
-    };
-    return this.resolve(call);
+  public getContainer():ContainerInterface {
+    return this.container;
   }
 }

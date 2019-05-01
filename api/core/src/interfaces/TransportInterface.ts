@@ -2,9 +2,7 @@ import { KernelInterface } from './KernelInterface';
 
 export interface TransportInterface {
   kernel: KernelInterface;
-  opts: string[];
 
-  up():Promise<void>;
-
+  up(opts?: string[]):Promise<void>;
   down():Promise<void>;
 }

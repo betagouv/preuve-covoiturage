@@ -4,23 +4,21 @@ import jsYaml from 'js-yaml';
 import { camelCase, get } from 'lodash';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
-import { KernelInterface } from '../interfaces/KernelInterface';
-
 import { EnvProvider } from './EnvProvider';
+import { provider } from '../Container';
 
+@provider()
 export class ConfigProvider implements ProviderInterface {
   readonly signature: string = 'config';
-  private kernel: KernelInterface;
   private config: object = {};
-  constructor(kernel: KernelInterface) {
-    this.kernel = kernel;
-  }
+
+  constructor(protected env: EnvProvider) {}
 
   boot() {
     // recommended : set the CONFIG_DIR as env variable
     const configFolder = path.resolve(
       process.cwd(),
-      (<EnvProvider>this.kernel.get('env')).get('CONFIG_DIR', './config'),
+      this.env.get('CONFIG_DIR', './config'),
     );
     // Load all .yml files from the config/ folder
     if (fs.existsSync(configFolder)) {

@@ -1,3 +1,5 @@
+import { KernelInterface } from '~/interfaces/KernelInterface';
+
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
 import { ResultType } from '../types/ResultType';
@@ -17,6 +19,12 @@ export class CallCommand extends Command {
       coerce: val => JSON.parse(val),
     },
   ];
+
+  constructor(
+    private kernel: KernelInterface,
+  ) {
+    super();
+  }
 
   public async call(method, options?):Promise<ResultType> {
     try {

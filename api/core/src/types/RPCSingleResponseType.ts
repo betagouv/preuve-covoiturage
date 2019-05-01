@@ -7,4 +7,4 @@ export type RPCSingleResponseType = {
   jsonrpc: string;
   result?: ResultType;
   error?: RPCErrorType;
-};
+} | void;

@@ -1,125 +1,80 @@
+import { ParamsType } from '~/types/ParamsType';
+import { ContextType } from '~/types/ContextType';
+import { ResultType } from '~/types/ResultType';
+import { ContainerInterface } from '~/Container';
+
 import { KernelInterface } from '../interfaces/KernelInterface';
-import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { RPCCallType } from '../types/RPCCallType';
 import { RPCResponseType } from '../types/RPCResponseType';
 import { RPCSingleCallType } from '../types/RPCSingleCallType';
 import { RPCSingleResponseType } from '../types/RPCSingleResponseType';
-
-import { ProviderInterface } from '../interfaces/ProviderInterface';
-import { ServiceProviderConstructorInterface } from '../interfaces/ServiceProviderConstructorInterface';
-import { ProviderConstructorInterface } from '../interfaces/ProviderConstructorInterface';
-import { TransportInterface } from '../interfaces/TransportInterface';
-import { TransportConstructorInterface } from '../interfaces/TransportConstructorInterface';
-import { CommandInterface } from '../interfaces/CommandInterface';
-
 import { resolveMethodFromString } from '../helpers/resolveMethod';
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
 import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 import { InvalidRequestException } from '../exceptions/InvalidRequestException';
-import { CommandConstructorInterface } from '../interfaces/CommandConstructorInterface';
+import { ServiceProvider } from './ServiceProvider';
 
-export abstract class Kernel implements KernelInterface {
-  protected serviceRegistry: Map<string, ServiceProviderInterface> = new Map();
-  protected providerRegistry: Map<string, ProviderInterface> = new Map();
-  protected commandRegistry: Map<string, CommandInterface> = new Map();
-
-  providers: ProviderConstructorInterface[] = [];
-  services: ServiceProviderConstructorInterface[] = [];
-  commands: CommandConstructorInterface[] = [];
-
-  protected transport?: TransportInterface;
-
-  public async boot() {
-    await this.bootProviders();
-    await this.bootServices();
-    await this.bootCommands();
+export abstract class Kernel extends ServiceProvider implements KernelInterface {
+  constructor(container?: ContainerInterface) {
+    super(container);
+    if (!container) {
+      this.container.bind(Kernel).toConstantValue(this); // PAS SUR QUE CE SOIT UTILE
+    }
   }
 
-  protected async bootServices(): Promise<void> {
-    for (const serviceProviderConstructor of this.services) {
-      const serviceProvider = new serviceProviderConstructor(this);
-      await serviceProvider.boot();
-      this.serviceRegistry.set(serviceProvider.signature, serviceProvider);
+  protected validate(call: RPCSingleCallType): void {
+    const keys = Reflect.ownKeys(call).filter((k: string) => ['jsonrpc', 'method', 'id', 'params'].indexOf(k) < 0);
+    if (keys.length > 0) {
+      throw new InvalidRequestException('Illegal property');
     }
 
-    return;
-  }
-  protected async bootProviders(): Promise<void> {
-    for (const providerContructor of this.providers) {
-      const provider = new providerContructor(this);
-      await provider.boot();
-      this.providerRegistry.set(provider.signature, provider);
+    if (!('jsonrpc' in call) || call.jsonrpc !== '2.0') {
+      throw new InvalidRequestException('jsonrpc must be equal to 2.0');
     }
 
+    if (!('method' in call)) {
+      throw new InvalidRequestException('jsonrpc call must have a method property');
+    }
+
+    if (('id' in call) && (typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null)) {
+      throw new InvalidRequestException('id property should be either a string, a number or null');
+    }
     return;
   }
 
-  protected async bootCommands(): Promise<void> {
-    const commands = [...this.commands];
-
-    this.providerRegistry.forEach((provider) => {
-      if ('commands' in provider) {
-        commands.push(...provider.commands);
-      }
-    });
-
-    this.serviceRegistry.forEach((provider) => {
-      if ('commands' in provider) {
-        commands.push(...provider.commands);
-      }
-    });
-
-    for (const commandConstructor of commands) {
-      const command = new commandConstructor(this);
-      await command.boot();
-      this.commandRegistry.set(command.signature, command);
-    }
-
-    return;
-  }
-
-  public get(name: string):ProviderInterface {
-    if (!this.providerRegistry.has(name)) {
-      throw new Error(`Unknown provider ${name}`);
-    }
-    return this.providerRegistry.get(name);
-  }
-
-  public async up(transportConstructor: TransportConstructorInterface, opts?: string[]) {
-    this.transport = new transportConstructor(this, opts);
-    return this.transport.up();
-  }
-
-  public async down() {
-    return this.transport.down();
-  }
-
-  protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType> {
+  protected async getHandlerAndCall(config, call) {
     try {
-      const keys = Reflect.ownKeys(call).filter((k: string) => ['jsonrpc', 'method', 'id', 'params'].indexOf(k) < 0);
-      if (keys.length > 0) {
-        throw new InvalidRequestException('Illegal property');
+      const handler = this.getContainer().getHandler(config);
+      if (!handler) {
+        throw new MethodNotFoundException(`Unknown method or service ${config.service}:${config.method}`);
       }
+      return handler.call(call);
+    } catch (e) {
+      throw e;
+    }
+  }
 
-      if (!('jsonrpc' in call) || call.jsonrpc !== '2.0') {
-        throw new InvalidRequestException('jsonrpc must be equal to 2.0');
-      }
+  public async call(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<ResultType> {
+    const handlerConfig = resolveMethodFromString(method);
+    return this.getHandlerAndCall(handlerConfig, { method, params, context });
+  }
 
-      if (!('method' in call)) {
-        throw new InvalidRequestException('jsonrpc call must have a method property');
-      }
+  public async notify(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<void> {
+    const handlerConfig = {
+      ...resolveMethodFromString(method),
+      transport: 'queue',
+    };
+    return this.getHandlerAndCall(handlerConfig, { method, params, context });
+  }
 
-      if (('id' in call) && (typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null)) {
-        throw new InvalidRequestException('id property should be either a string, a number or null');
-      }
-
-      const { method, service } = resolveMethodFromString(<string>call.method);
-
-      if (!this.serviceRegistry.has(service)) {
-        throw new MethodNotFoundException(`Unknown service ${service}`);
-      }
-
+  protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType | void> {
+    let name = 'anonymous';
+    if ('name' in this) {
+      name = this['name'];
+    }
+    try {
+      this.validate(call);
       let context = null;
       let params = null;
 
@@ -131,13 +86,17 @@ export abstract class Kernel implements KernelInterface {
         }
       }
 
-      const response = await this.serviceRegistry.get(service).call(method, params, context);
+      if ('id' in call) {
+        const response = await this.call(call.method, params, context);
 
-      return {
-        id: call.id,
-        result: response,
-        jsonrpc: '2.0',
-      };
+        return {
+          id: call.id,
+          result: response,
+          jsonrpc: '2.0',
+        };
+      }
+      await this.notify(call.method, params, context);
+      return;
     } catch (e) {
       if (isAnRPCException(e)) {
         return {

@@ -1,18 +1,15 @@
 import { Command } from 'commander';
 
-import { ProviderInterface } from '../interfaces/ProviderInterface';
-import { KernelInterface } from '../interfaces/KernelInterface';
+import { ProviderInterface } from '~/interfaces/ProviderInterface';
+import { provider } from '~/Container';
 
+@provider()
 export class CommandProvider extends Command implements ProviderInterface {
-  readonly signature: string = 'command';
-  private kernel: KernelInterface;
-
-  constructor(kernel: KernelInterface) {
-    super();
-    this.kernel = kernel;
+  boot() {
+    //
   }
 
-  boot() {
-      //
+  output(...args: any[]) {
+    console.log(...args);
   }
 }

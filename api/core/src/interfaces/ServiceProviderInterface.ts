@@ -1,10 +1,11 @@
-import { ParamsType } from '../types/ParamsType';
-import { ResultType } from '../types/ResultType';
-import { ContextType } from '../types/ContextType';
+import { ContainerInterface } from '~/Container';
 
 import { ProviderInterface } from './ProviderInterface';
+import { NewableType } from '../types/NewableType';
 
 export interface ServiceProviderInterface extends ProviderInterface {
-  readonly version: string;
-  call(method: string, parameters: ParamsType, context: ContextType): Promise<ResultType>;
+  readonly alias: any[];
+  readonly serviceProviders: NewableType<ServiceProviderInterface>[];
+
+  getContainer():ContainerInterface;
 }

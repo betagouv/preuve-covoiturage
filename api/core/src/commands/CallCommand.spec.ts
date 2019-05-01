@@ -4,15 +4,13 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import { CallCommand } from './CallCommand';
-import { CommandProvider } from '../providers/CommandProvider';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
 const kernel = {
-  commander: null,
-  providers: [],
-  services: [],
+  alias: [],
+  serviceProviders: [],
   boot() { return; },
   async handle(call) {
     if (call.method === 'nope') {
@@ -20,14 +18,9 @@ const kernel = {
     }
     return call;
   },
-  get() {
-    if (!this.commander) {
-      this.commander = new CommandProvider(this);
-    }
-    return this.commander;
-  },
   async up() { return; },
   async down() { return; },
+  getContainer() { throw new Error(); },
 };
 
 describe('Command: Call', () => {

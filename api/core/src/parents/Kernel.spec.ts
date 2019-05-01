@@ -1,19 +1,66 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
 import { describe } from 'mocha';
-import chai, { expect } from 'chai';
+import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { ProviderInterface } from '../interfaces/ProviderInterface';
+import { HandlerInterface } from '~/interfaces/HandlerInterface';
+import { NewableType } from '~/types/NewableType';
+import { ServiceProviderInterface } from '~/interfaces/ServiceProviderInterface';
 
+import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { Kernel } from './Kernel';
 import { ServiceProvider } from './ServiceProvider';
 import { Action } from './Action';
+import { ResultType } from '../types/ResultType';
+import { ParamsType } from '../types/ParamsType';
+import { ContextType } from '../types/ContextType';
+import { handler, provider } from '../Container';
 
 chai.use(chaiAsPromised);
+const { expect } = chai;
 
+@provider()
+class Test implements ProviderInterface {
+  base: string;
+  boot() {
+    this.base = 'Hello';
+  }
+  hello(name) {
+    const response = `${this.base} ${name}`;
+    this.base = 'Hi';
+    return response;
+  }
+}
+
+@handler({
+  service: 'string',
+  method: 'hi',
+})
 class BasicAction extends Action {
-  public readonly signature: string = 'add';
-  protected async handle(params, context) {
+  constructor(private test: Test) {
+    super();
+  }
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+    if ('name' in params) {
+      let from = '';
+      if (context.user) {
+        from = ` from ${context.user.name}`;
+      }
+      return this.test.hello(`${params.name}${from}`);
+    }
+    throw new Error('Missing arguments');
+  }
+}
+
+@handler({
+  service: 'math',
+  method: 'add',
+})
+class BasicTwoAction extends Action {
+  constructor(private test: Test) {
+    super();
+  }
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     let count = 0;
     if ('add' in params) {
       const { add } = params;
@@ -23,24 +70,36 @@ class BasicAction extends Action {
     } else {
       throw new Error('Please provide add param');
     }
-    return count;
+    return this.test.hello(count);
   }
 }
-class ProviderBasedAction extends Action {
-  public readonly signature: string = 'config';
-  protected async handle(params, context) {
-    return (<any>this.kernel.get('config')).response;
-  }
+
+class BasicTwoServiceProvider extends ServiceProvider {
+  readonly alias = [
+    [Test, Test],
+  ];
+  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
+
+  readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
 }
+
 class BasicServiceProvider extends ServiceProvider {
-  public readonly signature: string = 'math';
-  actions = [BasicAction, ProviderBasedAction];
+  readonly alias = [
+    [Test, Test],
+  ];
+  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [
+    BasicTwoServiceProvider,
+  ];
+
+  readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
 }
+
 describe('Kernel', () => {
   it('should work with single call', async () => {
     class BasicKernel extends Kernel {
-      services = [BasicServiceProvider];
+      serviceProviders = [BasicServiceProvider];
     }
+
     const kernel = new BasicKernel();
     await kernel.boot();
     const response = await kernel.handle({
@@ -54,12 +113,13 @@ describe('Kernel', () => {
     expect(response).to.deep.equal({
       jsonrpc: '2.0',
       id: 1,
-      result: 3,
+      result: 'Hello 3',
     });
   });
+
   it('should work with a batch', async () => {
     class BasicKernel extends Kernel {
-      services = [BasicServiceProvider];
+      serviceProviders = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
     await kernel.boot();
@@ -85,18 +145,18 @@ describe('Kernel', () => {
       {
         jsonrpc: '2.0',
         id: 1,
-        result: 3,
+        result: 'Hello 3',
       },
       {
         jsonrpc: '2.0',
         id: 2,
-        result: 6,
+        result: 'Hi 6',
       },
     ]);
   });
+
   it('should return an error if service is unknown', async () => {
     class BasicKernel extends Kernel {
-      services = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
     await kernel.boot();
@@ -113,39 +173,15 @@ describe('Kernel', () => {
       id: 1,
       error: {
         code: -32601,
-        data: 'Unknown service nope',
+        data: 'Unknown method or service nope:add',
         message: 'Method not found',
       },
     });
   });
 
-  it('should return an error if method is unknown', async () => {
-    class BasicKernel extends Kernel {
-      services = [BasicServiceProvider];
-    }
-    const kernel = new BasicKernel();
-    await kernel.boot();
-    const response = await kernel.handle({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'math:nope',
-      params: {
-        add: [1, 2],
-      },
-    });
-    expect(response).to.deep.equal({
-      jsonrpc: '2.0',
-      id: 1,
-      error: {
-        code: -32601,
-        data: 'Unknown method nope',
-        message: 'Method not found',
-      },
-    });
-  });
   it('should return an error if method throw an error', async () => {
     class BasicKernel extends Kernel {
-      services = [BasicServiceProvider];
+      serviceProviders = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
     await kernel.boot();
@@ -165,28 +201,65 @@ describe('Kernel', () => {
       },
     });
   });
-  it('should work with provider based call', async () => {
+
+  it('should work with contexted call', async () => {
     class BasicKernel extends Kernel {
-      services = [BasicServiceProvider];
-      providers = [class ConfigProvider implements ProviderInterface {
-        public readonly signature: string = 'config';
-        response: string;
-        boot() {
-          this.response = 'Hello world';
-        }
-      }];
+      serviceProviders = [BasicServiceProvider];
     }
+
     const kernel = new BasicKernel();
     await kernel.boot();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
-      method: 'math:config',
+      method: 'string:hi',
+      params: {
+        params: {
+          name: 'Jon',
+        },
+        _context: {
+          user: {
+            name: 'Nicolas',
+          },
+        },
+      },
     });
     expect(response).to.deep.equal({
       jsonrpc: '2.0',
       id: 1,
-      result: 'Hello world',
+      result: 'Hello Jon from Nicolas',
+    });
+  });
+
+  it('should work with notify call', async () => {
+    class BasicKernel extends Kernel {
+      serviceProviders = [BasicServiceProvider];
+    }
+
+    const kernel = new BasicKernel();
+    await kernel.boot();
+    const response = await kernel.handle({
+      jsonrpc: '2.0',
+      method: 'string:hi',
+      params: {
+        params: {
+          name: 'Jon',
+        },
+        _context: {
+          user: {
+            name: 'Nicolas',
+          },
+        },
+      },
+    });
+    expect(response).to.deep.equal({
+      jsonrpc: '2.0',
+      id: undefined,
+      error: {
+        code: -32601,
+        data: 'Unknown method or service string:hi',
+        message: 'Method not found',
+      },
     });
   });
 });

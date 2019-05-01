@@ -1,17 +1,12 @@
 import dotenv from 'dotenv';
 
+import { provider } from '~/Container';
+
 import { ProviderInterface } from '../interfaces/ProviderInterface';
-import { KernelInterface } from '../interfaces/KernelInterface';
 
+@provider()
 export class EnvProvider implements ProviderInterface {
-  readonly signature: string = 'env';
-
-  private kernel: KernelInterface;
   private env: Map<string, any> = new Map();
-
-  constructor(kernel: KernelInterface) {
-    this.kernel = kernel;
-  }
 
   boot() {
     const result = dotenv.config();

@@ -6,5 +6,5 @@ export type CallType = {
   method: string,
   context: ContextType
   params: ParamsType;
-  result: ResultType;
+  result?: ResultType;
 };

@@ -4,48 +4,19 @@ import { expect } from 'chai';
 import mockFs from 'mock-fs';
 
 import { ConfigProvider } from './ConfigProvider';
-import { ProviderInterface } from '../interfaces/ProviderInterface';
+import { EnvProvider } from './EnvProvider';
 
-const kernel = {
-  providers: [class FakeEnvProvider implements ProviderInterface {
-    public readonly signature: 'env';
-    boot() { return; }
-    get(key, fb) { return fb; }
-  }],
-  services: [],
-  boot() { this.env = new this.providers[0](this); },
-  async handle(call) {
-    return {
-      id: null,
-      jsonrpc: '2.0',
-    };
-  },
-  get() { return this.env; },
-  async up() { return; },
-  async down() { return; },
-};
+class FakeEnvProvider extends EnvProvider {
+  boot() {
+    return;
+  }
 
-kernel.boot();
+  get(key: string, fallback?: any): any {
+    return fallback;
+  }
+}
 
 describe('Config provider', () => {
-  it('should throw error if no env provider found', async () => {
-    const configProvider = new ConfigProvider({
-      providers: [],
-      services: [],
-      boot() { return; },
-      async handle(call) {
-        return {
-          id: null,
-          jsonrpc: '2.0',
-        };
-      },
-      get() { throw new Error(); },
-      async up() { return; },
-      async down() { return; },
-    });
-    return expect(() => configProvider.boot()).to.throws(Error, '');
-  });
-
   it('should work', async () => {
     mockFs({
       [`${process.cwd()}/config/hello-world.yml`]: `
@@ -54,7 +25,7 @@ describe('Config provider', () => {
         \n`,
     });
 
-    const configProvider = new ConfigProvider(kernel);
+    const configProvider = new ConfigProvider(new FakeEnvProvider());
     await configProvider.boot();
     expect(configProvider.get('helloWorld')).to.deep.equal({
       hi: [
@@ -66,7 +37,7 @@ describe('Config provider', () => {
   });
 
   it('should return fallback if key not found', async () => {
-    const configProvider = new ConfigProvider(kernel);
+    const configProvider = new ConfigProvider(new FakeEnvProvider());
     await configProvider.boot();
     expect(configProvider.get('hello', 'world')).to.equal('world');
   });

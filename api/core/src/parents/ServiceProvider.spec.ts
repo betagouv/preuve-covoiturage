@@ -3,37 +3,29 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
+import { HandlerInterface } from '~/interfaces/HandlerInterface';
+import { NewableType } from '~/types/NewableType';
+import { ServiceProviderInterface } from '~/interfaces/ServiceProviderInterface';
+import { ProviderInterface } from '~/interfaces/ProviderInterface';
+
 import { ServiceProvider } from './ServiceProvider';
 import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-
-import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
+import { handler, provider } from '../Container';
 
 chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
 
-const kernel = {
-  providers: [],
-  services: [],
-  boot() { return; },
-  async handle(call) {
-    return {
-      id: null,
-      jsonrpc: '2.0',
-    };
-  },
-  get() { throw new Error(); },
-  async up() { return; },
-  async down() { return; },
-};
-
-describe('Provider', () => {
-  it('should work with call', async () => {
+describe('Service provider', () => {
+  it('should register handler', async () => {
+    @handler({
+      service: 'test',
+      method: 'add',
+    })
     class BasicAction extends Action {
-      public readonly signature: string = 'add';
       protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
@@ -46,23 +38,148 @@ describe('Provider', () => {
       }
     }
 
-    class BasicProvider extends ServiceProvider {
-      protected actions = [BasicAction];
+    class BasicServiceProvider extends ServiceProvider {
+      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
+
+      readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
     }
 
-    const provider = new BasicProvider(kernel);
-    provider.boot();
-    const r = await provider.call('add', { add: [1, 1] });
-    expect(r).to.equal(2);
+    const serviceProvider = new BasicServiceProvider();
+    await serviceProvider.boot();
+
+    const container = serviceProvider.getContainer();
+    expect(container.getHandler({ service: 'test', method: 'add' })).be.instanceOf(BasicAction);
   });
 
-  it('should raise an error if no action is unknown', async () => {
-    class BasicProvider extends ServiceProvider {
-      protected actions = [];
+  it('should register handler with alias', async () => {
+    @provider()
+    class Test implements ProviderInterface {
+      base: string;
+      boot() {
+        this.base = 'Hello';
+      }
+      hello(name) {
+        return `${this.base} ${name}`;
+      }
     }
 
-    const provider = new BasicProvider(kernel);
-    await provider.boot();
-    return (<any>assert).isRejected(provider.call('add', { add: [1, 1] }), MethodNotFoundException, 'Method not found');
+    @handler({
+      service: 'test',
+      method: 'hi',
+    })
+    class BasicAction extends Action {
+      constructor(private test: Test) {
+        super();
+      }
+      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+        if ('name' in params) {
+          return this.test.hello(params.name);
+        }
+        throw new Error('Missing arguments');
+      }
+    }
+
+    class BasicServiceProvider extends ServiceProvider {
+      readonly alias = [
+        [Test, Test],
+      ];
+      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
+
+      readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
+    }
+
+    const serviceProvider = new BasicServiceProvider();
+    await serviceProvider.boot();
+
+    const container = serviceProvider.getContainer();
+    const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
+    const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: { internal: true } });
+    expect(response).be.equal('Hello Sam');
+  });
+
+  it('should register handler with alias and nested service providers', async () => {
+    @provider()
+    class Test implements ProviderInterface {
+      base: string;
+      boot() {
+        this.base = 'Hello';
+      }
+      hello(name) {
+        const response = `${this.base} ${name}`;
+        this.base = 'Hi';
+        return response;
+      }
+    }
+
+    @handler({
+      service: 'test',
+      method: 'hi',
+    })
+    class BasicAction extends Action {
+      constructor(private test: Test) {
+        super();
+      }
+      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+        if ('name' in params) {
+          return this.test.hello(params.name);
+        }
+        throw new Error('Missing arguments');
+      }
+    }
+
+    @handler({
+      service: 'test',
+      method: 'add',
+    })
+    class BasicTwoAction extends Action {
+      constructor(private test: Test) {
+        super();
+      }
+      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+        let count = 0;
+        if ('add' in params) {
+          const { add } = params;
+          add.forEach((param) => {
+            count += param;
+          });
+        }
+        return this.test.hello(count);
+      }
+    }
+
+    class BasicTwoServiceProvider extends ServiceProvider {
+      readonly alias = [
+        [Test, Test],
+      ];
+      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
+
+      readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
+    }
+
+    class BasicServiceProvider extends ServiceProvider {
+      readonly alias = [
+        [Test, Test],
+      ];
+      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [
+        BasicTwoServiceProvider,
+      ];
+
+      readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
+    }
+
+    const serviceProvider = new BasicServiceProvider();
+    await serviceProvider.boot();
+
+    const container = serviceProvider.getContainer();
+    const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
+    const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: { internal: true } });
+    expect(response).be.equal('Hello Sam');
+
+    const handlerTwoInstance = container.getHandler({ service: 'test', method: 'add' });
+    const responseTwo = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: { internal: true } });
+    expect(responseTwo).be.equal('Hello 42');
+
+    const responseTwoBis = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: { internal: true } });
+    expect(responseTwoBis).be.equal('Hi 42');
   });
 });

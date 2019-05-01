@@ -1,8 +1,6 @@
-import { CommandConstructorInterface } from './CommandConstructorInterface';
+import { ContainerModuleConfigurator, ContainerInterface } from '../Container';
 
 export interface ProviderInterface {
-  readonly signature: string;
-  commands?: CommandConstructorInterface[];
-
-  boot():Promise<void> | void;
+  boot(container?: ContainerInterface): Promise<void> | void;
+  register?(module: ContainerModuleConfigurator): Promise<void> | void;
 }
