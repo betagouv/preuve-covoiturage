@@ -58,6 +58,10 @@ const routes: Routes = [
     path: 'stats',
     loadChildren: './modules/statistics/statistics.module#StatisticsModule',
   },
+  {
+    path: 'statistics',
+    redirectTo: 'stats',
+  },
 ];
 
 @NgModule({
