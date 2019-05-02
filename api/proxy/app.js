@@ -22,7 +22,10 @@ const { appUrl, apiUrl } = require('@pdc/shared/helpers/url/url')(
 );
 
 // eslint-disable-next-line
-console.log('app', appUrl(), 'api', apiUrl());
+console.log('app', appUrl(), 'api', apiUrl(), {
+  app: process.env.APP_URL,
+  api: process.env.API_URL,
+});
 
 const swaggerDocument = require('./static/openapi.json');
 
