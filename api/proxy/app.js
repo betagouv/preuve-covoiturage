@@ -50,7 +50,7 @@ app.use(
 app.use(helmet());
 app.use(
   cors({
-    origin: appUrl() || '*',
+    origin: appUrl('', { allowNull: true, forceGeneration: true }) || '*',
     optionsSuccessStatus: 200,
   }),
 );

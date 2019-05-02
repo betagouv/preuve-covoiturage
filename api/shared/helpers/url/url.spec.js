@@ -120,6 +120,38 @@ describe('url: PR API_URL only - allowNull', async () => {
   });
 });
 
+describe('url: PR API_URL only - forceGeneration', async () => {
+  const app = 'https://pdc-dashboard-dev-pr147.scalingo.io';
+  const api = 'https://pdc-api-dev-pr147.scalingo.io';
+  const { appUrl, apiUrl } = urlFactory('override-me', api);
+
+  it('ok appUrl', () => {
+    assert.equal(app, appUrl('', { forceGeneration: true }));
+  });
+
+  it('ok apiUrl', () => {
+    assert.equal(api, apiUrl());
+  });
+});
+
+describe('url: PR API_URL only - CORS review app', async () => {
+  const app = 'https://pdc-dashboard-dev-pr147.scalingo.io';
+  const api = 'https://pdc-api-dev-pr147.scalingo.io';
+  const { appUrl } = urlFactory('override-me', api);
+
+  it('ok appUrl', () => {
+    assert.equal(app, appUrl('', { allowNull: true, forceGeneration: true }) || '*');
+  });
+});
+
+describe('url: PR API_URL only - CORS no env vars', async () => {
+  const { appUrl } = urlFactory(null, null);
+
+  it('ok appUrl', () => {
+    assert.equal('*', appUrl('', { allowNull: true, forceGeneration: true }) || '*');
+  });
+});
+
 describe('url: no ENV vars', async () => {
   const { appUrl, apiUrl } = urlFactory(null, null);
 

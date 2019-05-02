@@ -3,8 +3,14 @@ const normalizeUrl = require('normalize-url');
 const cleanUrl = (baseUrl, baseOptions) => (queryString = '', opts = {}) => {
   const options = {
     allowNull: false,
+    forceGeneration: false,
     ...opts,
   };
+
+  if (options.forceGeneration === true) {
+    // eslint-disable-next-line no-param-reassign
+    baseUrl = null;
+  }
 
   // get URL from fallback if missing
   if (!baseUrl) {
