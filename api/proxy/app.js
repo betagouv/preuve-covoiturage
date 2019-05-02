@@ -16,7 +16,13 @@ const eventBus = require('@pdc/shared/bus');
 const journeyBus = require('@pdc/service-acquisition/transports/bus');
 
 const { PORT, sessionSecret } = require('@pdc/shared/config.js');
-const { appUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
+const { appUrl, apiUrl } = require('@pdc/shared/helpers/url/url')(
+  process.env.APP_URL,
+  process.env.API_URL,
+);
+
+// eslint-disable-next-line
+console.log('app', appUrl(), 'api', apiUrl());
 
 const swaggerDocument = require('./static/openapi.json');
 
