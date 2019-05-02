@@ -1,6 +1,16 @@
 const assert = require('assert');
 const urlFactory = require('./url');
 
+const originalEnv = process.env;
+before(() => {
+  process.env.APP_URL = undefined;
+  process.env.API_URL = undefined;
+});
+
+after(() => {
+  process.env = originalEnv;
+});
+
 describe('url: both', async () => {
   const app = 'https://pdc-dashboard-dev.scalingo.io';
   const api = 'https://pdc-api-dev.scalingo.io';
