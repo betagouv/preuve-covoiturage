@@ -45,10 +45,10 @@ module.exports = {
    * @param link
    */
   invite: ({ email, fullname, requester, organisation, link }) => {
+    const req = requester ? `par ${requester} ` : '';
     const template = `
         Bonjour ${fullname},<br>
-        Vous avez été invité•e ${requester ? `par ${requester} pour` : ''} accéder au Registre de
-        preuve de covoiturage.<br>
+        Vous avez été invité ${req}à accéder au Registre de preuve de covoiturage.<br>
         <br>
         ${organisation ? `Organisation: ${organisation}<br><br>` : ''}
         Veuillez cliquer sur le lien suivant et choisir votre mot de passe
@@ -77,8 +77,7 @@ module.exports = {
   forgottenPassword({ email, fullname, link }) {
     const template = `
         Bonjour ${fullname},<br>
-        Vous avez demandé la réinitialisation de votre mot de passe sur
-        le site Preuve de covoiturage.<br>
+        Vous avez demandé la réinitialisation de votre mot de passe sur le site du Registre de preuve de covoiturage.<br>
         <br>
         Veuillez cliquer sur le lien suivant et choisir un nouveau mot de passe.
         <br>
