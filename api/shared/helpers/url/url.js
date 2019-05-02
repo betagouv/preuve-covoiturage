@@ -7,9 +7,9 @@ const cleanUrl = (baseUrl, baseOptions) => (queryString = '', opts = {}) => {
   };
 
   // get URL from fallback if missing
-  if (!baseUrl) {
+  if (baseUrl === null || typeof baseUrl === 'undefined') {
     // return null if no fallback and user is Okay with that
-    if (!baseOptions.fallback) {
+    if (baseOptions.fallback === null) {
       return options.allowNull ? null : '/';
     }
 
