@@ -23,7 +23,7 @@ const service = serviceFactory(User, {
       throw new ForbiddenError();
     }
 
-    if (!await userDoc.comparePassword(password)) {
+    if (!(await userDoc.comparePassword(password))) {
       throw new ForbiddenError();
     }
 
@@ -36,14 +36,12 @@ const service = serviceFactory(User, {
     // retrieve the company
     switch (user.group) {
       case 'operators':
-        user.company = await Operator
-          .findById(user.operator, {
-            company: 0,
-            applications: 0,
-            createdAt: 0,
-            updatedAt: 0,
-          })
-          .exec();
+        user.company = await Operator.findById(user.operator, {
+          company: 0,
+          applications: 0,
+          createdAt: 0,
+          updatedAt: 0,
+        }).exec();
 
         if (user.company && user.company.toJSON()) {
           user.company = user.company.toJSON();
@@ -52,15 +50,13 @@ const service = serviceFactory(User, {
 
         break;
       case 'aom':
-        user.company = await Aom
-          .findById(user.aom, {
-            company: 0,
-            network_id: 0,
-            geometry: 0,
-            createdAt: 0,
-            updatedAt: 0,
-          })
-          .exec();
+        user.company = await Aom.findById(user.aom, {
+          company: 0,
+          network_id: 0,
+          geometry: 0,
+          createdAt: 0,
+          updatedAt: 0,
+        }).exec();
         break;
       default:
         user.company = null;
@@ -92,7 +88,7 @@ const service = serviceFactory(User, {
     // same password ?
     if (data.old === data.new) return user;
 
-    if (!await user.comparePassword(data.old)) {
+    if (!(await user.comparePassword(data.old))) {
       throw new ForbiddenError('Wrong credentials');
     }
 
@@ -108,7 +104,7 @@ const service = serviceFactory(User, {
 
   async forgottenPassword({ email, invite }, userCache = null) {
     // search for user
-    const user = userCache || await User.findOne({ email }).exec();
+    const user = userCache || (await User.findOne({ email }).exec());
     if (!user) {
       throw new NotFoundError();
     }
@@ -137,7 +133,7 @@ const service = serviceFactory(User, {
       throw new NotFoundError();
     }
 
-    if (!await user.compareForgottenToken(token)) {
+    if (!(await user.compareForgottenToken(token))) {
       throw new ForbiddenError();
     }
 

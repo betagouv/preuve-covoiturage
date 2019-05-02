@@ -57,7 +57,7 @@ module.exports = {
         ${link}
     `;
 
-    return send({
+    send({
       type: 'Invitation',
       email,
       fullname,
@@ -85,7 +85,7 @@ module.exports = {
         ${link}
     `;
 
-    return send({
+    send({
       type: 'Forgotten Password',
       email,
       fullname,

@@ -23,20 +23,16 @@ module.exports = async function dummyAom() {
 
   // check if a user is attached to this AOM
   if (!user) {
-    await userService.create(
-      {
-        firstname: 'Dummy',
-        lastname: 'Operator',
-        email: 'operator@example.com',
-        phone: '+33123456789',
-        password: 'operator',
-        group: 'operators',
-        role: 'admin',
-        operator: operator._id,
-      },
-      {},
-      false,
-    );
+    await userService.create({
+      firstname: 'Dummy',
+      lastname: 'Operator',
+      email: 'operator@example.com',
+      phone: '+33123456789',
+      password: 'operator',
+      group: 'operators',
+      role: 'admin',
+      operator: operator._id,
+    });
   }
 
   if (process.env.NODE_ENV !== 'test') {

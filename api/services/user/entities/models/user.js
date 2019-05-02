@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const modelFactory = require('@pdc/shared/providers/mongo/model-factory');
 const emails = require('@pdc/package-email/emails');
 const { appUrl } = require('@pdc/shared/helpers/url/url');
+const { environment } = require('@pdc/shared/config');
 const UserSchema = require('../schemas/user');
 
 module.exports = modelFactory('User', {
@@ -42,7 +43,9 @@ module.exports = modelFactory('User', {
       });
     },
     async invite(schema, doc, reset, token, requester, organisation) {
-      return emails.invite({
+      if (environment === 'review') return;
+
+      emails.invite({
         email: doc.email,
         fullname: doc.fullname,
         requester,
@@ -51,7 +54,9 @@ module.exports = modelFactory('User', {
       });
     },
     async forgotten(schema, doc, reset, token) {
-      return emails.forgottenPassword({
+      if (environment === 'review') return;
+
+      emails.forgottenPassword({
         email: doc.email,
         fullname: doc.fullname,
         link: appUrl(`/reset-password/${reset}/${token}`),

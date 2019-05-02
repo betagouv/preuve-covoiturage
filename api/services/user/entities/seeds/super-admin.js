@@ -36,19 +36,15 @@ module.exports = async () => {
   const password = getCredentials('APP_SUPERUSER_PASSWORD', 'admin1234');
   if (!email || !password) return false;
 
-  await userService.create(
-    {
-      phone: '+33123456789',
-      firstname: 'Super',
-      lastname: 'Admin',
-      email,
-      password,
-      group: 'registry',
-      role: 'admin',
-    },
-    {},
-    false,
-  );
+  await userService.create({
+    phone: '+33123456789',
+    firstname: 'Super',
+    lastname: 'Admin',
+    email,
+    password,
+    group: 'registry',
+    role: 'admin',
+  });
 
   if (process.env.NODE_ENV !== 'test') {
     console.log('- 💾 Created a super admin user');

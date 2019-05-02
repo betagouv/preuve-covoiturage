@@ -31,21 +31,17 @@ module.exports = async function dummyAom() {
 
   // check if a user is attached to this AOM
   if (!user) {
-    await userService.create(
-      {
-        email: 'aom@example.com',
-        phone: '+33123456789',
-        firstname: 'AOM',
-        lastname: 'Example',
-        password: 'aom1234',
-        group: 'aom',
-        role: 'admin',
-        status: 'invited',
-        aom: aom._id,
-      },
-      {},
-      false,
-    );
+    await userService.create({
+      email: 'aom@example.com',
+      phone: '+33123456789',
+      firstname: 'AOM',
+      lastname: 'Example',
+      password: 'aom1234',
+      group: 'aom',
+      role: 'admin',
+      status: 'invited',
+      aom: aom._id,
+    });
   }
 
   if (process.env.NODE_ENV !== 'test') {
