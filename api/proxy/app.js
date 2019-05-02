@@ -16,16 +16,7 @@ const eventBus = require('@pdc/shared/bus');
 const journeyBus = require('@pdc/service-acquisition/transports/bus');
 
 const { PORT, sessionSecret } = require('@pdc/shared/config.js');
-const { appUrl, apiUrl } = require('@pdc/shared/helpers/url/url')(
-  process.env.APP_URL,
-  process.env.API_URL,
-);
-
-// eslint-disable-next-line
-console.log('app', appUrl(), 'api', apiUrl(), {
-  app: process.env.APP_URL,
-  api: process.env.API_URL,
-});
+const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
 
 const swaggerDocument = require('./static/openapi.json');
 
@@ -50,7 +41,7 @@ app.use(
 app.use(helmet());
 app.use(
   cors({
-    origin: appUrl('', { allowNull: true, forceGeneration: true }) || '*',
+    origin: apiUrl('', { allowNull: true }) || '*',
     optionsSuccessStatus: 200,
   }),
 );
