@@ -41,7 +41,7 @@ app.use(
 app.use(helmet());
 app.use(
   cors({
-    origin: appUrl('', { allowNull: true }) || '*',
+    origin: appUrl() || '*',
     optionsSuccessStatus: 200,
   }),
 );

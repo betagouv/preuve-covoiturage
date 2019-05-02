@@ -95,3 +95,41 @@ describe('url: PR API_URL only', async () => {
     assert.equal(api, apiUrl());
   });
 });
+
+describe('url: PR API_URL only - allowNull', async () => {
+  const app = 'https://pdc-dashboard-dev-pr147.scalingo.io';
+  const api = 'https://pdc-api-dev-pr147.scalingo.io';
+  const { appUrl, apiUrl } = urlFactory(null, api);
+
+  it('ok appUrl', () => {
+    assert.equal(app, appUrl('', { allowNull: true }));
+  });
+
+  it('ok apiUrl', () => {
+    assert.equal(api, apiUrl('', { allowNull: true }));
+  });
+});
+
+describe('url: no ENV vars', async () => {
+  const { appUrl, apiUrl } = urlFactory(null, null);
+
+  it('ok appUrl', () => {
+    assert.equal('/', appUrl());
+  });
+
+  it('ok apiUrl', () => {
+    assert.equal('/', apiUrl());
+  });
+});
+
+describe('url: no ENV vars - allowNull', async () => {
+  const { appUrl, apiUrl } = urlFactory(null, null);
+
+  it('ok appUrl', () => {
+    assert.equal(null, appUrl('', { allowNull: true }));
+  });
+
+  it('ok apiUrl', () => {
+    assert.equal(null, apiUrl('', { allowNull: true }));
+  });
+});
