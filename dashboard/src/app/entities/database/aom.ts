@@ -12,6 +12,7 @@ class Aom {
   shortname: string;
   acronym: string;
   insee: [];
+  town: [];
   insee_main: string;
   createdAt: string;
   updatedAt: string;
@@ -28,6 +29,7 @@ class Aom {
     this.shortname = obj && obj.shortname || null;
     this.acronym = obj && obj.acronym || null;
     this.insee = obj && obj.insee || [];
+    this.town = obj && obj.town || [];
     this.insee_main = obj && obj.insee_main || [];
     this.createdAt = obj && obj.createdAt || null;
     this.updatedAt = obj && obj.updatedAt || null;

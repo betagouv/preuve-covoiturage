@@ -56,19 +56,17 @@
 
     <!-- More filters -->
 
-    <!-- INSEE -->
+    <!-- TOWNS -->
     <div *ngIf="showMoreFilters" class="p-grid">
       <div class="p-col-4">
         <div class="p-grid">
           <div class="p-col-6">
-            <p class="filter-label">Commune départ</p>
-            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.start.town')"
-                   [value]="dt.filters['passenger.start.town'] ? dt.filters['passenger.start.town'].value : ''">
+            <p class="filter-label">Communes départ</p>
+            <app-aom-town-multiple-dropdown [aomId]="aomId" [selectedTownsInput]="startTowns" (selectedTownChange)="onStartTownChange($event)" ></app-aom-town-multiple-dropdown>
           </div>
           <div class="p-col-6">
-            <p class="filter-label">Commune arrivée</p>
-            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.end.town')"
-                   [value]="dt.filters['passenger.end.town'] ? dt.filters['passenger.end.town'].value : ''">
+            <p class="filter-label">Communes arrivée</p>
+            <app-aom-town-multiple-dropdown [aomId]="aomId" [selectedTownsInput]="endTowns" (selectedTownChange)="onEndTownChange($event)" ></app-aom-town-multiple-dropdown>
           </div>
         </div>
       </div>

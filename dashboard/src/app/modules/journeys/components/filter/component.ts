@@ -70,12 +70,19 @@ export class JourneyFilterComponent implements OnInit {
   aomFiltered: any[] = [];
   aomList: any[] = [];
 
+  startTowns = [];
+  endTowns = [];
+
   /*
    * Saved filters before applyed to query
    */
   filters = {};
 
   fr = DATES.fr;
+
+
+  // if aom account
+  aomId: string;
 
   ngOnInit(): void {
     this.defaultMinDate = MAIN.startDate;
@@ -92,6 +99,12 @@ export class JourneyFilterComponent implements OnInit {
             label: `${aom._id.name} (${aom.count})`,
           }));
       });
+
+    const user = this.authenticationService.getUser();
+    if (user.aom) {
+      console.log(user.aom);
+      this.aomId = user.aom;
+    }
   }
 
   filterAom(event) {
@@ -161,10 +174,6 @@ export class JourneyFilterComponent implements OnInit {
     this.addFilter(this.selectedDays, 'day', 'in');
   }
 
-  filterText(event, colName) {
-    const colIndex = this.getColumnIndexFromName(colName);
-    this.addFilter(event.target.value, this.columns[colIndex].field, this.columns[colIndex].filterMatchMode);
-  }
 
   onClassChange() {
     this.addFilter(this.classes, 'operator_class', 'in');
@@ -179,6 +188,17 @@ export class JourneyFilterComponent implements OnInit {
     this.aomIds = aomIds;
     this.addFilter(this.aomIds, 'aom._id', 'in');
   }
+
+  onStartTownChange(towns: any[]) {
+    this.startTowns = towns;
+    this.addFilter(this.startTowns, 'passenger.start.town', 'in');
+  }
+
+  onEndTownChange(towns: any[]) {
+    this.endTowns = towns;
+    this.addFilter(this.endTowns, 'passenger.end.town', 'in');
+  }
+
 
   onAgeChange() {
     const allAges = ['true', 'false'];
@@ -232,6 +252,8 @@ export class JourneyFilterComponent implements OnInit {
     this.operatorIds = [];
     this.aomIds = [];
     this.ages = [];
+    this.startTowns = [];
+    this.endTowns= [];
   }
 
   getColumnIndexFromName(colName) {

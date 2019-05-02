@@ -2,7 +2,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 /* External modules */
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -22,16 +21,15 @@ import { OperatorUIModule } from '~/modules/operator/modules/operators/ui/ui.mod
 import { AomUIModule } from '~/modules/aom/modules/ui/ui.module';
 import { TranslationService } from '~/shared/services/translationService';
 import { TableService } from '~/shared/services/tableService';
+import { AomTownUIModule } from '~/modules/aom/modules/town/ui/ui.module';
 
 /* Local modules */
 import { JourneyRoutingModule } from './journey.routing';
 import { JourneyUIModule } from './modules/ui/ui.module';
-
 /* Local components */
 import { JourneyListComponent } from './components/list/component';
 import { JourneyListPageComponent } from './pages/list/component';
 import { JourneyFilterComponent } from './components/filter/component';
-
 /* Local services */
 import { JourneyService } from './services/journeyService';
 
@@ -55,6 +53,7 @@ import { JourneyService } from './services/journeyService';
     InputTextModule,
     ButtonModule,
     SplitButtonModule,
+    AomTownUIModule,
   ],
   providers: [
     JourneyService,

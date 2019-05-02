@@ -1,0 +1,11 @@
+<p-autoComplete
+    [suggestions]="filteredTowns"
+    [(ngModel)]="selectedTowns"
+    (completeMethod)="filter($event)"
+    field="value"
+    (onSelect)="onSelect()"
+    (onUnselect)="unSelect()"
+    [multiple]="true"
+    [dropdown]="true"
+    [disabled]="!towns.length">
+</p-autoComplete>
