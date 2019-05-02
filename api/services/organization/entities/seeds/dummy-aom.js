@@ -18,7 +18,7 @@ module.exports = async function dummyAom() {
       company: {
         siren: '123456789',
         region: 'Lune',
-        nature_juridique: 'Communauté d\'agglomération',
+        nature_juridique: "Communauté d'agglomération",
       },
       geometry: {
         type: 'MultiPolygon',

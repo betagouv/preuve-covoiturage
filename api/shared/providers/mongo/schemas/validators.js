@@ -65,7 +65,6 @@ module.exports = {
   cardName: {
     validator(name) {
       const list = _.get(config, 'travelPass.authorized', []);
-      console.log('cardName', name, list);
       if (list.indexOf(name) > -1) {
         return true;
       }

@@ -1,14 +1,33 @@
 const normalizeUrl = require('normalize-url');
 
-module.exports = {
-  appUrl(queryString) {
-    const base = process.env.APP_URL || 'http://localhost:4200';
+const cleanUrl = (baseUrl, baseOptions) => (queryString = '', opts = {}) => {
+  const options = {
+    allowNull: false,
+    forceGeneration: false,
+    ...opts,
+  };
+
+  if (options.forceGeneration === true) {
+    // eslint-disable-next-line no-param-reassign
+    baseUrl = null;
+  }
+
+  // get URL from fallback if missing
+  if (!baseUrl) {
+    // return null if no fallback and user is Okay with that
+    if (!baseOptions.fallback) {
+      return options.allowNull ? null : '/';
+    }
+
+    const base = baseOptions.fallback.replace(baseOptions.replace[0], baseOptions.replace[1]);
 
     return normalizeUrl(`${base}/${queryString}`);
-  },
-  apiUrl(queryString) {
-    const base = process.env.API_URL || '/';
+  }
 
-    return normalizeUrl(`${base}/${queryString}`);
-  },
+  return normalizeUrl(`${baseUrl || '/'}/${queryString}`);
 };
+
+module.exports = (app, api) => ({
+  appUrl: cleanUrl(app, { fallback: api, replace: ['api', 'dashboard'] }),
+  apiUrl: cleanUrl(api, { fallback: app, replace: ['dashboard', 'api'] }),
+});
