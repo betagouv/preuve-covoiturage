@@ -2,7 +2,7 @@
 const bcrypt = require('bcrypt');
 const modelFactory = require('@pdc/shared/providers/mongo/model-factory');
 const emails = require('@pdc/package-email/emails');
-const { appUrl } = require('@pdc/shared/helpers/url/url');
+const { appUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
 const { environment } = require('@pdc/shared/config');
 const UserSchema = require('../schemas/user');
 

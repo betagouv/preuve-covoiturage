@@ -50,6 +50,10 @@ describe('Unit tests: datetime', async () => {
   require('@pdc/shared/providers/mongo/test/datetime/round');
 });
 
+describe('Unit tests: url', async () => {
+  require('@pdc/shared/helpers/url/url.spec');
+});
+
 /**
  * Functional tests
  */

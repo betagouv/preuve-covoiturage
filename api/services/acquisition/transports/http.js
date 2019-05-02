@@ -8,7 +8,7 @@ const router = require('express').Router();
 const can = require('@pdc/shared/middlewares/can');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 const jwtServer = require('@pdc/shared/middlewares/jwt-server');
-const { apiUrl } = require('@pdc/shared/helpers/url/url');
+const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
 
 const journeyService = require('../service');
 const Journey = require('../entities/models/journey');
