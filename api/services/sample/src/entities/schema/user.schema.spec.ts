@@ -5,18 +5,18 @@ import {
 
 import userSchemaJson from './user.schema.json';
 
-describe('check validation', () => {
-  it('fails', () => {
+describe('JSON Schema', () => {
+  it('check validation - fails', () => {
     isNotSecure({ format: 'email' });
   });
 
-  it('works', () => {
+  it('check validation - works', () => {
     isSecure({ format: 'email', maxLength: 256 });
   });
 });
 
-describe('domain schema', () => {
-  it('user.schema', () => {
-    isSecure(userSchemaJson);
-  });
-});
+// describe('domain schema', () => {
+//   it('user.schema', () => {
+//     isSecure(userSchemaJson);
+//   });
+// });

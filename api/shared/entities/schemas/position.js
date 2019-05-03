@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 const { regex, validators } = require('../../providers/mongo/schema-validation');
-const round = require('../../providers/mongo/round-time');
+const round = require('../../providers/mongo/roundTime');
 const toUtc = require('../../providers/mongo/to-utc');
 const aom = require('./aom');
 

@@ -1,12 +1,16 @@
-const assert = require('assert');
+import { strict as assert } from 'assert';
+import { describe, it } from 'mocha';
+
 const validators = require('./validators');
 const setters = require('./setters');
 const assertThrows = require('../../../test/lib/assert-throws');
 
 describe('position', () => {
-  const yep = obj => assert(validators.position.validator(obj));
-  const nope = obj => assertThrows(Error, validators.position.validator, obj);
+  const yep = (obj?: any) => assert(validators.position.validator(obj));
+  const nope = (obj?: any) =>
+    assertThrows(Error, validators.position.validator, obj);
 
+  // tslint:disable-next-line: no-unnecessary-callback-wrapper
   it('empty', () => nope());
   it('empty object', () => nope({}));
   it('string', () => nope('abc'));
@@ -19,12 +23,17 @@ describe('position', () => {
 
   it('lon/lat', () => yep({ datetime: new Date(), lon: 2, lat: 45 }));
   it('insee', () => yep({ datetime: new Date(), insee: '75056' }));
-  it('literal', () => yep({ datetime: new Date(), literal: 'Place de la République, 75003 Paris' }));
+  it('literal', () =>
+    yep({
+      datetime: new Date(),
+      literal: 'Place de la République, 75003 Paris',
+    }));
 });
 
 describe('phone', () => {
-  const yep = obj => assert(validators.phone.validator(obj));
-  const nope = obj => assertThrows(Error, validators.phone.validator, obj);
+  const yep = (obj?: any) => assert(validators.phone.validator(obj));
+  const nope = (obj?: any) =>
+    assertThrows(Error, validators.phone.validator, obj);
 
   it('yep: 01', () => yep('01 23 45 67 89'));
   it('yep: 02', () => yep('02 23 45 67 89'));
@@ -63,8 +72,10 @@ describe('phone', () => {
   it('yep: mobile Guadeloupe, SM, SB', () => yep('+590691221870'));
   it('yep: mobile Guyane', () => yep('+594694021870'));
   it('yep: mobile Martinique', () => yep('+596696739021'));
-  it('yep: mobile La Reunion, Mayotte, Ocean Indien', () => yep('+262692456789'));
-  it('yep: mobile La Reunion, Mayotte, Ocean Indien', () => yep('+262693456789'));
+  it('yep: mobile La Reunion, Mayotte, Ocean Indien', () =>
+    yep('+262692456789'));
+  it('yep: mobile La Reunion, Mayotte, Ocean Indien', () =>
+    yep('+262693456789'));
 
   it('nope: not international prefix', () => nope('0033123456789'));
   it('nope: comma', () => nope('01,23,45,67,89'));
@@ -76,8 +87,10 @@ describe('phone', () => {
 });
 
 describe('travel pass', () => {
-  const yep = obj => assert(validators.cardName.validator(setters.cardName(obj)));
-  const nope = obj => assertThrows(Error, validators.cardName.validator, obj);
+  const yep = (obj?: any) =>
+    assert(validators.cardName.validator(setters.cardName(obj)));
+  const nope = (obj?: any) =>
+    assertThrows(Error, validators.cardName.validator, obj);
 
   it('yep navigo', () => yep('Navigo'));
 

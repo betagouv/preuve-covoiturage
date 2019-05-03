@@ -1,8 +1,10 @@
-const assert = require('assert');
+import { strict as assert } from 'assert';
+import { describe, it } from 'mocha';
+
 const regex = require('./regex');
 
-const yep = (r, n) => assert(r.test(n));
-const nope = (r, n) => assert(!r.test(n));
+const yep = (r: RegExp, n?: any) => assert(r.test(n));
+const nope = (r: RegExp, n?: any) => assert(!r.test(n));
 
 describe('phone', () => {
   it('yep: 01', () => yep(regex.phone, '01 23 45 67 89'));
@@ -26,7 +28,8 @@ describe('phone', () => {
   it('yep: belgian', () => yep(regex.phone, '+3225138940'));
   it('yep: reunion', () => yep(regex.phone, '+262262456789'));
 
-  it('nope: not international prefix', () => nope(regex.phone, '0033123456789'));
+  it('nope: not international prefix', () =>
+    nope(regex.phone, '0033123456789'));
   it('nope: comma', () => nope(regex.phone, '01,23,45,67,89'));
   it('nope: slash', () => nope(regex.phone, '01/23/45/67/89'));
   it('nope: 00000', () => nope(regex.phone, '0000000000'));
@@ -71,7 +74,7 @@ describe('lon', () => {
   it('nope', () => nope(regex.lon, []));
   it('nope', () => nope(regex.lon, '1.123N'));
   it('nope', () => nope(regex.lon, 'A'));
-  it('nope', () => nope(regex.lon, '23"12\'123°)'));
+  it('nope', () => nope(regex.lon, "23\"12'123°)"));
   it('nope', () => nope(regex.lon, 12333));
   it('nope', () => nope(regex.lon, -3601));
 });
@@ -90,7 +93,7 @@ describe('lat', () => {
   it('nope', () => nope(regex.lat, []));
   it('nope', () => nope(regex.lat, '1.123N'));
   it('nope', () => nope(regex.lat, 'A'));
-  it('nope', () => nope(regex.lat, '23"12\'123°)'));
+  it('nope', () => nope(regex.lat, "23\"12'123°)"));
   it('nope', () => nope(regex.lat, 12333));
   it('nope', () => nope(regex.lat, 180));
   it('nope', () => nope(regex.lat, -180));

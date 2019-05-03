@@ -35,23 +35,11 @@ after(async () => {
 });
 
 /**
- * Unit tests
+ * Geo tests
+ * - requires DB access
  */
-describe('Unit tests: geo', async () => {
+describe('Geo tests', async () => {
   require('@pdc/package-geo/test/geo');
-});
-
-describe('Unit tests: validation', async () => {
-  require('@pdc/shared/providers/mongo/schemas/regex.spec');
-  require('@pdc/shared/providers/mongo/schemas/validators.spec');
-});
-
-describe('Unit tests: datetime', async () => {
-  require('@pdc/shared/providers/mongo/test/datetime/round');
-});
-
-describe('Unit tests: url', async () => {
-  require('@pdc/shared/helpers/url/url.spec');
 });
 
 /**

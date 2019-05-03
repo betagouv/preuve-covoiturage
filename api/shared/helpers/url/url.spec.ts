@@ -1,4 +1,6 @@
-const assert = require('assert');
+import { strict as assert } from 'assert';
+import { describe, it } from 'mocha';
+
 const urlFactory = require('./url');
 
 const originalEnv = process.env;
