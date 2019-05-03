@@ -4,6 +4,13 @@ import { provider } from '~/Container';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 
+
+/**
+ * Env provider
+ * @export
+ * @class EnvProvider
+ * @implements {ProviderInterface}
+ */
 @provider()
 export class EnvProvider implements ProviderInterface {
   private env: Map<string, any> = new Map();

@@ -5,6 +5,13 @@ import { KernelInterface } from '../interfaces/KernelInterface';
 import { bullFactory } from '../helpers/bullFactory';
 import { ContainerInterface } from '../Container';
 
+
+/**
+ * Queue Transport
+ * @export
+ * @class QueueTransport
+ * @implements {TransportInterface}
+ */
 export class QueueTransport implements TransportInterface {
   queues: Queue[] = [];
   kernel: KernelInterface;

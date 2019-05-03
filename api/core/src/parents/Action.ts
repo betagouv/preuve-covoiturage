@@ -6,8 +6,15 @@ import { ContextType } from '../types/ContextType';
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { compose } from '../helpers/compose';
 
+
+/**
+ * Action parent class, must be decorated
+ * @export
+ * @abstract
+ * @class Action
+ * @implements {HandlerInterface}
+ */
 export abstract class Action implements HandlerInterface {
-  public readonly signature: string;
   public readonly middlewares: MiddlewareInterface[] = [];
 
   protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {

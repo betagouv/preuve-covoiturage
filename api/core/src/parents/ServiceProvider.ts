@@ -14,6 +14,13 @@ import { HandlerInterface } from '~/interfaces/HandlerInterface';
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { NewableType } from '../types/NewableType';
 
+/**
+ * Service provider parent class
+ * @export
+ * @abstract
+ * @class ServiceProvider
+ * @implements {ServiceProviderInterface}
+ */
 export abstract class ServiceProvider implements ServiceProviderInterface {
   readonly alias: any[] = [];
   readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
@@ -28,6 +35,11 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
     }
   }
 
+  /**
+   * Boot register a container module provided by register function,
+   * then register the handlers, then boot other service providers
+   * @memberof ServiceProvider
+   */
   public async boot() {
     this.container.load(
       new ContainerModule(
@@ -45,6 +57,11 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
     }
   }
 
+  /**
+   * Auto bind alias
+   * @param {ContainerModuleConfigurator} module
+   * @memberof ServiceProvider
+   */
   public register(module: ContainerModuleConfigurator):void {
     this.alias.forEach((def) => {
       if (Array.isArray(def)) {
@@ -56,6 +73,11 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
     });
   }
 
+  /**
+   * Return the container
+   * @returns {ContainerInterface}
+   * @memberof ServiceProvider
+   */
   public getContainer():ContainerInterface {
     return this.container;
   }

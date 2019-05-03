@@ -4,6 +4,12 @@ import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
 import { ResultType } from '../types/ResultType';
 
+/**
+ * Command that make an RPC call
+ * @export
+ * @class CallCommand
+ * @extends {Command}
+ */
 export class CallCommand extends Command {
   public readonly signature: string = 'call <method>';
   public readonly description: string = 'Make an RPC call';

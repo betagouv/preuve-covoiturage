@@ -3,6 +3,13 @@ import http from 'http';
 import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
 
+
+/**
+ * Http Transport
+ * @export
+ * @class HttpTransport
+ * @implements {TransportInterface}
+ */
 export class HttpTransport implements TransportInterface {
   server: http.Server;
   kernel: KernelInterface;

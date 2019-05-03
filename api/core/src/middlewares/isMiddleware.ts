@@ -4,6 +4,13 @@ import { ForbiddenException } from '~/Exceptions/ForbiddenException';
 import { InvalidParamsException } from '~/Exceptions/InvalidParamsException';
 import { reduceRoles } from '~/helpers/reducers/reduceRoles';
 
+
+/**
+ * Check role, may throw a ForbiddenException of a InvalidParamsException
+ * @export
+ * @param {...string[]} roles
+ * @returns {MiddlewareInterface}
+ */
 export function isMiddleware(...roles: string[]): MiddlewareInterface {
   return async (call: CallType, next: Function): Promise<void> => {
     const filtered: string[] = roles.filter(i => !!i);

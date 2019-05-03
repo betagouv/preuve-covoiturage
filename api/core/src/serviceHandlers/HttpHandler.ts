@@ -7,9 +7,14 @@ import { NewableType } from '~/types/NewableType';
 import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 
 import { ResultType } from '../types/ResultType';
-import { resolveMethodFromObject } from '../helpers/resolveMethod';
 import { ServiceException } from '../exceptions/ServiceException';
 
+/**
+ * Http handler
+ * @export
+ * @class HttpHandler
+ * @implements {HandlerInterface}
+ */
 export class HttpHandler implements HandlerInterface {
   readonly middlewares: MiddlewareInterface[] = [];
 
@@ -63,6 +68,14 @@ export class HttpHandler implements HandlerInterface {
   }
 }
 
+/**
+ * httpHandlerFactory - Create a HttpHandler for a remote service
+ * @export
+ * @param {string} service - service name
+ * @param {string} url - service url
+ * @param {string} [version]
+ * @returns {NewableType<HandlerInterface>}
+ */
 export function httpHandlerFactory(service: string, url: string, version?: string): NewableType<HandlerInterface> {
   @handler({
     service,

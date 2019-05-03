@@ -2,6 +2,13 @@ import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
 import { CommandProvider } from '../providers/CommandProvider';
 
+
+/**
+ * Cli Transport
+ * @export
+ * @class CliTransport
+ * @implements {TransportInterface}
+ */
 export class CliTransport implements TransportInterface {
   kernel: KernelInterface;
 

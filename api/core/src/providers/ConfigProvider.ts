@@ -7,6 +7,12 @@ import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { EnvProvider } from './EnvProvider';
 import { provider } from '../Container';
 
+/**
+ * Config provider
+ * @export
+ * @class ConfigProvider
+ * @implements {ProviderInterface}
+ */
 @provider()
 export class ConfigProvider implements ProviderInterface {
   readonly signature: string = 'config';
