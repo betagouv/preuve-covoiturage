@@ -27,7 +27,7 @@ export class QueueTransport implements TransportInterface {
     const container = <ContainerInterface>this.kernel.getContainer();
     (new Set(container
       .getHandlers()
-      .filter(cfg => 'transport' in cfg && cfg.transport === 'local')
+      .filter(cfg => ('local' in cfg && cfg.local) && ('queue' in cfg && !cfg.queue))
       .map(cfg => cfg.service),
     ))
       .forEach((service) => {

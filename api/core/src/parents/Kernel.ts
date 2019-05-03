@@ -2,13 +2,13 @@ import { ParamsType } from '~/types/ParamsType';
 import { ContextType } from '~/types/ContextType';
 import { ResultType } from '~/types/ResultType';
 import { ContainerInterface } from '~/Container';
+import { normalizeHandlerConfig } from '~/helpers/normalizeHandlerConfig';
 
 import { KernelInterface } from '../interfaces/KernelInterface';
 import { RPCCallType } from '../types/RPCCallType';
 import { RPCResponseType } from '../types/RPCResponseType';
 import { RPCSingleCallType } from '../types/RPCSingleCallType';
 import { RPCSingleResponseType } from '../types/RPCSingleResponseType';
-import { resolveMethodFromString } from '../helpers/resolveMethod';
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
 import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
@@ -25,7 +25,6 @@ import { ServiceProvider } from './ServiceProvider';
  * @implements {KernelInterface}
  */
 export abstract class Kernel extends ServiceProvider implements KernelInterface {
-
   /**
    * Creates an instance of Kernel.
    * @param {ContainerInterface} [container]
@@ -96,11 +95,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async call(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<ResultType> {
-    const handlerConfig = resolveMethodFromString(method);
+    const handlerConfig = normalizeHandlerConfig({ signature: method });
     return this.getHandlerAndCall(handlerConfig, { method, params, context });
   }
 
-  
+
   /**
    * Notify (async call) a method
    * @param {string} method
@@ -110,10 +109,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async notify(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<void> {
-    const handlerConfig = {
-      ...resolveMethodFromString(method),
-      transport: 'queue',
-    };
+    const handlerConfig = normalizeHandlerConfig({ signature: method, queue: true });
     return this.getHandlerAndCall(handlerConfig, { method, params, context });
   }
 

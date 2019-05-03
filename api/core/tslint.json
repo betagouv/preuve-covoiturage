@@ -78,7 +78,7 @@
     "encoding": true,
     "new-parens": true,
     "no-irregular-whitespace": true,
-    "no-redundant-jsdoc": true,
+    "no-redundant-jsdoc": false,
     "no-unnecessary-callback-wrapper": true,
     "prefer-method-signature": true,
     "prefer-template": [true, "allow-single-concat"],

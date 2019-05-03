@@ -17,16 +17,26 @@ export function provider() {
 
 export function handler(config: HandlerConfig) {
   const { service } = config;
-  let { method, version, transport } = config;
+  let { method, version, local, queue } = config;
 
-  method = method ? method : '*';
-  version = version ? version : 'latest';
-  transport = transport ? transport : 'local';
+  if (!('method' in config)) {
+    method = '*';
+  }
+  if (!('version' in config)) {
+    version = 'latest';
+  }
+  if (!('local' in config)) {
+    local = true;
+  }
+  if (!('queue' in config)) {
+    queue = false;
+  }
   return function (target) {
     Reflect.defineMetadata('rpc:service', service, target);
     Reflect.defineMetadata('rpc:method', method, target);
     Reflect.defineMetadata('rpc:version', version, target);
-    Reflect.defineMetadata('rpc:transport', transport, target);
+    Reflect.defineMetadata('rpc:local', local, target);
+    Reflect.defineMetadata('rpc:queue', queue, target);
     return injectable()(target);
   };
 }

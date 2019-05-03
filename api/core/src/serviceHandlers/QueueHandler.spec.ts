@@ -42,7 +42,7 @@ describe('Queue handler', () => {
       () => ({
       // @ts-ignore
         async add(name, opts) {
-          if (name !== 'basic@0.0.1:nope') {
+          if (name !== 'nope') {
             return {
               name,
               opts,
@@ -58,16 +58,16 @@ describe('Queue handler', () => {
   it('works', async () => {
     const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
     const result = await queueProvider.call({
-      method: 'method',
+      method: 'basic@latest:method',
       params: { add: [1, 2] },
       context: { internal: true },
     });
     expect(result).to.deep.equal({
-      name: 'basic@0.0.1:method',
+      name: 'basic@latest:method',
       opts: {
         jsonrpc: '2.0',
         id: null,
-        method: 'basic@0.0.1:method',
+        method: 'basic@latest:method',
         params: { params: { add: [1, 2] }, _context: { internal: true } } },
     });
   });

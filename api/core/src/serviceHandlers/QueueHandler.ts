@@ -6,8 +6,6 @@ import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
 import { CallType } from '~/types/CallType';
 import { NewableType } from '~/types/NewableType';
 
-import { KernelInterface } from '../interfaces/KernelInterface';
-import { resolveMethodFromObject } from '../helpers/resolveMethod';
 import { ConfigProvider } from '../providers/ConfigProvider';
 import { EnvProvider } from '../providers/EnvProvider';
 import { bullFactory } from '../helpers/bullFactory';
@@ -42,16 +40,11 @@ export class QueueHandler implements HandlerInterface {
 
     try {
       const { method, params, context } = call;
-      const methodString = resolveMethodFromObject({
-        method,
-        service: this.service,
-        version: this.version,
-      });
 
-      const job = await this.client.add(methodString, {
+      const job = await this.client.add(method, {
+        method,
         jsonrpc: '2.0',
         id: null,
-        method: methodString,
         params: {
           params,
           _context: context,
@@ -70,7 +63,8 @@ export function queueHandlerFactory(service: string, version?: string): NewableT
     service,
     version,
     method: '*',
-    transport: 'queue',
+    local: false,
+    queue: true,
   })
   class CustomQueueHandler extends QueueHandler {
     readonly service: string = service;

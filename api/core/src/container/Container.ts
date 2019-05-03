@@ -7,9 +7,8 @@ import {
 
 import { HandlerInterface } from '~/interfaces/HandlerInterface';
 import { NewableType } from '~/types/NewableType';
-import { resolveMethodFromObject } from '~/helpers/resolveMethod';
-
 import { HandlerConfig } from './ContainerInterfaces';
+import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 
 export class Container extends InversifyContainer {
   protected handlersRegistry: HandlerConfig[] = [];
@@ -46,14 +45,10 @@ export class Container extends InversifyContainer {
    * @memberof Container
    */
   getHandler(config: HandlerConfig): HandlerInterface {
-    const { service, method } = config;
-    if (!method || !service) {
-      throw new Error('Unable to resolve service: missing param');
+    const normalizedHandlerConfig = normalizeHandlerConfig(config);
+    if (!('local' in normalizedHandlerConfig) || normalizedHandlerConfig.local === undefined) {
+      normalizedHandlerConfig.local = true;
     }
-    let { version, transport } = config;
-
-    version = version ? version : 'latest';
-    transport = transport ? transport : 'local';
 
     /*
       1. Try to get local or specific service:method
@@ -62,18 +57,20 @@ export class Container extends InversifyContainer {
       4. Try to get http service:*
     */
 
-    let result = this.getHandlerFinal({ method, version, transport, service });
+    let result = this.getHandlerFinal(normalizedHandlerConfig);
     if (result) {
       return result;
     }
-    result = this.getHandlerFinal({ version, transport, service, method: '*' });
+    normalizedHandlerConfig.method = '*';
+    result = this.getHandlerFinal(normalizedHandlerConfig);
     if (result) {
       return result;
     }
-    if (transport === 'http') {
+    if (!normalizedHandlerConfig.local) {
       return;
     }
-    return this.getHandler({ method, version, service, transport: 'http' });
+    normalizedHandlerConfig.local = false;
+    return this.getHandler(normalizedHandlerConfig);
   }
 
   /**
@@ -84,10 +81,13 @@ export class Container extends InversifyContainer {
    * @memberof Container
    */
   protected getHandlerFinal(config: HandlerConfig): HandlerInterface | undefined {
-    const { service, method, version, transport } = config;
-    const signature = `HandlerInterface/${resolveMethodFromObject({ service, method, version })}/${transport}`;
-    if (this.isBound(signature)) {
-      return this.get(signature);
+    const { containerSignature } = normalizeHandlerConfig(config);
+    if (!containerSignature) {
+      throw new Error('Oups');
+    }
+
+    if (this.isBound(containerSignature)) {
+      return this.get(containerSignature);
     }
     return;
   }
@@ -106,10 +106,13 @@ export class Container extends InversifyContainer {
       this.parent.setHandlerFinal(handlerConfig, resolvedHandler);
       return;
     }
-    const { service, method, version, transport, signature } = handlerConfig;
+    const normalizedHandlerConfig = normalizeHandlerConfig(handlerConfig);
 
-    this.handlersRegistry.push({ service, method, version, transport, signature });
-    this.bind<HandlerInterface>(signature).toConstantValue(resolvedHandler);
+    if (!normalizedHandlerConfig.containerSignature) {
+      throw new Error('Oups');
+    }
+    this.handlersRegistry.push(normalizedHandlerConfig);
+    this.bind<HandlerInterface>(normalizedHandlerConfig.containerSignature).toConstantValue(resolvedHandler);
   }
 
 
@@ -122,16 +125,15 @@ export class Container extends InversifyContainer {
     const service = Reflect.getMetadata('rpc:service', handler);
     const method = Reflect.getMetadata('rpc:method', handler);
     const version = Reflect.getMetadata('rpc:version', handler);
-    const transport = Reflect.getMetadata('rpc:transport', handler);
-    if (!service) {
-      throw new Error('You must provide a service name');
-    }
+    const local = Reflect.getMetadata('rpc:local', handler);
+    const queue = Reflect.getMetadata('rpc:queue', handler);
+
+    const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
     const resolvedHandler = this.get<HandlerInterface>(<any>handler);
     // throw error if not found
     // throw error if duplicate
-    const signature = `HandlerInterface/${resolveMethodFromObject({ service, method, version })}/${transport}`;
 
-    this.setHandlerFinal({ service, method, version, transport, signature }, resolvedHandler);
+    this.setHandlerFinal(handlerConfig, resolvedHandler);
   }
 }
 

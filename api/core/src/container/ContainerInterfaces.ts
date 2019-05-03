@@ -6,11 +6,13 @@ import { HandlerInterface } from '~/interfaces/HandlerInterface';
 import { NewableType } from '~/types/NewableType';
 
 export type HandlerConfig = {
-  service: string,
+  service?: string,
   method?: string,
   version?: string,
-  transport?: string,
+  local?: boolean,
+  queue?: boolean,
   signature?: string,
+  containerSignature?: string,
 };
 
 export interface ContainerInterface extends interfaces.Container {

@@ -81,7 +81,7 @@ export function httpHandlerFactory(service: string, url: string, version?: strin
     service,
     version,
     method: '*',
-    transport: 'http',
+    local: false,
   })
   class CustomHttpHandler extends HttpHandler {
     protected readonly service: string = service;

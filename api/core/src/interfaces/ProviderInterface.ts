@@ -10,7 +10,7 @@ export interface ProviderInterface {
    */
   boot(container?: ContainerInterface): Promise<void> | void;
 
-  
+
   /**
    * Declare a container module
    * @param {ContainerModuleConfigurator} module

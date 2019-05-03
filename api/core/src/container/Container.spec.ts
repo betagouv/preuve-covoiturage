@@ -20,7 +20,6 @@ describe('Container', () => {
     @handler({
       service: 'test',
       method: 'hello',
-      transport: 'local',
     })
     class Test {
       public readonly middlewares: MiddlewareInterface[] = [];
