@@ -15,9 +15,11 @@
     "carpooling"
   ],
   "workspaces": [
+    "core",
     "proxy",
     "shared",
     "services/*",
+    "services-ts/*",
     "packages/*"
   ],
   "license": "Apache-2.0",

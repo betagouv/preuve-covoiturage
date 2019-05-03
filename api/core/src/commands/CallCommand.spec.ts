@@ -4,24 +4,22 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import { CallCommand } from './CallCommand';
+import { Kernel } from '../parents/Kernel';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-const kernel = {
-  alias: [],
-  serviceProviders: [],
-  boot() { return; },
+class FakeKernel extends Kernel {
+  async boot() { return; }
   async handle(call) {
     if (call.method === 'nope') {
       throw new Error();
     }
     return call;
-  },
-  async up() { return; },
-  async down() { return; },
-  getContainer() { throw new Error(); },
-};
+  }
+}
+
+const kernel = new FakeKernel();
 
 describe('Command: Call', () => {
   it('should work', async () => {

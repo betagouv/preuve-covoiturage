@@ -1,8 +1,9 @@
-import { KernelInterface } from '../interfaces/KernelInterface';
+import { Kernel } from '../parents/Kernel';
 
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
 import { ResultType } from '../types/ResultType';
+import { command } from '../Container';
 
 /**
  * Command that make an RPC call
@@ -10,6 +11,7 @@ import { ResultType } from '../types/ResultType';
  * @class CallCommand
  * @extends {Command}
  */
+@command()
 export class CallCommand extends Command {
   public readonly signature: string = 'call <method>';
   public readonly description: string = 'Make an RPC call';
@@ -27,7 +29,7 @@ export class CallCommand extends Command {
   ];
 
   constructor(
-    private kernel: KernelInterface,
+    private kernel: Kernel,
   ) {
     super();
   }

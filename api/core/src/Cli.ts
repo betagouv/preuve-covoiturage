@@ -27,18 +27,24 @@ function boot() {
   import(bootstrapPath).then(async (bootstrap) => {
     const kernel = ('kernel' in bootstrap) ? bootstrap.kernel : new Kernel();
     await kernel.boot();
+    const serviceProviders = ('serviceProviders' in bootstrap) ? bootstrap.serviceProviders : [];
+    for (const serviceProvider of serviceProviders) {
+      await kernel.registerServiceProvider(serviceProvider);
+    }
     switch (command) {
       case 'http':
         transport = new HttpTransport(kernel);
+        await transport.up(opts);
         break;
       case 'queue':
         transport = new QueueTransport(kernel);
+        await transport.up(opts);
         break;
       default:
         transport = new CliTransport(kernel);
+        await transport.up(argv);
         break;
     }
-    await transport.up(opts);
   });
 }
 

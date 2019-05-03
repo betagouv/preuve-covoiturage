@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import axios from 'axios';
 
 import { HttpTransport } from '../src/transports/HttpTransport';
-import { Kernel } from '../src/Kernel';
+import { Kernel } from '../src/parents/Kernel';
 import { httpHandlerFactory } from '../src/serviceHandlers/HttpHandler';
 import { TransportInterface } from '../src/interfaces/TransportInterface';
 import { injectable } from '../src/Container';

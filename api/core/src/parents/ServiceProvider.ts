@@ -52,8 +52,7 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
     });
 
     for (const serviceProviderConstructor of this.serviceProviders) {
-      const serviceProvider = new serviceProviderConstructor(this.getContainer());
-      await serviceProvider.boot();
+      await this.registerServiceProvider(serviceProviderConstructor);
     }
   }
 
@@ -80,5 +79,11 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
    */
   public getContainer():ContainerInterface {
     return this.container;
+  }
+
+  // TODO: add to interface
+  public async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>) {
+    const serviceProvider = new serviceProviderConstructor(this.getContainer());
+    await serviceProvider.boot();
   }
 }
