@@ -10,5 +10,4 @@ import { User } from '~/entities/database/user/user';
 
 export class CompanyFormComponent {
   @Input() parentForm: FormGroup;
-  @Input() users: User[];
 }

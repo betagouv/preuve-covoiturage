@@ -17,10 +17,9 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
   templateUrl: 'template.html',
 })
 
-export class AomFormComponent implements OnInit {
+export class AomFormComponent {
   inseeMessage = '';
   users: User[] = [];
-  aom: Aom;
 
   @Output() answer = new EventEmitter();
 
@@ -43,26 +42,9 @@ export class AomFormComponent implements OnInit {
 
   @Input('aom')
   set aomInput(aom: Aom) {
-    this.aom = aom;
-
-    // reformat contacts
-    if (this.aom) {
-      this.aom.contacts = <ContactList>Object
-        .keys(this.aom.contacts || {})
-        .reduce(
-          (p, k) => {
-            const val = this.aom.contacts[k];
-            p[k] = {
-              key: val._id,
-              value: `${val.firstname} ${val.lastname}`,
-            };
-
-            return p;
-          },
-          {},
-        );
-
-      this.aomForm.patchValue(this.aom);
+    if (aom) {
+      this.setUsers(aom);
+      this.aomForm.patchValue(aom);
     }
   }
 
@@ -78,15 +60,12 @@ export class AomFormComponent implements OnInit {
     return [];
   }
 
-  ngOnInit(): void {
-    if (this.aom && this.aom._id) {
+  private setUsers(aom): void {
+    if (aom._id) {
       this.aomService
-        .getUsers(this.aom._id)
+        .getUsers(aom._id)
         .subscribe((response: ApiResponse) => {
-          this.users = response.data.map(item => ({
-            key: item._id,
-            value: `${item.firstname} ${item.lastname}`,
-          }));
+          this.users = response.data;
         });
     }
   }
