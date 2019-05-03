@@ -1,4 +1,4 @@
-import { KernelInterface } from '~/interfaces/KernelInterface';
+import { KernelInterface } from '../interfaces/KernelInterface';
 
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';

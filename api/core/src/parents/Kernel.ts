@@ -1,8 +1,8 @@
-import { ParamsType } from '~/types/ParamsType';
-import { ContextType } from '~/types/ContextType';
-import { ResultType } from '~/types/ResultType';
-import { ContainerInterface } from '~/Container';
-import { normalizeHandlerConfig } from '~/helpers/normalizeHandlerConfig';
+import { ParamsType } from '../types/ParamsType';
+import { ContextType } from '../types/ContextType';
+import { ResultType } from '../types/ResultType';
+import { ContainerInterface } from '../Container';
+import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 
 import { KernelInterface } from '../interfaces/KernelInterface';
 import { RPCCallType } from '../types/RPCCallType';

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-import { provider } from '~/Container';
+import { provider } from '../Container';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 

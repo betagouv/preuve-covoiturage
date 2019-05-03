@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 
-import { ProviderInterface } from '~/interfaces/ProviderInterface';
-import { provider } from '~/Container';
+import { ProviderInterface } from '../interfaces/ProviderInterface';
+import { provider } from '../Container';
 
 /**
  * Commander provider

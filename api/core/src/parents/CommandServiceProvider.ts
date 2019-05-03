@@ -1,6 +1,6 @@
-import { NewableType } from '~/types/NewableType';
-import { CommandInterface } from '~/interfaces/CommandInterface';
-import { ServiceProviderInterface } from '~/interfaces/ServiceProviderInterface';
+import { NewableType } from '../types/NewableType';
+import { CommandInterface } from '../interfaces/CommandInterface';
+import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 
 import { CommandProvider } from '../providers/CommandProvider';
 import { ServiceProvider } from './ServiceProvider';

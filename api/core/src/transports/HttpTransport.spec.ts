@@ -2,7 +2,7 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import supertest from 'supertest';
 
-import { Kernel } from '~/parents/Kernel';
+import { Kernel } from '../parents/Kernel';
 
 import { HttpTransport } from './HttpTransport';
 import { RPCCallType } from '../types/RPCCallType';

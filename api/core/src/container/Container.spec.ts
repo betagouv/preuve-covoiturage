@@ -2,8 +2,8 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
-import { CallType } from '~/types/CallType';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import { CallType } from '../types/CallType';
 
 import { Container, handler, lib } from '../Container';
 

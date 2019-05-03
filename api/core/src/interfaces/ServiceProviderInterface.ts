@@ -1,4 +1,4 @@
-import { ContainerInterface } from '~/Container';
+import { ContainerInterface } from '../Container';
 
 import { ProviderInterface } from './ProviderInterface';
 import { NewableType } from '../types/NewableType';

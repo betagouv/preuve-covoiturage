@@ -3,12 +3,12 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { Kernel } from '~/parents/Kernel';
-import { CommandServiceProvider } from '~/parents/CommandServiceProvider';
-import { Command } from '~/parents/Command';
-import { ResultType } from '~/types/ResultType';
-import { CommandProvider } from '~/providers/CommandProvider';
-import { command } from '~/Container';
+import { Kernel } from '../parents/Kernel';
+import { CommandServiceProvider } from '../parents/CommandServiceProvider';
+import { Command } from '../parents/Command';
+import { ResultType } from '../types/ResultType';
+import { CommandProvider } from '../providers/CommandProvider';
+import { command } from '../Container';
 
 import { CliTransport } from './CliTransport';
 

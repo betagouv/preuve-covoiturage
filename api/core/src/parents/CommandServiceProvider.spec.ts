@@ -3,9 +3,9 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { ResultType } from '~/types/ResultType';
-import { command } from '~/Container';
-import { CommandProvider } from '~/providers/CommandProvider';
+import { ResultType } from '../types/ResultType';
+import { command } from '../Container';
+import { CommandProvider } from '../providers/CommandProvider';
 
 import { CommandServiceProvider } from './CommandServiceProvider';
 import { Command } from './Command';

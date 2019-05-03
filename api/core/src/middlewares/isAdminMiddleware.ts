@@ -1,4 +1,4 @@
-import { CallType } from '~/types/CallType';
+import { CallType } from '../types/CallType';
 
 import { isMiddleware } from './isMiddleware';
 

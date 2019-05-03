@@ -4,12 +4,12 @@
 
 // import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 // import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
-// import { QueueTransport } from '~/transports/QueueTransport';
-// import { HttpTransport } from '~/transports/HttpTransport';
-// import { Kernel } from '~/Kernel';
-// import { ServiceProviderConstructorInterface } from '~/interfaces/ServiceProviderConstructorInterface';
-// import { httpServiceProviderFactory } from '~/helpers/httpServiceProviderFactory';
-// import { KernelInterface } from '~/interfaces/KernelInterface';
+// import { QueueTransport } from '../src/transports/QueueTransport';
+// import { HttpTransport } from '../src/transports/HttpTransport';
+// import { Kernel } from '../src/Kernel';
+// import { ServiceProviderConstructorInterface } from '../src/interfaces/ServiceProviderConstructorInterface';
+// import { httpServiceProviderFactory } from '../src/helpers/httpServiceProviderFactory';
+// import { KernelInterface } from '../src/interfaces/KernelInterface';
 
 // class MathKernel extends Kernel {
 //   services: ServiceProviderConstructorInterface[] = [

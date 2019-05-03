@@ -14,8 +14,7 @@
         "paths": {
             "*": [
                 "node_modules/*"
-            ],
-            "~/*": ["./src/*"],
+            ]
         }    
     },
     "include": [

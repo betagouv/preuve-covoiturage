@@ -3,12 +3,11 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import axios from 'axios';
 
-import { HttpTransport } from '~/transports/HttpTransport';
-import { Kernel } from '~/Kernel';
-import { KernelInterface } from '~/interfaces/KernelInterface';
-import { httpHandlerFactory } from '~/serviceHandlers/HttpHandler';
-import { TransportInterface } from '~/interfaces/TransportInterface';
-import { injectable } from '~/Container';
+import { HttpTransport } from '../src/transports/HttpTransport';
+import { Kernel } from '../src/Kernel';
+import { httpHandlerFactory } from '../src/serviceHandlers/HttpHandler';
+import { TransportInterface } from '../src/interfaces/TransportInterface';
+import { injectable } from '../src/Container';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';

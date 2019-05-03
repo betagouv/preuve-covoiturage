@@ -1,10 +1,10 @@
 import { Job } from 'bull';
 
-import { HandlerInterface } from '~/interfaces/HandlerInterface';
-import { handler } from '~/Container';
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
-import { CallType } from '~/types/CallType';
-import { NewableType } from '~/types/NewableType';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
+import { handler } from '../Container';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import { CallType } from '../types/CallType';
+import { NewableType } from '../types/NewableType';
 
 import { ConfigProvider } from '../providers/ConfigProvider';
 import { EnvProvider } from '../providers/EnvProvider';

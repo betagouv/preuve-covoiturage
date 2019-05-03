@@ -2,13 +2,13 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 
-import { CallType } from '~/types/CallType';
-import { ContextType } from '~/types/ContextType';
-import { ParamsType } from '~/types/ParamsType';
-import { ResultType } from '~/types/ResultType';
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
-import { ForbiddenException } from '~/Exceptions/ForbiddenException';
-import { InvalidParamsException } from '~/Exceptions/InvalidParamsException';
+import { CallType } from '../types/CallType';
+import { ContextType } from '../types/ContextType';
+import { ParamsType } from '../types/ParamsType';
+import { ResultType } from '../types/ResultType';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import { ForbiddenException } from '../exceptions/ForbiddenException';
+import { InvalidParamsException } from '../exceptions/InvalidParamsException';
 
 import { isMiddleware } from './isMiddleware';
 

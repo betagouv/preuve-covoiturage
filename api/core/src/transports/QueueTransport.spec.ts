@@ -3,12 +3,12 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { ParamsType } from '~/types/ParamsType';
-import { ContextType } from '~/types/ContextType';
-import { ResultType } from '~/types/ResultType';
-import { ServiceProvider } from '~/parents/ServiceProvider';
-import { NewableType } from '~/types/NewableType';
-import { HandlerInterface } from '~/interfaces/HandlerInterface';
+import { ParamsType } from '../types/ParamsType';
+import { ContextType } from '../types/ContextType';
+import { ResultType } from '../types/ResultType';
+import { ServiceProvider } from '../parents/ServiceProvider';
+import { NewableType } from '../types/NewableType';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
 
 import * as Bull from '../helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';

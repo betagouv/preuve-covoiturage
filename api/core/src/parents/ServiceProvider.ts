@@ -7,9 +7,9 @@ import {
   Unbind,
   IsBound,
   Rebind,
-} from '~/Container';
+} from '../Container';
 
-import { HandlerInterface } from '~/interfaces/HandlerInterface';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
 
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { NewableType } from '../types/NewableType';

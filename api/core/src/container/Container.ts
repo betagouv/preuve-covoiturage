@@ -5,8 +5,8 @@ import {
   interfaces,
 } from 'inversify';
 
-import { HandlerInterface } from '~/interfaces/HandlerInterface';
-import { NewableType } from '~/types/NewableType';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
+import { NewableType } from '../types/NewableType';
 import { HandlerConfig } from './ContainerInterfaces';
 import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 

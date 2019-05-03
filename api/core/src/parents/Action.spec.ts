@@ -3,7 +3,7 @@ import { describe } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 import { Action } from './Action';
 import { CallType } from '../types/CallType';

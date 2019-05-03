@@ -1,6 +1,6 @@
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
-import { CallType } from '~/types/CallType';
-import { ForbiddenException } from '~/Exceptions/ForbiddenException';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import { CallType } from '../types/CallType';
+import { ForbiddenException } from '../exceptions/ForbiddenException';
 
 
 /**

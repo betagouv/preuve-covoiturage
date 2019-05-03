@@ -1,4 +1,4 @@
-import { ServiceProvider as BaseServiceProvider } from '~/parents/ServiceProvider';
+import { ServiceProvider as BaseServiceProvider } from '../../../src/parents/ServiceProvider';
 
 import { AddAction } from './actions/AddAction';
 

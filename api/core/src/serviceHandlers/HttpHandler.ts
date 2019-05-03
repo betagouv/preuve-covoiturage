@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { CallType } from '~/types/CallType';
-import { HandlerInterface } from '~/interfaces/HandlerInterface';
-import { handler } from '~/Container';
-import { NewableType } from '~/types/NewableType';
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
+import { CallType } from '../types/CallType';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
+import { handler } from '../Container';
+import { NewableType } from '../types/NewableType';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 import { ResultType } from '../types/ResultType';
 import { ServiceException } from '../exceptions/ServiceException';

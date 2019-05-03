@@ -1,4 +1,4 @@
-import { ReducerInterface } from '~/interfaces/ReducerInterface';
+import { ReducerInterface } from '../../interfaces/ReducerInterface';
 
 export function reduceRoles(roles: string[], group: string, role: string): ReducerInterface {
   return (p: boolean, c: string) => {

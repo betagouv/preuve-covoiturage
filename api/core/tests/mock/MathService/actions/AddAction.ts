@@ -1,10 +1,10 @@
-import { Action } from '~/parents/Action';
-import { MiddlewareInterface } from '~/interfaces/MiddlewareInterface';
-import { ParamsType } from '~/types/ParamsType';
-import { ContextType } from '~/types/ContextType';
-import { ResultType } from '~/types/ResultType';
-import { InvalidParamsException } from '~/exceptions/InvalidParamsException';
-import { handler } from '~/Container';
+import { Action } from '../../../../src//parents/Action';
+import { MiddlewareInterface } from '../../../../src//interfaces/MiddlewareInterface';
+import { ParamsType } from '../../../../src//types/ParamsType';
+import { ContextType } from '../../../../src//types/ContextType';
+import { ResultType } from '../../../../src//types/ResultType';
+import { InvalidParamsException } from '../../../../src//exceptions/InvalidParamsException';
+import { handler } from '../../../../src//Container';
 
 @handler({
   service: 'math',

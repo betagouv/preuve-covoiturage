@@ -3,10 +3,10 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { HandlerInterface } from '~/interfaces/HandlerInterface';
-import { NewableType } from '~/types/NewableType';
-import { ServiceProviderInterface } from '~/interfaces/ServiceProviderInterface';
-import { ProviderInterface } from '~/interfaces/ProviderInterface';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
+import { NewableType } from '../types/NewableType';
+import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
+import { ProviderInterface } from '../interfaces/ProviderInterface';
 
 import { ServiceProvider } from './ServiceProvider';
 import { Action } from './Action';

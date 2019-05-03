@@ -2,8 +2,8 @@
 
 import { interfaces } from 'inversify';
 
-import { HandlerInterface } from '~/interfaces/HandlerInterface';
-import { NewableType } from '~/types/NewableType';
+import { HandlerInterface } from '../interfaces/HandlerInterface';
+import { NewableType } from '../types/NewableType';
 
 export type HandlerConfig = {
   service?: string,
