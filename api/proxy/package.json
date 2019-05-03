@@ -35,7 +35,7 @@
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "bull": "^3.8.1",
-    "bull-arena": "^2.5.2",
+    "bull-arena": "^2.6.2",
     "chardet": "^0.7.0",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
