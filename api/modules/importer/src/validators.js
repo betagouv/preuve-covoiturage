@@ -1,4 +1,4 @@
-module.exports = {
+export const validators = {
   /**
    * Check if the file is empty
    *

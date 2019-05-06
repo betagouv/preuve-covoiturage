@@ -3,14 +3,14 @@ const _ = require('lodash');
 const fs = require('fs');
 const chardet = require('chardet');
 const parse = require('csv-parse/lib/sync');
-const { Journey } = require('@pdc/service-acquisition').acquisition.entities.models;
+const {
+  Journey,
+} = require('@pdc/service-acquisition').acquisition.entities.models;
 const cast = require('./lib/cast');
-const validators = require('./validators');
+const { validators } = require('./validators');
 
 /**
  * CSV authorized headers
- *
- * @type {string[]}
  */
 const headers = [
   'journey_id',
@@ -62,9 +62,6 @@ const headers = [
 
 /**
  * Detect encoding from a file
- *
- * @param {string} path
- * @return {string}
  */
 const detectEncoding = (path) => {
   const enc = chardet.detectFileSync(path);
@@ -79,28 +76,23 @@ const detectEncoding = (path) => {
 
 /**
  * Detect the delimiter by counting occurences of known delimiters
- *
- * @param {string} file
- * @return {string}
  */
 const detectDelimiter = (file) => {
   const line = file.substr(0, file.indexOf('\n'));
-  return [',', ';']
-    .reduce((p, c) => {
-      const res = line.replace(new RegExp(`[^${c}]`, 'g'), '');
-      if (res.length) p[res.length] = c;
-      return p;
-    }, [])
-    .pop() || ',';
+  return (
+    [',', ';']
+      .reduce((p, c) => {
+        const res = line.replace(new RegExp(`[^${c}]`, 'g'), '');
+        if (res.length) p[res.length] = c;
+        return p;
+      },      [])
+      .pop() || ','
+  );
 };
 
-module.exports = {
+export const importer = {
   /**
    * Run registered validators
-   *
-   * @param {MulterFile} file
-   * @param {String[]} lines
-   * @throws {Error}
    */
   validate(file, lines) {
     if (!file) {
@@ -111,14 +103,11 @@ module.exports = {
       validators.isEmptyFile,
       validators.isCsvFile,
       validators.rightNumberOfColumns,
-    ].forEach(fn => fn({ file, headers, lines }));
+    ].forEach((fn) => fn({ file, headers, lines }));
   },
 
   /**
    * Read the CSV file with the correct encoding
-   *
-   * @param path
-   * @return {any | never}
    */
   read({ path }) {
     const file = fs.readFileSync(path, { encoding: detectEncoding(path) });
@@ -128,18 +117,13 @@ module.exports = {
 
   /**
    * run the importer
-   *
-   * @param {Object} service
-   * @param {Object} operator
-   * @param {string} lines
-   * @return {Promise<{data: {imported: Array, failed: Array}}>}
    */
   async exec(service, operator, lines) {
     const promises = [];
     const failed = [];
 
     lines.forEach((line, idx) => {
-      const j = {};
+      const j: any = {};
       for (let i = 0; i < headers.length; i += 1) {
         if (line[i] !== '') {
           const data = cast(headers, line, i);
@@ -157,25 +141,35 @@ module.exports = {
         failed.push({
           journey_id: j.journey_id,
           line: idx + 1,
-          errors: _.reduce(err.errors, (p, c, k) => {
-            if (c.errors === undefined) {
-              p[k] = _.get(c, 'reason.message', _.get(c, 'message', ''))
-                .replace(/["`]/g, "'");
-            }
-            return p;
-          }, {}),
+          errors: _.reduce(
+            err.errors,
+            (p, c, k) => {
+              if (c.errors === undefined) {
+                p[k] = _.get(
+                  c,
+                  'reason.message',
+                  _.get(c, 'message', ''),
+                ).replace(/["`]/g, "'");
+              }
+              return p;
+            },
+            {},
+          ),
         });
       } else {
-        promises.push(service.create(j, operator).catch((createError) => {
-          const errors = {};
-          errors[`${createError.name} ${createError.code}`] = createError.message;
+        promises.push(
+          service.create(j, operator).catch((createError) => {
+            const errors = {};
+            errors[`${createError.name} ${createError.code}`] =
+              createError.message;
 
-          failed.push({
-            journey_id: j.journey_id,
-            line: idx + 1,
-            errors,
-          });
-        }));
+            failed.push({
+              errors,
+              journey_id: j.journey_id,
+              line: idx + 1,
+            });
+          }),
+        );
       }
     });
 

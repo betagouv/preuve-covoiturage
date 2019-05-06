@@ -2,11 +2,15 @@
   "name": "@pdc/package-importer",
   "version": "0.0.1",
   "description": "Operator's data importers",
-  "main": "importer.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "test": "mocha src/**/*.spec.ts"
   },
   "keywords": [
     "pdc",
