@@ -3,7 +3,7 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 const { mongoUrl } = require('@pdc/shared/config');
 const Permissions = require('@pdc/shared/helpers/permissions/permissions');
-const User = require('@pdc/service-user/entities/models/user');
+const { User } = require("@pdc/service-user").user.entities.models;
 
 (async () => {
   try {

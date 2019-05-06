@@ -1,5 +1,5 @@
 const { has } = require('lodash');
-const { isSuperAdmin, isAom } = require('@pdc/service-user/helpers');
+const { isSuperAdmin, isAom } = require('@pdc/service-user').user.helpers;
 const UnauthorizedError = require('../errors/unauthorized');
 const ForbiddenError = require('../errors/forbidden');
 

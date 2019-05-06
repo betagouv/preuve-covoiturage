@@ -3,7 +3,7 @@ const router = require('express').Router();
 const passport = require('passport');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 const jwtServer = require('@pdc/shared/middlewares/jwt-server');
-const userService = require('@pdc/service-user/service');
+const { userService } = require('@pdc/service-user').user;
 
 require('@pdc/shared/providers/passport/passport')(passport);
 

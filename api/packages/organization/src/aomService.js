@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { ObjectId } = require('mongoose').Types;
-const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
-const User = require('@pdc/service-user/entities/models/user');
-const Aom = require('./entities/models/Aom');
+const _ = require("lodash");
+const { ObjectId } = require("mongoose").Types;
+const serviceFactory = require("@pdc/shared/providers/mongo/service-factory");
+const { User } = require("@pdc/service-user").user.entities.models;
+const Aom = require("./entities/models/Aom");
 
 const aomService = serviceFactory(Aom, {
   async addUser(id, userId) {
@@ -26,7 +26,6 @@ const aomService = serviceFactory(Aom, {
   },
 });
 
-
 /**
  * Extend Aom.find to add contact details
  */
@@ -37,22 +36,21 @@ aomService.find = async (query) => {
     const item = itemDoc.toObject();
     if (!item.contacts) return item;
     const contacts = Object.values(item.contacts).filter(String) || [];
-    (await User.find({ _id: { $in: contacts } }).exec())
-      .forEach((userDoc) => {
-        const user = userDoc.toObject();
-        Object.keys(item.contacts).forEach((key) => {
-          const val = item.contacts[key];
-          if (val && user._id.toString() === val.toString()) {
-            item.contacts[key] = _.pick(user, [
-              '_id',
-              'firstname',
-              'lastname',
-              'email',
-              'phone',
-            ]);
-          }
-        });
+    (await User.find({ _id: { $in: contacts } }).exec()).forEach((userDoc) => {
+      const user = userDoc.toObject();
+      Object.keys(item.contacts).forEach((key) => {
+        const val = item.contacts[key];
+        if (val && user._id.toString() === val.toString()) {
+          item.contacts[key] = _.pick(user, [
+            "_id",
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+          ]);
+        }
       });
+    });
 
     return item;
   });

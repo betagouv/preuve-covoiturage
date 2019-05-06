@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { ObjectId } = require('mongoose').Types;
 const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
-const User = require('@pdc/service-user/entities/models/user');
+const { User } = require("@pdc/service-user").user.entities.models;
 const Operator = require('./entities/models/Operator');
 
 const operatorService = serviceFactory(Operator, {

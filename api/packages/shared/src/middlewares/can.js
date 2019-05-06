@@ -1,4 +1,4 @@
-const { isSuperAdmin } = require('@pdc/service-user/helpers');
+const { isSuperAdmin } = require('@pdc/service-user').user.helpers;
 const UnauthorizedError = require('../errors/unauthorized');
 const ForbiddenError = require('../errors/forbidden');
 

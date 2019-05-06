@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-const User = require('@pdc/service-user/entities/models/user');
-const userService = require('@pdc/service-user/service');
+const { User } = require("@pdc/service-user").user.entities.models;
+const { userService } = require("@pdc/service-user");
 const Operator = require('../models/operator');
 const operatorService = require('../../operator');
 

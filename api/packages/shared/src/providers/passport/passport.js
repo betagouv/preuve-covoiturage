@@ -3,7 +3,7 @@ const { ExtractJwt } = require('passport-jwt');
 const JwtStrategy = require('passport-jwt').Strategy;
 
 // load the models
-const User = require('@pdc/service-user/entities/models/user');
+const { User } = require('@pdc/service-user').user.entities.models;
 // const Operator = require('./routes/operators/model');
 const { operatorService } = require('@pdc/service-organization').organization;
 const { applicationService } = require('@pdc/service-organization').organization;

@@ -23,7 +23,7 @@ export const organization = {
       ApplicationSchema: require('./entities/schemas/application'),
       TokenSchema: require('./entities/schemas/token'),
     },
-    seed: {
+    seeds: {
       aom: require('./entities/seeds/aom'),
       dummyAom: require('./entities/seeds/dummy-aom'),
       dummyOperator: require('./entities/seeds/dummy-operator'),

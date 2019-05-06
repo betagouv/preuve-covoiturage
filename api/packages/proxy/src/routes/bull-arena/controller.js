@@ -3,7 +3,7 @@ const arena = require('bull-arena');
 const passport = require('passport');
 const router = require('express').Router();
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('@pdc/service-user/entities/models/user');
+const { User } = require("@pdc/service-user").user.entities.models;
 const { redisObject } = require('@pdc/shared/config');
 
 passport.use(new LocalStrategy(async (username, password, done) => {

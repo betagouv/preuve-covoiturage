@@ -69,8 +69,8 @@ app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // default response
 app.use('/auth', require('@pdc/service-auth').auth.transports.http);
 app.use('/stats', require('@pdc/service-stats').stats.transports.http);
-app.use('/profile', jwtUser, require('@pdc/service-user/transports/profilehttp'));
-app.use('/users', jwtUser, require('@pdc/service-user/transports/userhttp'));
+app.use('/profile', jwtUser, require('@pdc/service-user').user.transports.profileHttp);
+app.use('/users', jwtUser, require('@pdc/service-user').user.transports.userHttp);
 app.use('/aom', jwtUser, require('@pdc/service-organization').organization.transports.aomHttp);
 app.use('/operators', jwtUser, require('@pdc/service-organization').organization.transports.operatorHttp);
 app.use('/trips', jwtUser, require('@pdc/service-trip').trip.transports.http);
