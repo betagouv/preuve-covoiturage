@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
-const Journey = require('../acquisition/src/entities/models/journey');
+const Journey = require('@pdc/service-acquisition/src/entities/models/journey');
 const Trip = require('./entities/models/trip');
 
 const mapPeople = journey => [journey.driver, journey.passenger]

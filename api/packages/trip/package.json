@@ -3,14 +3,22 @@
   "version": "0.0.1",
   "private": true,
   "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
-    "@pdc/shared": "0.0.1",
     "@pdc/service-acquisition": "0.0.1",
     "@pdc/service-organization": "0.0.1",
     "@pdc/service-user": "0.0.1",
-    "mongoose": "^5.4",
+    "@pdc/shared": "0.0.1",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
-    "moment": "^2.22.2"
+    "moment": "^2.22.2",
+    "mongoose": "^5.4"
+  },
+  "devDependencies": {
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }
