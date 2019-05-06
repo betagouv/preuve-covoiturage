@@ -67,7 +67,7 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // default response
-app.use('/auth', require('@pdc/service-auth/transports/http'));
+app.use('/auth', require('@pdc/service-auth').transports.http);
 app.use('/stats', require('@pdc/service-stats/transports/http'));
 app.use('/profile', jwtUser, require('@pdc/service-user/transports/profilehttp'));
 app.use('/users', jwtUser, require('@pdc/service-user/transports/userhttp'));
