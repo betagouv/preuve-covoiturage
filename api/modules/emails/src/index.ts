@@ -30,11 +30,6 @@ module.exports = {
 
   /**
    * Invite a new user to the application
-   *
-   * @param email
-   * @param name
-   * @param requester
-   * @param link
    */
   invite: ({ email, fullname, requester, organisation, link }) => {
     const req = requester ? `par ${requester} ` : '';
@@ -61,10 +56,6 @@ module.exports = {
 
   /**
    * Send a reset token link to a user
-   *
-   * @param email
-   * @param name
-   * @param token
    */
   forgottenPassword({ email, fullname, link }) {
     const template = `
