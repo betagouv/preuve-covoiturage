@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const aom = require('@pdc/service-organization/entities/schemas/aom');
+const { AomSchema } = require('@pdc/service-organization').organization.entities.schemas;
 const IdentitySchema = require('@pdc/shared/entities/schemas/identity');
 const position = require('@pdc/shared/entities/schemas/position');
 const rank = require('@pdc/shared/entities/schemas/rank');
@@ -69,7 +69,7 @@ const TripSchema = new Schema({
     type: String,
     index: true,
   },
-  aom: [aom],
+  aom: [AomSchema],
   status: {
     type: String,
     enum: ['pending', 'active', 'error'],

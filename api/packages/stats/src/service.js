@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const mongoose = require("mongoose");
-const { Journey } = require("@pdc/service-acquisition").entities.models;
+const { Journey } = require("@pdc/service-acquisition").acquisition.entities.models;
 const Stat = require("./entities/models/stat");
 
 const mapDayOfWeek = (doc) => {

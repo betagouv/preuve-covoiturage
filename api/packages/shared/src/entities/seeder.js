@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-const aomSeeder = require('@pdc/service-organization/entities/seeds/aom');
+const aomSeeder = require('@pdc/service-organization');
 const superAdmin = require('@pdc/service-user/entities/seeds/super-admin');
-const dummyAom = require('@pdc/service-organization/entities/seeds/dummy-aom');
-const dummyOperator = require('@pdc/service-organization/entities/seeds/dummy-operator');
+const { dummyAom } = require('@pdc/service-organization').organization.entities.seeds;
+const { dummyOperator } = require('@pdc/service-organization').organization.entities.seeds;
 
 const config = {
   local: [

@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 const sendEmail = require('@pdc/package-email/connect');
 const emailsQueue = require('@pdc/shared/worker/queues-emails');
-const { journeysQueue } = require('@pdc/service-acquisition');
-const { journeysProcessor } = require('@pdc/service-acquisition');
+const { journeysQueue } = require('@pdc/service-acquisition').acquisition;
+const { journeysProcessor } = require('@pdc/service-acquisition').acquisition;
 const emailsProcessor = require('@pdc/shared/worker/processor-emails');
 const db = require('./mongo');
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const rank = require('@pdc/shared/entities/schemas/rank');
-const aom = require('@pdc/service-organization/entities/schemas/aom');
+const { AomSchema } = require('@pdc/service-organization').organization.entities.schemas;
 
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Types;
@@ -25,7 +25,7 @@ module.exports = {
     rank,
   },
 
-  aom: [aom],
+  aom: [AomSchema],
 
   deletedAt: { type: Date, default: null },
 };

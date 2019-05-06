@@ -1,5 +1,5 @@
 const passport = require('passport');
-const Token = require('@pdc/service-organization/entities/models/token');
+const { Token } = require('@pdc/service-organization').organization.entities.models;
 const UnauthorizedError = require('../errors/unauthorized');
 
 const jwtServer = async (req, res, next) => {

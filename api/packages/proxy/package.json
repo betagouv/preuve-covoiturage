@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./dist/app.js",
     "build": "tsc",
+    "build:watch": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
     "test": "mocha src/**/*.spec.ts",
     "start-dev": "nodemon --inspect=0.0.0.0:9229 ./dist/app.js",

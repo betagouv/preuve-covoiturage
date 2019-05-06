@@ -1,37 +1,36 @@
-/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { ObjectId } = require('mongoose').Types;
 const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
 const User = require('@pdc/service-user/entities/models/user');
-const Aom = require('./entities/models/aom');
+const Operator = require('./entities/models/Operator');
 
-const service = serviceFactory(Aom, {
+const operatorService = serviceFactory(Operator, {
   async addUser(id, userId) {
-    const aom = await Aom.findOne({ _id: id });
+    const operator = await Operator.findOne({ _id: id });
     const user = await User.findOne({ _id: userId });
-    await user.setAom(aom);
+    await user.setOperator(operator);
 
     return user.save();
   },
 
   async removeUser(id, userId) {
     const user = await User.findOne({ _id: userId });
-    await user.unsetAom();
+    await user.unsetOperator();
 
     return user.save();
   },
 
   async users(id) {
-    return User.find({ aom: ObjectId(id) });
+    return User.find({ operator: ObjectId(id) });
   },
 });
 
 
 /**
- * Extend Aom.find to add contact details
+ * Extend Operator.find to add contact details
  */
-const baseFind = service.find;
-service.find = async (query) => {
+const baseFind = operatorService.find;
+operatorService.find = async (query) => {
   const { meta, data } = await baseFind(query);
   const promises = data.map(async (itemDoc) => {
     const item = itemDoc.toObject();
@@ -63,4 +62,4 @@ service.find = async (query) => {
   };
 };
 
-module.exports = service;
+module.exports = operatorService;

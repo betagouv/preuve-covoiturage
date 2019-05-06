@@ -3,7 +3,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const chardet = require('chardet');
 const parse = require('csv-parse/lib/sync');
-const Journey = require('@pdc/service-acquisition/entities/models/journey');
+const { Journey } = require('@pdc/service-acquisition').acquisition.entities.models;
 const cast = require('./lib/cast');
 const validators = require('./validators');
 

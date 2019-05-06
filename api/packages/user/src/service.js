@@ -9,11 +9,11 @@ const ConflictError = require('@pdc/shared/errors/conflict');
 const InternalServerError = require('@pdc/shared/errors/internal-server');
 const Permissions = require('@pdc/shared/helpers/permissions/permissions');
 const config = require('@pdc/shared/config');
-const Aom = require('@pdc/service-organization/entities/models/aom');
 const generateToken = require('@pdc/shared/helpers/random/token');
-const Operator = require('@pdc/service-organization/entities/models/operator');
-const operatorService = require('@pdc/service-organization/operator');
-const aomService = require('@pdc/service-organization/aom');
+const { Aom } = require('@pdc/service-organization').organization.entities.models;
+const { Operator } = require('@pdc/service-organization').organization.entities.models;
+const { operatorService } = require('@pdc/service-organization');
+const { aomService } = require('@pdc/service-organization');
 const User = require('./entities/models/user');
 
 const service = serviceFactory(User, {

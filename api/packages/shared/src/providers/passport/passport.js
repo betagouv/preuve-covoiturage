@@ -5,8 +5,8 @@ const JwtStrategy = require('passport-jwt').Strategy;
 // load the models
 const User = require('@pdc/service-user/entities/models/user');
 // const Operator = require('./routes/operators/model');
-const operatorService = require('@pdc/service-organization/operator');
-const applicationService = require('@pdc/service-organization/application');
+const { operatorService } = require('@pdc/service-organization').organization;
+const { applicationService } = require('@pdc/service-organization').organization;
 const config = require('../../config');
 
 const NotFoundError = require('../../errors/not-found');
