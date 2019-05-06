@@ -4,7 +4,9 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "test": "mocha src/**/*.spec.ts"
   },
   "dependencies": {
     "@pdc/service-stats": "0.0.1",

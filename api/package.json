@@ -34,7 +34,7 @@
     "process-trip": "yarn workspace @pdc/proxy process-trip",
     "fix-permissions": "yarn workspace @pdc/proxy fix-permissions",
     "build": "yarn workspaces run build",
-    "lint": "yarn workspacesrun  lint",
+    "lint": "yarn workspaces run lint",
     "test": "NODE_ENV=test yarn workspaces run test"
   },
   "dependencies": {
