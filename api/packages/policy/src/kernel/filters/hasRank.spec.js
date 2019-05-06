@@ -1,6 +1,6 @@
 const chai = require('chai');
 const hasRank = require('./hasRank');
-const { fakeTrip } = require('../helpers/fake.js');
+const { fakeTrip } = require('../helpers/fake.js.js');
 
 const { expect } = chai;
 

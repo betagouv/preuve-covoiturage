@@ -1,6 +1,6 @@
 const chai = require('chai');
 const mapInternalParams = require('./mapInternalParams');
-const { fakeTrip, fakePolicy } = require('./fake.js');
+const { fakeTrip, fakePolicy } = require('./fake.js.js');
 
 const { expect } = chai;
 

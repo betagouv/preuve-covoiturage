@@ -1,6 +1,6 @@
 const chai = require('chai');
 const isWeekday = require('./isWeekday');
-const { fakeTrip } = require('../helpers/fake.js');
+const { fakeTrip } = require('../helpers/fake.js.js');
 
 const { expect } = chai;
 

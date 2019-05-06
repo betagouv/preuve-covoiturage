@@ -4,18 +4,19 @@
   "description": "Proxy",
   "license": "Apache-2.0",
   "scripts": {
-    "start": "node ./app.js",
-    "dev": "nodemon --inspect=0.0.0.0:9229 ./app.js",
-    "worker": "node ./worker.js",
-    "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./worker.js",
+    "start": "node ./dist/app.js",
+    "build": "tsc",
+    "dev": "nodemon --inspect=0.0.0.0:9229 ./dist/app.js",
+    "worker": "node ./dist/worker.js",
+    "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./dist/worker.js",
     "migrate": "npx migrate-mongo up",
     "mig:up": "cd ../.. && docker-compose exec api npx migrate-mongo up",
     "mig:down": "cd ../.. && docker-compose exec api npx migrate-mongo down",
     "mig:status": "cd ../.. && docker-compose exec api npx migrate-mongo status",
-    "seed": "node cli/seed.js",
+    "seed": "node dist/cli/seed.js",
     "process": "yarn workspace @pdc/service-acquisition process",
     "process-trip": "yarn workspace @pdc/service-acquisition process-trip",
-    "fix-permissions": "node cli/fix-permissions.js"
+    "fix-permissions": "node dist/cli/fix-permissions.js"
   },
   "dependencies": {
     "@pdc/package-email": "0.0.1",
@@ -67,6 +68,9 @@
   },
   "devDependencies": {
     "faker": "^4.1.0",
-    "supertest": "^4.0"
+    "supertest": "^4.0",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }
