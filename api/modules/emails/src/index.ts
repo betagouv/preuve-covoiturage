@@ -2,13 +2,6 @@ const emailsQueue = require('@pdc/shared/worker/queues-emails');
 
 /**
  * Send the action to emailsQueue
- *
- * @param type
- * @param email
- * @param name
- * @param subject
- * @param title
- * @param content
  */
 const send = async ({ type, email, fullname, subject, title, content }) => {
   emailsQueue.add(type, {
@@ -20,21 +13,20 @@ const send = async ({ type, email, fullname, subject, title, content }) => {
 };
 
 module.exports = {
+  sendEmail: require('./providers/mailjet'),
+
   /**
    * Notify a user with free title and content
-   *
-   * @param email
-   * @param fullname
-   * @param title
-   * @param content
    */
-  notify: async ({ email, fullname, subject, content }) => send({
-    type: 'Notify',
-    email,
-    fullname,
-    subject,
-    content,
-  }),
+  notify: async ({ email, fullname, subject, content }) =>
+    send({
+      email,
+      fullname,
+      subject,
+      content,
+      type: 'Notify',
+      title: subject,
+    }),
 
   /**
    * Invite a new user to the application
@@ -58,9 +50,9 @@ module.exports = {
     `;
 
     send({
-      type: 'Invitation',
       email,
       fullname,
+      type: 'Invitation',
       subject: 'Invitation',
       title: 'Invitation',
       content: template,
@@ -86,9 +78,9 @@ module.exports = {
     `;
 
     send({
-      type: 'Forgotten Password',
       email,
       fullname,
+      type: 'Forgotten Password',
       subject: 'Mot de passe perdu',
       title: 'Mot de passe perdu',
       content: template,

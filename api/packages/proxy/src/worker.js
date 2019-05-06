@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const sendEmail = require('@pdc/package-email/connect');
+const { sendEmail } = require('@pdc/package-email');
 const emailsQueue = require('@pdc/shared/worker/queues-emails');
 const { journeysQueue } = require('@pdc/service-acquisition').acquisition;
 const { journeysProcessor } = require('@pdc/service-acquisition').acquisition;

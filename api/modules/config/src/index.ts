@@ -16,4 +16,5 @@ fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
   config[camelCase(basename)] = yaml.safeLoad(fs.readFileSync(`${configFolder}/${basename}.yml`, 'utf8'));
 });
 
-module.exports = config;
+// tslint:disable-next-line: no-default-export
+export default config;
