@@ -31,10 +31,10 @@ export const STAT_STYLE = {
       name: 'energyTotal',
       map: 'distance.total',
       type: 'number',
-      title: 'Pétrole économisé',
-      unitTransformation: `*${STAT_MAIN.average_petrol_per_m}`,
+      title: 'Essence économisé',
+      unitTransformation: `*${STAT_MAIN.average_petrol_liter_per_m}`,
       img: 'petrol.svg',
-      unit: 'kg',
+      unit: 'litre',
     }),
     new StatConfig({
       name: 'co2Total',
@@ -232,8 +232,8 @@ export const STAT_STYLE = {
       map: 'distance.day',
       type: 'line',
       cumul: true,
-      title: 'Pétrole économisé',
-      unitTransformation: `*${STAT_MAIN.average_petrol_per_m}`,
+      title: 'Essence économisé',
+      unitTransformation: `*${STAT_MAIN.average_petrol_liter_per_m}`,
       style: {
         backgroundColor: '#42A5F5',
         borderColor: '#1E88E5',
@@ -246,7 +246,7 @@ export const STAT_STYLE = {
             },
             scaleLabel: {
               display: true,
-              labelString: 'kg équivalent pétrole',
+              labelString: 'Litre d\'essence',
             },
           }],
           xAxes: [{

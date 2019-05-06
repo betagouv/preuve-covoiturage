@@ -40,6 +40,7 @@ const mongoConfig = getMongoConfig(mongoUrl);
  * - Session secret key
  */
 module.exports = {
+  environment: process.env,
   PORT: getHttpPost(process.env.PORT),
   mongoDatabase: mongoConfig.database,
   mongoUrl,

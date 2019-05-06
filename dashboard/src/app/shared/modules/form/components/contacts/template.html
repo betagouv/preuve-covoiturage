@@ -4,14 +4,14 @@
       <label>Délégué(e) à la protection des données</label>
     </div>
     <div class="p-col-12 p-md-8">
-      <app-user-dropdown [userId]="parentForm.get('rgpd_dpo')" [users]="users"></app-user-dropdown>
+      <app-user-dropdown [user]="parentForm.get('rgpd_dpo')" [users]="users"></app-user-dropdown>
     </div>
 
     <div class="p-col-12 p-md-4">
       <label>Responsable de traitement</label>
     </div>
     <div class="p-col-12 p-md-8">
-      <app-user-dropdown [userId]="parentForm.get('rgpd_controller')" [users]="users"></app-user-dropdown>
+      <app-user-dropdown [user]="parentForm.get('rgpd_controller')" [users]="users"></app-user-dropdown>
     </div>
 
     <div class="p-col-12 p-md-4">
@@ -19,7 +19,7 @@
     </div>
 
     <div class="p-col-12 p-md-8">
-      <app-user-dropdown [userId]="parentForm.get('technical')" [users]="users"></app-user-dropdown>
+      <app-user-dropdown [user]="parentForm.get('technical')" [users]="users"></app-user-dropdown>
     </div>
   </div>
 </p-fieldset>

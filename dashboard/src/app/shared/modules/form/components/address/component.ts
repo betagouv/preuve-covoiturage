@@ -10,5 +10,4 @@ import { User } from '~/entities/database/user/user';
 
 export class AddressFormComponent {
   @Input() parentForm: FormGroup;
-  @Input() users: User[];
 }

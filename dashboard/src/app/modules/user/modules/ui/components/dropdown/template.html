@@ -1,9 +1,17 @@
 <p-autoComplete
     [suggestions]="filteredUsers"
-    [(ngModel)]="user"
+    [(ngModel)]="formattedUser"
     [dropdown]="true"
     (completeMethod)="filter($event)"
     [forceSelection]="true"
     field="value"
     (onSelect)="onSelect($event)">
+    <ng-template let-user pTemplate="selectedItem">
+        <span style="font-size:18px">to{{user.value}}</span>
+    </ng-template>
+    <ng-template let-user pTemplate="item">
+        <div class="ui-helper-clearfix">
+            <div style="font-size:18px;float:right;margin:10px 10px 0 0">{{user.value}}</div>
+        </div>
+    </ng-template>
 </p-autoComplete>

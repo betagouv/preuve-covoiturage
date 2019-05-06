@@ -16,7 +16,7 @@ const eventBus = require('@pdc/shared/bus');
 const journeyBus = require('@pdc/service-acquisition/transports/bus');
 
 const { PORT, sessionSecret } = require('@pdc/shared/config.js');
-const { appUrl } = require('@pdc/shared/helpers/url/url');
+const { appUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
 
 const swaggerDocument = require('./static/openapi.json');
 
@@ -33,14 +33,21 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(require('cookie-parser')());
-app.use(require('express-session')({ secret: sessionSecret, resave: false, saveUninitialized: false }));
+app.use(
+  require('express-session')({ secret: sessionSecret, resave: false, saveUninitialized: false }),
+);
+
+// eslint-disable-next-line no-console
+console.log('CORS', appUrl('', { allowNull: true, forceGeneration: true }) || '*');
 
 // protect with typical headers and enable cors
 app.use(helmet());
-app.use(cors({
-  origin: appUrl('', { allowNull: true }) || '*',
-  optionsSuccessStatus: 200,
-}));
+app.use(
+  cors({
+    origin: appUrl('', { allowNull: true, forceGeneration: true }) || '*',
+    optionsSuccessStatus: 200,
+  }),
+);
 app.use(signResponse);
 app.use(dataWrap);
 
