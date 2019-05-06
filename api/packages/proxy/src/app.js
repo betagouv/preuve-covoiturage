@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const swaggerUi = require('swagger-ui-express');
-const expressErrorHandler = require('@pdc/package-express-errors');
+const { expressErrorHandler } = require('@pdc/package-express-errors');
 
 const Sentry = require('@pdc/shared/providers/sentry/sentry');
 const signResponse = require('@pdc/shared/middlewares/sign-response');

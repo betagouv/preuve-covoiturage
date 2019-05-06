@@ -1,8 +1,8 @@
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler
 // https://expressjs.com/en/guide/error-handling.html
-// eslint-disable-next-line no-unused-vars
-module.exports = (err, req, res, next) => {
+// tslint:disable-next-line: no-default-export no-unused-var
+export default function (err, req, res, next) {
   let output;
 
   switch (err.name) {
@@ -46,4 +46,4 @@ module.exports = (err, req, res, next) => {
   }
 
   output.json({ name: err.name, message: err.message });
-};
+}
