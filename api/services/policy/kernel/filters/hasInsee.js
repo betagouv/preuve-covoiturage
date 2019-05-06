@@ -14,7 +14,6 @@ module.exports = function hasInsee({ tripStakeholder, insee }) {
   let blackListOr = true;
   let blackListAnd = true;
 
-
   if (insee.whiteList) {
     if (insee.whiteList.or) {
       if (insee.whiteList.or.start) {
