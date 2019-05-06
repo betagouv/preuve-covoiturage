@@ -3,7 +3,7 @@ import {
   isNotSecure,
 } from '@pdc/shared/entities/schemas/utils/is-schema-secure';
 
-import userSchemaJson from './user.schema.json';
+import userSchemaJson from './user.schema.json.js';
 
 describe('JSON Schema', () => {
   it('check validation - fails', () => {

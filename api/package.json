@@ -15,10 +15,7 @@
     "carpooling"
   ],
   "workspaces": [
-    "core",
-    "shared",
-    "services/*",
-    "services-ts/*",
+    "modules/*",
     "packages/*"
   ],
   "license": "Apache-2.0",
@@ -28,7 +25,7 @@
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "scripts": {
     "start": "yarn workspace @pdc/proxy start",
-    "dev": "nodemon --inspect=0.0.0.0:9229 ./proxy/app.js",
+    "start-dev": "nodemon --inspect=0.0.0.0:9229 ./proxy/app.js",
     "worker": "yarn workspace @pdc/proxy worker",
     "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./proxy/worker.js",
     "seed": "yarn workspace @pdc/proxy seed",
@@ -36,10 +33,9 @@
     "process": "yarn workspace @pdc/proxy process",
     "process-trip": "yarn workspace @pdc/proxy process-trip",
     "fix-permissions": "yarn workspace @pdc/proxy fix-permissions",
-    "test": "yarn test:unit && yarn test:integration",
-    "test:unit": "NODE_ENV=test mocha --config=mocha-ts.json 'services/**/*.spec.ts' 'packages/**/*.spec.ts' 'shared/**/*.spec.ts'",
-    "test:integration": "NODE_ENV=test mocha -t 5000 test/run.js",
-    "lint": "eslint --ignore-path .gitignore ."
+    "build": "yarn workspaces run build",
+    "lint": "yarn workspacesrun  lint",
+    "test": "NODE_ENV=test yarn workspaces run test"
   },
   "dependencies": {
     "@pdc/package-geo": "0.0.1",

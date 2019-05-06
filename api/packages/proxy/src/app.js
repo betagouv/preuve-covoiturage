@@ -67,14 +67,14 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // default response
-app.use('/auth', require('@pdc/service-auth/transports/http'));
+app.use('/auth', require('../../auth/transports/http'));
 app.use('/stats', require('@pdc/service-stats/transports/http'));
 app.use('/profile', jwtUser, require('@pdc/service-user/transports/profilehttp'));
 app.use('/users', jwtUser, require('@pdc/service-user/transports/userhttp'));
 app.use('/aom', jwtUser, require('@pdc/service-organization/transports/aomhttp'));
 app.use('/operators', jwtUser, require('@pdc/service-organization/transports/operatorhttp'));
 app.use('/trips', jwtUser, require('@pdc/service-trip/transports/http'));
-app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive/transports/http'));
+app.use('/incentive/incentives', jwtUser, require('../../incentive/transports/http'));
 app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy/transports/parameterhttp'));
 app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy/transports/campaignhttp'));
 app.use('/incentive/policies', jwtUser, require('@pdc/service-policy/transports/policyhttp'));
