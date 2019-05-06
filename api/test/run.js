@@ -35,14 +35,6 @@ after(async () => {
 });
 
 /**
- * Geo tests
- * - requires DB access
- */
-describe("Geo tests", async () => {
-  require("@pdc/package-geo/test/geo");
-});
-
-/**
  * Functional tests
  */
 describe("Functional tests: users", async () => {

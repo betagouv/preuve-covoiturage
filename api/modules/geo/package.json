@@ -2,13 +2,16 @@
   "name": "@pdc/package-geo",
   "version": "0.0.1",
   "description": "Geo utils",
-  "main": "geo.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
   "private": true,
-  "license": "AGPL-3.0",
-  "keywords": [
-    "pdc",
-    "geo"
-  ],
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "test": "mocha src/**/*.spec.ts"
+  },
   "dependencies": {
     "@pdc/shared": "0.0.1",
     "@pdc/service-organization": "0.0.1",

@@ -228,9 +228,4 @@ const postcodes = async ({ lon, lat, insee }) => {
   return _.get(await town({ lon, lat }), "postcodes", []);
 };
 
-module.exports = {
-  aom,
-  town,
-  insee,
-  postcodes,
-};
+export { aom, town, insee, postcodes };
