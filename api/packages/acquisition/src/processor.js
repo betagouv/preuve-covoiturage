@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const tripService = require('@pdc/service-trip/service');
+const { tripService } = require('@pdc/service-trip').trip;
 const NotFoundError = require('@pdc/shared/errors/not-found');
 const Journey = require('./entities/models/journey');
 const SafeJourney = require('./entities/models/safe-journey');

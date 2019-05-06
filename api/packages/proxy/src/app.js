@@ -73,7 +73,7 @@ app.use('/profile', jwtUser, require('@pdc/service-user/transports/profilehttp')
 app.use('/users', jwtUser, require('@pdc/service-user/transports/userhttp'));
 app.use('/aom', jwtUser, require('@pdc/service-organization').organization.transports.aomHttp);
 app.use('/operators', jwtUser, require('@pdc/service-organization').organization.transports.operatorHttp);
-app.use('/trips', jwtUser, require('@pdc/service-trip/transports/http'));
+app.use('/trips', jwtUser, require('@pdc/service-trip').trip.transports.http);
 app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive').incentive.transports.http);
 app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy').policy.transports.parameterHttp);
 app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy').policy.transports.campaignHttp);

@@ -87,7 +87,7 @@ describe('Trips', () => {
         const { ObjectId } = require('mongoose').Types;
         const { SafeJourney } = require('@pdc/service-acquisition').acquisition.entities.models;
         const { journeyService } = require('@pdc/service-acquisition').acquisition;
-        const tripService = require('@pdc/service-trip/service');
+        const { tripService } = require('@pdc/service-trip').trip;
 
         const safe = await SafeJourney.findOne({ _id: ObjectId(safeId) }).exec();
         // console.log(safe ? safe.toObject().operator : safe);

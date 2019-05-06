@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongoose').Types;
 const moment = require('moment');
-const Trip = require('@pdc/service-trip/entities/models/trip');
+const { Trip } = require('@pdc/service-trip').trip.entities.models;
 const Campaign = require('../entities/models/campaign');
 const processTripCampaign = require('./process/tripCampaign');
 
