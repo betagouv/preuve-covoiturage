@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
+const { regex } = require('@pdc/shared/providers/mongo/schema-validation');
+
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 const UnitSchema = require('../schemas/unit');
 const ParameterSchema = require('../schemas/parameter');
+
 
 const IncentiveTimeFilterSchema = new Schema({
   start: {
@@ -43,17 +46,29 @@ const IncentivePolicySchema = new Schema({
         and: {
           start: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
           end: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
         },
         or: {
           start: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
           end: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
         },
       },
@@ -61,17 +76,29 @@ const IncentivePolicySchema = new Schema({
         and: {
           start: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
           end: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
         },
         or: {
           start: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
           end: [{
             type: String,
+            trim: true,
+            uppercase: true,
+            match: regex.insee,
           }],
         },
       },
