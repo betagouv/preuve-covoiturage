@@ -5,20 +5,13 @@ const { fakeTrip } = require('../helpers/fake.js');
 const { expect } = chai;
 
 describe('incentive: filter insee', () => {
-  it('works', async () => {
-    const tripStakeholder = fakeTrip.people[0];
-    //  start.insee: 69001,
-    //  end.insee: 69028,
-    let result;
+  const tripStakeholder = fakeTrip.people[0];
+  //  start.insee: 69001,
+  //  end.insee: 69028,
 
 
-    /*
-     * OR
-     */
-
-    // WHITELIST
-
-    result = hasInsee({
+  it('OR - whitelist - start insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -31,8 +24,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
+
+  it('OR - whitelist - start insee false', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -44,10 +40,13 @@ describe('incentive: filter insee', () => {
       },
     });
 
+
     expect(result).to.equal(false);
+  });
 
 
-    result = hasInsee({
+  it('OR - whitelist - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -59,8 +58,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
+
+  it('OR - whitelist - end insee false', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -72,21 +74,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
-    result = hasInsee({
-      tripStakeholder,
-      insee: {
-        whiteList: {
-          or: {
-            end: [69001, 69028, 69047],
-          },
-        },
-      },
-    });
 
-    expect(result).to.equal(true);
-
-    result = hasInsee({
+  it('OR - whitelist - start & end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -100,8 +92,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
+
+  it('OR - whitelist - start insee true - end insee false', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -115,8 +110,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
+
+  it('OR - whitelist - start insee false - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -129,10 +127,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    // BLACK LIST
 
-    result = hasInsee({
+  it('OR - blackList - start insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -145,8 +144,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
-    result = hasInsee({
+
+  it('OR - blackList - start insee false', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -159,9 +161,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
 
-    result = hasInsee({
+  it('OR - blackList - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -174,8 +178,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
-    result = hasInsee({
+
+  it('OR - blackList - end insee false', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -188,22 +195,11 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
-      tripStakeholder,
-      insee: {
-        blackList: {
-          or: {
-            end: [69001, 69028, 69047],
 
-          },
-        },
-      },
-    });
-
-    expect(result).to.equal(false);
-
-    result = hasInsee({
+  it('OR - blackList - start insee true - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -217,8 +213,10 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
-    result = hasInsee({
+  it('OR - blackList - start insee false - end insee false ', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -232,8 +230,10 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
+  it('OR - blackList - start insee true - start insee false', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -247,11 +247,10 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
-
-    // WHITELIST && BLACKLIST
-
-    result = hasInsee({
+  it('OR - whiteList - start insee true - blackList - end insee false', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -268,8 +267,10 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
+  it('OR - whiteList - end insee true - blackList - start insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -286,15 +287,10 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
-
-    /*
-     * AND
-     */
-
-    // WHITELIST
-
-    result = hasInsee({
+  it('AND - whiteList - start insee true - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -307,8 +303,10 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(true);
+  });
 
-    result = hasInsee({
+  it('AND - whiteList - start insee false - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         whiteList: {
@@ -321,11 +319,27 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
 
-    // BLACKLIST
+  it('AND - whiteList - start insee false - end insee true', async () => {
+    const result = hasInsee({
+      tripStakeholder,
+      insee: {
+        whiteList: {
+          and: {
+            start: [69002],
+            end: [69028],
+          },
+        },
+      },
+    });
 
-    result = hasInsee({
+    expect(result).to.equal(false);
+  });
+
+  it('AND - blackList - start insee true - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
@@ -338,8 +352,10 @@ describe('incentive: filter insee', () => {
     });
 
     expect(result).to.equal(false);
+  });
 
-    result = hasInsee({
+  it('AND - blackList - start insee false - end insee true', async () => {
+    const result = hasInsee({
       tripStakeholder,
       insee: {
         blackList: {
