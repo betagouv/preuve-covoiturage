@@ -25,9 +25,9 @@
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "scripts": {
     "start": "yarn workspace @pdc/proxy start",
-    "start-dev": "nodemon --inspect=0.0.0.0:9229 ./proxy/app.js",
+    "start-dev": "yarn workspace @pdc/proxy start-dev",
     "worker": "yarn workspace @pdc/proxy worker",
-    "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./proxy/worker.js",
+    "worker-dev": "yarn workspace @pdc/proxy worker-dev",
     "seed": "yarn workspace @pdc/proxy seed",
     "migrate": "yarn workspace @pdc/proxy migrate",
     "process": "yarn workspace @pdc/proxy process",
@@ -42,29 +42,15 @@
     "@pdc/proxy": "0.0.1",
     "@pdc/service-acquisition": "0.0.1",
     "@pdc/service-trip": "0.0.1",
-    "@pdc/shared": "0.0.1",
-    "mongoose": "^5.5.5"
+    "@pdc/shared": "0.0.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
-    "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "faker": "^4.1.0",
-    "google-libphonenumber": "^3.2.2",
-    "jsonwebtoken": "^8.3.0",
-    "lodash": "^4.17.11",
-    "supertest": "^4.0",
-    "ts-node": "^8.1.0",
-    "tsconfig-paths": "^3.8.0",
     "tslint": "^5.16.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-eslint-rules": "^5.4.0",
-    "tslint-import-group-ordering": "^2.1.1",
     "typescript": "^3.4.5"
   },
   "eslintConfig": {
@@ -78,16 +64,5 @@
       "no-underscore-dangle": "off",
       "object-curly-newline": "off"
     }
-  },
-  "nodemonConfig": {
-    "ignore": [
-      ".circleci/*",
-      "cli/*",
-      "config/*",
-      "documentation/*",
-      "node_modules/*",
-      "test/*"
-    ],
-    "delay": "200"
   }
 }

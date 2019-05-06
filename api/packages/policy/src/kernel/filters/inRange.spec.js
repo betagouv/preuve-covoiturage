@@ -1,6 +1,6 @@
 const chai = require('chai');
 const inRange = require('./inRange');
-const { fakeTrip } = require('../helpers/fake.js.js');
+const { fakeTrip } = require('../helpers/fake');
 
 const { expect } = chai;
 

@@ -13,7 +13,7 @@ const dataWrap = require('@pdc/shared/middlewares/data-wrap');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 
 const eventBus = require('@pdc/shared/bus');
-const journeyBus = require('../../acquisition/src/transports/bus');
+const journeyBus = require('@pdc/service-acquisition/src/transports/bus');
 
 const { PORT, sessionSecret } = require('@pdc/shared/config.js');
 const { appUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
@@ -67,19 +67,19 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // default response
-app.use('/auth', require('../../auth/transports/http'));
+app.use('/auth', require('@pdc/service-auth/transports/http'));
 app.use('/stats', require('@pdc/service-stats/transports/http'));
 app.use('/profile', jwtUser, require('@pdc/service-user/transports/profilehttp'));
 app.use('/users', jwtUser, require('@pdc/service-user/transports/userhttp'));
 app.use('/aom', jwtUser, require('@pdc/service-organization/transports/aomhttp'));
 app.use('/operators', jwtUser, require('@pdc/service-organization/transports/operatorhttp'));
 app.use('/trips', jwtUser, require('@pdc/service-trip/transports/http'));
-app.use('/incentive/incentives', jwtUser, require('../../incentive/transports/http'));
+app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive/transports/http'));
 app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy/transports/parameterhttp'));
 app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy/transports/campaignhttp'));
 app.use('/incentive/policies', jwtUser, require('@pdc/service-policy/transports/policyhttp'));
 app.use('/incentive/units', jwtUser, require('@pdc/service-policy/transports/unithttp'));
-app.use('/journeys', require('../../acquisition/src/transports/http'));
+app.use('/journeys', require('@pdc/service-acquisition/src/transports/http'));
 
 // Arena access for queues
 app.use('/arena', require('./routes/bull-arena/controller'));
