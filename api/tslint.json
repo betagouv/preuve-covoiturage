@@ -4,6 +4,9 @@
     "tslint-eslint-rules",
     "tslint-import-group-ordering"
   ],
+  "linterOptions": {
+    "exclude": ["**/dist"]
+  },
   "rules": {
     "arrow-return-shorthand": true,
     "callable-types": true,

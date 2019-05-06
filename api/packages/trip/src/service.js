@@ -1,51 +1,52 @@
 /* eslint-disable camelcase */
-const _ = require('lodash');
-const moment = require('moment');
-const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
-const Journey = require('@pdc/service-acquisition/src/entities/models/journey');
-const Trip = require('./entities/models/trip');
+const _ = require("lodash");
+const moment = require("moment");
+const serviceFactory = require("@pdc/shared/providers/mongo/service-factory");
+const { Journey } = require("@pdc/service-acquisition").entities.models;
+const Trip = require("./entities/models/trip");
 
-const mapPeople = journey => [journey.driver, journey.passenger]
-  .filter(p => !!p)
-  .map(p => (p && _.isFunction(p.toObject) ? p.toObject() : p))
-  .map((p, idx) => {
-    const is_driver = (idx === 0);
-    return {
-      journey_id: journey.journey_id,
-      safe_journey_id: journey.safe_journey_id,
+const mapPeople = (journey) =>
+  [journey.driver, journey.passenger]
+    .filter((p) => !!p)
+    .map((p) => (p && _.isFunction(p.toObject) ? p.toObject() : p))
+    .map((p, idx) => {
+      const is_driver = idx === 0;
+      return {
+        journey_id: journey.journey_id,
+        safe_journey_id: journey.safe_journey_id,
 
-      class: journey.operator_class,
-      operator_class: journey.operator_class,
-      operator: journey.operator,
-      aom: journey.aom,
+        class: journey.operator_class,
+        operator_class: journey.operator_class,
+        operator: journey.operator,
+        aom: journey.aom,
 
-      is_driver,
+        is_driver,
 
-      identity: p.identity,
+        identity: p.identity,
 
-      start: p.start,
-      end: p.end,
-      distance: p.distance,
-      duration: p.duration,
+        start: p.start,
+        end: p.end,
+        distance: p.distance,
+        duration: p.duration,
 
-      seats: is_driver ? 1 : p.seats,
+        seats: is_driver ? 1 : p.seats,
 
-      cost: p.cost,
-      incentive: p.incentive,
-      remaining_fee: p.remaining_fee,
-      contribution: p.contribution,
-      revenue: p.revenue,
-      expense: p.expense,
+        cost: p.cost,
+        incentive: p.incentive,
+        remaining_fee: p.remaining_fee,
+        contribution: p.contribution,
+        revenue: p.revenue,
+        expense: p.expense,
 
-      validation: journey.validation,
-    };
-  });
+        validation: journey.validation,
+      };
+    });
 
 // find the oldest start date
 const reduceStartDate = (journey, trip = null) => {
-  let arr = [
-    _.get(journey.toObject(), 'driver.start.datetime', null),
-  ].filter(i => !!i);
+  let arr = [_.get(journey.toObject(), "driver.start.datetime", null)].filter(
+    (i) => !!i,
+  );
 
   if (trip) {
     arr = arr.concat([trip.start]);
@@ -55,14 +56,14 @@ const reduceStartDate = (journey, trip = null) => {
 };
 
 const createFromJourney = async (journey) => {
-  const trip = await (new Trip({
+  const trip = await new Trip({
     operator_id: journey.operator._id,
     operator_journey_id: journey.operator_journey_id,
-    status: 'pending',
+    status: "pending",
     aom: journey.aom,
     start: reduceStartDate(journey),
     people: mapPeople(journey),
-  })).save();
+  }).save();
 
   await Journey.findByIdAndUpdate({ _id: journey._id }, { trip_id: trip._id });
 
@@ -71,13 +72,16 @@ const createFromJourney = async (journey) => {
 
 const addJourney = async (journey, sourceTrip) => {
   // extract existing phone number to compare identities
-  const phones = _.uniq(_.get(sourceTrip.toObject(), 'people', [])
-    .map(i => _.get(i, 'identity.phone', null))
-    .filter(i => !!i));
+  const phones = _.uniq(
+    _.get(sourceTrip.toObject(), "people", [])
+      .map((i) => _.get(i, "identity.phone", null))
+      .filter((i) => !!i),
+  );
 
   // filter mapped people by their phone number. Keep non matching ones
-  const people = mapPeople(journey)
-    .filter(person => phones.indexOf(person.identity.phone) === -1);
+  const people = mapPeople(journey).filter(
+    (person) => phones.indexOf(person.identity.phone) === -1,
+  );
 
   // push the list of people to the trip
   const trip = await Trip.findByIdAndUpdate(
@@ -102,14 +106,20 @@ const detectors = {
     }).exec();
   },
   async driverIdentity(journey) {
-    const startTime = _.get(journey.toObject(), 'driver.start.datetime');
+    const startTime = _.get(journey.toObject(), "driver.start.datetime");
 
     return Trip.findOne({
-      'people.identity.phone': _.get(journey, 'driver.identity.phone', null),
-      'people.is_driver': true,
+      "people.identity.phone": _.get(journey, "driver.identity.phone", null),
+      "people.is_driver": true,
       start: {
-        $gte: moment.utc(startTime).subtract(2, 'h').toDate(),
-        $lte: moment.utc(startTime).add(2, 'h').toDate(),
+        $gte: moment
+          .utc(startTime)
+          .subtract(2, "h")
+          .toDate(),
+        $lte: moment
+          .utc(startTime)
+          .add(2, "h")
+          .toDate(),
       },
     }).exec();
   },
@@ -122,19 +132,19 @@ const tripService = serviceFactory(Trip, {
 
     // apply all detectors and get the last trip from the list
     // returns null if no trip is found
-    const trip = (await Promise.all([
-      'operatorJourneyId',
-      'driverIdentity',
-    ].reduce((p, c, idx) => {
-      if (_.isFunction(detectors[c])) {
-        // eslint-disable-next-line no-param-reassign
-        p[idx] = detectors[c](journey);
-      }
+    const trip =
+      (await Promise.all(
+        ["operatorJourneyId", "driverIdentity"].reduce((p, c, idx) => {
+          if (_.isFunction(detectors[c])) {
+            // eslint-disable-next-line no-param-reassign
+            p[idx] = detectors[c](journey);
+          }
 
-      return p;
-    }, [])))
-      .filter(p => !!p)
-      .pop() || null;
+          return p;
+        }, []),
+      ))
+        .filter((p) => !!p)
+        .pop() || null;
 
     if (!trip) {
       return createFromJourney(journey);
