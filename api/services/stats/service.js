@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const mongoose = require('mongoose');
-const journey = require('../acquisition/src/entities/models/journey');
+const journey = require('../../packages/acquisition/src/entities/models/journey');
 const Stat = require('./entities/models/stat');
 
 // const { Date } = require('mongoose').Types;
