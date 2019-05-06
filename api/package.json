@@ -16,7 +16,6 @@
   ],
   "workspaces": [
     "core",
-    "proxy",
     "shared",
     "services/*",
     "services-ts/*",

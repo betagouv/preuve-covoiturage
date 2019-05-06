@@ -13,7 +13,7 @@ const dataWrap = require('@pdc/shared/middlewares/data-wrap');
 const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 
 const eventBus = require('@pdc/shared/bus');
-const journeyBus = require('@pdc/service-acquisition/transports/bus');
+const journeyBus = require('../../acquisition/transports/bus');
 
 const { PORT, sessionSecret } = require('@pdc/shared/config.js');
 const { appUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
@@ -79,7 +79,7 @@ app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy/transport
 app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy/transports/campaignhttp'));
 app.use('/incentive/policies', jwtUser, require('@pdc/service-policy/transports/policyhttp'));
 app.use('/incentive/units', jwtUser, require('@pdc/service-policy/transports/unithttp'));
-app.use('/journeys', require('@pdc/service-acquisition/transports/http'));
+app.use('/journeys', require('../../acquisition/transports/http'));
 
 // Arena access for queues
 app.use('/arena', require('./routes/bull-arena/controller'));
