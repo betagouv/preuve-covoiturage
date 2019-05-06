@@ -75,10 +75,10 @@ app.use('/aom', jwtUser, require('@pdc/service-organization').organization.trans
 app.use('/operators', jwtUser, require('@pdc/service-organization').organization.transports.operatorHttp);
 app.use('/trips', jwtUser, require('@pdc/service-trip/transports/http'));
 app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive').incentive.transports.http);
-app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy/transports/parameterhttp'));
-app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy/transports/campaignhttp'));
-app.use('/incentive/policies', jwtUser, require('@pdc/service-policy/transports/policyhttp'));
-app.use('/incentive/units', jwtUser, require('@pdc/service-policy/transports/unithttp'));
+app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy').policy.transports.parameterHttp);
+app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy').policy.transports.campaignHttp);
+app.use('/incentive/policies', jwtUser, require('@pdc/service-policy').policy.transports.policyHttp);
+app.use('/incentive/units', jwtUser, require('@pdc/service-policy').policy.transports.unitHttp);
 app.use('/journeys', require('@pdc/service-acquisition').acquisition.transports.http);
 
 // Arena access for queues

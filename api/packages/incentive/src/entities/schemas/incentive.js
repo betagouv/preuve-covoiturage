@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const UnitSchema = require('@pdc/service-policy/entities/schemas/unit');
+const { IncentiveUnitSchema } = require('@pdc/service-policy').policy.entities.schemas;
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
@@ -23,7 +23,7 @@ const IncentiveSchema = new Schema({
     required: true,
   },
   unit: {
-    type: UnitSchema, // IncentiveUnit
+    type: IncentiveUnitSchema, // IncentiveUnit
     required: true,
   },
   amount: {
