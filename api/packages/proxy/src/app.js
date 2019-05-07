@@ -44,7 +44,7 @@ console.log('CORS', process.env.NODE_ENV === 'review' ? '*' : appUrl());
 app.use(helmet());
 app.use(
   cors({
-    origin: appUrl('', { allowNull: true, forceGeneration: (process.env.NODE_ENV === 'review') }) || '*',
+    origin: process.env.NODE_ENV === 'review' ? '*' : appUrl(),
     optionsSuccessStatus: 200,
   }),
 );
