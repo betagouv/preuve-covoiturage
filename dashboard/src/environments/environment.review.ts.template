@@ -1,5 +1,0 @@
-export const environment = {
-  production: true,
-  name: 'review',
-  apiUrl: \"${API_URL}\",
-};

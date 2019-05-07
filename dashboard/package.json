@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "scalingo-prebuild": "npm link @angular/cli && eval \"echo \\\"$(cat src/environments/environment.review.ts.template)\\\"\" | sed 's/dashboard/api/g' > src/environments/environment.review.ts && cp -f src/environments/environment.review.ts src/environments/environment.ts",
+    "scalingo-prebuild": "npm link @angular/cli",
     "start": "node server/app.js",
     "build": "ng build --configuration=$NODE_ENV",
     "test": "ng test",
