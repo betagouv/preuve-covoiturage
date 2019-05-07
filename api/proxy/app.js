@@ -44,7 +44,7 @@ console.log('CORS', appUrl('', { allowNull: true, forceGeneration: true }) || '*
 app.use(helmet());
 app.use(
   cors({
-    origin: appUrl('', { allowNull: true, forceGeneration: true }) || '*',
+    origin: appUrl('', { allowNull: true, forceGeneration: (process.env.NODE_ENV === 'review') }) || '*',
     optionsSuccessStatus: 200,
   }),
 );
