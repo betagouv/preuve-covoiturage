@@ -38,7 +38,7 @@ app.use(
 );
 
 // eslint-disable-next-line no-console
-console.log('CORS', appUrl('', { allowNull: true, forceGeneration: true }) || '*');
+console.log('CORS', appUrl('', { allowNull: true, forceGeneration: (process.env.NODE_ENV === 'review') }) || '*');
 
 // protect with typical headers and enable cors
 app.use(helmet());
