@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const config = require('@pdc/package-config/config');
+const { config } = require('@pdc/package-config');
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 const { isValidIBAN, isValidBIC } = require('ibantools');
 
