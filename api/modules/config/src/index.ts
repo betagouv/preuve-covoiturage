@@ -6,7 +6,7 @@ const { camelCase } = require('lodash');
 // recommended : set the CONFIG_DIR as env variable
 const configFolder = path.resolve(
   __dirname,
-  process.env.CONFIG_DIR || '../../config',
+  process.env.CONFIG_DIR || '../../../config',
 );
 const config = {};
 
@@ -22,4 +22,4 @@ fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
 });
 
 // tslint:disable-next-line: no-default-export
-export default config;
+export { config };
