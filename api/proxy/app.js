@@ -38,13 +38,13 @@ app.use(
 );
 
 // eslint-disable-next-line no-console
-console.log('CORS', appUrl('', { allowNull: true, forceGeneration: (process.env.NODE_ENV === 'review') }) || '*');
+console.log('CORS', process.env.NODE_ENV === 'review' ? '*' : appUrl());
 
 // protect with typical headers and enable cors
 app.use(helmet());
 app.use(
   cors({
-    origin: appUrl('', { allowNull: true, forceGeneration: (process.env.NODE_ENV === 'review') }) || '*',
+    origin: process.env.NODE_ENV === 'review' ? '*' : appUrl(),
     optionsSuccessStatus: 200,
   }),
 );
