@@ -13,7 +13,7 @@
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 [context.deploy-preview]
-  command = "yarn build-preview"
+  command = "yarn build:review"
 
 [context.deploy-preview.environment]
   NODE_ENV = "review"
