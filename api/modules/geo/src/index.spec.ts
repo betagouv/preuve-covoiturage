@@ -1,9 +1,12 @@
-const assert = require('assert');
-const mongoose = require('mongoose');
-const assertThrows = require('@pdc/shared/test/lib/assert-throws');
-const BadRequestError = require('@pdc/shared/errors/bad-request');
+import { strict as assert } from 'assert';
+import { BadRequestError } from '@pdc/package-errors';
 
-const { aom, postcodes, town } = require('../geo');
+import { aom, postcodes, town } from '.';
+
+const mongoose = require('mongoose');
+
+const assertThrows = require('@pdc/shared/test/lib/assert-throws');
+
 
 // AOM
 describe('find AOM common', () => {

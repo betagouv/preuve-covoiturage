@@ -1,7 +1,7 @@
 {
-  "name": "@pdc/package-geo",
+  "name": "@pdc/package-errors",
   "version": "0.0.1",
-  "description": "Geo utils",
+  "description": "Error classes",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "private": true,
@@ -12,20 +12,14 @@
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
     "test": "mocha src/**/*.spec.ts"
   },
-  "dependencies": {
-    "@pdc/package-errors": "0.0.1",
-    "@pdc/service-organization": "0.0.1",
-    "@pdc/shared": "0.0.1",
-    "axios": "^0.18.0",
-    "lodash": "^4.17.11",
-    "mongoose": "^5.4"
-  },
+  "keywords": [
+    "pdc",
+    "errors"
+  ],
   "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/lodash": "^4.14.123",
     "@types/mocha": "^5.2.6",
-    "@types/mongoose": "^5.5.0",
     "@types/node": "^12.0.0",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",

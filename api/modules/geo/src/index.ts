@@ -1,50 +1,46 @@
-/* eslint-disable camelcase */
-const _ = require("lodash");
-const NotFoundError = require("@pdc/shared/errors/not-found");
-const BadRequestError = require("@pdc/shared//errors/bad-request");
-const { Aom } = require("@pdc/service-organization").entities.models;
-const { validate } = require("@pdc/shared/providers/mongo/schema-validation");
-const geoApi = require("./providers/fr.gouv.api.geo");
-const addressApi = require("./providers/fr.gouv.data.api-adresse");
-const nominatimApi = require("./providers/org.openstreetmap.nominatim");
-const komootApi = require("./providers/de.komoot.photon");
+import * as _ from 'lodash';
+import { BadRequestError, NotFoundError } from '@pdc/package-errors';
+
+import { GeoType } from './types/GeoType';
+
+const { Aom } = require('@pdc/service-organization').entities.models;
+const { validate } = require('@pdc/shared/providers/mongo/schema-validation');
+const geoApi = require('./providers/fr.gouv.api.geo');
+const addressApi = require('./providers/fr.gouv.data.api-adresse');
+const nominatimApi = require('./providers/org.openstreetmap.nominatim');
+const komootApi = require('./providers/de.komoot.photon');
 
 /**
  * Search for an AOM object
  * by INSEE or latitude and longitude
- *
- * @param lat
- * @param lon
- * @param insee
- * @returns {Promise<*>}
  */
-const aom = async ({ lon, lat, insee }) => {
+const aom = async ({ lon, lat, insee }: GeoType) => {
   if ((_.isNil(lon) || _.isNil(lat)) && _.isNil(insee)) {
-    throw new BadRequestError("lon/lat or INSEE must be provided");
+    throw new BadRequestError('lon/lat or INSEE must be provided');
   }
 
   // search by INSEE code
   if (insee) {
-    if (!validate("insee", insee)) {
-      throw BadRequestError("Wrong Insee format");
+    if (!validate('insee', insee)) {
+      throw new BadRequestError('Wrong Insee format');
     }
 
     return Aom.findOne({ insee }).exec();
   }
 
-  if (!validate("lat", lat)) {
-    throw new BadRequestError("Wrong lat format");
+  if (!validate('lat', lat)) {
+    throw new BadRequestError('Wrong lat format');
   }
 
-  if (!validate("lon", lon)) {
-    throw new BadRequestError("Wrong lon format");
+  if (!validate('lon', lon)) {
+    throw new BadRequestError('Wrong lon format');
   }
 
   // search by lat/lon
   return Aom.findOne({
     geometry: {
       $geoIntersects: {
-        $geometry: { type: "Point", coordinates: [lon, lat] },
+        $geometry: { type: 'Point', coordinates: [lon, lat] },
       },
     },
   }).exec();
@@ -53,14 +49,14 @@ const aom = async ({ lon, lat, insee }) => {
 const cleanPostcodes = (p) =>
   (Array.isArray(p) ? p : [p].filter((i) => !!i)) || [];
 
-const town = async ({ lon, lat, insee, literal }) => {
+const town = async ({ lon, lat, insee, literal }: GeoType) => {
   if ((_.isNil(lon) || _.isNil(lat)) && _.isNil(insee) && _.isNil(literal)) {
-    throw new BadRequestError("lon/lat or INSEE or literal must be provided");
+    throw new BadRequestError('lon/lat or INSEE or literal must be provided');
   }
 
-  if (!_.isNil(insee)) validate("insee", insee);
-  if (!_.isNil(lon)) validate("lon", lon);
-  if (!_.isNil(lat)) validate("lat", lat);
+  if (!_.isNil(insee)) validate('insee', insee);
+  if (!_.isNil(lon)) validate('lon', lon);
+  if (!_.isNil(lat)) validate('lat', lat);
 
   if (!_.isNil(lon) && !_.isNil(lat)) {
     // beurk...
@@ -160,7 +156,7 @@ const town = async ({ lon, lat, insee, literal }) => {
     }
   }
 
-  if (!_.isNil(literal) && literal !== "") {
+  if (!_.isNil(literal) && literal !== '') {
     // beurk...
     try {
       // use international search first
@@ -202,17 +198,17 @@ const town = async ({ lon, lat, insee, literal }) => {
   throw new BadRequestError();
 };
 
-const insee = async ({ lon, lat }) => {
-  // eslint-disable-next-line no-shadow
+const inseeCode = async ({ lon, lat }: GeoType) => {
+  // tslint:disable-next-line
   const { insee } = await town({ lon, lat });
 
   return insee;
 };
 
 // eslint-disable-next-line no-shadow
-const postcodes = async ({ lon, lat, insee }) => {
+const postcodes = async ({ lon, lat, insee }: GeoType) => {
   if ((_.isNil(lon) || _.isNil(lat)) && _.isNil(insee)) {
-    throw new BadRequestError("lon/lat or INSEE or literal must be provided");
+    throw new BadRequestError('lon/lat or INSEE or literal must be provided');
   }
 
   if (insee) {
@@ -225,7 +221,7 @@ const postcodes = async ({ lon, lat, insee }) => {
     return data.codesPostaux;
   }
 
-  return _.get(await town({ lon, lat }), "postcodes", []);
+  return _.get(await town({ lon, lat }), 'postcodes', []);
 };
 
-export { aom, town, insee, postcodes };
+export { aom, town, inseeCode as insee, postcodes };
