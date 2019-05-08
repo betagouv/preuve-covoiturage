@@ -1,3 +1,2 @@
 web: yarn start
 worker: MQ_WORKER=true yarn worker
-postdeploy: yarn migrate && yarn seed && yarn fix-permissions
