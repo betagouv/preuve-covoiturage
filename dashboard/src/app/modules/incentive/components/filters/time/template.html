@@ -1,0 +1,46 @@
+<br>
+<div class="p-grid p-justify-end">
+  <p-button (onClick)="addRange($event)" label="Ajouter une période" icon="pi pi-plus"></p-button>
+</div>
+
+<form (ngSubmit)="onSubmit()" [formGroup]="filterForm">
+  <br><br>
+  <div formArrayName="value">
+    <div *ngFor="let range of ranges.controls; let i = index;">
+      <div class="p-grid p-justify-center ui-fluid" [formGroupName]="i">
+        <div class="p-col-12 p-md-2">
+          <label>Début de la période</label>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <p-calendar
+            #calendar
+            formControlName="start"
+            [timeOnly]="true"
+            [stepMinute]="5"
+            [minDate]="minDateValue"
+            (onFocus)="updateCalendarUI(i, 'min', calendar)"
+            ></p-calendar>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <label>Fin de la période</label>
+        </div>
+        <div class="p-col-12 p-md-3">
+          <p-calendar
+            #calendar
+            formControlName="end"
+            [timeOnly]="true"
+            [stepMinute]="5"
+            [maxDate]="maxDateValue"
+            (onFocus)="updateCalendarUI(i, 'max', calendar)"
+            ></p-calendar>
+        </div>
+        <div class="p-col-12 p-md-1">
+          <p-button (onClick)="deleteRange(i)" label="" icon="pi pi-times" iconPos="left" styleClass="ui-button-warning"></p-button>
+        </div>
+      </div>
+      <br><br>
+    </div>
+  </div>
+  <br><br>
+  <p-button (onClick)="onSubmit" label="Enregistrer"></p-button>
+</form>

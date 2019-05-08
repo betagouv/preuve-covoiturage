@@ -1,0 +1,53 @@
+@import '../../../../../assets/scss/variables';
+
+.title {
+  padding-left: 10px;
+  color: #777777;
+}
+
+.is-active {
+  background-color: #394754;
+}
+
+#mainMenu .ui-menu {
+  width: 100%;
+  border: none;
+}
+
+#mainMenu .ui-menu {
+  background-color: #f7f7f7;
+
+  ul {
+    background-color: #f7f7f7;
+  }
+
+  .ui-menuitem {
+    background-color: #f7f7f7;
+    padding: 0 10px;
+  }
+
+  .ui-menuitem-link {
+    background-color: white;
+
+    .ui-menuitem-text, .ui-menuitem-icon {
+      color: #616161 !important;
+    }
+
+    &:not(.ui-state-active):hover {
+      background-color: rgba(254, 254, 254, 0.91) !important;
+
+      .ui-menuitem-text, .ui-menuitem-icon {
+        color: #0081d5 !important;
+      }
+    }
+
+    &.ui-state-active, &.ui-state-active:hover {
+      background-color: white !important;
+      font-weight: 600;
+
+      .ui-menuitem-text, .ui-menuitem-icon {
+        color: #0081d5 !important;
+      }
+    }
+  }
+}

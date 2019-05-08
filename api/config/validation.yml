@@ -1,0 +1,84 @@
+journey:
+  steps:
+    - name: 0
+      desc: |
+        Tests running at T0 when the proof
+        has been received.
+      tests:
+        - has_proofs
+        - has_driver
+        - has_passenger
+        - has_operator
+        - has_driver_geo_start_strong
+        - has_driver_geo_end_strong
+        - has_passenger_geo_start_strong
+        - has_passenger_geo_end_strong
+        - has_driver_geo_start_weak
+        - has_driver_geo_end_weak
+        - has_passenger_geo_start_weak
+        - has_passenger_geo_end_weak
+        - device_is_machine
+        - device_is_human
+        - error_driver_below_18
+        - error_multiple_driver
+        - error_speeding
+        - error_distance_too_big
+        - error_too_many_passengers
+    - name: 1
+      desc: |
+        Tests running some time later to detect
+        weird patterns or overuse of car pooling.
+      tests:
+        - has_proofs
+    - name: 2
+      desc: |
+        Tests running even later to detect weird
+        things on the long run.
+      tests:
+        - has_proofs
+  ranks:
+    - name: A
+      desc: |
+        A driver and a passenger have been
+        connected together. We don't know if
+        a journey happened.
+      tests:
+        - has_proofs
+        - has_operator
+        - has_driver_or_passenger
+        - device_is_human
+    - name: B
+      desc: |
+        A driver and at least a passenger are
+        connected and a journey happened.
+      tests:
+        - has_proofs
+        - has_operator
+        - has_driver
+        - has_passenger
+    - name: C
+      desc: |
+        A driver and at least a passenger are
+        connected and both have geo data from
+        an automated device.
+      tests:
+        - has_proofs
+        - has_operator
+        - has_driver
+        - has_passenger
+        - has_driver_geo_start_strong
+        - has_driver_geo_end_strong
+        - has_passenger_geo_start_strong
+        - has_passenger_geo_end_strong
+        - device_is_machine
+    - name: Z
+      desc: |
+        Fake proofs !
+        All the tests checking oddities and
+        illegal behaviours. Must return true to pass!
+      logic: or
+      tests:
+        - error_driver_below_18
+        - error_speeding
+        - error_distance_too_big
+        - error_too_many_passengers

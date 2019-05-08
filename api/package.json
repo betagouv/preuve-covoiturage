@@ -1,0 +1,86 @@
+{
+  "name": "@pdc/api",
+  "private": true,
+  "repository": "git@github.com:betagouv/preuve-covoiturage.git",
+  "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
+  "contributors": [
+    "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
+    "Nicolas Mérigot <nicolas.merigot@beta.gouv.fr>",
+    "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
+  ],
+  "keywords": [
+    "betagouv",
+    "covoiturage",
+    "api",
+    "carpooling"
+  ],
+  "workspaces": [
+    "proxy",
+    "shared",
+    "services/*",
+    "packages/*"
+  ],
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/betagouv/preuve-covoiturage/issues"
+  },
+  "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
+  "scripts": {
+    "start": "yarn workspace @pdc/proxy start",
+    "dev": "nodemon --inspect=0.0.0.0:9229 ./proxy/app.js",
+    "worker": "yarn workspace @pdc/proxy worker",
+    "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./proxy/worker.js",
+    "seed": "yarn workspace @pdc/proxy seed",
+    "migrate": "yarn workspace @pdc/proxy migrate",
+    "process": "yarn workspace @pdc/proxy process",
+    "process-trip": "yarn workspace @pdc/proxy process-trip",
+    "fix-permissions": "yarn workspace @pdc/proxy fix-permissions",
+    "test": "NODE_ENV=test mocha -t 5000",
+    "lint": "eslint --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@pdc/package-geo": "0.0.1",
+    "@pdc/proxy": "0.0.1",
+    "@pdc/service-acquisition": "0.0.1",
+    "@pdc/service-trip": "0.0.1",
+    "@pdc/shared": "0.0.1",
+    "google-libphonenumber": "^3.2.2",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "faker": "^4.1.0",
+    "mocha": "^6.1.4",
+    "supertest": "^4.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "mongo": true,
+      "mocha": true
+    },
+    "extends": "airbnb",
+    "rules": {
+      "no-underscore-dangle": "off",
+      "object-curly-newline": "off"
+    }
+  },
+  "nodemonConfig": {
+    "ignore": [
+      ".circleci/*",
+      "cli/*",
+      "config/*",
+      "documentation/*",
+      "node_modules/*",
+      "test/*"
+    ],
+    "delay": "200"
+  }
+}

@@ -1,0 +1,44 @@
+roles:
+  - slug: admin
+    name: Admin
+    permissions:
+      - user.list
+      - user.invite
+      - user.create
+      - user.read
+      - user.update
+      - user.delete
+      - aom.users.add
+      - aom.users.remove
+      - aom.users.list
+      - aom.list
+      - aom.read
+      - aom.create
+      - aom.update
+      - aom.delete
+      - aom.stats
+      - operator.users.add
+      - operator.users.remove
+      - operator.users.list
+      - operator.list
+      - operator.read
+      - operator.create
+      - operator.update
+      - operator.delete
+      - journey.read
+      - journey.list
+      - journey.delete
+      - journey.import
+      - journey.process
+      - profile.read
+      - profile.update
+      - profile.password
+      - profile.delete
+  - slug: user
+    name: User
+    permissions:
+      - user.list
+      - profile.read
+      - profile.update
+      - profile.password
+      - profile.delete

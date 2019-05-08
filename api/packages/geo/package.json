@@ -1,0 +1,20 @@
+{
+  "name": "@pdc/package-geo",
+  "version": "0.0.1",
+  "description": "Geo utils",
+  "main": "geo.js",
+  "private": true,
+  "license": "AGPL-3.0",
+  "keywords": [
+    "pdc",
+    "geo"
+  ],
+  "dependencies": {
+    "@pdc/shared": "0.0.1",
+    "@pdc/service-organization": "0.0.1",
+    "lodash": "^4.17.11",
+    "axios": "^0.18.0",
+    "mongoose": "^5.4"
+  },
+  "author": "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>"
+}

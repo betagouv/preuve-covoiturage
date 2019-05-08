@@ -1,0 +1,63 @@
+<div class="main__wrapper">
+  <section class="p-grid p-justify-center" *ngIf="tokens.length > 0">
+
+    <div class="p-col-12">
+      <h1 class="has-text-centered">Liste des tokens</h1>
+    </div>
+
+    <div class="p-col-12 p-md-8">
+      <p-table #dt [columns]="columns" [value]="tokens" dataKey="_id" [paginator]="true" [rows]="perPage"
+               [resizableColumns]="true" [totalRecords]="total" [loading]="loading">
+
+        <ng-template pTemplate="caption">
+          <div style="display: flex; justify-content: flex-end;">
+            <p-button label="Générer un token" (onClick)="create()"></p-button>
+          </div>
+
+        </ng-template>
+
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field" pResizableColumn>
+        <span>
+        {{col.header}}
+        </span>
+              <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                          ariaLabelDesc="Activate to sort in descending order"
+                          ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+            </th>
+            <th class="options-column"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns" class="ui-resizable-column">
+              <div class="is-ellipsis" title="{{getValue(rowData, col.field)}}">{{getValue(rowData, col.field)}}</div>
+            </td>
+            <td class="options-column">
+              <div>
+            <span *ngIf="hasPermission('operator.app.delete')" (click)="delete(rowData)">
+                <fa-icon title="supprimer" icon="trash-alt"></fa-icon>
+            </span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+  </section>
+
+
+  <section class="p-grid" *ngIf="!loading && tokens.length === 0">
+    <br>
+    <br>
+    <div class="p-col-6 p-offset-3">
+      <p>
+        Créer votre premier Token
+      </p>
+      <br>
+      <p-button label="Générer un token" (onClick)="create()"></p-button>
+    </div>
+  </section>
+</div>

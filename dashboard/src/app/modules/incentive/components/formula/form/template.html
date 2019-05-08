@@ -1,0 +1,22 @@
+<div class="p-grid p-justify-center ui-fluid">
+  <div class="p-col-12 has-text-centered">
+    <h2>Formule</h2>
+  </div>
+  <div class="p-col-9">
+    <input
+      type="text"
+      pInputText
+      [formControl]="incentiveFormulaForm"
+      [appValidateFormula]="incentiveParametersList"
+      >
+      <p-message
+        severity="error"
+        [text]="incentiveFormulaForm.errors['validateFormula'] ? 'Formule invalide' : ''"
+        *ngIf="!incentiveFormulaForm.valid&&incentiveFormulaForm.dirty">
+      </p-message>
+  </div>
+  <div class="p-col-2">
+    <p-button  [style]="{ width: '100px' }" [label]="!loading ? 'enregistrer' : ''" [icon]="loading ? 'pi pi-spin pi-spinner' : ''" (onClick)="saveFormula()" ></p-button>
+  </div>
+
+</div>

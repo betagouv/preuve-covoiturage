@@ -1,0 +1,41 @@
+<div class="p-grid p-justify-center">
+    <div class="p-col-12 p-md-10">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-4">
+                <label class="has-text-grey">Prénom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+                <p>{{user.firstname}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+                <label class="has-text-grey">Nom</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+                <p>{{user.lastname}}</p>
+            </div>
+
+            <div class="p-col-12 p-md-4">
+                <label class="has-text-grey">N° de téléphone</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+                <p>{{user.phone}}</p>
+            </div>
+            <div class="p-col-12 p-md-4">
+                <label class="has-text-grey">Role</label>
+            </div>
+            <div class="p-col-12 p-md-8">
+                <p>{{user.role}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="p-grid p-justify-center">
+    <p-button label="Modifier" (click)="edit(user)"></p-button>
+</div>
+
+
+
+
+
+

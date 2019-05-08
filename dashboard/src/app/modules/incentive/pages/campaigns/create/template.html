@@ -1,0 +1,126 @@
+<h2 class="has-text-centered"> Création de la campagne</h2>
+<form [formGroup]="campaignForm">
+  <div class="p-grid p-justify-center">
+    <div class="p-col-12 p-md-6">
+      <div class="p-grid ui-fluid">
+        <div class="p-col-12 p-md-2">
+          <label>Nom</label>
+        </div>
+        <div class="p-col-12 p-md-10">
+          <input type="text" pInputText formControlName="name">
+          <p-message
+              severity="error"
+              [text]="campaignForm.controls['name'].errors['required'] ? 'Le nom est requis.' : ''"
+              *ngIf="!campaignForm.controls['name'].valid&&campaignForm.controls['name'].dirty">
+          </p-message>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <label>Description</label>
+        </div>
+        <div class="p-col-12 p-md-10">
+      <textarea
+          formControlName="description"
+          pInputTextarea
+      >
+      </textarea>
+        </div>
+        <div class="p-col-12 p-md-2">
+          <label>Période d'application</label>
+        </div>
+        <div class="p-col-12 p-md-10">
+          <p-calendar
+              [locale]="calendarLocale"
+              [formControl]="campaignRange"
+              selectionMode="range"
+              [numberOfMonths]="3"
+              [readonlyInput]="true"
+              [minDate]="minDate"
+              (onSelect)='rangeSelected($event)'
+              dateFormat="dd/mm/yy"
+          ></p-calendar>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid p-justify-center">
+    <div class="p-col-12 p-md-8">
+      <h4 class="has-text-centered" style="margin-bottom: 0">Politiques de la campagne</h4>
+      <p class="subtitle">Par ordre de priorités</p>
+      <div class="p-grid p-justify-end">
+        <p-button (onClick)="addPolicy()" icon="pi pi-plus" label="Ajouter une politique">
+        </p-button>
+      </div>
+      <br><br>
+      <div class="p-grid ui-fluid chosenPolicyList">
+
+        <!--   todo: separate in component   -->
+        <div class="p-col-12"
+             *ngFor="let policy of appliedPolicies; let i = index;">
+          <p-card>
+            <div
+                class="p-grid p-justify-between"
+            >
+              <label>
+                Position <span><b>{{i}}</b></span>
+              </label>
+              <p><b>
+                {{ policy.policy.name }}
+              </b></p>
+              <div>
+                <button
+                    pButton
+                    cornerStyleClass="ui-corner-left"
+                    icon="pi pi-pencil"
+                    (click)="editPolicy(i)"
+                ></button>
+                <button
+                    pButton
+                    cornerStyleClass="ui-corner-right"
+                    icon="pi pi-times"
+                    (click)="deletePolicy(i)"
+                ></button>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-2">
+                <div class="p-grid p-dir-col">
+                  <button
+                      pButton
+                      cornerStyleClass="ui-corner-top"
+                      icon="pi pi-sort-up"
+                      (click)="moveUpPolicy(i)"
+                  ></button>
+                  <button
+                      pButton
+                      cornerStyleClass="ui-corner-bottom"
+                      icon="pi pi-sort-down"
+                      (click)="moveDownPolicy(i)"
+                  ></button>
+                </div>
+              </div>
+              <div class="p-col-8 policyDescription">
+                <p>
+                  {{ policy.policy.description }}
+                </p>
+                <b> {{ policy.policy.formula }} </b>
+                <ul *ngIf="policy.parameters.length > 0">
+                  <li *ngFor="let param of policy.parameters">
+                    <b>{{param.key}}</b>={{param.value}}
+                  </li>
+                </ul>
+              </div>
+              <div class="p-col-2">
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <hr *ngIf="appliedPolicies.length>0">
+  <br>
+  <div class="p-grid p-justify-center" >
+    <p-button label="Lancer la campagne" [disabled]="appliedPolicies.length===0||campaignRange.value.length===0" (onClick)="onSubmit()" icon="pi pi-check"></p-button>
+  </div>
+</form>

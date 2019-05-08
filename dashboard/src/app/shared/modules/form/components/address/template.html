@@ -1,0 +1,44 @@
+<p-fieldset legend="Adresse" [toggleable]="true" [formGroup]="parentForm">
+  <div class="p-grid ui-fluid">
+    <div class="p-col-12 p-md-2">
+      <label>Rue</label>
+    </div>
+    <div class="p-col-12 p-md-10">
+      <input type="text" pInputText formControlName="street">
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Code Postal</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <p-inputMask formControlName="postcode" mask="99999" [unmask]="true"></p-inputMask>
+      <p-message
+        severity="error"
+        [text]="parentForm.controls['postcode'].errors['pattern'] ? 'Le code postal est invalide.' : ''"
+        *ngIf="!parentForm.controls['postcode'].valid&&parentForm.controls['postcode'].dirty">
+      </p-message>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Cedex</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <input type="text" pInputText formControlName="cedex">
+      <p-message
+        severity="error"
+        [text]="parentForm.controls['cedex'].errors['pattern'] ? 'Le code cedex est invalide.' : ''"
+        *ngIf="!parentForm.controls['cedex'].valid&&parentForm.controls['cedex'].dirty">
+      </p-message>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Ville</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <input type="text" pInputText formControlName="city">
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Pays</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <input type="text" pInputText formControlName="country">
+    </div>
+  </div>
+</p-fieldset>

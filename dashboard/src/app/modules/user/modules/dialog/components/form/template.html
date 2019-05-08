@@ -1,0 +1,148 @@
+<form (ngSubmit)="onSubmit()"
+      [formGroup]="userForm"
+      class="app-user-form"
+      autocomplete="off">
+
+  <div class="ui-g">
+    <h4>Coordonnées</h4>
+  </div>
+
+  <div class="ui-g ui-fluid">
+
+    <!-- First name -->
+    <div class="ui-g-12 ui-md-6">
+      <div class="ui-g-12 ui-md-4">
+        <label>Prénom&nbsp;<span class="required">*</span></label>
+      </div>
+      <div class="ui-g-12 ui-md-8">
+        <input type="text" autocomplete="nope" pInputText formControlName="firstname">
+        <p-message
+            severity="error"
+            [text]="userForm.controls['firstname'].errors['required'] ? 'Le prénom est requis.' : ''"
+            *ngIf="!userForm.controls['firstname'].valid&&userForm.controls['firstname'].dirty">
+        </p-message>
+      </div>
+    </div>
+
+    <!-- Last name -->
+    <div class="ui-g-12 ui-md-6">
+      <div class="ui-g-12 ui-md-4">
+        <label>Nom&nbsp;<span class="required">*</span></label>
+      </div>
+      <div class="ui-g-12 ui-md-8">
+        <input type="text" autocomplete="nope" pInputText formControlName="lastname">
+        <p-message
+            severity="error"
+            [text]="userForm.controls['lastname'].errors['required'] ? 'Le nom est requis.' : ''"
+            *ngIf="!userForm.controls['lastname'].valid&&userForm.controls['lastname'].dirty">
+        </p-message>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-g ui-fluid">
+
+    <!-- Email -->
+    <div class="ui-g-12 ui-md-6">
+      <div class="ui-g-12 ui-md-4">
+        <label>Email&nbsp;<span class="required">*</span></label>
+      </div>
+      <div class="ui-g-12 ui-md-8">
+        <input type="email" autocomplete="nope" pInputText formControlName="email">
+        <p-message
+            severity="error"
+            [text]="userForm.controls['email'].errors['required'] ? 'L\'email est requis.' : userForm.controls['email'].errors['pattern'] ? 'Email invalide' : ''"
+            *ngIf="!userForm.controls['email'].valid&&userForm.controls['email'].dirty">
+        </p-message>
+      </div>
+    </div>
+
+    <!-- Phone number -->
+    <div class="ui-g-12 ui-md-6">
+      <div class="ui-g-12 ui-md-4">
+        <label>Téléphone</label>
+      </div>
+      <div class="ui-g-12 ui-md-8">
+        <input type="tel" autocomplete="nope" pInputText formControlName="phone">
+        <p-message
+            severity="error"
+            [text]="userForm.controls['phone'].errors['required'] ? 'Le numéro de téléphone est requis.' : userForm.controls['phone'].errors['pattern'] ? 'Numéro de téléphone invalide' : ''"
+            *ngIf="!userForm.controls['phone'].valid&&userForm.controls['phone'].dirty">
+        </p-message>
+      </div>
+    </div>
+  </div>
+
+  <!-- hackish crap to screw browser autofilling passwords -->
+  <div style="display: none;">
+    <input type="email" name="email" id="email" autocomplete="email">
+    <input type="password" name="password" id="password" autocomplete="new-password">
+  </div>
+
+  <!-- Password -->
+  <div class="ui-g ui-fluid">
+    <div class="ui-g-12 ui-md-6">
+      <div class="ui-g-12 ui-md-4">
+        <label>Mot de passe</label>
+      </div>
+      <div class="ui-g-12 ui-md-8">
+        <input type="password" autocomplete="nope" pInputText formControlName="password">
+        <p-message
+            severity="error"
+            [text]="userForm.controls['password'].errors['required'] ? 'Le mot de passe est requis.' : (userForm.controls['password'].errors['minLength'] || userForm.controls['password'].errors['maxLength']) ? '' : 'Le mot de passe doit comprendre entre 6 et 128 caractères'"
+            *ngIf="!userForm.controls['password'].valid&&userForm.controls['password'].dirty">
+        </p-message>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-g">
+    <h4>Rôles&nbsp;<span class="required">*</span></h4>
+  </div>
+
+  <!-- Role -->
+  <div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+      <p *ngFor="let role of roles" class="form__radio-button-wrapper">
+        <label>
+          <p-radioButton
+              name="role"
+              [value]="role.value"
+              formControlName="role"
+              class="form__radio-button-item">
+          </p-radioButton>&nbsp;{{ role.label }}
+        </label>
+      </p>
+    </div>
+  </div>
+
+  <!-- Group -->
+  <div class="ui-g ui-fluid">
+    <div class="ui-g-6">
+      <h4>Groupe&nbsp;<span class="required">*</span></h4>
+
+      <p *ngFor="let group of groups" class="form__radio-button-wrapper">
+        <label>
+          <p-radioButton
+              name="group"
+              [value]="group.value"
+              formControlName="group">
+          </p-radioButton>&nbsp;{{ group.label }}
+        </label>
+      </p>
+    </div>
+
+    <!-- Dynamic dropdown to select Aom or Operator -->
+    <div class="ui-g-6">
+      <h4 *ngIf="isAom()">Choisir une AOM</h4>
+      <h4 *ngIf="isOperator()">Choisir un opérateur</h4>
+
+      <app-aom-dropdown *ngIf="isAom()" [aomId]="userForm.get('aom')"></app-aom-dropdown>
+      <app-operator-form-dropdown *ngIf="isOperator()" [operatorId]="userForm.get('operator')"></app-operator-form-dropdown>
+    </div>
+  </div>
+
+  <div class="ui-g ui-fluid form__actions">
+    <p-button label="Enregistrer" [disabled]="!userForm.valid"></p-button>
+  </div>
+</form>

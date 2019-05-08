@@ -1,0 +1,90 @@
+@import "~src/assets/scss/variables";
+
+/**
+ * Extract from template.data.gouv.fr
+ */
+.navbar {
+  z-index: 100;
+  border-bottom: 1px solid #eee;
+  width: 100%;
+  background: white;
+}
+
+.navbar__container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  height: $navbar-height;
+  padding: 1em;
+}
+
+.navbar__home {
+  height: 40px;
+}
+
+.navbar__logo {
+  height: 100%;
+}
+
+.nav__links {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.nav__item {
+  padding: 0;
+  display: inline-block;
+
+  a, .dropdown {
+    text-decoration: none;
+    color: black;
+    padding: 0.4em 0.8em;
+    border-radius: 3px;
+  }
+}
+
+.nav__links a::after {
+  content: none;
+}
+
+.nav__item {
+  a:hover, .dropdown:hover {
+    background: #fefefe;
+  }
+
+  a.active {
+    background: white;
+    color: white;
+  }
+}
+
+a.navbar__home {
+  font-family: $family-primary;
+  display: flex;
+  align-items: center;
+  color: #333;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.navbar__home img {
+  vertical-align: middle;
+}
+
+.navbar__logo {
+  margin-right: 0.8em;
+}
+
+.navbar__gouvfr {
+  height: 100%;
+}
+
+span.navbar__domain {
+  font-weight: 400;
+  color: #333;
+  -webkit-padding-after: 3px;
+  /* fix the broken line-height in logo */
+}

@@ -1,0 +1,63 @@
+<p-card>
+  <app-incentive-formula-form
+      [incentiveParametersList]="incentiveAvailableParameters"
+      [incentiveFormulaForm]="incentiveFormulaForm"
+      [incentiveParametersForm]="incentiveParametersForm"
+      [addParameter]="parameterAddedToFormula"
+      (save)="formulaSet()"
+  ></app-incentive-formula-form>
+</p-card>
+<br>
+<br>
+<br>
+<div class="p-grid p-justify-end">
+    <p-button (onClick)="addIncentiveParameter()" label="Nouveau paramètre" icon="pi pi-plus"></p-button>
+</div>
+<br>
+<div class="p-grid ui-fluid p-justify-center" *ngIf="!loading">
+  <div class="p-col-6">
+    <p-orderList
+      [value]="incentiveAvailableInternalParameters"
+      header="Paramètres registre"
+      [responsive]="true"
+      filterBy="label"
+      dragdrop="false"
+      filterPlaceholder="Rechercher"
+      [style]="{'height':'300px'}"
+      (onSelectionChange)="addToFormula($event)"
+      >
+      <ng-template let-param pTemplate="item">
+          <div class="ui-helper-clearfix">
+            <!--<fa-icon class="fa-xs" [ngStyle]="{'color': 'grey', 'padding': '5px'}" [icon]="param.internal ? 'database' : 'home'" ></fa-icon>-->
+            <b>{{param.varname}}</b>
+            <p>
+              {{ param.helper }}
+            </p>
+          </div>
+      </ng-template>
+    </p-orderList>
+  </div>
+  <div class="p-col-6">
+    <p-orderList
+        [value]="incentiveAvailableExternalParameters"
+        header="Paramètres AOM"
+        [responsive]="true"
+        filterBy="label"
+        dragdrop="false"
+        filterPlaceholder="Rechercher"
+        [style]="{'height':'300px'}"
+        (onSelectionChange)="addToFormula($event)"
+    >
+      <ng-template let-param pTemplate="item">
+        <div class="ui-helper-clearfix">
+          <!--<fa-icon class="fa-xs" [ngStyle]="{'color': 'grey', 'padding': '5px'}" [icon]="param.internal ? 'database' : 'home'" ></fa-icon>-->
+          <b>{{param.varname}}</b>
+          <p>
+            {{ param.helper }}
+          </p>
+        </div>
+      </ng-template>
+    </p-orderList>
+  </div>
+</div>
+

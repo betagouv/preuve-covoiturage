@@ -1,10 +1,11 @@
 node_modules
 .idea
+.vscode
 .env
 db/mongo
 
 yarn-error.log
-back-api
-dashboard
 doc
 !docker/dashboard
+dashboard/src/environments/environment.review.ts
+
