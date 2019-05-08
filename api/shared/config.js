@@ -1,4 +1,5 @@
 const url = require('url');
+const { getMongoConfig } = require('./config/getMongoConfig');
 
 function getRedisConfig(redisUrl) {
   const redisConfig = url.parse(redisUrl);
@@ -10,16 +11,6 @@ function getRedisConfig(redisUrl) {
   };
 }
 
-function getMongoConfig(mongoUrl) {
-  const mongoConfig = url.parse(mongoUrl);
-  return {
-    host: mongoConfig.hostname || 'localhost',
-    port: Number(mongoConfig.port || 6379),
-    database: mongoConfig.pathname.substr(1) || `pdc-${process.env.NODE_ENV}`,
-    password: mongoConfig.auth ? mongoConfig.auth.split(':')[1] : undefined,
-  };
-}
-
 function getHttpPost(port, def = 8080) {
   if (process.env.NODE_ENV === 'test') {
     return 0;
@@ -28,7 +19,8 @@ function getHttpPost(port, def = 8080) {
   return port || def;
 }
 
-const mongoUrl = process.env.MONGO_URL || `mongodb://mongo:mongo@mongo/pdc-${process.env.NODE_ENV}?authSource=admin`;
+const mongoUrl = process.env.MONGO_URL
+  || `mongodb://mongo:mongo@mongo/pdc-${process.env.NODE_ENV}?authSource=admin`;
 const mongoConfig = getMongoConfig(mongoUrl);
 
 /**
