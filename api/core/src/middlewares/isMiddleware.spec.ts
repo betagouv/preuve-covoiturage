@@ -21,11 +21,15 @@ const noop = () => { };
 const callFactory = (group: string, role: string): CallType => ({
   method: 'test',
   context: <ContextType>{
-    internal: true,
-    transport: 'http',
-    user: {
-      group,
-      role,
+    channel: {
+      service: '',
+      transport: 'http',
+    },
+    call: {
+      user: {
+        group,
+        role,
+      },
     },
   },
   params: <ParamsType>{},

@@ -94,7 +94,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @returns {Promise<ResultType>}
    * @memberof Kernel
    */
-  public async call(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<ResultType> {
+  public async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
     const handlerConfig = normalizeHandlerConfig({ signature: method });
     return this.getHandlerAndCall(handlerConfig, { method, params, context });
   }
@@ -108,7 +108,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @returns {Promise<void>}
    * @memberof Kernel
    */
-  public async notify(method: string, params: ParamsType, context: ContextType = { internal: true }): Promise<void> {
+  public async notify(method: string, params: ParamsType, context: ContextType): Promise<void> {
     const handlerConfig = normalizeHandlerConfig({ signature: method, queue: true });
     return this.getHandlerAndCall(handlerConfig, { method, params, context });
   }

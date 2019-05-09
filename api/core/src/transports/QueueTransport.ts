@@ -33,6 +33,7 @@ export class QueueTransport implements TransportInterface {
       .forEach((service) => {
         const queue = bullFactory(`${env}-${service}`, redisUrl);
         this.queues.push(queue);
+        // TODO : add channel ?
         queue.process(job => this.kernel.handle({
           jsonrpc: '2.0',
           id: 1,
@@ -41,7 +42,6 @@ export class QueueTransport implements TransportInterface {
             params: job.data.params.params,
             _context: {
               ...job.data.params._context,
-              transport: 'queue',
             },
           },
         }));

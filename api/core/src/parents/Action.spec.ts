@@ -13,6 +13,12 @@ import { ContextType } from '../types/ContextType';
 
 chai.use(chaiAsPromised);
 
+const defaultContext = {
+  channel: {
+    service: '',
+  },
+};
+
 describe('Action', () => {
   it('should work', async () => {
     class BasicAction extends Action {
@@ -34,9 +40,7 @@ describe('Action', () => {
       params: {
         add: [1, 1],
       },
-      context: {
-        internal: true,
-      },
+      context: defaultContext,
     });
     expect(result).equal(2);
   });
@@ -65,9 +69,7 @@ describe('Action', () => {
       params: {
         add: [1, 1],
       },
-      context: {
-        internal: true,
-      },
+      context: defaultContext,
     });
     expect(result).equal(1);
   });
@@ -96,9 +98,7 @@ describe('Action', () => {
       params: {
         name: 'Sam',
       },
-      context: {
-        internal: true,
-      },
+      context: defaultContext,
     });
     expect(result).equal('hello world Sam!?');
   });
@@ -114,9 +114,7 @@ describe('Action', () => {
           name: 'Sam',
         },
       },
-      context: {
-        internal: true,
-      },
+      context: defaultContext,
     })).to).eventually
     .be.rejectedWith('No implementation found')
     .and.be.an.instanceOf(Error);

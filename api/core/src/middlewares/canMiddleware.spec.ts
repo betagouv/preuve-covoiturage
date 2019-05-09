@@ -20,10 +20,14 @@ const noop = () => { };
 const callFactory = (permissions: string[]): CallType => ({
   method: 'test',
   context: <ContextType>{
-    internal: true,
-    transport: 'http',
-    user: {
-      permissions,
+    channel: {
+      service: '',
+      transport: 'http',
+    },
+    call: {
+      user: {
+        permissions,
+      },
     },
   },
   params: <ParamsType>{},

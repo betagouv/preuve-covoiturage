@@ -47,6 +47,7 @@ export class HttpTransport implements TransportInterface {
           }
 
           const call = JSON.parse(data);
+          // TODO : add channel ?
           this.kernel.handle(call)
             .then((results) => {
               res.setHeader('content-type', 'application/json');

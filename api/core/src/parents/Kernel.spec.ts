@@ -43,8 +43,8 @@ class BasicAction extends Action {
   protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     if ('name' in params) {
       let from = '';
-      if (context.user) {
-        from = ` from ${context.user.name}`;
+      if ('user' in context.call) {
+        from = ` from ${context.call.user.name}`;
       }
       return this.test.hello(`${params.name}${from}`);
     }
@@ -218,8 +218,13 @@ describe('Kernel', () => {
           name: 'Jon',
         },
         _context: {
-          user: {
-            name: 'Nicolas',
+          channel: {
+            service: '',
+          },
+          call: {
+            user: {
+              name: 'Nicolas',
+            },
           },
         },
       },
@@ -246,8 +251,13 @@ describe('Kernel', () => {
           name: 'Jon',
         },
         _context: {
-          user: {
-            name: 'Nicolas',
+          channel: {
+            service: '',
+          },
+          call: {
+            user: {
+              name: 'Nicolas',
+            },
           },
         },
       },

@@ -35,6 +35,12 @@ const configProvider = new FakeConfigProvider(envProvider);
 
 const sandbox = sinon.createSandbox();
 
+const defaultContext = {
+  channel: {
+    service: '',
+  },
+};
+
 describe('Queue handler', () => {
   beforeEach(() => {
     sandbox.stub(Bull, 'bullFactory').callsFake(
@@ -60,7 +66,7 @@ describe('Queue handler', () => {
     const result = await queueProvider.call({
       method: 'basic@latest:method',
       params: { add: [1, 2] },
-      context: { internal: true },
+      context: defaultContext,
     });
     expect(result).to.deep.equal({
       name: 'basic@latest:method',
@@ -68,7 +74,7 @@ describe('Queue handler', () => {
         jsonrpc: '2.0',
         id: null,
         method: 'basic@latest:method',
-        params: { params: { add: [1, 2] }, _context: { internal: true } } },
+        params: { params: { add: [1, 2] }, _context: defaultContext } },
     });
   });
   it('raise error if fail', async () => {
@@ -77,7 +83,7 @@ describe('Queue handler', () => {
       queueProvider.call({
         method: 'nope',
         params: { add: [1, 2] },
-        context: { internal: true },
+        context: defaultContext,
       }),
       Error,
       'An error occured',

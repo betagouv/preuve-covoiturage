@@ -31,7 +31,10 @@ describe('Command: Call', () => {
       method: 'method',
       params: {
         _context: {
-          transport: 'cli',
+          channel: {
+            service: '',
+            transport: 'cli',
+          },
         },
         params: undefined,
       },
@@ -39,15 +42,20 @@ describe('Command: Call', () => {
   });
   it('should work with options', async () => {
     const command = new CallCommand(kernel);
-    const response = await command.call('method', { params: [1, 2], context: { user: 'michou' } });
+    const response = await command.call('method', { params: [1, 2], context: { call: { user: 'michou' } } });
     expect(response).to.deep.equal({
       id: 1,
       jsonrpc: '2.0',
       method: 'method',
       params: {
         _context: {
-          transport: 'cli',
-          user: 'michou',
+          channel: {
+            service: '',
+            transport: 'cli',
+          },
+          call: {
+            user: 'michou',
+          },
         },
         params: [1, 2],
       },

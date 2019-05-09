@@ -18,6 +18,7 @@ import { handler, provider } from '../Container';
 chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
+const defaultContext = { channel: { service: '' } };
 
 describe('Service provider', () => {
   it('should register handler', async () => {
@@ -93,7 +94,7 @@ describe('Service provider', () => {
 
     const container = serviceProvider.getContainer();
     const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
-    const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: { internal: true } });
+    const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
     expect(response).be.equal('Hello Sam');
   });
 
@@ -172,14 +173,14 @@ describe('Service provider', () => {
 
     const container = serviceProvider.getContainer();
     const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
-    const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: { internal: true } });
+    const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
     expect(response).be.equal('Hello Sam');
 
     const handlerTwoInstance = container.getHandler({ service: 'test', method: 'add' });
-    const responseTwo = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: { internal: true } });
+    const responseTwo = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: defaultContext });
     expect(responseTwo).be.equal('Hello 42');
 
-    const responseTwoBis = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: { internal: true } });
+    const responseTwoBis = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: defaultContext });
     expect(responseTwoBis).be.equal('Hi 42');
   });
 });

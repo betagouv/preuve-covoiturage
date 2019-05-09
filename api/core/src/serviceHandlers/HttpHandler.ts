@@ -44,6 +44,7 @@ export class HttpHandler implements HandlerInterface {
 
     const { method, params, context } = call;
     try {
+      // TODO : add channel ?
       const response = await this.client.post('/', {
         method,
         params: {

@@ -16,7 +16,11 @@ export function canMiddleware(methodPerms: string[] = []): MiddlewareInterface {
       return next();
     }
 
-    const { permissions } = call.context.user;
+    if (!('call' in call.context) || !('permissions' in call.context.call.user)) {
+      throw new ForbiddenException('Invalid permissions');
+    }
+
+    const { permissions } = call.context.call.user;
 
     if (methodPerms.length !== permissions.length) {
       throw new ForbiddenException('Invalid permissions');

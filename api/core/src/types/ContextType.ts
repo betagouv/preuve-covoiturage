@@ -1,5 +1,11 @@
 export type ContextType = {
-  internal: boolean;
-  transport?: string;
-  user?: any;
+  channel: {
+    service: string,
+    transport?: string,
+    metadata?: any,
+  },
+  call?: {
+    user: any,
+    metadata?: any,
+  },
 };

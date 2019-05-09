@@ -43,10 +43,14 @@ export class CallCommand extends Command {
         params: {
           params: undefined,
           _context: {
-            transport: 'cli',
+            channel: {
+              service: '',
+              transport: 'cli',
+            },
           },
         },
       };
+      // TODO : add channel ?
 
       if (options && ('params' in options || 'context' in options)) {
         if ('params' in options) {

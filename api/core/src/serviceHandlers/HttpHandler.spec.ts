@@ -9,6 +9,12 @@ import { httpHandlerFactory } from './HttpHandler';
 chai.use(chaiNock);
 chai.use(chaiAsPromised);
 
+const defaultContext = {
+  channel: {
+    service: '',
+  },
+};
+
 describe('Http handler', () => {
   it('works', () => {
     const url = 'http://myfakeservice:8080';
@@ -31,7 +37,7 @@ describe('Http handler', () => {
     provider.call({
       method: 'service@latest:method',
       params: { param: true },
-      context: { internal: true },
+      context: defaultContext,
     });
 
     return (<any>expect(nockRequest).to.have.been).requestedWith({
@@ -39,9 +45,7 @@ describe('Http handler', () => {
       jsonrpc: '2.0',
       method: 'service@latest:method',
       params: {
-        _context: {
-          internal: true,
-        },
+        _context: defaultContext,
         params: {
           param: true,
         },
@@ -70,7 +74,7 @@ describe('Http handler', () => {
     provider.call({
       method: 'service@latest:method',
       params: { param: true },
-      context: { internal: true },
+      context: defaultContext,
     });
 
     return (<any>expect(nockRequest).to.have.been).requestedWithHeadersMatch({
@@ -100,7 +104,7 @@ describe('Http handler', () => {
     const promise = provider.call({
       method: 'service@latest:method',
       params: { param: true },
-      context: { internal: true },
+      context: defaultContext,
     });
     return (<any>assert).isRejected(promise, Error, 'An error occured');
   });
@@ -128,7 +132,7 @@ describe('Http handler', () => {
     const promise = provider.call({
       method: 'service@latest:method',
       params: { param: true },
-      context: { internal: true },
+      context: defaultContext,
     });
     return (<any>assert).isRejected(promise, Error, 'wrong!');
   });

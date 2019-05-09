@@ -19,7 +19,11 @@ export function isMiddleware(...roles: string[]): MiddlewareInterface {
       throw new InvalidParamsException('No role defined');
     }
 
-    const { role, group } = call.context.user;
+    if (!('call' in call.context) || (!('role' in call.context.call.user) && !('group' in call.context.call.user))) {
+      throw new ForbiddenException('Invalid permissions');
+    }
+
+    const { role, group } = call.context.call.user;
 
     const pass = filtered.reduce(reduceRoles(filtered, group, role), true);
 
