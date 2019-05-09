@@ -1,5 +1,5 @@
 import { describe } from 'mocha';
-import chai, { expect, assert } from 'chai';
+import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
 import chaiAsPromised from 'chai-as-promised';
@@ -8,6 +8,8 @@ import { httpHandlerFactory } from './HttpHandler';
 
 chai.use(chaiNock);
 chai.use(chaiAsPromised);
+
+const { expect, assert } = chai;
 
 const defaultContext = {
   channel: {

@@ -1,14 +1,13 @@
-import { ContainerModuleConfigurator, ContainerInterface } from '../container';
+import { ContainerModuleConfigurator } from '../container';
 
 export interface ProviderInterface {
 
   /**
    * Boot is the first method called after constructor
-   * @param {ContainerInterface} [container]
    * @returns {(Promise<void> | void)}
    * @memberof ProviderInterface
    */
-  boot(container?: ContainerInterface): Promise<void> | void;
+  boot(): Promise<void> | void;
 
 
   /**

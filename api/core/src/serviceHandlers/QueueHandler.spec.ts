@@ -23,7 +23,7 @@ class FakeEnvProvider extends EnvProvider {
 }
 
 class FakeConfigProvider extends ConfigProvider {
-  boot() {
+  async boot() {
     return;
   }
   get(key: string, fallback?: any): any {
