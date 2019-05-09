@@ -7,56 +7,99 @@ import { Kernel } from './Kernel';
 import { CliTransport } from './transports/CliTransport';
 import { HttpTransport } from './transports/HttpTransport';
 import { QueueTransport } from './transports/QueueTransport';
+import { TransportInterface } from './interfaces';
 
-const { argv } = process;
-const [_node, _script, command, ...opts] = argv;
+function setEnvironment():void {
+  process.env.APP_ROOT_PATH = process.cwd();
 
-const basePath = process.cwd();
-const bootstrapFile = process.env.npm_package_config_bootstrap ? process.env.npm_package_config_bootstrap : './bootstrap.ts';
-const bootstrapPath = path.resolve(basePath, bootstrapFile);
+  if ('npm_package_config_workingDir' in process.env) {
+    process.chdir(path.resolve(process.cwd(), process.env.npm_package_config_workingDir));
+  }
+  
+  process.env.APP_WORKING_PATH = process.cwd();
 
-if (!fs.existsSync(bootstrapPath)) {
-  console.error('No bootstrap file provided');
-  process.exit(1);
-}
-
-const defaultBootstrap = {
-  kernel() { return new Kernel(); },
-  serviceProviders: [],
-  transport: {
-    http(k) { return new HttpTransport(k); },
-    queue(k) { return new QueueTransport(k); },
-    cli(k) { return new CliTransport(k); },
-  },
-};
-
-let transport;
-
-function boot() {
-  import(bootstrapPath).then(async (bootstrap) => {
-    const kernel = ('kernel' in bootstrap) ? bootstrap.kernel() : defaultBootstrap.kernel();
-    await kernel.boot();
-    const serviceProviders = ('serviceProviders' in bootstrap) ? bootstrap.serviceProviders : defaultBootstrap.serviceProviders;
-
-    for (const serviceProvider of serviceProviders) {
-      await kernel.registerServiceProvider(serviceProvider);
-    }
-
-    switch (command) {
-      case 'http':
-        transport = ('transport' in bootstrap && 'http' in bootstrap.transport) ? bootstrap.transport.http(kernel) : defaultBootstrap.transport.http(kernel);
-        await transport.up(opts);
-        break;
-      case 'queue':
-      transport = ('transport' in bootstrap && 'queue' in bootstrap.transport) ? bootstrap.transport.queue(kernel) : defaultBootstrap.transport.queue(kernel);
-        await transport.up(opts);
-        break;
-      default:
-        transport = ('transport' in bootstrap && 'cli' in bootstrap.transport) ? bootstrap.transport.cli(kernel) : defaultBootstrap.transport.cli(kernel);
-        await transport.up(argv);
-        break;
+  // Define config from npm package
+  Reflect.ownKeys(process.env)
+  .filter((key: string ) => /npm_package_config_app/.test(key))
+  .forEach((key: string) => {
+    const oldKey = key;
+    const newKey = key.replace('npm_package_config_', '').toUpperCase();
+    if (!(newKey in process.env)) {
+      process.env[newKey] = process.env[oldKey];
     }
   });
+
+  process.env.APP_ENV = process.env.NODE_ENV;
 }
 
-boot();
+function getBootstrapFile():string {
+  const basePath = process.cwd();
+  const bootstrapFile = ('npm_package_config_bootstrap' in process.env) ? process.env.npm_package_config_bootstrap : './bootstrap.ts';
+  
+  
+  const bootstrapPath = path.resolve(basePath, bootstrapFile);
+  
+  if (!fs.existsSync(bootstrapPath)) {
+    console.error('No bootstrap file provided');
+    process.exit(1);
+  }
+  return bootstrapPath;
+}
+
+async function start(path: string, argv: string[]): Promise<TransportInterface> {
+  const [_node, _script, command, ...opts] = argv;
+
+  const defaultBootstrap = {
+    kernel() { return new Kernel(); },
+    serviceProviders: [],
+    transport: {
+      http(k) { return new HttpTransport(k); },
+      queue(k) { return new QueueTransport(k); },
+      cli(k) { return new CliTransport(k); },
+    },
+  };
+  
+  let transport;
+  const bootstrap = await import(path);
+  const kernel = ('kernel' in bootstrap) ? bootstrap.kernel() : defaultBootstrap.kernel();
+  await kernel.boot();
+  const serviceProviders = ('serviceProviders' in bootstrap) ? bootstrap.serviceProviders : defaultBootstrap.serviceProviders;
+
+  for (const serviceProvider of serviceProviders) {
+    await kernel.registerServiceProvider(serviceProvider);
+  }
+
+  switch (command) {
+    case 'http':
+      console.log('Starting http interface');
+      transport = ('transport' in bootstrap && 'http' in bootstrap.transport) ?
+        bootstrap.transport.http(kernel) : defaultBootstrap.transport.http(kernel);
+      await transport.up(opts);
+      break;
+    case 'queue':
+      console.log('Starting queue interface');
+      transport = ('transport' in bootstrap && 'queue' in bootstrap.transport) ?
+        bootstrap.transport.queue(kernel) : defaultBootstrap.transport.queue(kernel);
+      await transport.up(opts);
+      break;
+    default:
+      console.log('Starting cli interface');
+      transport = ('transport' in bootstrap && 'cli' in bootstrap.transport) ?
+        bootstrap.transport.cli(kernel) : defaultBootstrap.transport.cli(kernel);
+      await transport.up(argv);
+      break;
+  }
+
+  return transport;
+}
+
+export function boot(argv: string[]) {
+  setEnvironment();
+  const path = getBootstrapFile();
+  return start(path, argv);
+}
+
+if (process.env.NODE_ENV !== 'testing') {
+  console.log('Bootstraping app...');
+  boot(process.argv);
+}
