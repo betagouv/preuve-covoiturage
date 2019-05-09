@@ -15,6 +15,7 @@
     "carpooling"
   ],
   "workspaces": [
+    "core",
     "modules/*",
     "packages/*"
   ],
