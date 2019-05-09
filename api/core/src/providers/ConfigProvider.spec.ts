@@ -17,7 +17,7 @@ class FakeEnvProvider extends EnvProvider {
 }
 
 describe('Config provider', () => {
-  it('should work', async () => {
+  it('should work with yaml', async () => {
     mockFs({
       [`${process.cwd()}/config/hello-world.yml`]: `
         hi:\n
@@ -28,6 +28,27 @@ describe('Config provider', () => {
     const configProvider = new ConfigProvider(new FakeEnvProvider());
     await configProvider.boot();
     expect(configProvider.get('helloWorld')).to.deep.equal({
+      hi: [
+        { name: 'john' },
+      ],
+    });
+
+    mockFs.restore();
+  });
+
+  it('should work with js', async () => {
+    mockFs({
+      [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
+        {
+          name: env('FAKE', 'john'),
+        },
+      ];
+      module.exports.test = false;`,
+    });
+
+    const configProvider = new ConfigProvider(new FakeEnvProvider());
+    await configProvider.boot();
+    expect(configProvider.get('helloWorld')).to.deep.include({
       hi: [
         { name: 'john' },
       ],
