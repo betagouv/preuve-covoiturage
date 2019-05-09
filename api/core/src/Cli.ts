@@ -20,28 +20,39 @@ if (!fs.existsSync(bootstrapPath)) {
   process.exit(1);
 }
 
+const defaultBootstrap = {
+  kernel() { return new Kernel(); },
+  serviceProviders: [],
+  transport: {
+    http(k) { return new HttpTransport(k); },
+    queue(k) { return new QueueTransport(k); },
+    cli(k) { return new CliTransport(k); },
+  },
+};
 
 let transport;
 
 function boot() {
   import(bootstrapPath).then(async (bootstrap) => {
-    const kernel = ('kernel' in bootstrap) ? bootstrap.kernel : new Kernel();
+    const kernel = ('kernel' in bootstrap) ? bootstrap.kernel() : defaultBootstrap.kernel();
     await kernel.boot();
-    const serviceProviders = ('serviceProviders' in bootstrap) ? bootstrap.serviceProviders : [];
+    const serviceProviders = ('serviceProviders' in bootstrap) ? bootstrap.serviceProviders : defaultBootstrap.serviceProviders;
+
     for (const serviceProvider of serviceProviders) {
       await kernel.registerServiceProvider(serviceProvider);
     }
+
     switch (command) {
       case 'http':
-        transport = new HttpTransport(kernel);
+        transport = ('transport' in bootstrap && 'http' in bootstrap.transport) ? bootstrap.transport.http(kernel) : defaultBootstrap.transport.http(kernel);
         await transport.up(opts);
         break;
       case 'queue':
-        transport = new QueueTransport(kernel);
+      transport = ('transport' in bootstrap && 'queue' in bootstrap.transport) ? bootstrap.transport.queue(kernel) : defaultBootstrap.transport.queue(kernel);
         await transport.up(opts);
         break;
       default:
-        transport = new CliTransport(kernel);
+        transport = ('transport' in bootstrap && 'cli' in bootstrap.transport) ? bootstrap.transport.cli(kernel) : defaultBootstrap.transport.cli(kernel);
         await transport.up(argv);
         break;
     }
