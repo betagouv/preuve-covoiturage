@@ -14,7 +14,7 @@ import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { handler, provider } from '../Container';
+import { handler, provider } from '../container';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;

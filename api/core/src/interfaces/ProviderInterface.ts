@@ -1,4 +1,4 @@
-import { ContainerModuleConfigurator, ContainerInterface } from '../Container';
+import { ContainerModuleConfigurator, ContainerInterface } from '../container';
 
 export interface ProviderInterface {
 

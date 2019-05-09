@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { ResultType } from '../types/ResultType';
-import { command } from '../Container';
+import { command } from '../container';
 import { CommandProvider } from '../providers/CommandProvider';
 
 import { CommandServiceProvider } from './CommandServiceProvider';

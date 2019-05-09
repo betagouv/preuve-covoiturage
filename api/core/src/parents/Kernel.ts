@@ -1,7 +1,7 @@
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 import { ResultType } from '../types/ResultType';
-import { ContainerInterface } from '../Container';
+import { ContainerInterface } from '../container';
 import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 
 import { KernelInterface } from '../interfaces/KernelInterface';

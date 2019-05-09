@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { CallType } from '../types/CallType';
 import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { handler } from '../Container';
+import { handler } from '../container';
 import { NewableType } from '../types/NewableType';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 

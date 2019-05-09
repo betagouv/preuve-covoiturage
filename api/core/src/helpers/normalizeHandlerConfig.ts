@@ -1,4 +1,4 @@
-import { HandlerConfig } from '../Container';
+import { HandlerConfig } from '../container';
 
 import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 

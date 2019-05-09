@@ -3,7 +3,7 @@ import { Queue } from 'bull';
 import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
 import { bullFactory } from '../helpers/bullFactory';
-import { ContainerInterface } from '../Container';
+import { ContainerInterface } from '../container';
 
 
 /**

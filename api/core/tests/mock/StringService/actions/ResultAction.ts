@@ -5,7 +5,7 @@ import { ContextType } from '../../../../src//types/ContextType';
 import { ResultType } from '../../../../src//types/ResultType';
 import { InvalidParamsException } from '../../../../src//exceptions/InvalidParamsException';
 import { RPCSingleResponseType } from '../../../../src//types/RPCSingleResponseType';
-import { handler } from '../../../../src//Container';
+import { handler } from '../../../../src/container';
 import { Kernel } from '../../../../src//parents/Kernel';
 
 @handler({

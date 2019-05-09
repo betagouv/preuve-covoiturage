@@ -5,7 +5,7 @@ import { camelCase, get } from 'lodash';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { EnvProvider } from './EnvProvider';
-import { provider } from '../Container';
+import { provider } from '../container';
 
 /**
  * Config provider

@@ -14,7 +14,7 @@ import * as Bull from '../helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
 import { Kernel } from '../parents/Kernel';
 import { Action } from '../parents/Action';
-import { handler } from '../Container';
+import { handler } from '../container';
 
 const sandbox = sinon.createSandbox();
 

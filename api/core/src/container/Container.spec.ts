@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { CallType } from '../types/CallType';
 
-import { Container, handler, lib } from '../Container';
+import { Container, handler, lib } from '.';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;

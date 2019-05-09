@@ -3,7 +3,7 @@ import { Kernel } from '../parents/Kernel';
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
 import { ResultType } from '../types/ResultType';
-import { command } from '../Container';
+import { command } from '../container';
 
 /**
  * Command that make an RPC call
