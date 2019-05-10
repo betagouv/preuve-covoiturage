@@ -5,7 +5,14 @@ qu'un covoiturage a bien eu lieu. L'objectif de l'outil est l'incitation des
 utilisateurs à pratiquer le covoiturage courte distance pour réduire
 l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 
-[http://covoiturage.beta.gouv.fr/](http://covoiturage.beta.gouv.fr/)
+- Le projet [http://covoiturage.beta.gouv.fr/](http://covoiturage.beta.gouv.fr/)
+- Interface Opérateurs de covoiturage et AOM [https://app.covoiturage.beta.gouv.fr](https://app.covoiturage.beta.gouv.fr)
+- API [https://api.covoiturage.beta.gouv.fr]([https://api.covoiturage.beta.gouv.fr])
+
+#### Environments
+
+- [Staging (pré-production)](https://app-staging.covoiturage.beta.gouv.fr)
+- [Développement](https://app-dev.covoiturage.beta.gouv.fr)
 
 ### Requirements
 
