@@ -53,7 +53,7 @@ module.exports = (Model, methods) => _.assign(
         .cursor();
     },
 
-    async findOne(q = {}) {
+    async findOne(q = {}, lean = false) {
       if (!q) {
         throw new Error('Undefined query');
       }
@@ -67,6 +67,13 @@ module.exports = (Model, methods) => _.assign(
 
       if (!_.isObject(q)) {
         throw new Error('Query must be an object or ObjectId');
+      }
+
+      // return a raw Mongo object
+      if (lean) {
+        return Model.findOne(q)
+          .lean()
+          .exec();
       }
 
       return Model.findOne(q).exec();

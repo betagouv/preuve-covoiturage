@@ -59,6 +59,18 @@ const AomSchema = new Schema(
       acceptedAt: Date,
       acceptedBy: Schema.Types.ObjectId,
     },
+    authorized_operators: [
+      {
+        _id: {
+          type: Schema.Types.ObjectId,
+          index: true,
+        },
+        nom_commercial: {
+          type: String,
+          alias: 'name',
+        },
+      },
+    ],
     geometry: {
       type: {
         type: String,
