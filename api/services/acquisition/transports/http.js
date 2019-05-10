@@ -10,6 +10,8 @@ const jwtUser = require('@pdc/shared/middlewares/jwt-user');
 const jwtServer = require('@pdc/shared/middlewares/jwt-server');
 const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
 
+const aomService = require('@pdc/service-organization/aom');
+
 const journeyService = require('../service');
 const Journey = require('../entities/models/journey');
 const { importMaxFileSizeMb } = require('../config');
@@ -104,11 +106,41 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
     }
 
     // filter by AOM
-    const aom = _.get(req, 'user.aom');
-    if (aom) {
-      req.query.filter = _.assign(req.query.filter, { 'aom._id': aom });
+    const aomId = _.get(req, 'user.aom');
+    let authorizedOps = [];
+    const filterOps = (doc) => {
+      const oI = doc.operator._id.toString();
+      if (authorizedOps.indexOf(oI) === -1) {
+        return {
+          operator: {
+            _id: '0',
+            nom_commercial: '',
+          },
+        };
+      }
+
+      return doc;
+    };
+
+    if (aomId) {
+      const aomLean = await aomService.findOne(aomId, true);
+
+      if (aomLean && aomLean.authorized_operators) {
+        authorizedOps = aomLean.authorized_operators.map(o => o.toString());
+        const filteredOps = (req.query['operator._id'] || '')
+          .split(',')
+          .filter(o => authorizedOps.indexOf(o) !== -1);
+        if (filteredOps.length) {
+          req.query['operator._id'] = filteredOps.join(',');
+        } else {
+          delete req.query['operator._id'];
+        }
+      }
+
+      req.query.filter = _.assign(req.query.filter, { 'aom._id': aomId });
     }
 
+    // CSV stream
     if (req.get('Accept') === 'text/csv') {
       res.setHeader(
         'Content-disposition',
@@ -122,7 +154,7 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
 
       res.flushHeaders();
 
-      const transformer = doc => anonymize(flat(doc.toJSON()));
+      const transformer = doc => anonymize(flat(filterOps(doc.toJSON())));
 
       // update limits
       req.query.limit = _.get(req, 'query.limit', 50000);
@@ -133,8 +165,12 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
         .pipe(csv.transform(transformer))
         .pipe(csv.stringify({ header: true }))
         .pipe(res);
+    } else {
+      // JSON response
+      const response = await journeyService.find(req.query);
+      response.data = response.data.map(filterOps);
+      res.json(response);
     }
-    res.json(await journeyService.find(req.query));
   } catch (e) {
     next(e);
   }
