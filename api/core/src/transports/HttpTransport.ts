@@ -2,6 +2,7 @@ import http from 'http';
 
 import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
+import { parse } from 'path';
 
 
 /**
@@ -42,8 +43,10 @@ export class HttpTransport implements TransportInterface {
       req.on('end', () => {
         try {
           // Add Lenght check
-          if (Number(req.headers['content-length']) !== data.length) {
-            throw new Error();
+          if (Number(req.headers['content-length']) !== (data.length + 1)) {
+            // console.log(Number(req.headers['content-length']), data.length)
+            // TODO repair, this is not working
+            // throw new Error();
           }
 
           const call = JSON.parse(data);

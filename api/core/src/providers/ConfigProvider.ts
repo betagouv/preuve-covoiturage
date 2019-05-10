@@ -2,7 +2,7 @@ import fs from 'fs';
 import vm from 'vm';
 import path from 'path';
 import jsYaml from 'js-yaml';
-import { camelCase, get, set } from 'lodash';
+import { camelCase, get, set, has } from 'lodash';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { EnvProvider } from './EnvProvider';
@@ -24,7 +24,7 @@ export class ConfigProvider implements ProviderInterface {
   async boot() {
     // recommended : set the CONFIG_DIR as env variable
     const configFolder = path.resolve(
-      process.cwd(),
+      this.env.get('APP_WORKING_PATH', process.cwd()),
       this.env.get('APP_CONFIG_DIR', './config'),
     );
 
@@ -76,6 +76,9 @@ export class ConfigProvider implements ProviderInterface {
   }
 
   get(key: string, fallback?: any): any {
+    if (fallback === undefined && !has(this.config, key)) {
+      throw new Error(`Unknown config key ${key}`);
+    }
     return get(this.config, key, fallback);
   }
 

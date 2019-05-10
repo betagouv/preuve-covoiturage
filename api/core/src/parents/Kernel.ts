@@ -122,10 +122,6 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType | void> {
-    let name = 'anonymous';
-    if ('name' in this) {
-      name = this['name'];
-    }
     try {
       this.validate(call);
       let context = null;
