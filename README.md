@@ -13,14 +13,14 @@ l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 
 ### Architecture
 
-| Service         | slug       | URL                         | Folder         | Port          |
-|-----------------|------------|-----------------------------|----------------|---------------|
-| MongoDB         | `mongo`    | mongodb://mongo:27017       | -              | 27017         |
-| Redis           | `redis`    | http://localhost:6379       | -              | 6379          |
-| Arena (bg jobs) | `arena`    | http://localhost:8080/arena | -              | 8080          |
-| API             | `api`      | http://localhost:8080       | /api           | 8080          |
-| OpenAPI Editor  | `editor`   | http://localhost:8081       | -              | 8081          |
-| Dashboard       | `dash`     | http://localhost:4200       | /dashboard     | 4200          |
+| Service         | slug     | URL                         | Folder     | Port  |
+| --------------- | -------- | --------------------------- | ---------- | ----- |
+| MongoDB         | `mongo`  | mongodb://mongo:27017       | -          | 27017 |
+| Redis           | `redis`  | http://localhost:6379       | -          | 6379  |
+| Arena (bg jobs) | `arena`  | http://localhost:8080/arena | -          | 8080  |
+| API             | `api`    | http://localhost:8080       | /api       | 8080  |
+| OpenAPI Editor  | `editor` | http://localhost:8081       | -          | 8081  |
+| Dashboard       | `dash`   | http://localhost:4200       | /dashboard | 4200  |
 
 ### Installation
 
@@ -33,7 +33,7 @@ l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 7. `docker-compose run worker yarn`
 8. `docker-compose run api yarn migrate`
 9. `docker-compose run api yarn seed`
-`
+   `
 
 ### Run the stack
 
@@ -69,13 +69,32 @@ enter it to access the mongo shell.
 
 1. `(local)$ docker-compose up -d mongo`
 2. `(local)$ docker-compose exec mongo bash`
-3. `(docker)$ mongo -u mongo -p mongo --authenticationDatabase=admin`
+3. `(docker)$ mongo -u mongo -p mongo`
 4. `(mongo shell)> use pdc-local`
 
 If you have mongo shell or a GUI like Compass, you can connect directly to
 the server on port 27017:
 
 1. `(local)$ mongo -u mongo -p mongo --host localhost:27017 --authenticationDatabase=admin`
+
+#### import / export mongo database
+
+```bash
+# export the database to a compressed archive
+$ docker-compose exec mongo mongodump -u mongo -p mongo \
+    --db=pdc-local \
+    --authenticationDatabase=admin \
+    --gzip \
+    --archive=/data/db/exports/mongodump-$(date +%Y%m%d%H%M%S).archive.gz
+
+# import an exports archive to 'pdc-local' database
+$ docker-compose exec mongo mongorestore -u mongo -p mongo \
+    --drop \
+    --gzip \
+    --nsFrom="pdc-api-staging-1234.*" \
+    --nsTo="pdc-local.*" \
+    --archive=/data/db/imports/mongodump-20190510084207.archive.gz
+```
 
 ### CLI commands
 
@@ -88,15 +107,6 @@ the server on port 27017:
 - `yarn lint`
 - `yarn test` run the tests
 
-##### outside the `api` container
-
-- `yarn mig:up` run up migrations
-- `yarn mig:down` run down migrations
-- `yarn mig:status` show the migrations status
-- `yarn docker-test` run unit and functional tests
-- `yarn docker-test-unit` run unit tests
-- `yarn docker-test-func` run functional tests
-
 ### API documentation
 
 - [Documentation (French)](https://registre-preuve-de-covoiturage.gitbook.io/produit/)
@@ -106,4 +116,4 @@ the server on port 27017:
 
 DINSIC, 2017-2019.
 
-The source code is published under [Apache license 2.0](https://choosealicense.com/licenses/apache-2.0/).
+The source code is published under [Apache license 2.0](./LICENSE).
