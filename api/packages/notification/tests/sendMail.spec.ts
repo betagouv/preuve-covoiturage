@@ -38,11 +38,11 @@ describe('Notification service', async () => {
     nockRequest = nock(/mailjet/)
       .post(/.*/)
       .reply(
-        200,
-        {
-          Messages: [],
-        },
-      );
+      200,
+      {
+        Messages: [],
+      },
+    );
   });
   afterEach(() => {
     nock.cleanAll();

@@ -8,13 +8,15 @@ export class HandlebarsProvider implements Interfaces.ProviderInterface {
   protected templates: Map<string, Function> = new Map();
   protected metadata: Map<string, any> = new Map();
 
-  constructor(private configProvider: Providers.ConfigProvider) {}
+  constructor(
+    private envProvider: Providers.EnvProvider,
+    private configProvider: Providers.ConfigProvider,
+  ) {}
 
   async boot(): Promise<void> {
     const templateDirectory = this.configProvider.get('template.templateDirectory');
     const metadata = this.configProvider.get('template.metadata');
-
-    const templatePath = path.resolve(process.cwd(), templateDirectory);
+    const templatePath = path.resolve(this.envProvider.get('APP_WORKING_PATH'), templateDirectory);
     if (fs.existsSync(templatePath)) {
       fs.readdirSync(templatePath, 'utf8').forEach((basename) => {
         const filename = `${templatePath}/${basename}`;
@@ -37,7 +39,7 @@ export class HandlebarsProvider implements Interfaces.ProviderInterface {
     if (this.metadata.has(templateName)) {
       return this.metadata.get(templateName);
     }
-    return;
+    throw new Error(`Template meta ${templateName} not found`);
   }
 
   set(templateName: string, template: string): void {

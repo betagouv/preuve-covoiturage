@@ -4,6 +4,7 @@ import { Parents, Types } from '@pdc/core';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
+import { doesNotReject } from 'assert';
 
 import { ServiceProvider } from './ServiceProvider';
 
@@ -19,33 +20,27 @@ class ServiceKernel extends Parents.Kernel {
 
 const service = (<Types.Kernel>new ServiceKernel());
 let nockRequest;
-
+const url = /mailjet/;
+const endpoint = /send/;
 describe('Notification service', async () => {
   before(async () => {
     await service.boot();
   });
 
-  beforeEach(() => {
-    const url = 'https://api.mailjet.com';
-    const endpoint = '/v3.1/send';
-    nockRequest = nock(/mailjet/)
-      .post(/.*/)
-      .reply(
-        200,
-        {
-          Messages: [],
-        },
-      )
-      .log(console.log)
-      .on('request', (_req, _int, body) => {
-        console.log({ body });
-      });
-  });
   afterEach(() => {
     nock.cleanAll();
   });
 
   it('works', async () => {
+    nockRequest = nock(url)
+      .post(endpoint)
+      .reply(
+      200,
+      {
+        Messages: [],
+      },
+    );
+
     const response = await service.handle({
       id: 1,
       jsonrpc: '2.0',
@@ -64,21 +59,20 @@ describe('Notification service', async () => {
     });
   });
 
-  it('send correct request to mailjet', () => {
-    service.handle({
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'notification:sendmail',
-      params: {
-        email: 'test@fake.com',
-        fullname: 'Mad tester',
-        subject: 'Mot de passe oublié',
-        content: 'Hello world !!!',
+  it('send correct request to mailjet', (done) => {
+    let body;
+    nockRequest = nock(url)
+    .post(endpoint, (b) => {
+      body = b;
+      return b;
+    })
+    .reply(
+      200,
+      {
+        Messages: [],
       },
-    });
-
-    return (<any>expect(nockRequest).to.have.been)
-      .requestedWith({
+    ).on('replied', (req) => {
+      expect(body).to.deep.equal({
         Messages:[
           {
             From: {
@@ -96,78 +90,83 @@ describe('Notification service', async () => {
             Subject: 'Mot de passe oublié',
             Variables: {
               title:'Mot de passe oublié',
-              content: 'Hello world',
+              content: 'Hello world !!!',
             },
           },
         ],
       });
+      done();
+    });
+
+    service.handle({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'notification:sendmail',
+      params: {
+        email: 'test@fake.com',
+        fullname: 'Mad tester',
+        subject: 'Mot de passe oublié',
+        content: 'Hello world !!!',
+      },
+    });
   });
+  it('send correct request to mailjet with template', (done) => {
+    let body;
+    nockRequest = nock(url)
+    .post(endpoint, (b) => {
+      body = b;
+      return b;
+    })
+    .reply(
+      200,
+      {
+        Messages: [],
+      },
+    ).on('replied', (req) => {
+      expect(body).to.deep.equal({
+        Messages:[
+          {
+            From: {
+              Email: '',
+              Name: '',
+            },
+            To: [
+              {
+                Email: 'test@fake.com',
+                Name: 'Mad tester',
+              },
+            ],
+            TemplateID: null,
+            TemplateLanguage: true,
+            Subject: 'Mot de passe oublié',
+            Variables: {
+              title:'Mot de passe oublié',
+              content: `Bonjour Mad tester,<br>
+              Vous avez demandé la réinitialisation de votre mot de passe sur le site du Registre de preuve de covoiturage.<br>
+              <br>
+              Veuillez cliquer sur le lien suivant et choisir un nouveau mot de passe.
+              <br>
+              <br>
+              http://givememoney`.replace(/ {14}/g, ''),
+            },
+          },
+        ],
+      });
+      done();
+    });
 
-  // it('works with template', async () => {
-  //   const response = await request.post(
-  //     '/',
-  //     {
-  //       id: 1,
-  //       jsonrpc: '2.0',
-  //       method: 'notification:sendtemplatemail',
-  //       params: {
-  //         email: 'test@fake.com',
-  //         fullname: 'Mad tester',
-  //         template: 'forgotten_password',
-  //         opts: {
-  //           link: 'http://givememoney',
-  //         },
-  //       },
-  //     },
-  //   );
-  //   expect(response.status).equal(200);
-  // });
-
-  // it('send correct request to mailjet with template', () => {
-  //   request.post('/',
-  //     {
-  //     id: 1,
-  //     jsonrpc: '2.0',
-  //     method: 'notification:sendtemplatemail',
-  //     params: {
-  //       email: 'test@fake.com',
-  //       fullname: 'Mad tester',
-  //       template: 'forgotten_password',
-  //       opts: {
-  //         link: 'http://givememoney',
-  //       }
-  //     }
-  //   });
-
-  //   return (<any>expect(nockRequest).to.have.been)
-  //     .requestedWith({
-  //       Messages:[
-  //         {
-  //           From: {
-  //             Email: '',
-  //             Name: '',
-  //           },
-  //           To: [
-  //             {
-  //               Email: 'test@fake.com',
-  //               Name: 'Mad tester',
-  //             }
-  //           ],
-  //           TemplateID: null,
-  //           TemplateLanguage: true,
-  //           Subject: 'Mot de passe oublié',
-  //           Variables: {
-  //             title:'Mot de passe oublié',
-  //             content: `Bonjour Mad tester,<br>
-  //             Vous avez demandé la réinitialisation de votre mot de passe sur le site du Registre de preuve de covoiturage.<br>
-  //             <br>
-  //             Veuillez cliquer sur le lien suivant et choisir un nouveau mot de passe.
-  //             <br>
-  //             <br>
-  //             http://givememoney`,
-  //           },
-  //         },
-  //       ],
-  //     });
-  // });
+    service.handle({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'notification:sendtemplatemail',
+      params: {
+        email: 'test@fake.com',
+        fullname: 'Mad tester',
+        template: 'forgotten_password',
+        opts: {
+          link: 'http://givememoney',
+        },
+      },
+    });
+  });
 });

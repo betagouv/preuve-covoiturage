@@ -29,7 +29,6 @@ export class SendTemplateMailAction extends Parents.Action {
       title = subject;
     }
     const content = this.hds.get(template, { email, fullname, subject, ...opts });
-
     this.mj.send({
       email,
       fullname,
