@@ -93,10 +93,6 @@ const findAomFromPosition = async ({ journey, path, position }) => {
   const pos = Object.assign({}, position);
   const jrn = Object.assign({}, journey);
 
-  if (!_.isNil(position.lon) || _.isNil(position.lat)) {
-    return { journey, path, position };
-  }
-
   const aom = await geo.aom({
     lat: position.lat,
     lon: position.lon,
