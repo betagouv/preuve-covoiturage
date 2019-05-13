@@ -18,16 +18,47 @@ import { provider } from '../container';
 export class ConfigProvider implements ProviderInterface {
   readonly signature: string = 'config';
   private config: object = {};
-
+  private configPaths: Set<string> = new Set();
   constructor(protected env: EnvProvider) {}
 
   async boot() {
-    // recommended : set the CONFIG_DIR as env variable
+    this.loadConfigDirectory(this.env.get('APP_WORKING_PATH', process.cwd()));
+  }
+
+  loadConfigDirectory(workingPath: string, configDir?: string) {
     const configFolder = path.resolve(
-      this.env.get('APP_WORKING_PATH', process.cwd()),
-      this.env.get('APP_CONFIG_DIR', './config'),
+      workingPath,
+      configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config'),
     );
 
+    if (!fs.existsSync(configFolder) || !fs.lstatSync(configFolder).isDirectory()) {
+      throw new Error(`Config path ${configFolder} is not a directory`);
+    }
+    
+    if (this.configPaths.has(configFolder)) {
+      return;
+    }
+    
+    this.configPaths.add(configFolder);
+
+    fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
+      const filename = `${configFolder}/${basename}`;
+      const fileinfo = path.parse(filename);
+      if (['.yaml', '.yml'].indexOf(fileinfo.ext) > -1) {
+        this.set(camelCase(fileinfo.name), this.loadYmlFile(filename))
+      }
+
+      if (['.js'].indexOf(fileinfo.ext) > -1) {      
+        const configExport = this.loadJsFile(filename);
+        if (configExport) {
+          this.set(camelCase(fileinfo.name), configExport);
+        }
+      }
+    });
+  }
+
+  private loadJsFile(filename) {
+    // default sandbox config
     const sandbox = {
       env: (key: string, fallback?: string) => this.env.get(key, fallback),
       module: {
@@ -51,28 +82,19 @@ export class ConfigProvider implements ProviderInterface {
       URIError: URIError,  
     };
 
-    if (fs.existsSync(configFolder)) {
-      fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
-        const filename = `${configFolder}/${basename}`;
-        if (/\.yml$/.test(basename)) {
-          this.set(camelCase(basename.replace('.yml', '')), jsYaml.safeLoad(fs.readFileSync(filename, 'utf8')))
-        }
-        if (/\.js$/.test(basename)) {
-          const script = fs.readFileSync(filename, 'utf8');
-          let configExport;
-          vm.runInNewContext(script, sandbox);
-          if (Reflect.ownKeys(sandbox.module.exports).length > 0) {
-            configExport = sandbox.module.exports;
-          } else if (Reflect.ownKeys(sandbox.exports).length > 0) {
-            configExport = sandbox.exports;
-          }
-
-          if (configExport) {
-            this.set(camelCase(basename.replace('.js', '')), configExport);
-          }
-        }
-      });
+    const script = fs.readFileSync(filename, 'utf8');
+    let configExport;
+    vm.runInNewContext(script, sandbox);
+    if (Reflect.ownKeys(sandbox.module.exports).length > 0) {
+      configExport = sandbox.module.exports;
+    } else if (Reflect.ownKeys(sandbox.exports).length > 0) {
+      configExport = sandbox.exports;
     }
+    return configExport;
+  }
+
+  private loadYmlFile(filename) {
+    return jsYaml.safeLoad(fs.readFileSync(filename, 'utf8'));
   }
 
   get(key: string, fallback?: any): any {

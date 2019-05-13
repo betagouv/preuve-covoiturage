@@ -58,8 +58,19 @@ describe('Config provider', () => {
   });
 
   it('should return fallback if key not found', async () => {
+    mockFs({
+      [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
+        {
+          name: env('FAKE', 'john'),
+        },
+      ];
+      module.exports.test = false;`,
+    });
+
     const configProvider = new ConfigProvider(new FakeEnvProvider());
     await configProvider.boot();
     expect(configProvider.get('hello', 'world')).to.equal('world');
+
+    mockFs.restore();
   });
 });
