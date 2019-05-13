@@ -34,21 +34,21 @@ export class ConfigProvider implements ProviderInterface {
     if (!fs.existsSync(configFolder) || !fs.lstatSync(configFolder).isDirectory()) {
       throw new Error(`Config path ${configFolder} is not a directory`);
     }
-    
+
     if (this.configPaths.has(configFolder)) {
       return;
     }
-    
+
     this.configPaths.add(configFolder);
 
     fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
       const filename = `${configFolder}/${basename}`;
       const fileinfo = path.parse(filename);
       if (['.yaml', '.yml'].indexOf(fileinfo.ext) > -1) {
-        this.set(camelCase(fileinfo.name), this.loadYmlFile(filename))
+        this.set(camelCase(fileinfo.name), this.loadYmlFile(filename));
       }
 
-      if (['.js'].indexOf(fileinfo.ext) > -1) {      
+      if (['.js'].indexOf(fileinfo.ext) > -1) {
         const configExport = this.loadJsFile(filename);
         if (configExport) {
           this.set(camelCase(fileinfo.name), configExport);
@@ -60,26 +60,26 @@ export class ConfigProvider implements ProviderInterface {
   private loadJsFile(filename) {
     // default sandbox config
     const sandbox = {
+      Object,
+      Function,
+      Array,
+      String,
+      Boolean,
+      Number,
+      Date,
+      RegExp,
+      Error,
+      EvalError,
+      RangeError,
+      ReferenceError,
+      SyntaxError,
+      TypeError,
+      URIError,
       env: (key: string, fallback?: string) => this.env.get(key, fallback),
       module: {
         exports: {},
       },
       exports: {},
-      Object: Object,
-      Function: Function,
-      Array: Array,
-      String: String,
-      Boolean: Boolean,
-      Number: Number,
-      Date: Date,
-      RegExp: RegExp,
-      Error: Error,
-      EvalError: EvalError,
-      RangeError: RangeError,
-      ReferenceError: ReferenceError,
-      SyntaxError: SyntaxError,
-      TypeError: TypeError,
-      URIError: URIError,  
     };
 
     const script = fs.readFileSync(filename, 'utf8');

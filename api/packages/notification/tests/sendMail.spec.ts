@@ -8,7 +8,7 @@ import { boot } from '@pdc/core';
 chai.use(chaiNock);
 
 const { expect } = chai;
-const port = 8081;
+const port = '8081';
 
 let transport;
 let request;

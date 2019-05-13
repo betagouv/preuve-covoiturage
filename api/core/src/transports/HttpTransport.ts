@@ -1,8 +1,8 @@
 import http from 'http';
+import { parse } from 'path';
 
 import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
-import { parse } from 'path';
 
 
 /**

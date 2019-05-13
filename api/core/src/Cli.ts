@@ -15,12 +15,12 @@ function setEnvironment():void {
   if ('npm_package_config_workingDir' in process.env) {
     process.chdir(path.resolve(process.cwd(), process.env.npm_package_config_workingDir));
   }
-  
+
   process.env.APP_WORKING_PATH = process.cwd();
 
   // Define config from npm package
   Reflect.ownKeys(process.env)
-  .filter((key: string ) => /npm_package_config_app/.test(key))
+  .filter((key: string) => /npm_package_config_app/.test(key))
   .forEach((key: string) => {
     const oldKey = key;
     const newKey = key.replace('npm_package_config_', '').toUpperCase();
@@ -35,10 +35,10 @@ function setEnvironment():void {
 function getBootstrapFile():string {
   const basePath = process.cwd();
   const bootstrapFile = ('npm_package_config_bootstrap' in process.env) ? process.env.npm_package_config_bootstrap : './bootstrap.ts';
-  
-  
+
+
   const bootstrapPath = path.resolve(basePath, bootstrapFile);
-  
+
   if (!fs.existsSync(bootstrapPath)) {
     console.error('No bootstrap file provided');
     process.exit(1);
@@ -46,7 +46,7 @@ function getBootstrapFile():string {
   return bootstrapPath;
 }
 
-async function start(path: string, argv: string[]): Promise<TransportInterface> {
+async function start(bootstrapPath: string, argv: string[]): Promise<TransportInterface> {
   const [_node, _script, command, ...opts] = argv;
 
   const defaultBootstrap = {
@@ -58,9 +58,9 @@ async function start(path: string, argv: string[]): Promise<TransportInterface> 
       cli(k) { return new CliTransport(k); },
     },
   };
-  
+
   let transport;
-  const bootstrap = await import(path);
+  const bootstrap = await import(bootstrapPath);
   const kernel = ('kernel' in bootstrap) ? bootstrap.kernel() : defaultBootstrap.kernel();
   await kernel.boot();
   const serviceProviders = ('serviceProviders' in bootstrap) ? bootstrap.serviceProviders : defaultBootstrap.serviceProviders;
@@ -93,10 +93,10 @@ async function start(path: string, argv: string[]): Promise<TransportInterface> 
   return transport;
 }
 
-export function boot(argv: string[]) {
+export async function boot(argv: string[]) {
   setEnvironment();
-  const path = getBootstrapFile();
-  return start(path, argv);
+  const bootstrapPath = getBootstrapFile();
+  return start(bootstrapPath, argv);
 }
 
 if (process.env.NODE_ENV !== 'testing') {
