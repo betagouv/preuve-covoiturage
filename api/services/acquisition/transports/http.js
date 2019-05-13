@@ -111,12 +111,9 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
     const filterOps = (doc) => {
       const oI = doc.operator._id.toString();
       if (authorizedOps.indexOf(oI) === -1) {
-        return {
-          operator: {
-            _id: '0',
-            nom_commercial: '',
-          },
-        };
+        doc.name = 'hidden';
+        doc.operator = { _id: null, nom_commercial: 'hidden' };
+        doc.operator_journey_id = null;
       }
 
       return doc;
@@ -125,11 +122,17 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
     if (aomId) {
       const aomLean = await aomService.findOne(aomId, true);
 
-      if (aomLean && aomLean.authorized_operators) {
-        authorizedOps = aomLean.authorized_operators.map(o => o.toString());
+      // filter operators in the query to let the user filter by
+      // authorised operators only.
+      if (aomLean && aomLean.authorised) {
+        authorizedOps = aomLean.authorised
+          .filter(o => o.coll === 'operators')
+          .map(o => o._id.toString());
+
         const filteredOps = (req.query['operator._id'] || '')
           .split(',')
           .filter(o => authorizedOps.indexOf(o) !== -1);
+
         if (filteredOps.length) {
           req.query['operator._id'] = filteredOps.join(',');
         } else {

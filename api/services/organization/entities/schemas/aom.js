@@ -59,10 +59,10 @@ const AomSchema = new Schema(
       acceptedAt: Date,
       acceptedBy: Schema.Types.ObjectId,
     },
-    authorized_operators: [
+    authorised: [
       {
         _id: Schema.Types.ObjectId,
-        nom_commercial: { type: String, alias: 'name' },
+        coll: { type: String, required: true, enum: ['operators'] },
       },
     ],
     geometry: {
