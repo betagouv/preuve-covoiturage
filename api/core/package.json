@@ -21,9 +21,10 @@
     "serve-debug": "nodemon --inspect dist/kernel.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\""
   },
-  "main": "./dist/src/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
-    "cli": "./dist/src/Cli.js"
+    "cli": "./dist/Cli.js"
   },
   "mocha": {
     "require": [
