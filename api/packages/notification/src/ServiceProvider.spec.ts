@@ -1,6 +1,6 @@
 import { describe } from 'mocha';
 import path from 'path';
-import { Parents, Types } from '@pdc/core';
+import { Parents, Interfaces } from '@pdc/core';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
@@ -18,7 +18,7 @@ class ServiceKernel extends Parents.Kernel {
   serviceProviders = [ServiceProvider];
 }
 
-const service = (<Types.Kernel>new ServiceKernel());
+const service = (<Interfaces.KernelInterface>new ServiceKernel());
 let nockRequest;
 const url = /mailjet/;
 const endpoint = /send/;
