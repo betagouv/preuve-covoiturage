@@ -13,6 +13,9 @@ roles:
       - operator.users.add
       - operator.users.remove
       - operator.users.list
+      - operator.authorisations.add
+      - operator.authorisations.remove
+      - operator.authorisations.list
       - operator.app.create
       - operator.app.delete
       - operator.app.list

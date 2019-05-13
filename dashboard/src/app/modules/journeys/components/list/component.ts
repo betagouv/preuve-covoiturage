@@ -71,6 +71,8 @@ export class JourneyListComponent {
   }
 
   applyFilters(mainFilters) {
+    if (!mainFilters) return;
+
     Object
       .keys(mainFilters)
       .forEach((key) => {
