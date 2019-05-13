@@ -1,19 +1,12 @@
 const _ = require('lodash');
 const slugify = require('slugify');
 const jwt = require('jsonwebtoken');
-const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
-const NotFoundError = require('@pdc/shared/errors/not-found');
-const BadRequestError = require('@pdc/shared/errors/bad-request');
-const ForbiddenError = require('@pdc/shared/errors/forbidden');
-const ConflictError = require('@pdc/shared/errors/conflict');
-const InternalServerError = require('@pdc/shared/errors/internal-server');
-const Permissions = require('@pdc/shared/helpers/permissions/permissions');
-const config = require('@pdc/shared/config');
-const generateToken = require('@pdc/shared/helpers/random/token');
-const { Aom } = require('@pdc/service-organization').organization.entities.models;
-const { Operator } = require('@pdc/service-organization').organization.entities.models;
-const { operatorService } = require('@pdc/service-organization');
-const { aomService } = require('@pdc/service-organization');
+const { serviceFactory } = require('@pdc/shared-providers').mongo;
+const { NotFoundError, BadRequestError, ForbiddenError, ConflictError, InternalServerError} = require('@pdc/shared-errors');
+const { permissions: Permissions, token: generateToken } = require('@pdc/shared-helpers');
+const config = require('@pdc/shared-config');
+const { entities, operatorService, aomService } = require('@pdc/service-organization');
+const { Aom, Operator } = entities.models;
 const User = require('./entities/models/user');
 
 const service = serviceFactory(User, {

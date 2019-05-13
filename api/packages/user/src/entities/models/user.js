@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 const bcrypt = require('bcrypt');
-const modelFactory = require('@pdc/shared/providers/mongo/model-factory');
+const { modelFactory } = require('@pdc/shared-providers').mongo;
 const emails = require('@pdc/package-email');
-const { appUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
-const { environment } = require('@pdc/shared/config');
+const { appUrl } = require('@pdc/shared-helpers').url(process.env.APP_URL, process.env.API_URL);
+const { environment } = require('@pdc/shared-config');
 const UserSchema = require('../schemas/user');
 
 module.exports = modelFactory('User', {

@@ -1,11 +1,10 @@
 const _ = require('lodash');
 const router = require('express').Router();
 const passport = require('passport');
-const jwtUser = require('@pdc/shared/middlewares/jwt-user');
-const jwtServer = require('@pdc/shared/middlewares/jwt-server');
+const { jwtUser, jwtServer } = require('@pdc/shared-middlewares');
 const { userService } = require('@pdc/service-user').user;
 
-require('@pdc/shared/providers/passport/passport')(passport);
+require('@pdc/shared-providers').passport(passport);
 
 router.get('/ping', jwtUser, (req, res, next) => {
   try {

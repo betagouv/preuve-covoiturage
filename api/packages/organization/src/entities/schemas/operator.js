@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { regex, setters, validators } = require('@pdc/shared/providers/mongo/schema-validation');
+const { regex, setters, validators } = require('@pdc/shared-providers').mongo.schema;
 const ApplicationSchema = require('./application');
 
 const { Schema } = mongoose;

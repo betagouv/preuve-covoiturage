@@ -2,7 +2,7 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const modelFactory = require('@pdc/shared/providers/mongo/model-factory');
+const { modelFactory } = require('@pdc/shared-providers').mongo;
 const SafeJourneySchema = require('../schemas/safe-journey');
 
 module.exports = modelFactory('SafeJourney', {

@@ -1,32 +1,21 @@
-import aomService = require('./aomService');
-import operatorService = require('./operatorService');
-import applicationService = require('./applicationService');
+import * as aomService from './aomService';
+import * as operatorService from './operatorService';
+import * as applicationService from './applicationService';
+import * as aomHttp from './transports/aomHttp';
+import * as operatorHttp from './transports/operatorHttp';
+import * as applicationHttp from './transports/applicationHttp';
+import * as entities from './entities';
 
-export const organization = {
+const transports = {
+  aomHttp,
+  operatorHttp,
+  applicationHttp,
+};
+
+export {
   aomService,
-  applicationService,
   operatorService,
-  transports: {
-    aomHttp: require('./transports/aomHttp'),
-    operatorHttp: require('./transports/operatorHttp'),
-    applicationHttp: require('./transports/applicationHttp'),
-  },
-  entities: {
-    models: {
-      Aom: require('./entities/models/Aom'),
-      Operator: require('./entities/models/Operator'),
-      Token: require('./entities/models/Token'),
-    },
-    schemas: {
-      AomSchema: require('./entities/schemas/aom'),
-      OperatorSchema: require('./entities/schemas/operator'),
-      ApplicationSchema: require('./entities/schemas/application'),
-      TokenSchema: require('./entities/schemas/token'),
-    },
-    seeds: {
-      aom: require('./entities/seeds/aom'),
-      dummyAom: require('./entities/seeds/dummy-aom'),
-      dummyOperator: require('./entities/seeds/dummy-operator'),
-    }
-  },
+  applicationService,
+  transports,
+  entities,
 };

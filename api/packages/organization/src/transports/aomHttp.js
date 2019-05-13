@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const statService = require('@pdc/service-stats/service');
-const can = require('@pdc/shared/middlewares/can');
-const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
+const { can } = require('@pdc/shared-middlewares');
+const { apiUrl } = require('@pdc/shared-helpers').url(process.env.APP_URL, process.env.API_URL);
 const aomService = require('../aom');
 
 /**

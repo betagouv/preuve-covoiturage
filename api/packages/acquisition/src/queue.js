@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
-const Queue = require('@pdc/shared/providers/queue/queue');
-const Sentry = require('@pdc/shared/providers/sentry/sentry');
+const { queue: Queue, sentry: Sentry } = require('@pdc/shared-providers');
 
 /**
  * Queue to process the journeys

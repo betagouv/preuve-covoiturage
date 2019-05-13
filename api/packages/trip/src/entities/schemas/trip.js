@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
-const { AomSchema } = require('@pdc/service-organization').organization.entities.schemas;
-const IdentitySchema = require('@pdc/shared/entities/schemas/identity');
-const position = require('@pdc/shared/entities/schemas/position');
-const rank = require('@pdc/shared/entities/schemas/rank');
-const { validators } = require('@pdc/shared/providers/mongo/schema-validation');
+const { AomSchema } = require('@pdc/service-organization').entities.schemas;
+const { identity: IdentitySchema, position, rank } = require('@pdc/shared-entities').schemas;
+const { validators } = require('@pdc/shared-providers').mongo.schemas;
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;

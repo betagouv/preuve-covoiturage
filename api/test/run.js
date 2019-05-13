@@ -1,12 +1,12 @@
 /* eslint-disable global-require */
 const mongoose = require("mongoose");
-const seeder = require("@pdc/shared/entities/seeder");
+const { seeder } = require("@pdc/shared-entities");
 const { journeyQueues } = require("@pdc/service-acquisition").acquisition;
-const emailsQueues = require("@pdc/shared/worker/queues-emails");
+const { queuesEmails: emailsQueues } = require("@pdc/shared-worker").worker;
 
 const app = require("@pdc/proxy/app");
 
-const { mongoUrl } = require("@pdc/shared/config");
+const { mongoUrl } = require("@pdc/shared-config");
 
 const queues = { journeyQueues, emailsQueues };
 

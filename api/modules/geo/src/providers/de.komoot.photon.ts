@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import axios from 'axios';
 
-const NotFoundError = require('@pdc/shared/errors/not-found');
+const { NotFoundError } = require('@pdc/shared-errors');
 
 const domain = 'https://photon.komoot.de/api';
 

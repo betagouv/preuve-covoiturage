@@ -15,7 +15,6 @@
   "dependencies": {
     "@pdc/package-errors": "0.0.1",
     "@pdc/service-organization": "0.0.1",
-    "@pdc/shared": "0.0.1",
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
     "mongoose": "^5.4"

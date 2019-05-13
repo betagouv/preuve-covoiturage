@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const moment = require('moment');
 const router = require('express').Router();
-const ForbiddenError = require('@pdc/shared/errors/forbidden');
-const can = require('@pdc/shared/middlewares/can');
-const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
+const { ForbiddenError } = require('@pdc/shared-errors');
+const { can } = require('@pdc/shared-middlewares');
+const { apiUrl } = require('@pdc/shared-helpers').url(process.env.APP_URL, process.env.API_URL);
 const policiesService = require('../policy');
 const campaignService = require('../campaign');
 const { processCampaign } = require('../kernel/kernel');

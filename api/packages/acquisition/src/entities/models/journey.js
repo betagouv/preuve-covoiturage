@@ -1,4 +1,4 @@
-const modelFactory = require('@pdc/shared/providers/mongo/model-factory');
+const { modelFactory } = require('@pdc/shared-providers').mongo;
 const JourneySchema = require('../schemas/journey');
 
 module.exports = modelFactory('Journey', {

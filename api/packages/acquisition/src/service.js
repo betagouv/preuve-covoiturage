@@ -1,14 +1,12 @@
 /* eslint-disable camelcase */
 const _ = require('lodash');
 const { ObjectId } = require('mongoose').Types;
-const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
-const NotFoundError = require('@pdc/shared/errors/not-found');
-const BadRequestError = require('@pdc/shared/errors/bad-request');
-const InternalServerError = require('@pdc/shared/errors/internal-server');
-const eventBus = require('@pdc/shared/bus');
+const { serviceFactory } = require('@pdc/shared-providers').mongo;
+const { NotFoundError, BadRequestError, InternalServerError } = require('@pdc/shared-errors');
+const eventBus = require('@pdc/shared-worker').bus;
 const importer = require('@pdc/package-importer');
-const { Operator } = require('@pdc/service-organization').organization.entities.models;
-const { operatorService } = require('@pdc/service-organization').organization;
+const { Operator } = require('@pdc/service-organization').entities.models;
+const { operatorService } = require('@pdc/service-organization');
 const { tripService } = require('@pdc/service-trip').trip;
 const Journey = require('./entities/models/journey');
 const SafeJourney = require('./entities/models/safe-journey');

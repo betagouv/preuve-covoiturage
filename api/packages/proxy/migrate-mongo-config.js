@@ -1,4 +1,4 @@
-const { mongoUrl, mongoDatabase } = require('@pdc/shared/config');
+const { mongoUrl, mongoDatabase } = require('@pdc/shared-config');
 
 const config = {
   mongodb: {

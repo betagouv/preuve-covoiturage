@@ -5,7 +5,7 @@ import { aom, postcodes, town } from '.';
 
 const mongoose = require('mongoose');
 
-const assertThrows = require('@pdc/shared/test/lib/assert-throws');
+const { assertThrows } = require('@pdc/shared-helpers').test;
 
 
 // AOM

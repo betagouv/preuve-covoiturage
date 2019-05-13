@@ -7,16 +7,14 @@ const passport = require('passport');
 const swaggerUi = require('swagger-ui-express');
 const { expressErrorHandler } = require('@pdc/package-express-errors');
 
-const Sentry = require('@pdc/shared/providers/sentry/sentry');
-const signResponse = require('@pdc/shared/middlewares/sign-response');
-const dataWrap = require('@pdc/shared/middlewares/data-wrap');
-const jwtUser = require('@pdc/shared/middlewares/jwt-user');
+const { sentry: Sentry } = require('@pdc/shared-providers');
+const { signResponse, dataWrap, jwtUser } = require('@pdc/shared-middlewares');
 
-const eventBus = require('@pdc/shared/bus');
+const { eventBus } = require('@pdc/shared-worker').bus;
 const { bus: journeyBus } = require('@pdc/service-acquisition').acquisition.transports;
 
-const { PORT, sessionSecret } = require('@pdc/shared/config.js');
-const { appUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
+const { PORT, sessionSecret } = require('@pdc/shared-config');
+const { appUrl } = require('@pdc/shared-helpers').url(process.env.APP_URL, process.env.API_URL);
 
 const swaggerDocument = require('./static/openapi.json');
 
@@ -25,6 +23,8 @@ require('./definitions');
 require('./mongo');
 
 const app = express();
+
+app.locals.kernel = require('./bridge/index');
 
 // plugin Sentry - before other middlewares
 app.use(Sentry.Handlers.requestHandler());
@@ -71,8 +71,8 @@ app.use('/auth', require('@pdc/service-auth').auth.transports.http);
 app.use('/stats', require('@pdc/service-stats').stats.transports.http);
 app.use('/profile', jwtUser, require('@pdc/service-user').user.transports.profileHttp);
 app.use('/users', jwtUser, require('@pdc/service-user').user.transports.userHttp);
-app.use('/aom', jwtUser, require('@pdc/service-organization').organization.transports.aomHttp);
-app.use('/operators', jwtUser, require('@pdc/service-organization').organization.transports.operatorHttp);
+app.use('/aom', jwtUser, require('@pdc/service-organization').transports.aomHttp);
+app.use('/operators', jwtUser, require('@pdc/service-organization').transports.operatorHttp);
 app.use('/trips', jwtUser, require('@pdc/service-trip').trip.transports.http);
 app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive').incentive.transports.http);
 app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy').policy.transports.parameterHttp);

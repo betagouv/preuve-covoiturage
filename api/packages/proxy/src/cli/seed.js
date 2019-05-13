@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const { mongoUrl } = require('@pdc/shared/config');
-const seeder = require('@pdc/shared/entities/seeder');
+const { mongoUrl } = require('@pdc/shared-config');
+const { seeder } = require('@pdc/shared-entities');
 
 (async () => {
   try {

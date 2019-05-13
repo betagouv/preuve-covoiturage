@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const geo = require('@pdc/package-geo');
-const BadRequestError = require('@pdc/shared/errors/bad-request');
+const { BadRequestError } = require('@pdc/shared-errors');
 
 const processTownResponse = ({ jrn, path, pos }) => async ({
   town,

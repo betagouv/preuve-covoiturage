@@ -14,7 +14,6 @@
   "dependencies": {
     "@pdc/package-email": "0.0.1",
     "@pdc/service-organization": "0.0.1",
-    "@pdc/shared": "0.0.1",
     "bcrypt": "^3.0.2",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.3.0",

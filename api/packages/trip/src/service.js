@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const _ = require("lodash");
 const moment = require("moment");
-const serviceFactory = require("@pdc/shared/providers/mongo/service-factory");
+const { serviceFactory } = require("@pdc/shared-providers").mongo;
 const { Journey } = require("@pdc/service-acquisition").acquisition.entities.models;
 const Trip = require("./entities/models/trip");
 

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase,no-console */
 const mongoose = require('mongoose');
-const { mongoUrl } = require('@pdc/shared/config');
+const { mongoUrl } = require('@pdc/shared-config');
 const journeysQueue = require('../queue');
 const SafeJourney = require('../entities/models/safe-journey');
 

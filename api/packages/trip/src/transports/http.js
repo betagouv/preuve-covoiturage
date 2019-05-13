@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const can = require('@pdc/shared/middlewares/can');
+const { can } = require('@pdc/shared-middlewares');
 const tripService = require('../service');
 // const { apiUrl } = require('@pdc/shared/providers/url/url');
 

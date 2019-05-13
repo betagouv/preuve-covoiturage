@@ -3,7 +3,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "target": "es6",
-    "declaration": true,
+    "allowJs": true,
     "noImplicitAny": false,
     "moduleResolution": "node",
     "noStrictGenericChecks": true,
@@ -17,6 +17,10 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts",
+    "tests/**"
+  ],
   "libs": ["es6"]
 }

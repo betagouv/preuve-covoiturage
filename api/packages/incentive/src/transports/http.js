@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const _ = require('lodash');
-const can = require('@pdc/shared/middlewares/can');
+const { can } = require('@pdc/shared-middlewares');
 const incentiveService = require('../service');
 
 /**

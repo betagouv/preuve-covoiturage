@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const { mongoUrl } = require('@pdc/shared/config');
-const Permissions = require('@pdc/shared/helpers/permissions/permissions');
+const { mongoUrl } = require('@pdc/shared-config');
+const { permissions: Permissions } = require('@pdc/shared-helpers');
 const { User } = require("@pdc/service-user").user.entities.models;
 
 (async () => {

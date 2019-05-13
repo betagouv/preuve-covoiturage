@@ -1,9 +1,8 @@
 import * as _ from 'lodash';
 import axios from 'axios';
 
-const NotFoundError = require('@pdc/shared/errors/not-found');
-const BadRequestError = require('@pdc/shared/errors/bad-request');
-const { validate } = require('@pdc/shared/providers/mongo/schema-validation');
+const { NotFoundError, BadRequestError } = require('@pdc/shared-errors');
+const { validate } = require('@pdc/shared-providers').mongo.schema;
 
 const domain = 'https://api-adresse.data.gouv.fr';
 

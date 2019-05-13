@@ -16,6 +16,7 @@
   ],
   "workspaces": [
     "core",
+    "shared/*",
     "modules/*",
     "packages/*"
   ],
@@ -38,12 +39,17 @@
     "lint": "yarn workspaces run lint",
     "test": "NODE_ENV=test yarn workspaces run test"
   },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
+  },
   "dependencies": {
     "@pdc/package-geo": "0.0.1",
     "@pdc/proxy": "0.0.1",
     "@pdc/service-acquisition": "0.0.1",
-    "@pdc/service-trip": "0.0.1",
-    "@pdc/shared": "0.0.1"
+    "@pdc/service-trip": "0.0.1"
   },
   "devDependencies": {
     "tslint": "^5.16.0",

@@ -4,7 +4,7 @@ import { BadRequestError, NotFoundError } from '@pdc/package-errors';
 import { GeoType } from './types/GeoType';
 
 const { Aom } = require('@pdc/service-organization').entities.models;
-const { validate } = require('@pdc/shared/providers/mongo/schema-validation');
+const { validate } = require('@pdc/shared-providers').mongo.schema;
 const geoApi = require('./providers/fr.gouv.api.geo');
 const addressApi = require('./providers/fr.gouv.data.api-adresse');
 const nominatimApi = require('./providers/org.openstreetmap.nominatim');

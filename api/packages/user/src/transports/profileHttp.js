@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const can = require('@pdc/shared/middlewares/can');
+const { can } = require('@pdc/shared-middlewares');
 const userService = require('../service');
 
 // show my profile

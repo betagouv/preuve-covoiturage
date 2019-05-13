@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@pdc/service-acquisition": "0.0.1",
-    "@pdc/shared": "0.0.1",
     "express": "^4.16.4",
     "mongoose": "^5.4"
   },

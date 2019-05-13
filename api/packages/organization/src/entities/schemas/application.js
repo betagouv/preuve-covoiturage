@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const toJSON = require('@pdc/shared/providers/mongo/to-json');
+const { toJSON } = require('@pdc/shared-providers').mongo;
 
 const { Schema } = mongoose;
 

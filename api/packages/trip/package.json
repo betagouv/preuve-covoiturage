@@ -15,7 +15,6 @@
     "@pdc/service-acquisition": "0.0.1",
     "@pdc/service-organization": "0.0.1",
     "@pdc/service-user": "0.0.1",
-    "@pdc/shared": "0.0.1",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",

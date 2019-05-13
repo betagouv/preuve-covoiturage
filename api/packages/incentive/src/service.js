@@ -1,4 +1,4 @@
-const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
+const { serviceFactory } = require('@pdc/shared-providers').mongo;
 const Incentive = require('./entities/models/incentive');
 
 module.exports = serviceFactory(Incentive);

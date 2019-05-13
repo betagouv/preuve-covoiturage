@@ -2,8 +2,8 @@
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
 const app = require('@pdc/proxy/app');
-const assertResponse = require('@pdc/shared/test/lib/assert-response');
-const { jwtSecret } = require('@pdc/shared/config');
+const { assertResponse } = require('@pdc/shared-helpers').test;
+const { jwtSecret } = require('@pdc/shared-config');
 
 const request = supertest(app);
 

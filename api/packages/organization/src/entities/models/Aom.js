@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const modelFactory = require('@pdc/shared/providers/mongo/model-factory');
+const { modelFactory } = require('@pdc/shared-providers').mongo;
 const AomSchema = require('../schemas/aom');
 
 module.exports = modelFactory('Aom', {
