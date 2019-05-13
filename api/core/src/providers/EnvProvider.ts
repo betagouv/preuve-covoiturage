@@ -30,7 +30,7 @@ export class EnvProvider implements ProviderInterface {
         this.env.set(key, result.parsed[key]);
       });
     }
-    
+
     Reflect.ownKeys(process.env)
       .filter((key: string) => key === key.toUpperCase() && key.startsWith('APP_'))
       .forEach((key: string) => {
