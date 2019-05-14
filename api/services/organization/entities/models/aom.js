@@ -6,17 +6,19 @@ module.exports = modelFactory('Aom', {
   schema: AomSchema,
   methods: {
     // {coll: string, id: ObjectId}
-    async setAuthorised(schema, doc, { coll, id }) {
-      doc.authorised.push({ coll, _id: id });
+    pushAuthorised(schema, doc, { coll, id }) {
+      const d = doc;
+      d.authorised.push({ coll, _id: id });
 
-      return doc;
+      return d;
     },
 
     // {coll: string, id: ObjectId}
-    async unsetAuthorised(schema, doc, { coll, id }) {
-      doc.authorised = doc.authorised.filter(a => a.coll === coll && a._id === id);
+    pullAuthorised(schema, doc, { coll, id }) {
+      const d = doc;
+      d.authorised = d.authorised.filter(a => a.coll === coll && a._id === id);
 
-      return doc;
+      return d;
     },
   },
   virtuals: {

@@ -109,14 +109,15 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
     const aomId = _.get(req, 'user.aom');
     let authorizedOps = [];
     const filterOps = (doc) => {
-      const oI = doc.operator._id.toString();
+      const d = doc;
+      const oI = d.operator._id.toString();
       if (authorizedOps.indexOf(oI) === -1) {
-        doc.name = 'hidden';
-        doc.operator = { _id: null, nom_commercial: 'hidden' };
-        doc.operator_journey_id = null;
+        d.name = 'hidden';
+        d.operator = { _id: null, nom_commercial: 'hidden' };
+        d.operator_journey_id = null;
       }
 
-      return doc;
+      return d;
     };
 
     if (aomId) {

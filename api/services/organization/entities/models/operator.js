@@ -5,19 +5,26 @@ module.exports = modelFactory('Operator', {
   schema: OperatorSchema,
   methods: {
     // {coll: string, orgId: ObjectId}
-    async setAuthorisation(schema, doc, { coll, orgId }) {
-      doc.authorisations.push({ coll, _id: orgId });
+    setAuthorisations(schema, doc, { coll, authList }) {
+      const d = doc;
 
-      return doc;
+      // unset all authorisations matching the same collection
+      d.authorisations = d.authorisations.filter(a => coll.indexOf(a.coll) === -1);
+
+      // apply given authorisations
+      authList.forEach(({ collec, orgId }) => {
+        d.authorisations.push({ collec, _id: orgId });
+      });
+
+      return d;
     },
 
     // {coll: string, orgId: ObjectId}
-    async unsetAuthorisation(schema, doc, { coll, orgId }) {
-      doc.authorisations = doc.authorisations.filter(
-        a => a.coll === coll && a._id === orgId,
-      );
+    unsetAuthorisations(schema, doc, { coll, orgId }) {
+      const d = doc;
+      d.authorisations = d.authorisations.filter(a => a.coll === coll && a._id === orgId);
 
-      return doc;
+      return d;
     },
   },
   virtuals: {

@@ -1,0 +1,21 @@
+// ViewEncapsulation: None
+.ui-listbox-aom {
+  width: 560px;
+  max-width: 100%;
+  margin: 1em auto;
+  .ui-listbox-list-wrapper {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 360px;
+  }
+}
+
+.actions {
+  text-align: right;
+  width: 560px;
+  max-width: 100%;
+  margin: 1em auto;
+  .ui-button {
+    margin-left: 0.5em;
+  }
+}

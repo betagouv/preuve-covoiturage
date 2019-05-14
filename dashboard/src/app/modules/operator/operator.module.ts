@@ -9,6 +9,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogService } from 'primeng/api';
+import { ListboxModule } from 'primeng/listbox';
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
@@ -27,9 +28,12 @@ import { OperatorListComponent } from './pages/list/component';
 import { OperatorTokenPageComponent } from './pages/token/component';
 import { OperatorSettingsComponent } from './pages/settings/component';
 import { OperatorJourneyImportComponent } from './pages/journeyImport/component';
+import { OperatorAomVisibilityComponent } from './pages/aomVisibility/component';
 /* Local services */
 import { OperatorService } from './services/operatorService';
 import { OperatorTokenService } from './services/operatorTokenService';
+/* Remote services */
+import { AomService } from '../aom/services/aomService';
 
 @NgModule({
   imports: [
@@ -39,6 +43,7 @@ import { OperatorTokenService } from './services/operatorTokenService';
     GraphicModule,
     OperatorRoutingModule,
     TableModule,
+    ListboxModule,
     MultiSelectModule,
     OperatorDialogModule,
     OperatorUIModule,
@@ -54,12 +59,14 @@ import { OperatorTokenService } from './services/operatorTokenService';
     DialogService,
     TranslationService,
     TableService,
+    AomService,
   ],
   declarations: [
     OperatorListComponent,
     OperatorTokenPageComponent,
     OperatorSettingsComponent,
     OperatorJourneyImportComponent,
+    OperatorAomVisibilityComponent,
   ],
   exports: [
     OperatorUIModule,
@@ -68,4 +75,4 @@ import { OperatorTokenService } from './services/operatorTokenService';
     OperatorSettingsComponent,
   ],
 })
-export class OperatorModule { }
+export class OperatorModule {}

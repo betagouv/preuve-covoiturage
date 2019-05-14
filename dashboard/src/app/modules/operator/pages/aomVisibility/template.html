@@ -1,0 +1,43 @@
+<div class="main__wrapper">
+  <div class="main__container">
+    <section class="section">
+      <h1 class="has-text-centered">Visibilité pour les AOM</h1>
+
+      <p>
+        Sélectionnez les Autorités Organisatrices de Mobilité qui verront vos
+        informations apparaitre sur les trajets de leur territoire.<br />
+        Les AOM non sélectionnées verront un opérateur masqué et ne pourront pas
+        filtrer les résultats en utilisant votre nom.
+      </p>
+
+      <p>
+        Cochez la case si vous avez signé une convention ou que vous souhaitez
+        que l'AOM sache que le trajet concerné a été effectué via votre service.
+      </p>
+
+      <h6>Liste des AOM</h6>
+
+      <p-listbox
+        [options]="listAom"
+        [(ngModel)]="selectedAom"
+        filter="filter"
+        checkbox="true"
+        multiple="true"
+        styleClass="ui-listbox-aom"
+      ></p-listbox>
+
+      <div class="actions">
+        <p-button
+          label="Reset"
+          (onClick)="reset($event)"
+          styleClass="ui-button-secondary"
+        ></p-button>
+
+        <p-button label="Enregistrer" (onClick)="save($event)"></p-button>
+      </div>
+
+      <h6>AOM sélectionnées</h6>
+      <p>{{ selectedAomInline() || "Aucune" }}</p>
+    </section>
+  </div>
+</div>
