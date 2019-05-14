@@ -8,4 +8,4 @@ Sentry.init({
   environment: process.env.SENTRY_ENV || process.env.NODE_ENV,
 });
 
-module.exports = Sentry;
+export default Sentry;

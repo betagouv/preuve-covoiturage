@@ -12,7 +12,7 @@ const send = async ({ type, email, fullname, subject, title, content }) => {
   });
 };
 
-module.exports = {
+export default {
   sendEmail: require('./providers/mailjet'),
 
   /**

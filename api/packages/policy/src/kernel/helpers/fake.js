@@ -136,7 +136,7 @@ const fakeCampaign = {
   trips: [],
 };
 
-module.exports = {
+export default {
   fakeTrip,
   fakePolicy: basePolicy,
   fakeCampaign,

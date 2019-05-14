@@ -1,6 +1,6 @@
 const { modelFactory } = require('@pdc/shared-providers').mongo;
 const IncentivePolicySchema = require('../schemas/policy');
 
-module.exports = modelFactory('IncentivePolicy', {
+export default modelFactory('IncentivePolicy', {
   schema: IncentivePolicySchema,
 });

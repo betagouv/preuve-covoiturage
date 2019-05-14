@@ -1,5 +1,5 @@
-const crypto = require('crypto');
-const mung = require('express-mung');
+import crypto from 'crypto';
+import mung from 'express-mung';
 
 /**
  * Hash the payload
@@ -31,4 +31,4 @@ const signResponse = (body, req, res) => {
   return signed;
 };
 
-module.exports = mung.json(signResponse);
+export const signResponseMiddleware = mung.json(signResponse);

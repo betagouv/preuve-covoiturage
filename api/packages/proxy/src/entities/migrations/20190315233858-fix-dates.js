@@ -3,7 +3,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const { journeysQueue } = require('@pdc/service-acquisition').acquisition;
 
-module.exports = {
+export default {
   async up(db) {
     const res = await db
       .collection('safejourneys')

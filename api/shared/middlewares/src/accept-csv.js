@@ -4,7 +4,7 @@ const flat = require('flat');
 const slugify = require('slugify');
 const json2csv = require('json2csv').parse;
 
-module.exports = [
+export default [
   // pre middleware to transform the query
   (req, res, next) => {
     if (req.get('Accept') !== 'text/csv') {

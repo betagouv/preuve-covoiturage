@@ -4,7 +4,7 @@ const { userService } = require("@pdc/service-user");
 const Aom = require("../models/aom");
 const aomService = require("../../aom");
 
-module.exports = async function dummyAom() {
+export const dummyAom = async function dummyAom() {
   // search for dummy aom
   let aom = await Aom.findOne({ name: "Dummy AOM" }).exec();
 

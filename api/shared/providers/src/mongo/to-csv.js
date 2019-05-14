@@ -41,7 +41,7 @@ const mapper = obj => Object
  * @param schema
  * @param doc
  */
-module.exports = (schema, doc) => {
+export default (schema, doc) => {
   schema = schema.tree ? schema.tree : schema;
 
   // list all 'hidden' fields

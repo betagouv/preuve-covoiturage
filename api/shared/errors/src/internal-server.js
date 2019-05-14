@@ -5,4 +5,4 @@ const InternalServerError = function InternalServerError(message = 'Internal ser
 InternalServerError.prototype = new Error();
 InternalServerError.prototype.name = 'InternalServerError';
 
-module.exports = InternalServerError;
+export default InternalServerError;

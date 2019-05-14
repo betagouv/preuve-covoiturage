@@ -1,4 +1,4 @@
-module.exports = function hasInsee({ tripStakeholder, insee }) {
+export default function hasInsee({ tripStakeholder, insee }) {
   if (insee.whiteList) {
     if (insee.whiteList.start
         && insee.whiteList.start.indexOf(tripStakeholder.start.insee) === -1) return false;

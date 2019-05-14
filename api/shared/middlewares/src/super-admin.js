@@ -13,4 +13,4 @@ const superAdmin = function superAdmin(req, res, next) {
   next();
 };
 
-module.exports = superAdmin;
+export default superAdmin;

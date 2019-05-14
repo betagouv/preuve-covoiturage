@@ -22,4 +22,4 @@ const config = {
 };
 
 // Return the config as a promise
-module.exports = config;
+export default config;

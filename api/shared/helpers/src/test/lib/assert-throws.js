@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-module.exports = async (errorType, func, ...args) => {
+export default async (errorType, func, ...args) => {
   try {
     await func(...args);
     throw new Error('Does not throw error');

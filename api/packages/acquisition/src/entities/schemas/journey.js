@@ -10,4 +10,4 @@ const JourneySchema = new Schema(Object.assign(
   journeySystem,
 ), { timestamps: true, id: false });
 
-module.exports = JourneySchema;
+export default JourneySchema;

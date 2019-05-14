@@ -5,7 +5,7 @@ const mapQuery = require('./map-query');
 
 const { ObjectId } = mongoose.Types;
 
-module.exports = (Model, methods) => _.assign(
+export default (Model, methods) => _.assign(
   {
     async find(query) {
       const { filter, limit, skip, sort, projection } = { ...mapQuery(query) };

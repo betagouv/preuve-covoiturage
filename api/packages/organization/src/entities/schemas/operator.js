@@ -4,7 +4,7 @@ const ApplicationSchema = require('./application');
 
 const { Schema } = mongoose;
 
-const OperatorSchema = new Schema({
+export const OperatorSchema = new Schema({
   nom_commercial: { type: String, trim: true, required: true, alias: 'name' },
   raison_sociale: { type: String, trim: true, required: true },
   company: {
@@ -43,5 +43,3 @@ const OperatorSchema = new Schema({
 
   deletedAt: { type: Date },
 }, { timestamps: true, id: false });
-
-module.exports = OperatorSchema;

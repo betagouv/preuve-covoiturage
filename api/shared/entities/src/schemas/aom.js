@@ -2,7 +2,7 @@ const { Schema } = require('mongoose');
 
 const { ObjectId } = Schema.Types;
 
-module.exports = {
+export default {
   type: new Schema({
     _id: { type: ObjectId, index: true },
     name: { type: String, trim: true },

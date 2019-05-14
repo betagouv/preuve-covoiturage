@@ -3,7 +3,7 @@ import axios from 'axios';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
-import { boot } from '@pdc/core';
+import { bootstrap } from '@pdc/core';
 
 chai.use(chaiNock);
 
@@ -16,7 +16,7 @@ let nockRequest;
 
 describe('Notification service', async () => {
   before(async () => {
-    transport = await boot(['', '', 'http', port]);
+    transport = await bootstrap.boot(['', '', 'http', port]);
     // request = supertest(transport.server);
     request = axios.create({
       baseURL: `http://127.0.0.1:${port}`,

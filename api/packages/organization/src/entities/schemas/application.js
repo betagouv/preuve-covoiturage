@@ -3,7 +3,7 @@ const { toJSON } = require('@pdc/shared-providers').mongo;
 
 const { Schema } = mongoose;
 
-const ApplicationSchema = new Schema({
+export const ApplicationSchema = new Schema({
   name: { type: String, max: 255, trim: true },
   permissions: [String],
 }, { timestamps: true, id: false });
@@ -12,5 +12,3 @@ const ApplicationSchema = new Schema({
 ApplicationSchema.method('toJSON', function () {
   return toJSON(ApplicationSchema, this);
 });
-
-module.exports = ApplicationSchema;

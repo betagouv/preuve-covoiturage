@@ -43,4 +43,4 @@ const PositionSchema = new Schema({
   }],
 }, { _id: false, id: false });
 
-module.exports = PositionSchema;
+export default PositionSchema;

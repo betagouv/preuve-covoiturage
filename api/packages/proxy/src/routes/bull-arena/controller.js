@@ -93,4 +93,4 @@ router.use('/',
     disableListen: true,
   }));
 
-module.exports = router;
+export default router;

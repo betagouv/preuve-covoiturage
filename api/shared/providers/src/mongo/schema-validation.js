@@ -31,7 +31,7 @@ const validate = (field, value) => {
   return true;
 };
 
-module.exports = {
+export default {
   regex,
   validators,
   setters,

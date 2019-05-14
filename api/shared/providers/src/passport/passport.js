@@ -10,7 +10,7 @@ const config = require('../../config');
 
 const { NotFoundError } = require('@pdc/shared-errors/not-found');
 
-module.exports = (passport) => {
+export default (passport) => {
   const opts = {};
   opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
   opts.secretOrKey = config.jwtSecret;

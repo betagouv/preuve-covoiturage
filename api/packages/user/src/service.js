@@ -304,4 +304,4 @@ service.find = async (query, options = {}) => {
   return results;
 };
 
-module.exports = service;
+export default service;

@@ -5,7 +5,7 @@
 // BadRequestError.prototype = new Error();
 // BadRequestError.prototype.name = 'BadRequestError';
 
-// module.exports = BadRequestError;
+// export default BadRequestError;
 
 export class BadRequestError extends Error {
 

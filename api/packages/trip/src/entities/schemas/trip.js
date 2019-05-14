@@ -80,4 +80,4 @@ const TripSchema = new Schema({
   incentives: [IncentiveSchema],
 }, { timestamps: true, id: false });
 
-module.exports = TripSchema;
+export default TripSchema;

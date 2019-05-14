@@ -24,4 +24,4 @@ const operator = function operator(req, res, next) {
   return next();
 };
 
-module.exports = operator;
+export default operator;

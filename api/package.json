@@ -16,6 +16,8 @@
   ],
   "workspaces": [
     "core",
+    "proxy",
+    "providers/*",
     "shared/*",
     "modules/*",
     "packages/*"

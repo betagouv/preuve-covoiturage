@@ -4,7 +4,7 @@ const { serviceFactory } = require('@pdc/shared-providers').mongo;
 const { User } = require("@pdc/service-user").user.entities.models;
 const Operator = require('./entities/models/Operator');
 
-const operatorService = serviceFactory(Operator, {
+export const operatorService = serviceFactory(Operator, {
   async addUser(id, userId) {
     const operator = await Operator.findOne({ _id: id });
     const user = await User.findOne({ _id: userId });
@@ -61,5 +61,3 @@ operatorService.find = async (query) => {
     data: await Promise.all(promises),
   };
 };
-
-module.exports = operatorService;

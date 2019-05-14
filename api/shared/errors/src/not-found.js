@@ -5,4 +5,4 @@ const NotFoundError = function NotFoundError(message = 'Not Found') {
 NotFoundError.prototype = new Error();
 NotFoundError.prototype.name = 'NotFoundError';
 
-module.exports = NotFoundError;
+export default NotFoundError;

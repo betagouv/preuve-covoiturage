@@ -154,4 +154,4 @@ const tripService = serviceFactory(Trip, {
   },
 });
 
-module.exports = tripService;
+export default tripService;

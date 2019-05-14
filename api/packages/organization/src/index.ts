@@ -1,9 +1,9 @@
-import * as aomService from './aomService';
-import * as operatorService from './operatorService';
-import * as applicationService from './applicationService';
-import * as aomHttp from './transports/aomHttp';
-import * as operatorHttp from './transports/operatorHttp';
-import * as applicationHttp from './transports/applicationHttp';
+import { aomService } from './aomService';
+import { operatorService } from './operatorService';
+import { applicationService } from './applicationService';
+import { aomHttp } from './transports/aomHttp';
+import { operatorHttp } from './transports/operatorHttp';
+import { applicationHttp } from './transports/applicationHttp';
 import * as entities from './entities';
 
 const transports = {
@@ -12,10 +12,8 @@ const transports = {
   applicationHttp,
 };
 
-export {
-  aomService,
-  operatorService,
-  applicationService,
-  transports,
-  entities,
-};
+export { aomService };
+export { operatorService };
+export { applicationService };
+export { transports };
+export { entities };

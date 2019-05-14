@@ -1,7 +1,7 @@
 const tripPolicyIncentive = require('./tripPolicyIncentive');
 const filter = require('../filters/filter');
 
-module.exports = function tripCampaign({ campaign, trip }, callback) {
+export default function tripCampaign({ campaign, trip }, callback) {
   let incentives = [];
 
   campaign.policies.forEach(({ policy, parameters }) => {

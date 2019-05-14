@@ -15,4 +15,4 @@ function getMongoConfig(mongoUrl) {
   };
 }
 
-module.exports = { getMongoConfig, getDatabase };
+export { getMongoConfig, getDatabase };

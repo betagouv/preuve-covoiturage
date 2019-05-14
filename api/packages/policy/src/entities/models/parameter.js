@@ -1,6 +1,6 @@
 const { modelFactory } = require('@pdc/shared-providers').mongo;
 const IncentiveParameterSchema = require('../schemas/parameter');
 
-module.exports = modelFactory('IncentiveParameter', {
+export default modelFactory('IncentiveParameter', {
   schema: IncentiveParameterSchema,
 });

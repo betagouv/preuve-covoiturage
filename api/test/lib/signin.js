@@ -14,7 +14,7 @@ const superAdmin = {
   id: null,
 };
 
-module.exports = {
+export default {
   superAdmin,
   async signin(user) {
     await request

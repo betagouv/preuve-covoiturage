@@ -25,4 +25,4 @@ const IncentiveUnitSchema = new Schema({
   },
 }, { id: false });
 
-module.exports = IncentiveUnitSchema;
+export default IncentiveUnitSchema;

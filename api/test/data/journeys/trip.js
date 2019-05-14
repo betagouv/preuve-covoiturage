@@ -59,4 +59,4 @@ const tripGenerator = (name, override = null) => {
   return data;
 };
 
-module.exports = tripGenerator;
+export default tripGenerator;

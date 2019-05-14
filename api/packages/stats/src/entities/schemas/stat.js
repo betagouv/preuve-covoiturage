@@ -20,4 +20,4 @@ const StatSchema = new Schema({
   },
 }, { timestamps: true, id: false });
 
-module.exports = StatSchema;
+export default StatSchema;

@@ -51,4 +51,4 @@ router.post('/', can('operator.app.create'), async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export { router as applicationHttp };

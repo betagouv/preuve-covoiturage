@@ -90,7 +90,7 @@ const pullCodes = db => results => results.map(res => db
   .collection('aoms')
   .findOneAndUpdate({ _id: res.aom._id }, { $pull: { insee: { $in: res.codes } } }));
 
-module.exports = {
+export default {
   up(db) {
     const promises = [];
 

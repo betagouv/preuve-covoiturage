@@ -17,7 +17,7 @@ const phoneNumber = () => {
 
 faker.locale = 'fr';
 
-module.exports = {
+export default {
   journey_id: faker.random.uuid(),
   operator_journey_id: faker.random.uuid(),
   operator_class: faker.helpers.randomize(['A', 'B', 'C']),

@@ -4,4 +4,4 @@ const jwtUser = (req, res, next) => {
   passport.authenticate('jwt', { session: false })(req, res, next);
 };
 
-module.exports = jwtUser;
+export default jwtUser;

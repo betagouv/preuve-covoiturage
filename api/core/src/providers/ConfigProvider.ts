@@ -84,13 +84,17 @@ export class ConfigProvider implements ProviderInterface {
 
     const script = fs.readFileSync(filename, 'utf8');
     let configExport;
-    vm.runInNewContext(script, sandbox);
-    if (Reflect.ownKeys(sandbox.module.exports).length > 0) {
-      configExport = sandbox.module.exports;
-    } else if (Reflect.ownKeys(sandbox.exports).length > 0) {
-      configExport = sandbox.exports;
+    try {
+      vm.runInNewContext(script, sandbox);
+      if (Reflect.ownKeys(sandbox.module.exports).length > 0) {
+        configExport = sandbox.module.exports;
+      } else if (Reflect.ownKeys(sandbox.exports).length > 0) {
+        configExport = sandbox.exports;
+      }
+      return configExport;
+    } catch (e) {
+      throw e;
     }
-    return configExport;
   }
 
   private loadYmlFile(filename) {
@@ -105,6 +109,9 @@ export class ConfigProvider implements ProviderInterface {
   }
 
   set(key: string, value: any): void {
+    if (has(this.config, key)) {
+      throw new Error(`Duplicate config key ${key}`);
+    }
     set(this.config, key, value);
   }
 }

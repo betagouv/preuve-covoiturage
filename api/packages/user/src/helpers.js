@@ -63,4 +63,4 @@ const userHelpers = {
   },
 };
 
-module.exports = userHelpers;
+export default userHelpers;

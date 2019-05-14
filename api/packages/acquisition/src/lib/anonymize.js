@@ -53,4 +53,4 @@ const anonymize = (line) => {
   return filtered;
 };
 
-module.exports = { anonymize };
+export default { anonymize };

@@ -7,7 +7,8 @@ import * as Providers from './providers';
 import * as ServiceHandlers from './serviceHandlers';
 import * as Transports from './transports';
 import * as Types from './types';
-import { boot } from './Cli';
+import * as bootstrap from './bootstrap';
+import { Kernel } from './Kernel';
 
 export {
   Container,
@@ -19,5 +20,6 @@ export {
   ServiceHandlers,
   Transports,
   Types,
-  boot,
+  bootstrap,
+  Kernel,
 };

@@ -5,7 +5,7 @@ const { serviceFactory } = require("@pdc/shared-providers").mongo;
 const { User } = require("@pdc/service-user").user.entities.models;
 const Aom = require("./entities/models/Aom");
 
-const aomService = serviceFactory(Aom, {
+export const aomService = serviceFactory(Aom, {
   async addUser(id, userId) {
     const aom = await Aom.findOne({ _id: id });
     const user = await User.findOne({ _id: userId });
@@ -60,5 +60,3 @@ aomService.find = async (query) => {
     data: await Promise.all(promises),
   };
 };
-
-module.exports = aomService;

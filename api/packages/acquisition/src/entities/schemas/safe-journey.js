@@ -8,4 +8,4 @@ const SafeJourneySchema = new Schema(Object.assign(
   journeyOperator,
 ), { timestamps: true, id: false });
 
-module.exports = SafeJourneySchema;
+export default SafeJourneySchema;

@@ -5,7 +5,7 @@ const { AomSchema } = require('@pdc/service-organization').entities.schemas;
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Types;
 
-module.exports = {
+export default {
   safe_journey_id: { type: ObjectId, index: true },
   trip_id: { type: ObjectId, index: true },
 

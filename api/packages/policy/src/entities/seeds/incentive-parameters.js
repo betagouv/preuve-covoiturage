@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-module.exports = [
+export default [
   {
     varname: 'conducteur',
     label: 'Conducteur',

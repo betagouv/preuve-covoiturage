@@ -6,7 +6,7 @@ const moment = require('moment');
  * @param {Array} line
  * @param {number} i
  */
-module.exports = (headers, line, i) => {
+export default (headers, line, i) => {
   let data = {};
 
   const frRegex = /^([0-9]{2})[^0-9]+([0-9]{2})[^0-9]+([0-9]{4})[^0-9]+([0-9]{2})[^0-9]+([0-9]{2})[^0-9]?([0-9]{2})?$/;

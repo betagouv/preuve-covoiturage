@@ -176,4 +176,4 @@ const modelFactory = (modelName, {
   return mongoose.model(modelName, S);
 };
 
-module.exports = modelFactory;
+export default modelFactory;

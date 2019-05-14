@@ -35,4 +35,4 @@ const can = (...perms) => (req, res, next) => {
   return next();
 };
 
-module.exports = can;
+export default can;

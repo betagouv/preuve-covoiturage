@@ -4,7 +4,7 @@ function mapInternalParam(param, { policy, trip, tripStakeholder }) {
   return param.getter(tripStakeholder, { policy, trip });
 }
 
-module.exports = function mapInternalParams({ policy, trip, tripStakeholder }) {
+export default function mapInternalParams({ policy, trip, tripStakeholder }) {
   return internalParams.filter(param => param.internal)
     .map(param => ({
       varname: param.varname,

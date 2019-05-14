@@ -3,7 +3,7 @@ const _ = require('lodash');
 const Aom = require('../models/aom');
 const source = require('../seeds/aom.json');
 
-module.exports = async () => {
+export const aom = async () => {
   const existing = await Aom.find({}, { network_id: 1 }).exec();
   const filtered = [];
   existing.forEach((item) => {

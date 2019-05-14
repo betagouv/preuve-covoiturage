@@ -103,4 +103,4 @@ router.post('/', can('operator.create'), async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export { router as operatorHttp };

@@ -32,4 +32,4 @@ function paginate(query = {}) {
   return { skip, limit };
 }
 
-module.exports = paginate;
+export default paginate;

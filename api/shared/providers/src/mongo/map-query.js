@@ -27,4 +27,4 @@ function mapQuery(options = {}) {
   return { filter, limit, sort, skip, projection };
 }
 
-module.exports = mapQuery;
+export default mapQuery;

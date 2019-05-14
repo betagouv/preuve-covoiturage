@@ -26,7 +26,7 @@ const DriverSchema = new Schema(Object.assign({}, schema, {
   expense: { type: Number, min: 0, default: 0 },
 }), { _id: false, id: false });
 
-module.exports = {
+export default {
   journey_id: { type: String, trim: true, unique: true },
   operator_journey_id: { type: String, trim: true, index: true },
 

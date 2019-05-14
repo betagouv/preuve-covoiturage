@@ -21,7 +21,7 @@ const cleanUrl = (baseUrl, baseOptions) => (queryString = '', opts = {}) => {
   return normalizeUrl(`${baseUrl || '/'}/${queryString}`);
 };
 
-module.exports = (app, api) => ({
+export default (app, api) => ({
   appUrl: cleanUrl(app, { fallback: api, replace: ['api', 'dashboard'] }),
   apiUrl: cleanUrl(api, { fallback: app, replace: ['dashboard', 'api'] }),
 });

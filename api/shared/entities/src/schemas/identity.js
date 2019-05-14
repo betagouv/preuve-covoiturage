@@ -59,4 +59,4 @@ const IdentitySchema = new Schema(
   { id: false, _id: false },
 );
 
-module.exports = IdentitySchema;
+export default IdentitySchema;

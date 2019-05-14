@@ -40,4 +40,4 @@ emailsQueue.on('failed', (job, err) => {
   Sentry.captureException(err);
 });
 
-module.exports = emailsQueue;
+export default emailsQueue;

@@ -6,7 +6,7 @@ const baseUnits = require('./entities/seeds/incentive-units');
 
 const baseParameters = _.map(baseParametersOriginal, param => _.omit(param, ['getter']));
 
-module.exports = serviceFactory(IncentivePolicy, {
+export default serviceFactory(IncentivePolicy, {
 
   /**
    * map parameters form policies

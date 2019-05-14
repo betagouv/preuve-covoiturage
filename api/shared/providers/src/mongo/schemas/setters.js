@@ -7,7 +7,7 @@ const { electronicFormatIBAN } = require('ibantools');
  * Mongoose setters for the values
  * Runs first, before validators
  */
-module.exports = {
+export default {
   phone(v) {
     const number = phoneUtil.parseAndKeepRawInput(v, v.substr(0, 1) === '+' ? null : 'FR');
 

@@ -5,7 +5,7 @@ const slugify = require('slugify');
 const { modelFactory } = require('@pdc/shared-providers').mongo;
 const SafeJourneySchema = require('../schemas/safe-journey');
 
-module.exports = modelFactory('SafeJourney', {
+export default modelFactory('SafeJourney', {
   schema: SafeJourneySchema,
   pre: {
     save: [

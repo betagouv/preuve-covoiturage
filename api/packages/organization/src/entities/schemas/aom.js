@@ -4,7 +4,7 @@ const { regex } = require('@pdc/shared-providers').mongo.schema;
 
 const { Schema } = mongoose;
 
-const AomSchema = new Schema({
+export const AomSchema = new Schema({
   name: { type: String, trim: true, required: true },
   shortname: { type: String, trim: true, default: '' },
   acronym: {
@@ -70,5 +70,3 @@ const AomSchema = new Schema({
 }, { timestamps: true, id: false });
 
 AomSchema.index({ geometry: '2dsphere' });
-
-module.exports = AomSchema;

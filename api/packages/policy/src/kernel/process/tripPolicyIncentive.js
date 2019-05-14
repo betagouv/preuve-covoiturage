@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const tripStakeholderIncentiveAmount = require('./tripStakeholderIncentiveAmount');
 
-module.exports = function tripPolicyIncentive(
+export default function tripPolicyIncentive(
   {
     campaign,
     policy,

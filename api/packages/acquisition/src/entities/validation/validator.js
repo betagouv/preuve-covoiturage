@@ -92,4 +92,4 @@ const validator = {
   },
 };
 
-module.exports = validator;
+export default validator;

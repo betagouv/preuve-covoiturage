@@ -17,6 +17,6 @@ const onCreate = ({ journey, operator }) => {
   });
 };
 
-module.exports = {
+export default {
   create: onCreate,
 };

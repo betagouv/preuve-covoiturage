@@ -4,7 +4,7 @@ const { Trip } = require('@pdc/service-trip').trip.entities.models;
 const Campaign = require('../entities/models/campaign');
 const processTripCampaign = require('./process/tripCampaign');
 
-module.exports = {
+export default {
   async processTrip(trip, callback) {
     // select campaign then process trip
     const aoms = trip.aom.map(tripAom => ObjectId(tripAom._id));

@@ -1,5 +1,5 @@
 
-module.exports = [
+export default [
   {
     name: 'Incitation financière en euros',
     short_name: 'EUR',

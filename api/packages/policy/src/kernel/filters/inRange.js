@@ -1,4 +1,4 @@
-module.exports = function inRange({ tripStakeholder, range }) {
+export default function inRange({ tripStakeholder, range }) {
   const { min, max } = range;
   let result = true;
 

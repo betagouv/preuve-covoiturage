@@ -39,4 +39,4 @@ journeysQueue.on('failed', (job, err) => {
 });
 
 
-module.exports = journeysQueue;
+export default journeysQueue;

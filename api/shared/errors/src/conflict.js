@@ -5,4 +5,4 @@ const ConflictError = function ConflictError(message = 'Conflict') {
 ConflictError.prototype = new Error();
 ConflictError.prototype.name = 'ConflictError';
 
-module.exports = ConflictError;
+export default ConflictError;

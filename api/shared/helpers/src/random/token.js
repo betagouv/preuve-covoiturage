@@ -1,4 +1,4 @@
-module.exports = function generateToken(length = 32) {
+export default function generateToken(length = 32) {
   let text = '';
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 

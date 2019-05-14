@@ -5,4 +5,4 @@ const UnauthorizedError = function UnauthorizedError(message = 'Unauthorized') {
 UnauthorizedError.prototype = new Error();
 UnauthorizedError.prototype.name = 'UnauthorizedError';
 
-module.exports = UnauthorizedError;
+export default UnauthorizedError;

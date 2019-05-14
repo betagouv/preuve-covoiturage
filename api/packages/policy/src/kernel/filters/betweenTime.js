@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-module.exports = function betweenTime({ tripStakeholder, time }) {
+export default function betweenTime({ tripStakeholder, time }) {
   let result = false;
   const tripStakeholderStart = moment(tripStakeholder.start.datetime);
   const tripStakeholderEnd = moment(tripStakeholder.end.datetime);

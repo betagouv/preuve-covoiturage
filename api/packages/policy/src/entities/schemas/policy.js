@@ -77,4 +77,4 @@ const IncentivePolicySchema = new Schema({
   deletedAt: { type: Date },
 }, { timestamps: true, id: false });
 
-module.exports = IncentivePolicySchema;
+export default IncentivePolicySchema;

@@ -9,7 +9,7 @@ const { isValidIBAN, isValidBIC } = require('ibantools');
  *
  * @url https://mongoosejs.com/docs/validation.html
  */
-module.exports = {
+export default {
   iban: {
     message: p => `${p.value} is not a valid IBAN`,
     validator: v => isValidIBAN(v),

@@ -18,6 +18,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
 
   public async boot() {
     await super.boot();
+    this.getContainer().get(Providers.EnvProvider).loadEnvFile(__dirname);
     this.getContainer().get(Providers.ConfigProvider).loadConfigDirectory(__dirname);
   }
 }

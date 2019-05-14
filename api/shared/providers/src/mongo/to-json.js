@@ -30,4 +30,4 @@ const toJSON = (schema, doc) => {
   return _.pick(doc, picked);
 };
 
-module.exports = toJSON;
+export default toJSON;

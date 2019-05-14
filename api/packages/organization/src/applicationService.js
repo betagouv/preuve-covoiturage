@@ -8,7 +8,7 @@ const config = require('@pdc/shared-config');
 const operatorService = require('./operatorService');
 const Operator = require('./entities/models/Operator');
 
-const applicationService = {
+export const applicationService = {
   async find(op) {
     const operator = await operatorService.findOne(op);
 
@@ -82,5 +82,3 @@ const applicationService = {
     return compare(token, application.token);
   },
 };
-
-module.exports = applicationService;

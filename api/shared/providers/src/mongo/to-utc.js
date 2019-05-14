@@ -7,7 +7,7 @@ const moment = require('moment');
  * @param {Date} input
  * @returns {*}
  */
-module.exports = (input) => {
+export default (input) => {
   const date = moment.utc(input);
   if (!date) return null;
 

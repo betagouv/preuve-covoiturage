@@ -13,4 +13,4 @@ class Kernel extends Parents.Kernel {
   ];  
 }
 
-module.exports = Kernel;
+export default Kernel;

@@ -39,7 +39,7 @@ const config = {
   ],
 };
 
-module.exports = async function seeder(env) {
+export default async function seeder(env) {
   console.log(`Seeding database for '${env}' environment`);
 
   const seeds = config[env] ? config[env] : config.default;

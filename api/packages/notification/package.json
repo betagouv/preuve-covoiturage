@@ -23,6 +23,7 @@
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
     "cli": "cli"
   },
+  "main": "./dist/bootstrap.js",
   "config": {
     "workingDir": "./dist",
     "bootstrap": "./bootstrap.js",

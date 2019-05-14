@@ -31,7 +31,7 @@ const mongoConfig = getMongoConfig(mongoUrl);
  * - JWT secret key
  * - Session secret key
  */
-module.exports = {
+export default {
   environment: process.env,
   PORT: getHttpPost(process.env.PORT),
   mongoDatabase: mongoConfig.database,

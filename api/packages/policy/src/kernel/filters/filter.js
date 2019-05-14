@@ -31,7 +31,7 @@ function generateTripStakeholderFilter(policy) {
   };
 }
 
-module.exports = function filter({ trip, policy }) {
+export default function filter({ trip, policy }) {
   if (!policy.rules) {
     return trip;
   }

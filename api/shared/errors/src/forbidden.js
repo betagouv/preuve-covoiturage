@@ -5,4 +5,4 @@ const ForbiddenError = function ForbiddenError(message = 'Forbidden') {
 ForbiddenError.prototype = new Error();
 ForbiddenError.prototype.name = 'ForbiddenError';
 
-module.exports = ForbiddenError;
+export default ForbiddenError;

@@ -76,4 +76,4 @@ const UserSchema = new Schema({
   deletedAt: { type: Date },
 }, { timestamps: true, id: false });
 
-module.exports = UserSchema;
+export default UserSchema;

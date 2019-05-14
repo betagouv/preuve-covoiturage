@@ -10,7 +10,7 @@ const _ = require('lodash');
  * @param seed
  * @returns {*[]}
  */
-module.exports = (key, value, schema, seed = []) => _.sortBy(
+export default (key, value, schema, seed = []) => _.sortBy(
   _.uniq(
     seed.concat(_.filter(
       _.map(schema, (v, k) => (v[key] === value ? k : null)),

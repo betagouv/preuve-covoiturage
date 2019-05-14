@@ -6,7 +6,7 @@ const { appUrl } = require('@pdc/shared-helpers').url(process.env.APP_URL, proce
 const { environment } = require('@pdc/shared-config');
 const UserSchema = require('../schemas/user');
 
-module.exports = modelFactory('User', {
+export default modelFactory('User', {
   schema: UserSchema,
   methods: {
     async comparePassword(schema, doc, passw) {

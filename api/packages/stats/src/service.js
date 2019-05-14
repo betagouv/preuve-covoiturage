@@ -18,7 +18,7 @@ const mapDayOfWeek = (doc) => {
   return doc;
 };
 
-module.exports = {
+export default {
   async find() {
     return Stat.find({}).exec();
   },

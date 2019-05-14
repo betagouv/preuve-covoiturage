@@ -86,7 +86,7 @@ const onProcessTrip = async (db, job) => {
   return { journey, trip };
 };
 
-module.exports = db => async (job) => {
+export default db => async (job) => {
   let res;
 
   switch (job.data.type) {

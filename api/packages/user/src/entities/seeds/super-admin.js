@@ -22,7 +22,7 @@ const getCredentials = (envName, def = false) => {
   return false;
 };
 
-module.exports = async () => {
+export default async () => {
   const user = await User.findOne({
     group: 'registry',
     role: 'admin',

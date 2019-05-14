@@ -3,7 +3,7 @@ import passport from './passport/passport';
 import queue from './queue/queue';
 import sentry from './sentry/sentry';
 
-export {
+export default {
   mongo,
   passport,
   queue,

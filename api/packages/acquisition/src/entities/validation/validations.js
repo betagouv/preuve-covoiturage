@@ -20,7 +20,7 @@ const strictHas = (obj, path) => _.has(obj, path)
  */
 const geoStrong = (obj, rad) => (strictHas(obj, `${rad}.lat`) && strictHas(obj, `${rad}.lng`)) || strictHas(obj, `${rad}.insee`);
 
-module.exports = {
+export default {
   async hasProofs(journey) {
     const proofs = _.get(journey.toObject(), 'proofs', []);
 

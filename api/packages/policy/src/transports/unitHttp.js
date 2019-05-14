@@ -32,4 +32,4 @@ router.get('/', can('incentive-unit.list'), async (req, res, next) => {
 });
 
 
-module.exports = router;
+export default router;

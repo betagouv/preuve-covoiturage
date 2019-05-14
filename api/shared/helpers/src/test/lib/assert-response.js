@@ -56,7 +56,7 @@ const assertResponse = (response, node, keys = []) => _.forEach(node, (expected,
   keys.pop();
 });
 
-module.exports = (status, body = {}) => (res) => {
+export default (status, body = {}) => (res) => {
   if (_.isObject(status)) body = status;
 
   assertResponse(getResponse(res), body, []);

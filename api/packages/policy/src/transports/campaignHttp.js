@@ -121,4 +121,4 @@ router.post('/simulation', can('incentive-campaign.create'), async (req, res, ne
   }
 });
 
-module.exports = router;
+export default router;

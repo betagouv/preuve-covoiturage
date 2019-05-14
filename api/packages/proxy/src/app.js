@@ -97,4 +97,4 @@ app.use(expressErrorHandler);
 
 // export the http.Server object
 // eslint-disable-next-line no-console
-module.exports = app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+export default app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

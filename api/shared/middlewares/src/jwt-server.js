@@ -21,4 +21,4 @@ const jwtServer = async (req, res, next) => {
   })(req, res, next);
 };
 
-module.exports = jwtServer;
+export default jwtServer;

@@ -126,4 +126,4 @@ router.post('/', can('aom.create'), async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export { router as aomHttp };

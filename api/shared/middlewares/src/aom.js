@@ -24,4 +24,4 @@ const aom = function aom(req, res, next) {
   return next();
 };
 
-module.exports = aom;
+export default aom;

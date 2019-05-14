@@ -1,6 +1,6 @@
 const { modelFactory } = require('@pdc/shared-providers').mongo;
 const TripSchema = require('../schemas/trip');
 
-module.exports = modelFactory('Trip', {
+export default modelFactory('Trip', {
   schema: TripSchema,
 });

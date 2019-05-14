@@ -222,4 +222,4 @@ const journeyService = serviceFactory(Journey, {
   },
 });
 
-module.exports = journeyService;
+export default journeyService;

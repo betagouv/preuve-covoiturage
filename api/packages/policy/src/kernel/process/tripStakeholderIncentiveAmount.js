@@ -1,7 +1,7 @@
 const math = require('mathjs');
 const mapInternalParams = require('../helpers/mapInternalParams');
 
-module.exports = function tripStakeholderIncentiveAmount({
+export default function tripStakeholderIncentiveAmount({
   policy,
   parameters,
   trip,

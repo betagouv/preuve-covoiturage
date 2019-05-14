@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   '32460',
   '51141',
   '77130',

@@ -108,7 +108,7 @@ const findAomFromPosition = async ({ journey, path, position }) => {
   return { journey: jrn, path, position: pos };
 };
 
-module.exports = {
+export default {
   pathToPosition,
   findTown,
   findTownByInsee,
