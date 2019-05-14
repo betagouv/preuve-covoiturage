@@ -9,7 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
-import { Sentry } from '@pdc/provider-sentry';
+import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 
 import { Kernel, Interfaces, Providers, bootstrap } from './bridge';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
@@ -55,6 +55,7 @@ export class App {
   }
   
   private registerBeforeAllHandlers() {
+    this.kernel.getContainer().get(SentryProvider);
     this.app.use(Sentry.Handlers.requestHandler());
   }
   

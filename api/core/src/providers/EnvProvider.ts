@@ -35,7 +35,7 @@ export class EnvProvider implements ProviderInterface {
       return;
     }
     const result = dotenv.config({ path: envPath });
-  
+
     if (!result.error) {
       Reflect.ownKeys(result.parsed).forEach((key: string) => {
         if (this.env.has(key)) {

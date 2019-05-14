@@ -9,6 +9,8 @@
     "noStrictGenericChecks": true,
     "resolveJsonModule": true,
     "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {

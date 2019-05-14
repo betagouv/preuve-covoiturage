@@ -1,17 +1,16 @@
-import { Container, Providers } from '@pdc/core';
+import { Container, Providers, Interfaces } from '@pdc/core';
 import { Sentry } from './Sentry';
 
-Container.provider()
-export class SentryProvider {
+@Container.provider()
+export class SentryProvider implements Interfaces.ProviderInterface {
   constructor(
     protected config: Providers.ConfigProvider,
-    protected env: Providers.EnvProvider,
   ) {}
 
   boot() {
     const sentryDSN = this.config.get('sentry.dsn');
-    const env = this.env.get('SENTRY_ENV', this.env.get('APP_ENV'));
-    const version = '0.0.1';
+    const env = this.config.get('sentry.environment');
+    const version = this.config.get('sentry.version');
 
     Sentry.init({
       dsn: sentryDSN,
