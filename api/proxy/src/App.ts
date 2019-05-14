@@ -20,6 +20,7 @@ export class App {
   app: express.Express;
   kernel: Interfaces.KernelInterface;
   config: Providers.ConfigProvider;
+  env: Providers.EnvProvider;
   port: string;
 
   constructor() {
@@ -38,7 +39,11 @@ export class App {
     this.registerSwagger();
     this.registerBullArena();
     this.registerRoutes();
-    this.registerCallHandler();
+
+    if (this.env.get('APP_ENV') === 'dev') {
+      this.registerCallHandler();
+    }
+      
     this.registerAfterAllHandlers();
     this.start();
   }
@@ -51,6 +56,7 @@ export class App {
     bootstrap.setEnvironment();
     await this.kernel.boot();
     this.config = this.kernel.getContainer().get(Providers.ConfigProvider)
+    this.env = this.kernel.getContainer().get(Providers.EnvProvider)
     this.app.locals.kernel = this.kernel;
   }
   
@@ -122,6 +128,24 @@ export class App {
 
   private registerCallHandler() {
     const endpoint = this.config.get('proxy.rpcEndpoint', '/rpc');
+    this.app.get(endpoint, asyncHandler(async (req, res, next) => {
+      const response = await this.kernel
+        .getContainer()
+        .getHandlers()
+        .map(def => ({
+          service: def.service,
+          method: def.method,
+        }))
+        .reduce((acc, { service, method }) => {
+          if (!(service in acc)) {
+            acc[service] = [];
+          }
+          acc[service].push(method);
+          return acc;
+        }, {});
+      res.json(response);
+    }));
+
     this.app.post(endpoint, asyncHandler(async (req, res, next) => {
       const response = await this.kernel.handle(req.body);
       res.json(response);
