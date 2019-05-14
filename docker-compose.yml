@@ -18,7 +18,7 @@ services:
       - back
 
   redis:
-    image: 'redis:4'
+    image: 'redis:5'
     cpu_count: 1
     cpu_percent: 50
     mem_limit: 256M
