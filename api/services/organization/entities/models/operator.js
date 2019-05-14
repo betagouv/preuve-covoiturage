@@ -12,8 +12,8 @@ module.exports = modelFactory('Operator', {
       d.authorisations = d.authorisations.filter(a => coll.indexOf(a.coll) === -1);
 
       // apply given authorisations
-      authList.forEach(({ collec, orgId }) => {
-        d.authorisations.push({ collec, _id: orgId });
+      authList.forEach(({ coll: collec, orgId }) => {
+        d.authorisations.push({ coll: collec, _id: orgId });
       });
 
       return d;
