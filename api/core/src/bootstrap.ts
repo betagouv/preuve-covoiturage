@@ -29,7 +29,7 @@ export function setEnvironment():void {
     }
   });
 
-  process.env.APP_ENV = process.env.NODE_ENV;
+  process.env.APP_ENV = ('NODE_ENV' in process.env && process.env.NODE_ENV !== undefined) ? process.env.NODE_ENV : 'dev';
 }
 
 export function getBootstrapFile():string {
