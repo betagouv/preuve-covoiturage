@@ -45,12 +45,6 @@ module.exports = {
         { _id: orgList.map(ObjectId) },
         { $push: { authorised: { coll: 'operators', _id: ObjectId(id) } } },
       ).exec();
-      //   const updateAomPromises = [];
-      // aomList.forEach((aom) => {
-      //   aom.pushAuthorised({ coll: 'operators', id: ObjectId(id) });
-      //   updateAomPromises.push(aom.save());
-      // });
-      // await Promise.all(updateAomPromises);
     }
 
     // update operator with org IDs
