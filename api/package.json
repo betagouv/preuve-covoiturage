@@ -8,6 +8,10 @@
     "Nicolas Mérigot <nicolas.merigot@beta.gouv.fr>",
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
+  "scripts": {
+    "watch": "lerna run --parallel watch",
+    "build": "lerna run build"
+  },
   "keywords": [
     "betagouv",
     "covoiturage",
@@ -24,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/betagouv/preuve-covoiturage/issues"
   },
-  "homepage": "https://github.com/betagouv/preuve-covoiturage#readme"
+  "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
+  "devDependencies": {
+    "lerna": "^3.13.4"
+  }
 }
