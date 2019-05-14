@@ -128,7 +128,7 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
       if (aomLean && aomLean.authorised) {
         authorizedOps = aomLean.authorised
           .filter(o => o.coll === 'operators')
-          .map(o => (o && o._id) ? o._id.toString() : null)
+          .map(o => ((o && o._id) ? o._id.toString() : null))
           .filter(o => !!o);
 
         const filteredOps = (req.query['operator._id'] || '')
