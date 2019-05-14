@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
   mongo:
     image: "mongo:4.0"
@@ -10,12 +10,14 @@ services:
       MONGO_INITDB_DATABASE: "pdc-local"
     volumes:
       - ./db/mongo:/data/db
+    mem_limit: 256M
     networks:
       - front
       - back
 
   redis:
     image: "redis:4"
+    mem_limit: 256M
     networks:
       - back
 
@@ -35,6 +37,7 @@ services:
       APP_URL: 'http://localhost:4200'
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin1234
+    mem_limit: 256M
     networks:
       - front
       - api
@@ -55,6 +58,7 @@ services:
     environment:
       CONFIG_DIR: '/code/config'
       MQ_WORKER: 'true'
+    mem_limit: 256M
     networks:
       - front
       - api
@@ -78,10 +82,10 @@ services:
     depends_on:
       - api
 
-  editor:
-    image: "swaggerapi/swagger-editor"
-    ports:
-      - 8081:8080
+#  editor:
+#    image: "swaggerapi/swagger-editor"
+#    ports:
+#      - 8081:8080
 
 networks:
   front:
