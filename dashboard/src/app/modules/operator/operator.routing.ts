@@ -5,6 +5,7 @@ import { OperatorListComponent } from './pages/list/component';
 import { OperatorSettingsComponent } from './pages/settings/component';
 import { OperatorJourneyImportComponent } from './pages/journeyImport/component';
 import { OperatorTokenPageComponent } from './pages/token/component';
+import { OperatorAomVisibilityComponent } from './pages/aomVisibility/component';
 
 const routes: Routes = [
   {
@@ -18,25 +19,24 @@ const routes: Routes = [
     data: { groups: ['operators'] },
   },
   {
-    path : 'settings',
+    path: 'settings',
     component: OperatorSettingsComponent,
     data: { groups: ['operators'] },
   },
   {
-    path : 'journey-import',
+    path: 'journey-import',
     component: OperatorJourneyImportComponent,
     data: { groups: ['operators'] },
   },
-
+  {
+    path: 'aom-visibility',
+    component: OperatorAomVisibilityComponent,
+    data: { groups: ['operators'] },
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [
-    RouterModule,
-  ],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-
-export class OperatorRoutingModule { }
+export class OperatorRoutingModule {}

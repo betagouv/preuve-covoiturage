@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongoose').Types;
 const Aom = require('../entities/models/aom');
+const User = require('../../user/entities/models/user');
 
 module.exports = {
   async addUser(id, userId) {
