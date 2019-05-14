@@ -18,46 +18,11 @@
     "core",
     "proxy",
     "providers/*",
-    "shared/*",
-    "modules/*",
-    "packages/*"
+    "services/*"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/betagouv/preuve-covoiturage/issues"
   },
-  "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
-  "scripts": {
-    "start": "yarn workspace @pdc/proxy start",
-    "start-dev": "yarn workspace @pdc/proxy start-dev",
-    "worker": "yarn workspace @pdc/proxy worker",
-    "worker-dev": "yarn workspace @pdc/proxy worker-dev",
-    "seed": "yarn workspace @pdc/proxy seed",
-    "migrate": "yarn workspace @pdc/proxy migrate",
-    "process": "yarn workspace @pdc/proxy process",
-    "process-trip": "yarn workspace @pdc/proxy process-trip",
-    "fix-permissions": "yarn workspace @pdc/proxy fix-permissions",
-    "build": "yarn workspaces run build",
-    "lint": "yarn workspaces run lint",
-    "test": "NODE_ENV=test yarn workspaces run test"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "dependencies": {
-    "@pdc/package-geo": "0.0.1",
-    "@pdc/proxy": "0.0.1",
-    "@pdc/service-acquisition": "0.0.1",
-    "@pdc/service-trip": "0.0.1"
-  },
-  "devDependencies": {
-    "tslint": "^5.16.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-eslint-rules": "^5.4.0",
-    "tslint-import-group-ordering": "^2.1.1",
-    "typescript": "^3.4.5"
-  }
+  "homepage": "https://github.com/betagouv/preuve-covoiturage#readme"
 }
