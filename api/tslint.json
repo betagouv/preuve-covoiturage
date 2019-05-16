@@ -166,6 +166,11 @@
             "imports-group": "common"
           },
           {
+            "type": "peerDependencies",
+            "matches": "^[A-Za-z@]",
+            "imports-group": "dependencies"
+          },
+          {
             "type": "dependencies",
             "imports-group": "dependencies",
             "from-package.json": true

@@ -3,5 +3,6 @@ data-dumps
 dist
 .idea
 .env
-
+coverage
+.nyc_output
 yarn-error.log
