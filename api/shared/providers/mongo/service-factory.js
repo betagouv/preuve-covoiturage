@@ -17,7 +17,10 @@ module.exports = (Model, methods) => _.assign(
         .select(projection)
         .exec();
 
-      const docCount = await Model.countDocuments(filter);
+      // do not use collection.countDocument({}) which is slow and doesn't use indexes
+      const docCount = await Model.find(filter)
+        .count()
+        .exec();
 
       return {
         data,
