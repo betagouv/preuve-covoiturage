@@ -2,6 +2,8 @@ import { Interfaces, Providers, Container } from '@pdc/core';
 import { ParentRepositoryProvider } from '@pdc/provider-repository';
 import { JsonSchemaProvider } from '@pdc/provider-jsonschema';
 import { MongoProvider } from '@pdc/provider-mongo';
+import { userSchema } from '../entities/userSchema';
+import { User } from '../entities/User';
 
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider {
@@ -21,21 +23,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider {
   }
 
   public getSchema(): object | null {
-    return {
-      $id: 'user',
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-        },
-        age: {
-          type: 'integer',
-          minimum: 0,
-          default: 18,
-        },
-      },
-      required: ['name'],
-    };
+   return userSchema;
   }
 
   public getModel() {

@@ -14,11 +14,11 @@ export const userSchema = {
     },
     lastname: {
       type: 'string',
-      // trim: true,
+      maxlength: 128,
     },
     firstname: {
       type: 'string',
-      // trim: true,
+      maxlength: 128,
     },
     phone: {
       type: 'string',
