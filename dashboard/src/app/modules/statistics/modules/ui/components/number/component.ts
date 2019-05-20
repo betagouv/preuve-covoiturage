@@ -5,7 +5,6 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class StatisticsNumberComponent {
   @Input() number;
   @Input() unit;

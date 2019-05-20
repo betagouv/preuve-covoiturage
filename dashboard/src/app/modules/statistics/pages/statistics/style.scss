@@ -1,4 +1,4 @@
-@import "~src/assets/scss/variables";
+@import '~src/assets/scss/variables';
 
 .absolute-center {
   position: absolute;
@@ -17,3 +17,43 @@
   color: #c8c8c8;
 }
 
+.padding-fat-bottom {
+  padding-bottom: 5em;
+}
+
+.stats--cards-wrapper {
+  margin: 0 auto;
+  width: 640px;
+  max-width: 100%;
+  .stats--card {
+    padding: 1em;
+    .ui-card-body {
+      padding: 2em 1em 1em;
+    }
+    &.stats--card-first {
+      .ui-card-body {
+        padding: 3em 1em 2em;
+      }
+      .stats--card-value {
+        font-size: 3.2em;
+      }
+    }
+    .stats--card-icon {
+      display: block;
+      margin: 0 auto;
+      max-height: 64px;
+    }
+    .stats--card-title {
+      margin: 1em 0 0.2em;
+      font-size: 1.2em;
+      color: #aaa;
+      text-align: center;
+    }
+    .stats--card-value {
+      text-align: center;
+      font-size: 2.2em;
+      font-weight: bold;
+      color: $primary;
+    }
+  }
+}

@@ -4,8 +4,8 @@ import { ApiService } from '~/shared/services/apiService';
 import { Statistic } from '~/entities/database/statistics';
 
 @Injectable()
-export class StatisticsService extends ApiService{
-  public endPoint = '/stats';
+export class StatisticsService extends ApiService {
+  public endPoint = '/stats/test';
 
   getDataFromPathString(str, apiData): [Statistic] {
     const path = str.split('.');
@@ -24,7 +24,9 @@ export class StatisticsService extends ApiService{
     if (transformation) {
       retValue = this.transformUnit(retValue, transformation);
     }
-    return (precision !== null) ? retValue.toFixed(precision) : Math.floor(retValue);
+    return precision !== null
+      ? retValue.toFixed(precision)
+      : Math.floor(retValue);
   }
 
   transformUnit(value, transformation) {
@@ -32,9 +34,9 @@ export class StatisticsService extends ApiService{
     const type = transformation.split('')[0];
     const num = Number(transformation.substring(1));
     switch (type) {
-      case '/' :
+      case '/':
         return value / num;
-      case '*' :
+      case '*':
         return value * num;
     }
   }

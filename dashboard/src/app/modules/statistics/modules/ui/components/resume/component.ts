@@ -11,7 +11,6 @@ import { StatisticsService } from '../../../../services/statisticsService';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class StatisticsResumeComponent implements OnInit {
   data = [];
 
@@ -23,16 +22,16 @@ export class StatisticsResumeComponent implements OnInit {
     { label: 'Par jour', value: false },
   ];
 
-  constructor(private statisticsService: StatisticsService) {
-  }
+  constructor(private statisticsService: StatisticsService) {}
 
   ngOnInit(): void {
     this.loadResumeGraphs();
   }
 
-
   private loadResumeGraphs() {
-    const stats = STAT_STYLE.resume.filter(statConfig => this.statNames.indexOf(statConfig.name) !== -1);
+    const stats = STAT_STYLE.resume.filter(
+      (statConfig) => this.statNames.indexOf(statConfig.name) !== -1,
+    );
     for (const obj of stats) {
       if (obj.name === 'aomTotal') {
         this.loadAomResumeGraph(obj);
@@ -42,10 +41,12 @@ export class StatisticsResumeComponent implements OnInit {
     }
   }
 
-
   private loadDefaultResumeGraph(config: StatConfig) {
     // get path to map api values
-    const data = this.statisticsService.getDataFromPathString(config.map, this.apiData);
+    const data = this.statisticsService.getDataFromPathString(
+      config.map,
+      this.apiData,
+    );
     const values = this.getValues(data, config);
     const lastValue = values[values.length - 1];
     const graphData = {
@@ -57,7 +58,7 @@ export class StatisticsResumeComponent implements OnInit {
       unit: config.unit || '',
       datasets: [
         {
-          ...config.style || {},
+          ...(config.style || {}),
           data: values,
         },
       ],
@@ -65,7 +66,6 @@ export class StatisticsResumeComponent implements OnInit {
 
     this.data.push(graphData);
   }
-
 
   private loadAomResumeGraph(config) {
     const graphData = {
@@ -81,6 +81,12 @@ export class StatisticsResumeComponent implements OnInit {
   }
 
   private getValues(values, config) {
-    return values.map(value => this.statisticsService.formatUnit(value.total, config.unitTransformation, config.precision));
+    return values.map((value) =>
+      this.statisticsService.formatUnit(
+        value.total,
+        config.unitTransformation,
+        config.precision,
+      ),
+    );
   }
 }

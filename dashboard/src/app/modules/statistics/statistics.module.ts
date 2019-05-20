@@ -1,10 +1,10 @@
 /* Angular imports */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 /* External modules */
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CardModule } from 'primeng/card';
 
 /* Local modules */
 import { StatisticsRoutingModule } from './statistics.routing';
@@ -23,6 +23,7 @@ import { StatisticsHeaderComponent } from './layout/components/header/component'
   imports: [
     StatisticsRoutingModule,
     CommonModule,
+    CardModule,
     ProgressSpinnerModule,
     StatisticsUIModule,
   ],
