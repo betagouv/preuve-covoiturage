@@ -17,7 +17,7 @@ import { provider } from '../container';
 @provider()
 export class ConfigProvider implements ProviderInterface {
   readonly signature: string = 'config';
-  private config: object = {};
+  protected config: object = {};
   private configPaths: Set<string> = new Set();
   constructor(protected env: EnvProvider) {}
 

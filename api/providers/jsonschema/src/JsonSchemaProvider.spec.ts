@@ -92,4 +92,40 @@ describe('Json Schema provider', () => {
     const result = await provider.validate((new FakeObject({ hello: { world: '!!!' } })));
     expect(result).to.equal(true);
   });
+
+  it('should work with inherance', async () => {
+    class FakeObjectExtended extends FakeObject {}
+
+    const schema = {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      $id: 'myschema',
+      type: 'object',
+      properties: {
+        hello: {
+          type: 'boolean',
+        },
+      },
+      required: ['hello'],
+    };
+
+    const schemaExtended = {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      $id: 'myschema.extended',
+      type: 'object',
+      properties: {
+        hello: {
+          type: 'string',
+        },
+      },
+      required: ['hello'],
+    };
+
+    provider.addSchema(schema, FakeObject);
+    provider.addSchema(schemaExtended, FakeObjectExtended);
+
+    const resultExtended = await provider.validate(new FakeObjectExtended({ hello: 'world' }));
+    expect(resultExtended).to.equal(true);
+    const result = await provider.validate(new FakeObject({ hello: true }));
+    expect(result).to.equal(true);
+  });
 });

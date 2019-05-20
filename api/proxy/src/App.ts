@@ -40,7 +40,7 @@ export class App {
     this.registerBullArena();
     this.registerRoutes();
 
-    if (this.env.get('APP_ENV') === 'dev') {
+    if (this.env.get('APP_ENV') !== 'production') {
       this.registerCallHandler();
     }
       
