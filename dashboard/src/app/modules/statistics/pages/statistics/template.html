@@ -86,13 +86,35 @@
 
   <h3 class="subtitle has-text-centered">Détails</h3>
 
-  <div class="p-grid p-justify-center">
-    <!-- <div class="p-col-12 p-md-6">
-      <app-statistics-graphs
-        [apiData]="apiData"
-        [statNames]="statList.graphs"
-      ></app-statistics-graphs>
-    </div> -->
+  <div class="p-grid p-justify-center stats--cards-wrapper">
+    <!-- Trajets covoiturés -->
+    <div class="p-col-12 stats--card">
+      <p-card>
+        <div class="graph--toggle">
+          <span class="graph--toggle-label">{{
+            toggle.journeysPerDaySwitch ? 'cumulé' : 'par jour'
+          }}</span>
+          <p-inputSwitch
+            (onChange)="handleChange($event, 'journeysPerDaySwitch')"
+          ></p-inputSwitch>
+        </div>
+
+        <h2 class="graph--toggle-title">Trajets covoiturés</h2>
+
+        <p-chart
+          *ngIf="toggle.journeysPerDaySwitch"
+          [type]="'line'"
+          [data]="data.graphs.journeysPerDay"
+          [options]="graphLineOptions"
+        ></p-chart>
+        <p-chart
+          *ngIf="!toggle.journeysPerDaySwitch"
+          [type]="'line'"
+          [data]="data.graphs.journeysPerDayTotal"
+          [options]="graphLineOptions"
+        ></p-chart>
+      </p-card>
+    </div>
   </div>
 
   <h4 class="subtitle has-text-centered">Calculs</h4>

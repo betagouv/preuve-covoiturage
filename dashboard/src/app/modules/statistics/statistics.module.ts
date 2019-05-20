@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 /* External modules */
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CardModule } from 'primeng/card';
+import { ChartModule } from 'primeng/chart';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 /* Local modules */
 import { StatisticsRoutingModule } from './statistics.routing';
@@ -24,17 +26,13 @@ import { StatisticsHeaderComponent } from './layout/components/header/component'
     StatisticsRoutingModule,
     CommonModule,
     CardModule,
+    ChartModule,
+    InputSwitchModule,
     ProgressSpinnerModule,
     StatisticsUIModule,
   ],
-  providers: [
-    StatisticsService,
-  ],
-  declarations: [
-    StatisticsPageComponent,
-    StatisticsHeaderComponent,
-  ],
+  providers: [StatisticsService],
+  declarations: [StatisticsPageComponent, StatisticsHeaderComponent],
   exports: [],
 })
-export class StatisticsModule {
-}
+export class StatisticsModule {}

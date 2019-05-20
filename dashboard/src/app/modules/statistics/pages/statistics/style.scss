@@ -57,3 +57,17 @@
     }
   }
 }
+
+.graph--toggle {
+  float: right;
+  margin-right: 0.8em;
+  .graph--toggle-label {
+    line-height: 35px;
+    vertical-align: bottom;
+    margin: 0 5px;
+  }
+}
+.graph--toggle-title {
+  margin-top: 0;
+  margin-bottom: 2em;
+}
