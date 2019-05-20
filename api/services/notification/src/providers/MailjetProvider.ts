@@ -1,10 +1,11 @@
-import { Interfaces, Providers, Container } from '@pdc/core';
+import { Providers, Container } from '@pdc/core';
+import { MailProviderInterface } from '../interfaces/MailProviderInterface';
 import nodeMailjet from 'node-mailjet';
 
 import { MailInterface } from '../interfaces/MailInterface';
 
 @Container.provider()
-export class MailjetProvider implements Interfaces.ProviderInterface {
+export class MailjetProvider implements MailProviderInterface {
   protected mj;
   protected config;
 

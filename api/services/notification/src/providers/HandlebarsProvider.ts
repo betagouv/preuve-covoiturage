@@ -1,10 +1,11 @@
-import { Interfaces, Providers, Container } from '@pdc/core';
+import { Providers, Container } from '@pdc/core';
 import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars';
+import { TemplateProviderInterface } from '../interfaces/TemplateProviderInterface';
 
 @Container.provider()
-export class HandlebarsProvider implements Interfaces.ProviderInterface {
+export class HandlebarsProvider implements TemplateProviderInterface {
   protected templates: Map<string, Function> = new Map();
   protected metadata: Map<string, any> = new Map();
 

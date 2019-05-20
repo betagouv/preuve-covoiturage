@@ -80,7 +80,7 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
   public register(module: ContainerModuleConfigurator):void {
     this.alias.forEach((def) => {
       if (Array.isArray(def)) {
-        const [target, alias] = def;
+        const [alias, target] = def;
         module.bind(alias).to(target);
       } else {
         module.bind(def).toSelf();
