@@ -1,4 +1,4 @@
-const CACHE_DURATION_HOURS = 24;
+const CACHE_DURATION_HOURS = 1;
 
 module.exports = (mongo, bus, processors) => async (key, args = {}) => {
   const { db } = mongo;

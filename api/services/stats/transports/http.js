@@ -4,17 +4,27 @@ const statService = require('../service');
 const bus = require('./bus');
 
 const { journeysCollectedAllTimes } = require('../calculators/journeys-all-times');
-const { journeysCollectedPerMonth } = require('../calculators/journeys-per-month');
-const { journeysCollectedPerWeek } = require('../calculators/journeys-per-week');
+// const { journeysCollectedPerMonth } = require('../calculators/journeys-per-month');
+// const { journeysCollectedPerWeek } = require('../calculators/journeys-per-week');
 const { journeysCollectedPerDay } = require('../calculators/journeys-per-day');
-const { journeysCollectedPerDayOfWeek } = require('../calculators/journeys-per-day-of-week');
+// const { journeysCollectedPerDayOfWeek } = require('../calculators/journeys-per-day-of-week');
+
+const { distanceAllTimes } = require('../calculators/distance-all-times');
+const { distancePerDay } = require('../calculators/distance-per-day');
+
+const { durationAllTimes } = require('../calculators/duration-all-times');
+const { durationPerDay } = require('../calculators/duration-per-day');
 
 const calculator = require('../calculator')(mongoConnection, bus, {
   journeysCollectedAllTimes,
-  journeysCollectedPerMonth,
-  journeysCollectedPerWeek,
+  // journeysCollectedPerMonth,
+  // journeysCollectedPerWeek,
   journeysCollectedPerDay,
-  journeysCollectedPerDayOfWeek,
+  // journeysCollectedPerDayOfWeek,
+  distanceAllTimes,
+  distancePerDay,
+  durationAllTimes,
+  durationPerDay,
 });
 
 router.get('/test', async (req, res, next) => {
@@ -22,10 +32,18 @@ router.get('/test', async (req, res, next) => {
     res.json({
       collected: {
         total: await calculator('journeysCollectedAllTimes'),
-        month: await calculator('journeysCollectedPerMonth'),
-        week: await calculator('journeysCollectedPerWeek'),
+        // month: await calculator('journeysCollectedPerMonth'),
+        // week: await calculator('journeysCollectedPerWeek'),
         day: await calculator('journeysCollectedPerDay'),
-        dayOfWeek: await calculator('journeysCollectedPerDayOfWeek'),
+        // dayOfWeek: await calculator('journeysCollectedPerDayOfWeek'),
+      },
+      distance: {
+        total: await calculator('distanceAllTimes'),
+        day: await calculator('distancePerDay'),
+      },
+      duration: {
+        total: await calculator('durationAllTimes'),
+        day: await calculator('durationPerDay'),
       },
     });
   } catch (e) {
