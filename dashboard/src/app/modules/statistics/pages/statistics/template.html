@@ -92,7 +92,7 @@
       <p-card>
         <div class="graph--toggle">
           <span class="graph--toggle-label">{{
-            toggle.journeysPerDaySwitch ? 'cumulé' : 'par jour'
+            toggle.journeysPerDaySwitch ? 'par jour' : 'cumulé'
           }}</span>
           <p-inputSwitch
             (onChange)="handleChange($event, 'journeysPerDaySwitch')"
@@ -111,6 +111,35 @@
           *ngIf="!toggle.journeysPerDaySwitch"
           [type]="'line'"
           [data]="data.graphs.journeysPerDayTotal"
+          [options]="graphLineOptions"
+        ></p-chart>
+      </p-card>
+    </div>
+
+    <!-- Distance parcourue -->
+    <div class="p-col-12 stats--card">
+      <p-card>
+        <div class="graph--toggle">
+          <span class="graph--toggle-label">{{
+            toggle.distancePerDaySwitch ? 'par jour' : 'cumulée'
+          }}</span>
+          <p-inputSwitch
+            (onChange)="handleChange($event, 'distancePerDaySwitch')"
+          ></p-inputSwitch>
+        </div>
+
+        <h2 class="graph--toggle-title">Distance parcourue</h2>
+
+        <p-chart
+          *ngIf="toggle.distancePerDaySwitch"
+          [type]="'line'"
+          [data]="data.graphs.distancePerDay"
+          [options]="graphLineOptions"
+        ></p-chart>
+        <p-chart
+          *ngIf="!toggle.distancePerDaySwitch"
+          [type]="'line'"
+          [data]="data.graphs.distancePerDayTotal"
           [options]="graphLineOptions"
         ></p-chart>
       </p-card>

@@ -73,6 +73,31 @@ export class StatisticsPageComponent implements OnInit {
               },
             ],
           },
+          distancePerDay: {
+            labels: data.distance.day.map(this.mapDateLabels),
+            datasets: [
+              {
+                label: 'Distance par jour',
+                data: data.distance.day.map((i) => i.total / 1000 | 0),
+                backgroundColor: '#42A5F588',
+                borderColor: '#1E88E5',
+              },
+            ],
+          },
+          distancePerDayTotal: {
+            labels: data.distance.day.map(this.mapDateLabels),
+            datasets: [
+              {
+                label: 'Distance cumulée',
+                data: data.distance.day.reduce(this.reduceCumulativeData, []).map(i => {
+                  i.y = i.y / 1000 | 0;
+                  return i;
+                }),
+                backgroundColor: '#42A5F588',
+                borderColor: '#1E88E5',
+              },
+            ],
+          },
         },
       };
     });
