@@ -9,7 +9,7 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
-    "watch": "lerna run --parallel watch",
+    "watch": "lerna run --parallel watch-ts",
     "build": "lerna run build"
   },
   "keywords": [

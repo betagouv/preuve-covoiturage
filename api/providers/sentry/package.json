@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc -w",
+    "watch-ts": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
     "test": "mocha src/**/*.spec.ts"
   },

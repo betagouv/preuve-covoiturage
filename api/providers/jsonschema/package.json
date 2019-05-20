@@ -7,9 +7,9 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc -w",
+    "watch-ts": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts tests/**/*.spec.ts",
+    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts",
     "test": "mocha src/**/*.spec.ts"
   },
   "mocha": {
