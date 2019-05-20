@@ -1,37 +1,21 @@
 import { NgModule } from '@angular/core';
-import { ChartModule } from 'primeng/chart';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { FormsModule } from '@angular/forms';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { ChartModule } from 'primeng/chart';
 
-import { StatisticsResumeComponent } from './components/resume/component';
-import { StatisticsGraphsComponent } from './components/graphs/component';
-import { StatisticsNumberComponent } from './components/number/component';
-import { StatisticsService } from '../../services/statisticsService';
+import { StatisticsContentComponent } from './stats/component';
 
 @NgModule({
   imports: [
     CommonModule,
-    ChartModule,
     CardModule,
-    SelectButtonModule,
-    FormsModule,
+    ChartModule,
+    InputSwitchModule,
+    ProgressSpinnerModule,
   ],
-  providers: [
-    StatisticsService,
-  ],
-  declarations: [
-    StatisticsResumeComponent,
-    StatisticsGraphsComponent,
-    StatisticsNumberComponent,
-  ],
-  exports: [
-    StatisticsResumeComponent,
-    StatisticsGraphsComponent,
-    StatisticsNumberComponent,
-  ],
+  declarations: [StatisticsContentComponent],
+  exports: [StatisticsContentComponent],
 })
-
-export class StatisticsUIModule {
-}
+export class StatisticsUIModule {}

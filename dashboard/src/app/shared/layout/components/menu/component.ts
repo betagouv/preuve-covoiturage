@@ -38,7 +38,7 @@ export class MenuComponent implements OnInit {
             visible: this.hasAnyGroup(['registry']),
           },
           {
-            label: 'Statistiques', icon: 'pi pi-fw pi-chart-bar', routerLink: '/dashboard/aoms/statistics', routerLinkActive: 'is-active',
+            label: 'Statistiques', icon: 'pi pi-fw pi-chart-bar', routerLink: '/dashboard/aoms/stats', routerLinkActive: 'is-active',
             visible: this.hasAnyGroup(['aom']),
           },
         ],

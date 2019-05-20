@@ -18,7 +18,7 @@ const routes: Routes = [
     data: { groups: ['aom'] },
   },
   {
-    path : 'statistics',
+    path : 'stats',
     component: AomStatisticsComponent,
     data: { groups: ['aom'] },
   },

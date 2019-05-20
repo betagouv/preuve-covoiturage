@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const statService = require('@pdc/service-stats/service');
 const can = require('@pdc/shared/middlewares/can');
+const { getStats } = require('@pdc/service-stats/service');
 const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
 const aomService = require('../aom');
 
@@ -42,22 +42,7 @@ router.get('/:id/users', can('aom.users.list'), async (req, res, next) => {
  */
 router.get('/:id/stats', can('aom.stats'), async (req, res, next) => {
   try {
-    res.json({
-      collected: await statService.journeysCollected(req.params.id),
-      distance: await statService.distance(req.params.id),
-      duration: await statService.duration(req.params.id),
-      classes: {
-        a: await statService.class('A', req.params.id),
-        b: await statService.class('B', req.params.id),
-        c: await statService.class('C', req.params.id),
-      },
-      unvalidated: {
-        total: [],
-        month: [],
-        day: [],
-      },
-
-    });
+    res.json(await getStats({ aom: req.params.id }));
   } catch (e) {
     next(e);
   }
@@ -92,7 +77,7 @@ router.delete('/:id', can('aom.delete'), async (req, res, next) => {
   try {
     res.json({
       id: req.params.id,
-      deleted: !!await aomService.delete(req.params.id),
+      deleted: !!(await aomService.delete(req.params.id)),
     });
   } catch (e) {
     next(e);
