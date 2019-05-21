@@ -1,11 +1,12 @@
 import { Parents, Providers, Interfaces } from '@pdc/core';
 
 import { CreateUserAction } from './actions/CreateUserAction';
+import { UserRepositoryProviderInterfaceResolver } from './interfaces/UserRepositoryProviderInterface';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
-    UserRepositoryProvider,
+    [UserRepositoryProviderInterfaceResolver, UserRepositoryProvider],
   ];
 
   handlers = [
