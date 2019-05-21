@@ -13,6 +13,7 @@ export class CreateUserAction extends Parents.Action {
     super();
   }
 
+  // todo: fix all comments
   public async handle(request: User, context: { invite: boolean, connectedUser: User }): Promise<void> {
     /*
     // check if the user exists already
@@ -22,7 +23,7 @@ export class CreateUserAction extends Parents.Action {
 */
 
     if (request.operator && request.aom) {
-      throw new Error('Cannot assign operator and AOM at the same time');
+      // throw new BadRequestError('Cannot assign operator and AOM at the same time');
     }
 
     if (!context.invite) context.invite = false;
@@ -73,5 +74,30 @@ export class CreateUserAction extends Parents.Action {
         organisation: payload.organisation,
       },
     });
+  }
+
+  private async forgottenPassword({ email, invite }, userCache = null) {
+    // search for user
+    const user = userCache || (await User.findOne({ email }).exec());
+    if (!user) {
+      // throw new NotFoundError();
+    }
+
+    // const reset = generateToken(12);
+    // const token = generateToken();
+
+    // user.forgottenReset = reset;
+    // user.forgottenToken = token;
+    user.forgottenAt = new Date();
+    await user.save();
+
+    // send the email
+    if (invite) {
+      // user.invite(reset, token, invite.requester, invite.organisation);
+    } else {
+      // user.forgotten(reset, token);
+    }
+
+    return user;
   }
 }
