@@ -127,7 +127,7 @@ export class CreateUserAction extends Parents.Action {
     return updatedUser;
   }
 
-  private async forgottenPassword({ email, invite }, userCache = null) {
+  private async forgottenPassword({ email }, userCache = null) {
     // search for user
     const user = userCache || (await User.findOne({ email }).exec());
     if (!user) {
@@ -143,11 +143,8 @@ export class CreateUserAction extends Parents.Action {
     await user.save();
 
     // send the email
-    if (invite) {
-      // user.invite(reset, token, invite.requester, invite.organisation);
-    } else {
-      // user.forgotten(reset, token);
-    }
+    // user.forgotten(reset, token);
+
 
     return user;
   }
