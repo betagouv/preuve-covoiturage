@@ -126,4 +126,29 @@ export class CreateUserAction extends Parents.Action {
 
     return updatedUser;
   }
+
+  private async forgottenPassword({ email, invite }, userCache = null) {
+    // search for user
+    const user = userCache || (await User.findOne({ email }).exec());
+    if (!user) {
+      // throw new NotFoundError();
+    }
+
+    // const reset = generateToken(12);
+    // const token = generateToken();
+
+    // user.forgottenReset = reset;
+    // user.forgottenToken = token;
+    user.forgottenAt = new Date();
+    await user.save();
+
+    // send the email
+    if (invite) {
+      // user.invite(reset, token, invite.requester, invite.organisation);
+    } else {
+      // user.forgotten(reset, token);
+    }
+
+    return user;
+  }
 }
