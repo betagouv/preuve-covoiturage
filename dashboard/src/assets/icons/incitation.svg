@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66.33 92.37"><defs><style>.cls-1,.cls-2{fill:#fff;stroke-miterlimit:10;stroke-width:3px;}.cls-1{stroke:#2977ff;}.cls-2{stroke:#65c8d0;}</style></defs><title>Incitation</title><g id="Calque_2" data-name="Calque 2"><g id="Calque_1-2" data-name="Calque 1"><rect class="cls-1" x="1.5" y="27.54" width="63.33" height="63.33"/><line class="cls-2" x1="33.17" y1="27.54" x2="33.17" y2="90.87"/><line class="cls-2" x1="64.83" y1="59.21" x2="1.5" y2="59.21"/><path class="cls-2" d="M24.93,10.84c7.12,6.84,10,14,6.36,15.91s-12.31-2-19.43-8.85S1.88,3.95,5.49,2,17.8,4,24.93,10.84Z"/><path class="cls-2" d="M41.41,10.84c-7.12,6.84-10,14-6.36,15.91s12.31-2,19.43-8.85,10-14,6.36-15.91S48.53,4,41.41,10.84Z"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" version="1.1" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style>.cls-1,.cls-2{fill:#fff;stroke-miterlimit:10;stroke-width:3px;}.cls-1{stroke:#2977ff;}.cls-2{stroke:#65c8d0;}</style>
+ </defs>
+ <title>Incitation</title>
+ <g transform="matrix(1.262 0 0 1.262 22.145 5.7437)" fill="#fff" stroke="#65c8d0" stroke-miterlimit="10" stroke-width="3px" data-name="Calque 2">
+  <path class="cls-2" d="m24.93 10.84c7.12 6.84 10 14 6.36 15.91s-12.31-2-19.43-8.85-9.98-13.95-6.37-15.9 12.31 2 19.44 8.84z"/>
+  <path class="cls-2" d="m41.41 10.84c-7.12 6.84-10 14-6.36 15.91s12.31-2 19.43-8.85 10-14 6.36-15.91-12.31 2.01-19.43 8.85z"/>
+ </g>
+ <g>
+  <rect class="cls-1" transform="matrix(1.262 0 0 1.262 22.145 5.7437)" x="1.5" y="27.54" width="63.33" height="63.33" fill="#fff" stroke="#2977ff" stroke-miterlimit="10" stroke-width="3px"/>
+ </g>
+ <path d="m102.03 80.467h-76.066m38.039-38.039v76.066" fill="#fff" stroke="#65c8d0" stroke-miterlimit="10" stroke-width="3.6033px"/>
+</svg>
