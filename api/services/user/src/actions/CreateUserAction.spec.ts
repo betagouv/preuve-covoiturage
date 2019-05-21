@@ -9,7 +9,7 @@ import { User } from '../entities/User';
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-const mockUser = <User>{
+const mockUser = {
   email: 'john.schmidt@example.com',
   firstname: 'john',
   lastname: 'schmidt',
@@ -29,14 +29,8 @@ const action = new CreateUserAction(fakeUserRepository);
 
 describe('Create user action', () => {
   it('should work', async () => {
-    const result = await action.handle({ user: {
-      email: 'john.schmidt@example.com',
-      firstname: 'john',
-      lastname: 'schmidt',
-      phone: '0624857425',
-    },
-    });
-    expect(result).to.equal({ ...mockUser, _id: '1ab' });
+    const result = await action.handle({ user: mockUser });
+    expect(result).to.equal({ ...mockUser, _id: '1ab',  });
   });
 });
 
