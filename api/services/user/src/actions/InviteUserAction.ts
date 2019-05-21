@@ -4,9 +4,9 @@ import { User } from '../entities/User';
 
 @Container.handler({
   service: 'user',
-  method: 'create',
+  method: 'invite',
 })
-export class CreateUserAction extends Parents.Action {
+export class InviteUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProvider,
   ) {
@@ -26,7 +26,6 @@ export class CreateUserAction extends Parents.Action {
       // throw new BadRequestError('Cannot assign operator and AOM at the same time');
     }
 
-
     const payload: any = {};
 
     payload['email'] = request.email;
@@ -38,8 +37,8 @@ export class CreateUserAction extends Parents.Action {
     payload['password'] = request.password; // todo: || generateToken();
     payload['requester'] = context.connectedUser['fullname']; // todo: add fullname to user entity ?
 
-    const op = request.operator;
-    const ao = request.aom;
+    const op = context.connectedUser.operator;
+    const ao = context.connectedUser.aom;
 
  /*   if (op) {
       const operator = await operatorService.findOne(op);
@@ -68,10 +67,14 @@ export class CreateUserAction extends Parents.Action {
     // generate new token for a password reset on first access
     return this.forgottenPassword({
       email: payload.email,
+      invite: {
+        requester: payload.requester,
+        organisation: payload.organisation,
+      },
     });
   }
 
-  private async forgottenPassword({ email }, userCache = null) {
+  private async forgottenPassword({ email, invite }, userCache = null) {
     // search for user
     const user = userCache || (await User.findOne({ email }).exec());
     if (!user) {
@@ -87,8 +90,7 @@ export class CreateUserAction extends Parents.Action {
     await user.save();
 
     // send the email
-    // user.forgotten(reset, token);
-
+    // user.invite(reset, token, invite.requester, invite.organisation);
 
     return user;
   }
