@@ -17,8 +17,8 @@ const mockUser = {
 };
 
 const fakeUserRepository = <UserRepositoryProvider>sinon.createStubInstance(UserRepositoryProvider, {
-  async find(id: string) {
-    return mockUser;
+  async find(id: string): Promise<any> {
+    return new Promise<any>(() => mockUser);
   },
 });
 
