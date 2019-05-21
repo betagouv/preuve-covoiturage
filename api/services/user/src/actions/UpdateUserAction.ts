@@ -13,6 +13,8 @@ export class UpdateUserAction extends Parents.Action {
   }
 
   public async handle(request: {user: object}): Promise<void> {
+    // middlewares
+
     return this.userRepository.update(request.user);
   }
 }

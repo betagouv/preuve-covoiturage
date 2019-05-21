@@ -17,10 +17,9 @@ export class CreateUserAction extends Parents.Action {
   public async handle(request: User, context: { connectedUser: User }): Promise<void> {
     /*
     // check if the user exists already
-    if (await User.findOne({ email: data.email }).exec()) {
-      throw new ConflictError();
-    }
-*/
+    // if (await this.userRepository.findByEamil(data.email).exec()) {
+    //   throw new ConflictError();
+    // }
 
     if (request.operator && request.aom) {
       // throw new BadRequestError('Cannot assign operator and AOM at the same time');
@@ -36,6 +35,7 @@ export class CreateUserAction extends Parents.Action {
     payload['role'] = request.role;
     payload['status'] = 'invited';
     payload['password'] = request.password; // todo: || generateToken();
+    // token inject authprovider >> to generateToken()
     payload['requester'] = context.connectedUser['fullname']; // todo: add fullname to user entity ?
 
     const op = request.operator;
@@ -57,7 +57,6 @@ export class CreateUserAction extends Parents.Action {
       }
     }
 */
-
 
     // create the new user
     const user = new User(payload);
