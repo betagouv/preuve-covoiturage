@@ -25,7 +25,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 
 const action = new AllUserAction(new FakeUserRepository());
 
-describe('Create user action', () => {
+describe('all users action', () => {
   it('should work', async () => {
     const result = await action.handle();
     expect(result).to.be.an('array').to['containSubset'](mockUsers);
