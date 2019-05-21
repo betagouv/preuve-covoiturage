@@ -1,5 +1,6 @@
 // tslint:disable: no-bitwise
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { get } from 'lodash';
 
 import { MAIN } from '~/config/main';
 
@@ -32,58 +33,57 @@ export class StatisticsContentComponent implements OnInit {
   };
 
   @Input() set apiData(d) {
-    console.log(d);
     if (!d || !d.collected || !d.distance || !d.duration) return;
 
     this.loaded = true;
     this.data = {
       summary: {
-        journeys: d.collected.total,
-        distance: (parseInt(d.distance.total[0].total, 10) / 1000) | 0,
+        journeys: get(d, 'collected.total', 0),
+        distance: (this.getDistance(d) / 1000) | 0,
         aom: 3,
-        petrol: (parseInt(d.distance.total[0].total, 10) * 0.0000636) | 0,
-        co2: (parseInt(d.distance.total[0].total, 10) * 0.000195) | 0,
+        petrol: (this.getDistance(d) * 0.0000636) | 0,
+        co2: (this.getDistance(d) * 0.000195) | 0,
       },
       graphs: {
         journeysPerDay: {
-          labels: d.collected.day.map(this.mapDateLabels),
+          labels: get(d, 'collected.day', []).map(this.mapDateLabels),
           datasets: [
             {
               label: 'Trajets par jour',
-              data: d.collected.day.map((i) => i.total),
+              data: get(d, 'collected.day', []).map(i => i.total),
               backgroundColor: '#42A5F588',
               borderColor: '#1E88E5',
             },
           ],
         },
         journeysPerDayTotal: {
-          labels: d.collected.day.map(this.mapDateLabels),
+          labels: get(d, 'collected.day', []).map(this.mapDateLabels),
           datasets: [
             {
               label: 'Trajets cumulés',
-              data: d.collected.day.reduce(this.reduceCumulativeData, []),
+              data: get(d, 'collected.day', []).reduce(this.reduceCumulativeData, []),
               backgroundColor: '#42A5F588',
               borderColor: '#1E88E5',
             },
           ],
         },
         distancePerDay: {
-          labels: d.distance.day.map(this.mapDateLabels),
+          labels: get(d, 'distance.day', []).map(this.mapDateLabels),
           datasets: [
             {
               label: 'Distance par jour',
-              data: d.distance.day.map((i) => (i.total / 1000) | 0),
+              data: get(d, 'distance.day', []).map(i => (i.total / 1000) | 0),
               backgroundColor: '#42A5F588',
               borderColor: '#1E88E5',
             },
           ],
         },
         distancePerDayTotal: {
-          labels: d.distance.day.map(this.mapDateLabels),
+          labels: get(d, 'distance.day', []).map(this.mapDateLabels),
           datasets: [
             {
               label: 'Distance cumulée',
-              data: d.distance.day
+              data: get(d, 'distance.day', [])
                 .reduce(this.reduceCumulativeData, [])
                 .map((i) => {
                   i.y = (i.y / 1000) | 0;
@@ -113,6 +113,13 @@ export class StatisticsContentComponent implements OnInit {
 
   public handleChange(event, key) {
     this.toggle[key] = event.checked;
+  }
+
+  private getDistance(d): number {
+    const dArr = get(d, 'distance.total', [{ total: 0 }]);
+    if (!dArr.length) return 0;
+    if (!dArr[0] || !dArr[0].total) return 0;
+    return parseInt(dArr[0].total, 10);
   }
 
   ngOnInit(): void {

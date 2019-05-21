@@ -32,7 +32,7 @@ statsQueue.on('progress', (job, progress) => {
 });
 statsQueue.on('completed', (job) => {
   console.log(`🐮/stats: completed ${job.id} ${job.data.type}`);
-  // console.log(JSON.stringify(result));
+  job.remove();
 });
 statsQueue.on('failed', (job, err) => {
   console.log(`🐮/stats: failed ${job.id} ${job.data.type}`, err.message);
