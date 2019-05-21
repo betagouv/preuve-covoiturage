@@ -1,38 +1,41 @@
 const mongoConnection = require('@pdc/proxy/mongo');
 const bus = require('./transports/bus');
 
-const { journeysCollectedAllTimes } = require('./calculators/journeys-all-times');
-const { journeysCollectedPerDay } = require('./calculators/journeys-per-day');
+const { journeysAllTimes } = require('./calculators/journeys-all-times');
+const { journeysPerMonth } = require('./calculators/journeys-per-month');
+const { journeysPerDay } = require('./calculators/journeys-per-day');
 
 const { distanceAllTimes } = require('./calculators/distance-all-times');
+const { distancePerMonth } = require('./calculators/distance-per-month');
 const { distancePerDay } = require('./calculators/distance-per-day');
 
 const { durationAllTimes } = require('./calculators/duration-all-times');
-const { durationPerDay } = require('./calculators/duration-per-day');
 
 const calculator = require('./calculator')(mongoConnection, bus, {
-  journeysCollectedAllTimes,
-  journeysCollectedPerDay,
+  journeysAllTimes,
+  journeysPerMonth,
+  journeysPerDay,
   distanceAllTimes,
+  distancePerMonth,
   distancePerDay,
   durationAllTimes,
-  durationPerDay,
 });
 
 module.exports = {
   async getStats(args) {
     return {
-      collected: {
-        total: await calculator('journeysCollectedAllTimes', args),
-        day: await calculator('journeysCollectedPerDay', args),
+      journeys: {
+        total: await calculator('journeysAllTimes', args),
+        month: await calculator('journeysPerMonth', args),
+        day: await calculator('journeysPerDay', args),
       },
       distance: {
         total: await calculator('distanceAllTimes', args),
+        month: await calculator('distancePerMonth', args),
         day: await calculator('distancePerDay', args),
       },
       duration: {
         total: await calculator('durationAllTimes', args),
-        day: await calculator('durationPerDay', args),
       },
     };
   },

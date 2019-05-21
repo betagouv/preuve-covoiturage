@@ -1,32 +1,29 @@
 const { ObjectId } = require('mongoose').Types;
 
 module.exports = {
-  durationPerDay({ aom = null }) {
+  distancePerMonth({ aom = null }) {
     const args = [
       {
         $project: {
           year: { $year: '$passenger.start.datetime' },
           month: { $month: '$passenger.start.datetime' },
-          day: { $dayOfMonth: '$passenger.start.datetime' },
-          duration: '$passenger.duration',
+          distance: '$passenger.distance',
         },
       },
       {
         $group: {
           _id: {
-            name: 'duration_per_day',
+            name: 'distance_per_day',
             year: '$year',
             month: '$month',
-            day: '$day',
           },
-          total: { $sum: '$duration' },
+          total: { $sum: '$distance' },
         },
       },
       {
         $sort: {
           '_id.year': 1,
           '_id.month': 1,
-          '_id.day': 1,
         },
       },
     ];

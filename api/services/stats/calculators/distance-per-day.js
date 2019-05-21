@@ -14,7 +14,7 @@ module.exports = {
       {
         $group: {
           _id: {
-            name: 'distance_per_month',
+            name: 'distance_per_day',
             year: '$year',
             month: '$month',
             day: '$day',

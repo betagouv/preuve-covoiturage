@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 
 module.exports = {
-  journeysCollectedPerDay({ aom = null }) {
+  journeysPerDay({ aom = null }) {
     const args = [
       {
         $project: {
@@ -13,7 +13,7 @@ module.exports = {
       {
         $group: {
           _id: {
-            name: 'journeys_collected_per_day',
+            name: 'journeys_per_day',
             year: '$year',
             month: '$month',
             day: '$day',

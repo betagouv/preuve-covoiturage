@@ -61,7 +61,7 @@
     <div class="p-col-12 stats--card">
       <p-card>
         <div class="graph--toggle">
-          <span class="graph--toggle-label">{{ toggle.journeysPerDaySwitch ? 'par jour' : 'cumulé' }}</span>
+          <span class="graph--toggle-label">{{ toggle.journeysPerDaySwitch ? 'par mois' : 'cumulé' }}</span>
           <p-inputSwitch (onChange)="handleChange($event, 'journeysPerDaySwitch')"></p-inputSwitch>
         </div>
 
@@ -69,9 +69,9 @@
 
         <p-chart
           *ngIf="toggle.journeysPerDaySwitch"
-          [type]="'line'"
-          [data]="data.graphs.journeysPerDay"
-          [options]="graphLineOptions"
+          [type]="'bar'"
+          [data]="data.graphs.journeysPerMonth"
+          [options]="graphBarOptions"
         ></p-chart>
         <p-chart
           *ngIf="!toggle.journeysPerDaySwitch"
@@ -86,7 +86,7 @@
     <div class="p-col-12 stats--card">
       <p-card>
         <div class="graph--toggle">
-          <span class="graph--toggle-label">{{ toggle.distancePerDaySwitch ? 'par jour' : 'cumulée' }}</span>
+          <span class="graph--toggle-label">{{ toggle.distancePerDaySwitch ? 'par mois' : 'cumulée' }}</span>
           <p-inputSwitch (onChange)="handleChange($event, 'distancePerDaySwitch')"></p-inputSwitch>
         </div>
 
@@ -94,9 +94,9 @@
 
         <p-chart
           *ngIf="toggle.distancePerDaySwitch"
-          [type]="'line'"
-          [data]="data.graphs.distancePerDay"
-          [options]="graphLineOptions"
+          [type]="'bar'"
+          [data]="data.graphs.distancePerMonth"
+          [options]="graphBarOptions"
         ></p-chart>
         <p-chart
           *ngIf="!toggle.distancePerDaySwitch"

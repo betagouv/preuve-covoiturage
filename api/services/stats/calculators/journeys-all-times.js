@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 
 module.exports = {
-  journeysCollectedAllTimes({ aom = null }) {
+  journeysAllTimes({ aom = null }) {
     const findArgs = aom ? { 'aom._id': ObjectId(aom) } : {};
 
     return {
