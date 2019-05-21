@@ -3,32 +3,33 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { AllUserAction } from './AllUserAction';
+import { DeleteUserAction } from './DeleteUserAction';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
 
-const mockUsers = [{
+
+const mockUser = {
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',
   lastname: 'schmidt',
   phone: '0624857425',
-}];
+};
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  async all(): Promise<any> {
-    return mockUsers;
+  async delete(_id: string): Promise<any> {
+    return mockUser;
   }
 }
 
-const action = new AllUserAction(new FakeUserRepository());
+const action = new DeleteUserAction(new FakeUserRepository());
 
-describe('all users action', () => {
+describe('Update user action', () => {
   it('should work', async () => {
-    const result = await action.handle();
-    expect(result).to.be.an('array').to['containSubset'](mockUsers);
+    const result = await action.handle({ id: mockUser._id });
+    expect(result).to.include(mockUser);
   });
 });
 

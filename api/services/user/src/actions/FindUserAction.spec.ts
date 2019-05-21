@@ -1,6 +1,5 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon from 'sinon';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { FindUserAction } from './FindUserAction';
@@ -24,7 +23,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 
 const action = new FindUserAction(new FakeUserRepository());
 
-describe('Create user action', () => {
+describe('find a user action', () => {
   it('should work', async () => {
     const result = await action.handle({ id: mockUser['_id'] });
     expect(result).to.include(mockUser);
