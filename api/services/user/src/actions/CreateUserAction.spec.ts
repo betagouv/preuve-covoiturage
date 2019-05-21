@@ -7,8 +7,8 @@ import { CreateUserAction } from './CreateUserAction';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
-chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+// chai.use(chaiAsPromised);
+// const { expect, assert } = chai;
 
 const mockConnectedUser = <User>{
   _id: '1ab',
