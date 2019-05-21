@@ -31,8 +31,14 @@ export class CreateUserAction extends Parents.Action {
 
 
   // todo: fix all comments
-  public async handle(request: User, context: { connectedUser: User }): Promise<void> {
-    /*
+  public async handle(request: User, context: { invite: boolean, connectedUser: User }): Promise<void> {
+    // typings: request & context
+    // middlewares :
+    // - can('user.invite')
+    // - si l'utilisateur != registre, on vérifie que aom = connectedUser.aom | operator = connectedUser.operator, sinon 403
+    // - validation
+    // rename CreateUserAction > InviteUserAction
+  
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
@@ -83,7 +89,6 @@ export class CreateUserAction extends Parents.Action {
       //   payload.organisation = aom.name;
       // }
     }
-
 
     // create the new user
     let user = new User(payload);
