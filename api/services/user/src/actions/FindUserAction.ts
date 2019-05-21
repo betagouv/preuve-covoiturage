@@ -1,5 +1,5 @@
 import { Parents, Container } from '@pdc/core';
-import { UserRepositoryProvider } from '../providers/UserRepositoryProvider';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 @Container.handler({
   service: 'user',
@@ -7,7 +7,7 @@ import { UserRepositoryProvider } from '../providers/UserRepositoryProvider';
 })
 export class FindUserAction extends Parents.Action {
   constructor(
-    private userRepository: UserRepositoryProvider,
+    private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
     super();
   }

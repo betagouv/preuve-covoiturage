@@ -2,11 +2,11 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import { UserRepositoryProvider } from '../providers/UserRepositoryProvider';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { FindUserAction } from './FindUserAction';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
 const mockUser = {
   _id: '1ab',
@@ -16,13 +16,13 @@ const mockUser = {
   phone: '0624857425',
 };
 
-const fakeUserRepository = <UserRepositoryProvider>sinon.createStubInstance(UserRepositoryProvider, {
+class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async find(id: string): Promise<any> {
-    return new Promise<any>(() => mockUser);
-  },
-});
+    return mockUser;
+  }
+}
 
-const action = new FindUserAction(fakeUserRepository);
+const action = new FindUserAction(new FakeUserRepository());
 
 describe('Create user action', () => {
   it('should work', async () => {
