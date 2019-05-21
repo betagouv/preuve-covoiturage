@@ -1,18 +1,20 @@
 import { MongoProvider, CollectionInterface, MongoException } from '@pdc/provider-mongo';
-import { JsonSchemaProvider } from '@pdc/provider-jsonschema';
 
-import { Providers, Interfaces, Types } from '@pdc/core';
-type Model = any;
+import { Providers, Types } from '@pdc/core';
+import { ParentRepositoryProviderInterface, Model } from './ParentRepositoryProviderInterface';
 
-export abstract class ParentRepositoryProvider implements Interfaces.ProviderInterface {
+export abstract class ParentRepositoryProvider implements ParentRepositoryProviderInterface {
   protected collection: CollectionInterface;
   protected validation: Set<string> = new Set();
 
   constructor(
     protected config: Providers.ConfigProvider,
-    protected jsonSchemaProvider: JsonSchemaProvider,
     protected mongoProvider: MongoProvider,
   ) {
+  }
+
+  boot(): void {
+    return;
   }
 
   public getDbName(): string {
@@ -27,31 +29,17 @@ export abstract class ParentRepositoryProvider implements Interfaces.ProviderInt
     throw new Error('Database not set');
   }
 
-  public getSchema(): object | null {
-    return;
-  }
-
   public getModel(): Types.NewableType<any> {
     return Object;
-  }
-
-  boot() {
-    if (this.getSchema() !== null) {
-      this.jsonSchemaProvider.addSchema(this.getSchema(), this.getModel());
-    }
   }
 
   async getCollection() {
     return this.mongoProvider.getCollectionFromDb(this.getKey(), this.getDbName());
   }
 
-  async validate(data: any): Promise<boolean> {
-    return this.jsonSchemaProvider.validate(data);
-  }
-
   async find(id: string): Promise<Model> {
     const collection = await this.getCollection();
-    const result = await collection.findOne(id);
+    const result = await collection.findOne({ _id: id });
     return this.instanciate(result);
   }
 
@@ -115,8 +103,3 @@ export abstract class ParentRepositoryProvider implements Interfaces.ProviderInt
     return data.map((d) => this.instanciate(d));
   }
 }
-
-
-// TODO : add index
-// TODO : add transformer
-// TODO : remove jsonschema

@@ -35,11 +35,11 @@ class FakeConfigProvider extends Providers.ConfigProvider {
 class UserRepositoryProvider extends ParentRepositoryProvider {
   constructor(
     protected config: Providers.ConfigProvider,
-    protected jsonSchemaProvider: JsonSchemaProvider,
     protected mongoProvider: MongoProvider,
   ) {
-    super(config, jsonSchemaProvider, mongoProvider);
+    super(config, mongoProvider);
   }
+
   public getKey(): string {
     return 'user';
   }
