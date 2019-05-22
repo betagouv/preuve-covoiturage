@@ -14,7 +14,6 @@ export class FindUserAction extends Parents.Action {
 
   public async handle(request: {id: string}): Promise<void> {
     // middleware : "user.read"
-
     const foundUser = this.userRepository.find(request.id);
 
 

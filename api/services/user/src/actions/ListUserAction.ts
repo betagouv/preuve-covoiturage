@@ -1,13 +1,13 @@
 import { Parents, Container } from '@pdc/core';
-
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
+import { UserInterface } from '../entities/UserInterface';
 
-interface PaginationInputInterface { // todo: mettre offset et limit ?
+interface Pagination {
+  total: number;
+  count: number;
   per_page: number;
   current_page: number;
-  limit: number;
-  skip: number;
+  total_pages: number;
 }
 
 
@@ -23,27 +23,23 @@ export class ListUserAction extends Parents.Action {
   }
 
   public async handle(
-    filters: { [prop: string]: any },
-    context: { call?: { user: User, metadata?: { pagination: PaginationInputInterface }}}): Promise<any> {
+    filters: [{ [prop: string]: any }],
+    context: { call?: { user: UserInterface, metadata?: { pagination: Pagination }}}): Promise<any[]> {
     // middleware : "user.list"
 
     // todo: manage pagination ( default value ... )
     const pagination = context.call.metadata.pagination;
 
-    const data = await this.userRepository.list(filters, pagination);
+    return this.userRepository.list(filters, pagination);
 
-    return {
-      data: data.users,
-      metadata: {
-        pagination : {
-          total: data.total,
-          count: data.users.length,
-          per_page: pagination.per_page,
-          current_page: Math.floor((pagination.skip || 0) / pagination.limit) + 1,
-          total_pages: Math.floor(data.total / pagination.limit),
-        },
-      },
-    };
+    // todo: assign new pagination from data
+    // data.metadata.pagination = {
+    //       // total: docCount,
+    //       //   count: data.length,
+    //       //   per_page: limit,
+    //       //   current_page: Math.floor((skip || 0) / limit) + 1,
+    //       //   total_pages: Math.floor(docCount / limit),
+    // };
 
 
     // Complete aom & operators in payload

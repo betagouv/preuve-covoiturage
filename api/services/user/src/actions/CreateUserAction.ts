@@ -31,14 +31,9 @@ export class CreateUserAction extends Parents.Action {
 
 
   // todo: fix all comments
-  public async handle(request: User, context: { invite: boolean, connectedUser: User }): Promise<void> {
-    // typings: request & context
-    // middlewares :
-    // - can('user.invite')
-    // - si l'utilisateur != registre, on vérifie que aom = connectedUser.aom | operator = connectedUser.operator, sinon 403
-    // - validation
-    // rename CreateUserAction > InviteUserAction
-  
+  public async handle(request: UserInterface, context: { call?: { user: UserInterface } }): Promise<void> {
+    // middleware: "user.create"
+
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
@@ -66,8 +61,8 @@ export class CreateUserAction extends Parents.Action {
     };
 
 
-    const op = request.operator;
-    const ao = request.aom;
+      if (op) {
+          const operator = await operatorService.findOne(op);
 
     if (op) {
       // todo: replace with what is in comment
@@ -132,9 +127,10 @@ export class CreateUserAction extends Parents.Action {
     return updatedUser;
   }
 
-  private async forgottenPassword({ email }, userCache = null) {
+  // todo: put this in authentification ?
+  private async forgottenPassword({ email, invite }, userCache = null) {
     // search for user
-    const user = userCache || (await User.findOne({ email }).exec());
+    const user = userCache || (await this.userRepository.findByEmail(email));
     if (!user) {
       // throw new NotFoundError();
     }
@@ -148,8 +144,7 @@ export class CreateUserAction extends Parents.Action {
     await user.save();
 
     // send the email
-    // user.forgotten(reset, token);
-
+    // user.invite(reset, token, invite.requester, invite.organisation);
 
     return user;
   }
