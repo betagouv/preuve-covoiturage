@@ -2,8 +2,8 @@ import { Parents, Container } from '@pdc/core';
 import { AomRepositoryProviderInterfaceResolver } from '../interfaces/AomRepositoryProviderInterface';
 
 @Container.handler({
-  service: 'aom',
-  method: 'delete',
+  service: 'organization',
+  method: 'deleteAom',
 })
 export class DeleteAomAction extends Parents.Action {
   constructor(

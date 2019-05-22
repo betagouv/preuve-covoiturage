@@ -2,8 +2,8 @@ import { Parents, Container } from '@pdc/core';
 import { AomRepositoryProviderInterfaceResolver } from '../interfaces/AomRepositoryProviderInterface';
 
 @Container.handler({
-  service: 'aom',
-  method: 'all',
+  service: 'organization',
+  method: 'allAom',
 })
 export class AllAomAction extends Parents.Action {
   constructor(
