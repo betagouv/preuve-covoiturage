@@ -1,5 +1,6 @@
 import { Parents, Container } from '@pdc/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserInterface } from '../entities/UserInterface';
 
 @Container.handler({
   service: 'user',
@@ -13,7 +14,7 @@ export class UpdateUserAction extends Parents.Action {
   }
 
   public async handle(request: {user: object}): Promise<void> {
-    // middlewares
+    // middleware : "user.update"
 
     return this.userRepository.update(request.user);
   }

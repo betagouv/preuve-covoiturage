@@ -1,23 +1,48 @@
 import { Parents, Container } from '@pdc/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserInterface } from '../entities/UserInterface';
+
+interface Pagination {
+  total: number;
+  count: number;
+  per_page: number;
+  current_page: number;
+  total_pages: number;
+}
+
 
 @Container.handler({
   service: 'user',
-  method: 'all',
+  method: 'list',
 })
-export class AllUserAction extends Parents.Action {
+export class ListUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(): Promise<any[]> {
-    const foundUser = this.userRepository.all();
-    // filtre
-    // pagination
-    // middleware : (can('user.list'))
-    // rename : UserListAction
+  public async handle(
+    filters: [{ [prop: string]: any }],
+    context: { call?: { user: UserInterface, metadata?: { pagination: Pagination }}}): Promise<any[]> {
+    // middleware : "user.list"
+
+    // todo: manage pagination ( default value ... )
+    const pagination = context.call.metadata.pagination;
+
+    return this.userRepository.list(filters, pagination);
+
+    // todo: assign new pagination from data
+    // data.metadata.pagination = {
+    //       // total: docCount,
+    //       //   count: data.length,
+    //       //   per_page: limit,
+    //       //   current_page: Math.floor((skip || 0) / limit) + 1,
+    //       //   total_pages: Math.floor(docCount / limit),
+    // };
+
+
+    // Complete aom & operators in payload
 
     // const results = await baseFind(query, options);
     // const aom = await Aom.find({}, { name: 1 });
@@ -40,7 +65,5 @@ export class AllUserAction extends Parents.Action {
     // });
     //
     // return results;
-
-    return  foundUser;
   }
 }

@@ -13,7 +13,7 @@ export class DeleteUserAction extends Parents.Action {
   }
 
   public async handle(request: {id: string}): Promise<void> {
-    // middlewares
+    // middleware : "user.delete"
     return this.userRepository.delete(request.id);
   }
 }
