@@ -1,5 +1,5 @@
 import { Parents, Container } from '@pdc/core';
-import { AomRepositoryProviderInterfaceResolver } from '../../interfaces/AomRepositoryProviderInterface';
+import { AomRepositoryProviderInterfaceResolver } from '../interfaces/AomRepositoryProviderInterface';
 
 @Container.handler({
   service: 'organization',

@@ -2,10 +2,10 @@ import { Parents, Providers, Interfaces } from '@pdc/core';
 
 import { AomRepositoryProviderInterfaceResolver } from './interfaces/AomRepositoryProviderInterface';
 import { AomRepositoryProvider } from './providers/AomRepositoryProvider';
-import { AllAomAction } from './actions/aom/AllAomAction';
-import { CreateAomAction } from './actions/aom/CreateAomAction';
-import { DeleteAomAction } from './actions/aom/DeleteAomAction';
-import { PatchAomAction } from './actions/aom/PatchAomAction';
+import { AllAomAction } from './actions/AllAomAction';
+import { CreateAomAction } from './actions/CreateAomAction';
+import { DeleteAomAction } from './actions/DeleteAomAction';
+import { PatchAomAction } from './actions/PatchAomAction';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
