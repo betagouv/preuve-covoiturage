@@ -2,23 +2,23 @@ export class User {
   public email: string;
   public lastname: string;
   public firstname: string;
-  public phone: string;
   public group: string;
-  public role: string;
   public permissions: string;
   public password: string;
-  public status: string;
-  public forgottenReset: string;
-  public forgottenToken: string;
-  public operator: string;
-  public aom: string;
-  public hasResetPassword: boolean;
-  public forgottenAt: Date;
-  public lastConnectedAt: Date;
-  public options: object;
-  public deletedAt: Date;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public phone: string;
+  public role?: string;
+  public status?: string;
+  public forgottenReset?: string;
+  public forgottenToken?: string;
+  public operator?: string;
+  public aom?: string;
+  public hasResetPassword?: boolean;
+  public forgottenAt?: Date;
+  public lastConnectedAt?: Date;
+  public options?: object;
+  public deletedAt?: Date;
+  public createdAt?: Date;
+  public updatedAt?: Date;
 
   constructor(data: {
     email: string,
