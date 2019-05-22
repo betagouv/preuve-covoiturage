@@ -16,6 +16,10 @@ export class CliTransport implements TransportInterface {
     this.kernel = kernel;
   }
 
+  getKernel():KernelInterface {
+    return this.kernel;
+  }
+
   async up(opts: string[] = []) {
     this.kernel.getContainer().get<CommandProvider>(CommandProvider).parse(opts);
   }

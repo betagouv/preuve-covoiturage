@@ -20,6 +20,10 @@ export class QueueTransport implements TransportInterface {
     this.kernel = kernel;
   }
 
+  getKernel():KernelInterface {
+    return this.kernel;
+  }
+
   async up(opts: string[] = []) {
     const [redisUrl, env] = opts;
     // throw error

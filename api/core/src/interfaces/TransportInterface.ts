@@ -3,12 +3,11 @@ import { KernelInterface } from './KernelInterface';
 export interface TransportInterface {
 
   /**
-   * Instance of the kernel
-   * @type {KernelInterface}
+   * Get Kernel instance
+   * @returns {KernelInterface}
    * @memberof TransportInterface
    */
-  kernel: KernelInterface;
-
+  getKernel():KernelInterface;
 
   /**
    * Start the transport

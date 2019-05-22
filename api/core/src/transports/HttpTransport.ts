@@ -19,6 +19,10 @@ export class HttpTransport implements TransportInterface {
     this.kernel = kernel;
   }
 
+  getKernel():KernelInterface {
+    return this.kernel;
+  }
+
   async up(opts: string[] = []) {
     this.server = http.createServer((req, res) => {
       if (
