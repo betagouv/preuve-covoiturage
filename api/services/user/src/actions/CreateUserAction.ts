@@ -135,17 +135,17 @@ export class CreateUserAction extends Parents.Action {
       // throw new NotFoundError();
     }
 
-    // const reset = generateToken(12);
-    // const token = generateToken();
+    const reset = this.randomProvider.generateToken();
+    const token = this.randomProvider.generateToken();
 
-    // user.forgottenReset = reset;
-    // user.forgottenToken = token;
+    user.forgottenReset = reset;
+    user.forgottenToken = token;
     user.forgottenAt = new Date();
-    await user.save();
+    const updatedUser = await this.userRepository.update(user);
 
     // send the email
     // user.invite(reset, token, invite.requester, invite.organisation);
 
-    return user;
+    return updatedUser;
   }
 }

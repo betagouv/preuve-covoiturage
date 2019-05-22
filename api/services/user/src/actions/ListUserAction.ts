@@ -1,6 +1,6 @@
 import { Parents, Container } from '@pdc/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserInterface } from '../entities/UserInterface';
+import { UserInterface } from '../interfaces/UserInterface';
 
 interface Pagination {
   total: number;
@@ -23,7 +23,7 @@ export class ListUserAction extends Parents.Action {
   }
 
   public async handle(
-    filters: [{ [prop: string]: any }],
+    filters: { [prop: string]: any },
     context: { call?: { user: UserInterface, metadata?: { pagination: Pagination }}}): Promise<any[]> {
     // middleware : "user.list"
 
