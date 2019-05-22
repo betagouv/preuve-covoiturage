@@ -2,11 +2,9 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
-import nock from 'nock';
 import chaiNock from 'chai-nock';
 import { bootstrap } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
-import { AomRepositoryProviderInterfaceResolver } from '../src/interfaces/AomRepositoryProviderInterface';
 
 let mongoServer;
 let connectionString;
@@ -14,7 +12,6 @@ let dbName;
 let kernel;
 let transport;
 let request;
-let nockRequest;
 
 chai.use(chaiNock);
 
@@ -51,7 +48,7 @@ describe('Aom service', () => {
     const { status: createStatus, data: createData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'organization:createAom',
+      method: 'aom:create',
       params: {
         name: 'Toto',
       },
@@ -63,7 +60,7 @@ describe('Aom service', () => {
     const { status: patchStatus, data: patchData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'organization:patchAom',
+      method: 'aom:patch',
       params: {
         id: _id,
         patch: {
@@ -80,7 +77,7 @@ describe('Aom service', () => {
     const { status: listStatus, data: listData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'organization:allAom',
+      method: 'aom:all',
     });
     const list = listData.result;
     expect(list.length).eq(1);
@@ -90,7 +87,7 @@ describe('Aom service', () => {
     const { status: deleteStatus, data: deleteData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'organization:deleteAom',
+      method: 'aom:delete',
       params: {
         _id,
       },

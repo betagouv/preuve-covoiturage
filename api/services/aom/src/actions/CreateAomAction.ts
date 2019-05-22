@@ -3,8 +3,8 @@ import { AomRepositoryProviderInterfaceResolver } from '../interfaces/AomReposit
 import { CreateAomParamsInterface, AomDbInterface } from '../interfaces/AomInterfaces';
 
 @Container.handler({
-  service: 'organization',
-  method: 'createAom',
+  service: 'aom',
+  method: 'create',
 })
 export class CreateAomAction extends Parents.Action {
   constructor(
