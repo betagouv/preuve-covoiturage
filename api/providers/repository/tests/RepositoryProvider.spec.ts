@@ -144,12 +144,12 @@ describe('Repository provider', () => {
     expect(res.length).to.eq(0);
   });
 
-  it('should update document', async () => {
+  it('should patch document', async () => {
     const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
     const r = await repository.create({
       name: 'Tom',
     });
-    const res = await repository.update(r, { name: 'Jon' });
+    const res = await repository.patch(r._id, { name: 'Jon' });
     expect(res.name).to.eq('Jon');
   });
 

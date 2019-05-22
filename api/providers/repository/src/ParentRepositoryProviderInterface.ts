@@ -1,4 +1,5 @@
 import { Interfaces } from '@pdc/core';
+import { ObjectId } from '@pdc/provider-mongo';
 
 export type Model = any;
 
@@ -6,8 +7,9 @@ export interface ParentRepositoryProviderInterface extends Interfaces.ProviderIn
   find(id: string): Promise<Model>;
   all(): Promise<Model[]>;
   create(data: Model): Promise<Model>;
-  delete(data: Model): Promise<void>;
+  delete(data: Model | { _id: string }): Promise<void>;
   update(data: Model, patch?: any): Promise<Model>;
+  patch(id: ObjectId | string, patch?: any): Promise<Model>;
   clear(): Promise<void>;
 }
 
@@ -28,11 +30,14 @@ export abstract class ParentRepositoryProviderInterfaceResolver implements Paren
     throw new Error();
   }
 
-  async delete(data: Model): Promise<void> {
+  async delete(data: Model | { _id: string }): Promise<void> {
     throw new Error();
   }
 
   async update(data: Model, patch?: any): Promise<Model> {
+    throw new Error();
+  }
+  async patch(id: ObjectId | string, patch?: any): Promise<Model> {
     throw new Error();
   }
 
