@@ -5,7 +5,7 @@ FOLDER=/tmp
 FILENAME="mongodump-$DATE.archive.gz"
 TRANSFERSH_SERVER=http://shared.dotify.eu:8080
 
-dbclient-fetcher mongo
+dbclient-fetcher mongo 4.0
 mongodump \
     --uri $MONGO_URL \
     --forceTableScan \
