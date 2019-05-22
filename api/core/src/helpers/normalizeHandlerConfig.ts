@@ -2,7 +2,7 @@ import { HandlerConfig } from '../container';
 
 import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 
-const regexp = new RegExp('^([a-z]*)@?([\.0-9]*|latest):([a-z]*|\\*)$');
+const regexp = new RegExp('^([a-z]*)@?([\.0-9]*|latest):([a-zA-Z]*|\\*)$');
 // const fullregexp = new RegExp('^(?:HandlerInterface\/)?([a-z]*)@?([\.0-9]*|latest):([a-z]*|\\*)\/?(local)?\/?(queue)?$');
 
 export function getConfigBySignature(method: string): { service: string, method: string, version?: string } {
