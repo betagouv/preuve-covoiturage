@@ -1,7 +1,9 @@
 import { Parents, Container } from '@pdc/core';
 import { UserRepositoryProvider } from '../providers/UserRepositoryProvider';
+import { RandomProvider } from '@pdc/provider-random';
+import { CryptoProvider } from '@pdc/provider-crypto';
 import { User } from '../entities/User';
-import { UserInterface } from '../entities/UserInterface';
+import { UserInterface } from '../interfaces/UserInterface';
 
 @Container.handler({
   service: 'user',
@@ -10,6 +12,8 @@ import { UserInterface } from '../entities/UserInterface';
 export class CreateUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProvider,
+    private randomProvider: RandomProvider,
+    private cryptoProvider: CryptoProvider,
   ) {
     super();
   }
@@ -37,7 +41,7 @@ export class CreateUserAction extends Parents.Action {
       group : request.group,
       role : request.role,
       status : 'invited',
-      password : request.password,
+      password : await this.cryptoProvider.cryptPassword(request.password),
       requester : context.call.user.fullname,
     };
 
@@ -87,17 +91,17 @@ export class CreateUserAction extends Parents.Action {
       // throw new NotFoundError();
     }
 
-    // const reset = generateToken(12);
-    // const token = generateToken();
+    const reset = this.randomProvider.generateToken();
+    const token = this.randomProvider.generateToken();
 
-    // user.forgottenReset = reset;
-    // user.forgottenToken = token;
+    user.forgottenReset = reset;
+    user.forgottenToken = token;
     user.forgottenAt = new Date();
-    await user.save();
+    const updatedUser = await this.userRepository.update(user);
 
     // send the email
     // user.invite(reset, token, invite.requester, invite.organisation);
 
-    return user;
+    return updatedUser;
   }
 }
