@@ -1,0 +1,25 @@
+{
+  "name": "@pdc/provider-crypto",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "watch-ts": "tsc -w",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "test": "mocha src/**/*.spec.ts"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6"
+  },
+  "peerDependencies": {
+    "@pdc/core": "0.0.1"
+  },
+  "devDependencies": {
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
+}
