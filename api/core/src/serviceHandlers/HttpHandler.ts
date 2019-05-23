@@ -1,10 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 import { CallType } from '../types/CallType';
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { handler } from '../container';
 import { NewableType } from '../types/NewableType';
-import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 import { ResultType } from '../types/ResultType';
 import { ServiceException } from '../exceptions/ServiceException';
@@ -16,16 +15,15 @@ import { ServiceException } from '../exceptions/ServiceException';
  * @implements {HandlerInterface}
  */
 export class HttpHandler implements HandlerInterface {
-  readonly middlewares: MiddlewareInterface[] = [];
+  public readonly middlewares: (string|[string, any])[] = [];
 
   protected readonly service: string;
   protected readonly version: string;
-  protected booted = false;
   protected readonly url: string;
 
-  private client;
+  private client: AxiosInstance;
 
-  boot() {
+  public boot() {
     this.client = axios.create({
       baseURL: this.url,
       timeout: 1000,
@@ -34,14 +32,9 @@ export class HttpHandler implements HandlerInterface {
         'Content-Type': 'application/json',
       },
     });
-    this.booted = true;
   }
 
   public async call(call: CallType): Promise<ResultType> {
-    if (!this.booted) {
-      this.boot();
-    }
-
     const { method, params, context } = call;
     try {
       // TODO : add channel ?

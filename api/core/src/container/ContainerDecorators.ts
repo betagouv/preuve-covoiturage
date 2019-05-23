@@ -42,5 +42,6 @@ export function handler(config: HandlerConfig) {
 }
 
 export function command() { return injectable(); }
+export function middleware() { return injectable(); }
 export function lib() { return injectable(); }
-export { injectable } from 'inversify';
+export { injectable, inject } from 'inversify';

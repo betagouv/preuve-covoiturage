@@ -1,3 +1,2 @@
-export { canMiddleware } from './canMiddleware';
-export { isAdminMiddleware } from './isAdminMiddleware';
-export { isMiddleware } from './isMiddleware';
+export { PermissionMiddleware } from './PermissionMiddleware';
+export { RoleMiddleware } from './RoleMiddleware';

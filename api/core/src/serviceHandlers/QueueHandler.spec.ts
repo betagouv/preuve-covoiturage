@@ -63,6 +63,7 @@ describe('Queue handler', () => {
   });
   it('works', async () => {
     const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
+    queueProvider.boot();
     const result = await queueProvider.call({
       method: 'basic@latest:method',
       params: { add: [1, 2] },
@@ -79,6 +80,7 @@ describe('Queue handler', () => {
   });
   it('raise error if fail', async () => {
     const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
+    queueProvider.boot();
     return (<any>assert).isRejected(
       queueProvider.call({
         method: 'nope',

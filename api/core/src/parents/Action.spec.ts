@@ -3,13 +3,12 @@ import { describe } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
-
 import { Action } from './Action';
-import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
+import { ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { Container, middleware } from '../container';
 
 chai.use(chaiAsPromised);
 
@@ -18,6 +17,30 @@ const defaultContext = {
     service: '',
   },
 };
+
+@middleware()
+class MinusMiddleware implements ClassMiddlewareInterface {
+  async process(params, context, next) {
+    const result = await next(params, context);
+    return result - 1;
+  }
+}
+
+@middleware()
+class HelloMiddleware implements ClassMiddlewareInterface {
+  async process(params, context, next) {
+    const result = await next(params, context);
+    return `hello ${result}?`;
+  }
+}
+
+@middleware()
+class WorldMiddleware implements ClassMiddlewareInterface {
+  async process(params, context, next) {
+    const result = await next(params, context);
+    return `world ${result}!`;
+  }
+}
 
 describe('Action', () => {
   it('should work', async () => {
@@ -47,10 +70,7 @@ describe('Action', () => {
 
   it('should work with middleware', async () => {
     class BasicAction extends Action {
-      public readonly middlewares = [async (call: CallType, next: Function) => {
-        await next();
-        call.result -= 1;
-      }];
+      public readonly middlewares = ['minus'];
       protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
@@ -63,6 +83,9 @@ describe('Action', () => {
       }
     }
     const action = new BasicAction();
+    const container = new Container();
+    container.bind('minus').to(MinusMiddleware);
+    await action.boot(container);
     const result = await action.call({
       result: 0,
       method: '',
@@ -76,13 +99,7 @@ describe('Action', () => {
 
   it('should work with ordered middleware', async () => {
     class BasicAction extends Action {
-      public readonly middlewares: MiddlewareInterface[] = [async (call: CallType, next: Function) => {
-        await next();
-        call.result = `hello ${call.result}?`;
-      }, async (call: CallType, next: Function) => {
-        await next();
-        call.result = `world ${call.result}!`;
-      }];
+      public readonly middlewares = ['hello', 'world'];
       protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
         let result = '';
         if ('name' in params) {
@@ -92,6 +109,10 @@ describe('Action', () => {
       }
     }
     const action = new BasicAction();
+    const container = new Container();
+    container.bind('hello').to(HelloMiddleware);
+    container.bind('world').to(WorldMiddleware);
+    await action.boot(container);
     const result = await action.call({
       result: '',
       method: '',

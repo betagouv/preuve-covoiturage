@@ -13,6 +13,7 @@ import { HandlerInterface } from '../interfaces/HandlerInterface';
 
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { NewableType } from '../types/NewableType';
+import { ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
 
 /**
  * Service provider parent class
@@ -26,6 +27,8 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
   readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
 
   readonly handlers: NewableType<HandlerInterface>[] = [];
+  readonly middlewares: [string, NewableType<ClassMiddlewareInterface>][] = [];
+
   protected container: ContainerInterface;
 
   constructor(container?: ContainerInterface) {
@@ -41,18 +44,24 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
    * @memberof ServiceProvider
    */
   public async boot() {
-    this.container.load(
+    this.getContainer().load(
       new ContainerModule(
-        (bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind) => this.register({ bind, unbind, isBound, rebind }),
+        (bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind) => {
+          this.register({ bind, unbind, isBound, rebind });
+          this.middlewares.forEach(([name, middleware]) => {
+            bind(name).to(middleware);
+          });
+        },
       ),
     );
 
-    this.handlers.forEach((handler) => {
-      this.getContainer().setHandler(handler);
-    });
-
     for (const serviceProviderConstructor of this.serviceProviders) {
       await this.registerServiceProvider(serviceProviderConstructor);
+    }
+
+    for (const handler of this.handlers) {
+      const handlerInstance = this.getContainer().setHandler(handler);
+      await handlerInstance.boot(this.getContainer());
     }
   }
 

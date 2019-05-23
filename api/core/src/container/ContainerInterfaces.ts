@@ -16,7 +16,7 @@ export type HandlerConfig = {
 };
 
 export interface ContainerInterface extends interfaces.Container {
-  setHandler(handler: NewableType<HandlerInterface>):void;
+  setHandler(handler: NewableType<HandlerInterface>): HandlerInterface;
   getHandler(config: HandlerConfig): HandlerInterface;
   getHandlers(): HandlerConfig[];
 }

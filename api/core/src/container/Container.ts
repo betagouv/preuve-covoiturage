@@ -121,7 +121,7 @@ export class Container extends InversifyContainer {
    * @param {NewableType<HandlerInterface>} handler
    * @memberof Container
    */
-  setHandler(handler: NewableType<HandlerInterface>) {
+  setHandler(handler: NewableType<HandlerInterface>): HandlerInterface {
     const service = Reflect.getMetadata('rpc:service', handler);
     const method = Reflect.getMetadata('rpc:method', handler);
     const version = Reflect.getMetadata('rpc:version', handler);
@@ -130,10 +130,12 @@ export class Container extends InversifyContainer {
 
     const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
     const resolvedHandler = this.get<HandlerInterface>(<any>handler);
-    // throw error if not found
-    // throw error if duplicate
+    // TODO: throw error if not found
+    // TODO: throw error if duplicate
 
     this.setHandlerFinal(handlerConfig, resolvedHandler);
+
+    return resolvedHandler;
   }
 }
 

@@ -1,5 +1,4 @@
 import { Action } from '../../../../src//parents/Action';
-import { MiddlewareInterface } from '../../../../src//interfaces/MiddlewareInterface';
 import { ParamsType } from '../../../../src//types/ParamsType';
 import { ContextType } from '../../../../src//types/ContextType';
 import { ResultType } from '../../../../src//types/ResultType';
@@ -13,8 +12,6 @@ import { Kernel } from '../../../../src//parents/Kernel';
   method: 'result',
 })
 export class ResultAction extends Action {
-  public readonly middlewares: MiddlewareInterface[] = [];
-
   constructor(private kernel: Kernel) {
     super();
   }
