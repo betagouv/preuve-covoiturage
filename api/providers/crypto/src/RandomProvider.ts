@@ -6,7 +6,7 @@ export class RandomProvider implements Interfaces.ProviderInterface {
 //
   }
 
-  generateToken(length = 12) {
+  generateToken(length:number = 12):string {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
