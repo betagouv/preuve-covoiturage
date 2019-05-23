@@ -8,7 +8,7 @@ import { User } from '../entities/User';
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-const mockUser = {
+const mockUser = <User>{
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',

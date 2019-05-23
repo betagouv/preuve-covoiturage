@@ -4,14 +4,14 @@ import chaiSubset from 'chai-subset';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { ListUserAction } from './ListUserAction';
-import { UserInterface } from '../interfaces/UserInterface';
+import { User } from '../entities/User';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
 
 
-const mockConnectedUser = <UserInterface>{
+const mockConnectedUser = <User>{
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',
@@ -20,10 +20,13 @@ const mockConnectedUser = <UserInterface>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
+  permissions: [
+    'user.list',
+  ],
 };
 
 
-const mockUsers = <UserInterface[]>[{
+const mockUsers = [{
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',

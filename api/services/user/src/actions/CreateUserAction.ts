@@ -1,6 +1,5 @@
 import { Parents, Container } from '@pdc/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
@@ -31,7 +30,7 @@ export class CreateUserAction extends Parents.Action {
 
 
   // todo: fix all comments
-  public async handle(request: NewUser , context: { call?: { user: UserInterface } }): Promise<void> {
+  public async handle(request: NewUser , context: { call?: { user: User } }): Promise<User> {
     // middleware: "user.create"
     // middleware: "aom.users.add"
     // middleware: "operator.users.add"

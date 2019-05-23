@@ -1,6 +1,6 @@
 import { Parents, Container } from '@pdc/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserInterface } from '../interfaces/UserInterface';
+import { User } from '../entities/User';
 
 interface PaginationInputInterface { // todo: mettre offset et limit ?
   per_page: number;
@@ -23,7 +23,7 @@ export class ListUserAction extends Parents.Action {
 
   public async handle(
     filters: { [prop: string]: any },
-    context: { call?: { user: UserInterface, metadata?: { pagination: PaginationInputInterface }}}): Promise<any> {
+    context: { call?: { user: User, metadata?: { pagination: PaginationInputInterface }}}): Promise<any> {
     // middleware : "user.list"
 
     // todo: manage pagination ( default value ... )
