@@ -1,11 +1,13 @@
 export class User {
+  public _id: string;
   public email: string;
   public lastname: string;
   public firstname: string;
   public group: string;
-  public permissions: string;
-  public password: string;
+  public permissions: string[];
   public phone: string;
+  public password?: string;
+  public fullname?: string;
   public role?: string;
   public status?: string;
   public forgottenReset?: string;
@@ -21,11 +23,13 @@ export class User {
   public updatedAt?: Date;
 
   constructor(data: {
+    _id: string;
     email: string,
     lastname: string,
     firstname: string,
+    fullname: string,
     group: string,
-    permissions: string,
+    permissions: string[],
     password: string,
     role?: string,
     phone?: string,
@@ -42,9 +46,11 @@ export class User {
     createdAt?: Date,
     updatedAt?: Date,
   }) {
+    this._id = data._id;
     this.email = data.email;
     this.lastname = data.lastname;
     this.firstname = data.firstname;
+    this.fullname = data.fullname;
     this.phone = data.phone;
     this.group = data.group;
     this.role = data.role;

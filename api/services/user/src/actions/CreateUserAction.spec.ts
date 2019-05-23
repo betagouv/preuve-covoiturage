@@ -6,12 +6,11 @@ import { RandomProvider, CryptoProvider, CryptoProviderInterfaceResolver, Random
 import { CreateUserAction } from './CreateUserAction';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserInterface } from '../interfaces/UserInterface';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-const mockConnectedUser = <UserInterface>{
+const mockConnectedUser = <User>{
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',
@@ -20,6 +19,9 @@ const mockConnectedUser = <UserInterface>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
+  permissions: [
+    'user.list',
+  ],
 };
 
 
@@ -42,18 +44,21 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   public async findByEmail(email: string): Promise<User> {
     return null;
   }
-  public async update(user:UserInterface): Promise<User> {
+  public async update(user:User): Promise<User> {
     return user;
   }
-  public async create(user:UserInterface): Promise<UserInterface> {
+  public async create(user:User): Promise<User> {
     return { ...user, _id: mockId };
   }
 }
 
-// todo: shoud we fake random and crypto providers ?
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
+
+}
 
 
-const action = new CreateUserAction(new FakeUserRepository(), new RandomProvider(), new CryptoProvider());
+
+const action = new CreateUserAction(new FakeUserRepository(), new FakeCryptoProvider());
 
 describe('Create user action', () => {
   it('should work', async () => {

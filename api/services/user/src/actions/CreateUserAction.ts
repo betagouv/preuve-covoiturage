@@ -1,7 +1,6 @@
 import { Parents, Container } from '@pdc/core';
-import { CryptoProvider, RandomProvider } from '@pdc/provider-crypto';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { User } from '../entities/User';
-import { UserInterface } from '../interfaces/UserInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 
@@ -24,8 +23,7 @@ interface NewUser {
 export class CreateUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private randomProvider: RandomProvider,
-    private cryptoProvider: CryptoProvider,
+    private cryptoProvider: CryptoProviderInterfaceResolver,
   ) {
     super();
   }
