@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { ObjectId } = require('mongoose').Types;
 
 /**
