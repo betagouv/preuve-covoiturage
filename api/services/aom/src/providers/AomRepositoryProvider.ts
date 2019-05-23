@@ -18,7 +18,7 @@ export class AomRepositoryProvider extends ParentRepositoryProvider implements A
   }
 
   public getDatabase(): string {
-    return this.config.get('mongo.dbName');
+    return this.config.get('mongo.db');
   }
 
   public getModel() {
