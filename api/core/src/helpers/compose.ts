@@ -1,7 +1,7 @@
 import { ParamsType, ResultType, ContextType } from '../types';
-import { ClassMiddlewareInterface, FunctionMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { MiddlewareInterface, FunctionMiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
-type middlewareInstancesWithOptionsType = (ClassMiddlewareInterface | [ClassMiddlewareInterface, any])[];
+type middlewareInstancesWithOptionsType = (MiddlewareInterface | [MiddlewareInterface, any])[];
 export function compose(middlewareInstancesWithOptions: middlewareInstancesWithOptionsType):FunctionMiddlewareInterface {
   if (!Array.isArray(middlewareInstancesWithOptions)) {
     throw new TypeError('Middleware stack must be an array!');
@@ -11,7 +11,7 @@ export function compose(middlewareInstancesWithOptions: middlewareInstancesWithO
 
   for (const middlewareInstanceWithOptions of middlewareInstancesWithOptions) {
     let options: any;
-    let middlewareInstance: ClassMiddlewareInterface;
+    let middlewareInstance: MiddlewareInterface;
 
     if (Array.isArray(middlewareInstanceWithOptions)) {
       [middlewareInstance, options] = middlewareInstanceWithOptions;

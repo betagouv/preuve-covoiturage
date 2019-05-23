@@ -13,7 +13,7 @@ import { HandlerInterface } from '../interfaces/HandlerInterface';
 
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { NewableType } from '../types/NewableType';
-import { ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 /**
  * Service provider parent class
@@ -27,7 +27,7 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
   readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
 
   readonly handlers: NewableType<HandlerInterface>[] = [];
-  readonly middlewares: [string, NewableType<ClassMiddlewareInterface>][] = [];
+  readonly middlewares: [string, NewableType<MiddlewareInterface>][] = [];
 
   protected container: ContainerInterface;
 

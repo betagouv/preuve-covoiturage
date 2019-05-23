@@ -1,3 +1,7 @@
-import { CallType } from '../types/CallType';
+import { ParamsType, ResultType, ContextType } from '../types';
 
-export type MiddlewareInterface = (call: CallType, next: Function) => Promise<void>;
+export interface MiddlewareInterface {
+  process(params: ParamsType, context: ContextType, next?: Function, options?: any):Promise<ResultType>;
+}
+
+export type FunctionMiddlewareInterface = (params: ParamsType, context: ContextType, next?: Function) => Promise<ResultType>;

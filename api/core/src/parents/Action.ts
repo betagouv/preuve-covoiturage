@@ -5,7 +5,7 @@ import { ContextType } from '../types/ContextType';
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { compose } from '../helpers/compose';
 import { ContainerInterface } from '../container';
-import { FunctionMiddlewareInterface, ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { FunctionMiddlewareInterface, MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 
 /**
@@ -20,12 +20,12 @@ export abstract class Action implements HandlerInterface {
   public readonly middlewares: (string|[string, any])[] = [];
 
   async boot(container: ContainerInterface) {
-    const middlewares = <(ClassMiddlewareInterface | [ClassMiddlewareInterface, any])[]>this.middlewares.map((value) => {
+    const middlewares = <(MiddlewareInterface | [MiddlewareInterface, any])[]>this.middlewares.map((value) => {
       if (typeof value === 'string') {
-        return <ClassMiddlewareInterface>container.get(value);
+        return <MiddlewareInterface>container.get(value);
       }
       const [key, config] = value;
-      const middleware = <ClassMiddlewareInterface>container.get(key);
+      const middleware = <MiddlewareInterface>container.get(key);
       return [middleware, config];
     });
     this.wrapper = compose(middlewares);

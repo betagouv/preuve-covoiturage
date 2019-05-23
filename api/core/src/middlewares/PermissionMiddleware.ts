@@ -1,7 +1,7 @@
 import { InvalidParamsException, ForbiddenException } from '../exceptions';
-import { ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { ParamsType, ResultType, ContextType } from '../types';
-
+import { middleware } from '../container';
 
 /**
  * Can middleware check permission in context and may throw a ForbiddenException
@@ -10,7 +10,8 @@ import { ParamsType, ResultType, ContextType } from '../types';
  * @param {...string[]} roles
  * @returns {MiddlewareInterface}
  */
-export class PermissionMiddleware implements ClassMiddlewareInterface {
+@middleware()
+export class PermissionMiddleware implements MiddlewareInterface {
   async process(params: ParamsType, context: ContextType, next: Function, neededPermissions: string[]): Promise<ResultType> {
     if (!neededPermissions.length) {
       throw new InvalidParamsException('No permissions defined');

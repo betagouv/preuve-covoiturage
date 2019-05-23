@@ -7,7 +7,7 @@ import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { Container, middleware } from '../container';
 
 chai.use(chaiAsPromised);
@@ -19,7 +19,7 @@ const defaultContext = {
 };
 
 @middleware()
-class MinusMiddleware implements ClassMiddlewareInterface {
+class MinusMiddleware implements MiddlewareInterface {
   async process(params, context, next) {
     const result = await next(params, context);
     return result - 1;
@@ -27,7 +27,7 @@ class MinusMiddleware implements ClassMiddlewareInterface {
 }
 
 @middleware()
-class HelloMiddleware implements ClassMiddlewareInterface {
+class HelloMiddleware implements MiddlewareInterface {
   async process(params, context, next) {
     const result = await next(params, context);
     return `hello ${result}?`;
@@ -35,7 +35,7 @@ class HelloMiddleware implements ClassMiddlewareInterface {
 }
 
 @middleware()
-class WorldMiddleware implements ClassMiddlewareInterface {
+class WorldMiddleware implements MiddlewareInterface {
   async process(params, context, next) {
     const result = await next(params, context);
     return `world ${result}!`;

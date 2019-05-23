@@ -2,7 +2,7 @@ import { ContainerInterface } from '../container';
 
 import { ProviderInterface } from './ProviderInterface';
 import { NewableType } from '../types/NewableType';
-import { ClassMiddlewareInterface } from './ClassMiddlewareInterface';
+import { MiddlewareInterface } from './MiddlewareInterface';
 
 export interface ServiceProviderInterface extends ProviderInterface {
 
@@ -18,10 +18,10 @@ export interface ServiceProviderInterface extends ProviderInterface {
     /**
    * Middlewares is a shortcut to registrer middlewares
    * @example [['can', CanMiddleware]] will bind 'can' to CanMiddleware
-   * @type {[string, NewableType<ClassMiddlewareInterface>][]}
+   * @type {[string, NewableType<MiddlewareInterface>][]}
    * @memberof ServiceProviderInterface
    */
-  readonly middlewares?: [string, NewableType<ClassMiddlewareInterface>][];
+  readonly middlewares?: [string, NewableType<MiddlewareInterface>][];
 
   /**
    * List of Service providers constructor

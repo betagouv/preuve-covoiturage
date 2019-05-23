@@ -1,8 +1,9 @@
 import { ForbiddenException } from '../exceptions/ForbiddenException';
 import { InvalidParamsException } from '../exceptions/InvalidParamsException';
 import { reduceRoles } from '../helpers/reducers/reduceRoles';
-import { ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { ParamsType, ResultType, ContextType } from '../types';
+import { middleware } from '../container';
 
 
 /**
@@ -11,7 +12,8 @@ import { ParamsType, ResultType, ContextType } from '../types';
  * @param {...string[]} roles
  * @returns {MiddlewareInterface}
  */
-export class RoleMiddleware implements ClassMiddlewareInterface {
+@middleware()
+export class RoleMiddleware implements MiddlewareInterface {
   async process(params: ParamsType, context: ContextType, next: Function, roles: string[]): Promise<ResultType> {
     const filtered: string[] = roles.filter(i => !!i);
 

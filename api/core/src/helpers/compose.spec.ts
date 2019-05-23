@@ -4,22 +4,22 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 
 import { compose } from './compose';
-import { ClassMiddlewareInterface } from '../interfaces/ClassMiddlewareInterface';
+import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { ContextType, ResultType, ParamsType } from '../types';
 
-class MiddlewareOne implements ClassMiddlewareInterface {
+class MiddlewareOne implements MiddlewareInterface {
   async process(params: { name: string }, context: ContextType, next?: Function, options?: any):Promise<ResultType> {
     const { name } = params;
     return next({ name: `${name} Stark` }, context);
   }
 }
-class MiddlewareTwo implements ClassMiddlewareInterface {
+class MiddlewareTwo implements MiddlewareInterface {
   async process(params: ParamsType, context: ContextType, next?: Function, options?: any):Promise<ResultType> {
     const result = await next(params, context);
     return `${result} !!!`;
   }
 }
-class MiddlewareThree implements ClassMiddlewareInterface {
+class MiddlewareThree implements MiddlewareInterface {
   async process(params: { name: string}, context: ContextType, next?: Function, options?: any):Promise<ResultType> {
     const { name } = params;
     const { greeting } = options;
