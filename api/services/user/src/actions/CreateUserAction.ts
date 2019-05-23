@@ -1,9 +1,21 @@
 import { Parents, Container } from '@pdc/core';
-import { UserRepositoryProvider } from '../providers/UserRepositoryProvider';
-import { RandomProvider } from '@pdc/provider-random';
-import { CryptoProvider } from '@pdc/provider-crypto';
+import { CryptoProvider, RandomProvider } from '@pdc/provider-crypto';
 import { User } from '../entities/User';
 import { UserInterface } from '../interfaces/UserInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+
+
+interface NewUser {
+  email: string;
+  lastname: string;
+  firstname: string;
+  phone: string;
+  group: string;
+  role: string;
+  password: string;
+  aom?: string;
+  operator?: string;
+}
 
 @Container.handler({
   service: 'user',
@@ -11,7 +23,7 @@ import { UserInterface } from '../interfaces/UserInterface';
 })
 export class CreateUserAction extends Parents.Action {
   constructor(
-    private userRepository: UserRepositoryProvider,
+    private userRepository: UserRepositoryProviderInterfaceResolver,
     private randomProvider: RandomProvider,
     private cryptoProvider: CryptoProvider,
   ) {
@@ -34,53 +46,62 @@ export class CreateUserAction extends Parents.Action {
     }
 
 
+    // todo: create fullname ?
     const payload: any = {
       email: request.email,
       firstname : request.firstname,
       lastname : request.lastname,
       group : request.group,
       role : request.role,
+      phone: request.phone,
       status : 'invited',
       password : await this.cryptoProvider.cryptPassword(request.password),
       requester : context.call.user.fullname,
     };
 
-    /*
-        const op = request.operator;
-        const ao = request.aom;
 
-      if (op) {
-          const operator = await operatorService.findOne(op);
+    const op = request.operator;
+    const ao = request.aom;
 
-          if (operator) {
-            payload.operator = operator._id;
-            payload.organisation = operator.name;
-          }
-        } else if (ao) {
-          const aom = await aomService.findOne(ao);
+    if (op) {
+      // todo: replace with what is in comment
+      payload.operator = op;
 
-          if (aom) {
-            payload.aom = aom._id;
-            payload.organisation = aom.name;
-          }
-        }
-    */
+      // const operator = await operatorService.findOne(op);
+
+      // if (operator) {
+      //   payload.operator = operator._id;
+        // payload.organisation = operator.name;
+      // }
+    } else if (ao) {
+      // todo: replace with what is in comment
+      payload.aom = ao;
+      // const aom = await aomService.findOne(ao);
+
+      // if (aom) {
+      //   payload.aom = aom._id;
+      //   payload.organisation = aom.name;
+      // }
+    }
 
 
     // create the new user
-    const user = new User(payload);
+    let user = new User(payload);
     // user.permissions = Permissions.getFromRole(user.group, user.role);
 
-    this.userRepository.create(payload);
+    user = await this.userRepository.create(user);
 
     // generate new token for a password reset on first access
-    return this.forgottenPassword({
-      email: payload.email,
-      invite: {
-        requester: payload.requester,
-        organisation: payload.organisation,
+    return this.forgottenPassword(
+      {
+        email: payload.email,
+        invite: {
+          requester: payload.requester,
+          organisation: payload.organisation,
+        },
       },
-    });
+      user,
+    );
   }
 
   // todo: put this in authentification ?

@@ -1,5 +1,5 @@
 export interface UserInterface {
-  _id: string;
+  _id?: string;
   email: string;
   lastname: string;
   firstname: string;
@@ -12,8 +12,8 @@ export interface UserInterface {
   status: string;
   forgottenReset: string;
   forgottenToken: string;
-  operator: string;
-  aom: string;
+  operator?: string;
+  aom?: string;
   hasResetPassword: boolean;
   forgottenAt: Date;
   lastConnectedAt: Date;

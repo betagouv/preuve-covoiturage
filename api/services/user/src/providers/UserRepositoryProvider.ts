@@ -1,10 +1,9 @@
 import { Providers, Container } from '@pdc/core';
 import { ParentRepositoryProvider } from '@pdc/provider-repository';
-import { MongoProvider } from '@pdc/provider-mongo';
+import { MongoProvider, ObjectId } from '@pdc/provider-mongo';
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
-import { Model } from '@pdc/provider-repository/dist/ParentRepositoryProviderInterface';
 
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface{
@@ -31,18 +30,33 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return User;
   }
 
-  public async findByEmail(email: string): Promise<Model>  {
+  public async findByEmail(email: string): Promise<User>  {
     const collection = await this.getCollection();
     const result = await collection.findOne({ email });
     return this.instanciate(result);
   }
 
-  public async list(filters, pagination): Promise<Model> {
+  public async list(filters, pagination): Promise<{users: User[], total: number}> {
+    let result = [];
+
     // todo: get skip and limit from pagination
     const collection = await this.getCollection();
-    const result = await collection.find(filters).toArray();
 
-    // todo: update pagination metadata from request
-    return this.instanciate(result);
+    // filters aom : string, operator: string
+    if (filters.aom) {
+      result = await collection.find({ aom: ObjectId(filters.aom) }).toArray();
+    } else if (filters.operator) {
+      result = await collection.find({ operator: ObjectId(filters.operator) }).toArray();
+    }
+
+    result = await collection.find(filters).toArray();
+
+    const users = this.instanciateMany(result);
+    const total = 100; // todo : get total;
+
+    return {
+      users,
+      total,
+    };
   }
 }
