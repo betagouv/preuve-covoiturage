@@ -141,7 +141,7 @@ export class StatisticsContentComponent implements OnInit {
 
   private getDistance(d): number {
     const dArr = get(d, 'distance.total', [{ total: 0 }]);
-    if (!dArr.length) return 0;
+    if (!dArr || !dArr.length) return 0;
     if (!dArr[0] || !dArr[0].total) return 0;
     return parseInt(dArr[0].total, 10);
   }

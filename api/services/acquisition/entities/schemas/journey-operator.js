@@ -18,24 +18,33 @@ const schema = {
   remaining_fee: { type: Number, min: 0, default: 0 },
 };
 
-const PassengerSchema = new Schema(Object.assign({}, schema, {
-  contribution: { type: Number, min: 0, default: 0 },
-  seats: { type: Number, min: 1, default: 1 },
-}), { _id: false, id: false });
+const PassengerSchema = new Schema(
+  Object.assign({}, schema, {
+    contribution: { type: Number, min: 0, default: 0 },
+    seats: { type: Number, min: 1, default: 1 },
+  }),
+  { _id: false, id: false },
+);
 
-const DriverSchema = new Schema(Object.assign({}, schema, {
-  revenue: { type: Number, min: 0, default: 0 },
-  expense: { type: Number, min: 0, default: 0 },
-}), { _id: false, id: false });
+const DriverSchema = new Schema(
+  Object.assign({}, schema, {
+    revenue: { type: Number, min: 0, default: 0 },
+    expense: { type: Number, min: 0, default: 0 },
+  }),
+  { _id: false, id: false },
+);
 
 module.exports = {
-  journey_id: { type: String, trim: true, unique: true },
+  journey_id: { type: String, trim: true, index: true, unique: true },
   operator_journey_id: { type: String, trim: true, index: true },
 
   operator_class: rank,
 
   operator: {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      index: true,
+    },
     nom_commercial: { type: String, alias: 'name' },
   },
 

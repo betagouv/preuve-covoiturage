@@ -1,9 +1,46 @@
-const { get, set } = require('lodash');
 const { ObjectId } = require('mongoose').Types;
 
+/**
+ * Get the value with a path as array
+ * @param {object} obj
+ * @param {array} path
+ */
+const get = (obj, path = []) => {
+  const len = path.length;
+  return path.reduce((p, c, i) => {
+    if (i === len - 1) return p[c];
+    if (p && p[c]) p = p[c];
+    return p;
+  }, obj);
+};
+
+/**
+ * Set the value with a path as array
+ * @param {object} obj
+ * @param {array} path
+ * @param {*} value
+ */
+const set = (obj, path = [], value) => {
+  const len = path.length;
+  return path.reduce((p, c, i) => {
+    if (i === len - 1) {
+      p[c] = value;
+      return obj;
+    }
+
+    if (p && p[c]) p = p[c];
+    return p;
+  }, obj);
+};
+
 const castToObjectId = {
-  find: ['aom._id'],
-  aggregate: [[0, '$match.aom.$elemMatch._id']],
+  find: [['aom._id']],
+  aggregate: [[0, '$match', 'aom._id']],
+};
+
+const castToISODate = {
+  find: [['passenger.start.datetime', '$gte']],
+  aggregate: [[0, '$match', 'passenger.start.datetime', '$gte']],
 };
 
 const castArgs = (command, args) => {
@@ -15,17 +52,24 @@ const castArgs = (command, args) => {
           set(args, path, ObjectId(_id));
         }
       });
+
+      castToISODate.find.forEach((path) => {
+        const date = get(args, path);
+        if (date) set(args, path, new Date(date));
+      });
       break;
 
     case 'aggregate':
-      // cast all declared ObjectId
-      castToObjectId.aggregate.forEach(([idx, path]) => {
-        if (args[idx]) {
-          const _id = get(args[idx], path);
-          if (_id && ObjectId.isValid(_id)) {
-            set(args[idx], path, ObjectId(_id));
-          }
+      castToObjectId.aggregate.forEach((path) => {
+        const _id = get(args, path);
+        if (_id && ObjectId.isValid(_id)) {
+          set(args, path, ObjectId(_id));
         }
+      });
+
+      castToISODate.aggregate.forEach((path) => {
+        const date = get(args, path);
+        if (date) set(args, path, new Date(date));
       });
       break;
     default:

@@ -1,8 +1,14 @@
-const { ObjectId } = require('mongoose').Types;
-
 module.exports = {
-  distancePerMonth({ aom = null }) {
+  distancePerMonth({ aom = null, startDate = '2019-01-01T00:00:00Z' }) {
+    const $match = {
+      'passenger.start.datetime': { $gte: startDate },
+    };
+    if (aom) $match['aom._id'] = aom;
+
     const args = [
+      {
+        $match,
+      },
       {
         $project: {
           year: { $year: '$passenger.start.datetime' },
@@ -27,18 +33,6 @@ module.exports = {
         },
       },
     ];
-
-    if (aom) {
-      args.unshift({
-        $match: {
-          aom: {
-            $elemMatch: {
-              _id: ObjectId(aom),
-            },
-          },
-        },
-      });
-    }
 
     return {
       collection: 'journeys',
