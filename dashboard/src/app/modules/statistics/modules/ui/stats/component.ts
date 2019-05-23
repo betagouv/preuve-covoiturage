@@ -120,7 +120,7 @@ export class StatisticsContentComponent implements OnInit {
   }
 
   private mapDateLabelsPerDay({ _id }) {
-    return new Date(_id.year, _id.month, _id.day, 12);
+    return new Date(_id.year, _id.month - 1, _id.day, 12);
   }
 
   private mapDateLabelsPerMonth({ _id }) {
@@ -129,7 +129,7 @@ export class StatisticsContentComponent implements OnInit {
 
   private reduceCumulativeData(p, c, i) {
     p[i] = p[i] || {};
-    p[i].t = new Date(c._id.year, c._id.month, c._id.day, 0, 0, 0);
+    p[i].t = new Date(c._id.year, c._id.month - 1, c._id.day, 0, 0, 0);
     p[i].y = i > 1 ? p[i - 1].y + c.total : c.total;
     return p;
   }
