@@ -1,11 +1,9 @@
 import { Providers, Container } from '@pdc/core';
 import { ParentRepositoryProvider } from '@pdc/provider-repository';
 import { MongoProvider, ObjectId } from '@pdc/provider-mongo';
-
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
-import { Model } from '@pdc/provider-repository/dist/ParentRepositoryProviderInterface';
 
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface{

@@ -2,12 +2,11 @@ import { Parents, Container } from '@pdc/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserInterface } from '../interfaces/UserInterface';
 
-interface Pagination {
-  total: number;
-  count: number;
+interface PaginationInputInterface { // todo: mettre offset et limit ?
   per_page: number;
   current_page: number;
-  total_pages: number;
+  limit: number;
+  skip: number;
 }
 
 
@@ -24,22 +23,26 @@ export class ListUserAction extends Parents.Action {
 
   public async handle(
     filters: { [prop: string]: any },
-    context: { call?: { user: UserInterface, metadata?: { pagination: Pagination }}}): Promise<any[]> {
+    context: { call?: { user: UserInterface, metadata?: { pagination: PaginationInputInterface }}}): Promise<any> {
     // middleware : "user.list"
 
     // todo: manage pagination ( default value ... )
     const pagination = context.call.metadata.pagination;
 
-    return this.userRepository.list(filters, pagination);
+    const data = await this.userRepository.list(filters, pagination);
 
-    // todo: assign new pagination from data
-    // data.metadata.pagination = {
-    //       // total: docCount,
-    //       //   count: data.length,
-    //       //   per_page: limit,
-    //       //   current_page: Math.floor((skip || 0) / limit) + 1,
-    //       //   total_pages: Math.floor(docCount / limit),
-    // };
+    return {
+      data: data.users,
+      metadata: {
+        pagination : {
+          total: data.total,
+          count: data.users.length,
+          per_page: pagination.per_page,
+          current_page: Math.floor((pagination.skip || 0) / pagination.limit) + 1,
+          total_pages: Math.floor(data.total / pagination.limit),
+        },
+      },
+    };
 
 
     // Complete aom & operators in payload

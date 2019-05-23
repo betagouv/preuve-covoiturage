@@ -35,7 +35,14 @@ const mockRequest = {
   aom: '1ac',
 };
 
-const mockPagination = {
+const mockInputPagination = {
+  per_page: 25,
+  current_page: 1,
+  limit: 5,
+  skip: 1,
+};
+
+const mockOutputPagination = {
   total: 1,
   count: 1,
   per_page: 25,
@@ -47,13 +54,15 @@ const mockPagination = {
 const mockContext = {
   call: {
     user: mockConnectedUser,
-    pagination: mockPagination,
+    metadata: {
+      pagination: mockInputPagination,
+    },
   },
 };
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async list(filters, pagination): Promise<any> {
-    return mockUsers;
+    return { users: mockUsers, total: mockOutputPagination.total, count: mockOutputPagination.count };
   }
 }
 
@@ -62,7 +71,7 @@ const action = new ListUserAction(new FakeUserRepository());
 describe('list users action', () => {
   it('should work', async () => {
     const result = await action.handle(mockRequest, mockContext);
-    expect(result).to.be.an('array').to['containSubset'](mockUsers);
+    expect(result.data).to.be.an('array').to['containSubset'](mockUsers);
   });
 });
 

@@ -62,7 +62,6 @@ const action = new CreateUserAction(new FakeUserRepository(), new FakeCryptoProv
 describe('Create user action', () => {
   it('should work', async () => {
     const result = await action.handle(mockNewUser, { call: { user: mockConnectedUser } });
-
     expect(result).to.include({
       _id: '1ab',
       email: mockNewUser.email,

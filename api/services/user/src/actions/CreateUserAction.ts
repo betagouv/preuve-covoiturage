@@ -31,8 +31,13 @@ export class CreateUserAction extends Parents.Action {
 
 
   // todo: fix all comments
-  public async handle(request: UserInterface, context: { call?: { user: UserInterface } }): Promise<void> {
+  public async handle(request: NewUser , context: { call?: { user: UserInterface } }): Promise<void> {
     // middleware: "user.create"
+    // middleware: "aom.users.add"
+    // middleware: "operator.users.add"
+
+    // complete in case of adding to AOM !
+
 
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
@@ -61,8 +66,8 @@ export class CreateUserAction extends Parents.Action {
     };
 
 
-      if (op) {
-          const operator = await operatorService.findOne(op);
+    const op = request.operator;
+    const ao = request.aom;
 
     if (op) {
       // todo: replace with what is in comment
