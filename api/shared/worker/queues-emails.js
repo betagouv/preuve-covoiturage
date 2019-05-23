@@ -33,7 +33,7 @@ emailsQueue.on('progress', (job, progress) => {
 });
 emailsQueue.on('completed', (job) => {
   console.log(`🐮/emails: completed ${job.id} ${job.data.type}`);
-  // console.log(JSON.stringify(result));
+  job.remove();
 });
 emailsQueue.on('failed', (job, err) => {
   console.log(`🐮/emails: failed ${job.id} ${job.data.type}`, err.message);
