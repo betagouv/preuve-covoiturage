@@ -124,7 +124,7 @@ export class StatisticsContentComponent implements OnInit {
   }
 
   private mapDateLabelsPerMonth({ _id }) {
-    return new Date(_id.year, _id.month, 1, 12);
+    return new Date(_id.year, _id.month - 1, 1, 12);
   }
 
   private reduceCumulativeData(p, c, i) {
