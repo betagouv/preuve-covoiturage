@@ -32,6 +32,8 @@ after(async () => {
 
   // close ExpressJS application server
   await app.close();
+
+  process.exit();
 });
 
 /**
