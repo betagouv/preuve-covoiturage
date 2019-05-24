@@ -37,9 +37,10 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     return this.mongoProvider.getCollectionFromDb(this.getKey(), this.getDbName());
   }
 
-  async find(id: string): Promise<Model> {
+  async find(id: string | ObjectId): Promise<Model> {
     const collection = await this.getCollection();
-    const result = await collection.findOne({ _id: id });
+    const normalizedId = (typeof id === 'string') ? new ObjectId(id) : id;
+    const result = await collection.findOne({ _id: normalizedId });
     if (!result) throw new Exceptions.DDBNotFoundException('id not found');
     return this.instanciate(result);
   }
