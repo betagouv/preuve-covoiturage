@@ -1,6 +1,6 @@
 import { MongoProvider, CollectionInterface, MongoException, ObjectId } from '@pdc/provider-mongo';
-
 import { Providers, Types } from '@pdc/core';
+
 import { ParentRepositoryProviderInterface, Model } from './ParentRepositoryProviderInterface';
 
 export abstract class ParentRepositoryProvider implements ParentRepositoryProviderInterface {
@@ -82,7 +82,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     const collection = await this.getCollection();
     const normalizedId = (typeof id === 'string') ? new ObjectId(id) : id;
     const result = await collection.findOneAndUpdate(
-      { _id: normalizedId }, 
+      { _id: normalizedId },
       {
         $set: patch,
       },
@@ -107,7 +107,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   protected instanciate(data: any): Model {
     const constructor = this.getModel();
-    return new constructor(data);
+    return data ? new constructor(data) : data;
   }
 
   protected instanciateMany(data: any[]): Model[] {
