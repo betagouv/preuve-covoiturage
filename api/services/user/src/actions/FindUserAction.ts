@@ -1,6 +1,7 @@
 import { Parents, Container } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserDbInterface } from '../interfaces/UserInterfaces';
 
 @Container.handler({
   service: 'user',
@@ -13,10 +14,9 @@ export class FindUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: {id: string}): Promise<void> {
+  public async handle(request: {id: string}): Promise<UserDbInterface> {
     // middleware : "user.read"
     const foundUser = this.userRepository.find(request.id);
-
 
       // const results = await baseFind(query, options);
       // const aom = await Aom.find({}, { name: 1 });

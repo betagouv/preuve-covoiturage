@@ -1,14 +1,9 @@
+import lodash from 'lodash';
+
 import { Parents, Container } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
-
-interface PaginationInputInterface { // todo: mettre offset et limit ?
-  per_page: number;
-  current_page: number;
-  limit: number;
-  skip: number;
-}
+import { UserDbInterface } from '../interfaces/UserInterfaces';
 
 
 @Container.handler({
@@ -22,13 +17,25 @@ export class ListUserAction extends Parents.Action {
     super();
   }
 
+  private config = {
+    perPage: 25,
+    defaultPage: 1,
+    defaultLimit: 25,
+    maxLimit: 1000,
+  };
+
   public async handle(
     filters: { [prop: string]: any },
-    context: { call?: { user: User, metadata?: { pagination: PaginationInputInterface }}}): Promise<any> {
+    context: { call?: { user: UserDbInterface}}): Promise<{data: UserDbInterface[], metadata: { pagination: { [prop:string]: any }}}> {
     // middleware : "user.list"
 
-    // todo: manage pagination ( default value ... )
-    const pagination = context.call.metadata.pagination;
+    // pagination: (skip and/or limit) or (page and/or per_page)
+
+    const page = filters.page ? this.castPage(filters.page) : this.config.defaultPage;
+    const limit = filters.limit ? this.castPage(filters.limit) : this.config.defaultLimit;
+
+
+    const pagination = this.paginate({ limit, page });
 
     const data = await this.userRepository.list(filters, pagination);
 
@@ -38,7 +45,7 @@ export class ListUserAction extends Parents.Action {
         pagination : {
           total: data.total,
           count: data.users.length,
-          per_page: pagination.per_page,
+          per_page: this.config.perPage, // not used in front
           current_page: Math.floor((pagination.skip || 0) / pagination.limit) + 1,
           total_pages: Math.floor(data.total / pagination.limit),
         },
@@ -69,5 +76,30 @@ export class ListUserAction extends Parents.Action {
     // });
     //
     // return results;
+  }
+
+  private castPage(page) {
+    const p = parseInt(page, 10);
+
+    if (lodash.isNaN(p)) return this.config.defaultPage;
+
+    return Math.abs(p) || this.config.defaultPage;
+  }
+
+  private castLimit(limit) {
+    let lim = parseInt(limit, 10);
+
+    if (lodash.isNaN(lim)) return this.config.defaultLimit;
+
+    lim = Math.abs(lim) || this.config.defaultLimit;
+
+    return lim > this.config.maxLimit ? this.config.maxLimit : lim;
+  }
+
+  private paginate(query: {limit: number, page: number}): {skip:number, limit:number} {
+    const limit = this.castLimit(query.limit);
+    const skip = (this.castPage(query.page) - 1) * limit;
+
+    return { skip, limit };
   }
 }

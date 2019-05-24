@@ -26,7 +26,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 
 const action = new DeleteUserAction(new FakeUserRepository());
 
-describe('Update user action', () => {
+describe('Delete user action', () => {
   it('should work', async () => {
     const result = await action.handle({ id: mockUser._id });
     expect(result).to.include(mockUser);

@@ -3,6 +3,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserDbInterface } from '../interfaces/UserInterfaces';
 
 
 interface NewUser {
@@ -31,22 +32,19 @@ export class CreateUserAction extends Parents.Action {
 
 
   // todo: fix all comments
-  public async handle(request: NewUser , context: { call?: { user: User } }): Promise<User> {
+  public async handle(request: NewUser , context: { call?: { user: UserDbInterface } }): Promise<UserDbInterface> {
     // middleware: "user.create"
     // middleware: "aom.users.add"
     // middleware: "operator.users.add"
 
     // complete in case of adding to AOM !
 
-    console.log(request, context);
 
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
       // throw new ConflictError();
     }
-
-    console.log('yo');
 
     if (request.operator && request.aom) {
       // throw new BadRequestError('Cannot assign operator and AOM at the same time');
@@ -63,7 +61,7 @@ export class CreateUserAction extends Parents.Action {
       phone: request.phone,
       status : 'invited',
       password : await this.cryptoProvider.cryptPassword(request.password),
-      requester : context.call.user.fullname,
+      // requester : context.call.user.fullname,
     };
 
 
@@ -95,9 +93,7 @@ export class CreateUserAction extends Parents.Action {
     let user = new User(payload);
     // user.permissions = Permissions.getFromRole(user.group, user.role);
 
-    console.log('yo');
     user = await this.userRepository.create(user);
-    console.log(user);
     // generate new token for a password reset on first access
     return this.forgottenPassword(
       {

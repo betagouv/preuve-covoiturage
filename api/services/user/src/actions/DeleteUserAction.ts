@@ -1,6 +1,7 @@
 import { Parents, Container } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserDbInterface } from '../interfaces/UserInterfaces';
 
 @Container.handler({
   service: 'user',

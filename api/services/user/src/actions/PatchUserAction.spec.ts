@@ -4,7 +4,8 @@ import chaiSubset from 'chai-subset';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { PatchUserAction } from './PatchUserAction';
-import { User } from '../entities/User';
+import { UserDbInterface } from '../interfaces/UserInterfaces';
+
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
@@ -24,8 +25,20 @@ const mockUserNewProperties = {
 
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  async update(user:User): Promise<User> {
-    return user;
+  async patch(id: string, patch?: any): Promise<UserDbInterface> {
+    return {
+      _id: id,
+      email: 'john.schmidt@example.com',
+      firstname: mockUserNewProperties.firstname,
+      lastname: mockUserNewProperties.lastname,
+      phone: mockUser.phone,
+      group: 'registry',
+      role: 'admin',
+      aom: '1ac',
+      permissions: [
+        'user.list',
+      ],
+    };
   }
 }
 
