@@ -1,4 +1,4 @@
-import { Kernel } from '../parents/Kernel';
+import { KernelInterfaceResolver } from '../interfaces/KernelInterface';
 
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
@@ -29,7 +29,7 @@ export class CallCommand extends Command {
   ];
 
   constructor(
-    private kernel: Kernel,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }

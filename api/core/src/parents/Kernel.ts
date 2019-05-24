@@ -4,7 +4,7 @@ import { ResultType } from '../types/ResultType';
 import { ContainerInterface } from '../container';
 import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 
-import { KernelInterface } from '../interfaces/KernelInterface';
+import { KernelInterface, KernelInterfaceResolver } from '../interfaces/KernelInterface';
 import { RPCCallType } from '../types/RPCCallType';
 import { RPCResponseType } from '../types/RPCResponseType';
 import { RPCSingleCallType } from '../types/RPCSingleCallType';
@@ -33,7 +33,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
   constructor(container?: ContainerInterface) {
     super(container);
     if (!container) {
-      this.container.bind(Kernel).toConstantValue(this); // PAS SUR QUE CE SOIT UTILE
+      this.container.bind(KernelInterfaceResolver).toConstantValue(this);
     }
   }
 

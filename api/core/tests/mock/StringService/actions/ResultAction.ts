@@ -3,16 +3,16 @@ import { ParamsType } from '../../../../src//types/ParamsType';
 import { ContextType } from '../../../../src//types/ContextType';
 import { ResultType } from '../../../../src//types/ResultType';
 import { InvalidParamsException } from '../../../../src//exceptions/InvalidParamsException';
-import { RPCSingleResponseType } from '../../../../src//types/RPCSingleResponseType';
+import { RPCSingleResponseType } from '../../../../src/types/RPCSingleResponseType';
 import { handler } from '../../../../src/container';
-import { Kernel } from '../../../../src//parents/Kernel';
+import { KernelInterfaceResolver } from '../../../../src/interfaces/KernelInterface';
 
 @handler({
   service: 'string',
   method: 'result',
 })
 export class ResultAction extends Action {
-  constructor(private kernel: Kernel) {
+  constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
