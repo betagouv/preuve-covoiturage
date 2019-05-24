@@ -1,40 +1,4 @@
 <app-stats-header></app-stats-header>
-
-<div *ngIf="!loaded" class="absolute-center">
-    <p-progressSpinner></p-progressSpinner>
-</div>
-
-<div *ngIf="loaded" class="stats__wrapper">
-    <h1 class="has-text-centered">Statistiques</h1>
-
-    <h3 class="subtitle has-text-centered">Résumé</h3>
-
-    <div class="p-grid p-justify-center">
-        <div class="p-col-12 p-md-6">
-            <app-statistics-resume [apiData]="apiData" [statNames]="statList.resume"></app-statistics-resume>
-        </div>
-    </div>
-
-    <br><br>
-
-
-    <h3 class="subtitle has-text-centered">Détails</h3>
-
-    <div class="p-grid p-justify-center">
-        <div class="p-col-12 p-md-6">
-            <app-statistics-graphs [apiData]="apiData" [statNames]="statList.graphs"></app-statistics-graphs>
-        </div>
-    </div>
-
-    <br><br><br>
-
-    <h4 class="subtitle has-text-centered">Calculs</h4>
-
-    <div class="has-text-centered">
-        <a href="{{gitbookLinkStats}}">Informations sur les méthodes de calculs utilisées.</a>
-    </div>
-
-    <br><br>
-
-
+<div class="stats__wrapper">
+  <app-stats-content [apiData]="apiData"></app-stats-content>
 </div>

@@ -1,6 +1,4 @@
 export const JOURNEY_HEADER = {
-
-
   main: {
     journey: [
       'operator.nom_commercial',
@@ -13,11 +11,7 @@ export const JOURNEY_HEADER = {
       'passenger.end.town',
       'operator_class',
     ],
-    driverPassenger: [
-      'start.insee',
-      'end.insee',
-      'cost',
-    ],
+    driverPassenger: ['start.insee', 'end.insee', 'cost'],
   },
   selection: {
     journey: [
@@ -56,12 +50,7 @@ export const JOURNEY_HEADER = {
       'traveler_hash',
     ],
   },
-  sort : {
-    journey: [
-      'passenger.start.date',
-      'passenger.distance',
-      'operator_class',
-    ],
+  sort: {
+    journey: ['passenger.start.date', 'passenger.distance', 'operator_class'],
   },
-
 };

@@ -1,6 +1,12 @@
 import { saveAs } from 'file-saver';
 import { Component, ViewChild } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { LazyLoadEvent, MessageService } from 'primeng/api';
 
 import { AuthenticationService } from '~/applicativeService/authentication/service';
@@ -17,20 +23,25 @@ import { JOURNEY_HEADER } from '../../config/header';
   templateUrl: 'template.html',
   animations: [
     trigger('rowExpansionTrigger', [
-      state('void', style({
-        transform: 'translateX(-10%)',
-        opacity: 0,
-      })),
-      state('active', style({
-        transform: 'translateX(0)',
-        opacity: 1,
-      })),
+      state(
+        'void',
+        style({
+          transform: 'translateX(-10%)',
+          opacity: 0,
+        }),
+      ),
+      state(
+        'active',
+        style({
+          transform: 'translateX(0)',
+          opacity: 1,
+        }),
+      ),
       transition('* <=> *', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)')),
     ]),
   ],
   styleUrls: ['style.scss'],
 })
-
 export class JourneyListComponent {
   journeys;
   headList = JOURNEY_HEADER.main.journey;
@@ -71,11 +82,15 @@ export class JourneyListComponent {
   }
 
   applyFilters(mainFilters) {
-    Object
-      .keys(mainFilters)
-      .forEach((key) => {
-        this.dt.filter(mainFilters[key]['value'], mainFilters[key]['colName'], mainFilters[key]['filterType']);
-      });
+    if (!mainFilters) return;
+
+    Object.keys(mainFilters).forEach((key) => {
+      this.dt.filter(
+        mainFilters[key]['value'],
+        mainFilters[key]['colName'],
+        mainFilters[key]['filterType'],
+      );
+    });
 
     this.filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
 
@@ -115,27 +130,25 @@ export class JourneyListComponent {
 
   loadLazy(event: LazyLoadEvent) {
     const eventBeforeFormat = this.setDefault(event);
-    const filters = this.journeyService.formatFiltersFromLazyEvent(eventBeforeFormat);
+    const filters = this.journeyService.formatFiltersFromLazyEvent(
+      eventBeforeFormat,
+    );
     this.get(filters);
   }
 
   export(type) {
-    this.journeyService
-      .export(type, this.filters)
-      .subscribe((res) => {
-        saveAs(res, `journeys.${type}`);
-      });
+    this.journeyService.export(type, this.filters).subscribe((res) => {
+      saveAs(res, `journeys.${type}`);
+    });
   }
 
   delete(root, id) {
-    this.journeyService
-      .delete(id)
-      .subscribe(() => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Trajet supprimé',
-        });
+    this.journeyService.delete(id).subscribe(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Trajet supprimé',
       });
+    });
   }
 
   isNaN(value) {
@@ -156,15 +169,16 @@ export class JourneyListComponent {
 
   private get(filters: any[any] = []) {
     this.loading = true;
-    this.journeyService
-      .get(filters)
-      .subscribe(
-        (response: ApiResponse) => {
-          this.setTotal(response.meta);
-          this.journeys = response.data;
-          this.loading = false;
-        },
-      );
+    this.journeyService.get(filters).subscribe((response: ApiResponse) => {
+      this.setTotal(response.meta);
+      this.journeys = response.data.map((j) => {
+        if (j.operator && j.operator.nom_commercial === 'hidden') {
+          j.operator.nom_commercial = 'Masqué';
+        }
+        return j;
+      });
+      this.loading = false;
+    });
   }
 
   private setDefault(event: LazyLoadEvent) {
@@ -174,7 +188,6 @@ export class JourneyListComponent {
     }
     return event;
   }
-
 
   private setTotal(meta) {
     if (meta.hasOwnProperty('pagination')) {

@@ -17,7 +17,10 @@ module.exports = (Model, methods) => _.assign(
         .select(projection)
         .exec();
 
-      const docCount = await Model.countDocuments(filter);
+      // do not use collection.countDocument({}) which is slow and doesn't use indexes
+      const docCount = await Model.find(filter)
+        .count()
+        .exec();
 
       return {
         data,
@@ -50,7 +53,7 @@ module.exports = (Model, methods) => _.assign(
         .cursor();
     },
 
-    async findOne(q = {}) {
+    async findOne(q = {}, lean = false) {
       if (!q) {
         throw new Error('Undefined query');
       }
@@ -64,6 +67,13 @@ module.exports = (Model, methods) => _.assign(
 
       if (!_.isObject(q)) {
         throw new Error('Query must be an object or ObjectId');
+      }
+
+      // return a raw Mongo object
+      if (lean) {
+        return Model.findOne(q)
+          .lean()
+          .exec();
       }
 
       return Model.findOne(q).exec();

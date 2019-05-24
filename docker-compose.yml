@@ -1,30 +1,36 @@
-version: '3'
+version: '2.2'
 services:
   mongo:
-    image: "mongo:4.0"
+    image: 'mongo:4.0'
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: "mongo"
-      MONGO_INITDB_ROOT_PASSWORD: "mongo"
-      MONGO_INITDB_DATABASE: "pdc-local"
+      MONGO_INITDB_ROOT_USERNAME: 'mongo'
+      MONGO_INITDB_ROOT_PASSWORD: 'mongo'
+      MONGO_INITDB_DATABASE: 'pdc-local'
     volumes:
       - ./db/mongo:/data/db
+    cpus: 1
+    mem_limit: 256m
+    memswap_limit: 256m
     networks:
       - front
       - back
 
   redis:
-    image: "redis:4"
+    image: 'redis:5'
+    cpu_count: 1
+    cpu_percent: 50
+    mem_limit: 256M
     networks:
       - back
 
   api:
-    build: "./docker/api"
+    build: './docker/api'
     volumes:
       - ./api:/code
-    working_dir: "/code"
-    command: "yarn dev"
+    working_dir: '/code'
+    command: 'yarn dev'
     ports:
       - 8080:8080
       - 9229:9229
@@ -35,6 +41,9 @@ services:
       APP_URL: 'http://localhost:4200'
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin1234
+    cpu_count: 1
+    cpu_percent: 50
+    mem_limit: 256M
     networks:
       - front
       - api
@@ -44,17 +53,20 @@ services:
       - redis
 
   worker:
-    build: "./docker/api"
+    build: './docker/api'
     volumes:
       - ./api:/code
-    working_dir: "/code"
-    command: "yarn worker-dev"
+    working_dir: '/code'
+    command: 'yarn worker-dev'
     ports:
       - 9230:9230
     env_file: .env
     environment:
       CONFIG_DIR: '/code/config'
       MQ_WORKER: 'true'
+    cpu_count: 1
+    cpu_percent: 50
+    mem_limit: 256M
     networks:
       - front
       - api
@@ -64,12 +76,12 @@ services:
       - redis
 
   dashboard:
-    build: "./docker/dashboard"
+    build: './docker/dashboard'
     tty: true
     volumes:
       - ./dashboard:/code
-    working_dir: "/code"
-    command: "ng serve --host 0.0.0.0"
+    working_dir: '/code'
+    command: 'ng serve --host 0.0.0.0'
     ports:
       - 4200:4200
     networks:
@@ -78,10 +90,10 @@ services:
     depends_on:
       - api
 
-  editor:
-    image: "swaggerapi/swagger-editor"
-    ports:
-      - 8081:8080
+#  editor:
+#    image: "swaggerapi/swagger-editor"
+#    ports:
+#      - 8081:8080
 
 networks:
   front:

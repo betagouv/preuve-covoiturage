@@ -7,9 +7,9 @@ export class AomService extends ApiService {
   public endPoint = '/aom';
 
   public messages = {
-    created: 'L\'AOM a bien été crée.',
-    deleted: 'L\'AOM a bien été supprimée.',
-    updated: 'L\'AOM a bien été mise à jour',
+    created: "L'AOM a bien été crée.",
+    deleted: "L'AOM a bien été supprimée.",
+    updated: "L'AOM a bien été mise à jour",
   };
 
   getUsers(aomId: string) {

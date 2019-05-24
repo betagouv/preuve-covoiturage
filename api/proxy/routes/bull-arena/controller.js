@@ -87,6 +87,11 @@ router.use('/',
         hostId: 'redis',
         redis: redisObject,
       },
+      {
+        name: `${process.env.NODE_ENV}-stats`,
+        hostId: 'redis',
+        redis: redisObject,
+      },
     ],
   }, {
     basePath: '/',

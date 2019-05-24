@@ -20,7 +20,7 @@ function mapQuery(options = {}) {
     fields,
   }));
 
-  filter = Object.assign({ deletedAt: null }, filter || {});
+  filter = filter || {};
   sort = sort || {};
   projection = Object.assign({ geometry: 0 }, projection || {});
 

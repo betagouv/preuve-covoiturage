@@ -32,7 +32,7 @@ journeysQueue.on('progress', (job, progress) => {
 });
 journeysQueue.on('completed', (job) => {
   console.log(`🐮/journeys: completed ${job.id} ${job.data.type}`);
-  // console.log(JSON.stringify(result));
+  job.remove();
 });
 journeysQueue.on('failed', (job, err) => {
   console.log(`🐮/journeys: failed ${job.id} ${job.data.type}`, err.message);

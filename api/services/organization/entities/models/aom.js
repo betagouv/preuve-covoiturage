@@ -4,6 +4,23 @@ const AomSchema = require('../schemas/aom');
 
 module.exports = modelFactory('Aom', {
   schema: AomSchema,
+  methods: {
+    // {coll: string, id: ObjectId}
+    pushAuthorised(schema, doc, { coll, id }) {
+      const d = doc;
+      d.authorised.push({ coll, _id: id });
+
+      return d;
+    },
+
+    // {coll: string, id: ObjectId}
+    pullAuthorised(schema, doc, { coll, id }) {
+      const d = doc;
+      d.authorised = d.authorised.filter(a => a.coll === coll && a._id === id);
+
+      return d;
+    },
+  },
   virtuals: {
     nicename: {
       get(schema, doc) {

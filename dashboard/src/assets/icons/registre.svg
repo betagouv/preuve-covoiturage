@@ -1,1 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 145.6 170.72"><defs><style>.cls-1{fill:#fff;stroke:#2977ff;stroke-miterlimit:10;stroke-width:2px;}.cls-2{fill:#65c8d0;}</style></defs><title>API</title><g id="Calque_2" data-name="Calque 2"><g id="Calque_1-2" data-name="Calque 1"><path class="cls-1" d="M1,28.19V142.53c0,15,32.15,27.19,71.8,27.19s71.8-12.18,71.8-27.19V28.19"/><ellipse class="cls-1" cx="72.8" cy="28.19" rx="71.8" ry="27.19"/><path class="cls-1" d="M144.6,64.83c0,15-32.15,27.19-71.8,27.19S1,79.85,1,64.83"/><path class="cls-1" d="M144.6,103.68c0,15-32.15,27.19-71.8,27.19S1,118.7,1,103.68"/><circle class="cls-2" cx="101.86" cy="72.04" r="4.55"/><circle class="cls-2" cx="102.97" cy="108.98" r="4.55"/><circle class="cls-2" cx="102.97" cy="148.63" r="4.55"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" version="1.1" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style>.cls-1{fill:#fff;stroke:#2977ff;stroke-miterlimit:10;stroke-width:2px;}.cls-2{fill:#65c8d0;}</style>
+ </defs>
+ <title>API</title>
+ <g transform="matrix(.59017 0 0 .59017 21.036 13.623)" data-name="Calque 2">
+  <g data-name="Calque 1">
+   <g fill="#fff" stroke="#2977ff" stroke-miterlimit="10" stroke-width="2px">
+    <path class="cls-1" d="m1 28.19v114.34c0 15 32.15 27.19 71.8 27.19s71.8-12.18 71.8-27.19v-114.34"/>
+    <ellipse class="cls-1" cx="72.8" cy="28.19" rx="71.8" ry="27.19"/>
+    <path class="cls-1" d="m144.6 64.83c0 15-32.15 27.19-71.8 27.19s-71.8-12.17-71.8-27.19"/>
+    <path class="cls-1" d="m144.6 103.68c0 15-32.15 27.19-71.8 27.19s-71.8-12.17-71.8-27.19"/>
+   </g>
+   <g fill="#65c8d0">
+    <circle class="cls-2" cx="101.86" cy="72.04" r="4.55"/>
+    <circle class="cls-2" cx="102.97" cy="108.98" r="4.55"/>
+    <circle class="cls-2" cx="102.97" cy="148.63" r="4.55"/>
+   </g>
+  </g>
+ </g>
+</svg>

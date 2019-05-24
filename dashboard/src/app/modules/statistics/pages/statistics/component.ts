@@ -1,37 +1,24 @@
+// tslint:disable: no-bitwise
 import { Component, OnInit } from '@angular/core';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
-import { STAT_MAIN } from '~/modules/statistics/config/stat_main';
-import { MAIN } from '~/config/main';
 
 import { StatisticsService } from '../../services/statisticsService';
 
 @Component({
   templateUrl: 'template.html',
-  styleUrls: ['style.scss'],
 })
-
 export class StatisticsPageComponent implements OnInit {
-  public loaded = false;
-  apiData = {};
+  public apiData = {};
 
-  statList = STAT_MAIN.main;
-  gitbookLinkStats = MAIN.gitbookLinkStats;
-
-
-  constructor(private statisticsService: StatisticsService) {
-  }
-
+  constructor(private statisticsService: StatisticsService) {}
   ngOnInit(): void {
-    this.load();
+    this.fetchData();
   }
 
-  private load() {
-    this.statisticsService
-      .get()
-      .subscribe((apiData: ApiResponse) => {
-        this.loaded = true;
-        this.apiData = apiData.data;
-      });
+  private fetchData() {
+    this.statisticsService.get().subscribe((response: ApiResponse) => {
+      this.apiData = response.data;
+    });
   }
 }

@@ -1,1 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.46 14.81"><defs><style>.cls-1,.cls-2{fill:#fff;stroke-linecap:round;stroke-linejoin:round;}.cls-1{stroke:#2977ff;}.cls-2{stroke:#65c8d0;}</style></defs><title>Documentation</title><g id="Calque_2" data-name="Calque 2"><g id="Calque_1-2" data-name="Calque 1"><rect class="cls-1" x="5.81" y="2.82" width="0.84" height="11.5"/><polygon class="cls-1" points="11.96 12 6.65 14.31 6.65 2.82 11.96 0.5 11.96 12"/><polygon class="cls-1" points="0.5 12 5.81 14.31 5.81 2.82 0.5 0.5 0.5 12"/><line class="cls-2" x1="1.47" y1="2.34" x2="4.93" y2="3.92"/><line class="cls-2" x1="1.43" y1="4.3" x2="4.88" y2="5.88"/><line class="cls-2" x1="1.43" y1="6.25" x2="4.88" y2="7.83"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" version="1.1" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style>.cls-1,.cls-2{fill:#fff;stroke-linecap:round;stroke-linejoin:round;}.cls-1{stroke:#2977ff;}.cls-2{stroke:#65c8d0;}</style>
+ </defs>
+ <title>Documentation</title>
+ <g transform="matrix(7.1321 0 0 7.1321 19.567 11.151)" data-name="Calque 2">
+  <g fill="#fff" stroke-linecap="round" stroke-linejoin="round" data-name="Calque 1">
+   <g stroke="#2977ff">
+    <rect class="cls-1" x="5.81" y="2.82" width=".84" height="11.5"/>
+    <polygon class="cls-1" points="11.96 0.5 11.96 12 6.65 14.31 6.65 2.82"/>
+    <polygon class="cls-1" points="0.5 0.5 0.5 12 5.81 14.31 5.81 2.82"/>
+   </g>
+   <g stroke="#65c8d0">
+    <line class="cls-2" x1="1.47" x2="4.93" y1="2.34" y2="3.92"/>
+    <line class="cls-2" x1="1.43" x2="4.88" y1="4.3" y2="5.88"/>
+    <line class="cls-2" x1="1.43" x2="4.88" y1="6.25" y2="7.83"/>
+   </g>
+  </g>
+ </g>
+</svg>

@@ -2,8 +2,12 @@
   <p-progressSpinner></p-progressSpinner>
 </div>
 
+{{ apiData | json }}
+
+<app-stats-content [apiData]="apiData"></app-stats-content>
+
 <div *ngIf="loaded" >
-  <h1 class="has-text-centered">Statistiques</h1>
+  <!-- <h1 class="has-text-centered">Statistiques</h1>
 
   <h3 class="subtitle has-text-centered">Résumé</h3>
 
@@ -30,6 +34,5 @@
     <a href="{{gitbookLinkStats}}">Informations sur les méthodes de calculs utilisées.</a>
   </div>
 
-  <br><br>
-
+  <br><br> -->
 </div>

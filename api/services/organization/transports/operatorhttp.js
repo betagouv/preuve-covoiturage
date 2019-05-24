@@ -10,6 +10,51 @@ router.use('/applications', applications);
 /**
  * Add a user to an operator
  */
+router.post(
+  '/:id/authorisations/add',
+  can('operator.authorisations.add'),
+  async (req, res, next) => {
+    try {
+      res.json(
+        await operatorService.addAuthorisations(req.params.id, req.body.orgId, req.body.orgType),
+      );
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+/**
+ * Remove a user to an operator
+ */
+router.post(
+  '/:id/authorisations/remove',
+  can('operator.authorisations.remove'),
+  async (req, res, next) => {
+    try {
+      res.json(
+        await operatorService.removeAuthorisations(req.params.id, req.body.orgId, req.body.orgType),
+      );
+    } catch (e) {
+      next(e);
+    }
+  },
+);
+
+/**
+ * List all authorisations from an operator
+ */
+router.get('/:id/authorisations', can('operator.authorisations.list'), async (req, res, next) => {
+  try {
+    res.json(await operatorService.authorisations(req.params.id));
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * Add a user to an operator
+ */
 router.post('/:id/users/add', can('operator.users.add'), async (req, res, next) => {
   try {
     res.json(await operatorService.addUser(req.params.id, req.body.user));
@@ -69,7 +114,7 @@ router.delete('/:id', can('operator.delete'), async (req, res, next) => {
   try {
     res.json({
       id: req.params.id,
-      deleted: !!await operatorService.delete(req.params.id),
+      deleted: !!(await operatorService.delete(req.params.id)),
     });
   } catch (e) {
     next(e);
