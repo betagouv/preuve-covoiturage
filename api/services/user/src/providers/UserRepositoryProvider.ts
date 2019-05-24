@@ -48,9 +48,9 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
 
     // filters aom : string, operator: string
     if (filters.aom) {
-      result = await collection.find({ aom: ObjectId(filters.aom) }).toArray();
+      result = await collection.find({ aom: new ObjectId(filters.aom) }).toArray();
     } else if (filters.operator) {
-      result = await collection.find({ operator: ObjectId(filters.operator) }).toArray();
+      result = await collection.find({ operator: new ObjectId(filters.operator) }).toArray();
     }
 
     result = await collection.find(filters).toArray();

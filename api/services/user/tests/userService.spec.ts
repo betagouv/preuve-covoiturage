@@ -18,6 +18,19 @@ chai.use(chaiNock);
 const { expect } = chai;
 const port = '8081';
 
+
+const mockConnectedUser = {
+  _id: '1ab',
+  email: 'admin@example.com',
+  firstname: 'admin',
+  lastname: 'admin',
+  fullname: 'admin admin',
+  phone: '0622222233',
+  group: 'registry',
+  role: 'admin',
+};
+
+
 // mocks
 const mockNewUser = {
   email: 'edouard.nelson@example.com',
@@ -57,13 +70,18 @@ describe('User service', () => {
 
   // let createdUserId;
   it('should create user', async () => {
-    const { status: createStatus, data: createData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'user:create',
-      params: mockNewUser,
-    });
-    console.log(createData)
+    const { status: createStatus, data: createData } = await request.post(
+      '/',
+      {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'user:create',
+        params: mockNewUser,
+      },
+      {
+        call: { user: mockConnectedUser },
+      });
+    console.log(createData);
     expect(createData.result).to.include({
       email: mockNewUser.email,
       firstname: mockNewUser.firstname,
