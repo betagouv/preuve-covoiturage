@@ -61,7 +61,7 @@
     "@pdc/core": "0.0.1",
     "@pdc/provider-mongo": "0.0.1",
     "@pdc/provider-repository": "0.0.1",
-    "@pdc/provider-jsonschema": "0.0.1",
+    "@pdc/provider-validator": "0.0.1",
     "@pdc/provider-crypto": "0.0.1"
   },
   "devDependencies": {
