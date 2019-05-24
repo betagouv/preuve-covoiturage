@@ -59,9 +59,9 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     return this.instanciate(ops[0]);
   }
 
-  async delete(data: Model | { _id: string }): Promise<void> {
+  async delete(data: Model | string | ObjectId): Promise<void> {
     const collection = await this.getCollection();
-    const id = (typeof data._id === 'string') ? new ObjectId(data._id) : data._id;
+    const id = (typeof data === 'string') ? new ObjectId(data) : ('_id' in data) ? data._id : data;
     const result = await collection.deleteOne({ _id: id });
     if (result.deletedCount !== 1) {
       throw new MongoException();
