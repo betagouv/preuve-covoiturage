@@ -25,51 +25,6 @@ const upload = multer({
   },
 });
 
-router.get('/aom', jwtUser, can('journey.list'), async (req, res, next) => {
-  try {
-    const aoms = await Journey.aggregate([
-      {
-        $unwind: {
-          path: '$aom',
-          preserveNullAndEmptyArrays: false,
-        },
-      },
-      {
-        $project: {
-          _id: '$aom._id',
-          name: '$aom.name',
-        },
-      },
-      {
-        $group: {
-          _id: {
-            _id: '$_id',
-            name: '$name',
-          },
-          count: {
-            $sum: 1,
-          },
-        },
-      },
-      {
-        $sort: {
-          '_id.name': 1,
-        },
-      },
-    ]).exec();
-
-    res.json(
-      aoms.map(aom => ({
-        _id: aom._id._id,
-        name: aom._id.name,
-        count: aom.count,
-      })),
-    );
-  } catch (e) {
-    next(e);
-  }
-});
-
 router.get('/process/:id', jwtUser, can('journey.process'), async (req, res, next) => {
   try {
     res.json(await journeyService.process({ safe_journey_id: req.params.id }));

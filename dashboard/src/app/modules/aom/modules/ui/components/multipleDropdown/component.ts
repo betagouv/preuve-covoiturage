@@ -58,9 +58,9 @@ export class AomMultipleDropdownComponent implements OnInit {
       .listAom()
       .subscribe((response) => {
         this.aoms = response['data']
-          .map(({ _id, name, count }) => ({
+          .map(({ _id, name }) => ({
             key: _id,
-            value: `${name} (${count})`,
+            value: name,
           }));
       });
   }
@@ -69,7 +69,6 @@ export class AomMultipleDropdownComponent implements OnInit {
     if (event && event.query) {
       const regexp = new RegExp(event.query, 'i');
       this.filteredAoms = this.aoms.filter(item => regexp.test(item.value));
-      // console.log(this.filteredAoms)
     } else {
       this.filteredAoms = this.aoms.slice();
     }

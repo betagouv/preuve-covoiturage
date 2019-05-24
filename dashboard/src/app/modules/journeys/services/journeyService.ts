@@ -6,6 +6,7 @@ import { ApiService } from '~/shared/services/apiService';
 @Injectable()
 export class JourneyService extends ApiService {
   public endPoint = '/journeys';
+  public aomEndPoint = '/aom';
 
   public messages = {
     created: 'Le trajet a bien été crée.',
@@ -28,6 +29,6 @@ export class JourneyService extends ApiService {
 
   listAom() {
     return this.http
-      .get(`${this.endPoint}/aom`);
+      .get(`${this.aomEndPoint}?limit=1000`);
   }
 }
