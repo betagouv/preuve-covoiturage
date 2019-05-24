@@ -5,6 +5,7 @@ import { MongoProvider, ObjectId } from '@pdc/provider-mongo';
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
+import { UserDbInterface } from '../interfaces/UserInterfaces';
 
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface{
@@ -32,15 +33,12 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   public async findByEmail(email: string): Promise<User> {
-    console.log('email : ', email);
     const collection = await this.getCollection();
-    console.log('?');
     const result = await collection.findOne({ email });
-    console.log('result', result);
-    return this.instanciate(result);
+    return result ? this.instanciate(result) : result;
   }
 
-  public async list(filters, pagination): Promise<{users: User[], total: number}> {
+  public async list(filters, pagination): Promise<{users: UserDbInterface[], total: number}> {
     let result = [];
 
     // todo: get skip and limit from pagination
