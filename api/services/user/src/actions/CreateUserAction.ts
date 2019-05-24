@@ -1,5 +1,6 @@
 import { Parents, Container } from '@pdc/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
@@ -38,6 +39,7 @@ export class CreateUserAction extends Parents.Action {
       // throw new ConflictError();
     }
 
+    console.log('yo');
 
     if (request.operator && request.aom) {
       // throw new BadRequestError('Cannot assign operator and AOM at the same time');
@@ -87,8 +89,9 @@ export class CreateUserAction extends Parents.Action {
     let user = new User(payload);
     // user.permissions = Permissions.getFromRole(user.group, user.role);
 
+    console.log('yo');
     user = await this.userRepository.create(user);
-
+    console.log(user);
     // generate new token for a password reset on first access
     return this.forgottenPassword(
       {
@@ -110,8 +113,8 @@ export class CreateUserAction extends Parents.Action {
       // throw new NotFoundError();
     }
 
-    const reset = this.randomProvider.generateToken();
-    const token = this.randomProvider.generateToken();
+    const reset = this.cryptoProvider.generateToken();
+    const token = this.cryptoProvider.generateToken();
 
     user.forgottenReset = reset;
     user.forgottenToken = token;

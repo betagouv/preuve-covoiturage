@@ -1,5 +1,5 @@
 export const userSchema = {
-  '$id': 'user',
+  $id: 'user',
   type: 'object',
   required: ['email', 'lastname', 'firstname', 'group', 'permissions', 'password'],
   additionnalProperties: false,
@@ -40,7 +40,7 @@ export const userSchema = {
       type: 'array',
       items: {
         type: 'string',
-      }
+      },
     },
     password: {
       type: 'string',
@@ -57,7 +57,7 @@ export const userSchema = {
     },
     hasResetPassword: {
       type: 'boolean',
-      default: false
+      default: false,
     },
     forgottenReset: {
       type: 'string',
@@ -85,7 +85,7 @@ export const userSchema = {
     },
     options: {
       type: 'object',
-      default: {}
+      default: {},
     },
     deletedAt: {
       type: 'string',

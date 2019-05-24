@@ -1,4 +1,5 @@
 import { Parents, Container } from '@pdc/core';
+
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 @Container.handler({
@@ -40,6 +41,6 @@ export class FindUserAction extends Parents.Action {
       //
       // return results;
 
-    return  foundUser;
+    return foundUser;
   }
 }

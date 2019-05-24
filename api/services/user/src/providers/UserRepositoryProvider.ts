@@ -1,6 +1,7 @@
 import { Providers, Container } from '@pdc/core';
 import { ParentRepositoryProvider } from '@pdc/provider-repository';
 import { MongoProvider, ObjectId } from '@pdc/provider-mongo';
+
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
@@ -15,11 +16,11 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   public getKey(): string {
-    return 'user';
+    return this.config.get('user.collectionName');
   }
 
   public getDatabase(): string {
-    return 'test';
+    return this.config.get('mongo.db');
   }
 
   public getSchema(): object | null {
@@ -30,9 +31,12 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return User;
   }
 
-  public async findByEmail(email: string): Promise<User>  {
+  public async findByEmail(email: string): Promise<User> {
+    console.log('email : ', email);
     const collection = await this.getCollection();
+    console.log('?');
     const result = await collection.findOne({ email });
+    console.log('result', result);
     return this.instanciate(result);
   }
 

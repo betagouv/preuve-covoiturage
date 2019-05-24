@@ -1,4 +1,5 @@
 import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@pdc/provider-repository';
+
 import { User } from '../entities/User';
 
 export interface UserRepositoryProviderInterface extends ParentRepositoryProviderInterface {
@@ -7,7 +8,6 @@ export interface UserRepositoryProviderInterface extends ParentRepositoryProvide
 }
 
 export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepositoryProviderInterfaceResolver {
-
   public async findByEmail(email: string): Promise<User> {
     return;
   }

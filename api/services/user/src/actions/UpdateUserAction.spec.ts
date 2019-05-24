@@ -4,7 +4,7 @@ import chaiSubset from 'chai-subset';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UpdateUserAction } from './UpdateUserAction';
-import {User} from "../entities/User";
+import { User } from '../entities/User';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);

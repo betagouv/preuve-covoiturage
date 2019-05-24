@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { RandomProvider, CryptoProvider, CryptoProviderInterfaceResolver, RandomProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 
 import { CreateUserAction } from './CreateUserAction';
@@ -57,13 +57,12 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
 }
 
 
-
 const action = new CreateUserAction(new FakeUserRepository(), new FakeCryptoProvider());
 
 describe('Create user action', () => {
   it('should work', async () => {
     const result = await action.handle(mockNewUser, { call: { user: mockConnectedUser } });
-    console.log(result);
+
     expect(result).to.include({
       _id: '1ab',
       email: mockNewUser.email,
