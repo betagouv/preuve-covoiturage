@@ -7,6 +7,11 @@ import { PatchOperatorParamsInterface, OperatorDbInterface } from '../interfaces
   method: 'patch',
 })
 export class PatchOperatorAction extends Parents.Action {
+  public readonly middlewares: (string|[string, any])[] = [
+    ['can', ['operator.update']],
+    ['validate', 'operator.patch'],
+  ];
+
   constructor(
     private operatorRepository: OperatorRepositoryProviderInterfaceResolver,
   ) {

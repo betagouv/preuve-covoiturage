@@ -7,6 +7,11 @@ import { CreateOperatorParamsInterface, OperatorDbInterface } from '../interface
   method: 'create',
 })
 export class CreateOperatorAction extends Parents.Action {
+  public readonly middlewares: (string|[string, any])[] = [
+    ['can', ['operator.create']],
+    ['validate', 'operator.create'],
+  ];
+
   constructor(
     private operatorRepository: OperatorRepositoryProviderInterfaceResolver,
   ) {

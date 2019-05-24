@@ -2,8 +2,8 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
-import chaiNock from 'chai-nock';
-import { bootstrap } from '@pdc/core';
+import chaiAsPromised from 'chai-as-promised';
+import { bootstrap, Exceptions } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
 
 let mongoServer;
@@ -13,10 +13,45 @@ let kernel;
 let transport;
 let request;
 
-chai.use(chaiNock);
+chai.use(chaiAsPromised);
 
 const { expect } = chai;
 const port = '8081';
+
+const errorFactory = (err: Exceptions.RPCException) => {
+  return {
+    status: 200,
+    data: {
+      jsonrpc: '2.0',
+      id: 1,
+      error: {
+        code: err.rpcError.code,
+        message: err.rpcError.message,
+        data: err.rpcError.data,
+      },
+    },
+  };
+}
+
+const callFactory = (method: string, data: any, permissions: string[]) => ({
+  id: 1,
+  jsonrpc: '2.0',
+  method: method,
+  params: {
+    params: data,
+    _context: {
+      channel: {
+        service: 'proxy',
+        transport: 'http',
+      },
+      call: {
+        user: {
+          permissions,
+        },
+      },
+    },
+  },
+});
 
 describe('Operator service', () => {
   before(async () => {
@@ -44,55 +79,84 @@ describe('Operator service', () => {
     await mongoServer.stop();
   });
 
+  it('should validate request on create', async () => {
+    await expect(
+      request.post(
+        '/',
+        callFactory(
+          'operator:create',
+          {
+            nom_commercial: 10,
+            raison_sociale: 'Toto inc.',
+          },
+          ['operator.create']
+        ),
+      )
+    ).to.eventually.deep.include(errorFactory(new Exceptions.InvalidParamsException('data.nom_commercial should be string')));
+  });
+
+  it('should validate permission on create', async () => {
+    await expect(
+      request.post(
+        '/',
+        callFactory(
+          'operator:create',
+          {
+            nom_commercial: 'Toto',
+            raison_sociale: 'Toto inc.',
+          },
+          ['operator.list']
+        ),
+      )
+    ).to.eventually.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
+  });
+
   it('should work', async () => {
-    const { status: createStatus, data: createData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'operator:create',
-      params: {
+    const { status: createStatus, data: createData } = await request.post('/', callFactory(
+      'operator:create',
+      {
         nom_commercial: 'Toto',
         raison_sociale: 'Toto inc.',
       },
-    });
+      ['operator.create'],
+    ));
     const { _id, nom_commercial } = createData.result;
-    expect(nom_commercial).to.eq('Toto');
     expect(createStatus).equal(200);
+    expect(nom_commercial).to.eq('Toto');
 
-    const { status: patchStatus, data: patchData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'operator:patch',
-      params: {
+    const { status: patchStatus, data: patchData } = await request.post('/', callFactory(
+      'operator:patch',
+      {
         id: _id,
         patch: {
           nom_commercial: 'Yop',
         }
       },
-    });
+      ['operator.update'],
+    ));
     const { nom_commercial: patchedName} = patchData.result;
-    expect(patchedName).to.eq('Yop');
     expect(patchStatus).equal(200);
+    expect(patchedName).to.eq('Yop');
 
     
 
-    const { status: listStatus, data: listData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'operator:all',
-    });
+    const { status: listStatus, data: listData } = await request.post('/', callFactory(
+      'operator:all',
+      {},
+      ['operator.list'],
+    ));
     const list = listData.result;
+    expect(listStatus).equal(200);
     expect(list.length).eq(1);
     expect(list[0].nom_commercial).eq(patchedName);
-    expect(listStatus).equal(200);
 
-    const { status: deleteStatus, data: deleteData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'operator:delete',
-      params: {
-        _id,
+    const { status: deleteStatus, data: deleteData } = await request.post('/', callFactory(
+      'operator:delete',
+      {
+        id: _id,
       },
-    });
+      ['operator.delete'],
+    ));
     expect(deleteStatus).equal(200);
     expect(deleteData.result).equal(true);
   });
