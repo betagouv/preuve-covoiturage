@@ -7,7 +7,7 @@ import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 import { DeleteUserAction } from './actions/DeleteUserAction';
 import { FindUserAction } from './actions/FindUserAction';
 import { ListUserAction } from './actions/ListUserAction';
-import { UpdateUserAction } from './actions/UpdateUserAction';
+import { PatchUserAction } from './actions/PatchUserAction';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -20,7 +20,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     DeleteUserAction,
     FindUserAction,
     ListUserAction,
-    UpdateUserAction,
+    PatchUserAction,
   ];
 
   public async boot() {
