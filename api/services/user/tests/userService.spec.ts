@@ -19,7 +19,7 @@ const { expect } = chai;
 const port = '8081';
 
 
-const mockConnectedUser = {
+const mockConnectedUser = { // todo : to be added in context
   _id: '1ab',
   email: 'admin@example.com',
   firstname: 'admin',
@@ -41,6 +41,11 @@ const mockNewUser = {
   role: 'admin',
   aom: 'aomid',
   password: 'password',
+};
+
+const mockUpdatedProperties = {
+  firstname: 'johnny',
+  lastname: 'smith',
 };
 
 describe('User service', () => {
@@ -68,7 +73,7 @@ describe('User service', () => {
     await mongoServer.stop();
   });
 
-  // let createdUserId;
+  let createdUserId;
   it('should create user', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
@@ -77,11 +82,7 @@ describe('User service', () => {
         jsonrpc: '2.0',
         method: 'user:create',
         params: mockNewUser,
-      },
-      {
-        call: { user: mockConnectedUser },
       });
-    console.log(createData);
     expect(createData.result).to.include({
       email: mockNewUser.email,
       firstname: mockNewUser.firstname,
@@ -93,46 +94,84 @@ describe('User service', () => {
     });
     expect(createStatus).equal(200);
 
-    // createdUserId = createData.result._id;
+    createdUserId = createData.result._id;
   });
 
-  // it('should find user', async () => {
-  //   const { status: createStatus, data: createData } = await request.get('/', {
-  //     id: 1,
-  //     jsonrpc: '2.0',
-  //     method: 'user:find',
-  //     params: createdUserId,
-  //   });
-  //   expect(createData.result).to.include({
-  //     _id: createdUserId,
-  //     email: mockNewUser.email,
-  //     firstname: mockNewUser.firstname,
-  //     lastname: mockNewUser.lastname,
-  //     phone: mockNewUser.phone,
-  //     group: mockNewUser.group,
-  //     role: mockNewUser.role,
-  //     aom: mockNewUser.aom,
-  //   });
-  //   expect(createStatus).equal(200);
-  // });
-  //
-  // it('should list users', async () => {
-  //   const { status: createStatus, data: createData } = await request.get('/', {
-  //     id: 1,
-  //     jsonrpc: '2.0',
-  //     method: 'user:list',
-  //     params: {},
-  //   });
-  //   expect(createData.result[0]).to.include({
-  //     _id: createdUserId,
-  //     email: mockNewUser.email,
-  //     firstname: mockNewUser.firstname,
-  //     lastname: mockNewUser.lastname,
-  //     phone: mockNewUser.phone,
-  //     group: mockNewUser.group,
-  //     role: mockNewUser.role,
-  //     aom: mockNewUser.aom,
-  //   });
-  //   expect(createStatus).equal(200);
-  // });
+  it('should find user', async () => {
+    const { status: status, data: data } = await request.post('/', {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'user:find',
+      params: { id: createdUserId },
+    });
+    expect(data.result).to.include({
+      _id: createdUserId,
+      email: mockNewUser.email,
+      firstname: mockNewUser.firstname,
+      lastname: mockNewUser.lastname,
+      phone: mockNewUser.phone,
+      group: mockNewUser.group,
+      role: mockNewUser.role,
+      aom: mockNewUser.aom,
+    });
+    expect(status).equal(200);
+  });
+
+  it('should list users', async () => {
+    const { status: status, data: data } = await request.post('/', {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'user:list',
+      params: {},
+    });
+    console.log(data.result.data[0]);
+    expect(data.result.data[0]).to.include({
+      _id: createdUserId,
+      email: mockNewUser.email,
+      firstname: mockNewUser.firstname,
+      lastname: mockNewUser.lastname,
+      phone: mockNewUser.phone,
+      group: mockNewUser.group,
+      role: mockNewUser.role,
+      aom: mockNewUser.aom,
+    });
+    expect(status).equal(200);
+  });
+
+  it('should patch user', async () => {
+    const { status: status, data: data } = await request.post('/', {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'user:patch',
+      params: {
+        id: createdUserId,
+        patch: mockUpdatedProperties,
+      },
+    });
+    console.log('patch', data.result);
+    expect(data.result).to.include({
+      _id: createdUserId,
+      email: mockNewUser.email,
+      firstname: mockUpdatedProperties.firstname,
+      lastname: mockUpdatedProperties.lastname,
+      phone: mockNewUser.phone,
+      group: mockNewUser.group,
+      role: mockNewUser.role,
+      aom: mockNewUser.aom,
+    });
+    expect(status).equal(200);
+  });
+
+  it('should delete user', async () => {
+    const { status: status, data: data } = await request.post('/', {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'user:delete',
+      params: {
+        ...mockUpdatedProperties,
+      },
+    });
+    expect(status).equal(200);
+    expect(data.result['deletedAt']).to.not.equal(null);
+  });
 });
