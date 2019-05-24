@@ -2,7 +2,7 @@ export const userSchema = {
   $id: 'user',
   type: 'object',
   required: ['email', 'lastname', 'firstname', 'group', 'permissions', 'password'],
-  additionnalProperties: false,
+  additionalProperties: false,
   properties: {
     email: {
       type: 'string',

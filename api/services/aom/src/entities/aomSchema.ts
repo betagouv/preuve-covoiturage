@@ -2,7 +2,7 @@ export const aomSchema = {
   '$id': 'aom',
   type: 'object',
   required: ['name',],
-  additionnalProperties: false,
+  additionalProperties: false,
   properties: {
     name: {
       type: 'string',
@@ -30,7 +30,7 @@ export const aomSchema = {
     company: {
       type: 'object',
       required: ['siren'],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         siren: {
           type: 'string',
@@ -66,7 +66,7 @@ export const aomSchema = {
     address: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         street: {
           type: 'string',
@@ -90,7 +90,7 @@ export const aomSchema = {
     contacts: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         phone: {
           type: 'string',
@@ -113,7 +113,7 @@ export const aomSchema = {
     cgu: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         accepted: {
           type: 'boolean',
@@ -131,7 +131,7 @@ export const aomSchema = {
     geometry: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         type: {
           type: 'string',
