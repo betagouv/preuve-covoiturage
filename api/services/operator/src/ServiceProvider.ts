@@ -1,4 +1,4 @@
-import { Parents, Providers, Interfaces } from '@pdc/core';
+import { Parents, Providers, Interfaces, Middlewares, Types } from '@pdc/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from './interfaces/OperatorRepositoryProviderInterface';
 import { OperatorRepositoryProvider } from './providers/OperatorRepositoryProvider';
@@ -17,6 +17,10 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     CreateOperatorAction,
     PatchOperatorAction,
     DeleteOperatorAction,
+  ];
+
+  readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
+    ['can', Middlewares.PermissionMiddleware],
   ];
 
   public async boot() {

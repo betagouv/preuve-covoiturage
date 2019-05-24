@@ -1,5 +1,5 @@
 {
-  "name": "@pdc/provider-jsonschema",
+  "name": "@pdc/provider-validator",
   "version": "0.0.1",
   "private": true,
   "main": "dist/index.js",

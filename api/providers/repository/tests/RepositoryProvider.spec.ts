@@ -3,8 +3,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 import { Parents, Providers, Container } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
-import { JsonSchemaProvider } from '@pdc/provider-jsonschema';
-
 import { ParentRepositoryProvider } from '../src/index';
 
 let mongoServer;
@@ -74,7 +72,6 @@ class UserRepositoryProvider extends ParentRepositoryProvider {
 class Kernel extends Parents.Kernel {
   alias = [
     MongoProvider,
-    JsonSchemaProvider,
     UserRepositoryProvider,
   ];
 }

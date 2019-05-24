@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import { Providers } from '@pdc/core';
 
-import { JsonSchemaProvider } from './JsonSchemaProvider';
+import { ValidatorProvider } from './ValidatorProvider';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -25,7 +25,7 @@ class FakeObject {
 
 describe('Json Schema provider', () => {
   beforeEach(async () => {
-    provider = new JsonSchemaProvider(fakeConfigProvider);
+    provider = new ValidatorProvider(fakeConfigProvider);
     await provider.boot();
   });
 

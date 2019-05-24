@@ -1,12 +1,12 @@
 import ajv from 'ajv';
-import { Container, Providers, Interfaces } from '@pdc/core';
+import { Container, Providers } from '@pdc/core';
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
-import { NewableType } from '@pdc/core/dist/types';
-
+import { Types } from '@pdc/core';
+import { ValidatorProviderInterface } from './ValidatorProviderInterface';
 import { Cache } from './Cache';
 
 @Container.provider()
-export class JsonSchemaProvider implements Interfaces.ProviderInterface {
+export class ValidatorProvider implements ValidatorProviderInterface {
   protected ajv: ajv.Ajv;
   protected bindings: Map<any, ajv.ValidateFunction> = new Map();
   protected cache: Cache = new Cache();
@@ -35,7 +35,27 @@ export class JsonSchemaProvider implements Interfaces.ProviderInterface {
     this.isSchemaSecure = this.ajv.compile(jsonSchemaSecureJson);
   }
 
-  addSchema(schema: object, target?: NewableType<any>): JsonSchemaProvider {
+  registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorProviderInterface {
+    return this.addSchema(definition, target);
+  }
+
+  registerCustomKeyword(def: {
+    name: string,
+    type: string,
+    definition: ajv.FormatValidator | ajv.FormatDefinition | ajv.KeywordDefinition,
+  }): ValidatorProviderInterface {
+    const { name, type, definition } = def;
+    switch(type) {
+      case 'format':
+        return this.addFormat(name, <ajv.FormatValidator | ajv.FormatDefinition>definition);
+      case 'keyword':
+        return this.addKeyword(name, <ajv.KeywordDefinition>definition);
+      default:
+        return this;
+    }
+  }
+
+  protected addSchema(schema: object, target?: Types.NewableType<any> | string): ValidatorProviderInterface {
     if (!this.ajv.validateSchema(schema)) {
       throw new Error(this.ajv.errorsText(this.ajv.errors));
     }
@@ -52,11 +72,13 @@ export class JsonSchemaProvider implements Interfaces.ProviderInterface {
     return this;
   }
 
-  async validate(data: any): Promise<boolean> {
-    if (!this.bindings.has(data.constructor)) {
+  async validate(data: any, schema?: string): Promise<boolean> {
+    const resolver = schema ? schema : data.constructor;
+
+    if (!this.bindings.has(resolver)) {
       throw new Error('No schema provided for this type');
     }
-    const validator = this.bindings.get(data.constructor);
+    const validator = this.bindings.get(resolver);
     const valid = await validator(data);
     if (!valid) {
       throw new Error(this.ajv.errorsText(validator.errors));
@@ -64,12 +86,12 @@ export class JsonSchemaProvider implements Interfaces.ProviderInterface {
     return true;
   }
 
-  addFormat(name: string, format: ajv.FormatValidator | ajv.FormatDefinition): JsonSchemaProvider {
+  protected addFormat(name: string, format: ajv.FormatValidator | ajv.FormatDefinition): ValidatorProviderInterface {
     this.ajv.addFormat(name, format);
     return this;
   }
 
-  addKeyword(keyword: string, definition: ajv.KeywordDefinition): JsonSchemaProvider {
+  protected addKeyword(keyword: string, definition: ajv.KeywordDefinition): ValidatorProviderInterface {
     this.ajv.addKeyword(keyword, definition);
     return this;
   }
