@@ -38,6 +38,7 @@ export class CreateUserAction extends Parents.Action {
 
     // complete in case of adding to AOM !
 
+    console.log(request, context);
 
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
