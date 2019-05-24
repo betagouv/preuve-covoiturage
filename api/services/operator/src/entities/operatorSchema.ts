@@ -2,7 +2,7 @@ export const aomSchema = {
   '$id': 'operator',
   type: 'object',
   required: ['nom_commercial', 'raison_sociale'],
-  additionnalProperties: false,
+  additionalProperties: false,
   properties: {
     nom_commercial: {
       type: 'string',
@@ -13,7 +13,7 @@ export const aomSchema = {
     company: {
       type: 'object',
       required: ['siren'],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         siren: {
           type: 'string', 
@@ -46,7 +46,7 @@ export const aomSchema = {
     address: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         street: {
           type: 'string'
@@ -70,7 +70,7 @@ export const aomSchema = {
     bank: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         bank_name: {
           type: 'string'
@@ -93,7 +93,7 @@ export const aomSchema = {
     contacts: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         rgpd_dpo: {
           type: 'string', // ObjectId
@@ -109,7 +109,7 @@ export const aomSchema = {
     cgu: {
       type: 'object',
       required: [],
-      additionnalProperties: false,
+      additionalProperties: false,
       properties: {
         accepted: {
           type: 'boolean', 
