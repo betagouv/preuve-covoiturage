@@ -24,7 +24,7 @@ interface NewUser {
 })
 export class CreateUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.create', 'aom.users.add', 'operator.users.add']],
+    ['can', ['user.create']], //  'aom.users.add', 'operator.users.add'
     ['validate', 'user.create'],
   ];
   constructor(
@@ -126,7 +126,7 @@ export class CreateUserAction extends Parents.Action {
     user.forgottenToken = token;
     user.forgottenAt = new Date();
     const updatedUser = await this.userRepository.update(user);
-    console.log('updatedUser', updatedUser);
+
     // send the email
     // user.invite(reset, token, invite.requester, invite.organisation);
 

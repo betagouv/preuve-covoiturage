@@ -70,7 +70,7 @@ const mockNewUser = {
   firstname: 'edouard',
   lastname: 'nelson',
   phone: '0622222233',
-  group: 'registry',
+  group: 'aom',
   role: 'admin',
   aom: 'aomid',
   password: 'password',
@@ -113,9 +113,8 @@ describe('User service', () => {
       callFactory(
         'user:create',
         mockNewUser,
-        ['user:create'],
+        ['user.create'],
       ));
-
     expect(createData.result).to.include({
       email: mockNewUser.email,
       firstname: mockNewUser.firstname,
@@ -136,7 +135,7 @@ describe('User service', () => {
       callFactory(
       'user:find',
       { id: createdUserId },
-      ['user:read'],
+      ['user.read'],
     ));
     expect(data.result).to.include({
       _id: createdUserId,
@@ -157,7 +156,7 @@ describe('User service', () => {
       callFactory(
         'user:list',
         {},
-        ['user:list'],
+        ['user.list'],
       ));
     expect(data.result.data[0]).to.include({
       _id: createdUserId,
@@ -181,9 +180,9 @@ describe('User service', () => {
           id: createdUserId,
           patch: mockUpdatedProperties,
         },
-        ['user:patch'],
+        ['user.update'],
       ));
-
+    console.log(data)
     expect(data.result).to.include({
       _id: createdUserId,
       email: mockNewUser.email,
@@ -203,7 +202,7 @@ describe('User service', () => {
       callFactory(
         'user:delete',
         { id: createdUserId },
-        ['user:delete'],
+        ['user.delete'],
       ));
     expect(status).equal(200);
   });
