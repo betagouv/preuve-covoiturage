@@ -11,6 +11,7 @@ export const UserCreateSchema = {
       // trim: true,
       // lowercase: true,
       // unique: true,
+      maxlength: 128,
     },
     lastname: {
       type: 'string',
@@ -26,6 +27,7 @@ export const UserCreateSchema = {
       // set: setters.phone,
       // validate: validators.phone,
       // trim: true,
+      maxlength: 128,
     },
     group: {
       type: 'string',
@@ -46,10 +48,12 @@ export const UserCreateSchema = {
     },
     operator: {
       type: 'string',
+      maxlength: 255,
       // ObjectId
     },
     aom: {
       type: 'string',
+      maxlength: 255,
       // ObjectId
     },
   },
