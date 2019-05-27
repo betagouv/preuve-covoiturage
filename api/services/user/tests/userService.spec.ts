@@ -124,7 +124,6 @@ describe('User service', () => {
       method: 'user:list',
       params: {},
     });
-    console.log(data.result.data[0]);
     expect(data.result.data[0]).to.include({
       _id: createdUserId,
       email: mockNewUser.email,
@@ -148,7 +147,6 @@ describe('User service', () => {
         patch: mockUpdatedProperties,
       },
     });
-    console.log('patch', data.result);
     expect(data.result).to.include({
       _id: createdUserId,
       email: mockNewUser.email,
@@ -172,6 +170,5 @@ describe('User service', () => {
       },
     });
     expect(status).equal(200);
-    expect(data.result['deletedAt']).to.not.equal(null);
   });
 });
