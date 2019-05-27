@@ -7,8 +7,8 @@ export class IncentiveCampaignService extends ApiService {
   public endPoint = '/incentive/campaigns';
 
   public messages = {
-    created: 'La campagne d\'incitation a bien été lancée.',
-    deleted: 'La campagne d\'incitation a bien été supprimée.',
-    updated: 'La campagne d\'incitation a bien été mise à jour' ,
+    created: "La campagne d'incitation a bien été lancée.",
+    deleted: "La campagne d'incitation a bien été supprimée.",
+    updated: "La campagne d'incitation a bien été mise à jour",
   };
 }

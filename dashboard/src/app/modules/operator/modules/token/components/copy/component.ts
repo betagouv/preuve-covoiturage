@@ -4,7 +4,6 @@ import { Component, Injectable, OnInit, Input } from '@angular/core';
   selector: 'app-operator-token-copy',
   templateUrl: 'template.html',
 })
-
 @Injectable()
 export class OperatorCopyComponent implements OnInit {
   @Input() data: string;
@@ -12,7 +11,7 @@ export class OperatorCopyComponent implements OnInit {
   public rand: string;
 
   ngOnInit() {
-    this.rand = String(Math.floor(Math.random() * (10000)));  // tslint:disable-line
+    this.rand = String(Math.floor(Math.random() * 10000)); // tslint:disable-line
   }
 
   copy() {

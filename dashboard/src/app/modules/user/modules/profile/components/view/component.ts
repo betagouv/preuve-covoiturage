@@ -2,29 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 
 import { User } from '~/entities/database/user/user';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 
 import { UserService } from '../../../../services/userService';
 import { ProfileEditionDialogComponent } from '../edition/component';
-
 
 @Component({
   selector: 'app-profile',
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class ProfileViewComponent implements OnInit {
   user: User;
   constructor(
-              private usersService: UserService,
-              private authentificationService: AuthenticationService,
-              private dialogService: DialogService,
-
-  ) {
-  }
-
+    private usersService: UserService,
+    private authentificationService: AuthenticationService,
+    private dialogService: DialogService,
+  ) {}
 
   ngOnInit() {
     this.user = this.authentificationService.getUser();
@@ -32,7 +27,6 @@ export class ProfileViewComponent implements OnInit {
       this.get();
     }
   }
-
 
   /**
    * get user from database
@@ -50,12 +44,11 @@ export class ProfileViewComponent implements OnInit {
     this.user = user;
   }
 
-
   edit(user) {
     const config = {
       ...DIALOGSTYLE,
       header: 'Éditer votre profil',
-      data : {
+      data: {
         id: user._id,
       },
     };

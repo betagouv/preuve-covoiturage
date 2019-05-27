@@ -30,7 +30,6 @@ import { UserEditionDialogComponent } from './components/edition/component';
 /* Local services */
 import { UserService } from '../../services/userService';
 
-
 @NgModule({
   imports: [
     CommonModule,
@@ -57,15 +56,7 @@ import { UserService } from '../../services/userService';
     DynamicDialogRef,
     DynamicDialogConfig,
   ],
-  declarations: [
-    UserCreationDialogComponent,
-    UserEditionDialogComponent,
-    UserFormComponent,
-  ],
-  entryComponents: [
-    UserCreationDialogComponent,
-    UserEditionDialogComponent,
-  ],
+  declarations: [UserCreationDialogComponent, UserEditionDialogComponent, UserFormComponent],
+  entryComponents: [UserCreationDialogComponent, UserEditionDialogComponent],
 })
-export class UserDialogModule {
-}
+export class UserDialogModule {}

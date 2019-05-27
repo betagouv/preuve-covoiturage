@@ -1,9 +1,7 @@
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import {
-  DialogService,
-} from 'primeng/api';
+import { DialogService } from 'primeng/api';
 
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 
@@ -17,7 +15,6 @@ import { IncentiveParameterService } from '../../../services/incentiveParameterS
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentiveParameterFormComponent implements OnInit {
   public incentiveAvailableParameters: IncentiveParameter[] = [];
   public loading = true;
@@ -29,11 +26,7 @@ export class IncentiveParameterFormComponent implements OnInit {
   @Input() incentiveFormulaForm: FormControl;
   @Output() submit = new EventEmitter();
 
-  constructor(
-       private incentiveParameterService: IncentiveParameterService,
-       private dialogService: DialogService,
-   ) {
-  }
+  constructor(private incentiveParameterService: IncentiveParameterService, private dialogService: DialogService) {}
 
   ngOnInit() {
     this.get();
@@ -43,8 +36,8 @@ export class IncentiveParameterFormComponent implements OnInit {
     this.loading = true;
     this.incentiveParameterService.get().then((parameters: IncentiveParameter[]) => {
       this.incentiveAvailableParameters = parameters;
-      this.incentiveAvailableInternalParameters = parameters.filter(value => value.internal);
-      this.incentiveAvailableExternalParameters = parameters.filter(value => !value.internal);
+      this.incentiveAvailableInternalParameters = parameters.filter((value) => value.internal);
+      this.incentiveAvailableExternalParameters = parameters.filter((value) => !value.internal);
       this.loading = false;
     });
   }
@@ -52,7 +45,7 @@ export class IncentiveParameterFormComponent implements OnInit {
   addIncentiveParameter() {
     const config = {
       ...DIALOGSTYLE,
-      header: 'Ajout d\'un paramètre',
+      header: "Ajout d'un paramètre",
     };
 
     const ref = this.dialogService.open(IncentiveParameterCreationComponent, config);
@@ -68,7 +61,6 @@ export class IncentiveParameterFormComponent implements OnInit {
   addToFormula(value) {
     this.parameterAddedToFormula = value.value[0];
   }
-
 
   formulaSet() {
     this.submit.emit();

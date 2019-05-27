@@ -11,10 +11,7 @@ export class IncentiveParameterService extends ApiService {
   public endPoint = '/incentive/parameters';
 
   public get allParameters() {
-    return [
-      ...this.parameters,
-      ...this.createdParameters,
-    ];
+    return [...this.parameters, ...this.createdParameters];
   }
 
   public create(parameter: IncentiveParameter) {
@@ -23,9 +20,7 @@ export class IncentiveParameterService extends ApiService {
 
   public async get() {
     if (this.parameters.length === 0) {
-      const result = await this.http
-      .get<ApiResponse>(`${this.endPoint}`)
-      .toPromise();
+      const result = await this.http.get<ApiResponse>(`${this.endPoint}`).toPromise();
 
       this.parameters = [...result.data];
     }

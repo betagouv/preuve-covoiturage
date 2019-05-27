@@ -45,11 +45,14 @@ export class WeekDayFilter {
   }
 
   public static export(data) {
-    return (data && data.length > 0) ? data : null;
+    return data && data.length > 0 ? data : null;
   }
 
-  public static toString(data):string {
-    const weekdaystring = data.map(wd => WeekDayFilter.weekdays.find(lb => lb.key === wd)).map(wd => wd.label).join(', ');
+  public static toString(data): string {
+    const weekdaystring = data
+      .map((wd) => WeekDayFilter.weekdays.find((lb) => lb.key === wd))
+      .map((wd) => wd.label)
+      .join(', ');
     return `Les trajets effectués le : ${weekdaystring}`;
   }
 }

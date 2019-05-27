@@ -4,13 +4,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { User } from '~/entities/database/user/user';
 import { regexp } from '~/entities/validators';
 
-
 @Component({
   selector: 'app-profile-form',
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class ProfileFormComponent {
   @Input('user')
   set userInput(user: User) {
@@ -27,10 +25,7 @@ export class ProfileFormComponent {
     role: ['', Validators.required],
   });
 
-  constructor(
-      private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   onSubmit() {
     const user = {};

@@ -6,11 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
-import {
-  DialogService,
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
+import { DialogService, DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 
 /* Shared modules */
 import { FormModule } from '~/shared/modules/form/form.module';
@@ -33,23 +29,9 @@ import { OperatorService } from '../../../services/operatorService';
     FormModule,
     GraphicModule,
   ],
-  providers: [
-    OperatorService,
-    DialogService,
-    DynamicDialogRef,
-    DynamicDialogConfig,
-  ],
-  declarations: [
-    OperatorCreationDialogComponent,
-    OperatorEditionDialogComponent,
-    OperatorFormComponent,
-  ],
-  entryComponents: [
-    OperatorCreationDialogComponent,
-    OperatorEditionDialogComponent,
-  ],
-  exports: [
-    OperatorFormComponent,
-  ],
+  providers: [OperatorService, DialogService, DynamicDialogRef, DynamicDialogConfig],
+  declarations: [OperatorCreationDialogComponent, OperatorEditionDialogComponent, OperatorFormComponent],
+  entryComponents: [OperatorCreationDialogComponent, OperatorEditionDialogComponent],
+  exports: [OperatorFormComponent],
 })
-export class OperatorDialogModule { }
+export class OperatorDialogModule {}

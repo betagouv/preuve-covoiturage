@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 
-import {
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { IncentivePolicy } from '~/entities/database/Incentive/incentivePolicy';
@@ -15,7 +12,6 @@ import { IncentivePolicyService } from '../../../services/incentivePolicyService
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentivePolicyPickerComponent implements OnInit {
   public loading = false;
   public availablePolicies = [];
@@ -26,8 +22,7 @@ export class IncentivePolicyPickerComponent implements OnInit {
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
     private incentivePolicyService: IncentivePolicyService,
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getPolicies();
@@ -54,7 +49,7 @@ export class IncentivePolicyPickerComponent implements OnInit {
   filter() {
     try {
       const regexp = new RegExp(this.policySearch, 'g');
-      this.filteredPolicies = this.availablePolicies.filter(policy => regexp.test(policy.name));
+      this.filteredPolicies = this.availablePolicies.filter((policy) => regexp.test(policy.name));
     } catch (e) {
       this.filteredPolicies = [];
     }

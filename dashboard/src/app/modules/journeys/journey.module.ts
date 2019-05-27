@@ -35,7 +35,6 @@ import { JourneyFilterComponent } from './components/filter/component';
 /* Local services */
 import { JourneyService } from './services/journeyService';
 
-
 @NgModule({
   imports: [
     CommonModule,
@@ -56,20 +55,8 @@ import { JourneyService } from './services/journeyService';
     ButtonModule,
     SplitButtonModule,
   ],
-  providers: [
-    JourneyService,
-    TranslationService,
-    TableService,
-  ],
-  declarations: [
-    JourneyListComponent,
-    JourneyListPageComponent,
-    JourneyFilterComponent,
-  ],
-  exports: [
-    JourneyListPageComponent,
-    JourneyUIModule,
-  ],
+  providers: [JourneyService, TranslationService, TableService],
+  declarations: [JourneyListComponent, JourneyListPageComponent, JourneyFilterComponent],
+  exports: [JourneyListPageComponent, JourneyUIModule],
 })
-export class JourneyModule {
-}
+export class JourneyModule {}

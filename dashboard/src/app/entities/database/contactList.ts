@@ -7,8 +7,8 @@ export class ContactList {
   technical: Contact;
 
   constructor(obj?: any) {
-    this.rgpd_dpo = obj && obj.rgpd_dpo || null;
-    this.rgpd_controller = obj && obj.rgpd_controller || null;
-    this.technical = obj && obj.technical || null;
+    this.rgpd_dpo = (obj && obj.rgpd_dpo) || null;
+    this.rgpd_controller = (obj && obj.rgpd_controller) || null;
+    this.technical = (obj && obj.technical) || null;
   }
 }

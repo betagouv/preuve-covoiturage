@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, DialogService } from 'primeng/api';
 
 import { TranslationService } from '~/shared/services/translationService';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { Token } from '~/entities/database/token';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
@@ -18,7 +18,6 @@ import { OperatorTokenCreationDialogComponent } from '../../modules/token/compon
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorTokenPageComponent implements OnInit {
   public tokens: any = [];
   public headList: string[] = OPERATOR_HEADERS.tokens.main;
@@ -28,14 +27,13 @@ export class OperatorTokenPageComponent implements OnInit {
   perPage = 10;
   columns = [];
 
-
-  constructor(private operatorTokenService: OperatorTokenService,
-              private translationService: TranslationService,
-              private authentificationService: AuthenticationService,
-              private confirmationService: ConfirmationService,
-              private ts: TableService,
-              private dialogService: DialogService,
-
+  constructor(
+    private operatorTokenService: OperatorTokenService,
+    private translationService: TranslationService,
+    private authentificationService: AuthenticationService,
+    private confirmationService: ConfirmationService,
+    private ts: TableService,
+    private dialogService: DialogService,
   ) {
     this.setColumns();
   }
@@ -50,7 +48,6 @@ export class OperatorTokenPageComponent implements OnInit {
     }
   }
 
-
   public get(filters: any[any] = []) {
     this.operatorTokenService.get().subscribe((response: ApiResponse) => {
       this.setTotal(response.meta ? response.meta : null);
@@ -59,11 +56,9 @@ export class OperatorTokenPageComponent implements OnInit {
     });
   }
 
-
   create(): void {
     this.openTokenFormDialog();
   }
-
 
   openTokenFormDialog() {
     const config = {
@@ -72,7 +67,7 @@ export class OperatorTokenPageComponent implements OnInit {
     };
     const ref = this.dialogService.open(OperatorTokenCreationDialogComponent, config);
 
-    ref.onClose.subscribe((token:string) => {
+    ref.onClose.subscribe((token: string) => {
       if (token) {
         this.openNewTokenDialog(token);
       }
@@ -94,18 +89,15 @@ export class OperatorTokenPageComponent implements OnInit {
     });
   }
 
-
   public delete(token: Token) {
     const id = token._id;
     const name = token.name;
     this.confirmationService.confirm({
       message: `Etes vous sûr de vouloir supprimer le token du serveur ${name} ?`,
       accept: () => {
-        this.operatorTokenService.delete(id).subscribe(
-          () => {
-            this.get();
-          },
-        );
+        this.operatorTokenService.delete(id).subscribe(() => {
+          this.get();
+        });
       },
     });
   }
@@ -117,7 +109,6 @@ export class OperatorTokenPageComponent implements OnInit {
   public getValue(token: object, key: string): string {
     return this.translationService.getTableValue(token, key);
   }
-
 
   private setTotal(meta: Meta) {
     if (meta && meta.hasOwnProperty('pagination')) {

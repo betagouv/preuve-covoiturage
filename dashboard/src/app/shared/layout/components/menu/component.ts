@@ -1,11 +1,6 @@
-import {
-  Component,
-  Injectable,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, Injectable, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 
 import { environment } from '../../../../../environments/environment';
 
@@ -59,10 +54,7 @@ export class MenuComponent implements OnInit {
       {
         label: 'INCITATIONS',
         icon: 'pi pi-fw pi-briefcase',
-        // hide for now in production and staging
-        visible:
-          environment.name !== 'production' &&
-          this.hasAnyGroup(['registry', 'aom']),
+        visible: this.hasAnyGroup(['aom']),
         items: [
           {
             label: 'Politiques',

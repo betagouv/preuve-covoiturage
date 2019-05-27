@@ -9,16 +9,12 @@ import { OperatorService } from '../../../../../services/operatorService';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorShowComponent implements OnInit {
   @Input() operatorId: string;
 
   public operator = new Operator();
 
-  constructor(
-      private operatorService: OperatorService,
-  ) {
-  }
+  constructor(private operatorService: OperatorService) {}
 
   ngOnInit() {
     this.operator.nom_commercial = 'Opérateur non trouvé dans la base';

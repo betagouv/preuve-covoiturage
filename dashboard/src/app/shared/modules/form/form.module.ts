@@ -27,14 +27,8 @@ import { CompanyFormComponent } from './components/company/component';
     MessageModule,
     ButtonModule,
     UserUIModule,
-
   ],
-  declarations: [
-    AddressFormComponent,
-    BankFormComponent,
-    CompanyFormComponent,
-    ContactsFormComponent,
-  ],
+  declarations: [AddressFormComponent, BankFormComponent, CompanyFormComponent, ContactsFormComponent],
   exports: [
     FormsModule,
     ReactiveFormsModule,
@@ -44,4 +38,4 @@ import { CompanyFormComponent } from './components/company/component';
     ContactsFormComponent,
   ],
 })
-export class FormModule { }
+export class FormModule {}

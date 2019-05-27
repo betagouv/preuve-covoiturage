@@ -5,8 +5,5 @@ import { Component, Injectable, OnInit } from '@angular/core';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 @Injectable()
-export class OperatorHomePageComponent {
-
-}
+export class OperatorHomePageComponent {}

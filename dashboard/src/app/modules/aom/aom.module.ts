@@ -47,11 +47,7 @@ import { StatisticsUIModule } from '../statistics/modules/ui/ui.module';
     StatisticsUIModule,
   ],
   providers: [AomService, DialogService, TranslationService, TableService],
-  declarations: [
-    AomListComponent,
-    AomSettingsComponent,
-    AomStatisticsComponent,
-  ],
+  declarations: [AomListComponent, AomSettingsComponent, AomStatisticsComponent],
   exports: [AomListComponent, AomSettingsComponent, AomUIModule],
 })
 export class AomModule {}

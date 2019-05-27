@@ -8,16 +8,18 @@ export class InputBase<T> {
   placeholder: string;
   pattern: string;
 
-  constructor(options: {
-    value?: T,
-    key?: string,
-    label?: string,
-    required?: boolean,
-    order?: number,
-    controlType?: string,
-    placeholder?: string,
-    pattern?: string,
-  } = {}) {
+  constructor(
+    options: {
+      value?: T;
+      key?: string;
+      label?: string;
+      required?: boolean;
+      order?: number;
+      controlType?: string;
+      placeholder?: string;
+      pattern?: string;
+    } = {},
+  ) {
     this.value = options.value;
     this.key = options.key || '';
     this.label = options.label || '';

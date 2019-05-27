@@ -11,20 +11,9 @@ import { JourneyService } from '../../services/journeyService';
 
 /* Local components */
 @NgModule({
-  imports: [
-    CommonModule,
-    FileUploadModule,
-    AccordionModule,
-  ],
-  providers: [
-    JourneyService,
-  ],
-  declarations: [
-    JourneyUploadComponent,
-  ],
-  exports: [
-    JourneyUploadComponent,
-  ],
+  imports: [CommonModule, FileUploadModule, AccordionModule],
+  providers: [JourneyService],
+  declarations: [JourneyUploadComponent],
+  exports: [JourneyUploadComponent],
 })
-export class JourneyUIModule {
-}
+export class JourneyUIModule {}

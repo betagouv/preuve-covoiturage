@@ -9,26 +9,21 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
 import { GROUPS } from '../../config/groups';
 import { ROLES } from '../../config/roles';
 
-
 /*
  * Methods used to get dropdown options
  */
 @Injectable()
 export class DropdownService {
-  constructor(
-      private operatorService: OperatorService,
-      private aomService: AomService,
-  ) {
-  }
+  constructor(private operatorService: OperatorService, private aomService: AomService) {}
 
   getAoms(): Observable<any> {
     return this.aomService.get().pipe(map((response: ApiResponse) => this.formatDropdownOptions(response.data, 'aom')));
   }
 
   getOperators(): Observable<object> {
-    return this.operatorService.get().pipe(map(
-        (response: ApiResponse) => this.formatDropdownOptions(response.data, 'operator')),
-    );
+    return this.operatorService
+      .get()
+      .pipe(map((response: ApiResponse) => this.formatDropdownOptions(response.data, 'operator')));
   }
 
   getGroups() {
@@ -69,7 +64,6 @@ export class DropdownService {
           });
         }
     }
-
 
     return options;
   }

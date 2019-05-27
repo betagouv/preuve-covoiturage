@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { regexp } from '~/entities/validators';
 import { User } from '~/entities/database/user/user';
 
@@ -10,7 +10,6 @@ import { User } from '~/entities/database/user/user';
   selector: 'app-auth-form-forgotten-password',
   templateUrl: 'template.html',
 })
-
 export class AuthFormForgottenPasswordComponent implements OnInit {
   public forgottenPasswordForm = this.fb.group({
     email: ['', [Validators.required, Validators.pattern(regexp.email)]],
@@ -20,12 +19,7 @@ export class AuthFormForgottenPasswordComponent implements OnInit {
   public loading = false;
   submitted = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private authenticationService: AuthenticationService,
-  ) {
-  }
+  constructor(private fb: FormBuilder, private router: Router, private authenticationService: AuthenticationService) {}
 
   ngOnInit(): void {
     //
@@ -44,16 +38,15 @@ export class AuthFormForgottenPasswordComponent implements OnInit {
 
   sendEmailForNewPassword(user: User) {
     this.loading = true;
-    this.authenticationService.sendEmailForPasswordReset(user.email)
-      .subscribe(
-        () => {
-          this.loading = false;
-          this.router.navigate(['/signin'], { queryParams: { flash: 'password-sent' } });
-        },
-        () => {
-          this.loading = false;
-          // fix: do nothhing ?;
-        },
-      );
+    this.authenticationService.sendEmailForPasswordReset(user.email).subscribe(
+      () => {
+        this.loading = false;
+        this.router.navigate(['/signin'], { queryParams: { flash: 'password-sent' } });
+      },
+      () => {
+        this.loading = false;
+        // fix: do nothhing ?;
+      },
+    );
   }
 }

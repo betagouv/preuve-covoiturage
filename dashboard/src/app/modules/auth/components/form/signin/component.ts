@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { password, regexp } from '~/entities/validators';
 import { User } from '~/entities/database/user/user';
 
@@ -10,12 +10,10 @@ import { User } from '~/entities/database/user/user';
   selector: 'app-auth-form-signin',
   templateUrl: 'template.html',
 })
-
 export class AuthFormSigninComponent implements OnInit {
   public signinForm = this.fb.group({
     email: ['', [Validators.required, Validators.pattern(regexp.email)]],
     password: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
-
   });
 
   model: any = {};
@@ -50,22 +48,21 @@ export class AuthFormSigninComponent implements OnInit {
 
   signin(user: User) {
     this.loading = true;
-    this.authenticationService.login(user.email, user.password)
-      .subscribe(
-        (result) => {
-          this.loading = false;
-          if (result) {
-            if (this.params && this.params.r) {
-              this.router.navigate([this.params.r]);
-            } else {
-              this.router.navigate(['/dashboard/home']);
-            }
+    this.authenticationService.login(user.email, user.password).subscribe(
+      (result) => {
+        this.loading = false;
+        if (result) {
+          if (this.params && this.params.r) {
+            this.router.navigate([this.params.r]);
+          } else {
+            this.router.navigate(['/dashboard/home']);
           }
-        },
-        () => {
-          this.error = 'L\'email et/ou le mot de passe ne sont pas valides';
-          this.loading = false;
-        },
-      );
+        }
+      },
+      () => {
+        this.error = "L'email et/ou le mot de passe ne sont pas valides";
+        this.loading = false;
+      },
+    );
   }
 }

@@ -13,23 +13,18 @@ const routes: Routes = [
     data: { groups: ['registry'] },
   },
   {
-    path : 'settings',
+    path: 'settings',
     component: AomSettingsComponent,
     data: { groups: ['aom'] },
   },
   {
-    path : 'stats',
+    path: 'stats',
     component: AomStatisticsComponent,
     data: { groups: ['aom'] },
   },
 ];
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [
-    RouterModule,
-  ],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-
-export class AomRoutingModule { }
+export class AomRoutingModule {}

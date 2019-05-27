@@ -8,15 +8,11 @@ import { MAIN } from '~/config/main';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class AuthPageSigninComponent {
   contactEmail = MAIN.contactEmail;
   public params: any;
 
-  constructor(
-    private route: ActivatedRoute,
-    private messageService: MessageService,
-  ) {
+  constructor(private route: ActivatedRoute, private messageService: MessageService) {
     this.params = route.snapshot.queryParams;
   }
 
@@ -55,7 +51,7 @@ export class AuthPageSigninComponent {
         case 'forbidden':
           this.messageService.add({
             severity: 'error',
-            summary: 'Vous n\'avez pas l\'autorisation',
+            summary: "Vous n'avez pas l'autorisation",
           });
           break;
       }

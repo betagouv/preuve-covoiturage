@@ -25,7 +25,6 @@ import { AuthPageForgottenPasswordComponent } from './pages/forgottenPassword/co
 import { AuthPageConfirmEmailComponent } from './pages/confirmEmail/component';
 
 @NgModule({
-
   imports: [
     CommonModule,
     FormsModule,
@@ -52,10 +51,6 @@ import { AuthPageConfirmEmailComponent } from './pages/confirmEmail/component';
     AuthPageConfirmEmailComponent,
     AutofocusDirective,
   ],
-  exports: [
-    AuthRoutingModule,
-  ],
-
+  exports: [AuthRoutingModule],
 })
-export class AuthModule {
-}
+export class AuthModule {}

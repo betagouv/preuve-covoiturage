@@ -10,13 +10,8 @@ import { JourneyService } from '~/modules/journeys/services/journeyService';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class AomMultipleDropdownComponent implements OnInit {
-  constructor(
-    private aomService: AomService,
-    private journeyService: JourneyService,
-  ) {
-  }
+  constructor(private aomService: AomService, private journeyService: JourneyService) {}
 
   aoms = [];
   selectedAoms = [];
@@ -42,7 +37,7 @@ export class AomMultipleDropdownComponent implements OnInit {
 
   public getSelectedAoms() {
     const filters = [];
-    this.selectedAomIds.forEach(aomId => filters.push(['_id', aomId]));
+    this.selectedAomIds.forEach((aomId) => filters.push(['_id', aomId]));
     this.aomService.get(filters).subscribe((aoms: ApiResponse) => {
       aoms.data.forEach((aom: Aom) => {
         this.aoms.push({
@@ -54,34 +49,30 @@ export class AomMultipleDropdownComponent implements OnInit {
   }
 
   public getAoms() {
-    this.journeyService
-      .listAom()
-      .subscribe((response) => {
-        this.aoms = response['data']
-          .map(({ _id, name, count }) => ({
-            key: _id,
-            value: `${name} (${count})`,
-          }));
-      });
+    this.journeyService.listAom().subscribe((response) => {
+      this.aoms = response['data'].map(({ _id, name }) => ({
+        key: _id,
+        value: name,
+      }));
+    });
   }
 
   public filter(event) {
     if (event && event.query) {
       const regexp = new RegExp(event.query, 'i');
-      this.filteredAoms = this.aoms.filter(item => regexp.test(item.value));
-      // console.log(this.filteredAoms)
+      this.filteredAoms = this.aoms.filter((item) => regexp.test(item.value));
     } else {
       this.filteredAoms = this.aoms.slice();
     }
   }
 
   public onSelect() {
-    this.selectedAomIds = this.selectedAoms.map(aom => aom.key);
+    this.selectedAomIds = this.selectedAoms.map((aom) => aom.key);
     this.aomIdsChange.emit(this.selectedAomIds);
   }
 
   public unSelect() {
-    this.selectedAomIds = this.selectedAoms.map(aom => aom.key);
+    this.selectedAomIds = this.selectedAoms.map((aom) => aom.key);
     this.aomIdsChange.emit(this.selectedAomIds);
   }
 

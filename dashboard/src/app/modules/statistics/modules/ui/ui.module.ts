@@ -8,13 +8,7 @@ import { ChartModule } from 'primeng/chart';
 import { StatisticsContentComponent } from './stats/component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    CardModule,
-    ChartModule,
-    InputSwitchModule,
-    ProgressSpinnerModule,
-  ],
+  imports: [CommonModule, CardModule, ChartModule, InputSwitchModule, ProgressSpinnerModule],
   declarations: [StatisticsContentComponent],
   exports: [StatisticsContentComponent],
 })

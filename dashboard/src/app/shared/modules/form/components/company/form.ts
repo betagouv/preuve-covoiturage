@@ -12,9 +12,7 @@ export class CompanyForm {
   rna = new FormControl();
   vat_intra = new FormControl(); // tslint:disable-line variable-name
 
-  constructor(
-    company: Company,
-  ) {
+  constructor(company: Company) {
     this.siren.setValue(company.siren);
     this.siren.setValidators([Validators.required, Validators.pattern(regexp.siren)]);
 

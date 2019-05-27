@@ -53,14 +53,7 @@ import { AomService } from '../aom/services/aomService';
     ButtonModule,
     InputTextModule,
   ],
-  providers: [
-    OperatorService,
-    OperatorTokenService,
-    DialogService,
-    TranslationService,
-    TableService,
-    AomService,
-  ],
+  providers: [OperatorService, OperatorTokenService, DialogService, TranslationService, TableService, AomService],
   declarations: [
     OperatorListComponent,
     OperatorTokenPageComponent,
@@ -68,11 +61,6 @@ import { AomService } from '../aom/services/aomService';
     OperatorJourneyImportComponent,
     OperatorAomVisibilityComponent,
   ],
-  exports: [
-    OperatorUIModule,
-    OperatorListComponent,
-    OperatorTokenPageComponent,
-    OperatorSettingsComponent,
-  ],
+  exports: [OperatorUIModule, OperatorListComponent, OperatorTokenPageComponent, OperatorSettingsComponent],
 })
 export class OperatorModule {}

@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 
 import { IncentiveCampaign } from '~/entities/database/Incentive/incentiveCampaign';
 
@@ -11,15 +8,10 @@ import { IncentiveCampaign } from '~/entities/database/Incentive/incentiveCampai
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentiveCampaignConfirmationComponent implements OnInit {
   public campaign: IncentiveCampaign;
 
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-  ) {
-  }
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
 
   ngOnInit(): void {
     const { campaign } = this.config.data;

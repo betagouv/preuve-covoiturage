@@ -8,31 +8,39 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
 import { User } from '~/entities/database/user/user';
 import { OrganisationCompany } from '~/entities/database/organisationCompany';
 
-import { TokenService } from '../token/service';
-import { Logged } from '../authguard/logged';
-import { LoggerService } from '../logger/service';
+import { TokenService } from '../token/token.service';
+import { Logged } from './logged';
 
 @Injectable()
 export class AuthenticationService {
   private user = null;
   private endPoint = '/auth';
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private loggerService: LoggerService,
-  ) {
-    this.loggerService = loggerService;
+  constructor(private http: HttpClient, private router: Router) {}
+
+  check(backend = false): boolean {
+    if (!backend) {
+      return !!this.getUser();
+    }
+
+    return !!this.checkToken();
   }
 
-  check(): boolean {
-    return !!this.getUser();
+  checkToken(): boolean {
+    try {
+      this.http.get(`${this.endPoint}/auth/check`);
+
+      return true;
+    } catch (e) {
+      console.log(e.message);
+      return false;
+    }
   }
 
   login(email: string, password: string): Observable<boolean> {
-    return this.http.post(`${this.endPoint}/signin`, { email, password }).pipe(
-      map((response: ApiResponse) => this.loginResponse(response.data)),
-    );
+    return this.http
+      .post(`${this.endPoint}/signin`, { email, password })
+      .pipe(map((response: ApiResponse) => this.loginResponse(response.data)));
   }
 
   loginResponse(response: object) {
@@ -87,7 +95,7 @@ export class AuthenticationService {
     return user && user.role === role;
   }
 
-  logout(opt: { toLogin?: boolean, redirectTo?: string } = {}) {
+  logout(opt: { toLogin?: boolean; redirectTo?: string } = {}) {
     const options = { toLogin: false, redirectTo: null, ...opt };
 
     // clear the Token, user object and connection state
@@ -96,12 +104,14 @@ export class AuthenticationService {
     Logged.set(false);
 
     if (options.toLogin) {
-      const extras = options.redirectTo ? {
-        queryParams: {
-          flash: 'expired',
-          r: options.redirectTo,
-        },
-      } : {};
+      const extras = options.redirectTo
+        ? {
+            queryParams: {
+              flash: 'expired',
+              r: options.redirectTo,
+            },
+          }
+        : {};
 
       this.router.navigate(['/signin'], extras);
     }
@@ -138,11 +148,11 @@ export class AuthenticationService {
 
     if (user.company && user.company.name) {
       switch (user.group) {
-        case 'operators' :
+        case 'operators':
           user.company.link = '/dashboard/operators/settings';
           user.company.icon = 'tablet';
           break;
-        case 'aom' :
+        case 'aom':
           user.company.link = '/dashboard/aoms/settings';
           user.company.icon = 'home';
           break;

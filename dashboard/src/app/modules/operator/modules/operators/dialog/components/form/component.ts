@@ -15,7 +15,6 @@ import { OperatorService } from '~/modules/operator/services/operatorService';
   selector: 'app-operator-form',
   templateUrl: 'template.html',
 })
-
 export class OperatorFormComponent {
   users: User[];
   @Output() answer = new EventEmitter();
@@ -28,11 +27,7 @@ export class OperatorFormComponent {
     contacts: this.fb.group(new ContactsForm(new ContactList())),
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private operatorService: OperatorService,
-  ) {
-  }
+  constructor(private fb: FormBuilder, private operatorService: OperatorService) {}
 
   @Input('operator')
   set operatorInput(operator: Operator) {
@@ -43,11 +38,9 @@ export class OperatorFormComponent {
   }
 
   setUsers(operator) {
-    this.operatorService
-          .getUsers(operator._id)
-          .subscribe((response: ApiResponse) => {
-            this.users = response.data;
-          });
+    this.operatorService.getUsers(operator._id).subscribe((response: ApiResponse) => {
+      this.users = response.data;
+    });
   }
 
   onSubmit() {

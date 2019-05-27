@@ -7,14 +7,7 @@ import { TimeFilter } from '../filters/TimeFilter';
 import { RangeFilter } from '../filters/RangeFilter';
 import { RankFilter } from '../filters/RankFilter';
 
-
-const FILTERS = [
-  WeekDayFilter,
-  TimeFilter,
-  RangeFilter,
-  RankFilter,
-  InseeFilter,
-];
+const FILTERS = [WeekDayFilter, TimeFilter, RangeFilter, RankFilter, InseeFilter];
 
 @Injectable()
 export class IncentiveFilterService {

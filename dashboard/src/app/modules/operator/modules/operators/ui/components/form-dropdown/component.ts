@@ -11,17 +11,13 @@ import { OPERATOR_MAIN } from '../../../../../config/main';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorFormDropdownComponent implements OnInit {
   @Input() operatorId: FormControl;
   public operator;
   public operators = [];
   public filteredOperators = [];
 
-  constructor(
-      private operatorService: OperatorService,
-  ) {
-  }
+  constructor(private operatorService: OperatorService) {}
 
   public ngOnInit() {
     if (this.operatorId) {
@@ -56,7 +52,7 @@ export class OperatorFormDropdownComponent implements OnInit {
   public filter(event) {
     if (event && event.query) {
       const regexp = new RegExp(event.query);
-      this.filteredOperators = this.operators.filter(item => regexp.test(item.value));
+      this.filteredOperators = this.operators.filter((item) => regexp.test(item.value));
     } else {
       this.filteredOperators = this.operators.slice();
     }

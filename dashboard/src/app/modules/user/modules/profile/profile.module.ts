@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-
 /* External modules */
 import { MessageModule } from 'primeng/message';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
@@ -23,9 +22,7 @@ import { ProfileViewComponent } from './components/view/component';
 import { PasswordResetViewComponent } from './components/password/view/component';
 import { PasswordResetDialogComponent } from './components/password/resetDialog/component';
 
-
 /* Local services */
-
 
 @NgModule({
   imports: [
@@ -38,11 +35,8 @@ import { PasswordResetDialogComponent } from './components/password/resetDialog/
     FormModule,
     FormsModule,
     PasswordModule,
-
   ],
-  providers: [
-
-  ],
+  providers: [],
   declarations: [
     ProfileEditionDialogComponent,
     ProfileFormComponent,
@@ -50,14 +44,7 @@ import { PasswordResetDialogComponent } from './components/password/resetDialog/
     PasswordResetViewComponent,
     PasswordResetDialogComponent,
   ],
-  exports: [
-    ProfileViewComponent,
-    PasswordResetViewComponent,
-  ],
-  entryComponents: [
-    ProfileEditionDialogComponent,
-    PasswordResetDialogComponent,
-
-  ],
+  exports: [ProfileViewComponent, PasswordResetViewComponent],
+  entryComponents: [ProfileEditionDialogComponent, PasswordResetDialogComponent],
 })
-export class UserProfileModule { }
+export class UserProfileModule {}

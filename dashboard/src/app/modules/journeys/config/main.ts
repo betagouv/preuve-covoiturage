@@ -1,4 +1,4 @@
 export const JOURNEY_MAIN = {
-  showTimeFilter : false,
+  showTimeFilter: false,
   showDayFilter: false,
 };

@@ -3,13 +3,11 @@ import { SirenInputBase } from '~/entities/form/sirenInputBase';
 import { TextboxBase } from '../entities/form/textBoxBase';
 
 export const INPUTS = {
-
-  address : [
-
+  address: [
     new TextboxBase({
       key: 'street',
       label: 'Adresse',
-      placeholder: 'Remplir l\'adresse',
+      placeholder: "Remplir l'adresse",
       value: null,
       required: true,
     }),
@@ -37,14 +35,12 @@ export const INPUTS = {
       value: null,
       required: true,
     }),
-
   ],
 
-  company : [
-
+  company: [
     new TextboxBase({
       key: 'naf_etablissement',
-      label: 'Naf de l\'établissement',
+      label: "Naf de l'établissement",
       placeholder: 'Remplir la Naf',
       value: null,
     }),
@@ -58,7 +54,7 @@ export const INPUTS = {
 
     new TextboxBase({
       key: 'naf_entreprise',
-      label: 'Naf de l\'entreprise',
+      label: "Naf de l'entreprise",
       value: null,
     }),
 
@@ -89,8 +85,6 @@ export const INPUTS = {
       label: 'Vat intra',
       value: null,
     }),
-
-
   ],
 
   contact: [
@@ -144,6 +138,4 @@ export const INPUTS = {
       value: null,
     }),
   ],
-
 };
-

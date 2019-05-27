@@ -18,17 +18,14 @@ import { IncentivePolicyPickerComponent } from '../../../components/policy/picke
   templateUrl: './template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentiveCampaignsCreatePageComponent {
-  public campaignForm = this.fb.group(
-    {
-      name: ['', Validators.required],
-      description: [''],
-      start: ['', Validators.required],
-      end: ['', Validators.required],
-      policies: [[], Validators.required],
-    },
-  );
+  public campaignForm = this.fb.group({
+    name: ['', Validators.required],
+    description: [''],
+    start: ['', Validators.required],
+    end: ['', Validators.required],
+    policies: [[], Validators.required],
+  });
   public loading = false;
 
   public campaignRange = this.fb.control('');
@@ -48,9 +45,22 @@ export class IncentiveCampaignsCreatePageComponent {
       dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
       dayNamesShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
       dayNamesMin: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
-      monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
+      monthNames: [
+        'Janvier',
+        'Février',
+        'Mars',
+        'Avril',
+        'Mai',
+        'Juin',
+        'Juillet',
+        'Août',
+        'Septembre',
+        'Octobre',
+        'Novembre',
+        'Decembre',
+      ],
       monthNamesShort: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Dec'],
-      today: 'Aujourd\'hui',
+      today: "Aujourd'hui",
       clear: 'Remise à zéro',
       dateFormat: 'dd/mm/yy',
     };
@@ -69,7 +79,7 @@ export class IncentiveCampaignsCreatePageComponent {
   }
 
   rangeSelected(e) {
-    if (this.campaignRange.value.filter(d => d === null).length === 0) {
+    if (this.campaignRange.value.filter((d) => d === null).length === 0) {
       const [start, end] = this.campaignRange.value;
       this.campaignForm.patchValue({
         start,
@@ -88,7 +98,7 @@ export class IncentiveCampaignsCreatePageComponent {
 
     ref.onClose.subscribe((policy: IncentivePolicy) => {
       if (policy) {
-        policy.parameters = policy.parameters.filter(value => !value.internal);
+        policy.parameters = policy.parameters.filter((value) => !value.internal);
         this.startEditModal(
           {
             policy,
@@ -98,10 +108,13 @@ export class IncentiveCampaignsCreatePageComponent {
           (parameters) => {
             const appliedPolicies = this.campaignForm.value.policies;
             this.campaignForm.patchValue({
-              policies: [...appliedPolicies, {
-                parameters,
-                policy,
-              }],
+              policies: [
+                ...appliedPolicies,
+                {
+                  parameters,
+                  policy,
+                },
+              ],
             });
           },
         );
@@ -154,11 +167,7 @@ export class IncentiveCampaignsCreatePageComponent {
     if (i > 0) {
       const appliedPolicies = this.appliedPolicies;
 
-      appliedPolicies.splice(
-        (i - 1),
-        0,
-        appliedPolicies.splice(i, 1)[0],
-      );
+      appliedPolicies.splice(i - 1, 0, appliedPolicies.splice(i, 1)[0]);
 
       this.campaignForm.patchValue({
         policies: appliedPolicies,
@@ -170,11 +179,7 @@ export class IncentiveCampaignsCreatePageComponent {
     const appliedPolicies = this.appliedPolicies;
 
     if (i < appliedPolicies.length) {
-      appliedPolicies.splice(
-        (i + 1),
-        0,
-        appliedPolicies.splice(i, 1)[0],
-      );
+      appliedPolicies.splice(i + 1, 0, appliedPolicies.splice(i, 1)[0]);
 
       this.campaignForm.patchValue({
         policies: appliedPolicies,
@@ -185,10 +190,7 @@ export class IncentiveCampaignsCreatePageComponent {
   deletePolicy(i) {
     const appliedPolicies = this.appliedPolicies;
 
-    appliedPolicies.splice(
-      i,
-      1,
-    );
+    appliedPolicies.splice(i, 1);
 
     this.campaignForm.patchValue({
       policies: appliedPolicies,
@@ -223,12 +225,14 @@ export class IncentiveCampaignsCreatePageComponent {
       };
     });
     this.loading = true;
-    this.incentiveCampaignService.post({
-      ...campaign,
-      start: campaign.start.toISOString(),
-      end: campaign.end.toISOString(),
-      policies: normalizedPolicies,
-    }).subscribe(
+    this.incentiveCampaignService
+      .post({
+        ...campaign,
+        start: campaign.start.toISOString(),
+        end: campaign.end.toISOString(),
+        policies: normalizedPolicies,
+      })
+      .subscribe(
         (response) => {
           this.loading = false;
           this.reset();
@@ -237,9 +241,8 @@ export class IncentiveCampaignsCreatePageComponent {
         () => {
           this.loading = false;
         },
-    );
+      );
   }
-
 
   reset() {
     this.campaignForm.reset();

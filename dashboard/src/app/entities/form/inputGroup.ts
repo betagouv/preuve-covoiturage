@@ -6,13 +6,14 @@ export class InputGroup<T> {
   title: string;
   key: string;
 
-
-  constructor(options: {
-    inputs?: InputBase<any>[],
-    inputGroup?: boolean,
-    title?: string,
-    key?: string,
-  } = {}) {
+  constructor(
+    options: {
+      inputs?: InputBase<any>[];
+      inputGroup?: boolean;
+      title?: string;
+      key?: string;
+    } = {},
+  ) {
     this.inputs = options.inputs || [];
     this.inputGroup = options.inputGroup;
     this.title = options.title || '';

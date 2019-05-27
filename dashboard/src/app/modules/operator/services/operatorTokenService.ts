@@ -11,8 +11,8 @@ export class OperatorTokenService extends ApiService {
   public endPoint = '/operators/applications';
 
   public messages = {
-    created: 'L\'application a bien été créée.',
-    deleted: 'L\'application a bien été supprimée.',
-    updated: 'L\'application a bien été mise à jour',
+    created: "L'application a bien été créée.",
+    deleted: "L'application a bien été supprimée.",
+    updated: "L'application a bien été mise à jour",
   };
 }

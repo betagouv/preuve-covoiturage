@@ -25,69 +25,67 @@ export class ApiService {
   /**
    * filters is Array of [ [ key, value, comparaison ] ]
    */
-  get(filters:any[any] = [], options = {}): any {
+  get(filters: any[any] = [], options = {}): any {
     const params = this.getUrlParams(filters);
     return this.http.get(`${this.endPoint}${params}`, options);
   }
 
   post(item: any): Observable<any> {
     const cleanedItem = this.cleanObject(item);
-    return this.http
-        .post<object>(`${this.endPoint}`, cleanedItem)
-        .pipe(map((response: ApiResponse) => {
-          this.messageService.add({
-            severity: 'info',
-            summary: this.messages.created,
-          });
-          return response.data;
-        }));
+    return this.http.post<object>(`${this.endPoint}`, cleanedItem).pipe(
+      map((response: ApiResponse) => {
+        this.messageService.add({
+          severity: 'info',
+          summary: this.messages.created,
+        });
+        return response.data;
+      }),
+    );
   }
 
   put(item: any, key: string, value: string): Observable<any> {
     if (item[key] !== value && value !== null) {
       const put = {};
       put[key] = value;
-      return this.http
-          .put<object>(`${this.endPoint}/${item._id}`, put)
-          .pipe(map((response: ApiResponse) => {
-            this.messageService.add({
-              severity: 'info',
-              summary: this.messages.updated,
-            });
-            return response.data;
-          }));
-    }
-    return observableOf();
-  }
-
-  patch(id: string, patch: object): Observable<any> {
-    return this.http
-        .put<object>(`${this.endPoint}/${id}`, patch)
-        .pipe(map((response: ApiResponse) => {
+      return this.http.put<object>(`${this.endPoint}/${item._id}`, put).pipe(
+        map((response: ApiResponse) => {
           this.messageService.add({
             severity: 'info',
             summary: this.messages.updated,
           });
           return response.data;
-        }));
+        }),
+      );
+    }
+    return observableOf();
+  }
+
+  patch(id: string, patch: object): Observable<any> {
+    return this.http.put<object>(`${this.endPoint}/${id}`, patch).pipe(
+      map((response: ApiResponse) => {
+        this.messageService.add({
+          severity: 'info',
+          summary: this.messages.updated,
+        });
+        return response.data;
+      }),
+    );
   }
 
   getOne(id: string): any {
-    return this.http
-        .get(`${this.endPoint}/` + id)
-        .pipe(map((response: ApiResponse) => response.data));
+    return this.http.get(`${this.endPoint}/` + id).pipe(map((response: ApiResponse) => response.data));
   }
 
   delete(id: string) {
-    return this.http
-        .delete(`${this.endPoint}/` + id)
-        .pipe(map((response: ApiResponse) => {
-          this.messageService.add({
-            severity: 'info',
-            summary: this.messages.deleted,
-          });
-          return response.data;
-        }));
+    return this.http.delete(`${this.endPoint}/` + id).pipe(
+      map((response: ApiResponse) => {
+        this.messageService.add({
+          severity: 'info',
+          summary: this.messages.deleted,
+        });
+        return response.data;
+      }),
+    );
   }
 
   /* Filter format */
