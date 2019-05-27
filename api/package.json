@@ -69,7 +69,8 @@
     "extends": "airbnb",
     "rules": {
       "no-underscore-dangle": "off",
-      "object-curly-newline": "off"
+      "object-curly-newline": "off",
+      "arrow-parens": "off"
     }
   },
   "nodemonConfig": {
