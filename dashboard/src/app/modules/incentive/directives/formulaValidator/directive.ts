@@ -14,20 +14,16 @@ import { IncentiveParameter } from '~/entities/database/Incentive/incentiveParam
     },
   ],
 })
-
 export class FormulaValidatorDirective {
   @Input('appValidateFormula') formulaParameters: [];
 
   validate(c: FormControl) {
     const parameters = this.formulaParameters
       .map((param: IncentiveParameter) => param.varname)
-      .reduce(
-        (values, varname) => {
-          values[varname] = 0;
-          return values;
-        },
-        {},
-      );
+      .reduce((values, varname) => {
+        values[varname] = 0;
+        return values;
+      }, {});
 
     // TODO check this
     if (c.value) {

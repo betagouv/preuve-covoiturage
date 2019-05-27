@@ -6,26 +6,21 @@ import { ModalResponse } from '~/entities/responses/modalResponse';
 
 import { OperatorTokenService } from '../../../../services/operatorTokenService';
 
-
 @Component({
   selector: 'app-token-creation',
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorTokenCreationDialogComponent implements OnInit {
   constructor(
-      private operatorTokenService: OperatorTokenService,
-      public ref: DynamicDialogRef,
-      private fb: FormBuilder,
-  ) {
-  }
-
+    private operatorTokenService: OperatorTokenService,
+    public ref: DynamicDialogRef,
+    private fb: FormBuilder,
+  ) {}
 
   public tokenForm = this.fb.group({
     name: ['', Validators.required],
   });
-
 
   showTokenForm = false;
   name = 'Serveur';
@@ -37,7 +32,6 @@ export class OperatorTokenCreationDialogComponent implements OnInit {
     //
   }
 
-
   onSubmit(): void {
     if (this.tokenForm.controls['name'].dirty) {
       this.create(this.tokenForm.value.name);
@@ -47,13 +41,14 @@ export class OperatorTokenCreationDialogComponent implements OnInit {
   create(name): void {
     this.loading = true;
     this.operatorTokenService.post({ name }).subscribe(
-        (response) => {
-          this.loading = false;
-          this.ref.close(response['token']);
-        },
-        (error) => {
-          this.showTokenForm = false;
-          this.loading = false;
-        });
+      (response) => {
+        this.loading = false;
+        this.ref.close(response['token']);
+      },
+      (error) => {
+        this.showTokenForm = false;
+        this.loading = false;
+      },
+    );
   }
 }

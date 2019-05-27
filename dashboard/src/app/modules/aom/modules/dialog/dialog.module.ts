@@ -41,24 +41,9 @@ import { AomService } from '../../services/aomService';
     InputMaskModule,
     UserUIModule,
   ],
-  providers: [
-    AomService,
-    DialogService,
-    DynamicDialogRef,
-    DynamicDialogConfig,
-  ],
-  declarations: [
-    AomCreationDialogComponent,
-    AomEditionDialogComponent,
-    AomFormComponent,
-  ],
-  entryComponents: [
-    AomCreationDialogComponent,
-    AomEditionDialogComponent,
-  ],
-  exports: [
-    AomFormComponent,
-  ],
+  providers: [AomService, DialogService, DynamicDialogRef, DynamicDialogConfig],
+  declarations: [AomCreationDialogComponent, AomEditionDialogComponent, AomFormComponent],
+  entryComponents: [AomCreationDialogComponent, AomEditionDialogComponent],
+  exports: [AomFormComponent],
 })
-export class AomDialogModule {
-}
+export class AomDialogModule {}

@@ -16,7 +16,6 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
   selector: 'app-aom-form',
   templateUrl: 'template.html',
 })
-
 export class AomFormComponent {
   inseeMessage = '';
   users: User[] = [];
@@ -34,11 +33,7 @@ export class AomFormComponent {
     contacts: this.fb.group(new ContactsForm(new ContactList())),
   });
 
-  constructor(
-    private aomService: AomService,
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private aomService: AomService, private fb: FormBuilder) {}
 
   @Input('aom')
   set aomInput(aom: Aom) {
@@ -51,7 +46,7 @@ export class AomFormComponent {
   get aomInsee() {
     const insee = this.aomForm.value.insee;
     if (insee && insee.length > 0) {
-      return insee.map(item => ({
+      return insee.map((item) => ({
         label: item,
         value: item,
       }));
@@ -62,11 +57,9 @@ export class AomFormComponent {
 
   private setUsers(aom): void {
     if (aom._id) {
-      this.aomService
-        .getUsers(aom._id)
-        .subscribe((response: ApiResponse) => {
-          this.users = response.data;
-        });
+      this.aomService.getUsers(aom._id).subscribe((response: ApiResponse) => {
+        this.users = response.data;
+      });
     }
   }
 

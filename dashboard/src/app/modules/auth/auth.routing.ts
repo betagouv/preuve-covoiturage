@@ -10,7 +10,9 @@ import { AuthLayoutMainComponent } from './layout/main/component';
 
 const routes: Routes = [
   {
-    path: '', component: AuthLayoutMainComponent, children: [
+    path: '',
+    component: AuthLayoutMainComponent,
+    children: [
       { path: 'signin', component: AuthPageSigninComponent },
       { path: 'reset-password/:reset/:token', component: AuthPageNewPasswordComponent },
       { path: 'forgotten-password', component: AuthPageForgottenPasswordComponent },
@@ -21,13 +23,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [
-    RouterModule,
-  ],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-
-export class AuthRoutingModule {
-}
+export class AuthRoutingModule {}

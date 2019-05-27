@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import {
-  DynamicDialogRef,
-  DynamicDialogConfig, Message, MenuItem,
-} from 'primeng/api';
+import { DynamicDialogRef, DynamicDialogConfig, Message, MenuItem } from 'primeng/api';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 
 @Component({
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentiveInseeFilterComponent implements OnInit {
   public filter;
   public filterForm = this.fb.group({
@@ -47,18 +43,18 @@ export class IncentiveInseeFilterComponent implements OnInit {
     public config: DynamicDialogConfig,
     public fb: FormBuilder,
     private authentificationService: AuthenticationService,
-  ) {
-  }
-
+  ) {}
 
   ngOnInit(): void {
     this.items = [
-      { label: 'Liste Noire',
+      {
+        label: 'Liste Noire',
         command: (event) => {
           this.showBlackList = true;
         },
       },
-      { label: 'Liste Blanche',
+      {
+        label: 'Liste Blanche',
         command: (event) => {
           this.showBlackList = false;
         },
@@ -80,15 +76,24 @@ export class IncentiveInseeFilterComponent implements OnInit {
    * if insee is in whiteList and blackList show error
    */
   isPossible() {
-    if (this.filterForm.value.whiteList.or.start.length > 0 && this.filterForm.value.blackList.or.start.length > 0 &&
-        this.filterForm.value.whiteList.or.start.filter(value => this.filterForm.value.blackList.or.start.includes(value)).length > 0) {
+    if (
+      this.filterForm.value.whiteList.or.start.length > 0 &&
+      this.filterForm.value.blackList.or.start.length > 0 &&
+      this.filterForm.value.whiteList.or.start.filter((value) =>
+        this.filterForm.value.blackList.or.start.includes(value),
+      ).length > 0
+    ) {
       this.showError('Vous ne pouvez pas avoir le même code insee au départ dans la liste blanche et la liste noire');
       return;
     }
-    if (this.filterForm.value.whiteList.or.end.length > 0 && this.filterForm.value.blackList.or.end.length > 0 &&
-        this.filterForm.value.whiteList.or.end.filter(value => this.filterForm.value.blackList.or.end.includes(value)).length > 0) {
+    if (
+      this.filterForm.value.whiteList.or.end.length > 0 &&
+      this.filterForm.value.blackList.or.end.length > 0 &&
+      this.filterForm.value.whiteList.or.end.filter((value) => this.filterForm.value.blackList.or.end.includes(value))
+        .length > 0
+    ) {
       this.error = true;
-      this.showError('Vous ne pouvez pas avoir le même code insee à l\'arrivée dans la liste blanche et la liste noire');
+      this.showError("Vous ne pouvez pas avoir le même code insee à l'arrivée dans la liste blanche et la liste noire");
       return;
     }
     // todo : add validation for AND cases ?
@@ -100,7 +105,7 @@ export class IncentiveInseeFilterComponent implements OnInit {
    */
   isValid() {
     if (this.filterForm.value.whiteList.and.start.length > 0 && this.filterForm.value.whiteList.and.end.length === 0) {
-      this.showError('Vous devez mettre au moins une insee d\'arrivée dans la liste blanche de type : ET.');
+      this.showError("Vous devez mettre au moins une insee d'arrivée dans la liste blanche de type : ET.");
       return false;
     }
     if (this.filterForm.value.whiteList.and.end.length > 0 && this.filterForm.value.whiteList.and.start.length === 0) {
@@ -108,7 +113,7 @@ export class IncentiveInseeFilterComponent implements OnInit {
       return false;
     }
     if (this.filterForm.value.blackList.and.start.length > 0 && this.filterForm.value.blackList.and.end.length === 0) {
-      this.showError('Vous devez mettre au moins une insee d\'arrivée dans la liste noire de type : ET.');
+      this.showError("Vous devez mettre au moins une insee d'arrivée dans la liste noire de type : ET.");
       return false;
     }
     if (this.filterForm.value.blackList.and.end.length > 0 && this.filterForm.value.blackList.and.start.length === 0) {
@@ -121,11 +126,11 @@ export class IncentiveInseeFilterComponent implements OnInit {
 
   private showError(msg: string) {
     this.error = true;
-    this.msgs.push(
-      {
-        severity: 'error', summary: 'Erreur',
-        detail: msg,
-      });
+    this.msgs.push({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: msg,
+    });
   }
 
   private resetError() {

@@ -5,12 +5,8 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/api';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorNewTokenDialogComponent implements OnInit {
-  constructor(
-      public config: DynamicDialogConfig,
-      public ref: DynamicDialogRef,
-  ) {}
+  constructor(public config: DynamicDialogConfig, public ref: DynamicDialogRef) {}
 
   public newToken = '';
 
@@ -18,7 +14,7 @@ export class OperatorNewTokenDialogComponent implements OnInit {
     this.newToken = this.config.data['token'];
   }
 
-  close():void {
+  close(): void {
     this.ref.close();
   }
 }

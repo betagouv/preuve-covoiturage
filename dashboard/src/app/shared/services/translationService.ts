@@ -69,13 +69,13 @@ export class TranslationService {
 
   private manageValueExceptions(keyString, bodyElement) {
     switch (keyString) {
-      case 'passenger.start.date' :
+      case 'passenger.start.date':
         const date = new Date(bodyElement['passenger']['start']['datetime']);
         return date.toLocaleDateString('fr-FR');
-      case 'passenger.start.time' :
+      case 'passenger.start.time':
         const time = new Date(bodyElement['passenger']['start']['datetime']);
         return time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      case 'passenger.start.day' :
+      case 'passenger.start.day':
         const day = new Date(bodyElement['passenger']['start']['datetime']);
         return DATES.fr.dayNames[day.getDay()] || '';
     }

@@ -9,17 +9,13 @@ import { AOM_MAIN } from '../../../../config/main';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class AomDropdownComponent implements OnInit {
   @Input() aomId: FormControl;
   public aom;
   public aoms = [];
   public filteredAoms = [];
 
-  constructor(
-      private aomService: AomService,
-  ) {
-  }
+  constructor(private aomService: AomService) {}
 
   public ngOnInit() {
     if (this.aomId) {
@@ -54,7 +50,7 @@ export class AomDropdownComponent implements OnInit {
   public filter(event) {
     if (event && event.query) {
       const regexp = new RegExp(event.query, 'i');
-      this.filteredAoms = this.aoms.filter(item => regexp.test(item.value));
+      this.filteredAoms = this.aoms.filter((item) => regexp.test(item.value));
     } else {
       this.filteredAoms = this.aoms.slice();
     }

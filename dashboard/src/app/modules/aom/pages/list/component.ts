@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, DialogService, LazyLoadEvent } from 'primeng/api';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { TranslationService } from '~/shared/services/translationService';
 import { Aom } from '~/entities/database/aom';
 import { TableService } from '~/shared/services/tableService';
@@ -16,7 +16,6 @@ import { AOM_HEADERS } from '../../config/header';
 @Component({
   templateUrl: 'template.html',
 })
-
 export class AomListComponent implements OnInit {
   aoms;
   headList: string[] = AOM_HEADERS.main;
@@ -72,11 +71,9 @@ export class AomListComponent implements OnInit {
     this.confirmationService.confirm({
       message: `Etes vous sûr de vouloir supprimer l'aom ${aom.name} ?`,
       accept: () => {
-        this.aomService.delete(aom._id).subscribe(
-          () => {
-            this.get();
-          },
-        );
+        this.aomService.delete(aom._id).subscribe(() => {
+          this.get();
+        });
       },
     });
   }

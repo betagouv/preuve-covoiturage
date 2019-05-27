@@ -11,17 +11,12 @@ export class IncentiveUnitService extends ApiService {
   public endPoint = '/incentive/units';
 
   public get allUnits() {
-    return [
-      ...this.units,
-      ...this.createdUnits,
-    ];
+    return [...this.units, ...this.createdUnits];
   }
 
   public async get() {
     if (this.units.length === 0) {
-      const result = await this.http
-          .get<ApiResponse>(`${this.endPoint}`)
-          .toPromise();
+      const result = await this.http.get<ApiResponse>(`${this.endPoint}`).toPromise();
 
       this.units = [...result.data];
     }

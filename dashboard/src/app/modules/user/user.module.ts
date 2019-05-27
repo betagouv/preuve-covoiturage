@@ -29,7 +29,6 @@ import { UserSettingsComponent } from './pages/settings/component';
 import { UserService } from './services/userService';
 import { ProfileService } from './services/profileService';
 
-
 @NgModule({
   imports: [
     CommonModule,
@@ -47,20 +46,8 @@ import { ProfileService } from './services/profileService';
     DialogModule,
     InputTextModule,
   ],
-  providers: [
-    UserService,
-    ProfileService,
-    DialogService,
-    TranslationService,
-    TableService,
-  ],
-  declarations: [
-    UserListComponent,
-    UserSettingsComponent,
-  ],
-  exports: [
-    UserListComponent,
-    UserSettingsComponent,
-  ],
+  providers: [UserService, ProfileService, DialogService, TranslationService, TableService],
+  declarations: [UserListComponent, UserSettingsComponent],
+  exports: [UserListComponent, UserSettingsComponent],
 })
-export class UserModule { }
+export class UserModule {}

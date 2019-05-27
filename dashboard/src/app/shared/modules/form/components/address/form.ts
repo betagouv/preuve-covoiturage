@@ -10,9 +10,7 @@ export class AddressForm {
   city = new FormControl();
   country = new FormControl();
 
-  constructor(
-    address: Address,
-  ) {
+  constructor(address: Address) {
     this.street.setValue(address.street);
 
     this.postcode.setValue(address.postcode);

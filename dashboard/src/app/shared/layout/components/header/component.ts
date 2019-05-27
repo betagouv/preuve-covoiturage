@@ -1,6 +1,6 @@
 import { Component, Injectable, OnInit } from '@angular/core';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { Logged } from '~/applicativeService/authguard/logged';
 import { TITLES } from '~/config/navbar';
 import { OrganisationCompany } from '~/entities/database/organisationCompany';
@@ -11,7 +11,6 @@ import { User } from '~/entities/database/user/user';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 @Injectable()
 export class HeaderComponent implements OnInit {
   public logged: boolean;
@@ -19,26 +18,21 @@ export class HeaderComponent implements OnInit {
   public user: User;
   public company: OrganisationCompany;
 
-  constructor(
-    private authenticationService: AuthenticationService,
-  ) {
-  }
+  constructor(private authenticationService: AuthenticationService) {}
 
   ngOnInit() {
     this.user = this.authenticationService.getUser();
     this.company = this.authenticationService.getCompany();
     this.setTitles();
 
-    Logged
-      .get()
-      .subscribe((logged: boolean) => {
-        this.logged = logged;
-      });
+    Logged.get().subscribe((logged: boolean) => {
+      this.logged = logged;
+    });
   }
 
   setTitles(group: string = null) {
     const groupToTitles = TITLES;
-    this.title = (groupToTitles[group]) ? groupToTitles[group] : groupToTitles['default'];
+    this.title = groupToTitles[group] ? groupToTitles[group] : groupToTitles['default'];
   }
 
   logOut() {

@@ -1,5 +1,4 @@
 export const PATH_FR = {
-
   // OPERATEUR
   'operator.nom_commercial': {
     name: 'Opérateur',
@@ -9,16 +8,15 @@ export const PATH_FR = {
   },
 
   // AOM
-  'aom.name' : {
+  'aom.name': {
     name: 'AOM',
   },
-  insee : {
+  insee: {
     name: 'Insee',
   },
-  insee_main : {
+  insee_main: {
     name: 'Insee principal',
   },
-
 
   // PASSAGER
   'passenger.start.datetime': {
@@ -33,32 +31,32 @@ export const PATH_FR = {
   'passenger.start.time': {
     name: 'Heure départ',
   },
-  'passenger.start.day' : {
+  'passenger.start.day': {
     name: 'Jour',
   },
   'passenger.start.insee': {
     name: 'Insee de départ',
   },
   'passenger.end.insee': {
-    name: 'Insee à l\'arrivée',
+    name: "Insee à l'arrivée",
   },
   'passenger.start.town': {
     name: 'Commune de départ',
   },
   'passenger.end.town': {
-    name: 'Commune d\'arrivée',
+    name: "Commune d'arrivée",
   },
   'passenger.start.lat': {
     name: 'Latitude de départ',
   },
   'passenger.end.lat': {
-    name: 'Latitude à l\'arrivée',
+    name: "Latitude à l'arrivée",
   },
   'passenger.start.lng': {
     name: 'Longitude de départ',
   },
   'passenger.end.lng': {
-    name: 'Longitude à l\'arrivée',
+    name: "Longitude à l'arrivée",
   },
   'passenger.duration': {
     name: 'Durée',
@@ -69,7 +67,6 @@ export const PATH_FR = {
   'passenger.seats': {
     name: 'Nombre de places réservées',
   },
-
 
   // ADRESSE
   'address.street': {
@@ -130,7 +127,7 @@ export const PATH_FR = {
       false: 'Mineur',
       yes: 'Majeur',
       no: 'Mineur',
-      unknown: 'Pas d\'info.',
+      unknown: "Pas d'info.",
     },
   },
   traveler_hash: {
@@ -191,22 +188,21 @@ export const PATH_FR = {
     name: 'Email',
   },
 
-
   // COMPANY
   nom_commercial: {
     name: 'Nom commercial',
   },
-  raison_sociale : {
+  raison_sociale: {
     name: 'Raison sociale',
   },
   'company.siren': {
     name: 'Numéro de Siren',
   },
   'company.naf_etablissement': {
-    name: 'Naf de l\'établissement',
+    name: "Naf de l'établissement",
   },
   'company.naf_entreprise': {
-    name: 'Naf de l\'entreprise',
+    name: "Naf de l'entreprise",
   },
   'company.nature_juridique': {
     name: 'Nature juridique',
@@ -254,5 +250,4 @@ export const PATH_FR = {
   end: {
     name: 'Fin',
   },
-
 };

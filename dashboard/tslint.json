@@ -1,9 +1,8 @@
 {
-  "rulesDirectory": [
-    "node_modules/codelyzer"
-  ],
+  "rulesDirectory": ["node_modules/codelyzer"],
   "extends": ["tslint-config-airbnb", "tslint-eslint-rules", "tslint-import-group-ordering"],
   "rules": {
+    "align": false,
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
@@ -12,7 +11,6 @@
     },
     "forin": true,
     "import-blacklist": [true, "rxjs/Rx", "primeng/primeng"],
-    "import-spacing": true,
     "interface-over-type-literal": true,
     "member-ordering": [
       true,
@@ -68,6 +66,7 @@
     "array-type": [true, "array"],
     "encoding": true,
     "new-parens": true,
+    "arrow-parens": true,
     "no-irregular-whitespace": true,
     "no-redundant-jsdoc": true,
     "no-unnecessary-callback-wrapper": true,
@@ -85,7 +84,6 @@
     "no-sparse-arrays": true,
     "ban": true,
     "no-invalid-this": true,
-//    "no-magic-numbers": [true, 0, 1, 2, 3, 4, 5, -1, -2, 100],
     "no-duplicate-variable": true,
     "linebreak-style": [true, "LF"],
     "no-consecutive-blank-lines": [true, 2],
@@ -104,6 +102,7 @@
     "no-unsafe-finally": true,
     "use-isnan": true,
     "no-multi-spaces": true,
+    "ter-indent": false,
     "ter-no-proto": true,
     "ter-no-script-url": true,
     "ter-no-self-compare": true,
@@ -119,6 +118,7 @@
       }
     ],
     "ter-no-tabs": true,
+    "ter-arrow-parens": [true, "always"],
     "ter-arrow-body-style": [
       true,
       "as-needed",
@@ -127,7 +127,7 @@
       }
     ],
     "no-parameter-reassignment": true,
-    "max-line-length": [true, 140],
+    "max-line-length": [true, 120],
     "no-return-await": true,
     "promise-function-async": true,
     "no-implicit-dependencies": [true, "dev", ["~"]],

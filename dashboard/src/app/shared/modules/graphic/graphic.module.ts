@@ -10,19 +10,13 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 library.add(fas);
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-  ],
-  declarations: [
-  ],
-  providers: [
-  ],
+  imports: [CommonModule, FontAwesomeModule],
+  declarations: [],
+  providers: [],
   exports: [
     // Modules
     CommonModule,
     FontAwesomeModule,
   ],
 })
-
-export class GraphicModule { }
+export class GraphicModule {}

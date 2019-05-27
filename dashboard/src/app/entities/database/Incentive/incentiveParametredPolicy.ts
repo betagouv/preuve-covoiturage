@@ -7,7 +7,7 @@ export class IncentiveParametredPolicy {
   parameters: [IncentiveParameterValue];
 
   constructor(obj?: any) {
-    this.policy = obj && obj.policy || null;
-    this.parameters = obj && obj.parameters || null;
+    this.policy = (obj && obj.policy) || null;
+    this.parameters = (obj && obj.parameters) || null;
   }
 }

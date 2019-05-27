@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/api';
 
 import { TranslationService } from '~/shared/services/translationService';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { Operator } from '~/entities/database/operator';
 
 import { OperatorService } from '../../../../../services/operatorService';
@@ -10,7 +10,6 @@ import { OperatorService } from '../../../../../services/operatorService';
 @Component({
   templateUrl: 'template.html',
 })
-
 export class OperatorEditionDialogComponent implements OnInit {
   public operator: Operator;
   public values = {};
@@ -23,8 +22,7 @@ export class OperatorEditionDialogComponent implements OnInit {
     private operatorService: OperatorService,
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-  ) {
-  }
+  ) {}
 
   public ngOnInit() {
     this.operator = new Operator();

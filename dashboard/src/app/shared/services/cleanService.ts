@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
-import { LoggerService } from '../../applicativeService/logger/service';
+import { LoggerService } from '../../applicativeService/logger/logger.service';
 
 @Injectable()
 export class CleanService {
   constructor(private loggerService: LoggerService) {
     this.loggerService = loggerService;
   }
-
 
   public cleanObject(obj: any): any {
     for (const propName in obj) {

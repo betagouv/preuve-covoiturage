@@ -1,14 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  LazyLoadEvent,
-  ConfirmationService,
-  DialogService,
- } from 'primeng/api';
+import { LazyLoadEvent, ConfirmationService, DialogService } from 'primeng/api';
 
 import { User } from '~/entities/database/user/user';
 import { ROLES } from '~/config/roles';
 import { GROUPS } from '~/config/groups';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { TranslationService } from '~/shared/services/translationService';
 import { TableService } from '~/shared/services/tableService';
 import { ApiResponse } from '~/entities/responses/apiResponse';
@@ -23,7 +19,6 @@ import { USER_HEADERS } from '../../config/header';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class UserListComponent implements OnInit {
   users;
   user: User = new User();
@@ -41,18 +36,18 @@ export class UserListComponent implements OnInit {
   perPage = 10;
 
   constructor(
-      private userService: UserService,
-      private authentificationService: AuthenticationService,
-      private translationService: TranslationService,
-      private ts: TableService,
-      private confirmationService: ConfirmationService,
-      private dialogService: DialogService,
+    private userService: UserService,
+    private authentificationService: AuthenticationService,
+    private translationService: TranslationService,
+    private ts: TableService,
+    private confirmationService: ConfirmationService,
+    private dialogService: DialogService,
   ) {
     this.setColumns();
   }
 
   ngOnInit() {
-// FIX: do nothing ?
+    // FIX: do nothing ?
   }
 
   private setColumns() {
@@ -97,7 +92,7 @@ export class UserListComponent implements OnInit {
     const config = {
       ...DIALOGSTYLE,
       header: 'Éditer un utilisateur',
-      data : {
+      data: {
         id: user._id,
       },
     };
@@ -118,15 +113,12 @@ export class UserListComponent implements OnInit {
     this.confirmationService.confirm({
       message: `Etes vous sûr de vouloir supprimer l'utilisateur ${username} ?`,
       accept: () => {
-        this.userService.delete(user._id).subscribe(
-          () => {
-            this.get();
-          },
-        );
+        this.userService.delete(user._id).subscribe(() => {
+          this.get();
+        });
       },
     });
   }
-
 
   hasPermission(permission: string): boolean {
     return this.authentificationService.hasPermission(permission);

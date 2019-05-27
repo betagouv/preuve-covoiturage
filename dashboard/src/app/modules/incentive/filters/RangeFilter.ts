@@ -20,14 +20,15 @@ export class RangeFilter {
   }
 
   public static export(data) {
-    return data.length > 0 ?
-      {
-        min: data[0],
-        max: data[1],
-      } : null;
+    return data.length > 0
+      ? {
+          min: data[0],
+          max: data[1],
+        }
+      : null;
   }
 
-  public static toString(data):string {
+  public static toString(data): string {
     return `Les trajets compris entre ${data.min} et ${data.max} km.`;
   }
 }

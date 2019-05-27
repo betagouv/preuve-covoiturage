@@ -10,7 +10,6 @@ import { OPERATOR_MAIN } from '../../../../../config/main';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorDropdownComponent implements OnInit {
   public selectedOperatorId;
 
@@ -25,10 +24,7 @@ export class OperatorDropdownComponent implements OnInit {
   public operators = [];
   public filteredOperators = [];
 
-  constructor(
-      private operatorService: OperatorService,
-  ) {
-  }
+  constructor(private operatorService: OperatorService) {}
 
   public ngOnInit() {
     if (this.selectedOperatorId) {
@@ -63,7 +59,7 @@ export class OperatorDropdownComponent implements OnInit {
   public filter(event) {
     if (event && event.query) {
       const regexp = new RegExp(event.query, 'i');
-      this.filteredOperators = this.operators.filter(item => regexp.test(item.value));
+      this.filteredOperators = this.operators.filter((item) => regexp.test(item.value));
     } else {
       this.filteredOperators = this.operators.slice();
     }

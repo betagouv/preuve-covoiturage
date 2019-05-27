@@ -1,10 +1,6 @@
 export const OPERATOR_HEADERS = {
-
   tokens: {
-    main: [
-      'name',
-      'createdAt',
-    ],
+    main: ['name', 'createdAt'],
   },
   operators: {
     main: [
@@ -27,12 +23,6 @@ export const OPERATOR_HEADERS = {
       'bank.iban',
       'bank.bic',
     ],
-    selection: [
-      'nom_commercial',
-      'raison_sociale',
-    ],
-
+    selection: ['nom_commercial', 'raison_sociale'],
   },
-
-
 };

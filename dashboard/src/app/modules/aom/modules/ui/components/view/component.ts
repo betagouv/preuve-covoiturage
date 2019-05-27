@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 
 import { Aom } from '~/entities/database/aom';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 
 import { AomService } from '~/modules/aom/services/aomService';
@@ -12,7 +12,6 @@ import { AomEditionDialogComponent } from '~/modules/aom/modules/dialog/componen
   selector: 'app-aom-view',
   templateUrl: 'template.html',
 })
-
 export class AomViewComponent implements OnInit {
   aom: Aom = new Aom();
 
@@ -20,8 +19,7 @@ export class AomViewComponent implements OnInit {
     private authentificationService: AuthenticationService,
     private dialogService: DialogService,
     private aomsService: AomService,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     const user = this.authentificationService.getUser();
@@ -38,7 +36,7 @@ export class AomViewComponent implements OnInit {
   edit(aom) {
     const config = {
       ...DIALOGSTYLE,
-      header: 'Éditer les données de l\'AOM',
+      header: "Éditer les données de l'AOM",
       data: {
         id: aom._id,
       },
@@ -52,11 +50,9 @@ export class AomViewComponent implements OnInit {
   }
 
   private get() {
-    this.aomsService
-      .getOne(this.aom._id)
-      .subscribe((aom: [Aom]) => {
-        this.set(aom[0]);
-      });
+    this.aomsService.getOne(this.aom._id).subscribe((aom: [Aom]) => {
+      this.set(aom[0]);
+    });
   }
 
   private set(aom: Aom) {

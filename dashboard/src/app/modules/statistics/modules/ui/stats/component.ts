@@ -69,7 +69,7 @@ export class StatisticsContentComponent implements OnInit {
           datasets: [
             {
               label: 'Trajets par mois',
-              data: get(d, 'journeys.month', []).map(i => i.total),
+              data: get(d, 'journeys.month', []).map((i) => i.total),
               backgroundColor: '#42A5F588',
               hoverBackgroundColor: '#42A5F5EE',
               borderColor: '#1E88E5',
@@ -92,7 +92,7 @@ export class StatisticsContentComponent implements OnInit {
           datasets: [
             {
               label: 'Distance par jour',
-              data: get(d, 'distance.month', []).map(i => (i.total / 1000) | 0),
+              data: get(d, 'distance.month', []).map((i) => (i.total / 1000) | 0),
               backgroundColor: '#42A5F588',
               hoverBackgroundColor: '#42A5F5EE',
               borderColor: '#1E88E5',

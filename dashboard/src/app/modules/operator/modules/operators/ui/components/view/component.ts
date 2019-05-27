@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 
 import { Operator } from '~/entities/database/operator';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 
 import { OperatorService } from '../../../../../services/operatorService';
@@ -12,7 +12,6 @@ import { OperatorEditionDialogComponent } from '../../../dialog/components/editi
   selector: 'app-operator-view',
   templateUrl: 'template.html',
 })
-
 export class OperatorViewComponent implements OnInit {
   operator: Operator = new Operator();
 
@@ -20,8 +19,7 @@ export class OperatorViewComponent implements OnInit {
     private authentificationService: AuthenticationService,
     private dialogService: DialogService,
     private operatorService: OperatorService,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     const user = this.authentificationService.getUser();
@@ -38,7 +36,7 @@ export class OperatorViewComponent implements OnInit {
   edit(aom) {
     const config = {
       ...DIALOGSTYLE,
-      header: 'Éditer les données de l\'opérateur',
+      header: "Éditer les données de l'opérateur",
       data: {
         id: aom._id,
       },

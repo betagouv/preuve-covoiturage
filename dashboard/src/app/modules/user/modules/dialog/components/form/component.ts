@@ -10,7 +10,6 @@ import { User } from '~/entities/database/user/user';
   styleUrls: ['style.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-
 export class UserFormComponent implements OnInit {
   @Output() answer = new EventEmitter();
   public roles = [
@@ -49,10 +48,7 @@ export class UserFormComponent implements OnInit {
     operator: [null],
   });
 
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   @Input('user')
   set userInput(user: User) {
@@ -85,12 +81,11 @@ export class UserFormComponent implements OnInit {
         break;
     }
 
-    Object.keys(this.userForm.controls)
-      .forEach((prop) => {
-        if (this.userForm.controls[prop].dirty) {
-          user[prop] = this.userForm.value[prop];
-        }
-      });
+    Object.keys(this.userForm.controls).forEach((prop) => {
+      if (this.userForm.controls[prop].dirty) {
+        user[prop] = this.userForm.value[prop];
+      }
+    });
 
     this.answer.emit(user);
   }

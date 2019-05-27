@@ -3,8 +3,8 @@ import { FormControl } from '@angular/forms';
 import { ContactList } from '~/entities/database/contactList';
 
 export class ContactsForm {
-  rgpd_dpo = new FormControl();  // tslint:disable-line variable-name
-  rgpd_controller = new FormControl();  // tslint:disable-line variable-name
+  rgpd_dpo = new FormControl(); // tslint:disable-line variable-name
+  rgpd_controller = new FormControl(); // tslint:disable-line variable-name
   technical = new FormControl();
 
   constructor(contacts: ContactList) {

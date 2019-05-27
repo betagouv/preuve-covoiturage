@@ -7,21 +7,15 @@ import { password } from '~/entities/validators';
 
 import { ProfileService } from '../../../../../services/profileService';
 
-
 @Component({
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class PasswordResetDialogComponent implements OnInit {
   public loading = false;
 
   public newPassordForm;
-  constructor(
-      private profileService: ProfileService,
-      public ref: DynamicDialogRef,
-      private fb: FormBuilder,
-  ) {
+  constructor(private profileService: ProfileService, public ref: DynamicDialogRef, private fb: FormBuilder) {
     this.newPassordForm = this.fb.group({
       password: ['', [Validators.required]],
       newPassword: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
@@ -29,9 +23,8 @@ export class PasswordResetDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-  //
+    //
   }
-
 
   onSubmit() {
     if (this.newPassordForm.controls['password'].dirty && this.newPassordForm.controls['newPassword'].dirty) {

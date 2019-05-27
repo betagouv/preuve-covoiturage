@@ -9,9 +9,7 @@ export class BankForm {
   iban = new FormControl();
   bic = new FormControl();
 
-  constructor(
-    bank: Bank,
-  ) {
+  constructor(bank: Bank) {
     this.bank_name.setValue(bank.bank_name);
     // this.bank_name.setValidators([Validators.required]);
 
