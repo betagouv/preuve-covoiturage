@@ -23,6 +23,10 @@ interface NewUser {
   method: 'create',
 })
 export class CreateUserAction extends Parents.Action {
+  public readonly middlewares: (string|[string, any])[] = [
+    ['can', ['user.create', 'aom.users.add', 'operator.users.add']],
+    ['validate', 'user.create'],
+  ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,

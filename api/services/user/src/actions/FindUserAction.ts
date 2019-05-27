@@ -8,6 +8,10 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
   method: 'find',
 })
 export class FindUserAction extends Parents.Action {
+  public readonly middlewares: (string|[string, any])[] = [
+    ['can', ['user.read']],
+    ['validate', 'user.find'],
+  ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {

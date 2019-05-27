@@ -11,23 +11,27 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
   method: 'list',
 })
 export class ListUserAction extends Parents.Action {
-  constructor(
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-  ) {
-    super();
-  }
+  public readonly middlewares: (string|[string, any])[] = [
+    ['can', ['user.list']],
+    ['validate', 'user.list'],
+  ];
 
-  private config = {
+  private readonly config = {
     perPage: 25,
     defaultPage: 1,
     defaultLimit: 25,
     maxLimit: 1000,
   };
 
+  constructor(
+    private userRepository: UserRepositoryProviderInterfaceResolver,
+  ) {
+    super();
+  }
+
   public async handle(
     filters: { [prop: string]: any },
     context: { call?: { user: UserDbInterface}}): Promise<{data: UserDbInterface[], metadata: { pagination: { [prop:string]: any }}}> {
-    // middleware : "user.list"
 
     // pagination: (skip and/or limit) or (page and/or per_page)
 

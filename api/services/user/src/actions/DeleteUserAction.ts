@@ -8,6 +8,11 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
   method: 'delete',
 })
 export class DeleteUserAction extends Parents.Action {
+  public readonly middlewares: (string|[string, any])[] = [
+    ['can', ['user.delete']],
+    ['validate', 'user.delete'],
+  ];
+
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
@@ -15,7 +20,6 @@ export class DeleteUserAction extends Parents.Action {
   }
 
   public async handle(request: {id: string}): Promise<void> {
-    // middleware : "user.delete"
     return this.userRepository.delete(request.id);
   }
 }

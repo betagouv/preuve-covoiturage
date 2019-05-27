@@ -9,6 +9,10 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
   method: 'patch',
 })
 export class PatchUserAction extends Parents.Action {
+  public readonly middlewares: (string|[string, any])[] = [
+    ['can', ['user.update']],
+    ['validate', 'user.update'],
+  ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
@@ -16,7 +20,6 @@ export class PatchUserAction extends Parents.Action {
   }
 
   public async handle(request: { id: string, patch: { [prop: string]: string }}): Promise<UserDbInterface> {
-    // middleware : "user.update"
 
     return this.userRepository.patch(request.id, request.patch);
   }
