@@ -1,13 +1,15 @@
-export const UserFindSchema = {
-  $id: 'user.find',
+export const userListSchema = {
+  $id: 'user.list',
   type: 'object',
-  required: ['id'],
   additionalProperties: false,
   properties: {
-    id: {
-      type: 'string',
-      maxlength: 255,
-      minlength: 1,
+    page: {
+      type: 'number',
+      maxlength: 128,
+    },
+    limit: {
+      type: 'number',
+      maxlength: 128,
     },
   },
 };

@@ -1,4 +1,4 @@
-export const UserPatchSchema = {
+export const userPatchSchema = {
   $id: 'user.patch',
   type: 'object',
   required: ['id', 'patch'],

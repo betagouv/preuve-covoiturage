@@ -1,4 +1,4 @@
-export const UserFindSchema = {
+export const userFindSchema = {
   $id: 'user.find',
   type: 'object',
   required: ['id'],

@@ -1,4 +1,4 @@
-export const UserDeleteSchema = {
+export const userDeleteSchema = {
   $id: 'user.delete',
   type: 'object',
   required: ['id'],
