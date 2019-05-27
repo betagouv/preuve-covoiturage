@@ -61,6 +61,7 @@ export class ValidatorProvider implements ValidatorProviderInterface {
     }
 
     if (!this.isSchemaSecure(schema)) {
+      console.log(schema)
       throw new Error(this.ajv.errorsText(this.isSchemaSecure.errors));
     }
 

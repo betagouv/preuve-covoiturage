@@ -1,25 +1,25 @@
-export const UserCreateSchema = {
+export const userCreateSchema = {
   $id: 'user.create',
   type: 'object',
-  required: ['email', 'lastname', 'firstname', 'group', 'permissions', 'password'],
+  required: ['email', 'lastname', 'firstname', 'group', 'password'],
   additionalProperties: false,
   properties: {
     email: {
       type: 'string',
       format: 'email',
+      maxLength: 128,
       // match: regex.email,
       // trim: true,
       // lowercase: true,
       // unique: true,
-      maxlength: 128,
     },
     lastname: {
       type: 'string',
-      maxlength: 128,
+      maxLength: 128,
     },
     firstname: {
       type: 'string',
-      maxlength: 128,
+      maxLength: 128,
     },
     phone: {
       type: 'string',
@@ -27,7 +27,7 @@ export const UserCreateSchema = {
       // set: setters.phone,
       // validate: validators.phone,
       // trim: true,
-      maxlength: 128,
+      maxLength: 128,
     },
     group: {
       type: 'string',
@@ -40,21 +40,39 @@ export const UserCreateSchema = {
     },
     password: {
       type: 'string',
-      minlength: 6,
-      maxlength: 128,
+      minLength: 6,
+      maxLength: 128,
       // trim: false,
       // hidden: true,
       // crypt: true,
     },
     operator: {
       type: 'string',
-      maxlength: 255,
+      maxLength: 255,
       // ObjectId
     },
     aom: {
       type: 'string',
-      maxlength: 255,
+      maxLength: 255,
       // ObjectId
     },
   },
+  allOf: [
+    {
+      if: {
+        properties: { group: { const: 'aom' } },
+      },
+      then: {
+        required: ['email', 'lastname', 'firstname', 'group', 'password', 'aom'],
+      },
+    },
+    {
+      if: {
+        properties: { group: { const: 'operator' } },
+      },
+      then: {
+        required: ['email', 'lastname', 'firstname', 'group', 'password', 'operator'],
+      },
+    },
+  ],
 };

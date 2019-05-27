@@ -3,7 +3,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
-import { bootstrap } from '@pdc/core';
+import { bootstrap, Exceptions } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
 
 let mongoServer;
@@ -19,6 +19,21 @@ const { expect } = chai;
 const port = '8081';
 
 
+const errorFactory = (err: Exceptions.RPCException) => {
+  return {
+    status: 200,
+    data: {
+      jsonrpc: '2.0',
+      id: 1,
+      error: {
+        code: err.rpcError.code,
+        message: err.rpcError.message,
+        data: err.rpcError.data,
+      },
+    },
+  };
+};
+
 const mockConnectedUser = { // todo : to be added in context
   _id: '1ab',
   email: 'admin@example.com',
@@ -29,6 +44,24 @@ const mockConnectedUser = { // todo : to be added in context
   group: 'registry',
   role: 'admin',
 };
+
+const callFactory = (method: string, data: any, permissions: string[]) => ({
+  id: 1,
+  jsonrpc: '2.0',
+  method,
+  params: {
+    params: data,
+    _context: {
+      channel: {
+        service: 'proxy',
+        transport: 'http',
+      },
+      call: {
+        user: { ...mockConnectedUser, permissions },
+      },
+    },
+  },
+});
 
 
 // mocks
@@ -77,12 +110,12 @@ describe('User service', () => {
   it('should create user', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
-      {
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'user:create',
-        params: mockNewUser,
-      });
+      callFactory(
+        'user:create',
+        mockNewUser,
+        ['user:create'],
+      ));
+
     expect(createData.result).to.include({
       email: mockNewUser.email,
       firstname: mockNewUser.firstname,
@@ -98,12 +131,13 @@ describe('User service', () => {
   });
 
   it('should find user', async () => {
-    const { status: status, data: data } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'user:find',
-      params: { id: createdUserId },
-    });
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+      'user:find',
+      { id: createdUserId },
+      ['user:read'],
+    ));
     expect(data.result).to.include({
       _id: createdUserId,
       email: mockNewUser.email,
@@ -118,12 +152,13 @@ describe('User service', () => {
   });
 
   it('should list users', async () => {
-    const { status: status, data: data } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'user:list',
-      params: {},
-    });
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:list',
+        {},
+        ['user:list'],
+      ));
     expect(data.result.data[0]).to.include({
       _id: createdUserId,
       email: mockNewUser.email,
@@ -138,15 +173,17 @@ describe('User service', () => {
   });
 
   it('should patch user', async () => {
-    const { status: status, data: data } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'user:patch',
-      params: {
-        id: createdUserId,
-        patch: mockUpdatedProperties,
-      },
-    });
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:patch',
+        {
+          id: createdUserId,
+          patch: mockUpdatedProperties,
+        },
+        ['user:patch'],
+      ));
+
     expect(data.result).to.include({
       _id: createdUserId,
       email: mockNewUser.email,
@@ -161,14 +198,13 @@ describe('User service', () => {
   });
 
   it('should delete user', async () => {
-    const { status: status, data: data } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'user:delete',
-      params: {
-        ...mockUpdatedProperties,
-      },
-    });
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:delete',
+        { id: createdUserId },
+        ['user:delete'],
+      ));
     expect(status).equal(200);
   });
 });

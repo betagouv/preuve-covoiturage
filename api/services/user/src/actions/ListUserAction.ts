@@ -32,7 +32,6 @@ export class ListUserAction extends Parents.Action {
   public async handle(
     filters: { [prop: string]: any },
     context: { call?: { user: UserDbInterface}}): Promise<{data: UserDbInterface[], metadata: { pagination: { [prop:string]: any }}}> {
-
     // pagination: (skip and/or limit) or (page and/or per_page)
 
     const page = filters.page ? this.castPage(filters.page) : this.config.defaultPage;

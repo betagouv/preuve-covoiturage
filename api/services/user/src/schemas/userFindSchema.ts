@@ -6,8 +6,8 @@ export const userFindSchema = {
   properties: {
     id: {
       type: 'string',
-      maxlength: 255,
-      minlength: 1,
+      maxLength: 255,
+      minLength: 1,
     },
   },
 };

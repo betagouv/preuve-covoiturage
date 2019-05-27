@@ -6,8 +6,8 @@ export const userPatchSchema = {
   properties: {
     id: {
       type: 'string',
-      maxlength: 255,
-      minlength: 1,
+      maxLength: 255,
+      minLength: 1,
     },
     patch: {
       type: 'object',
@@ -16,11 +16,11 @@ export const userPatchSchema = {
       properties: {
         lastname: {
           type: 'string',
-          maxlength: 128,
+          maxLength: 128,
         },
         firstname: {
           type: 'string',
-          maxlength: 128,
+          maxLength: 128,
         },
         phone: {
           type: 'string',
@@ -28,7 +28,7 @@ export const userPatchSchema = {
           // set: setters.phone,
           // validate: validators.phone,
           // trim: true,
-          maxlength: 128,
+          maxLength: 128,
         },
         group: {
           type: 'string',
@@ -41,15 +41,33 @@ export const userPatchSchema = {
         },
         operator: {
           type: 'string',
-          maxlength: 255,
+          maxLength: 255,
           // ObjectId
         },
         aom: {
           type: 'string',
-          maxlength: 255,
+          maxLength: 255,
           // ObjectId
         },
       },
+      allOf: [
+        {
+          if: {
+            properties: { group: { const: 'aom' } },
+          },
+          then: {
+            required: ['aom'],
+          },
+        },
+        {
+          if: {
+            properties: { group: { const: 'operator' } },
+          },
+          then: {
+            required: ['operator'],
+          },
+        },
+      ],
     },
   },
 };

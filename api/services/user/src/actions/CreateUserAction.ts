@@ -42,7 +42,7 @@ export class CreateUserAction extends Parents.Action {
     // middleware: "operator.users.add"
 
     // complete in case of adding to AOM !
-
+    console.log('request', request);
 
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
@@ -126,7 +126,7 @@ export class CreateUserAction extends Parents.Action {
     user.forgottenToken = token;
     user.forgottenAt = new Date();
     const updatedUser = await this.userRepository.update(user);
-
+    console.log('updatedUser', updatedUser);
     // send the email
     // user.invite(reset, token, invite.requester, invite.organisation);
 

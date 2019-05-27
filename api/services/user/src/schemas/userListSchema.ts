@@ -5,11 +5,11 @@ export const userListSchema = {
   properties: {
     page: {
       type: 'number',
-      maxlength: 128,
+      maxLength: 128,
     },
     limit: {
       type: 'number',
-      maxlength: 128,
+      maxLength: 128,
     },
   },
 };
