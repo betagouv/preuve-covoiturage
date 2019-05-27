@@ -1,7 +1,7 @@
 import { Component, Injectable, OnInit } from '@angular/core';
 
 import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
-import { Logged } from '~/applicativeService/authguard/logged';
+import { Logged } from '~/applicativeService/authentication/logged';
 import { TITLES } from '~/config/navbar';
 import { OrganisationCompany } from '~/entities/database/organisationCompany';
 import { User } from '~/entities/database/user/user';

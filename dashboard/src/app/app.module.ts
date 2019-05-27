@@ -13,8 +13,8 @@ import { MenuModule } from 'primeng/menu';
 /* Local services */
 import { HttpApiInterceptor } from './applicativeService/interceptor/httpApiInterceptor';
 import { HeaderBag } from './applicativeService/interceptor/header-bag';
-import { Logged } from './applicativeService/authguard/logged';
-import { AuthGuard } from './applicativeService/authguard/service';
+import { Logged } from './applicativeService/authentication/logged';
+import { AuthGuard } from './guards/auth-guard.service';
 import { AuthenticationService } from './applicativeService/authentication/auth.service';
 import { LoggerService } from './applicativeService/logger/logger.service';
 /* Local component */

@@ -9,20 +9,31 @@ import { User } from '~/entities/database/user/user';
 import { OrganisationCompany } from '~/entities/database/organisationCompany';
 
 import { TokenService } from '../token/token.service';
-import { Logged } from '../authguard/logged';
-import { LoggerService } from '../logger/logger.service';
+import { Logged } from './logged';
 
 @Injectable()
 export class AuthenticationService {
   private user = null;
   private endPoint = '/auth';
 
-  constructor(private http: HttpClient, private router: Router, private loggerService: LoggerService) {
-    this.loggerService = loggerService;
+  check(backend = false): boolean {
+    if (!backend) {
+      return !!this.getUser();
+    }
+
+    return !!this.checkToken();
   }
 
-  check(): boolean {
-    return !!this.getUser();
+  checkToken(): boolean {
+    console.log('checkToken');
+    try {
+      this.http.get(`${this.endPoint}/auth/check`);
+
+      return true;
+    } catch (e) {
+      console.log(e.message);
+      return false;
+    }
   }
 
   login(email: string, password: string): Observable<boolean> {
