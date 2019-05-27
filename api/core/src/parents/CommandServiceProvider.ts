@@ -25,7 +25,15 @@ export abstract class CommandServiceProvider extends ServiceProvider implements 
     command.description(cmd.description);
 
     for (const option of cmd.options) {
-      command.option(option.signature, option.description, option.coerce);
+      const { signature, description, coerce, default: def } = option;
+      const args = [];
+      if (typeof coerce === 'function') {
+        args.push(coerce);
+      }
+      if (typeof def !== 'undefined') {
+        args.push(def);
+      }
+      command.option(signature, description, ...args);
     }
 
     command.action(async (...args: any[]) => {

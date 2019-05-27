@@ -1,6 +1,8 @@
 import { Parents, Providers, Interfaces, Middlewares, Types } from '@pdc/core';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 
+import { CommandServiceProvider } from './CommandServiceProvider';
+
 import { OperatorRepositoryProviderInterfaceResolver } from './interfaces/OperatorRepositoryProviderInterface';
 import { OperatorRepositoryProvider } from './providers/OperatorRepositoryProvider';
 
@@ -14,6 +16,10 @@ import { operatorPatchSchema } from './schemas/operatorPatchSchema';
 import { operatorDeleteSchema } from './schemas/operatorDeleteSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
+  readonly serviceProviders = [
+    CommandServiceProvider,
+  ];
+
   readonly alias = [
     [OperatorRepositoryProviderInterfaceResolver, OperatorRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider]

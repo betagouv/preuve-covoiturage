@@ -11,6 +11,8 @@ export interface ParentRepositoryProviderInterface extends Interfaces.ProviderIn
   update(data: Model, patch?: any): Promise<Model>;
   patch(id: ObjectId | string, patch?: any): Promise<Model>;
   clear(): Promise<void>;
+  updateOrCreate(data: Model): Promise<Model>;
+  getDriver(): Promise<any>;
 }
 
 export abstract class ParentRepositoryProviderInterfaceResolver implements ParentRepositoryProviderInterface {
@@ -42,6 +44,14 @@ export abstract class ParentRepositoryProviderInterfaceResolver implements Paren
   }
 
   async clear(): Promise<void> {
+    throw new Error();
+  }
+
+  async updateOrCreate(data: Model): Promise<Model> {
+    throw new Error();
+  }
+
+  async getDriver(): Promise<any> {
     throw new Error();
   }
 }

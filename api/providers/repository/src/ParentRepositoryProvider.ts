@@ -4,7 +4,6 @@ import { Providers, Types, Exceptions } from '@pdc/core';
 import { ParentRepositoryProviderInterface, Model } from './ParentRepositoryProviderInterface';
 
 export abstract class ParentRepositoryProvider implements ParentRepositoryProviderInterface {
-  protected collection: CollectionInterface;
   protected validation: Set<string> = new Set();
 
   constructor(
@@ -31,6 +30,10 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   public getModel(): Types.NewableType<any> {
     return Object;
+  }
+
+  async getDriver(): Promise<CollectionInterface> {
+    return this.getCollection();
   }
 
   async getCollection() {
@@ -74,6 +77,16 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     const collection = await this.getCollection();
     const selector = { _id: data._id };
     const { modifiedCount } = await collection.replaceOne(selector, data);
+    if (modifiedCount !== 1) {
+      throw new MongoException();
+    }
+    return data;
+  }
+
+  async updateOrCreate(data: Model): Promise<Model> {
+    const collection = await this.getCollection();
+    const selector = { _id: data._id };
+    const { modifiedCount } = await collection.replaceOne(selector, data, { upsert: true });
     if (modifiedCount !== 1) {
       throw new MongoException();
     }
