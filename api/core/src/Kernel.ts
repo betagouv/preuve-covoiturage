@@ -4,10 +4,12 @@ import { ConfigProvider } from './providers/ConfigProvider';
 import { CommandProvider } from './providers/CommandProvider';
 import { CommandServiceProvider } from './parents/CommandServiceProvider';
 import { CallCommand } from './commands/CallCommand';
+import { ListCommand } from './commands/ListCommand';
 
 class BaseCommandServiceProvider extends CommandServiceProvider {
   commands = [
     CallCommand,
+    ListCommand,
   ];
 }
 
