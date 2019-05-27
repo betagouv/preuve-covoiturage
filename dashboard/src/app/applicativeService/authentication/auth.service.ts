@@ -16,6 +16,8 @@ export class AuthenticationService {
   private user = null;
   private endPoint = '/auth';
 
+  constructor(private http: HttpClient, private router: Router) {}
+
   check(backend = false): boolean {
     if (!backend) {
       return !!this.getUser();
