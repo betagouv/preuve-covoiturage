@@ -19,11 +19,7 @@ import { MessageModule } from 'primeng/message';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { OrderListModule } from 'primeng/orderlist';
 import { TableModule } from 'primeng/table';
-import {
-  DialogService,
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
+import { DialogService, DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 
 /* Shared modules */
@@ -155,4 +151,4 @@ import { IncentiveUnitService } from './services/incentiveUnitService';
     IncentiveCampaignSummaryComponent,
   ],
 })
-export class IncentiveModule { }
+export class IncentiveModule {}

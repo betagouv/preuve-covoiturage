@@ -7,7 +7,6 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ButtonModule } from 'primeng/button';
 
-
 /* Local components */
 import { OperatorShowComponent } from './components/show/component';
 import { OperatorFormDropdownComponent } from './components/form-dropdown/component';
@@ -19,16 +18,8 @@ import { OperatorDropdownComponent } from './components/dropdown/component';
 import { OperatorService } from '../../../services/operatorService';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    AutoCompleteModule,
-    FieldsetModule,
-    ButtonModule,
-  ],
-  providers: [
-    OperatorService,
-  ],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, FieldsetModule, ButtonModule],
+  providers: [OperatorService],
   declarations: [
     OperatorShowComponent,
     OperatorFormDropdownComponent,
@@ -44,4 +35,4 @@ import { OperatorService } from '../../../services/operatorService';
     OperatorMultipleDropdownComponent,
   ],
 })
-export class OperatorUIModule { }
+export class OperatorUIModule {}

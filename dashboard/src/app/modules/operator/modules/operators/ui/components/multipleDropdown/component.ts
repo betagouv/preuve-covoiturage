@@ -6,18 +6,13 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
 import { OperatorService } from '../../../../../services/operatorService';
 import { OPERATOR_MAIN } from '../../../../../config/main';
 
-
 @Component({
   selector: 'app-operator-multiple-dropdown',
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorMultipleDropdownComponent implements OnInit {
-  constructor(
-      private operatorService: OperatorService,
-  ) {
-  }
+  constructor(private operatorService: OperatorService) {}
 
   operators = [];
   selectedOperators = [];
@@ -34,7 +29,6 @@ export class OperatorMultipleDropdownComponent implements OnInit {
 
   @Output() operatorIdsChange = new EventEmitter();
 
-
   public ngOnInit() {
     if (this.selectedOperatorIds.length > 0) {
       this.getSelectedOperators();
@@ -44,7 +38,7 @@ export class OperatorMultipleDropdownComponent implements OnInit {
 
   public getSelectedOperators() {
     const filters = [];
-    this.selectedOperatorIds.forEach(operatorId => filters.push(['_id', operatorId]));
+    this.selectedOperatorIds.forEach((operatorId) => filters.push(['_id', operatorId]));
     this.operatorService.get(filters).subscribe((operators: ApiResponse) => {
       operators.data.forEach((operator: Operator) => {
         this.operators.push({
@@ -70,19 +64,19 @@ export class OperatorMultipleDropdownComponent implements OnInit {
   public filter(event) {
     if (event && event.query) {
       const regexp = new RegExp(event.query, 'i');
-      this.filteredOperators = this.operators.filter(item => regexp.test(item.value));
+      this.filteredOperators = this.operators.filter((item) => regexp.test(item.value));
     } else {
       this.filteredOperators = this.operators.slice();
     }
   }
 
   public onSelect() {
-    this.selectedOperatorIds = this.selectedOperators.map(operator => operator.key);
+    this.selectedOperatorIds = this.selectedOperators.map((operator) => operator.key);
     this.operatorIdsChange.emit(this.selectedOperatorIds);
   }
 
   public unSelect() {
-    this.selectedOperatorIds = this.selectedOperators.map(operator => operator.key);
+    this.selectedOperatorIds = this.selectedOperators.map((operator) => operator.key);
     this.operatorIdsChange.emit(this.selectedOperatorIds);
   }
 

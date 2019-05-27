@@ -5,20 +5,14 @@ import { RegistryJourneyImportComponent } from './pages/journeyImport/component'
 
 const routes: Routes = [
   {
-    path : 'journey-import',
+    path: 'journey-import',
     component: RegistryJourneyImportComponent,
     data: { groups: ['registry'] },
   },
-
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [
-    RouterModule,
-  ],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-
-export class RegistryRoutingModule { }
+export class RegistryRoutingModule {}

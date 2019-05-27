@@ -16,27 +16,10 @@ import { AomMultipleDropdownComponent } from './components/multipleDropdown/comp
 import { AomService } from '../../services/aomService';
 import { AomViewComponent } from './components/view/component';
 
-
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    AutoCompleteModule,
-    ButtonModule,
-    FieldsetModule,
-  ],
-  providers: [
-    AomService,
-  ],
-  declarations: [
-    AomDropdownComponent,
-    AomViewComponent,
-    AomMultipleDropdownComponent,
-  ],
-  exports: [
-    AomDropdownComponent,
-    AomViewComponent,
-    AomMultipleDropdownComponent,
-  ],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule, FieldsetModule],
+  providers: [AomService],
+  declarations: [AomDropdownComponent, AomViewComponent, AomMultipleDropdownComponent],
+  exports: [AomDropdownComponent, AomViewComponent, AomMultipleDropdownComponent],
 })
-export class AomUIModule { }
+export class AomUIModule {}

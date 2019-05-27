@@ -13,10 +13,10 @@ import { MenuModule } from 'primeng/menu';
 /* Local services */
 import { HttpApiInterceptor } from './applicativeService/interceptor/httpApiInterceptor';
 import { HeaderBag } from './applicativeService/interceptor/header-bag';
-import { Logged } from './applicativeService/authguard/logged';
-import { AuthGuard } from './applicativeService/authguard/service';
-import { AuthenticationService } from './applicativeService/authentication/service';
-import { LoggerService } from './applicativeService/logger/service';
+import { Logged } from './applicativeService/authentication/logged';
+import { AuthGuard } from './guards/auth-guard.service';
+import { AuthenticationService } from './applicativeService/authentication/auth.service';
+import { LoggerService } from './applicativeService/logger/logger.service';
 /* Local component */
 import { NotDeletedPipe } from './filters/notDeleted/pipe';
 import { AppComponent } from './app.component';
@@ -31,13 +31,10 @@ import { GraphicModule } from './shared/modules/graphic/graphic.module';
 
 /* Libs */
 
-
 @NgModule({
   declarations: [
-
     // main
     AppComponent,
-
 
     // Layout Component
     LayoutComponent,
@@ -83,6 +80,4 @@ import { GraphicModule } from './shared/modules/graphic/graphic.module';
   ],
   bootstrap: [AppComponent],
 })
-
-export class AppModule {
-}
+export class AppModule {}

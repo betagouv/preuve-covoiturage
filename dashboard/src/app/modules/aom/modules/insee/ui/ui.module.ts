@@ -14,23 +14,10 @@ import { AomInseeMultipleDropdownComponent } from './components/multipleDropdown
 
 /* Local services */
 
-
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    AutoCompleteModule,
-    ButtonModule,
-    FieldsetModule,
-  ],
-  providers: [
-    AomService,
-  ],
-  declarations: [
-    AomInseeMultipleDropdownComponent,
-  ],
-  exports: [
-    AomInseeMultipleDropdownComponent,
-  ],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule, FieldsetModule],
+  providers: [AomService],
+  declarations: [AomInseeMultipleDropdownComponent],
+  exports: [AomInseeMultipleDropdownComponent],
 })
-export class AomInseeUIModule { }
+export class AomInseeUIModule {}

@@ -3,27 +3,25 @@ import { Component, OnInit } from '@angular/core';
 import { User } from '~/entities/database/user/user';
 import { PROFIL_DATA } from '~/config/user/profilData';
 import { TranslationService } from '~/shared/services/translationService';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { EditResponse } from '~/entities/responses/editResponse';
 
 import { UserService } from '../../services/userService';
-
 
 @Component({
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class UserSettingsComponent implements OnInit {
   public user: User;
   public headList = PROFIL_DATA.data;
   public editableTypes: {} = PROFIL_DATA.editInputType;
   public values = {};
 
-
-  constructor(private translationService: TranslationService,
-              private authentificationService: AuthenticationService,
-              private usersService: UserService,
+  constructor(
+    private translationService: TranslationService,
+    private authentificationService: AuthenticationService,
+    private usersService: UserService,
   ) {
     this.resetValues();
   }
@@ -60,9 +58,8 @@ export class UserSettingsComponent implements OnInit {
   }
 
   public isEditable(head: string): boolean {
-    return (PROFIL_DATA.editable && PROFIL_DATA.editable.includes(head));
+    return PROFIL_DATA.editable && PROFIL_DATA.editable.includes(head);
   }
-
 
   public hasPermission(permission: string): boolean {
     return this.authentificationService.hasPermission(permission);

@@ -31,7 +31,7 @@ export class RankFilter {
     return data && data.length > 0 ? data : null;
   }
 
-  public static toString(data):string {
+  public static toString(data): string {
     return `Les trajets dont la classe de preuve est : ${data.sort().join(', ')}`;
   }
 }

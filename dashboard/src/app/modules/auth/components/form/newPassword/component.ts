@@ -3,7 +3,7 @@ import { MessageService } from 'primeng/api';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { password } from '~/entities/validators';
 import { User } from '~/entities/database/user/user';
 
@@ -11,7 +11,6 @@ import { User } from '~/entities/database/user/user';
   selector: 'app-auth-form-new-password',
   templateUrl: 'template.html',
 })
-
 export class AuthFormNewPasswordComponent implements OnInit {
   public resetPasswordForm = this.fb.group({
     password: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
@@ -28,8 +27,7 @@ export class AuthFormNewPasswordComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.authenticationService.logout();
@@ -49,7 +47,8 @@ export class AuthFormNewPasswordComponent implements OnInit {
           () => {
             this.messageService.add({
               severity: 'error',
-              summary: 'Une erreur est survenue lors de la réinitalisation de votre mot de passe, ' +
+              summary:
+                'Une erreur est survenue lors de la réinitalisation de votre mot de passe, ' +
                 'vérifier que vous avez bien ouvert le dernier email intitulé "Nouveau mot de passe ". ',
             });
           },
@@ -57,7 +56,8 @@ export class AuthFormNewPasswordComponent implements OnInit {
       } else {
         this.messageService.add({
           severity: 'error',
-          summary: 'Une erreur est survenue lors de la réinitalisation de votre mot de passe, ' +
+          summary:
+            'Une erreur est survenue lors de la réinitalisation de votre mot de passe, ' +
             'vérifier que vous avez bien ouvert le dernier email intitulé "Nouveau mot de passe ". ',
         });
       }
@@ -78,18 +78,17 @@ export class AuthFormNewPasswordComponent implements OnInit {
   setNewPassword(user: User) {
     if (this.token) {
       this.loading = true;
-      this.authenticationService.postNewPassword(this.reset, this.token, user.password)
-        .subscribe(
-          () => {
-            this.loading = false;
-            this.router.navigate(['/signin'], { queryParams: { flash: 'password-changed' } });
-          },
-          () => {
-            this.loading = false;
+      this.authenticationService.postNewPassword(this.reset, this.token, user.password).subscribe(
+        () => {
+          this.loading = false;
+          this.router.navigate(['/signin'], { queryParams: { flash: 'password-changed' } });
+        },
+        () => {
+          this.loading = false;
 
-            // fix: do nothhing ?;
-          },
-        );
+          // fix: do nothhing ?;
+        },
+      );
     }
   }
 }

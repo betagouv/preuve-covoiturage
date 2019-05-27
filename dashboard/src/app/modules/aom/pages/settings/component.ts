@@ -4,6 +4,4 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
-export class AomSettingsComponent {
-}
+export class AomSettingsComponent {}

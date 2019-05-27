@@ -10,12 +10,8 @@ import { PasswordResetDialogComponent } from '../resetDialog/component';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class PasswordResetViewComponent {
-  constructor(
-      private dialogService: DialogService,
-  ) {
-  }
+  constructor(private dialogService: DialogService) {}
 
   showPwdResetModal() {
     const config = {

@@ -8,7 +8,6 @@ import { OperatorService } from '../../../../../services/operatorService';
 @Component({
   templateUrl: 'template.html',
 })
-
 export class OperatorCreationDialogComponent implements OnInit {
   public loading = false;
   public error = null;
@@ -18,8 +17,7 @@ export class OperatorCreationDialogComponent implements OnInit {
     private operatorService: OperatorService,
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     //

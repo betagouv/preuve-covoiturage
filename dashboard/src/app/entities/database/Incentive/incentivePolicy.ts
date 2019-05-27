@@ -13,18 +13,17 @@ export class IncentivePolicy {
   parameters: IncentiveParameter[];
   unit: IncentiveUnit;
   formula: string;
-  status: { 'draft', 'active', 'archived' };
-
+  status: { draft; active; archived };
 
   constructor(obj?: any) {
-    this._id = obj && obj._id || null;
-    this.aom = obj && obj.aom || null;
-    this.name = obj && obj.name || null;
-    this.description = obj && obj.description || null;
-    this.rules = obj && obj.rules || null;
-    this.parameters = obj && obj.parameters || null;
-    this.unit = obj && obj.unit || null;
-    this.formula = obj && obj.formula || null;
-    this.status = obj && obj.status || null;
+    this._id = (obj && obj._id) || null;
+    this.aom = (obj && obj.aom) || null;
+    this.name = (obj && obj.name) || null;
+    this.description = (obj && obj.description) || null;
+    this.rules = (obj && obj.rules) || null;
+    this.parameters = (obj && obj.parameters) || null;
+    this.unit = (obj && obj.unit) || null;
+    this.formula = (obj && obj.formula) || null;
+    this.status = (obj && obj.status) || null;
   }
 }

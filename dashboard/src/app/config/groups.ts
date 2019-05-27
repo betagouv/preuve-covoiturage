@@ -1,5 +1,1 @@
-export const GROUPS = [
-  'aom',
-  'operators',
-  'registry',
-];
+export const GROUPS = ['aom', 'operators', 'registry'];

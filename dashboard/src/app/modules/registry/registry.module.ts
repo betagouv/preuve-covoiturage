@@ -12,23 +12,12 @@ import { RegistryRoutingModule } from './registry.routing';
 /* Local components */
 import { RegistryJourneyImportComponent } from './pages/journeyImport/component';
 
-
 /* Local services */
 
-
 @NgModule({
-  imports: [
-    CommonModule,
-    OperatorUIModule,
-    JourneyUIModule,
-    RegistryRoutingModule,
-  ],
-  providers: [
-  ],
-  declarations: [
-    RegistryJourneyImportComponent,
-  ],
-  exports: [
-  ],
+  imports: [CommonModule, OperatorUIModule, JourneyUIModule, RegistryRoutingModule],
+  providers: [],
+  declarations: [RegistryJourneyImportComponent],
+  exports: [],
 })
-export class RegistryModule { }
+export class RegistryModule {}

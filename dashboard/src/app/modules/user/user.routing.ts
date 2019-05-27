@@ -11,19 +11,14 @@ const routes: Routes = [
     data: { groups: ['registry'] },
   },
   {
-    path : 'settings',
+    path: 'settings',
     component: UserSettingsComponent,
     data: { groups: ['users'] },
   },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [
-    RouterModule,
-  ],
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-
-export class UserRoutingModule { }
+export class UserRoutingModule {}

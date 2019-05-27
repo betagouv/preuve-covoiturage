@@ -21,14 +21,13 @@ export class JourneyService extends ApiService {
   export(type, filters) {
     return this.get(filters, {
       headers: new HttpHeaders({
-        Accept: (type === 'csv') ? 'text/csv' : 'application/json',
+        Accept: type === 'csv' ? 'text/csv' : 'application/json',
       }),
       responseType: 'blob',
     });
   }
 
   listAom() {
-    return this.http
-      .get(`${this.aomEndPoint}?limit=1000`);
+    return this.http.get(`${this.aomEndPoint}?limit=1000`);
   }
 }

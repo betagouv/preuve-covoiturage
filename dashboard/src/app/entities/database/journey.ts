@@ -21,19 +21,18 @@ export class Journey {
   public validation: Validation;
   public createdAt: string;
 
-
   constructor(obj?: any) {
-    this._id = obj && obj._id || null;
-    this.identity = obj && obj.identity || null;
-    this.start = obj && obj.start || new Position();
-    this.end = obj && obj.end || new Position();
-    this.cost = obj && obj.cost || null;
-    this.distance = obj && obj.distance || null;
-    this.duration = obj && obj.duration || null;
-    this.operator = obj && obj.operator || new Operator();
-    this.operator_class = obj && obj.operator_class || null;
-    this.journey_id = obj && obj.journey_id || null;
-    this.passengers = obj && obj.passengers || null;
-    this.createdAt = obj && obj.createdAt || null;
+    this._id = (obj && obj._id) || null;
+    this.identity = (obj && obj.identity) || null;
+    this.start = (obj && obj.start) || new Position();
+    this.end = (obj && obj.end) || new Position();
+    this.cost = (obj && obj.cost) || null;
+    this.distance = (obj && obj.distance) || null;
+    this.duration = (obj && obj.duration) || null;
+    this.operator = (obj && obj.operator) || new Operator();
+    this.operator_class = (obj && obj.operator_class) || null;
+    this.journey_id = (obj && obj.journey_id) || null;
+    this.passengers = (obj && obj.passengers) || null;
+    this.createdAt = (obj && obj.createdAt) || null;
   }
 }

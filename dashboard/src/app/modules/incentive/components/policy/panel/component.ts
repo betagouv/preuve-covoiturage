@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
 
-import {
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 
 import { IncentivePolicy } from '~/entities/database/Incentive/incentivePolicy';
 import { IncentiveParameter } from '~/entities/database/Incentive/incentiveParameter';
@@ -13,36 +10,28 @@ import { IncentiveParameter } from '~/entities/database/Incentive/incentiveParam
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentivePolicyPanelComponent implements OnInit {
   public loading = false;
   public error = null;
   public incentivePolicy: IncentivePolicy;
   public incentivePolicyParametersForm = this.fb.array([]);
 
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-    public fb: FormBuilder,
-  ) {
-  }
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, public fb: FormBuilder) {}
 
   ngOnInit(): void {
     const { policy, parameters, creation } = this.config.data;
     this.incentivePolicy = policy;
     this.incentivePolicyParametersForm.setValidators([
-      this.coverAllParameters(this.incentivePolicy.parameters.map(param => param.varname)),
+      this.coverAllParameters(this.incentivePolicy.parameters.map((param) => param.varname)),
     ]);
 
     this.incentivePolicy.parameters.forEach((param, i) => {
-      this.incentivePolicyParametersForm.push(
-        this.getParameterForm(),
-      );
+      this.incentivePolicyParametersForm.push(this.getParameterForm());
 
       const { varname } = param;
       const value = parameters
-        .filter(v => v.key === varname)
-        .reduce((initial, paramValue) => paramValue.value ? paramValue.value : initial, undefined);
+        .filter((v) => v.key === varname)
+        .reduce((initial, paramValue) => (paramValue.value ? paramValue.value : initial), undefined);
 
       this.incentivePolicyParametersForm.at(i).patchValue({
         value,
@@ -57,7 +46,7 @@ export class IncentivePolicyPanelComponent implements OnInit {
       const result = {};
 
       parameters.forEach((key) => {
-        if (!value.find(v => v.key === key)) {
+        if (!value.find((v) => v.key === key)) {
           result[key] = `Missing ${key} param`;
         }
       });
@@ -92,7 +81,7 @@ export class IncentivePolicyPanelComponent implements OnInit {
   }
 
   getParameterDefinition(key) {
-    return this.incentivePolicy.parameters.find(param => param.varname === key);
+    return this.incentivePolicy.parameters.find((param) => param.varname === key);
   }
 
   getParameterHelper(key) {

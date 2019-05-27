@@ -7,7 +7,6 @@ import { User } from '~/entities/database/user/user';
   selector: 'app-contacts-form',
   templateUrl: './template.html',
 })
-
 export class ContactsFormComponent {
   @Input() parentForm: FormGroup;
   @Input() users: User[];

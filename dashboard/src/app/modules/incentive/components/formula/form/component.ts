@@ -8,7 +8,6 @@ import { IncentiveParameter } from '~/entities/database/Incentive/incentiveParam
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentiveFormulaFormComponent implements OnInit {
   loading = false;
   @Input() incentiveParametersList: [];
@@ -24,13 +23,12 @@ export class IncentiveFormulaFormComponent implements OnInit {
 
   @Output() save = new EventEmitter();
 
-  constructor(
-   ) {
-     //
+  constructor() {
+    //
   }
 
   ngOnInit() {
-    this.incentiveFormulaForm.valueChanges.subscribe((formula:string) => {
+    this.incentiveFormulaForm.valueChanges.subscribe((formula: string) => {
       const foundParameters = [];
       const distinct = (value, index, self) => {
         return self.indexOf(value) === index && value !== '';
@@ -52,7 +50,7 @@ export class IncentiveFormulaFormComponent implements OnInit {
   saveFormula() {
     if (this.incentiveFormulaForm.valid && this.incentiveFormulaForm.value) {
       this.loading = true;
-      setTimeout(() => this.loading = false, 1000); // tslint:disable-line:no-magic-numbers
+      setTimeout(() => (this.loading = false), 1000); // tslint:disable-line:no-magic-numbers
       this.save.emit();
     }
   }

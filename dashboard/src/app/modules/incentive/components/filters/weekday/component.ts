@@ -1,26 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import {
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 
 @Component({
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentiveWeekdayFilterComponent implements OnInit {
   public filter;
   public filterControl = this.fb.control([]);
 
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-    public fb: FormBuilder,
-  ) {
-  }
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, public fb: FormBuilder) {}
 
   get weekdays() {
     return this.filter.weekdays;

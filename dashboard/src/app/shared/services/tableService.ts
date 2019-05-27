@@ -2,15 +2,12 @@ import { Injectable } from '@angular/core';
 
 import { TranslationService } from './translationService';
 
-
 /*
  * Methods used to organize data in tables
  */
 @Injectable()
 export class TableService {
-  constructor(private translationService: TranslationService,
-  ) {
-  }
+  constructor(private translationService: TranslationService) {}
 
   createColumn(field) {
     let header = this.getKey(field);

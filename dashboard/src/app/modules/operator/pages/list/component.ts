@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  ConfirmationService,
-  DialogService,
-  LazyLoadEvent,
- } from 'primeng/api';
+import { ConfirmationService, DialogService, LazyLoadEvent } from 'primeng/api';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { TranslationService } from '~/shared/services/translationService';
 import { TableService } from '~/shared/services/tableService';
 import { Operator } from '~/entities/database/operator';
@@ -13,7 +9,6 @@ import { ApiResponse } from '~/entities/responses/apiResponse';
 import { DIALOGSTYLE } from '~/config/dialog/dialogStyle';
 
 import { OPERATOR_HEADERS } from '../../config/header';
-
 
 import { OperatorService } from '../../services/operatorService';
 import { OperatorCreationDialogComponent } from '../../modules/operators/dialog/components/creation/component';
@@ -23,7 +18,6 @@ import { OperatorEditionDialogComponent } from '../../modules/operators/dialog/c
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class OperatorListComponent implements OnInit {
   operators;
   headList: string[] = OPERATOR_HEADERS.operators.main;
@@ -36,12 +30,12 @@ export class OperatorListComponent implements OnInit {
   loading = true;
 
   constructor(
-      private operatorService: OperatorService,
-      private authentificationService: AuthenticationService,
-      private translationService: TranslationService,
-      private ts: TableService,
-      private confirmationService: ConfirmationService,
-      private dialogService: DialogService,
+    private operatorService: OperatorService,
+    private authentificationService: AuthenticationService,
+    private translationService: TranslationService,
+    private ts: TableService,
+    private confirmationService: ConfirmationService,
+    private dialogService: DialogService,
   ) {
     this.setColumns();
   }
@@ -73,9 +67,7 @@ export class OperatorListComponent implements OnInit {
       ...DIALOGSTYLE,
       header: 'Créer un opérateur',
     };
-    const ref = this.dialogService.open(OperatorCreationDialogComponent,
-                                        config,
-    );
+    const ref = this.dialogService.open(OperatorCreationDialogComponent, config);
 
     ref.onClose.subscribe((operator: Operator) => {
       if (operator) {
@@ -103,11 +95,9 @@ export class OperatorListComponent implements OnInit {
     this.confirmationService.confirm({
       message: `Etes vous sûr de vouloir supprimer l'operateur ${operator.nom_commercial} ?`,
       accept: () => {
-        this.operatorService.delete(operator._id).subscribe(
-          () => {
-            this.get();
-          },
-        );
+        this.operatorService.delete(operator._id).subscribe(() => {
+          this.get();
+        });
       },
     });
   }

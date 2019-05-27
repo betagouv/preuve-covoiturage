@@ -7,7 +7,6 @@ import { User } from '~/entities/database/user/user';
   selector: 'app-company-form',
   templateUrl: './template.html',
 })
-
 export class CompanyFormComponent {
   @Input() parentForm: FormGroup;
 }

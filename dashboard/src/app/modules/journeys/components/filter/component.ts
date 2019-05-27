@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { JourneyService } from '~/modules/journeys/services/journeyService';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { MAIN } from '~/config/main';
 import { DATES } from '~/config/dates';
 
@@ -16,12 +16,8 @@ import { JOURNEY_HEADER } from '../../config/header';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class JourneyFilterComponent implements OnInit {
-  constructor(
-    private authenticationService: AuthenticationService,
-    private journeyService: JourneyService,
-  ) {
+  constructor(private authenticationService: AuthenticationService, private journeyService: JourneyService) {
     this.journeyService = journeyService;
   }
 
@@ -83,20 +79,16 @@ export class JourneyFilterComponent implements OnInit {
     this.defaultHourDate = new Date(JOURNEY_HOUR.defaultDate);
     this.resetVar();
 
-    this.journeyService
-      .listAom()
-      .subscribe((response: any[]) => {
-        this.aomList = (response['data'] || [])
-          .map(aom => ({
-            value: aom._id._id,
-            label: `${aom._id.name} (${aom.count})`,
-          }));
-      });
+    this.journeyService.listAom().subscribe((response: any[]) => {
+      this.aomList = (response['data'] || []).map((aom) => ({
+        value: aom._id._id,
+        label: `${aom._id.name} (${aom.count})`,
+      }));
+    });
   }
 
   filterAom(event) {
-    this.aomFiltered = this.aomList
-      .filter(i => (new RegExp(event.query, 'i').test(i.label)));
+    this.aomFiltered = this.aomList.filter((i) => new RegExp(event.query, 'i').test(i.label));
   }
 
   selectAom(selection) {
@@ -197,7 +189,6 @@ export class JourneyFilterComponent implements OnInit {
     }
   }
 
-
   addFilter(value, colName, filterType) {
     this.filters[colName] = {
       colName,
@@ -223,7 +214,7 @@ export class JourneyFilterComponent implements OnInit {
 
   resetVar() {
     this.distanceRange = [0, JOURNEY_DISTANCE.max];
-    this.selectedDays = this.days.map(value => value.value);
+    this.selectedDays = this.days.map((value) => value.value);
     this.minDate = '';
     this.maxDate = '';
     this.minTime = '';

@@ -1,27 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
-
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 
 import { TranslationService } from '~/shared/services/translationService';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { User } from '~/entities/database/user/user';
 
-
 import { UserService } from '../../../../services/userService';
-
 
 @Component({
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class UserEditionDialogComponent implements OnInit {
   public user;
   loaded = false;
-
 
   constructor(
     private translationService: TranslationService,
@@ -29,8 +21,7 @@ export class UserEditionDialogComponent implements OnInit {
     private userService: UserService,
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.user = new User();
@@ -41,9 +32,8 @@ export class UserEditionDialogComponent implements OnInit {
     });
   }
 
-
   public edit(patch) {
-    this.userService.patch(this.user._id, patch).subscribe((user:User) => {
+    this.userService.patch(this.user._id, patch).subscribe((user: User) => {
       this.user = user;
       this.ref.close();
     });

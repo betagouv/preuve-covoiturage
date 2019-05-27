@@ -18,17 +18,11 @@ import { HomePageImgComponent } from './components/img/component';
 import { HomePageInformationComponent } from './components/information/component';
 import { HomePageTitleComponent } from './components/title/component';
 
-
 /* Local services */
 
-
 @NgModule({
-  imports: [
-    HomeRoutingModule,
-    GraphicModule,
-  ],
-  providers: [
-  ],
+  imports: [HomeRoutingModule, GraphicModule],
+  providers: [],
   declarations: [
     // home page
     HomeComponent,
@@ -43,7 +37,6 @@ import { HomePageTitleComponent } from './components/title/component';
     HomePageInformationComponent,
     HomePageTitleComponent,
   ],
-  exports: [
-  ],
+  exports: [],
 })
-export class HomeModule { }
+export class HomeModule {}

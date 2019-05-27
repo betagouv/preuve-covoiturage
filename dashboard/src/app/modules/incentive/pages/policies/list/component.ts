@@ -16,20 +16,24 @@ import { IncentivePolicyService } from '../../../services/incentivePolicyService
   styleUrls: ['style.scss'],
   animations: [
     trigger('rowExpansionTrigger', [
-      state('void', style({
-        transform: 'translateX(-10%)',
-        opacity: 0,
-      })),
-      state('active', style({
-        transform: 'translateX(0)',
-        opacity: 1,
-      })),
+      state(
+        'void',
+        style({
+          transform: 'translateX(-10%)',
+          opacity: 0,
+        }),
+      ),
+      state(
+        'active',
+        style({
+          transform: 'translateX(0)',
+          opacity: 1,
+        }),
+      ),
       transition('* <=> *', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)')),
     ]),
   ],
 })
-
-
 export class IncentivePoliciesListPageComponent implements OnInit {
   policies: IncentivePolicy[];
   public headList: string[] = INCENTIVE_HEADERS.policies.main;
@@ -38,12 +42,10 @@ export class IncentivePoliciesListPageComponent implements OnInit {
   perPage = 10;
   columns = [];
 
-
   constructor(
-      private incentivePolicyService: IncentivePolicyService,
-      private translationService: TranslationService,
-      private ts: TableService,
-
+    private incentivePolicyService: IncentivePolicyService,
+    private translationService: TranslationService,
+    private ts: TableService,
   ) {
     this.setColumns();
   }

@@ -3,10 +3,7 @@ import { FormBuilder, Validators, FormArray, FormGroup } from '@angular/forms';
 
 import { Calendar } from 'primeng/calendar';
 
-import {
-  DynamicDialogRef,
-  DynamicDialogConfig,
-} from 'primeng/api';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/api';
 
 import { TimeFilter } from '~/modules/incentive/filters/TimeFilter';
 
@@ -14,21 +11,14 @@ import { TimeFilter } from '~/modules/incentive/filters/TimeFilter';
   templateUrl: 'template.html',
   styleUrls: ['style.scss'],
 })
-
 export class IncentiveTimeFilterComponent implements OnInit {
   public filter: typeof TimeFilter;
-
 
   public filterForm = this.fb.group({
     value: this.fb.array([]),
   });
 
-  constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
-    public fb: FormBuilder,
-  ) {
-  }
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, public fb: FormBuilder) {}
 
   get ranges() {
     return this.filterForm.get('value') as FormArray; // tslint:disable-line

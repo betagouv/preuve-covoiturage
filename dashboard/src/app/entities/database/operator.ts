@@ -1,4 +1,4 @@
-  /* tslint:disable:variable-name*/
+/* tslint:disable:variable-name*/
 import { Company } from './company';
 import { Address } from './address';
 import { Bank } from './bank';
@@ -16,15 +16,15 @@ class Operator {
   public updatedAt: string;
 
   constructor(obj?: any) {
-    this._id = obj && obj._id || null;
-    this.address = obj && obj.address || new Address();
-    this.nom_commercial = obj && obj.nom_commercial || null;
-    this.raison_sociale = obj && obj.raison_sociale || null;
-    this.company = obj && obj.company || new Company();
-    this.bank = obj && obj.bank || new Bank();
-    this.contacts = obj && obj.contacts || new ContactList();
-    this.createdAt = obj && obj.createdAt || null;
-    this.updatedAt = obj && obj.updatedAt || null;
+    this._id = (obj && obj._id) || null;
+    this.address = (obj && obj.address) || new Address();
+    this.nom_commercial = (obj && obj.nom_commercial) || null;
+    this.raison_sociale = (obj && obj.raison_sociale) || null;
+    this.company = (obj && obj.company) || new Company();
+    this.bank = (obj && obj.bank) || new Bank();
+    this.contacts = (obj && obj.contacts) || new ContactList();
+    this.createdAt = (obj && obj.createdAt) || null;
+    this.updatedAt = (obj && obj.updatedAt) || null;
   }
 }
 

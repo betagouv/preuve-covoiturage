@@ -1,5 +1,4 @@
 export const USER_HEADERS = {
-
   main: [
     'email',
     'firstname',
@@ -12,20 +11,6 @@ export const USER_HEADERS = {
     'permissions',
     '_id',
   ],
-  selection: [
-    'email',
-    'firstname',
-    'lastname',
-    'group',
-    'role',
-    'operator.nom_commercial',
-    'aom.name',
-  ],
-  sort: [
-    'email',
-    'firstname',
-    'lastname',
-  ],
-
-
+  selection: ['email', 'firstname', 'lastname', 'group', 'role', 'operator.nom_commercial', 'aom.name'],
+  sort: ['email', 'firstname', 'lastname'],
 };

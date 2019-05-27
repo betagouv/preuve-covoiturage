@@ -6,8 +6,8 @@ export class CGU {
   acceptedBy: User;
 
   constructor(obj?: any) {
-    this.accepted = obj && obj.accepted || null;
-    this.acceptedAt = obj && obj.acceptedAt || null;
-    this.acceptedBy = obj && obj.acceptedBy || null;
+    this.accepted = (obj && obj.accepted) || null;
+    this.acceptedAt = (obj && obj.acceptedAt) || null;
+    this.acceptedBy = (obj && obj.acceptedBy) || null;
   }
 }

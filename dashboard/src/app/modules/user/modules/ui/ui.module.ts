@@ -13,19 +13,9 @@ import { UserDropdownComponent } from './components/dropdown/component';
 import { UserService } from '../../services/userService';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    AutoCompleteModule,
-  ],
-  providers: [
-    UserService,
-  ],
-  declarations: [
-    UserDropdownComponent,
-  ],
-  exports: [
-    UserDropdownComponent,
-  ],
+  imports: [CommonModule, FormsModule, AutoCompleteModule],
+  providers: [UserService],
+  declarations: [UserDropdownComponent],
+  exports: [UserDropdownComponent],
 })
-export class UserUIModule { }
+export class UserUIModule {}

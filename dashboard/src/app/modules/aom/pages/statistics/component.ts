@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { AomService } from '~/modules/aom/services/aomService';
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { Aom } from '~/entities/database/aom';
 
 @Component({
@@ -13,10 +13,7 @@ export class AomStatisticsComponent implements OnInit {
   public apiData = {};
   aom: Aom = new Aom();
 
-  constructor(
-    private aomService: AomService,
-    private authenticationService: AuthenticationService,
-  ) {}
+  constructor(private aomService: AomService, private authenticationService: AuthenticationService) {}
 
   ngOnInit(): void {
     const user = this.authenticationService.getUser();

@@ -1,15 +1,9 @@
 import { saveAs } from 'file-saver';
 import { Component, ViewChild } from '@angular/core';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { LazyLoadEvent, MessageService } from 'primeng/api';
 
-import { AuthenticationService } from '~/applicativeService/authentication/service';
+import { AuthenticationService } from '~/applicativeService/authentication/auth.service';
 import { Journey } from '~/entities/database/journey';
 import { TranslationService } from '~/shared/services/translationService';
 import { TableService } from '~/shared/services/tableService';
@@ -85,11 +79,7 @@ export class JourneyListComponent {
     if (!mainFilters) return;
 
     Object.keys(mainFilters).forEach((key) => {
-      this.dt.filter(
-        mainFilters[key]['value'],
-        mainFilters[key]['colName'],
-        mainFilters[key]['filterType'],
-      );
+      this.dt.filter(mainFilters[key]['value'], mainFilters[key]['colName'], mainFilters[key]['filterType']);
     });
 
     this.filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
@@ -130,9 +120,7 @@ export class JourneyListComponent {
 
   loadLazy(event: LazyLoadEvent) {
     const eventBeforeFormat = this.setDefault(event);
-    const filters = this.journeyService.formatFiltersFromLazyEvent(
-      eventBeforeFormat,
-    );
+    const filters = this.journeyService.formatFiltersFromLazyEvent(eventBeforeFormat);
     this.get(filters);
   }
 

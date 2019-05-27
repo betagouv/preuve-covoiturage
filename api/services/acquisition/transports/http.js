@@ -13,7 +13,6 @@ const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, p
 const aomService = require('@pdc/service-organization/aom');
 
 const journeyService = require('../service');
-const Journey = require('../entities/models/journey');
 const { importMaxFileSizeMb } = require('../config');
 const { anonymize } = require('../lib/anonymize');
 
@@ -82,13 +81,11 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
       // authorised operators only.
       if (aomLean && aomLean.authorised) {
         authorizedOps = aomLean.authorised
-          .filter(o => o.coll === 'operators')
-          .map(o => ((o && o._id) ? o._id.toString() : null))
-          .filter(o => !!o);
+          .filter((o) => o.coll === 'operators')
+          .map((o) => (o && o._id ? o._id.toString() : null))
+          .filter((o) => !!o);
 
-        const filteredOps = (req.query['operator._id'] || '')
-          .split(',')
-          .filter(o => authorizedOps.indexOf(o) !== -1);
+        const filteredOps = (req.query['operator._id'] || '').split(',').filter((o) => authorizedOps.indexOf(o) !== -1);
 
         if (filteredOps.length) {
           req.query['operator._id'] = filteredOps.join(',');
@@ -102,10 +99,7 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
 
     // CSV stream
     if (req.get('Accept') === 'text/csv') {
-      res.setHeader(
-        'Content-disposition',
-        `attachment; filename=${slugify(req.baseUrl)}-${Date.now()}.csv`,
-      );
+      res.setHeader('Content-disposition', `attachment; filename=${slugify(req.baseUrl)}-${Date.now()}.csv`);
 
       res.writeHead(200, {
         'Content-Type': 'text/csv;charset=utf-8',
@@ -114,7 +108,7 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
 
       res.flushHeaders();
 
-      const transformer = doc => anonymize(flat(filterOps(doc.toJSON())));
+      const transformer = (doc) => anonymize(flat(filterOps(doc.toJSON())));
 
       // update limits
       req.query.limit = _.get(req, 'query.limit', 50000);
@@ -163,25 +157,19 @@ router.post('/push', jwtServer, can('journey.create'), async (req, res, next) =>
   }
 });
 
-router.post(
-  '/import',
-  upload.single('csv'),
-  jwtUser,
-  can('journey.import'),
-  async (req, res, next) => {
-    try {
-      // get operator from connected user
-      if (!_.get(req, 'body.operator') && _.get(req, 'user.operator')) {
-        _.set(req, 'body.operator', _.get(req, 'user.operator._id').toString());
-      }
-
-      const results = await journeyService.import(req.body, req.file);
-
-      res.status(results.failed.length ? 400 : 200).json(results);
-    } catch (e) {
-      next(e);
+router.post('/import', upload.single('csv'), jwtUser, can('journey.import'), async (req, res, next) => {
+  try {
+    // get operator from connected user
+    if (!_.get(req, 'body.operator') && _.get(req, 'user.operator')) {
+      _.set(req, 'body.operator', _.get(req, 'user.operator._id').toString());
     }
-  },
-);
+
+    const results = await journeyService.import(req.body, req.file);
+
+    res.status(results.failed.length ? 400 : 200).json(results);
+  } catch (e) {
+    next(e);
+  }
+});
 
 module.exports = router;

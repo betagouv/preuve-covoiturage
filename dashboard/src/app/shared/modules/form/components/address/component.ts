@@ -7,7 +7,6 @@ import { User } from '~/entities/database/user/user';
   selector: 'app-address-form',
   templateUrl: './template.html',
 })
-
 export class AddressFormComponent {
   @Input() parentForm: FormGroup;
 }
