@@ -6,6 +6,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { CreateUserAction } from './CreateUserAction';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserPermissionsProviderInterfaceResolver } from '../interfaces/UserPermissionsProviderInterface';
 
 // chai.use(chaiAsPromised);
 // const { expect, assert } = chai;
@@ -56,8 +57,12 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
 
 }
 
+class FakePermissionsProvider extends UserPermissionsProviderInterfaceResolver{ // tslint:disable-line max-classes-per-file
 
-const action = new CreateUserAction(new FakeUserRepository(), new FakeCryptoProvider());
+}
+
+
+const action = new CreateUserAction(new FakeUserRepository(), new FakeCryptoProvider(), new FakePermissionsProvider());
 
 describe('Create user action', () => {
   it('should work', async () => {

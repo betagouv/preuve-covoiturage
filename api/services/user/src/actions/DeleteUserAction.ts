@@ -9,7 +9,7 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
 })
 export class DeleteUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.delete']],
+    ['can', ['user.delete']], // 'profile.delete'
     ['validate', 'user.delete'],
   ];
 

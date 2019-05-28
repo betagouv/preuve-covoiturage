@@ -1,12 +1,13 @@
-import { Parents, Container } from '@pdc/core';
+import { Parents, Container, Exceptions } from '@pdc/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserPermissionsProviderInterfaceResolver } from '../interfaces/UserPermissionsProviderInterface';
 
 
-interface NewUser {
+interface NewUserRequestInterface {
   email: string;
   lastname: string;
   firstname: string;
@@ -30,28 +31,24 @@ export class CreateUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
+    private userPermissions: UserPermissionsProviderInterfaceResolver,
   ) {
     super();
   }
 
 
   // todo: fix all comments
-  public async handle(request: NewUser , context: { call?: { user: UserDbInterface } }): Promise<UserDbInterface> {
-    // middleware: "user.create"
-    // middleware: "aom.users.add"
-    // middleware: "operator.users.add"
-
+  public async handle(request: NewUserRequestInterface , context: { call?: { user: UserDbInterface } }): Promise<UserDbInterface> {
     // complete in case of adding to AOM !
-    console.log('request', request);
 
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
-      // throw new ConflictError();
+      throw new Exceptions.DDBConflictException();
     }
 
     if (request.operator && request.aom) {
-      // throw new BadRequestError('Cannot assign operator and AOM at the same time');
+      throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 
 
@@ -65,7 +62,7 @@ export class CreateUserAction extends Parents.Action {
       phone: request.phone,
       status : 'invited',
       password : await this.cryptoProvider.cryptPassword(request.password),
-      // requester : context.call.user.fullname,
+      requester : context.call.user.fullname,
     };
 
 
@@ -95,7 +92,7 @@ export class CreateUserAction extends Parents.Action {
 
     // create the new user
     let user = new User(payload);
-    // user.permissions = Permissions.getFromRole(user.group, user.role);
+    user.permissions = this.userPermissions.getFromRole(user.group, user.role);
 
     user = await this.userRepository.create(user);
     // generate new token for a password reset on first access
@@ -116,7 +113,7 @@ export class CreateUserAction extends Parents.Action {
     // search for user
     const user = userCache || (await this.userRepository.findByEmail(email));
     if (!user) {
-      // throw new NotFoundError();
+      throw new Exceptions.DDBNotFoundException();
     }
 
     const reset = this.cryptoProvider.generateToken();

@@ -9,7 +9,7 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
 })
 export class FindUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.read']],
+    ['can', ['user.read']], // 'profile.read'
     ['validate', 'user.find'],
   ];
   constructor(

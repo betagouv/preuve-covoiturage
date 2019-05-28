@@ -6,6 +6,8 @@ import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddlew
 import { CreateUserAction } from './actions/CreateUserAction';
 import { UserRepositoryProviderInterfaceResolver } from './interfaces/UserRepositoryProviderInterface';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
+import { UserPermissionsProviderInterfaceResolver } from './interfaces/UserPermissionsProviderInterface';
+import { UserPermissionsProvider } from './providers/UserPermissionsProvider';
 import { DeleteUserAction } from './actions/DeleteUserAction';
 import { FindUserAction } from './actions/FindUserAction';
 import { ListUserAction } from './actions/ListUserAction';
@@ -21,6 +23,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [UserRepositoryProviderInterfaceResolver, UserRepositoryProvider],
     [CryptoProviderInterfaceResolver, CryptoProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
+    [UserPermissionsProviderInterfaceResolver, UserPermissionsProvider],
   ];
 
   readonly handlers = [

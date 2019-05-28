@@ -4,12 +4,12 @@ export const userListSchema = {
   additionalProperties: false,
   properties: {
     page: {
-      type: 'number',
-      maxLength: 128,
+      type: 'integer',
+      maximum: 100,
     },
     limit: {
-      type: 'number',
-      maxLength: 128,
+      type: 'integer',
+      maximum: 10000,
     },
   },
 };

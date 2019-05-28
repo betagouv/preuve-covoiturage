@@ -1,4 +1,4 @@
-import lodash from 'lodash';
+import * as _ from 'lodash';
 
 import { Parents, Container } from '@pdc/core';
 
@@ -84,7 +84,7 @@ export class ListUserAction extends Parents.Action {
   private castPage(page) {
     const p = parseInt(page, 10);
 
-    if (lodash.isNaN(p)) return this.config.defaultPage;
+    if (_.isNaN(p)) return this.config.defaultPage;
 
     return Math.abs(p) || this.config.defaultPage;
   }
@@ -92,7 +92,7 @@ export class ListUserAction extends Parents.Action {
   private castLimit(limit) {
     let lim = parseInt(limit, 10);
 
-    if (lodash.isNaN(lim)) return this.config.defaultLimit;
+    if (_.isNaN(lim)) return this.config.defaultLimit;
 
     lim = Math.abs(lim) || this.config.defaultLimit;
 

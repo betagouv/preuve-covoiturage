@@ -9,7 +9,7 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
 })
 export class PatchUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.update']],
+    ['can', ['user.update']], // profile.update
     ['validate', 'user.patch'],
   ];
   constructor(
@@ -19,7 +19,8 @@ export class PatchUserAction extends Parents.Action {
   }
 
   public async handle(request: { id: string, patch: { [prop: string]: string }}): Promise<UserDbInterface> {
-    console.log(request.patch)
+    console.log('patch', request.patch);
+
     return this.userRepository.patch(request.id, request.patch);
   }
 }

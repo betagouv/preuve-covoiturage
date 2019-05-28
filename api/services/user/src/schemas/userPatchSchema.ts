@@ -30,44 +30,15 @@ export const userPatchSchema = {
           // trim: true,
           maxLength: 128,
         },
-        group: {
-          type: 'string',
-          enum: ['aom', 'operators', 'registry'],
-        },
         role: {
           type: 'string',
-          default: 'user',
           enum: ['admin', 'user'],
         },
-        operator: {
-          type: 'string',
-          maxLength: 255,
-          // ObjectId
-        },
-        aom: {
-          type: 'string',
-          maxLength: 255,
-          // ObjectId
-        },
       },
-      allOf: [
-        {
-          if: {
-            properties: { group: { const: 'aom' } },
-          },
-          then: {
-            required: ['aom'],
-          },
-        },
-        {
-          if: {
-            properties: { group: { const: 'operator' } },
-          },
-          then: {
-            required: ['operator'],
-          },
-        },
-      ],
     },
   },
 };
+
+// email
+// password
+// password confirmation

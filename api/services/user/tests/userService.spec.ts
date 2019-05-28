@@ -34,7 +34,7 @@ const errorFactory = (err: Exceptions.RPCException) => {
   };
 };
 
-const mockConnectedUser = { // todo : to be added in context
+const mockConnectedUser = {
   _id: '1ab',
   email: 'admin@example.com',
   firstname: 'admin',
@@ -70,9 +70,9 @@ const mockNewUser = {
   firstname: 'edouard',
   lastname: 'nelson',
   phone: '0622222233',
-  group: 'aom',
+  group: 'registry',
   role: 'admin',
-  aom: 'aomid',
+  // aom: 'aomid',
   password: 'password',
 };
 
@@ -115,6 +115,7 @@ describe('User service', () => {
         mockNewUser,
         ['user.create'],
       ));
+    console.log(createData)
     expect(createData.result).to.include({
       email: mockNewUser.email,
       firstname: mockNewUser.firstname,
@@ -122,7 +123,7 @@ describe('User service', () => {
       phone: mockNewUser.phone,
       group: mockNewUser.group,
       role: mockNewUser.role,
-      aom: mockNewUser.aom,
+      // aom: mockNewUser.aom,
     });
     expect(createStatus).equal(200);
 
@@ -145,7 +146,7 @@ describe('User service', () => {
       phone: mockNewUser.phone,
       group: mockNewUser.group,
       role: mockNewUser.role,
-      aom: mockNewUser.aom,
+      // aom: mockNewUser.aom,
     });
     expect(status).equal(200);
   });
@@ -166,7 +167,7 @@ describe('User service', () => {
       phone: mockNewUser.phone,
       group: mockNewUser.group,
       role: mockNewUser.role,
-      aom: mockNewUser.aom,
+      // aom: mockNewUser.aom,
     });
     expect(status).equal(200);
   });
@@ -182,7 +183,6 @@ describe('User service', () => {
         },
         ['user.update'],
       ));
-    console.log(data)
     expect(data.result).to.include({
       _id: createdUserId,
       email: mockNewUser.email,
@@ -191,7 +191,7 @@ describe('User service', () => {
       phone: mockNewUser.phone,
       group: mockNewUser.group,
       role: mockNewUser.role,
-      aom: mockNewUser.aom,
+      // aom: mockNewUser.aom,
     });
     expect(status).equal(200);
   });
