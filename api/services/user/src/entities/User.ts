@@ -6,7 +6,7 @@ export class User {
   public group: string;
   public permissions: string[];
   public phone: string;
-  public password?: string; // todo: should password be required ?
+  public password: string;
   public fullname?: string;
   public role?: string;
   public status?: string;
