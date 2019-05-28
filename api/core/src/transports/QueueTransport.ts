@@ -25,27 +25,34 @@ export class QueueTransport implements TransportInterface {
     // throw error
 
     const container = <ContainerInterface>this.kernel.getContainer();
-    (new Set(container
+    const services = Array.from(new Set(
+      container
       .getHandlers()
       .filter(cfg => ('local' in cfg && cfg.local) && ('queue' in cfg && !cfg.queue))
       .map(cfg => cfg.service),
-    ))
-      .forEach((service) => {
-        const queue = bullFactory(`${env}-${service}`, redisUrl);
-        this.queues.push(queue);
-        // TODO : add channel ?
-        queue.process(job => this.kernel.handle({
-          jsonrpc: '2.0',
-          id: 1,
-          method: job.data.method,
-          params: {
-            params: job.data.params.params,
-            _context: {
-              ...job.data.params._context,
-            },
+      ));
+
+    for (const service of services) {
+      const key = `${env}-${service}`;
+      // TODO : add Sentry error handler
+      const queue = bullFactory(key, redisUrl);
+      await queue.isReady();
+
+      this.registerListeners(queue, key);
+      this.queues.push(queue);
+
+      queue.process(job => this.kernel.handle({
+        jsonrpc: '2.0',
+        id: 1,
+        method: job.data.method,
+        params: {
+          params: job.data.params.params,
+          _context: {
+            ...job.data.params._context,
           },
-        }));
-      });
+        },
+      }));
+    }
   }
 
   async down() {
@@ -54,5 +61,42 @@ export class QueueTransport implements TransportInterface {
       promises.push(queue.close());
     }
     await Promise.all(promises);
+  }
+
+  protected registerListeners(queue: Queue, name: string, errorHandler?: Function): void {
+    queue.on('error', (err) => {
+      console.log(`🐮/${name}: error`, err.message);
+      if (errorHandler && typeof errorHandler === 'function') {
+        errorHandler(err);
+      }
+    });
+
+    queue.on('waiting', (jobId) => {
+      console.log(`🐮/${name}: waiting ${jobId}`);
+    });
+
+    queue.on('active', (job) => {
+      console.log(`🐮/${name}: active ${job.id} ${job.data.type}`);
+    });
+
+    queue.on('stalled', (job) => {
+      console.log(`🐮/${name}: stalled ${job.id} ${job.data.type}`);
+    });
+
+    queue.on('progress', (job, progress) => {
+      console.log(`🐮/${name}: progress ${job.id} ${job.data.type} : ${progress}`);
+    });
+
+    queue.on('completed', (job) => {
+      console.log(`🐮/${name}: completed ${job.id} ${job.data.type}`);
+      job.remove();
+    });
+
+    queue.on('failed', (job, err) => {
+      console.log(`🐮/${name}: failed ${job.id} ${job.data.type}`, err.message);
+      if (errorHandler && typeof errorHandler === 'function') {
+        errorHandler(err);
+      }
+    });
   }
 }

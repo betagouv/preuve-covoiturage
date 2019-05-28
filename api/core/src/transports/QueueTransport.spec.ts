@@ -73,6 +73,8 @@ describe('Queue transport', () => {
         name,
         async process(fn) { this.fn = fn; return; },
         async close() { return; },
+        async isReady() { return this; },
+        on(event: string, callback: (...args: any[]) => void) { return this; },
         async add(call) {
           const fn = this.fn;
           return fn(call);
