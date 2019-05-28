@@ -9,3 +9,4 @@ export { UnauthorizedException } from './UnauthorizedException';
 
 // ddb
 export { DDBNotFoundException } from './database/DDBNotFoundException';
+export { DDBConflictException } from './database/DDBConflictException';
