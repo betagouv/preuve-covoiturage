@@ -28,9 +28,9 @@ import { JourneyRoutingModule } from './journey.routing';
 import { JourneyUIModule } from './modules/ui/ui.module';
 
 /* Local components */
-import { JourneyListComponent } from './components/list/component';
+import { JourneyListComponent } from './components/list/list.component';
 import { JourneyListPageComponent } from './pages/list/component';
-import { JourneyFilterComponent } from './components/filter/component';
+import { JourneyFilterComponent } from './components/filter/filter.component';
 
 /* Local services */
 import { JourneyService } from './services/journeyService';
