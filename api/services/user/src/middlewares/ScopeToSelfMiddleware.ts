@@ -3,8 +3,9 @@ import { Types, Exceptions, Interfaces } from '@pdc/core';
 export type ScopeToSelfMiddlewareOptionsType = [ string[], Function[]];
 
 export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
-  async process(params: Types.ParamsType, context: Types.ContextType, next: Function, options: ScopeToSelfMiddlewareOptionsType): Promise<Types.ResultType> {
-    const [ basePermission, callbackPermissions ] = options;
+  async process(params: Types.ParamsType, context: Types.ContextType, next: Function,
+                options: ScopeToSelfMiddlewareOptionsType): Promise<Types.ResultType> {
+    const [basePermission, callbackPermissions] = options;
     if (!basePermission || callbackPermissions.length === 0) {
       throw new Exceptions.InvalidParamsException('No permissions defined');
     }
@@ -20,7 +21,7 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
       return next(params, context);
     }
 
-    for(const cb of callbackPermissions) {
+    for (const cb of callbackPermissions) {
       const permission = cb(params, context);
       if (permissions.indexOf(permission) > -1) {
         return next(params, context);
