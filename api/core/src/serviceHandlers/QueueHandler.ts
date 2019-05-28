@@ -34,6 +34,8 @@ export class QueueHandler implements HandlerInterface {
     try {
       const { method, params, context } = call;
       // TODO : add channel ?
+      await this.client.isReady();
+
       const job = await this.client.add(method, {
         method,
         jsonrpc: '2.0',

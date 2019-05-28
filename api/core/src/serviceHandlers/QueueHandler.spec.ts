@@ -1,3 +1,4 @@
+// tslint:disable no-invalid-this
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import chai from 'chai';
@@ -55,6 +56,9 @@ describe('Queue handler', () => {
             };
           }
           throw new Error('Nope');
+        },
+        async isReady() {
+          return this;
         },
       }));
   });
