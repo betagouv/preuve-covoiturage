@@ -27,7 +27,6 @@ export class AuthenticationService {
   }
 
   checkToken(): boolean {
-    console.log('checkToken');
     try {
       this.http.get(`${this.endPoint}/auth/check`);
 

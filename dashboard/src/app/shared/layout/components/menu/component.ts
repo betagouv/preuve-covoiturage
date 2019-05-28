@@ -54,8 +54,7 @@ export class MenuComponent implements OnInit {
       {
         label: 'INCITATIONS',
         icon: 'pi pi-fw pi-briefcase',
-        // hide for now in production and staging
-        visible: environment.name !== 'production' && this.hasAnyGroup(['registry', 'aom']),
+        visible: this.hasAnyGroup(['aom']),
         items: [
           {
             label: 'Politiques',

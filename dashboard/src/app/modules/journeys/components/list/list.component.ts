@@ -46,22 +46,9 @@ export class JourneyListComponent {
   selectedColumns = [];
   subColumns = [];
   subTableTitles = ['Conducteur', 'Passager'];
-  total = 30;
-  perPage = 10;
+  total = 0;
+  perPage = 25;
   loading = true;
-  // exportItems = [{
-  //   label: 'CSV',
-  //   icon: 'pi pi-file',
-  //   command: () => {
-  //     this.export('csv');
-  //   },
-  // },{
-  //   label: 'JSON',
-  //   icon: 'pi pi-file',
-  //   command: () => {
-  //     this.export('json');
-  //   },
-  // }];
   @ViewChild('dt') dt;
   private filters;
 
@@ -82,9 +69,15 @@ export class JourneyListComponent {
       this.dt.filter(mainFilters[key]['value'], mainFilters[key]['colName'], mainFilters[key]['filterType']);
     });
 
-    this.filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
+    this.applyDefaultSort(this.dt);
 
-    this.get(this.filters);
+    this.filters = this.journeyService.formatFiltersFromLazyEvent(this.dt);
+  }
+
+  lazyLoad(event: LazyLoadEvent) {
+    const eventBeforeFormat = this.applyDefaultSort(event);
+    const filters = this.journeyService.formatFiltersFromLazyEvent(eventBeforeFormat);
+    this.get(filters);
   }
 
   getSubArray(a, b) {
@@ -116,12 +109,6 @@ export class JourneyListComponent {
   hasAnyGroup(groups: string[]) {
     const group = this.authentificationService.hasAnyGroup(groups);
     return !!group;
-  }
-
-  loadLazy(event: LazyLoadEvent) {
-    const eventBeforeFormat = this.setDefault(event);
-    const filters = this.journeyService.formatFiltersFromLazyEvent(eventBeforeFormat);
-    this.get(filters);
   }
 
   export(type) {
@@ -169,12 +156,15 @@ export class JourneyListComponent {
     });
   }
 
-  private setDefault(event: LazyLoadEvent) {
-    if (!event.sortField) {
-      event.sortField = 'passenger.start.datetime';
-      event.sortOrder = -1;
+  private applyDefaultSort(event: LazyLoadEvent) {
+    const evt = { ...event };
+
+    if (!evt.sortField) {
+      evt.sortField = 'passenger.start.datetime';
+      evt.sortOrder = -1;
     }
-    return event;
+
+    return evt;
   }
 
   private setTotal(meta) {
