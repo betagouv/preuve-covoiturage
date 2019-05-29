@@ -7,7 +7,7 @@ boot(process.argv)
   .then(() => {
     console.log('Ready!');
   })
-  .catch(e => {
+  .catch((e) => {
     console.error(e.message);
     process.exit(1);
   });

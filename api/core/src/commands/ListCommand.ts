@@ -26,33 +26,38 @@ export class ListCommand extends Command {
     let result = '';
     const handlers = this.kernel.getContainer().getHandlers();
 
-    const handlersByTransport = handlers.reduce((acc, h) => {
-      const key = h.local ? 'local' : h.queue ? 'queue': 'remote';
-      if (!(key in acc)) {
-        acc[key] = [];
-      }
-      acc[key].push(h);
-      return acc;
-    }, {});
-
-    Reflect.ownKeys(handlersByTransport).forEach((key: string) => {
-      result += `${key.toUpperCase()} : \n`;
-      const handlersByService = handlersByTransport[key].reduce((acc, h) => {
-        const key = `${h.service}@${h.version}`;
+    const handlersByTransport = handlers.reduce(
+      (acc, h) => {
+        const key = h.local ? 'local' : h.queue ? 'queue' : 'remote';
         if (!(key in acc)) {
           acc[key] = [];
         }
         acc[key].push(h);
         return acc;
-      }, {});
+      },
+      {});
 
-      Reflect.ownKeys(handlersByService).forEach((serviceKey:string) => {
-        result += `  - ${serviceKey}\n`;
-        handlersByService[serviceKey].forEach(handler => {
-          result += `    * ${handler.method}\n`;
-        })
-      })
-    });
+    Reflect.ownKeys(handlersByTransport).forEach(
+      (key: string) => {
+        result += `${key.toUpperCase()} : \n`;
+        const handlersByService = handlersByTransport[key].reduce(
+          (acc, h) => {
+            const keyVersion = `${h.service}@${h.version}`;
+            if (!(keyVersion in acc)) {
+              acc[keyVersion] = [];
+            }
+            acc[key].push(h);
+            return acc;
+          },
+          {});
+
+        Reflect.ownKeys(handlersByService).forEach((serviceKey:string) => {
+          result += `  - ${serviceKey}\n`;
+          handlersByService[serviceKey].forEach((handler) => {
+            result += `    * ${handler.method}\n`;
+          });
+        });
+      });
 
     return result;
   }

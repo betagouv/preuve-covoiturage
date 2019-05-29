@@ -40,11 +40,9 @@ export class ConfigProvider implements ProviderInterface {
     }
 
     this.configPaths.add(configFolder);
-    console.log('configFolder', configFolder);
     fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
       const filename = `${configFolder}/${basename}`;
       const fileinfo = path.parse(filename);
-      console.log(fileinfo);
       if (['.yaml', '.yml'].indexOf(fileinfo.ext) > -1) {
         this.set(camelCase(fileinfo.name), this.loadYmlFile(filename));
       }
