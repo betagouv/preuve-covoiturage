@@ -25,8 +25,19 @@ interface NewUserRequestInterface {
 })
 export class CreateUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.create']], //  'aom.users.add', 'operator.users.add'
     ['validate', 'user.create'],
+    ['scopeIt', [['user.create'], [
+      (params, context) => {
+        if ('aom' in params && params.aom === context.call.user.aom) {
+          return 'aom.users.add';
+        }
+      },
+      (params, context) => {
+        if ('operator' in params && params.aom === context.call.user.aom) {
+          return 'operator.users.add';
+        }
+      },
+    ]]],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -44,7 +55,7 @@ export class CreateUserAction extends Parents.Action {
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
-      throw new Exceptions.DDBConflictException();
+      throw new Exceptions.DDBConflictException('email conflict');
     }
 
     if (request.operator && request.aom) {
@@ -115,7 +126,6 @@ export class CreateUserAction extends Parents.Action {
     if (!user) {
       throw new Exceptions.DDBNotFoundException();
     }
-
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 

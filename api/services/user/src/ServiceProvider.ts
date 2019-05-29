@@ -17,6 +17,7 @@ import { userDeleteSchema } from './schemas/userDeleteSchema';
 import { userCreateSchema } from './schemas/userCreateSchema';
 import { userFindSchema } from './schemas/userFindSchema';
 import { userListSchema } from './schemas/userListSchema';
+import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -37,6 +38,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
     ['can', Middlewares.PermissionMiddleware],
     ['validate', ValidatorMiddleware],
+    ['scopeIt', ScopeToSelfMiddleware],
   ];
 
 

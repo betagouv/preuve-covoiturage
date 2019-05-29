@@ -1,12 +1,13 @@
-import { Types, Exceptions, Interfaces } from '@pdc/core';
+import { Types, Exceptions, Interfaces, Container } from '@pdc/core';
 
 export type ScopeToSelfMiddlewareOptionsType = [ string[], Function[]];
 
+@Container.middleware()
 export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
   async process(params: Types.ParamsType, context: Types.ContextType, next: Function,
                 options: ScopeToSelfMiddlewareOptionsType): Promise<Types.ResultType> {
-    const [basePermission, callbackPermissions] = options;
-    if (!basePermission || callbackPermissions.length === 0) {
+    const [basePermissions, callbackPermissions] = options;
+    if (!basePermissions || callbackPermissions.length === 0) {
       throw new Exceptions.InvalidParamsException('No permissions defined');
     }
 
@@ -16,8 +17,8 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
 
     const { permissions } = context.call.user;
 
-    // Si l'utilisateur à la permission "de base", on laisse passer
-    if (permissions.indexOf(basePermission) > - 1) {
+    // Si l'utilisateur à une des permissions "de base", on laisse passer
+    if (permissions.filter(value => -1 !== basePermissions.indexOf(value)).length) {
       return next(params, context);
     }
 
@@ -31,21 +32,6 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
   }
 }
 
-// ['scopeIt', [['user.create'], [
-//   (params, context) => {
-//     if ('aom' in params) {
-//       if (params.aom === context.call.user.aom) {
-//         return 'user-create-aom';
-//       }
-//     }
-//   },
-//   (params) => {
-//     if('operator' in params) {
-//       return 'user-create-operator';
-//     }
-//     return [];
-//   }
-// ]]];
 
 // ['scopeIt', [['user.read'], [
 //   (params, context) => {

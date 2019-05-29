@@ -5,6 +5,7 @@ import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { bootstrap, Exceptions } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
+import { operator } from '../../../legacy/shared/middlewares/src';
 
 let mongoServer;
 let connectionString;
@@ -34,52 +35,51 @@ const errorFactory = (err: Exceptions.RPCException) => {
   };
 };
 
-const mockConnectedUser = {
+const mockConnectedUserBase = {
   _id: '1ab',
   email: 'admin@example.com',
   firstname: 'admin',
   lastname: 'admin',
   fullname: 'admin admin',
   phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
 };
 
-const callFactory = (method: string, data: any, permissions: string[]) => ({
-  id: 1,
-  jsonrpc: '2.0',
-  method,
-  params: {
-    params: data,
-    _context: {
-      channel: {
-        service: 'proxy',
-        transport: 'http',
-      },
-      call: {
-        user: { ...mockConnectedUser, permissions },
-      },
-    },
-  },
-});
+const callFactory = (method: string, data: any, permissions: string[],
+                     group:string = 'registry', role:string = 'admin', aomOperator: { aom?:string, operator?:string} = {}) => ({
+                       id: 1,
+                       jsonrpc: '2.0',
+                       method,
+                       params: {
+                         params: data,
+                         _context: {
+                           channel: {
+                             service: 'proxy',
+                             transport: 'http',
+                           },
+                           call: {
+                             user: { ...mockConnectedUserBase, permissions, group, role, ...aomOperator },
+                           },
+                         },
+                       },
+                     });
 
 
-// mocks
-const mockNewUser = {
-  email: 'edouard.nelson@example.com',
+const mockNewUserBase = {
   firstname: 'edouard',
   lastname: 'nelson',
   phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
-  // aom: 'aomid',
   password: 'password',
 };
 
-const mockUpdatedProperties = {
-  firstname: 'johnny',
-  lastname: 'smith',
-};
+
+const newUserFactory = (group:string = 'registry', role:string = 'admin', aomOperator: { aom?:string, operator?:string} = {}, email?) => ({
+  ...mockNewUserBase,
+  group,
+  role,
+  email : email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.com`,
+  ...aomOperator,
+});
+
 
 describe('User service', () => {
   before(async () => {
@@ -106,52 +106,155 @@ describe('User service', () => {
     await mongoServer.stop();
   });
 
-  let createdUserId;
-  it('should create user', async () => {
+
+  /*
+
+  Création d'un utilisateur
+
+   */
+  const newAomUser = newUserFactory('aom', 'user', { aom: 'aomId' });
+  const newOperatorUser = newUserFactory('operators', 'user', { operator: 'operatorId' });
+  const newRegistryAdmin = newUserFactory();
+  const newRegistryUser = newUserFactory('registry', 'user');
+
+
+  let createdRegistryUserId;
+  let createdAomUserId;
+  let createdOperatorUserId;
+  it('registry admin - should create user registry', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
       callFactory(
         'user:create',
-        mockNewUser,
+        newRegistryUser,
         ['user.create'],
       ));
-    console.log(createData)
     expect(createData.result).to.include({
-      email: mockNewUser.email,
-      firstname: mockNewUser.firstname,
-      lastname: mockNewUser.lastname,
-      phone: mockNewUser.phone,
-      group: mockNewUser.group,
-      role: mockNewUser.role,
-      // aom: mockNewUser.aom,
+      email: newRegistryUser.email,
+      firstname: newRegistryUser.firstname,
+      lastname: newRegistryUser.lastname,
+      phone: newRegistryUser.phone,
+      group: newRegistryUser.group,
+      role: newRegistryUser.role,
     });
     expect(createStatus).equal(200);
 
-    createdUserId = createData.result._id;
+    createdRegistryUserId = createData.result._id;
   });
 
-  it('should find user', async () => {
+  it('aom admin - should create user aom', async () => {
+    const { status: createStatus, data: createData } = await request.post(
+      '/',
+      callFactory(
+        'user:create',
+        newAomUser,
+        ['aom.users.add'],
+        newAomUser.group,
+        'admin',
+        { aom: newAomUser.aom },
+      ));
+    expect(createData.result).to.include({
+      email: newAomUser.email,
+      firstname: newAomUser.firstname,
+      lastname: newAomUser.lastname,
+      phone: newAomUser.phone,
+      group: newAomUser.group,
+      role: newAomUser.role,
+      aom: newAomUser.aom,
+    });
+    expect(createStatus).equal(200);
+
+    createdAomUserId = createData.result._id;
+  });
+
+  it('operator admin - should create user operator', async () => {
+    const { status: createStatus, data: createData } = await request.post(
+      '/',
+      callFactory(
+        'user:create',
+        newOperatorUser,
+        ['operator.users.add'],
+        newOperatorUser.group,
+        'admin',
+        { operator: newOperatorUser.operator },
+      ));
+    expect(createData.result).to.include({
+      email: newOperatorUser.email,
+      firstname: newOperatorUser.firstname,
+      lastname: newOperatorUser.lastname,
+      phone: newOperatorUser.phone,
+      group: newOperatorUser.group,
+      role: newOperatorUser.role,
+      operator: newOperatorUser.operator,
+    });
+    expect(createStatus).equal(200);
+
+    createdOperatorUserId = createData.result._id;
+  });
+
+  it('registry admin - should find registry user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       callFactory(
       'user:find',
-      { id: createdUserId },
+      { id: createdRegistryUserId },
       ['user.read'],
     ));
     expect(data.result).to.include({
-      _id: createdUserId,
-      email: mockNewUser.email,
-      firstname: mockNewUser.firstname,
-      lastname: mockNewUser.lastname,
-      phone: mockNewUser.phone,
-      group: mockNewUser.group,
-      role: mockNewUser.role,
-      // aom: mockNewUser.aom,
+      _id: createdRegistryUserId,
+      email: newRegistryUser.email,
+      firstname: newRegistryUser.firstname,
+      lastname: newRegistryUser.lastname,
+      phone: newRegistryUser.phone,
+      group: newRegistryUser.group,
+      role: newRegistryUser.role,
     });
     expect(status).equal(200);
   });
 
-  it('should list users', async () => {
+  it('registry admin should find aom user', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:find',
+        { id: createdAomUserId },
+        ['user.read'],
+      ));
+    expect(data.result).to.include({
+      _id: createdAomUserId,
+      email: newAomUser.email,
+      firstname: newAomUser.firstname,
+      lastname: newAomUser.lastname,
+      phone: newAomUser.phone,
+      group: newAomUser.group,
+      role: newAomUser.role,
+      aom: newAomUser.aom,
+    });
+    expect(status).equal(200);
+  });
+
+  it('registry admin - should find operator user', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:find',
+        { id: createdOperatorUserId },
+        ['user.read'],
+      ));
+    expect(data.result).to.include({
+      _id: createdOperatorUserId,
+      email: newOperatorUser.email,
+      firstname: newOperatorUser.firstname,
+      lastname: newOperatorUser.lastname,
+      phone: newOperatorUser.phone,
+      group: newOperatorUser.group,
+      role: newOperatorUser.role,
+      operator: newOperatorUser.operator,
+    });
+    expect(status).equal(200);
+  });
+
+  it('registry admin - should list users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       callFactory(
@@ -160,48 +263,71 @@ describe('User service', () => {
         ['user.list'],
       ));
     expect(data.result.data[0]).to.include({
-      _id: createdUserId,
-      email: mockNewUser.email,
-      firstname: mockNewUser.firstname,
-      lastname: mockNewUser.lastname,
-      phone: mockNewUser.phone,
-      group: mockNewUser.group,
-      role: mockNewUser.role,
-      // aom: mockNewUser.aom,
+      _id: createdRegistryUserId,
+      email: newRegistryUser.email,
+      firstname: newRegistryUser.firstname,
+      lastname: newRegistryUser.lastname,
+      phone: newRegistryUser.phone,
+      group: newRegistryUser.group,
+      role: newRegistryUser.role,
+    });
+    expect(data.result.data[1]).to.include({
+      _id: createdAomUserId,
+      email: newAomUser.email,
+      firstname: newAomUser.firstname,
+      lastname: newAomUser.lastname,
+      phone: newAomUser.phone,
+      group: newAomUser.group,
+      role: newAomUser.role,
+      aom: newAomUser.aom,
+    });
+    expect(data.result.data[2]).to.include({
+      _id: createdOperatorUserId,
+      email: newOperatorUser.email,
+      firstname: newOperatorUser.firstname,
+      lastname: newOperatorUser.lastname,
+      phone: newOperatorUser.phone,
+      group: newOperatorUser.group,
+      role: newOperatorUser.role,
+      operator: newOperatorUser.operator,
     });
     expect(status).equal(200);
   });
 
-  it('should patch user', async () => {
+  it('registry admin - should patch registry user', async () => {
+    const mockUpdatedProperties = {
+      firstname: 'johnny',
+      lastname: 'smith',
+    };
+
     const { status: status, data: data } = await request.post(
       '/',
       callFactory(
         'user:patch',
         {
-          id: createdUserId,
+          id: createdRegistryUserId,
           patch: mockUpdatedProperties,
         },
         ['user.update'],
       ));
     expect(data.result).to.include({
-      _id: createdUserId,
-      email: mockNewUser.email,
+      _id: createdRegistryUserId,
+      email: newRegistryUser.email,
       firstname: mockUpdatedProperties.firstname,
       lastname: mockUpdatedProperties.lastname,
-      phone: mockNewUser.phone,
-      group: mockNewUser.group,
-      role: mockNewUser.role,
-      // aom: mockNewUser.aom,
+      phone: newRegistryUser.phone,
+      group: newRegistryUser.group,
+      role: newRegistryUser.role,
     });
     expect(status).equal(200);
   });
 
-  it('should delete user', async () => {
+  it('registry admin - should delete user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       callFactory(
         'user:delete',
-        { id: createdUserId },
+        { id: createdRegistryUserId },
         ['user.delete'],
       ));
     expect(status).equal(200);

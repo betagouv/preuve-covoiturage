@@ -19,8 +19,6 @@ export class PatchUserAction extends Parents.Action {
   }
 
   public async handle(request: { id: string, patch: { [prop: string]: string }}): Promise<UserDbInterface> {
-    console.log('patch', request.patch);
-
     return this.userRepository.patch(request.id, request.patch);
   }
 }
