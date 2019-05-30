@@ -8,16 +8,16 @@ export class CryptoProvider implements Interfaces.ProviderInterface {
   }
 
 
-  async cryptPassword(plainPassword): Promise<string> {
+  async cryptPassword(plainPassword:string): Promise<string> {
     const saltRounds = 10;
     return bcrypt.hash(plainPassword, saltRounds);
   }
-  async comparePassword(schema, doc, passw): Promise<boolean> {
-    return bcrypt.compare(passw, doc.password);
+  async comparePassword(plainPwd:string, hashedPwd:string): Promise<boolean> {
+    return bcrypt.compare(plainPwd, hashedPwd);
   }
 
-  async compareForgottenToken(schema, doc, token): Promise<boolean> {
-    return bcrypt.compare(token, doc.forgottenToken);
+  async compareForgottenToken(plainToken:string, hashedToken:string): Promise<boolean> {
+    return bcrypt.compare(plainToken, hashedToken);
   }
 
   generateToken(length:number = 12):string {
