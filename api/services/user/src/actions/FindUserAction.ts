@@ -9,8 +9,14 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
 })
 export class FindUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.read']], // 'profile.read'
     ['validate', 'user.find'],
+    ['scopeIt', [['user.read'], [
+      (params, context) => {
+        if ('id' in params && params.id === context.call.user._id) {
+          return 'profile.read';
+        }
+      }, // aom.users.read && operator.users.read ?
+    ]]],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,

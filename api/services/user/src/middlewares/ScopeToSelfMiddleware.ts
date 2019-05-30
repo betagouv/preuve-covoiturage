@@ -6,6 +6,7 @@ export type ScopeToSelfMiddlewareOptionsType = [ string[], Function[]];
 export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
   async process(params: Types.ParamsType, context: Types.ContextType, next: Function,
                 options: ScopeToSelfMiddlewareOptionsType): Promise<Types.ResultType> {
+    console.log('params', params);
     const [basePermissions, callbackPermissions] = options;
     if (!basePermissions || callbackPermissions.length === 0) {
       throw new Exceptions.InvalidParamsException('No permissions defined');

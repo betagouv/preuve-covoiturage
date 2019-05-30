@@ -50,8 +50,6 @@ export class CreateUserAction extends Parents.Action {
 
   // todo: fix all comments
   public async handle(request: NewUserRequestInterface , context: { call?: { user: UserDbInterface } }): Promise<UserDbInterface> {
-    // complete in case of adding to AOM !
-
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {

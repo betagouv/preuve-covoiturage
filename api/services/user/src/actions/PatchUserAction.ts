@@ -9,8 +9,14 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
 })
 export class PatchUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.update']], // profile.update
     ['validate', 'user.patch'],
+    ['scopeIt', [['user.update'], [
+      (params, context) => {
+        if ('id' in params && params.id === context.call.user._id) {
+          return 'profile.update';
+        }
+      },
+    ]]],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,

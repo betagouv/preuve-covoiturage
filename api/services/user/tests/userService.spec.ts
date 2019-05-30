@@ -20,23 +20,20 @@ const { expect } = chai;
 const port = '8081';
 
 
-const errorFactory = (err: Exceptions.RPCException) => {
-  return {
-    status: 200,
-    data: {
-      jsonrpc: '2.0',
-      id: 1,
-      error: {
-        code: err.rpcError.code,
-        message: err.rpcError.message,
-        data: err.rpcError.data,
-      },
+const errorFactory = (err: Exceptions.RPCException) => ({
+  status: 200,
+  data: {
+    jsonrpc: '2.0',
+    id: 1,
+    error: {
+      code: err.rpcError.code,
+      message: err.rpcError.message,
+      data: err.rpcError.data,
     },
-  };
-};
+  },
+});
 
 const mockConnectedUserBase = {
-  _id: '1ab',
   email: 'admin@example.com',
   firstname: 'admin',
   lastname: 'admin',
@@ -44,8 +41,15 @@ const mockConnectedUserBase = {
   phone: '0622222233',
 };
 
-const callFactory = (method: string, data: any, permissions: string[],
-                     group:string = 'registry', role:string = 'admin', aomOperator: { aom?:string, operator?:string} = {}) => ({
+const callFactory = (method: string, data: any,
+                     group:string = 'registry',
+                     role:string = 'admin',
+                     userparams: {
+                       permissions: string[],
+                       aom?:string,
+                       operator?:string,
+                     } = { permissions : [] },
+                     _id:string = 'fakeId') => ({
                        id: 1,
                        jsonrpc: '2.0',
                        method,
@@ -57,7 +61,7 @@ const callFactory = (method: string, data: any, permissions: string[],
                              transport: 'http',
                            },
                            call: {
-                             user: { ...mockConnectedUserBase, permissions, group, role, ...aomOperator },
+                             user: { ...mockConnectedUserBase, group, role, _id, ...userparams },
                            },
                          },
                        },
@@ -112,8 +116,8 @@ describe('User service', () => {
   Création d'un utilisateur
 
    */
-  const newAomUser = newUserFactory('aom', 'user', { aom: 'aomId' });
-  const newOperatorUser = newUserFactory('operators', 'user', { operator: 'operatorId' });
+  const newAomUser = newUserFactory('aom', 'user', { aom: '5cef990d133992029c1abe44' });
+  const newOperatorUser = newUserFactory('operators', 'user', { operator: '5cef990d133992029c1abe41' });
   const newRegistryAdmin = newUserFactory();
   const newRegistryUser = newUserFactory('registry', 'user');
 
@@ -127,7 +131,9 @@ describe('User service', () => {
       callFactory(
         'user:create',
         newRegistryUser,
-        ['user.create'],
+        'registry',
+        'admin',
+        { permissions: ['user.create'] },
       ));
     expect(createData.result).to.include({
       email: newRegistryUser.email,
@@ -148,10 +154,9 @@ describe('User service', () => {
       callFactory(
         'user:create',
         newAomUser,
-        ['aom.users.add'],
         newAomUser.group,
         'admin',
-        { aom: newAomUser.aom },
+        { permissions: ['aom.users.add'], aom: newAomUser.aom },
       ));
     expect(createData.result).to.include({
       email: newAomUser.email,
@@ -173,10 +178,9 @@ describe('User service', () => {
       callFactory(
         'user:create',
         newOperatorUser,
-        ['operator.users.add'],
         newOperatorUser.group,
         'admin',
-        { operator: newOperatorUser.operator },
+        { permissions: ['operator.users.add'], operator: newOperatorUser.operator },
       ));
     expect(createData.result).to.include({
       email: newOperatorUser.email,
@@ -198,7 +202,9 @@ describe('User service', () => {
       callFactory(
       'user:find',
       { id: createdRegistryUserId },
-      ['user.read'],
+      'registry',
+      'admin',
+      { permissions: ['user.read'] },
     ));
     expect(data.result).to.include({
       _id: createdRegistryUserId,
@@ -212,13 +218,52 @@ describe('User service', () => {
     expect(status).equal(200);
   });
 
-  it('registry admin should find aom user', async () => {
+  it('registry user - should find his profile', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:find',
+        { id: createdRegistryUserId },
+        'registry',
+        'user',
+        { permissions: ['profile.read'] },
+        createdRegistryUserId,
+      ));
+    expect(data.result).to.include({
+      _id: createdRegistryUserId,
+      email: newRegistryUser.email,
+      firstname: newRegistryUser.firstname,
+      lastname: newRegistryUser.lastname,
+      phone: newRegistryUser.phone,
+      group: newRegistryUser.group,
+      role: newRegistryUser.role,
+    });
+    expect(status).equal(200);
+  });
+
+  it('registry user - should not be able to find other profile', async () => {
+    const response = await request.post(
+      '/',
+      callFactory(
+        'user:find',
+        { id: createdAomUserId },
+        'registry',
+        'user',
+        { permissions: ['profile.read'] },
+        createdRegistryUserId,
+      ));
+    expect(response).to.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
+  });
+
+  it('registry admin - should find aom user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       callFactory(
         'user:find',
         { id: createdAomUserId },
-        ['user.read'],
+        'registry',
+        'admin',
+        { permissions: ['user.read'] },
       ));
     expect(data.result).to.include({
       _id: createdAomUserId,
@@ -239,7 +284,9 @@ describe('User service', () => {
       callFactory(
         'user:find',
         { id: createdOperatorUserId },
-        ['user.read'],
+        'registry',
+        'admin',
+        { permissions: ['user.read'] },
       ));
     expect(data.result).to.include({
       _id: createdOperatorUserId,
@@ -260,7 +307,9 @@ describe('User service', () => {
       callFactory(
         'user:list',
         {},
-        ['user.list'],
+        'registry',
+        'admin',
+        { permissions:['user.list'] },
       ));
     expect(data.result.data[0]).to.include({
       _id: createdRegistryUserId,
@@ -294,6 +343,53 @@ describe('User service', () => {
     expect(status).equal(200);
   });
 
+  it('aom admin - should list aom users', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:list',
+        { aom: newAomUser.aom },
+        'aom',
+        'admin',
+        { permissions:['aom.users.list'], aom: newAomUser.aom },
+      ));
+    console.log(data)
+    expect(data.result.data[0]).to.include({
+      _id: createdAomUserId,
+      email: newAomUser.email,
+      firstname: newAomUser.firstname,
+      lastname: newAomUser.lastname,
+      phone: newAomUser.phone,
+      group: newAomUser.group,
+      role: newAomUser.role,
+      aom: newAomUser.aom,
+    });
+    expect(status).equal(200);
+  });
+
+  it('operator admin - should list operator users', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:list',
+        { operator: newOperatorUser.operator },
+        'operators',
+        'admin',
+        { permissions:['operator.users.list'], operator: newOperatorUser.operator },
+      ));
+    expect(data.result.data[0]).to.include({
+      _id: createdOperatorUserId,
+      email: newOperatorUser.email,
+      firstname: newOperatorUser.firstname,
+      lastname: newOperatorUser.lastname,
+      phone: newOperatorUser.phone,
+      group: newOperatorUser.group,
+      role: newOperatorUser.role,
+      operator: newOperatorUser.operator,
+    });
+    expect(status).equal(200);
+  });
+
   it('registry admin - should patch registry user', async () => {
     const mockUpdatedProperties = {
       firstname: 'johnny',
@@ -308,7 +404,9 @@ describe('User service', () => {
           id: createdRegistryUserId,
           patch: mockUpdatedProperties,
         },
-        ['user.update'],
+        'registry',
+        'admin',
+        { permissions: ['user.update'] },
       ));
     expect(data.result).to.include({
       _id: createdRegistryUserId,
@@ -322,14 +420,97 @@ describe('User service', () => {
     expect(status).equal(200);
   });
 
+  it('registry user - should patch his profile', async () => {
+    const mockUpdatedProperties = {
+      firstname: 'johnny',
+      lastname: 'smith',
+    };
+
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:patch',
+        {
+          id: createdRegistryUserId,
+          patch: mockUpdatedProperties,
+        },
+        'registry',
+        'user',
+        { permissions: ['profile.update'] },
+        createdRegistryUserId,
+      ));
+    expect(data.result).to.include({
+      _id: createdRegistryUserId,
+      email: newRegistryUser.email,
+      firstname: mockUpdatedProperties.firstname,
+      lastname: mockUpdatedProperties.lastname,
+      phone: newRegistryUser.phone,
+      group: newRegistryUser.group,
+      role: newRegistryUser.role,
+    });
+    expect(status).equal(200);
+  });
+
+  it('registry user - shouldn\'t patch other profile', async () => {
+    const mockUpdatedProperties = {
+      firstname: 'johnny',
+      lastname: 'smith',
+    };
+
+    const response = await request.post(
+      '/',
+      callFactory(
+        'user:patch',
+        {
+          id: createdAomUserId,
+          patch: mockUpdatedProperties,
+        },
+        'registry',
+        'user',
+        { permissions: ['profile.update'] },
+        createdRegistryUserId,
+      ));
+    expect(response).to.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
+  });
+
   it('registry admin - should delete user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       callFactory(
         'user:delete',
         { id: createdRegistryUserId },
-        ['user.delete'],
+        'registry',
+        'admin',
+        { permissions: ['user.delete'] },
       ));
     expect(status).equal(200);
+  });
+
+  it('registry user - should delete his profile', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:delete',
+        { id: createdRegistryUserId },
+        'registry',
+        'admin',
+        { permissions: ['profile.delete'] },
+        createdRegistryUserId,
+      ));
+    expect(status).equal(200);
+  });
+
+  it('registry user - shouldn\'t delete other profile', async () => {
+    const response = await request.post(
+      '/',
+      callFactory(
+        'user:delete',
+        { id: createdAomUserId },
+        'registry',
+        'admin',
+        { permissions: ['profile.delete'] },
+        createdRegistryUserId,
+      ));
+    expect(response).to.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 });

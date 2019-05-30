@@ -12,8 +12,19 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
 })
 export class ListUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.list']],
     ['validate', 'user.list'],
+    ['scopeIt', [['user.list'], [
+      (params, context) => {
+        if ('aom' in params && params.aom === context.call.user.aom) {
+          return 'aom.users.list';
+        }
+      },
+      (params, context) => {
+        if ('operator' in params && params.operator === context.call.user.operator) {
+          return 'operator.users.list';
+        }
+      },
+    ]]],
   ];
 
   private readonly config = {
@@ -32,7 +43,6 @@ export class ListUserAction extends Parents.Action {
   public async handle(
     filters: { [prop: string]: any },
     context: { call?: { user: UserDbInterface}}): Promise<{data: UserDbInterface[], metadata: { pagination: { [prop:string]: any }}}> {
-
     const page = filters.page ? this.castPage(filters.page) : this.config.defaultPage;
     const limit = filters.limit ? this.castPage(filters.limit) : this.config.defaultLimit;
 
