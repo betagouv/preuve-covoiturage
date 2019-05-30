@@ -5,6 +5,7 @@ import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { bootstrap, Exceptions } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
+import { CryptoProvider } from '@pdc/provider-crypto';
 import { operator } from '../../../legacy/shared/middlewares/src';
 
 let mongoServer;
@@ -75,6 +76,7 @@ const mockNewUserBase = {
   password: 'password',
 };
 
+let hashedCurrentPassword = 'not set yet';
 
 const newUserFactory = (group:string = 'registry', role:string = 'admin', aomOperator: { aom?:string, operator?:string} = {}, email?) => ({
   ...mockNewUserBase,
@@ -87,6 +89,7 @@ const newUserFactory = (group:string = 'registry', role:string = 'admin', aomOpe
 
 describe('User service', () => {
   before(async () => {
+    hashedCurrentPassword = await new CryptoProvider().cryptPassword(mockNewUserBase.password);
     mongoServer = new MongoMemoryServer();
     connectionString = await mongoServer.getConnectionString();
     dbName = await mongoServer.getDbName();
@@ -598,6 +601,54 @@ describe('User service', () => {
       role: newOperatorUser.role,
     });
     expect(status).equal(200);
+  });
+
+
+  /*
+  CHANGE PASSWORD
+   */
+  const newPassword = 'newPassword';
+  it('registry admin - should change password registry user', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:patch',
+        {
+          id: createdRegistryUserId,
+          password: hashedCurrentPassword,
+          patch: { newPassword, oldPassword: newRegistryUser.password },
+        },
+        'registry',
+        'admin',
+        { permissions: ['user.update'] },
+      ));
+    console.log(data.data);
+    expect(data.result).to.include({
+      _id: createdRegistryUserId,
+      email: newRegistryUser.email,
+      phone: newRegistryUser.phone,
+      group: newRegistryUser.group,
+      role: newRegistryUser.role,
+    });
+    expect(status).equal(200);
+  });
+
+  it('registry admin - shouldn\'t change password registry user - wrong old password', async () => {
+    const response = await request.post(
+      '/',
+      callFactory(
+        'user:patch',
+        {
+          id: createdRegistryUserId,
+          password: hashedCurrentPassword,
+          patch: { newPassword, oldPassword: `wrong${newRegistryUser.password}` },
+        },
+        'registry',
+        'admin',
+        { permissions: ['user.update'] },
+    ),
+  );
+    expect(response).to.deep.include(errorFactory(new Exceptions.ForbiddenException('Wrong credentials')));
   });
 
 

@@ -8,6 +8,7 @@ export const userCreateSchema = {
       type: 'string',
       format: 'email',
       maxLength: 128,
+      minLength: 1,
       // match: regex.email,
       // trim: true,
       // lowercase: true,

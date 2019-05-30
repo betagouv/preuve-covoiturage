@@ -2,6 +2,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { PatchUserAction } from './PatchUserAction';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
@@ -42,7 +44,12 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   }
 }
 
-const action = new PatchUserAction(new FakeUserRepository());
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
+
+}
+
+
+const action = new PatchUserAction(new FakeUserRepository(), new FakeCryptoProvider());
 
 describe('Update user action', () => {
   it('should work', async () => {

@@ -19,11 +19,26 @@ export const userPatchSchema = {
       maxLength: 255,
       minLength: 1,
     },
+    password: {
+      type: 'string',
+      maxLength: 128,
+      minLength: 1,
+    },
     patch: {
       type: 'object',
       minProperties: 1,
       additionalProperties: false,
       properties: {
+        oldPassword: {
+          type: 'string',
+          maxLength: 128,
+          minLength: 6,
+        },
+        newPassword: {
+          type: 'string',
+          maxLength: 128,
+          minLength: 6,
+        },
         lastname: {
           type: 'string',
           maxLength: 128,
@@ -31,6 +46,16 @@ export const userPatchSchema = {
         firstname: {
           type: 'string',
           maxLength: 128,
+        },
+        email: {
+          type: 'string',
+          format: 'email',
+          maxLength: 128,
+          minLength: 1,
+          // match: regex.email,
+          // trim: true,
+          // lowercase: true,
+          // unique: true,
         },
         phone: {
           type: 'string',
