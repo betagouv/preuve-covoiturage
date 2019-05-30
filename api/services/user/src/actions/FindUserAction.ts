@@ -15,7 +15,17 @@ export class FindUserAction extends Parents.Action {
         if ('id' in params && params.id === context.call.user._id) {
           return 'profile.read';
         }
-      }, // aom.users.read && operator.users.read ?
+      },
+      (params, context) => {
+        if ('aom' in params && params.aom === context.call.user.aom) {
+          return 'aom.users.read';
+        }
+      },
+      (params, context) => {
+        if ('operator' in params && params.operator === context.call.user.operator) {
+          return 'operator.users.read';
+        }
+      },
     ]]],
   ];
   constructor(

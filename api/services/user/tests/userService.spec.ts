@@ -125,6 +125,11 @@ describe('User service', () => {
   let createdRegistryUserId;
   let createdAomUserId;
   let createdOperatorUserId;
+
+
+  /*
+  CREATION ------------
+   */
   it('registry admin - should create user registry', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
@@ -196,6 +201,10 @@ describe('User service', () => {
     createdOperatorUserId = createData.result._id;
   });
 
+
+  /*
+  FIND  --------------------
+   */
   it('registry admin - should find registry user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
@@ -301,6 +310,55 @@ describe('User service', () => {
     expect(status).equal(200);
   });
 
+  it('aom admin - should find aom user', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:find',
+        { id: createdAomUserId, aom: newAomUser.aom },
+        'aom',
+        'admin',
+        { permissions: ['aom.users.read'], aom: newAomUser.aom },
+      ));
+    expect(data.result).to.include({
+      _id: createdAomUserId,
+      email: newAomUser.email,
+      firstname: newAomUser.firstname,
+      lastname: newAomUser.lastname,
+      phone: newAomUser.phone,
+      group: newAomUser.group,
+      role: newAomUser.role,
+      aom: newAomUser.aom,
+    });
+    expect(status).equal(200);
+  });
+
+  it('operator admin - should find operator user', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:find',
+        { id: createdOperatorUserId, operator: newOperatorUser.operator },
+        'registry',
+        'admin',
+        { permissions: ['operator.users.read'], operator: newOperatorUser.operator },
+      ));
+    expect(data.result).to.include({
+      _id: createdOperatorUserId,
+      email: newOperatorUser.email,
+      firstname: newOperatorUser.firstname,
+      lastname: newOperatorUser.lastname,
+      phone: newOperatorUser.phone,
+      group: newOperatorUser.group,
+      role: newOperatorUser.role,
+      operator: newOperatorUser.operator,
+    });
+    expect(status).equal(200);
+  });
+
+  /*
+   LIST -------------------------------
+   */
   it('registry admin - should list users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
@@ -353,7 +411,7 @@ describe('User service', () => {
         'admin',
         { permissions:['aom.users.list'], aom: newAomUser.aom },
       ));
-    console.log(data)
+    console.log(data);
     expect(data.result.data[0]).to.include({
       _id: createdAomUserId,
       email: newAomUser.email,
@@ -390,6 +448,10 @@ describe('User service', () => {
     expect(status).equal(200);
   });
 
+
+  /*
+  PATCH -------------------------
+   */
   it('registry admin - should patch registry user', async () => {
     const mockUpdatedProperties = {
       firstname: 'johnny',
@@ -473,6 +535,75 @@ describe('User service', () => {
     expect(response).to.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
+  it('aom admin - should patch aom user', async () => {
+    const mockUpdatedProperties = {
+      firstname: 'samuel',
+      lastname: 'goldschmidt',
+    };
+
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:patch',
+        {
+          id: createdAomUserId,
+          aom: newAomUser.aom,
+          patch: mockUpdatedProperties,
+        },
+        'aom',
+        'admin',
+        { permissions: ['aom.users.update'], aom: newAomUser.aom },
+        createdAomUserId,
+      ));
+    expect(data.result).to.include({
+      _id: createdAomUserId,
+      email: newAomUser.email,
+      firstname: mockUpdatedProperties.firstname,
+      lastname: mockUpdatedProperties.lastname,
+      phone: newAomUser.phone,
+      group: newAomUser.group,
+      role: newAomUser.role,
+      aom: newAomUser.aom,
+    });
+    expect(status).equal(200);
+  });
+
+  it('operator admin - should patch operator user', async () => {
+    const mockUpdatedProperties = {
+      firstname: 'samuel',
+      lastname: 'goldschmidt',
+    };
+
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:patch',
+        {
+          id: createdOperatorUserId,
+          operator: newOperatorUser.operator,
+          patch: mockUpdatedProperties,
+        },
+        'operator',
+        'admin',
+        { permissions: ['operator.users.update'], operator: newOperatorUser.operator },
+        createdOperatorUserId,
+      ));
+    expect(data.result).to.include({
+      _id: createdOperatorUserId,
+      email: newOperatorUser.email,
+      firstname: mockUpdatedProperties.firstname,
+      lastname: mockUpdatedProperties.lastname,
+      phone: newOperatorUser.phone,
+      group: newOperatorUser.group,
+      role: newOperatorUser.role,
+    });
+    expect(status).equal(200);
+  });
+
+
+  /*
+  DELETION  -------------------------
+   */
   it('registry admin - should delete user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
@@ -512,5 +643,33 @@ describe('User service', () => {
         createdRegistryUserId,
       ));
     expect(response).to.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
+  });
+
+  it('registry aom - should delete user from aom', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:delete',
+        { id: createdAomUserId, aom: newAomUser.aom },
+        'aom',
+        'admin',
+        { permissions: ['aom.users.delete'], aom: newAomUser.aom },
+        createdAomUserId,
+      ));
+    expect(status).equal(200);
+  });
+
+  it('registry operator - should delete user from opertor', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      callFactory(
+        'user:delete',
+        { id: createdOperatorUserId, operator: newOperatorUser.operator },
+        'operator',
+        'admin',
+        { permissions: ['operator.users.delete'], operator: newAomUser.operator },
+        createdOperatorUserId,
+      ));
+    expect(status).equal(200);
   });
 });
