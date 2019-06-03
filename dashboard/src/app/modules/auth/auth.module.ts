@@ -14,15 +14,15 @@ import { FormModule } from '~/shared/modules/form/form.module';
 import { AutofocusDirective } from '~/shared/directives/autofocus.directive';
 
 import { AuthHeaderComponent } from './layout/components/header/component';
-import { AuthPageSigninComponent } from './pages/signin/component';
+import { AuthPageSigninComponent } from './pages/signin/signin.page';
 import { AuthLayoutMainComponent } from './layout/main/component';
 import { AuthRoutingModule } from './auth.routing';
-import { AuthFormSigninComponent } from './components/form/signin/component';
-import { AuthPageNewPasswordComponent } from './pages/newPassword/component';
-import { AuthFormNewPasswordComponent } from './components/form/newPassword/component';
-import { AuthFormForgottenPasswordComponent } from './components/form/forgottenPassword/component';
-import { AuthPageForgottenPasswordComponent } from './pages/forgottenPassword/component';
-import { AuthPageConfirmEmailComponent } from './pages/confirmEmail/component';
+import { AuthFormSigninComponent } from './components/form/signin/signin.component';
+import { AuthPageNewPasswordComponent } from './pages/new-password/new-password.page';
+import { AuthFormNewPasswordComponent } from './components/form/new-password/new-password.component';
+import { AuthFormForgottenPasswordComponent } from './components/form/forgotten-password/forgotten-password.component';
+import { AuthPageForgottenPasswordComponent } from './pages/forgotten-password/forgotten-password.page';
+import { AuthPageConfirmEmailComponent } from './pages/confirm-email/confirm-email.page';
 
 @NgModule({
   imports: [

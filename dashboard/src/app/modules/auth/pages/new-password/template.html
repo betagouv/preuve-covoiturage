@@ -1,0 +1,15 @@
+<section class="auth__wrapper">
+  <div class="has-text-centered">
+    <h3>Changement de mot de passe</h3>
+    <div *ngIf="token && reset">
+      <p>Veuillez renseigner votre nouveau mot de passe</p>
+      <app-auth-form-new-password [token]="token" [reset]="reset"></app-auth-form-new-password>
+    </div>
+  </div>
+
+  <p-messages [value]="messages" [closable]="false"></p-messages>
+
+  <p *ngIf="hasError" class="has-text-centered">
+    <a href="/forgotten-password">Changer mon mot de passe</a>
+  </p>
+</section>

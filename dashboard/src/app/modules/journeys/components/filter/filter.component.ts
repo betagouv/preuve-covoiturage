@@ -82,7 +82,7 @@ export class JourneyFilterComponent implements OnInit {
     this.journeyService.listAom().subscribe((response: any[]) => {
       this.aomList = (response['data'] || []).map((aom) => ({
         value: aom._id._id,
-        label: `${aom._id.name} (${aom.count})`,
+        label: aom._id.name,
       }));
     });
   }
