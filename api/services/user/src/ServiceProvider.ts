@@ -24,7 +24,6 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [UserRepositoryProviderInterfaceResolver, UserRepositoryProvider],
     [CryptoProviderInterfaceResolver, CryptoProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
-    [UserPermissionsProviderInterfaceResolver, UserPermissionsProvider],
   ];
 
   readonly handlers = [
