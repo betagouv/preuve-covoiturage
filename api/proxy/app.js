@@ -33,9 +33,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(require('cookie-parser')());
-app.use(
-  require('express-session')({ secret: sessionSecret, resave: false, saveUninitialized: false }),
-);
+app.use(require('express-session')({ secret: sessionSecret, resave: false, saveUninitialized: false }));
 
 // eslint-disable-next-line no-console
 console.log('CORS', process.env.NODE_ENV === 'review' ? '*' : appUrl());
@@ -75,10 +73,10 @@ app.use('/aom', jwtUser, require('@pdc/service-organization/transports/aomhttp')
 app.use('/operators', jwtUser, require('@pdc/service-organization/transports/operatorhttp'));
 app.use('/trips', jwtUser, require('@pdc/service-trip/transports/http'));
 app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive/transports/http'));
-app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy/transports/parameterhttp'));
-app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy/transports/campaignhttp'));
-app.use('/incentive/policies', jwtUser, require('@pdc/service-policy/transports/policyhttp'));
-app.use('/incentive/units', jwtUser, require('@pdc/service-policy/transports/unithttp'));
+app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy/transports/parameter-http'));
+app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy/transports/campaign-http'));
+app.use('/incentive/policies', jwtUser, require('@pdc/service-policy/transports/policy-http'));
+app.use('/incentive/units', jwtUser, require('@pdc/service-policy/transports/unit-http'));
 app.use('/journeys', require('@pdc/service-acquisition/transports/http'));
 
 // Arena access for queues

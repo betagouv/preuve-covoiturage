@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const router = require('express').Router();
 const can = require('@pdc/shared/middlewares/can');
-const incentivePolicyService = require('../policy');
+const incentivePolicyService = require('../policy.service');
 
 // /**
 //  * get an Unit by ID
@@ -30,6 +30,5 @@ router.get('/', can('incentive-unit.list'), async (req, res, next) => {
     next(e);
   }
 });
-
 
 module.exports = router;
