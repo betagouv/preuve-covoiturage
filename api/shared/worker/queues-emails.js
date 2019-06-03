@@ -2,7 +2,6 @@
 const Queue = require('../providers/queue/queue');
 const Sentry = require('../providers/sentry/sentry');
 
-
 /**
  * Queue to process the emails
  */
@@ -33,7 +32,9 @@ emailsQueue.on('progress', (job, progress) => {
 });
 emailsQueue.on('completed', (job) => {
   console.log(`🐮/emails: completed ${job.id} ${job.data.type}`);
-  job.remove();
+  if (process.env.NODE_ENV !== 'local') {
+    job.remove();
+  }
 });
 emailsQueue.on('failed', (job, err) => {
   console.log(`🐮/emails: failed ${job.id} ${job.data.type}`, err.message);
