@@ -10,7 +10,7 @@ services:
       MONGO_INITDB_DATABASE: 'pdc-local'
     volumes:
       - ./db/mongo:/data/db
-    cpus: 0.1
+    cpus: 1
     mem_limit: 256m
     memswap_limit: 256m
     networks:

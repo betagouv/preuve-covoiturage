@@ -40,6 +40,8 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
     "csv-parse": "^4.3.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-react": "^7.11.1",
     "express": "^4.16.4",
     "express-mung": "^0.5.1",
     "express-session": "^1.15.6",

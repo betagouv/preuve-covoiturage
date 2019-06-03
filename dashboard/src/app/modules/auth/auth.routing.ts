@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AuthPageForgottenPasswordComponent } from '~/modules/auth/pages/forgottenPassword/component';
-import { AuthPageConfirmEmailComponent } from '~/modules/auth/pages/confirmEmail/component';
+import { AuthPageForgottenPasswordComponent } from './pages/forgotten-password/forgotten-password.page';
+import { AuthPageConfirmEmailComponent } from './pages/confirm-email/confirm-email.page';
 
-import { AuthPageNewPasswordComponent } from './pages/newPassword/component';
-import { AuthPageSigninComponent } from './pages/signin/component';
+import { AuthPageNewPasswordComponent } from './pages/new-password/new-password.page';
+import { AuthPageSigninComponent } from './pages/signin/signin.page';
 import { AuthLayoutMainComponent } from './layout/main/component';
 
 const routes: Routes = [
