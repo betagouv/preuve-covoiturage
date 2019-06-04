@@ -6,7 +6,5 @@ export { ParseErrorException } from './ParseErrorException';
 export { RPCException } from './RPCException';
 export { ServiceException } from './ServiceException';
 export { UnauthorizedException } from './UnauthorizedException';
-
-// ddb
-export { DDBNotFoundException } from './database/DDBNotFoundException';
-export { DDBConflictException } from './database/DDBConflictException';
+export { NotFoundException } from './NotFoundException';
+export { ConflictException } from './ConflictException';
