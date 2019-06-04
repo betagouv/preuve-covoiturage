@@ -9,21 +9,6 @@ export const userPatchSchema = {
       maxLength: 255,
       minLength: 1,
     },
-    aom: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
-    operator: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
-    password: {
-      type: 'string',
-      maxLength: 128,
-      minLength: 1,
-    },
     patch: {
       type: 'object',
       minProperties: 1,
@@ -73,7 +58,3 @@ export const userPatchSchema = {
     },
   },
 };
-
-// email
-// password
-// password confirmation

@@ -11,13 +11,5 @@ export const userListSchema = {
       type: 'integer',
       maximum: 10000,
     },
-    aom: {
-      type: 'string', // objectid
-      maxLength: 255,
-    },
-    operator: {
-      type: 'string', // objectid
-      maxLength: 255,
-    },
   },
 };

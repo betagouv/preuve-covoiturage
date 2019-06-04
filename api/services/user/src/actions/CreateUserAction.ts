@@ -1,23 +1,11 @@
-import { Parents, Container, Exceptions } from '@pdc/core';
+import { Parents, Container, Exceptions, Providers, Types } from '@pdc/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { NewUserInterface, UserDbInterface } from '../interfaces/UserInterfaces';
 import { UserPermissionsProviderInterfaceResolver } from '../interfaces/UserPermissionsProviderInterface';
 
-
-interface NewUserRequestInterface {
-  email: string;
-  lastname: string;
-  firstname: string;
-  phone: string;
-  group: string;
-  role: string;
-  password: string;
-  aom?: string;
-  operator?: string;
-}
 
 @Container.handler({
   service: 'user',
@@ -43,20 +31,19 @@ export class CreateUserAction extends Parents.Action {
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userPermissions: UserPermissionsProviderInterfaceResolver,
+    private config: Providers.ConfigProvider,
   ) {
     super();
   }
 
-
-  // todo: fix all comments
-  public async handle(request: NewUserRequestInterface , context: { call?: { user: UserDbInterface } }): Promise<UserDbInterface> {
+  public async handle(request: NewUserInterface , context: Types.ContextType): Promise<UserDbInterface> {
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
       throw new Exceptions.DDBConflictException('email conflict');
     }
 
-    if (request.operator && request.aom) {
+    if ('operator' in request && 'aom' in request) {
       throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 
@@ -79,31 +66,17 @@ export class CreateUserAction extends Parents.Action {
     const ao = request.aom;
 
     if (op) {
-      // todo: replace with what is in comment
       payload.operator = op;
-
-      // const operator = await operatorService.findOne(op);
-
-      // if (operator) {
-      //   payload.operator = operator._id;
-        // payload.organisation = operator.name;
-      // }
     } else if (ao) {
-      // todo: replace with what is in comment
       payload.aom = ao;
-      // const aom = await aomService.findOne(ao);
-
-      // if (aom) {
-      //   payload.aom = aom._id;
-      //   payload.organisation = aom.name;
-      // }
     }
 
     // create the new user
     let user = new User(payload);
-    user.permissions = this.userPermissions.getFromRole(user.group, user.role);
+    user.permissions = this.config.get(`permissions.${user.group}.${user.role}`);
 
     user = await this.userRepository.create(user);
+
     // generate new token for a password reset on first access
     return this.forgottenPassword(
       {
@@ -118,9 +91,8 @@ export class CreateUserAction extends Parents.Action {
   }
 
   // todo: put this in authentification ?
-  private async forgottenPassword({ email, invite }, userCache = null) {
+  private async forgottenPassword(invite, user) {
     // search for user
-    const user = userCache || (await this.userRepository.findByEmail(email));
     if (!user) {
       throw new Exceptions.DDBNotFoundException();
     }

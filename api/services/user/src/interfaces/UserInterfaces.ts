@@ -27,3 +27,16 @@ export interface UserDbInterface extends UserBaseInterface {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+export interface NewUserInterface {
+  email: string;
+  lastname: string;
+  firstname: string;
+  phone: string;
+  group: string;
+  role: string;
+  password: string;
+  aom?: string;
+  operator?: string;
+}

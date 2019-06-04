@@ -5,6 +5,13 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserContextInterface } from '../interfaces/UserContextInterfaces';
+
+interface PatchUserInterface {
+  id: string;
+  patch: { [prop: string]: string };
+}
+
 
 @Container.handler({
   service: 'user',
@@ -20,12 +27,12 @@ export class PatchUserAction extends Parents.Action {
         }
       },
       (params, context) => {
-        if ('aom' in params && params.aom === context.call.user.aom) {
+        if ('aom' in context.call.user.aom) {
           return 'aom.users.update';
         }
       },
       (params, context) => {
-        if ('operator' in params && params.operator === context.call.user.operator) {
+        if ('operator' in context.call.user.operator) {
           return 'operator.users.update';
         }
       },
@@ -38,44 +45,45 @@ export class PatchUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: { id: string, password?: string, patch: { [prop: string]: string }}): Promise<UserDbInterface> {
+  public async handle(request: PatchUserInterface, context: UserContextInterface): Promise<UserDbInterface> {
+    const contextParam: {aom?: string, operator?: string} = {};
+
+    if ('aom' in context.call.user) {
+      contextParam.aom = context.call.user.aom;
+    }
+
+    if ('operator' in context.call.user) {
+      contextParam.operator = context.call.user.operator;
+    }
+
     // update password && change email
     if (request.patch.newPassword) {
-      return this.changePassword(request.id, request.password, request.patch);
+      return this.changePassword(request.id, request.patch);
     }
     if (request.patch.email) {
       // send email to confirm
-      return this.userRepository.patch(request.id, request.patch);
+      return this.userRepository.patchUser(request.id, request.patch, contextParam);
     }
-    return this.userRepository.patch(request.id, request.patch);
+    return this.userRepository.patchUser(request.id, request.patch, contextParam);
   }
 
-  private async changePassword(id:string, currentPassword:string, data) {
-    if (!currentPassword) {
-      throw new Exceptions.InvalidRequestException('Missing current user hashed password');
-    }
-    if (!_.has(data, 'oldPassword') || !_.has(data, 'newPassword')) {
+  private async changePassword(id:string, data) {
+    if (!_.has(data, 'oldPassword') || !_.has(data, 'newPassword')) { // can json schema do this ?
       throw new Exceptions.InvalidRequestException('Old and new passwords must be set');
     }
+
+    const user = await this.userRepository.find(id);
+    const currentPassword = user.password;
 
     if (!(await this.cryptoProvider.comparePassword(data.oldPassword, currentPassword))) {
       throw new Exceptions.ForbiddenException('Wrong credentials');
     }
 
-    const user = await this.userRepository.find(id);
-    if (!user) {
-      throw new Exceptions.DDBNotFoundException('User not found');
-    }
-
     // same password ?
-    if (data.oldPassword === data.newPassword) return user;
+    if (data.oldPassword === data.newPassword) return user; // can json schema check this ?
 
     // change the password
     const newHashPassword = await this.cryptoProvider.cryptPassword(data.newPassword);
-
-    // set the permissions here as the findOneAndUpdate Mongoose middleware
-    // cannot access the original document
-    // user.permissions = Permissions.getFromRole(user.group, user.role);
 
     return this.userRepository.patch(id, { password: newHashPassword });
   }

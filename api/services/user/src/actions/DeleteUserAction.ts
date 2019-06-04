@@ -1,7 +1,7 @@
-import { Parents, Container, Types} from '@pdc/core';
+import { Parents, Container, Types } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
 @Container.handler({
   service: 'user',
@@ -35,18 +35,16 @@ export class DeleteUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: {id: string}, context: Types.ContextType): Promise<void> {
+  public async handle(request: {id: string}, context: UserContextInterface): Promise<void> {
     const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {
       contextParam.aom = context.call.user.aom;
     }
 
-
     if ('operator' in context.call.user) {
       contextParam.operator = context.call.user.operator;
     }
-
 
     return this.userRepository.deleteUser(request.id, contextParam);
   }

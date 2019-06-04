@@ -1,6 +1,6 @@
-import { Providers, Container } from '@pdc/core';
+import { Providers, Container, Exceptions } from '@pdc/core';
 import { ParentRepositoryProvider } from '@pdc/provider-repository';
-import { MongoProvider, ObjectId } from '@pdc/provider-mongo';
+import { MongoException, MongoProvider, ObjectId } from '@pdc/provider-mongo';
 
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
@@ -44,14 +44,9 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     // todo: get skip and limit from pagination
     const collection = await this.getCollection();
 
-    // filters aom : string, operator: string
-    if (filters.aom) {
-      result = await collection.find({ aom: new ObjectId(filters.aom) }).toArray();
-    } else if (filters.operator) {
-      result = await collection.find({ operator: new ObjectId(filters.operator) }).toArray();
-    }
+    const normalizedFilters = this.normalizeContextFilters(filters);
 
-    result = await collection.find(filters).toArray();
+    result = await collection.find(normalizedFilters).toArray();
 
     const users = this.instanciateMany(result);
     const total = 100; // todo : get total;
@@ -60,5 +55,55 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
       users,
       total,
     };
+  }
+
+  public async deleteUser(id: string, contextParam: {aom?: string, operator?: string}):Promise<void> {
+    const normalizedFilters = this.normalizeContextFilters(contextParam);
+    const collection = await this.getCollection();
+    const normalizedId = new ObjectId(id);
+    const result = await collection.deleteOne({ _id: id, ...normalizedFilters });
+    if (result.deletedCount !== 1) {
+      throw new MongoException();
+    }
+    return;
+  }
+
+  public async findUser(id: string, contextParam: {aom?: string, operator?: string}): Promise<UserDbInterface> {
+    const normalizedFilters = this.normalizeContextFilters(contextParam);
+    const collection = await this.getCollection();
+    const normalizedId = new ObjectId(id);
+    const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters });
+    if (!result) throw new Exceptions.DDBNotFoundException('id not found');
+    return this.instanciate(result);
+  }
+
+  public async patchUser(id: string, patch: any, contextParam: {aom?: string, operator?: string}) {
+    const normalizedFilters = this.normalizeContextFilters(contextParam);
+    const collection = await this.getCollection();
+    const normalizedId = new ObjectId(id);
+    const result = await collection.findOneAndUpdate(
+      { _id: normalizedId },
+      {
+        $set: patch,
+      },
+      {
+        returnOriginal: false,
+      },
+    );
+    if (result.ok !== 1) {
+      throw new MongoException();
+    }
+    return this.instanciate(result.value);
+  }
+
+  private normalizeContextFilters(contextFilter: {aom?: string, operator?: string}) {
+    const normalizedFilters: { aom?: ObjectId, operator?: ObjectId} = {};
+    if ('aom' in contextFilter) {
+      normalizedFilters.aom = new ObjectId(contextFilter.aom);
+    }
+    if ('operator' in contextFilter) {
+      normalizedFilters.operator = new ObjectId(contextFilter.operator);
+    }
+    return normalizedFilters;
   }
 }

@@ -9,15 +9,5 @@ export const userFindSchema = {
       maxLength: 255,
       minLength: 1,
     },
-    aom: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
-    operator: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
   },
 };

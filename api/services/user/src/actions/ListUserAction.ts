@@ -1,10 +1,22 @@
 import * as _ from 'lodash';
 
-import { Parents, Container } from '@pdc/core';
+import { Parents, Container, Providers } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserContextInterface } from '../interfaces/UserContextInterfaces';
+import { PaginationInterface } from '../interfaces/PaginationInterface';
 
+
+interface ListUserInterface {
+  data: UserDbInterface[];
+  metadata: { pagination: PaginationInterface};
+}
+
+interface ListUserRequestInterface {
+  page?: string;
+  limit?: string;
+}
 
 @Container.handler({
   service: 'user',
@@ -15,41 +27,45 @@ export class ListUserAction extends Parents.Action {
     ['validate', 'user.list'],
     ['scopeIt', [['user.list'], [
       (params, context) => {
-        if ('aom' in params && params.aom === context.call.user.aom) {
+        if ('aom' in context.call.user.aom) {
           return 'aom.users.list';
         }
       },
       (params, context) => {
-        if ('operator' in params && params.operator === context.call.user.operator) {
+        if ('operator' in context.call.user.operator) {
           return 'operator.users.list';
         }
       },
     ]]],
   ];
 
-  private readonly config = {
-    perPage: 25,
-    defaultPage: 1,
-    defaultLimit: 25,
-    maxLimit: 1000,
-  };
-
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
+    private config: Providers.ConfigProvider,
   ) {
     super();
   }
 
   public async handle(
-    filters: { [prop: string]: any },
-    context: { call?: { user: UserDbInterface}}): Promise<{data: UserDbInterface[], metadata: { pagination: { [prop:string]: any }}}> {
-    const page = filters.page ? this.castPage(filters.page) : this.config.defaultPage;
-    const limit = filters.limit ? this.castPage(filters.limit) : this.config.defaultLimit;
+    request: ListUserRequestInterface,
+    context: UserContextInterface): Promise<ListUserInterface> {
+    const contextParam: {aom?: string, operator?: string} = {};
 
+    if ('aom' in context.call.user) {
+      contextParam.aom = context.call.user.aom;
+    }
+
+    if ('operator' in context.call.user) {
+      contextParam.operator = context.call.user.operator;
+    }
+
+    // Pagination
+    const page = 'page' in request ? this.castPage(request.page) : this.config.get('pagination.defaultPage');
+    const limit = 'limit' in request ? this.castPage(request.limit) : this.config.get('pagination.defaultLimit');
 
     const pagination = this.paginate({ limit, page });
 
-    const data = await this.userRepository.list(filters, pagination);
+    const data = await this.userRepository.list(contextParam, pagination);
 
     return {
       data: data.users,
@@ -57,61 +73,26 @@ export class ListUserAction extends Parents.Action {
         pagination : {
           total: data.total,
           count: data.users.length,
-          per_page: this.config.perPage, // not used in front
+          per_page: this.config.get('pagination.perPage'), // not used in front
           current_page: Math.floor((pagination.skip || 0) / pagination.limit) + 1,
           total_pages: Math.floor(data.total / pagination.limit),
         },
       },
     };
-
-
-    // Complete aom & operators in payload
-
-    // const results = await baseFind(query, options);
-    // const aom = await Aom.find({}, { name: 1 });
-    // const operators = await Operator.find({}, { nom_commercial: 1 });
-    //
-    // results.data = results.data.map((item) => {
-    //   const user = item.toJSON();
-    //
-    //   if (user.aom && user.aom !== '') {
-    //     const found = _.find(aom, a => a._id.toString() === user.aom.toString());
-    //     if (found) user.aom = found.toJSON();
-    //   }
-    //
-    //   if (user.operator && user.operator !== '') {
-    //     const found = _.find(operators, a => a._id.toString() === user.operator.toString());
-    //     if (found) user.operator = found.toJSON();
-    //   }
-    //
-    //   return user;
-    // });
-    //
-    // return results;
   }
 
   private castPage(page) {
-    const p = parseInt(page, 10);
-
-    if (_.isNaN(p)) return this.config.defaultPage;
-
-    return Math.abs(p) || this.config.defaultPage;
+    return Math.abs(page) || this.config.get('pagination.defaultPage'); // Math abs useful ?
   }
 
   private castLimit(limit) {
-    let lim = parseInt(limit, 10);
-
-    if (_.isNaN(lim)) return this.config.defaultLimit;
-
-    lim = Math.abs(lim) || this.config.defaultLimit;
-
-    return lim > this.config.maxLimit ? this.config.maxLimit : lim;
+    const lim = Math.abs(limit) || this.config.get('pagination.defaultLimit'); // Math abs useful ?
+    return lim > this.config.get('pagination.maxLimit ') ? this.config.get('pagination.maxLimit ') : lim;
   }
 
   private paginate(query: {limit: number, page: number}): {skip:number, limit:number} {
     const limit = this.castLimit(query.limit);
     const skip = (this.castPage(query.page) - 1) * limit;
-
     return { skip, limit };
   }
 }
