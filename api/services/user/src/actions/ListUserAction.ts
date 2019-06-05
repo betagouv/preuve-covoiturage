@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 import { Parents, Container, Providers } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
