@@ -42,15 +42,17 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   public async list(filters, pagination): Promise<{users: UserDbInterface[], total: number}> {
     let result = [];
 
-    // todo: get skip and limit from pagination
     const collection = await this.getCollection();
 
     const normalizedFilters = this.normalizeContextFilters(filters);
 
-    result = await collection.find(normalizedFilters).toArray();
+    const skip = 'skip' in filters ? filters.skip : this.config.get('user.defaultSkip')
+    const limit = 'limit' in filters ? filters.limit : this.config.get('user.defaultLimit')
+
+    result = await collection.find(normalizedFilters).skip(skip).limit(limit).toArray();
 
     const users = this.instanciateMany(result);
-    const total = 100; // todo : get total;
+    const total = await this.countUsers(normalizedFilters);
 
     return {
       users,
@@ -106,5 +108,10 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
       normalizedFilters.operator = new ObjectId(contextFilter.operator);
     }
     return normalizedFilters;
+  }
+
+  private async countUsers(filters: {aom?: ObjectId, operator?: ObjectId}) {
+    const collection = await this.getCollection();
+    return collection.countDocuments(filters);
   }
 }
