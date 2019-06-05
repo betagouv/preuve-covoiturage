@@ -35,7 +35,8 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   public async findByEmail(email: string): Promise<User> {
     const collection = await this.getCollection();
     const result = await collection.findOne({ email });
-    return result ? this.instanciate(result) : result;
+    if (!result) throw new Exceptions.DDBNotFoundException('email not found');
+    return this.instanciate(result);
   }
 
   public async list(filters, pagination): Promise<{users: UserDbInterface[], total: number}> {
