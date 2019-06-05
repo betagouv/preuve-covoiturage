@@ -1,6 +1,5 @@
 import { ServiceProviderInterface } from './ServiceProviderInterface';
-import { RPCCallType } from '../types/RPCCallType';
-import { RPCResponseType } from '../types/RPCResponseType';
+import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType} from '../types';
 import { ContainerInterface, ContainerModuleConfigurator } from '../container';
 
 export interface KernelInterface extends ServiceProviderInterface {
@@ -32,6 +31,14 @@ export abstract class KernelInterfaceResolver implements KernelInterface {
   }
 
   async handle(call: RPCCallType): Promise<RPCResponseType|void> {
+    throw new Error();
+  }
+
+  async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
+    throw new Error();
+  }
+
+  async notify(method: string, params: ParamsType, context: ContextType): Promise<void> {
     throw new Error();
   }
 }
