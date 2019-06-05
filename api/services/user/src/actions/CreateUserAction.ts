@@ -1,4 +1,4 @@
-import { Parents, Container, Exceptions, Providers, Types } from '@pdc/core';
+import { Parents, Container, Exceptions, Providers, Types, Interfaces } from '@pdc/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { User } from '../entities/User';
@@ -32,6 +32,7 @@ export class CreateUserAction extends Parents.Action {
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userPermissions: UserPermissionsProviderInterfaceResolver,
     private config: Providers.ConfigProvider,
+    private kernel: Interfaces.KernelInterfaceResolver,
   ) {
     super();
   }
@@ -103,6 +104,27 @@ export class CreateUserAction extends Parents.Action {
     user.forgottenToken = token;
     user.forgottenAt = new Date();
     const updatedUser = await this.userRepository.update(user);
+
+    this.kernel.notify(
+      'notification:sendTemplateEmail', 
+      {
+        template: 'invite',
+        email: user.email,
+        fullName: user.fullName,
+        opts: {
+          requester,
+          organization,
+          link,
+        },
+      },
+      {
+        call: context.call,
+        channel: {
+          ...context.channel,
+          service: 'user',
+        },
+      },
+    );
 
     // send the email
     // user.invite(reset, token, invite.requester, invite.organisation);
