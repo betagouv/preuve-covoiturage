@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import mung from 'express-mung';
+import expressMung from 'express-mung';
 
 /**
  * Hash the payload
@@ -31,4 +31,4 @@ const signResponse = (body, req, res) => {
   return signed;
 };
 
-export const signResponseMiddleware = mung.json(signResponse);
+export const signResponseMiddleware = expressMung.json(signResponse);

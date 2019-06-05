@@ -1,41 +1,53 @@
 import path from 'path';
+import http from 'http';
 import express from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
-import passport from 'passport';
-import swaggerUi from 'swagger-ui-express';
-
+import swaggerUiExpress from 'swagger-ui-express';
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 
-import { Kernel, Interfaces, Providers, bootstrap } from './bridge';
+import { Interfaces, Providers, bootstrap } from './bridge';
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
-import swaggerDocument from './static/openapi.json';
+import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
+import { makeCall, routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './helpers/routeMapping';
 
-export class App {
+export class App implements Interfaces.TransportInterface {
   app: express.Express;
   kernel: Interfaces.KernelInterface;
   config: Providers.ConfigProvider;
   env: Providers.EnvProvider;
   port: string;
+  server: http.Server;
+  readonly routeMap:(ObjectRouteMapType | ArrayRouteMapType)[] = [];
 
-  constructor() {
-    this.app = express();
-    this.kernel = new Kernel();
+  constructor(kernel: Interfaces.KernelInterface) {
+    this.kernel = kernel;
   }
 
   async up() {
     await this.bootKernel();
+    this.app = express();
+    this.setup();
+    this.start();
+  }
+
+  async down() {
+    if (this.server) {
+      this.server.close();
+    }
+  }
+
+  setup() {
     this.registerBeforeAllHandlers();
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
     this.registerGlobalMiddlewares();
-    this.registerPassport();
+    this.registerAuth();
     this.registerSwagger();
     this.registerBullArena();
     this.registerRoutes();
@@ -43,9 +55,8 @@ export class App {
     if (this.env.get('APP_ENV') !== 'production') {
       this.registerCallHandler();
     }
-      
+
     this.registerAfterAllHandlers();
-    this.start();
   }
 
   getApp(): express.Express {
@@ -55,34 +66,47 @@ export class App {
   private async bootKernel() {
     bootstrap.setEnvironment();
     await this.kernel.boot();
-    this.config = this.kernel.getContainer().get(Providers.ConfigProvider)
-    this.env = this.kernel.getContainer().get(Providers.EnvProvider)
-    this.app.locals.kernel = this.kernel;
+    this.config = this.kernel.getContainer().get(Providers.ConfigProvider);
+    this.env = this.kernel.getContainer().get(Providers.EnvProvider);
+    // this.app.locals.kernel = this.kernel;
   }
-  
+
   private registerBeforeAllHandlers() {
     this.kernel.getContainer().get(SentryProvider);
     this.app.use(Sentry.Handlers.requestHandler());
   }
-  
+
   private registerBodyHandler() {
     this.app.use(bodyParser.json({ limit: '2mb' }));
     this.app.use(bodyParser.urlencoded({ extended: false }));
   }
-  
+
   private registerSessionHandler() {
-    this.app.use(cookieParser());
     const sessionSecret = this.config.get('proxy.sessionSecret');
+    const sessionName = this.config.get('proxy.sessionName', 'PDC-Session');
     this.app.use(
-      expressSession({ secret: sessionSecret, resave: false, saveUninitialized: false }),
+      expressSession({
+        cookie: {
+          path: '/',
+          httpOnly: true,
+          secure: false, // true in production
+          maxAge: null,
+        },
+        name: sessionName,
+        secret: sessionSecret,
+        resave: false,
+        saveUninitialized: false,
+        // store, TODO: use redis
+      }),
     );
   }
-  
+
   private registerSecurity() {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
     const appUrl = this.config.get('proxy.appUrl');
+
     this.app.use(
       cors({
         origin: process.env.NODE_ENV === 'review' ? '*' : appUrl,
@@ -90,16 +114,47 @@ export class App {
       }),
     );
   }
-  
+
   private registerGlobalMiddlewares() {
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
   }
 
-  private registerPassport() {
-    this.app.use(passport.initialize());
-    this.app.use(passport.session());
-    
+  private registerAuth() {
+    this.app.post('/login', asyncHandler(async (req, res, next) => {
+      try {
+        const response = await this.kernel.handle(
+          makeCall(
+            'user:login',
+            req.body,
+          ),
+        );
+        if (!response || Array.isArray(response) || 'error' in response) {
+          throw new Error('Forbidden');
+        }
+        req.session.user = response.result;
+        res.json(response.result);
+      } catch (e) {
+        throw e;
+      }
+    }));
+
+    this.app.get('/profile', (req, res, next) => {
+      if (!('user' in req.session)) {
+        throw new Error('Unauthenticated');
+      }
+
+      res.json(req.session.user);
+    });
+
+    this.app.post('/logout', (req, res, next) => {
+      req.session.destroy((err) => {
+        if (err) {
+          throw new Error(err.message);
+        }
+        res.status(204).end();
+      });
+    });
   }
 
   private registerSwagger() {
@@ -107,7 +162,7 @@ export class App {
     this.app.use(express.static(path.join(__dirname, 'static')));
 
     // OpenAPI specification UI
-    this.app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    this.app.use('/openapi', swaggerUiExpress.serve, swaggerUiExpress.setup(openapiJson));
   }
 
   private registerBullArena() {
@@ -123,7 +178,7 @@ export class App {
   }
 
   private registerRoutes() {
-
+    routeMapping(this.routeMap, this.app, this.kernel);
   }
 
   private registerCallHandler() {
@@ -136,13 +191,16 @@ export class App {
           service: def.service,
           method: def.method,
         }))
-        .reduce((acc, { service, method }) => {
-          if (!(service in acc)) {
-            acc[service] = [];
-          }
-          acc[service].push(method);
-          return acc;
-        }, {});
+        .reduce(
+          (acc, { service, method }) => {
+            if (!(service in acc)) {
+              acc[service] = [];
+            }
+            acc[service].push(method);
+            return acc;
+          },
+          {},
+        );
       res.json(response);
     }));
 
@@ -154,7 +212,7 @@ export class App {
 
   private start() {
     const port = this.config.get('proxy.port', 8080);
-    this.app.listen(port, () => console.log(`Listening on port ${port}`))
+    this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
   }
 }
 

@@ -1,9 +1,10 @@
 import { expect } from 'chai';
-import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping';
 import supertest from 'supertest';
 import { Parents } from '@pdc/core';
 import express from 'express';
 import bodyParser from 'body-parser';
+
+import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping';
 
 const app = express();
 
@@ -35,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   req.user = fakeUser;
   next();
-})
+});
 class Kernel extends Parents.Kernel {
   async handle(call) {
     return {
@@ -43,14 +44,14 @@ class Kernel extends Parents.Kernel {
       id: call.id,
       result: {
         method: call.method,
-        ...call.params
+        ...call.params,
       },
     };
   }
 }
 
 const kernel = new Kernel();
-const routeMap :Array<ObjectRouteMapType | ArrayRouteMapType> = [
+const routeMap:(ObjectRouteMapType | ArrayRouteMapType)[] = [
   {
     verb: 'post',
     route: '/user/:id',
@@ -69,9 +70,9 @@ const routeMap :Array<ObjectRouteMapType | ArrayRouteMapType> = [
     mapResponse(response) {
       return {
         ...response,
-        params: fakeUser
+        params: fakeUser,
       };
-    }
+    },
   },
   ['post', '/user', 'user:create'],
   // {
@@ -99,10 +100,6 @@ describe('Route mapping', () => {
     request = supertest(app);
   });
 
-  after(async () => {
-
-  });
- 
   it('works', async () => {
     const response = await request.post('/user')
       .send({

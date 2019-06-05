@@ -1,4 +1,4 @@
-import mung from 'express-mung';
+import expressMung from 'express-mung';
 
 // eslint-disable-next-line no-unused-vars
 const dataWrap = (body, req, res) => {
@@ -12,4 +12,4 @@ const dataWrap = (body, req, res) => {
   };
 };
 
-export const dataWrapMiddleware = mung.json(dataWrap);
+export const dataWrapMiddleware = expressMung.json(dataWrap);
