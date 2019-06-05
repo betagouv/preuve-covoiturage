@@ -29,6 +29,7 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
   readonly handlers: NewableType<HandlerInterface>[] = [];
   readonly middlewares: [string, NewableType<MiddlewareInterface>][] = [];
 
+  protected ready: boolean = false;
   protected container: ContainerInterface;
 
   constructor(container?: ContainerInterface) {
@@ -44,6 +45,10 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
    * @memberof ServiceProvider
    */
   public async boot() {
+    if (this.ready) {
+      return;
+    }
+
     this.getContainer().load(
       new ContainerModule(
         (bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind) => {
@@ -63,6 +68,8 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
       const handlerInstance = this.getContainer().setHandler(handler);
       await handlerInstance.boot(this.getContainer());
     }
+
+    this.ready = true;
   }
 
   /**
