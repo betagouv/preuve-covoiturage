@@ -48,8 +48,6 @@ export class CreateUserAction extends Parents.Action {
       throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 
-
-    // todo: create fullname ?
     const payload: any = {
       email: request.email,
       firstname : request.firstname,
@@ -81,18 +79,15 @@ export class CreateUserAction extends Parents.Action {
     // generate new token for a password reset on first access
     return this.forgottenPassword(
       {
-        email: payload.email,
-        invite: {
-          requester: payload.requester,
-          organisation: payload.organisation,
-        },
+        requester: payload.requester,
+        organisation: payload.organisation,
       },
       user,
+      context,
     );
   }
 
-  // todo: put this in authentification ?
-  private async forgottenPassword(invite, user) {
+  private async forgottenPassword(invite: { requester: string, organisation: string}, user: UserDbInterface, context: Types.ContextType) {
     // search for user
     if (!user) {
       throw new Exceptions.DDBNotFoundException();
@@ -105,29 +100,26 @@ export class CreateUserAction extends Parents.Action {
     user.forgottenAt = new Date();
     const updatedUser = await this.userRepository.update(user);
 
-    this.kernel.notify(
-      'notification:sendTemplateEmail', 
-      {
-        template: 'invite',
-        email: user.email,
-        fullName: user.fullName,
-        opts: {
-          requester,
-          organization,
-          link,
-        },
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'user',
-        },
-      },
-    );
-
-    // send the email
-    // user.invite(reset, token, invite.requester, invite.organisation);
+    // this.kernel.notify(
+    //   'notification:sendTemplateEmail',
+    //   {
+    //     template: 'invite',
+    //     email: user.email,
+    //     fullName: user.fullname,
+    //     opts: {
+    //       requester: invite.requester,
+    //       organization: invite.organisation,
+    //       link: `${this.config.get('url.appUrl')}/confirm-email/${reset}/${token}`,
+    //     },
+    //   },
+    //   {
+    //     call: context.call,
+    //     channel: {
+    //       ...context.channel,
+    //       service: 'user',
+    //     },
+    //   },
+    // );
 
     return updatedUser;
   }
