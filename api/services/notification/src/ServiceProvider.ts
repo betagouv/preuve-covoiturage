@@ -14,6 +14,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   handlers = [
+    // add queue handlers :)
     SendMailAction,
     SendTemplateMailAction,
   ];
