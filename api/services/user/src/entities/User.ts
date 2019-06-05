@@ -7,7 +7,6 @@ export class User {
   public permissions: string[];
   public phone: string;
   public password: string;
-  public fullname?: string;
   public role?: string;
   public status?: string;
   public forgottenReset?: string;
@@ -27,7 +26,6 @@ export class User {
     email: string,
     lastname: string,
     firstname: string,
-    fullname: string,
     group: string,
     permissions: string[],
     password: string,
@@ -50,7 +48,6 @@ export class User {
     this.email = data.email;
     this.lastname = data.lastname;
     this.firstname = data.firstname;
-    this.fullname = data.fullname;
     this.phone = data.phone;
     this.group = data.group;
     this.role = data.role;
@@ -68,5 +65,9 @@ export class User {
     this.deletedAt = data.deletedAt;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
+  }
+
+  get fullName() {
+    return `${this.firstname} ${this.lastname}`;
   }
 }
