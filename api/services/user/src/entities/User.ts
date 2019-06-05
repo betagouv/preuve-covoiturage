@@ -1,5 +1,7 @@
+import { ObjectId } from '@pdc/provider-mongo';
+
 export class User {
-  public _id: string;
+  public _id?: string;
   public email: string;
   public lastname: string;
   public firstname: string;
@@ -22,7 +24,7 @@ export class User {
   public updatedAt?: Date;
 
   constructor(data: {
-    _id: string;
+    _id?: string | ObjectId;
     email: string,
     lastname: string,
     firstname: string,
@@ -44,7 +46,7 @@ export class User {
     createdAt?: Date,
     updatedAt?: Date,
   }) {
-    this._id = data._id;
+    this._id = (typeof data._id === 'string') ? data._id : data._id.toString();
     this.email = data.email;
     this.lastname = data.lastname;
     this.firstname = data.firstname;
@@ -67,7 +69,7 @@ export class User {
     this.updatedAt = data.updatedAt;
   }
 
-  get fullName() {
+  get fullname() {
     return `${this.firstname} ${this.lastname}`;
   }
 }
