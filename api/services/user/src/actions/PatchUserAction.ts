@@ -56,10 +56,11 @@ export class PatchUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    // update password && change email
+    // update password
     if (request.patch.newPassword) {
       return this.changePassword(request.id, request.patch);
     }
+    // change email
     if (request.patch.email) {
       // send email to confirm
       return this.userRepository.patchUser(request.id, request.patch, contextParam);
