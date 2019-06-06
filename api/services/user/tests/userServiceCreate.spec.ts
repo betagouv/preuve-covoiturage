@@ -9,6 +9,7 @@ chai.use(chaiNock);
 
 const { expect } = chai;
 
+const port = '8081';
 let request;
 
 describe('User service', () => {
@@ -36,6 +37,7 @@ describe('User service', () => {
         'admin',
         { permissions: ['user.create'] },
       ));
+    console.log(createData.result)
     expect(createData.result).to.include({
       email: newRegistryUser.email,
       firstname: newRegistryUser.firstname,
@@ -79,6 +81,7 @@ describe('User service', () => {
         'admin',
         { permissions: ['operator.users.add'], operator: newOperatorUser.operator },
       ));
+    console.log(createData)
     expect(createData.result).to.include({
       email: newOperatorUser.email,
       firstname: newOperatorUser.firstname,
