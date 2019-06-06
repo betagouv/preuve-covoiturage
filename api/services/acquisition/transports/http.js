@@ -122,7 +122,12 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
     } else {
       // JSON response
       const response = await journeyService.find(req.query);
-      response.data = response.data.map(filterOps);
+
+      // filter response if the user belongs to an AOM
+      if (aomId) {
+        response.data = response.data.map(filterOps);
+      }
+
       res.json(response);
     }
   } catch (e) {
