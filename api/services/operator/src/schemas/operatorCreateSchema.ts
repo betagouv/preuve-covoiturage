@@ -4,7 +4,7 @@ import { bankSchema } from './parts/bankSchema';
 import { contactsSchema } from './parts/contactsSchema';
 
 export const operatorCreateSchema = {
-  '$id': 'operator.create',
+  $id: 'operator.create',
   type: 'object',
   required: ['nom_commercial', 'raison_sociale'],
   additionalProperties: false,

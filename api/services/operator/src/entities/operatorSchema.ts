@@ -1,5 +1,5 @@
 export const aomSchema = {
-  '$id': 'operator',
+  $id: 'operator',
   type: 'object',
   required: ['nom_commercial', 'raison_sociale'],
   additionalProperties: false,
@@ -16,7 +16,7 @@ export const aomSchema = {
       additionalProperties: false,
       properties: {
         siren: {
-          type: 'string', 
+          type: 'string',
           // match: regex.siren,
         },
         naf_etablissement: {
@@ -28,11 +28,11 @@ export const aomSchema = {
           // match: regex.naf,
         },
         nature_juridique: {
-          type: 'string'
+          type: 'string',
         },
         cle_nic: {
-          type: 'string', 
-          // match: regex.nic, 
+          type: 'string',
+          // match: regex.nic,
         },
         rna: {
           type: 'string',
@@ -49,16 +49,16 @@ export const aomSchema = {
       additionalProperties: false,
       properties: {
         street: {
-          type: 'string'
+          type: 'string',
         },
         city: {
-          type: 'string'
+          type: 'string',
         },
         country: {
-          type: 'string'
+          type: 'string',
         },
         postcode: {
-          type: 'string', 
+          type: 'string',
           // match: regex.postcode,
         },
         cedex: {
@@ -73,15 +73,15 @@ export const aomSchema = {
       additionalProperties: false,
       properties: {
         bank_name: {
-          type: 'string'
+          type: 'string',
         },
         client_name: {
-          type: 'string'
+          type: 'string',
         },
         iban: {
           type: 'string',
-          // validate: validators.iban, 
-          // set: setters.iban 
+          // validate: validators.iban,
+          // set: setters.iban
         },
         bic: {
           type: 'string',
@@ -112,8 +112,8 @@ export const aomSchema = {
       additionalProperties: false,
       properties: {
         accepted: {
-          type: 'boolean', 
-          default: false
+          type: 'boolean',
+          default: false,
         },
         acceptedAt: {
           type: 'string',
@@ -128,17 +128,17 @@ export const aomSchema = {
       type: 'array',
       items: {
         // [ApplicationSchema]
-      }
+      },
     },
-    createdAt: { 
+    createdAt: {
       type: 'string',
       format: 'datetime',
     },
-    updatedAt: { 
+    updatedAt: {
       type: 'string',
       format: 'datetime',
     },
-    deletedAt: { 
+    deletedAt: {
       type: 'string',
       format: 'datetime',
     },

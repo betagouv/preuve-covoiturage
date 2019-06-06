@@ -16,27 +16,19 @@ import { operatorPatchSchema } from './schemas/operatorPatchSchema';
 import { operatorDeleteSchema } from './schemas/operatorDeleteSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
-  readonly serviceProviders = [
-    CommandServiceProvider,
-  ];
+  readonly serviceProviders = [CommandServiceProvider];
 
   readonly alias = [
     [OperatorRepositoryProviderInterfaceResolver, OperatorRepositoryProvider],
-    [ValidatorProviderInterfaceResolver, ValidatorProvider]
+    [ValidatorProviderInterfaceResolver, ValidatorProvider],
   ];
 
-  readonly handlers = [
-    AllOperatorAction,
-    CreateOperatorAction,
-    PatchOperatorAction,
-    DeleteOperatorAction,
-  ];
+  readonly handlers = [AllOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction];
 
   readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
     ['can', Middlewares.PermissionMiddleware],
-    ['validate', ValidatorMiddleware]
+    ['validate', ValidatorMiddleware],
   ];
-
 
   protected readonly validators: [string, any][] = [
     ['operator.create', operatorCreateSchema],
@@ -45,7 +37,9 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
-    this.getContainer().get(Providers.ConfigProvider).loadConfigDirectory(__dirname);
+    this.getContainer()
+      .get(Providers.ConfigProvider)
+      .loadConfigDirectory(__dirname);
     await super.boot();
     this.registerValidators();
   }

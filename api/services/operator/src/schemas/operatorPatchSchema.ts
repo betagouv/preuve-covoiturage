@@ -4,7 +4,7 @@ import { bankSchema } from './parts/bankSchema';
 import { contactsSchema } from './parts/contactsSchema';
 
 export const operatorPatchSchema = {
-  '$id': 'operator.patch',
+  $id: 'operator.patch',
   type: 'object',
   required: ['id', 'patch'],
   additionalProperties: false,

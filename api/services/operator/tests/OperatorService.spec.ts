@@ -31,7 +31,7 @@ const errorFactory = (err: Exceptions.RPCException) => {
       },
     },
   };
-}
+};
 
 const callFactory = (method: string, data: any, permissions: string[]) => ({
   id: 1,
@@ -70,7 +70,6 @@ describe('Operator service', () => {
         'Content-Type': 'application/json',
       },
     });
-
   });
 
   after(async () => {
@@ -89,10 +88,12 @@ describe('Operator service', () => {
             nom_commercial: 10,
             raison_sociale: 'Toto inc.',
           },
-          ['operator.create']
+          ['operator.create'],
         ),
-      )
-    ).to.eventually.deep.include(errorFactory(new Exceptions.InvalidParamsException('data.nom_commercial should be string')));
+      ),
+    ).to.eventually.deep.include(
+      errorFactory(new Exceptions.InvalidParamsException('data.nom_commercial should be string')),
+    );
   });
 
   it('should validate permission on create', async () => {
@@ -105,58 +106,64 @@ describe('Operator service', () => {
             nom_commercial: 'Toto',
             raison_sociale: 'Toto inc.',
           },
-          ['operator.list']
+          ['operator.list'],
         ),
-      )
+      ),
     ).to.eventually.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
   it('should work', async () => {
-    const { status: createStatus, data: createData } = await request.post('/', callFactory(
-      'operator:create',
-      {
-        nom_commercial: 'Toto',
-        raison_sociale: 'Toto inc.',
-      },
-      ['operator.create'],
-    ));
+    const { status: createStatus, data: createData } = await request.post(
+      '/',
+      callFactory(
+        'operator:create',
+        {
+          nom_commercial: 'Toto',
+          raison_sociale: 'Toto inc.',
+        },
+        ['operator.create'],
+      ),
+    );
     const { _id, nom_commercial } = createData.result;
     expect(createStatus).equal(200);
     expect(nom_commercial).to.eq('Toto');
 
-    const { status: patchStatus, data: patchData } = await request.post('/', callFactory(
-      'operator:patch',
-      {
-        id: _id,
-        patch: {
-          nom_commercial: 'Yop',
-        }
-      },
-      ['operator.update'],
-    ));
-    const { nom_commercial: patchedName} = patchData.result;
+    const { status: patchStatus, data: patchData } = await request.post(
+      '/',
+      callFactory(
+        'operator:patch',
+        {
+          id: _id,
+          patch: {
+            nom_commercial: 'Yop',
+          },
+        },
+        ['operator.update'],
+      ),
+    );
+    const { nom_commercial: patchedName } = patchData.result;
     expect(patchStatus).equal(200);
     expect(patchedName).to.eq('Yop');
 
-    
-
-    const { status: listStatus, data: listData } = await request.post('/', callFactory(
-      'operator:all',
-      {},
-      ['operator.list'],
-    ));
+    const { status: listStatus, data: listData } = await request.post(
+      '/',
+      callFactory('operator:all', {}, ['operator.list']),
+    );
     const list = listData.result;
     expect(listStatus).equal(200);
     expect(list.length).eq(1);
     expect(list[0].nom_commercial).eq(patchedName);
 
-    const { status: deleteStatus, data: deleteData } = await request.post('/', callFactory(
-      'operator:delete',
-      {
-        id: _id,
-      },
-      ['operator.delete'],
-    ));
+    const { status: deleteStatus, data: deleteData } = await request.post(
+      '/',
+      callFactory(
+        'operator:delete',
+        {
+          id: _id,
+        },
+        ['operator.delete'],
+      ),
+    );
     expect(deleteStatus).equal(200);
     expect(deleteData.result).equal(true);
   });

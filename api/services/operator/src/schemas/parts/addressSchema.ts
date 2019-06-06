@@ -4,16 +4,16 @@ export const addressSchema = {
   additionalProperties: false,
   properties: {
     street: {
-      type: 'string'
+      type: 'string',
     },
     city: {
-      type: 'string'
+      type: 'string',
     },
     country: {
-      type: 'string'
+      type: 'string',
     },
     postcode: {
-      type: 'string', 
+      type: 'string',
       // match: regex.postcode,
     },
     cedex: {

@@ -4,15 +4,15 @@ export const bankSchema = {
   additionalProperties: false,
   properties: {
     bank_name: {
-      type: 'string'
+      type: 'string',
     },
     client_name: {
-      type: 'string'
+      type: 'string',
     },
     iban: {
       type: 'string',
-      // validate: validators.iban, 
-      // set: setters.iban 
+      // validate: validators.iban,
+      // set: setters.iban
     },
     bic: {
       type: 'string',

@@ -1,5 +1,5 @@
 export const operatorDeleteSchema = {
-  '$id': 'operator.delete',
+  $id: 'operator.delete',
   type: 'object',
   required: ['id'],
   additionalProperties: false,

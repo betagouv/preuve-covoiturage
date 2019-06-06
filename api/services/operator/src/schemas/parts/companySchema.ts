@@ -4,7 +4,7 @@ export const companySchema = {
   additionalProperties: false,
   properties: {
     siren: {
-      type: 'string', 
+      type: 'string',
       // match: regex.siren,
     },
     naf_etablissement: {
@@ -16,11 +16,11 @@ export const companySchema = {
       // match: regex.naf,
     },
     nature_juridique: {
-      type: 'string'
+      type: 'string',
     },
     cle_nic: {
-      type: 'string', 
-      // match: regex.nic, 
+      type: 'string',
+      // match: regex.nic,
     },
     rna: {
       type: 'string',

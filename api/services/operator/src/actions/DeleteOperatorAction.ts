@@ -1,4 +1,5 @@
 import { Parents, Container } from '@pdc/core';
+
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 
 @Container.handler({
@@ -6,19 +7,17 @@ import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/Opera
   method: 'delete',
 })
 export class DeleteOperatorAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
+  public readonly middlewares: (string | [string, any])[] = [
     ['can', ['operator.delete']],
     ['validate', 'operator.delete'],
   ];
 
-  constructor(
-    private operatorRepository: OperatorRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: { id: string }): Promise<boolean> {
-    await this.operatorRepository.delete(params.id)
+    await this.operatorRepository.delete(params.id);
     return true;
   }
 }

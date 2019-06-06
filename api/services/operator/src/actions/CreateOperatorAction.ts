@@ -1,4 +1,5 @@
 import { Parents, Container } from '@pdc/core';
+
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { CreateOperatorParamsInterface, OperatorDbInterface } from '../interfaces/OperatorInterfaces';
 
@@ -7,14 +8,12 @@ import { CreateOperatorParamsInterface, OperatorDbInterface } from '../interface
   method: 'create',
 })
 export class CreateOperatorAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
+  public readonly middlewares: (string | [string, any])[] = [
     ['can', ['operator.create']],
     ['validate', 'operator.create'],
   ];
 
-  constructor(
-    private operatorRepository: OperatorRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }
 

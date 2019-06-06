@@ -1,4 +1,5 @@
 import { Parents, Container } from '@pdc/core';
+
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 
 @Container.handler({
@@ -6,13 +7,9 @@ import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/Opera
   method: 'all',
 })
 export class AllOperatorAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
-    ['can', ['operator.list']]
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['can', ['operator.list']]];
 
-  constructor(
-    private operatorRepository: OperatorRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }
 
