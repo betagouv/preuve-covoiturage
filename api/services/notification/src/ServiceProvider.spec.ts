@@ -1,10 +1,9 @@
 import { describe } from 'mocha';
-import path from 'path';
 import { Parents, Interfaces } from '@pdc/core';
+import path from 'path';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
-import { doesNotReject } from 'assert';
 
 import { ServiceProvider } from './ServiceProvider';
 
@@ -18,7 +17,7 @@ class ServiceKernel extends Parents.Kernel {
   serviceProviders = [ServiceProvider];
 }
 
-const service = (<Interfaces.KernelInterface>new ServiceKernel());
+const service = <Interfaces.KernelInterface>new ServiceKernel();
 let nockRequest;
 const url = /mailjet/;
 const endpoint = /send/;
@@ -34,12 +33,9 @@ describe('Notification service', async () => {
   it('works', async () => {
     nockRequest = nock(url)
       .post(endpoint)
-      .reply(
-      200,
-      {
+      .reply(200, {
         Messages: [],
-      },
-    );
+      });
 
     const response = await service.handle({
       id: 1,
@@ -62,41 +58,39 @@ describe('Notification service', async () => {
   it('send correct request to mailjet', (done) => {
     let body;
     nockRequest = nock(url)
-    .post(endpoint, (b) => {
-      body = b;
-      return b;
-    })
-    .reply(
-      200,
-      {
+      .post(endpoint, (b) => {
+        body = b;
+        return b;
+      })
+      .reply(200, {
         Messages: [],
-      },
-    ).on('replied', (req) => {
-      expect(body).to.deep.equal({
-        Messages:[
-          {
-            From: {
-              Email: '',
-              Name: '',
-            },
-            To: [
-              {
-                Email: 'test@fake.com',
-                Name: 'Mad tester',
+      })
+      .on('replied', (req) => {
+        expect(body).to.deep.equal({
+          Messages: [
+            {
+              From: {
+                Email: '',
+                Name: '',
               },
-            ],
-            TemplateID: null,
-            TemplateLanguage: true,
-            Subject: 'Mot de passe oublié',
-            Variables: {
-              title:'Mot de passe oublié',
-              content: 'Hello world !!!',
+              To: [
+                {
+                  Email: 'test@fake.com',
+                  Name: 'Mad tester',
+                },
+              ],
+              TemplateID: null,
+              TemplateLanguage: true,
+              Subject: 'Mot de passe oublié',
+              Variables: {
+                title: 'Mot de passe oublié',
+                content: 'Hello world !!!',
+              },
             },
-          },
-        ],
+          ],
+        });
+        done();
       });
-      done();
-    });
 
     service.handle({
       id: 1,
@@ -113,47 +107,46 @@ describe('Notification service', async () => {
   it('send correct request to mailjet with template', (done) => {
     let body;
     nockRequest = nock(url)
-    .post(endpoint, (b) => {
-      body = b;
-      return b;
-    })
-    .reply(
-      200,
-      {
+      .post(endpoint, (b) => {
+        body = b;
+        return b;
+      })
+      .reply(200, {
         Messages: [],
-      },
-    ).on('replied', (req) => {
-      expect(body).to.deep.equal({
-        Messages:[
-          {
-            From: {
-              Email: '',
-              Name: '',
-            },
-            To: [
-              {
-                Email: 'test@fake.com',
-                Name: 'Mad tester',
+      })
+      .on('replied', (req) => {
+        expect(body).to.deep.equal({
+          Messages: [
+            {
+              From: {
+                Email: '',
+                Name: '',
               },
-            ],
-            TemplateID: null,
-            TemplateLanguage: true,
-            Subject: 'Mot de passe oublié',
-            Variables: {
-              title:'Mot de passe oublié',
-              content: `Bonjour Mad tester,<br>
-              Vous avez demandé la réinitialisation de votre mot de passe sur le site du Registre de preuve de covoiturage.<br>
+              To: [
+                {
+                  Email: 'test@fake.com',
+                  Name: 'Mad tester',
+                },
+              ],
+              TemplateID: null,
+              TemplateLanguage: true,
+              Subject: 'Mot de passe oublié',
+              Variables: {
+                title: 'Mot de passe oublié',
+                content: `Bonjour Mad tester,<br>
+              Vous avez demandé la réinitialisation de votre mot de passe
+              sur le site du Registre de preuve de covoiturage.<br>
               <br>
               Veuillez cliquer sur le lien suivant et choisir un nouveau mot de passe.
               <br>
               <br>
               http://givememoney`.replace(/ {14}/g, ''),
+              },
             },
-          },
-        ],
+          ],
+        });
+        done();
       });
-      done();
-    });
 
     service.handle({
       id: 1,

@@ -2,13 +2,6 @@ import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
 import { CommandProvider } from '../providers/CommandProvider';
 
-
-/**
- * Cli Transport
- * @export
- * @class CliTransport
- * @implements {TransportInterface}
- */
 export class CliTransport implements TransportInterface {
   kernel: KernelInterface;
 
@@ -16,12 +9,15 @@ export class CliTransport implements TransportInterface {
     this.kernel = kernel;
   }
 
-  getKernel():KernelInterface {
+  getKernel(): KernelInterface {
     return this.kernel;
   }
 
   async up(opts: string[] = []) {
-    this.kernel.getContainer().get<CommandProvider>(CommandProvider).parse(opts);
+    this.kernel
+      .getContainer()
+      .get<CommandProvider>(CommandProvider)
+      .parse(opts);
   }
 
   async down() {

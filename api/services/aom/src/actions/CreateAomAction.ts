@@ -1,4 +1,5 @@
 import { Parents, Container } from '@pdc/core';
+
 import { AomRepositoryProviderInterfaceResolver } from '../interfaces/AomRepositoryProviderInterface';
 import { CreateAomParamsInterface, AomDbInterface } from '../interfaces/AomInterfaces';
 
@@ -7,9 +8,7 @@ import { CreateAomParamsInterface, AomDbInterface } from '../interfaces/AomInter
   method: 'create',
 })
 export class CreateAomAction extends Parents.Action {
-  constructor(
-    private aomRepository: AomRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private aomRepository: AomRepositoryProviderInterfaceResolver) {
     super();
   }
 

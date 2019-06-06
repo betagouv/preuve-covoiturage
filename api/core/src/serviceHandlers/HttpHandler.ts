@@ -10,12 +10,9 @@ import { ServiceException } from '../exceptions/ServiceException';
 
 /**
  * Http handler
- * @export
- * @class HttpHandler
- * @implements {HandlerInterface}
  */
 export class HttpHandler implements HandlerInterface {
-  public readonly middlewares: (string|[string, any])[] = [];
+  public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
   protected readonly version: string;
@@ -64,11 +61,6 @@ export class HttpHandler implements HandlerInterface {
 
 /**
  * httpHandlerFactory - Create a HttpHandler for a remote service
- * @export
- * @param {string} service - service name
- * @param {string} url - service url
- * @param {string} [version]
- * @returns {NewableType<HandlerInterface>}
  */
 export function httpHandlerFactory(service: string, url: string, version?: string): NewableType<HandlerInterface> {
   @handler({

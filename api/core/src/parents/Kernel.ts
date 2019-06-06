@@ -15,20 +15,12 @@ import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 import { InvalidRequestException } from '../exceptions/InvalidRequestException';
 import { ServiceProvider } from './ServiceProvider';
 
-
 /**
  * Kernel parent class
- * @export
- * @abstract
- * @class Kernel
- * @extends {ServiceProvider}
- * @implements {KernelInterface}
  */
 export abstract class Kernel extends ServiceProvider implements KernelInterface {
   /**
    * Creates an instance of Kernel.
-   * @param {ContainerInterface} [container]
-   * @memberof Kernel
    */
   constructor(container?: ContainerInterface) {
     super(container);
@@ -37,13 +29,8 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
     }
   }
 
-
   /**
    * Validate a call, check if JSON RPC standart is fulfilled properly
-   * @protected
-   * @param {RPCSingleCallType} call
-   * @returns {void}
-   * @memberof Kernel
    */
   protected validate(call: RPCSingleCallType): void {
     const keys = Reflect.ownKeys(call).filter((k: string) => ['jsonrpc', 'method', 'id', 'params'].indexOf(k) < 0);
@@ -59,7 +46,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       throw new InvalidRequestException('jsonrpc call must have a method property');
     }
 
-    if (('id' in call) && (typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null)) {
+    if ('id' in call && (typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null)) {
       throw new InvalidRequestException('id property should be either a string, a number or null');
     }
     return;
@@ -67,11 +54,6 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
 
   /**
    * Get the targeted handler and call. May throw an MethodNotFoundException
-   * @protected
-   * @param {*} config
-   * @param {*} call
-   * @returns
-   * @memberof Kernel
    */
   protected async getHandlerAndCall(config, call) {
     try {
@@ -85,41 +67,24 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
     }
   }
 
-
   /**
    * Call a method
-   * @param {string} method
-   * @param {ParamsType} params
-   * @param {ContextType} [context={ internal: true }]
-   * @returns {Promise<ResultType>}
-   * @memberof Kernel
    */
   public async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
     const handlerConfig = normalizeHandlerConfig({ signature: method });
     return this.getHandlerAndCall(handlerConfig, { method, params, context });
   }
 
-
   /**
    * Notify (async call) a method
-   * @param {string} method
-   * @param {ParamsType} params
-   * @param {ContextType} [context={ internal: true }]
-   * @returns {Promise<void>}
-   * @memberof Kernel
    */
   public async notify(method: string, params: ParamsType, context: ContextType): Promise<void> {
     const handlerConfig = normalizeHandlerConfig({ signature: method, queue: true });
     return this.getHandlerAndCall(handlerConfig, { method, params, context });
   }
 
-
   /**
    * Resolve a single RPC call
-   * @protected
-   * @param {RPCSingleCallType} call
-   * @returns {(Promise<RPCSingleResponseType | void>)}
-   * @memberof Kernel
    */
   protected async resolve(call: RPCSingleCallType): Promise<RPCSingleResponseType | void> {
     try {
@@ -168,12 +133,9 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
 
   /**
    * Handle an RPC Call
-   * @param {RPCCallType} call
-   * @returns {Promise<RPCResponseType>}
-   * @memberof Kernel
    */
   async handle(call: RPCCallType): Promise<RPCResponseType> {
-    if (!Array.isArray(call) && (typeof call !== 'object')) {
+    if (!Array.isArray(call) && typeof call !== 'object') {
       throw new InvalidRequestException();
     }
 

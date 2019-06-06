@@ -1,4 +1,5 @@
 import { Parents, Container } from '@pdc/core';
+
 import { AomRepositoryProviderInterfaceResolver } from '../interfaces/AomRepositoryProviderInterface';
 
 @Container.handler({
@@ -6,9 +7,7 @@ import { AomRepositoryProviderInterfaceResolver } from '../interfaces/AomReposit
   method: 'all',
 })
 export class AllAomAction extends Parents.Action {
-  constructor(
-    private aomRepository: AomRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private aomRepository: AomRepositoryProviderInterfaceResolver) {
     super();
   }
 

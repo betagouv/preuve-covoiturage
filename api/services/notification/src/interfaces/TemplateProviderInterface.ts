@@ -1,9 +1,9 @@
 import { Interfaces } from '@pdc/core';
 
 export interface TemplateProviderInterface extends Interfaces.ProviderInterface {
-  setMetadata(templateName: string, metadata: any):void;
+  setMetadata(templateName: string, metadata: any): void;
 
-  getMetadata(templateName: string):any;
+  getMetadata(templateName: string): any;
 
   set(templateName: string, template: string): void;
 
@@ -11,11 +11,11 @@ export interface TemplateProviderInterface extends Interfaces.ProviderInterface 
 }
 
 export abstract class TemplateProviderInterfaceResolver {
-  setMetadata(templateName: string, metadata: any):void {
+  setMetadata(templateName: string, metadata: any): void {
     throw new Error();
   }
 
-  getMetadata(templateName: string):any {
+  getMetadata(templateName: string): any {
     throw new Error();
   }
 
@@ -26,4 +26,4 @@ export abstract class TemplateProviderInterfaceResolver {
   get(templateName: string, opts: any): string {
     throw new Error();
   }
-};
+}

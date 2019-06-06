@@ -1,9 +1,5 @@
 import 'reflect-metadata';
-import {
-  Container as InversifyContainer,
-  ContainerModule as InversifyContainerModule,
-  interfaces,
-} from 'inversify';
+import { Container as InversifyContainer, ContainerModule as InversifyContainerModule, interfaces } from 'inversify';
 
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { NewableType } from '../types/NewableType';
@@ -16,8 +12,6 @@ export class Container extends InversifyContainer {
 
   /**
    * Creates an instance of Container.
-   * @param {interfaces.ContainerOptions} [containerOptions]
-   * @memberof Container
    */
   constructor(containerOptions?: interfaces.ContainerOptions) {
     super({
@@ -30,19 +24,13 @@ export class Container extends InversifyContainer {
 
   /**
    * Get all registred handlers
-   * @returns {HandlerConfig[]}
-   * @memberof Container
    */
   getHandlers(): HandlerConfig[] {
     return [...this.handlersRegistry];
   }
 
-
   /**
    * Get a particular handler
-   * @param {HandlerConfig} config
-   * @returns {HandlerInterface}
-   * @memberof Container
    */
   getHandler(config: HandlerConfig): HandlerInterface {
     const normalizedHandlerConfig = normalizeHandlerConfig(config);
@@ -75,10 +63,6 @@ export class Container extends InversifyContainer {
 
   /**
    * Get a particular handler or undefined if not known
-   * @protected
-   * @param {HandlerConfig} config
-   * @returns {(HandlerInterface | undefined)}
-   * @memberof Container
    */
   protected getHandlerFinal(config: HandlerConfig): HandlerInterface | undefined {
     const { containerSignature } = normalizeHandlerConfig(config);
@@ -92,14 +76,8 @@ export class Container extends InversifyContainer {
     return;
   }
 
-
   /**
    * Set an handler identified by config
-   * @protected
-   * @param {HandlerConfig} handlerConfig
-   * @param {*} resolvedHandler
-   * @returns
-   * @memberof Container
    */
   protected setHandlerFinal(handlerConfig: HandlerConfig, resolvedHandler: any) {
     if (this.parent) {
@@ -115,11 +93,8 @@ export class Container extends InversifyContainer {
     this.bind<HandlerInterface>(normalizedHandlerConfig.containerSignature).toConstantValue(resolvedHandler);
   }
 
-
   /**
    * Set an handler
-   * @param {NewableType<HandlerInterface>} handler
-   * @memberof Container
    */
   setHandler(handler: NewableType<HandlerInterface>): HandlerInterface {
     const service = Reflect.getMetadata('rpc:service', handler);

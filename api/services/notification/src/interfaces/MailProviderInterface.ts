@@ -10,4 +10,4 @@ export abstract class MailProviderInterfaceResolver {
   async send(mail: MailInterface): Promise<void> {
     throw new Error();
   }
-};
+}

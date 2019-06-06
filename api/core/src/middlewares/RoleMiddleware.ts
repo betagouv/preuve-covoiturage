@@ -5,17 +5,13 @@ import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { ParamsType, ResultType, ContextType } from '../types';
 import { middleware } from '../container';
 
-
 /**
  * Check role, may throw a ForbiddenException of a InvalidParamsException
- * @export
- * @param {...string[]} roles
- * @returns {MiddlewareInterface}
  */
 @middleware()
 export class RoleMiddleware implements MiddlewareInterface {
   async process(params: ParamsType, context: ContextType, next: Function, roles: string[]): Promise<ResultType> {
-    const filtered: string[] = roles.filter(i => !!i);
+    const filtered: string[] = roles.filter((i) => !!i);
 
     if (!filtered.length) {
       throw new InvalidParamsException('No role defined');

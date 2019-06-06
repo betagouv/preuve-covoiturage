@@ -1,11 +1,10 @@
 import { Types, Interfaces, Providers } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
 
-
 export type MigrationType = {
-  signature: string,
-  date?: Date,
-  success?: boolean,
+  signature: string;
+  date?: Date;
+  success?: boolean;
 };
 
 export interface MigrationInterface {
@@ -17,8 +16,8 @@ export abstract class ParentMigration implements MigrationInterface {
   static signature: string;
 
   static getSignature(): string {
-    if (this.signature) {
-      return this.signature;
+    if (ParentMigration.signature) {
+      return ParentMigration.signature;
     }
     throw new Error('No signature provided');
   }
@@ -37,7 +36,7 @@ export abstract class ParentMigrateCommand implements Interfaces.CommandInterfac
   protected readonly migrations: Types.NewableType<ParentMigration>[] = [];
   protected availableMigrationsMap: Map<string, ParentMigration> = new Map();
 
-  get signature():string {
+  get signature(): string {
     return `migrate.${this.entity}`;
   }
 
@@ -64,8 +63,7 @@ export abstract class ParentMigrateCommand implements Interfaces.CommandInterfac
     protected kernel: Interfaces.KernelInterfaceResolver,
     protected db: MongoProvider,
     protected config: Providers.ConfigProvider,
-  ) {
-  }
+  ) {}
 
   public async call({ rollback, reset, status }) {
     await this.boot();
@@ -87,7 +85,7 @@ export abstract class ParentMigrateCommand implements Interfaces.CommandInterfac
 
   protected boot() {
     const container = this.kernel.getContainer();
-    this.migrations.forEach(migration => {
+    this.migrations.forEach((migration) => {
       this.availableMigrationsMap.set((<any>migration).getSignature(), container.get(migration));
     });
   }
@@ -102,32 +100,30 @@ export abstract class ParentMigrateCommand implements Interfaces.CommandInterfac
     const dbMigrations = await this.listDbMigrations();
     const availableMigrations = this.availableMigrations;
     const result = [];
-    for(const signature of availableMigrations) {
-      const info = dbMigrations.find(migration => migration.signature === signature);
-      result.push({ signature, info })
+    for (const signature of availableMigrations) {
+      const info = dbMigrations.find((migration) => migration.signature === signature);
+      result.push({ signature, info });
     }
 
     let output = '';
     result.forEach(({ info, signature }) => {
-      output += `${signature}: ${info ? info.success ? 'success' : 'failed' : 'pending'}\n`;
+      output += `${signature}: ${info ? (info.success ? 'success' : 'failed') : 'pending'}\n`;
     });
     return output;
   }
 
   protected async rollback(round: number): Promise<string> {
     const dbMigrations = await this.listDbMigrations();
-    const orderedDbMigrations = dbMigrations
-      .filter(migration => migration.success === true)
-      .reverse();
+    const orderedDbMigrations = dbMigrations.filter((migration) => !!migration.success).reverse();
 
-    let output: string = '';
+    let output = '';
     for (let i = 0; i < round; i += 1) {
       const signature = orderedDbMigrations[i].signature;
       if (!this.availableMigrationsMap.has(signature)) {
         throw new Error(`Migration not found: ${signature}`);
       }
       const r = await this.applyMigrationAndSave(this.availableMigrationsMap.get(signature), true);
-      output += `${r.signature}: ${r.success ? 'success': 'failure'}\n`;
+      output += `${r.signature}: ${r.success ? 'success' : 'failure'}\n`;
     }
 
     return output;
@@ -140,33 +136,30 @@ export abstract class ParentMigrateCommand implements Interfaces.CommandInterfac
 
   protected async process(): Promise<string> {
     const dbMigrations = await this.listDbMigrations();
-    let output: string = '';
-    for(const migrationSignature of this.availableMigrations) {
-      if(!dbMigrations.find((m => m.signature === migrationSignature && m.success === true))) {
+    let output = '';
+    for (const migrationSignature of this.availableMigrations) {
+      if (!dbMigrations.find((m) => m.signature === migrationSignature && !!m.success)) {
         const r = await this.applyMigrationAndSave(this.availableMigrationsMap.get(migrationSignature));
-        output += `${r.signature}: ${r.success ? 'success': 'failure'}\n`;
+        output += `${r.signature}: ${r.success ? 'success' : 'failure'}\n`;
       }
     }
     return output;
   }
 
-  protected async listDbMigrations(): Promise<MigrationType[]>{
+  protected async listDbMigrations(): Promise<MigrationType[]> {
     try {
       const collection = await this.getMigrationCollection();
-      const result = await collection
-        .find({})
-        .toArray();
+      const result = await collection.find({}).toArray();
 
-      return result
-        .map((migration) => {
-          const date = ('date' in migration) ? migration.date : undefined;
-          const success = ('success' in migration) ? migration.success : undefined;
-          return {
-            date,
-            success,
-            signature: migration._id,
-          };
-        });
+      return result.map((migration) => {
+        const date = 'date' in migration ? migration.date : undefined;
+        const success = 'success' in migration ? migration.success : undefined;
+        return {
+          date,
+          success,
+          signature: migration._id,
+        };
+      });
     } catch {
       return [];
     }
@@ -184,18 +177,21 @@ export abstract class ParentMigrateCommand implements Interfaces.CommandInterfac
         date: data.date,
         success: data.success,
       };
-  
-      const { result } = await collection.replaceOne({ _id: dbData._id}, dbData, { upsert: true });
+
+      // tslint:disable-next-line: no-shadowed-variable
+      const { result } = await collection.replaceOne({ _id: dbData._id }, dbData, { upsert: true });
       if (result.ok !== 1) {
         return false;
       }
-  
+
       return true;
     }
+
     const { result } = await collection.deleteOne({ _id: data.signature });
     if (result.ok !== 1) {
       return false;
     }
+
     return true;
   }
 

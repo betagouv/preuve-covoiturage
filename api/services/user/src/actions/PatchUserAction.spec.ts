@@ -28,7 +28,6 @@ const mockUserNewProperties = {
   lastname: 'smith',
 };
 
-
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async patch(id: string, patch?: any): Promise<UserDbInterface> {
     return new User({
@@ -40,24 +39,21 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
       group: 'registry',
       role: 'admin',
       aom: '1ac',
-      permissions: [
-        'user.list',
-      ],
+      permissions: ['user.list'],
     });
   }
 }
 
-class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
-
-}
-
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
 
 const action = new PatchUserAction(new FakeUserRepository(), new FakeCryptoProvider());
 
 describe('Update user action', () => {
   it('should work', async () => {
-    const result = await action.handle({  id: mockUser._id , patch: mockUserNewProperties }, { call: { user:  mockFactory.newUser() } });
-    expect(result).to.include({ _id: mockUser._id , ...mockUserNewProperties });
+    const result = await action.handle(
+      { id: mockUser._id, patch: mockUserNewProperties },
+      { call: { user: mockFactory.newUser() } },
+    );
+    expect(result).to.include({ _id: mockUser._id, ...mockUserNewProperties });
   });
 });
-

@@ -1,11 +1,15 @@
 import { Types, Exceptions, Interfaces, Container } from '@pdc/core';
 
-export type ScopeToSelfMiddlewareOptionsType = [ string[], Function[]];
+export type ScopeToSelfMiddlewareOptionsType = [string[], Function[]];
 
 @Container.middleware()
 export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
-  async process(params: Types.ParamsType, context: Types.ContextType, next: Function,
-                options: ScopeToSelfMiddlewareOptionsType): Promise<Types.ResultType> {
+  async process(
+    params: Types.ParamsType,
+    context: Types.ContextType,
+    next: Function,
+    options: ScopeToSelfMiddlewareOptionsType,
+  ): Promise<Types.ResultType> {
     console.log('params', params);
     const [basePermissions, callbackPermissions] = options;
     if (!basePermissions || callbackPermissions.length === 0) {
@@ -19,7 +23,7 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
     const { permissions } = context.call.user;
 
     // Si l'utilisateur à une des permissions "de base", on laisse passer
-    if (permissions.filter(value => -1 !== basePermissions.indexOf(value)).length) {
+    if (permissions.filter((value) => -1 !== basePermissions.indexOf(value)).length) {
       return next(params, context);
     }
 
@@ -32,7 +36,6 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
     throw new Exceptions.ForbiddenException('Invalid permissions');
   }
 }
-
 
 // ['scopeIt', [['user.read'], [
 //   (params, context) => {

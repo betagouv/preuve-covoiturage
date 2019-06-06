@@ -5,26 +5,31 @@ import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { NewUserInterface, UserDbInterface } from '../interfaces/UserInterfaces';
 
-
 @Container.handler({
   service: 'user',
   method: 'create',
 })
 export class CreateUserAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
+  public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.create'],
-    ['scopeIt', [['user.create'], [
-      (params, context) => {
-        if ('aom' in params && params.aom === context.call.user.aom) {
-          return 'aom.users.add';
-        }
-      },
-      (params, context) => {
-        if ('operator' in params && params.aom === context.call.user.aom) {
-          return 'operator.users.add';
-        }
-      },
-    ]]],
+    [
+      'scopeIt',
+      [
+        ['user.create'],
+        [
+          (params, context) => {
+            if ('aom' in params && params.aom === context.call.user.aom) {
+              return 'aom.users.add';
+            }
+          },
+          (params, context) => {
+            if ('operator' in params && params.aom === context.call.user.aom) {
+              return 'operator.users.add';
+            }
+          },
+        ],
+      ],
+    ],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -35,7 +40,7 @@ export class CreateUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: NewUserInterface , context: Types.ContextType): Promise<UserDbInterface> {
+  public async handle(request: NewUserInterface, context: Types.ContextType): Promise<UserDbInterface> {
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
@@ -48,16 +53,15 @@ export class CreateUserAction extends Parents.Action {
 
     const payload: any = {
       email: request.email,
-      firstname : request.firstname,
-      lastname : request.lastname,
-      group : request.group,
-      role : request.role,
+      firstname: request.firstname,
+      lastname: request.lastname,
+      group: request.group,
+      role: request.role,
       phone: request.phone,
-      status : 'invited',
-      password : await this.cryptoProvider.cryptPassword(request.password),
-      requester : context.call.user.fullname,
+      status: 'invited',
+      password: await this.cryptoProvider.cryptPassword(request.password),
+      requester: context.call.user.fullname,
     };
-
 
     const op = request.operator;
     const ao = request.aom;
@@ -85,7 +89,11 @@ export class CreateUserAction extends Parents.Action {
     );
   }
 
-  private async forgottenPassword(invite: { requester: string, organisation: string}, user: UserDbInterface, context: Types.ContextType) {
+  private async forgottenPassword(
+    invite: { requester: string; organisation: string },
+    user: UserDbInterface,
+    context: Types.ContextType,
+  ) {
     // search for user
     if (!user) {
       throw new Exceptions.NotFoundException();

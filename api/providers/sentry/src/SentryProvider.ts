@@ -1,11 +1,10 @@
 import { Container, Providers, Interfaces } from '@pdc/core';
+
 import { Sentry } from './Sentry';
 
 @Container.provider()
 export class SentryProvider implements Interfaces.ProviderInterface {
-  constructor(
-    protected config: Providers.ConfigProvider,
-  ) {}
+  constructor(protected config: Providers.ConfigProvider) {}
 
   boot() {
     const sentryDSN = this.config.get('sentry.dsn');
@@ -16,6 +15,6 @@ export class SentryProvider implements Interfaces.ProviderInterface {
       dsn: sentryDSN,
       release: `pdc-api@${version}`,
       environment: env,
-    });    
+    });
   }
 }

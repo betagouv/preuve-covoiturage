@@ -1,7 +1,8 @@
-import { Providers, Container } from '@pdc/core';
 import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars';
+import { Providers, Container } from '@pdc/core';
+
 import { TemplateProviderInterface } from '../interfaces/TemplateProviderInterface';
 
 @Container.provider()
@@ -9,10 +10,7 @@ export class HandlebarsProvider implements TemplateProviderInterface {
   protected templates: Map<string, Function> = new Map();
   protected metadata: Map<string, any> = new Map();
 
-  constructor(
-    private envProvider: Providers.EnvProvider,
-    private configProvider: Providers.ConfigProvider,
-  ) {}
+  constructor(private envProvider: Providers.EnvProvider, private configProvider: Providers.ConfigProvider) {}
 
   async boot(): Promise<void> {
     const templateDirectory = this.configProvider.get('template.templateDirectory');
@@ -32,11 +30,11 @@ export class HandlebarsProvider implements TemplateProviderInterface {
     }
   }
 
-  setMetadata(templateName: string, metadata: any):void {
+  setMetadata(templateName: string, metadata: any): void {
     this.metadata.set(templateName, metadata);
   }
 
-  getMetadata(templateName: string):any {
+  getMetadata(templateName: string): any {
     if (this.metadata.has(templateName)) {
       return this.metadata.get(templateName);
     }

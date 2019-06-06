@@ -8,12 +8,6 @@ import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { EnvProvider } from './EnvProvider';
 import { provider } from '../container';
 
-/**
- * Config provider
- * @export
- * @class ConfigProvider
- * @implements {ProviderInterface}
- */
 @provider()
 export class ConfigProvider implements ProviderInterface {
   readonly signature: string = 'config';
@@ -26,10 +20,7 @@ export class ConfigProvider implements ProviderInterface {
   }
 
   loadConfigDirectory(workingPath: string, configDir?: string) {
-    const configFolder = path.resolve(
-      workingPath,
-      configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config'),
-    );
+    const configFolder = path.resolve(workingPath, configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config'));
 
     if (!fs.existsSync(configFolder) || !fs.lstatSync(configFolder).isDirectory()) {
       throw new Error(`Config path ${configFolder} is not a directory`);

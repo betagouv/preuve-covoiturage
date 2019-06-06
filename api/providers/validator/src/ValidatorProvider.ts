@@ -1,7 +1,8 @@
 import ajv from 'ajv';
-import { Container, Providers } from '@pdc/core';
+import { Container, Providers, Types } from '@pdc/core';
+
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
-import { Types } from '@pdc/core';
+
 import { ValidatorProviderInterface } from './ValidatorProviderInterface';
 import { Cache } from './Cache';
 
@@ -12,9 +13,7 @@ export class ValidatorProvider implements ValidatorProviderInterface {
   protected cache: Cache = new Cache();
   protected isSchemaSecure: ajv.ValidateFunction;
 
-  constructor(
-    protected config: Providers.ConfigProvider,
-  ) {}
+  constructor(protected config: Providers.ConfigProvider) {}
 
   boot() {
     const ajvConfig = {
@@ -40,12 +39,12 @@ export class ValidatorProvider implements ValidatorProviderInterface {
   }
 
   registerCustomKeyword(def: {
-    name: string,
-    type: string,
-    definition: ajv.FormatValidator | ajv.FormatDefinition | ajv.KeywordDefinition,
+    name: string;
+    type: string;
+    definition: ajv.FormatValidator | ajv.FormatDefinition | ajv.KeywordDefinition;
   }): ValidatorProviderInterface {
     const { name, type, definition } = def;
-    switch(type) {
+    switch (type) {
       case 'format':
         return this.addFormat(name, <ajv.FormatValidator | ajv.FormatDefinition>definition);
       case 'keyword':
@@ -61,7 +60,7 @@ export class ValidatorProvider implements ValidatorProviderInterface {
     }
 
     if (!this.isSchemaSecure(schema)) {
-      console.log(schema)
+      console.log(schema);
       throw new Error(this.ajv.errorsText(this.isSchemaSecure.errors));
     }
 

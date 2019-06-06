@@ -1,7 +1,7 @@
 export const aomSchema = {
-  '$id': 'aom',
+  $id: 'aom',
   type: 'object',
-  required: ['name',],
+  required: ['name'],
   additionalProperties: false,
   properties: {
     name: {
@@ -16,10 +16,12 @@ export const aomSchema = {
       default: '',
       maxlength: 12,
     },
-    insee: [{
-      type: 'string',
-      // match: regex.insee,
-    }],
+    insee: [
+      {
+        type: 'string',
+        // match: regex.insee,
+      },
+    ],
     insee_main: {
       type: 'string',
       // match: regex.insee,
@@ -34,7 +36,7 @@ export const aomSchema = {
       properties: {
         siren: {
           type: 'string',
-          // match: regex.siren, 
+          // match: regex.siren,
         },
         region: {
           type: 'string',
@@ -72,13 +74,13 @@ export const aomSchema = {
           type: 'string',
         },
         city: {
-          type: 'string'
+          type: 'string',
         },
         country: {
-          type: 'string'
+          type: 'string',
         },
         postcode: {
-          type: 'string', 
+          type: 'string',
           // match: regex.postcode,
         },
         cedex: {
@@ -140,9 +142,9 @@ export const aomSchema = {
         coordinates: {
           type: 'array',
         },
-      }
+      },
     },
-    deletedAt: { 
+    deletedAt: {
       type: 'string',
       format: 'datetime',
     },
@@ -150,6 +152,5 @@ export const aomSchema = {
 };
 
 // AomSchema.index({ geometry: '2dsphere' });
-
 //   },
 // };

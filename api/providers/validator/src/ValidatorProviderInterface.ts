@@ -2,7 +2,7 @@ import { Types, Interfaces } from '@pdc/core';
 
 export interface ValidatorProviderInterface extends Interfaces.ProviderInterface {
   registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorProviderInterface;
-  registerCustomKeyword(definition: any):ValidatorProviderInterface;
+  registerCustomKeyword(definition: any): ValidatorProviderInterface;
   validate(data: any, validator?: string): Promise<boolean>;
 }
 
@@ -13,10 +13,10 @@ export abstract class ValidatorProviderInterfaceResolver implements ValidatorPro
   registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorProviderInterface {
     throw new Error();
   }
-  registerCustomKeyword(definition: any):ValidatorProviderInterface {
+  registerCustomKeyword(definition: any): ValidatorProviderInterface {
     throw new Error();
   }
-  validate(data: any, validator?: string): Promise<boolean> {
+  async validate(data: any, validator?: string): Promise<boolean> {
     throw new Error();
   }
 }
