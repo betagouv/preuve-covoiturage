@@ -41,15 +41,17 @@
     "instrument": true
   },
   "dependencies": {
-    "ajv": "^6.10.0"
+    "ajv": "^6.10.0",
+    "google-libphonenumber": "^3.2.2"
   },
   "peerDependencies": {
-    "@pdc/core": "0.0.1",
-    "@ilos/provider-validator": "0.0.1"
+    "@ilos/provider-validator": "0.0.1",
+    "@pdc/core": "0.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
+    "@types/google-libphonenumber": "^7.4.17",
     "@types/mocha": "^5.2.6",
     "@types/sinon": "^7.0.11",
     "chai": "^4.2.0",

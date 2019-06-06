@@ -3,6 +3,7 @@ import { Container, Providers, Types } from '@pdc/core';
 
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
+import { CustomKeywordInterface } from './CustomKeywordInterface';
 import { ValidatorProviderInterface } from './ValidatorProviderInterface';
 import { Cache } from './Cache';
 
@@ -38,11 +39,7 @@ export class AjvValidatorProvider implements ValidatorProviderInterface {
     return this.addSchema(definition, target);
   }
 
-  registerCustomKeyword(def: {
-    name: string;
-    type: string;
-    definition: ajv.FormatValidator | ajv.FormatDefinition | ajv.KeywordDefinition;
-  }): ValidatorProviderInterface {
+  registerCustomKeyword(def: CustomKeywordInterface): ValidatorProviderInterface {
     const { name, type, definition } = def;
     switch (type) {
       case 'format':
