@@ -14,7 +14,7 @@ process.env.APP_MONGO_URL = '';
 process.env.APP_MONGO_DB = '';
 
 describe('Operator service provider', () => {
-  it('should work', async () => {
+  it('boots', async () => {
     const sp = new ServiceProvider();
     await expect(sp.boot()).to.become(undefined);
   });
