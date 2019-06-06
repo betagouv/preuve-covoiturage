@@ -35,7 +35,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   public async findByEmail(email: string): Promise<User> {
     const collection = await this.getCollection();
     const result = await collection.findOne({ email });
-    if (!result) throw new Exceptions.DDBNotFoundException('email not found');
+    if (!result) throw new Exceptions.NotFoundException('email not found');
     return this.instanciate(result);
   }
 
@@ -46,8 +46,8 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
 
     const normalizedFilters = this.normalizeContextFilters(filters);
 
-    const skip = 'skip' in filters ? filters.skip : this.config.get('user.defaultSkip')
-    const limit = 'limit' in filters ? filters.limit : this.config.get('user.defaultLimit')
+    const skip = 'skip' in filters ? filters.skip : this.config.get('user.defaultSkip');
+    const limit = 'limit' in filters ? filters.limit : this.config.get('user.defaultLimit');
 
     result = await collection.find(normalizedFilters).skip(skip).limit(limit).toArray();
 
@@ -76,7 +76,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
     const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters });
-    if (!result) throw new Exceptions.DDBNotFoundException('id not found');
+    if (!result) throw new Exceptions.NotFoundException('id not found');
     return this.instanciate(result);
   }
 

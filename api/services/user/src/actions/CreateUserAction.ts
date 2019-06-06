@@ -4,7 +4,6 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { NewUserInterface, UserDbInterface } from '../interfaces/UserInterfaces';
-import { UserPermissionsProviderInterfaceResolver } from '../interfaces/UserPermissionsProviderInterface';
 
 
 @Container.handler({
@@ -30,7 +29,6 @@ export class CreateUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
-    private userPermissions: UserPermissionsProviderInterfaceResolver,
     private config: Providers.ConfigProvider,
     private kernel: Interfaces.KernelInterfaceResolver,
   ) {
@@ -41,7 +39,7 @@ export class CreateUserAction extends Parents.Action {
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
-      throw new Exceptions.DDBConflictException('email conflict');
+      throw new Exceptions.ConflictException('email conflict');
     }
 
     if ('operator' in request && 'aom' in request) {
@@ -90,7 +88,7 @@ export class CreateUserAction extends Parents.Action {
   private async forgottenPassword(invite: { requester: string, organisation: string}, user: UserDbInterface, context: Types.ContextType) {
     // search for user
     if (!user) {
-      throw new Exceptions.DDBNotFoundException();
+      throw new Exceptions.NotFoundException();
     }
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();

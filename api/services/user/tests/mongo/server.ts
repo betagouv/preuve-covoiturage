@@ -28,7 +28,7 @@ export class FakeMongoServer {
     this.transport = await bootstrap.boot(['', '', 'http', this.port]);
     this.kernel = this.transport.getKernel();
     this.key = (<Providers.ConfigProvider>this.kernel.getContainer().get(Providers.ConfigProvider)).get('user.collectionName');
-    this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(key, this.dbName);
+    this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(this.key, this.dbName);
     return axios.create({
       baseURL: `http://127.0.0.1:${this.port}`,
       timeout: 1000,

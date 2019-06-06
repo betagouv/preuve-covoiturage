@@ -23,6 +23,7 @@ export interface UserBaseInterface {
 
 export interface UserDbInterface extends UserBaseInterface {
   _id?: string;
+  fullname: string;
   deletedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;

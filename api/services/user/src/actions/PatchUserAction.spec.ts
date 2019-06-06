@@ -7,7 +7,10 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { PatchUserAction } from './PatchUserAction';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { User } from '../entities/User';
+import { MockFactory } from '../../tests/mocks/factory';
 
+const mockFactory = new MockFactory();
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
@@ -28,7 +31,7 @@ const mockUserNewProperties = {
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async patch(id: string, patch?: any): Promise<UserDbInterface> {
-    return {
+    return new User({
       _id: id,
       email: 'john.schmidt@example.com',
       firstname: mockUserNewProperties.firstname,
@@ -40,7 +43,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
       permissions: [
         'user.list',
       ],
-    };
+    });
   }
 }
 
@@ -53,7 +56,7 @@ const action = new PatchUserAction(new FakeUserRepository(), new FakeCryptoProvi
 
 describe('Update user action', () => {
   it('should work', async () => {
-    const result = await action.handle({  id: mockUser._id , patch: mockUserNewProperties });
+    const result = await action.handle({  id: mockUser._id , patch: mockUserNewProperties }, { call: { user:  mockFactory.newUser() } });
     expect(result).to.include({ _id: mockUser._id , ...mockUserNewProperties });
   });
 });

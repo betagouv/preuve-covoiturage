@@ -1,12 +1,11 @@
 import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@pdc/provider-repository';
 
-import { User } from '../entities/User';
 import { UserDbInterface } from './UserInterfaces';
 
 import { User } from '../entities/User';
 
 export interface UserRepositoryProviderInterface extends ParentRepositoryProviderInterface {
-  findByEmail(email:string): Promise<User>;
+  findByEmail(email:string): Promise<UserDbInterface>;
   list(filters, pagination): Promise<{users: UserDbInterface[], total: number}>;
   deleteUser(id: string, contextParam: {aom?: string, operator?: string}): Promise<void>;
   findUser(id: string, contextParam: {aom?: string, operator?: string}): Promise<UserDbInterface>;

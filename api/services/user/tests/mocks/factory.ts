@@ -1,6 +1,7 @@
+import { Exceptions } from '@pdc/core';
+
 import { mockConnectedUserBase } from './connectedUserBase';
 import { mockNewUserBase } from './newUserBase';
-import { Exceptions } from '@pdc/core';
 
 
 interface UserparamsInterface {
@@ -23,9 +24,9 @@ export class MockFactory {
               userparams: UserparamsInterface = { permissions : [] },
               _id:string = 'fakeId') {
     return {
+      method,
       id: 1,
       jsonrpc: '2.0',
-      method,
       params: {
         params: data,
         _context: {
