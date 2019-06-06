@@ -8,7 +8,7 @@ export class User {
   public group: string;
   public permissions: string[];
   public phone: string;
-  public password: string;
+  public password?: string;
   public role?: string;
   public status?: string;
   public forgottenReset?: string;
@@ -30,7 +30,7 @@ export class User {
     firstname: string,
     group: string,
     permissions: string[],
-    password: string,
+    password?: string,
     role?: string,
     phone?: string,
     status?: string,
