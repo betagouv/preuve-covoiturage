@@ -42,6 +42,7 @@ export class CreateUserAction extends Parents.Action {
 
   public async handle(request: NewUserInterface, context: Types.ContextType): Promise<UserDbInterface> {
     // check if the user exists already
+
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
       throw new Exceptions.ConflictException('email conflict');
@@ -51,7 +52,8 @@ export class CreateUserAction extends Parents.Action {
       throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 
-    const payload: any = {
+    // create the new user
+    const user = new User({
       email: request.email,
       firstname: request.firstname,
       lastname: request.lastname,
@@ -60,31 +62,27 @@ export class CreateUserAction extends Parents.Action {
       phone: request.phone,
       status: 'invited',
       password: await this.cryptoProvider.cryptPassword(request.password),
-      requester: context.call.user.fullname,
-    };
+      permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`)
+    });
 
-    const op = request.operator;
-    const ao = request.aom;
-
-    if (op) {
-      payload.operator = op;
-    } else if (ao) {
-      payload.aom = ao;
+    if ('aom' in request) {
+      user.aom = request.aom;
+    }
+    if ('operator' in request) {
+      user.operator = request.operator;
     }
 
-    // create the new user
-    let user = new User(payload);
     user.permissions = this.config.get(`permissions.${user.group}.${user.role}`);
 
-    user = await this.userRepository.create(user);
+    const userCreated = await this.userRepository.create(user);
 
     // generate new token for a password reset on first access
     return this.forgottenPassword(
       {
-        requester: payload.requester,
-        organisation: payload.organisation,
+        requester: context.call.user.fullname,
+        organisation: "operatorNameORaomName", // a récupérer de l'opérateur ou de l'aom
       },
-      user,
+      userCreated,
       context,
     );
   }
