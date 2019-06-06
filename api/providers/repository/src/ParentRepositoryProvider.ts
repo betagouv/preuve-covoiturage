@@ -44,7 +44,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     const collection = await this.getCollection();
     const normalizedId = (typeof id === 'string') ? new ObjectId(id) : id;
     const result = await collection.findOne({ _id: normalizedId });
-    if (!result) throw new Exceptions.DDBNotFoundException('id not found');
+    if (!result) throw new Exceptions.NotFoundException('id not found');
     return this.instanciate(result);
   }
 
