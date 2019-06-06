@@ -1,4 +1,5 @@
 import { Parents, Container } from '@pdc/core';
+import { CreateJourneyParamsInterface } from '../interfaces/JourneyInterfaces';
 
 @Container.handler({
   service: 'acquisition',
@@ -10,7 +11,7 @@ export class CreateJourneyAction extends Parents.Action {
     super();
   }
 
-  protected async handle(): Promise<void> {
+  protected async handle(params: CreateJourneyParamsInterface): Promise<void> {
     
   }
 }
