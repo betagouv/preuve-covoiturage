@@ -1,5 +1,5 @@
 {
-  "name": "@pdc/provider-validator",
+  "name": "@ilos/provider-validator",
   "version": "0.0.1",
   "private": true,
   "main": "dist/index.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "watch-ts": "tsc -w",
-    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "lint": "tslint -c ../tslint.json -p tsconfig.json",
     "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts",
     "test": "mocha src/**/*.spec.ts"
   },
@@ -44,8 +44,7 @@
     "ajv": "^6.10.0"
   },
   "peerDependencies": {
-    "@pdc/core": "0.0.1",
-    "@ilos/provider-validator": "0.0.1"
+    "@pdc/core": "0.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

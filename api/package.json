@@ -24,6 +24,7 @@
   ],
   "workspaces": [
     "core",
+    "ilos-validator",
     "proxy",
     "providers/*",
     "services/*"

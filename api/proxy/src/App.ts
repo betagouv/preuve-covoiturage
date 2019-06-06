@@ -22,10 +22,14 @@ export class App implements Interfaces.TransportInterface {
   env: Providers.EnvProvider;
   port: string;
   server: http.Server;
-  readonly routeMap:(ObjectRouteMapType | ArrayRouteMapType)[] = [];
+  readonly routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [];
 
   constructor(kernel: Interfaces.KernelInterface) {
     this.kernel = kernel;
+  }
+
+  getKernel() {
+    return this.kernel;
   }
 
   async up() {
@@ -121,23 +125,21 @@ export class App implements Interfaces.TransportInterface {
   }
 
   private registerAuth() {
-    this.app.post('/login', asyncHandler(async (req, res, next) => {
-      try {
-        const response = await this.kernel.handle(
-          makeCall(
-            'user:login',
-            req.body,
-          ),
-        );
-        if (!response || Array.isArray(response) || 'error' in response) {
-          throw new Error('Forbidden');
+    this.app.post(
+      '/login',
+      asyncHandler(async (req, res, next) => {
+        try {
+          const response = await this.kernel.handle(makeCall('user:login', req.body));
+          if (!response || Array.isArray(response) || 'error' in response) {
+            throw new Error('Forbidden');
+          }
+          req.session.user = response.result;
+          res.json(response.result);
+        } catch (e) {
+          throw e;
         }
-        req.session.user = response.result;
-        res.json(response.result);
-      } catch (e) {
-        throw e;
-      }
-    }));
+      }),
+    );
 
     this.app.get('/profile', (req, res, next) => {
       if (!('user' in req.session)) {
@@ -183,31 +185,34 @@ export class App implements Interfaces.TransportInterface {
 
   private registerCallHandler() {
     const endpoint = this.config.get('proxy.rpcEndpoint', '/rpc');
-    this.app.get(endpoint, asyncHandler(async (req, res, next) => {
-      const response = await this.kernel
-        .getContainer()
-        .getHandlers()
-        .map(def => ({
-          service: def.service,
-          method: def.method,
-        }))
-        .reduce(
-          (acc, { service, method }) => {
+    this.app.get(
+      endpoint,
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel
+          .getContainer()
+          .getHandlers()
+          .map((def) => ({
+            service: def.service,
+            method: def.method,
+          }))
+          .reduce((acc, { service, method }) => {
             if (!(service in acc)) {
               acc[service] = [];
             }
             acc[service].push(method);
             return acc;
-          },
-          {},
-        );
-      res.json(response);
-    }));
+          }, {});
+        res.json(response);
+      }),
+    );
 
-    this.app.post(endpoint, asyncHandler(async (req, res, next) => {
-      const response = await this.kernel.handle(req.body);
-      res.json(response);
-    }));
+    this.app.post(
+      endpoint,
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(req.body);
+        res.json(response);
+      }),
+    );
   }
 
   private start() {
@@ -227,7 +232,6 @@ export class App implements Interfaces.TransportInterface {
 // const { PORT, sessionSecret } = require('@pdc/shared-config');
 // const { appUrl } = require('@pdc/shared-helpers').url(process.env.APP_URL, process.env.API_URL);
 
-
 // default response
 // this.app.use('/auth', require('@pdc/service-auth').auth.transports.http);
 // this.app.use('/stats', require('@pdc/service-stats').stats.transports.http);
@@ -242,4 +246,3 @@ export class App implements Interfaces.TransportInterface {
 // this.app.use('/incentive/policies', jwtUser, require('@pdc/service-policy').policy.transports.policyHttp);
 // this.app.use('/incentive/units', jwtUser, require('@pdc/service-policy').policy.transports.unitHttp);
 // this.app.use('/journeys', require('@pdc/service-acquisition').acquisition.transports.http);
-

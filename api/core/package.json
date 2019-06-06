@@ -16,7 +16,7 @@
     "watch-test": "yarn test -- --watchAll",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "lint": "tslint -c ../tslint.json -p tsconfig.json",
     "debug": "yarn build && yarn watch-debug",
     "serve-debug": "nodemon --inspect dist/kernel.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\""

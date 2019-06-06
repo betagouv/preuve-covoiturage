@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import { Providers } from '@pdc/core';
 
-import { ValidatorProvider } from './ValidatorProvider';
+import { AjvValidatorProvider } from './AjvValidatorProvider';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -27,7 +27,7 @@ class FakeObject {
 
 describe('Json Schema provider', () => {
   beforeEach(async () => {
-    provider = new ValidatorProvider(fakeConfigProvider);
+    provider = new AjvValidatorProvider(fakeConfigProvider);
     await provider.boot();
   });
 
@@ -49,7 +49,7 @@ describe('Json Schema provider', () => {
     expect(result).to.equal(true);
   });
 
-  it('should raise exception if data is invalid', () => {
+  it('should raise exception if data unvalid', () => {
     const schema = {
       $schema: 'http://json-schema.org/draft-07/schema#',
       $id: 'myschema',
@@ -95,7 +95,7 @@ describe('Json Schema provider', () => {
     expect(result).to.equal(true);
   });
 
-  it('should work with inheritance', async () => {
+  it('should work with inherance', async () => {
     class FakeObjectExtended extends FakeObject {}
 
     const schema = {
