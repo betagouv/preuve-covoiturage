@@ -121,26 +121,4 @@ export class CreateUserAction extends Parents.Action {
 
     return updatedUser;
   }
-
-  // todo: put this in authentification ?
-  private async forgottenPassword({ email, invite }, userCache = null) {
-    // search for user
-    const user = userCache || (await this.userRepository.findByEmail(email));
-    if (!user) {
-      // throw new NotFoundError();
-    }
-
-    const reset = this.randomProvider.generateToken();
-    const token = this.randomProvider.generateToken();
-
-    user.forgottenReset = reset;
-    user.forgottenToken = token;
-    user.forgottenAt = new Date();
-    const updatedUser = await this.userRepository.update(user);
-
-    // send the email
-    // user.invite(reset, token, invite.requester, invite.organisation);
-
-    return updatedUser;
-  }
 }

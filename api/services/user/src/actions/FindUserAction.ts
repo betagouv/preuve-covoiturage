@@ -35,9 +35,9 @@ export class FindUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: {id: string}): Promise<UserDbInterface> {
+  public async handle(request: {id: string}, context: UserContextInterface): Promise<UserDbInterface> {
     // middleware : "user.read"
-    const foundUser = this.userRepository.find(request.id);
+    const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {
       contextParam.aom = context.call.user.aom;
