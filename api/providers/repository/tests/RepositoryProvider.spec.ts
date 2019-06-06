@@ -3,6 +3,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 import { Parents, Providers, Container } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
+
 import { ParentRepositoryProvider } from '../src/index';
 
 let mongoServer;
@@ -31,10 +32,7 @@ class FakeConfigProvider extends Providers.ConfigProvider {
 
 @Container.provider()
 class UserRepositoryProvider extends ParentRepositoryProvider {
-  constructor(
-    protected config: Providers.ConfigProvider,
-    protected mongoProvider: MongoProvider,
-  ) {
+  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {
     super(config, mongoProvider);
   }
 
@@ -70,10 +68,7 @@ class UserRepositoryProvider extends ParentRepositoryProvider {
 }
 
 class Kernel extends Parents.Kernel {
-  alias = [
-    MongoProvider,
-    UserRepositoryProvider,
-  ];
+  alias = [MongoProvider, UserRepositoryProvider];
 }
 
 const kernel = new Kernel();
@@ -100,12 +95,12 @@ describe('Repository provider', () => {
   });
 
   beforeEach(async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     await repository.clear();
   });
 
   it('should create new document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -113,7 +108,7 @@ describe('Repository provider', () => {
   });
 
   it('should list documents', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     await repository.create({
       name: 'Tom',
     });
@@ -123,7 +118,7 @@ describe('Repository provider', () => {
   });
 
   it('should find document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -132,7 +127,7 @@ describe('Repository provider', () => {
   });
 
   it('should delete document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -142,7 +137,7 @@ describe('Repository provider', () => {
   });
 
   it('should patch document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -151,7 +146,7 @@ describe('Repository provider', () => {
   });
 
   it('should replace document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
