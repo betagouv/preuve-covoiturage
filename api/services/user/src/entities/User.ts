@@ -24,7 +24,7 @@ export class User {
   public updatedAt?: Date;
 
   constructor(data: {
-    _id?: string;
+    _id?: string,
     email: string,
     lastname: string,
     firstname: string,

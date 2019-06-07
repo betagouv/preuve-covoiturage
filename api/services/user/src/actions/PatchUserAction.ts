@@ -26,12 +26,12 @@ export class PatchUserAction extends Parents.Action {
           return 'profile.update';
         }
       },
-      (params, context) => {
+      (_params, context) => {
         if ('aom' in context.call.user) {
           return 'aom.users.update';
         }
       },
-      (params, context) => {
+      (_params, context) => {
         if ('operator' in context.call.user) {
           return 'operator.users.update';
         }

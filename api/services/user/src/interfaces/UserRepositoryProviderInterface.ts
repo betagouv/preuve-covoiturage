@@ -14,19 +14,19 @@ export interface UserRepositoryProviderInterface extends ParentRepositoryProvide
 
 export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepositoryProviderInterfaceResolver {
   public async findByEmail(email: string): Promise<UserDbInterface> {
-    return;
+    throw new Error();
   }
 
   public async list(filters, pagination): Promise<{ users: UserDbInterface[]; total: number }> {
-    return;
+    throw new Error();
   }
 
   public async deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void> {
-    return;
+    throw new Error();
   }
 
   public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<UserDbInterface> {
-    return;
+    throw new Error();
   }
 
   public async patchUser(
@@ -34,6 +34,6 @@ export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepo
     patch: any,
     contextParam: { aom?: string; operator?: string },
   ): Promise<UserDbInterface> {
-    return;
+    throw new Error();
   }
 }

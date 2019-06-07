@@ -47,13 +47,22 @@ export class FakeMongoServer {
     this.kernel = this.transport.getKernel();
     this.key = (<Providers.ConfigProvider>this.kernel.getContainer().get(Providers.ConfigProvider)).get('user.collectionName');
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(this.key, this.dbName);
+
     const normalizedUser = Object.assign({}, user);
-    if ('operator' in user ) normalizedUser.operator = new ObjectId(user.operator);
-    if ('aom' in user ) normalizedUser.aom = new ObjectId(user.aom);
+    if ('operator' in user) {
+      normalizedUser.operator = new ObjectId(user.operator);
+    }
+
+    if ('aom' in user) {
+      normalizedUser.aom = new ObjectId(user.aom);
+    }
+
     normalizedUser.password = await crypto.cryptPassword(user.password);
     const { result, ops } = await <Promise<any>>this.collection.insertOne(normalizedUser);
+
     let newUser = ops[0];
     newUser._id = newUser._id.toString();
+
     if ('operator' in user ) user.operator = user.operator.toString();
     if ('aom' in user ) user.aom = user.aom.toString();
     return new User(newUser);

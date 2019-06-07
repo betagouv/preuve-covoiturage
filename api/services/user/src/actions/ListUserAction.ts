@@ -24,12 +24,12 @@ export class ListUserAction extends Parents.Action {
   public readonly middlewares: (string|[string, any])[] = [
     ['validate', 'user.list'],
     ['scopeIt', [['user.list'], [
-      (params, context) => {
+      (_params, context) => {
         if ('aom' in context.call.user) {
           return 'aom.users.list';
         }
       },
-      (params, context) => {
+      (_params, context) => {
         if ('operator' in context.call.user) {
           return 'operator.users.list';
         }
@@ -78,16 +78,16 @@ export class ListUserAction extends Parents.Action {
     };
   }
 
-  private castPage(page) {
-    return Math.abs(page) || this.config.get('pagination.defaultPage'); // Math abs useful ?
+  private castPage(page: number): number {
+    return page || this.config.get('pagination.defaultPage'); // Math abs useful ?
   }
 
-  private castLimit(limit) {
-    const lim = Math.abs(limit) || this.config.get('pagination.defaultLimit'); // Math abs useful ?
+  private castLimit(limit: number): number {
+    const lim = limit || this.config.get('pagination.defaultLimit'); // Math abs useful ?
     return lim > this.config.get('pagination.maxLimit') ? this.config.get('pagination.maxLimit') : lim;
   }
 
-  private paginate(query: {limit: number, page: number}): {skip:number, limit:number} {
+  private paginate(query: { limit: number, page: number }): { skip: number, limit: number } {
     const limit = this.castLimit(query.limit);
     const skip = (this.castPage(query.page) - 1) * limit;
     return { skip, limit };

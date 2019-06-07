@@ -16,12 +16,12 @@ export class DeleteUserAction extends Parents.Action {
           return 'profile.delete';
         }
       },
-      (params, context) => {
+      (_params, context) => {
         if ('aom' in context.call.user) {
           return 'aom.users.remove';
         }
       },
-      (params, context) => {
+      (_params, context) => {
         if ('operator' in context.call.user) {
           return 'operator.users.remove';
         }

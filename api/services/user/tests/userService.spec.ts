@@ -232,7 +232,9 @@ describe('User service Find', () => {
         'user',
         {permissions: ['profile.read']},
         newRegistryUser._id,
-      ));
+      ),
+    );
+
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -419,11 +421,13 @@ describe('User service : List', () => {
       '/',
       mockFactory.call(
         'user:list',
-        {aom: newAomUser.aom},
+        { aom: newAomUser.aom },
         'aom',
         'admin',
-        {permissions: ['aom.users.list'], aom: newAomUser.aom},
-      ));
+        { permissions: ['aom.users.list'], aom: newAomUser.aom },
+      ),
+    );
+
     expect(data.result.data[0]).to.include({
       _id: newAomUser._id,
       email: newAomUser.email,
@@ -446,7 +450,9 @@ describe('User service : List', () => {
         'operators',
         'admin',
         {permissions: ['operator.users.list'], operator: newOperatorUser.operator},
-      ));
+      ),
+    );
+
     expect(data.result.data[0]).to.include({
       _id: newOperatorUser._id,
       email: newOperatorUser.email,

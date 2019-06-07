@@ -78,7 +78,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result);
   }
 
-  public async patchUser(id: string, patch: any, contextParam: {aom?: string, operator?: string}) {
+  public async patchUser(id: string, patch: any, contextParam: { aom?: string, operator?: string }) {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
@@ -97,7 +97,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result.value);
   }
 
-  private normalizeContextFilters(contextFilter: {aom?: string, operator?: string}) {
+  private normalizeContextFilters(contextFilter: { aom?: string, operator?: string }) {
     const normalizedFilters: { aom?: ObjectId, operator?: ObjectId} = {};
     if ('aom' in contextFilter) {
       normalizedFilters.aom = new ObjectId(contextFilter.aom);
@@ -108,7 +108,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return normalizedFilters;
   }
 
-  private async countUsers(filters: {aom?: ObjectId, operator?: ObjectId}) {
+  private async countUsers(filters: { aom?: ObjectId, operator?: ObjectId }) {
     const collection = await this.getCollection();
     return collection.countDocuments(filters);
   }
