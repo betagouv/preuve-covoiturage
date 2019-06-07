@@ -4,7 +4,9 @@ import { Providers, Types, Exceptions } from '@pdc/core';
 import { ParentRepositoryProviderInterface, Model } from './ParentRepositoryProviderInterface';
 
 export abstract class ParentRepositoryProvider implements ParentRepositoryProviderInterface {
-  protected validation: Set<string> = new Set();
+  protected readonly castObjectIds: string[] = [
+    '_id',
+  ];
 
   constructor(
     protected config: Providers.ConfigProvider,
@@ -93,13 +95,14 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     return data;
   }
 
-  async patch(id: ObjectId | string, patch?: any): Promise<Model> {
+  async patch(id: ObjectId | string, patch: any): Promise<Model> {
+    const castedPatch = this.castObjectIdFromString(patch);
     const collection = await this.getCollection();
     const normalizedId = (typeof id === 'string') ? new ObjectId(id) : id;
     const result = await collection.findOneAndUpdate(
       { _id: normalizedId },
       {
-        $set: patch,
+        $set: castedPatch,
       },
       {
         returnOriginal: false,
@@ -122,10 +125,33 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   protected instanciate(data: any): Model {
     const constructor = this.getModel();
-    return new constructor(data);
+
+    return new constructor(
+      this.castStringFromObjectId(data)
+    );
   }
 
   protected instanciateMany(data: any[]): Model[] {
     return data.map((d) => this.instanciate(d));
+  }
+
+  protected castObjectIdFromString(data: Model) {
+    const castedData = { ...data };
+    this.castObjectIds.forEach((path: string) => {
+      if (path in castedData) {
+        castedData[path] = new ObjectId(castedData[path]);
+      }
+    });
+    return castedData;
+  }
+
+  protected castStringFromObjectId(data) {
+    const castedData = { ...data };
+    this.castObjectIds.forEach((path: string) => {
+      if (path in castedData && castedData[path] instanceof ObjectId) {
+        castedData[path] = castedData[path].toString();
+      }
+    });
+    return castedData;
   }
 }
