@@ -1,6 +1,4 @@
-export const pagination = {
-  perPage: 25,
-  defaultPage: 1,
-  defaultLimit: 25,
-  maxLimit: 1000,
-};
+export const perPage = 25;
+export const defaultPage = 1;
+export const defaultLimit = 25;
+export const maxLimit = 1000;
