@@ -2,6 +2,9 @@ import { Exceptions } from '@pdc/core';
 
 import { mockConnectedUserBase } from './connectedUserBase';
 import { mockNewUserBase } from './newUserBase';
+import axios from "axios";
+
+
 
 
 interface UserparamsInterface {
@@ -17,6 +20,9 @@ interface AomOperator {
 
 
 export class MockFactory {
+
+  port = '8081';
+
   public call(method: string,
               data: any,
               group:string = 'registry',
@@ -43,6 +49,7 @@ export class MockFactory {
   }
 
   public newUser(group:string = 'registry', role:string = 'admin', aomOperator: AomOperator = {}, email?) {
+
     return {
       ...mockNewUserBase,
       group,
@@ -65,5 +72,16 @@ export class MockFactory {
         },
       },
     };
+  }
+
+  public request() {
+    return axios.create({
+      baseURL: `http://127.0.0.1:${this.port}`,
+      timeout: 1000,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
