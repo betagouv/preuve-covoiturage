@@ -170,7 +170,7 @@ const passengerSchema = {
 
 export const journeyDbSchema = {
   bsonType: 'object',
-  required: [''],
+  required: ['journey_id', 'operator_class', 'operator'],
   additionalProperties: false,
   properties: {
     journey_id: { // unique
