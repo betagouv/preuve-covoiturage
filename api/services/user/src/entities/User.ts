@@ -24,7 +24,7 @@ export class User {
   public updatedAt?: Date;
 
   constructor(data: {
-    _id?: string | ObjectId;
+    _id?: string;
     email: string,
     lastname: string,
     firstname: string,
@@ -46,7 +46,7 @@ export class User {
     createdAt?: Date,
     updatedAt?: Date,
   }) {
-    this._id = (typeof data._id === 'string') ? data._id : data._id.toString();
+    this._id = data._id ;
     this.email = data.email;
     this.lastname = data.lastname;
     this.firstname = data.firstname;
