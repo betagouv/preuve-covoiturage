@@ -47,7 +47,6 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
 
     const skip = 'skip' in filters ? filters.skip : this.config.get('user.defaultSkip');
     const limit = 'limit' in filters ? filters.limit : this.config.get('user.defaultLimit');
-
     result = await collection.find(normalizedFilters).skip(skip).limit(limit).toArray();
 
     const users = this.instanciateMany(result);
@@ -74,8 +73,8 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
-    const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters });
-    if (!result) throw new Exceptions.NotFoundException('id not found');
+    const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters});
+    if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }
 
