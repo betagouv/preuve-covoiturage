@@ -1,6 +1,7 @@
 export const userListSchema = {
   $id: 'user.list',
   type: 'object',
+  required: [],
   additionalProperties: false,
   properties: {
     page: {

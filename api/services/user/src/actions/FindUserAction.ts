@@ -18,12 +18,12 @@ export class FindUserAction extends Parents.Action {
         }
       },
       (params, context) => {
-        if ('aom' in context.call.user.aom) {
+        if ('aom' in context.call.user) {
           return 'aom.users.read';
         }
       },
       (params, context) => {
-        if ('operator' in context.call.user.operator) {
+        if ('operator' in context.call.user) {
           return 'operator.users.read';
         }
       },
@@ -36,7 +36,8 @@ export class FindUserAction extends Parents.Action {
   }
 
   public async handle(request: {id: string}, context: UserContextInterface): Promise<UserDbInterface> {
-    // middleware : "user.read"
+
+    console.log('find request', request)
     const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {

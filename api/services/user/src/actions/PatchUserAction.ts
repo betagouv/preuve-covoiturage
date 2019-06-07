@@ -27,12 +27,12 @@ export class PatchUserAction extends Parents.Action {
         }
       },
       (params, context) => {
-        if ('aom' in context.call.user.aom) {
+        if ('aom' in context.call.user) {
           return 'aom.users.update';
         }
       },
       (params, context) => {
-        if ('operator' in context.call.user.operator) {
+        if ('operator' in context.call.user) {
           return 'operator.users.update';
         }
       },
@@ -46,6 +46,7 @@ export class PatchUserAction extends Parents.Action {
   }
 
   public async handle(request: PatchUserInterface, context: UserContextInterface): Promise<UserDbInterface> {
+
     const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {
@@ -63,12 +64,13 @@ export class PatchUserAction extends Parents.Action {
     // change email
     if (request.patch.email) {
       // send email to confirm
-      return this.userRepository.patchUser(request.id, request.patch, contextParam);
+
+
     }
     return this.userRepository.patchUser(request.id, request.patch, contextParam);
   }
 
-  private async changePassword(id:string, data) {
+  private async changePassword(id:string, data: { oldPassword?:string, newPassword?: string }) {
     if (!_.has(data, 'oldPassword') || !_.has(data, 'newPassword')) { // can json schema do this ?
       throw new Exceptions.InvalidRequestException('Old and new passwords must be set');
     }
@@ -76,6 +78,8 @@ export class PatchUserAction extends Parents.Action {
     const user = await this.userRepository.find(id);
     const currentPassword = user.password;
 
+    console.log("comparision", data.oldPassword, currentPassword)
+    console.log("hashed pwd", this.cryptoProvider.cryptPassword(data.oldPassword))
     if (!(await this.cryptoProvider.comparePassword(data.oldPassword, currentPassword))) {
       throw new Exceptions.ForbiddenException('Wrong credentials');
     }

@@ -25,12 +25,12 @@ export class ListUserAction extends Parents.Action {
     ['validate', 'user.list'],
     ['scopeIt', [['user.list'], [
       (params, context) => {
-        if ('aom' in context.call.user.aom) {
+        if ('aom' in context.call.user) {
           return 'aom.users.list';
         }
       },
       (params, context) => {
-        if ('operator' in context.call.user.operator) {
+        if ('operator' in context.call.user) {
           return 'operator.users.list';
         }
       },
@@ -60,7 +60,6 @@ export class ListUserAction extends Parents.Action {
     // Pagination
     const page = 'page' in request ? this.castPage(request.page) : this.config.get('pagination.defaultPage');
     const limit = 'limit' in request ? this.castPage(request.limit) : this.config.get('pagination.defaultLimit');
-
     const pagination = this.paginate({ limit, page });
 
     const data = await this.userRepository.list(contextParam, pagination);
@@ -85,7 +84,7 @@ export class ListUserAction extends Parents.Action {
 
   private castLimit(limit) {
     const lim = Math.abs(limit) || this.config.get('pagination.defaultLimit'); // Math abs useful ?
-    return lim > this.config.get('pagination.maxLimit ') ? this.config.get('pagination.maxLimit ') : lim;
+    return lim > this.config.get('pagination.maxLimit') ? this.config.get('pagination.maxLimit') : lim;
   }
 
   private paginate(query: {limit: number, page: number}): {skip:number, limit:number} {
