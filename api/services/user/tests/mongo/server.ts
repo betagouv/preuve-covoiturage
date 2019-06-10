@@ -48,7 +48,7 @@ export class FakeMongoServer {
     this.key = (<Providers.ConfigProvider>this.kernel.getContainer().get(Providers.ConfigProvider)).get('user.collectionName');
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(this.key, this.dbName);
 
-    const normalizedUser = Object.assign({}, user);
+    const normalizedUser = { ...user };
     if ('operator' in user) {
       normalizedUser.operator = new ObjectId(user.operator);
     }
@@ -63,8 +63,8 @@ export class FakeMongoServer {
     let newUser = ops[0];
     newUser._id = newUser._id.toString();
 
-    if ('operator' in user ) user.operator = user.operator.toString();
-    if ('aom' in user ) user.aom = user.aom.toString();
+    if ('operator' in newUser ) newUser.operator = newUser.operator.toString();
+    if ('aom' in newUser ) newUser.aom = newUser.aom.toString();
     return new User(newUser);
   }
 

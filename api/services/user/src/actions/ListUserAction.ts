@@ -12,8 +12,8 @@ interface ListUserInterface {
 }
 
 interface ListUserRequestInterface {
-  page?: string;
-  limit?: string;
+  page?: number;
+  limit?: number;
 }
 
 @Container.handler({

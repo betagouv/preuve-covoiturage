@@ -36,8 +36,6 @@ export class FindUserAction extends Parents.Action {
   }
 
   public async handle(request: {id: string}, context: UserContextInterface): Promise<UserDbInterface> {
-
-    console.log('find request', request)
     const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {

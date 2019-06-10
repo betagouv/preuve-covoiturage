@@ -73,7 +73,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
-    const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters});
+    const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters });
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }

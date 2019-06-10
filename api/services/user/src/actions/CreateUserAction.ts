@@ -62,7 +62,7 @@ export class CreateUserAction extends Parents.Action {
       phone: request.phone,
       status: 'invited',
       password: await this.cryptoProvider.cryptPassword(request.password),
-      permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`)
+      permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
     });
 
     if ('aom' in request) {
@@ -80,7 +80,7 @@ export class CreateUserAction extends Parents.Action {
     return this.forgottenPassword(
       {
         requester: context.call.user.fullname,
-        organisation: "operatorNameORaomName", // a récupérer de l'opérateur ou de l'aom
+        organisation: 'operatorNameORaomName', // a récupérer de l'opérateur ou de l'aom
       },
       userCreated,
       context,

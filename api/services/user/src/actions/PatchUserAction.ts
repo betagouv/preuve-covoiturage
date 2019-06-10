@@ -46,7 +46,6 @@ export class PatchUserAction extends Parents.Action {
   }
 
   public async handle(request: PatchUserInterface, context: UserContextInterface): Promise<UserDbInterface> {
-
     const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {
@@ -64,8 +63,6 @@ export class PatchUserAction extends Parents.Action {
     // change email
     if (request.patch.email) {
       // send email to confirm
-
-
     }
     return this.userRepository.patchUser(request.id, request.patch, contextParam);
   }
@@ -78,8 +75,6 @@ export class PatchUserAction extends Parents.Action {
     const user = await this.userRepository.find(id);
     const currentPassword = user.password;
 
-    console.log("comparision", data.oldPassword, currentPassword)
-    console.log("hashed pwd", this.cryptoProvider.cryptPassword(data.oldPassword))
     if (!(await this.cryptoProvider.comparePassword(data.oldPassword, currentPassword))) {
       throw new Exceptions.ForbiddenException('Wrong credentials');
     }

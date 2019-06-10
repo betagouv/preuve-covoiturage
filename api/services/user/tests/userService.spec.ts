@@ -41,7 +41,6 @@ describe('User service Creation', () => {
         'admin',
         {permissions: ['user.create']},
       ));
-    console.log(createData.result)
     expect(createData.result).to.include({
       email: newRegistryUser.email,
       firstname: newRegistryUser.firstname,
@@ -484,7 +483,6 @@ describe('User service : Patch', () => {
   let newRegistryUser;
 
   before(async () => {
-    console.log('newRegistryUserModel', newRegistryUserModel)
     newAomUser = await fakeMongoServer.addUser(newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(newRegistryAdminModel);
@@ -497,7 +495,6 @@ describe('User service : Patch', () => {
       lastname: 'smith',
     };
 
-    console.log('id : ', newRegistryUser._id)
 
     const { status: status, data: data } = await request.post(
       '/',
@@ -511,7 +508,6 @@ describe('User service : Patch', () => {
         'admin',
         { permissions: ['user.update'] },
       ));
-    console.log(data);
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -543,7 +539,6 @@ describe('User service : Patch', () => {
         { permissions: ['profile.update'] },
         newRegistryUser._id,
       ));
-    console.log(data);
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -649,7 +644,6 @@ describe('User service : Patch', () => {
    */
   const newPassword = 'newPassword';
   it('registry admin - should change password registry user', async () => {
-    console.log('pwd old: ', newRegistryUserModel)
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
@@ -662,7 +656,6 @@ describe('User service : Patch', () => {
         'admin',
         { permissions: ['user.update'] },
       ));
-    console.log(data);
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,

@@ -10,7 +10,6 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
     next: Function,
     options: ScopeToSelfMiddlewareOptionsType,
   ): Promise<Types.ResultType> {
-    console.log('params', params);
     const [basePermissions, callbackPermissions] = options;
     if (!basePermissions || callbackPermissions.length === 0) {
       throw new Exceptions.InvalidParamsException('No permissions defined');
@@ -36,11 +35,3 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
     throw new Exceptions.ForbiddenException('Invalid permissions');
   }
 }
-
-// ['scopeIt', [['user.read'], [
-//   (params, context) => {
-//     if (params._id === context.call.user._id) {
-//         return 'profile.read';
-//     }
-//   },
-// ]]];

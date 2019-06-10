@@ -1,5 +1,3 @@
-import { ObjectId } from '@pdc/provider-mongo';
-
 export class User {
   public _id?: string;
   public email: string;
