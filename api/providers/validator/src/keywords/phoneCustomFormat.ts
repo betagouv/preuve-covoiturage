@@ -1,8 +1,8 @@
 import { PhoneNumberUtil, PhoneNumber } from 'google-libphonenumber';
 
-export const phoneCustomKeyword = {
+export const phoneCustomFormat = {
   name: 'phone',
-  type: 'string',
+  type: 'format',
 
   /**
    * validate the phone number.

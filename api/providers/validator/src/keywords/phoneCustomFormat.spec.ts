@@ -1,12 +1,12 @@
 import chai from 'chai';
 
-import { phoneCustomKeyword } from './phoneCustomKeyword';
+import { phoneCustomFormat } from './phoneCustomFormat';
 
 const { assert } = chai;
 
 describe('phone number validation', () => {
-  const yep = (s: string) => assert(phoneCustomKeyword.definition(s));
-  const nope = (s: string) => assert(!phoneCustomKeyword.definition(s));
+  const yep = (s: string) => assert(phoneCustomFormat.definition(s));
+  const nope = (s: string) => assert(!phoneCustomFormat.definition(s));
 
   it('yep: 01', () => yep('01 23 45 67 89'));
   it('yep: 02', () => yep('02 23 45 67 89'));
