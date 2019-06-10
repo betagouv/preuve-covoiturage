@@ -35,9 +35,6 @@ const mockUsers = [{
   phone: '0624857425',
 }];
 
-const mockRequest = {
-  aom: '1ac',
-};
 
 const mockInputPagination = {
   per_page: 25,
@@ -70,14 +67,25 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   }
 }
 
-// todo: missing fake config provider
-//
-// const action = new ListUserAction(new FakeUserRepository());
-//
-// describe('list users action', () => {
-//   it('should work', async () => {
-//     const result = await action.handle(mockRequest, mockContext);
-//     expect(result.data).to.be.an('array').to['containSubset'](mockUsers);
-//   });
-// });
+// todo: use configproviderinterfaceresolver
+class FakeConfigProvider extends Providers.ConfigProvider {
+  constructor(protected env: Providers.EnvProvider) {
+    super(env);
+  }
+
+  get(key: string, fallback?: any): any {
+    return ['user.list'];
+  }
+}
+
+const envProvider = new Providers.EnvProvider();
+
+const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvider(envProvider) );
+
+describe('list users action', () => {
+  it('should work', async () => {
+    const result = await action.handle({}, mockContext);
+    expect(result.data).to.be.an('array').to['containSubset'](mockUsers);
+  });
+});
 

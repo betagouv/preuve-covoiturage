@@ -104,26 +104,26 @@ export class CreateUserAction extends Parents.Action {
     user.forgottenAt = new Date();
     const updatedUser = await this.userRepository.update(user);
 
-    // this.kernel.notify(
-    //   'notification:sendTemplateEmail',
-    //   {
-    //     template: 'invite',
-    //     email: user.email,
-    //     fullName: user.fullname,
-    //     opts: {
-    //       requester: invite.requester,
-    //       organization: invite.organisation,
-    //       link: `${this.config.get('url.appUrl')}/confirm-email/${reset}/${token}`,
-    //     },
-    //   },
-    //   {
-    //     call: context.call,
-    //     channel: {
-    //       ...context.channel,
-    //       service: 'user',
-    //     },
-    //   },
-    // );
+    this.kernel.notify(
+      'notification:sendTemplateEmail',
+      {
+        template: 'invite',
+        email: user.email,
+        fullName: user.fullname,
+        opts: {
+          requester: invite.requester,
+          organization: invite.organisation,
+          link: `${this.config.get('url.appUrl')}/confirm-email/${reset}/${token}`,
+        },
+      },
+      {
+        call: context.call,
+        channel: {
+          ...context.channel,
+          service: 'user',
+        },
+      },
+    );
 
     return updatedUser;
   }

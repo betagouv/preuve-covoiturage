@@ -1,17 +1,17 @@
+// tslint:disable max-classes-per-file
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-
+import { Interfaces, Providers, Types } from '@pdc/core';
 
 import { CreateUserAction } from './CreateUserAction';
-import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserBaseInterface, UserDbInterface } from '../interfaces/UserInterfaces';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-const mockConnectedUser = <User>{
+const mockConnectedUser = <UserBaseInterface>{
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',
@@ -26,7 +26,7 @@ const mockConnectedUser = <User>{
 };
 
 
-const mockNewUser = {
+const mockNewUserParameters = {
   email: 'edouard.nelson@example.com',
   firstname: 'edouard',
   lastname: 'nelson',
@@ -57,27 +57,46 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
 
 }
 
+class FakeKernelProvider extends Interfaces.KernelInterfaceResolver{
+  notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
+    return;
+  }
+}
 
-// todo: add config resolver
-// todo: add kernel resolver
+// todo: use configproviderinterfaceresolver
+class FakeConfigProvider extends Providers.ConfigProvider {
+  constructor(protected env: Providers.EnvProvider) {
+    super(env);
+  }
 
+  get(key: string, fallback?: any): any {
+    return ['user.create'];
+  }
+}
 
-// const action = new CreateUserAction(new FakeUserRepository(), new FakeCryptoProvider());
-//
-// describe('Create user action', () => {
-//   it('should work', async () => {
-//     const result = await action.handle(mockNewUser, { call: { user: mockConnectedUser } });
-//
-//     expect(result).to.include({
-//       _id: '1ab',
-//       email: mockNewUser.email,
-//       firstname: mockNewUser.firstname,
-//       lastname: mockNewUser.lastname,
-//       phone: mockNewUser.phone,
-//       group: mockNewUser.group,
-//       role: mockNewUser.role,
-//       aom: mockNewUser.aom,
-//     });
-//   });
-// });
-//
+const envProvider = new Providers.EnvProvider();
+
+const action = new CreateUserAction(
+  new FakeUserRepository(),
+  new FakeCryptoProvider(),
+  new FakeConfigProvider(envProvider),
+  new FakeKernelProvider());
+
+describe('Create user action', () => {
+  it('should work', async () => {
+    const result = await action.handle(mockNewUserParameters,
+      { call: { user: mockConnectedUser }, channel: { service: '' } });
+
+    expect(result).to.include({
+      _id: '1ab',
+      email: mockNewUserParameters.email,
+      firstname: mockNewUserParameters.firstname,
+      lastname: mockNewUserParameters.lastname,
+      phone: mockNewUserParameters.phone,
+      group: mockNewUserParameters.group,
+      role: mockNewUserParameters.role,
+      aom: mockNewUserParameters.aom,
+    });
+  });
+});
+
