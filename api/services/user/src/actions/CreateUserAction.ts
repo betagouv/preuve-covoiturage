@@ -57,6 +57,7 @@ export class CreateUserAction extends Parents.Action {
       status: this.config.get('user.status.invited'),
       password: await this.cryptoProvider.cryptPassword(request.password),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
+      emailChangeAt: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);
