@@ -11,12 +11,14 @@ export interface UserBaseInterface {
   status?: string;
   forgottenReset?: string;
   forgottenToken?: string;
+  emailConfirm?: string;
+  emailToken?: string;
   operator?: string;
   aom?: string;
   hasResetPassword?: boolean;
   forgottenAt?: Date;
+  emailChangeAt?: Date;
   lastConnectedAt?: Date;
-  options?: object;
 
 }
 

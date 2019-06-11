@@ -11,10 +11,13 @@ export class User {
   public status?: string;
   public forgottenReset?: string;
   public forgottenToken?: string;
+  public emailConfirm?: string;
+  public emailToken?: string;
   public operator?: string;
   public aom?: string;
   public hasResetPassword?: boolean;
   public forgottenAt?: Date;
+  public emailChangeAt?: Date;
   public lastConnectedAt?: Date;
   public options?: object;
   public deletedAt?: Date;
@@ -34,10 +37,13 @@ export class User {
     status?: string,
     forgottenReset?: string,
     forgottenToken?: string,
+    emailConfirm?: string,
+    emailToken?: string,
     operator?: string,
     aom?: string,
     hasResetPassword?: boolean,
     forgottenAt?: Date,
+    emailChangeAt?: Date,
     lastConnectedAt?: Date,
     options?: object,
     deletedAt?: Date,
@@ -56,10 +62,13 @@ export class User {
     this.status = data.status;
     this.forgottenReset = data.forgottenReset;
     this.forgottenToken = data.forgottenToken;
+    this.emailConfirm = data.emailConfirm;
+    this.emailToken = data.emailToken;
     this.operator = data.operator;
     this.aom = data.aom;
     this.hasResetPassword = data.hasResetPassword;
     this.forgottenAt = data.forgottenAt;
+    this.emailChangeAt = data.emailChangeAt;
     this.lastConnectedAt = data.lastConnectedAt;
     this.options = data.options;
     this.deletedAt = data.deletedAt;
