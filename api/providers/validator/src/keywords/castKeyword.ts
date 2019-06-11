@@ -8,23 +8,21 @@ export const castKeyword = {
   definition: {
     modifying: true,
     errors: false,
-    compile: (schema, parentSchema, it) => {
-      return (data, dataPath, parentData, parentKey, rootData) => {
-        if (schema in castStore) {
-          parentData[parentKey] = castStore[schema]({
-            schema,
-            parentSchema,
-            it,
-            data,
-            dataPath,
-            parentData,
-            parentKey,
-            rootData,
-          });
-        }
+    compile: (schema, parentSchema, it) => (data, dataPath, parentData, parentKey, rootData) => {
+      if (schema in castStore) {
+        parentData[parentKey] = castStore[schema]({
+          schema,
+          parentSchema,
+          it,
+          data,
+          dataPath,
+          parentData,
+          parentKey,
+          rootData,
+        });
+      }
 
-        return true;
-      };
+      return true;
     },
     metaSchema: {
       type: 'string',

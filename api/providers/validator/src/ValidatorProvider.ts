@@ -8,6 +8,6 @@ export class ValidatorProvider extends AjvValidatorProvider implements Validator
   boot() {
     super.boot();
 
-    this.registerCustomKeyword(phoneCustomFormat);
+    this.addFormat('phone', phoneCustomFormat);
   }
 }
