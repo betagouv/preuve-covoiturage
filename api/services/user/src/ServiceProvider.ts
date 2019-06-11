@@ -22,6 +22,10 @@ import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
 import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
 import { ResetPasswordUserAction } from './actions/ResetPasswordUserAction';
 import { userConfirmEmailSchema } from './schemas/userConfirmEmailSchema';
+import { userChangePasswordSchema } from './schemas/userChangePasswordSchema';
+import { userChangeEmailSchema } from './schemas/userChangeEmailSchema';
+import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
+import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -31,6 +35,8 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   readonly handlers = [
+    ChangeEmailUserAction,
+    ChangePasswordUserAction,
     ConfirmEmailUserAction,
     CreateUserAction,
     DeleteUserAction,
@@ -50,10 +56,12 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
 
   protected readonly validators: [string, any][] = [
     ['user.create', userCreateSchema],
+    ['user.changePassword', userChangePasswordSchema],
+    ['user.changeEmail', userChangeEmailSchema],
     ['user.confirmEmail', userConfirmEmailSchema],
-    ['user.patch', userPatchSchema],
     ['user.find', userFindSchema],
     ['user.forgottenPassword', userForgottenPasswordSchema],
+    ['user.patch', userPatchSchema],
     ['user.list', userListSchema],
     ['user.delete', userDeleteSchema],
     ['user.resetPassword', userResetPasswordSchema],
