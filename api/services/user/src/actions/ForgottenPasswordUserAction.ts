@@ -52,7 +52,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
         opts: {
           requester: requester.fullname,
           organization: 'AomOrOperatorOrganisation',
-          link: `${this.config.get('url.appUrl')}/confirm-email/${reset}/${token}`,
+          link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
         },
       },
       {
