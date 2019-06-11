@@ -2,6 +2,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { Providers } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
@@ -21,11 +22,12 @@ const mockUser = new User({
   role: 'admin',
   aom: 'aomid',
   permissions: [],
+  forgottenAt: new Date(),
 });
-
 
 const mockResetPasswordParams = <ResetPasswordUserInterface>{
   token: 'tokenFromEmail',
+  reset: 'resetFromEmail',
   password: 'newPassword',
 };
 
@@ -47,11 +49,30 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
   async cryptPassword(plainPassword: string): Promise<string> {
     return cryptedPassword;
   }
+  async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
+    return true;
+  }
 }
 
+// todo: use configproviderinterfaceresolver
+class FakeConfigProvider extends Providers.ConfigProvider {
+  constructor(protected env: Providers.EnvProvider) {
+    super(env);
+  }
+
+  get(key: string, fallback?: any): any {
+    if (key === 'user.tokenExpiration.passwordReset') {
+      return 86400;
+    }
+  }
+}
+
+const envProvider = new Providers.EnvProvider();
+
 const action = new ResetPasswordUserAction(
-  new FakeUserRepository(),
+  new FakeConfigProvider(envProvider),
   new FakeCryptoProvider(),
+  new FakeUserRepository(),
 );
 
 describe('Reset password with token action', () => {

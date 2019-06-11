@@ -27,6 +27,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: ForgottenPasswordUserInterface, context: Types.ContextType): Promise<User> {
+
     // todo: find by email ?
 
     const user = await this.userRepository.find(params.id);
