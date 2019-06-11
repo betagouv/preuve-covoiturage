@@ -19,7 +19,6 @@ export class User {
   public forgottenAt?: Date;
   public emailChangeAt?: Date;
   public lastConnectedAt?: Date;
-  public options?: object;
   public deletedAt?: Date;
   public createdAt?: Date;
   public updatedAt?: Date;
@@ -45,7 +44,6 @@ export class User {
     forgottenAt?: Date,
     emailChangeAt?: Date,
     lastConnectedAt?: Date,
-    options?: object,
     deletedAt?: Date,
     createdAt?: Date,
     updatedAt?: Date,
@@ -70,7 +68,6 @@ export class User {
     this.forgottenAt = data.forgottenAt;
     this.emailChangeAt = data.emailChangeAt;
     this.lastConnectedAt = data.lastConnectedAt;
-    this.options = data.options;
     this.deletedAt = data.deletedAt;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
