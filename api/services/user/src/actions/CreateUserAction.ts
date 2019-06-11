@@ -42,7 +42,6 @@ export class CreateUserAction extends Parents.Action {
 
   public async handle(request: CreateUserParamsInterface, context: Types.ContextType): Promise<User> {
     // check if the user exists already
-
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {
       throw new Exceptions.ConflictException('email conflict');
@@ -54,25 +53,11 @@ export class CreateUserAction extends Parents.Action {
 
     // create the new user
     const user = new User({
-      email: request.email,
-      firstname: request.firstname,
-      lastname: request.lastname,
-      group: request.group,
-      role: request.role,
-      phone: request.phone,
-      status: 'invited',
+      ...request,
+      status: this.config.get('user.status.invited'),
       password: await this.cryptoProvider.cryptPassword(request.password),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
     });
-
-    if ('aom' in request) {
-      user.aom = request.aom;
-    }
-    if ('operator' in request) {
-      user.operator = request.operator;
-    }
-
-    user.permissions = this.config.get(`permissions.${user.group}.${user.role}`);
 
     const userCreated = await this.userRepository.create(user);
 
