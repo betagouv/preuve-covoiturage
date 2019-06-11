@@ -1,5 +1,9 @@
+import { dateCast } from '../cast/dateCast';
+import { positionCast } from '../cast/positionCast';
+
 const castStore = {
-  date: ({ data }) => new Date(data),
+  date: dateCast,
+  position: positionCast,
 };
 
 export const castKeyword = {

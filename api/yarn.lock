@@ -975,6 +975,11 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
+"@types/lodash@^4.14.134":
+  version "4.14.134"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.134.tgz#9032b440122db3a2a56200e91191996161dde5b9"
+  integrity sha512-2/O0khFUCFeDlbi7sZ7ZFRCcT812fAeOLm7Ev4KbwASkZ575TDrDcY7YyaoHdTOzKcNbfiwLYZqPmoC4wadrsw==
+
 "@types/mime@*":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.1.tgz#dc488842312a7f075149312905b5e3c0b054c79d"
@@ -4119,6 +4124,11 @@ husky@^2.4.0:
     read-pkg "^5.1.1"
     run-node "^1.0.0"
     slash "^3.0.0"
+
+ibantools@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/ibantools/-/ibantools-2.1.0.tgz#6cba8bec7c63288e297b5d1c506cef0212331818"
+  integrity sha512-Jy22RiajBgJyQwqeJOp+8uDl0IpGtzcPLPqnDixfbGXPAf+PyxbcVKEingHxmpdSG6BweOR3A4ii7v+j9IWGVg==
 
 iconv-lite@0.4.23:
   version "0.4.23"
