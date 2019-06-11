@@ -9,10 +9,16 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
+    "clean": "rm -rf ./**/dist",
     "precommit": "run-s format:fix lint",
     "watch": "lerna run --parallel watch-ts",
     "ls": "lerna ls",
-    "build": "lerna run --parallel build",
+    "build": "run-s clean build:core build:ilos build:providers build:services build:proxy",
+    "build:core": "lerna run --scope @pdc/core build",
+    "build:proxy": "lerna run --scope @pdc/proxy build",
+    "build:ilos": "lerna run --scope @ilos/* build",
+    "build:providers": "lerna run --scope @pdc/provider-* build",
+    "build:services": "lerna run --scope @pdc/service-* build",
     "format:fix": "pretty-quick --staged",
     "lint": "lerna run --parallel lint"
   },
