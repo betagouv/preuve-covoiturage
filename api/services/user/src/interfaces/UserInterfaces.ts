@@ -30,7 +30,7 @@ export interface UserDbInterface extends UserBaseInterface {
 }
 
 
-export interface NewUserInterface {
+export interface CreateUserParamsInterface {
   email: string;
   lastname: string;
   firstname: string;

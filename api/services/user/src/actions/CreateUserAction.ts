@@ -40,7 +40,7 @@ export class CreateUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: CreateUserParamsInterface, context: Types.ContextType): Promise<UserDbInterface> {
+  public async handle(request: CreateUserParamsInterface, context: Types.ContextType): Promise<User> {
     // check if the user exists already
 
     const foundUser = await this.userRepository.findByEmail(request.email);

@@ -1,23 +1,22 @@
 import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@pdc/provider-repository';
 
-import { UserDbInterface } from './UserInterfaces';
-
 import { User } from '../entities/User';
 
 export interface UserRepositoryProviderInterface extends ParentRepositoryProviderInterface {
-  findByEmail(email: string): Promise<UserDbInterface>;
-  list(filters, pagination): Promise<{ users: UserDbInterface[]; total: number }>;
+  findByEmail(email: string): Promise<User | undefined>;
+  list(filters, pagination): Promise<{ users: User[]; total: number }>;
   deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void>;
-  findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<UserDbInterface>;
-  findUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }): Promise<UserDbInterface>;
+  findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User>;
+  patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }): Promise<User>;
+  findUserByParam(param: { [prop: string]: string }): Promise<User>;
 }
 
 export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepositoryProviderInterfaceResolver {
-  public async findByEmail(email: string): Promise<UserDbInterface> {
+  public async findByEmail(email: string): Promise<User | undefined> {
     throw new Error();
   }
 
-  public async list(filters, pagination): Promise<{ users: UserDbInterface[]; total: number }> {
+  public async list(filters, pagination): Promise<{ users: User[]; total: number }> {
     throw new Error();
   }
 
@@ -25,7 +24,11 @@ export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepo
     throw new Error();
   }
 
-  public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<UserDbInterface> {
+  public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User> {
+    throw new Error();
+  }
+
+  public async findUserByParam(param: { [prop: string]: string }): Promise<User> {
     throw new Error();
   }
 
@@ -33,7 +36,7 @@ export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepo
     id: string,
     patch: any,
     contextParam: { aom?: string; operator?: string },
-  ): Promise<UserDbInterface> {
+  ): Promise<User> {
     throw new Error();
   }
 }

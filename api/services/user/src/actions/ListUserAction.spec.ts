@@ -80,7 +80,7 @@ class FakeConfigProvider extends Providers.ConfigProvider {
 
 const envProvider = new Providers.EnvProvider();
 
-const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvider(envProvider) );
+const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvider(envProvider));
 
 describe('list users action', () => {
   it('should work', async () => {

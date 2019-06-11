@@ -46,9 +46,6 @@ const mockForgottenPasswordParams = {
 
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  public async findByEmail(email: string): Promise<User> {
-    return null;
-  }
   public async update(user:UserDbInterface): Promise<User> {
     return new User({
       ...mockUser,

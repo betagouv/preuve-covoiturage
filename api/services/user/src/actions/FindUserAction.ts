@@ -1,8 +1,8 @@
 import { Parents, Container, Types } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
+import { User } from '../entities/User';
 
 @Container.handler({
   service: 'user',
@@ -35,7 +35,7 @@ export class FindUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: {id: string}, context: UserContextInterface): Promise<UserDbInterface> {
+  public async handle(request: {id: string}, context: UserContextInterface): Promise<User> {
     const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {

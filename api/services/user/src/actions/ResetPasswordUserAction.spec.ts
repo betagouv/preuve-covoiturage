@@ -2,7 +2,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Providers } from '@pdc/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
@@ -30,9 +29,7 @@ const mockResetPasswordParams = <ResetPasswordUserInterface>{
   password: 'newPassword',
 };
 
-
 const cryptedPassword = 'cryptedPassword';
-
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   public async findUserByParam(param: { [prop: string]: string }): Promise<User> {
@@ -51,8 +48,6 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
     return cryptedPassword;
   }
 }
-
-const envProvider = new Providers.EnvProvider();
 
 const action = new ResetPasswordUserAction(
   new FakeUserRepository(),

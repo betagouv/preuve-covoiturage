@@ -5,7 +5,6 @@ import { MongoException, MongoProvider, ObjectId } from '@pdc/provider-mongo';
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
 
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface{
@@ -38,7 +37,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return result ? this.instanciate(result) : result;
   }
 
-  public async list(filters, pagination): Promise<{users: UserDbInterface[], total: number}> {
+  public async list(filters, pagination): Promise<{users: User[], total: number}> {
     let result = [];
 
     const collection = await this.getCollection();
@@ -69,11 +68,18 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return;
   }
 
-  public async findUser(id: string, contextParam: {aom?: string, operator?: string}): Promise<UserDbInterface> {
+  public async findUser(id: string, contextParam: {aom?: string, operator?: string}): Promise<User> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
     const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters });
+    if (!result) throw new Exceptions.NotFoundException('User not found');
+    return this.instanciate(result);
+  }
+
+  public async findUserByParam(param: {[prop: string]: string}): Promise<User> {
+    const collection = await this.getCollection();
+    const result = await collection.findOne(param);
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }

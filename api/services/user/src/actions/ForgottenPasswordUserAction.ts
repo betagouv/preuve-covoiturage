@@ -2,7 +2,6 @@ import { Parents, Container, Providers, Types, Interfaces } from '@pdc/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 
 interface ForgottenPasswordUserInterface {
@@ -27,7 +26,9 @@ export class ForgottenPasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ForgottenPasswordUserInterface, context: Types.ContextType): Promise<UserDbInterface> {
+  public async handle(params: ForgottenPasswordUserInterface, context: Types.ContextType): Promise<User> {
+    // todo: find by email ?
+
     const user = await this.userRepository.find(params.id);
 
     const reset = this.cryptoProvider.generateToken();

@@ -1,12 +1,9 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-
-
 import { bootstrap, Providers } from '@pdc/core';
 import { MongoProvider, ObjectId } from '@pdc/provider-mongo';
-import { CryptoProvider} from "@pdc/provider-crypto";
-import { NewUserInterface } from '../../src/interfaces/UserInterfaces';
-import { User } from '../../src/entities/User';
+import { CryptoProvider } from '@pdc/provider-crypto';
 
+import { User } from '../../src/entities/User';
 
 const crypto = new CryptoProvider();
 
@@ -45,8 +42,10 @@ export class FakeMongoServer {
 
   public async addUser(user: any): Promise<User> {
     this.kernel = this.transport.getKernel();
-    this.key = (<Providers.ConfigProvider>this.kernel.getContainer().get(Providers.ConfigProvider)).get('user.collectionName');
-    this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(this.key, this.dbName);
+    this.key = (<Providers.ConfigProvider>this.kernel.getContainer()
+      .get(Providers.ConfigProvider)).get('user.collectionName');
+    this.collection = await (<MongoProvider>this.kernel.getContainer()
+      .get(MongoProvider)).getCollectionFromDb(this.key, this.dbName);
 
     const normalizedUser = { ...user };
     if ('operator' in user) {
@@ -60,18 +59,20 @@ export class FakeMongoServer {
     normalizedUser.password = await crypto.cryptPassword(user.password);
     const { result, ops } = await <Promise<any>>this.collection.insertOne(normalizedUser);
 
-    let newUser = ops[0];
+    const newUser = ops[0];
     newUser._id = newUser._id.toString();
 
-    if ('operator' in newUser ) newUser.operator = newUser.operator.toString();
-    if ('aom' in newUser ) newUser.aom = newUser.aom.toString();
+    if ('operator' in newUser) newUser.operator = newUser.operator.toString();
+    if ('aom' in newUser) newUser.aom = newUser.aom.toString();
     return new User(newUser);
   }
 
   public async clearCollection(): Promise<void> {
     this.kernel = this.transport.getKernel();
-    this.key = (<Providers.ConfigProvider>this.kernel.getContainer().get(Providers.ConfigProvider)).get('user.collectionName');
-    this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(this.key, this.dbName);
+    this.key = (<Providers.ConfigProvider>this.kernel.getContainer()
+      .get(Providers.ConfigProvider)).get('user.collectionName');
+    this.collection = await (<MongoProvider>this.kernel.getContainer()
+      .get(MongoProvider)).getCollectionFromDb(this.key, this.dbName);
     await this.collection.remove();
   }
 }

@@ -2,16 +2,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Exceptions, Interfaces, Providers, Types } from '@pdc/core';
+import { Interfaces, Providers, Types } from '@pdc/core';
 
 import { CreateUserAction } from './CreateUserAction';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserBaseInterface, UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { User } from '../entities/User';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-const mockConnectedUser = <UserBaseInterface>{
+const mockConnectedUser = new User({
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',
@@ -23,7 +24,7 @@ const mockConnectedUser = <UserBaseInterface>{
   permissions: [
     'user.list',
   ],
-};
+});
 
 
 const mockCreateUserParameters = {
@@ -48,14 +49,11 @@ const mockId = '1ad';
 
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  public async findByEmail(email: string): Promise<UserDbInterface> {
+  public async findByEmail(email: string): Promise<User> {
     return null;
   }
-  public async update(user:UserDbInterface): Promise<UserDbInterface> {
-    return user;
-  }
-  public async create(user:UserDbInterface): Promise<UserDbInterface> {
-    return { ...user, _id: mockId };
+  public async create(user:UserDbInterface): Promise<User> {
+    return new User({ ...mockCreateUserParameters, _id: mockId , permissions: [] });
   }
 }
 
