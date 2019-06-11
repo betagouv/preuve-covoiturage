@@ -672,4 +672,28 @@ describe('User service : Patch', () => {
   );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Wrong credentials')));
   });
+
+
+  /*
+  CHANGE EMAIL
+   */
+  const newEmail = 'newEmail@example.com';
+  it('registry admin - should change email registry user', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      mockFactory.call(
+        'user:patch',
+        {
+          id: newRegistryUser._id,
+          patch: { email: newEmail },
+        },
+        'registry',
+        'admin',
+        { permissions: ['user.update'] },
+      ));
+    expect(data.result).to.include({
+      email: newEmail,
+    });
+    expect(status).equal(200);
+  });
 });
