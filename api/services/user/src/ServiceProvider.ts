@@ -15,7 +15,13 @@ import { userDeleteSchema } from './schemas/userDeleteSchema';
 import { userCreateSchema } from './schemas/userCreateSchema';
 import { userFindSchema } from './schemas/userFindSchema';
 import { userListSchema } from './schemas/userListSchema';
+import { userResetPasswordSchema } from './schemas/userResetPasswordSchema';
+import { userForgottenPasswordSchema } from './schemas/userForgottenPasswordSchema';
 import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
+import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
+import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
+import { ResetPasswordUserAction } from './actions/ResetPasswordUserAction';
+import { userConfirmEmailSchema } from './schemas/userConfirmEmailSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -25,11 +31,14 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   readonly handlers = [
+    ConfirmEmailUserAction,
     CreateUserAction,
     DeleteUserAction,
     FindUserAction,
+    ForgottenPasswordUserAction,
     ListUserAction,
     PatchUserAction,
+    ResetPasswordUserAction,
   ];
 
   readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
@@ -41,10 +50,13 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
 
   protected readonly validators: [string, any][] = [
     ['user.create', userCreateSchema],
+    ['user.confirmEmail', userConfirmEmailSchema],
     ['user.patch', userPatchSchema],
     ['user.find', userFindSchema],
+    ['user.forgottenPassword', userForgottenPasswordSchema],
     ['user.list', userListSchema],
     ['user.delete', userDeleteSchema],
+    ['user.resetPassword', userResetPasswordSchema],
   ];
 
   public async boot() {
