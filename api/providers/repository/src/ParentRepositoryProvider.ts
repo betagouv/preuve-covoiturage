@@ -76,13 +76,14 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
   }
 
   async update(data: Model): Promise<Model> {
+    const normalizedData = this.castObjectIdFromString(data);
     const collection = await this.getCollection();
-    const selector = { _id: data._id };
-    const { modifiedCount } = await collection.replaceOne(selector, data);
+    const selector = { _id: normalizedData._id };
+    const { modifiedCount } = await collection.replaceOne(selector, normalizedData);
     if (modifiedCount !== 1) {
       throw new MongoException();
     }
-    return data;
+    return this.instanciate(data);
   }
 
   async updateOrCreate(data: Model): Promise<Model> {
@@ -127,7 +128,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     const constructor = this.getModel();
 
     return new constructor(
-      this.castStringFromObjectId(data)
+      this.castStringFromObjectId(data),
     );
   }
 
