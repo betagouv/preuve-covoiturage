@@ -17,7 +17,7 @@ export class SendTemplateMailAction extends Parents.Action {
   ) {
     super();
   }
-  protected async handle(params: SendTemplateMailParamsInterface):Promise<void> {
+  protected async handle(params: SendTemplateMailParamsInterface): Promise<void> {
     const { template, email, fullname, opts } = params;
 
     let { subject, title } = this.template.getMetadata(template);

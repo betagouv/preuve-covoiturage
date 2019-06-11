@@ -20,7 +20,9 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
-    this.getContainer().get(Providers.ConfigProvider).loadConfigDirectory(__dirname);
+    this.getContainer()
+      .get(Providers.ConfigProvider)
+      .loadConfigDirectory(__dirname);
     await super.boot();
   }
 }

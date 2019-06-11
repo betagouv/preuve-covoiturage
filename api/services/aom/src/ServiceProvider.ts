@@ -8,19 +8,14 @@ import { DeleteAomAction } from './actions/DeleteAomAction';
 import { PatchAomAction } from './actions/PatchAomAction';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
-  readonly alias = [
-    [AomRepositoryProviderInterfaceResolver, AomRepositoryProvider],
-  ];
+  readonly alias = [[AomRepositoryProviderInterfaceResolver, AomRepositoryProvider]];
 
-  handlers = [
-    AllAomAction,
-    CreateAomAction,
-    PatchAomAction,
-    DeleteAomAction,
-  ];
+  handlers = [AllAomAction, CreateAomAction, PatchAomAction, DeleteAomAction];
 
   public async boot() {
-    this.getContainer().get(Providers.ConfigProvider).loadConfigDirectory(__dirname);
+    this.getContainer()
+      .get(Providers.ConfigProvider)
+      .loadConfigDirectory(__dirname);
     await super.boot();
   }
 }

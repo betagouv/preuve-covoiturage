@@ -6,9 +6,7 @@ export class MongoProvider implements Interfaces.ProviderInterface {
   protected client: MongoClient;
   protected connected = false;
 
-  constructor(
-    protected config: Providers.ConfigProvider,
-  ) {}
+  constructor(protected config: Providers.ConfigProvider) {}
 
   async boot() {
     const mongoConfig = {

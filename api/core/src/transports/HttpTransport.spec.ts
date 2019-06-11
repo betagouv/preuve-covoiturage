@@ -42,14 +42,15 @@ describe('Http transport', () => {
   });
 
   it('should work', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(200);
     expect(response.body).to.deep.equal({
       id: 1,
@@ -59,56 +60,61 @@ describe('Http transport', () => {
   });
 
   it('should fail if missing accept header', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
   });
 
   it('should fail if missing content type header', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
   });
 
   it('should fail if http verb is not POST', async () => {
-    const response = await request.get('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .get('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(405);
   });
 
   it('should fail if json is misformed', async () => {
-    const response = await request.post('/')
-        .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
   });
 
   it('should fail if service reject', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'error',
-        })
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'error',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(500);
   });
 });

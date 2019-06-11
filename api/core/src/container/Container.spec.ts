@@ -56,8 +56,7 @@ describe('Container', () => {
       public world = '!!';
       @inject(HelloLib) helloLib: HelloLib;
 
-      boot(
-      ) {
+      boot() {
         this.world = this.helloLib.world;
       }
     }

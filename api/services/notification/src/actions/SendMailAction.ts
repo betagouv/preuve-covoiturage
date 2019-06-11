@@ -8,9 +8,7 @@ import { MailProviderInterfaceResolver } from '../interfaces/MailProviderInterfa
   method: 'sendmail',
 })
 export class SendMailAction extends Parents.Action {
-  constructor(
-    private ml: MailProviderInterfaceResolver,
-  ) {
+  constructor(private ml: MailProviderInterfaceResolver) {
     super();
   }
 

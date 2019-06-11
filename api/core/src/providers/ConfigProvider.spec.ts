@@ -28,9 +28,7 @@ describe('Config provider', () => {
     const configProvider = new ConfigProvider(new FakeEnvProvider());
     await configProvider.boot();
     expect(configProvider.get('helloWorld')).to.deep.equal({
-      hi: [
-        { name: 'john' },
-      ],
+      hi: [{ name: 'john' }],
     });
 
     mockFs.restore();
@@ -49,9 +47,7 @@ describe('Config provider', () => {
     const configProvider = new ConfigProvider(new FakeEnvProvider());
     await configProvider.boot();
     expect(configProvider.get('helloWorld')).to.deep.include({
-      hi: [
-        { name: 'john' },
-      ],
+      hi: [{ name: 'john' }],
     });
 
     mockFs.restore();

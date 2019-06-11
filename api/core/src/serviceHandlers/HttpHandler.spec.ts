@@ -21,19 +21,19 @@ describe('Http handler', () => {
   it('works', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      200,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        result: 'hello world',
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    );
+      .post('/')
+      .reply(
+        200,
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          result: 'hello world',
+        },
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.boot();
@@ -59,19 +59,19 @@ describe('Http handler', () => {
   it('works with correct headers', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      200,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        result: 'hello world',
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    );
+      .post('/')
+      .reply(
+        200,
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          result: 'hello world',
+        },
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.boot();
@@ -90,19 +90,19 @@ describe('Http handler', () => {
   it('throw error on status code error', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      500,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        result: 'hello world',
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    );
+      .post('/')
+      .reply(
+        500,
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          result: 'hello world',
+        },
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.boot();
@@ -117,21 +117,21 @@ describe('Http handler', () => {
   it('throw error on status code error', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      200,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        error: {
-          message: 'wrong!',
+      .post('/')
+      .reply(
+        200,
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          error: {
+            message: 'wrong!',
+          },
         },
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    );
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.boot();

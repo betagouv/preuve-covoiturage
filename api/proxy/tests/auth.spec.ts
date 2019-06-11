@@ -8,7 +8,7 @@ import { Interfaces, Parents, Container, Exceptions } from '@pdc/core';
 
 @Container.handler({
   service: 'user',
-  method: 'login'
+  method: 'login',
 })
 class UserLoginAction extends Parents.Action implements Interfaces.HandlerInterface {
   users = [
@@ -16,7 +16,7 @@ class UserLoginAction extends Parents.Action implements Interfaces.HandlerInterf
       login: 'test@test.com',
       password: '12345',
       extras: {
-        message: 'hello world'
+        message: 'hello world',
       },
     },
   ];
@@ -37,9 +37,7 @@ class UserLoginAction extends Parents.Action implements Interfaces.HandlerInterf
 }
 
 class UserServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
-  handlers = [
-    UserLoginAction,
-  ];
+  handlers = [UserLoginAction];
 }
 
 class ThinKernel extends Kernel {
@@ -55,11 +53,11 @@ describe('Proxy auth', async () => {
   before(async () => {
     await app.up();
   });
-  
+
   after(async () => {
     await app.down();
   });
-  
+
   beforeEach(() => {
     request = supertest(app.app);
   });
@@ -74,43 +72,38 @@ describe('Proxy auth', async () => {
     // cookie should not be sent
     let cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie))
+      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
     }
     expect(cookie).to.be.undefined;
   });
 
   it('should return error on login failure', async () => {
-
-    const r = await request
-      .post('/login')
-      .send({
-        login: 'test@test.com',
-        password: '123456',
-      });
+    const r = await request.post('/login').send({
+      login: 'test@test.com',
+      password: '123456',
+    });
     expect(r.status).to.eq(500);
     expect(r.body).to.deep.include({
       message: 'Forbidden',
     });
-    
+
     let cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie))
+      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
     }
     expect(cookie).to.be.undefined;
   });
 
   it('should return session cookie on login', async () => {
-    const r = await request
-      .post('/login')
-      .send({
-        login: 'test@test.com',
-        password: '12345',
-      });
-    expect(r.status).to.eq(200);    
+    const r = await request.post('/login').send({
+      login: 'test@test.com',
+      password: '12345',
+    });
+    expect(r.status).to.eq(200);
     expect(r.body).to.deep.include({
       payload: {
         data: {
-          message: 'hello world'
+          message: 'hello world',
         },
         meta: null,
       },
@@ -119,26 +112,22 @@ describe('Proxy auth', async () => {
   });
 
   it('should read session on profile', async () => {
-    const res = await request
-      .post('/login')
-      .send({
-        login: 'test@test.com',
-        password: '12345',
-      });
+    const res = await request.post('/login').send({
+      login: 'test@test.com',
+      password: '12345',
+    });
     const re = new RegExp('; path=/; httponly', 'gi');
 
     // Save the cookie to use it later to retrieve the session
-    const cookies = res.headers['set-cookie'].map(r => r.replace(re, '')).join('; ');
+    const cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
 
-    const r = await request
-      .get('/profile')
-      .set('Cookie', cookies);
+    const r = await request.get('/profile').set('Cookie', cookies);
 
-    expect(r.status).to.eq(200);    
+    expect(r.status).to.eq(200);
     expect(r.body).to.deep.include({
       payload: {
         data: {
-          message: 'hello world'
+          message: 'hello world',
         },
         meta: null,
       },
@@ -146,34 +135,28 @@ describe('Proxy auth', async () => {
   });
 
   it('should delete session on logout', async () => {
-    const res = await request
-      .post('/login')
-      .send({
-        login: 'test@test.com',
-        password: '12345',
-      });
+    const res = await request.post('/login').send({
+      login: 'test@test.com',
+      password: '12345',
+    });
 
     const re = new RegExp('; path=/; httponly', 'gi');
 
     // Save the cookie to use it later to retrieve the session
-    const cookies = res.headers['set-cookie'].map(r => r.replace(re, '')).join('; ');
+    const cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
 
-    const r = await request
-      .post('/logout')
-      .set('Cookie', cookies);
+    const r = await request.post('/logout').set('Cookie', cookies);
 
     expect(r.status).to.eq(204);
 
     // cookie should not be sent
     let cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie))
+      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
     }
     expect(cookie).to.be.undefined;
 
-    const rr = await request
-    .get('/profile')
-    .set('Cookie', cookies);
+    const rr = await request.get('/profile').set('Cookie', cookies);
 
     expect(rr.status).to.eq(500);
     expect(rr.body).to.deep.include({

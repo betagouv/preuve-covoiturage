@@ -47,7 +47,7 @@ describe('Queue handler', () => {
     sandbox.stub(Bull, 'bullFactory').callsFake(
       // @ts-ignore
       () => ({
-      // @ts-ignore
+        // @ts-ignore
         async add(name, opts) {
           if (name !== 'nope') {
             return {
@@ -60,7 +60,8 @@ describe('Queue handler', () => {
         async isReady() {
           return this;
         },
-      }));
+      }),
+    );
   });
   afterEach(() => {
     sandbox.restore();
@@ -79,7 +80,8 @@ describe('Queue handler', () => {
         jsonrpc: '2.0',
         id: null,
         method: 'basic@latest:method',
-        params: { params: { add: [1, 2] }, _context: defaultContext } },
+        params: { params: { add: [1, 2] }, _context: defaultContext },
+      },
     });
   });
   it('raise error if fail', async () => {
@@ -96,4 +98,3 @@ describe('Queue handler', () => {
     );
   });
 });
-

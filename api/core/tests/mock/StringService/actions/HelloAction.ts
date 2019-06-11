@@ -10,7 +10,7 @@ import { handler } from '../../../../src/container';
   method: 'hello',
 })
 export class HelloAction extends Action {
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     if (Array.isArray(params) || !('name' in params)) {
       throw new InvalidParamsException();
     }

@@ -26,7 +26,7 @@ export function compose(
     );
   }
 
-  return async function (
+  return async function(
     params: ParamsType,
     context: ContextType,
     handle: FunctionMiddlewareInterface,

@@ -34,4 +34,3 @@ describe('Env provider', () => {
     expect(envProvider.get('HELLO2', 'world')).to.equal('world');
   });
 });
-

@@ -30,7 +30,7 @@ export abstract class CommandServiceProvider extends ServiceProvider implements 
       if (typeof coerce === 'function') {
         args.push(coerce);
       }
-      if (typeof def !== 'undefined') { //tslint:disable-line
+      if (def !== undefined) {
         args.push(def);
       }
       command.option(signature, description, ...args);

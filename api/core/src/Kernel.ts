@@ -7,20 +7,11 @@ import { CallCommand } from './commands/CallCommand';
 import { ListCommand } from './commands/ListCommand';
 
 class BaseCommandServiceProvider extends CommandServiceProvider {
-  commands = [
-    CallCommand,
-    ListCommand,
-  ];
+  commands = [CallCommand, ListCommand];
 }
 
 export class Kernel extends ParentKernel {
-  readonly alias = [
-    EnvProvider,
-    ConfigProvider,
-    CommandProvider,
-  ];
+  readonly alias = [EnvProvider, ConfigProvider, CommandProvider];
 
-  readonly serviceProviders = [
-    BaseCommandServiceProvider,
-  ];
+  readonly serviceProviders = [BaseCommandServiceProvider];
 }

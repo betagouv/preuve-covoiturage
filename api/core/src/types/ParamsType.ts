@@ -1,1 +1,1 @@
-export type ParamsType = any[] | {[prop: string]: any};
+export type ParamsType = any[] | { [prop: string]: any };

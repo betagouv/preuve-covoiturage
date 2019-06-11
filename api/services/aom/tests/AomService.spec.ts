@@ -35,7 +35,6 @@ describe('Aom service', () => {
         'Content-Type': 'application/json',
       },
     });
-
   });
 
   after(async () => {
@@ -65,14 +64,12 @@ describe('Aom service', () => {
         id: _id,
         patch: {
           name: 'Yop',
-        }
+        },
       },
     });
-    const { name: patchedName} = patchData.result;
+    const { name: patchedName } = patchData.result;
     expect(patchedName).to.eq('Yop');
     expect(patchStatus).equal(200);
-
-    
 
     const { status: listStatus, data: listData } = await request.post('/', {
       id: 1,

@@ -26,11 +26,8 @@ class FakeConfigProvider extends Providers.ConfigProvider {
   }
 }
 
-
 class Kernel extends Parents.Kernel {
-  alias = [
-    MongoProvider,
-  ];
+  alias = [MongoProvider];
 }
 
 const kernel = new Kernel();
@@ -39,9 +36,7 @@ const kernel = new Kernel();
 class FirstMigration extends ParentMigration {
   static signature = '20190527.FirstMigration';
 
-  constructor(
-    private mongo: MongoProvider,
-  ) {
+  constructor(private mongo: MongoProvider) {
     super();
   }
 
@@ -60,9 +55,7 @@ class FirstMigration extends ParentMigration {
 class SecondMigration extends ParentMigration {
   static signature = '20190527.SecondMigration';
 
-  constructor(
-    private mongo: MongoProvider,
-  ) {
+  constructor(private mongo: MongoProvider) {
     super();
   }
 
@@ -82,10 +75,7 @@ class SecondMigration extends ParentMigration {
 @Container.command()
 class MigrateCommand extends ParentMigrateCommand {
   entity = 'test';
-  migrations = [
-    FirstMigration,
-    SecondMigration,
-  ];
+  migrations = [FirstMigration, SecondMigration];
 
   constructor(
     protected kernel: Interfaces.KernelInterfaceResolver,
@@ -122,7 +112,7 @@ describe('Repository provider: migrate', () => {
   });
 
   afterEach(async () => {
-    const mongo = (<MongoProvider>kernel.getContainer().get(MongoProvider));
+    const mongo = <MongoProvider>kernel.getContainer().get(MongoProvider);
     const collection = await mongo.getCollectionFromDb(collectionName, dbName);
     try {
       await collection.drop();
@@ -139,7 +129,7 @@ describe('Repository provider: migrate', () => {
 
   it('should do migration', async () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
-    const mongo = (<MongoProvider>kernel.getContainer().get(MongoProvider));
+    const mongo = <MongoProvider>kernel.getContainer().get(MongoProvider);
     const db = await mongo.getDb(targetDb);
     const migrationCollection = await mongo.getCollectionFromDb(collectionName, dbName);
     const result = await command.call({ status: false, rollback: false, reset: false });
@@ -158,34 +148,25 @@ describe('Repository provider: migrate', () => {
     ]);
     const collections = await db.listCollections().toArray();
     expect(collections.length).to.eq(1);
-    expect(collections.map(c => c.name)).to.deep.eq([
-      targetCollection,
-    ]);
+    expect(collections.map((c) => c.name)).to.deep.eq([targetCollection]);
     const collection = await db.collection(targetCollection);
     const indexes = await collection.indexes();
-    expect(
-      indexes
-        .map(i => Object.keys(i.key))
-        .reduce((acc, i) => ([
-          ...acc,
-          ...i,
-        ]), [])
-      ).to.deep.eq([
-        '_id',
-        'myindex',
-      ]);
+    expect(indexes.map((i) => Object.keys(i.key)).reduce((acc, i) => [...acc, ...i], [])).to.deep.eq([
+      '_id',
+      'myindex',
+    ]);
   });
 
   it('should do rollback', async () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
-    const mongo = (<MongoProvider>kernel.getContainer().get(MongoProvider));
+    const mongo = <MongoProvider>kernel.getContainer().get(MongoProvider);
     const db = await mongo.getDb(targetDb);
     const migrationCollection = await mongo.getCollectionFromDb(collectionName, dbName);
     await command.call({ status: false, rollback: false, reset: false });
     const result = await command.call({ status: false, rollback: 1, reset: false });
 
     expect(result).to.eq(`${SecondMigration.signature}: success\n`);
-    
+
     const migrations = await migrationCollection.find({}).toArray();
     expect(migrations.length).to.eq(1);
     expect(migrations.map((m) => ({ signature: m._id, success: m.success }))).to.deep.equal([
@@ -197,25 +178,14 @@ describe('Repository provider: migrate', () => {
 
     const collections = await db.listCollections().toArray();
     expect(collections.length).to.eq(1);
-    expect(collections.map(c => c.name)).to.deep.eq([
-      targetCollection,
-    ]);
+    expect(collections.map((c) => c.name)).to.deep.eq([targetCollection]);
     const collection = await db.collection(targetCollection);
     const indexes = await collection.indexes();
-    expect(
-      indexes
-        .map(i => Object.keys(i.key))
-        .reduce((acc, i) => ([
-          ...acc,
-          ...i,
-        ]), [])
-      ).to.deep.eq([
-        '_id',
-      ]);
+    expect(indexes.map((i) => Object.keys(i.key)).reduce((acc, i) => [...acc, ...i], [])).to.deep.eq(['_id']);
   });
   it('should do reset', async () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
-    const mongo = (<MongoProvider>kernel.getContainer().get(MongoProvider));
+    const mongo = <MongoProvider>kernel.getContainer().get(MongoProvider);
     const db = await mongo.getDb(targetDb);
     const migrationCollection = await mongo.getCollectionFromDb(collectionName, dbName);
     await command.call({ status: false, rollback: false, reset: false });

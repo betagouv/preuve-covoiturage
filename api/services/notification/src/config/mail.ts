@@ -14,4 +14,3 @@ export const mailjetConfig = {
   version: 'v3.1',
   perform_api_call: env('APP_ENV') !== 'local' || !!mailjet.debug_email,
 };
-

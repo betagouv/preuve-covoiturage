@@ -4,15 +4,9 @@ import { Providers, Types, Exceptions } from '@pdc/core';
 import { ParentRepositoryProviderInterface, Model } from './ParentRepositoryProviderInterface';
 
 export abstract class ParentRepositoryProvider implements ParentRepositoryProviderInterface {
-  protected readonly castObjectIds: string[] = [
-    '_id',
-  ];
+  protected readonly castObjectIds: string[] = ['_id'];
 
-  constructor(
-    protected config: Providers.ConfigProvider,
-    protected mongoProvider: MongoProvider,
-  ) {
-  }
+  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {}
 
   boot(): void {
     return;
@@ -44,7 +38,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   async find(id: string | ObjectId): Promise<Model> {
     const collection = await this.getCollection();
-    const normalizedId = (typeof id === 'string') ? new ObjectId(id) : id;
+    const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
     const result = await collection.findOne({ _id: normalizedId });
     if (!result) throw new Exceptions.NotFoundException('id not found');
     return this.instanciate(result);
@@ -67,7 +61,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   async delete(data: Model | string | ObjectId): Promise<void> {
     const collection = await this.getCollection();
-    const id = (typeof data === 'string') ? new ObjectId(data) : ('_id' in data) ? data._id : data;
+    const id = typeof data === 'string' ? new ObjectId(data) : '_id' in data ? data._id : data;
     const result = await collection.deleteOne({ _id: id });
     if (result.deletedCount !== 1) {
       throw new MongoException();
@@ -99,7 +93,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
   async patch(id: ObjectId | string, patch: any): Promise<Model> {
     const castedPatch = this.castObjectIdFromString(patch);
     const collection = await this.getCollection();
-    const normalizedId = (typeof id === 'string') ? new ObjectId(id) : id;
+    const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
     const result = await collection.findOneAndUpdate(
       { _id: normalizedId },
       {
@@ -127,9 +121,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
   protected instanciate(data: any): Model {
     const constructor = this.getModel();
 
-    return new constructor(
-      this.castStringFromObjectId(data),
-    );
+    return new constructor(this.castStringFromObjectId(data));
   }
 
   protected instanciateMany(data: any[]): Model[] {

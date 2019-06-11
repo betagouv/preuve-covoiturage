@@ -3,7 +3,5 @@ import { ServiceProvider as BaseServiceProvider } from '../../../src/parents/Ser
 import { AddAction } from './actions/AddAction';
 
 export class ServiceProvider extends BaseServiceProvider {
-  handlers = [
-    AddAction,
-  ];
+  handlers = [AddAction];
 }

@@ -117,6 +117,7 @@
         "switches": "never"
       }
     ],
+    "ter-indent": false,
     "ter-no-tabs": true,
     "ter-arrow-body-style": [
       true,
@@ -129,6 +130,7 @@
     "max-line-length": [true, 120],
     "no-return-await": true,
     "promise-function-async": true,
+    "space-before-function-paren": false,
     "no-implicit-dependencies": [true, "dev", ["~"]],
     "prefer-conditional-expression": true,
     "newline-per-chained-call": false,

@@ -10,18 +10,14 @@ import { EnvProvider } from '../providers/EnvProvider';
 import { bullFactory } from '../helpers/bullFactory';
 
 export class QueueHandler implements HandlerInterface {
-  public readonly middlewares: (string|[string, any])[] = [];
+  public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
   protected readonly version: string;
 
   private client: Queue;
 
-  constructor(
-    private env: EnvProvider,
-    private config: ConfigProvider,
-  ) {
-  }
+  constructor(private env: EnvProvider, private config: ConfigProvider) {}
 
   public boot() {
     const redisUrl = this.config.get('redisUrl');
@@ -68,4 +64,3 @@ export function queueHandlerFactory(service: string, version?: string): NewableT
 
   return CustomQueueHandler;
 }
-

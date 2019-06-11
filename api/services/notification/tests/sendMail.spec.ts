@@ -37,12 +37,9 @@ describe('Notification service', async () => {
     const endpoint = '/v3.1/send';
     nockRequest = nock(/mailjet/)
       .post(/.*/)
-      .reply(
-      200,
-      {
+      .reply(200, {
         Messages: [],
-      },
-    );
+      });
   });
   afterEach(() => {
     nock.cleanAll();
@@ -64,44 +61,40 @@ describe('Notification service', async () => {
   });
 
   it('send correct request to mailjet', () => {
-    request.post(
-      '/',
-      {
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'notification:sendmail',
-        params: {
-          email: 'test@fake.com',
-          fullname: 'Mad tester',
-          subject: 'Mot de passe oublié',
-          content: 'Hello world',
-        },
+    request.post('/', {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'notification:sendmail',
+      params: {
+        email: 'test@fake.com',
+        fullname: 'Mad tester',
+        subject: 'Mot de passe oublié',
+        content: 'Hello world',
       },
-    );
+    });
 
-    return (<any>expect(nockRequest).to.have.been)
-      .requestedWith({
-        Messages:[
-          {
-            From: {
-              Email: '',
-              Name: '',
-            },
-            To: [
-              {
-                Email: 'test@fake.com',
-                Name: 'Mad tester',
-              },
-            ],
-            TemplateID: null,
-            TemplateLanguage: true,
-            Subject: 'Mot de passe oublié',
-            Variables: {
-              title:'Mot de passe oublié',
-              content: 'Hello world',
-            },
+    return (<any>expect(nockRequest).to.have.been).requestedWith({
+      Messages: [
+        {
+          From: {
+            Email: '',
+            Name: '',
           },
-        ],
-      });
+          To: [
+            {
+              Email: 'test@fake.com',
+              Name: 'Mad tester',
+            },
+          ],
+          TemplateID: null,
+          TemplateLanguage: true,
+          Subject: 'Mot de passe oublié',
+          Variables: {
+            title: 'Mot de passe oublié',
+            content: 'Hello world',
+          },
+        },
+      ],
+    });
   });
 });
