@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { Parents, Container, Exceptions } from '@pdc/core';
+import { Parents, Container, Exceptions, Interfaces, Types } from '@pdc/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -39,13 +39,13 @@ export class PatchUserAction extends Parents.Action {
     ]]],
   ];
   constructor(
+    private kernel: Interfaces.KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(request: PatchUserInterface, context: UserContextInterface): Promise<User> {
+  public async handle(request: PatchUserInterface, context: Types.ContextType): Promise<User> {
     const contextParam: {aom?: string, operator?: string} = {};
 
     if ('aom' in context.call.user) {
@@ -58,33 +58,40 @@ export class PatchUserAction extends Parents.Action {
 
     // update password
     if (request.patch.newPassword) {
-      return this.changePassword(request.id, request.patch);
+      return this.kernel.call(
+        'user:changePassword',
+        {
+          id: request.id,
+          newPassword: request.patch.newPassword,
+          oldPassword: request.patch.oldPassword,
+        },
+        {
+          call: context.call,
+          channel: {
+            ...context.channel,
+            service: 'user',
+          },
+        },
+      );
     }
     // change email
     if (request.patch.email) {
       // send email to confirm
+      return this.kernel.call(
+        'user:changeEmail',
+        {
+          id: request.id,
+          email: request.patch.email,
+        },
+        {
+          call: context.call,
+          channel: {
+            ...context.channel,
+            service: 'user',
+          },
+        },
+      );
     }
     return this.userRepository.patchUser(request.id, request.patch, contextParam);
-  }
-
-  private async changePassword(id:string, data: { oldPassword?:string, newPassword?: string }) {
-    if (!_.has(data, 'oldPassword') || !_.has(data, 'newPassword')) { // can json schema do this ?
-      throw new Exceptions.InvalidRequestException('Old and new passwords must be set');
-    }
-
-    const user = await this.userRepository.find(id);
-    const currentPassword = user.password;
-
-    if (!(await this.cryptoProvider.comparePassword(data.oldPassword, currentPassword))) {
-      throw new Exceptions.ForbiddenException('Wrong credentials');
-    }
-
-    // same password ?
-    if (data.oldPassword === data.newPassword) return user; // can json schema check this ?
-
-    // change the password
-    const newHashPassword = await this.cryptoProvider.cryptPassword(data.newPassword);
-
-    return this.userRepository.patch(id, { password: newHashPassword });
   }
 }
