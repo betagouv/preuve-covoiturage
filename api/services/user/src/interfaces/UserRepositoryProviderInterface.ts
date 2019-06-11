@@ -32,11 +32,7 @@ export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepo
     throw new Error();
   }
 
-  public async patchUser(
-    id: string,
-    patch: any,
-    contextParam: { aom?: string; operator?: string },
-  ): Promise<User> {
+  public async patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }): Promise<User> {
     throw new Error();
   }
 }

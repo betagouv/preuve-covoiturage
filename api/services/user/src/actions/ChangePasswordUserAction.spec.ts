@@ -8,11 +8,9 @@ import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ChangePasswordUserAction, ChangePasswordUserInterface } from './ChangePasswordUserAction';
 
-
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
-
 
 const mockConnectedUser = <UserBaseInterface>{
   _id: '1ab',
@@ -23,9 +21,7 @@ const mockConnectedUser = <UserBaseInterface>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 };
 
 const mockUser = new User({
@@ -37,9 +33,7 @@ const mockUser = new User({
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 });
 
 const mockChangePasswordParams = <ChangePasswordUserInterface>{
@@ -63,24 +57,17 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 }
 
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-  async comparePassword(oldPwd:string, newPwd:string): Promise<boolean> {
+  async comparePassword(oldPwd: string, newPwd: string): Promise<boolean> {
     return true;
   }
 }
 
-const action = new ChangePasswordUserAction(
-  new FakeUserRepository(),
-  new FakeCryptoProvider(),
-);
-
+const action = new ChangePasswordUserAction(new FakeUserRepository(), new FakeCryptoProvider());
 
 describe('Change password - user action', () => {
   it('should work', async () => {
-    const result = await action.handle(
-      mockChangePasswordParams,
-      { call: { user: mockConnectedUser } });
+    const result = await action.handle(mockChangePasswordParams, { call: { user: mockConnectedUser } });
 
-    expect(result).to.include({ password:  cryptedNewPassword });
+    expect(result).to.include({ password: cryptedNewPassword });
   });
 });
-

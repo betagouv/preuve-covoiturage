@@ -24,31 +24,31 @@ export class User {
   public updatedAt?: Date;
 
   constructor(data: {
-    _id?: string,
-    email: string,
-    lastname: string,
-    firstname: string,
-    group: string,
-    permissions: string[],
-    password?: string,
-    role?: string,
-    phone?: string,
-    status?: string,
-    forgottenReset?: string,
-    forgottenToken?: string,
-    emailConfirm?: string,
-    emailToken?: string,
-    operator?: string,
-    aom?: string,
-    hasResetPassword?: boolean,
-    forgottenAt?: Date,
-    emailChangeAt?: Date,
-    lastConnectedAt?: Date,
-    deletedAt?: Date,
-    createdAt?: Date,
-    updatedAt?: Date,
+    _id?: string;
+    email: string;
+    lastname: string;
+    firstname: string;
+    group: string;
+    permissions: string[];
+    password?: string;
+    role?: string;
+    phone?: string;
+    status?: string;
+    forgottenReset?: string;
+    forgottenToken?: string;
+    emailConfirm?: string;
+    emailToken?: string;
+    operator?: string;
+    aom?: string;
+    hasResetPassword?: boolean;
+    forgottenAt?: Date;
+    emailChangeAt?: Date;
+    lastConnectedAt?: Date;
+    deletedAt?: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
   }) {
-    this._id = data._id ;
+    this._id = data._id;
     this.email = data.email;
     this.lastname = data.lastname;
     this.firstname = data.firstname;

@@ -21,11 +21,8 @@ const mockConnectedUser = new User({
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 });
-
 
 const mockCreateUserParameters = {
   email: 'edouard.nelson@example.com',
@@ -44,30 +41,29 @@ const mockForgottenPasswordParams = {
   forgottenAt: new Date(),
 };
 
-
 const mockId = '1ad';
-
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   public async findByEmail(email: string): Promise<User> {
     return null;
   }
-  public async create(user:UserDbInterface): Promise<User> {
-    return new User({ ...mockCreateUserParameters, _id: mockId , permissions: [] });
+  public async create(user: UserDbInterface): Promise<User> {
+    return new User({ ...mockCreateUserParameters, _id: mockId, permissions: [] });
   }
 }
 
-class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
 
-}
-
-class FakeKernelProvider extends Interfaces.KernelInterfaceResolver{
+class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
     return;
   }
 
-  async call(method: string, params: any[] | { [p: string]: any },
-             context: Types.ContextType): Promise<Types.ResultType> {
+  async call(
+    method: string,
+    params: any[] | { [p: string]: any },
+    context: Types.ContextType,
+  ): Promise<Types.ResultType> {
     return {
       _id: mockId,
       ...mockCreateUserParameters,
@@ -93,12 +89,15 @@ const action = new CreateUserAction(
   new FakeUserRepository(),
   new FakeCryptoProvider(),
   new FakeConfigProvider(envProvider),
-  new FakeKernelProvider());
+  new FakeKernelProvider(),
+);
 
 describe('Create user action', () => {
   it('should work', async () => {
-    const result = await action.handle(mockCreateUserParameters,
-      { call: { user: mockConnectedUser }, channel: { service: '' } });
+    const result = await action.handle(mockCreateUserParameters, {
+      call: { user: mockConnectedUser },
+      channel: { service: '' },
+    });
 
     expect(result).to.include({
       _id: mockId,
@@ -113,4 +112,3 @@ describe('Create user action', () => {
     });
   });
 });
-

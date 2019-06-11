@@ -7,11 +7,8 @@ import { User } from '../entities/User';
 import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
 
 @Container.provider()
-export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface{
-  constructor(
-    protected config: Providers.ConfigProvider,
-    protected mongoProvider: MongoProvider,
-  ) {
+export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface {
+  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {
     super(config, mongoProvider);
   }
 
@@ -37,7 +34,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return result ? this.instanciate(result) : result;
   }
 
-  public async list(filters, pagination): Promise<{users: User[], total: number}> {
+  public async list(filters, pagination): Promise<{ users: User[]; total: number }> {
     let result = [];
 
     const collection = await this.getCollection();
@@ -46,7 +43,11 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
 
     const skip = 'skip' in filters ? filters.skip : this.config.get('user.defaultSkip');
     const limit = 'limit' in filters ? filters.limit : this.config.get('user.defaultLimit');
-    result = await collection.find(normalizedFilters).skip(skip).limit(limit).toArray();
+    result = await collection
+      .find(normalizedFilters)
+      .skip(skip)
+      .limit(limit)
+      .toArray();
 
     const users = this.instanciateMany(result);
     const total = await this.countUsers(normalizedFilters);
@@ -57,7 +58,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     };
   }
 
-  public async deleteUser(id: string, contextParam: {aom?: string, operator?: string}):Promise<void> {
+  public async deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
@@ -68,7 +69,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return;
   }
 
-  public async findUser(id: string, contextParam: {aom?: string, operator?: string}): Promise<User> {
+  public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
@@ -77,14 +78,14 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result);
   }
 
-  public async findUserByParam(param: {[prop: string]: string}): Promise<User> {
+  public async findUserByParam(param: { [prop: string]: string }): Promise<User> {
     const collection = await this.getCollection();
     const result = await collection.findOne(param);
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }
 
-  public async patchUser(id: string, patch: any, contextParam: { aom?: string, operator?: string }) {
+  public async patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }) {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
@@ -103,8 +104,8 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result.value);
   }
 
-  private normalizeContextFilters(contextFilter: { aom?: string, operator?: string }) {
-    const normalizedFilters: { aom?: ObjectId, operator?: ObjectId} = {};
+  private normalizeContextFilters(contextFilter: { aom?: string; operator?: string }) {
+    const normalizedFilters: { aom?: ObjectId; operator?: ObjectId } = {};
     if ('aom' in contextFilter) {
       normalizedFilters.aom = new ObjectId(contextFilter.aom);
     }
@@ -114,7 +115,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return normalizedFilters;
   }
 
-  private async countUsers(filters: { aom?: ObjectId, operator?: ObjectId }) {
+  private async countUsers(filters: { aom?: ObjectId; operator?: ObjectId }) {
     const collection = await this.getCollection();
     return collection.countDocuments(filters);
   }

@@ -13,9 +13,7 @@ interface ForgottenPasswordUserInterface {
   method: 'forgottenPassword',
 })
 export class ForgottenPasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.forgottenPassword'],
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.forgottenPassword']];
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -27,7 +25,6 @@ export class ForgottenPasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: ForgottenPasswordUserInterface, context: Types.ContextType): Promise<User> {
-
     // todo: find by email ?
 
     const user = await this.userRepository.find(params.id);

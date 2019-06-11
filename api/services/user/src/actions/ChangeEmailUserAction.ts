@@ -9,21 +9,17 @@ export interface ChangeEmailUserInterface {
   email: string;
 }
 
-
 @Container.handler({
   service: 'user',
   method: 'changeEmail',
 })
 export class ChangeEmailUserAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
-    ['validate', 'user.changeEmail'],
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.changeEmail']];
   constructor(
     private config: Providers.ConfigProvider,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private kernel: Interfaces.KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
-
   ) {
     super();
   }
@@ -58,13 +54,11 @@ export class ChangeEmailUserAction extends Parents.Action {
       },
     );
 
-    return this.userRepository.patch(user._id,
-      {
-        confirm,
-        emailChangeAt,
-        token,
-        email: params.email,
-      },
-    );
+    return this.userRepository.patch(user._id, {
+      confirm,
+      emailChangeAt,
+      token,
+      email: params.email,
+    });
   }
 }

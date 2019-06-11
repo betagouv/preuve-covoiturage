@@ -15,9 +15,7 @@ export interface ResetPasswordUserInterface {
   method: 'resetPassword',
 })
 export class ResetPasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.resetPassword'],
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.resetPassword']];
 
   constructor(
     private config: Providers.ConfigProvider,

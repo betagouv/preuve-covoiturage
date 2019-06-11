@@ -38,14 +38,14 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     return mockUser;
   }
 
-  public async update(user:UserDbInterface): Promise<User> {
+  public async update(user: UserDbInterface): Promise<User> {
     return new User({
       ...mockUser,
     });
   }
 }
 
-class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   async cryptPassword(plainPassword: string): Promise<string> {
     return cryptedPassword;
   }
@@ -77,12 +77,10 @@ const action = new ResetPasswordUserAction(
 
 describe('Reset password with token action', () => {
   it('should work', async () => {
-    const result = await action.handle(mockResetPasswordParams,
-      { call: { user: {} }, channel: { service: '' } });
+    const result = await action.handle(mockResetPasswordParams, { call: { user: {} }, channel: { service: '' } });
 
     expect(result).to.include({
       password: cryptedPassword,
     });
   });
 });
-

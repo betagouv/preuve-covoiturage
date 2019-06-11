@@ -11,7 +11,6 @@ chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
 
-
 const mockConnectedUser = <User>{
   _id: '1ab',
   email: 'john.schmidt@example.com',
@@ -21,20 +20,18 @@ const mockConnectedUser = <User>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 };
 
-
-const mockUsers = [{
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-}];
-
+const mockUsers = [
+  {
+    _id: '1ab',
+    email: 'john.schmidt@example.com',
+    firstname: 'john',
+    lastname: 'schmidt',
+    phone: '0624857425',
+  },
+];
 
 const mockInputPagination = {
   per_page: 25,
@@ -50,7 +47,6 @@ const mockOutputPagination = {
   current_page: 1,
   total_pages: 1,
 };
-
 
 const mockContext = {
   call: {
@@ -85,7 +81,8 @@ const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvid
 describe('list users action', () => {
   it('should work', async () => {
     const result = await action.handle({}, mockContext);
-    expect(result.data).to.be.an('array').to['containSubset'](mockUsers);
+    expect(result.data)
+      .to.be.an('array')
+      .to['containSubset'](mockUsers);
   });
 });
-

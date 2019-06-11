@@ -10,11 +10,9 @@ import { PatchUserAction } from './PatchUserAction';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 
-
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
-
 
 const mockConnectedUser = <UserBaseInterface>{
   _id: '1ab',
@@ -25,9 +23,7 @@ const mockConnectedUser = <UserBaseInterface>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 };
 
 const mockUser = new User({
@@ -39,9 +35,7 @@ const mockUser = new User({
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 });
 
 const mockUserNewProperties = {
@@ -52,14 +46,16 @@ const mockUserNewProperties = {
 const cryptedNewPassword = 'cryptedNewPassword';
 const newEmail = 'newEmail@example.com';
 
-
-class FakeKernelProvider extends Interfaces.KernelInterfaceResolver{
+class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
     return;
   }
 
-  async call(method: string, params: any[] | { [p: string]: any },
-             context: Types.ContextType): Promise<Types.ResultType> {
+  async call(
+    method: string,
+    params: any[] | { [p: string]: any },
+    context: Types.ContextType,
+  ): Promise<Types.ResultType> {
     if (method === 'user:changePassword') {
       return new User({
         ...mockUser,
@@ -75,7 +71,6 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver{
   }
 }
 
-
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async patchUser(id: string, patch: any): Promise<User> {
     return new User({
@@ -89,30 +84,32 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
 
 const action = new PatchUserAction(new FakeKernelProvider(), new FakeUserRepository());
 
-
 describe('Update name - user action', () => {
   it('should work', async () => {
     const result = await action.handle(
-      {  id: mockUser._id , patch: mockUserNewProperties },
-      { call: { user: mockConnectedUser }, channel: { service: '' } });
-    expect(result).to.include({ _id: mockUser._id , ...mockUserNewProperties });
+      { id: mockUser._id, patch: mockUserNewProperties },
+      { call: { user: mockConnectedUser }, channel: { service: '' } },
+    );
+    expect(result).to.include({ _id: mockUser._id, ...mockUserNewProperties });
   });
 });
 
 describe('Update password - user action', () => {
   it('should work', async () => {
     const result = await action.handle(
-      {  id: mockUser._id , patch: { oldPassword: 'oldPassword', newPassword: 'newPassword' } },
-      { call: { user: mockConnectedUser }, channel: { service: '' } });
-    expect(result).to.include({ _id: mockUser._id , password: cryptedNewPassword });
+      { id: mockUser._id, patch: { oldPassword: 'oldPassword', newPassword: 'newPassword' } },
+      { call: { user: mockConnectedUser }, channel: { service: '' } },
+    );
+    expect(result).to.include({ _id: mockUser._id, password: cryptedNewPassword });
   });
 });
 
 describe('Update email - user action', () => {
   it('should work', async () => {
     const result = await action.handle(
-      {  id: mockUser._id , patch: { email: newEmail } },
-      { call: { user: mockConnectedUser }, channel: { service: '' } });
-    expect(result).to.include({ _id: mockUser._id , email: newEmail });
+      { id: mockUser._id, patch: { email: newEmail } },
+      { call: { user: mockConnectedUser }, channel: { service: '' } },
+    );
+    expect(result).to.include({ _id: mockUser._id, email: newEmail });
   });
 });

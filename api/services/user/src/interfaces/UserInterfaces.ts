@@ -19,9 +19,7 @@ export interface UserBaseInterface {
   forgottenAt?: Date;
   emailChangeAt?: Date;
   lastConnectedAt?: Date;
-
 }
-
 
 export interface UserDbInterface extends UserBaseInterface {
   _id?: string;
@@ -30,7 +28,6 @@ export interface UserDbInterface extends UserBaseInterface {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
 
 export interface CreateUserParamsInterface {
   email: string;

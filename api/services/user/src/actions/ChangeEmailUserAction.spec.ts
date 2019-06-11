@@ -11,11 +11,9 @@ import { User } from '../entities/User';
 import { ChangePasswordUserAction } from './ChangePasswordUserAction';
 import { ChangeEmailUserAction, ChangeEmailUserInterface } from './ChangeEmailUserAction';
 
-
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
-
 
 const mockConnectedUser = <UserBaseInterface>{
   _id: '1ab',
@@ -26,9 +24,7 @@ const mockConnectedUser = <UserBaseInterface>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 };
 
 const mockUser = new User({
@@ -40,9 +36,7 @@ const mockUser = new User({
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 });
 
 const mockChangeEmailParams = <ChangeEmailUserInterface>{
@@ -63,13 +57,16 @@ class FakeConfigProvider extends Providers.ConfigProvider {
 
 const envProvider = new Providers.EnvProvider();
 
-class FakeKernelProvider extends Interfaces.KernelInterfaceResolver{
+class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
     return;
   }
 
-  async call(method: string, params: any[] | { [p: string]: any },
-             context: Types.ContextType): Promise<Types.ResultType> {
+  async call(
+    method: string,
+    params: any[] | { [p: string]: any },
+    context: Types.ContextType,
+  ): Promise<Types.ResultType> {
     return {
       ...mockUser,
       email: mockChangeEmailParams.email,
@@ -90,7 +87,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 }
 
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-  async comparePassword(oldPwd:string, newPwd:string): Promise<boolean> {
+  async comparePassword(oldPwd: string, newPwd: string): Promise<boolean> {
     return true;
   }
 }
@@ -102,14 +99,13 @@ const action = new ChangeEmailUserAction(
   new FakeUserRepository(),
 );
 
-
 describe('Change email - user action', () => {
   it('should work', async () => {
-    const result = await action.handle(
-      mockChangeEmailParams,
-      { call: { user: mockConnectedUser } , channel: { service: '' } });
+    const result = await action.handle(mockChangeEmailParams, {
+      call: { user: mockConnectedUser },
+      channel: { service: '' },
+    });
 
-    expect(result).to.include({ email:  mockChangeEmailParams.email });
+    expect(result).to.include({ email: mockChangeEmailParams.email });
   });
 });
-

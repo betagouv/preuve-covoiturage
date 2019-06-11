@@ -24,7 +24,6 @@ const mockConnectedUser = <UserBaseInterface>{
   permissions: [],
 };
 
-
 const mockUser = new User({
   _id: '1ac',
   email: 'edouard.nelson@example.com',
@@ -44,26 +43,25 @@ const mockForgottenPasswordParams = {
   forgottenAt: new Date(),
 };
 
-
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  public async update(user:UserDbInterface): Promise<User> {
+  public async update(user: UserDbInterface): Promise<User> {
     return new User({
       ...mockUser,
       ...mockForgottenPasswordParams,
     });
   }
-  public async find(id:string): Promise<User> {
+  public async find(id: string): Promise<User> {
     return mockUser;
   }
 }
 
-class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
-  generateToken(length?:number) {
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
+  generateToken(length?: number) {
     return 'randomToken';
   }
 }
 
-class FakeKernelProvider extends Interfaces.KernelInterfaceResolver{
+class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
     return;
   }
@@ -86,16 +84,18 @@ const action = new ForgottenPasswordUserAction(
   new FakeUserRepository(),
   new FakeCryptoProvider(),
   new FakeConfigProvider(envProvider),
-  new FakeKernelProvider());
+  new FakeKernelProvider(),
+);
 
 describe('Forgotten password action', () => {
   it('should work', async () => {
-    const result = await action.handle({ id: mockUser._id },
-      { call: { user: mockConnectedUser }, channel: { service: '' } });
+    const result = await action.handle(
+      { id: mockUser._id },
+      { call: { user: mockConnectedUser }, channel: { service: '' } },
+    );
 
     expect(result).to.include({
       ...mockForgottenPasswordParams,
     });
   });
 });
-

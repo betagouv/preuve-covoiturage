@@ -25,7 +25,6 @@ const mockUser = new User({
   emailChangeAt: new Date(),
 });
 
-
 const mockResetPasswordParams = <ConfirmEmailUserInterface>{
   token: 'tokenFromEmail',
   confirm: 'confirmFromEmail',
@@ -36,14 +35,14 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     return mockUser;
   }
 
-  public async update(user:UserDbInterface): Promise<User> {
+  public async update(user: UserDbInterface): Promise<User> {
     return new User({
       ...mockUser,
     });
   }
 }
 
-class FakeCryptoProvider extends CryptoProviderInterfaceResolver{
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
     return true;
   }
@@ -73,12 +72,10 @@ const action = new ConfirmEmailUserAction(
 
 describe('confirm email with token action', () => {
   it('should work', async () => {
-    const result = await action.handle(mockResetPasswordParams,
-      { call: { user: {} }, channel: { service: '' } });
+    const result = await action.handle(mockResetPasswordParams, { call: { user: {} }, channel: { service: '' } });
 
     expect(result).to.include({
       status: 'active',
     });
   });
 });
-

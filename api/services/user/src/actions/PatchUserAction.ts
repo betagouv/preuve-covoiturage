@@ -12,31 +12,36 @@ interface PatchUserInterface {
   patch: { [prop: string]: string };
 }
 
-
 @Container.handler({
   service: 'user',
   method: 'patch',
 })
 export class PatchUserAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
+  public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.patch'],
-    ['scopeIt', [['user.update'], [
-      (params, context) => {
-        if ('id' in params && params.id === context.call.user._id) {
-          return 'profile.update';
-        }
-      },
-      (_params, context) => {
-        if ('aom' in context.call.user) {
-          return 'aom.users.update';
-        }
-      },
-      (_params, context) => {
-        if ('operator' in context.call.user) {
-          return 'operator.users.update';
-        }
-      },
-    ]]],
+    [
+      'scopeIt',
+      [
+        ['user.update'],
+        [
+          (params, context) => {
+            if ('id' in params && params.id === context.call.user._id) {
+              return 'profile.update';
+            }
+          },
+          (_params, context) => {
+            if ('aom' in context.call.user) {
+              return 'aom.users.update';
+            }
+          },
+          (_params, context) => {
+            if ('operator' in context.call.user) {
+              return 'operator.users.update';
+            }
+          },
+        ],
+      ],
+    ],
   ];
   constructor(
     private kernel: Interfaces.KernelInterfaceResolver,
@@ -46,7 +51,7 @@ export class PatchUserAction extends Parents.Action {
   }
 
   public async handle(request: PatchUserInterface, context: Types.ContextType): Promise<User> {
-    const contextParam: {aom?: string, operator?: string} = {};
+    const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {
       contextParam.aom = context.call.user.aom;

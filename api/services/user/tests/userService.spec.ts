@@ -11,7 +11,6 @@ chai.use(chaiNock);
 
 const { expect } = chai;
 
-
 before(async () => {
   await fakeMongoServer.startServer();
   await fakeMongoServer.startTransport();
@@ -22,7 +21,6 @@ after(async () => {
   await fakeMongoServer.stopTransport();
 });
 
-
 const request = mockFactory.request();
 
 describe('User service Creation', () => {
@@ -30,17 +28,11 @@ describe('User service Creation', () => {
   const newOperatorUser = mockFactory.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' });
   const newRegistryUser = mockFactory.newUser('registry', 'user');
 
-
   it('registry admin - should create user registry', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
-      mockFactory.call(
-        'user:create',
-        newRegistryUser,
-        'registry',
-        'admin',
-        { permissions: ['user.create'] },
-      ));
+      mockFactory.call('user:create', newRegistryUser, 'registry', 'admin', { permissions: ['user.create'] }),
+    );
 
     expect(createData.result).to.include({
       email: newRegistryUser.email,
@@ -56,13 +48,11 @@ describe('User service Creation', () => {
   it('aom admin - should create user aom', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
-      mockFactory.call(
-        'user:create',
-        newAomUser,
-        newAomUser.group,
-        'admin',
-        { permissions: ['aom.users.add'], aom: newAomUser.aom },
-      ));
+      mockFactory.call('user:create', newAomUser, newAomUser.group, 'admin', {
+        permissions: ['aom.users.add'],
+        aom: newAomUser.aom,
+      }),
+    );
     expect(createData.result).to.include({
       email: newAomUser.email,
       firstname: newAomUser.firstname,
@@ -78,13 +68,11 @@ describe('User service Creation', () => {
   it('operator admin - should create user operator', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
-      mockFactory.call(
-        'user:create',
-        newOperatorUser,
-        newOperatorUser.group,
-        'admin',
-        { permissions: ['operator.users.add'], operator: newOperatorUser.operator },
-      ));
+      mockFactory.call('user:create', newOperatorUser, newOperatorUser.group, 'admin', {
+        permissions: ['operator.users.add'],
+        operator: newOperatorUser.operator,
+      }),
+    );
     expect(createData.result).to.include({
       email: newOperatorUser.email,
       firstname: newOperatorUser.firstname,
@@ -97,7 +85,6 @@ describe('User service Creation', () => {
     expect(createStatus).equal(200);
   });
 });
-
 
 describe('User service Deletion', () => {
   let newAomUser;
@@ -124,11 +111,12 @@ describe('User service Deletion', () => {
         'admin',
         { permissions: ['profile.delete'] },
         newRegistryUser._id,
-      ));
+      ),
+    );
     expect(status).equal(200);
   });
 
-  it('registry user - shouldn\'t delete other profile', async () => {
+  it("registry user - shouldn't delete other profile", async () => {
     const response = await request.post(
       '/',
       mockFactory.call(
@@ -138,7 +126,8 @@ describe('User service Deletion', () => {
         'admin',
         { permissions: ['profile.delete'] },
         newRegistryUser._id,
-      ));
+      ),
+    );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
@@ -152,7 +141,8 @@ describe('User service Deletion', () => {
         'admin',
         { permissions: ['aom.users.delete'], aom: newAomUser.aom },
         newAomUser._id,
-      ));
+      ),
+    );
     expect(status).equal(200);
   });
 
@@ -166,11 +156,11 @@ describe('User service Deletion', () => {
         'admin',
         { permissions: ['operator.users.delete'], operator: newAomUser.operator },
         newOperatorUser._id,
-      ));
+      ),
+    );
     expect(status).equal(200);
   });
 });
-
 
 describe('User service Find', () => {
   const newAomUserModel = mockFactory.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' });
@@ -190,20 +180,15 @@ describe('User service Find', () => {
     newRegistryUser = await fakeMongoServer.addUser(newRegistryUserModel);
   });
 
-  after(async() => {
+  after(async () => {
     fakeMongoServer.clearCollection();
   });
 
   it('registry admin - should find registry user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call(
-        'user:find',
-        { id: newRegistryUser._id },
-        'registry',
-        'admin',
-        { permissions: ['user.read'] },
-      ));
+      mockFactory.call('user:find', { id: newRegistryUser._id }, 'registry', 'admin', { permissions: ['user.read'] }),
+    );
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -251,20 +236,16 @@ describe('User service Find', () => {
         'user',
         { permissions: ['profile.read'] },
         newRegistryUser._id,
-      ));
+      ),
+    );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
   it('registry admin - should find aom user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call(
-        'user:find',
-        { id: newAomUser._id },
-        'registry',
-        'admin',
-        { permissions: ['user.read'] },
-      ));
+      mockFactory.call('user:find', { id: newAomUser._id }, 'registry', 'admin', { permissions: ['user.read'] }),
+    );
     expect(data.result).to.include({
       _id: newAomUser._id,
       email: newAomUser.email,
@@ -281,13 +262,8 @@ describe('User service Find', () => {
   it('registry admin - should find operator user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call(
-        'user:find',
-        { id: newOperatorUser._id },
-        'registry',
-        'admin',
-        { permissions: ['user.read'] },
-      ));
+      mockFactory.call('user:find', { id: newOperatorUser._id }, 'registry', 'admin', { permissions: ['user.read'] }),
+    );
     expect(data.result).to.include({
       _id: newOperatorUser._id,
       email: newOperatorUser.email,
@@ -304,13 +280,11 @@ describe('User service Find', () => {
   it('aom admin - should find aom user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call(
-        'user:find',
-        { id: newAomUser._id, aom: newAomUser.aom },
-        'aom',
-        'admin',
-        { permissions: ['aom.users.read'], aom: newAomUser.aom },
-      ));
+      mockFactory.call('user:find', { id: newAomUser._id, aom: newAomUser.aom }, 'aom', 'admin', {
+        permissions: ['aom.users.read'],
+        aom: newAomUser.aom,
+      }),
+    );
     expect(data.result).to.include({
       _id: newAomUser._id,
       email: newAomUser.email,
@@ -333,7 +307,8 @@ describe('User service Find', () => {
         'registry',
         'admin',
         { permissions: ['operator.users.read'], operator: newOperatorUser.operator },
-      ));
+      ),
+    );
     expect(data.result).to.include({
       _id: newOperatorUser._id,
       email: newOperatorUser.email,
@@ -359,7 +334,6 @@ describe('User service : List', () => {
   let newRegistryAdmin;
   let newRegistryUser;
 
-
   before(async () => {
     newRegistryUser = await fakeMongoServer.addUser(newRegistryUserModel);
     newAomUser = await fakeMongoServer.addUser(newAomUserModel);
@@ -370,13 +344,8 @@ describe('User service : List', () => {
   it('registry admin - should list users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call(
-        'user:list',
-        {},
-        'registry',
-        'admin',
-        { permissions: ['user.list'] },
-      ));
+      mockFactory.call('user:list', {}, 'registry', 'admin', { permissions: ['user.list'] }),
+    );
     expect(data.result.data[0]).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -412,13 +381,10 @@ describe('User service : List', () => {
   it('aom admin - should list aom users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call(
-        'user:list',
-        { aom: newAomUser.aom },
-        'aom',
-        'admin',
-        { permissions: ['aom.users.list'], aom: newAomUser.aom },
-      ),
+      mockFactory.call('user:list', { aom: newAomUser.aom }, 'aom', 'admin', {
+        permissions: ['aom.users.list'],
+        aom: newAomUser.aom,
+      }),
     );
 
     expect(data.result.data[0]).to.include({
@@ -437,13 +403,10 @@ describe('User service : List', () => {
   it('operator admin - should list operator users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call(
-        'user:list',
-        { operator: newOperatorUser.operator },
-        'operators',
-        'admin',
-        { permissions: ['operator.users.list'], operator: newOperatorUser.operator },
-      ),
+      mockFactory.call('user:list', { operator: newOperatorUser.operator }, 'operators', 'admin', {
+        permissions: ['operator.users.list'],
+        operator: newOperatorUser.operator,
+      }),
     );
 
     expect(data.result.data[0]).to.include({
@@ -459,7 +422,6 @@ describe('User service : List', () => {
     expect(status).equal(200);
   });
 });
-
 
 describe('User service : Patch', () => {
   const newAomUserModel = mockFactory.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' });
@@ -485,7 +447,6 @@ describe('User service : Patch', () => {
       lastname: 'smith',
     };
 
-
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
@@ -497,7 +458,8 @@ describe('User service : Patch', () => {
         'registry',
         'admin',
         { permissions: ['user.update'] },
-      ));
+      ),
+    );
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -528,7 +490,8 @@ describe('User service : Patch', () => {
         'user',
         { permissions: ['profile.update'] },
         newRegistryUser._id,
-      ));
+      ),
+    );
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -541,7 +504,7 @@ describe('User service : Patch', () => {
     expect(status).equal(200);
   });
 
-  it('registry user - shouldn\'t patch other profile', async () => {
+  it("registry user - shouldn't patch other profile", async () => {
     const mockUpdatedProperties = {
       firstname: 'johnny',
       lastname: 'smith',
@@ -559,7 +522,8 @@ describe('User service : Patch', () => {
         'user',
         { permissions: ['profile.update'] },
         newRegistryUser._id,
-      ));
+      ),
+    );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
@@ -582,7 +546,8 @@ describe('User service : Patch', () => {
         'admin',
         { permissions: ['aom.users.update'], aom: newAomUser.aom },
         newAomUser._id,
-      ));
+      ),
+    );
     expect(data.result).to.include({
       _id: newAomUser._id,
       email: newAomUser.email,
@@ -615,7 +580,8 @@ describe('User service : Patch', () => {
         'admin',
         { permissions: ['operator.users.update'], operator: newOperatorUser.operator },
         newOperatorUser._id,
-      ));
+      ),
+    );
     expect(data.result).to.include({
       _id: newOperatorUser._id,
       email: newOperatorUser.email,
@@ -627,7 +593,6 @@ describe('User service : Patch', () => {
     });
     expect(status).equal(200);
   });
-
 
   /*
   CHANGE PASSWORD
@@ -645,7 +610,8 @@ describe('User service : Patch', () => {
         'registry',
         'admin',
         { permissions: ['user.update'] },
-      ));
+      ),
+    );
     expect(data.result).to.include({
       _id: newRegistryUser._id,
       email: newRegistryUser.email,
@@ -656,7 +622,7 @@ describe('User service : Patch', () => {
     expect(status).equal(200);
   });
 
-  it('registry admin - shouldn\'t change password registry user - wrong old password', async () => {
+  it("registry admin - shouldn't change password registry user - wrong old password", async () => {
     const response = await request.post(
       '/',
       mockFactory.call(
@@ -668,11 +634,10 @@ describe('User service : Patch', () => {
         'registry',
         'admin',
         { permissions: ['user.update'] },
-    ),
-  );
+      ),
+    );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Wrong credentials')));
   });
-
 
   /*
   CHANGE EMAIL
@@ -690,7 +655,8 @@ describe('User service : Patch', () => {
         'registry',
         'admin',
         { permissions: ['user.update'] },
-      ));
+      ),
+    );
     expect(data.result).to.include({
       email: newEmail,
     });

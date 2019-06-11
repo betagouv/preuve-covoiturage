@@ -165,12 +165,6 @@ export const registry = {
   user: {
     slug: 'user',
     name: 'User',
-    permissions: [
-      'user.list',
-      'profile.read',
-      'profile.update',
-      'profile.password',
-      'profile.delete',
-    ],
+    permissions: ['user.list', 'profile.read', 'profile.update', 'profile.password', 'profile.delete'],
   },
 };

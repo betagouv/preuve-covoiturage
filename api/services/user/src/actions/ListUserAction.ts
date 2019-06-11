@@ -5,10 +5,9 @@ import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { PaginationInterface } from '../interfaces/PaginationInterface';
 
-
 interface ListUserInterface {
   data: UserDbInterface[];
-  metadata: { pagination: PaginationInterface};
+  metadata: { pagination: PaginationInterface };
 }
 
 interface ListUserRequestInterface {
@@ -21,20 +20,26 @@ interface ListUserRequestInterface {
   method: 'list',
 })
 export class ListUserAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
+  public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.list'],
-    ['scopeIt', [['user.list'], [
-      (_params, context) => {
-        if ('aom' in context.call.user) {
-          return 'aom.users.list';
-        }
-      },
-      (_params, context) => {
-        if ('operator' in context.call.user) {
-          return 'operator.users.list';
-        }
-      },
-    ]]],
+    [
+      'scopeIt',
+      [
+        ['user.list'],
+        [
+          (_params, context) => {
+            if ('aom' in context.call.user) {
+              return 'aom.users.list';
+            }
+          },
+          (_params, context) => {
+            if ('operator' in context.call.user) {
+              return 'operator.users.list';
+            }
+          },
+        ],
+      ],
+    ],
   ];
 
   constructor(
@@ -44,10 +49,8 @@ export class ListUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(
-    request: ListUserRequestInterface,
-    context: UserContextInterface): Promise<ListUserInterface> {
-    const contextParam: {aom?: string, operator?: string} = {};
+  public async handle(request: ListUserRequestInterface, context: UserContextInterface): Promise<ListUserInterface> {
+    const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {
       contextParam.aom = context.call.user.aom;
@@ -67,7 +70,7 @@ export class ListUserAction extends Parents.Action {
     return {
       data: data.users,
       metadata: {
-        pagination : {
+        pagination: {
           total: data.total,
           count: data.users.length,
           per_page: this.config.get('pagination.perPage'), // not used in front
@@ -87,7 +90,7 @@ export class ListUserAction extends Parents.Action {
     return lim > this.config.get('pagination.maxLimit') ? this.config.get('pagination.maxLimit') : lim;
   }
 
-  private paginate(query: { limit: number, page: number }): { skip: number, limit: number } {
+  private paginate(query: { limit: number; page: number }): { skip: number; limit: number } {
     const limit = this.castLimit(query.limit);
     const skip = (this.castPage(query.page) - 1) * limit;
     return { skip, limit };

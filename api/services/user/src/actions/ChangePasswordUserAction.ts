@@ -13,15 +13,12 @@ export interface ChangePasswordUserInterface {
   newPassword: string;
 }
 
-
 @Container.handler({
   service: 'user',
   method: 'changePassword',
 })
 export class ChangePasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string|[string, any])[] = [
-    ['validate', 'user.changePassword'],
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.changePassword']];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
@@ -30,7 +27,6 @@ export class ChangePasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: ChangePasswordUserInterface, context: UserContextInterface): Promise<User> {
-
     const user = await this.userRepository.find(params.id);
 
     if (!(await this.cryptoProvider.comparePassword(params.oldPassword, user.password))) {

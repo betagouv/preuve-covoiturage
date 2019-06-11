@@ -2,33 +2,30 @@ import { Exceptions } from '@pdc/core';
 
 import { mockConnectedUserBase } from './connectedUserBase';
 import { mockNewUserBase } from './newUserBase';
-import axios from "axios";
-
-
-
+import axios from 'axios';
 
 interface UserparamsInterface {
   permissions: string[];
-  aom?:string;
-  operator?:string;
+  aom?: string;
+  operator?: string;
 }
 
 interface AomOperator {
-  aom?:string;
-  operator?:string;
+  aom?: string;
+  operator?: string;
 }
 
-
 export class MockFactory {
-
   port = '8081';
 
-  public call(method: string,
-              data: any,
-              group:string = 'registry',
-              role:string = 'admin',
-              userparams: UserparamsInterface = { permissions : [] },
-              _id:string = 'fakeId') {
+  public call(
+    method: string,
+    data: any,
+    group: string = 'registry',
+    role: string = 'admin',
+    userparams: UserparamsInterface = { permissions: [] },
+    _id: string = 'fakeId',
+  ) {
     return {
       method,
       id: 1,
@@ -48,13 +45,12 @@ export class MockFactory {
     };
   }
 
-  public newUser(group:string = 'registry', role:string = 'admin', aomOperator: AomOperator = {}, email?) {
-
+  public newUser(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?) {
     return {
       ...mockNewUserBase,
       group,
       role,
-      email : email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.com`,
+      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.com`,
       ...aomOperator,
     };
   }

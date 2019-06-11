@@ -5,7 +5,6 @@ import chaiAsPromised from 'chai-as-promised';
 import { ScopeToSelfMiddleware } from './ScopeToSelfMiddleware';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
-
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
@@ -17,9 +16,7 @@ const mockConnectedUser = <UserBaseInterface>{
   phone: '0624857425',
   group: 'registry',
   role: 'admin',
-  permissions: [
-    'user.create',
-  ],
+  permissions: ['user.create'],
 };
 
 async function noop(params, context) {
@@ -36,7 +33,6 @@ const mockCreateUserParameters = {
   aom: 'aomid',
   password: 'password',
 };
-
 
 function error(err: Exceptions.RPCException) {
   return {
@@ -56,7 +52,7 @@ function error(err: Exceptions.RPCException) {
 function contextFactory(params) {
   return <Types.ContextType>{
     call: {
-      user:{
+      user: {
         ...mockConnectedUser,
         ...params,
       },
@@ -73,25 +69,21 @@ describe('Has permission to create user', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['user.create'] });
 
   it('should work', async () => {
-    const result = await middleware.process(
-      mockCreateUserParameters,
-      mockCreateUserContext,
-      noop,
+    const result = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
+      ['user.create'],
       [
-        ['user.create'],
-        [
-          (params, context) => {
-            if ('aom' in params && params.aom === context.call.user.aom) {
-              return 'aom.users.add';
-            }
-          },
-          (params, context) => {
-            if ('operator' in params && params.aom === context.call.user.aom) {
-              return 'operator.users.add';
-            }
-          },
-        ],
-      ]);
+        (params, context) => {
+          if ('aom' in params && params.aom === context.call.user.aom) {
+            return 'aom.users.add';
+          }
+        },
+        (params, context) => {
+          if ('operator' in params && params.aom === context.call.user.aom) {
+            return 'operator.users.add';
+          }
+        },
+      ],
+    ]);
 
     expect(result).to.equal(undefined);
   });
@@ -101,25 +93,21 @@ describe('Has no permission to create user', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: mockCreateUserParameters.aom });
 
   it('should throw permission error', async () => {
-    const response = await middleware.process(
-      mockCreateUserParameters,
-      mockCreateUserContext,
-      noop,
+    const response = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
+      ['user.create'],
       [
-        ['user.create'],
-        [
-          (params, context) => {
-            if ('aom' in params && params.aom === context.call.user.aom) {
-              return 'aom.users.add';
-            }
-          },
-          (params, context) => {
-            if ('operator' in params && params.aom === context.call.user.aom) {
-              return 'operator.users.add';
-            }
-          },
-        ],
-      ]);
+        (params, context) => {
+          if ('aom' in params && params.aom === context.call.user.aom) {
+            return 'aom.users.add';
+          }
+        },
+        (params, context) => {
+          if ('operator' in params && params.aom === context.call.user.aom) {
+            return 'operator.users.add';
+          }
+        },
+      ],
+    ]);
 
     expect(response).to.equal(undefined);
   });
@@ -129,11 +117,8 @@ describe('Aom admin - has no permission to create aom user', () => {
   const mockCreateUserContext = contextFactory({ permissions: [], aom: mockCreateUserParameters.aom });
 
   it('should work', async () => {
-    await expect(middleware.process(
-      mockCreateUserParameters,
-      mockCreateUserContext,
-      noop,
-      [
+    await expect(
+      middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
         ['user.create'],
         [
           (params, context) => {
@@ -147,7 +132,8 @@ describe('Aom admin - has no permission to create aom user', () => {
             }
           },
         ],
-      ])).to.rejectedWith(Exceptions.ForbiddenException);
+      ]),
+    ).to.rejectedWith(Exceptions.ForbiddenException);
   });
 });
 
@@ -155,11 +141,8 @@ describe('Aom registry - has wrong aom to create aom user', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: 'wrongAomId' });
 
   it('should throw permission error', async () => {
-    await expect(middleware.process(
-      mockCreateUserParameters,
-      mockCreateUserContext,
-      noop,
-      [
+    await expect(
+      middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
         ['user.create'],
         [
           (params, context) => {
@@ -173,6 +156,7 @@ describe('Aom registry - has wrong aom to create aom user', () => {
             }
           },
         ],
-      ])).to.rejectedWith(Exceptions.ForbiddenException);
+      ]),
+    ).to.rejectedWith(Exceptions.ForbiddenException);
   });
 });

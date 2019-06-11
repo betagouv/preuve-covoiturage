@@ -19,9 +19,7 @@ const mockConnectedUser = <UserBaseInterface>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 };
 
 const mockUser = {
@@ -46,4 +44,3 @@ describe('Delete user action', () => {
     expect(result).to.equal(undefined);
   });
 });
-

@@ -18,9 +18,7 @@ const mockConnectedUser = <UserBaseInterface>{
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 };
 const mockUser = new User({
   _id: '1ab',
@@ -31,9 +29,7 @@ const mockUser = new User({
   group: 'registry',
   role: 'admin',
   aom: '1ac',
-  permissions: [
-    'user.list',
-  ],
+  permissions: ['user.list'],
 });
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
@@ -46,8 +42,7 @@ const action = new FindUserAction(new FakeUserRepository());
 
 describe('find a user action', () => {
   it('should work', async () => {
-    const result = await action.handle({ id: mockUser['_id'] }, { call: { user:  mockConnectedUser } });
+    const result = await action.handle({ id: mockUser['_id'] }, { call: { user: mockConnectedUser } });
     expect(result).to.include(mockUser);
   });
 });
-
