@@ -3,17 +3,18 @@ import { Providers, Container } from '@pdc/core';
 
 import { MailProviderInterface } from '../interfaces/MailProviderInterface';
 import { MailInterface } from '../interfaces/MailInterface';
+import { MailjetConfigInterface, MailjetConnectOptionsInterface } from '../interfaces/MailjetInterface';
 
 @Container.provider()
 export class MailjetProvider implements MailProviderInterface {
-  protected mj;
-  protected config;
+  protected mj: nodeMailjet.Email.Client;
+  protected config: MailjetConfigInterface;
 
   constructor(private configProvider: Providers.ConfigProvider) {}
   async boot(): Promise<void> {
-    const mailjetConfig = this.configProvider.get('mail.mailjetConfig');
+    const connectOptions: MailjetConnectOptionsInterface = this.configProvider.get('mail.connectOptions');
     this.config = this.configProvider.get('mail.mailjet');
-    this.mj = nodeMailjet.connect(this.config.public, this.config.private, mailjetConfig);
+    this.mj = nodeMailjet.connect(this.config.public, this.config.private, connectOptions);
   }
 
   async send(mail: MailInterface): Promise<void> {
@@ -23,6 +24,7 @@ export class MailjetProvider implements MailProviderInterface {
       subject,
       content: { title, content: fullContent },
     } = mail;
+
     this.mj.post('send').request({
       Messages: [
         {
@@ -32,8 +34,8 @@ export class MailjetProvider implements MailProviderInterface {
           },
           To: [
             {
-              Email: this.config.debug_email || email,
-              Name: this.config.debug_fullname || fullname,
+              Email: this.config.debugEmail || email,
+              Name: this.config.debugFullname || fullname,
             },
           ],
           TemplateID: parseInt(this.config.template, 10),

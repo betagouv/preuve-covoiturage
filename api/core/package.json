@@ -60,6 +60,7 @@
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/commander": "^2.12.2",
+    "@types/dotenv": "^6.1.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",
     "@types/sinon": "^7.0.11",

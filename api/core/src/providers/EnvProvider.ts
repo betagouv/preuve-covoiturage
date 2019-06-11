@@ -44,6 +44,7 @@ export class EnvProvider implements ProviderInterface {
       if (fallback !== undefined) {
         return fallback;
       }
+      console.log(this.env);
       throw new Error(`Unknown env key ${key}`);
     }
     return this.env.get(key);

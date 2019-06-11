@@ -127,7 +127,7 @@
       }
     ],
     "no-parameter-reassignment": true,
-    "max-line-length": [true, 120],
+    "max-line-length": false,
     "no-return-await": true,
     "promise-function-async": true,
     "space-before-function-paren": false,

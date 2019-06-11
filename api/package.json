@@ -20,7 +20,8 @@
     "build:providers": "lerna run --scope @pdc/provider-* build",
     "build:services": "lerna run --scope @pdc/service-* build",
     "format:fix": "pretty-quick --staged",
-    "lint": "lerna run --parallel lint"
+    "lint": "lerna run --parallel lint",
+    "test": "lerna run --parallel test"
   },
   "keywords": [
     "betagouv",

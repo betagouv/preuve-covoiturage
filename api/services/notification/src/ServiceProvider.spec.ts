@@ -11,6 +11,11 @@ chai.use(chaiNock);
 
 process.env.APP_WORKING_PATH = path.resolve(process.cwd(), 'dist');
 process.env.APP_ENV = 'testing';
+process.env.APP_MJ_FROM_EMAIL = 'from@example.com';
+process.env.APP_MJ_FROM_NAME = 'From Example';
+process.env.APP_MJ_TEMPLATE = '123456';
+process.env.APP_MJ_DEBUG_EMAIL = 'test@fake.com';
+process.env.APP_MJ_DEBUG_NAME = 'Mad tester';
 
 const { expect } = chai;
 class ServiceKernel extends Parents.Kernel {
@@ -19,8 +24,8 @@ class ServiceKernel extends Parents.Kernel {
 
 const service = <Interfaces.KernelInterface>new ServiceKernel();
 let nockRequest;
-const url = /mailjet/;
-const endpoint = /send/;
+const url: RegExp = /mailjet/;
+const endpoint: RegExp = /send/;
 describe('Notification service', async () => {
   before(async () => {
     await service.boot();
@@ -30,7 +35,7 @@ describe('Notification service', async () => {
     nock.cleanAll();
   });
 
-  it('works', async () => {
+  it('notifies user', async () => {
     nockRequest = nock(url)
       .post(endpoint)
       .reply(200, {
@@ -70,8 +75,8 @@ describe('Notification service', async () => {
           Messages: [
             {
               From: {
-                Email: '',
-                Name: '',
+                Email: 'from@example.com',
+                Name: 'From Example',
               },
               To: [
                 {
@@ -79,7 +84,7 @@ describe('Notification service', async () => {
                   Name: 'Mad tester',
                 },
               ],
-              TemplateID: null,
+              TemplateID: 123456,
               TemplateLanguage: true,
               Subject: 'Mot de passe oublié',
               Variables: {
@@ -119,8 +124,8 @@ describe('Notification service', async () => {
           Messages: [
             {
               From: {
-                Email: '',
-                Name: '',
+                Email: 'from@example.com',
+                Name: 'From Example',
               },
               To: [
                 {
@@ -128,14 +133,13 @@ describe('Notification service', async () => {
                   Name: 'Mad tester',
                 },
               ],
-              TemplateID: null,
+              TemplateID: 123456,
               TemplateLanguage: true,
               Subject: 'Mot de passe oublié',
               Variables: {
                 title: 'Mot de passe oublié',
                 content: `Bonjour Mad tester,<br>
-              Vous avez demandé la réinitialisation de votre mot de passe
-              sur le site du Registre de preuve de covoiturage.<br>
+              Vous avez demandé la réinitialisation de votre mot de passe sur le site du Registre de preuve de covoiturage.<br>
               <br>
               Veuillez cliquer sur le lien suivant et choisir un nouveau mot de passe.
               <br>
