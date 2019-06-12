@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import supertest from 'supertest';
-import { Parents } from '@pdc/core';
+import { Parents } from '@ilos/core';
 import express from 'express';
 import bodyParser from 'body-parser';
 

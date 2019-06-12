@@ -3,7 +3,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Interfaces, Providers, Types } from '@pdc/core';
+import { Interfaces, Types } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
@@ -45,17 +46,11 @@ const mockChangeEmailParams = <ChangeEmailUserInterface>{
 };
 
 // todo: use configproviderinterfaceresolver
-class FakeConfigProvider extends Providers.ConfigProvider {
-  constructor(protected env: Providers.EnvProvider) {
-    super(env);
-  }
-
+class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
     return 'https://app.covoiturage.beta.gouv.fr';
   }
 }
-
-const envProvider = new Providers.EnvProvider();
 
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
@@ -93,7 +88,7 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
 }
 
 const action = new ChangeEmailUserAction(
-  new FakeConfigProvider(envProvider),
+  new FakeConfigProvider(),
   new FakeCryptoProvider(),
   new FakeKernelProvider(),
   new FakeUserRepository(),

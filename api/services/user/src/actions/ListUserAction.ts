@@ -1,4 +1,5 @@
-import { Parents, Container, Providers } from '@pdc/core';
+import { Parents, Container } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
@@ -44,7 +45,7 @@ export class ListUserAction extends Parents.Action {
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private config: Providers.ConfigProvider,
+    private config: ConfigProviderInterfaceResolver,
   ) {
     super();
   }

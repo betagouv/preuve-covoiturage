@@ -1,4 +1,5 @@
-import { Parents, Container, Providers } from '@pdc/core';
+import { Parents, Container } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { HandlebarsProvider } from '../providers/HandlebarsProvider';
 import { SendTemplateMailParamsInterface } from '../interfaces/SendTemplateMailParamsInterface';
@@ -13,7 +14,7 @@ export class SendTemplateMailAction extends Parents.Action {
   constructor(
     private ml: MailProviderInterfaceResolver,
     private template: TemplateProviderInterfaceResolver,
-    private conf: Providers.ConfigProvider,
+    private conf: ConfigProviderInterfaceResolver,
   ) {
     super();
   }

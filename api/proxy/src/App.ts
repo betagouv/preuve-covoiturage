@@ -9,7 +9,10 @@ import bodyParser from 'body-parser';
 
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 
-import { Interfaces, Providers, bootstrap } from './bridge';
+import { Interfaces } from '@ilos/core';
+import { ConfigProviderInterface, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { EnvProviderInterface, EnvProviderInterfaceResolver } from '@ilos/provider-env';
+
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
@@ -18,8 +21,8 @@ import { makeCall, routeMapping, ObjectRouteMapType, ArrayRouteMapType } from '.
 export class App implements Interfaces.TransportInterface {
   app: express.Express;
   kernel: Interfaces.KernelInterface;
-  config: Providers.ConfigProvider;
-  env: Providers.EnvProvider;
+  config: ConfigProviderInterface;
+  env: EnvProviderInterface;
   port: string;
   server: http.Server;
   readonly routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [];
@@ -68,10 +71,10 @@ export class App implements Interfaces.TransportInterface {
   }
 
   private async bootKernel() {
-    bootstrap.setEnvironment();
+    // bootstrap.setEnvironment();
     await this.kernel.boot();
-    this.config = this.kernel.getContainer().get(Providers.ConfigProvider);
-    this.env = this.kernel.getContainer().get(Providers.EnvProvider);
+    this.config = this.kernel.getContainer().get(ConfigProviderInterfaceResolver);
+    this.env = this.kernel.getContainer().get(EnvProviderInterfaceResolver);
     // this.app.locals.kernel = this.kernel;
   }
 

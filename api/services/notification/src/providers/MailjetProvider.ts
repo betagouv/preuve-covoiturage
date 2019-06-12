@@ -1,5 +1,6 @@
 import nodeMailjet from 'node-mailjet';
-import { Providers, Container } from '@pdc/core';
+import { Container } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { MailProviderInterface } from '../interfaces/MailProviderInterface';
 import { MailInterface } from '../interfaces/MailInterface';
@@ -10,7 +11,7 @@ export class MailjetProvider implements MailProviderInterface {
   protected mj: nodeMailjet.Email.Client;
   protected config: MailjetConfigInterface;
 
-  constructor(private configProvider: Providers.ConfigProvider) {}
+  constructor(private configProvider: ConfigProviderInterfaceResolver) {}
   async boot(): Promise<void> {
     const connectOptions: MailjetConnectOptionsInterface = this.configProvider.get('mail.connectOptions');
     this.config = this.configProvider.get('mail.mailjet');

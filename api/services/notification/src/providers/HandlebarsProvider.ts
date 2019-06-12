@@ -1,7 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars';
-import { Providers, Container } from '@pdc/core';
+import { Container } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
 
 import { TemplateProviderInterface } from '../interfaces/TemplateProviderInterface';
 
@@ -10,7 +12,10 @@ export class HandlebarsProvider implements TemplateProviderInterface {
   protected templates: Map<string, Function> = new Map();
   protected metadata: Map<string, any> = new Map();
 
-  constructor(private envProvider: Providers.EnvProvider, private configProvider: Providers.ConfigProvider) {}
+  constructor(
+    private envProvider: EnvProviderInterfaceResolver,
+    private configProvider: ConfigProviderInterfaceResolver,
+  ) {}
 
   async boot(): Promise<void> {
     const templateDirectory = this.configProvider.get('template.templateDirectory');

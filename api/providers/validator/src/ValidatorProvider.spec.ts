@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import { Providers } from '@pdc/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { ValidatorProvider } from './ValidatorProvider';
 
@@ -9,11 +9,11 @@ chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
 // tslint:disable prefer-type-cast
-const fakeConfigProvider = (<unknown>sinon.createStubInstance(Providers.ConfigProvider, {
+const fakeConfigProvider = sinon.createStubInstance(ConfigProviderInterfaceResolver, {
   get() {
     return {};
   },
-})) as Providers.ConfigProvider;
+});
 
 let provider;
 

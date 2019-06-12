@@ -1,9 +1,11 @@
 import { describe } from 'mocha';
-import { Parents, Interfaces } from '@pdc/core';
+import { Parents, Interfaces } from '@ilos/core';
 import path from 'path';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
+import { ConfigProviderInterfaceResolver, ConfigProvider } from '@ilos/provider-config';
+import { EnvProviderInterfaceResolver, EnvProvider } from '@ilos/provider-env';
 
 import { ServiceProvider } from './ServiceProvider';
 
@@ -19,7 +21,12 @@ process.env.APP_MJ_DEBUG_NAME = 'Mad tester';
 
 const { expect } = chai;
 class ServiceKernel extends Parents.Kernel {
-  serviceProviders = [ServiceProvider];
+  readonly alias = [
+    [ConfigProviderInterfaceResolver, ConfigProvider],
+    [EnvProviderInterfaceResolver, EnvProvider],
+  ];
+
+  readonly serviceProviders = [ServiceProvider];
 }
 
 const service = <Interfaces.KernelInterface>new ServiceKernel();

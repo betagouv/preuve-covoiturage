@@ -1,5 +1,6 @@
-import { Parents, Container, Exceptions, Providers, Types, Interfaces } from '@pdc/core';
+import { Parents, Container, Exceptions, Types, Interfaces } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -34,7 +35,7 @@ export class CreateUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
-    private config: Providers.ConfigProvider,
+    private config: ConfigProviderInterfaceResolver,
     private kernel: Interfaces.KernelInterfaceResolver,
   ) {
     super();

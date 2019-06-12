@@ -3,7 +3,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { bootstrap, Exceptions } from '@pdc/core';
+import { bootstrap, Exceptions } from '@ilos/core';
 import { MongoProvider } from '@pdc/provider-mongo';
 
 let mongoServer;

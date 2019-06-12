@@ -1,4 +1,4 @@
-import { Parents, Container } from '@pdc/core';
+import { Parents, Container } from '@ilos/core';
 
 import { SendMailParamsInterface } from '../interfaces/SendMailParamsInterface';
 import { MailProviderInterfaceResolver } from '../interfaces/MailProviderInterface';

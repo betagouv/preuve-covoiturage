@@ -1,4 +1,5 @@
-import { Parents, Container, Providers, Types, Interfaces } from '@pdc/core';
+import { Parents, Container, Types, Interfaces } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -18,7 +19,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
-    private config: Providers.ConfigProvider,
+    private config: ConfigProviderInterfaceResolver,
     private kernel: Interfaces.KernelInterfaceResolver,
   ) {
     super();

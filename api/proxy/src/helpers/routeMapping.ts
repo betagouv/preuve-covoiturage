@@ -1,5 +1,5 @@
 import express from 'express';
-import { Interfaces, Types } from '@pdc/core';
+import { Interfaces, Types } from '@ilos/core';
 
 export type MapRequestType = (body: any, query?: any, params?: any) => any;
 export type MapResponseType = (result: any, error: any) => any;

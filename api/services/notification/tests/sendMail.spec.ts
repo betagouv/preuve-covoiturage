@@ -3,7 +3,7 @@ import axios from 'axios';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
-import { bootstrap } from '@pdc/core';
+import { bootstrap } from '@ilos/core';
 
 chai.use(chaiNock);
 

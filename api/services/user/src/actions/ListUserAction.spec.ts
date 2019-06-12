@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
-import { Providers } from '@pdc/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { ListUserAction } from './ListUserAction';
@@ -64,19 +64,13 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 }
 
 // todo: use configproviderinterfaceresolver
-class FakeConfigProvider extends Providers.ConfigProvider {
-  constructor(protected env: Providers.EnvProvider) {
-    super(env);
-  }
-
+class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
     return ['user.list'];
   }
 }
 
-const envProvider = new Providers.EnvProvider();
-
-const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvider(envProvider));
+const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvider());
 
 describe('list users action', () => {
   it('should work', async () => {

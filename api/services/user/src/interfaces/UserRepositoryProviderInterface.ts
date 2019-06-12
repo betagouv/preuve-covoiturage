@@ -1,4 +1,4 @@
-import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@pdc/provider-repository';
+import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@ilos/provider-repository';
 
 import { User } from '../entities/User';
 

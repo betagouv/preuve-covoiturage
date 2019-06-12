@@ -1,4 +1,5 @@
-import { Parents, Types, Interfaces } from '@pdc/core';
+import { Parents, Interfaces } from '@ilos/cli';
+import { Types } from '@ilos/core';
 
 import { MigrateCommand } from './commands/MigrateCommand';
 

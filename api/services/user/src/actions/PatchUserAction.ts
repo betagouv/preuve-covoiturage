@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { Parents, Container, Exceptions, Interfaces, Types } from '@pdc/core';
+import { Parents, Container, Exceptions, Interfaces, Types } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';

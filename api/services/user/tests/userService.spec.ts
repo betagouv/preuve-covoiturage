@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiNock from 'chai-nock';
-import { Exceptions } from '@pdc/core';
+import { Exceptions } from '@ilos/core';
 
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';

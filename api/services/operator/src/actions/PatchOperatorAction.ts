@@ -1,4 +1,4 @@
-import { Parents, Container } from '@pdc/core';
+import { Parents, Container } from '@ilos/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { PatchOperatorParamsInterface, OperatorDbInterface } from '../interfaces/OperatorInterfaces';

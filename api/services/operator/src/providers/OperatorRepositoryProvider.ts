@@ -1,6 +1,7 @@
-import { Providers, Container } from '@pdc/core';
-import { ParentRepositoryProvider } from '@pdc/provider-repository';
-import { MongoProvider } from '@pdc/provider-mongo';
+import { Container } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
+import { ParentRepositoryProvider } from '@ilos/provider-repository';
 
 import { Operator } from '../entities/Operator';
 import { OperatorRepositoryProviderInterface } from '../interfaces/OperatorRepositoryProviderInterface';
@@ -8,7 +9,10 @@ import { OperatorRepositoryProviderInterface } from '../interfaces/OperatorRepos
 @Container.provider()
 export class OperatorRepositoryProvider extends ParentRepositoryProvider
   implements OperatorRepositoryProviderInterface {
-  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {
+  constructor(
+    protected config: ConfigProviderInterfaceResolver,
+    protected mongoProvider: MongoProviderInterfaceResolver,
+  ) {
     super(config, mongoProvider);
   }
 

@@ -1,4 +1,6 @@
-import { Parents, Providers, Interfaces, Types, Middlewares } from '@pdc/core';
+import { Parents, Interfaces, Types } from '@ilos/core';
+import { PermissionMiddleware } from '@ilos/package-acl';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver, CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 
@@ -47,7 +49,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
-    ['can', Middlewares.PermissionMiddleware],
+    ['can', PermissionMiddleware],
     ['validate', ValidatorMiddleware],
     ['scopeIt', ScopeToSelfMiddleware],
   ];
@@ -67,7 +69,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
 
   public async boot() {
     this.getContainer()
-      .get(Providers.ConfigProvider)
+      .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
     await super.boot();
     this.registerValidators();

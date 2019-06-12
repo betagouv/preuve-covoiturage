@@ -1,4 +1,4 @@
-import { Parents, Types } from '@pdc/core';
+import { Parents, Types } from '@ilos/cli';
 
 export class MigrateCommand implements Parents.Command {
   signature: string;

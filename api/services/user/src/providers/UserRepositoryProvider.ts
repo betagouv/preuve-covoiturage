@@ -1,6 +1,7 @@
-import { Providers, Container, Exceptions } from '@pdc/core';
-import { ParentRepositoryProvider } from '@pdc/provider-repository';
-import { MongoException, MongoProvider, ObjectId } from '@pdc/provider-mongo';
+import { Container, Exceptions } from '@ilos/core';
+import { ParentRepositoryProvider } from '@ilos/provider-repository';
+import { MongoException, MongoProvider, ObjectId } from '@ilos/provider-mongo';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
@@ -8,7 +9,7 @@ import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryPro
 
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface {
-  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {
+  constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
     super(config, mongoProvider);
   }
 

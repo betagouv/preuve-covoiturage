@@ -1,4 +1,5 @@
-import { Parents, Providers, Interfaces } from '@pdc/core';
+import { Parents, Interfaces } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { AomRepositoryProviderInterfaceResolver } from './interfaces/AomRepositoryProviderInterface';
 import { AomRepositoryProvider } from './providers/AomRepositoryProvider';
@@ -14,7 +15,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
 
   public async boot() {
     this.getContainer()
-      .get(Providers.ConfigProvider)
+      .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
     await super.boot();
   }

@@ -1,4 +1,4 @@
-import { Container, Interfaces } from '@pdc/core';
+import { Container, Interfaces } from '@ilos/core';
 import bcrypt from 'bcrypt';
 
 @Container.provider()

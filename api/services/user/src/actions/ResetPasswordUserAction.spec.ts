@@ -2,7 +2,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Providers } from '@pdc/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
@@ -55,11 +55,7 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
 }
 
 // todo: use configproviderinterfaceresolver
-class FakeConfigProvider extends Providers.ConfigProvider {
-  constructor(protected env: Providers.EnvProvider) {
-    super(env);
-  }
-
+class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
     if (key === 'user.tokenExpiration.passwordReset') {
       return 86400;
@@ -67,10 +63,8 @@ class FakeConfigProvider extends Providers.ConfigProvider {
   }
 }
 
-const envProvider = new Providers.EnvProvider();
-
 const action = new ResetPasswordUserAction(
-  new FakeConfigProvider(envProvider),
+  new FakeConfigProvider(),
   new FakeCryptoProvider(),
   new FakeUserRepository(),
 );

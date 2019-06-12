@@ -2,7 +2,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Interfaces, Providers, Types } from '@pdc/core';
+import { Interfaces, Types } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserBaseInterface, UserDbInterface } from '../interfaces/UserInterfaces';
@@ -67,23 +68,16 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   }
 }
 
-// todo: use configproviderinterfaceresolver
-class FakeConfigProvider extends Providers.ConfigProvider {
-  constructor(protected env: Providers.EnvProvider) {
-    super(env);
-  }
-
+class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
     return 'https://app.covoiturage.beta.gouv.fr';
   }
 }
 
-const envProvider = new Providers.EnvProvider();
-
 const action = new ForgottenPasswordUserAction(
   new FakeUserRepository(),
   new FakeCryptoProvider(),
-  new FakeConfigProvider(envProvider),
+  new FakeConfigProvider(),
   new FakeKernelProvider(),
 );
 

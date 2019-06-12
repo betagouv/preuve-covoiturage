@@ -6,7 +6,7 @@
   "scripts": {
     "copy-static": "cp -R ./src/templates ./dist/",
     "start": "yarn serve",
-    "build": "yarn build-ts && yarn lint && yarn copy-static",
+    "build": "yarn build-ts && yarn copy-static",
     "serve": "node dist/kernel.js",
     "watch-node": "nodemon dist/kernel.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
@@ -59,7 +59,9 @@
     "instrument": true
   },
   "dependencies": {
-    "@pdc/core": "0.0.1",
+    "@ilos/core": "~0",
+    "@ilos/provider-config": "~0",
+    "@ilos/provider-env": "~0",
     "handlebars": "^4.1.2",
     "node-mailjet": "^3.3.1"
   },

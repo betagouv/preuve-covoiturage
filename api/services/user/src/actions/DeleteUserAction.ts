@@ -1,4 +1,4 @@
-import { Parents, Container, Types } from '@pdc/core';
+import { Parents, Container, Types } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';

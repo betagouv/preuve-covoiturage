@@ -1,13 +1,17 @@
-import { Providers, Container } from '@pdc/core';
-import { ParentRepositoryProvider } from '@pdc/provider-repository';
-import { MongoProvider } from '@pdc/provider-mongo';
+import { Container } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ParentRepositoryProvider } from '@ilos/provider-repository';
+import { MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
 
 import { Aom } from '../entities/Aom';
 import { AomRepositoryProviderInterface } from '../interfaces/AomRepositoryProviderInterface';
 
 @Container.provider()
 export class AomRepositoryProvider extends ParentRepositoryProvider implements AomRepositoryProviderInterface {
-  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {
+  constructor(
+    protected config: ConfigProviderInterfaceResolver,
+    protected mongoProvider: MongoProviderInterfaceResolver,
+  ) {
     super(config, mongoProvider);
   }
 

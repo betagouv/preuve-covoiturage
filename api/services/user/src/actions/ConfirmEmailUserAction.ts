@@ -1,4 +1,5 @@
-import { Parents, Container, Types, Providers, Exceptions } from '@pdc/core';
+import { Parents, Container, Types, Exceptions } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -17,7 +18,7 @@ export class ConfirmEmailUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [['validate', 'user.confirmEmail']];
 
   constructor(
-    private config: Providers.ConfigProvider,
+    private config: ConfigProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {

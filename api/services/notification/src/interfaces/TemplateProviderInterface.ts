@@ -1,4 +1,4 @@
-import { Interfaces } from '@pdc/core';
+import { Interfaces } from '@ilos/core';
 
 export interface TemplateProviderInterface extends Interfaces.ProviderInterface {
   setMetadata(templateName: string, metadata: any): void;

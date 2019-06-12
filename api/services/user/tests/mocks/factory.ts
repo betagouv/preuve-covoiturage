@@ -1,4 +1,4 @@
-import { Exceptions } from '@pdc/core';
+import { Exceptions } from '@ilos/core';
 
 import { mockConnectedUserBase } from './connectedUserBase';
 import { mockNewUserBase } from './newUserBase';

@@ -1,4 +1,4 @@
-import { Interfaces } from '@pdc/core';
+import { Interfaces } from '@ilos/core';
 
 import { MailInterface } from './MailInterface';
 

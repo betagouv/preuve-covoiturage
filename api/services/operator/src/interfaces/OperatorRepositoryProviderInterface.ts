@@ -1,4 +1,4 @@
-import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@pdc/provider-repository';
+import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@ilos/provider-repository';
 
 export interface OperatorRepositoryProviderInterface extends ParentRepositoryProviderInterface {}
 

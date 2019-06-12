@@ -1,4 +1,4 @@
-import { Container } from '@pdc/core';
+import { Container } from '@ilos/core';
 import { AjvValidatorProvider, ValidatorProviderInterface } from '@ilos/provider-validator';
 
 import { bicCustomFormat } from './formats/bicCustomFormat';

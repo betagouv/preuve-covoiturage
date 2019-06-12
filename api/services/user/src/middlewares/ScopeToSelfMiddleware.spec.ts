@@ -1,4 +1,4 @@
-import { Types, Exceptions, Interfaces, Container } from '@pdc/core';
+import { Types, Exceptions, Interfaces, Container } from '@ilos/core';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

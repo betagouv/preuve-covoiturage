@@ -1,4 +1,4 @@
-import { Interfaces, Container } from '@pdc/core';
+import { Interfaces, Container } from '@ilos/core';
 import { ValidatorMiddleware as BaseValidatorMiddleware } from '@ilos/provider-validator';
 
 @Container.middleware()

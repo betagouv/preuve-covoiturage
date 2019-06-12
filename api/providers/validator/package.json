@@ -47,8 +47,9 @@
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "@ilos/provider-validator": "0.0.1",
-    "@pdc/core": "0.0.1"
+    "@ilos/provider-validator": "~0",
+    "@ilos/provider-config": "~0",
+    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

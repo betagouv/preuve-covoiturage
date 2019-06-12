@@ -1,4 +1,7 @@
-import { Parents, Providers, Interfaces, Middlewares, Types } from '@pdc/core';
+import { Parents, Interfaces, Types } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { PermissionMiddleware } from '@ilos/package-acl';
+
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 
 import { CommandServiceProvider } from './CommandServiceProvider';
@@ -26,7 +29,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   readonly handlers = [AllOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction];
 
   readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
-    ['can', Middlewares.PermissionMiddleware],
+    ['can', PermissionMiddleware],
     ['validate', ValidatorMiddleware],
   ];
 
@@ -38,7 +41,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
 
   public async boot() {
     this.getContainer()
-      .get(Providers.ConfigProvider)
+      .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
     await super.boot();
     this.registerValidators();

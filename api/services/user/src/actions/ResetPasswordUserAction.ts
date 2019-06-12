@@ -1,5 +1,6 @@
-import { Parents, Container, Types, Exceptions, Providers } from '@pdc/core';
+import { Parents, Container, Types, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
@@ -18,7 +19,7 @@ export class ResetPasswordUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [['validate', 'user.resetPassword']];
 
   constructor(
-    private config: Providers.ConfigProvider,
+    private config: ConfigProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
