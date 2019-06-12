@@ -7,7 +7,8 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
-import { ResetPasswordUserAction, ResetPasswordUserInterface } from './ResetPasswordUserAction';
+import { ResetPasswordUserAction } from './ResetPasswordUserAction';
+import { UserResetPasswordParamsInterface } from '../interfaces/UserResetPasswordParamsInterface';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -25,7 +26,7 @@ const mockUser = new User({
   forgottenAt: new Date(),
 });
 
-const mockResetPasswordParams = <ResetPasswordUserInterface>{
+const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
   token: 'tokenFromEmail',
   reset: 'resetFromEmail',
   password: 'newPassword',
