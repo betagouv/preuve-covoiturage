@@ -3,6 +3,9 @@ import { Parents, Container, Types } from '@ilos/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
+/*
+ *  Find user by id and delete user
+ */
 @Container.handler({
   service: 'user',
   method: 'delete',

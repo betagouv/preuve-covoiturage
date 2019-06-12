@@ -4,6 +4,9 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
 
+/*
+ * Find user by id
+ */
 @Container.handler({
   service: 'user',
   method: 'find',

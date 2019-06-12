@@ -6,6 +6,9 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { User } from '../entities/User';
 import { UserConfirmEmailParamsInterface } from '../interfaces/UserConfirmEmailParamsInterface';
 
+/*
+ * Confirm email by getting user from 'confirm' and verifying uncrypted 'token' with crypted 'emailToken'
+ */
 @Container.handler({
   service: 'user',
   method: 'confirmEmail',

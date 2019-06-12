@@ -8,6 +8,9 @@ import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
 import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePasswordParamsInterface';
 
+/*
+ * Change password of user by sending old & new password
+ */
 @Container.handler({
   service: 'user',
   method: 'changePassword',

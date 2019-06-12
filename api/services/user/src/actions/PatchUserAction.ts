@@ -1,10 +1,6 @@
-import * as _ from 'lodash';
-
-import { Parents, Container, Exceptions, Interfaces, Types } from '@ilos/core';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { Parents, Container, Interfaces, Types } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
 
 interface PatchUserInterface {
