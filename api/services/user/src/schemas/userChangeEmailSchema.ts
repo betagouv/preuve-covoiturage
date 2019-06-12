@@ -7,7 +7,7 @@ export const userChangeEmailSchema = {
     id: {
       type: 'string',
       maxLength: 255,
-      minLength: 6,
+      minLength: 1,
     },
     email: {
       type: 'string',
@@ -17,7 +17,14 @@ export const userChangeEmailSchema = {
       // match: regex.email,
       // trim: true,
       // lowercase: true,
-      // unique: true,
     },
   },
+  oneOf: [
+    {
+      required: ['id'],
+    },
+    {
+      required: ['email'],
+    },
+  ],
 };
