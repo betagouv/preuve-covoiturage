@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ApiResponse } from '~/entities/responses/apiResponse';
+import { environment } from '~/../environments/environment';
 
 import { StatisticsService } from '../../services/statisticsService';
 
@@ -10,6 +11,7 @@ import { StatisticsService } from '../../services/statisticsService';
 })
 export class StatisticsPageComponent implements OnInit {
   public apiData = {};
+  public isProduction = environment.name === 'production';
 
   constructor(private statisticsService: StatisticsService) {}
   ngOnInit(): void {

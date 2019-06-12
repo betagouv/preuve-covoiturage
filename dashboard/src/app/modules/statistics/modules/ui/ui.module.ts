@@ -6,10 +6,11 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { ChartModule } from 'primeng/chart';
 
 import { StatisticsContentComponent } from './stats/component';
+import { StatisticsMaintenanceComponent } from './maintenance/maintenance.component';
 
 @NgModule({
   imports: [CommonModule, CardModule, ChartModule, InputSwitchModule, ProgressSpinnerModule],
-  declarations: [StatisticsContentComponent],
-  exports: [StatisticsContentComponent],
+  declarations: [StatisticsContentComponent, StatisticsMaintenanceComponent],
+  exports: [StatisticsContentComponent, StatisticsMaintenanceComponent],
 })
 export class StatisticsUIModule {}

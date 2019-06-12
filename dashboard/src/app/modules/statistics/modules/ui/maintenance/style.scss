@@ -1,0 +1,23 @@
+@import '~src/assets/scss/variables';
+
+.page-centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  transform: translate(-50%, -50%);
+}
+
+.img-maintenance {
+  display: block;
+  margin: 3em auto;
+  max-width: 100%;
+}
+
+.credits {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  font-size: 0.8em;
+  padding: 0.5em 1em;
+}
