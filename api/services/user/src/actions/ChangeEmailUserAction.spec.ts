@@ -9,8 +9,8 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
-import { ChangePasswordUserAction } from './ChangePasswordUserAction';
-import { ChangeEmailUserAction, ChangeEmailUserInterface } from './ChangeEmailUserAction';
+import { ChangeEmailUserAction } from './ChangeEmailUserAction';
+import { UserChangeEmailParamsInterface } from '../interfaces/UserChangeEmailParamsInterface';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
@@ -40,7 +40,7 @@ const mockUser = new User({
   permissions: ['user.list'],
 });
 
-const mockChangeEmailParams = <ChangeEmailUserInterface>{
+const mockChangeEmailParams = <UserChangeEmailParamsInterface>{
   id: '1ab',
   email: 'newEmail@example.com',
 };

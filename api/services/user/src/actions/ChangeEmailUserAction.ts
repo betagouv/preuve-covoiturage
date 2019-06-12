@@ -4,11 +4,8 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
+import { UserChangeEmailParamsInterface } from '../interfaces/UserChangeEmailParamsInterface';
 
-export interface ChangeEmailUserInterface {
-  id: string;
-  email: string;
-}
 
 @Container.handler({
   service: 'user',
@@ -25,7 +22,7 @@ export class ChangeEmailUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ChangeEmailUserInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserChangeEmailParamsInterface, context: Types.ContextType): Promise<User> {
     const user = await this.userRepository.find(params.id);
 
     const emailChangeAt = new Date();

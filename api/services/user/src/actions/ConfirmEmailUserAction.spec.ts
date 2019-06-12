@@ -7,7 +7,8 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
-import { ConfirmEmailUserAction, ConfirmEmailUserInterface } from './ConfirmEmailUserAction';
+import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
+import { UserConfirmEmailParamsInterface } from '../interfaces/UserConfirmEmailParamsInterface';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -25,7 +26,7 @@ const mockUser = new User({
   emailChangeAt: new Date(),
 });
 
-const mockResetPasswordParams = <ConfirmEmailUserInterface>{
+const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
   token: 'tokenFromEmail',
   confirm: 'confirmFromEmail',
 };
