@@ -35,6 +35,7 @@ export class FindUserAction extends Parents.Action {
         ],
       ],
     ],
+    ['filterOutput', 'password'],
   ];
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();

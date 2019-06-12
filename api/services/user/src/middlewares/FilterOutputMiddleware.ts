@@ -8,11 +8,16 @@ export class FilterOutputMiddleware implements Interfaces.MiddlewareInterface {
     params: Types.ParamsType,
     context: Types.ContextType,
     next: Function,
-    options: FilterOutputMiddlewareOptionsType,
+    filterProperties: FilterOutputMiddlewareOptionsType,
   ): Promise<Types.ResultType> {
-    console.log('options', options);
-    const val = await next(params, context);
+    const result = await next(params, context);
 
-    console.log('test', val);
+    filterProperties.forEach((prop) => {
+      if (prop in result) {
+        delete result[prop];
+      }
+    });
+
+    return result;
   }
 }
