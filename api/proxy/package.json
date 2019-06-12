@@ -32,7 +32,7 @@
     "@sentry/node": "^5.1.0",
     "api-query-params": "^4.9.0",
     "axios": "^0.18.0",
-    "bcrypt": "^3.0.2",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "bull": "^3.8.1",
     "bull-arena": "^2.5.2",
