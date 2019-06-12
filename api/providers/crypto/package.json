@@ -9,7 +9,7 @@
     "build": "tsc",
     "watch-ts": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "test": "mocha src/**/*.spec.ts"
+    "test": "mocha src/*.spec.ts src/**/*.spec.ts"
   },
   "dependencies": {
     "bcrypt": "^3.0.6"
