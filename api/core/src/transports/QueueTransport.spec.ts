@@ -23,7 +23,7 @@ const sandbox = sinon.createSandbox();
   method: 'minus',
 })
 class BasicAction extends Action {
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     let count = 0;
     if ('minus' in params) {
       const { add } = params;
@@ -42,7 +42,7 @@ class BasicAction extends Action {
   method: 'add',
 })
 class BasicTwoAction extends Action {
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     let count = 0;
     if ('add' in params) {
       const { add } = params;
@@ -64,22 +64,31 @@ class BasicKernel extends Kernel {
   serviceProviders = [BasicServiceProvider];
 }
 
-
 describe('Queue transport', () => {
   beforeEach(() => {
     sandbox.stub(Bull, 'bullFactory').callsFake(
       // @ts-ignore
-      name => ({
+      (name) => ({
         name,
-        async process(fn) { this.fn = fn; return; },
-        async close() { return; },
-        async isReady() { return this; },
-        on(event: string, callback: (...args: any[]) => void) { return this; },
+        async process(fn) {
+          this.fn = fn;
+          return;
+        },
+        async close() {
+          return;
+        },
+        async isReady() {
+          return this;
+        },
+        on(event: string, callback: (...args: any[]) => void) {
+          return this;
+        },
         async add(call) {
           const fn = this.fn;
           return fn(call);
         },
-      }));
+      }),
+    );
   });
   afterEach(() => {
     sandbox.restore();
@@ -116,4 +125,3 @@ describe('Queue transport', () => {
     await queueTransport.down();
   });
 });
-

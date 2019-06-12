@@ -1,3 +1,1 @@
-export class MongoException extends Error {
-
-}
+export class MongoException extends Error {}

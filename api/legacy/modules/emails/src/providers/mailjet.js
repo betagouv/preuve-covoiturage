@@ -17,31 +17,29 @@ const mailjet = mj.connect(config.public, config.private, {
 
 // eslint-disable-next-line object-curly-newline
 const sendEmail = async ({ email, fullname, subject, content }) => {
-  mailjet
-    .post('send')
-    .request({
-      Messages: [
-        {
-          From: {
-            Email: config.email,
-            Name: config.name,
-          },
-          To: [
-            {
-              Email: config.debug_email || email,
-              Name: config.debug_fullname || fullname,
-            },
-          ],
-          TemplateID: parseInt(config.template, 10),
-          TemplateLanguage: true,
-          Subject: subject,
-          Variables: {
-            title: content.title,
-            content: content.content,
-          },
+  mailjet.post('send').request({
+    Messages: [
+      {
+        From: {
+          Email: config.email,
+          Name: config.name,
         },
-      ],
-    });
+        To: [
+          {
+            Email: config.debug_email || email,
+            Name: config.debug_fullname || fullname,
+          },
+        ],
+        TemplateID: parseInt(config.template, 10),
+        TemplateLanguage: true,
+        Subject: subject,
+        Variables: {
+          title: content.title,
+          content: content.content,
+        },
+      },
+    ],
+  });
 };
 
 export default sendEmail;

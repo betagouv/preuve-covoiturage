@@ -9,8 +9,19 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
+    "clean": "rm -rf ./**/dist",
+    "precommit": "run-s format:fix lint",
     "watch": "lerna run --parallel watch-ts",
-    "build": "lerna run build"
+    "ls": "lerna ls",
+    "build": "run-s clean build:core build:ilos build:providers build:services build:proxy",
+    "build:core": "lerna run --scope @pdc/core build",
+    "build:proxy": "lerna run --scope @pdc/proxy build",
+    "build:ilos": "lerna run --scope @ilos/* build",
+    "build:providers": "lerna run --scope @pdc/provider-* build",
+    "build:services": "lerna run --scope @pdc/service-* build",
+    "format:fix": "pretty-quick --staged",
+    "lint": "lerna run --parallel lint",
+    "test": "lerna run --parallel test"
   },
   "keywords": [
     "betagouv",
@@ -20,6 +31,7 @@
   ],
   "workspaces": [
     "core",
+    "ilos-validator",
     "proxy",
     "providers/*",
     "services/*"
@@ -30,6 +42,11 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "devDependencies": {
-    "lerna": "^3.13.4"
+    "husky": "^2.4.0",
+    "lerna": "^3.13.4",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.17.1",
+    "pretty-quick": "^1.11.0",
+    "tslint": "^5.17.0"
   }
 }

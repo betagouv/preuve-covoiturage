@@ -3,7 +3,7 @@ export interface MailInterface {
   fullname: string;
   subject: string;
   content: {
-    title: string,
-    content: string,
+    title: string;
+    content: string;
   };
 }

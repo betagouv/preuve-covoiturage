@@ -1,11 +1,11 @@
 export type ContextType = {
   channel: {
-    service: string,
-    transport?: string,
-    metadata?: any,
-  },
+    service: string;
+    transport?: string;
+    metadata?: any;
+  };
   call?: {
-    user: any,
-    metadata?: any,
-  },
+    user: any;
+    metadata?: any;
+  };
 };

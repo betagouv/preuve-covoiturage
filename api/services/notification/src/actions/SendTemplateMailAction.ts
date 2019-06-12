@@ -1,8 +1,9 @@
 import { Parents, Container, Providers } from '@pdc/core';
 
-import { MailjetProvider } from '../providers/MailjetProvider';
 import { HandlebarsProvider } from '../providers/HandlebarsProvider';
 import { SendTemplateMailParamsInterface } from '../interfaces/SendTemplateMailParamsInterface';
+import { MailProviderInterfaceResolver } from '../interfaces/MailProviderInterface';
+import { TemplateProviderInterfaceResolver } from '../interfaces/TemplateProviderInterface';
 
 @Container.handler({
   service: 'notification',
@@ -10,16 +11,16 @@ import { SendTemplateMailParamsInterface } from '../interfaces/SendTemplateMailP
 })
 export class SendTemplateMailAction extends Parents.Action {
   constructor(
-    private mj: MailjetProvider,
-    private hds: HandlebarsProvider,
+    private ml: MailProviderInterfaceResolver,
+    private template: TemplateProviderInterfaceResolver,
     private conf: Providers.ConfigProvider,
   ) {
     super();
   }
-  protected async handle(params: SendTemplateMailParamsInterface):Promise<void> {
+  protected async handle(params: SendTemplateMailParamsInterface): Promise<void> {
     const { template, email, fullname, opts } = params;
 
-    let { subject, title } = this.hds.getMetadata(template);
+    let { subject, title } = this.template.getMetadata(template);
 
     if (!subject) {
       subject = this.conf.get('template.defaultSubject');
@@ -28,8 +29,8 @@ export class SendTemplateMailAction extends Parents.Action {
     if (!title) {
       title = subject;
     }
-    const content = this.hds.get(template, { email, fullname, subject, ...opts });
-    this.mj.send({
+    const content = this.template.get(template, { email, fullname, subject, ...opts });
+    this.ml.send({
       email,
       fullname,
       subject,

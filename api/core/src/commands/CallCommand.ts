@@ -7,9 +7,6 @@ import { command } from '../container';
 
 /**
  * Command that make an RPC call
- * @export
- * @class CallCommand
- * @extends {Command}
  */
 @command()
 export class CallCommand extends Command {
@@ -19,22 +16,20 @@ export class CallCommand extends Command {
     {
       signature: '-p, --params <params>',
       description: 'Set call parameters',
-      coerce: val => JSON.parse(val),
+      coerce: (val) => JSON.parse(val),
     },
     {
       signature: '-c, --context <context>',
       description: 'Set call context',
-      coerce: val => JSON.parse(val),
+      coerce: (val) => JSON.parse(val),
     },
   ];
 
-  constructor(
-    private kernel: KernelInterfaceResolver,
-  ) {
+  constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
-  public async call(method, options?):Promise<ResultType> {
+  public async call(method, options?): Promise<ResultType> {
     try {
       const call = {
         method,

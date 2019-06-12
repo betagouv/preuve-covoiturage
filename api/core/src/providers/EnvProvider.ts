@@ -6,19 +6,12 @@ import { provider } from '../container';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 
-
-/**
- * Env provider
- * @export
- * @class EnvProvider
- * @implements {ProviderInterface}
- */
 @provider()
 export class EnvProvider implements ProviderInterface {
   private env: Map<string, any> = new Map();
 
   boot() {
-    const envPath = ('APP_ROOT_PATH' in process.env) ? process.env.APP_ROOT_PATH : process.cwd();
+    const envPath = 'APP_ROOT_PATH' in process.env ? process.env.APP_ROOT_PATH : process.cwd();
 
     this.loadEnvFile(envPath);
 
@@ -51,6 +44,7 @@ export class EnvProvider implements ProviderInterface {
       if (fallback !== undefined) {
         return fallback;
       }
+      console.log(this.env);
       throw new Error(`Unknown env key ${key}`);
     }
     return this.env.get(key);

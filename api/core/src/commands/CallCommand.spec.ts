@@ -10,7 +10,9 @@ chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
 class FakeKernel extends Kernel {
-  async boot() { return; }
+  async boot() {
+    return;
+  }
   async handle(call) {
     if (call.method === 'nope') {
       throw new Error();

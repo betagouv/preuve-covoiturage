@@ -17,10 +17,6 @@ import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 /**
  * Service provider parent class
- * @export
- * @abstract
- * @class ServiceProvider
- * @implements {ServiceProviderInterface}
  */
 export abstract class ServiceProvider implements ServiceProviderInterface {
   readonly alias: any[] = [];
@@ -29,7 +25,7 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
   readonly handlers: NewableType<HandlerInterface>[] = [];
   readonly middlewares: [string, NewableType<MiddlewareInterface>][] = [];
 
-  protected ready: boolean = false;
+  protected ready = false;
   protected container: ContainerInterface;
 
   constructor(container?: ContainerInterface) {
@@ -42,7 +38,6 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
   /**
    * Boot register a container module provided by register function,
    * then register the handlers, then boot other service providers
-   * @memberof ServiceProvider
    */
   public async boot() {
     if (this.ready) {
@@ -50,14 +45,12 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
     }
 
     this.getContainer().load(
-      new ContainerModule(
-        (bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind) => {
-          this.register({ bind, unbind, isBound, rebind });
-          this.middlewares.forEach(([name, middleware]) => {
-            bind(name).to(middleware);
-          });
-        },
-      ),
+      new ContainerModule((bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind) => {
+        this.register({ bind, unbind, isBound, rebind });
+        this.middlewares.forEach(([name, middleware]) => {
+          bind(name).to(middleware);
+        });
+      }),
     );
 
     for (const serviceProviderConstructor of this.serviceProviders) {
@@ -74,13 +67,11 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
 
   /**
    * Auto bind alias
-   * @param {ContainerModuleConfigurator} module
-   * @memberof ServiceProvider
    */
-  public register(module: ContainerModuleConfigurator):void {
+  public register(module: ContainerModuleConfigurator): void {
     this.alias.forEach((def) => {
       if (Array.isArray(def)) {
-        const [target, alias] = def;
+        const [alias, target] = def;
         module.bind(alias).to(target);
       } else {
         module.bind(def).toSelf();
@@ -88,12 +79,7 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
     });
   }
 
-  /**
-   * Return the container
-   * @returns {ContainerInterface}
-   * @memberof ServiceProvider
-   */
-  public getContainer():ContainerInterface {
+  public getContainer(): ContainerInterface {
     return this.container;
   }
 

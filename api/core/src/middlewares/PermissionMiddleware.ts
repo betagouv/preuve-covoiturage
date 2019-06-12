@@ -5,19 +5,20 @@ import { middleware } from '../container';
 
 /**
  * Can middleware check permission in context and may throw a ForbiddenException
- *
- * @export
- * @param {...string[]} roles
- * @returns {MiddlewareInterface}
  */
 @middleware()
 export class PermissionMiddleware implements MiddlewareInterface {
-  async process(params: ParamsType, context: ContextType, next: Function, neededPermissions: string[]): Promise<ResultType> {
-    if (!neededPermissions.length) {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: Function,
+    neededPermissions: string[],
+  ): Promise<ResultType> {
+    if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
       throw new InvalidParamsException('No permissions defined');
     }
 
-    if (!('call' in context) || !('permissions' in context.call.user)) {
+    if (!context || !('call' in context) || !('permissions' in context.call.user)) {
       throw new ForbiddenException('Invalid permissions');
     }
 

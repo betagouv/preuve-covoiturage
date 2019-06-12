@@ -42,7 +42,6 @@
     "instrument": true
   },
   "dependencies": {
-    "@pdc/provider-jsonschema": "0.0.1",
     "@pdc/provider-mongo": "0.0.1"
   },
   "peerDependencies": {

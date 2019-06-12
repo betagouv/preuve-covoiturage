@@ -14,11 +14,11 @@ const defaultMapResponse: MapResponseType = (result, error) => {
 const defaultMapRequest: MapRequestType = (body: any, query?: any, params?: any) => body;
 
 export type ObjectRouteMapType = {
-  route: string,
-  verb: string,
-  signature: string,
-  mapRequest?: MapRequestType,
-  mapResponse?: MapResponseType,
+  route: string;
+  verb: string;
+  signature: string;
+  mapRequest?: MapRequestType;
+  mapResponse?: MapResponseType;
 };
 
 export type ArrayRouteMapType = [
@@ -26,19 +26,21 @@ export type ArrayRouteMapType = [
   string, // route
   string, // signature
   MapRequestType?, // mapRequest
-  MapResponseType?, // mapResponse
+  MapResponseType? // mapResponse
 ];
 
-export type RouteHandlerType = (req: express.Request, res: express.Response, next:express.NextFunction) => Promise<void>;
+export type RouteHandlerType = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => Promise<void>;
 
 export function makeCall(method: string, params: Types.ParamsType, callContext?: any): Types.RPCSingleCallType {
   const baseRPCCall = {
     jsonrpc: '2.0',
     id: 1,
   };
-  const call = callContext ? callContext : {
-    user: null,
-  };
+  const call = callContext ? callContext : { user: null };
 
   const context = {
     call,
@@ -98,31 +100,30 @@ export function routeMapping(
         if (!mapResponse) {
           mapResponse = defaultMapResponse;
         }
-        router[verb](route, async (req: express.Request, res: express.Response, next:express.NextFunction): Promise<void> => {
-          try {
-            const response = await kernel.handle(
-              makeCall(
-                serviceDefinition.signature,
-                mapRequest(req.body, req.query, req.params),
-                {
+        router[verb](
+          route,
+          async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+            try {
+              const response = await kernel.handle(
+                makeCall(serviceDefinition.signature, mapRequest(req.body, req.query, req.params), {
                   user: req.user,
-                },
-              ),
-            );
-            if (!response) {
-              res.status(204).end();
-            } else {
-              if ('result' in response) {
-                res.json(mapResponse(response.result, response.error));
+                }),
+              );
+              if (!response) {
+                res.status(204).end();
+              } else {
+                if ('result' in response) {
+                  res.json(mapResponse(response.result, response.error));
+                }
+                if ('error' in response) {
+                  res.status(500).json(mapResponse(response.result, response.error));
+                }
               }
-              if ('error' in response) {
-                res.status(500).json(mapResponse(response.result, response.error));
-              }
+            } catch (e) {
+              res.status(500).json({ error: e.message });
             }
-          } catch (e) {
-            res.status(500).json({ error: e.message });
-          }
-        });
+          },
+        );
       }
     });
   });

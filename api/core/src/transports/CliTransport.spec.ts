@@ -22,7 +22,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<ResultType> {
+  public async call(name, options?): Promise<ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }
@@ -34,9 +34,7 @@ class BasicServiceCommandProvider extends CommandServiceProvider {
 }
 
 class BasicKernel extends Kernel {
-  alias = [
-    CommandProvider,
-  ];
+  alias = [CommandProvider];
   serviceProviders = [BasicServiceCommandProvider];
 }
 

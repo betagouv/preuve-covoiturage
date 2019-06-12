@@ -27,7 +27,7 @@ describe('Service provider', () => {
       method: 'add',
     })
     class BasicAction extends Action {
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
           const { add } = params;
@@ -72,7 +72,7 @@ describe('Service provider', () => {
       constructor(private test: Test) {
         super();
       }
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         if ('name' in params) {
           return this.test.hello(params.name);
         }
@@ -81,9 +81,7 @@ describe('Service provider', () => {
     }
 
     class BasicServiceProvider extends ServiceProvider {
-      readonly alias = [
-        [Test, Test],
-      ];
+      readonly alias = [[Test, Test]];
       readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
 
       readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
@@ -120,7 +118,7 @@ describe('Service provider', () => {
       constructor(private test: Test) {
         super();
       }
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         if ('name' in params) {
           return this.test.hello(params.name);
         }
@@ -136,7 +134,7 @@ describe('Service provider', () => {
       constructor(private test: Test) {
         super();
       }
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
           const { add } = params;
@@ -149,21 +147,15 @@ describe('Service provider', () => {
     }
 
     class BasicTwoServiceProvider extends ServiceProvider {
-      readonly alias = [
-        [Test, Test],
-      ];
+      readonly alias = [[Test, Test]];
       readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
 
       readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
     }
 
     class BasicServiceProvider extends ServiceProvider {
-      readonly alias = [
-        [Test, Test],
-      ];
-      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [
-        BasicTwoServiceProvider,
-      ];
+      readonly alias = [[Test, Test]];
+      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [BasicTwoServiceProvider];
 
       readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
     }
@@ -177,10 +169,18 @@ describe('Service provider', () => {
     expect(response).be.equal('Hello Sam');
 
     const handlerTwoInstance = container.getHandler({ service: 'test', method: 'add' });
-    const responseTwo = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: defaultContext });
+    const responseTwo = await handlerTwoInstance.call({
+      method: 'fake',
+      params: { add: [21, 21] },
+      context: defaultContext,
+    });
     expect(responseTwo).be.equal('Hello 42');
 
-    const responseTwoBis = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: defaultContext });
+    const responseTwoBis = await handlerTwoInstance.call({
+      method: 'fake',
+      params: { add: [21, 21] },
+      context: defaultContext,
+    });
     expect(responseTwoBis).be.equal('Hi 42');
   });
 });

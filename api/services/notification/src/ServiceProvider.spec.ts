@@ -1,10 +1,9 @@
 import { describe } from 'mocha';
-import path from 'path';
 import { Parents, Interfaces } from '@pdc/core';
+import path from 'path';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
-import { doesNotReject } from 'assert';
 
 import { ServiceProvider } from './ServiceProvider';
 
@@ -12,16 +11,21 @@ chai.use(chaiNock);
 
 process.env.APP_WORKING_PATH = path.resolve(process.cwd(), 'dist');
 process.env.APP_ENV = 'testing';
+process.env.APP_MJ_FROM_EMAIL = 'from@example.com';
+process.env.APP_MJ_FROM_NAME = 'From Example';
+process.env.APP_MJ_TEMPLATE = '123456';
+process.env.APP_MJ_DEBUG_EMAIL = 'test@fake.com';
+process.env.APP_MJ_DEBUG_NAME = 'Mad tester';
 
 const { expect } = chai;
 class ServiceKernel extends Parents.Kernel {
   serviceProviders = [ServiceProvider];
 }
 
-const service = (<Interfaces.KernelInterface>new ServiceKernel());
+const service = <Interfaces.KernelInterface>new ServiceKernel();
 let nockRequest;
-const url = /mailjet/;
-const endpoint = /send/;
+const url: RegExp = /mailjet/;
+const endpoint: RegExp = /send/;
 describe('Notification service', async () => {
   before(async () => {
     await service.boot();
@@ -31,15 +35,12 @@ describe('Notification service', async () => {
     nock.cleanAll();
   });
 
-  it('works', async () => {
+  it('notifies user', async () => {
     nockRequest = nock(url)
       .post(endpoint)
-      .reply(
-      200,
-      {
+      .reply(200, {
         Messages: [],
-      },
-    );
+      });
 
     const response = await service.handle({
       id: 1,
@@ -62,41 +63,39 @@ describe('Notification service', async () => {
   it('send correct request to mailjet', (done) => {
     let body;
     nockRequest = nock(url)
-    .post(endpoint, (b) => {
-      body = b;
-      return b;
-    })
-    .reply(
-      200,
-      {
+      .post(endpoint, (b) => {
+        body = b;
+        return b;
+      })
+      .reply(200, {
         Messages: [],
-      },
-    ).on('replied', (req) => {
-      expect(body).to.deep.equal({
-        Messages:[
-          {
-            From: {
-              Email: '',
-              Name: '',
-            },
-            To: [
-              {
-                Email: 'test@fake.com',
-                Name: 'Mad tester',
+      })
+      .on('replied', (req) => {
+        expect(body).to.deep.equal({
+          Messages: [
+            {
+              From: {
+                Email: 'from@example.com',
+                Name: 'From Example',
               },
-            ],
-            TemplateID: null,
-            TemplateLanguage: true,
-            Subject: 'Mot de passe oublié',
-            Variables: {
-              title:'Mot de passe oublié',
-              content: 'Hello world !!!',
+              To: [
+                {
+                  Email: 'test@fake.com',
+                  Name: 'Mad tester',
+                },
+              ],
+              TemplateID: 123456,
+              TemplateLanguage: true,
+              Subject: 'Mot de passe oublié',
+              Variables: {
+                title: 'Mot de passe oublié',
+                content: 'Hello world !!!',
+              },
             },
-          },
-        ],
+          ],
+        });
+        done();
       });
-      done();
-    });
 
     service.handle({
       id: 1,
@@ -113,47 +112,45 @@ describe('Notification service', async () => {
   it('send correct request to mailjet with template', (done) => {
     let body;
     nockRequest = nock(url)
-    .post(endpoint, (b) => {
-      body = b;
-      return b;
-    })
-    .reply(
-      200,
-      {
+      .post(endpoint, (b) => {
+        body = b;
+        return b;
+      })
+      .reply(200, {
         Messages: [],
-      },
-    ).on('replied', (req) => {
-      expect(body).to.deep.equal({
-        Messages:[
-          {
-            From: {
-              Email: '',
-              Name: '',
-            },
-            To: [
-              {
-                Email: 'test@fake.com',
-                Name: 'Mad tester',
+      })
+      .on('replied', (req) => {
+        expect(body).to.deep.equal({
+          Messages: [
+            {
+              From: {
+                Email: 'from@example.com',
+                Name: 'From Example',
               },
-            ],
-            TemplateID: null,
-            TemplateLanguage: true,
-            Subject: 'Mot de passe oublié',
-            Variables: {
-              title:'Mot de passe oublié',
-              content: `Bonjour Mad tester,<br>
+              To: [
+                {
+                  Email: 'test@fake.com',
+                  Name: 'Mad tester',
+                },
+              ],
+              TemplateID: 123456,
+              TemplateLanguage: true,
+              Subject: 'Mot de passe oublié',
+              Variables: {
+                title: 'Mot de passe oublié',
+                content: `Bonjour Mad tester,<br>
               Vous avez demandé la réinitialisation de votre mot de passe sur le site du Registre de preuve de covoiturage.<br>
               <br>
               Veuillez cliquer sur le lien suivant et choisir un nouveau mot de passe.
               <br>
               <br>
               http://givememoney`.replace(/ {14}/g, ''),
+              },
             },
-          },
-        ],
+          ],
+        });
+        done();
       });
-      done();
-    });
 
     service.handle({
       id: 1,

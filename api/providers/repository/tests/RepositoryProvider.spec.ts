@@ -3,7 +3,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 import { Parents, Providers, Container } from '@pdc/core';
 import { MongoProvider } from '@pdc/provider-mongo';
-import { JsonSchemaProvider } from '@pdc/provider-jsonschema';
 
 import { ParentRepositoryProvider } from '../src/index';
 
@@ -33,13 +32,10 @@ class FakeConfigProvider extends Providers.ConfigProvider {
 
 @Container.provider()
 class UserRepositoryProvider extends ParentRepositoryProvider {
-  constructor(
-    protected config: Providers.ConfigProvider,
-    protected jsonSchemaProvider: JsonSchemaProvider,
-    protected mongoProvider: MongoProvider,
-  ) {
-    super(config, jsonSchemaProvider, mongoProvider);
+  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {
+    super(config, mongoProvider);
   }
+
   public getKey(): string {
     return 'user';
   }
@@ -72,11 +68,7 @@ class UserRepositoryProvider extends ParentRepositoryProvider {
 }
 
 class Kernel extends Parents.Kernel {
-  alias = [
-    MongoProvider,
-    JsonSchemaProvider,
-    UserRepositoryProvider,
-  ];
+  alias = [MongoProvider, UserRepositoryProvider];
 }
 
 const kernel = new Kernel();
@@ -103,12 +95,12 @@ describe('Repository provider', () => {
   });
 
   beforeEach(async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     await repository.clear();
   });
 
   it('should create new document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -116,7 +108,7 @@ describe('Repository provider', () => {
   });
 
   it('should list documents', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     await repository.create({
       name: 'Tom',
     });
@@ -126,7 +118,7 @@ describe('Repository provider', () => {
   });
 
   it('should find document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -135,7 +127,7 @@ describe('Repository provider', () => {
   });
 
   it('should delete document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -144,17 +136,17 @@ describe('Repository provider', () => {
     expect(res.length).to.eq(0);
   });
 
-  it('should update document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+  it('should patch document', async () => {
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });
-    const res = await repository.update(r, { name: 'Jon' });
+    const res = await repository.patch(r._id, { name: 'Jon' });
     expect(res.name).to.eq('Jon');
   });
 
   it('should replace document', async () => {
-    const repository = (<UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider));
+    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
     const r = await repository.create({
       name: 'Tom',
     });

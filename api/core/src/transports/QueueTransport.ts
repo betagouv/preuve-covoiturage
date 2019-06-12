@@ -5,13 +5,6 @@ import { KernelInterface } from '../interfaces/KernelInterface';
 import { bullFactory } from '../helpers/bullFactory';
 import { ContainerInterface } from '../container';
 
-
-/**
- * Queue Transport
- * @export
- * @class QueueTransport
- * @implements {TransportInterface}
- */
 export class QueueTransport implements TransportInterface {
   queues: Queue[] = [];
   kernel: KernelInterface;
@@ -20,17 +13,23 @@ export class QueueTransport implements TransportInterface {
     this.kernel = kernel;
   }
 
+  getKernel(): KernelInterface {
+    return this.kernel;
+  }
+
   async up(opts: string[] = []) {
     const [redisUrl, env] = opts;
     // throw error
 
     const container = <ContainerInterface>this.kernel.getContainer();
-    const services = Array.from(new Set(
-      container
-      .getHandlers()
-      .filter(cfg => ('local' in cfg && cfg.local) && ('queue' in cfg && !cfg.queue))
-      .map(cfg => cfg.service),
-      ));
+    const services = Array.from(
+      new Set(
+        container
+          .getHandlers()
+          .filter((cfg) => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
+          .map((cfg) => cfg.service),
+      ),
+    );
 
     for (const service of services) {
       const key = `${env}-${service}`;
@@ -41,17 +40,19 @@ export class QueueTransport implements TransportInterface {
       this.registerListeners(queue, key);
       this.queues.push(queue);
 
-      queue.process(job => this.kernel.handle({
-        jsonrpc: '2.0',
-        id: 1,
-        method: job.data.method,
-        params: {
-          params: job.data.params.params,
-          _context: {
-            ...job.data.params._context,
+      queue.process((job) =>
+        this.kernel.handle({
+          jsonrpc: '2.0',
+          id: 1,
+          method: job.data.method,
+          params: {
+            params: job.data.params.params,
+            _context: {
+              ...job.data.params._context,
+            },
           },
-        },
-      }));
+        }),
+      );
     }
   }
 

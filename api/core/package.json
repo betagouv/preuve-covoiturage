@@ -16,7 +16,7 @@
     "watch-test": "yarn test -- --watchAll",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "lint": "tslint -c ../tslint.json -p tsconfig.json",
     "debug": "yarn build && yarn watch-debug",
     "serve-debug": "nodemon --inspect dist/kernel.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\""
@@ -60,6 +60,7 @@
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/commander": "^2.12.2",
+    "@types/dotenv": "^6.1.1",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",
     "@types/sinon": "^7.0.11",

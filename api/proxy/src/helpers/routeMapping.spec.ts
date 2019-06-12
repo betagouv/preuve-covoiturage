@@ -51,7 +51,7 @@ class Kernel extends Parents.Kernel {
 }
 
 const kernel = new Kernel();
-const routeMap:(ObjectRouteMapType | ArrayRouteMapType)[] = [
+const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
   {
     verb: 'post',
     route: '/user/:id',
@@ -81,9 +81,9 @@ const routeMap:(ObjectRouteMapType | ArrayRouteMapType)[] = [
   //   signature:'user:create'
   // },
   {
-    verb:'get',
-    route:'/user',
-    signature:'user:list',
+    verb: 'get',
+    route: '/user',
+    signature: 'user:list',
     mapRequest(body, query, params) {
       return {
         ...body,
@@ -101,7 +101,8 @@ describe('Route mapping', () => {
   });
 
   it('works', async () => {
-    const response = await request.post('/user')
+    const response = await request
+      .post('/user')
       .send({
         firstName: 'John',
         lastName: 'Doe',
@@ -110,14 +111,17 @@ describe('Route mapping', () => {
       .set('Content-Type', 'application/json');
 
     expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(responseFactory('user:create', {
-      firstName: 'John',
-      lastName: 'Doe',
-    }));
+    expect(response.body).to.deep.equal(
+      responseFactory('user:create', {
+        firstName: 'John',
+        lastName: 'Doe',
+      }),
+    );
   });
 
   it('works with url params', async () => {
-    const response = await request.post('/user/1')
+    const response = await request
+      .post('/user/1')
       .send({
         firstName: 'John',
         lastName: 'Doe',
@@ -126,32 +130,40 @@ describe('Route mapping', () => {
       .set('Content-Type', 'application/json');
 
     expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(responseFactory('user:update', {
-      id: '1',
-      firstName: 'John',
-      lastName: 'Doe',
-    }));
+    expect(response.body).to.deep.equal(
+      responseFactory('user:update', {
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+      }),
+    );
   });
 
   it('works with query params', async () => {
-    const response = await request.get('/user/?orderBy=date')
+    const response = await request
+      .get('/user/?orderBy=date')
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
 
     expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(responseFactory('user:list', {
-      orderBy: 'date',
-    }));
+    expect(response.body).to.deep.equal(
+      responseFactory('user:list', {
+        orderBy: 'date',
+      }),
+    );
   });
 
   it('works with response mapping', async () => {
-    const response = await request.get('/user/1')
+    const response = await request
+      .get('/user/1')
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
 
     expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(responseFactory('user:read', {
-      ...fakeUser,
-    }));
+    expect(response.body).to.deep.equal(
+      responseFactory('user:read', {
+        ...fakeUser,
+      }),
+    );
   });
 });

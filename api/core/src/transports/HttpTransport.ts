@@ -1,16 +1,8 @@
 import http from 'http';
-import { parse } from 'path';
 
 import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
 
-
-/**
- * Http Transport
- * @export
- * @class HttpTransport
- * @implements {TransportInterface}
- */
 export class HttpTransport implements TransportInterface {
   server: http.Server;
   kernel: KernelInterface;
@@ -19,12 +11,16 @@ export class HttpTransport implements TransportInterface {
     this.kernel = kernel;
   }
 
+  getKernel(): KernelInterface {
+    return this.kernel;
+  }
+
   async up(opts: string[] = []) {
     this.server = http.createServer((req, res) => {
       if (
-        !('content-type' in req.headers && 'accept' in req.headers)
-        || (req.headers['content-type'] !== 'application/json')
-        || (req.headers.accept !== 'application/json')
+        !('content-type' in req.headers && 'accept' in req.headers) ||
+        req.headers['content-type'] !== 'application/json' ||
+        req.headers.accept !== 'application/json'
       ) {
         res.statusCode = 415;
         res.end('Wrong content type header');
@@ -43,7 +39,7 @@ export class HttpTransport implements TransportInterface {
       req.on('end', () => {
         try {
           // Add Lenght check
-          if (Number(req.headers['content-length']) !== (data.length + 1)) {
+          if (Number(req.headers['content-length']) !== data.length + 1) {
             // console.log(Number(req.headers['content-length']), data.length)
             // TODO repair, this is not working
             // throw new Error();
@@ -51,7 +47,8 @@ export class HttpTransport implements TransportInterface {
 
           const call = JSON.parse(data);
           // TODO : add channel ?
-          this.kernel.handle(call)
+          this.kernel
+            .handle(call)
             .then((results) => {
               res.setHeader('content-type', 'application/json');
               res.statusCode = 200;

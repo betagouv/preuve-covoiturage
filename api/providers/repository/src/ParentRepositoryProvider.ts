@@ -1,18 +1,15 @@
-import { MongoProvider, CollectionInterface, MongoException } from '@pdc/provider-mongo';
-import { JsonSchemaProvider } from '@pdc/provider-jsonschema';
+import { MongoProvider, CollectionInterface, MongoException, ObjectId } from '@pdc/provider-mongo';
+import { Providers, Types, Exceptions } from '@pdc/core';
 
-import { Providers, Interfaces, Types } from '@pdc/core';
-type Model = any;
+import { ParentRepositoryProviderInterface, Model } from './ParentRepositoryProviderInterface';
 
-export abstract class ParentRepositoryProvider implements Interfaces.ProviderInterface {
-  protected collection: CollectionInterface;
-  protected validation: Set<string> = new Set();
+export abstract class ParentRepositoryProvider implements ParentRepositoryProviderInterface {
+  protected readonly castObjectIds: string[] = ['_id'];
 
-  constructor(
-    protected config: Providers.ConfigProvider,
-    protected jsonSchemaProvider: JsonSchemaProvider,
-    protected mongoProvider: MongoProvider,
-  ) {
+  constructor(protected config: Providers.ConfigProvider, protected mongoProvider: MongoProvider) {}
+
+  boot(): void {
+    return;
   }
 
   public getDbName(): string {
@@ -27,31 +24,23 @@ export abstract class ParentRepositoryProvider implements Interfaces.ProviderInt
     throw new Error('Database not set');
   }
 
-  public getSchema(): object | null {
-    return;
-  }
-
   public getModel(): Types.NewableType<any> {
     return Object;
   }
 
-  boot() {
-    if (this.getSchema() !== null) {
-      this.jsonSchemaProvider.addSchema(this.getSchema(), this.getModel());
-    }
+  async getDriver(): Promise<CollectionInterface> {
+    return this.getCollection();
   }
 
   async getCollection() {
     return this.mongoProvider.getCollectionFromDb(this.getKey(), this.getDbName());
   }
 
-  async validate(data: any): Promise<boolean> {
-    return this.jsonSchemaProvider.validate(data);
-  }
-
-  async find(id: string): Promise<Model> {
+  async find(id: string | ObjectId): Promise<Model> {
     const collection = await this.getCollection();
-    const result = await collection.findOne(id);
+    const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
+    const result = await collection.findOne({ _id: normalizedId });
+    if (!result) throw new Exceptions.NotFoundException('id not found');
     return this.instanciate(result);
   }
 
@@ -70,33 +59,56 @@ export abstract class ParentRepositoryProvider implements Interfaces.ProviderInt
     return this.instanciate(ops[0]);
   }
 
-  async delete(data: Model): Promise<void> {
+  async delete(data: Model | string | ObjectId): Promise<void> {
     const collection = await this.getCollection();
-    const { deletedCount } = await collection.deleteOne({ _id: data._id });
-    if (deletedCount !== 1) {
+    const id = typeof data === 'string' ? new ObjectId(data) : '_id' in data ? data._id : data;
+    const result = await collection.deleteOne({ _id: id });
+    if (result.deletedCount !== 1) {
       throw new MongoException();
     }
     return;
   }
 
-  async update(data: Model, patch?: any): Promise<Model> {
+  async update(data: Model): Promise<Model> {
+    const normalizedData = this.castObjectIdFromString(data);
+    const collection = await this.getCollection();
+    const selector = { _id: normalizedData._id };
+    const { modifiedCount } = await collection.replaceOne(selector, normalizedData);
+    if (modifiedCount !== 1) {
+      throw new MongoException();
+    }
+    return this.instanciate(data);
+  }
+
+  async updateOrCreate(data: Model): Promise<Model> {
     const collection = await this.getCollection();
     const selector = { _id: data._id };
-    if (patch) {
-      const { result } = await collection.updateOne(selector, {
-        $set: patch,
-      });
-      if (result.ok !== 1) {
-        throw new MongoException();
-      }
-      return this.instanciate({ ...data, ...patch });
-    }
-    const { modifiedCount } = await collection.replaceOne(selector, data);
+    const { modifiedCount } = await collection.replaceOne(selector, data, { upsert: true });
     if (modifiedCount !== 1) {
       throw new MongoException();
     }
     return data;
   }
+
+  async patch(id: ObjectId | string, patch: any): Promise<Model> {
+    const castedPatch = this.castObjectIdFromString(patch);
+    const collection = await this.getCollection();
+    const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
+    const result = await collection.findOneAndUpdate(
+      { _id: normalizedId },
+      {
+        $set: castedPatch,
+      },
+      {
+        returnOriginal: false,
+      },
+    );
+    if (result.ok !== 1) {
+      throw new MongoException();
+    }
+    return this.instanciate(result.value);
+  }
+
   async clear(): Promise<void> {
     const collection = await this.getCollection();
     const { result } = await collection.deleteMany({});
@@ -108,10 +120,31 @@ export abstract class ParentRepositoryProvider implements Interfaces.ProviderInt
 
   protected instanciate(data: any): Model {
     const constructor = this.getModel();
-    return new constructor(data);
+
+    return new constructor(this.castStringFromObjectId(data));
   }
 
   protected instanciateMany(data: any[]): Model[] {
     return data.map((d) => this.instanciate(d));
+  }
+
+  protected castObjectIdFromString(data: Model) {
+    const castedData = { ...data };
+    this.castObjectIds.forEach((path: string) => {
+      if (path in castedData) {
+        castedData[path] = new ObjectId(castedData[path]);
+      }
+    });
+    return castedData;
+  }
+
+  protected castStringFromObjectId(data) {
+    const castedData = { ...data };
+    this.castObjectIds.forEach((path: string) => {
+      if (path in castedData && castedData[path] instanceof ObjectId) {
+        castedData[path] = castedData[path].toString();
+      }
+    });
+    return castedData;
   }
 }

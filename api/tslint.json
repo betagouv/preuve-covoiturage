@@ -1,13 +1,10 @@
 {
-  "extends": [
-    "tslint-config-airbnb",
-    "tslint-eslint-rules",
-    "tslint-import-group-ordering"
-  ],
+  "extends": ["tslint-config-airbnb", "tslint-eslint-rules", "tslint-import-group-ordering"],
   "linterOptions": {
     "exclude": ["**/dist"]
   },
   "rules": {
+    "align": false,
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
@@ -19,12 +16,7 @@
     "member-ordering": [
       true,
       {
-        "order": [
-          "public-static-field",
-          "public-instance-field",
-          "public-static-method",
-          "public-instance-method"
-        ]
+        "order": ["public-static-field", "public-instance-field", "public-static-method", "public-instance-method"]
       }
     ],
     "no-arg": true,
@@ -32,12 +24,12 @@
     "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
     "no-debugger": true,
     "no-duplicate-super": true,
-    "no-empty": true,
-    "no-empty-interface": true,
+    "no-empty": false,
+    "no-empty-interface": false,
     "no-inferrable-types": [true, "ignore-params"],
     "no-misused-new": true,
     "no-non-null-assertion": true,
-    "no-shadowed-variable": true,
+    "no-shadowed-variable": [true, { "interface": false }],
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": true,
@@ -45,7 +37,7 @@
     "no-unused-expression": true,
     "no-use-before-declare": true,
     "quotemark": [true, "single", "avoid-escape", "jsx-double"],
-    "ter-arrow-parens": "as-needed",
+    "ter-arrow-parens": [true, "always"],
     "typedef-whitespace": [
       true,
       {
@@ -57,12 +49,7 @@
       }
     ],
     "unified-signatures": true,
-    "variable-name": [
-      true,
-      "check-format",
-      "ban-keywords",
-      "allow-leading-underscore"
-    ],
+    "variable-name": [true, "check-format", "ban-keywords", "allow-leading-underscore"],
     "no-this-assignment": [
       true,
       {
@@ -89,7 +76,7 @@
     "no-duplicate-parameter-names": true,
     "no-typeof-undefined": true,
     "no-unnecessary-override": true,
-    "prefer-type-cast": true,
+    "prefer-type-cast": false,
     "no-accessor-recursion": true,
     "no-collapsible-if": true,
     "no-unnecessary-else": true,
@@ -130,6 +117,7 @@
         "switches": "never"
       }
     ],
+    "ter-indent": false,
     "ter-no-tabs": true,
     "ter-arrow-body-style": [
       true,
@@ -139,9 +127,10 @@
       }
     ],
     "no-parameter-reassignment": true,
-    "max-line-length": [true, 140],
+    "max-line-length": false,
     "no-return-await": true,
     "promise-function-async": true,
+    "space-before-function-paren": false,
     "no-implicit-dependencies": [true, "dev", ["~"]],
     "prefer-conditional-expression": true,
     "newline-per-chained-call": false,

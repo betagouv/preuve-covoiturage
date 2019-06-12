@@ -40,7 +40,7 @@ class BasicAction extends Action {
   constructor(private test: Test) {
     super();
   }
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     if ('name' in params) {
       let from = '';
       if ('user' in context.call) {
@@ -60,7 +60,7 @@ class BasicTwoAction extends Action {
   constructor(private test: Test) {
     super();
   }
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     let count = 0;
     if ('add' in params) {
       const { add } = params;
@@ -75,21 +75,15 @@ class BasicTwoAction extends Action {
 }
 
 class BasicTwoServiceProvider extends ServiceProvider {
-  readonly alias = [
-    [Test, Test],
-  ];
+  readonly alias = [[Test, Test]];
   readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
 
   readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
 }
 
 class BasicServiceProvider extends ServiceProvider {
-  readonly alias = [
-    [Test, Test],
-  ];
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [
-    BasicTwoServiceProvider,
-  ];
+  readonly alias = [[Test, Test]];
+  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [BasicTwoServiceProvider];
 
   readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
 }
@@ -156,8 +150,7 @@ describe('Kernel', () => {
   });
 
   it('should return an error if service is unknown', async () => {
-    class BasicKernel extends Kernel {
-    }
+    class BasicKernel extends Kernel {}
     const kernel = new BasicKernel();
     await kernel.boot();
     const response = await kernel.handle({

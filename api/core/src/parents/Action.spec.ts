@@ -45,7 +45,7 @@ class WorldMiddleware implements MiddlewareInterface {
 describe('Action', () => {
   it('should work', async () => {
     class BasicAction extends Action {
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
           const { add } = params;
@@ -71,7 +71,7 @@ describe('Action', () => {
   it('should work with middleware', async () => {
     class BasicAction extends Action {
       public readonly middlewares = ['minus'];
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
           const { add } = params;
@@ -100,7 +100,7 @@ describe('Action', () => {
   it('should work with ordered middleware', async () => {
     class BasicAction extends Action {
       public readonly middlewares = ['hello', 'world'];
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         let result = '';
         if ('name' in params) {
           result = params.name;
@@ -127,17 +127,19 @@ describe('Action', () => {
   it('should raise an error if no handle method is defined', () => {
     class BasicAction extends Action {}
     const action = new BasicAction();
-    return (<any>expect(action.call({
-      result: {},
-      method: '',
-      params: {
+    return (<any>expect(
+      action.call({
+        result: {},
+        method: '',
         params: {
-          name: 'Sam',
+          params: {
+            name: 'Sam',
+          },
         },
-      },
-      context: defaultContext,
-    })).to).eventually
-    .be.rejectedWith('No implementation found')
-    .and.be.an.instanceOf(Error);
+        context: defaultContext,
+      }),
+    ).to).eventually.be
+      .rejectedWith('No implementation found')
+      .and.be.an.instanceOf(Error);
   });
 });
