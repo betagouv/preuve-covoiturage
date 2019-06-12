@@ -4,12 +4,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-
-export interface ResetPasswordUserInterface {
-  token: string;
-  reset: string;
-  password: string;
-}
+import { UserResetPasswordParamsInterface } from '../interfaces/UserResetPasswordParamsInterface';
 
 @Container.handler({
   service: 'user',
@@ -26,7 +21,7 @@ export class ResetPasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ResetPasswordUserInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserResetPasswordParamsInterface, context: Types.ContextType): Promise<User> {
     const user = await this.userRepository.findUserByParams({ forgottenReset: params.reset });
 
     if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgottenToken))) {

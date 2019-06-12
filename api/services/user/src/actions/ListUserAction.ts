@@ -2,19 +2,9 @@ import { Parents, Container } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
+import { ListUserParamsInterface } from '../interfaces/UserListParamsInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
-import { PaginationInterface } from '../interfaces/PaginationInterface';
-
-interface ListUserInterface {
-  data: UserDbInterface[];
-  metadata: { pagination: PaginationInterface };
-}
-
-interface ListUserRequestInterface {
-  page?: number;
-  limit?: number;
-}
 
 @Container.handler({
   service: 'user',
@@ -50,7 +40,10 @@ export class ListUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: ListUserRequestInterface, context: UserContextInterface): Promise<ListUserInterface> {
+  public async handle(
+    params: ListUserParamsInterface,
+    context: UserContextInterface,
+  ): Promise<UserListResponseInterface> {
     const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {
@@ -62,8 +55,8 @@ export class ListUserAction extends Parents.Action {
     }
 
     // Pagination
-    const page = 'page' in request ? this.castPage(request.page) : this.config.get('pagination.defaultPage');
-    const limit = 'limit' in request ? this.castPage(request.limit) : this.config.get('pagination.defaultLimit');
+    const page = 'page' in params ? this.castPage(params.page) : this.config.get('pagination.defaultPage');
+    const limit = 'limit' in params ? this.castPage(params.limit) : this.config.get('pagination.defaultLimit');
     const pagination = this.paginate({ limit, page });
 
     const data = await this.userRepository.list(contextParam, pagination);

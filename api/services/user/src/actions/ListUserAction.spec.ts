@@ -33,13 +33,6 @@ const mockUsers = [
   },
 ];
 
-const mockInputPagination = {
-  per_page: 25,
-  current_page: 1,
-  limit: 5,
-  skip: 1,
-};
-
 const mockOutputPagination = {
   total: 1,
   count: 1,
@@ -51,9 +44,7 @@ const mockOutputPagination = {
 const mockContext = {
   call: {
     user: mockConnectedUser,
-    metadata: {
-      pagination: mockInputPagination,
-    },
+    metadata: {},
   },
 };
 
