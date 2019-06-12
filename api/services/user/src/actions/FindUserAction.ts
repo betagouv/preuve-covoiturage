@@ -11,6 +11,7 @@ import { User } from '../entities/User';
 export class FindUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.find'],
+    ['filterOutput', 'password'],
     [
       'scopeIt',
       [

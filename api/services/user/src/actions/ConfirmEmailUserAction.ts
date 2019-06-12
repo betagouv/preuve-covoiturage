@@ -4,11 +4,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-
-export interface ConfirmEmailUserInterface {
-  token: string;
-  confirm: string;
-}
+import { UserConfirmEmailParamsInterface } from '../interfaces/UserConfirmEmailParamsInterface';
 
 @Container.handler({
   service: 'user',
@@ -25,7 +21,7 @@ export class ConfirmEmailUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ConfirmEmailUserInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserConfirmEmailParamsInterface, context: Types.ContextType): Promise<User> {
     const user = await this.userRepository.findUserByParam({ emailConfirm: params.confirm });
 
     if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.emailToken))) {

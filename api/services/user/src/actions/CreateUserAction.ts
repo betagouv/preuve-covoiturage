@@ -4,7 +4,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { CreateUserParamsInterface, UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserCreateParamsInterface } from '../interfaces/UserCreateParamsInterface';
 
 @Container.handler({
   service: 'user',
@@ -41,7 +41,7 @@ export class CreateUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: CreateUserParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(request: UserCreateParamsInterface, context: Types.ContextType): Promise<User> {
     // check if the user exists already
     const foundUser = await this.userRepository.findByEmail(request.email);
     if (foundUser) {

@@ -4,10 +4,8 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
+import { UserForgottenPasswordParamsInterface } from '../interfaces/UserForgottenPasswordParamsInterface';
 
-interface ForgottenPasswordUserInterface {
-  id: string;
-}
 
 @Container.handler({
   service: 'user',
@@ -25,7 +23,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ForgottenPasswordUserInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserForgottenPasswordParamsInterface, context: Types.ContextType): Promise<User> {
     // todo: find by email ?
 
     const user = await this.userRepository.find(params.id);

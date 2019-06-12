@@ -6,12 +6,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
-
-export interface ChangePasswordUserInterface {
-  id: string;
-  oldPassword: string;
-  newPassword: string;
-}
+import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePasswordParamsInterface';
 
 @Container.handler({
   service: 'user',
@@ -26,7 +21,7 @@ export class ChangePasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ChangePasswordUserInterface, context: UserContextInterface): Promise<User> {
+  public async handle(params: UserChangePasswordParamsInterface, context: UserContextInterface): Promise<User> {
     const user = await this.userRepository.find(params.id);
 
     if (!(await this.cryptoProvider.comparePassword(params.oldPassword, user.password))) {

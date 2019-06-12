@@ -6,7 +6,8 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
-import { ChangePasswordUserAction, ChangePasswordUserInterface } from './ChangePasswordUserAction';
+import { ChangePasswordUserAction } from './ChangePasswordUserAction';
+import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePasswordParamsInterface';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
@@ -36,7 +37,7 @@ const mockUser = new User({
   permissions: ['user.list'],
 });
 
-const mockChangePasswordParams = <ChangePasswordUserInterface>{
+const mockChangePasswordParams = <UserChangePasswordParamsInterface>{
   id: '1ab',
   oldPassword: 'oldPassword',
   newPassword: 'newPassword',
