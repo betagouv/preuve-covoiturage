@@ -22,7 +22,7 @@ export class ConfirmEmailUserAction extends Parents.Action {
   }
 
   public async handle(params: UserConfirmEmailParamsInterface, context: Types.ContextType): Promise<User> {
-    const user = await this.userRepository.findUserByParam({ emailConfirm: params.confirm });
+    const user = await this.userRepository.findUserByParams({ emailConfirm: params.confirm });
 
     if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.emailToken))) {
       throw new Exceptions.ForbiddenException('Invalid token');
