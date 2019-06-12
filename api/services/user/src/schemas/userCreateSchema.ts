@@ -44,8 +44,6 @@ export const userCreateSchema = {
       minLength: 6,
       maxLength: 128,
       // trim: false,
-      // hidden: true,
-      // crypt: true,
     },
     operator: {
       type: 'string',
