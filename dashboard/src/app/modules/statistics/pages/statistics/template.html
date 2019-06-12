@@ -1,6 +1,5 @@
 <app-stats-header></app-stats-header>
 <div class="stats__wrapper">
-  {{ env | json }}
   <app-stats-maintenance *ngIf="!isProduction"></app-stats-maintenance>
   <app-stats-content *ngIf="isProduction" [apiData]="apiData"></app-stats-content>
 </div>
