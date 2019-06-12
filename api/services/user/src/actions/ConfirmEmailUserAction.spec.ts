@@ -32,7 +32,7 @@ const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
 };
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  public async findUserByParam(param: { [prop: string]: string }): Promise<User> {
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     return mockUser;
   }
 

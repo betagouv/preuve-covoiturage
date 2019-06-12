@@ -8,7 +8,7 @@ export interface UserRepositoryProviderInterface extends ParentRepositoryProvide
   deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void>;
   findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User>;
   patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }): Promise<User>;
-  findUserByParam(param: { [prop: string]: string }): Promise<User>;
+  findUserByParams(params: { [prop: string]: string }): Promise<User>;
 }
 
 export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepositoryProviderInterfaceResolver {
@@ -28,7 +28,7 @@ export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepo
     throw new Error();
   }
 
-  public async findUserByParam(param: { [prop: string]: string }): Promise<User> {
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     throw new Error();
   }
 

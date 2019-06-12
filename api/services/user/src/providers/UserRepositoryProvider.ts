@@ -79,9 +79,12 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result);
   }
 
-  public async findUserByParam(param: { [prop: string]: string }): Promise<User> {
+  /**
+   * find user by email or confirm or reset
+   */
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     const collection = await this.getCollection();
-    const result = await collection.findOne(param);
+    const result = await collection.findOne(params);
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }
