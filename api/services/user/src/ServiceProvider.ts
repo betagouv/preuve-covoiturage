@@ -13,6 +13,8 @@ import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
 import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
 import { ResetPasswordUserAction } from './actions/ResetPasswordUserAction';
 import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
+import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
+import { LoginUserAction } from './actions/LoginUserAction';
 
 import { UserRepositoryProviderInterfaceResolver } from './interfaces/UserRepositoryProviderInterface';
 
@@ -31,7 +33,7 @@ import { userForgottenPasswordSchema } from './schemas/userForgottenPasswordSche
 import { userConfirmEmailSchema } from './schemas/userConfirmEmailSchema';
 import { userChangePasswordSchema } from './schemas/userChangePasswordSchema';
 import { userChangeEmailSchema } from './schemas/userChangeEmailSchema';
-import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
+import { userLoginSchema } from './schemas/userLoginSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -49,6 +51,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     FindUserAction,
     ForgottenPasswordUserAction,
     ListUserAction,
+    LoginUserAction,
     PatchUserAction,
     ResetPasswordUserAction,
   ];
@@ -69,6 +72,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     ['user.forgottenPassword', userForgottenPasswordSchema],
     ['user.patch', userPatchSchema],
     ['user.list', userListSchema],
+    ['user.login', userLoginSchema],
     ['user.delete', userDeleteSchema],
     ['user.resetPassword', userResetPasswordSchema],
   ];

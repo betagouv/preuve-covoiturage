@@ -11,13 +11,13 @@ export const userChangePasswordSchema = {
     },
     oldPassword: {
       type: 'string',
-      maxLength: 255,
+      maxLength: 128,
       minLength: 6,
     },
     newPassword: {
       type: 'string',
-      maxLength: 255,
-      minLength: 1,
+      maxLength: 128,
+      minLength: 6,
     },
   },
 };
