@@ -41,6 +41,9 @@ export class ResetPasswordUserAction extends Parents.Action {
 
     user.hasResetPassword = true;
 
+    // confirm status on first invite
+    user.status = this.config.get('user.status.active');
+
     return this.userRepository.update(user);
   }
 }

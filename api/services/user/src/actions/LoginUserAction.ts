@@ -5,6 +5,9 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { User } from '../entities/User';
 import { UserLoginParamsInterface } from '../interfaces/UserLoginParamsInterface';
 
+/*
+ * Authenticate user by email & pwd - else throws forbidden error
+ */
 @Container.handler({
   service: 'user',
   method: 'login',

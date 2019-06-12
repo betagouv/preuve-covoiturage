@@ -6,6 +6,9 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { User } from '../entities/User';
 import { UserChangeEmailParamsInterface } from '../interfaces/UserChangeEmailParamsInterface';
 
+/*
+ * Update email of user and send email for confirmation
+ */
 @Container.handler({
   service: 'user',
   method: 'changeEmail',
@@ -33,7 +36,7 @@ export class ChangeEmailUserAction extends Parents.Action {
     await this.kernel.notify(
       'notification:sendTemplateEmail',
       {
-        template: 'changeEmail',
+        template: 'confirmEmail',
         email: user.email,
         fullName: user.fullname,
         opts: {

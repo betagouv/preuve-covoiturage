@@ -6,6 +6,9 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { User } from '../entities/User';
 import { UserForgottenPasswordParamsInterface } from '../interfaces/UserForgottenPasswordParamsInterface';
 
+/*
+ * find user by id or email and send email to set new password
+ */
 @Container.handler({
   service: 'user',
   method: 'forgottenPassword',
@@ -23,8 +26,16 @@ export class ForgottenPasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: UserForgottenPasswordParamsInterface, context: Types.ContextType): Promise<User> {
-    // todo: find by email ?
-    const user = await this.userRepository.find(params.id);
+    let user: User;
+    let template: string;
+
+    if (params.email) {
+      user = await this.userRepository.findUserByParams({ email: params.email });
+      template = this.config.get('email.template.forgotten');
+    } else {
+      user = await this.userRepository.find(params.id);
+      template = this.config.get('email.template.invite');
+    }
 
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
@@ -40,7 +51,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
     await this.kernel.notify(
       'notification:sendTemplateEmail',
       {
-        template: 'invite',
+        template,
         email: updatedUser.email,
         fullName: updatedUser.fullname,
         opts: {

@@ -6,6 +6,9 @@ import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserCreateParamsInterface } from '../interfaces/UserCreateParamsInterface';
 
+/*
+ * Create user and call forgotten password action
+ */
 @Container.handler({
   service: 'user',
   method: 'create',

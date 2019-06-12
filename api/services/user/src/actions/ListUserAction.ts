@@ -6,6 +6,9 @@ import { UserListResponseInterface } from '../interfaces/UserListResponseInterfa
 import { ListUserParamsInterface } from '../interfaces/UserListParamsInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
+/*
+ * list users filtered by aom or operator and paginate with limit & skip
+ */
 @Container.handler({
   service: 'user',
   method: 'list',
