@@ -55,26 +55,26 @@ export const userPatchSchema = {
           enum: ['admin', 'user'],
         },
       },
+      oneOf: [
+        {
+          required: ['oldPassword', 'newPassword'],
+        },
+        {
+          required: ['email'],
+        },
+        {
+          required: ['lastname'],
+        },
+        {
+          required: ['firstname'],
+        },
+        {
+          required: ['phone'],
+        },
+        {
+          required: ['role'],
+        },
+      ],
     },
-    oneOf: [
-      {
-        required: ['oldPassword', 'newPassword'],
-      },
-      {
-        required: ['email'],
-      },
-      {
-        required: ['lastname'],
-      },
-      {
-        required: ['firstname'],
-      },
-      {
-        required: ['phone'],
-      },
-      {
-        required: ['role'],
-      },
-    ],
   },
 };
