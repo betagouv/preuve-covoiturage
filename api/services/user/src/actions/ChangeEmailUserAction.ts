@@ -6,7 +6,6 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { User } from '../entities/User';
 import { UserChangeEmailParamsInterface } from '../interfaces/UserChangeEmailParamsInterface';
 
-
 @Container.handler({
   service: 'user',
   method: 'changeEmail',
@@ -31,7 +30,7 @@ export class ChangeEmailUserAction extends Parents.Action {
 
     const requester = new User(context.call.user);
 
-    this.kernel.notify(
+    await this.kernel.notify(
       'notification:sendTemplateEmail',
       {
         template: 'changeEmail',
