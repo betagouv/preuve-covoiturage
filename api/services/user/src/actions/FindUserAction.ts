@@ -14,7 +14,6 @@ import { User } from '../entities/User';
 export class FindUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.find'],
-    ['filterOutput', 'password'],
     [
       'scopeIt',
       [
@@ -38,7 +37,7 @@ export class FindUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', 'password'],
+    ['filterOutput', ['password']],
   ];
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();

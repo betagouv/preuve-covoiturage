@@ -14,7 +14,10 @@ import { UserConfirmEmailParamsInterface } from '../interfaces/UserConfirmEmailP
   method: 'confirmEmail',
 })
 export class ConfirmEmailUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.confirmEmail']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.confirmEmail'],
+    ['filterOutput', ['password']],
+  ];
 
   constructor(
     private config: ConfigProviderInterfaceResolver,

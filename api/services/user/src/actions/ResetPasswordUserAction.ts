@@ -11,7 +11,10 @@ import { UserResetPasswordParamsInterface } from '../interfaces/UserResetPasswor
   method: 'resetPassword',
 })
 export class ResetPasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.resetPassword']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.resetPassword'],
+    ['filterOutput', ['password']],
+  ];
 
   constructor(
     private config: ConfigProviderInterfaceResolver,

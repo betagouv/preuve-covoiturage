@@ -14,7 +14,10 @@ import { UserForgottenPasswordParamsInterface } from '../interfaces/UserForgotte
   method: 'forgottenPassword',
 })
 export class ForgottenPasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.forgottenPassword']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.forgottenPassword'],
+    ['filterOutput', ['password']],
+  ];
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -31,10 +34,10 @@ export class ForgottenPasswordUserAction extends Parents.Action {
 
     if (params.email) {
       user = await this.userRepository.findUserByParams({ email: params.email });
-      template = this.config.get('email.template.forgotten');
+      template = this.config.get('email.templates.forgotten');
     } else {
       user = await this.userRepository.find(params.id);
-      template = this.config.get('email.template.invite');
+      template = this.config.get('email.templates.invite');
     }
 
     const reset = this.cryptoProvider.generateToken();
@@ -48,26 +51,26 @@ export class ForgottenPasswordUserAction extends Parents.Action {
 
     const requester = new User(context.call.user);
 
-    await this.kernel.notify(
-      'notification:sendTemplateEmail',
-      {
-        template,
-        email: updatedUser.email,
-        fullName: updatedUser.fullname,
-        opts: {
-          requester: requester.fullname,
-          organization: 'AomOrOperatorOrganisation',
-          link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
-        },
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'user',
-        },
-      },
-    );
+    // await this.kernel.notify(
+    //   'notification:sendtemplatemail',
+    //   {
+    //     template,
+    //     email: updatedUser.email,
+    //     fullName: updatedUser.fullname,
+    //     opts: {
+    //       requester: requester.fullname,
+    //       organization: 'AomOrOperatorOrganisation',
+    //       link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
+    //     },
+    //   },
+    //   {
+    //     call: context.call,
+    //     channel: {
+    //       ...context.channel,
+    //       service: 'user',
+    //     },
+    //   },
+    // );
 
     return updatedUser;
   }

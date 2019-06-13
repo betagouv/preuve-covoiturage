@@ -38,6 +38,7 @@ export class PatchUserAction extends Parents.Action {
         ],
       ],
     ],
+    ['filterOutput', ['password']],
   ];
   constructor(
     private kernel: Interfaces.KernelInterfaceResolver,
