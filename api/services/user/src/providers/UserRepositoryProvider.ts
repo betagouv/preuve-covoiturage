@@ -11,6 +11,9 @@ import {
   UserRepositoryListPaginationInterface,
 } from '../interfaces/repository/UserRepositoryListParamsInterface';
 
+/*
+ * User specific repository
+ */
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface {
   constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
@@ -33,6 +36,9 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return User;
   }
 
+  /*
+   * Find user by email - else return undefined
+   */
   public async findByEmail(email: string): Promise<User | undefined> {
     const collection = await this.getCollection();
     const result = await collection.findOne({ email });
@@ -66,6 +72,9 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     };
   }
 
+  /**
+   * Delete user by id &| ( aom | operator)
+   */
   public async deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
@@ -77,6 +86,9 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return;
   }
 
+  /**
+   * Find User by id &| ( aom | operator)
+   */
   public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
@@ -87,7 +99,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /**
-   * find user by email or confirm or reset
+   * Find user by email or confirm or reset
    */
   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     const collection = await this.getCollection();
@@ -96,6 +108,9 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result);
   }
 
+  /**
+   * Patch User by id &| ( aom | operator)
+   */
   public async patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }) {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();

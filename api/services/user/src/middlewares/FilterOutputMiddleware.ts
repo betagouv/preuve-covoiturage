@@ -4,7 +4,7 @@ export type FilterOutputMiddlewareOptionsType = string[];
 
 
 /*
- * Delete property from model or array of models on output of handler
+ * Delete properties from model or array of models on output of handler
  */
 @Container.middleware()
 export class FilterOutputMiddleware implements Interfaces.MiddlewareInterface {

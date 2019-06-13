@@ -1,14 +1,9 @@
 export const userForgottenPasswordSchema = {
   $id: 'user.forgottenPassword',
   type: 'object',
-  required: [],
+  required: ['email'],
   additionalProperties: false,
   properties: {
-    id: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
     email: {
       type: 'string',
       format: 'email',
@@ -20,12 +15,5 @@ export const userForgottenPasswordSchema = {
       // unique: true,
     },
   },
-  oneOf: [
-    {
-      required: ['id'],
-    },
-    {
-      required: ['email'],
-    },
-  ],
+
 };

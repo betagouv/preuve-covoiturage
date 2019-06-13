@@ -61,6 +61,9 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   async comparePassword(oldPwd: string, newPwd: string): Promise<boolean> {
     return true;
   }
+  async cryptPassword(plainPassword: string): Promise<string> {
+    return cryptedNewPassword;
+  }
 }
 
 const action = new ChangePasswordUserAction(new FakeUserRepository(), new FakeCryptoProvider());

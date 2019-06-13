@@ -8,6 +8,9 @@ interface PatchUserInterface {
   patch: { [prop: string]: string };
 }
 
+/*
+ * Update properties of user ( email | pwd | ( role, firtname, lastname, phone )
+ */
 @Container.handler({
   service: 'user',
   method: 'patch',

@@ -40,7 +40,7 @@ const mockUser = new User({
 
 const mockForgottenPasswordParams = {
   forgottenReset: 'randomToken',
-  forgottenToken: 'randomToken2',
+  forgottenToken: 'cryptedRandomToken2',
   forgottenAt: new Date(),
 };
 
@@ -51,7 +51,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
       ...mockForgottenPasswordParams,
     });
   }
-  public async find(id: string): Promise<User> {
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     return mockUser;
   }
 }
@@ -59,6 +59,9 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   generateToken(length?: number) {
     return 'randomToken';
+  }
+  async cryptToken(plainToken: string): Promise<string> {
+    return mockForgottenPasswordParams.forgottenToken;
   }
 }
 
@@ -84,7 +87,7 @@ const action = new ForgottenPasswordUserAction(
 describe('Forgotten password action', () => {
   it('should work', async () => {
     const result = await action.handle(
-      { id: mockUser._id },
+      { email: mockUser.email },
       { call: { user: mockConnectedUser }, channel: { service: '' } },
     );
 

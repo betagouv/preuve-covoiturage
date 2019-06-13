@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 import { Parents, Container, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
