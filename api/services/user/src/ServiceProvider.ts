@@ -42,7 +42,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
   ];
 
-  readonly handlers = [
+  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
     ChangeEmailUserAction,
     ChangePasswordUserAction,
     ConfirmEmailUserAction,
