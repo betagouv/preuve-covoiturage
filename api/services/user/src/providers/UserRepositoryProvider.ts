@@ -6,6 +6,10 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
+import {
+  UserRepositoryListFiltersInterface,
+  UserRepositoryListPaginationInterface,
+} from '../interfaces/repository/UserRepositoryListParamsInterface';
 
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface {
@@ -35,15 +39,18 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return result ? this.instanciate(result) : result;
   }
 
-  public async list(filters, pagination): Promise<{ users: User[]; total: number }> {
+  /*
+   * List users, filtered by Aom, Operator, skip & limit
+   */
+  public async list(filters: UserRepositoryListFiltersInterface, pagination: UserRepositoryListPaginationInterface): Promise<{ users: User[]; total: number }> {
     let result = [];
 
     const collection = await this.getCollection();
 
     const normalizedFilters = this.normalizeContextFilters(filters);
 
-    const skip = 'skip' in filters ? filters.skip : this.config.get('user.defaultSkip');
-    const limit = 'limit' in filters ? filters.limit : this.config.get('user.defaultLimit');
+    const skip = 'skip' in pagination ? pagination.skip : this.config.get('user.defaultSkip');
+    const limit = 'limit' in pagination ? pagination.limit : this.config.get('user.defaultLimit');
     result = await collection
       .find(normalizedFilters)
       .skip(skip)
