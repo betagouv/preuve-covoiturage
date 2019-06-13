@@ -82,8 +82,11 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 }
 
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-  async comparePassword(oldPwd: string, newPwd: string): Promise<boolean> {
-    return true;
+  async cryptToken(plainToken: string): Promise<string> {
+    return 'cryptedToken';
+  }
+  generateToken(length?: number):string {
+    return 'randomToken';
   }
 }
 

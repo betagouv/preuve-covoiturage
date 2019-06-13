@@ -34,6 +34,8 @@ export class ChangeEmailUserAction extends Parents.Action {
     const confirm = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
+    const cryptedToken = await this.cryptoProvider.cryptToken(token);
+
     const requester = new User(context.call.user);
 
     // await this.kernel.notify(
@@ -58,9 +60,9 @@ export class ChangeEmailUserAction extends Parents.Action {
     // );
 
     return this.userRepository.patch(user._id, {
-      confirm,
       emailChangeAt,
-      token,
+      emailConfirm: confirm,
+      emailToken: cryptedToken,
       email: params.email,
     });
   }

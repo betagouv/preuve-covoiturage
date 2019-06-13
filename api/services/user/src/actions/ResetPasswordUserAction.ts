@@ -6,6 +6,9 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { User } from '../entities/User';
 import { UserResetPasswordParamsInterface } from '../interfaces/UserResetPasswordParamsInterface';
 
+/*
+ * Find user by forgottenReset and update password
+ */
 @Container.handler({
   service: 'user',
   method: 'resetPassword',

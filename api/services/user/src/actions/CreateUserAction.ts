@@ -60,7 +60,6 @@ export class CreateUserAction extends Parents.Action {
     const user = new User({
       ...request,
       status: this.config.get('user.status.invited'),
-      password: await this.cryptoProvider.cryptPassword(request.password),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
       emailChangeAt: new Date(),
     });
@@ -69,7 +68,7 @@ export class CreateUserAction extends Parents.Action {
 
     // generate new token for a password reset on first access
     return this.kernel.call(
-      'user:forgottenPassword',
+      'user:invite',
       {
         id: userCreated._id,
       },
