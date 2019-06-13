@@ -7,6 +7,7 @@ import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddlew
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
 import { FindUserAction } from './actions/FindUserAction';
+import { InviteUserAction } from './actions/InviteUserAction';
 import { ListUserAction } from './actions/ListUserAction';
 import { PatchUserAction } from './actions/PatchUserAction';
 import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
@@ -34,6 +35,7 @@ import { userConfirmEmailSchema } from './schemas/userConfirmEmailSchema';
 import { userChangePasswordSchema } from './schemas/userChangePasswordSchema';
 import { userChangeEmailSchema } from './schemas/userChangeEmailSchema';
 import { userLoginSchema } from './schemas/userLoginSchema';
+import { userInviteSchema } from './schemas/userInviteSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -50,6 +52,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     DeleteUserAction,
     FindUserAction,
     ForgottenPasswordUserAction,
+    InviteUserAction,
     ListUserAction,
     LoginUserAction,
     PatchUserAction,
@@ -70,6 +73,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     ['user.confirmEmail', userConfirmEmailSchema],
     ['user.find', userFindSchema],
     ['user.forgottenPassword', userForgottenPasswordSchema],
+    ['user.invite', userInviteSchema],
     ['user.patch', userPatchSchema],
     ['user.list', userListSchema],
     ['user.login', userLoginSchema],
