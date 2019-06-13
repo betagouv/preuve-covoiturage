@@ -3,8 +3,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
-import { bootstrap } from '@ilos/core';
-import { MongoProvider } from '@pdc/provider-mongo';
+import { bootstrap } from '@ilos/framework';
+import { MongoProvider } from '@ilos/provider-mongo';
 
 let mongoServer;
 let connectionString;
