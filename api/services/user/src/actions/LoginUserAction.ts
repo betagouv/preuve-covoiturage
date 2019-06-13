@@ -1,5 +1,6 @@
-  import { Parents, Container, Types, Exceptions } from '@ilos/core';
+import { Parents, Container, Types, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
@@ -19,6 +20,7 @@ export class LoginUserAction extends Parents.Action {
   ];
 
   constructor(
+    private config: ConfigProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
@@ -33,10 +35,11 @@ export class LoginUserAction extends Parents.Action {
         throw new Exceptions.ForbiddenException();
       }
 
-      const patchUser = await this.userRepository.patch(user._id, { lastConnectedAt: new Date() });
+      if (user.status !== this.config.get('user.status.active')) {
+        throw new Exceptions.ForbiddenException();
+      }
 
-      // todo: set auth token
-      return patchUser;
+      return this.userRepository.patch(user._id, { lastConnectedAt: new Date() });
     } catch (e) {
       throw new Exceptions.ForbiddenException();
     }
