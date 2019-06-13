@@ -6,7 +6,6 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { User } from '../entities/User';
 import { UserForgottenPasswordParamsInterface } from '../interfaces/UserForgottenPasswordParamsInterface';
 
-
 @Container.handler({
   service: 'user',
   method: 'forgottenPassword',
@@ -25,7 +24,6 @@ export class ForgottenPasswordUserAction extends Parents.Action {
 
   public async handle(params: UserForgottenPasswordParamsInterface, context: Types.ContextType): Promise<User> {
     // todo: find by email ?
-
     const user = await this.userRepository.find(params.id);
 
     const reset = this.cryptoProvider.generateToken();
@@ -39,7 +37,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
 
     const requester = new User(context.call.user);
 
-    this.kernel.notify(
+    await this.kernel.notify(
       'notification:sendTemplateEmail',
       {
         template: 'invite',
