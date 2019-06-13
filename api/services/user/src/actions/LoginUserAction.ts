@@ -1,4 +1,4 @@
-import { Parents, Container, Types, Exceptions, Providers } from '@pdc/core';
+import { Parents, Container, Types, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';

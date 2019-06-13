@@ -1,4 +1,4 @@
-import { Types, Exceptions, Interfaces, Container } from '@pdc/core';
+import { Types, Interfaces, Container } from '@ilos/core';
 
 export type FilterOutputMiddlewareOptionsType = string[];
 
