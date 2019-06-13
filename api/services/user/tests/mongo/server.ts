@@ -1,5 +1,5 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Bootstrap } from '@ilos/cli';
+import { Bootstrap } from '@ilos/framework';
 import { MongoProvider, ObjectId } from '@ilos/provider-mongo';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
@@ -23,6 +23,7 @@ export class FakeMongoServer {
     this.mongoServer = new MongoMemoryServer();
     this.connectionString = await this.mongoServer.getConnectionString();
     this.dbName = await this.mongoServer.getDbName();
+    process.env.APP_URL = `http://localhost:${this.port}`;
     process.env.APP_MONGO_URL = this.connectionString;
     process.env.APP_MONGO_DB = this.dbName;
   }
@@ -42,9 +43,10 @@ export class FakeMongoServer {
 
   public async addUser(user: any): Promise<User> {
     this.kernel = this.transport.getKernel();
-    this.key = this.kernel.getContainer().get(ConfigProviderInterfaceResolver).get(
-      'user.collectionName',
-    );
+    this.key = this.kernel
+      .getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .get('user.collectionName');
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
       this.key,
       this.dbName,
@@ -72,9 +74,10 @@ export class FakeMongoServer {
 
   public async clearCollection(): Promise<void> {
     this.kernel = this.transport.getKernel();
-    this.key = this.kernel.getContainer().get(ConfigProviderInterfaceResolver).get(
-      'user.collectionName',
-    );
+    this.key = this.kernel
+      .getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .get('user.collectionName');
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
       this.key,
       this.dbName,
