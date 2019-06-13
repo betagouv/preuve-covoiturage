@@ -1,7 +1,6 @@
 export const userChangeEmailSchema = {
   $id: 'user.changeEmail',
   type: 'object',
-  required: ['id', 'email'],
   additionalProperties: false,
   properties: {
     id: {
