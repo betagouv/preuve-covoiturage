@@ -10,18 +10,16 @@
   ],
   "scripts": {
     "clean": "rm -rf ./**/dist",
-    "precommit": "run-s format:fix lint",
-    "watch": "lerna run --parallel watch-ts",
-    "ls": "lerna ls",
-    "build": "run-s clean build:core build:ilos build:providers build:services build:proxy",
-    "build:core": "lerna run --scope @pdc/core build",
-    "build:proxy": "lerna run --scope @pdc/proxy build",
-    "build:ilos": "lerna run --scope @ilos/* build",
-    "build:providers": "lerna run --scope @pdc/provider-* build",
-    "build:services": "lerna run --scope @pdc/service-* build",
+    "precommit": "npx npm-run-all format:fix lint",
+    "watch": "npx lerna run --parallel watch-ts",
+    "ls": "npx lerna ls",
+    "build": "npx npm-run-all clean build:providers build:services build:proxy",
+    "build:proxy": "npx lerna run --scope @pdc/proxy build",
+    "build:providers": "npx lerna run --scope @pdc/provider-* build",
+    "build:services": "npx lerna run --scope @pdc/service-* build",
     "format:fix": "pretty-quick --staged",
-    "lint": "lerna run --parallel lint",
-    "test": "lerna run --parallel test"
+    "lint": "npx lerna run --parallel lint",
+    "test": "npx lerna run --parallel test"
   },
   "keywords": [
     "betagouv",
