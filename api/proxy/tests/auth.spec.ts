@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import chai from 'chai';
 import { App } from '../src/App';
 import { Kernel } from '../src/bridge/Kernel';
-import { Interfaces, Parents, Container, Exceptions } from '@pdc/core';
+import { Interfaces, Parents, Container, Exceptions, Types } from '@ilos/core';
 
 @Container.handler({
   service: 'user',
@@ -41,7 +41,7 @@ class UserServiceProvider extends Parents.ServiceProvider implements Interfaces.
 }
 
 class ThinKernel extends Kernel {
-  serviceProviders = [UserServiceProvider];
+  serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [UserServiceProvider];
 }
 
 const { expect } = chai;

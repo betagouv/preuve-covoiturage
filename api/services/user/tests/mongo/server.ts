@@ -1,5 +1,5 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Bootstrap } from '@ilos/framework';
+import { bootstrap } from '@ilos/framework';
 import { MongoProvider, ObjectId } from '@ilos/provider-mongo';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
@@ -29,7 +29,7 @@ export class FakeMongoServer {
   }
 
   public async startTransport(): Promise<any> {
-    this.transport = await Bootstrap.boot(['', '', 'http', this.port]);
+    this.transport = await bootstrap.boot(['', '', 'http', this.port]);
   }
 
   public async stopServer(): Promise<void> {
