@@ -9,6 +9,10 @@ export class CryptoProvider implements Interfaces.ProviderInterface {
     const saltRounds = 10;
     return bcrypt.hash(plainPassword, saltRounds);
   }
+  async cryptToken(plainToken: string): Promise<string> {
+    const saltRounds = 10;
+    return bcrypt.hash(plainToken, saltRounds);
+  }
   async comparePassword(plainPwd: string, hashedPwd: string): Promise<boolean> {
     return bcrypt.compare(plainPwd, hashedPwd);
   }
