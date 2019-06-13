@@ -14,7 +14,10 @@ import { UserChangeEmailParamsInterface } from '../interfaces/UserChangeEmailPar
   method: 'changeEmail',
 })
 export class ChangeEmailUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.changeEmail']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.changeEmail'],
+    ['filterOutput', ['password']],
+  ];
   constructor(
     private config: ConfigProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
@@ -33,26 +36,26 @@ export class ChangeEmailUserAction extends Parents.Action {
 
     const requester = new User(context.call.user);
 
-    await this.kernel.notify(
-      'notification:sendTemplateEmail',
-      {
-        template: 'confirmEmail',
-        email: user.email,
-        fullName: user.fullname,
-        opts: {
-          requester: requester.fullname,
-          organization: 'AomOrOperatorOrganisation',
-          link: `${this.config.get('url.appUrl')}/confirm-email/${confirm}/${token}`,
-        },
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'user',
-        },
-      },
-    );
+    // await this.kernel.notify(
+    //   'notification:sendtemplatemail',
+    //   {
+    //     template: 'confirmEmail',
+    //     email: user.email,
+    //     fullName: user.fullname,
+    //     opts: {
+    //       requester: requester.fullname,
+    //       organization: 'AomOrOperatorOrganisation',
+    //       link: `${this.config.get('url.appUrl')}/confirm-email/${confirm}/${token}`,
+    //     },
+    //   },
+    //   {
+    //     call: context.call,
+    //     channel: {
+    //       ...context.channel,
+    //       service: 'user',
+    //     },
+    //   },
+    // );
 
     return this.userRepository.patch(user._id, {
       confirm,

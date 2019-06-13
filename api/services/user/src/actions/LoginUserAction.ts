@@ -1,4 +1,4 @@
-import { Parents, Container, Types, Exceptions } from '@ilos/core';
+  import { Parents, Container, Types, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -13,7 +13,10 @@ import { UserLoginParamsInterface } from '../interfaces/UserLoginParamsInterface
   method: 'login',
 })
 export class LoginUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.login']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.login'],
+    ['filterOutput', ['password']],
+  ];
 
   constructor(
     private cryptoProvider: CryptoProviderInterfaceResolver,

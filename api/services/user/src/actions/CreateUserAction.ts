@@ -34,6 +34,7 @@ export class CreateUserAction extends Parents.Action {
         ],
       ],
     ],
+    ['filterOutput', ['password']],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,

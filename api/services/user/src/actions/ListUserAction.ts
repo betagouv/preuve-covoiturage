@@ -34,6 +34,7 @@ export class ListUserAction extends Parents.Action {
         ],
       ],
     ],
+    ['filterOutput', ['password']],
   ];
 
   constructor(

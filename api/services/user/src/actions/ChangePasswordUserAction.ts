@@ -16,7 +16,10 @@ import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePassw
   method: 'changePassword',
 })
 export class ChangePasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.changePassword']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.changePassword'],
+    ['filterOutput', ['password']],
+  ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
