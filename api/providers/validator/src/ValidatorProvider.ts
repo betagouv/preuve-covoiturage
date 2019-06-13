@@ -13,9 +13,14 @@ import { phoneCustomFormat } from './formats/phoneCustomFormat';
 import { postcodeCustomFormat } from './formats/postcodeCustomFormat';
 import { sirenCustomFormat } from './formats/sirenCustomFormat';
 import { siretCustomFormat } from './formats/siretCustomFormat';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 @Container.provider()
 export class ValidatorProvider extends AjvValidatorProvider implements ValidatorProviderInterface {
+  constructor(config: ConfigProviderInterfaceResolver) {
+    super(config);
+  }
+
   boot() {
     super.boot();
 
