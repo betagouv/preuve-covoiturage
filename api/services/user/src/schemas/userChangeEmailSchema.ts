@@ -2,6 +2,7 @@ export const userChangeEmailSchema = {
   $id: 'user.changeEmail',
   type: 'object',
   additionalProperties: false,
+  minProperties: 1,
   properties: {
     id: {
       type: 'string',
@@ -18,12 +19,4 @@ export const userChangeEmailSchema = {
       // lowercase: true,
     },
   },
-  oneOf: [
-    {
-      required: ['id'],
-    },
-    {
-      required: ['email'],
-    },
-  ],
 };
