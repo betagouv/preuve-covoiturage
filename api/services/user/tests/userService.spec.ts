@@ -4,6 +4,7 @@ import { Exceptions } from '@ilos/core';
 
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';
+import { UserBaseInterface } from '../src/interfaces/UserInterfaces';
 
 const fakeMongoServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
@@ -341,6 +342,11 @@ describe('User service : List', () => {
     newRegistryAdmin = await fakeMongoServer.addUser(newRegistryAdminModel);
   });
 
+  after(async () => {
+    fakeMongoServer.clearCollection();
+  });
+
+
   it('registry admin - should list users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
@@ -440,6 +446,11 @@ describe('User service : Patch', () => {
     newRegistryAdmin = await fakeMongoServer.addUser(newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(newRegistryUserModel);
   });
+
+  after(async () => {
+    fakeMongoServer.clearCollection();
+  });
+
 
   it('registry admin - should patch registry user', async () => {
     const mockUpdatedProperties = {
@@ -659,6 +670,46 @@ describe('User service : Patch', () => {
     );
     expect(data.result).to.include({
       email: newEmail,
+    });
+    expect(status).equal(200);
+  });
+});
+
+/*
+ * LOGIN
+ */
+describe('User service : Login', () => {
+  const newRegistryAdminModel = <UserBaseInterface>mockFactory.newUser();
+  newRegistryAdminModel.status = 'active';
+  newRegistryAdminModel.permissions = ['test'];
+
+  let newRegistryAdmin;
+
+  before(async () => {
+    newRegistryAdmin = await fakeMongoServer.addUser(newRegistryAdminModel);
+  });
+
+  after(async () => {
+    fakeMongoServer.clearCollection();
+  });
+
+  const newEmail = 'newEmail@example.com';
+  it('registry admin - should change email registry user', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      mockFactory.call(
+        'user:login',
+        {
+          email: newRegistryAdminModel.email,
+          password: newRegistryAdminModel.password,
+        },
+        'registry',
+        'admin',
+        { permissions: [] },
+      ),
+    );
+    expect(data.result).to.include({
+      _id: newRegistryAdmin._id,
     });
     expect(status).equal(200);
   });
