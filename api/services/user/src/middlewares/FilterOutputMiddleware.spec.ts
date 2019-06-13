@@ -31,8 +31,17 @@ const mockUser = new User({
   permissions: [],
 });
 
+const mockListUsers = [
+  new User({ ...mockUser, password: 'password1' }),
+  new User({ ...mockUser, password: 'password2' }),
+];
+
 async function findUser(params, context): Promise<User> {
   return new User({ ...mockUser, password: 'password' });
+}
+
+async function listUsers(params, context): Promise<User[]> {
+  return mockListUsers;
 }
 
 function error(err: Exceptions.RPCException) {
@@ -72,5 +81,15 @@ describe('Filter password from result', () => {
   it('should work', async () => {
     const result = await middleware.process({}, mockFindUserContext, findUser, ['password']);
     expect(result).to.not.have.property('password');
+  });
+});
+
+describe('Filter password from list of users', () => {
+  const mockFindUserContext = contextFactory({ permissions: [] });
+
+  it('should work', async () => {
+    const result = await middleware.process({}, mockFindUserContext, listUsers, ['password']);
+    expect(result[0]).to.not.have.property('password');
+    expect(result[1]).to.not.have.property('password');
   });
 });
