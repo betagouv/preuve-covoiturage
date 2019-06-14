@@ -4,7 +4,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
-import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePasswordParamsInterface';
+import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserChangePasswordParamsInterface';
 
 /*
  * Change password of user by sending old & new password

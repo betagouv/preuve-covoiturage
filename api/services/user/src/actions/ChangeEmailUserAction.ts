@@ -4,7 +4,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserChangeEmailParamsInterface } from '../interfaces/UserChangeEmailParamsInterface';
+import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChangeEmailParamsInterface';
 
 /*
  * Update email of user and send email for confirmation
@@ -59,6 +59,7 @@ export class ChangeEmailUserAction extends Parents.Action {
     //   },
     // );
 
+    // TODO: update status
     return this.userRepository.patch(user._id, {
       emailChangeAt,
       emailConfirm: confirm,

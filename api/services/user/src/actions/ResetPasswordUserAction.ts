@@ -4,7 +4,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserResetPasswordParamsInterface } from '../interfaces/UserResetPasswordParamsInterface';
+import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
 
 /*
  * Find user by forgottenReset and update password

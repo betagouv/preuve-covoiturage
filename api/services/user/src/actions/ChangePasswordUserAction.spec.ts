@@ -7,7 +7,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repositor
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ChangePasswordUserAction } from './ChangePasswordUserAction';
-import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePasswordParamsInterface';
+import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserChangePasswordParamsInterface';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);

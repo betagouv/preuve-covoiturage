@@ -3,8 +3,8 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-import { UserCreateParamsInterface } from '../interfaces/UserCreateParamsInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserCreateParamsInterface } from '../interfaces/actions/UserCreateParamsInterface';
 
 /*
  * Create user and call forgotten password action
@@ -71,6 +71,7 @@ export class CreateUserAction extends Parents.Action {
     const userCreated = await this.userRepository.create(user);
 
     // generate new token for a password reset on first access
+    // TODO move invite to method of this action
     return this.kernel.call(
       'user:invite',
       {
