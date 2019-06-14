@@ -45,11 +45,11 @@ const mockForgottenPasswordParams = {
 const mockId = '1ad';
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  public async findByEmail(email: string): Promise<User> {
-    return null;
-  }
   public async create(user: UserDbInterface): Promise<User> {
     return new User({ ...mockCreateUserParameters, _id: mockId, permissions: [] });
+  }
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
+    return null;
   }
 }
 
