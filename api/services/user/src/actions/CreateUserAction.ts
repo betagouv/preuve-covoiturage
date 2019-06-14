@@ -3,7 +3,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserCreateParamsInterface } from '../interfaces/actions/UserCreateParamsInterface';
 
 /*
@@ -72,18 +72,37 @@ export class CreateUserAction extends Parents.Action {
 
     // generate new token for a password reset on first access
     // TODO move invite to method of this action
-    return this.kernel.call(
-      'user:invite',
-      {
-        id: userCreated._id,
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'user',
-        },
-      },
-    );
+    await this.createInvitation(user);
+    return user;
+  }
+
+  async createInvitation(user: User) {
+    // const reset = this.cryptoProvider.generateToken();
+    // const token = this.cryptoProvider.generateToken();
+    // // set forgotten password properties to set first password
+    // user.forgottenReset = reset;
+    // user.forgottenToken = await this.cryptoProvider.cryptToken(token);
+    // user.forgottenAt = new Date();
+    // await this.userRepository.update(user);
+    // await this.kernel.notify(
+    //   'user:notification',
+    //   {
+    //     template: this.config.get('email.templates.invite'),
+    //     email: updatedUser.email,
+    //     fullName: updatedUser.fullname,
+    //     opts: {
+    //       requester: requester.fullname,
+    //       organization: 'AomOrOperatorOrganisation',
+    //       link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
+    //     },
+    //   },
+    //   {
+    //     call: context.call,
+    //     channel: {
+    //       ...context.channel,
+    //       service: 'user',
+    //     },
+    //   },
+    // );
   }
 }

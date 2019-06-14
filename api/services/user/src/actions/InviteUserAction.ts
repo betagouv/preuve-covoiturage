@@ -10,7 +10,7 @@ import { User } from '../entities/User';
  */
 @Container.handler({
   service: 'user',
-  method: 'invite',
+  method: 'notify',
 })
 export class InviteUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
@@ -28,18 +28,6 @@ export class InviteUserAction extends Parents.Action {
   }
 
   public async handle(params: { id: string }, context: Types.ContextType): Promise<User> {
-    const user = await this.userRepository.find(params.id);
-
-    const reset = this.cryptoProvider.generateToken();
-    const token = this.cryptoProvider.generateToken();
-
-    // set forgotten password properties to set first password
-    user.forgottenReset = reset;
-    user.forgottenToken = await this.cryptoProvider.cryptToken(token);
-    user.forgottenAt = new Date();
-
-    const updatedUser = await this.userRepository.update(user);
-
     const requester = new User(context.call.user);
 
     // await this.kernel.notify(
@@ -63,6 +51,6 @@ export class InviteUserAction extends Parents.Action {
     //   },
     // );
 
-    return updatedUser;
+    return requester;
   }
 }

@@ -26,7 +26,7 @@ export class ChangePasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: UserChangePasswordParamsInterface, context: UserContextInterface): Promise<User> {
-    const user = await this.userRepository.find(params.id);
+    const user = await this.userRepository.find(params.id); // TODO: set from context
 
     if (!(await this.cryptoProvider.comparePassword(params.oldPassword, user.password))) {
       throw new Exceptions.ForbiddenException('Wrong credentials');
