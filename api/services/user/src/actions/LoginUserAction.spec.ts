@@ -7,7 +7,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { LoginUserAction } from './LoginUserAction';
-import { UserLoginParamsInterface } from '../interfaces/UserLoginParamsInterface';
+import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
 import { ConfigProviderInterfaceResolver } from "@ilos/provider-config";
 
 chai.use(chaiAsPromised);

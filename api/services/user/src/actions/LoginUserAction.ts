@@ -4,7 +4,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserLoginParamsInterface } from '../interfaces/UserLoginParamsInterface';
+import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
 
 /*
  * Authenticate user by email & pwd - else throws forbidden error
@@ -16,7 +16,7 @@ import { UserLoginParamsInterface } from '../interfaces/UserLoginParamsInterface
 export class LoginUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.login'],
-    ['filterOutput', ['password']],
+    ['filterOutput', ['password']], // TODO: remove token and other information that not relevant
   ];
 
   constructor(

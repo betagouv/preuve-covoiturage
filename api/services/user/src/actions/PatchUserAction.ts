@@ -1,12 +1,9 @@
 import { Parents, Container, Interfaces, Types } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
+import { UserPatchParamsInterface } from '../interfaces/actions/UserPatchParamsInterface';
 
-interface PatchUserInterface {
-  id: string;
-  patch: { [prop: string]: string };
-}
+import { User } from '../entities/User';
 
 /*
  * Update properties of user ( email | pwd | ( role, firtname, lastname, phone )
@@ -50,7 +47,7 @@ export class PatchUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: PatchUserInterface, context: Types.ContextType): Promise<User> {
+  public async handle(request: UserPatchParamsInterface, context: Types.ContextType): Promise<User> {
     const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {
@@ -61,6 +58,7 @@ export class PatchUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
+    // TODO : this implementation is not working
     // update password
     if (request.patch.newPassword) {
       return this.kernel.call(

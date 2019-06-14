@@ -8,7 +8,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
-import { UserConfirmEmailParamsInterface } from '../interfaces/UserConfirmEmailParamsInterface';
+import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;

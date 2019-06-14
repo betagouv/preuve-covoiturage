@@ -10,7 +10,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ChangeEmailUserAction } from './ChangeEmailUserAction';
-import { UserChangeEmailParamsInterface } from '../interfaces/UserChangeEmailParamsInterface';
+import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChangeEmailParamsInterface';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);

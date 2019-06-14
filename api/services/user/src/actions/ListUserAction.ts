@@ -3,7 +3,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
-import { ListUserParamsInterface } from '../interfaces/UserListParamsInterface';
+import { ListUserParamsInterface } from '../interfaces/actions/UserListParamsInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
 /*

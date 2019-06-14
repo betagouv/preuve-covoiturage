@@ -8,7 +8,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ResetPasswordUserAction } from './ResetPasswordUserAction';
-import { UserResetPasswordParamsInterface } from '../interfaces/UserResetPasswordParamsInterface';
+import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
