@@ -10,5 +10,7 @@ export interface UserPatchParamsInterface {
     password?: string;
     aom?: string;
     operator?: string;
+    newPassword?: string;
+    oldPassword?: string;
   };
 }

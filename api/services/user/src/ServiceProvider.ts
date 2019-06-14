@@ -82,17 +82,21 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
-    this.getContainer()
-      .get(ConfigProviderInterfaceResolver)
-      .loadConfigDirectory(__dirname);
     await super.boot();
     this.registerValidators();
+    this.registerConfig();
   }
 
-  private registerValidators() {
+  protected registerValidators() {
     const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
     this.validators.forEach(([name, schema]) => {
       validator.registerValidator(schema, name);
     });
+  }
+
+  protected registerConfig() {
+    this.getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .loadConfigDirectory(__dirname);
   }
 }
