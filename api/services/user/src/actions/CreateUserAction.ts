@@ -3,7 +3,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserCreateParamsInterface } from '../interfaces/UserCreateParamsInterface';
 
 /*
@@ -46,10 +46,14 @@ export class CreateUserAction extends Parents.Action {
   }
 
   public async handle(request: UserCreateParamsInterface, context: Types.ContextType): Promise<User> {
-    // check if the user exists already
-    const foundUser = await this.userRepository.findByEmail(request.email);
-    if (foundUser) {
-      throw new Exceptions.ConflictException('email conflict');
+    try {
+      // check if the user exists already
+      const foundUser = await this.userRepository.findUserByParams({ email: request.email });
+      if (foundUser) {
+        throw new Exceptions.ConflictException('email conflict');
+      }
+    } catch (e) {
+      // don't throw no found error
     }
 
     if ('operator' in request && 'aom' in request) {

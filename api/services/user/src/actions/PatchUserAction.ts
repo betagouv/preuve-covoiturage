@@ -1,6 +1,6 @@
 import { Parents, Container, Interfaces, Types } from '@ilos/core';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 
 interface PatchUserInterface {

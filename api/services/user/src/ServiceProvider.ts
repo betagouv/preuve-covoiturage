@@ -17,7 +17,7 @@ import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
 import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
 import { LoginUserAction } from './actions/LoginUserAction';
 
-import { UserRepositoryProviderInterfaceResolver } from './interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from './interfaces/repository/UserRepositoryProviderInterface';
 
 import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
 import { FilterOutputMiddleware } from './middlewares/FilterOutputMiddleware';

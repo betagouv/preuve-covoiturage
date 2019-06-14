@@ -5,7 +5,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface, UserDbInterface } from '../interfaces/UserInterfaces';
 import { ForgottenPasswordUserAction } from './ForgottenPasswordUserAction';
 import { User } from '../entities/User';

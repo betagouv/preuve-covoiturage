@@ -2,7 +2,7 @@ import { Parents, Container, Types, Interfaces } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 
 /*
@@ -33,6 +33,7 @@ export class InviteUserAction extends Parents.Action {
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
+    // set forgotten password properties to set first password
     user.forgottenReset = reset;
     user.forgottenToken = await this.cryptoProvider.cryptToken(token);
     user.forgottenAt = new Date();
