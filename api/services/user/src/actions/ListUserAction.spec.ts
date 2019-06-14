@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { ListUserAction } from './ListUserAction';
 import { User } from '../entities/User';
 

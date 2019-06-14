@@ -5,7 +5,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterface } from '../interfaces/repository/UserRepositoryProviderInterface';
 import {
   UserRepositoryListFiltersInterface,
   UserRepositoryListPaginationInterface,
@@ -37,18 +37,12 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /*
-   * Find user by email - else return undefined
-   */
-  public async findByEmail(email: string): Promise<User | undefined> {
-    const collection = await this.getCollection();
-    const result = await collection.findOne({ email });
-    return result ? this.instanciate(result) : result;
-  }
-
-  /*
    * List users, filtered by Aom, Operator, skip & limit
    */
-  public async list(filters: UserRepositoryListFiltersInterface, pagination: UserRepositoryListPaginationInterface): Promise<{ users: User[]; total: number }> {
+  public async list(
+    filters: UserRepositoryListFiltersInterface,
+    pagination: UserRepositoryListPaginationInterface,
+  ): Promise<{ users: User[]; total: number }> {
     let result = [];
 
     const collection = await this.getCollection();

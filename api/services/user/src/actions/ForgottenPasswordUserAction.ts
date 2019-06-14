@@ -2,7 +2,7 @@ import { Parents, Container, Types, Interfaces } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 
 /*
@@ -28,7 +28,6 @@ export class ForgottenPasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: { email: string }, context: Types.ContextType): Promise<User> {
-
     const user = await this.userRepository.findUserByParams({ email: params.email });
 
     const reset = this.cryptoProvider.generateToken();

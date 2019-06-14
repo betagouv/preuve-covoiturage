@@ -4,7 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
@@ -54,11 +54,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   }
 }
 
-const action = new ConfirmEmailUserAction(
-  new FakeConfigProvider(),
-  new FakeCryptoProvider(),
-  new FakeUserRepository(),
-);
+const action = new ConfirmEmailUserAction(new FakeConfigProvider(), new FakeCryptoProvider(), new FakeUserRepository());
 
 describe('confirm email with token action', () => {
   it('should work', async () => {

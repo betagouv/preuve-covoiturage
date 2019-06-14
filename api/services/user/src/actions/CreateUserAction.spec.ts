@@ -6,7 +6,7 @@ import { Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { CreateUserAction } from './CreateUserAction';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 

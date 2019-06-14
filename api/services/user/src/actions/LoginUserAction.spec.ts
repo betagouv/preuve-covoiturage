@@ -3,12 +3,12 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { LoginUserAction } from './LoginUserAction';
 import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
-import { ConfigProviderInterfaceResolver } from "@ilos/provider-config";
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -32,14 +32,12 @@ const mockLoginParams = <UserLoginParamsInterface>{
   password: 'password',
 };
 
-
 // todo: use configproviderinterfaceresolver
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
     return 'active';
   }
 }
-
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
