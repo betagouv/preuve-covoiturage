@@ -6,7 +6,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ChangeEmailUserAction } from './ChangeEmailUserAction';

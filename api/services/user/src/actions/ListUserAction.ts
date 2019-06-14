@@ -1,7 +1,7 @@
 import { Parents, Container } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
 import { ListUserParamsInterface } from '../interfaces/UserListParamsInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';

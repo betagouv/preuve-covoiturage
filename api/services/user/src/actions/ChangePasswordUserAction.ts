@@ -1,7 +1,7 @@
 import { Parents, Container, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
 import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePasswordParamsInterface';

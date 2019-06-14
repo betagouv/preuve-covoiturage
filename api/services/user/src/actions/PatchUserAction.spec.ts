@@ -5,7 +5,7 @@ import chaiSubset from 'chai-subset';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { Interfaces, Types } from '@ilos/core';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { PatchUserAction } from './PatchUserAction';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
