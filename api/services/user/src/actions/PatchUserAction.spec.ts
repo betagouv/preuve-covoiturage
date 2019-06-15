@@ -84,8 +84,8 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
 
 const action = new PatchUserAction(new FakeKernelProvider(), new FakeUserRepository());
 
-describe('Update name - user action', () => {
-  it('should work', async () => {
+describe('USER ACTION - patch', () => {
+  it('should change firstname & lastname', async () => {
     const result = await action.handle(
       { id: mockUser._id, patch: mockUserNewProperties },
       { call: { user: mockConnectedUser }, channel: { service: '' } },
@@ -94,22 +94,3 @@ describe('Update name - user action', () => {
   });
 });
 
-describe('Update password - user action', () => {
-  it('should work', async () => {
-    const result = await action.handle(
-      { id: mockUser._id, patch: { oldPassword: 'oldPassword', newPassword: 'newPassword' } },
-      { call: { user: mockConnectedUser }, channel: { service: '' } },
-    );
-    expect(result).to.include({ _id: mockUser._id, password: cryptedNewPassword });
-  });
-});
-
-describe('Update email - user action', () => {
-  it('should work', async () => {
-    const result = await action.handle(
-      { id: mockUser._id, patch: { email: newEmail } },
-      { call: { user: mockConnectedUser }, channel: { service: '' } },
-    );
-    expect(result).to.include({ _id: mockUser._id, email: newEmail });
-  });
-});

@@ -45,7 +45,6 @@ const mockChangeEmailParams = <UserChangeEmailParamsInterface>{
   email: 'newEmail@example.com',
 };
 
-// todo: use configproviderinterfaceresolver
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
     return 'https://app.covoiturage.beta.gouv.fr';
@@ -70,12 +69,13 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
 }
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  async patch(id: string, patch: any): Promise<User> {
+  async patchUser(id: string, patch: any, context: any): Promise<User> {
     return new User({
       ...mockUser,
       email: mockChangeEmailParams.email,
     });
   }
+
   async find(id: string): Promise<User> {
     return mockUser;
   }
@@ -97,8 +97,8 @@ const action = new ChangeEmailUserAction(
   new FakeUserRepository(),
 );
 
-describe('Change email - user action', () => {
-  it('should work', async () => {
+describe('USER ACTION - Change email', () => {
+  it('should change email of a user', async () => {
     const result = await action.handle(mockChangeEmailParams, {
       call: { user: mockConnectedUser },
       channel: { service: '' },

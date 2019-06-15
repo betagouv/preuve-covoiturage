@@ -68,10 +68,11 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
 
 const action = new ChangePasswordUserAction(new FakeUserRepository(), new FakeCryptoProvider());
 
-describe('Change password - user action', () => {
+describe('USER ACTION - Change password', () => {
   it('should work', async () => {
     const result = await action.handle(mockChangePasswordParams, { call: { user: mockConnectedUser } });
 
     expect(result).to.include({ password: cryptedNewPassword });
   });
 });
+

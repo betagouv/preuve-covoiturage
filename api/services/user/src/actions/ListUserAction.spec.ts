@@ -63,7 +63,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 
 const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvider());
 
-describe('list users action', () => {
+describe('USER ACTION  - list', () => {
   it('should work', async () => {
     const result = await action.handle({}, mockContext);
     expect(result.data)

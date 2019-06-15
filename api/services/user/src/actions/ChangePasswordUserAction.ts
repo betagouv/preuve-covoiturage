@@ -5,6 +5,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repositor
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
 import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserChangePasswordParamsInterface';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Change password of user by sending old & new password
@@ -16,7 +17,8 @@ import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserCha
 export class ChangePasswordUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.changePassword'],
-    ['filterOutput', ['password']],
+    ['can', ['profile.update']],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -26,14 +28,10 @@ export class ChangePasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: UserChangePasswordParamsInterface, context: UserContextInterface): Promise<User> {
-    const user = await this.userRepository.find(params.id); // TODO: set from context
-
+    const user = await this.userRepository.find(context.call.user._id);
     if (!(await this.cryptoProvider.comparePassword(params.oldPassword, user.password))) {
       throw new Exceptions.ForbiddenException('Wrong credentials');
     }
-
-    // same password ?
-    if (params.oldPassword === params.newPassword) return user; // can json schema check this ?
 
     // change the password
     const newHashPassword = await this.cryptoProvider.cryptPassword(params.newPassword);
