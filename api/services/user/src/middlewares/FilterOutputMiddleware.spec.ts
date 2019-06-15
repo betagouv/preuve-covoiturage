@@ -75,20 +75,20 @@ function contextFactory(params) {
 
 const middleware = new FilterOutputMiddleware();
 
-describe('Filter password from result', () => {
+describe('FILTER OUTPUT MIDDLEWARE - blacklist - model', () => {
   const mockFindUserContext = contextFactory({ permissions: [] });
 
-  it('should work', async () => {
-    const result = await middleware.process({}, mockFindUserContext, findUser, ['password']);
+  it('should filter password from result', async () => {
+    const result = await middleware.process({}, mockFindUserContext, findUser, { blackList: ['password'] });
     expect(result).to.not.have.property('password');
   });
 });
 
-describe('Filter password from list of users', () => {
+describe('FILTER OUTPUT MIDDLEWARE - blacklist - array of models', () => {
   const mockFindUserContext = contextFactory({ permissions: [] });
 
-  it('should work', async () => {
-    const result = await middleware.process({}, mockFindUserContext, listUsers, ['password']);
+  it('should filter password from list of users', async () => {
+    const result = await middleware.process({}, mockFindUserContext, listUsers, { blackList: ['password'] });
     expect(result[0]).to.not.have.property('password');
     expect(result[1]).to.not.have.property('password');
   });
