@@ -5,6 +5,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserCreateParamsInterface } from '../interfaces/actions/UserCreateParamsInterface';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Create user and call forgotten password action
@@ -34,7 +35,7 @@ export class CreateUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', ['password']],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -53,7 +54,9 @@ export class CreateUserAction extends Parents.Action {
         throw new Exceptions.ConflictException('email conflict');
       }
     } catch (e) {
-      // don't throw no found error
+      if (e instanceof Exceptions.ConflictException) {
+        throw e;
+      }
     }
 
     if ('operator' in request && 'aom' in request) {
@@ -63,46 +66,48 @@ export class CreateUserAction extends Parents.Action {
     // create the new user
     const user = new User({
       ...request,
-      status: this.config.get('user.status.invited'),
+      status: this.config.get('user.status.notActive'),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
       emailChangeAt: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);
 
-    // generate new token for a password reset on first access
-    // TODO move invite to method of this action
-    await this.createInvitation(user);
-    return user;
+    await this.createInvitation(userCreated, context);
+
+    return userCreated;
   }
 
-  async createInvitation(user: User) {
-    // const reset = this.cryptoProvider.generateToken();
-    // const token = this.cryptoProvider.generateToken();
-    // // set forgotten password properties to set first password
-    // user.forgottenReset = reset;
-    // user.forgottenToken = await this.cryptoProvider.cryptToken(token);
-    // user.forgottenAt = new Date();
-    // await this.userRepository.update(user);
-    // await this.kernel.notify(
-    //   'user:notification',
-    //   {
-    //     template: this.config.get('email.templates.invite'),
-    //     email: updatedUser.email,
-    //     fullName: updatedUser.fullname,
-    //     opts: {
-    //       requester: requester.fullname,
-    //       organization: 'AomOrOperatorOrganisation',
-    //       link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
-    //     },
-    //   },
-    //   {
-    //     call: context.call,
-    //     channel: {
-    //       ...context.channel,
-    //       service: 'user',
-    //     },
-    //   },
-    // );
+  async createInvitation(user: User, context: Types.ContextType) {
+    // generate new token for a password reset on first access
+    const reset = this.cryptoProvider.generateToken();
+    const token = this.cryptoProvider.generateToken();
+    // set forgotten password properties to set first password
+    user.forgottenReset = reset;
+    user.forgottenToken = await this.cryptoProvider.cryptToken(token);
+    user.forgottenAt = new Date();
+
+    await this.userRepository.update(user);
+
+    const requester = new User(context.call.user);
+
+    await this.kernel.call(
+      'user:notify',
+      {
+        template: this.config.get('email.templates.invite'),
+        email: user.email,
+        fullName: user.fullname,
+        requester: requester.fullname,
+        organization: 'AomOrOperatorOrganisation',
+        link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
+      },
+      {
+        call: context.call,
+        channel: {
+          ...context.channel,
+          service: 'user',
+        },
+      },
+    );
   }
 }

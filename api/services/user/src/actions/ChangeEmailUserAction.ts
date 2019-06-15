@@ -5,6 +5,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChangeEmailParamsInterface';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Update email of user and send email for confirmation
@@ -16,7 +17,30 @@ import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChange
 export class ChangeEmailUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.changeEmail'],
-    ['filterOutput', ['password']],
+    [
+      'scopeIt',
+      [
+        ['user.update'],
+        [
+          (params, context) => {
+            if ('id' in params && params.id === context.call.user._id) {
+              return 'profile.update';
+            }
+          },
+          (_params, context) => {
+            if ('aom' in context.call.user) {
+              return 'aom.users.update';
+            }
+          },
+          (_params, context) => {
+            if ('operator' in context.call.user) {
+              return 'operator.users.update';
+            }
+          },
+        ],
+      ],
+    ],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(
     private config: ConfigProviderInterfaceResolver,
@@ -30,6 +54,16 @@ export class ChangeEmailUserAction extends Parents.Action {
   public async handle(params: UserChangeEmailParamsInterface, context: Types.ContextType): Promise<User> {
     const user = await this.userRepository.find(params.id);
 
+    const contextParam: { aom?: string; operator?: string } = {};
+
+    if ('aom' in context.call.user) {
+      contextParam.aom = context.call.user.aom;
+    }
+
+    if ('operator' in context.call.user) {
+      contextParam.operator = context.call.user.operator;
+    }
+
     const emailChangeAt = new Date();
     const confirm = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
@@ -38,33 +72,33 @@ export class ChangeEmailUserAction extends Parents.Action {
 
     const requester = new User(context.call.user);
 
-    // await this.kernel.notify(
-    //   'notification:sendtemplatemail',
-    //   {
-    //     template: 'confirmEmail',
-    //     email: user.email,
-    //     fullName: user.fullname,
-    //     opts: {
-    //       requester: requester.fullname,
-    //       organization: 'AomOrOperatorOrganisation',
-    //       link: `${this.config.get('url.appUrl')}/confirm-email/${confirm}/${token}`,
-    //     },
-    //   },
-    //   {
-    //     call: context.call,
-    //     channel: {
-    //       ...context.channel,
-    //       service: 'user',
-    //     },
-    //   },
-    // );
+    await this.kernel.call(
+      'user:notify',
+      {
+        template: 'confirmEmail',
+        email: user.email,
+        fullName: user.fullname,
+        requester: requester.fullname,
+        organization: 'AomOrOperatorOrganisation',
+        link: `${this.config.get('url.appUrl')}/confirm-email/${confirm}/${token}`,
+      },
+      {
+        call: context.call,
+        channel: {
+          ...context.channel,
+          service: 'user',
+        },
+      },
+    );
 
-    // TODO: update status
-    return this.userRepository.patch(user._id, {
+    const patch = {
       emailChangeAt,
       emailConfirm: confirm,
       emailToken: cryptedToken,
       email: params.email,
-    });
+      status: this.config.get('user.status.notActive'),
+    };
+
+    return this.userRepository.patchUser(params.id, patch, contextParam);
   }
 }

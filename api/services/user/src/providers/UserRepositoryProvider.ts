@@ -107,7 +107,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     const collection = await this.getCollection();
     const normalizedId = new ObjectId(id);
     const result = await collection.findOneAndUpdate(
-      { _id: normalizedId },
+      { _id: normalizedId, ...normalizedFilters },
       {
         $set: patch,
       },

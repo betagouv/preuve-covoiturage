@@ -5,10 +5,10 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
 import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -36,7 +36,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     return mockUser;
   }
 
-  public async update(user: UserDbInterface): Promise<User> {
+  public async update(user: UserBaseInterface): Promise<User> {
     return new User({
       ...mockUser,
     });
@@ -50,7 +50,10 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
 }
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
-    return 'https://app.covoiturage.beta.gouv.fr';
+    if (key === 'user.tokenExpiration.emailConfirm') {
+    return '86400';
+    }
+    return 'active';
   }
 }
 
@@ -60,13 +63,11 @@ const action = new ConfirmEmailUserAction(
   new FakeUserRepository(),
 );
 
-describe('confirm email with token action', () => {
+describe('USER ACTION - confirm email', () => {
   it('should work', async () => {
     const result = await action.handle(mockResetPasswordParams, { call: { user: {} }, channel: { service: '' } });
-    // TODO : FIX ME
-    expect(true).to.eq(true);
-    // expect(result).to.include({
-    //   status: 'active',
-    // });
+    expect(result).to.include({
+      status: 'active',
+    });
   });
 });

@@ -4,9 +4,11 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { UserPatchParamsInterface } from '../interfaces/actions/UserPatchParamsInterface';
 
 import { User } from '../entities/User';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
+
 
 /*
- * Update properties of user ( email | pwd | ( role, firtname, lastname, phone )
+ * Update properties of user ( firstname, lastname, phone )
  */
 @Container.handler({
   service: 'user',
@@ -38,7 +40,7 @@ export class PatchUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', ['password']],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(
     private kernel: Interfaces.KernelInterfaceResolver,
@@ -47,7 +49,7 @@ export class PatchUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: UserPatchParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserPatchParamsInterface, context: Types.ContextType): Promise<User> {
     const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {
@@ -58,43 +60,6 @@ export class PatchUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    // TODO : this implementation is not working
-    // update password
-    if (request.patch.newPassword) {
-      return this.kernel.call(
-        'user:changePassword',
-        {
-          id: request.id,
-          newPassword: request.patch.newPassword,
-          oldPassword: request.patch.oldPassword,
-        },
-        {
-          call: context.call,
-          channel: {
-            ...context.channel,
-            service: 'user',
-          },
-        },
-      );
-    }
-    // change email
-    if (request.patch.email) {
-      // send email to confirm
-      return this.kernel.call(
-        'user:changeEmail',
-        {
-          id: request.id,
-          email: request.patch.email,
-        },
-        {
-          call: context.call,
-          channel: {
-            ...context.channel,
-            service: 'user',
-          },
-        },
-      );
-    }
-    return this.userRepository.patchUser(request.id, request.patch, contextParam);
+    return this.userRepository.patchUser(params.id, params.patch, contextParam);
   }
 }

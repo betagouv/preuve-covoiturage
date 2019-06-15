@@ -4,6 +4,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * find user by email and send email to set new password
@@ -13,10 +14,7 @@ import { User } from '../entities/User';
   method: 'forgottenPassword',
 })
 export class ForgottenPasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.forgottenPassword'],
-    ['filterOutput', ['password']],
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.forgottenPassword']];
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -27,8 +25,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: { email: string }, context: Types.ContextType): Promise<User> {
-
+  public async handle(params: { email: string }, context: Types.ContextType): Promise<void> {
     const user = await this.userRepository.findUserByParams({ email: params.email });
 
     const reset = this.cryptoProvider.generateToken();
@@ -37,22 +34,21 @@ export class ForgottenPasswordUserAction extends Parents.Action {
     user.forgottenReset = reset;
     user.forgottenToken = await this.cryptoProvider.cryptToken(token);
     user.forgottenAt = new Date();
+    user.status = this.config.get('user.status.notActive');
 
     const updatedUser = await this.userRepository.update(user);
 
     const requester = new User(context.call.user);
 
-    await this.kernel.notify(
-      'notification:sendtemplatemail',
+    await this.kernel.call(
+      'user:notify',
       {
         template: this.config.get('email.templates.forgotten'),
         email: updatedUser.email,
         fullName: updatedUser.fullname,
-        opts: {
-          requester: requester.fullname,
-          organization: 'AomOrOperatorOrganisation',
-          link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
-        },
+        requester: requester.fullname,
+        organization: 'AomOrOperatorOrganisation',
+        link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
       },
       {
         call: context.call,
@@ -63,6 +59,6 @@ export class ForgottenPasswordUserAction extends Parents.Action {
       },
     );
 
-    return updatedUser;
+    return;
   }
 }

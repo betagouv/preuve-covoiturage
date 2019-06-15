@@ -3,6 +3,7 @@ import { Parents, Container, Types } from '@ilos/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Find user by id
@@ -37,7 +38,7 @@ export class FindUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', ['password']],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();

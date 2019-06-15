@@ -34,7 +34,7 @@ export class ListUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', ['password']],
+    // ['filterOutput', ], // todo: normalize output as { data:, metadata:} or complexify middleware
   ];
 
   constructor(
@@ -80,11 +80,11 @@ export class ListUserAction extends Parents.Action {
   }
 
   private castPage(page: number): number {
-    return page || this.config.get('pagination.defaultPage'); // Math abs useful ?
+    return page || this.config.get('pagination.defaultPage');
   }
 
   private castLimit(limit: number): number {
-    const lim = limit || this.config.get('pagination.defaultLimit'); // Math abs useful ?
+    const lim = limit || this.config.get('pagination.defaultLimit');
     return lim > this.config.get('pagination.maxLimit') ? this.config.get('pagination.maxLimit') : lim;
   }
 

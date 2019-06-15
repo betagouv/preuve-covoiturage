@@ -4,7 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { LoginUserAction } from './LoginUserAction';
 import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
@@ -48,7 +48,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     }
   }
 
-  public async patch(id: string, user: UserDbInterface): Promise<User> {
+  public async patch(id: string, user: UserBaseInterface): Promise<User> {
     return new User({
       ...mockUser,
       lastConnectedAt: new Date(),
@@ -66,8 +66,8 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
 
 const action = new LoginUserAction(new FakeConfigProvider(), new FakeCryptoProvider(), new FakeUserRepository());
 
-describe('login with right email & pwd - user action', () => {
-  it('should work', async () => {
+describe('USER ACTION - LOGIN', () => {
+  it('should login with right email & pwd', async () => {
     const result = await action.handle(mockLoginParams, { call: { user: {} }, channel: { service: '' } });
     expect(result).to.include({
       _id: mockUser._id,

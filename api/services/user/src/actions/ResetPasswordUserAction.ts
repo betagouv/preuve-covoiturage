@@ -5,6 +5,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Find user by forgottenReset and update password
@@ -16,7 +17,7 @@ import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserRese
 export class ResetPasswordUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.resetPassword'],
-    ['filterOutput', ['password']],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
 
   constructor(
@@ -47,7 +48,6 @@ export class ResetPasswordUserAction extends Parents.Action {
 
     user.hasResetPassword = true;
 
-    // confirm status on first invite
     user.status = this.config.get('user.status.active');
 
     return this.userRepository.update(user);

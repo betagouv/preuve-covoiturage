@@ -1,14 +1,10 @@
 import { Exceptions } from '@ilos/core';
+import axios from 'axios';
 
 import { mockConnectedUserBase } from './connectedUserBase';
 import { mockNewUserBase } from './newUserBase';
-import axios from 'axios';
+import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 
-interface UserparamsInterface {
-  permissions: string[];
-  aom?: string;
-  operator?: string;
-}
 
 interface AomOperator {
   aom?: string;
@@ -20,25 +16,30 @@ export class MockFactory {
 
   public call(
     method: string,
-    data: any,
-    group: string = 'registry',
-    role: string = 'admin',
-    userparams: UserparamsInterface = { permissions: [] },
-    _id: string = 'fakeId',
+    params: any,
+    callUserProperties: UserBaseInterface,
   ) {
+    const callUser = {
+      group : 'registry',
+      role: 'admin',
+      permissions: [],
+      _id: 'fakeId',
+      ...callUserProperties,
+    };
+
     return {
       method,
       id: 1,
       jsonrpc: '2.0',
       params: {
-        params: data,
+        params,
         _context: {
           channel: {
             service: 'proxy',
             transport: 'http',
           },
           call: {
-            user: { ...mockConnectedUserBase, group, role, _id, ...userparams },
+            user: callUser,
           },
         },
       },
