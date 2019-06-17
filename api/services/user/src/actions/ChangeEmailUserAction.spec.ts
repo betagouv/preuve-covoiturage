@@ -3,7 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Container, Interfaces, Types } from '@ilos/core';
+import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
@@ -125,7 +125,54 @@ describe('USER ACTION - Change email', () => {
     action = serviceProvider.getContainer().getHandler(handlers[0]);
   });
 
-  it('should change email of a user', async () => {
+  it('permission "user.update" should change email of a user', async () => {
+    const result = await action.call(
+      {
+        method: 'user:changeEmail',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: mockChangeEmailParams,
+      });
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockUser,
+      _id: mockUserId,
+      email: mockChangeEmailParams.email,
+    });
+  });
+
+  it('permission "profile.update" should change email of his profile', async () => {
+    mockConnectedUser.permissions = ['profile.update'];
+    mockConnectedUser._id = mockUserId;
+    const result = await action.call(
+      {
+        method: 'user:changeEmail',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: mockChangeEmailParams,
+      });
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockUser,
+      _id: mockUserId,
+      email: mockChangeEmailParams.email,
+    });
+  });
+
+  it('permission "profile.update" shouldn\'t change email of other profile - reject with forbidden', async () => {
+    mockConnectedUser.permissions = ['profile.update'];
+    mockConnectedUser._id = 'otherUserId';
+    await expect(action.call(
+      {
+        method: 'user:changeEmail',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: mockChangeEmailParams,
+      })).to.rejectedWith(Exceptions.ForbiddenException);
+  });
+
+  it('permission "aom.users.update" should change email of aom user', async () => {
+    mockConnectedUser.permissions = ['profile.update'];
+    mockConnectedUser.aom = 'aomId';
+    mockUser['aom'] = mockConnectedUser.aom;
+    mockConnectedUser._id = mockUserId;
     const result = await action.call(
       {
         method: 'user:changeEmail',

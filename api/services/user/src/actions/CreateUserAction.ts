@@ -59,7 +59,7 @@ export class CreateUserAction extends Parents.Action {
       }
     }
 
-    if ('operator' in request && 'aom' in request) {
+    if ('operator' in request && 'aom' in request) { // todo: check this in jsonschema
       throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 

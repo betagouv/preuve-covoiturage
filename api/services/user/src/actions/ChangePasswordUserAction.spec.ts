@@ -4,7 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
-import { Container } from '@ilos/core';
+import { Container, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { User } from '../entities/User';
@@ -35,12 +35,10 @@ const mockUser = {
   _id: mockConnectedUserBase._id,
 };
 
-const mockChangePasswordParams = <UserChangePasswordParamsInterface>{
-  oldPassword: 'oldPassword',
-  newPassword: 'newPassword',
-};
 
 const cryptedNewPassword = 'cryptedNewPassword';
+const cryptedOldPassword = 'cryptedOldPassword';
+const password = 'password';
 
 @Container.provider()
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
@@ -66,14 +64,19 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     });
   }
   async find(id: string): Promise<User> {
-    return new User(mockUser);
+    return new User({
+      ...mockUser,
+      password: cryptedOldPassword,
+    });
   }
 }
 
 @Container.provider()
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-  async comparePassword(oldPwd: string, newPwd: string): Promise<boolean> {
-    return true;
+  async comparePassword(plainPassword: string, cryptedPassword: string): Promise<boolean> {
+    if (cryptedPassword === cryptedOldPassword && plainPassword === password) {
+      return true;
+    }
   }
   async cryptPassword(plainPassword: string): Promise<string> {
     return cryptedNewPassword;
@@ -96,6 +99,11 @@ let serviceProvider;
 let handlers;
 let action;
 
+const mockChangePasswordParams = <UserChangePasswordParamsInterface>{
+  oldPassword: password,
+  newPassword: 'newPassword',
+};
+
 describe('USER ACTION - Change password', () => {
   before(async () => {
     serviceProvider = new ServiceProvider();
@@ -104,7 +112,7 @@ describe('USER ACTION - Change password', () => {
     action = serviceProvider.getContainer().getHandler(handlers[0]);
   });
 
-  it('should change password of user', async () => {
+  it('permission "profile.update" should change password of user', async () => {
     const result = await action.call(
       {
         method: 'user:changePassword',
@@ -115,6 +123,18 @@ describe('USER ACTION - Change password', () => {
       ...defaultUserProperties,
       ...mockUser,
     });
+  });
+
+  it('wrong password should reject', async () => {
+    await expect(action.call(
+      {
+        method: 'user:changePassword',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: {
+          ...mockChangePasswordParams,
+          oldPassword: 'wrongPassword',
+        },
+      })).to.rejectedWith(Exceptions.ForbiddenException);
   });
 });
 

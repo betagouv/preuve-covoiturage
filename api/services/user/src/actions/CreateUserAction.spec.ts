@@ -2,7 +2,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Container, Interfaces, Types } from '@ilos/core';
+import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
@@ -116,7 +116,7 @@ describe('USER ACTION  - Create user', () => {
     action = serviceProvider.getContainer().getHandler(handlers[0]);
   });
 
-  it('should return new user', async () => {
+  it('permission "user.create" should return new user with ', async () => {
     const result = await action.call({
       method: 'user:createUser',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
@@ -129,4 +129,49 @@ describe('USER ACTION  - Create user', () => {
       _id: mockNewUserId,
     });
   });
+
+  it('permission "aom.users.add" should return new user', async () => {
+    const result = await action.call({
+      method: 'user:createUser',
+      context: {
+        call: {
+            user: {
+              ...mockConnectedUser,
+              permissions: ['aom.users.add'],
+              aom: 'aomId',
+            },
+          },
+        channel: { service: '' } },
+      params: {
+        ...mockCreateUserParams,
+        aom: 'aomId',
+      },
+    });
+
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockNewUser,
+      _id: mockNewUserId,
+    });
+  });
+
+  it('permission "aom.users.add" shouldn\'t create user from other aom - reject forbidden', async () => {
+    await expect(action.call({
+      method: 'user:createUser',
+      context: {
+        call: {
+          user: {
+            ...mockConnectedUser,
+            permissions: ['aom.users.add'],
+            aom: 'aomId',
+          },
+        },
+        channel: { service: '' } },
+      params: {
+        ...mockCreateUserParams,
+        aom: 'otherAomId',
+      },
+    })).to.rejectedWith(Exceptions.ForbiddenException);
+  });
+
 });
