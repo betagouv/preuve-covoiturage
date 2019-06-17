@@ -39,10 +39,6 @@ const mockChangeEmailParams = <UserChangeEmailParamsInterface>{
 
 @Container.provider()
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
-  async boot() {
-    return;
-  }
-
   get(key: string, fallback?: any): any {
     return 'https://app.covoiturage.beta.gouv.fr';
   }
@@ -50,10 +46,6 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 
 @Container.provider()
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-  boot() {
-    return;
-  }
-
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
     return;
   }
@@ -73,9 +65,6 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
 
 @Container.provider()
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  async boot(): Promise<void> {
-    return;
-  }
   async patchUser(id: string, patch: any, context: any): Promise<User> {
     return new User({
       ...mockUser,
@@ -116,7 +105,6 @@ let serviceProvider;
 let handlers;
 let action;
 
-
 describe('USER ACTION - Change email', () => {
   before(async () => {
     serviceProvider = new ServiceProvider();
@@ -126,12 +114,11 @@ describe('USER ACTION - Change email', () => {
   });
 
   it('permission "user.update" should change email of a user', async () => {
-    const result = await action.call(
-      {
-        method: 'user:changeEmail',
-        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-        params: mockChangeEmailParams,
-      });
+    const result = await action.call({
+      method: 'user:changeEmail',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: mockChangeEmailParams,
+    });
     expect(result).to.eql({
       ...defaultUserProperties,
       ...mockUser,
@@ -143,12 +130,11 @@ describe('USER ACTION - Change email', () => {
   it('permission "profile.update" should change email of his profile', async () => {
     mockConnectedUser.permissions = ['profile.update'];
     mockConnectedUser._id = mockUserId;
-    const result = await action.call(
-      {
-        method: 'user:changeEmail',
-        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-        params: mockChangeEmailParams,
-      });
+    const result = await action.call({
+      method: 'user:changeEmail',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: mockChangeEmailParams,
+    });
     expect(result).to.eql({
       ...defaultUserProperties,
       ...mockUser,
@@ -160,12 +146,13 @@ describe('USER ACTION - Change email', () => {
   it('permission "profile.update" shouldn\'t change email of other profile - reject with forbidden', async () => {
     mockConnectedUser.permissions = ['profile.update'];
     mockConnectedUser._id = 'otherUserId';
-    await expect(action.call(
-      {
+    await expect(
+      action.call({
         method: 'user:changeEmail',
         context: { call: { user: mockConnectedUser }, channel: { service: '' } },
         params: mockChangeEmailParams,
-      })).to.rejectedWith(Exceptions.ForbiddenException);
+      }),
+    ).to.rejectedWith(Exceptions.ForbiddenException);
   });
 
   it('permission "aom.users.update" should change email of aom user', async () => {
@@ -173,12 +160,11 @@ describe('USER ACTION - Change email', () => {
     mockConnectedUser.aom = 'aomId';
     mockUser['aom'] = mockConnectedUser.aom;
     mockConnectedUser._id = mockUserId;
-    const result = await action.call(
-      {
-        method: 'user:changeEmail',
-        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-        params: mockChangeEmailParams,
-      });
+    const result = await action.call({
+      method: 'user:changeEmail',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: mockChangeEmailParams,
+    });
     expect(result).to.eql({
       ...defaultUserProperties,
       ...mockUser,
