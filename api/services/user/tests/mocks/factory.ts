@@ -4,22 +4,22 @@ import axios from 'axios';
 import { mockNewUserBase } from './newUserBase';
 import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 
-
 interface AomOperator {
   aom?: string;
   operator?: string;
 }
 
+const generatePassword = () =>
+  Math.random()
+    .toString(36)
+    .substring(2, 15);
+
 export class MockFactory {
   port = '8081';
 
-  public call(
-    method: string,
-    params: any,
-    callUserProperties: UserBaseInterface,
-  ) {
+  public call(method: string, params: any, callUserProperties: UserBaseInterface) {
     const callUser = {
-      group : 'registry',
+      group: 'registry',
       role: 'admin',
       permissions: [],
       _id: 'fakeId',
@@ -45,12 +45,13 @@ export class MockFactory {
     };
   }
 
-  public newUser(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?) {
+  public newUser(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?, password?) {
     return {
       ...mockNewUserBase,
       group,
       role,
-      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.com`,
+      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
+      password: password || generatePassword(),
       ...aomOperator,
     };
   }

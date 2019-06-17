@@ -17,8 +17,7 @@ import { ResetPasswordUserAction } from './ResetPasswordUserAction';
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
 
 import { mockNewUserBase } from '../../tests/mocks/newUserBase';
-import { defaultUserProperties } from '../../dist/tests/mocks/defaultUserProperties';
-
+import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -27,7 +26,6 @@ const mockUser = {
   ...mockNewUserBase,
   _id: 'mockUserId',
 };
-
 
 const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
   token: 'tokenFromEmail',
@@ -93,7 +91,6 @@ class ServiceProvider extends BaseServiceProvider {
 let serviceProvider;
 let handlers;
 let action;
-
 
 describe('USER ACTION - Reset password', () => {
   before(async () => {
