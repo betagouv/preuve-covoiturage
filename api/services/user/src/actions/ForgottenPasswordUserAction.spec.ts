@@ -2,41 +2,34 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Interfaces, Types } from '@ilos/core';
+import { Container, Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
+
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
+
 import { ForgottenPasswordUserAction } from './ForgottenPasswordUserAction';
+
 import { User } from '../entities/User';
+
+import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+
+import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
+import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  aom: '1ac',
-  permissions: [],
+  ...mockConnectedUserBase,
 };
 
-const mockUser = new User({
-  _id: '1ac',
-  email: 'edouard.nelson@example.com',
-  firstname: 'edouard',
-  lastname: 'nelson',
-  phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
-  aom: 'aomid',
-  password: 'password',
-  permissions: [],
-});
+const mockUser = {
+  ...mockNewUserBase,
+  _id: 'mockUserId',
+};
 
 const mockForgottenPasswordParams = {
   forgottenReset: 'randomToken',
@@ -44,7 +37,11 @@ const mockForgottenPasswordParams = {
   forgottenAt: new Date(),
 };
 
+@Container.provider()
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
+  async boot() {
+    return;
+  }
   public async update(user: UserBaseInterface): Promise<User> {
     return new User({
       ...mockUser,
@@ -52,10 +49,11 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     });
   }
   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
-    return mockUser;
+    return new User(mockUser);
   }
 }
 
+@Container.provider()
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   generateToken(length?: number) {
     return 'randomToken';
@@ -65,31 +63,57 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   }
 }
 
+@Container.provider()
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
+  async boot() {
+    return;
+  }
   async call(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<Types.ResultType> {
     return undefined;
   }
 }
 
+@Container.provider()
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+  async boot() {
+    return;
+  }
   get(key: string, fallback?: any): any {
     return 'https://app.covoiturage.beta.gouv.fr';
   }
 }
 
-const action = new ForgottenPasswordUserAction(
-  new FakeUserRepository(),
-  new FakeCryptoProvider(),
-  new FakeConfigProvider(),
-  new FakeKernelProvider(),
-);
+class ServiceProvider extends BaseServiceProvider {
+  readonly handlers = [ForgottenPasswordUserAction];
+  readonly alias: any[] = [
+    [ConfigProviderInterfaceResolver, FakeConfigProvider],
+    [CryptoProviderInterfaceResolver, FakeCryptoProvider],
+    [Interfaces.KernelInterfaceResolver, FakeKernelProvider],
+    [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
+    [ValidatorProviderInterfaceResolver, ValidatorProvider],
+  ];
+
+  protected registerConfig() {}
+}
+
+let serviceProvider;
+let handlers;
+let action;
+
 
 describe('USER ACTION - Forgotten password', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.boot();
+    handlers = serviceProvider.getContainer().getHandlers();
+    action = serviceProvider.getContainer().getHandler(handlers[0]);
+  });
   it('should update user properties', async () => {
-    const result = await action.handle(
-      { email: mockUser.email },
-      { call: { user: mockConnectedUser }, channel: { service: '' } },
-    );
+    const result = await action.call({
+      method: 'user:deleteUser',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: { email: mockUser.email },
+    });
     expect(result).to.equal(undefined);
   });
 });

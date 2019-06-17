@@ -34,7 +34,7 @@ export class ListUserAction extends Parents.Action {
         ],
       ],
     ],
-    // ['filterOutput', ], // todo: normalize output as { data:, metadata:} or complexify middleware
+    // ['filterOutput', ], // todo: complexify middleware --> utiliser lodash
   ];
 
   constructor(

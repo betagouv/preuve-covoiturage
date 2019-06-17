@@ -1,7 +1,6 @@
 import { Exceptions } from '@ilos/core';
 import axios from 'axios';
 
-import { mockConnectedUserBase } from './connectedUserBase';
 import { mockNewUserBase } from './newUserBase';
 import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 

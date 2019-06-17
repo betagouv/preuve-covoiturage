@@ -43,7 +43,6 @@ export class PatchUserAction extends Parents.Action {
     ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
     super();
