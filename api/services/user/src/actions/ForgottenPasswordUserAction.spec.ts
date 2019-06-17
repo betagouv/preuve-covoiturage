@@ -8,6 +8,7 @@ import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/prov
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
+
 import { ForgottenPasswordUserAction } from './ForgottenPasswordUserAction';
 
 import { User } from '../entities/User';

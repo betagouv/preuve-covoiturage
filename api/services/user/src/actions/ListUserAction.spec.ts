@@ -24,7 +24,7 @@ const mockConnectedUser = <UserBaseInterface>{
   permissions: ['user.list'],
 };
 
-const mockUsers = [{ ...mockNewUserBase, _id: 'mockUserId' }];
+const mockUsers = [{ ...mockNewUserBase, _id: '5d10c15e5060d245502781fc' }];
 
 const mockOutputPagination = {
   total: 1,

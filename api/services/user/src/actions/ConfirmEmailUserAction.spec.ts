@@ -110,5 +110,11 @@ describe('USER ACTION - Confirm email', () => {
       ...mockUser,
       status: 'active',
     });
+
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockUser,
+      status: 'active',
+    });
   });
 });

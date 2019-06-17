@@ -10,6 +10,7 @@ import { CreateUserAction } from './CreateUserAction';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
+
 import { User } from '../entities/User';
 
 import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
