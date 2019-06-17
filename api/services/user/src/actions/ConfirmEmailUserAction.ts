@@ -5,7 +5,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
-import {userWhiteListFilterOutput} from "../config/filterOutput";
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Confirm email by getting user from 'confirm' and verifying uncrypted 'token' with crypted 'emailToken'

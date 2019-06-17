@@ -2,71 +2,100 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Interfaces, Types } from '@ilos/core';
+import { Container, Interfaces, Types } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
+
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-import { PatchUserAction } from './PatchUserAction';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
+
 import { User } from '../entities/User';
+
 import { ChangeRoleUserAction } from './ChangeRoleUserAction';
+
+import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+
+import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
+import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  aom: '1ac',
-  permissions: ['user.list'],
+  ...mockConnectedUserBase,
+  permissions: ['user.update'],
 };
 
-const mockUser = new User({
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  aom: '1ac',
-  permissions: ['user.list'],
-});
+const mockUser = {
+  ...mockNewUserBase,
+  _id: 'userId',
+};
+
 
 const newRole = 'user';
 
-class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-  async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
+@Container.provider()
+class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
+  async boot() {
     return;
   }
-}
-
-class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async patchUser(id: string, patch: any): Promise<User> {
     return new User({
-      _id: id,
+      ...mockUser,
       ...patch,
     });
   }
 }
 
-class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
+@Container.provider()
+class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+  async boot() {
+    return;
+  }
 
-const action = new ChangeRoleUserAction(new FakeKernelProvider(), new FakeUserRepository());
+  get(key: string, fallback?: any): any {
+    return;
+  }
+}
 
-describe('USER ACTION - update role', () => {
+class ServiceProvider extends BaseServiceProvider {
+  readonly handlers = [ChangeRoleUserAction];
+  readonly alias: any[] = [
+    [ConfigProviderInterfaceResolver, FakeConfigProvider],
+    [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
+    [ValidatorProviderInterfaceResolver, ValidatorProvider],
+  ];
+
+  protected registerConfig() {}
+}
+
+let serviceProvider;
+let handlers;
+let action;
+
+
+describe('USER ACTION - Change role', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.boot();
+    handlers = serviceProvider.getContainer().getHandlers();
+    action = serviceProvider.getContainer().getHandler(handlers[0]);
+  });
+
   it('should change role to user', async () => {
-    const result = await action.handle(
-      { id: mockUser._id, role: newRole },
-      { call: { user: mockConnectedUser }, channel: { service: '' } },
-    );
-    expect(result).to.include({ _id: mockUser._id, role: newRole  });
+    const result = await action.call({
+      method: 'user:changeRole',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: { id: mockUser._id, role: newRole },
+    });
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockUser,
+      role: newRole,
+    });
   });
 });
 

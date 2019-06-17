@@ -10,7 +10,7 @@
     "watch-node": "nodemon dist/kernel.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
     "test": "export NODE_ENV=testing; mocha src/*.spec.ts src/**/*.spec.ts",
-    "test:integration": "export NODE_ENV=testing; mocha tests/**/*.spec.ts",
+    "test:integration": "export NODE_ENV=testing; mocha tests/*.spec.ts",
     "coverage-ci": "export NODE_ENV=testing; nyc --all --reporter=lcov mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
     "coverage": "export NODE_ENV=testing; nyc --all --reporter=text mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
     "watch-test": "yarn test -- --watchAll",

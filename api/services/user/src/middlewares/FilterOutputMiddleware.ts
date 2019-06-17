@@ -24,7 +24,7 @@ export class FilterOutputMiddleware implements Interfaces.MiddlewareInterface {
     }
 
     if ('blackList' in filterProperties) {
-      filterProperties.blackList.forEach((prop: string) => {
+      filterProperties.blackList.forEach((prop: string) => { // utiliser map ->
         if (result instanceof Array) {
           result.forEach((model: object) => {
             if (prop in model) {
@@ -52,26 +52,6 @@ export class FilterOutputMiddleware implements Interfaces.MiddlewareInterface {
       });
       result = filteredResult;
     }
-    return this.clean(result);
-  }
-
-  private clean(result: any) {
-    if (result instanceof Array) {
-      result.forEach((model: object) => {
-        for (const key in Object.keys(model)) {
-          if (model[key] === undefined || model[key] === null) {
-            delete model[key];
-          }
-        }
-      });
-    } else if (result instanceof Object) {
-      for (const key in result) {
-        if (result[key] === undefined || result[key] === null) {
-          delete result[key];
-        }
-      }
-    }
-
     return result;
   }
 }
