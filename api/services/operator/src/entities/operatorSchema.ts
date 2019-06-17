@@ -6,9 +6,13 @@ export const aomSchema = {
   properties: {
     nom_commercial: {
       type: 'string',
+      minLength: 3,
+      maxLength: 256,
     },
     raison_sociale: {
       type: 'string',
+      minLength: 3,
+      maxLength: 256,
     },
     company: {
       type: 'object',
@@ -17,98 +21,125 @@ export const aomSchema = {
       properties: {
         siren: {
           type: 'string',
-          // match: regex.siren,
+          format: 'siren',
+          minLength: 9,
+          maxLength: 9,
         },
         naf_etablissement: {
           type: 'string',
-          // match: regex.naf,
+          format: 'naf',
+          minLength: 5,
+          maxLength: 5,
         },
         naf_entreprise: {
           type: 'string',
-          // match: regex.naf,
+          format: 'naf',
+          minLength: 5,
+          maxLength: 5,
         },
         nature_juridique: {
           type: 'string',
+          minLength: 2,
+          maxLength: 256,
         },
         cle_nic: {
           type: 'string',
-          // match: regex.nic,
+          format: 'nic',
+          minLength: 5,
+          maxLength: 5,
         },
         rna: {
           type: 'string',
+          format: 'rna',
         },
         vat_intra: {
           type: 'string',
-          // match: regex.vatIntra
+          format: 'euvat',
+          minLength: 13,
+          maxLength: 13,
         },
       },
     },
     address: {
       type: 'object',
-      required: [],
+      required: ['street', 'city', 'country', 'postcode'],
       additionalProperties: false,
       properties: {
         street: {
           type: 'string',
+          minLength: 3,
+          maxLength: 512,
         },
         city: {
           type: 'string',
+          minLength: 1,
+          maxLength: 256,
         },
         country: {
           type: 'string',
+          minLength: 3,
+          maxLength: 256,
         },
         postcode: {
           type: 'string',
-          // match: regex.postcode,
+          format: 'postcode',
         },
         cedex: {
           type: 'string',
-          // match: regex.cedex
+          minLength: 3,
+          maxLength: 256,
         },
       },
     },
     bank: {
       type: 'object',
-      required: [],
+      required: ['bank_name', 'client_name', 'iban', 'bic'],
       additionalProperties: false,
       properties: {
         bank_name: {
           type: 'string',
+          minLength: 3,
+          maxLength: 256,
         },
         client_name: {
           type: 'string',
+          minLength: 3,
+          maxLength: 256,
         },
         iban: {
           type: 'string',
-          // validate: validators.iban,
-          // set: setters.iban
+          format: 'iban',
+          minLength: 18,
+          maxLength: 18,
         },
         bic: {
           type: 'string',
-          // validate: validators.bic,
-          // set: setters.bic
+          format: 'bic',
+          minLength: 8,
+          maxLength: 11,
         },
       },
     },
     contacts: {
       type: 'object',
-      required: [],
       additionalProperties: false,
       properties: {
         rgpd_dpo: {
-          type: 'string', // ObjectId
+          type: 'string',
+          format: 'objectid',
         },
         rgpd_controller: {
-          type: 'string', // ObjectId
+          type: 'string',
+          format: 'objectid',
         },
         technical: {
-          type: 'string', // ObjectId
+          type: 'string',
+          format: 'objectid',
         },
       },
     },
     cgu: {
       type: 'object',
-      required: [],
       additionalProperties: false,
       properties: {
         accepted: {
@@ -120,7 +151,8 @@ export const aomSchema = {
           format: 'datetime',
         },
         acceptedBy: {
-          type: 'string', // ObjectId
+          type: 'string',
+          format: 'objectid',
         },
       },
     },
