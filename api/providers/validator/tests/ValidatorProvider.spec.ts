@@ -6,6 +6,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider } from '../src/ValidatorProvider';
 import { phoneFormatTest } from './parts/phoneFormatTest.spec';
 import { bicFormatTest } from './parts/bicFormatTest.spec';
+import { objectidFormatTest } from './parts/objectidFormatTest.spec';
 import { coordinatesKeywordTest } from './parts/coordinatesKeywordTest.spec';
 
 chai.use(chaiAsPromised);
@@ -137,12 +138,12 @@ describe('Json Schema provider', () => {
   // check formats
   describe('Phone custom format', phoneFormatTest(fakeConfigProvider, FakeObject));
   describe('BIC custom format', bicFormatTest(fakeConfigProvider, FakeObject));
+  describe('ObjectId custom format', objectidFormatTest(fakeConfigProvider, FakeObject));
   // EU VAT
   // IBAN
   // INSEE
   // NAF
   // NIC
-  // ObjectID
   // Postcode
   // SIREN
   // SIRET

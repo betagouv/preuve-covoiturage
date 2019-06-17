@@ -27,7 +27,7 @@ const mockConnectedUser = <UserBaseInterface>{
 
 const mockUser = {
   ...mockNewUserBase,
-  _id: 'mockUserId',
+  _id: '5d07f9c61cf0b9ce019da281',
 };
 
 const mockUserNewProperties = {
@@ -37,9 +37,6 @@ const mockUserNewProperties = {
 
 @Container.provider()
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  async boot() {
-    return;
-  }
   async patchUser(id: string, patch: any, contextParams: any): Promise<User> {
     return new User({
       ...mockUser,
@@ -51,9 +48,6 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 
 @Container.provider()
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
-  async boot() {
-    return;
-  }
   get(key: string, fallback?: any): any {
     return;
   }
@@ -85,6 +79,7 @@ describe('USER ACTION - Patch', () => {
     handlers = serviceProvider.getContainer().getHandlers();
     action = serviceProvider.getContainer().getHandler(handlers[0]);
   });
+
   it('should change firstname & lastname', async () => {
     const result = await action.call({
       method: 'user:patch',
@@ -98,13 +93,13 @@ describe('USER ACTION - Patch', () => {
     });
   });
 
-  // todo: fix validator ?
-  // it('shouldn\'t change role', async () => {
-  //   await expect(action.call({
-  //     method: 'user:patch',
-  //     context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-  //     params: { id: mockUser._id, patch: { role: 'user' } },
-  //   })).to.rejectedWith(Exceptions.InvalidParamsException);
-  // });
+  it("shouldn't change role", async () => {
+    await expect(
+      action.call({
+        method: 'user:patch',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: { id: mockUser._id, patch: { role: 'user' } },
+      }),
+    ).to.rejectedWith(Exceptions.InvalidParamsException);
+  });
 });
-
