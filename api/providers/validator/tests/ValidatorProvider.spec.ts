@@ -3,7 +3,10 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { ValidatorProvider } from './ValidatorProvider';
+import { ValidatorProvider } from '../src/ValidatorProvider';
+import { phoneFormatTest } from './parts/phoneFormatTest.spec';
+import { bicFormatTest } from './parts/bicFormatTest.spec';
+import { coordinatesKeywordTest } from './parts/coordinatesKeywordTest.spec';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -131,104 +134,19 @@ describe('Json Schema provider', () => {
     expect(result).to.equal(true);
   });
 
-  describe('Phone custom format', () => {
-    beforeEach(() => {
-      const schema = {
-        $schema: 'http://json-schema.org/draft-07/schema#',
-        $id: 'myschema',
-        type: 'object',
-        properties: {
-          phone: {
-            type: 'string',
-            format: 'phone',
-            minLength: 10,
-            maxLength: 14,
-          },
-        },
-        required: ['phone'],
-      };
+  // check formats
+  describe('Phone custom format', phoneFormatTest(fakeConfigProvider, FakeObject));
+  describe('BIC custom format', bicFormatTest(fakeConfigProvider, FakeObject));
+  // EU VAT
+  // IBAN
+  // INSEE
+  // NAF
+  // NIC
+  // ObjectID
+  // Postcode
+  // SIREN
+  // SIRET
 
-      provider.addSchema(schema, FakeObject);
-    });
-
-    it('valid phone string intl', async () => {
-      const result = await provider.validate(new FakeObject({ phone: '+33612345678' }));
-      expect(result).to.equal(true);
-    });
-
-    it('valid phone string leading 0', async () => {
-      const result = await provider.validate(new FakeObject({ phone: '0612345678' }));
-      expect(result).to.equal(true);
-    });
-
-    it('too short', (done) => {
-      provider
-        .validate(new FakeObject({ phone: '012345' }))
-        .catch((err: Error) => {
-          expect(err.message).to.equal('data.phone should NOT be shorter than 10 characters');
-        })
-        .finally(done);
-    });
-
-    it('too long', (done) => {
-      provider
-        .validate(new FakeObject({ phone: '00331234567890' }))
-        .catch((err: Error) => {
-          // console.log(err.message);
-          expect(err.message).to.equal('data.phone should match format "phone"');
-        })
-        .finally(done);
-    });
-  });
-
-  describe('BIC custom format', () => {
-    beforeEach(() => {
-      const schema = {
-        $schema: 'http://json-schema.org/draft-07/schema#',
-        $id: 'myschema',
-        type: 'object',
-        properties: {
-          bic: {
-            type: 'string',
-            format: 'bic',
-            minLength: 8,
-            maxLength: 11,
-          },
-        },
-        required: ['bic'],
-      };
-
-      provider.addSchema(schema, FakeObject);
-    });
-
-    it('valid bic string short', async () => {
-      const result = await provider.validate(new FakeObject({ bic: 'ABNANL2A' }));
-      expect(result).to.equal(true);
-    });
-
-    it('valid bic string padding XXX', async () => {
-      const result = await provider.validate(new FakeObject({ bic: 'ABNANL2AXXX' }));
-      expect(result).to.equal(true);
-    });
-
-    it('too short', (done) => {
-      provider
-        .validate(new FakeObject({ bic: '012345' }))
-        .catch((err: Error) => {
-          // console.log(err.message);
-          expect(err.message).to.equal('data.bic should NOT be shorter than 8 characters');
-        })
-        .finally(done);
-    });
-
-    it('too long', (done) => {
-      provider
-        .validate(new FakeObject({ bic: '00331234567890' }))
-        .catch((err: Error) => {
-          // console.log(err.message);
-          expect(err.message).to.equal('data.bic should NOT be longer than 11 characters');
-        })
-        .finally(done);
-    });
-  });
+  // check keywords
+  describe('Coordinates keyword', coordinatesKeywordTest(fakeConfigProvider, FakeObject));
 });
