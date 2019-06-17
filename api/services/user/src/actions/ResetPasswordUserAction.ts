@@ -2,21 +2,23 @@ import { Parents, Container, Types, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
+import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
-export interface ResetPasswordUserInterface {
-  token: string;
-  reset: string;
-  password: string;
-}
-
+/*
+ * Find user by forgottenReset and update password
+ */
 @Container.handler({
   service: 'user',
   method: 'resetPassword',
 })
 export class ResetPasswordUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.resetPassword']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.resetPassword'],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+  ];
 
   constructor(
     private config: ConfigProviderInterfaceResolver,
@@ -26,7 +28,7 @@ export class ResetPasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ResetPasswordUserInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserResetPasswordParamsInterface, context: Types.ContextType): Promise<User> {
     const user = await this.userRepository.findUserByParams({ forgottenReset: params.reset });
 
     if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgottenToken))) {
@@ -45,6 +47,8 @@ export class ResetPasswordUserAction extends Parents.Action {
     user.password = await this.cryptoProvider.cryptPassword(params.password);
 
     user.hasResetPassword = true;
+
+    user.status = this.config.get('user.status.active');
 
     return this.userRepository.update(user);
   }

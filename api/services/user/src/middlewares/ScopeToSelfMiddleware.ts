@@ -2,6 +2,9 @@ import { Types, Exceptions, Interfaces, Container } from '@ilos/core';
 
 export type ScopeToSelfMiddlewareOptionsType = [string[], Function[]];
 
+/*
+ * Verify default permission - else verify permissions according to params, context & callback function
+ */
 @Container.middleware()
 export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
   async process(

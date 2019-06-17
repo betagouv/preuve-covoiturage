@@ -1,17 +1,15 @@
-import * as _ from 'lodash';
+import { Parents, Container, Interfaces, Types } from '@ilos/core';
 
-import { Parents, Container, Exceptions, Interfaces, Types } from '@ilos/core';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserPatchParamsInterface } from '../interfaces/actions/UserPatchParamsInterface';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
-interface PatchUserInterface {
-  id: string;
-  patch: { [prop: string]: string };
-}
 
+/*
+ * Update properties of user ( firstname, lastname, phone )
+ */
 @Container.handler({
   service: 'user',
   method: 'patch',
@@ -42,6 +40,7 @@ export class PatchUserAction extends Parents.Action {
         ],
       ],
     ],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(
     private kernel: Interfaces.KernelInterfaceResolver,
@@ -50,7 +49,7 @@ export class PatchUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: PatchUserInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserPatchParamsInterface, context: Types.ContextType): Promise<User> {
     const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {
@@ -61,42 +60,6 @@ export class PatchUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    // update password
-    if (request.patch.newPassword) {
-      return this.kernel.call(
-        'user:changePassword',
-        {
-          id: request.id,
-          newPassword: request.patch.newPassword,
-          oldPassword: request.patch.oldPassword,
-        },
-        {
-          call: context.call,
-          channel: {
-            ...context.channel,
-            service: 'user',
-          },
-        },
-      );
-    }
-    // change email
-    if (request.patch.email) {
-      // send email to confirm
-      return this.kernel.call(
-        'user:changeEmail',
-        {
-          id: request.id,
-          email: request.patch.email,
-        },
-        {
-          call: context.call,
-          channel: {
-            ...context.channel,
-            service: 'user',
-          },
-        },
-      );
-    }
-    return this.userRepository.patchUser(request.id, request.patch, contextParam);
+    return this.userRepository.patchUser(params.id, params.patch, contextParam);
   }
 }

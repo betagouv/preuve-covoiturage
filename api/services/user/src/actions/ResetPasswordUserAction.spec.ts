@@ -4,10 +4,11 @@ import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
-import { ResetPasswordUserAction, ResetPasswordUserInterface } from './ResetPasswordUserAction';
+import { ResetPasswordUserAction } from './ResetPasswordUserAction';
+import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -25,7 +26,7 @@ const mockUser = new User({
   forgottenAt: new Date(),
 });
 
-const mockResetPasswordParams = <ResetPasswordUserInterface>{
+const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
   token: 'tokenFromEmail',
   reset: 'resetFromEmail',
   password: 'newPassword',
@@ -38,7 +39,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     return mockUser;
   }
 
-  public async update(user: UserDbInterface): Promise<User> {
+  public async update(user: UserBaseInterface): Promise<User> {
     return new User({
       ...mockUser,
     });
@@ -69,7 +70,7 @@ const action = new ResetPasswordUserAction(
   new FakeUserRepository(),
 );
 
-describe('Reset password with token action', () => {
+describe('USER ACTION - Reset password', () => {
   it('should work', async () => {
     const result = await action.handle(mockResetPasswordParams, { call: { user: {} }, channel: { service: '' } });
 

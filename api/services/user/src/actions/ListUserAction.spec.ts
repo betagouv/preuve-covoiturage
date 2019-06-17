@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { ListUserAction } from './ListUserAction';
 import { User } from '../entities/User';
 
@@ -33,13 +33,6 @@ const mockUsers = [
   },
 ];
 
-const mockInputPagination = {
-  per_page: 25,
-  current_page: 1,
-  limit: 5,
-  skip: 1,
-};
-
 const mockOutputPagination = {
   total: 1,
   count: 1,
@@ -51,9 +44,7 @@ const mockOutputPagination = {
 const mockContext = {
   call: {
     user: mockConnectedUser,
-    metadata: {
-      pagination: mockInputPagination,
-    },
+    metadata: {},
   },
 };
 
@@ -72,7 +63,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 
 const action = new ListUserAction(new FakeUserRepository(), new FakeConfigProvider());
 
-describe('list users action', () => {
+describe('USER ACTION  - list', () => {
   it('should work', async () => {
     const result = await action.handle({}, mockContext);
     expect(result.data)

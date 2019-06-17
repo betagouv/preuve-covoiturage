@@ -65,10 +65,10 @@ function contextFactory(params) {
 
 const middleware = new ScopeToSelfMiddleware();
 
-describe('Has permission to create user', () => {
+describe('MIDDLEWARE SCOPETOSELF', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['user.create'] });
 
-  it('should work', async () => {
+  it('should have permission to create user', async () => {
     const result = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
       ['user.create'],
       [
@@ -89,10 +89,10 @@ describe('Has permission to create user', () => {
   });
 });
 
-describe('Has no permission to create user', () => {
+describe('MIDDLEWARE SCOPETOSELF', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: mockCreateUserParameters.aom });
 
-  it('should throw permission error', async () => {
+  it('Has no permission to create user - should throw permission error', async () => {
     const response = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
       ['user.create'],
       [
@@ -113,10 +113,10 @@ describe('Has no permission to create user', () => {
   });
 });
 
-describe('Aom admin - has no permission to create aom user', () => {
+describe('MIDDLEWARE SCOPETOSELF', () => {
   const mockCreateUserContext = contextFactory({ permissions: [], aom: mockCreateUserParameters.aom });
 
-  it('should work', async () => {
+  it('Aom admin - has no permission to create aom user - should throw permission error', async () => {
     await expect(
       middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
         ['user.create'],
@@ -137,10 +137,10 @@ describe('Aom admin - has no permission to create aom user', () => {
   });
 });
 
-describe('Aom registry - has wrong aom to create aom user', () => {
+describe('MIDDLEWARE SCOPETOSELF', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: 'wrongAomId' });
 
-  it('should throw permission error', async () => {
+  it('Aom registry - has wrong aom to create aom user - should throw permission error', async () => {
     await expect(
       middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
         ['user.create'],

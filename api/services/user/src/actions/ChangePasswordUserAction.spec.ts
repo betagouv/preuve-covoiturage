@@ -3,11 +3,11 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ChangePasswordUserAction } from './ChangePasswordUserAction';
-import { UserChangePasswordParamsInterface } from '../interfaces/UserChangePasswordParamsInterface';
+import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserChangePasswordParamsInterface';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
@@ -61,14 +61,18 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   async comparePassword(oldPwd: string, newPwd: string): Promise<boolean> {
     return true;
   }
+  async cryptPassword(plainPassword: string): Promise<string> {
+    return cryptedNewPassword;
+  }
 }
 
 const action = new ChangePasswordUserAction(new FakeUserRepository(), new FakeCryptoProvider());
 
-describe('Change password - user action', () => {
+describe('USER ACTION - Change password', () => {
   it('should work', async () => {
     const result = await action.handle(mockChangePasswordParams, { call: { user: mockConnectedUser } });
 
     expect(result).to.include({ password: cryptedNewPassword });
   });
 });
+

@@ -6,8 +6,8 @@ import { Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { CreateUserAction } from './CreateUserAction';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 
 chai.use(chaiAsPromised);
@@ -33,48 +33,42 @@ const mockCreateUserParameters = {
   group: 'registry',
   role: 'admin',
   aom: 'aomid',
-  password: 'password',
-};
-
-const mockForgottenPasswordParams = {
-  forgottenReset: 'randomToken',
-  forgottenToken: 'randomToken2',
-  forgottenAt: new Date(),
 };
 
 const mockId = '1ad';
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  public async findByEmail(email: string): Promise<User> {
+  public async create(user: UserBaseInterface): Promise<User> {
+    return new User({ ...mockCreateUserParameters, _id: mockId, permissions: [] });
+  }
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     return null;
   }
-  public async create(user: UserDbInterface): Promise<User> {
-    return new User({ ...mockCreateUserParameters, _id: mockId, permissions: [] });
+  async update(user: any): Promise<User> {
+    return user;
   }
 }
 
-class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
+  generateToken(length?: number) {
+    return 'randomToken';
+  }
+  async cryptToken(plainToken: string): Promise<string> {
+    return 'cryptedToken';
+  }
+}
 
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-  async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
-    return;
-  }
-
-  async call(
-    method: string,
-    params: any[] | { [p: string]: any },
-    context: Types.ContextType,
-  ): Promise<Types.ResultType> {
-    return {
-      _id: mockId,
-      ...mockCreateUserParameters,
-      ...mockForgottenPasswordParams,
-    };
+  async call(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<Types.ResultType> {
+    return undefined;
   }
 }
 
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   get(key: string, fallback?: any): any {
+    if (key === 'user.status.notActive') {
+      return 'notActive';
+    }
     return 'https://app.covoiturage.beta.gouv.fr';
   }
 }
@@ -86,7 +80,7 @@ const action = new CreateUserAction(
   new FakeKernelProvider(),
 );
 
-describe('Create user action', () => {
+describe('USER ACTION  - Create user', () => {
   it('should work', async () => {
     const result = await action.handle(mockCreateUserParameters, {
       call: { user: mockConnectedUser },
@@ -95,14 +89,7 @@ describe('Create user action', () => {
 
     expect(result).to.include({
       _id: mockId,
-      email: mockCreateUserParameters.email,
-      firstname: mockCreateUserParameters.firstname,
-      lastname: mockCreateUserParameters.lastname,
-      phone: mockCreateUserParameters.phone,
-      group: mockCreateUserParameters.group,
-      role: mockCreateUserParameters.role,
-      aom: mockCreateUserParameters.aom,
-      ...mockForgottenPasswordParams,
+      ...mockCreateUserParameters
     });
   });
 });

@@ -31,8 +31,17 @@ const mockUser = new User({
   permissions: [],
 });
 
+const mockListUsers = [
+  new User({ ...mockUser, password: 'password1' }),
+  new User({ ...mockUser, password: 'password2' }),
+];
+
 async function findUser(params, context): Promise<User> {
   return new User({ ...mockUser, password: 'password' });
+}
+
+async function listUsers(params, context): Promise<User[]> {
+  return mockListUsers;
 }
 
 function error(err: Exceptions.RPCException) {
@@ -66,11 +75,21 @@ function contextFactory(params) {
 
 const middleware = new FilterOutputMiddleware();
 
-describe('Filter password from result', () => {
+describe('FILTER OUTPUT MIDDLEWARE - blacklist - model', () => {
   const mockFindUserContext = contextFactory({ permissions: [] });
 
-  it('should work', async () => {
-    const result = await middleware.process({}, mockFindUserContext, findUser, ['password']);
+  it('should filter password from result', async () => {
+    const result = await middleware.process({}, mockFindUserContext, findUser, { blackList: ['password'] });
     expect(result).to.not.have.property('password');
+  });
+});
+
+describe('FILTER OUTPUT MIDDLEWARE - blacklist - array of models', () => {
+  const mockFindUserContext = contextFactory({ permissions: [] });
+
+  it('should filter password from list of users', async () => {
+    const result = await middleware.process({}, mockFindUserContext, listUsers, { blackList: ['password'] });
+    expect(result[0]).to.not.have.property('password');
+    expect(result[1]).to.not.have.property('password');
   });
 });

@@ -3,11 +3,12 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { LoginUserAction } from './LoginUserAction';
-import { UserLoginParamsInterface } from '../interfaces/UserLoginParamsInterface';
+import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -23,12 +24,20 @@ const mockUser = new User({
   aom: 'aomid',
   permissions: [],
   password: 'cryptedPassword',
+  status: 'active',
 });
 
 const mockLoginParams = <UserLoginParamsInterface>{
   email: mockUser.email,
   password: 'password',
 };
+
+// todo: use configproviderinterfaceresolver
+class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+  get(key: string, fallback?: any): any {
+    return 'active';
+  }
+}
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
@@ -37,7 +46,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     }
   }
 
-  public async patch(id: string, user: UserDbInterface): Promise<User> {
+  public async patch(id: string, user: UserBaseInterface): Promise<User> {
     return new User({
       ...mockUser,
       lastConnectedAt: new Date(),
@@ -53,10 +62,10 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   }
 }
 
-const action = new LoginUserAction(new FakeCryptoProvider(), new FakeUserRepository());
+const action = new LoginUserAction(new FakeConfigProvider(), new FakeCryptoProvider(), new FakeUserRepository());
 
-describe('login with right email & pwd - user action', () => {
-  it('should work', async () => {
+describe('USER ACTION - LOGIN', () => {
+  it('should login with right email & pwd', async () => {
     const result = await action.handle(mockLoginParams, { call: { user: {} }, channel: { service: '' } });
     expect(result).to.include({
       _id: mockUser._id,

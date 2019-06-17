@@ -14,16 +14,6 @@ export const userPatchSchema = {
       minProperties: 1,
       additionalProperties: false,
       properties: {
-        oldPassword: {
-          type: 'string',
-          maxLength: 128,
-          minLength: 6,
-        },
-        newPassword: {
-          type: 'string',
-          maxLength: 128,
-          minLength: 6,
-        },
         lastname: {
           type: 'string',
           maxLength: 128,
@@ -32,16 +22,6 @@ export const userPatchSchema = {
           type: 'string',
           maxLength: 128,
         },
-        email: {
-          type: 'string',
-          format: 'email',
-          maxLength: 128,
-          minLength: 1,
-          // match: regex.email,
-          // trim: true,
-          // lowercase: true,
-          // unique: true,
-        },
         phone: {
           type: 'string',
           // match: regex.phone,
@@ -49,10 +29,6 @@ export const userPatchSchema = {
           // validate: validators.phone,
           // trim: true,
           maxLength: 128,
-        },
-        role: {
-          type: 'string',
-          enum: ['admin', 'user'],
         },
       },
     },

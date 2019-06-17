@@ -7,6 +7,7 @@ import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddlew
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
 import { FindUserAction } from './actions/FindUserAction';
+import { NotifyUserAction } from './actions/NotifyUserAction';
 import { ListUserAction } from './actions/ListUserAction';
 import { PatchUserAction } from './actions/PatchUserAction';
 import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
@@ -15,8 +16,9 @@ import { ResetPasswordUserAction } from './actions/ResetPasswordUserAction';
 import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
 import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
 import { LoginUserAction } from './actions/LoginUserAction';
+import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
 
-import { UserRepositoryProviderInterfaceResolver } from './interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from './interfaces/repository/UserRepositoryProviderInterface';
 
 import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
 import { FilterOutputMiddleware } from './middlewares/FilterOutputMiddleware';
@@ -34,6 +36,7 @@ import { userConfirmEmailSchema } from './schemas/userConfirmEmailSchema';
 import { userChangePasswordSchema } from './schemas/userChangePasswordSchema';
 import { userChangeEmailSchema } from './schemas/userChangeEmailSchema';
 import { userLoginSchema } from './schemas/userLoginSchema';
+import { userChangeRoleSchema } from './schemas/userChangeRoleSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -45,11 +48,13 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
     ChangeEmailUserAction,
     ChangePasswordUserAction,
+    ChangeRoleUserAction,
     ConfirmEmailUserAction,
     CreateUserAction,
     DeleteUserAction,
     FindUserAction,
     ForgottenPasswordUserAction,
+    NotifyUserAction,
     ListUserAction,
     LoginUserAction,
     PatchUserAction,
@@ -67,6 +72,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     ['user.create', userCreateSchema],
     ['user.changePassword', userChangePasswordSchema],
     ['user.changeEmail', userChangeEmailSchema],
+    ['user.changeRole', userChangeRoleSchema],
     ['user.confirmEmail', userConfirmEmailSchema],
     ['user.find', userFindSchema],
     ['user.forgottenPassword', userForgottenPasswordSchema],
@@ -78,17 +84,21 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
-    this.getContainer()
-      .get(ConfigProviderInterfaceResolver)
-      .loadConfigDirectory(__dirname);
     await super.boot();
     this.registerValidators();
+    this.registerConfig();
   }
 
-  private registerValidators() {
+  protected registerValidators() {
     const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
     this.validators.forEach(([name, schema]) => {
       validator.registerValidator(schema, name);
     });
+  }
+
+  protected registerConfig() {
+    this.getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .loadConfigDirectory(__dirname);
   }
 }

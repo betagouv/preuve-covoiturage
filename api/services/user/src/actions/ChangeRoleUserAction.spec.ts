@@ -9,6 +9,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repositor
 import { PatchUserAction } from './PatchUserAction';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
+import { ChangeRoleUserAction } from './ChangeRoleUserAction';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
@@ -38,36 +39,11 @@ const mockUser = new User({
   permissions: ['user.list'],
 });
 
-const mockUserNewProperties = {
-  firstname: 'johnny',
-  lastname: 'smith',
-};
-
-const cryptedNewPassword = 'cryptedNewPassword';
-const newEmail = 'newEmail@example.com';
+const newRole = 'user';
 
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
     return;
-  }
-
-  async call(
-    method: string,
-    params: any[] | { [p: string]: any },
-    context: Types.ContextType,
-  ): Promise<Types.ResultType> {
-    if (method === 'user:changePassword') {
-      return new User({
-        ...mockUser,
-        password: cryptedNewPassword,
-      });
-    }
-    if (method === 'user:changeEmail') {
-      return new User({
-        ...mockUser,
-        email: newEmail,
-      });
-    }
   }
 }
 
@@ -82,15 +58,15 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
 
-const action = new PatchUserAction(new FakeKernelProvider(), new FakeUserRepository());
+const action = new ChangeRoleUserAction(new FakeKernelProvider(), new FakeUserRepository());
 
-describe('USER ACTION - patch', () => {
-  it('should change firstname & lastname', async () => {
+describe('USER ACTION - update role', () => {
+  it('should change role to user', async () => {
     const result = await action.handle(
-      { id: mockUser._id, patch: mockUserNewProperties },
+      { id: mockUser._id, role: newRole },
       { call: { user: mockConnectedUser }, channel: { service: '' } },
     );
-    expect(result).to.include({ _id: mockUser._id, ...mockUserNewProperties });
+    expect(result).to.include({ _id: mockUser._id, role: newRole  });
   });
 });
 

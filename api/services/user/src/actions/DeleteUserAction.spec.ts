@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { DeleteUserAction } from './DeleteUserAction';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
@@ -38,7 +38,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 
 const action = new DeleteUserAction(new FakeUserRepository());
 
-describe('Delete user action', () => {
+describe('USER ACTION - Delete user', () => {
   it('should work', async () => {
     const result = await action.handle({ id: mockUser._id }, { call: { user: mockConnectedUser } });
     expect(result).to.equal(undefined);

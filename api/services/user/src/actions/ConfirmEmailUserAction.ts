@@ -2,16 +2,23 @@ import { Parents, Container, Types, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserConfirmEmailParamsInterface } from '../interfaces/UserConfirmEmailParamsInterface';
+import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
+import {userWhiteListFilterOutput} from "../config/filterOutput";
 
+/*
+ * Confirm email by getting user from 'confirm' and verifying uncrypted 'token' with crypted 'emailToken'
+ */
 @Container.handler({
   service: 'user',
   method: 'confirmEmail',
 })
 export class ConfirmEmailUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.confirmEmail']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.confirmEmail'],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+  ];
 
   constructor(
     private config: ConfigProviderInterfaceResolver,

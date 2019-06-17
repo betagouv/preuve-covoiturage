@@ -5,8 +5,8 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserBaseInterface, UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { ForgottenPasswordUserAction } from './ForgottenPasswordUserAction';
 import { User } from '../entities/User';
 
@@ -40,18 +40,18 @@ const mockUser = new User({
 
 const mockForgottenPasswordParams = {
   forgottenReset: 'randomToken',
-  forgottenToken: 'randomToken2',
+  forgottenToken: 'cryptedRandomToken2',
   forgottenAt: new Date(),
 };
 
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  public async update(user: UserDbInterface): Promise<User> {
+  public async update(user: UserBaseInterface): Promise<User> {
     return new User({
       ...mockUser,
       ...mockForgottenPasswordParams,
     });
   }
-  public async find(id: string): Promise<User> {
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     return mockUser;
   }
 }
@@ -60,11 +60,14 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   generateToken(length?: number) {
     return 'randomToken';
   }
+  async cryptToken(plainToken: string): Promise<string> {
+    return mockForgottenPasswordParams.forgottenToken;
+  }
 }
 
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-  async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
-    return;
+  async call(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<Types.ResultType> {
+    return undefined;
   }
 }
 
@@ -81,15 +84,12 @@ const action = new ForgottenPasswordUserAction(
   new FakeKernelProvider(),
 );
 
-describe('Forgotten password action', () => {
-  it('should work', async () => {
+describe('USER ACTION - Forgotten password', () => {
+  it('should update user properties', async () => {
     const result = await action.handle(
-      { id: mockUser._id },
+      { email: mockUser.email },
       { call: { user: mockConnectedUser }, channel: { service: '' } },
     );
-
-    expect(result).to.include({
-      ...mockForgottenPasswordParams,
-    });
+    expect(result).to.equal(undefined);
   });
 });

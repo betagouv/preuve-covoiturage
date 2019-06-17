@@ -1,18 +1,27 @@
 import { Parents, Container, Types, Exceptions } from '@ilos/core';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserLoginParamsInterface } from '../interfaces/UserLoginParamsInterface';
+import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
+/*
+ * Authenticate user by email & pwd - else throws forbidden error
+ */
 @Container.handler({
   service: 'user',
   method: 'login',
 })
 export class LoginUserAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.login']];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'user.login'],
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+  ];
 
   constructor(
+    private config: ConfigProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
@@ -27,10 +36,11 @@ export class LoginUserAction extends Parents.Action {
         throw new Exceptions.ForbiddenException();
       }
 
-      const patchUser = await this.userRepository.patch(user._id, { lastConnectedAt: new Date() });
+      if (user.status !== this.config.get('user.status.active')) {
+        throw new Exceptions.ForbiddenException();
+      }
 
-      // todo: set auth token
-      return patchUser;
+      return this.userRepository.patch(user._id, { lastConnectedAt: new Date() });
     } catch (e) {
       throw new Exceptions.ForbiddenException();
     }

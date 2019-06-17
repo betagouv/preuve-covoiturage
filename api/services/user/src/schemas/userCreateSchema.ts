@@ -39,12 +39,6 @@ export const userCreateSchema = {
       default: 'user',
       enum: ['admin', 'user'],
     },
-    password: {
-      type: 'string',
-      minLength: 6,
-      maxLength: 128,
-      // trim: false,
-    },
     operator: {
       type: 'string',
       maxLength: 255,
@@ -62,7 +56,7 @@ export const userCreateSchema = {
         properties: { group: { const: 'aom' } },
       },
       then: {
-        required: ['email', 'lastname', 'firstname', 'group', 'password', 'aom'],
+        required: ['email', 'lastname', 'firstname', 'group', 'aom'],
       },
     },
     {
@@ -70,7 +64,7 @@ export const userCreateSchema = {
         properties: { group: { const: 'operator' } },
       },
       then: {
-        required: ['email', 'lastname', 'firstname', 'group', 'password', 'operator'],
+        required: ['email', 'lastname', 'firstname', 'group', 'operator'],
       },
     },
   ],

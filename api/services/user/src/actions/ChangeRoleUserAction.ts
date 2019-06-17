@@ -1,38 +1,38 @@
-import { Parents, Container, Types } from '@ilos/core';
+import { Parents, Container, Interfaces, Types } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
+import { UserChangeRoleParamsInterface } from '../interfaces/actions/UserChangeRoleParamsInterface';
+import {userWhiteListFilterOutput} from "../config/filterOutput";
 
 /*
- * Find user by id
+ * Update role of user
  */
 @Container.handler({
   service: 'user',
-  method: 'find',
+  method: 'changeRole',
 })
-export class FindUserAction extends Parents.Action {
+export class ChangeRoleUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.find'],
+    ['validate', 'user.changeRole'],
     [
       'scopeIt',
       [
-        ['user.read'],
+        ['user.update'],
         [
           (params, context) => {
             if ('id' in params && params.id === context.call.user._id) {
-              return 'profile.read';
+              return 'profile.update';
             }
           },
-          (params, context) => {
+          (_params, context) => {
             if ('aom' in context.call.user) {
-              return 'aom.users.read';
+              return 'aom.users.update';
             }
           },
-          (params, context) => {
+          (_params, context) => {
             if ('operator' in context.call.user) {
-              return 'operator.users.read';
+              return 'operator.users.update';
             }
           },
         ],
@@ -40,11 +40,14 @@ export class FindUserAction extends Parents.Action {
     ],
     ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
-  constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
+  constructor(
+    private kernel: Interfaces.KernelInterfaceResolver,
+    private userRepository: UserRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
-  public async handle(request: { id: string }, context: UserContextInterface): Promise<User> {
+  public async handle(params: UserChangeRoleParamsInterface, context: Types.ContextType): Promise<User> {
     const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {
@@ -55,6 +58,6 @@ export class FindUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.findUser(request.id, contextParam);
+    return this.userRepository.patchUser(params.id, { role: params.role }, contextParam);
   }
 }
