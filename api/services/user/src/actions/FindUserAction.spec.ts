@@ -1,3 +1,4 @@
+// tslint:disable max-classes-per-file
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { Container, Exceptions, Types } from '@ilos/core';
@@ -5,37 +6,29 @@ import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/prov
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
+
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
 
 import { User } from '../entities/User';
-import { UserBaseInterface } from '../interfaces/UserInterfaces';
+
 import { FindUserAction } from './FindUserAction';
+
+import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
+import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  aom: '1ac',
+  ...mockConnectedUserBase,
   permissions: ['user.read'],
 };
+
 const mockUser = {
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  aom: '1ac',
-  permissions: [],
-  status: 'active',
+  ...mockNewUserBase,
+  _id: 'mockUserId',
 };
 
 @Container.provider()
@@ -71,7 +64,7 @@ class ServiceProvider extends BaseServiceProvider {
 
 let serviceProvider;
 
-describe('USER ACTION - FIND', () => {
+describe('USER ACTION - Find user', () => {
   before(async () => {
     serviceProvider = new ServiceProvider();
     await serviceProvider.boot();
@@ -85,7 +78,10 @@ describe('USER ACTION - FIND', () => {
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
       params: { id: mockUser._id },
     });
-    expect(result).to.eql(mockUser);
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockUser,
+    });
   });
 
   it('should throw forbidden error', async () => {

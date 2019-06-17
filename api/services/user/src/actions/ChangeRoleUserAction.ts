@@ -3,7 +3,7 @@ import { Parents, Container, Interfaces, Types } from '@ilos/core';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { UserChangeRoleParamsInterface } from '../interfaces/actions/UserChangeRoleParamsInterface';
-import {userWhiteListFilterOutput} from "../config/filterOutput";
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Update role of user
@@ -41,7 +41,6 @@ export class ChangeRoleUserAction extends Parents.Action {
     ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
     super();

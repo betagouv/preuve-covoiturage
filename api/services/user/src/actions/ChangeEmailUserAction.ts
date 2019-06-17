@@ -53,7 +53,6 @@ export class ChangeEmailUserAction extends Parents.Action {
 
   public async handle(params: UserChangeEmailParamsInterface, context: Types.ContextType): Promise<User> {
     const user = await this.userRepository.find(params.id);
-
     const contextParam: { aom?: string; operator?: string } = {};
 
     if ('aom' in context.call.user) {

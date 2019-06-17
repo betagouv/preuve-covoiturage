@@ -1,7 +1,10 @@
 export const mockConnectedUserBase = {
-  email: 'admin@example.com',
-  firstname: 'admin',
-  lastname: 'admin',
-  fullname: 'admin admin',
-  phone: '0622222233',
+  _id: 'connecteduserid',
+  email: 'john.schmidt@example.com',
+  firstname: 'john',
+  lastname: 'schmidt',
+  phone: '0624857425',
+  group: 'registry',
+  role: 'admin',
+  permissions: ['user.list'],
 };

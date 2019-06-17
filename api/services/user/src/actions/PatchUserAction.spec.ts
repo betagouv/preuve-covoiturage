@@ -3,94 +3,99 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Interfaces, Types } from '@ilos/core';
+import { Container, Interfaces, Types } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { PatchUserAction } from './PatchUserAction';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
+import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
+import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  aom: '1ac',
-  permissions: ['user.list'],
+  ...mockConnectedUserBase,
+  permissions: ['user.update'],
 };
 
-const mockUser = new User({
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  aom: '1ac',
-  permissions: ['user.list'],
-});
+const mockUser = {
+  ...mockNewUserBase,
+  _id: 'mockUserId',
+};
 
 const mockUserNewProperties = {
   firstname: 'johnny',
   lastname: 'smith',
 };
 
-const cryptedNewPassword = 'cryptedNewPassword';
-const newEmail = 'newEmail@example.com';
-
-class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-  async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
+@Container.provider()
+class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
+  async boot() {
     return;
   }
-
-  async call(
-    method: string,
-    params: any[] | { [p: string]: any },
-    context: Types.ContextType,
-  ): Promise<Types.ResultType> {
-    if (method === 'user:changePassword') {
-      return new User({
-        ...mockUser,
-        password: cryptedNewPassword,
-      });
-    }
-    if (method === 'user:changeEmail') {
-      return new User({
-        ...mockUser,
-        email: newEmail,
-      });
-    }
-  }
-}
-
-class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  async patchUser(id: string, patch: any): Promise<User> {
+  async patchUser(id: string, patch: any, contextParams: any): Promise<User> {
     return new User({
+      ...mockUser,
       _id: id,
       ...patch,
     });
   }
 }
 
+@Container.provider()
+class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+  async boot() {
+    return;
+  }
+  get(key: string, fallback?: any): any {
+    return;
+  }
+}
+
+@Container.provider()
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {}
 
-const action = new PatchUserAction(new FakeKernelProvider(), new FakeUserRepository());
+class ServiceProvider extends BaseServiceProvider {
+  readonly handlers = [PatchUserAction];
+  readonly alias: any[] = [
+    [ConfigProviderInterfaceResolver, FakeConfigProvider],
+    [CryptoProviderInterfaceResolver, FakeCryptoProvider],
+    [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
+    [ValidatorProviderInterfaceResolver, ValidatorProvider],
+  ];
 
-describe('USER ACTION - patch', () => {
+  protected registerConfig() {}
+}
+
+let serviceProvider;
+let handlers;
+let action;
+
+describe('USER ACTION - Patch', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.boot();
+    handlers = serviceProvider.getContainer().getHandlers();
+    action = serviceProvider.getContainer().getHandler(handlers[0]);
+  });
   it('should change firstname & lastname', async () => {
-    const result = await action.handle(
-      { id: mockUser._id, patch: mockUserNewProperties },
-      { call: { user: mockConnectedUser }, channel: { service: '' } },
-    );
-    expect(result).to.include({ _id: mockUser._id, ...mockUserNewProperties });
+    const result = await action.call({
+      method: 'user:patch',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: { id: mockUser._id, patch: mockUserNewProperties },
+    });
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockUser,
+      ...mockUserNewProperties,
+    });
   });
 });
 

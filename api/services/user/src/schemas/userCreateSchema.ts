@@ -1,7 +1,7 @@
 export const userCreateSchema = {
   $id: 'user.create',
   type: 'object',
-  required: ['email', 'lastname', 'firstname', 'group', 'password'],
+  required: ['email', 'lastname', 'firstname', 'group'],
   additionalProperties: false,
   properties: {
     email: {
