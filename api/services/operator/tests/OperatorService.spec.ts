@@ -19,25 +19,23 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 const port = '8081';
 
-const errorFactory = (err: Exceptions.RPCException) => {
-  return {
-    status: 200,
-    data: {
-      jsonrpc: '2.0',
-      id: 1,
-      error: {
-        code: err.rpcError.code,
-        message: err.rpcError.message,
-        data: err.rpcError.data,
-      },
+const errorFactory = (err: Exceptions.RPCException) => ({
+  status: 200,
+  data: {
+    jsonrpc: '2.0',
+    id: 1,
+    error: {
+      code: err.rpcError.code,
+      message: err.rpcError.message,
+      data: err.rpcError.data,
     },
-  };
-};
+  },
+});
 
 const callFactory = (method: string, data: any, permissions: string[]) => ({
+  method,
   id: 1,
   jsonrpc: '2.0',
-  method: method,
   params: {
     params: data,
     _context: {

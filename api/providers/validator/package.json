@@ -2,8 +2,8 @@
   "name": "@pdc/provider-validator",
   "version": "0.0.1",
   "private": true,
-  "main": "dist/index.js",
-  "typings": "dist/index.d.js",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.js",
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",

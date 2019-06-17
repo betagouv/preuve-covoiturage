@@ -61,10 +61,10 @@
     "@ilos/core": "~0",
     "@ilos/provider-mongo": "~0",
     "@ilos/provider-repository": "~0",
-    "@pdc/provider-validator": "0.0.1",
-    "@pdc/provider-crypto": "0.0.1",
     "@ilos/provider-config": "~0",
-    "@ilos/package-acl": "~0"
+    "@ilos/package-acl": "~0",
+    "@pdc/provider-validator": "0.0.1",
+    "@pdc/provider-crypto": "0.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

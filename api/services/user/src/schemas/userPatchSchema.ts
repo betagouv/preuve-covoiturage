@@ -6,13 +6,14 @@ export const userPatchSchema = {
   properties: {
     id: {
       type: 'string',
-      maxLength: 255,
-      minLength: 1,
+      format: 'objectid',
+      maxLength: 24,
+      minLength: 24,
     },
     patch: {
       type: 'object',
-      minProperties: 1,
       additionalProperties: false,
+      anyOf: [{ required: ['lastname'] }, { required: ['firstname'] }, { required: ['phone'] }],
       properties: {
         lastname: {
           type: 'string',
@@ -24,11 +25,8 @@ export const userPatchSchema = {
         },
         phone: {
           type: 'string',
-          // match: regex.phone,
-          // set: setters.phone,
-          // validate: validators.phone,
-          // trim: true,
-          maxLength: 128,
+          format: 'phone',
+          maxLength: 14,
         },
       },
     },
