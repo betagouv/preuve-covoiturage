@@ -71,11 +71,44 @@ describe('USER ACTION - Delete user', () => {
     handlers = serviceProvider.getContainer().getHandlers();
     action = serviceProvider.getContainer().getHandler(handlers[0]);
   });
-  it('should work', async () => {
+  it('permission "user.delete" should delete user', async () => {
     const result = await action.call({
       method: 'user:delete',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
       params: { id: mockUser._id },
+    });
+    expect(result).to.equal(undefined);
+  });
+  it('permission "profile.delete" should delete his profile', async () => {
+    const result = await action.call({
+      method: 'user:delete',
+      context: {
+        call: {
+          user: {
+            ...mockConnectedUser,
+            id: mockUser._id,
+          },
+        },
+        channel: { service: '' } },
+      params: { id: mockUser._id },
+    });
+    expect(result).to.equal(undefined);
+  });
+  it('permission "aom.users.remove" should delete aom user', async () => {
+    const result = await action.call({
+      method: 'user:delete',
+      context: {
+        call: {
+          user: {
+            ...mockConnectedUser,
+            aom: 'aomId',
+          },
+        },
+        channel: { service: '' } },
+      params: {
+        id: mockUser._id,
+        aom: 'aomId',
+      },
     });
     expect(result).to.equal(undefined);
   });

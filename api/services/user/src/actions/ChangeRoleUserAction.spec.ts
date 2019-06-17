@@ -2,7 +2,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
-import { Container, Interfaces, Types } from '@ilos/core';
+import { Container, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
@@ -31,6 +31,7 @@ const mockConnectedUser = <UserBaseInterface>{
 
 const mockUser = {
   ...mockNewUserBase,
+  role: 'admin',
   _id: 'userId',
 };
 
@@ -85,12 +86,37 @@ describe('USER ACTION - Change role', () => {
     action = serviceProvider.getContainer().getHandler(handlers[0]);
   });
 
-  it('should change role to user', async () => {
+  it('permission "user.update" - should change role to "user"', async () => {
     const result = await action.call({
       method: 'user:changeRole',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
       params: { id: mockUser._id, role: newRole },
     });
+    expect(result).to.eql({
+      ...defaultUserProperties,
+      ...mockUser,
+      role: newRole,
+    });
+  });
+
+  it('permission "aom.users.update" should change role of aom user', async () => {
+    const result = await action.call(
+      {
+        method: 'user:changeRole',
+        context: {
+          call: {
+            user: {
+              ...mockConnectedUser,
+              permissions : ['aom.users.update'],
+              aom : 'aomId',
+            },
+          }, channel: { service: '' } },
+        params: {
+          id: mockUser._id,
+          role: newRole,
+          aom: 'aomId',
+        },
+      });
     expect(result).to.eql({
       ...defaultUserProperties,
       ...mockUser,

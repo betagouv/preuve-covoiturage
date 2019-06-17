@@ -20,11 +20,6 @@ export class ChangeRoleUserAction extends Parents.Action {
       [
         ['user.update'],
         [
-          (params, context) => {
-            if ('id' in params && params.id === context.call.user._id) {
-              return 'profile.update';
-            }
-          },
           (_params, context) => {
             if ('aom' in context.call.user) {
               return 'aom.users.update';
