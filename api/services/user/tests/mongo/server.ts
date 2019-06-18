@@ -5,6 +5,7 @@ import { CryptoProvider } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { User } from '../../src/entities/User';
+import { MockFactory } from '../mocks/factory';
 
 const crypto = new CryptoProvider();
 
@@ -42,6 +43,10 @@ export class FakeMongoServer {
   }
 
   public async addUser(user: any): Promise<User> {
+    if (!('password' in user)) {
+      user.password = MockFactory.generatePassword();
+    }
+
     this.kernel = this.transport.getKernel();
     this.key = this.kernel
       .getContainer()
@@ -69,6 +74,7 @@ export class FakeMongoServer {
 
     if ('operator' in newUser) newUser.operator = newUser.operator.toString();
     if ('aom' in newUser) newUser.aom = newUser.aom.toString();
+
     return new User(newUser);
   }
 

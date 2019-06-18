@@ -20,7 +20,7 @@ export class NotifyUserAction extends Parents.Action {
   public async handle(params: UserNotifyParamsInterface, context: Types.ContextType): Promise<void> {
     const requester = new User(context.call.user);
 
-    // todo: waiting for notification provider
+    // todo: waiting for notification provider resolver
     // await this.kernel.notify(
     //   'notification:sendtemplatemail',
     //   {

@@ -1,7 +1,7 @@
 import { Exceptions } from '@ilos/core';
 import axios from 'axios';
 
-import { mockNewUserBase } from './newUserBase';
+import { mockCreateUserParams, mockNewUserBase } from './newUserBase';
 import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 
 interface AomOperator {
@@ -9,13 +9,14 @@ interface AomOperator {
   operator?: string;
 }
 
-const generatePassword = () =>
-  Math.random()
-    .toString(36)
-    .substring(2, 15);
-
 export class MockFactory {
   port = '8081';
+
+  static generatePassword() {
+    return Math.random()
+      .toString(36)
+      .substring(2, 15);
+  }
 
   public call(method: string, params: any, callUserProperties: UserBaseInterface) {
     const callUser = {
@@ -45,15 +46,38 @@ export class MockFactory {
     };
   }
 
-  public newUser(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?, password?) {
+  public createUserParams(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?) {
+    return {
+      ...mockCreateUserParams,
+      group,
+      role,
+      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
+      ...aomOperator,
+    };
+  }
+
+  public newUser(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?) {
     return {
       ...mockNewUserBase,
       group,
       role,
       email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
-      password: password || generatePassword(),
       ...aomOperator,
     };
+  }
+
+  public get newAomUserModel() {
+    return this.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' }, null);
+  }
+  public get newOperatorUserModel() {
+    return this.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' }, null);
+  }
+  public get newRegistryUserModel() {
+    return this.newUser('registry', 'user', {}, null);
+  }
+
+  public get newRegistryAdminModel() {
+    return this.newUser('registry', 'admin', {}, null);
   }
 
   public error(err: Exceptions.RPCException) {
