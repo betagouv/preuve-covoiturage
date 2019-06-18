@@ -1,6 +1,7 @@
 import { Parents, Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { PermissionMiddleware } from '@ilos/package-acl';
+import { MongoProviderInterfaceResolver, MongoProvider } from '@ilos/provider-mongo';
 
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 
@@ -19,11 +20,12 @@ import { operatorPatchSchema } from './schemas/operatorPatchSchema';
 import { operatorDeleteSchema } from './schemas/operatorDeleteSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
-  readonly serviceProviders = [CommandServiceProvider];
+  // readonly serviceProviders = [CommandServiceProvider];
 
   readonly alias = [
     [OperatorRepositoryProviderInterfaceResolver, OperatorRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
+    [MongoProviderInterfaceResolver, MongoProvider],
   ];
 
   readonly handlers = [AllOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction];

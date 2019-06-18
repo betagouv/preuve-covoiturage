@@ -28,7 +28,7 @@ services:
     ports:
       - 8080:8080
       - 9229:9229
-    env_file: .env
+    env_file: api/.env
     environment:
       CONFIG_DIR: '/code/config'
       API_URL: 'http://localhost:8080'
@@ -51,7 +51,7 @@ services:
     command: "yarn worker-dev"
     ports:
       - 9230:9230
-    env_file: .env
+    env_file: api/.env
     environment:
       CONFIG_DIR: '/code/config'
       MQ_WORKER: 'true'
