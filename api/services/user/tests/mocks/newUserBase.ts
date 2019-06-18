@@ -7,3 +7,6 @@ export const mockNewUserBase = {
   role: 'admin',
   permissions: [],
 };
+
+export const mockId = '5d07f9c61cf0b9ce019da281';
+export const mockId2 = '5d07f9c61cf0b9ce019da282';
