@@ -1,5 +1,4 @@
 // tslint:disable max-classes-per-file
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -7,10 +6,6 @@ import { Exceptions } from '@ilos/core';
 import { bootstrap } from '@ilos/framework';
 import { MongoProvider } from '@ilos/provider-mongo';
 
-let mongoServer;
-let connectionString;
-let dbName;
-let kernel;
 let transport;
 let request;
 
@@ -54,13 +49,11 @@ const callFactory = (method: string, data: any, permissions: string[]) => ({
 
 describe('Operator service', () => {
   before(async () => {
-    mongoServer = new MongoMemoryServer();
-    connectionString = await mongoServer.getConnectionString();
-    dbName = await mongoServer.getDbName();
-    process.env.APP_MONGO_URL = connectionString;
-    process.env.APP_MONGO_DB = dbName;
+    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017/pdc-test?authSource=admin';
+    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+
     transport = await bootstrap.boot(['', '', 'http', port]);
-    kernel = transport.getKernel();
+
     request = axios.create({
       baseURL: `http://127.0.0.1:${port}`,
       timeout: 1000,
@@ -72,9 +65,15 @@ describe('Operator service', () => {
   });
 
   after(async () => {
-    await (<MongoProvider>kernel.getContainer().get(MongoProvider)).close();
+    await (<MongoProvider>transport
+      .getKernel()
+      .getContainer()
+      .get(MongoProvider))
+      .getDb(process.env.APP_MONGO_DB)
+      .then((db) => db.dropDatabase());
+
     await transport.down();
-    await mongoServer.stop();
+    process.exit(0);
   });
 
   it('should validate request on create', async () => {
@@ -91,7 +90,11 @@ describe('Operator service', () => {
         ),
       ),
     ).to.eventually.deep.include(
-      errorFactory(new Exceptions.InvalidParamsException('data.nom_commercial should be string')),
+      errorFactory(
+        new Exceptions.InvalidParamsException(
+          'data.nom_commercial should be string, data.nom_commercial should pass "macro" keyword validation',
+        ),
+      ),
     );
   });
 
@@ -112,6 +115,7 @@ describe('Operator service', () => {
   });
 
   it('should work', async () => {
+    // Create an operator
     const { status: createStatus, data: createData } = await request.post(
       '/',
       callFactory(
@@ -127,6 +131,7 @@ describe('Operator service', () => {
     expect(createStatus).equal(200);
     expect(nom_commercial).to.eq('Toto');
 
+    // Update an operator
     const { status: patchStatus, data: patchData } = await request.post(
       '/',
       callFactory(
@@ -140,6 +145,7 @@ describe('Operator service', () => {
         ['operator.update'],
       ),
     );
+
     const { nom_commercial: patchedName } = patchData.result;
     expect(patchStatus).equal(200);
     expect(patchedName).to.eq('Yop');
@@ -153,6 +159,7 @@ describe('Operator service', () => {
     expect(list.length).eq(1);
     expect(list[0].nom_commercial).eq(patchedName);
 
+    // delete the operator
     const { status: deleteStatus, data: deleteData } = await request.post(
       '/',
       callFactory(

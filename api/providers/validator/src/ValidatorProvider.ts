@@ -15,6 +15,7 @@ import { sirenCustomFormat } from './formats/sirenCustomFormat';
 import { siretCustomFormat } from './formats/siretCustomFormat';
 import { coordinatesKeyword } from './keywords/coordinatesKeyword';
 import { macroKeyword } from './keywords/macroKeyword';
+import { rnaCustomFormat } from './formats/rnaCustomFormat';
 
 @Container.provider()
 export class ValidatorProvider extends AjvValidatorProvider implements ValidatorProviderInterface {
@@ -35,6 +36,7 @@ export class ValidatorProvider extends AjvValidatorProvider implements Validator
     this.registerCustomKeyword({ name: 'objectid', type: 'format', definition: objectidCustomFormat });
     this.registerCustomKeyword({ name: 'phone', type: 'format', definition: phoneCustomFormat });
     this.registerCustomKeyword({ name: 'postcode', type: 'format', definition: postcodeCustomFormat });
+    this.registerCustomKeyword({ name: 'rna', type: 'format', definition: rnaCustomFormat });
     this.registerCustomKeyword({ name: 'siren', type: 'format', definition: sirenCustomFormat });
     this.registerCustomKeyword({ name: 'siret', type: 'format', definition: siretCustomFormat });
 
