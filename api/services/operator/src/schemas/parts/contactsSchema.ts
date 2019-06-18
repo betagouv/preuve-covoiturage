@@ -3,17 +3,8 @@ export const contactsSchema = {
   required: [],
   additionalProperties: false,
   properties: {
-    rgpd_dpo: {
-      type: 'string',
-      format: 'objectid',
-    },
-    rgpd_controller: {
-      type: 'string',
-      format: 'objectid',
-    },
-    technical: {
-      type: 'string',
-      format: 'objectid',
-    },
+    rgpd_dpo: { macro: 'objectid' },
+    rgpd_controller: { macro: 'objectid' },
+    technical: { macro: 'objectid' },
   },
 };

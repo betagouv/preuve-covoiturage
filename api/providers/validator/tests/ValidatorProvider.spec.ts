@@ -8,6 +8,7 @@ import { phoneFormatTest } from './parts/phoneFormatTest.spec';
 import { bicFormatTest } from './parts/bicFormatTest.spec';
 import { objectidFormatTest } from './parts/objectidFormatTest.spec';
 import { coordinatesKeywordTest } from './parts/coordinatesKeywordTest.spec';
+import { macroKeywordTest } from './parts/macroKeywordTest.spec';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -150,4 +151,6 @@ describe('Json Schema provider', () => {
 
   // check keywords
   describe('Coordinates keyword', coordinatesKeywordTest(fakeConfigProvider, FakeObject));
+
+  describe('Macro keyword', macroKeywordTest(fakeConfigProvider, FakeObject));
 });
