@@ -1,0 +1,54 @@
+import { lonMacro } from '../macros/lonMacro';
+import { latMacro } from '../macros/latMacro';
+import { bicMacro } from '../macros/bicMacro';
+import { euVatMacro } from '../macros/euVatMacro';
+import { ibanMacro } from '../macros/ibanMacro';
+import { inseeMacro } from '../macros/inseeMacro';
+import { nafMacro } from '../macros/nafMacro';
+import { nicMacro } from '../macros/nicMacro';
+import { objectidMacro } from '../macros/objectidMacro';
+import { phoneMacro } from '../macros/phoneMacro';
+import { postcodeMacro } from '../macros/postcodeMacro';
+import { sirenMacro } from '../macros/sirenMacro';
+import { siretMacro } from '../macros/siretMacro';
+import { timestampMacro } from '../macros/timestampMacro';
+import { varcharMacro } from '../macros/varcharMacro';
+import { rnaMacro } from '../macros/rnaMacro';
+
+const macroStore = {
+  bic: bicMacro,
+  euvat: euVatMacro,
+  iban: ibanMacro,
+  insee: inseeMacro,
+  lat: latMacro,
+  lon: lonMacro,
+  naf: nafMacro,
+  nic: nicMacro,
+  objectid: objectidMacro,
+  phone: phoneMacro,
+  postcode: postcodeMacro,
+  rna: rnaMacro,
+  siren: sirenMacro,
+  siret: siretMacro,
+  createdat: timestampMacro,
+  updatedat: timestampMacro,
+  deletedat: timestampMacro,
+  timestamp: timestampMacro,
+  varchar: varcharMacro,
+};
+
+export const macroKeyword = {
+  name: 'macro',
+  type: 'keyword',
+  definition: {
+    macro(schema: string, parentSchema, it) {
+      if (schema in macroStore) {
+        return macroStore[schema](schema, parentSchema, it);
+      }
+    },
+    metaSchema: {
+      type: 'string',
+      enum: Object.keys(macroStore),
+    },
+  },
+};

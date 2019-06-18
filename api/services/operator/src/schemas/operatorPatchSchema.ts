@@ -9,20 +9,14 @@ export const operatorPatchSchema = {
   required: ['id', 'patch'],
   additionalProperties: false,
   properties: {
-    id: {
-      type: 'string',
-    },
+    id: { macro: 'objectid' },
     patch: {
       type: 'object',
       minProperties: 1,
       additionalProperties: false,
       properties: {
-        nom_commercial: {
-          type: 'string',
-        },
-        raison_sociale: {
-          type: 'string',
-        },
+        nom_commercial: { macro: 'varchar' },
+        raison_sociale: { macro: 'varchar' },
         company: companySchema,
         address: addressSchema,
         bank: bankSchema,
