@@ -4,15 +4,7 @@ export const userConfirmEmailSchema = {
   required: ['confirm', 'token'],
   additionalProperties: false,
   properties: {
-    confirm: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
-    token: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
+    confirm: { macro: 'token' },
+    token: { macro: 'token' },
   },
 };

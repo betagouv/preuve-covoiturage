@@ -28,7 +28,7 @@ const mockConnectedUser = <UserBaseInterface>{
 
 const mockUser = {
   ...mockNewUserBase,
-  _id: 'mockUserId',
+  _id: '5d08a55046d4230ed634d9bd',
 };
 
 @Container.provider()
@@ -87,10 +87,12 @@ describe('USER ACTION - Find user', () => {
   it('should throw forbidden error', async () => {
     const handlers = serviceProvider.getContainer().getHandlers();
     const action = serviceProvider.getContainer().getHandler(handlers[0]);
-    await expect(action.call({
-      method: 'user:find',
-      context: { call: { user: { ...mockConnectedUser, permissions: [] } } , channel: { service: '' } },
-      params: { id: mockUser._id },
-    })).to.rejectedWith(Exceptions.ForbiddenException);
+    await expect(
+      action.call({
+        method: 'user:find',
+        context: { call: { user: { ...mockConnectedUser, permissions: [] } }, channel: { service: '' } },
+        params: { id: mockUser._id },
+      }),
+    ).to.rejectedWith(Exceptions.ForbiddenException);
   });
 });

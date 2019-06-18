@@ -30,7 +30,7 @@ const mockUser = {
   ...mockNewUserBase,
 };
 
-const mockUserId = 'userId';
+const mockUserId = '5d08a3d4b9cf27edc29ee830';
 
 const mockChangeEmailParams = <UserChangeEmailParamsInterface>{
   id: mockUserId,

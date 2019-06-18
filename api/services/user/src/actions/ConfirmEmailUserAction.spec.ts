@@ -25,12 +25,12 @@ const { expect, assert } = chai;
 const mockUser = {
   ...mockNewUserBase,
   status: 'notActive',
-  _id: 'userId',
+  _id: '5d08a669f691dd623ae9378a',
 };
 
 const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
-  token: 'tokenFromEmail',
-  confirm: 'confirmFromEmail',
+  token: 'W0mn7FUNQI53qAaKW8lxIiTB9b03GP1N',
+  confirm: 'Y5ySSJRrlX49aSC9G1eIBb0dMWLv95aT',
 };
 
 @Container.provider()

@@ -4,51 +4,14 @@ export const userCreateSchema = {
   required: ['email', 'lastname', 'firstname', 'group'],
   additionalProperties: false,
   properties: {
-    email: {
-      type: 'string',
-      format: 'email',
-      maxLength: 128,
-      minLength: 1,
-      // match: regex.email,
-      // trim: true,
-      // lowercase: true,
-      // unique: true,
-    },
-    lastname: {
-      type: 'string',
-      maxLength: 128,
-    },
-    firstname: {
-      type: 'string',
-      maxLength: 128,
-    },
-    phone: {
-      type: 'string',
-      // match: regex.phone,
-      // set: setters.phone,
-      // validate: validators.phone,
-      // trim: true,
-      maxLength: 128,
-    },
-    group: {
-      type: 'string',
-      enum: ['aom', 'operators', 'registry'],
-    },
-    role: {
-      type: 'string',
-      default: 'user',
-      enum: ['admin', 'user'],
-    },
-    operator: {
-      type: 'string',
-      maxLength: 255,
-      // ObjectId
-    },
-    aom: {
-      type: 'string',
-      maxLength: 255,
-      // ObjectId
-    },
+    email: { macro: 'email' },
+    lastname: { macro: 'varchar' },
+    firstname: { macro: 'varchar' },
+    phone: { macro: 'phone' },
+    group: { macro: 'group' },
+    role: { macro: 'role' },
+    operator: { macro: 'objectid' },
+    aom: { macro: 'objectid' },
   },
   allOf: [
     {
