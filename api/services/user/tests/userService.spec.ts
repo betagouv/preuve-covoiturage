@@ -443,7 +443,6 @@ describe('USER SERVICE : Patch', () => {
         },
       ),
     );
-
     expect(data.result).to.eql({
       _id: newRegistryUser._id,
       ...mockFactory.newRegistryUserModel,
@@ -519,7 +518,6 @@ describe('USER SERVICE : Patch', () => {
         'user:patch',
         {
           id: newAomUser._id,
-          aom: newAomUser.aom,
           patch: mockUpdatedProperties,
         },
         {
@@ -551,7 +549,6 @@ describe('USER SERVICE : Patch', () => {
         'user:patch',
         {
           id: newOperatorUser._id,
-          operator: newOperatorUser.operator,
           patch: mockUpdatedProperties,
         },
         {
