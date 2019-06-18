@@ -109,7 +109,6 @@ describe('USER ACTION - Delete user', () => {
       },
       params: {
         id: mockUser._id,
-        aom: 'aomId',
       },
     });
     expect(result).to.equal(undefined);

@@ -112,7 +112,6 @@ describe('USER ACTION - Change role', () => {
       params: {
         id: mockUser._id,
         role: newRole,
-        aom: 'aomId',
       },
     });
     expect(result).to.eql({
