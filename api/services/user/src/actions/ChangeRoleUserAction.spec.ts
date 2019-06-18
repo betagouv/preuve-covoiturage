@@ -6,7 +6,6 @@ import { Container, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
-
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
@@ -32,9 +31,8 @@ const mockConnectedUser = <UserBaseInterface>{
 const mockUser = {
   ...mockNewUserBase,
   role: 'admin',
-  _id: 'userId',
+  _id: '5d08a67dea858e4bd08964d3',
 };
-
 
 const newRole = 'user';
 
@@ -77,7 +75,6 @@ let serviceProvider;
 let handlers;
 let action;
 
-
 describe('USER ACTION - Change role', () => {
   before(async () => {
     serviceProvider = new ServiceProvider();
@@ -100,23 +97,24 @@ describe('USER ACTION - Change role', () => {
   });
 
   it('permission "aom.users.update" should change role of aom user', async () => {
-    const result = await action.call(
-      {
-        method: 'user:changeRole',
-        context: {
-          call: {
-            user: {
-              ...mockConnectedUser,
-              permissions : ['aom.users.update'],
-              aom : 'aomId',
-            },
-          }, channel: { service: '' } },
-        params: {
-          id: mockUser._id,
-          role: newRole,
-          aom: 'aomId',
+    const result = await action.call({
+      method: 'user:changeRole',
+      context: {
+        call: {
+          user: {
+            ...mockConnectedUser,
+            permissions: ['aom.users.update'],
+            aom: 'aomId',
+          },
         },
-      });
+        channel: { service: '' },
+      },
+      params: {
+        id: mockUser._id,
+        role: newRole,
+        aom: 'aomId',
+      },
+    });
     expect(result).to.eql({
       ...defaultUserProperties,
       ...mockUser,
@@ -124,4 +122,3 @@ describe('USER ACTION - Change role', () => {
     });
   });
 });
-

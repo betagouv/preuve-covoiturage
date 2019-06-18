@@ -25,7 +25,7 @@ const mockConnectedUser = <UserBaseInterface>{
 
 const mockUser = {
   ...mockNewUserBase,
-  _id: 'mockUserId',
+  _id: '5d08a5746024760031b33629',
 };
 
 @Container.provider()
@@ -89,7 +89,8 @@ describe('USER ACTION - Delete user', () => {
             id: mockUser._id,
           },
         },
-        channel: { service: '' } },
+        channel: { service: '' },
+      },
       params: { id: mockUser._id },
     });
     expect(result).to.equal(undefined);
@@ -104,7 +105,8 @@ describe('USER ACTION - Delete user', () => {
             aom: 'aomId',
           },
         },
-        channel: { service: '' } },
+        channel: { service: '' },
+      },
       params: {
         id: mockUser._id,
         aom: 'aomId',

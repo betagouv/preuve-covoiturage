@@ -20,17 +20,17 @@ import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
 const mockUser = {
   ...mockNewUserBase,
-  _id: 'mockUserId',
+  _id: '5d08a43d282eeab274c2f3d7',
 };
 
 const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
-  token: 'tokenFromEmail',
-  reset: 'resetFromEmail',
-  password: 'newPassword',
+  token: 'Txl6jbKHyIFNjBkWaeVmDbc7eaKDWnAK',
+  reset: 'S2A01eh84ba5pQ2b1kSVPSkaWnfR6EvH',
+  password: 'LE@XE:E88apg4.^',
 };
 
 const cryptedPassword = 'cryptedPassword';

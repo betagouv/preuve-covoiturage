@@ -4,15 +4,7 @@ export const userChangePasswordSchema = {
   required: ['oldPassword', 'newPassword'],
   additionalProperties: false,
   properties: {
-    oldPassword: {
-      type: 'string',
-      maxLength: 128,
-      minLength: 6,
-    },
-    newPassword: {
-      type: 'string',
-      maxLength: 128,
-      minLength: 6,
-    },
+    oldPassword: { macro: 'password' },
+    newPassword: { macro: 'password' },
   },
 };

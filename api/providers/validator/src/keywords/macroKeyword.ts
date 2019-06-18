@@ -14,6 +14,11 @@ import { siretMacro } from '../macros/siretMacro';
 import { timestampMacro } from '../macros/timestampMacro';
 import { varcharMacro } from '../macros/varcharMacro';
 import { rnaMacro } from '../macros/rnaMacro';
+import { emailMacro } from '../macros/emailMacro';
+import { passwordMacro } from '../macros/passwordMacro';
+import { roleMacro } from '../macros/roleMacro';
+import { tokenMacro } from '../macros/tokenMacro';
+import { groupMacro } from '../macros/groupMacro';
 
 const macroStore = {
   bic: bicMacro,
@@ -35,6 +40,11 @@ const macroStore = {
   deletedat: timestampMacro,
   timestamp: timestampMacro,
   varchar: varcharMacro,
+  email: emailMacro,
+  password: passwordMacro,
+  role: roleMacro,
+  group: groupMacro,
+  token: tokenMacro,
 };
 
 export const macroKeyword = {

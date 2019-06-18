@@ -4,20 +4,8 @@ export const userResetPasswordSchema = {
   required: ['token', 'reset', 'password'],
   additionalProperties: false,
   properties: {
-    password: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 6,
-    },
-    token: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
-    reset: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
+    password: { macro: 'password' },
+    token: { macro: 'token' },
+    reset: { macro: 'token' },
   },
 };

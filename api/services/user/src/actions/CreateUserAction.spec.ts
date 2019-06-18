@@ -31,14 +31,13 @@ const mockNewUser = {
   ...mockNewUserBase,
 };
 
-
 const mockCreateUserParams = {
   ...mockNewUser,
 };
 
 delete mockCreateUserParams.permissions;
 
-const mockNewUserId = 'newUserId';
+const mockNewUserId = '5d08a59aeb5e79d7607d29cd';
 
 @Container.provider()
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
@@ -58,8 +57,15 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 
 @Container.provider()
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-  generateToken(length?: number) {
-    return 'randomToken';
+  generateToken(): string {
+    const list = [
+      'zHeJha04jbHdEG0FC6jhtKuPnCbiccd3',
+      'Nwle5ibspKzQbl32b53RAC1GWm9ZRKFK',
+      'd6QmpInknZudoFmRyy6pX9Z0apeCGTpK',
+      '8jLAY83TMcZ01Z7QsEyeS25WlZaS5xKC',
+    ];
+
+    return list[Math.floor(Math.random() * list.length)];
   }
   async cryptToken(plainToken: string): Promise<string> {
     return 'cryptedToken';
@@ -71,7 +77,11 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async boot() {
     return;
   }
-  async call(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<Types.ResultType> {
+  async call(
+    method: string,
+    params: any[] | { [p: string]: any },
+    context: Types.ContextType,
+  ): Promise<Types.ResultType> {
     return undefined;
   }
 }
@@ -89,7 +99,6 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   }
 }
 
-
 class ServiceProvider extends BaseServiceProvider {
   readonly handlers = [CreateUserAction];
   readonly alias: any[] = [
@@ -106,7 +115,6 @@ class ServiceProvider extends BaseServiceProvider {
 let serviceProvider;
 let handlers;
 let action;
-
 
 describe('USER ACTION  - Create user', () => {
   before(async () => {
@@ -135,16 +143,17 @@ describe('USER ACTION  - Create user', () => {
       method: 'user:createUser',
       context: {
         call: {
-            user: {
-              ...mockConnectedUser,
-              permissions: ['aom.users.add'],
-              aom: 'aomId',
-            },
+          user: {
+            ...mockConnectedUser,
+            permissions: ['aom.users.add'],
+            aom: '5d08a77ae2b965a487be64a4',
           },
-        channel: { service: '' } },
+        },
+        channel: { service: '' },
+      },
       params: {
         ...mockCreateUserParams,
-        aom: 'aomId',
+        aom: '5d08a77ae2b965a487be64a4',
       },
     });
 
@@ -156,22 +165,24 @@ describe('USER ACTION  - Create user', () => {
   });
 
   it('permission "aom.users.add" shouldn\'t create user from other aom - reject forbidden', async () => {
-    await expect(action.call({
-      method: 'user:createUser',
-      context: {
-        call: {
-          user: {
-            ...mockConnectedUser,
-            permissions: ['aom.users.add'],
-            aom: 'aomId',
+    await expect(
+      action.call({
+        method: 'user:createUser',
+        context: {
+          call: {
+            user: {
+              ...mockConnectedUser,
+              permissions: ['aom.users.add'],
+              aom: '5d08a77ae2b965a487be64a4',
+            },
           },
+          channel: { service: '' },
         },
-        channel: { service: '' } },
-      params: {
-        ...mockCreateUserParams,
-        aom: 'otherAomId',
-      },
-    })).to.rejectedWith(Exceptions.ForbiddenException);
+        params: {
+          ...mockCreateUserParams,
+          aom: '5d08a784a197afe4692da7f1',
+        },
+      }),
+    ).to.rejectedWith(Exceptions.ForbiddenException);
   });
-
 });
