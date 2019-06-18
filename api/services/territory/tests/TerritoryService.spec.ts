@@ -18,7 +18,7 @@ chai.use(chaiNock);
 const { expect } = chai;
 const port = '8081';
 
-describe('Aom service', () => {
+describe('Territory service', () => {
   before(async () => {
     mongoServer = new MongoMemoryServer();
     connectionString = await mongoServer.getConnectionString();
@@ -47,7 +47,7 @@ describe('Aom service', () => {
     const { status: createStatus, data: createData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'aom:create',
+      method: 'territory:create',
       params: {
         name: 'Toto',
       },
@@ -59,7 +59,7 @@ describe('Aom service', () => {
     const { status: patchStatus, data: patchData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'aom:patch',
+      method: 'territory:patch',
       params: {
         id: _id,
         patch: {
@@ -74,7 +74,7 @@ describe('Aom service', () => {
     const { status: listStatus, data: listData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'aom:all',
+      method: 'territory:all',
     });
     const list = listData.result;
     expect(list.length).eq(1);
@@ -84,7 +84,7 @@ describe('Aom service', () => {
     const { status: deleteStatus, data: deleteData } = await request.post('/', {
       id: 1,
       jsonrpc: '2.0',
-      method: 'aom:delete',
+      method: 'territory:delete',
       params: {
         _id,
       },
