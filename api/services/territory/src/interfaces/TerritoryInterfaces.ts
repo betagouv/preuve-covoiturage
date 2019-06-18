@@ -1,4 +1,4 @@
-export interface AomBaseInterface {
+export interface TerritoryBaseInterface {
   name?: string;
   shortname?: string;
   acronym?: string;
@@ -45,7 +45,7 @@ export interface AomBaseInterface {
   };
 }
 
-export interface AomDbInterface extends AomBaseInterface {
+export interface TerritoryDbInterface extends TerritoryBaseInterface {
   _id: string;
   name: string;
   deleted_at?: Date;
@@ -53,8 +53,8 @@ export interface AomDbInterface extends AomBaseInterface {
   updated_at?: Date;
 }
 
-export interface CreateAomParamsInterface extends AomBaseInterface {
+export interface CreateTerritoryParamsInterface extends TerritoryBaseInterface {
   name: string;
 }
 
-export interface PatchAomParamsInterface extends AomBaseInterface {}
+export interface PatchTerritoryParamsInterface extends TerritoryBaseInterface {}
