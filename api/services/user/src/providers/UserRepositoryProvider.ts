@@ -67,7 +67,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /**
-   * Delete user by id &| ( aom | operator)
+   * Delete user by id & ( aom | operator)
    */
   public async deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
@@ -81,7 +81,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /**
-   * Find User by id &| ( aom | operator)
+   * Find User by id & ( aom | operator)
    */
   public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
@@ -103,7 +103,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /**
-   * Patch User by id &| ( aom | operator)
+   * Patch User by id & ( aom | operator)
    */
   public async patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }) {
     const normalizedFilters = this.normalizeContextFilters(contextParam);

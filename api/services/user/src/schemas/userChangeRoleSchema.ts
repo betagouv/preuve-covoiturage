@@ -6,6 +6,7 @@ export const userChangeRoleSchema = {
   properties: {
     id: {
       type: 'string',
+      format: 'objectid',
       maxLength: 24,
       minLength: 24,
     },

@@ -17,7 +17,7 @@ import { ChangeRoleUserAction } from './ChangeRoleUserAction';
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
 
 import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
-import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+import { mockId, mockNewUserBase } from '../../tests/mocks/newUserBase';
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
@@ -32,7 +32,7 @@ const mockConnectedUser = <UserBaseInterface>{
 const mockUser = {
   ...mockNewUserBase,
   role: 'admin',
-  _id: 'userId',
+  _id: mockId,
 };
 
 
@@ -114,7 +114,6 @@ describe('USER ACTION - Change role', () => {
         params: {
           id: mockUser._id,
           role: newRole,
-          aom: 'aomId',
         },
       });
     expect(result).to.eql({
