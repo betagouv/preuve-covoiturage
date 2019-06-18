@@ -4,8 +4,9 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
+    "copy-static": "cp -R ./src/templates ./dist/",
     "start": "yarn serve",
-    "build": "yarn build-ts",
+    "build": "yarn build-ts && yarn copy-static",
     "serve": "node dist/kernel.js",
     "watch-node": "nodemon dist/kernel.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
