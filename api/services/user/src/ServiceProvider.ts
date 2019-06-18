@@ -37,6 +37,8 @@ import { userChangePasswordSchema } from './schemas/userChangePasswordSchema';
 import { userChangeEmailSchema } from './schemas/userChangeEmailSchema';
 import { userLoginSchema } from './schemas/userLoginSchema';
 import { userChangeRoleSchema } from './schemas/userChangeRoleSchema';
+import { ContentBlacklistMiddleware } from './middlewares/ContentBlacklistMiddleware';
+import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddleware';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -66,6 +68,8 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     ['validate', ValidatorMiddleware],
     ['scopeIt', ScopeToSelfMiddleware],
     ['filterOutput', FilterOutputMiddleware],
+    ['content.blacklist', ContentBlacklistMiddleware],
+    ['content.whitelist', ContentWhitelistMiddleware],
   ];
 
   protected readonly validators: [string, any][] = [
