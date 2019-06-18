@@ -3,11 +3,12 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ParentRepositoryProvider } from '@ilos/provider-repository';
 import { MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
 
-import { Aom } from '../entities/Aom';
-import { AomRepositoryProviderInterface } from '../interfaces/AomRepositoryProviderInterface';
+import { Territory } from '../entities/Territory';
+import { TerritoryRepositoryProviderInterface } from '../interfaces/TerritoryRepositoryProviderInterface';
 
 @Container.provider()
-export class AomRepositoryProvider extends ParentRepositoryProvider implements AomRepositoryProviderInterface {
+export class TerritoryRepositoryProvider extends ParentRepositoryProvider
+  implements TerritoryRepositoryProviderInterface {
   constructor(
     protected config: ConfigProviderInterfaceResolver,
     protected mongoProvider: MongoProviderInterfaceResolver,
@@ -16,7 +17,7 @@ export class AomRepositoryProvider extends ParentRepositoryProvider implements A
   }
 
   public getKey(): string {
-    return this.config.get('aom.collectionName');
+    return this.config.get('territory.collectionName');
   }
 
   public getDatabase(): string {
@@ -24,6 +25,6 @@ export class AomRepositoryProvider extends ParentRepositoryProvider implements A
   }
 
   public getModel() {
-    return Aom;
+    return Territory;
   }
 }

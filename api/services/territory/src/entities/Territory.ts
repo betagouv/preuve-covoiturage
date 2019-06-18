@@ -1,6 +1,6 @@
-import { AomDbInterface } from '../interfaces/AomInterfaces';
+import { TerritoryDbInterface } from '../interfaces/TerritoryInterfaces';
 
-export class Aom implements AomDbInterface {
+export class Territory implements TerritoryDbInterface {
   public _id: string;
   public name: string;
   public shortname?: string;
