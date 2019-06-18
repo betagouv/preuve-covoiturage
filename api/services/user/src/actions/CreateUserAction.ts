@@ -67,6 +67,7 @@ export class CreateUserAction extends Parents.Action {
     const user = new User({
       ...request,
       status: this.config.get('user.status.notActive'),
+      password: Math.random().toString(36).substring(2, 15),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
       emailChangeAt: new Date(),
     });
