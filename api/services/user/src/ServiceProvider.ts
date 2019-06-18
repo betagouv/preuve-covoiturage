@@ -3,6 +3,7 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver, CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
+import { NotificationProvider, NotificationProviderInterfaceResolver } from '@ilos/provider-notification';
 
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
@@ -17,14 +18,10 @@ import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
 import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
 import { LoginUserAction } from './actions/LoginUserAction';
 import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
-
 import { UserRepositoryProviderInterfaceResolver } from './interfaces/repository/UserRepositoryProviderInterface';
-
 import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
 import { FilterOutputMiddleware } from './middlewares/FilterOutputMiddleware';
-
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
-
 import { userPatchSchema } from './schemas/userPatchSchema';
 import { userDeleteSchema } from './schemas/userDeleteSchema';
 import { userCreateSchema } from './schemas/userCreateSchema';
@@ -42,6 +39,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   readonly alias = [
     [UserRepositoryProviderInterfaceResolver, UserRepositoryProvider],
     [CryptoProviderInterfaceResolver, CryptoProvider],
+    [NotificationProviderInterfaceResolver, NotificationProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
   ];
 
