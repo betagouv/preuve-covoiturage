@@ -1,4 +1,5 @@
 import { Parents, Container, Types, Interfaces } from '@ilos/core';
+import { NotificationProviderInterfaceResolver } from '@ilos/provider-notification';
 
 import { User } from '../entities/User';
 import { UserNotifyParamsInterface } from '../interfaces/actions/UserNotifyParamsInterface';
@@ -12,7 +13,7 @@ import { UserNotifyParamsInterface } from '../interfaces/actions/UserNotifyParam
 })
 export class NotifyUserAction extends Parents.Action {
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private notificationProvider: NotificationProviderInterfaceResolver,
   ) {
     super();
   }
@@ -20,27 +21,16 @@ export class NotifyUserAction extends Parents.Action {
   public async handle(params: UserNotifyParamsInterface, context: Types.ContextType): Promise<void> {
     const requester = new User(context.call.user);
 
-    // todo: waiting for notification provider resolver
-    // await this.kernel.notify(
-    //   'notification:sendtemplatemail',
-    //   {
-    //     template: params.template,
-    //     email: params.email,
-    //     fullName: params.fullname,
-    //     opts: {
-    //       requester: requester.fullname,
-    //       organization: params.organization,
-    //       link: params.link,
-    //     },
-    //   },
-    //   {
-    //     call: context.call,
-    //     channel: {
-    //       ...context.channel,
-    //       service: 'user',
-    //     },
-    //   },
-    // );
+    this.notificationProvider.sendTemplateByEmail({
+      template: params.template,
+      email: params.email,
+      fullname: params.fullname,
+      opts: {
+        requester: requester.fullname,
+        organization: params.organization,
+        link: params.link,
+      },
+    });
 
     return;
   }
