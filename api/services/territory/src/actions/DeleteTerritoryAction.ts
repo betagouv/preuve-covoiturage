@@ -7,6 +7,11 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
   method: 'delete',
 })
 export class DeleteTerritoryAction extends Parents.Action {
+  public readonly middlewares: (string | [string, any])[] = [
+    ['can', ['territory.delete']],
+    ['validate', 'territory.delete'],
+  ];
+
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

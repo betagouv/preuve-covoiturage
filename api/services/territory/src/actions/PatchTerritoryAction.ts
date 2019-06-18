@@ -8,6 +8,11 @@ import { PatchTerritoryParamsInterface, TerritoryDbInterface } from '../interfac
   method: 'patch',
 })
 export class PatchTerritoryAction extends Parents.Action {
+  public readonly middlewares: (string | [string, any])[] = [
+    ['can', ['territory.update']],
+    ['validate', 'territory.patch'],
+  ];
+
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

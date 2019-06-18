@@ -1,67 +1,22 @@
+import { addressSchema } from '../schemas/parts/addressSchema';
+import { baseSchema } from '../schemas/parts/baseSchema';
+import { companySchema } from '../schemas/parts/companySchema';
+import { contactsSchema } from '../schemas/parts/contactsSchema';
+import { cguSchema } from '../schemas/parts/cguSchema';
+import { timestampSchema } from '../schemas/parts/timestampSchema';
+
 export const territorySchema = {
   $id: 'territory',
   type: 'object',
   required: ['name'],
   additionalProperties: false,
   properties: {
-    name: { macro: 'varchar' },
-    shortname: { macro: 'varchar' },
-    acronym: { macro: 'varchar' },
-    insee: [{ macro: 'insee' }],
-    insee_main: { macro: 'insee' },
-    network_id: { type: 'integer' },
-    company: {
-      type: 'object',
-      required: ['siren'],
-      additionalProperties: false,
-      properties: {
-        siren: { macro: 'siren' },
-        region: { macro: 'varchar' },
-        naf_etablissement: { macro: 'naf' },
-        naf_entreprise: { macro: 'naf' },
-        nature_juridique: { macro: 'varchar' },
-        cle_nic: { macro: 'nic' },
-        rna: { macro: 'rna' },
-        vat_intra: { macro: 'euvat' },
-      },
-    },
-    address: {
-      type: 'object',
-      required: [],
-      additionalProperties: false,
-      properties: {
-        street: { macro: 'varchar' },
-        city: { macro: 'varchar' },
-        country: { macro: 'varchar' },
-        postcode: { macro: 'postcode' },
-        cedex: { macro: 'varchar' },
-      },
-    },
-    contacts: {
-      type: 'object',
-      required: [],
-      additionalProperties: false,
-      properties: {
-        phone: { macro: 'phone' },
-        email: { macro: 'email' },
-        rgpd_dpo: { macro: 'objectid' },
-        rgpd_controller: { macro: 'objectid' },
-        technical: { macro: 'objectid' },
-      },
-    },
-    cgu: {
-      type: 'object',
-      required: [],
-      additionalProperties: false,
-      properties: {
-        accepted: {
-          type: 'boolean',
-          default: false,
-        },
-        acceptedAt: { macro: 'timestamp' },
-        acceptedBy: { macro: 'objectid' },
-      },
-    },
+    ...baseSchema,
+    ...timestampSchema,
+    company: companySchema,
+    address: addressSchema,
+    contacts: contactsSchema,
+    cgu: cguSchema,
     geometry: {
       type: 'object',
       required: [],
@@ -76,6 +31,5 @@ export const territorySchema = {
         },
       },
     },
-    deletedAt: { macro: 'timestamp' },
   },
 };
