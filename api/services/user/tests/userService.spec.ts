@@ -271,6 +271,7 @@ describe('User service Find', () => {
         },
       ),
     );
+
     expect(data.result).to.eql({
       _id: newAomUser._id,
       ...mockFactory.newAomUserModel,
@@ -297,7 +298,7 @@ describe('User service Find', () => {
   it('aom admin - should find aom user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newAomUser._id, aom: newAomUser.aom },
+      mockFactory.call('user:find', { id: newAomUser._id },
         {
           group: 'aom',
           role: 'admin',
@@ -317,7 +318,7 @@ describe('User service Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newOperatorUser._id, operator: newOperatorUser.operator },
+        { id: newOperatorUser._id },
         {
           group:'registry',
           role: 'admin',
@@ -374,7 +375,7 @@ describe('User service : List', () => {
   it('aom admin - should list aom users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', { aom: newAomUser.aom }, {
+      mockFactory.call('user:list', {}, {
         group: 'aom',
         role:'admin',
         permissions: ['aom.users.list'],
@@ -392,7 +393,7 @@ describe('User service : List', () => {
   it('operator admin - should list operator users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', { operator: newOperatorUser.operator },
+      mockFactory.call('user:list', {},
         {
           group: 'operators',
           role: 'admin',
