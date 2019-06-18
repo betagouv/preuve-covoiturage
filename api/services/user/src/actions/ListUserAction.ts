@@ -6,6 +6,8 @@ import { UserListResponseInterface } from '../interfaces/UserListResponseInterfa
 import { ListUserParamsInterface } from '../interfaces/actions/UserListParamsInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
+import { userWhiteListFilterOutput } from '../config/filterOutput';
+
 /*
  * list users filtered by aom or operator and paginate with limit & skip
  */
@@ -34,7 +36,7 @@ export class ListUserAction extends Parents.Action {
         ],
       ],
     ],
-    // ['filterOutput', ], // todo: complexify middleware --> utiliser lodash
+    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
   ];
 
   constructor(

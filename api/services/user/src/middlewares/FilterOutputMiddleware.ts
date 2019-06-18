@@ -1,4 +1,5 @@
 import { Types, Interfaces, Container } from '@ilos/core';
+import * as _ from 'lodash';
 
 export type FilterOutputMiddlewareOptionsType = {
   whiteList?: string[],
@@ -17,41 +18,36 @@ export class FilterOutputMiddleware implements Interfaces.MiddlewareInterface {
     next: Function,
     filterProperties: FilterOutputMiddlewareOptionsType,
   ): Promise<Types.ResultType> {
-    let result = await next(params, context);
+    const result = await next(params, context);
+    let mappedResult = await _.get(result, 'data', result);
 
     if ('whiteList' in filterProperties && 'blackList' in filterProperties) {
       throw new Error();
     }
 
     if ('blackList' in filterProperties) {
-      filterProperties.blackList.forEach((prop: string) => { // utiliser map ->
-        if (result instanceof Array) {
-          result.forEach((model: object) => {
-            if (prop in model) {
-              delete model[prop];
-            }
-          });
-        } else if (prop in result) {
+      filterProperties.blackList.forEach((prop: string) => {
+        if (mappedResult instanceof Array) {
+          mappedResult.map((model: object) => delete model[prop]);
+        } else if (prop in mappedResult) {
           delete result[prop];
         }
       });
     }
 
     if ('whiteList' in filterProperties) {
-      const filteredResult = {};
-      filterProperties.whiteList.forEach((prop: string) => {
-        if (result instanceof Array) {
-          result.forEach((model: object) => {
-            if (prop in model) {
-              filteredResult[prop] = model[prop];
-            }
-          });
-        } else if (prop in result) {
-          filteredResult[prop] = result[prop];
-        }
-      });
-      result = filteredResult;
+      if (mappedResult instanceof Array) {
+        mappedResult = mappedResult.map((model: object) => _.pick(model, filterProperties.whiteList));
+      } else if (mappedResult instanceof Object) {
+        mappedResult = _.pick(mappedResult, filterProperties.whiteList);
+      }
     }
-    return result;
+
+    if ('data' in result) {
+      result.data = mappedResult;
+      return result;
+    }
+
+    return mappedResult;
   }
 }

@@ -16,7 +16,7 @@ import { ChangeRoleUserAction } from './ChangeRoleUserAction';
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
 
 import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
-import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+import { mockId, mockNewUserBase } from '../../tests/mocks/newUserBase';
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
@@ -31,7 +31,7 @@ const mockConnectedUser = <UserBaseInterface>{
 const mockUser = {
   ...mockNewUserBase,
   role: 'admin',
-  _id: '5d08a67dea858e4bd08964d3',
+  _id: mockId,
 };
 
 const newRole = 'user';

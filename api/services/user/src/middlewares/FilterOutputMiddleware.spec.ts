@@ -44,6 +44,11 @@ async function listUsers(params, context): Promise<User[]> {
   return mockListUsers;
 }
 
+async function listNestedUsers(params, context): Promise<{ data: User[]}> {
+  return{ data: mockListUsers };
+}
+
+
 function error(err: Exceptions.RPCException) {
   return {
     status: 200,
@@ -91,5 +96,19 @@ describe('FILTER OUTPUT MIDDLEWARE - blacklist - array of models', () => {
     const result = await middleware.process({}, mockFindUserContext, listUsers, { blackList: ['password'] });
     expect(result[0]).to.not.have.property('password');
     expect(result[1]).to.not.have.property('password');
+  });
+});
+
+describe('FILTER OUTPUT MIDDLEWARE - whitelist - array of models in nested data key', () => {
+  const mockFindUserContext = contextFactory({ permissions: [] });
+
+  it('should filter all except firstname & lastname from list of users', async () => {
+    const result = await middleware.process(
+      {},
+      mockFindUserContext,
+      listNestedUsers,
+      { whiteList: ['firstname', 'lastname'] });
+    expect(result.data[0]).to.eql({ firstname: mockUser.firstname, lastname: mockUser.lastname });
+    expect(result.data[1]).to.eql({ firstname: mockUser.firstname, lastname: mockUser.lastname });
   });
 });
