@@ -25,8 +25,8 @@ const mockConnectedUser = <UserBaseInterface>{
 };
 
 
-const mockUsers = <User[]>[
-  new User({ ...mockNewUserBase, _id: 'mockUserId' }),
+const mockUsers = [
+  { ...mockNewUserBase, _id: 'mockUserId' },
 ];
 
 const mockOutputPagination = {
@@ -51,7 +51,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
     return;
   }
   async list(filters, pagination): Promise<any> {
-    return { users: mockUsers, total: mockOutputPagination.total, count: mockOutputPagination.count };
+    return { users: [new User(mockUsers[0])], total: mockOutputPagination.total, count: mockOutputPagination.count };
   }
 }
 
