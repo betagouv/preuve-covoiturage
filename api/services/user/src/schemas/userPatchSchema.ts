@@ -7,8 +7,8 @@ export const userPatchSchema = {
     id: { macro: 'objectid' },
     patch: {
       type: 'object',
+      minProperties: 1,
       additionalProperties: false,
-      anyOf: [{ required: ['lastname'] }, { required: ['firstname'] }, { required: ['phone'] }],
       properties: {
         lastname: { macro: 'varchar' },
         firstname: { macro: 'varchar' },
