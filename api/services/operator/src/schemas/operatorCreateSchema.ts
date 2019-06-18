@@ -10,16 +10,8 @@ export const operatorCreateSchema = {
   required: ['nom_commercial', 'raison_sociale'],
   additionalProperties: false,
   properties: {
-    nom_commercial: {
-      type: 'string',
-      minLength: 3,
-      maxLength: 256,
-    },
-    raison_sociale: {
-      type: 'string',
-      minLength: 3,
-      maxLength: 256,
-    },
+    nom_commercial: { macro: 'varchar' },
+    raison_sociale: { macro: 'varchar' },
     company: companySchema,
     address: addressSchema,
     bank: bankSchema,

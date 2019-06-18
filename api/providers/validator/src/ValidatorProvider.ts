@@ -14,6 +14,7 @@ import { postcodeCustomFormat } from './formats/postcodeCustomFormat';
 import { sirenCustomFormat } from './formats/sirenCustomFormat';
 import { siretCustomFormat } from './formats/siretCustomFormat';
 import { coordinatesKeyword } from './keywords/coordinatesKeyword';
+import { macroKeyword } from './keywords/macroKeyword';
 
 @Container.provider()
 export class ValidatorProvider extends AjvValidatorProvider implements ValidatorProviderInterface {
@@ -37,7 +38,10 @@ export class ValidatorProvider extends AjvValidatorProvider implements Validator
     this.registerCustomKeyword({ name: 'siren', type: 'format', definition: sirenCustomFormat });
     this.registerCustomKeyword({ name: 'siret', type: 'format', definition: siretCustomFormat });
 
-    // register keywords (compile, macro...)
+    // register keywords (compile)
     this.registerCustomKeyword({ name: 'coordinates', type: 'keyword', definition: coordinatesKeyword });
+
+    // register macros
+    this.registerCustomKeyword(macroKeyword);
   }
 }

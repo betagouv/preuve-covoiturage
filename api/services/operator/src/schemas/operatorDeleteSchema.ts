@@ -4,8 +4,6 @@ export const operatorDeleteSchema = {
   required: ['id'],
   additionalProperties: false,
   properties: {
-    id: {
-      type: 'string',
-    },
+    id: { macro: 'objectid' },
   },
 };
