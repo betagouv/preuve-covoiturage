@@ -3,7 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
+import { Container, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
@@ -91,6 +91,16 @@ describe('USER ACTION - Patch', () => {
       ...mockUser,
       ...mockUserNewProperties,
     });
+  });
+
+  it('should raise error if data not valid', async () => {
+    expect(
+      action.call({
+        method: 'user:patch',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: { id: mockUser._id, patch: {} },
+      }),
+    ).to.be.rejectedWith(Exceptions.InvalidParamsException);
   });
 
   it("shouldn't change role", async () => {
