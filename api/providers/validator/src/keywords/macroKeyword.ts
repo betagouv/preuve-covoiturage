@@ -19,6 +19,7 @@ import { passwordMacro } from '../macros/passwordMacro';
 import { roleMacro } from '../macros/roleMacro';
 import { tokenMacro } from '../macros/tokenMacro';
 import { groupMacro } from '../macros/groupMacro';
+import { longcharMacro } from '../macros/longcharMacro';
 
 const macroStore = {
   bic: bicMacro,
@@ -40,6 +41,7 @@ const macroStore = {
   deletedat: timestampMacro,
   timestamp: timestampMacro,
   varchar: varcharMacro,
+  longchar: longcharMacro,
   email: emailMacro,
   password: passwordMacro,
   role: roleMacro,
