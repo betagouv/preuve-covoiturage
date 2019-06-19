@@ -1,4 +1,5 @@
 import chai from 'chai';
+import nock from 'nock';
 import chaiAsPromised from 'chai-as-promised';
 import chaiNock from 'chai-nock';
 import { Exceptions } from '@ilos/core';
@@ -12,7 +13,6 @@ const fakeMongoServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
 chai.use(chaiNock);
 chai.use(chaiAsPromised);
-
 
 const { expect } = chai;
 
@@ -36,13 +36,21 @@ let newRegistryAdmin;
 let aomUserParams;
 let operatorUserParams;
 let registryUserParams;
+let nockRequest;
 
 describe('User service Creation', () => {
   before(async () => {
     aomUserParams = mockFactory.createUserParams('aom', 'user', { aom: '5cef990d133992029c1abe44' });
     operatorUserParams = mockFactory.createUserParams('operators', 'user', { operator: '5cef990d133992029c1abe41' });
     registryUserParams = mockFactory.createUserParams('registry', 'user');
+    nockRequest = nock(/mailjet/)
+      .post(/send/, (_body) => true)
+      .reply(200);
   });
+  after(() => {
+    nock.cleanAll();
+  });
+
   it('registry admin - should create user registry', async () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
@@ -52,10 +60,11 @@ describe('User service Creation', () => {
           ...registryUserParams,
         },
         {
-        group: 'registry',
-        role: 'admin',
-        permissions: ['user.create'],
-      }),
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.create'],
+        },
+      ),
     );
 
     expect(createData.result).to.have.property('_id');
@@ -81,7 +90,8 @@ describe('User service Creation', () => {
           role: 'admin',
           permissions: ['aom.users.add'],
           aom: aomUserParams.aom,
-        }),
+        },
+      ),
     );
     expect(createData.result).to.have.property('_id');
     delete createData.result._id;
@@ -97,7 +107,8 @@ describe('User service Creation', () => {
     const { status: createStatus, data: createData } = await request.post(
       '/',
       mockFactory.call(
-        'user:create', {
+        'user:create',
+        {
           ...operatorUserParams,
         },
         {
@@ -105,8 +116,9 @@ describe('User service Creation', () => {
           role: 'admin',
           permissions: ['operator.users.add'],
           operator: operatorUserParams.operator,
-        }),
-      );
+        },
+      ),
+    );
     expect(createData.result).to.eql({
       ...operatorUserParams,
       permissions: operators.user.permissions,
@@ -121,6 +133,12 @@ describe('User service Deletion', () => {
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    nockRequest = nock(/mailjet/)
+      .post(/send/, (_body) => true)
+      .reply(200);
+  });
+  after(() => {
+    nock.cleanAll();
   });
 
   it('registry user - should delete his profile', async () => {
@@ -184,7 +202,8 @@ describe('User service Deletion', () => {
         {
           group: 'operator',
           role: 'admin',
-          permissions: ['operator.users.delete'], operator: newAomUser.operator,
+          permissions: ['operator.users.delete'],
+          operator: newAomUser.operator,
           _id: newOperatorUser._id,
         },
       ),
@@ -199,20 +218,28 @@ describe('User service Find', () => {
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    nockRequest = nock(/mailjet/)
+      .post(/send/, (_body) => true)
+      .reply(200);
   });
 
   after(async () => {
+    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
   it('registry admin - should find registry user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newRegistryUser._id }, {
-        group: 'registry',
-        role: 'admin',
-        permissions: ['user.read'],
-      }),
+      mockFactory.call(
+        'user:find',
+        { id: newRegistryUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.read'],
+        },
+      ),
     );
     expect(data.result).to.eql({
       _id: newRegistryUser._id,
@@ -263,7 +290,9 @@ describe('User service Find', () => {
   it('registry admin - should find aom user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newAomUser._id },
+      mockFactory.call(
+        'user:find',
+        { id: newAomUser._id },
         {
           group: 'registry',
           role: 'admin',
@@ -282,15 +311,19 @@ describe('User service Find', () => {
   it('registry admin - should find operator user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newOperatorUser._id }, {
-        group: 'registry',
-        role: 'admin',
-        permissions: ['user.read'],
-      }),
+      mockFactory.call(
+        'user:find',
+        { id: newOperatorUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.read'],
+        },
+      ),
     );
     expect(data.result).to.eql({
       _id: newOperatorUser._id,
-     ...mockFactory.newOperatorUserModel,
+      ...mockFactory.newOperatorUserModel,
     });
     expect(status).equal(200);
   });
@@ -298,17 +331,20 @@ describe('User service Find', () => {
   it('aom admin - should find aom user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newAomUser._id },
+      mockFactory.call(
+        'user:find',
+        { id: newAomUser._id },
         {
           group: 'aom',
           role: 'admin',
           permissions: ['aom.users.read'],
           aom: newAomUser.aom,
-        }),
+        },
+      ),
     );
     expect(data.result).to.eql({
       _id: newAomUser._id,
-     ...mockFactory.newAomUserModel,
+      ...mockFactory.newAomUserModel,
     });
     expect(status).equal(200);
   });
@@ -320,7 +356,7 @@ describe('User service Find', () => {
         'user:find',
         { id: newOperatorUser._id },
         {
-          group:'registry',
+          group: 'registry',
           role: 'admin',
           permissions: ['operator.users.read'],
           operator: newOperatorUser.operator,
@@ -329,7 +365,7 @@ describe('User service Find', () => {
     );
     expect(data.result).to.eql({
       _id: newOperatorUser._id,
-     ...mockFactory.newOperatorUserModel,
+      ...mockFactory.newOperatorUserModel,
     });
     expect(status).equal(200);
   });
@@ -341,21 +377,28 @@ describe('User service : List', () => {
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    nockRequest = nock(/mailjet/)
+      .post(/send/, (_body) => true)
+      .reply(200);
   });
 
-  after(async () => {
+  after(() => {
+    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
-
 
   it('registry admin - should list users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', {}, {
-        group: 'registry',
-        role: 'admin',
-        permissions: ['user.list'],
-      }),
+      mockFactory.call(
+        'user:list',
+        {},
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.list'],
+        },
+      ),
     );
     expect(data.result.data[0]).to.eql({
       _id: newRegistryUser._id,
@@ -375,12 +418,16 @@ describe('User service : List', () => {
   it('aom admin - should list aom users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', {}, {
-        group: 'aom',
-        role:'admin',
-        permissions: ['aom.users.list'],
-        aom: newAomUser.aom,
-      }),
+      mockFactory.call(
+        'user:list',
+        {},
+        {
+          group: 'aom',
+          role: 'admin',
+          permissions: ['aom.users.list'],
+          aom: newAomUser.aom,
+        },
+      ),
     );
 
     expect(data.result.data[0]).to.eql({
@@ -393,13 +440,16 @@ describe('User service : List', () => {
   it('operator admin - should list operator users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', {},
+      mockFactory.call(
+        'user:list',
+        {},
         {
           group: 'operators',
           role: 'admin',
           permissions: ['operator.users.list'],
           operator: newOperatorUser.operator,
-      }),
+        },
+      ),
     );
 
     expect(data.result.data[0]).to.eql({
@@ -416,12 +466,15 @@ describe('USER SERVICE : Patch', () => {
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    nockRequest = nock(/mailjet/)
+      .post(/send/, (_body) => true)
+      .reply(200);
   });
 
-  after(async () => {
+  after(() => {
+    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
-
 
   it('registry admin - should patch registry user', async () => {
     const mockUpdatedProperties = {
@@ -570,7 +623,6 @@ describe('USER SERVICE : Patch', () => {
   });
 });
 
-
 describe('USER SERVICE : change Password', () => {
   before(async () => {
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
@@ -580,9 +632,13 @@ describe('USER SERVICE : change Password', () => {
       ...mockFactory.newRegistryUserModel,
       password: 'passwordRegistryUser',
     });
+    nockRequest = nock(/mailjet/)
+      .post(/send/, (_body) => true)
+      .reply(200);
   });
 
-  after(async () => {
+  after(() => {
+    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
@@ -638,9 +694,13 @@ describe('USER SERVICE : change Email', () => {
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    nockRequest = nock(/mailjet/)
+      .post(/send/, (_body) => true)
+      .reply(200);
   });
 
-  after(async () => {
+  after(() => {
+    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
@@ -676,12 +736,11 @@ describe('USER SERVICE : change Email', () => {
  */
 describe('User service : Login', () => {
   before(async () => {
-    newRegistryAdmin = await fakeMongoServer.addUser(
-      {
-        ...mockFactory.newRegistryAdminModel,
-        password: 'password',
-        status : 'active',
-      });
+    newRegistryAdmin = await fakeMongoServer.addUser({
+      ...mockFactory.newRegistryAdminModel,
+      password: 'password',
+      status: 'active',
+    });
   });
 
   after(async () => {
@@ -700,7 +759,8 @@ describe('User service : Login', () => {
         {
           group: 'registry',
           role: 'admin',
-          permissions: [] },
+          permissions: [],
+        },
       ),
     );
     expect(data.result).to.eql({
@@ -711,7 +771,6 @@ describe('User service : Login', () => {
     expect(status).equal(200);
   });
 });
-
 
 // todo:
 // 'permission "aom.users.update" shouldn\'t change role of other aom user - reject with not found ?'
