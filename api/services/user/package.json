@@ -63,6 +63,7 @@
     "@ilos/provider-mongo": "~0",
     "@ilos/provider-notification": "~0",
     "@ilos/provider-repository": "~0",
+    "@ilos/provider-template": "~0",
     "@ilos/provider-config": "~0",
     "@ilos/package-acl": "~0",
     "@pdc/provider-validator": "0.0.1",
