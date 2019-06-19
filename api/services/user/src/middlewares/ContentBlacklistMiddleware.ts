@@ -20,7 +20,7 @@ export class ContentBlacklistMiddleware implements Interfaces.MiddlewareInterfac
       data = [data];
     }
 
-    const keys = config
+    const configKeys = config
       .map((k:string) => k.split('.'))
       .reduce(
         (acc:object, keys:string[]) => {
@@ -30,20 +30,20 @@ export class ContentBlacklistMiddleware implements Interfaces.MiddlewareInterfac
         {},
       );
 
-    data = this.blacklist(data, keys);
+    data = this.blacklist(data, configKeys);
 
     return isArray ? data : data[0];
   }
 
-  protected blacklist(model:any[], keys: object): any[] | any {
+  protected blacklist(model:any[] | any, keys: object): any[] | any {
     if (Array.isArray(model)) {
-      return model.map(m => this.blacklist(m, keys));
+      return model.map((m) => this.blacklist(m, keys));
     }
 
-    let result = {};
+    const result = {};
     Reflect.ownKeys(model).map((key:string) => {
       const keyValue = keys[key];
-      if(!keyValue) {
+      if (!keyValue) {
         result[key] = model[key];
       } else if (typeof keyValue === 'object' && '*' in keyValue) {
         result[key] = this.blacklist(model[key], keyValue['*']);

@@ -20,7 +20,6 @@ import { LoginUserAction } from './actions/LoginUserAction';
 import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
 import { UserRepositoryProviderInterfaceResolver } from './interfaces/repository/UserRepositoryProviderInterface';
 import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
-import { FilterOutputMiddleware } from './middlewares/FilterOutputMiddleware';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 import { userPatchSchema } from './schemas/userPatchSchema';
 import { userDeleteSchema } from './schemas/userDeleteSchema';
@@ -65,7 +64,6 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     ['can', PermissionMiddleware],
     ['validate', ValidatorMiddleware],
     ['scopeIt', ScopeToSelfMiddleware],
-    ['filterOutput', FilterOutputMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
   ];

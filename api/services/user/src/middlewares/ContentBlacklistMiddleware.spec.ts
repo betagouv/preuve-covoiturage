@@ -5,41 +5,22 @@ import chaiAsPromised from 'chai-as-promised';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ContentBlacklistMiddleware } from './ContentBlacklistMiddleware';
+import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
+import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  permissions: ['hello', 'world'],
+  ...mockConnectedUserBase,
 };
 
 const mockUser = new User({
-  email: 'edouard.nelson@example.com',
-  firstname: 'edouard',
-  lastname: 'nelson',
-  phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
-  aom: 'aomid',
-  permissions: ['hello', 'world'],
+  ...mockNewUserBase,
 });
 
 const mockUser2 = new User({
-  email: 'edouard.nelson@example.com',
-  firstname: 'sam',
-  lastname: 'nelson',
-  phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
-  aom: 'aomid',
-  permissions: ['hello', 'world'],
+  ...mockNewUserBase,
 });
 
 const mockListUsers = [
@@ -92,9 +73,8 @@ function contextFactory(params) {
 const mockFindUserContext = contextFactory({ permissions: [] });
 const middleware = new ContentBlacklistMiddleware();
 
-describe('Blacklist middleware', () => {
+describe('MIDDLEWARE BLACKLIST', () => {
   it('should filter all except listed simple field', async () => {
-    
     const result = await middleware.process({}, mockFindUserContext, findUser, ['firstname', 'lastname']);
     expect(result).not.to.have.property('firstname');
     expect(result).not.to.have.property('lastname');
@@ -105,14 +85,14 @@ describe('Blacklist middleware', () => {
       {},
       mockFindUserContext,
       listUsers,
-      ['firstname', 'lastname']
+      ['firstname', 'lastname'],
      );
 
      expect(result).to.be.an('array');
 
-     for (const r in result) {
-       expect(result).not.to.have.property('firstname');
-       expect(result).not.to.have.property('lastname');
+     for (const r of result) {
+       expect(r).not.to.have.property('firstname');
+       expect(r).not.to.have.property('lastname');
      }
   });
 
@@ -121,13 +101,13 @@ describe('Blacklist middleware', () => {
       {},
       mockFindUserContext,
       listNestedUsers,
-      ['data.*.firstname', 'data.*.lastname']
+      ['data.*.firstname', 'data.*.lastname'],
     );
     expect(result.data).to.be.an('array');
 
-    for (const r in result) {
-      expect(result).not.to.have.property('firstname');
-      expect(result).not.to.have.property('lastname');
+    for (const r of result.data) {
+      expect(r).not.to.have.property('firstname');
+      expect(r).not.to.have.property('lastname');
     }
   });
 });
