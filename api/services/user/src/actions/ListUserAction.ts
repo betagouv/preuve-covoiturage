@@ -36,7 +36,7 @@ export class ListUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+    ['content.whitelist', userWhiteListFilterOutput.map((key:string) => `data.${key}`)],
   ];
 
   constructor(

@@ -18,7 +18,7 @@ export class ChangePasswordUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.changePassword'],
     ['can', ['profile.update']],
-    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+    ['content.whitelist', userWhiteListFilterOutput],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,

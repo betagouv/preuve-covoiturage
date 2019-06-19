@@ -40,7 +40,7 @@ export class ChangeEmailUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+    ['content.whitelist', userWhiteListFilterOutput],
   ];
   constructor(
     private config: ConfigProviderInterfaceResolver,

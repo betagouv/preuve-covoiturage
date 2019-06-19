@@ -38,7 +38,7 @@ export class FindUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+    ['content.whitelist', userWhiteListFilterOutput],
   ];
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
