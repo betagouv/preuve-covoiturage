@@ -1,17 +1,17 @@
-import { Parents, Providers, Interfaces } from '@pdc/core';
+import { Parents, Interfaces } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
-  readonly alias = [
-  ];
+  readonly alias = [];
 
-  handlers = [
-    CreateJourneyAction,
-  ];
+  handlers = [CreateJourneyAction];
 
   public async boot() {
-    this.getContainer().get(Providers.ConfigProvider).loadConfigDirectory(__dirname);
+    this.getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .loadConfigDirectory(__dirname);
     await super.boot();
   }
 }

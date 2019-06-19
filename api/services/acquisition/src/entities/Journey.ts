@@ -1,42 +1,48 @@
 import { JourneyInterface, IdentityInterface, PositionInterface } from '../interfaces/JourneyInterfaces';
 
 export class Journey implements JourneyInterface {
-  journey_id: string;
-  operator_journey_id: string;
-  operator_class?: string;
-  operator: {
-    _id: string,
-    name: string,
+  public _id?: string;
+  public journeyId: string;
+  public operatorJourneyId: string;
+  public operatorClass?: string;
+  public operator: {
+    _id: string;
+    name: string;
   };
-  passenger?: {
-    identity: IdentityInterface,
-    start: PositionInterface,
-    end: PositionInterface,
-    seats: number,
-    contribution: number,
-    distance?: number,
-    duration?: number,
-    cost: number,
-    incentive: number,
-    remaining_fee: number,
+  public passenger?: {
+    identity: IdentityInterface;
+    start: PositionInterface;
+    end: PositionInterface;
+    seats: number;
+    contribution: number;
+    distance?: number;
+    duration?: number;
+    cost: number;
+    incentive: number;
+    remainingFee: number;
   };
-  driver?: {
-    expense: number,
-    identity: IdentityInterface,
-    start: PositionInterface,
-    end: PositionInterface,
-    revenue: number,
-    distance?: number,
-    duration?: number,
-    cost: number,
-    incentive: number,
-    remaining_fee: number,
+  public driver?: {
+    expense: number;
+    identity: IdentityInterface;
+    start: PositionInterface;
+    end: PositionInterface;
+    revenue: number;
+    distance?: number;
+    duration?: number;
+    cost: number;
+    incentive: number;
+    remainingFee: number;
   };
 
   constructor(data: JourneyInterface) {
-    this.journey_id = data.journey_id;
-    this.operator_journey_id = data.operator_journey_id;
-    this.operator_class = data.operator_class;
+    if ('_id' in data) {
+      this._id = data._id;
+    }
+
+    this.operator = data.operator;
+    this.journeyId = data.journeyId;
+    this.operatorJourneyId = data.operatorJourneyId;
+    this.operatorClass = data.operatorClass;
     this.passenger = data.passenger;
     this.driver = data.driver;
   }

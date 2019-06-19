@@ -1,4 +1,4 @@
-const IdentityPropertiesSchema =  {
+const identityPropertiesSchema = {
   firstname: {
     bsonType: 'string',
     maxLength: 128,
@@ -49,7 +49,7 @@ const startOrEndSchema = {
   additionalProperties: false,
   properties: {
     datetime: {
-      bsonType: 'date'
+      bsonType: 'date',
     },
     lon: {
       bsonType: 'double',
@@ -63,7 +63,7 @@ const startOrEndSchema = {
     },
     insee: {
       bsonType: 'string',
-      maxLength: 128,      
+      maxLength: 128,
     },
     literal: {
       bsonType: 'string',
@@ -78,34 +78,34 @@ const startOrEndSchema = {
     //   uppercase: true,
     //   match: regex.postcode,
     // }],
-  }
-}
+  },
+};
 
 const driverOrPassengerCommonProperties = {
   start: startOrEndSchema,
   end: startOrEndSchema,
   distance: {
-    bsonType: 'int', 
+    bsonType: 'int',
     minimum: 0,
     maximum: 1000000,
   },
   duration: {
-    bsonType: 'int', 
+    bsonType: 'int',
     minimum: 0,
     maximum: 100000,
   },
   cost: {
-    bsonType: 'int', 
+    bsonType: 'int',
     minimum: 0,
     maximum: 100000,
   },
   incentive: {
-    bsonType: 'int', 
+    bsonType: 'int',
     minimum: 0,
     maximum: 100000,
   },
   remaining_fee: {
-    bsonType: 'int', 
+    bsonType: 'int',
     minimum: 0,
     maximum: 100000,
   },
@@ -122,8 +122,8 @@ const driverSchema = {
       required: ['phone'],
       additionalProperties: false,
       properties: {
-        ...IdentityPropertiesSchema,
-      }
+        ...identityPropertiesSchema,
+      },
     },
     revenue: {
       bsonType: 'int',
@@ -149,11 +149,11 @@ const passengerSchema = {
       required: ['phone'],
       additionalProperties: false,
       properties: {
-        ...IdentityPropertiesSchema,
+        ...identityPropertiesSchema,
         over_18: {
           bsonType: 'boolean',
         },
-      }
+      },
     },
     contribution: {
       bsonType: 'int',
@@ -163,7 +163,7 @@ const passengerSchema = {
     seats: {
       bsonType: 'int',
       minimum: 1,
-      maximum: 8
+      maximum: 8,
     },
   },
 };
@@ -173,11 +173,13 @@ export const journeyDbSchema = {
   required: ['journey_id', 'operator_class', 'operator'],
   additionalProperties: false,
   properties: {
-    journey_id: { // unique
+    journey_id: {
+      // unique
       bsonType: 'string',
       maxLength: 128,
     },
-    operator_journey_id: { // unique
+    operator_journey_id: {
+      // unique
       bsonType: 'string',
       maxLength: 128,
     },
@@ -197,7 +199,7 @@ export const journeyDbSchema = {
           bsonType: 'string',
           maxLength: 128,
         },
-      }
+      },
     },
     passenger: passengerSchema,
     driver: driverSchema,

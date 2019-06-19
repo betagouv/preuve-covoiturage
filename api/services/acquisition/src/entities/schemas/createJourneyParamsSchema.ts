@@ -25,7 +25,6 @@ const startOrEndSchema = {
     insee: {
       type: 'string',
       maxLength: 128,
-
     },
     literal: {
       type: 'string',
@@ -76,9 +75,8 @@ const identityProperties = {
   },
 };
 
-
 export const journeyDbSchema = {
-  '$id': 'journey.create',
+  $id: 'journey.create',
   type: 'object',
   required: ['journey_id', 'operator_class'],
   additionalProperties: false,
@@ -103,7 +101,7 @@ export const journeyDbSchema = {
       properties: {
         identity: {
           type: 'object',
-          required:['phone'],
+          required: ['phone'],
           additionalProperties: false,
           properties: {
             ...identityProperties,
@@ -144,7 +142,7 @@ export const journeyDbSchema = {
       properties: {
         identity: {
           type: 'object',
-          required:['phone'],
+          required: ['phone'],
           additionalProperties: false,
           properties: {
             ...identityProperties,

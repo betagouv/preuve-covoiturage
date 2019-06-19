@@ -12,66 +12,67 @@ export interface IdentityInterface {
   lastname?: string;
   email?: string;
   company?: string;
-  travel_pass?: {
+  travelPass?: {
     name: string;
-    user_id: string;
+    userId: string;
   };
-  over_18?: boolean;
+  over18?: boolean;
 }
 
 export interface CreateJourneyParamsInterface {
-  journey_id: string;
-  operator_journey_id: string;
-  operator_class?: string;
+  journeyId: string;
+  operatorJourneyId: string;
+  operatorClass?: string;
   passenger?: {
-    identity: IdentityInterface,
-    start: PositionInterface,
-    end: PositionInterface,
-    seats: number,
-    contribution: number,
-    distance?: number,
-    duration?: number,
+    identity: IdentityInterface;
+    start: PositionInterface;
+    end: PositionInterface;
+    seats: number;
+    contribution: number;
+    distance?: number;
+    duration?: number;
   };
   driver?: {
-    identity: IdentityInterface,
-    start: PositionInterface,
-    end: PositionInterface,
-    revenue: number,
-    distance?: number,
-    duration?: number,
+    identity: IdentityInterface;
+    start: PositionInterface;
+    end: PositionInterface;
+    revenue: number;
+    distance?: number;
+    duration?: number;
   };
 }
 
 export interface JourneyInterface {
-  journey_id: string;
-  operator_journey_id: string;
-  operator_class?: string;
+  _id?: string;
+  journeyId: string;
+  operatorJourneyId: string;
+  operatorClass?: string;
   operator: {
-    _id: string,
-    name: string,
+    _id: string;
+    name: string;
   };
   passenger?: {
-    identity: IdentityInterface,
-    start: PositionInterface,
-    end: PositionInterface,
-    seats: number,
-    contribution: number,
-    distance?: number,
-    duration?: number,
-    cost: number,
-    incentive: number,
-    remaining_fee: number,
+    identity: IdentityInterface;
+    start: PositionInterface;
+    end: PositionInterface;
+    seats: number;
+    contribution: number;
+    distance?: number;
+    duration?: number;
+    cost: number;
+    incentive: number;
+    remainingFee: number;
   };
   driver?: {
-    identity: IdentityInterface,
-    start: PositionInterface,
-    end: PositionInterface,
-    expense: number,
-    revenue: number,
-    distance?: number,
-    duration?: number,
-    cost: number,
-    incentive: number,
-    remaining_fee: number,
+    identity: IdentityInterface;
+    start: PositionInterface;
+    end: PositionInterface;
+    expense: number;
+    revenue: number;
+    distance?: number;
+    duration?: number;
+    cost: number;
+    incentive: number;
+    remainingFee: number;
   };
 }
