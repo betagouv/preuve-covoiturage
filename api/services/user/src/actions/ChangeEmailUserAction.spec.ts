@@ -9,10 +9,14 @@ import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/prov
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
-import { User } from '../entities/User';
-import { ChangeEmailUserAction } from './ChangeEmailUserAction';
 import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChangeEmailParamsInterface';
+
+import { User } from '../entities/User';
+
+import { ChangeEmailUserAction } from './ChangeEmailUserAction';
+
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+
 import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
 import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
@@ -99,6 +103,8 @@ class ServiceProvider extends BaseServiceProvider {
   ];
 
   protected registerConfig() {}
+
+  protected registerTemplate() {}
 }
 
 let serviceProvider;
