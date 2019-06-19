@@ -1,8 +1,8 @@
 import { Parents, Container, Types, Interfaces } from '@ilos/core';
 import { NotificationProviderInterfaceResolver } from '@ilos/provider-notification';
 
-import { User } from '../entities/User';
 import { UserNotifyParamsInterface } from '../interfaces/actions/UserNotifyParamsInterface';
+import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
 
 /*
  * Send email to user
@@ -19,14 +19,26 @@ export class NotifyUserAction extends Parents.Action {
   }
 
   public async handle(params: UserNotifyParamsInterface, context: Types.ContextType): Promise<void> {
-    const requester = new User(context.call.user);
+    const sendTemplateByEmailParams:SendTemplateByEmailParamsInterface = {
+      template: params.template,
+      email: params.email,
+      fullname: params.fullname,
+      opts: {},
+    };
+
+    if ('organization' in params) {
+      sendTemplateByEmailParams.opts.organization = params.organization;
+    }
+
+    if ('link' in params) {
+      sendTemplateByEmailParams.opts.link = params.link;
+    }
 
     this.notificationProvider.sendTemplateByEmail({
       template: params.template,
       email: params.email,
       fullname: params.fullname,
       opts: {
-        requester: requester.fullname,
         organization: params.organization,
         link: params.link,
       },
