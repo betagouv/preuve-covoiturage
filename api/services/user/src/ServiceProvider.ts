@@ -1,3 +1,4 @@
+import path from 'path';
 import { Parents, Interfaces, Types } from '@ilos/core';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
@@ -35,11 +36,13 @@ import { userLoginSchema } from './schemas/userLoginSchema';
 import { userChangeRoleSchema } from './schemas/userChangeRoleSchema';
 import { ContentBlacklistMiddleware } from './middlewares/ContentBlacklistMiddleware';
 import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddleware';
+import { TemplateProviderInterfaceResolver, HandlebarsProvider } from '@ilos/provider-template';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
     [UserRepositoryProviderInterfaceResolver, UserRepositoryProvider],
     [CryptoProviderInterfaceResolver, CryptoProvider],
+    [TemplateProviderInterfaceResolver, HandlebarsProvider],
     [NotificationProviderInterfaceResolver, NotificationProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
   ];
@@ -87,6 +90,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     await super.boot();
     this.registerValidators();
     this.registerConfig();
+    this.registerTemplate();
   }
 
   protected registerValidators() {
@@ -100,5 +104,11 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     this.getContainer()
       .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
+  }
+
+  protected registerTemplate() {
+    this.getContainer()
+      .get(TemplateProviderInterfaceResolver)
+      .loadTemplatesFromDirectory(path.resolve(__dirname, 'templates'));
   }
 }
