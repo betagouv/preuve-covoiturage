@@ -17,7 +17,7 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 export class ConfirmEmailUserAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.confirmEmail'],
-    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+    ['content.whitelist', userWhiteListFilterOutput],
   ];
 
   constructor(

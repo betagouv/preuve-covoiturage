@@ -33,7 +33,7 @@ export class ChangeRoleUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['filterOutput', { whiteList: userWhiteListFilterOutput }],
+    ['content.whitelist', userWhiteListFilterOutput],
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
