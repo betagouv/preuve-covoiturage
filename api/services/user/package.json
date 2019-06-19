@@ -61,6 +61,7 @@
   "dependencies": {
     "@ilos/core": "~0",
     "@ilos/provider-mongo": "~0",
+    "@ilos/provider-notification": "~0",
     "@ilos/provider-repository": "~0",
     "@ilos/provider-config": "~0",
     "@ilos/package-acl": "~0",
