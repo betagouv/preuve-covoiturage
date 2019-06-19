@@ -1,20 +1,20 @@
 import chai from 'chai';
 import nock from 'nock';
-import chaiAsPromised from 'chai-as-promised';
 import chaiNock from 'chai-nock';
 import { Exceptions } from '@ilos/core';
 
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';
-import { UserBaseInterface } from '../src/interfaces/UserInterfaces';
 import { aom, operators, registry } from '../src/config/permissions';
 
 const fakeMongoServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
+
 chai.use(chaiNock);
-chai.use(chaiAsPromised);
 
 const { expect } = chai;
+
+let nockRequest;
 
 before(async () => {
   await fakeMongoServer.startServer();
@@ -24,6 +24,17 @@ before(async () => {
 after(async () => {
   await fakeMongoServer.stopServer();
   await fakeMongoServer.stopTransport();
+});
+
+beforeEach(() => {
+  nockRequest = nock(/mailjet/)
+    .post(/send/, (_body) => true)
+    .reply(200);
+});
+
+
+afterEach(() => {
+  nock.cleanAll();
 });
 
 const request = mockFactory.request();
@@ -36,22 +47,20 @@ let newRegistryAdmin;
 let aomUserParams;
 let operatorUserParams;
 let registryUserParams;
-let nockRequest;
 
-describe('User service Creation', () => {
+describe('USER SERVICE : Creation', () => {
   before(async () => {
     aomUserParams = mockFactory.createUserParams('aom', 'user', { aom: '5cef990d133992029c1abe44' });
     operatorUserParams = mockFactory.createUserParams('operators', 'user', { operator: '5cef990d133992029c1abe41' });
     registryUserParams = mockFactory.createUserParams('registry', 'user');
-    nockRequest = nock(/mailjet/)
-      .post(/send/, (_body) => true)
-      .reply(200);
-  });
-  after(() => {
-    nock.cleanAll();
   });
 
   it('registry admin - should create user registry', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(registryUserParams.email);
+      expect(body).to.include('reset-password');
+    });
+
     const { status: createStatus, data: createData } = await request.post(
       '/',
       mockFactory.call(
@@ -67,6 +76,7 @@ describe('User service Creation', () => {
       ),
     );
 
+
     expect(createData.result).to.have.property('_id');
     delete createData.result._id;
     expect(createData.result).to.eql({
@@ -78,6 +88,11 @@ describe('User service Creation', () => {
   });
 
   it('aom admin - should create user aom', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(aomUserParams.email);
+      expect(body).to.include('reset-password');
+    });
+
     const { status: createStatus, data: createData } = await request.post(
       '/',
       mockFactory.call(
@@ -93,6 +108,7 @@ describe('User service Creation', () => {
         },
       ),
     );
+
     expect(createData.result).to.have.property('_id');
     delete createData.result._id;
     expect(createData.result).to.eql({
@@ -104,6 +120,11 @@ describe('User service Creation', () => {
   });
 
   it('operator admin - should create user operator', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(operatorUserParams.email);
+      expect(body).to.include('reset-password');
+    });
+
     const { status: createStatus, data: createData } = await request.post(
       '/',
       mockFactory.call(
@@ -119,6 +140,9 @@ describe('User service Creation', () => {
         },
       ),
     );
+
+    expect(createData.result).to.have.property('_id');
+    delete createData.result._id;
     expect(createData.result).to.eql({
       ...operatorUserParams,
       permissions: operators.user.permissions,
@@ -128,17 +152,11 @@ describe('User service Creation', () => {
   });
 });
 
-describe('User service Deletion', () => {
+describe('USER SERVICE : Deletion', () => {
   before(async () => {
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
-    nockRequest = nock(/mailjet/)
-      .post(/send/, (_body) => true)
-      .reply(200);
-  });
-  after(() => {
-    nock.cleanAll();
   });
 
   it('registry user - should delete his profile', async () => {
@@ -212,19 +230,15 @@ describe('User service Deletion', () => {
   });
 });
 
-describe('User service Find', () => {
+describe('USER SERVICE : Find', () => {
   before(async () => {
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
-    nockRequest = nock(/mailjet/)
-      .post(/send/, (_body) => true)
-      .reply(200);
   });
 
   after(async () => {
-    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
@@ -371,19 +385,15 @@ describe('User service Find', () => {
   });
 });
 
-describe('User service : List', () => {
+describe('USER SERVICE : List', () => {
   before(async () => {
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
-    nockRequest = nock(/mailjet/)
-      .post(/send/, (_body) => true)
-      .reply(200);
   });
 
   after(() => {
-    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
@@ -466,13 +476,9 @@ describe('USER SERVICE : Patch', () => {
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
-    nockRequest = nock(/mailjet/)
-      .post(/send/, (_body) => true)
-      .reply(200);
   });
 
   after(() => {
-    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
@@ -623,7 +629,7 @@ describe('USER SERVICE : Patch', () => {
   });
 });
 
-describe('USER SERVICE : change Password', () => {
+describe('USER SERVICE : Change Password', () => {
   before(async () => {
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
@@ -632,13 +638,9 @@ describe('USER SERVICE : change Password', () => {
       ...mockFactory.newRegistryUserModel,
       password: 'passwordRegistryUser',
     });
-    nockRequest = nock(/mailjet/)
-      .post(/send/, (_body) => true)
-      .reply(200);
   });
 
   after(() => {
-    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
@@ -660,6 +662,10 @@ describe('USER SERVICE : change Password', () => {
         },
       ),
     );
+
+    // nockRequest.on('request', (req, interceptor, body) => {
+    //   expect(body).to.deep.equal(`{"Email":"${newRegistryUser.email}"}`);
+    // });
     expect(data.result).to.eql({
       _id: newRegistryUser._id,
       ...mockFactory.newRegistryUserModel,
@@ -688,24 +694,24 @@ describe('USER SERVICE : change Password', () => {
   });
 });
 
-describe('USER SERVICE : change Email', () => {
+describe('USER SERVICE : Change Email', () => {
   before(async () => {
     newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
-    nockRequest = nock(/mailjet/)
-      .post(/send/, (_body) => true)
-      .reply(200);
   });
 
   after(() => {
-    nock.cleanAll();
     fakeMongoServer.clearCollection();
   });
 
   const newEmail = 'newEmail@example.com';
   it('registry admin - should change email registry user', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(newEmail);
+      expect(body).to.include('confirm-email');
+    });
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
@@ -721,6 +727,7 @@ describe('USER SERVICE : change Email', () => {
         },
       ),
     );
+
     expect(data.result).to.eql({
       _id: newRegistryUser._id,
       ...mockFactory.newRegistryUserModel,
@@ -731,10 +738,51 @@ describe('USER SERVICE : change Email', () => {
   });
 });
 
-/*
- * LOGIN
- */
-describe('User service : Login', () => {
+describe('USER SERVICE : Forgotten Password', () => {
+  before(async () => {
+    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+  });
+
+  after(() => {
+    fakeMongoServer.clearCollection();
+  });
+
+  it('anonymous - should send email to reset password', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(newRegistryUser.email);
+      expect(body).to.include('reset-password');
+    });
+    const { status: status, data: data } = await request.post(
+      '/',
+      {
+        method: 'user:forgottenPassword',
+        id: 1,
+        jsonrpc: '2.0',
+        params: {
+          params: {
+            email: newRegistryUser.email,
+          },
+          _context: {
+            channel: {
+              service: 'proxy',
+              transport: 'http',
+            },
+            call: {
+              user: {},
+            },
+          },
+        },
+      },
+    );
+
+    expect(status).equal(200);
+  });
+});
+
+describe('USER SERVICE : Login', () => {
   before(async () => {
     newRegistryAdmin = await fakeMongoServer.addUser({
       ...mockFactory.newRegistryAdminModel,
@@ -774,3 +822,4 @@ describe('User service : Login', () => {
 
 // todo:
 // 'permission "aom.users.update" shouldn\'t change role of other aom user - reject with not found ?'
+// tests for confirm & reset actions

@@ -5,6 +5,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver, CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 import { NotificationProvider, NotificationProviderInterfaceResolver } from '@ilos/provider-notification';
+import { TemplateProviderInterfaceResolver, HandlebarsProvider } from '@ilos/provider-template';
 
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
@@ -36,7 +37,6 @@ import { userLoginSchema } from './schemas/userLoginSchema';
 import { userChangeRoleSchema } from './schemas/userChangeRoleSchema';
 import { ContentBlacklistMiddleware } from './middlewares/ContentBlacklistMiddleware';
 import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddleware';
-import { TemplateProviderInterfaceResolver, HandlebarsProvider } from '@ilos/provider-template';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
