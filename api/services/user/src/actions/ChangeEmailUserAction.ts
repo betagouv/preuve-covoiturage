@@ -71,11 +71,21 @@ export class ChangeEmailUserAction extends Parents.Action {
 
     const requester = new User(context.call.user);
 
+    const patch = {
+      emailChangeAt,
+      emailConfirm: confirm,
+      emailToken: cryptedToken,
+      email: params.email,
+      status: this.config.get('user.status.notActive'),
+    };
+
+    const patchedUser = this.userRepository.patchUser(params.id, patch, contextParam);
+
     await this.kernel.call(
       'user:notify',
       {
-        template: 'confirmEmail',
-        email: user.email,
+        template: this.config.get('email.templates.confirm'),
+        email: patch.email,
         fullName: user.fullname,
         requester: requester.fullname,
         organization: 'AomOrOperatorOrganisation',
@@ -90,14 +100,6 @@ export class ChangeEmailUserAction extends Parents.Action {
       },
     );
 
-    const patch = {
-      emailChangeAt,
-      emailConfirm: confirm,
-      emailToken: cryptedToken,
-      email: params.email,
-      status: this.config.get('user.status.notActive'),
-    };
-
-    return this.userRepository.patchUser(params.id, patch, contextParam);
+    return patchedUser;
   }
 }

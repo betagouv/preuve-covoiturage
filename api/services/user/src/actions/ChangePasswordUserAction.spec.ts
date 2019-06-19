@@ -92,10 +92,15 @@ class ServiceProvider extends BaseServiceProvider {
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
   ];
 
-  protected registerConfig() {}
+  protected registerConfig() {
+  }
+
+  protected registerTemplate() {
+  }
 }
 
-let serviceProvider;
+
+  let serviceProvider;
 let handlers;
 let action;
 

@@ -66,6 +66,8 @@ class ServiceProvider extends BaseServiceProvider {
   ];
 
   protected registerConfig() {}
+
+  protected registerTemplate() {}
 }
 
 let serviceProvider;
