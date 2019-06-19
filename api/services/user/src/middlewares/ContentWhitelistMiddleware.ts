@@ -20,7 +20,7 @@ export class ContentWhitelistMiddleware implements Interfaces.MiddlewareInterfac
       data = [data];
     }
 
-    const keys = config
+    const configKeys = config
       .map((k:string) => k.split('.'))
       .reduce(
         (acc:object, keys:string[]) => {
@@ -30,27 +30,25 @@ export class ContentWhitelistMiddleware implements Interfaces.MiddlewareInterfac
         {},
       );
 
-    data = this.whitelist(data, keys);
+    data = this.whitelist(data, configKeys);
 
     return isArray ? data : data[0];
   }
 
   protected whitelist(model:any[], keys: object): any[] | any {
     if (Array.isArray(model)) {
-      return model.map(m => this.whitelist(m, keys));
+      return model.map((m) => this.whitelist(m, keys));
     }
 
     let result = {};
     Reflect.ownKeys(keys).map((key:string) => {
       const keyValue = keys[key];
-      if(keyValue === true) {
+      if (keyValue === true) {
         result[key] = model[key];
-      } else {
-        if (key === '*') {
+      } else if (key === '*') {
           result = this.whitelist(model, keyValue);
-        } else {
-          result[key] = this.whitelist(model[key], keyValue);
-        }
+      } else {
+        result[key] = this.whitelist(model[key], keyValue);
       }
     });
     return result;

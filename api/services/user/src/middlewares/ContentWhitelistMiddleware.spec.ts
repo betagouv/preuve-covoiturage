@@ -5,41 +5,22 @@ import chaiAsPromised from 'chai-as-promised';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ContentWhitelistMiddleware } from './ContentWhitelistMiddleware';
+import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
+import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  permissions: ['hello', 'world'],
+  ...mockConnectedUserBase,
 };
 
 const mockUser = new User({
-  email: 'edouard.nelson@example.com',
-  firstname: 'edouard',
-  lastname: 'nelson',
-  phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
-  aom: 'aomid',
-  permissions: ['hello', 'world'],
+  ...mockNewUserBase,
 });
 
 const mockUser2 = new User({
-  email: 'edouard.nelson@example.com',
-  firstname: 'sam',
-  lastname: 'nelson',
-  phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
-  aom: 'aomid',
-  permissions: ['hello', 'world'],
+  ...mockNewUserBase,
 });
 
 const mockListUsers = [
@@ -92,14 +73,13 @@ function contextFactory(params) {
 const mockFindUserContext = contextFactory({ permissions: [] });
 const middleware = new ContentWhitelistMiddleware();
 
-describe('Whitelist middleware', () => {
+describe('MIDDLEWARE WHITELIST', () => {
   it('should filter all except listed simple field', async () => {
-    
     const result = await middleware.process({}, mockFindUserContext, findUser, ['firstname', 'lastname']);
     expect(result).to.deep.equal({
       firstname: mockUser.firstname,
       lastname: mockUser.lastname,
-    })
+    });
   });
 
   it('should filter all except listed simple field on a list', async () => {
@@ -107,7 +87,7 @@ describe('Whitelist middleware', () => {
       {},
       mockFindUserContext,
       listUsers,
-      ['firstname', 'lastname']
+      ['firstname', 'lastname'],
      );
     expect(result).to.deep.members([
       {
@@ -117,7 +97,7 @@ describe('Whitelist middleware', () => {
       {
         firstname: mockUser2.firstname,
         lastname: mockUser2.lastname,
-      }
+      },
     ]);
   });
 
@@ -126,7 +106,7 @@ describe('Whitelist middleware', () => {
       {},
       mockFindUserContext,
       listNestedUsers,
-      ['data.*.firstname', 'data.*.lastname']
+      ['data.*.firstname', 'data.*.lastname'],
     );
     expect(result.data).to.deep.members([
       {
@@ -136,7 +116,7 @@ describe('Whitelist middleware', () => {
       {
         firstname: mockUser2.firstname,
         lastname: mockUser2.lastname,
-      }
+      },
     ]);
   });
 });
