@@ -6,10 +6,10 @@ import { contactsSchema } from './parts/contactsSchema';
 export const operatorPatchSchema = {
   $id: 'operator.patch',
   type: 'object',
-  required: ['id', 'patch'],
+  required: ['_id', 'patch'],
   additionalProperties: false,
   properties: {
-    id: { macro: 'objectid' },
+    _id: { macro: 'objectid' },
     patch: {
       type: 'object',
       minProperties: 1,

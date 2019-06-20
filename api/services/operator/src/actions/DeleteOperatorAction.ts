@@ -16,8 +16,8 @@ export class DeleteOperatorAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: { id: string }): Promise<boolean> {
-    await this.operatorRepository.delete(params.id);
+  public async handle(params: { _id: string }): Promise<boolean> {
+    await this.operatorRepository.delete(params._id);
     return true;
   }
 }
