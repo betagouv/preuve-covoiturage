@@ -19,7 +19,9 @@
     "build:services": "npx lerna run --scope @pdc/service-* build",
     "format:fix": "pretty-quick --staged",
     "lint": "npx lerna run --parallel lint",
-    "test": "npx lerna run --parallel test"
+    "test": "run-p test:unit test:integration",
+    "test:unit": "npx lerna run --parallel test",
+    "test:integration": "npx lerna run --parallel test:integration"
   },
   "keywords": [
     "betagouv",
