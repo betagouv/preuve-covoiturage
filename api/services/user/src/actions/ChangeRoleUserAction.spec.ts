@@ -112,7 +112,7 @@ describe('USER ACTION - Change role', () => {
         channel: { service: '' },
       },
       params: {
-        id: mockUser._id,
+        _id: mockUser._id,
         role: newRole,
       },
     });
