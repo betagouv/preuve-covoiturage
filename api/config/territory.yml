@@ -8,14 +8,15 @@ roles:
       - user.read
       - user.update
       - user.delete
-      - aom.users.add
-      - aom.users.list
-      - aom.users.remove
-      - aom.list
-      - aom.read
-      - aom.update
-      - aom.delete
-      - aom.stats
+      - territory.users.add
+      - territory.users.list
+      - territory.users.remove
+      - territory.list
+      - territory.create
+      - territory.read
+      - territory.update
+      - territory.delete
+      - territory.stats
       - operator.list
       - operator.read
       - journey.read
@@ -49,7 +50,7 @@ roles:
   - slug: user
     name: User
     permissions:
-      - aom.stats
+      - territory.stats
       - user.list
       - journey.read
       - journey.list

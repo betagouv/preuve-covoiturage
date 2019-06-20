@@ -1,15 +1,10 @@
 // tslint:disable max-classes-per-file
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { bootstrap } from '@ilos/framework';
 import { MongoProvider } from '@ilos/provider-mongo';
 
-let mongoServer;
-let connectionString;
-let dbName;
-let kernel;
 let transport;
 let request;
 
@@ -20,13 +15,11 @@ const port = '8081';
 
 describe('Territory service', () => {
   before(async () => {
-    mongoServer = new MongoMemoryServer();
-    connectionString = await mongoServer.getConnectionString();
-    dbName = await mongoServer.getDbName();
-    process.env.APP_MONGO_URL = connectionString;
-    process.env.APP_MONGO_DB = dbName;
+    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017/pdc-test?authSource=admin';
+    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+
     transport = await bootstrap.boot(['', '', 'http', port]);
-    kernel = transport.getKernel();
+
     request = axios.create({
       baseURL: `http://127.0.0.1:${port}`,
       timeout: 1000,
@@ -38,58 +31,125 @@ describe('Territory service', () => {
   });
 
   after(async () => {
-    await (<MongoProvider>kernel.getContainer().get(MongoProvider)).close();
+    await (<MongoProvider>transport
+      .getKernel()
+      .getContainer()
+      .get(MongoProvider))
+      .getDb(process.env.APP_MONGO_DB)
+      .then((db) => db.dropDatabase());
+
     await transport.down();
-    await mongoServer.stop();
+    process.exit(0);
   });
 
-  it('should work', async () => {
-    const { status: createStatus, data: createData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'territory:create',
-      params: {
-        name: 'Toto',
-      },
-    });
-    const { _id, name } = createData.result;
-    expect(name).to.eq('Toto');
-    expect(createStatus).equal(200);
+  it('create, update, delete territory', async () => {
+    let _id: string;
+    let patchedName: string;
 
-    const { status: patchStatus, data: patchData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'territory:patch',
-      params: {
-        id: _id,
-        patch: {
-          name: 'Yop',
+    try {
+      // Create a territory
+      const { status: createStatus, data: createData } = await request.post('/', {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'territory:create',
+        params: {
+          params: { name: 'Toto' },
+          _context: {
+            call: {
+              user: {
+                permissions: ['territory.create'],
+              },
+            },
+          },
         },
-      },
-    });
-    const { name: patchedName } = patchData.result;
-    expect(patchedName).to.eq('Yop');
-    expect(patchStatus).equal(200);
+      });
 
-    const { status: listStatus, data: listData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'territory:all',
-    });
-    const list = listData.result;
-    expect(list.length).eq(1);
-    expect(list[0].name).eq(patchedName);
-    expect(listStatus).equal(200);
+      _id = createData.result._id;
+      expect(createData.result.name).to.eq('Toto');
+      expect(createStatus).equal(200);
+    } catch (e) {
+      console.log('CREATE', e.message);
+      throw e;
+    }
 
-    const { status: deleteStatus, data: deleteData } = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'territory:delete',
-      params: {
-        _id,
-      },
-    });
-    expect(deleteStatus).equal(200);
-    expect(deleteData.result).equal(true);
+    try {
+      // patch the name
+      const { status: patchStatus, data: patchData } = await request.post('/', {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'territory:patch',
+        params: {
+          params: {
+            _id,
+            patch: {
+              name: 'Yop',
+            },
+          },
+          _context: {
+            call: {
+              user: {
+                permissions: ['territory.update'],
+              },
+            },
+          },
+        },
+      });
+
+      patchedName = patchData.result.name;
+      expect(patchedName).to.eq('Yop');
+      expect(patchStatus).equal(200);
+    } catch (e) {
+      console.log('PATCH', e.message);
+      throw e;
+    }
+
+    try {
+      // list all territories and find the patched item
+      const { status: listStatus, data: listData } = await request.post('/', {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'territory:all',
+        params: {
+          _context: {
+            call: {
+              user: {
+                permissions: ['territory.list'],
+              },
+            },
+          },
+        },
+      });
+      const list = listData.result;
+      expect(list.length).eq(1);
+      expect(list[0].name).eq(patchedName);
+      expect(listStatus).equal(200);
+    } catch (e) {
+      console.log('FIND', e.message);
+      throw e;
+    }
+
+    try {
+      // delete the item
+      const { status: deleteStatus, data: deleteData } = await request.post('/', {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'territory:delete',
+        params: {
+          params: { _id },
+          _context: {
+            call: {
+              user: {
+                permissions: ['territory.delete'],
+              },
+            },
+          },
+        },
+      });
+      expect(deleteStatus).equal(200);
+      expect(deleteData.result).equal(true);
+    } catch (e) {
+      console.log('DELETE', e.message);
+      throw e;
+    }
   });
 });

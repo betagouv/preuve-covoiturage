@@ -9,7 +9,7 @@ describe('config', () => {
   });
 
   it('has aom', async () => {
-    expect(config).to.have.property('aom');
+    expect(config).to.have.property('territory');
   });
 
   it('has operators', async () => {

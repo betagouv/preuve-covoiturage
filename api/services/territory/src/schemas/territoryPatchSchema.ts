@@ -3,14 +3,15 @@ import { addressSchema } from './parts/addressSchema';
 import { bankSchema } from './parts/bankSchema';
 import { contactsSchema } from './parts/contactsSchema';
 import { baseSchema } from './parts/baseSchema';
+import { cguSchema } from './parts/cguSchema';
 
 export const territoryPatchSchema = {
   $id: 'territory.patch',
   type: 'object',
-  required: ['id', 'patch'],
+  required: ['_id', 'patch'],
   additionalProperties: false,
   properties: {
-    id: { macro: 'objectid' },
+    _id: { macro: 'objectid' },
     patch: {
       type: 'object',
       minProperties: 1,
@@ -21,6 +22,7 @@ export const territoryPatchSchema = {
         address: addressSchema,
         bank: bankSchema,
         contacts: contactsSchema,
+        cgu: cguSchema,
       },
     },
   },

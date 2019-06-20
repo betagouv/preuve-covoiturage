@@ -17,7 +17,7 @@ export class DeleteTerritoryAction extends Parents.Action {
   }
 
   public async handle(params: { _id: string }): Promise<boolean> {
-    await this.territoryRepository.delete(params);
+    await this.territoryRepository.delete(params._id);
     return true;
   }
 }
