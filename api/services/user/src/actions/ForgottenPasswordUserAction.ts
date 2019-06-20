@@ -2,13 +2,12 @@ import { Parents, Container, Types, Interfaces } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 
-interface ForgottenPasswordUserInterface {
-  id: string;
-}
-
+/*
+ * find user by email and send email to set new password
+ */
 @Container.handler({
   service: 'user',
   method: 'forgottenPassword',
@@ -25,33 +24,30 @@ export class ForgottenPasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: ForgottenPasswordUserInterface, context: Types.ContextType): Promise<User> {
-    // todo: find by email ?
-
-    const user = await this.userRepository.find(params.id);
+  public async handle(params: { email: string }, context: Types.ContextType): Promise<void> {
+    const user = await this.userRepository.findUserByParams({ email: params.email });
 
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
     user.forgottenReset = reset;
-    user.forgottenToken = token;
+    user.forgottenToken = await this.cryptoProvider.cryptToken(token);
     user.forgottenAt = new Date();
+    user.status = this.config.get('user.status.notActive');
 
     const updatedUser = await this.userRepository.update(user);
 
     const requester = new User(context.call.user);
 
-    this.kernel.notify(
-      'notification:sendTemplateEmail',
+    await this.kernel.call(
+      'user:notify',
       {
-        template: 'invite',
+        template: this.config.get('email.templates.forgotten'),
         email: updatedUser.email,
         fullName: updatedUser.fullname,
-        opts: {
-          requester: requester.fullname,
-          organization: 'AomOrOperatorOrganisation',
-          link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
-        },
+        requester: requester.fullname,
+        organization: 'AomOrOperatorOrganisation',
+        link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
       },
       {
         call: context.call,
@@ -62,6 +58,6 @@ export class ForgottenPasswordUserAction extends Parents.Action {
       },
     );
 
-    return updatedUser;
+    return;
   }
 }

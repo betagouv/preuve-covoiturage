@@ -1,13 +1,9 @@
 export const userDeleteSchema = {
   $id: 'user.delete',
   type: 'object',
-  required: ['id'],
+  required: ['_id'],
   additionalProperties: false,
   properties: {
-    id: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
+    _id: { macro: 'objectid' },
   },
 };

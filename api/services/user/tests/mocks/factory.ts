@@ -1,58 +1,93 @@
 import { Exceptions } from '@ilos/core';
-
-import { mockConnectedUserBase } from './connectedUserBase';
-import { mockNewUserBase } from './newUserBase';
 import axios from 'axios';
 
-interface UserparamsInterface {
-  permissions: string[];
-  aom?: string;
-  operator?: string;
-}
+import { mockCreateUserParams, mockNewUserBase } from './newUserBase';
+import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 
-interface AomOperator {
-  aom?: string;
+interface TerritoryOperator {
+  territory?: string;
   operator?: string;
 }
 
 export class MockFactory {
   port = '8081';
 
-  public call(
-    method: string,
-    data: any,
-    group: string = 'registry',
-    role: string = 'admin',
-    userparams: UserparamsInterface = { permissions: [] },
-    _id: string = 'fakeId',
-  ) {
+  static generatePassword() {
+    return Math.random()
+      .toString(36)
+      .substring(2, 15);
+  }
+
+  public call(method: string, params: any, callUserProperties: UserBaseInterface) {
+    const callUser = {
+      group: 'registry',
+      role: 'admin',
+      permissions: [],
+      _id: '5d0b5f7208e64927d0c63841',
+      ...callUserProperties,
+    };
+
     return {
       method,
       id: 1,
       jsonrpc: '2.0',
       params: {
-        params: data,
+        params,
         _context: {
           channel: {
             service: 'proxy',
             transport: 'http',
           },
           call: {
-            user: { ...mockConnectedUserBase, group, role, _id, ...userparams },
+            user: callUser,
           },
         },
       },
     };
   }
 
-  public newUser(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?) {
+  public createUserParams(
+    group: string = 'registry',
+    role: string = 'admin',
+    territoryOperator: TerritoryOperator = {},
+    email?,
+  ) {
+    return {
+      ...mockCreateUserParams,
+      group,
+      role,
+      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
+      ...territoryOperator,
+    };
+  }
+
+  public newUser(
+    group: string = 'registry',
+    role: string = 'admin',
+    territoryOperator: TerritoryOperator = {},
+    email?,
+  ) {
     return {
       ...mockNewUserBase,
       group,
       role,
-      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.com`,
-      ...aomOperator,
+      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
+      ...territoryOperator,
     };
+  }
+
+  public get newTerritoryUserModel() {
+    return this.newUser('territories', 'user', { territory: '5cef990d133992029c1abe44' }, null);
+  }
+  public get newOperatorUserModel() {
+    return this.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' }, null);
+  }
+  public get newRegistryUserModel() {
+    return this.newUser('registry', 'user', {}, null);
+  }
+
+  public get newRegistryAdminModel() {
+    return this.newUser('registry', 'admin', {}, null);
   }
 
   public error(err: Exceptions.RPCException) {

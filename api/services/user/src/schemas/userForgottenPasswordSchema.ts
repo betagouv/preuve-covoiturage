@@ -1,13 +1,9 @@
 export const userForgottenPasswordSchema = {
   $id: 'user.forgottenPassword',
   type: 'object',
-  required: ['id'],
+  required: ['email'],
   additionalProperties: false,
   properties: {
-    id: {
-      type: 'string',
-      maxLength: 255,
-      minLength: 1,
-    },
+    email: { macro: 'email' },
   },
 };

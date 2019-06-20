@@ -1,17 +1,23 @@
 import chai from 'chai';
+import nock from 'nock';
 import chaiNock from 'chai-nock';
 import { Exceptions } from '@ilos/core';
 
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';
+import { territories, operators, registry } from '../src/config/permissions';
 
 const fakeMongoServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
+
 chai.use(chaiNock);
 
 const { expect } = chai;
 
+let nockRequest;
+
 before(async () => {
+  console.log('> setup database');
   await fakeMongoServer.startServer();
   await fakeMongoServer.startTransport();
 });
@@ -19,98 +25,155 @@ before(async () => {
 after(async () => {
   await fakeMongoServer.stopServer();
   await fakeMongoServer.stopTransport();
+  process.exit(0);
+  console.log('> cleared database');
+});
+
+beforeEach(() => {
+  nockRequest = nock(/mailjet/)
+    .post(/send/, (_body) => true)
+    .reply(200);
+});
+
+afterEach(() => {
+  nock.cleanAll();
 });
 
 const request = mockFactory.request();
 
-describe('User service Creation', () => {
-  const newAomUser = mockFactory.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' });
-  const newOperatorUser = mockFactory.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' });
-  const newRegistryUser = mockFactory.newUser('registry', 'user');
+let newTerritoryUser;
+let newOperatorUser;
+let newRegistryUser;
+let newRegistryAdmin;
+
+let territoryUserParams;
+let operatorUserParams;
+let registryUserParams;
+
+describe('USER SERVICE : Creation', () => {
+  before(async () => {
+    territoryUserParams = mockFactory.createUserParams('territories', 'user', {
+      territory: '5cef990d133992029c1abe44',
+    });
+    operatorUserParams = mockFactory.createUserParams('operators', 'user', { operator: '5cef990d133992029c1abe41' });
+    registryUserParams = mockFactory.createUserParams('registry', 'user');
+  });
 
   it('registry admin - should create user registry', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(registryUserParams.email);
+      expect(body).to.include('reset-password');
+    });
+
     const { status: createStatus, data: createData } = await request.post(
       '/',
-      mockFactory.call('user:create', newRegistryUser, 'registry', 'admin', { permissions: ['user.create'] }),
+      mockFactory.call(
+        'user:create',
+        {
+          ...registryUserParams,
+        },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.create'],
+        },
+      ),
     );
 
-    expect(createData.result).to.include({
-      email: newRegistryUser.email,
-      firstname: newRegistryUser.firstname,
-      lastname: newRegistryUser.lastname,
-      phone: newRegistryUser.phone,
-      group: newRegistryUser.group,
-      role: newRegistryUser.role,
+    expect(createData.result).to.have.property('_id');
+    delete createData.result._id;
+    expect(createData.result).to.eql({
+      ...registryUserParams,
+      permissions: registry.user.permissions,
+      status: 'notActive',
     });
     expect(createStatus).equal(200);
   });
 
-  it('aom admin - should create user aom', async () => {
+  it('territory admin - should create user territory', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(territoryUserParams.email);
+      expect(body).to.include('reset-password');
+    });
+
     const { status: createStatus, data: createData } = await request.post(
       '/',
-      mockFactory.call('user:create', newAomUser, newAomUser.group, 'admin', {
-        permissions: ['aom.users.add'],
-        aom: newAomUser.aom,
-      }),
+      mockFactory.call(
+        'user:create',
+        {
+          ...territoryUserParams,
+        },
+        {
+          group: territoryUserParams.group,
+          role: 'admin',
+          permissions: ['territory.users.add'],
+          territory: territoryUserParams.territory,
+        },
+      ),
     );
-    expect(createData.result).to.include({
-      email: newAomUser.email,
-      firstname: newAomUser.firstname,
-      lastname: newAomUser.lastname,
-      phone: newAomUser.phone,
-      group: newAomUser.group,
-      role: newAomUser.role,
-      aom: newAomUser.aom,
+
+    expect(createData.result).to.have.property('_id');
+    delete createData.result._id;
+    expect(createData.result).to.eql({
+      ...territoryUserParams,
+      permissions: territories.user.permissions,
+      status: 'notActive',
     });
     expect(createStatus).equal(200);
   });
 
   it('operator admin - should create user operator', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(operatorUserParams.email);
+      expect(body).to.include('reset-password');
+    });
+
     const { status: createStatus, data: createData } = await request.post(
       '/',
-      mockFactory.call('user:create', newOperatorUser, newOperatorUser.group, 'admin', {
-        permissions: ['operator.users.add'],
-        operator: newOperatorUser.operator,
-      }),
+      mockFactory.call(
+        'user:create',
+        {
+          ...operatorUserParams,
+        },
+        {
+          group: territoryUserParams.group,
+          role: 'admin',
+          permissions: ['operator.users.add'],
+          operator: operatorUserParams.operator,
+        },
+      ),
     );
-    expect(createData.result).to.include({
-      email: newOperatorUser.email,
-      firstname: newOperatorUser.firstname,
-      lastname: newOperatorUser.lastname,
-      phone: newOperatorUser.phone,
-      group: newOperatorUser.group,
-      role: newOperatorUser.role,
-      operator: newOperatorUser.operator,
+
+    expect(createData.result).to.have.property('_id');
+    delete createData.result._id;
+    expect(createData.result).to.eql({
+      ...operatorUserParams,
+      permissions: operators.user.permissions,
+      status: 'notActive',
     });
     expect(createStatus).equal(200);
   });
 });
 
-describe('User service Deletion', () => {
-  let newAomUser;
-  let newOperatorUser;
-  let newRegistryUser;
-
-  const newAomUserModel = mockFactory.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' });
-  const newOperatorUserModel = mockFactory.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' });
-  const newRegistryUserModel = mockFactory.newUser('registry', 'user');
-
+describe('USER SERVICE : Deletion', () => {
   before(async () => {
-    newRegistryUser = await fakeMongoServer.addUser(newRegistryUserModel);
-    newAomUser = await fakeMongoServer.addUser(newAomUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(newOperatorUserModel);
+    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
   });
 
   it('registry user - should delete his profile', async () => {
-    const { status: status, data: data } = await request.post(
+    const { status, data } = await request.post(
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newRegistryUser._id },
-        'registry',
-        'admin',
-        { permissions: ['profile.delete'] },
-        newRegistryUser._id,
+        { _id: newRegistryUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['profile.delete'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
     expect(status).equal(200);
@@ -121,26 +184,31 @@ describe('User service Deletion', () => {
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newAomUser._id },
-        'registry',
-        'admin',
-        { permissions: ['profile.delete'] },
-        newRegistryUser._id,
+        { _id: newTerritoryUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['profile.delete'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
-  it('registry aom - should delete user from aom', async () => {
+  it('registry territory - should delete user from territory', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newAomUser._id, aom: newAomUser.aom },
-        'aom',
-        'admin',
-        { permissions: ['aom.users.delete'], aom: newAomUser.aom },
-        newAomUser._id,
+        { _id: newTerritoryUser._id, territory: newTerritoryUser.territory },
+        {
+          group: 'territory',
+          role: 'admin',
+          permissions: ['territory.users.delete'],
+          territory: newTerritoryUser.territory,
+          _id: newTerritoryUser._id,
+        },
       ),
     );
     expect(status).equal(200);
@@ -151,33 +219,26 @@ describe('User service Deletion', () => {
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newOperatorUser._id, operator: newOperatorUser.operator },
-        'operator',
-        'admin',
-        { permissions: ['operator.users.delete'], operator: newAomUser.operator },
-        newOperatorUser._id,
+        { _id: newOperatorUser._id, operator: newOperatorUser.operator },
+        {
+          group: 'operator',
+          role: 'admin',
+          permissions: ['operator.users.delete'],
+          operator: newTerritoryUser.operator,
+          _id: newOperatorUser._id,
+        },
       ),
     );
     expect(status).equal(200);
   });
 });
 
-describe('User service Find', () => {
-  const newAomUserModel = mockFactory.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' });
-  const newOperatorUserModel = mockFactory.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' });
-  const newRegistryAdminModel = mockFactory.newUser();
-  const newRegistryUserModel = mockFactory.newUser('registry', 'user');
-
-  let newAomUser;
-  let newOperatorUser;
-  let newRegistryAdmin;
-  let newRegistryUser;
-
+describe('USER SERVICE : Find', () => {
   before(async () => {
-    newAomUser = await fakeMongoServer.addUser(newAomUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(newRegistryAdminModel);
-    newRegistryUser = await fakeMongoServer.addUser(newRegistryUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
   });
 
   after(async () => {
@@ -185,18 +246,22 @@ describe('User service Find', () => {
   });
 
   it('registry admin - should find registry user', async () => {
-    const { status: status, data: data } = await request.post(
+    const { status, data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newRegistryUser._id }, 'registry', 'admin', { permissions: ['user.read'] }),
+      mockFactory.call(
+        'user:find',
+        { _id: newRegistryUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.read'],
+        },
+      ),
     );
-    expect(data.result).to.include({
+
+    expect(data.result).to.eql({
       _id: newRegistryUser._id,
-      email: newRegistryUser.email,
-      firstname: newRegistryUser.firstname,
-      lastname: newRegistryUser.lastname,
-      phone: newRegistryUser.phone,
-      group: newRegistryUser.group,
-      role: newRegistryUser.role,
+      ...mockFactory.newRegistryUserModel,
     });
     expect(status).equal(200);
   });
@@ -206,22 +271,19 @@ describe('User service Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newRegistryUser._id },
-        'registry',
-        'user',
-        { permissions: ['profile.read'] },
-        newRegistryUser._id,
+        { _id: newRegistryUser._id },
+        {
+          group: 'registry',
+          role: 'user',
+          permissions: ['profile.read'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
 
-    expect(data.result).to.include({
+    expect(data.result).to.eql({
       _id: newRegistryUser._id,
-      email: newRegistryUser.email,
-      firstname: newRegistryUser.firstname,
-      lastname: newRegistryUser.lastname,
-      phone: newRegistryUser.phone,
-      group: newRegistryUser.group,
-      role: newRegistryUser.role,
+      ...mockFactory.newRegistryUserModel,
     });
     expect(status).equal(200);
   });
@@ -231,30 +293,35 @@ describe('User service Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newAomUser._id },
-        'registry',
-        'user',
-        { permissions: ['profile.read'] },
-        newRegistryUser._id,
+        { _id: newTerritoryUser._id },
+        {
+          group: 'registry',
+          role: 'user',
+          permissions: ['profile.read'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
-  it('registry admin - should find aom user', async () => {
+  it('registry admin - should find territory user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newAomUser._id }, 'registry', 'admin', { permissions: ['user.read'] }),
+      mockFactory.call(
+        'user:find',
+        { _id: newTerritoryUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.read'],
+        },
+      ),
     );
-    expect(data.result).to.include({
-      _id: newAomUser._id,
-      email: newAomUser.email,
-      firstname: newAomUser.firstname,
-      lastname: newAomUser.lastname,
-      phone: newAomUser.phone,
-      group: newAomUser.group,
-      role: newAomUser.role,
-      aom: newAomUser.aom,
+
+    expect(data.result).to.eql({
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
     expect(status).equal(200);
   });
@@ -262,38 +329,40 @@ describe('User service Find', () => {
   it('registry admin - should find operator user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newOperatorUser._id }, 'registry', 'admin', { permissions: ['user.read'] }),
+      mockFactory.call(
+        'user:find',
+        { _id: newOperatorUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.read'],
+        },
+      ),
     );
-    expect(data.result).to.include({
+    expect(data.result).to.eql({
       _id: newOperatorUser._id,
-      email: newOperatorUser.email,
-      firstname: newOperatorUser.firstname,
-      lastname: newOperatorUser.lastname,
-      phone: newOperatorUser.phone,
-      group: newOperatorUser.group,
-      role: newOperatorUser.role,
-      operator: newOperatorUser.operator,
+      ...mockFactory.newOperatorUserModel,
     });
     expect(status).equal(200);
   });
 
-  it('aom admin - should find aom user', async () => {
+  it('territory admin - should find territory user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:find', { id: newAomUser._id, aom: newAomUser.aom }, 'aom', 'admin', {
-        permissions: ['aom.users.read'],
-        aom: newAomUser.aom,
-      }),
+      mockFactory.call(
+        'user:find',
+        { _id: newTerritoryUser._id },
+        {
+          group: 'territory',
+          role: 'admin',
+          permissions: ['territory.users.read'],
+          territory: newTerritoryUser.territory,
+        },
+      ),
     );
-    expect(data.result).to.include({
-      _id: newAomUser._id,
-      email: newAomUser.email,
-      firstname: newAomUser.firstname,
-      lastname: newAomUser.lastname,
-      phone: newAomUser.phone,
-      group: newAomUser.group,
-      role: newAomUser.role,
-      aom: newAomUser.aom,
+    expect(data.result).to.eql({
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
     expect(status).equal(200);
   });
@@ -303,99 +372,81 @@ describe('User service Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newOperatorUser._id, operator: newOperatorUser.operator },
-        'registry',
-        'admin',
-        { permissions: ['operator.users.read'], operator: newOperatorUser.operator },
+        { _id: newOperatorUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['operator.users.read'],
+          operator: newOperatorUser.operator,
+        },
       ),
     );
-    expect(data.result).to.include({
+    expect(data.result).to.eql({
       _id: newOperatorUser._id,
-      email: newOperatorUser.email,
-      firstname: newOperatorUser.firstname,
-      lastname: newOperatorUser.lastname,
-      phone: newOperatorUser.phone,
-      group: newOperatorUser.group,
-      role: newOperatorUser.role,
-      operator: newOperatorUser.operator,
+      ...mockFactory.newOperatorUserModel,
     });
     expect(status).equal(200);
   });
 });
 
-describe('User service : List', () => {
-  const newAomUserModel = mockFactory.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' });
-  const newOperatorUserModel = mockFactory.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' });
-  const newRegistryAdminModel = mockFactory.newUser();
-  const newRegistryUserModel = mockFactory.newUser('registry', 'user');
-
-  let newAomUser;
-  let newOperatorUser;
-  let newRegistryAdmin;
-  let newRegistryUser;
-
+describe('USER SERVICE : List', () => {
   before(async () => {
-    newRegistryUser = await fakeMongoServer.addUser(newRegistryUserModel);
-    newAomUser = await fakeMongoServer.addUser(newAomUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(newRegistryAdminModel);
+    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+  });
+
+  after(() => {
+    fakeMongoServer.clearCollection();
   });
 
   it('registry admin - should list users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', {}, 'registry', 'admin', { permissions: ['user.list'] }),
+      mockFactory.call(
+        'user:list',
+        {},
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.list'],
+        },
+      ),
     );
-    expect(data.result.data[0]).to.include({
+    expect(data.result.data[0]).to.eql({
       _id: newRegistryUser._id,
-      email: newRegistryUser.email,
-      firstname: newRegistryUser.firstname,
-      lastname: newRegistryUser.lastname,
-      phone: newRegistryUser.phone,
-      group: newRegistryUser.group,
-      role: newRegistryUser.role,
+      ...mockFactory.newRegistryUserModel,
     });
-    expect(data.result.data[1]).to.include({
-      _id: newAomUser._id,
-      email: newAomUser.email,
-      firstname: newAomUser.firstname,
-      lastname: newAomUser.lastname,
-      phone: newAomUser.phone,
-      group: newAomUser.group,
-      role: newAomUser.role,
-      aom: newAomUser.aom,
+    expect(data.result.data[1]).to.eql({
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
-    expect(data.result.data[2]).to.include({
+    expect(data.result.data[2]).to.eql({
       _id: newOperatorUser._id,
-      email: newOperatorUser.email,
-      firstname: newOperatorUser.firstname,
-      lastname: newOperatorUser.lastname,
-      phone: newOperatorUser.phone,
-      group: newOperatorUser.group,
-      role: newOperatorUser.role,
-      operator: newOperatorUser.operator,
+      ...mockFactory.newOperatorUserModel,
     });
     expect(status).equal(200);
   });
 
-  it('aom admin - should list aom users', async () => {
+  it('territory admin - should list territory users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', { aom: newAomUser.aom }, 'aom', 'admin', {
-        permissions: ['aom.users.list'],
-        aom: newAomUser.aom,
-      }),
+      mockFactory.call(
+        'user:list',
+        {},
+        {
+          group: 'territory',
+          role: 'admin',
+          permissions: ['territory.users.list'],
+          territory: newTerritoryUser.territory,
+        },
+      ),
     );
 
-    expect(data.result.data[0]).to.include({
-      _id: newAomUser._id,
-      email: newAomUser.email,
-      firstname: newAomUser.firstname,
-      lastname: newAomUser.lastname,
-      phone: newAomUser.phone,
-      group: newAomUser.group,
-      role: newAomUser.role,
-      aom: newAomUser.aom,
+    expect(data.result.data[0]).to.eql({
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
     expect(status).equal(200);
   });
@@ -403,42 +454,36 @@ describe('User service : List', () => {
   it('operator admin - should list operator users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
-      mockFactory.call('user:list', { operator: newOperatorUser.operator }, 'operators', 'admin', {
-        permissions: ['operator.users.list'],
-        operator: newOperatorUser.operator,
-      }),
+      mockFactory.call(
+        'user:list',
+        {},
+        {
+          group: 'operators',
+          role: 'admin',
+          permissions: ['operator.users.list'],
+          operator: newOperatorUser.operator,
+        },
+      ),
     );
 
-    expect(data.result.data[0]).to.include({
+    expect(data.result.data[0]).to.eql({
       _id: newOperatorUser._id,
-      email: newOperatorUser.email,
-      firstname: newOperatorUser.firstname,
-      lastname: newOperatorUser.lastname,
-      phone: newOperatorUser.phone,
-      group: newOperatorUser.group,
-      role: newOperatorUser.role,
-      operator: newOperatorUser.operator,
+      ...mockFactory.newOperatorUserModel,
     });
     expect(status).equal(200);
   });
 });
 
-describe('User service : Patch', () => {
-  const newAomUserModel = mockFactory.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' });
-  const newOperatorUserModel = mockFactory.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' });
-  const newRegistryAdminModel = mockFactory.newUser();
-  const newRegistryUserModel = mockFactory.newUser('registry', 'user');
-
-  let newAomUser;
-  let newOperatorUser;
-  let newRegistryAdmin;
-  let newRegistryUser;
-
+describe('USER SERVICE : Patch', () => {
   before(async () => {
-    newAomUser = await fakeMongoServer.addUser(newAomUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(newRegistryAdminModel);
-    newRegistryUser = await fakeMongoServer.addUser(newRegistryUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+  });
+
+  after(() => {
+    fakeMongoServer.clearCollection();
   });
 
   it('registry admin - should patch registry user', async () => {
@@ -452,30 +497,28 @@ describe('User service : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newRegistryUser._id,
+          _id: newRegistryUser._id,
           patch: mockUpdatedProperties,
         },
-        'registry',
-        'admin',
-        { permissions: ['user.update'] },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.update'],
+        },
       ),
     );
-    expect(data.result).to.include({
+    expect(data.result).to.eql({
       _id: newRegistryUser._id,
-      email: newRegistryUser.email,
-      firstname: mockUpdatedProperties.firstname,
-      lastname: mockUpdatedProperties.lastname,
-      phone: newRegistryUser.phone,
-      group: newRegistryUser.group,
-      role: newRegistryUser.role,
+      ...mockFactory.newRegistryUserModel,
+      ...mockUpdatedProperties,
     });
     expect(status).equal(200);
   });
 
   it('registry user - should patch his profile', async () => {
     const mockUpdatedProperties = {
-      firstname: 'johnny',
-      lastname: 'smith',
+      firstname: 'johnny2',
+      lastname: 'smith2',
     };
 
     const { status: status, data: data } = await request.post(
@@ -483,31 +526,29 @@ describe('User service : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newRegistryUser._id,
+          _id: newRegistryUser._id,
           patch: mockUpdatedProperties,
         },
-        'registry',
-        'user',
-        { permissions: ['profile.update'] },
-        newRegistryUser._id,
+        {
+          group: 'registry',
+          role: 'user',
+          permissions: ['profile.update'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
-    expect(data.result).to.include({
+    expect(data.result).to.eql({
       _id: newRegistryUser._id,
-      email: newRegistryUser.email,
-      firstname: mockUpdatedProperties.firstname,
-      lastname: mockUpdatedProperties.lastname,
-      phone: newRegistryUser.phone,
-      group: newRegistryUser.group,
-      role: newRegistryUser.role,
+      ...mockFactory.newRegistryUserModel,
+      ...mockUpdatedProperties,
     });
     expect(status).equal(200);
   });
 
   it("registry user - shouldn't patch other profile", async () => {
     const mockUpdatedProperties = {
-      firstname: 'johnny',
-      lastname: 'smith',
+      firstname: 'johnny3',
+      lastname: 'smith3',
     };
 
     const response = await request.post(
@@ -515,19 +556,21 @@ describe('User service : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newAomUser._id,
+          _id: newTerritoryUser._id,
           patch: mockUpdatedProperties,
         },
-        'registry',
-        'user',
-        { permissions: ['profile.update'] },
-        newRegistryUser._id,
+        {
+          group: 'registry',
+          role: 'user',
+          permissions: ['profile.update'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
-  it('aom admin - should patch aom user', async () => {
+  it('territory admin - should patch territory user', async () => {
     const mockUpdatedProperties = {
       firstname: 'samuel',
       lastname: 'goldschmidt',
@@ -538,25 +581,22 @@ describe('User service : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newAomUser._id,
-          aom: newAomUser.aom,
+          _id: newTerritoryUser._id,
           patch: mockUpdatedProperties,
         },
-        'aom',
-        'admin',
-        { permissions: ['aom.users.update'], aom: newAomUser.aom },
-        newAomUser._id,
+        {
+          group: 'territory',
+          role: 'admin',
+          permissions: ['territory.users.update'],
+          territory: newTerritoryUser.territory,
+          _id: newTerritoryUser._id,
+        },
       ),
     );
-    expect(data.result).to.include({
-      _id: newAomUser._id,
-      email: newAomUser.email,
-      firstname: mockUpdatedProperties.firstname,
-      lastname: mockUpdatedProperties.lastname,
-      phone: newAomUser.phone,
-      group: newAomUser.group,
-      role: newAomUser.role,
-      aom: newAomUser.aom,
+    expect(data.result).to.eql({
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
+      ...mockUpdatedProperties,
     });
     expect(status).equal(200);
   });
@@ -572,94 +612,215 @@ describe('User service : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newOperatorUser._id,
-          operator: newOperatorUser.operator,
+          _id: newOperatorUser._id,
           patch: mockUpdatedProperties,
         },
-        'operator',
-        'admin',
-        { permissions: ['operator.users.update'], operator: newOperatorUser.operator },
-        newOperatorUser._id,
+        {
+          group: 'operator',
+          role: 'admin',
+          permissions: ['operator.users.update'],
+          operator: newOperatorUser.operator,
+          _id: newOperatorUser._id,
+        },
       ),
     );
-    expect(data.result).to.include({
+    expect(data.result).to.eql({
       _id: newOperatorUser._id,
-      email: newOperatorUser.email,
-      firstname: mockUpdatedProperties.firstname,
-      lastname: mockUpdatedProperties.lastname,
-      phone: newOperatorUser.phone,
-      group: newOperatorUser.group,
-      role: newOperatorUser.role,
+      ...mockFactory.newOperatorUserModel,
+      ...mockUpdatedProperties,
     });
     expect(status).equal(200);
   });
+});
 
-  /*
-  CHANGE PASSWORD
-   */
+describe('USER SERVICE : Change Password', () => {
+  before(async () => {
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await fakeMongoServer.addUser({
+      ...mockFactory.newRegistryUserModel,
+      password: 'passwordRegistryUser',
+    });
+  });
+
+  after(() => {
+    fakeMongoServer.clearCollection();
+  });
+
   const newPassword = 'newPassword';
-  it('registry admin - should change password registry user', async () => {
+  it('registry admin - should change password', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
-        'user:patch',
+        'user:changePassword',
         {
-          id: newRegistryUser._id,
-          patch: { newPassword, oldPassword: newRegistryUserModel.password },
+          newPassword,
+          oldPassword: 'passwordRegistryUser',
         },
-        'registry',
-        'admin',
-        { permissions: ['user.update'] },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['profile.update'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
-    expect(data.result).to.include({
+
+    // nockRequest.on('request', (req, interceptor, body) => {
+    //   expect(body).to.deep.equal(`{"Email":"${newRegistryUser.email}"}`);
+    // });
+    expect(data.result).to.eql({
       _id: newRegistryUser._id,
-      email: newRegistryUser.email,
-      phone: newRegistryUser.phone,
-      group: newRegistryUser.group,
-      role: newRegistryUser.role,
+      ...mockFactory.newRegistryUserModel,
     });
     expect(status).equal(200);
   });
 
-  it("registry admin - shouldn't change password registry user - wrong old password", async () => {
+  it("registry admin - shouldn't change password with wrong old password", async () => {
     const response = await request.post(
       '/',
       mockFactory.call(
-        'user:patch',
+        'user:changePassword',
         {
-          id: newRegistryUser._id,
-          patch: { newPassword, oldPassword: `wrong${newRegistryUserModel.password}` },
+          newPassword,
+          oldPassword: 'wrongPassword',
         },
-        'registry',
-        'admin',
-        { permissions: ['user.update'] },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['profile.update'],
+          _id: newRegistryUser._id,
+        },
       ),
     );
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Wrong credentials')));
   });
+});
 
-  /*
-  CHANGE EMAIL
-   */
+describe('USER SERVICE : Change Email', () => {
+  before(async () => {
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+  });
+
+  after(() => {
+    fakeMongoServer.clearCollection();
+  });
+
   const newEmail = 'newEmail@example.com';
   it('registry admin - should change email registry user', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(newEmail);
+      expect(body).to.include('confirm-email');
+    });
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
-        'user:patch',
+        'user:changeEmail',
         {
-          id: newRegistryUser._id,
-          patch: { email: newEmail },
+          _id: newRegistryUser._id,
+          email: newEmail,
         },
-        'registry',
-        'admin',
-        { permissions: ['user.update'] },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: ['user.update'],
+        },
       ),
     );
-    expect(data.result).to.include({
+
+    expect(data.result).to.eql({
+      _id: newRegistryUser._id,
+      ...mockFactory.newRegistryUserModel,
+      status: 'notActive',
       email: newEmail,
     });
     expect(status).equal(200);
   });
 });
+
+describe('USER SERVICE : Forgotten Password', () => {
+  before(async () => {
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+  });
+
+  after(() => {
+    fakeMongoServer.clearCollection();
+  });
+
+  it('anonymous - should send email to reset password', async () => {
+    nockRequest.on('request', (req, interceptor, body) => {
+      expect(body).to.include(newRegistryUser.email);
+      expect(body).to.include('reset-password');
+    });
+    const { status: status, data: data } = await request.post('/', {
+      method: 'user:forgottenPassword',
+      id: 1,
+      jsonrpc: '2.0',
+      params: {
+        params: {
+          email: newRegistryUser.email,
+        },
+        _context: {
+          channel: {
+            service: 'proxy',
+            transport: 'http',
+          },
+          call: {
+            user: {},
+          },
+        },
+      },
+    });
+
+    expect(status).equal(200);
+  });
+});
+
+describe('USER SERVICE : Login', () => {
+  before(async () => {
+    newRegistryAdmin = await fakeMongoServer.addUser({
+      ...mockFactory.newRegistryAdminModel,
+      password: 'password',
+      status: 'active',
+    });
+  });
+
+  after(async () => {
+    fakeMongoServer.clearCollection();
+  });
+
+  it('registry admin - should login', async () => {
+    const { status: status, data: data } = await request.post(
+      '/',
+      mockFactory.call(
+        'user:login',
+        {
+          email: newRegistryAdmin.email,
+          password: 'password',
+        },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: [],
+        },
+      ),
+    );
+    expect(data.result).to.eql({
+      _id: newRegistryAdmin._id,
+      ...mockFactory.newRegistryAdminModel,
+      status: 'active',
+    });
+    expect(status).equal(200);
+  });
+});
+
+// todo:
+// 'permission "territory.users.update" shouldn\'t change role of other territory user - reject with not found ?'
+// tests for confirm & reset actions

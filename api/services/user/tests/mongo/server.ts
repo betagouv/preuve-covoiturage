@@ -1,39 +1,38 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Bootstrap } from '@ilos/cli';
-import { MongoProvider, ObjectId } from '@ilos/provider-mongo';
+import { bootstrap } from '@ilos/framework';
+import { MongoProvider, ObjectId, CollectionInterface } from '@ilos/provider-mongo';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { TransportInterface, KernelInterface } from '@ilos/core/dist/interfaces';
 
 import { User } from '../../src/entities/User';
+import { MockFactory } from '../mocks/factory';
 
 const crypto = new CryptoProvider();
 
 export class FakeMongoServer {
-  mongoServer;
-  connectionString;
-  dbName;
-  kernel;
-  transport;
+  dbName: string;
+  kernel: KernelInterface;
+  transport: TransportInterface;
   port = '8081';
-  collection;
-  key;
-  request;
+  collection: CollectionInterface;
+  key: string;
 
   public async startServer(): Promise<any> {
-    this.mongoServer = new MongoMemoryServer();
-    this.connectionString = await this.mongoServer.getConnectionString();
-    this.dbName = await this.mongoServer.getDbName();
-    process.env.APP_MONGO_URL = this.connectionString;
-    process.env.APP_MONGO_DB = this.dbName;
+    process.env.APP_URL = `http://localhost:${this.port}`;
+    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017/pdc-test?authSource=admin';
+    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+    this.dbName = process.env.APP_MONGO_DB;
   }
 
   public async startTransport(): Promise<any> {
-    this.transport = await Bootstrap.boot(['', '', 'http', this.port]);
+    this.transport = await bootstrap.boot(['', '', 'http', this.port]);
+    this.kernel = this.transport.getKernel();
   }
 
   public async stopServer(): Promise<void> {
-    await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).close();
-    await this.mongoServer.stop();
+    await (<MongoProvider>this.kernel.getContainer().get(MongoProvider))
+      .getDb(process.env.APP_MONGO_DB)
+      .then((db) => db.dropDatabase());
   }
 
   public async stopTransport(): Promise<void> {
@@ -41,10 +40,15 @@ export class FakeMongoServer {
   }
 
   public async addUser(user: any): Promise<User> {
+    if (!('password' in user)) {
+      user.password = MockFactory.generatePassword();
+    }
+
     this.kernel = this.transport.getKernel();
-    this.key = this.kernel.getContainer().get(ConfigProviderInterfaceResolver).get(
-      'user.collectionName',
-    );
+    this.key = this.kernel
+      .getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .get('user.collectionName');
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
       this.key,
       this.dbName,
@@ -55,30 +59,35 @@ export class FakeMongoServer {
       normalizedUser.operator = new ObjectId(user.operator);
     }
 
-    if ('aom' in user) {
-      normalizedUser.aom = new ObjectId(user.aom);
+    if ('territory' in user) {
+      normalizedUser.territory = new ObjectId(user.territory);
     }
 
     normalizedUser.password = await crypto.cryptPassword(user.password);
-    const { result, ops } = await (<Promise<any>>this.collection.insertOne(normalizedUser));
+    const { ops } = await (<Promise<any>>this.collection.insertOne(normalizedUser));
 
     const newUser = ops[0];
     newUser._id = newUser._id.toString();
 
     if ('operator' in newUser) newUser.operator = newUser.operator.toString();
-    if ('aom' in newUser) newUser.aom = newUser.aom.toString();
+    if ('territory' in newUser) newUser.territory = newUser.territory.toString();
+
     return new User(newUser);
   }
 
   public async clearCollection(): Promise<void> {
     this.kernel = this.transport.getKernel();
-    this.key = this.kernel.getContainer().get(ConfigProviderInterfaceResolver).get(
-      'user.collectionName',
-    );
+
+    this.key = this.kernel
+      .getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .get('user.collectionName');
+
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
       this.key,
       this.dbName,
     );
-    await this.collection.remove();
+
+    await this.collection.drop();
   }
 }

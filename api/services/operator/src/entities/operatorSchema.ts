@@ -1,135 +1,32 @@
-export const aomSchema = {
-  $id: 'operator',
+import { companySchema } from '../schemas/parts/companySchema';
+import { addressSchema } from '../schemas/parts/addressSchema';
+import { bankSchema } from '../schemas/parts/bankSchema';
+import { contactsSchema } from '../schemas/parts/contactsSchema';
+import { cguSchema } from '../schemas/parts/cguSchema';
+import { applicationSchema } from '../schemas/parts/applicationSchema';
+
+export const operatorSchema = {
+  $id: 'operator.create',
   type: 'object',
   required: ['nom_commercial', 'raison_sociale'],
   additionalProperties: false,
   properties: {
     nom_commercial: {
       type: 'string',
+      minLength: 3,
+      maxLength: 256,
     },
     raison_sociale: {
       type: 'string',
+      minLength: 3,
+      maxLength: 256,
     },
-    company: {
-      type: 'object',
-      required: ['siren'],
-      additionalProperties: false,
-      properties: {
-        siren: {
-          type: 'string',
-          // match: regex.siren,
-        },
-        naf_etablissement: {
-          type: 'string',
-          // match: regex.naf,
-        },
-        naf_entreprise: {
-          type: 'string',
-          // match: regex.naf,
-        },
-        nature_juridique: {
-          type: 'string',
-        },
-        cle_nic: {
-          type: 'string',
-          // match: regex.nic,
-        },
-        rna: {
-          type: 'string',
-        },
-        vat_intra: {
-          type: 'string',
-          // match: regex.vatIntra
-        },
-      },
-    },
-    address: {
-      type: 'object',
-      required: [],
-      additionalProperties: false,
-      properties: {
-        street: {
-          type: 'string',
-        },
-        city: {
-          type: 'string',
-        },
-        country: {
-          type: 'string',
-        },
-        postcode: {
-          type: 'string',
-          // match: regex.postcode,
-        },
-        cedex: {
-          type: 'string',
-          // match: regex.cedex
-        },
-      },
-    },
-    bank: {
-      type: 'object',
-      required: [],
-      additionalProperties: false,
-      properties: {
-        bank_name: {
-          type: 'string',
-        },
-        client_name: {
-          type: 'string',
-        },
-        iban: {
-          type: 'string',
-          // validate: validators.iban,
-          // set: setters.iban
-        },
-        bic: {
-          type: 'string',
-          // validate: validators.bic,
-          // set: setters.bic
-        },
-      },
-    },
-    contacts: {
-      type: 'object',
-      required: [],
-      additionalProperties: false,
-      properties: {
-        rgpd_dpo: {
-          type: 'string', // ObjectId
-        },
-        rgpd_controller: {
-          type: 'string', // ObjectId
-        },
-        technical: {
-          type: 'string', // ObjectId
-        },
-      },
-    },
-    cgu: {
-      type: 'object',
-      required: [],
-      additionalProperties: false,
-      properties: {
-        accepted: {
-          type: 'boolean',
-          default: false,
-        },
-        acceptedAt: {
-          type: 'string',
-          format: 'datetime',
-        },
-        acceptedBy: {
-          type: 'string', // ObjectId
-        },
-      },
-    },
-    applications: {
-      type: 'array',
-      items: {
-        // [ApplicationSchema]
-      },
-    },
+    company: companySchema,
+    address: addressSchema,
+    bank: bankSchema,
+    contacts: contactsSchema,
+    cgu: cguSchema,
+    applications: [applicationSchema],
     createdAt: {
       type: 'string',
       format: 'datetime',

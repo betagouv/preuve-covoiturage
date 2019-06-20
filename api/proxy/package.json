@@ -68,11 +68,12 @@
   "dependencies": {
     "@ilos/framework": "~0",
     "@ilos/core": "~0",
+    "@ilos/framework": "~0",
     "@ilos/cli": "~0",
     "@ilos/provider-env": "~0",
     "@ilos/provider-config": "~0",
     "@pdc/provider-sentry": "0.0.1",
-    "@pdc/service-notification": "0.0.1",
+    "@ilos/provider-notification": "~0",
     "body-parser": "^1.19.0",
     "bull-arena": "^2.6.2",
     "cors": "^2.8.5",

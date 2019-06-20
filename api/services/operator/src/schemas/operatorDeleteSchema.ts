@@ -1,11 +1,9 @@
 export const operatorDeleteSchema = {
   $id: 'operator.delete',
   type: 'object',
-  required: ['id'],
+  required: ['_id'],
   additionalProperties: false,
   properties: {
-    id: {
-      type: 'string',
-    },
+    _id: { macro: 'objectid' },
   },
 };

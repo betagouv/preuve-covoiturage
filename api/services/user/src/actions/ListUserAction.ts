@@ -1,21 +1,16 @@
 import { Parents, Container } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserDbInterface } from '../interfaces/UserInterfaces';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
+import { ListUserParamsInterface } from '../interfaces/actions/UserListParamsInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
-import { PaginationInterface } from '../interfaces/PaginationInterface';
 
-interface ListUserInterface {
-  data: UserDbInterface[];
-  metadata: { pagination: PaginationInterface };
-}
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
-interface ListUserRequestInterface {
-  page?: number;
-  limit?: number;
-}
-
+/*
+ * list users filtered by territory or operator and paginate with limit & skip
+ */
 @Container.handler({
   service: 'user',
   method: 'list',
@@ -29,8 +24,8 @@ export class ListUserAction extends Parents.Action {
         ['user.list'],
         [
           (_params, context) => {
-            if ('aom' in context.call.user) {
-              return 'aom.users.list';
+            if ('territory' in context.call.user) {
+              return 'territory.users.list';
             }
           },
           (_params, context) => {
@@ -41,6 +36,7 @@ export class ListUserAction extends Parents.Action {
         ],
       ],
     ],
+    ['content.whitelist', userWhiteListFilterOutput.map((key: string) => `data.${key}`)],
   ];
 
   constructor(
@@ -50,11 +46,14 @@ export class ListUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: ListUserRequestInterface, context: UserContextInterface): Promise<ListUserInterface> {
-    const contextParam: { aom?: string; operator?: string } = {};
+  public async handle(
+    params: ListUserParamsInterface,
+    context: UserContextInterface,
+  ): Promise<UserListResponseInterface> {
+    const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('aom' in context.call.user) {
-      contextParam.aom = context.call.user.aom;
+    if ('territory' in context.call.user) {
+      contextParam.territory = context.call.user.territory;
     }
 
     if ('operator' in context.call.user) {
@@ -62,8 +61,8 @@ export class ListUserAction extends Parents.Action {
     }
 
     // Pagination
-    const page = 'page' in request ? this.castPage(request.page) : this.config.get('pagination.defaultPage');
-    const limit = 'limit' in request ? this.castPage(request.limit) : this.config.get('pagination.defaultLimit');
+    const page = 'page' in params ? this.castPage(params.page) : this.config.get('pagination.defaultPage');
+    const limit = 'limit' in params ? this.castPage(params.limit) : this.config.get('pagination.defaultLimit');
     const pagination = this.paginate({ limit, page });
 
     const data = await this.userRepository.list(contextParam, pagination);
@@ -83,11 +82,11 @@ export class ListUserAction extends Parents.Action {
   }
 
   private castPage(page: number): number {
-    return page || this.config.get('pagination.defaultPage'); // Math abs useful ?
+    return page || this.config.get('pagination.defaultPage');
   }
 
   private castLimit(limit: number): number {
-    const lim = limit || this.config.get('pagination.defaultLimit'); // Math abs useful ?
+    const lim = limit || this.config.get('pagination.defaultLimit');
     return lim > this.config.get('pagination.maxLimit') ? this.config.get('pagination.maxLimit') : lim;
   }
 

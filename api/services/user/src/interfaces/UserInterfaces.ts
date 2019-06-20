@@ -1,4 +1,5 @@
 export interface UserBaseInterface {
+  _id?: string;
   email?: string;
   lastname?: string;
   firstname?: string;
@@ -6,7 +7,6 @@ export interface UserBaseInterface {
   permissions?: string[];
   phone?: string;
   password?: string;
-  fullname?: string;
   role?: string;
   status?: string;
   forgottenReset?: string;
@@ -14,29 +14,12 @@ export interface UserBaseInterface {
   emailConfirm?: string;
   emailToken?: string;
   operator?: string;
-  aom?: string;
+  territory?: string;
   hasResetPassword?: boolean;
   forgottenAt?: Date;
   emailChangeAt?: Date;
   lastConnectedAt?: Date;
-}
-
-export interface UserDbInterface extends UserBaseInterface {
-  _id?: string;
-  fullname: string;
   deletedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
-}
-
-export interface CreateUserParamsInterface {
-  email: string;
-  lastname: string;
-  firstname: string;
-  phone: string;
-  group: string;
-  role: string;
-  password: string;
-  aom?: string;
-  operator?: string;
 }

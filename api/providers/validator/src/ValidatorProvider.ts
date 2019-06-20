@@ -1,39 +1,49 @@
 import { Container } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { AjvValidatorProvider, ValidatorProviderInterface } from '@ilos/provider-validator';
 
 import { bicCustomFormat } from './formats/bicCustomFormat';
-import { dateCustomFormat } from './formats/dateCustomFormat';
-import { emailCustomFormat } from './formats/emailCustomFormat';
 import { euVatCustomFormat } from './formats/euVatCustomFormat';
 import { ibanCustomFormat } from './formats/ibanCustomFormat';
 import { inseeCustomFormat } from './formats/inseeCustomFormat';
-import { latCustomFormat } from './formats/latCustomFormat';
-import { lonCustomFormat } from './formats/lonCustomFormat';
 import { nafCustomFormat } from './formats/nafCustomFormat';
 import { nicCustomFormat } from './formats/nicCustomFormat';
+import { objectidCustomFormat } from './formats/objectidCustomFormat';
 import { phoneCustomFormat } from './formats/phoneCustomFormat';
 import { postcodeCustomFormat } from './formats/postcodeCustomFormat';
 import { sirenCustomFormat } from './formats/sirenCustomFormat';
 import { siretCustomFormat } from './formats/siretCustomFormat';
+import { coordinatesKeyword } from './keywords/coordinatesKeyword';
+import { macroKeyword } from './keywords/macroKeyword';
+import { rnaCustomFormat } from './formats/rnaCustomFormat';
 
 @Container.provider()
 export class ValidatorProvider extends AjvValidatorProvider implements ValidatorProviderInterface {
+  constructor(config: ConfigProviderInterfaceResolver) {
+    super(config);
+  }
+
   boot() {
     super.boot();
 
-    this.addFormat('bic', bicCustomFormat);
-    this.addFormat('date', dateCustomFormat);
-    this.addFormat('email', emailCustomFormat);
-    this.addFormat('euvat', euVatCustomFormat);
-    this.addFormat('iban', ibanCustomFormat);
-    this.addFormat('insee', inseeCustomFormat);
-    this.addFormat('lat', latCustomFormat);
-    this.addFormat('lon', lonCustomFormat);
-    this.addFormat('naf', nafCustomFormat);
-    this.addFormat('nic', nicCustomFormat);
-    this.addFormat('phone', phoneCustomFormat);
-    this.addFormat('postcode', postcodeCustomFormat);
-    this.addFormat('siren', sirenCustomFormat);
-    this.addFormat('siret', siretCustomFormat);
+    // register string formats
+    this.registerCustomKeyword({ name: 'bic', type: 'format', definition: bicCustomFormat });
+    this.registerCustomKeyword({ name: 'euvat', type: 'format', definition: euVatCustomFormat });
+    this.registerCustomKeyword({ name: 'iban', type: 'format', definition: ibanCustomFormat });
+    this.registerCustomKeyword({ name: 'insee', type: 'format', definition: inseeCustomFormat });
+    this.registerCustomKeyword({ name: 'naf', type: 'format', definition: nafCustomFormat });
+    this.registerCustomKeyword({ name: 'nic', type: 'format', definition: nicCustomFormat });
+    this.registerCustomKeyword({ name: 'objectid', type: 'format', definition: objectidCustomFormat });
+    this.registerCustomKeyword({ name: 'phone', type: 'format', definition: phoneCustomFormat });
+    this.registerCustomKeyword({ name: 'postcode', type: 'format', definition: postcodeCustomFormat });
+    this.registerCustomKeyword({ name: 'rna', type: 'format', definition: rnaCustomFormat });
+    this.registerCustomKeyword({ name: 'siren', type: 'format', definition: sirenCustomFormat });
+    this.registerCustomKeyword({ name: 'siret', type: 'format', definition: siretCustomFormat });
+
+    // register keywords (compile)
+    this.registerCustomKeyword({ name: 'coordinates', type: 'keyword', definition: coordinatesKeyword });
+
+    // register macros
+    this.registerCustomKeyword(macroKeyword);
   }
 }

@@ -1,15 +1,11 @@
 // tslint:disable max-classes-per-file
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { bootstrap, Exceptions } from '@ilos/core';
-import { MongoProvider } from '@pdc/provider-mongo';
+import { Exceptions } from '@ilos/core';
+import { bootstrap } from '@ilos/framework';
+import { MongoProvider } from '@ilos/provider-mongo';
 
-let mongoServer;
-let connectionString;
-let dbName;
-let kernel;
 let transport;
 let request;
 
@@ -18,25 +14,23 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 const port = '8081';
 
-const errorFactory = (err: Exceptions.RPCException) => {
-  return {
-    status: 200,
-    data: {
-      jsonrpc: '2.0',
-      id: 1,
-      error: {
-        code: err.rpcError.code,
-        message: err.rpcError.message,
-        data: err.rpcError.data,
-      },
+const errorFactory = (err: Exceptions.RPCException) => ({
+  status: 200,
+  data: {
+    jsonrpc: '2.0',
+    id: 1,
+    error: {
+      code: err.rpcError.code,
+      message: err.rpcError.message,
+      data: err.rpcError.data,
     },
-  };
-};
+  },
+});
 
 const callFactory = (method: string, data: any, permissions: string[]) => ({
+  method,
   id: 1,
   jsonrpc: '2.0',
-  method: method,
   params: {
     params: data,
     _context: {
@@ -55,13 +49,11 @@ const callFactory = (method: string, data: any, permissions: string[]) => ({
 
 describe('Operator service', () => {
   before(async () => {
-    mongoServer = new MongoMemoryServer();
-    connectionString = await mongoServer.getConnectionString();
-    dbName = await mongoServer.getDbName();
-    process.env.APP_MONGO_URL = connectionString;
-    process.env.APP_MONGO_DB = dbName;
+    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017/pdc-test?authSource=admin';
+    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+
     transport = await bootstrap.boot(['', '', 'http', port]);
-    kernel = transport.getKernel();
+
     request = axios.create({
       baseURL: `http://127.0.0.1:${port}`,
       timeout: 1000,
@@ -73,9 +65,15 @@ describe('Operator service', () => {
   });
 
   after(async () => {
-    await (<MongoProvider>kernel.getContainer().get(MongoProvider)).close();
+    await (<MongoProvider>transport
+      .getKernel()
+      .getContainer()
+      .get(MongoProvider))
+      .getDb(process.env.APP_MONGO_DB)
+      .then((db) => db.dropDatabase());
+
     await transport.down();
-    await mongoServer.stop();
+    process.exit(0);
   });
 
   it('should validate request on create', async () => {
@@ -92,7 +90,11 @@ describe('Operator service', () => {
         ),
       ),
     ).to.eventually.deep.include(
-      errorFactory(new Exceptions.InvalidParamsException('data.nom_commercial should be string')),
+      errorFactory(
+        new Exceptions.InvalidParamsException(
+          'data.nom_commercial should be string, data.nom_commercial should pass "macro" keyword validation',
+        ),
+      ),
     );
   });
 
@@ -113,58 +115,86 @@ describe('Operator service', () => {
   });
 
   it('should work', async () => {
-    const { status: createStatus, data: createData } = await request.post(
-      '/',
-      callFactory(
-        'operator:create',
-        {
-          nom_commercial: 'Toto',
-          raison_sociale: 'Toto inc.',
-        },
-        ['operator.create'],
-      ),
-    );
-    const { _id, nom_commercial } = createData.result;
-    expect(createStatus).equal(200);
-    expect(nom_commercial).to.eq('Toto');
+    let _id: string;
+    let patchedName: string;
 
-    const { status: patchStatus, data: patchData } = await request.post(
-      '/',
-      callFactory(
-        'operator:patch',
-        {
-          id: _id,
-          patch: {
-            nom_commercial: 'Yop',
+    try {
+      // Create an operator
+      const { status: createStatus, data: createData } = await request.post(
+        '/',
+        callFactory(
+          'operator:create',
+          {
+            nom_commercial: 'Toto',
+            raison_sociale: 'Toto inc.',
           },
-        },
-        ['operator.update'],
-      ),
-    );
-    const { nom_commercial: patchedName } = patchData.result;
-    expect(patchStatus).equal(200);
-    expect(patchedName).to.eq('Yop');
+          ['operator.create'],
+        ),
+      );
+      _id = createData.result._id;
+      const nom_commercial = createData.result.nom_commercial;
+      expect(createStatus).equal(200);
+      expect(nom_commercial).to.eq('Toto');
+    } catch (e) {
+      console.log('CREATE', e.message);
+      throw e;
+    }
 
-    const { status: listStatus, data: listData } = await request.post(
-      '/',
-      callFactory('operator:all', {}, ['operator.list']),
-    );
-    const list = listData.result;
-    expect(listStatus).equal(200);
-    expect(list.length).eq(1);
-    expect(list[0].nom_commercial).eq(patchedName);
+    try {
+      // Update an operator
+      const { status: patchStatus, data: patchData } = await request.post(
+        '/',
+        callFactory(
+          'operator:patch',
+          {
+            _id,
+            patch: {
+              nom_commercial: 'Yop',
+            },
+          },
+          ['operator.update'],
+        ),
+      );
 
-    const { status: deleteStatus, data: deleteData } = await request.post(
-      '/',
-      callFactory(
-        'operator:delete',
-        {
-          id: _id,
-        },
-        ['operator.delete'],
-      ),
-    );
-    expect(deleteStatus).equal(200);
-    expect(deleteData.result).equal(true);
+      patchedName = patchData.result.nom_commercial;
+      expect(patchStatus).equal(200);
+      expect(patchedName).to.eq('Yop');
+    } catch (e) {
+      console.log('PATCH', e.message);
+      throw e;
+    }
+
+    try {
+      const { status: listStatus, data: listData } = await request.post(
+        '/',
+        callFactory('operator:all', {}, ['operator.list']),
+      );
+      const list = listData.result;
+      expect(listStatus).equal(200);
+      expect(list.length).eq(1);
+      expect(list[0].nom_commercial).eq(patchedName);
+    } catch (e) {
+      console.log('FIND', e.message);
+      throw e;
+    }
+
+    // delete the operator
+    try {
+      const { status: deleteStatus, data: deleteData } = await request.post(
+        '/',
+        callFactory(
+          'operator:delete',
+          {
+            _id,
+          },
+          ['operator.delete'],
+        ),
+      );
+      expect(deleteStatus).equal(200);
+      expect(deleteData.result).equal(true);
+    } catch (e) {
+      console.log('DELETE', e.message);
+      throw e;
+    }
   });
 });

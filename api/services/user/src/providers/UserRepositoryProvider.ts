@@ -5,8 +5,15 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterface } from '../interfaces/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterface } from '../interfaces/repository/UserRepositoryProviderInterface';
+import {
+  UserRepositoryListFiltersInterface,
+  UserRepositoryListPaginationInterface,
+} from '../interfaces/repository/UserRepositoryListParamsInterface';
 
+/*
+ * User specific repository
+ */
 @Container.provider()
 export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface {
   constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
@@ -29,21 +36,18 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return User;
   }
 
-  public async findByEmail(email: string): Promise<User | undefined> {
-    const collection = await this.getCollection();
-    const result = await collection.findOne({ email });
-    return result ? this.instanciate(result) : result;
-  }
-
-  public async list(filters, pagination): Promise<{ users: User[]; total: number }> {
+  /*
+   * List users, filtered by Territory, Operator, skip & limit
+   */
+  public async list(filters: UserRepositoryListFiltersInterface, pagination: UserRepositoryListPaginationInterface): Promise<{ users: User[]; total: number }> {
     let result = [];
 
     const collection = await this.getCollection();
 
     const normalizedFilters = this.normalizeContextFilters(filters);
 
-    const skip = 'skip' in filters ? filters.skip : this.config.get('user.defaultSkip');
-    const limit = 'limit' in filters ? filters.limit : this.config.get('user.defaultLimit');
+    const skip = 'skip' in pagination ? pagination.skip : this.config.get('user.defaultSkip');
+    const limit = 'limit' in pagination ? pagination.limit : this.config.get('user.defaultLimit');
     result = await collection
       .find(normalizedFilters)
       .skip(skip)
@@ -59,39 +63,48 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     };
   }
 
-  public async deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void> {
+  /**
+   * Delete user by id & ( territory | operator)
+   */
+  public async deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
-    const normalizedId = new ObjectId(id);
-    const result = await collection.deleteOne({ _id: id, ...normalizedFilters });
+    const result = await collection.deleteOne({ _id: new ObjectId(_id), ...normalizedFilters });
     if (result.deletedCount !== 1) {
       throw new MongoException();
     }
     return;
   }
 
-  public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User> {
+  /**
+   * Find User by id & ( territory | operator)
+   */
+  public async findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
-    const normalizedId = new ObjectId(id);
-    const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters });
+    const result = await collection.findOne({ _id: new ObjectId(_id), ...normalizedFilters });
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }
 
-  public async findUserByParam(param: { [prop: string]: string }): Promise<User> {
+  /**
+   * Find user by email or confirm or reset
+   */
+  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     const collection = await this.getCollection();
-    const result = await collection.findOne(param);
+    const result = await collection.findOne(params);
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }
 
-  public async patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }) {
+  /**
+   * Patch User by id & ( territory | operator)
+   */
+  public async patchUser(_id: string, patch: any, contextParam: { territory?: string; operator?: string }) {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
-    const normalizedId = new ObjectId(id);
     const result = await collection.findOneAndUpdate(
-      { _id: normalizedId },
+      { _id: new ObjectId(_id), ...normalizedFilters },
       {
         $set: patch,
       },
@@ -105,10 +118,10 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result.value);
   }
 
-  private normalizeContextFilters(contextFilter: { aom?: string; operator?: string }) {
-    const normalizedFilters: { aom?: ObjectId; operator?: ObjectId } = {};
-    if ('aom' in contextFilter) {
-      normalizedFilters.aom = new ObjectId(contextFilter.aom);
+  private normalizeContextFilters(contextFilter: { territory?: string; operator?: string }) {
+    const normalizedFilters: { territory?: ObjectId; operator?: ObjectId } = {};
+    if ('territory' in contextFilter) {
+      normalizedFilters.territory = new ObjectId(contextFilter.territory);
     }
     if ('operator' in contextFilter) {
       normalizedFilters.operator = new ObjectId(contextFilter.operator);
@@ -116,7 +129,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return normalizedFilters;
   }
 
-  private async countUsers(filters: { aom?: ObjectId; operator?: ObjectId }) {
+  private async countUsers(filters: { territory?: ObjectId; operator?: ObjectId }) {
     const collection = await this.getCollection();
     return collection.countDocuments(filters);
   }
