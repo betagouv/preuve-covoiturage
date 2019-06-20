@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 
 import { Interfaces } from '@ilos/core';
+import { bootstrap } from '@ilos/framework';
 import { ConfigProviderInterface, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { EnvProviderInterface, EnvProviderInterfaceResolver } from '@ilos/provider-env';
 
@@ -17,6 +18,7 @@ import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } fr
 import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall, routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './helpers/routeMapping';
+import { sessionSecretGenerator } from './helpers/sessionSecretGenerator';
 
 export class App implements Interfaces.TransportInterface {
   app: express.Express;
@@ -71,7 +73,7 @@ export class App implements Interfaces.TransportInterface {
   }
 
   private async bootKernel() {
-    // bootstrap.setEnvironment();
+    bootstrap.setEnvironment();
     await this.kernel.boot();
     this.config = this.kernel.getContainer().get(ConfigProviderInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvProviderInterfaceResolver);
@@ -89,7 +91,7 @@ export class App implements Interfaces.TransportInterface {
   }
 
   private registerSessionHandler() {
-    const sessionSecret = this.config.get('proxy.sessionSecret');
+    const sessionSecret = this.config.get('proxy.sessionSecret', sessionSecretGenerator());
     const sessionName = this.config.get('proxy.sessionName', 'PDC-Session');
     this.app.use(
       expressSession({

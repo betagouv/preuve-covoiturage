@@ -2,9 +2,10 @@
 import { describe } from 'mocha';
 import supertest from 'supertest';
 import chai from 'chai';
+import { Interfaces, Parents, Container, Exceptions, Types } from '@ilos/core';
+
 import { App } from '../src/App';
 import { Kernel } from '../src/bridge/Kernel';
-import { Interfaces, Parents, Container, Exceptions, Types } from '@ilos/core';
 
 @Container.handler({
   service: 'user',
@@ -24,9 +25,7 @@ class UserLoginAction extends Parents.Action implements Interfaces.HandlerInterf
   protected async handle(params): Promise<any> {
     const { login, password } = params;
 
-    const user = this.users.find((user) => {
-      return user.login === login;
-    });
+    const user = this.users.find((u) => u.login === login);
 
     if (!user || user.password !== password) {
       throw new Exceptions.ForbiddenException();
@@ -51,6 +50,7 @@ let request;
 
 describe('Proxy auth', async () => {
   before(async () => {
+    process.env.APP_URL = 'http://localhost:8081';
     await app.up();
   });
 
@@ -70,11 +70,11 @@ describe('Proxy auth', async () => {
     });
 
     // cookie should not be sent
-    let cookie = undefined;
+    const cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
+      r.header['set-cookie'].find((c: string) => /PDC-Session/.test(c));
     }
-    expect(cookie).to.be.undefined;
+    expect(cookie).eq(undefined);
   });
 
   it('should return error on login failure', async () => {
@@ -87,11 +87,11 @@ describe('Proxy auth', async () => {
       message: 'Forbidden',
     });
 
-    let cookie = undefined;
+    const cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
+      r.header['set-cookie'].find((c: string) => /PDC-Session/.test(c));
     }
-    expect(cookie).to.be.undefined;
+    expect(cookie).eq(undefined);
   });
 
   it('should return session cookie on login', async () => {
@@ -108,6 +108,7 @@ describe('Proxy auth', async () => {
         meta: null,
       },
     });
+
     expect(r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie))).to.not.be.undefined;
   });
 
@@ -150,11 +151,11 @@ describe('Proxy auth', async () => {
     expect(r.status).to.eq(204);
 
     // cookie should not be sent
-    let cookie = undefined;
+    const cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
+      r.header['set-cookie'].find((c: string) => /PDC-Session/.test(c));
     }
-    expect(cookie).to.be.undefined;
+    expect(cookie).eq(undefined);
 
     const rr = await request.get('/profile').set('Cookie', cookies);
 
