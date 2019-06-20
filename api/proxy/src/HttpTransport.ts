@@ -7,18 +7,18 @@ import cors from 'cors';
 import swaggerUiExpress from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 
-import { Sentry, SentryProvider } from '@pdc/provider-sentry';
-
 import { Interfaces } from '@ilos/core';
 import { ConfigProviderInterface, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { EnvProviderInterface, EnvProviderInterfaceResolver } from '@ilos/provider-env';
+
+import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall, routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './helpers/routeMapping';
 
-export class App implements Interfaces.TransportInterface {
+export class HttpTransport implements Interfaces.TransportInterface {
   app: express.Express;
   kernel: Interfaces.KernelInterface;
   config: ConfigProviderInterface;
@@ -35,11 +35,16 @@ export class App implements Interfaces.TransportInterface {
     return this.kernel;
   }
 
-  async up() {
-    await this.bootKernel();
+  async up(opts: string[] = []) {
+    this.getProviders();
+
+    const [optsPort] = opts;
+    const port = optsPort ? Number(optsPort) : this.config.get('proxy.port', 8080);
+
     this.app = express();
     this.setup();
-    this.start();
+
+    this.start(port);
   }
 
   async down() {
@@ -59,7 +64,7 @@ export class App implements Interfaces.TransportInterface {
     this.registerBullArena();
     this.registerRoutes();
 
-    if (this.env.get('APP_ENV') !== 'production') {
+    if (this.config.get('proxy.rpc.open', false)) {
       this.registerCallHandler();
     }
 
@@ -70,12 +75,9 @@ export class App implements Interfaces.TransportInterface {
     return this.app;
   }
 
-  private async bootKernel() {
-    // bootstrap.setEnvironment();
-    await this.kernel.boot();
+  private async getProviders() {
     this.config = this.kernel.getContainer().get(ConfigProviderInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvProviderInterfaceResolver);
-    // this.app.locals.kernel = this.kernel;
   }
 
   private registerBeforeAllHandlers() {
@@ -89,8 +91,8 @@ export class App implements Interfaces.TransportInterface {
   }
 
   private registerSessionHandler() {
-    const sessionSecret = this.config.get('proxy.sessionSecret');
-    const sessionName = this.config.get('proxy.sessionName', 'PDC-Session');
+    const sessionSecret = this.config.get('proxy.session.secret');
+    const sessionName = this.config.get('proxy.session.name');
     this.app.use(
       expressSession({
         cookie: {
@@ -112,11 +114,11 @@ export class App implements Interfaces.TransportInterface {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
-    const appUrl = this.config.get('proxy.appUrl');
+    const corsOrigin = this.config.get('proxy.cors');
 
     this.app.use(
       cors({
-        origin: process.env.NODE_ENV === 'review' ? '*' : appUrl,
+        origin: corsOrigin,
         optionsSuccessStatus: 200,
       }),
     );
@@ -128,6 +130,8 @@ export class App implements Interfaces.TransportInterface {
   }
 
   private registerAuth() {
+    // TODO add token parser for operator application > inject in sessions
+
     this.app.post(
       '/login',
       asyncHandler(async (req, res, next) => {
@@ -187,7 +191,7 @@ export class App implements Interfaces.TransportInterface {
   }
 
   private registerCallHandler() {
-    const endpoint = this.config.get('proxy.rpcEndpoint', '/rpc');
+    const endpoint = this.config.get('proxy.rpc.endpoint');
     this.app.get(
       endpoint,
       asyncHandler(async (req, res, next) => {
@@ -218,8 +222,7 @@ export class App implements Interfaces.TransportInterface {
     );
   }
 
-  private start() {
-    const port = this.config.get('proxy.port', 8080);
+  private start(port: Number = 8080) {
     this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
   }
 }

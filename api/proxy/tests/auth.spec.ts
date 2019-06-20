@@ -1,10 +1,11 @@
 // tslint:disable max-classes-per-file
-import { describe } from 'mocha';
 import supertest from 'supertest';
 import chai from 'chai';
-import { App } from '../src/App';
-import { Kernel } from '../src/bridge/Kernel';
-import { Interfaces, Parents, Container, Exceptions } from '@pdc/core';
+import path from 'path';
+import { HttpTransport } from '../src/HttpTransport';
+import { Kernel } from '../src/Kernel';
+import { Interfaces, Parents, Container, Exceptions } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 @Container.handler({
   service: 'user',
@@ -42,15 +43,22 @@ class UserServiceProvider extends Parents.ServiceProvider implements Interfaces.
 
 class ThinKernel extends Kernel {
   serviceProviders = [UserServiceProvider];
+
+  async boot() {
+    super.boot();
+    this.getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .loadConfigDirectory(path.resolve(process.cwd(), './dist'), './config');
+  }
 }
 
 const { expect } = chai;
-
-const app = new App(new ThinKernel());
+const kernel = new ThinKernel();
+const app = new HttpTransport(kernel);
 let request;
-
 describe('Proxy auth', async () => {
   before(async () => {
+    await kernel.boot();
     await app.up();
   });
 
@@ -72,7 +80,7 @@ describe('Proxy auth', async () => {
     // cookie should not be sent
     let cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
+      r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
     expect(cookie).to.be.undefined;
   });
@@ -89,7 +97,7 @@ describe('Proxy auth', async () => {
 
     let cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
+      r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
     expect(cookie).to.be.undefined;
   });
@@ -108,7 +116,7 @@ describe('Proxy auth', async () => {
         meta: null,
       },
     });
-    expect(r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie))).to.not.be.undefined;
+    expect(r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie))).to.not.be.undefined;
   });
 
   it('should read session on profile', async () => {
@@ -152,7 +160,7 @@ describe('Proxy auth', async () => {
     // cookie should not be sent
     let cookie = undefined;
     if ('set-cookie' in r.header) {
-      r.header['set-cookie'].find((cookie: string) => /PDC-Session/.test(cookie));
+      r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
     expect(cookie).to.be.undefined;
 

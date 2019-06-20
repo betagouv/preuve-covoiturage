@@ -3,6 +3,7 @@ import supertest from 'supertest';
 import { Parents } from '@ilos/core';
 import express from 'express';
 import bodyParser from 'body-parser';
+import expressSession from 'express-session';
 
 import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping';
 
@@ -33,10 +34,17 @@ function responseFactory(method, params) {
 
 app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  expressSession({
+    secret: 'SECRET',
+  }),
+);
+
 app.use((req, res, next) => {
-  req.user = fakeUser;
+  req.session.user = fakeUser;
   next();
 });
+
 class Kernel extends Parents.Kernel {
   async handle(call) {
     return {

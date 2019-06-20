@@ -2,7 +2,7 @@
 // otherwise Express doesn't use it as error handler
 // https://expressjs.com/en/guide/error-handling.html
 // tslint:disable-next-line: no-default-export no-unused-var
-export function errorHandlerMiddleware(err, req, res, next) {
+export function errorHandlerMiddleware(err, _req, res, _next) {
   let output;
 
   switch (err.name) {

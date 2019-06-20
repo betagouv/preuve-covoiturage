@@ -4,25 +4,19 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "start": "yarn serve",
-    "build": "yarn build-ts",
-    "serve": "node dist/index.js",
-    "watch-node": "nodemon dist/index.js",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
-    "build-ts": "tsc",
-    "watch-ts": "tsc -w",
+    "build": "tsc",
+    "ilos": "ilos",
+    "watch": "tsc -w",
     "coverage": "export NODE_ENV=testing; nyc --all --reporter=text mocha src/**/*.spec.ts tests/**/*.spec.ts",
     "test": "export NODE_ENV=testing; mocha src/**/*.spec.ts",
     "test:integration": "export NODE_ENV=testing; mocha tests/**/*.spec.ts",
-    "lint": "tslint -c ../tslint.json -p tsconfig.json",
-    "debug": "yarn build && yarn watch-debug",
-    "serve-debug": "nodemon --inspect dist/index.js",
-    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\""
+    "lint": "tslint -c ../tslint.json -p tsconfig.json"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "config": {
-    "workingDir": "./dist"
+    "workingDir": "./dist",
+    "bootstrap": "./bootstrap.js"
   },
   "mocha": {
     "require": [
@@ -72,6 +66,7 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
+    "@ilos/framework": "~0",
     "@ilos/core": "~0",
     "@ilos/cli": "~0",
     "@ilos/provider-env": "~0",
