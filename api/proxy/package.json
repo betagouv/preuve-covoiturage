@@ -66,7 +66,6 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/framework": "~0",
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@ilos/cli": "~0",
