@@ -1,18 +1,10 @@
 // tslint:disable max-classes-per-file
 import supertest from 'supertest';
 import chai from 'chai';
-<<<<<<< HEAD
-import path from 'path';
-import { HttpTransport } from '../src/HttpTransport';
-import { Kernel } from '../src/Kernel';
-import { Interfaces, Parents, Container, Exceptions } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-=======
 import { Interfaces, Parents, Container, Exceptions, Types } from '@ilos/core';
 
-import { App } from '../src/App';
-import { Kernel } from '../src/bridge/Kernel';
->>>>>>> 46-ts-user
+import { HttpTransport } from '../src/HttpTransport';
+import { Kernel } from '../src/Kernel';
 
 @Container.handler({
   service: 'user',

@@ -8,7 +8,6 @@ import swaggerUiExpress from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 
 import { Interfaces } from '@ilos/core';
-import { bootstrap } from '@ilos/framework';
 import { ConfigProviderInterface, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { EnvProviderInterface, EnvProviderInterfaceResolver } from '@ilos/provider-env';
 
@@ -18,7 +17,6 @@ import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } fr
 import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall, routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './helpers/routeMapping';
-import { sessionSecretGenerator } from './helpers/sessionSecretGenerator';
 
 export class HttpTransport implements Interfaces.TransportInterface {
   app: express.Express;
@@ -77,9 +75,7 @@ export class HttpTransport implements Interfaces.TransportInterface {
     return this.app;
   }
 
-  private async bootKernel() {
-    bootstrap.setEnvironment();
-    await this.kernel.boot();
+  private async getProviders() {
     this.config = this.kernel.getContainer().get(ConfigProviderInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvProviderInterfaceResolver);
   }
@@ -95,8 +91,8 @@ export class HttpTransport implements Interfaces.TransportInterface {
   }
 
   private registerSessionHandler() {
-    const sessionSecret = this.config.get('proxy.sessionSecret', sessionSecretGenerator());
-    const sessionName = this.config.get('proxy.sessionName', 'PDC-Session');
+    const sessionSecret = this.config.get('proxy.session.secret');
+    const sessionName = this.config.get('proxy.session.name');
     this.app.use(
       expressSession({
         cookie: {
