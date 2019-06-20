@@ -1,4 +1,4 @@
-import { Parents, Container, Types } from '@ilos/core';
+import { Parents, Container } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
@@ -19,13 +19,13 @@ export class DeleteUserAction extends Parents.Action {
         ['user.delete'],
         [
           (params, context) => {
-            if ('id' in params && params.id === context.call.user._id) {
+            if ('_id' in params && params._id === context.call.user._id) {
               return 'profile.delete';
             }
           },
           (_params, context) => {
-            if ('aom' in context.call.user) {
-              return 'aom.users.remove';
+            if ('territory' in context.call.user) {
+              return 'territory.users.remove';
             }
           },
           (_params, context) => {
@@ -42,17 +42,17 @@ export class DeleteUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: { id: string }, context: UserContextInterface): Promise<void> {
-    const contextParam: { aom?: string; operator?: string } = {};
+  public async handle(request: { _id: string }, context: UserContextInterface): Promise<void> {
+    const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('aom' in context.call.user) {
-      contextParam.aom = context.call.user.aom;
+    if ('territory' in context.call.user) {
+      contextParam.territory = context.call.user.territory;
     }
 
     if ('operator' in context.call.user) {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.deleteUser(request.id, contextParam);
+    return this.userRepository.deleteUser(request._id, contextParam);
   }
 }

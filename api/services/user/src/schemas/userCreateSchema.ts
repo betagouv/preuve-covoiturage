@@ -11,15 +11,15 @@ export const userCreateSchema = {
     group: { macro: 'group' },
     role: { macro: 'role' },
     operator: { macro: 'objectid' },
-    aom: { macro: 'objectid' },
+    territory: { macro: 'objectid' },
   },
   allOf: [
     {
       if: {
-        properties: { group: { const: 'aom' } },
+        properties: { group: { const: 'territory' } },
       },
       then: {
-        required: ['email', 'lastname', 'firstname', 'group', 'aom'],
+        required: ['email', 'lastname', 'firstname', 'group', 'territory'],
       },
     },
     {

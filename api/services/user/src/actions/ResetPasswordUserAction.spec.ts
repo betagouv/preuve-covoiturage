@@ -3,7 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { Container, Interfaces } from '@ilos/core';
+import { Container } from '@ilos/core';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';

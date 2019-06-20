@@ -12,12 +12,11 @@ import { User } from '../entities/User';
 import { LoginUserAction } from './LoginUserAction';
 import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
-import { CreateUserAction } from './CreateUserAction';
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
 const mockUser = { ...mockNewUserBase, _id: 'mockUserId', status: 'active' };
 

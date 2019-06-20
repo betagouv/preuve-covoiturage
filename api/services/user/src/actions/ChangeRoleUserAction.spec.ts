@@ -41,7 +41,7 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async boot() {
     return;
   }
-  async patchUser(id: string, patch: any): Promise<User> {
+  async patchUser(_id: string, patch: any): Promise<User> {
     return new User({
       ...mockUser,
       ...patch,
@@ -89,7 +89,7 @@ describe('USER ACTION - Change role', () => {
     const result = await action.call({
       method: 'user:changeRole',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-      params: { id: mockUser._id, role: newRole },
+      params: { _id: mockUser._id, role: newRole },
     });
     expect(result).to.eql({
       ...defaultUserProperties,
@@ -98,15 +98,15 @@ describe('USER ACTION - Change role', () => {
     });
   });
 
-  it('permission "aom.users.update" should change role of aom user', async () => {
+  it('permission "territory.users.update" should change role of territory user', async () => {
     const result = await action.call({
       method: 'user:changeRole',
       context: {
         call: {
           user: {
             ...mockConnectedUser,
-            permissions: ['aom.users.update'],
-            aom: 'aomId',
+            permissions: ['territory.users.update'],
+            territory: '5d0b663b0de4f5b6e93dbca8',
           },
         },
         channel: { service: '' },

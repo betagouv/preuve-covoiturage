@@ -35,7 +35,6 @@ const mockUser = {
   _id: mockConnectedUserBase._id,
 };
 
-
 const cryptedNewPassword = 'cryptedNewPassword';
 const cryptedOldPassword = 'cryptedOldPassword';
 const password = 'password';
@@ -50,7 +49,6 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
     return;
   }
 }
-
 
 @Container.provider()
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
@@ -92,15 +90,12 @@ class ServiceProvider extends BaseServiceProvider {
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
   ];
 
-  protected registerConfig() {
-  }
+  protected registerConfig() {}
 
-  protected registerTemplate() {
-  }
+  protected registerTemplate() {}
 }
 
-
-  let serviceProvider;
+let serviceProvider;
 let handlers;
 let action;
 
@@ -118,12 +113,11 @@ describe('USER ACTION - Change password', () => {
   });
 
   it('permission "profile.update" should change password of user', async () => {
-    const result = await action.call(
-      {
-        method: 'user:changePassword',
-        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-        params: mockChangePasswordParams,
-      });
+    const result = await action.call({
+      method: 'user:changePassword',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: mockChangePasswordParams,
+    });
     expect(result).to.eql({
       ...defaultUserProperties,
       ...mockUser,
@@ -131,15 +125,15 @@ describe('USER ACTION - Change password', () => {
   });
 
   it('wrong password should reject', async () => {
-    await expect(action.call(
-      {
+    await expect(
+      action.call({
         method: 'user:changePassword',
         context: { call: { user: mockConnectedUser }, channel: { service: '' } },
         params: {
           ...mockChangePasswordParams,
           oldPassword: 'wrongPassword',
         },
-      })).to.rejectedWith(Exceptions.ForbiddenException);
+      }),
+    ).to.rejectedWith(Exceptions.ForbiddenException);
   });
 });
-

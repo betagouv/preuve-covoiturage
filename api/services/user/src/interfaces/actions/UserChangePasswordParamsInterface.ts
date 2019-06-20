@@ -1,5 +1,5 @@
 export interface UserChangePasswordParamsInterface {
-  id: string;
+  _id: string;
   oldPassword: string;
   newPassword: string;
 }

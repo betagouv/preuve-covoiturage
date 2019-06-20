@@ -12,14 +12,12 @@ import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateBy
   method: 'notify',
 })
 export class NotifyUserAction extends Parents.Action {
-  constructor(
-    private notificationProvider: NotificationProviderInterfaceResolver,
-  ) {
+  constructor(private notificationProvider: NotificationProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: UserNotifyParamsInterface, context: Types.ContextType): Promise<void> {
-    const sendTemplateByEmailParams:SendTemplateByEmailParamsInterface = {
+    const sendTemplateByEmailParams: SendTemplateByEmailParamsInterface = {
       template: params.template,
       email: params.email,
       fullname: params.fullname,

@@ -37,10 +37,10 @@ const mockUserNewProperties = {
 
 @Container.provider()
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-  async patchUser(id: string, patch: any, contextParams: any): Promise<User> {
+  async patchUser(_id: string, patch: any, contextParams: any): Promise<User> {
     return new User({
+      _id,
       ...mockUser,
-      _id: id,
       ...patch,
     });
   }
@@ -86,7 +86,7 @@ describe('USER ACTION - Patch', () => {
     const result = await action.call({
       method: 'user:patch',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-      params: { id: mockUser._id, patch: mockUserNewProperties },
+      params: { _id: mockUser._id, patch: mockUserNewProperties },
     });
     expect(result).to.eql({
       ...defaultUserProperties,
@@ -100,7 +100,7 @@ describe('USER ACTION - Patch', () => {
       action.call({
         method: 'user:patch',
         context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-        params: { id: mockUser._id, patch: {} },
+        params: { _id: mockUser._id, patch: {} },
       }),
     ).to.be.rejectedWith(Exceptions.InvalidParamsException);
   });
@@ -110,7 +110,7 @@ describe('USER ACTION - Patch', () => {
       action.call({
         method: 'user:patch',
         context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-        params: { id: mockUser._id, patch: { role: 'user' } },
+        params: { _id: mockUser._id, patch: { role: 'user' } },
       }),
     ).to.rejectedWith(Exceptions.InvalidParamsException);
   });

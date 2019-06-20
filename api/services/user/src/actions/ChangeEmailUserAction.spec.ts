@@ -37,7 +37,7 @@ const mockUser = {
 const mockUserId = '5d08a3d4b9cf27edc29ee830';
 
 const mockChangeEmailParams = <UserChangeEmailParamsInterface>{
-  id: mockUserId,
+  _id: mockUserId,
   email: 'newEmail@example.com',
 };
 
@@ -88,7 +88,14 @@ class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
     return 'cryptedToken';
   }
   generateToken(length?: number): string {
-    return 'randomToken';
+    const tokens = [
+      'EhWDV9WbltMgD6hQblL6jleDk1UMaorU',
+      '2AgQryXU1ZWrHeo6EXIT257785OaaiFM',
+      'Z9sfFkJFZBXjIjPZn8AsygyjsuVI6wr3',
+      'jCMvUPGMOSgLQBkiXyzxzgS6rZn5xVYd',
+    ];
+    const idx = Math.floor(Math.random() * tokens.length);
+    return tokens[idx];
   }
 }
 
@@ -151,7 +158,7 @@ describe('USER ACTION - Change email', () => {
 
   it('permission "profile.update" shouldn\'t change email of other profile - reject with forbidden', async () => {
     mockConnectedUser.permissions = ['profile.update'];
-    mockConnectedUser._id = 'otherUserId';
+    mockConnectedUser._id = '5d0b7d6d6e9dbf942cbaf7cb';
     await expect(
       action.call({
         method: 'user:changeEmail',
@@ -161,10 +168,10 @@ describe('USER ACTION - Change email', () => {
     ).to.rejectedWith(Exceptions.ForbiddenException);
   });
 
-  it('permission "aom.users.update" should change email of aom user', async () => {
+  it('permission "territory.users.update" should change email of territory user', async () => {
     mockConnectedUser.permissions = ['profile.update'];
-    mockConnectedUser.aom = 'aomId';
-    mockUser['aom'] = mockConnectedUser.aom;
+    mockConnectedUser.territory = '5d0b7d6642eec5d400231790';
+    mockUser['territory'] = mockConnectedUser.territory;
     mockConnectedUser._id = mockUserId;
     const result = await action.call({
       method: 'user:changeEmail',

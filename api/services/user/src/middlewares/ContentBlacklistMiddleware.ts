@@ -1,5 +1,5 @@
+import { set } from 'lodash';
 import { Types, Interfaces, Container } from '@ilos/core';
-import set from 'lodash/set';
 
 /*
  * Delete properties from model or array of models on output of handler
@@ -21,27 +21,24 @@ export class ContentBlacklistMiddleware implements Interfaces.MiddlewareInterfac
     }
 
     const configKeys = config
-      .map((k:string) => k.split('.'))
-      .reduce(
-        (acc:object, keys:string[]) => {
-          set(acc, keys, true);
-          return acc;
-        },
-        {},
-      );
+      .map((k: string) => k.split('.'))
+      .reduce((acc: object, keys: string[]) => {
+        set(acc, keys, true);
+        return acc;
+      }, {});
 
     data = this.blacklist(data, configKeys);
 
     return isArray ? data : data[0];
   }
 
-  protected blacklist(model:any[] | any, keys: object): any[] | any {
+  protected blacklist(model: any[] | any, keys: object): any[] | any {
     if (Array.isArray(model)) {
       return model.map((m) => this.blacklist(m, keys));
     }
 
     const result = {};
-    Reflect.ownKeys(model).map((key:string) => {
+    Reflect.ownKeys(model).map((key: string) => {
       const keyValue = keys[key];
       if (!keyValue) {
         result[key] = model[key];

@@ -4,8 +4,8 @@ import axios from 'axios';
 import { mockCreateUserParams, mockNewUserBase } from './newUserBase';
 import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 
-interface AomOperator {
-  aom?: string;
+interface TerritoryOperator {
+  territory?: string;
   operator?: string;
 }
 
@@ -23,7 +23,7 @@ export class MockFactory {
       group: 'registry',
       role: 'admin',
       permissions: [],
-      _id: 'fakeId',
+      _id: '5d0b5f7208e64927d0c63841',
       ...callUserProperties,
     };
 
@@ -46,28 +46,38 @@ export class MockFactory {
     };
   }
 
-  public createUserParams(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?) {
+  public createUserParams(
+    group: string = 'registry',
+    role: string = 'admin',
+    territoryOperator: TerritoryOperator = {},
+    email?,
+  ) {
     return {
       ...mockCreateUserParams,
       group,
       role,
       email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
-      ...aomOperator,
+      ...territoryOperator,
     };
   }
 
-  public newUser(group: string = 'registry', role: string = 'admin', aomOperator: AomOperator = {}, email?) {
+  public newUser(
+    group: string = 'registry',
+    role: string = 'admin',
+    territoryOperator: TerritoryOperator = {},
+    email?,
+  ) {
     return {
       ...mockNewUserBase,
       group,
       role,
       email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
-      ...aomOperator,
+      ...territoryOperator,
     };
   }
 
-  public get newAomUserModel() {
-    return this.newUser('aom', 'user', { aom: '5cef990d133992029c1abe44' }, null);
+  public get newTerritoryUserModel() {
+    return this.newUser('territories', 'user', { territory: '5cef990d133992029c1abe44' }, null);
   }
   public get newOperatorUserModel() {
     return this.newUser('operators', 'user', { operator: '5cef990d133992029c1abe41' }, null);

@@ -36,10 +36,9 @@ async function listUsers(params, context): Promise<User[]> {
   return mockListUsers;
 }
 
-async function listNestedUsers(params, context): Promise<{ data: User[]}> {
+async function listNestedUsers(params, context): Promise<{ data: User[] }> {
   return { data: mockListUsers };
 }
-
 
 function error(err: Exceptions.RPCException) {
   return {
@@ -81,28 +80,21 @@ describe('MIDDLEWARE BLACKLIST', () => {
   });
 
   it('should filter all except listed simple field on a list', async () => {
-    const result = await middleware.process(
-      {},
-      mockFindUserContext,
-      listUsers,
-      ['firstname', 'lastname'],
-     );
+    const result = await middleware.process({}, mockFindUserContext, listUsers, ['firstname', 'lastname']);
 
-     expect(result).to.be.an('array');
+    expect(result).to.be.an('array');
 
-     for (const r of result) {
-       expect(r).not.to.have.property('firstname');
-       expect(r).not.to.have.property('lastname');
-     }
+    for (const r of result) {
+      expect(r).not.to.have.property('firstname');
+      expect(r).not.to.have.property('lastname');
+    }
   });
 
   it('should filter all except listed nested field on a list', async () => {
-    const result = await middleware.process(
-      {},
-      mockFindUserContext,
-      listNestedUsers,
-      ['data.*.firstname', 'data.*.lastname'],
-    );
+    const result = await middleware.process({}, mockFindUserContext, listNestedUsers, [
+      'data.*.firstname',
+      'data.*.lastname',
+    ]);
     expect(result.data).to.be.an('array');
 
     for (const r of result.data) {

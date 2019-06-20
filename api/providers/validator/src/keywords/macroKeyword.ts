@@ -20,6 +20,7 @@ import { roleMacro } from '../macros/roleMacro';
 import { tokenMacro } from '../macros/tokenMacro';
 import { groupMacro } from '../macros/groupMacro';
 import { longcharMacro } from '../macros/longcharMacro';
+import { permissionsMacro } from '../macros/permissionsMacro';
 
 const macroStore = {
   bic: bicMacro,
@@ -47,6 +48,7 @@ const macroStore = {
   role: roleMacro,
   group: groupMacro,
   token: tokenMacro,
+  permissions: permissionsMacro,
 };
 
 export const macroKeyword = {

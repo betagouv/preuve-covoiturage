@@ -14,7 +14,7 @@ export interface UserBaseInterface {
   emailConfirm?: string;
   emailToken?: string;
   operator?: string;
-  aom?: string;
+  territory?: string;
   hasResetPassword?: boolean;
   forgottenAt?: Date;
   emailChangeAt?: Date;
@@ -23,4 +23,3 @@ export interface UserBaseInterface {
   createdAt?: Date;
   updatedAt?: Date;
 }
-

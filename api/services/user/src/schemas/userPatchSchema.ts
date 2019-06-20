@@ -1,10 +1,10 @@
 export const userPatchSchema = {
   $id: 'user.patch',
   type: 'object',
-  required: ['id', 'patch'],
+  required: ['_id', 'patch'],
   additionalProperties: false,
   properties: {
-    id: { macro: 'objectid' },
+    _id: { macro: 'objectid' },
     patch: {
       type: 'object',
       minProperties: 1,
