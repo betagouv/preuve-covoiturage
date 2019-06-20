@@ -8,7 +8,6 @@ import { Container } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
-import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
 import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
 
@@ -20,7 +19,7 @@ import { User } from '../entities/User';
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
 const mockUser = {
   ...mockNewUserBase,

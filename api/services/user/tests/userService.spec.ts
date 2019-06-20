@@ -5,7 +5,7 @@ import { Exceptions } from '@ilos/core';
 
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';
-import { aom, operators, registry } from '../src/config/permissions';
+import { territories, operators, registry } from '../src/config/permissions';
 
 const fakeMongoServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
@@ -17,6 +17,7 @@ const { expect } = chai;
 let nockRequest;
 
 before(async () => {
+  console.log('> setup database');
   await fakeMongoServer.startServer();
   await fakeMongoServer.startTransport();
 });
@@ -24,6 +25,8 @@ before(async () => {
 after(async () => {
   await fakeMongoServer.stopServer();
   await fakeMongoServer.stopTransport();
+  process.exit(0);
+  console.log('> cleared database');
 });
 
 beforeEach(() => {
@@ -32,25 +35,26 @@ beforeEach(() => {
     .reply(200);
 });
 
-
 afterEach(() => {
   nock.cleanAll();
 });
 
 const request = mockFactory.request();
 
-let newAomUser;
+let newTerritoryUser;
 let newOperatorUser;
 let newRegistryUser;
 let newRegistryAdmin;
 
-let aomUserParams;
+let territoryUserParams;
 let operatorUserParams;
 let registryUserParams;
 
 describe('USER SERVICE : Creation', () => {
   before(async () => {
-    aomUserParams = mockFactory.createUserParams('aom', 'user', { aom: '5cef990d133992029c1abe44' });
+    territoryUserParams = mockFactory.createUserParams('territories', 'user', {
+      territory: '5cef990d133992029c1abe44',
+    });
     operatorUserParams = mockFactory.createUserParams('operators', 'user', { operator: '5cef990d133992029c1abe41' });
     registryUserParams = mockFactory.createUserParams('registry', 'user');
   });
@@ -76,7 +80,6 @@ describe('USER SERVICE : Creation', () => {
       ),
     );
 
-
     expect(createData.result).to.have.property('_id');
     delete createData.result._id;
     expect(createData.result).to.eql({
@@ -87,9 +90,9 @@ describe('USER SERVICE : Creation', () => {
     expect(createStatus).equal(200);
   });
 
-  it('aom admin - should create user aom', async () => {
+  it('territory admin - should create user territory', async () => {
     nockRequest.on('request', (req, interceptor, body) => {
-      expect(body).to.include(aomUserParams.email);
+      expect(body).to.include(territoryUserParams.email);
       expect(body).to.include('reset-password');
     });
 
@@ -98,13 +101,13 @@ describe('USER SERVICE : Creation', () => {
       mockFactory.call(
         'user:create',
         {
-          ...aomUserParams,
+          ...territoryUserParams,
         },
         {
-          group: aomUserParams.group,
+          group: territoryUserParams.group,
           role: 'admin',
-          permissions: ['aom.users.add'],
-          aom: aomUserParams.aom,
+          permissions: ['territory.users.add'],
+          territory: territoryUserParams.territory,
         },
       ),
     );
@@ -112,8 +115,8 @@ describe('USER SERVICE : Creation', () => {
     expect(createData.result).to.have.property('_id');
     delete createData.result._id;
     expect(createData.result).to.eql({
-      ...aomUserParams,
-      permissions: aom.user.permissions,
+      ...territoryUserParams,
+      permissions: territories.user.permissions,
       status: 'notActive',
     });
     expect(createStatus).equal(200);
@@ -133,7 +136,7 @@ describe('USER SERVICE : Creation', () => {
           ...operatorUserParams,
         },
         {
-          group: aomUserParams.group,
+          group: territoryUserParams.group,
           role: 'admin',
           permissions: ['operator.users.add'],
           operator: operatorUserParams.operator,
@@ -155,16 +158,16 @@ describe('USER SERVICE : Creation', () => {
 describe('USER SERVICE : Deletion', () => {
   before(async () => {
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
-    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
   });
 
   it('registry user - should delete his profile', async () => {
-    const { status: status, data: data } = await request.post(
+    const { status, data } = await request.post(
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newRegistryUser._id },
+        { _id: newRegistryUser._id },
         {
           group: 'registry',
           role: 'admin',
@@ -181,7 +184,7 @@ describe('USER SERVICE : Deletion', () => {
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newAomUser._id },
+        { _id: newTerritoryUser._id },
         {
           group: 'registry',
           role: 'admin',
@@ -193,18 +196,18 @@ describe('USER SERVICE : Deletion', () => {
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
-  it('registry aom - should delete user from aom', async () => {
+  it('registry territory - should delete user from territory', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newAomUser._id, aom: newAomUser.aom },
+        { _id: newTerritoryUser._id, territory: newTerritoryUser.territory },
         {
-          group: 'aom',
+          group: 'territory',
           role: 'admin',
-          permissions: ['aom.users.delete'],
-          aom: newAomUser.aom,
-          _id: newAomUser._id,
+          permissions: ['territory.users.delete'],
+          territory: newTerritoryUser.territory,
+          _id: newTerritoryUser._id,
         },
       ),
     );
@@ -216,12 +219,12 @@ describe('USER SERVICE : Deletion', () => {
       '/',
       mockFactory.call(
         'user:delete',
-        { id: newOperatorUser._id, operator: newOperatorUser.operator },
+        { _id: newOperatorUser._id, operator: newOperatorUser.operator },
         {
           group: 'operator',
           role: 'admin',
           permissions: ['operator.users.delete'],
-          operator: newAomUser.operator,
+          operator: newTerritoryUser.operator,
           _id: newOperatorUser._id,
         },
       ),
@@ -232,7 +235,7 @@ describe('USER SERVICE : Deletion', () => {
 
 describe('USER SERVICE : Find', () => {
   before(async () => {
-    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
@@ -243,11 +246,11 @@ describe('USER SERVICE : Find', () => {
   });
 
   it('registry admin - should find registry user', async () => {
-    const { status: status, data: data } = await request.post(
+    const { status, data } = await request.post(
       '/',
       mockFactory.call(
         'user:find',
-        { id: newRegistryUser._id },
+        { _id: newRegistryUser._id },
         {
           group: 'registry',
           role: 'admin',
@@ -255,6 +258,7 @@ describe('USER SERVICE : Find', () => {
         },
       ),
     );
+
     expect(data.result).to.eql({
       _id: newRegistryUser._id,
       ...mockFactory.newRegistryUserModel,
@@ -267,7 +271,7 @@ describe('USER SERVICE : Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newRegistryUser._id },
+        { _id: newRegistryUser._id },
         {
           group: 'registry',
           role: 'user',
@@ -289,7 +293,7 @@ describe('USER SERVICE : Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newAomUser._id },
+        { _id: newTerritoryUser._id },
         {
           group: 'registry',
           role: 'user',
@@ -301,12 +305,12 @@ describe('USER SERVICE : Find', () => {
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
-  it('registry admin - should find aom user', async () => {
+  it('registry admin - should find territory user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
         'user:find',
-        { id: newAomUser._id },
+        { _id: newTerritoryUser._id },
         {
           group: 'registry',
           role: 'admin',
@@ -316,8 +320,8 @@ describe('USER SERVICE : Find', () => {
     );
 
     expect(data.result).to.eql({
-      _id: newAomUser._id,
-      ...mockFactory.newAomUserModel,
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
     expect(status).equal(200);
   });
@@ -327,7 +331,7 @@ describe('USER SERVICE : Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newOperatorUser._id },
+        { _id: newOperatorUser._id },
         {
           group: 'registry',
           role: 'admin',
@@ -342,23 +346,23 @@ describe('USER SERVICE : Find', () => {
     expect(status).equal(200);
   });
 
-  it('aom admin - should find aom user', async () => {
+  it('territory admin - should find territory user', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
         'user:find',
-        { id: newAomUser._id },
+        { _id: newTerritoryUser._id },
         {
-          group: 'aom',
+          group: 'territory',
           role: 'admin',
-          permissions: ['aom.users.read'],
-          aom: newAomUser.aom,
+          permissions: ['territory.users.read'],
+          territory: newTerritoryUser.territory,
         },
       ),
     );
     expect(data.result).to.eql({
-      _id: newAomUser._id,
-      ...mockFactory.newAomUserModel,
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
     expect(status).equal(200);
   });
@@ -368,7 +372,7 @@ describe('USER SERVICE : Find', () => {
       '/',
       mockFactory.call(
         'user:find',
-        { id: newOperatorUser._id },
+        { _id: newOperatorUser._id },
         {
           group: 'registry',
           role: 'admin',
@@ -388,7 +392,7 @@ describe('USER SERVICE : Find', () => {
 describe('USER SERVICE : List', () => {
   before(async () => {
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
-    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
   });
@@ -415,8 +419,8 @@ describe('USER SERVICE : List', () => {
       ...mockFactory.newRegistryUserModel,
     });
     expect(data.result.data[1]).to.eql({
-      _id: newAomUser._id,
-      ...mockFactory.newAomUserModel,
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
     expect(data.result.data[2]).to.eql({
       _id: newOperatorUser._id,
@@ -425,24 +429,24 @@ describe('USER SERVICE : List', () => {
     expect(status).equal(200);
   });
 
-  it('aom admin - should list aom users', async () => {
+  it('territory admin - should list territory users', async () => {
     const { status: status, data: data } = await request.post(
       '/',
       mockFactory.call(
         'user:list',
         {},
         {
-          group: 'aom',
+          group: 'territory',
           role: 'admin',
-          permissions: ['aom.users.list'],
-          aom: newAomUser.aom,
+          permissions: ['territory.users.list'],
+          territory: newTerritoryUser.territory,
         },
       ),
     );
 
     expect(data.result.data[0]).to.eql({
-      _id: newAomUser._id,
-      ...mockFactory.newAomUserModel,
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
     });
     expect(status).equal(200);
   });
@@ -472,7 +476,7 @@ describe('USER SERVICE : List', () => {
 
 describe('USER SERVICE : Patch', () => {
   before(async () => {
-    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
@@ -493,7 +497,7 @@ describe('USER SERVICE : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newRegistryUser._id,
+          _id: newRegistryUser._id,
           patch: mockUpdatedProperties,
         },
         {
@@ -522,7 +526,7 @@ describe('USER SERVICE : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newRegistryUser._id,
+          _id: newRegistryUser._id,
           patch: mockUpdatedProperties,
         },
         {
@@ -552,7 +556,7 @@ describe('USER SERVICE : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newAomUser._id,
+          _id: newTerritoryUser._id,
           patch: mockUpdatedProperties,
         },
         {
@@ -566,7 +570,7 @@ describe('USER SERVICE : Patch', () => {
     expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
   });
 
-  it('aom admin - should patch aom user', async () => {
+  it('territory admin - should patch territory user', async () => {
     const mockUpdatedProperties = {
       firstname: 'samuel',
       lastname: 'goldschmidt',
@@ -577,21 +581,21 @@ describe('USER SERVICE : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newAomUser._id,
+          _id: newTerritoryUser._id,
           patch: mockUpdatedProperties,
         },
         {
-          group: 'aom',
+          group: 'territory',
           role: 'admin',
-          permissions: ['aom.users.update'],
-          aom: newAomUser.aom,
-          _id: newAomUser._id,
+          permissions: ['territory.users.update'],
+          territory: newTerritoryUser.territory,
+          _id: newTerritoryUser._id,
         },
       ),
     );
     expect(data.result).to.eql({
-      _id: newAomUser._id,
-      ...mockFactory.newAomUserModel,
+      _id: newTerritoryUser._id,
+      ...mockFactory.newTerritoryUserModel,
       ...mockUpdatedProperties,
     });
     expect(status).equal(200);
@@ -608,7 +612,7 @@ describe('USER SERVICE : Patch', () => {
       mockFactory.call(
         'user:patch',
         {
-          id: newOperatorUser._id,
+          _id: newOperatorUser._id,
           patch: mockUpdatedProperties,
         },
         {
@@ -631,7 +635,7 @@ describe('USER SERVICE : Patch', () => {
 
 describe('USER SERVICE : Change Password', () => {
   before(async () => {
-    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser({
@@ -696,7 +700,7 @@ describe('USER SERVICE : Change Password', () => {
 
 describe('USER SERVICE : Change Email', () => {
   before(async () => {
-    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
@@ -717,7 +721,7 @@ describe('USER SERVICE : Change Email', () => {
       mockFactory.call(
         'user:changeEmail',
         {
-          id: newRegistryUser._id,
+          _id: newRegistryUser._id,
           email: newEmail,
         },
         {
@@ -740,7 +744,7 @@ describe('USER SERVICE : Change Email', () => {
 
 describe('USER SERVICE : Forgotten Password', () => {
   before(async () => {
-    newAomUser = await fakeMongoServer.addUser(mockFactory.newAomUserModel);
+    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
     newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
     newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
     newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
@@ -755,28 +759,25 @@ describe('USER SERVICE : Forgotten Password', () => {
       expect(body).to.include(newRegistryUser.email);
       expect(body).to.include('reset-password');
     });
-    const { status: status, data: data } = await request.post(
-      '/',
-      {
-        method: 'user:forgottenPassword',
-        id: 1,
-        jsonrpc: '2.0',
+    const { status: status, data: data } = await request.post('/', {
+      method: 'user:forgottenPassword',
+      id: 1,
+      jsonrpc: '2.0',
+      params: {
         params: {
-          params: {
-            email: newRegistryUser.email,
+          email: newRegistryUser.email,
+        },
+        _context: {
+          channel: {
+            service: 'proxy',
+            transport: 'http',
           },
-          _context: {
-            channel: {
-              service: 'proxy',
-              transport: 'http',
-            },
-            call: {
-              user: {},
-            },
+          call: {
+            user: {},
           },
         },
       },
-    );
+    });
 
     expect(status).equal(200);
   });
@@ -821,5 +822,5 @@ describe('USER SERVICE : Login', () => {
 });
 
 // todo:
-// 'permission "aom.users.update" shouldn\'t change role of other aom user - reject with not found ?'
+// 'permission "territory.users.update" shouldn\'t change role of other territory user - reject with not found ?'
 // tests for confirm & reset actions

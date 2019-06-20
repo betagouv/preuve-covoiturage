@@ -37,7 +37,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /*
-   * List users, filtered by Aom, Operator, skip & limit
+   * List users, filtered by Territory, Operator, skip & limit
    */
   public async list(filters: UserRepositoryListFiltersInterface, pagination: UserRepositoryListPaginationInterface): Promise<{ users: User[]; total: number }> {
     let result = [];
@@ -64,13 +64,12 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /**
-   * Delete user by id & ( aom | operator)
+   * Delete user by id & ( territory | operator)
    */
-  public async deleteUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<void> {
+  public async deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
-    const normalizedId = new ObjectId(id);
-    const result = await collection.deleteOne({ _id: normalizedId, ...normalizedFilters });
+    const result = await collection.deleteOne({ _id: new ObjectId(_id), ...normalizedFilters });
     if (result.deletedCount !== 1) {
       throw new MongoException();
     }
@@ -78,13 +77,12 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /**
-   * Find User by id & ( aom | operator)
+   * Find User by id & ( territory | operator)
    */
-  public async findUser(id: string, contextParam: { aom?: string; operator?: string }): Promise<User> {
+  public async findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
-    const normalizedId = new ObjectId(id);
-    const result = await collection.findOne({ _id: normalizedId, ...normalizedFilters });
+    const result = await collection.findOne({ _id: new ObjectId(_id), ...normalizedFilters });
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }
@@ -100,14 +98,13 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   }
 
   /**
-   * Patch User by id & ( aom | operator)
+   * Patch User by id & ( territory | operator)
    */
-  public async patchUser(id: string, patch: any, contextParam: { aom?: string; operator?: string }) {
+  public async patchUser(_id: string, patch: any, contextParam: { territory?: string; operator?: string }) {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
-    const normalizedId = new ObjectId(id);
     const result = await collection.findOneAndUpdate(
-      { _id: normalizedId, ...normalizedFilters },
+      { _id: new ObjectId(_id), ...normalizedFilters },
       {
         $set: patch,
       },
@@ -121,10 +118,10 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result.value);
   }
 
-  private normalizeContextFilters(contextFilter: { aom?: string; operator?: string }) {
-    const normalizedFilters: { aom?: ObjectId; operator?: ObjectId } = {};
-    if ('aom' in contextFilter) {
-      normalizedFilters.aom = new ObjectId(contextFilter.aom);
+  private normalizeContextFilters(contextFilter: { territory?: string; operator?: string }) {
+    const normalizedFilters: { territory?: ObjectId; operator?: ObjectId } = {};
+    if ('territory' in contextFilter) {
+      normalizedFilters.territory = new ObjectId(contextFilter.territory);
     }
     if ('operator' in contextFilter) {
       normalizedFilters.operator = new ObjectId(contextFilter.operator);
@@ -132,7 +129,7 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
     return normalizedFilters;
   }
 
-  private async countUsers(filters: { aom?: ObjectId; operator?: ObjectId }) {
+  private async countUsers(filters: { territory?: ObjectId; operator?: ObjectId }) {
     const collection = await this.getCollection();
     return collection.countDocuments(filters);
   }

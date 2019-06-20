@@ -1,5 +1,5 @@
 export const mockConnectedUserBase = {
-  _id: 'connecteduserid',
+  _id: '5d0b616f9f611aef34deb304',
   email: 'john.schmidt@example.com',
   firstname: 'john',
   lastname: 'schmidt',

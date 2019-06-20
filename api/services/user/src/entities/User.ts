@@ -14,7 +14,7 @@ export class User {
   public emailConfirm?: string;
   public emailToken?: string;
   public operator?: string;
-  public aom?: string;
+  public territory?: string;
   public hasResetPassword?: boolean;
   public forgottenAt?: Date;
   public emailChangeAt?: Date;
@@ -39,7 +39,7 @@ export class User {
     emailConfirm?: string;
     emailToken?: string;
     operator?: string;
-    aom?: string;
+    territory?: string;
     hasResetPassword?: boolean;
     forgottenAt?: Date;
     emailChangeAt?: Date;
@@ -63,7 +63,7 @@ export class User {
     this.emailConfirm = data.emailConfirm;
     this.emailToken = data.emailToken;
     this.operator = data.operator;
-    this.aom = data.aom;
+    this.territory = data.territory;
     this.hasResetPassword = data.hasResetPassword;
     this.forgottenAt = data.forgottenAt;
     this.emailChangeAt = data.emailChangeAt;

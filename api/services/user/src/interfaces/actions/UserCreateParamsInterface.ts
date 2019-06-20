@@ -5,6 +5,6 @@ export interface UserCreateParamsInterface {
   phone: string;
   group: string;
   role: string;
-  aom?: string;
+  territory?: string;
   operator?: string;
 }

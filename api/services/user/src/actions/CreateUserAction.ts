@@ -23,12 +23,12 @@ export class CreateUserAction extends Parents.Action {
         ['user.create'],
         [
           (params, context) => {
-            if ('aom' in params && params.aom === context.call.user.aom) {
-              return 'aom.users.add';
+            if ('territory' in params && params.territory === context.call.user.territory) {
+              return 'territory.users.add';
             }
           },
           (params, context) => {
-            if ('operator' in params && params.aom === context.call.user.aom) {
+            if ('operator' in params && params.territory === context.call.user.territory) {
               return 'operator.users.add';
             }
           },
@@ -59,7 +59,8 @@ export class CreateUserAction extends Parents.Action {
       }
     }
 
-    if ('operator' in request && 'aom' in request) { // todo: check this in jsonschema
+    if ('operator' in request && 'territory' in request) {
+      // todo: check this in jsonschema
       throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 
@@ -67,7 +68,9 @@ export class CreateUserAction extends Parents.Action {
     const user = new User({
       ...request,
       status: this.config.get('user.status.notActive'),
-      password: Math.random().toString(36).substring(2, 15),
+      password: Math.random()
+        .toString(36)
+        .substring(2, 15),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
       emailChangeAt: new Date(),
     });

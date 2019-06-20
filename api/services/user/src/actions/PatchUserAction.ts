@@ -1,11 +1,10 @@
-import { Parents, Container, Interfaces, Types } from '@ilos/core';
+import { Parents, Container, Types } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserPatchParamsInterface } from '../interfaces/actions/UserPatchParamsInterface';
 
 import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
-
 
 /*
  * Update properties of user ( firstname, lastname, phone )
@@ -23,13 +22,13 @@ export class PatchUserAction extends Parents.Action {
         ['user.update'],
         [
           (params, context) => {
-            if ('id' in params && params.id === context.call.user._id) {
+            if ('_id' in params && params._id === context.call.user._id) {
               return 'profile.update';
             }
           },
           (_params, context) => {
-            if ('aom' in context.call.user) {
-              return 'aom.users.update';
+            if ('territory' in context.call.user) {
+              return 'territory.users.update';
             }
           },
           (_params, context) => {
@@ -42,23 +41,21 @@ export class PatchUserAction extends Parents.Action {
     ],
     ['content.whitelist', userWhiteListFilterOutput],
   ];
-  constructor(
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: UserPatchParamsInterface, context: Types.ContextType): Promise<User> {
-    const contextParam: { aom?: string; operator?: string } = {};
+    const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('aom' in context.call.user) {
-      contextParam.aom = context.call.user.aom;
+    if ('territory' in context.call.user) {
+      contextParam.territory = context.call.user.territory;
     }
 
     if ('operator' in context.call.user) {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.patchUser(params.id, params.patch, contextParam);
+    return this.userRepository.patchUser(params._id, params.patch, contextParam);
   }
 }

@@ -1,5 +1,5 @@
 export interface UserRepositoryListFiltersInterface {
-  aom?: string;
+  territory?: string;
   operator?: string;
 }
 

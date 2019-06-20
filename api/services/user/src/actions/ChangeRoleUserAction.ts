@@ -1,4 +1,4 @@
-import { Parents, Container, Interfaces, Types } from '@ilos/core';
+import { Parents, Container, Types } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
@@ -21,8 +21,8 @@ export class ChangeRoleUserAction extends Parents.Action {
         ['user.update'],
         [
           (_params, context) => {
-            if ('aom' in context.call.user) {
-              return 'aom.users.update';
+            if ('territory' in context.call.user) {
+              return 'territory.users.update';
             }
           },
           (_params, context) => {
@@ -35,23 +35,21 @@ export class ChangeRoleUserAction extends Parents.Action {
     ],
     ['content.whitelist', userWhiteListFilterOutput],
   ];
-  constructor(
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: UserChangeRoleParamsInterface, context: Types.ContextType): Promise<User> {
-    const contextParam: { aom?: string; operator?: string } = {};
+    const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('aom' in context.call.user) {
-      contextParam.aom = context.call.user.aom;
+    if ('territory' in context.call.user) {
+      contextParam.territory = context.call.user.territory;
     }
 
     if ('operator' in context.call.user) {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.patchUser(params.id, { role: params.role }, contextParam);
+    return this.userRepository.patchUser(params._id, { role: params.role }, contextParam);
   }
 }

@@ -7,7 +7,7 @@ export const defaultUserProperties = {
   group: undefined,
   role: undefined,
   permissions: [],
-  aom: undefined,
+  territory: undefined,
   operator: undefined,
   status: undefined,
 };

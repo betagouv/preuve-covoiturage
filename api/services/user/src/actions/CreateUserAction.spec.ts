@@ -20,7 +20,7 @@ import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
   ...mockConnectedUserBase,
@@ -140,22 +140,22 @@ describe('USER ACTION  - Create user', () => {
     });
   });
 
-  it('permission "aom.users.add" should return new user', async () => {
+  it('permission "territory.users.add" should return new user', async () => {
     const result = await action.call({
       method: 'user:createUser',
       context: {
         call: {
           user: {
             ...mockConnectedUser,
-            permissions: ['aom.users.add'],
-            aom: '5d08a77ae2b965a487be64a4',
+            permissions: ['territory.users.add'],
+            territory: '5d08a77ae2b965a487be64a4',
           },
         },
         channel: { service: '' },
       },
       params: {
         ...mockCreateUserParams,
-        aom: '5d08a77ae2b965a487be64a4',
+        territory: '5d08a77ae2b965a487be64a4',
       },
     });
 
@@ -166,7 +166,7 @@ describe('USER ACTION  - Create user', () => {
     });
   });
 
-  it('permission "aom.users.add" shouldn\'t create user from other aom - reject forbidden', async () => {
+  it('permission "territory.users.add" shouldn\'t create user from other territory - reject forbidden', async () => {
     await expect(
       action.call({
         method: 'user:createUser',
@@ -174,15 +174,15 @@ describe('USER ACTION  - Create user', () => {
           call: {
             user: {
               ...mockConnectedUser,
-              permissions: ['aom.users.add'],
-              aom: '5d08a77ae2b965a487be64a4',
+              permissions: ['territory.users.add'],
+              territory: '5d08a77ae2b965a487be64a4',
             },
           },
           channel: { service: '' },
         },
         params: {
           ...mockCreateUserParams,
-          aom: '5d08a784a197afe4692da7f1',
+          territory: '5d08a784a197afe4692da7f1',
         },
       }),
     ).to.rejectedWith(Exceptions.ForbiddenException);

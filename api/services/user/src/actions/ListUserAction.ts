@@ -9,7 +9,7 @@ import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
- * list users filtered by aom or operator and paginate with limit & skip
+ * list users filtered by territory or operator and paginate with limit & skip
  */
 @Container.handler({
   service: 'user',
@@ -24,8 +24,8 @@ export class ListUserAction extends Parents.Action {
         ['user.list'],
         [
           (_params, context) => {
-            if ('aom' in context.call.user) {
-              return 'aom.users.list';
+            if ('territory' in context.call.user) {
+              return 'territory.users.list';
             }
           },
           (_params, context) => {
@@ -36,7 +36,7 @@ export class ListUserAction extends Parents.Action {
         ],
       ],
     ],
-    ['content.whitelist', userWhiteListFilterOutput.map((key:string) => `data.${key}`)],
+    ['content.whitelist', userWhiteListFilterOutput.map((key: string) => `data.${key}`)],
   ];
 
   constructor(
@@ -50,10 +50,10 @@ export class ListUserAction extends Parents.Action {
     params: ListUserParamsInterface,
     context: UserContextInterface,
   ): Promise<UserListResponseInterface> {
-    const contextParam: { aom?: string; operator?: string } = {};
+    const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('aom' in context.call.user) {
-      contextParam.aom = context.call.user.aom;
+    if ('territory' in context.call.user) {
+      contextParam.territory = context.call.user.territory;
     }
 
     if ('operator' in context.call.user) {

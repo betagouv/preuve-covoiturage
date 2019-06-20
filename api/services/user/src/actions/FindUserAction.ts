@@ -1,4 +1,4 @@
-import { Parents, Container, Types } from '@ilos/core';
+import { Parents, Container } from '@ilos/core';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
@@ -21,13 +21,13 @@ export class FindUserAction extends Parents.Action {
         ['user.read'],
         [
           (params, context) => {
-            if ('id' in params && params.id === context.call.user._id) {
+            if ('_id' in params && params._id === context.call.user._id) {
               return 'profile.read';
             }
           },
           (params, context) => {
-            if ('aom' in context.call.user) {
-              return 'aom.users.read';
+            if ('territory' in context.call.user) {
+              return 'territory.users.read';
             }
           },
           (params, context) => {
@@ -44,17 +44,17 @@ export class FindUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: { id: string }, context: UserContextInterface): Promise<User> {
-    const contextParam: { aom?: string; operator?: string } = {};
+  public async handle(request: { _id: string }, context: UserContextInterface): Promise<User> {
+    const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('aom' in context.call.user) {
-      contextParam.aom = context.call.user.aom;
+    if ('territory' in context.call.user) {
+      contextParam.territory = context.call.user.territory;
     }
 
     if ('operator' in context.call.user) {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.findUser(request.id, contextParam);
+    return this.userRepository.findUser(request._id, contextParam);
   }
 }

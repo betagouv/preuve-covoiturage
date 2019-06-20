@@ -78,7 +78,7 @@ describe('USER ACTION - Find user', () => {
     const result = await action.call({
       method: 'user:find',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-      params: { id: mockUser._id },
+      params: { _id: mockUser._id },
     });
     expect(result).to.eql({
       ...defaultUserProperties,
@@ -93,7 +93,7 @@ describe('USER ACTION - Find user', () => {
       action.call({
         method: 'user:find',
         context: { call: { user: { ...mockConnectedUser, permissions: [] } }, channel: { service: '' } },
-        params: { id: mockUser._id },
+        params: { _id: mockUser._id },
       }),
     ).to.rejectedWith(Exceptions.ForbiddenException);
   });

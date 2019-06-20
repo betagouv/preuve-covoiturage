@@ -24,10 +24,7 @@ const mockConnectedUser = <UserBaseInterface>{
   permissions: ['user.list'],
 };
 
-
-const mockUsers = [
-  { ...mockNewUserBase, _id: 'mockUserId' },
-];
+const mockUsers = [{ ...mockNewUserBase, _id: 'mockUserId' }];
 
 const mockOutputPagination = {
   total: 1,
@@ -41,8 +38,8 @@ const mockContext = {
   call: {
     user: mockConnectedUser,
     metadata: {},
-  }
-  , channel: { service: '' },
+  },
+  channel: { service: '' },
 };
 
 @Container.provider()
@@ -95,8 +92,7 @@ describe('USER ACTION  - List', () => {
       context: mockContext,
       params: {},
     });
-    expect(result.data[0])
-      .to.eql({
+    expect(result.data[0]).to.eql({
       ...defaultUserProperties,
       ...mockUsers[0],
     });

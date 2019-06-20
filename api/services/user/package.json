@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@ilos/core": "~0",
+    "@ilos/framework": "~0",
     "@ilos/provider-mongo": "~0",
     "@ilos/provider-notification": "~0",
     "@ilos/provider-repository": "~0",

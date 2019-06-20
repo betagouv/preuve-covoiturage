@@ -77,7 +77,7 @@ describe('USER ACTION - Delete user', () => {
     const result = await action.call({
       method: 'user:delete',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-      params: { id: mockUser._id },
+      params: { _id: mockUser._id },
     });
     expect(result).to.equal(undefined);
   });
@@ -88,29 +88,29 @@ describe('USER ACTION - Delete user', () => {
         call: {
           user: {
             ...mockConnectedUser,
-            id: mockUser._id,
+            _id: mockUser._id,
           },
         },
         channel: { service: '' },
       },
-      params: { id: mockUser._id },
+      params: { _id: mockUser._id },
     });
     expect(result).to.equal(undefined);
   });
-  it('permission "aom.users.remove" should delete aom user', async () => {
+  it('permission "territory.users.remove" should delete territory user', async () => {
     const result = await action.call({
       method: 'user:delete',
       context: {
         call: {
           user: {
             ...mockConnectedUser,
-            aom: 'aomId',
+            territory: 'territoryId',
           },
         },
         channel: { service: '' },
       },
       params: {
-        id: mockUser._id,
+        _id: mockUser._id,
       },
     });
     expect(result).to.equal(undefined);

@@ -6,7 +6,6 @@ import { Container, Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
-
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
@@ -20,7 +19,7 @@ import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
 import { mockNewUserBase } from '../../tests/mocks/newUserBase';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
 const mockConnectedUser = <UserBaseInterface>{
   ...mockConnectedUserBase,
@@ -32,8 +31,8 @@ const mockUser = {
 };
 
 const mockForgottenPasswordParams = {
-  forgottenReset: 'randomToken',
-  forgottenToken: 'cryptedRandomToken2',
+  forgottenReset: 'KGthmwB33fGzJcfQmgQBokiBxDveMV79',
+  forgottenToken: 'dsBvJoswU2IeJBjtnZuUAoGFYPBsQs2E',
   forgottenAt: new Date(),
 };
 
@@ -56,7 +55,14 @@ class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
 @Container.provider()
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   generateToken(length?: number) {
-    return 'randomToken';
+    const tokens = [
+      'oXYNxBM0c6yoOxG88Il6kObs4pzyPbYC',
+      'T1suv0YAB5oAjFCH8oUPGwkh8DkzBeAj',
+      'Mw8t5EdXwypN6G7PEFVnncWKDV8DjNZZ',
+      'RwjZZtctbjlju7Jq4Wdg9WBPUZhVrbBQ',
+    ];
+
+    return tokens[Math.floor(Math.random() * tokens.length)];
   }
   async cryptToken(plainToken: string): Promise<string> {
     return mockForgottenPasswordParams.forgottenToken;
@@ -68,7 +74,11 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async boot() {
     return;
   }
-  async call(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<Types.ResultType> {
+  async call(
+    method: string,
+    params: any[] | { [p: string]: any },
+    context: Types.ContextType,
+  ): Promise<Types.ResultType> {
     return undefined;
   }
 }
@@ -101,7 +111,6 @@ class ServiceProvider extends BaseServiceProvider {
 let serviceProvider;
 let handlers;
 let action;
-
 
 describe('USER ACTION - Forgotten password', () => {
   before(async () => {

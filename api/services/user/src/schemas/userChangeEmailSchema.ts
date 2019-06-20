@@ -4,7 +4,7 @@ export const userChangeEmailSchema = {
   additionalProperties: false,
   minProperties: 1,
   properties: {
-    id: { macro: 'objectid' },
+    _id: { macro: 'objectid' },
     email: { macro: 'email' },
   },
 };

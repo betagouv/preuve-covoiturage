@@ -1,4 +1,4 @@
 export interface UserChangeEmailParamsInterface {
-  id: string;
+  _id: string;
   email: string;
 }

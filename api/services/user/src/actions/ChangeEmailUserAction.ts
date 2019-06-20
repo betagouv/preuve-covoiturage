@@ -23,13 +23,13 @@ export class ChangeEmailUserAction extends Parents.Action {
         ['user.update'],
         [
           (params, context) => {
-            if ('id' in params && params.id === context.call.user._id) {
+            if ('_id' in params && params._id === context.call.user._id) {
               return 'profile.update';
             }
           },
           (_params, context) => {
-            if ('aom' in context.call.user) {
-              return 'aom.users.update';
+            if ('territory' in context.call.user) {
+              return 'territory.users.update';
             }
           },
           (_params, context) => {
@@ -52,11 +52,11 @@ export class ChangeEmailUserAction extends Parents.Action {
   }
 
   public async handle(params: UserChangeEmailParamsInterface, context: Types.ContextType): Promise<User> {
-    const user = await this.userRepository.find(params.id);
-    const contextParam: { aom?: string; operator?: string } = {};
+    const user = await this.userRepository.find(params._id);
+    const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('aom' in context.call.user) {
-      contextParam.aom = context.call.user.aom;
+    if ('territory' in context.call.user) {
+      contextParam.territory = context.call.user.territory;
     }
 
     if ('operator' in context.call.user) {
@@ -79,7 +79,7 @@ export class ChangeEmailUserAction extends Parents.Action {
       status: this.config.get('user.status.notActive'),
     };
 
-    const patchedUser = this.userRepository.patchUser(params.id, patch, contextParam);
+    const patchedUser = this.userRepository.patchUser(params._id, patch, contextParam);
 
     await this.kernel.call(
       'user:notify',
