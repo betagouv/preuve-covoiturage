@@ -1,6 +1,7 @@
 import { Parents, Interfaces, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { PermissionMiddleware } from '@ilos/package-acl';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { MongoProviderInterfaceResolver, MongoProvider } from '@ilos/provider-mongo';
 
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 
@@ -10,16 +11,19 @@ import { AllTerritoryAction } from './actions/AllTerritoryAction';
 import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
 import { PatchTerritoryAction } from './actions/PatchTerritoryAction';
 
+import { territoryCreateSchema } from './schemas/territoryCreateSchema';
 import { territoryPatchSchema } from './schemas/territoryPatchSchema';
 import { territoryDeleteSchema } from './schemas/territoryDeleteSchema';
+import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
     [TerritoryRepositoryProviderInterfaceResolver, TerritoryRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
+    [MongoProviderInterfaceResolver, MongoProvider],
   ];
 
-  handlers = [AllTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction];
+  handlers = [AllTerritoryAction, CreateTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction];
 
   readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
     ['can', PermissionMiddleware],
@@ -27,6 +31,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   protected readonly validators: [string, any][] = [
+    ['territory.create', territoryCreateSchema],
     ['territory.patch', territoryPatchSchema],
     ['territory.delete', territoryDeleteSchema],
   ];

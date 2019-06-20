@@ -1,9 +1,9 @@
 export const territoryDeleteSchema = {
   $id: 'territory.delete',
   type: 'object',
-  required: ['id'],
+  required: ['_id'],
   additionalProperties: false,
   properties: {
-    id: { macro: 'objectid' },
+    _id: { macro: 'objectid' },
   },
 };

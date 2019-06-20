@@ -1,4 +1,4 @@
-export const aom = {
+export const territory = {
   admin: {
     slug: 'admin',
     name: 'Admin',
@@ -9,14 +9,15 @@ export const aom = {
       'user.read',
       'user.update',
       'user.delete',
-      'aom.users.add',
-      'aom.users.list',
-      'aom.users.remove',
-      'aom.list',
-      'aom.read',
-      'aom.update',
-      'aom.delete',
-      'aom.stats',
+      'territory.users.add',
+      'territory.users.list',
+      'territory.users.remove',
+      'territory.list',
+      'territory.read',
+      'territory.create',
+      'territory.update',
+      'territory.delete',
+      'territory.stats',
       'operator.list',
       'operator.read',
       'journey.read',
@@ -53,7 +54,7 @@ export const aom = {
     slug: 'user',
     name: 'User',
     permissions: [
-      'aom.stats',
+      'territory.stats',
       'user.list',
       'journey.read',
       'journey.list',

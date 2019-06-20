@@ -17,7 +17,7 @@ export class PatchTerritoryAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: { id: string; patch: PatchTerritoryParamsInterface }): Promise<TerritoryDbInterface> {
-    return this.territoryRepository.patch(params.id, params.patch);
+  public async handle(params: { _id: string; patch: PatchTerritoryParamsInterface }): Promise<TerritoryDbInterface> {
+    return this.territoryRepository.patch(params._id, params.patch);
   }
 }
