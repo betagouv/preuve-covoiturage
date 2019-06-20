@@ -115,62 +115,86 @@ describe('Operator service', () => {
   });
 
   it('should work', async () => {
-    // Create an operator
-    const { status: createStatus, data: createData } = await request.post(
-      '/',
-      callFactory(
-        'operator:create',
-        {
-          nom_commercial: 'Toto',
-          raison_sociale: 'Toto inc.',
-        },
-        ['operator.create'],
-      ),
-    );
-    const { _id, nom_commercial } = createData.result;
-    expect(createStatus).equal(200);
-    expect(nom_commercial).to.eq('Toto');
+    let _id: string;
+    let patchedName: string;
 
-    // Update an operator
-    const { status: patchStatus, data: patchData } = await request.post(
-      '/',
-      callFactory(
-        'operator:patch',
-        {
-          id: _id,
-          patch: {
-            nom_commercial: 'Yop',
+    try {
+      // Create an operator
+      const { status: createStatus, data: createData } = await request.post(
+        '/',
+        callFactory(
+          'operator:create',
+          {
+            nom_commercial: 'Toto',
+            raison_sociale: 'Toto inc.',
           },
-        },
-        ['operator.update'],
-      ),
-    );
+          ['operator.create'],
+        ),
+      );
+      _id = createData.result._id;
+      const nom_commercial = createData.result.nom_commercial;
+      expect(createStatus).equal(200);
+      expect(nom_commercial).to.eq('Toto');
+    } catch (e) {
+      console.log('CREATE', e.message);
+      throw e;
+    }
 
-    const { nom_commercial: patchedName } = patchData.result;
-    expect(patchStatus).equal(200);
-    expect(patchedName).to.eq('Yop');
+    try {
+      // Update an operator
+      const { status: patchStatus, data: patchData } = await request.post(
+        '/',
+        callFactory(
+          'operator:patch',
+          {
+            _id,
+            patch: {
+              nom_commercial: 'Yop',
+            },
+          },
+          ['operator.update'],
+        ),
+      );
 
-    const { status: listStatus, data: listData } = await request.post(
-      '/',
-      callFactory('operator:all', {}, ['operator.list']),
-    );
-    const list = listData.result;
-    expect(listStatus).equal(200);
-    expect(list.length).eq(1);
-    expect(list[0].nom_commercial).eq(patchedName);
+      patchedName = patchData.result.nom_commercial;
+      expect(patchStatus).equal(200);
+      expect(patchedName).to.eq('Yop');
+    } catch (e) {
+      console.log('PATCH', e.message);
+      throw e;
+    }
+
+    try {
+      const { status: listStatus, data: listData } = await request.post(
+        '/',
+        callFactory('operator:all', {}, ['operator.list']),
+      );
+      const list = listData.result;
+      expect(listStatus).equal(200);
+      expect(list.length).eq(1);
+      expect(list[0].nom_commercial).eq(patchedName);
+    } catch (e) {
+      console.log('FIND', e.message);
+      throw e;
+    }
 
     // delete the operator
-    const { status: deleteStatus, data: deleteData } = await request.post(
-      '/',
-      callFactory(
-        'operator:delete',
-        {
-          id: _id,
-        },
-        ['operator.delete'],
-      ),
-    );
-    expect(deleteStatus).equal(200);
-    expect(deleteData.result).equal(true);
+    try {
+      const { status: deleteStatus, data: deleteData } = await request.post(
+        '/',
+        callFactory(
+          'operator:delete',
+          {
+            _id,
+          },
+          ['operator.delete'],
+        ),
+      );
+      expect(deleteStatus).equal(200);
+      expect(deleteData.result).equal(true);
+    } catch (e) {
+      console.log('DELETE', e.message);
+      throw e;
+    }
   });
 });

@@ -17,7 +17,7 @@ export class PatchOperatorAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: { id: string; patch: PatchOperatorParamsInterface }): Promise<OperatorDbInterface> {
-    return this.operatorRepository.patch(params.id, params.patch);
+  public async handle(params: { _id: string; patch: PatchOperatorParamsInterface }): Promise<OperatorDbInterface> {
+    return this.operatorRepository.patch(params._id, params.patch);
   }
 }
