@@ -1,6 +1,16 @@
 {
   "name": "@pdc/api",
   "private": true,
+  "engines": {
+    "node": "~10"
+  },
+  "workspaces": [
+    "core",
+    "proxy",
+    "providers/*",
+    "services/*",
+    "ilos/packages/*"
+  ],
   "repository": "git@github.com:betagouv/preuve-covoiturage.git",
   "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
   "contributors": [
@@ -18,23 +28,16 @@
     "build:providers": "npx lerna run --scope @pdc/provider-* build",
     "build:services": "npx lerna run --scope @pdc/service-* build",
     "format:fix": "pretty-quick --staged",
-    "lint": "npx lerna run --parallel lint",
+    "lint": "npx lerna run --scope @pdc/* lint",
     "test": "run-p test:unit test:integration",
-    "test:unit": "npx lerna run --parallel test",
-    "test:integration": "npx lerna run --parallel test:integration"
+    "test:unit": "npx lerna run --scope @pdc/* test",
+    "test:integration": "npx lerna run --scope @pdc/* test:integration"
   },
   "keywords": [
     "betagouv",
     "covoiturage",
     "api",
     "carpooling"
-  ],
-  "workspaces": [
-    "core",
-    "ilos-validator",
-    "proxy",
-    "providers/*",
-    "services/*"
   ],
   "license": "Apache-2.0",
   "bugs": {

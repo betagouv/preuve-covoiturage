@@ -19,7 +19,6 @@ export class FakeMongoServer {
 
   public async startServer(): Promise<any> {
     process.env.APP_URL = `http://localhost:${this.port}`;
-    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017/pdc-test?authSource=admin';
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
     this.dbName = process.env.APP_MONGO_DB;
   }

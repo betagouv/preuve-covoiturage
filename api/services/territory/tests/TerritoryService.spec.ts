@@ -15,7 +15,6 @@ const port = '8081';
 
 describe('Territory service', () => {
   before(async () => {
-    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017/pdc-test?authSource=admin';
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
 
     transport = await bootstrap.boot(['', '', 'http', port]);

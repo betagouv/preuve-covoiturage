@@ -1,5 +1,5 @@
 import { Container, Interfaces } from '@ilos/core';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Container.provider()
 export class CryptoProvider implements Interfaces.ProviderInterface {

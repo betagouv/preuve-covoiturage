@@ -12,12 +12,13 @@
     "test": "mocha src/*.spec.ts src/**/*.spec.ts"
   },
   "dependencies": {
-    "bcrypt": "^3.0.6"
+    "bcryptjs": "^2.4.3"
   },
   "peerDependencies": {
     "@ilos/core": "~0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/google-libphonenumber": "^7.4.17",

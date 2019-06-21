@@ -40,22 +40,20 @@ export function phoneFormatTest(fakeConfigProvider, FakeObject: NewableType<any>
     });
 
     it('too short', (done) => {
-      provider
-        .validate(new FakeObject({ phone: '012345' }))
-        .catch((err: Error) => {
-          expect(err.message).to.equal('data.phone should NOT be shorter than 10 characters');
-        })
-        .finally(done);
+      provider.validate(new FakeObject({ phone: '012345' })).catch((err: Error) => {
+        expect(err.message).to.equal('data.phone should NOT be shorter than 10 characters');
+        done();
+      });
     });
 
     it('too long', (done) => {
       provider
         .validate(new FakeObject({ phone: '00331234567890' }))
+        .then(done)
         .catch((err: Error) => {
-          // console.log(err.message);
           expect(err.message).to.equal('data.phone should match format "phone"');
-        })
-        .finally(done);
+          done();
+        });
     });
   };
 }
