@@ -34,6 +34,26 @@ export class MockFactory {
     };
   }
 
+  public notify(method: string, params: any) {
+    return {
+      method,
+      id: 0,
+      jsonrpc: '2.0',
+      params: {
+        params,
+        _context: {
+          channel: {
+            service: 'proxy',
+            transport: 'http',
+          },
+          call: {
+            user: {},
+          },
+        },
+      },
+    };
+  }
+
   public error(err: Exceptions.RPCException) {
     return {
       status: 200,

@@ -66,6 +66,7 @@
 
   },
   "devDependencies": {
+    "@ilos/framework": "~0",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.7",
