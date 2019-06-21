@@ -41,15 +41,15 @@
     "instrument": true
   },
   "dependencies": {
+    "@ilos/provider-validator": "~0",
     "ajv": "^6.10.0",
     "google-libphonenumber": "^3.2.2",
     "ibantools": "^2.1.0",
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "@ilos/provider-validator": "~0",
-    "@ilos/provider-config": "~0",
-    "@ilos/core": "~0"
+    "@ilos/core": "~0",
+    "@ilos/provider-config": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
