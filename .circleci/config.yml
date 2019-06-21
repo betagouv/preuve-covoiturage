@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   api-ts:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
       - image: circleci/mongo:4.0
       - image: circleci/redis:4
     working_directory: ~/repo/api
