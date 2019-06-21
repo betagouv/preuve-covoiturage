@@ -42,9 +42,9 @@ jobs:
           command: |
             ./cc-test-reporter before-build
             yarn run coverage-ci
-            ./cc-test-reporter format-coverage -t lcov -p /repo/api -o tmp/codeclimate -d
-            ./cc-test-reporter sum-coverage -p 7 -o tmp/codeclimate
-            ./cc-test-reporter upload-coverage -i tmp/codeclimate
+            cat coverage/**/lcov.info > coverage/lcov.info
+            ./cc-test-reporter format-coverage -t lcov
+            ./cc-test-reporter upload-coverage
 
   front-angular:
     docker:
