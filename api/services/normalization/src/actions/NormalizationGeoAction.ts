@@ -4,9 +4,10 @@ import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import { PositionInterface } from '../interfaces/PositionInterface';
+import { Journey } from '../entities/journey';
 
 interface NormalizationGeoParamsInterface {
-  journey: any;
+  journey: Journey;
 }
 
 /*
@@ -42,7 +43,9 @@ export class NormalizationGeoAction extends Parents.Action {
         journey: normalizedJourney,
       },
       {
-        call: context.call,
+        call: {
+          ...context.call,
+        },
         channel: {
           ...context.channel,
           service: 'normalization',
@@ -54,14 +57,17 @@ export class NormalizationGeoAction extends Parents.Action {
   }
 
   private async findTown(position: PositionInterface): Promise<PositionInterface> {
-    return this.geoProvider.getTown({ lon: position.lon, lat: position.lat, insee: position.insee, literal: position.literal });
+    const foundPosition = await this.geoProvider.getTown({ lon: position.lon, lat: position.lat, insee: position.insee, literal: position.literal });
+    return {
+      ...position,
+      ...foundPosition,
+    };
   }
-
 
   /**
    * Complete position with data relative to town
    */
-  private processTownResponse(journey, path, position, determinedPosition) {
+  private processTownResponse(journey, path, position: PositionInterface, determinedPosition: PositionInterface) {
     // console.log(journey, path, position, determinedPosition)
     if (determinedPosition.lon && !position.lon) {
       position.lon = determinedPosition.lon;
@@ -93,8 +99,6 @@ export class NormalizationGeoAction extends Parents.Action {
     position.postcodes = _.uniq(pcs);
     _.set(journey, `${path}.postcodes`, position.postcodes);
 
-
-    // console.log({ journey });
     return journey;
   }
 }

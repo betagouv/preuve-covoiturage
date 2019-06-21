@@ -1,8 +1,12 @@
 export interface PositionInterface {
-  lon?: number;
-  lat?: number;
-  town?: string;
+  datetime: string;
+  country?: string;
   insee?: string;
+  lat?: number;
+  lon?: number;
   literal?: string;
   postcodes?: any[];
+  territories?: any[];
+  town?: string;
 }
+

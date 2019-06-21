@@ -39,19 +39,19 @@ export class NormalizationTerritoryAction extends Parents.Action {
       _.set(territoriesEnrichedJourney, `${path}.territories`, territories);
     }));
 
-    await this.kernel.notify(
-      'crosscheck:process',
-      {
-        journey: territoriesEnrichedJourney,
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'normalization',
-        },
-      },
-    );
+    // await this.kernel.notify( // todo: should be notify
+    //   'crosscheck:process',
+    //   {
+    //     journey: territoriesEnrichedJourney,
+    //   },
+    //   {
+    //     call: context.call,
+    //     channel: {
+    //       ...context.channel,
+    //       service: 'normalization',
+    //     },
+    //   },
+    // );
 
     return;
   }
