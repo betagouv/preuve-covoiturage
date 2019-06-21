@@ -8,6 +8,8 @@
   "scripts": {
     "build": "tsc",
     "watch-ts": "tsc -w",
+    "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov mocha src/*.spec.ts src/**/*.spec.ts",
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha src/*.spec.ts src/**/*.spec.ts",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
     "test": "mocha src/*.spec.ts src/**/*.spec.ts"
   },
