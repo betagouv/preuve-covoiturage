@@ -4,9 +4,8 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "copy-static": "cp -R ./src/templates ./dist/",
     "start": "yarn serve",
-    "build": "yarn build-ts && yarn copy-static",
+    "build": "yarn build-ts",
     "serve": "node dist/kernel.js",
     "watch-node": "nodemon dist/kernel.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
@@ -60,7 +59,11 @@
   },
   "dependencies": {
     "@ilos/core": "~0",
-    "@ilos/provider-config": "~0"
+    "@ilos/provider-config": "~0",
+    "@ilos/provider-mongo": "~0",
+    "@pdc/provider-geo": "~0",
+    "lodash": "^4.17.11"
+
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
