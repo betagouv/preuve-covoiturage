@@ -23,6 +23,7 @@ jobs:
       #       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       #       chmod +x ./cc-test-reporter
       - run:
+          name: Clone and build @ilos packages
           command: |
             git clone https://github.com/betagouv/ilos
             cd ilos
