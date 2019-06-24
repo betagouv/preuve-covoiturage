@@ -54,7 +54,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 
 @Container.provider()
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-  boot() {
+  async boot(): Promise<void> {
     return;
   }
 

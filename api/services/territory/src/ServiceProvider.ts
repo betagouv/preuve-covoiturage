@@ -24,7 +24,6 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [TerritoryRepositoryProviderInterfaceResolver, TerritoryRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
     [MongoProviderInterfaceResolver, MongoProvider],
-    [ConfigProviderInterfaceResolver, ConfigProvider],
     [EnvProviderInterfaceResolver, EnvProvider],
   ];
 
