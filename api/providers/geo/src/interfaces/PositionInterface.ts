@@ -4,6 +4,6 @@ export interface PositionInterface {
   lon?: number;
   lat?: number;
   literal?: string;
-  postcodes?: any[];
+  postcodes?: string[];
   town?: string;
 }

@@ -1,4 +1,3 @@
-// tslint:disable max-classes-per-file
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

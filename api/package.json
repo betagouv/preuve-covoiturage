@@ -20,7 +20,6 @@
   ],
   "scripts": {
     "clean": "rm -rf ./**/dist",
-    "precommit": "run-sformat:fix lint",
     "watch": "lerna run --parallel watch-ts",
     "ls": "lerna ls",
     "build": "run-s clean build:providers build:services build:proxy",
@@ -53,5 +52,10 @@
     "prettier": "^1.17.1",
     "pretty-quick": "^1.11.0",
     "tslint": "^5.17.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "run-s format:fix lint"
+    }
   }
 }

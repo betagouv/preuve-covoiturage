@@ -1,12 +1,10 @@
 import * as _ from 'lodash';
 import axios from 'axios';
 
-
 import { Exceptions } from '@ilos/core';
 
 export class FrGouvApiGeo {
   private static domain = 'https://geo.api.gouv.fr';
-
 
   static async insee(code: string) {
     // if (!validate('insee', code)) {
@@ -54,4 +52,3 @@ export class FrGouvApiGeo {
     };
   }
 }
-

@@ -2,12 +2,28 @@ import * as _ from 'lodash';
 import axios from 'axios';
 import { Exceptions } from '@ilos/core';
 
+interface Feature {
+  properties: {
+    geometry: {
+      coordinates: [number, number];
+    };
+    city: string;
+    postcode: string;
+    country: string;
+  };
+}
+
+interface DeKomootPhotonResponse {
+  data: {
+    features: Feature[];
+  };
+}
 
 export class DeKomootPhoton {
   private static domain = 'https://photon.komoot.de/api';
 
-  static async search(query) {
-    const res = await axios.get(
+  static async search(query: string) {
+    const res: DeKomootPhotonResponse = await axios.get(
       `${DeKomootPhoton.domain}/?q=${encodeURIComponent(query)}&limit=1`,
     );
 
@@ -26,4 +42,3 @@ export class DeKomootPhoton {
     };
   }
 }
-

@@ -2,12 +2,10 @@ import * as _ from 'lodash';
 import axios from 'axios';
 import { Exceptions } from '@ilos/core';
 
-
 export class OrgOpenstreetmapNominatim {
   private static domain = 'https://nominatim.openstreetmap.org/';
 
-
-  static async reverse({ lon, lat }) {
+  static async reverse({ lon, lat }: { lon: number; lat: number }) {
     // if (!validate('lat', lat)) {
     //   throw new BadRequestError('Wrong lat format');
     // }
@@ -20,9 +18,7 @@ export class OrgOpenstreetmapNominatim {
     );
 
     if (data.error) {
-      throw new Exceptions.NotFoundException(
-        `Not found on Nominatim (${lat}, ${lon}). ${data.error}`,
-      );
+      throw new Exceptions.NotFoundException(`Not found on Nominatim (${lat}, ${lon}). ${data.error}`);
     }
 
     return {
@@ -33,4 +29,3 @@ export class OrgOpenstreetmapNominatim {
     };
   }
 }
-

@@ -2,8 +2,7 @@ import { strict as assert } from 'assert';
 
 import { GeoProvider } from './GeoProvider';
 
-
-async function assertThrows (errorType, func, ...args) {
+async function assertThrows(errorType, func, ...args) {
   try {
     await func(...args);
     throw new Error('Does not throw error');
@@ -17,7 +16,6 @@ async function assertThrows (errorType, func, ...args) {
 }
 
 const geoProvider = new GeoProvider();
-
 
 // TOWN
 describe('find Town common', () => {
@@ -41,15 +39,12 @@ describe('find Town common', () => {
   //   }));
 });
 
-
 describe('find Town by INSEE', () => {
   // it('wrong INSEE format', () =>
   //   assertThrows('FormatError', geoProvider.getTown, { insee: '75' }));
   // it('null INSEE', () => assertThrows(BadRequestError, town, { insee: null }));
-  it('non-existing code', async () =>
-    assert.equal((await geoProvider.getTown({ insee: '00000' })).insee, null));
-  it('Same INSEE code', async () =>
-    assert.equal((await geoProvider.getTown({ insee: '69123' })).insee, '69123'));
+  it('non-existing code', async () => assert.equal((await geoProvider.getTown({ insee: '00000' })).insee, null));
+  it('Same INSEE code', async () => assert.equal((await geoProvider.getTown({ insee: '69123' })).insee, '69123'));
 });
 
 describe('find Town by lon/lat', () => {

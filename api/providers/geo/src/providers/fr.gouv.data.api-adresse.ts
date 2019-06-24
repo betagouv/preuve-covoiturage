@@ -2,11 +2,10 @@ import * as _ from 'lodash';
 import axios from 'axios';
 import { Exceptions } from '@ilos/core';
 
-
 const domain = 'https://api-adresse.data.gouv.fr';
 
 export class FrGouvDataApiAdresse {
-  static async insee(code) {
+  static async insee(code: string) {
     // if (!validate('insee', code)) {
     //   throw BadRequestError('Wrong Insee format');
     // }
@@ -29,7 +28,7 @@ export class FrGouvDataApiAdresse {
   /**
    * Reverse geocoding by lon, lat
    */
-  static async reverse({ lon, lat }) {
+  static async reverse({ lon, lat }: { lon: number; lat: number }) {
     // if (!validate('lat', lat)) {
     //   throw new BadRequestError('Wrong lat format');
     // }
@@ -56,18 +55,15 @@ export class FrGouvDataApiAdresse {
   /**
    * Search by address
    */
-  static async search(literal) {
+  static async search(literal: string) {
     try {
-      const res = await axios.get(
-        `${domain}/search?q=${encodeURIComponent(literal)}`,
-      );
+      const res = await axios.get(`${domain}/search?q=${encodeURIComponent(literal)}`);
 
       if (!_.get(res, 'data.features', []).length) {
         throw new Exceptions.NotFoundException();
       }
 
-      const data = _.get(res, 'data.features', [{ properties: {} }])[0]
-        .properties;
+      const data = _.get(res, 'data.features', [{ properties: {} }])[0].properties;
 
       return {
         citycode: data.citycode || null,
@@ -80,4 +76,3 @@ export class FrGouvDataApiAdresse {
     }
   }
 }
-
