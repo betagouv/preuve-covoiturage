@@ -61,6 +61,7 @@
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@ilos/provider-config": "~0",
+    "@ilos/provider-env": "~0",
     "@ilos/cli": "~0",
     "@ilos/package-acl": "~0",
     "@pdc/provider-validator": "~0",

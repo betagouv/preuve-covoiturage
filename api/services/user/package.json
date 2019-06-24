@@ -66,6 +66,7 @@
     "@ilos/provider-repository": "~0",
     "@ilos/provider-template": "~0",
     "@ilos/provider-config": "~0",
+    "@ilos/provider-env": "~0",
     "@ilos/package-acl": "~0",
     "@pdc/provider-validator": "0.0.1",
     "@pdc/provider-crypto": "0.0.1"

@@ -1,6 +1,7 @@
 import { Parents, Interfaces, Types } from '@ilos/core';
 import { PermissionMiddleware } from '@ilos/package-acl';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigProviderInterfaceResolver, ConfigProvider } from '@ilos/provider-config';
+import { EnvProviderInterfaceResolver, EnvProvider } from '@ilos/provider-env';
 import { MongoProviderInterfaceResolver, MongoProvider } from '@ilos/provider-mongo';
 
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
@@ -21,6 +22,8 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [TerritoryRepositoryProviderInterfaceResolver, TerritoryRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
     [MongoProviderInterfaceResolver, MongoProvider],
+    [ConfigProviderInterfaceResolver, ConfigProvider],
+    [EnvProviderInterfaceResolver, EnvProvider],
   ];
 
   handlers = [AllTerritoryAction, CreateTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction];
@@ -37,11 +40,15 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
+    await super.boot();
+    this.registerConfig();
+    this.registerValidators();
+  }
+
+  protected registerConfig() {
     this.getContainer()
       .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
-    await super.boot();
-    this.registerValidators();
   }
 
   private registerValidators() {

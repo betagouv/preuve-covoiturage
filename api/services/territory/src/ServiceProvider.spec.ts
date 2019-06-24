@@ -15,9 +15,7 @@ process.env.APP_MONGO_DB = '';
 
 describe('Territory service provider', () => {
   it('boots', async () => {
-    expect(true).to.eq(true);
-    // TODO: add config + env provider
-    // const sp = new ServiceProvider();
-    // await expect(sp.boot()).to.become(undefined);
+    const sp = new ServiceProvider();
+    await expect(sp.boot()).to.become(undefined);
   });
 });

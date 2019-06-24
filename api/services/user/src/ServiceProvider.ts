@@ -1,7 +1,8 @@
 import path from 'path';
 import { Parents, Interfaces, Types } from '@ilos/core';
 import { PermissionMiddleware } from '@ilos/package-acl';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigProviderInterfaceResolver, ConfigProvider } from '@ilos/provider-config';
+import { EnvProviderInterfaceResolver, EnvProvider } from '@ilos/provider-env';
 import { CryptoProviderInterfaceResolver, CryptoProvider } from '@pdc/provider-crypto';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 import { NotificationProvider, NotificationProviderInterfaceResolver } from '@ilos/provider-notification';
@@ -45,6 +46,8 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [TemplateProviderInterfaceResolver, HandlebarsProvider],
     [NotificationProviderInterfaceResolver, NotificationProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
+    [ConfigProviderInterfaceResolver, ConfigProvider],
+    [EnvProviderInterfaceResolver, EnvProvider],
   ];
 
   readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
