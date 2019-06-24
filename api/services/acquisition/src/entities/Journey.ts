@@ -9,6 +9,7 @@ export class Journey implements JourneyInterface {
     _id: string;
     name: string;
   };
+
   public passenger?: {
     identity: IdentityInterface;
     start: PositionInterface;
@@ -21,6 +22,7 @@ export class Journey implements JourneyInterface {
     incentive: number;
     remainingFee: number;
   };
+
   public driver?: {
     expense: number;
     identity: IdentityInterface;

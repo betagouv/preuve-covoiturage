@@ -58,7 +58,7 @@ For _static_ application configuration (INSEE codes, timeout, etc.) edit/add the
 
 ```js
 // relative path depends on the location of your file
-const config = require("../../packages/config");
+const config = require('../../packages/config');
 console.log(config.camelCasedFileName);
 ```
 
@@ -106,6 +106,9 @@ $ docker-compose exec mongo mongorestore -u mongo -p mongo \
 - `yarn migrate` run up migrations
 - `yarn lint`
 - `yarn test` run the tests
+
+- `yarn workspace @pdc/... run test`
+- `yarn workspace @pdc/... run test:integration`
 
 ### API documentation
 

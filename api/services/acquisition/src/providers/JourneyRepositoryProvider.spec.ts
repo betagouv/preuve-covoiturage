@@ -1,9 +1,9 @@
+import { describe } from 'mocha';
 import { expect } from 'chai';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { MongoProvider } from '@ilos/provider-mongo';
 
 import { JourneyRepositoryProvider } from './JourneyRepositoryProvider';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Journey } from '../entities/Journey';
 
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
@@ -17,8 +17,6 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   }
 }
 
-const config = new FakeConfigProvider();
-let mongoServer;
 let mongoClient;
 let repository;
 
@@ -26,11 +24,11 @@ const identity = {
   phone: '',
 };
 const position = {
-  datetime: '2019-05-01',
+  datetime: '2019-05-01T10:00:00Z',
   literal: 'Paris',
 };
 const operator = {
-  _id: '123456',
+  _id: '5d10c5ec63214bba0f9fa2d4',
   name: 'Maxicovoit',
 };
 const journey1 = {
@@ -95,21 +93,25 @@ const journey2 = {
   },
 };
 
+const config = new FakeConfigProvider();
+
 describe('Journey repository', () => {
   before(async () => {
-    mongoServer = new MongoMemoryServer();
-    const connectionString = await mongoServer.getConnectionString();
-    const dbName = await mongoServer.getDbName();
-    config.set('mongo.url', connectionString);
-    config.set('aquisition.db', dbName);
+    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+
+    config.set('mongo.url', process.env.APP_MONGO_URL);
+    config.set('mongo.db', process.env.APP_MONGO_DB);
+    config.set('acquisition.db', process.env.APP_MONGO_DB);
+
     mongoClient = new MongoProvider(config);
     await mongoClient.boot();
     repository = new JourneyRepositoryProvider(config, mongoClient);
   });
 
   after(async () => {
+    await mongoClient.getDb(process.env.APP_MONGO_DB).then((db) => db.dropDatabase());
     await mongoClient.close();
-    await mongoServer.stop();
+    process.exit(0);
   });
 
   it('works', async () => {

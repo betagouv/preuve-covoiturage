@@ -1,12 +1,13 @@
 // tslint:disable max-classes-per-file
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { bootstrap } from '@ilos/framework';
 import { MongoProvider } from '@ilos/provider-mongo';
+import { Interfaces } from '@ilos/core';
 
-let transport;
-let request;
+let transport: Interfaces.TransportInterface;
+let request: AxiosInstance;
 
 chai.use(chaiNock);
 

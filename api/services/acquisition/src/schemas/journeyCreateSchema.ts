@@ -1,81 +1,7 @@
-const startOrEndSchema = {
-  type: 'object',
-  required: ['datetime'],
-  additionalProperties: false,
-  minProperties: 2,
-  dependencies: {
-    lat: ['lon'],
-    lon: ['lat'],
-  },
-  properties: {
-    datetime: {
-      type: 'string',
-      format: 'date-time',
-    },
-    lat: {
-      type: 'number',
-      minimum: -180,
-      maximum: 180,
-    },
-    lon: {
-      type: 'number',
-      minimum: -180,
-      maximum: 180,
-    },
-    insee: {
-      type: 'string',
-      maxLength: 128,
-    },
-    literal: {
-      type: 'string',
-      maxLength: 512,
-    },
-  },
-};
+import { identitySchema } from './parts/identitySchema';
+import { positionSchema } from './parts/positionSchema';
 
-const identityProperties = {
-  firstname: {
-    type: 'string',
-    maxLength: 128,
-  },
-  lastname: {
-    type: 'string',
-    maxLength: 128,
-  },
-  email: {
-    type: 'string',
-    format: 'email',
-    maxLength: 128,
-  },
-  phone: {
-    type: 'string',
-    format: 'phone',
-    maxLength: 32,
-  },
-  company: {
-    type: 'string',
-    maxLength: 128,
-  },
-  travel_pass: {
-    type: 'object',
-    required: ['name', 'user_id'],
-    additionalProperties: false,
-    properties: {
-      name: {
-        type: 'string',
-        minlength: 2,
-        maxLength: 128,
-      },
-      user_id: {
-        type: 'string',
-        minlength: 2,
-        maxLength: 64,
-      },
-    },
-  },
-};
-
-export const journeyDbSchema = {
+export const journeyCreateSchema = {
   $id: 'journey.create',
   type: 'object',
   required: ['journey_id', 'operator_class'],
@@ -96,7 +22,7 @@ export const journeyDbSchema = {
     },
     passenger: {
       type: 'object',
-      required: ['identity', 'start', 'end', 'seats', 'contribution'],
+      required: ['identity', 'start', 'end', 'seats', 'contribution', 'incentives'],
       additionalProperties: false,
       properties: {
         identity: {
@@ -104,24 +30,35 @@ export const journeyDbSchema = {
           required: ['phone'],
           additionalProperties: false,
           properties: {
-            ...identityProperties,
+            ...identitySchema,
             over_18: {
               type: 'boolean',
+              default: true,
             },
           },
         },
-        start: startOrEndSchema,
-        end: startOrEndSchema,
+        start: positionSchema,
+        end: positionSchema,
         seats: {
           type: 'integer',
           default: 1,
           minimum: 1,
           maximum: 8,
         },
+        expense: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 1000000,
+        },
         contribution: {
           type: 'integer',
           minimum: 0,
-          maximum: 100000,
+          maximum: 1000000,
+        },
+        incentives: {
+          type: 'array',
+          minItems: 0,
+          items: { $ref: '#/definitions/incentive' },
         },
         distance: {
           type: 'integer',
@@ -137,7 +74,7 @@ export const journeyDbSchema = {
     },
     driver: {
       type: 'object',
-      required: ['identity', 'start', 'end', 'revenue'],
+      required: ['identity', 'start', 'end', 'revenue', 'incentives'],
       additionalProperties: false,
       properties: {
         identity: {
@@ -145,15 +82,25 @@ export const journeyDbSchema = {
           required: ['phone'],
           additionalProperties: false,
           properties: {
-            ...identityProperties,
+            ...identitySchema,
           },
         },
-        start: startOrEndSchema,
-        end: startOrEndSchema,
+        start: positionSchema,
+        end: positionSchema,
+        expense: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 1000000,
+        },
         revenue: {
           type: 'integer',
           minimum: 0,
-          maximum: 100000,
+          maximum: 1000000,
+        },
+        incentives: {
+          type: 'array',
+          minItems: 0,
+          items: { $ref: '#/definitions/incentive' },
         },
         distance: {
           type: 'integer',
@@ -164,6 +111,25 @@ export const journeyDbSchema = {
           type: 'integer',
           minimum: 0,
           maximum: 100000,
+        },
+      },
+    },
+  },
+  definitions: {
+    incentive: {
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 3,
+      properties: {
+        index: {
+          type: 'integer',
+          minimum: 0,
+        },
+        siren: { macro: 'siren' },
+        amount: {
+          type: 'number',
+          minimum: -200,
+          maximum: 200,
         },
       },
     },

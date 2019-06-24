@@ -16,11 +16,11 @@ export class JourneyRepositoryProvider extends ParentRepositoryProvider implemen
   }
 
   public getKey(): string {
-    return this.config.get('aquisition.collectionName', 'journeys');
+    return this.config.get('acquisition.collectionName', 'journeys');
   }
 
   public getDatabase(): string {
-    return this.config.get('aquisition.db');
+    return this.config.get('acquisition.db');
   }
 
   public getModel() {
