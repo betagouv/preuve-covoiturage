@@ -55,7 +55,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "run-s format:fix lint"
+      "pre-commit": "yarn run format:fix",
+      "pre-push": "yarn run lint"
     }
   }
 }

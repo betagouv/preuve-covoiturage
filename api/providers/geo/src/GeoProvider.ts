@@ -1,5 +1,8 @@
-import { Container, Exceptions, Interfaces } from '@ilos/core';
 import * as _ from 'lodash';
+import { Container, Exceptions, Interfaces, Parents } from '@ilos/core';
+import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
+import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
 import { GeoInterface } from './interfaces/GeoInterface';
 import { PositionInterface } from './interfaces/PositionInterface';
@@ -10,17 +13,50 @@ import { FrGouvApiGeo } from './providers/fr.gouv.api.geo';
 import { OrgOpenstreetmapNominatim } from './providers/org.openstreetmap.nominatim';
 
 @Container.provider()
-export class GeoProvider implements Interfaces.ProviderInterface {
-  async boot() {}
+export class GeoProvider extends Parents.ServiceProvider implements Interfaces.ProviderInterface {
+  readonly alias = [
+    [ValidatorProviderInterfaceResolver, ValidatorProvider],
+    [ConfigProviderInterfaceResolver, ConfigProvider],
+    [EnvProviderInterfaceResolver, EnvProvider],
+  ];
 
-  public async getTown({ lon, lat, insee, literal }: GeoInterface): Promise<PositionInterface> {
-    if ((_.isNil(lon) || _.isNil(lat)) && _.isNil(insee) && _.isNil(literal)) {
-      throw new Exceptions.InvalidParamsException('lon/lat or INSEE or literal must be provided');
-    }
+  protected validator: ValidatorProviderInterfaceResolver;
+  protected readonly validators: [string, any][] = [
+    [
+      'position',
+      {
+        $id: 'position',
+        type: 'object',
+        additionalProperties: false,
+        minProperties: 1,
+        dependencies: {
+          lon: ['lat'],
+          lat: ['lon'],
+        },
+        properties: {
+          lat: { macro: 'lat' },
+          lon: { macro: 'lon' },
+          insee: { macro: 'insee' },
+          literal: { macro: 'longchar' },
+        },
+      },
+    ],
+  ];
 
-    // if (!_.isNil(insee)) validate('insee', insee);
-    // if (!_.isNil(lon)) validate('lon', lon);
-    // if (!_.isNil(lat)) validate('lat', lat);
+  public async boot() {
+    await super.boot();
+
+    // register validators
+    this.validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
+    this.validators.forEach(([name, schema]) => {
+      this.validator.registerValidator(schema, name);
+    });
+  }
+
+  public async getTown(position: GeoInterface): Promise<PositionInterface> {
+    await this.validator.validate(position, 'position');
+
+    const { lon, lat, insee, literal } = position;
 
     if (!_.isNil(lon) && !_.isNil(lat)) {
       // beurk...
