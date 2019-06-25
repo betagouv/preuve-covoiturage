@@ -7,6 +7,17 @@ l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
 
 [http://covoiturage.beta.gouv.fr/](http://covoiturage.beta.gouv.fr/)
 
+## Contribution à la liste des cartes de transport et des Titres-Mobilité
+
+Les listes des cartes de transport et des Titres-Mobilité autorisés sont disponibles dans la configuration. Il est possible de soumettre des _Pull Requests_ pour en ajouter.
+
+- [Cartes de transport](api/config/travel-pass.yml)
+- [Titres-Mobilité](api/config/mobility-pass.yml)
+
+> Merci d'utiliser le modèle de _Pull Request_ quand vous soumettez des modifications.
+
+Merci pour votre contribution !
+
 ### Requirements
 
 - `docker` && `docker-compose`
