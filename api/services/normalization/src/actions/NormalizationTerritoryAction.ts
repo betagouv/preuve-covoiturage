@@ -38,13 +38,11 @@ export class NormalizationTerritoryAction extends AbstractAction {
       ...param.journey,
     };
 
-    await Promise.all(
-      paths.map(async (path) => {
-        const position = _.get(param.journey, path);
-        const territories = await this.findTerritories(position, context);
-        _.set(territoriesEnrichedJourney, `${path}.territories`, territories);
-      }),
-    );
+    await Promise.all(paths.map(async (path) => {
+      const position = _.get(param.journey, path);
+      const territories = await this.findTerritories(position, context);
+      _.set(territoriesEnrichedJourney, `${path}.territory`, territories);
+    }));
 
     // await this.kernel.notify( // todo: should be notify
     //   'crosscheck:process',
