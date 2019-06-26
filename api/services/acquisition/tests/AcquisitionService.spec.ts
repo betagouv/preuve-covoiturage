@@ -1,10 +1,14 @@
+// tslint:disable: no-unused-expression
+
 import { describe } from 'mocha';
 import axios, { AxiosInstance } from 'axios';
 import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { bootstrap } from '@ilos/framework';
 import { MongoProvider } from '@ilos/provider-mongo';
 import { Interfaces } from '@ilos/core';
 
+chai.use(chaiAsPromised);
 const { expect } = chai;
 const port = '8081';
 
@@ -36,16 +40,50 @@ describe('Acquisition service', async () => {
       .then((db) => db.dropDatabase());
 
     await transport.down();
-    process.exit(0);
   });
 
-  it('works', async () => {
-    const response = await request.post('/', {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'acquisition:createJourney',
-      params: {},
-    });
-    expect(response.status).equal(200);
+  it('Empty payload fails', async () => {
+    let res;
+    try {
+      res = request.post('/', {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'acquisition:createJourney',
+        params: {
+          params: {},
+          _context: {
+            call: {
+              user: {
+                operator: '5d1233a374f16221c079b04f',
+                operator_name: 'MaxiCovoit',
+                permissions: ['journey.create'],
+              },
+            },
+          },
+        },
+      });
+
+      await res;
+      // .catch(({ response }) => {
+      //   return expect(response.data).to.deep.equal({
+      //     id: 1,
+      //     jsonrpc: '2.0',
+      //     error: {
+      //       code: 400,
+      //       message: 'Bad Request',
+      //       // data: "data should have required property 'journey_id'",
+      //     },
+      //   });
+      // })
+      // .catch((e) => {
+      //   console.log('throw');
+      //   throw e;
+      // });
+
+      expect(res).to.be.fulfilled;
+    } catch (e) {
+      console.log('res', res);
+      throw e;
+    }
   });
 });

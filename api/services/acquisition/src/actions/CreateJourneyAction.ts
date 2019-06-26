@@ -10,6 +10,11 @@ import { Journey } from '../entities/Journey';
   method: 'createJourney',
 })
 export class CreateJourneyAction extends Parents.Action {
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'journey.create'],
+    ['can', ['journey.create']],
+  ];
+
   constructor(
     private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
     private configProvider: ConfigProviderInterfaceResolver,

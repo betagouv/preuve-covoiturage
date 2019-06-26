@@ -30,10 +30,8 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   protected readonly validators: [string, any][] = [['journey.create', journeyCreateSchema]];
 
   public async boot() {
-    this.getContainer()
-      .get(ConfigProviderInterfaceResolver)
-      .loadConfigDirectory(__dirname);
     await super.boot();
+    this.registerConfig();
     this.registerValidators();
   }
 
@@ -42,5 +40,11 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     this.validators.forEach(([name, schema]) => {
       validator.registerValidator(schema, name);
     });
+  }
+
+  private registerConfig() {
+    this.getContainer()
+      .get(ConfigProviderInterfaceResolver)
+      .loadConfigDirectory(__dirname);
   }
 }
