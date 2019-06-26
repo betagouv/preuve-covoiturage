@@ -62,6 +62,7 @@
     "@ilos/provider-config": "~0",
     "@ilos/provider-repository": "~0",
     "@ilos/provider-mongo": "~0",
+    "@ilos/provider-validator": "~0",
     "moment": "^2.24.0",
     "lodash": "^4.17.11"
   },

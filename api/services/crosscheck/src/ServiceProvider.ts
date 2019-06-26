@@ -6,12 +6,12 @@ import { CrosscheckProcessAction } from './actions/CrosscheckProcessAction';
 
 import {TripRepositoryProviderInterfaceResolver} from './interfaces/repository/TripRepositoryProviderInterface';
 
-import {TripRepositoryProvider} from './providers/TripRepositoryProvider';
+import {CrosscheckRepositoryProvider} from './providers/CrosscheckRepositoryProvider';
 
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
-    [TripRepositoryProviderInterfaceResolver, TripRepositoryProvider],
+    [TripRepositoryProviderInterfaceResolver, CrosscheckRepositoryProvider],
   ];
 
   readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [

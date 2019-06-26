@@ -12,7 +12,7 @@ import {PersonInterface} from '../interfaces/TripInterface';
  * Trip specific repository
  */
 @Container.provider()
-export class TripRepositoryProvider extends ParentRepositoryProvider implements TripRepositoryProviderInterface {
+export class CrosscheckRepositoryProvider extends ParentRepositoryProvider implements TripRepositoryProviderInterface {
   constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
     super(config, mongoProvider);
   }
@@ -69,7 +69,6 @@ export class TripRepositoryProvider extends ParentRepositoryProvider implements 
     return this.instanciate(result);
   }
 
-
   private normalizeOperatorIds(params: { operator_journey_id?: string, operator_id: string }): { operator_journey_id?: ObjectId, operator_id?: ObjectId } {
     const normalizedFilters: { operator_journey_id?: ObjectId; operator_id?: ObjectId } = {};
     if ('operator_journey_id' in params) {
@@ -78,6 +77,5 @@ export class TripRepositoryProvider extends ParentRepositoryProvider implements 
     normalizedFilters.operator_id = new ObjectId(params.operator_id);
     return normalizedFilters;
   }
-
 
 }
