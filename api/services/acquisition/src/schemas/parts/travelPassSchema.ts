@@ -1,9 +1,9 @@
 export const travelPassSchema = {
   type: 'object',
-  required: ['name', 'userId'],
+  minProperties: 2,
   additionalProperties: false,
   properties: {
     name: { macro: 'varchar' },
-    userId: { macro: 'objectid' },
+    user_id: { macro: 'objectid' },
   },
 };

@@ -3,8 +3,7 @@ import { PositionInterface } from './PositionInterface';
 import { IncentiveInterface } from './IncentiveInterface';
 import { PaymentInterface } from './PaymentInterface';
 
-export interface JourneyInterface {
-  _id?: string;
+export interface CreateJourneyParamsInterface {
   journey_id: string;
   operator_journey_id: string;
   operator_class?: string;

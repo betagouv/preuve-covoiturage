@@ -6,5 +6,5 @@ export const identitySchema = {
   email: { macro: 'email' },
   phone: { macro: 'phone' },
   company: { macro: 'varchar' },
-  travelPass: travelPassSchema,
+  travel_pass: travelPassSchema,
 };

@@ -61,6 +61,10 @@ export class HttpTransport implements Interfaces.TransportInterface {
     return this.kernel;
   }
 
+  getInstance() {
+    return this.server;
+  }
+
   async up(opts: string[] = []) {
     this.getProviders();
 

@@ -3,8 +3,9 @@ import { expect } from 'chai';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { MongoProvider } from '@ilos/provider-mongo';
 
-import { JourneyRepositoryProvider } from './JourneyRepositoryProvider';
 import { Journey } from '../entities/Journey';
+import { JourneyRepositoryProvider } from './JourneyRepositoryProvider';
+import { CreateJourneyParamsInterface } from '../interfaces/CreateJourneyParamsInterface';
 
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   protected conf = {};
@@ -20,76 +21,59 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 let mongoClient;
 let repository;
 
-const identity = {
-  phone: '',
-};
-const position = {
-  datetime: '2019-05-01T10:00:00Z',
-  literal: 'Paris',
-};
-const operator = {
-  _id: '5d10c5ec63214bba0f9fa2d4',
-  name: 'Maxicovoit',
-};
-const journey1 = {
-  operator,
-  journeyId: '1',
-  operatorJourneyId: '1',
-  operatorClass: 'A',
+const journey1: CreateJourneyParamsInterface = {
+  journey_id: '1',
+  operator_journey_id: '1',
+  operator_class: 'A',
+  operator_id: '5d10c5ec63214bba0f9fa2d4',
   passenger: {
-    identity,
-    start: position,
-    end: position,
+    identity: { phone: '+33612345678' },
+    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
+    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
     seats: 1,
+    expense: 1,
     contribution: 1,
+    incentives: [],
     distance: 10,
     duration: 10,
-    cost: 0,
-    incentive: 0,
-    remainingFee: 0,
   },
   driver: {
-    identity,
-    start: position,
-    end: position,
-    revenue: 1,
+    identity: { phone: '+33687654321' },
+    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
+    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
     expense: 1,
+    revenue: 1,
+    incentives: [],
     distance: 10,
     duration: 10,
-    cost: 0,
-    incentive: 0,
-    remainingFee: 0,
   },
 };
 
-const journey2 = {
-  operator,
-  journeyId: '2',
-  operatorJourneyId: '2',
-  operatorClass: 'B',
+const journey2: CreateJourneyParamsInterface = {
+  journey_id: '2',
+  operator_journey_id: '2',
+  operator_class: 'B',
+  operator_id: '5d10c5ec63214bba0f9fa2d4',
   passenger: {
-    identity,
-    start: position,
-    end: position,
+    identity: { phone: '+33687652134' },
+    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
+    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
     seats: 1,
+    expense: 1,
     contribution: 1,
+    incentives: [],
     distance: 10,
     duration: 10,
-    cost: 0,
-    incentive: 0,
-    remainingFee: 0,
   },
   driver: {
-    identity,
-    start: position,
-    end: position,
-    revenue: 1,
+    identity: { phone: '+33687654321' },
+    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
+    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
     expense: 1,
+    revenue: 1,
+    incentives: [],
     distance: 10,
     duration: 10,
-    cost: 0,
-    incentive: 0,
-    remainingFee: 0,
   },
 };
 

@@ -1,9 +1,9 @@
 // tslint:disable: no-unused-expression
 
-import { describe } from 'mocha';
-import axios, { AxiosInstance } from 'axios';
+import supertest from 'supertest';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { describe } from 'mocha';
 import { bootstrap } from '@ilos/framework';
 import { MongoProvider } from '@ilos/provider-mongo';
 import { Interfaces } from '@ilos/core';
@@ -13,22 +13,45 @@ const { expect } = chai;
 const port = '8081';
 
 let transport: Interfaces.TransportInterface;
-let request: AxiosInstance;
+let request: supertest.SuperTest<supertest.Test>;
+
+const callFactory = (params: any = {}) => ({
+  id: 1,
+  jsonrpc: '2.0',
+  method: 'acquisition:createJourney',
+  params: {
+    params,
+    _context: {
+      call: {
+        user: {
+          operator: '5d13c703bb3ed9807cad2745',
+          operator_name: 'MaxiCovoit',
+          permissions: ['journey.create'],
+        },
+      },
+    },
+  },
+});
+
+const passingJourney = {
+  journey_id: '1234',
+  operator_class: 'A',
+  operator_id: '5d13c703bb3ed9807cad2745',
+  passenger: {
+    identity: { phone: '+33612345678' },
+    start: { datetime: new Date(), literal: 'Paris' },
+    end: { datetime: new Date(), literal: 'Evry' },
+    contribution: 0,
+    incentives: [],
+  },
+};
 
 describe('Acquisition service', async () => {
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
 
     transport = await bootstrap.boot(['', '', 'http', port]);
-
-    request = axios.create({
-      baseURL: `http://127.0.0.1:${port}`,
-      timeout: 1000,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
+    request = supertest(transport.getInstance());
   });
 
   after(async () => {
@@ -43,47 +66,67 @@ describe('Acquisition service', async () => {
   });
 
   it('Empty payload fails', async () => {
-    let res;
-    try {
-      res = request.post('/', {
+    return request
+      .post('/')
+      .send(callFactory())
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+      });
+  });
+
+  it('Missing user authorization', async () => {
+    return request
+      .post('/')
+      .send({
         id: 1,
         jsonrpc: '2.0',
         method: 'acquisition:createJourney',
         params: {
-          params: {},
+          params: passingJourney,
           _context: {
             call: {
-              user: {
-                operator: '5d1233a374f16221c079b04f',
-                operator_name: 'MaxiCovoit',
-                permissions: ['journey.create'],
-              },
+              user: {},
             },
           },
         },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(503);
+        expect(response.body).to.have.property('error');
       });
+  });
 
-      await res;
-      // .catch(({ response }) => {
-      //   return expect(response.data).to.deep.equal({
-      //     id: 1,
-      //     jsonrpc: '2.0',
-      //     error: {
-      //       code: 400,
-      //       message: 'Bad Request',
-      //       // data: "data should have required property 'journey_id'",
-      //     },
-      //   });
-      // })
-      // .catch((e) => {
-      //   console.log('throw');
-      //   throw e;
-      // });
+  it('Method not found', async () => {
+    return request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'acquisition:createUnknown',
+        params: {},
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(405);
+        expect(response.body).to.have.property('error');
+      });
+  });
 
-      expect(res).to.be.fulfilled;
-    } catch (e) {
-      console.log('res', res);
-      throw e;
-    }
+  it('Creates journey', async () => {
+    return request
+      .post('/')
+      .send(callFactory(passingJourney))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+      });
   });
 });
