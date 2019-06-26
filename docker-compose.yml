@@ -1,13 +1,13 @@
 version: '3'
 services:
   mongo:
-    image: "mongo:4.0"
+    image: 'mongo:4.0'
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: "mongo"
-      MONGO_INITDB_ROOT_PASSWORD: "mongo"
-      MONGO_INITDB_DATABASE: "pdc-local"
+      MONGO_INITDB_ROOT_USERNAME: 'mongo'
+      MONGO_INITDB_ROOT_PASSWORD: 'mongo'
+      MONGO_INITDB_DATABASE: 'pdc-local'
     volumes:
       - ./db/mongo:/data/db
     networks:
@@ -15,16 +15,19 @@ services:
       - back
 
   redis:
-    image: "redis:4"
+    image: 'redis:4'
+    ports:
+      - 6379:6379
     networks:
+      - front
       - back
 
   api:
-    build: "./docker/api"
+    build: './docker/api'
     volumes:
       - ./api:/code
-    working_dir: "/code"
-    command: "yarn dev"
+    working_dir: '/code'
+    command: 'yarn dev'
     ports:
       - 8080:8080
       - 9229:9229
@@ -44,11 +47,11 @@ services:
       - redis
 
   worker:
-    build: "./docker/api"
+    build: './docker/api'
     volumes:
       - ./api:/code
-    working_dir: "/code"
-    command: "yarn worker-dev"
+    working_dir: '/code'
+    command: 'yarn worker-dev'
     ports:
       - 9230:9230
     env_file: api/.env
@@ -64,12 +67,12 @@ services:
       - redis
 
   dashboard:
-    build: "./docker/dashboard"
+    build: './docker/dashboard'
     tty: true
     volumes:
       - ./dashboard:/code
-    working_dir: "/code"
-    command: "ng serve --host 0.0.0.0"
+    working_dir: '/code'
+    command: 'ng serve --host 0.0.0.0'
     ports:
       - 4200:4200
     networks:
@@ -79,7 +82,7 @@ services:
       - api
 
   editor:
-    image: "swaggerapi/swagger-editor"
+    image: 'swaggerapi/swagger-editor'
     ports:
       - 8081:8080
 
