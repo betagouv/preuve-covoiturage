@@ -2,13 +2,13 @@ import { Parents, Container, Types, Interfaces } from '@ilos/core';
 import * as _ from 'lodash';
 import moment from 'moment';
 
-import { Journey } from '../entities/journey';
 import {Person, Trip} from '../entities/trip';
 import {TripRepositoryProviderInterfaceResolver} from '../interfaces/repository/TripRepositoryProviderInterface';
-import {PersonInterface} from '../interfaces/TripInterface';
+import {PersonInterface, TripInterface} from '../interfaces/TripInterface';
+import {JourneyInterface} from '../interfaces/JourneyInterface';
 
 interface CrosscheckProcessParamsInterface {
-  journey: Journey;
+  journey: JourneyInterface;
 }
 
 /*
@@ -29,7 +29,7 @@ export class CrosscheckProcessAction extends Parents.Action {
   public async handle(param: CrosscheckProcessParamsInterface, context: Types.ContextType): Promise<void> {
 
 
-    let trip: Trip | null;
+    let trip: TripInterface | null;
 
     // find by ( operator_journey_id & operator._id )
     try {
@@ -68,7 +68,7 @@ export class CrosscheckProcessAction extends Parents.Action {
     return;
   }
 
-  private async createFromJourney(journey: Journey) {
+  private async createFromJourney(journey: JourneyInterface): Promise<Trip> {
     const trip = new Trip({
       operator_id: journey.operator._id,
       operator_journey_id: journey.operator_journey_id,
@@ -83,28 +83,26 @@ export class CrosscheckProcessAction extends Parents.Action {
     return trip;
   }
 
-  private async addJourney(journey: Journey, sourceTrip: Trip): Promise<void> {
+  private async addJourney(journey: JourneyInterface, sourceTrip: TripInterface): Promise<Trip> {
     // extract existing phone number to compare identities
     const phones = _.uniq(sourceTrip.people.map((p: PersonInterface) => p.identity.phone));
 
     // filter mapped people by their phone number. Keep non matching ones
     const people = this.mapPeople(journey).filter(
-      (person) => phones.indexOf(person.identity.phone) === -1,
+      (person:PersonInterface) => phones.indexOf(person.identity.phone) === -1,
     );
 
     const newStartDate = this.reduceStartDate(journey, sourceTrip);
 
-    this.tripRepository.findByIdAndPushPeople(sourceTrip._id, people, newStartDate);
+    return this.tripRepository.findByIdAndPushPeople(sourceTrip._id, people, newStartDate);
 
     // await Journey.findByIdAndUpdate({ _id: journey._id }, { trip_id: trip._id });
-
-    return;
   }
 
   /*
    * map people from journey
    */
-  private mapPeople(journey: Journey): Person[] {
+  private mapPeople(journey: JourneyInterface): Person[] {
 
     const people: Person[] = [];
     if ('driver' in journey) {
@@ -140,7 +138,7 @@ export class CrosscheckProcessAction extends Parents.Action {
   }
 
   // find the oldest start date
-  private reduceStartDate(journey: Journey, trip: Trip | null = null) {
+  private reduceStartDate(journey: JourneyInterface, trip: TripInterface | null = null): Date {
     const arr: Date[] = [journey.driver.start.datetime];
 
     if (trip) {
