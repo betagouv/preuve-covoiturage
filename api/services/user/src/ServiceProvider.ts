@@ -112,6 +112,11 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   protected registerTemplate() {
     this.getContainer()
       .get(TemplateProviderInterfaceResolver)
-      .loadTemplatesFromDirectory(path.resolve(__dirname, 'templates'));
+      .loadTemplatesFromDirectory(
+        path.resolve(__dirname, 'templates'),
+        this.getContainer()
+          .get(ConfigProviderInterfaceResolver)
+          .get('template'),
+      );
   }
 }
