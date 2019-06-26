@@ -1,10 +1,10 @@
-import { PositionInterface } from './PositionInterface';
+import {PositionInterface} from './PositionInterface';
 
 export interface JourneyInterface {
   _id: string;
-  journeyId: string;
-  operatorJourneyId: string;
-  operatorClass?: string;
+  journey_id: string;
+  operator_journey_id: string;
+  operator_class?: string;
   operator: {
     _id: string;
     name: string;
@@ -19,7 +19,7 @@ export interface JourneyInterface {
     duration?: number;
     cost: number;
     incentive: number;
-    remainingFee: number;
+    remaining_fee: number;
   };
   driver?: {
     identity: IdentityInterface;
@@ -31,10 +31,37 @@ export interface JourneyInterface {
     duration?: number;
     cost: number;
     incentive: number;
-    remainingFee: number;
+    remaining_fee: number;
   };
+  territory?: string[];
 }
 
+export interface PassengerInterface {
+  identity: IdentityInterface;
+  start: PositionInterface;
+  end: PositionInterface;
+  seats: number;
+  contribution: number;
+  distance?: number;
+  duration?: number;
+  cost: number;
+  incentive: number;
+  remaining_fee: number;
+  territory?: string[];
+}
+
+export interface DriverInterface {
+  expense: number;
+  identity: IdentityInterface;
+  start: PositionInterface;
+  end: PositionInterface;
+  revenue: number;
+  distance?: number;
+  duration?: number;
+  cost: number;
+  incentive: number;
+  remaining_fee: number;
+}
 
 export interface IdentityInterface {
   phone: string;
@@ -42,7 +69,7 @@ export interface IdentityInterface {
   lastname?: string;
   email?: string;
   company?: string;
-  travelPass?: {
+  travel_pass?: {
     name: string;
     userId: string;
   };

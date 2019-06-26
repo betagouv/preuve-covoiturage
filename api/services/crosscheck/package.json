@@ -59,7 +59,11 @@
   },
   "dependencies": {
     "@ilos/core": "~0",
-    "@ilos/provider-config": "~0"
+    "@ilos/provider-config": "~0",
+    "@ilos/provider-repository": "~0",
+    "@ilos/provider-mongo": "~0",
+    "moment": "^2.24.0",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "@ilos/framework": "~0",
