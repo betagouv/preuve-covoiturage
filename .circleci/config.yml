@@ -17,11 +17,11 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
+      # - run:
+      #     name: Setup Code Climate test-reporter
+      #     command: |
+      #       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      #       chmod +x ./cc-test-reporter
       - run:
           name: Clone and build @ilos packages
           command: |
@@ -37,14 +37,15 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn run build
       - run: yarn run lint
-      - run:
-          name: Run tests with coverage
-          command: |
-            ./cc-test-reporter before-build
-            yarn run coverage-ci
-            cat coverage/**/lcov.info > coverage/lcov.info
-            ./cc-test-reporter format-coverage -t lcov
-            ./cc-test-reporter upload-coverage
+      - run: yarn run test
+      # - run:
+      #     name: Run tests with coverage
+      #     command: |
+      #       ./cc-test-reporter before-build
+      #       yarn run coverage-ci
+      #       cat coverage/**/lcov.info > coverage/lcov.info
+      #       ./cc-test-reporter format-coverage -t lcov
+      #       ./cc-test-reporter upload-coverage
 
   front-angular:
     docker:
