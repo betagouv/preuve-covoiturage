@@ -25,7 +25,33 @@ export class HttpTransport implements Interfaces.TransportInterface {
   env: EnvProviderInterface;
   port: string;
   server: http.Server;
-  readonly routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [];
+  readonly routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
+    // USERS
+    ['put', '/profile', 'user:patch', (body, _query, _params, session) => ({...body, _id: session.user._id })],
+    ['delete', '/profile', 'user:delete', (_body, _query, _params, session) => ({_id: session.user._id })],
+    ['post', '/profile/password', 'user:changePassword', (body, _query, _params, session) => ({...body, _id: session.user._id })],
+    // ['post', '/signin', ???],
+    
+    ['post', '/forgotten', 'user:forgottenPassword', 'auto'],
+    ['post', '/reset', 'user:resetPassword', 'auto'],
+    
+    ['post', '/users/invite', 'user:create', 'auto'],
+    ['get', '/users/:_id', 'user:find', 'auto'],
+    ['put', '/users/:_id', 'user:patch', 'auto'],
+    ['delete', '/users/:_id', 'user:delete', 'auto'],
+    ['get', '/users', 'user:list', 'auto'],
+    // ['post', '/users/' > user: ???],
+
+    ['post', '/territories/:territory/users/add', 'user:create', 'auto'],
+    ['post', '/territories/:territory/users/remove', 'user:delete', 'auto'],
+    ['get', '/territories/:territory/users', 'user:list', 'auto'],
+
+    ['post', '/operators/:operator/users/add', 'user:create', 'auto'],
+    ['post', '/operators/:operator/users/remove', 'user:delete', 'auto'],
+    ['get', '/operators/:operator/users', 'user:list', 'auto'],
+
+
+  ];
 
   constructor(kernel: Interfaces.KernelInterface) {
     this.kernel = kernel;

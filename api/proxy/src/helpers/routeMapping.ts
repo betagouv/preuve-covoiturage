@@ -1,23 +1,29 @@
 import express from 'express';
 import { Interfaces, Types } from '@ilos/core';
 
-export type MapRequestType = (body: any, query?: any, params?: any) => any;
-export type MapResponseType = (result: any, error: any) => any;
+export type MapRequestType = (body: any, query?: any, params?: any, session?: any) => any;
+export type MapResponseType = (result: any, error: any, session?: any) => any;
 
-const defaultMapResponse: MapResponseType = (result, error) => {
+const defaultMapResponse: MapResponseType = (result, error, session?: any) => {
   if (error) {
     return error;
   }
   return result;
 };
 
-const defaultMapRequest: MapRequestType = (body: any, query?: any, params?: any) => body;
+const defaultMapRequest: MapRequestType = (body: any, query?: any, params?: any, session?: any) => body;
+
+const autoMapRequest: MapRequestType = (body: any, query?: any, params?: any) => ({
+  ...query,
+  ...params,
+  ...body,
+});
 
 export type ObjectRouteMapType = {
   route: string;
   verb: string;
   signature: string;
-  mapRequest?: MapRequestType;
+  mapRequest?: MapRequestType | 'auto';
   mapResponse?: MapResponseType;
 };
 
@@ -25,7 +31,7 @@ export type ArrayRouteMapType = [
   string, // verb
   string, // route
   string, // signature
-  MapRequestType?, // mapRequest
+  (MapRequestType | 'auto')?, // mapRequest
   MapResponseType? // mapResponse
 ];
 
@@ -40,7 +46,7 @@ export function makeCall(method: string, params: Types.ParamsType, callContext?:
     jsonrpc: '2.0',
     id: 1,
   };
-  const call = callContext ? callContext : { user: null };
+  const call = callContext ? callContext : { user: undefined };
 
   const context = {
     call,
@@ -91,21 +97,33 @@ export function routeMapping(
   routes.forEach((verbMap, route) => {
     verbMap.forEach((serviceDefinition, verb) => {
       if (verb in router) {
-        let { mapRequest, mapResponse } = serviceDefinition;
+        const { mapRequest, mapResponse } = serviceDefinition;
+
+        let mapRequestFinal: MapRequestType;
+        let mapResponseFinal: MapResponseType;
 
         if (!mapRequest) {
-          mapRequest = defaultMapRequest;
+          mapRequestFinal = defaultMapRequest;
+        }
+
+        if (typeof mapRequest !== 'function') {
+          mapRequestFinal = autoMapRequest;
+        } else {
+          mapRequestFinal = mapRequest;
         }
 
         if (!mapResponse) {
-          mapResponse = defaultMapResponse;
+          mapResponseFinal = defaultMapResponse;
+        } else {
+          mapResponseFinal = mapResponse;
         }
+
         router[verb](
           route,
           async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
             try {
               const response = await kernel.handle(
-                makeCall(serviceDefinition.signature, mapRequest(req.body, req.query, req.params), {
+                makeCall(serviceDefinition.signature, mapRequestFinal(req.body, req.query, req.params, req.session), {
                   user: 'session' in req && 'user' in req.session ? req.session.user : null,
                 }),
               );
@@ -113,10 +131,10 @@ export function routeMapping(
                 res.status(204).end();
               } else {
                 if ('result' in response) {
-                  res.json(mapResponse(response.result, response.error));
+                  res.json(mapResponseFinal(response.result, response.error, req.session));
                 }
                 if ('error' in response) {
-                  res.status(500).json(mapResponse(response.result, response.error));
+                  res.status(500).json(mapResponseFinal(response.result, response.error, req.session));
                 }
               }
             } catch (e) {
