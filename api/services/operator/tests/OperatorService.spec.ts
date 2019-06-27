@@ -1,8 +1,7 @@
 // tslint:disable max-classes-per-file
-import axios from 'axios';
+import supertest from 'supertest';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { Exceptions } from '@ilos/core';
 import { bootstrap } from '@ilos/framework';
 import { MongoProvider } from '@ilos/provider-mongo';
 
@@ -13,19 +12,6 @@ chai.use(chaiAsPromised);
 
 const { expect } = chai;
 const port = '8081';
-
-const errorFactory = (err: Exceptions.RPCException) => ({
-  status: 200,
-  data: {
-    jsonrpc: '2.0',
-    id: 1,
-    error: {
-      code: err.rpcError.code,
-      message: err.rpcError.message,
-      data: err.rpcError.data,
-    },
-  },
-});
 
 const callFactory = (method: string, data: any, permissions: string[]) => ({
   method,
@@ -52,15 +38,7 @@ describe('Operator service', () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
 
     transport = await bootstrap.boot(['', '', 'http', port]);
-
-    request = axios.create({
-      baseURL: `http://127.0.0.1:${port}`,
-      timeout: 1000,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
+    request = supertest(transport.getInstance());
   });
 
   after(async () => {
@@ -74,52 +52,35 @@ describe('Operator service', () => {
     await transport.down();
   });
 
-  it('should validate request on create', async () => {
-    await expect(
-      request.post(
-        '/',
-        callFactory(
-          'operator:create',
-          {
-            nom_commercial: 10,
-            raison_sociale: 'Toto inc.',
-          },
-          ['operator.create'],
-        ),
-      ),
-    ).to.eventually.deep.include(
-      errorFactory(
-        new Exceptions.InvalidParamsException(
-          'data.nom_commercial should be string, data.nom_commercial should pass "macro" keyword validation',
-        ),
-      ),
-    );
-  });
-
-  it('should validate permission on create', async () => {
-    await expect(
-      request.post(
-        '/',
+  it('Fails on wrong permissions', () => {
+    return request
+      .post('/')
+      .send(
         callFactory(
           'operator:create',
           {
             nom_commercial: 'Toto',
             raison_sociale: 'Toto inc.',
           },
-          ['operator.list'],
+          ['wrong.permission'],
         ),
-      ),
-    ).to.eventually.deep.include(errorFactory(new Exceptions.ForbiddenException('Invalid permissions')));
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(503);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error.data).to.eq('Invalid permissions');
+      });
   });
 
-  it('should work', async () => {
-    let _id: string;
-    let patchedName: string;
+  // id returned by database
+  let _id: string;
 
-    try {
-      // Create an operator
-      const { status: createStatus, data: createData } = await request.post(
-        '/',
+  it('Creates an operator', () => {
+    return request
+      .post('/')
+      .send(
         callFactory(
           'operator:create',
           {
@@ -128,20 +89,25 @@ describe('Operator service', () => {
           },
           ['operator.create'],
         ),
-      );
-      _id = createData.result._id;
-      const nom_commercial = createData.result.nom_commercial;
-      expect(createStatus).equal(200);
-      expect(nom_commercial).to.eq('Toto');
-    } catch (e) {
-      console.log('CREATE', e.message);
-      throw e;
-    }
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id');
+        expect(response.body.result).to.have.property('nom_commercial', 'Toto');
+        expect(response.body.result).to.have.property('raison_sociale', 'Toto inc.');
 
-    try {
-      // Update an operator
-      const { status: patchStatus, data: patchData } = await request.post(
-        '/',
+        // store the _id
+        _id = response.body.result._id;
+      });
+  });
+
+  it('Updates the operator', () => {
+    return request
+      .post('/')
+      .send(
         callFactory(
           'operator:patch',
           {
@@ -152,47 +118,43 @@ describe('Operator service', () => {
           },
           ['operator.update'],
         ),
-      );
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id', _id);
+        expect(response.body.result).to.have.property('nom_commercial', 'Yop');
+        expect(response.body.result).to.have.property('raison_sociale', 'Toto inc.');
+      });
+  });
 
-      patchedName = patchData.result.nom_commercial;
-      expect(patchStatus).equal(200);
-      expect(patchedName).to.eq('Yop');
-    } catch (e) {
-      console.log('PATCH', e.message);
-      throw e;
-    }
+  it('Lists all operators', () => {
+    return request
+      .post('/')
+      .send(callFactory('operator:all', {}, ['operator.list']))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result.length).to.eq(1);
+        expect(response.body.result[0]).to.have.property('_id', _id);
+        expect(response.body.result[0]).to.have.property('nom_commercial', 'Yop');
+        expect(response.body.result[0]).to.have.property('raison_sociale', 'Toto inc.');
+      });
+  });
 
-    try {
-      const { status: listStatus, data: listData } = await request.post(
-        '/',
-        callFactory('operator:all', {}, ['operator.list']),
-      );
-      const list = listData.result;
-      expect(listStatus).equal(200);
-      expect(list.length).eq(1);
-      expect(list[0].nom_commercial).eq(patchedName);
-    } catch (e) {
-      console.log('FIND', e.message);
-      throw e;
-    }
-
-    // delete the operator
-    try {
-      const { status: deleteStatus, data: deleteData } = await request.post(
-        '/',
-        callFactory(
-          'operator:delete',
-          {
-            _id,
-          },
-          ['operator.delete'],
-        ),
-      );
-      expect(deleteStatus).equal(200);
-      expect(deleteData.result).equal(true);
-    } catch (e) {
-      console.log('DELETE', e.message);
-      throw e;
-    }
+  it('Deletes the operator', () => {
+    return request
+      .post('/')
+      .send(callFactory('operator:delete', { _id }, ['operator.delete']))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result', true);
+      });
   });
 });
