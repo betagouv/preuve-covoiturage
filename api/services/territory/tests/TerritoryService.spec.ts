@@ -13,7 +13,7 @@ let request;
 chai.use(chaiNock);
 
 const { expect } = chai;
-const port = '8081';
+const port = '8086';
 
 describe('Territory service', () => {
   before(async () => {

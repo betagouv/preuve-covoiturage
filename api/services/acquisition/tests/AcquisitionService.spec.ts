@@ -10,7 +10,7 @@ import { Interfaces } from '@ilos/core';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
-const port = '8081';
+const port = '8082';
 
 let transport: Interfaces.TransportInterface;
 let request: supertest.SuperTest<supertest.Test>;
