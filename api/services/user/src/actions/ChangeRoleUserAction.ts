@@ -21,12 +21,12 @@ export class ChangeRoleUserAction extends Parents.Action {
         ['user.update'],
         [
           (_params, context) => {
-            if (!!context.call.user.territory) {
+            if (context.call.user.territory) {
               return 'territory.users.update';
             }
           },
           (_params, context) => {
-            if (!!context.call.user.operator) {
+            if (context.call.user.operator) {
               return 'operator.users.update';
             }
           },
@@ -42,11 +42,11 @@ export class ChangeRoleUserAction extends Parents.Action {
   public async handle(params: UserChangeRoleParamsInterface, context: Types.ContextType): Promise<User> {
     const contextParam: { territory?: string; operator?: string } = {};
 
-    if (!!context.call.user.territory) {
+    if (context.call.user.territory) {
       contextParam.territory = context.call.user.territory;
     }
 
-    if (!!context.call.user.operator) {
+    if (context.call.user.operator) {
       contextParam.operator = context.call.user.operator;
     }
 

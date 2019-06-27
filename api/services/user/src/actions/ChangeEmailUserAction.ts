@@ -28,12 +28,12 @@ export class ChangeEmailUserAction extends Parents.Action {
             }
           },
           (_params, context) => {
-            if (!!context.call.user.territory) {
+            if (context.call.user.territory) {
               return 'territory.users.update';
             }
           },
           (_params, context) => {
-            if (!!context.call.user.operator) {
+            if (context.call.user.operator) {
               return 'operator.users.update';
             }
           },
@@ -55,11 +55,11 @@ export class ChangeEmailUserAction extends Parents.Action {
     const user = await this.userRepository.find(params._id);
     const contextParam: { territory?: string; operator?: string } = {};
 
-    if (!!context.call.user.territory) {
+    if (context.call.user.territory) {
       contextParam.territory = context.call.user.territory;
     }
 
-    if (!!context.call.user.operator) {
+    if (context.call.user.operator) {
       contextParam.operator = context.call.user.operator;
     }
 

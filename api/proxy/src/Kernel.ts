@@ -14,7 +14,5 @@ export class Kernel extends Parents.Kernel {
     SentryProvider,
   ];
 
-  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [
-    ...userServiceProviders,
-  ];
+  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [...userServiceProviders];
 }

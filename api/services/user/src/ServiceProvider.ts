@@ -95,7 +95,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     ['user.login', userLoginSchema],
     ['user.delete', userDeleteSchema],
     ['user.resetPassword', userResetPasswordSchema],
-    ['user.register', userRegisterSchema]
+    ['user.register', userRegisterSchema],
   ];
 
   public async boot() {
@@ -124,12 +124,10 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   }
 
   protected registerEnv() {
-    if (!this.getContainer()
-        .isBound(EnvProviderInterfaceResolver)
-      ) {
-    this.getContainer()
-      .bind(EnvProviderInterfaceResolver)
-      .to(EnvProvider);
+    if (!this.getContainer().isBound(EnvProviderInterfaceResolver)) {
+      this.getContainer()
+        .bind(EnvProviderInterfaceResolver)
+        .to(EnvProvider);
     }
   }
   protected registerTemplate() {

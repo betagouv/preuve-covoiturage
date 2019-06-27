@@ -24,23 +24,19 @@ export class ListUserAction extends Parents.Action {
         ['user.list'],
         [
           (_params, context) => {
-            if (!!context.call.user.territory) {
+            if (context.call.user.territory) {
               return 'territory.users.list';
             }
           },
           (_params, context) => {
-            if (!!context.call.user.operator) {
+            if (context.call.user.operator) {
               return 'operator.users.list';
             }
           },
         ],
       ],
     ],
-    ['content.whitelist', [
-        ...userWhiteListFilterOutput.map((key: string) => `data.*.${key}`),
-        'meta.*',
-      ],
-    ],
+    ['content.whitelist', [...userWhiteListFilterOutput.map((key: string) => `data.*.${key}`), 'meta.*']],
   ];
 
   constructor(
@@ -56,11 +52,11 @@ export class ListUserAction extends Parents.Action {
   ): Promise<UserListResponseInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
-    if (!!context.call.user.territory) {
+    if (context.call.user.territory) {
       contextParam.territory = context.call.user.territory;
     }
 
-    if (!!context.call.user.operator) {
+    if (context.call.user.operator) {
       contextParam.operator = context.call.user.operator;
     }
 

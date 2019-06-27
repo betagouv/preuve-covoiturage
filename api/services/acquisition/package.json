@@ -64,7 +64,8 @@
     "@ilos/provider-env": "~0",
     "@ilos/provider-mongo": "~0",
     "@ilos/provider-repository": "~0",
-    "@pdc/provider-validator": "~0"
+    "@pdc/provider-validator": "~0",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

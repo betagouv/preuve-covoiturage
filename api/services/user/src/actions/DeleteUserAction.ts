@@ -24,12 +24,12 @@ export class DeleteUserAction extends Parents.Action {
             }
           },
           (_params, context) => {
-            if (!!context.call.user.territory) {
+            if (context.call.user.territory) {
               return 'territory.users.remove';
             }
           },
           (_params, context) => {
-            if (!!context.call.user.operator) {
+            if (context.call.user.operator) {
               return 'operator.users.remove';
             }
           },
@@ -45,11 +45,11 @@ export class DeleteUserAction extends Parents.Action {
   public async handle(request: { _id: string }, context: UserContextInterface): Promise<void> {
     const contextParam: { territory?: string; operator?: string } = {};
 
-    if (!!context.call.user.territory) {
+    if (context.call.user.territory) {
       contextParam.territory = context.call.user.territory;
     }
 
-    if (!!context.call.user.operator) {
+    if (context.call.user.operator) {
       contextParam.operator = context.call.user.operator;
     }
 

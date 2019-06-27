@@ -21,11 +21,7 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
 
     let permissions = [];
 
-    if (!!context.call 
-      && !!context.call.user 
-      && !!context.call.user.permissions
-      && !!context.call.user.permissions.length
-    ) {
+    if (context.call && context.call.user && context.call.user.permissions && context.call.user.permissions.length) {
       permissions = context.call.user.permissions;
     }
 
@@ -33,7 +29,7 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
       throw new Exceptions.ForbiddenException('Invalid permissions');
     }
 
-    // Si l'utilisateur à une des permissions "de base", on laisse passer
+    // If the user has one of basePermissions --> OK
     if (permissions.filter((value) => -1 !== basePermissions.indexOf(value)).length) {
       return next(params, context);
     }
