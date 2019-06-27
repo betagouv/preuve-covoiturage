@@ -8,21 +8,22 @@ import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddlew
 
 import { TerritoryRepositoryProviderInterfaceResolver } from './interfaces/TerritoryRepositoryProviderInterface';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
+
 import { AllTerritoryAction } from './actions/AllTerritoryAction';
-import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
+import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { PatchTerritoryAction } from './actions/PatchTerritoryAction';
+import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
 
 import { territoryCreateSchema } from './schemas/territoryCreateSchema';
 import { territoryPatchSchema } from './schemas/territoryPatchSchema';
 import { territoryDeleteSchema } from './schemas/territoryDeleteSchema';
-import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
+    [ConfigProviderInterfaceResolver, ConfigProvider],
     [TerritoryRepositoryProviderInterfaceResolver, TerritoryRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
     [MongoProviderInterfaceResolver, MongoProvider],
-    [ConfigProviderInterfaceResolver, ConfigProvider],
     [EnvProviderInterfaceResolver, EnvProvider],
   ];
 

@@ -4,6 +4,7 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * find user by email and send email to set new password

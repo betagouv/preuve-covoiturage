@@ -43,6 +43,10 @@ const mockChangeEmailParams = <UserChangeEmailParamsInterface>{
 
 @Container.provider()
 class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+  async boot() {
+    return;
+  }
+
   get(key: string, fallback?: any): any {
     return 'https://app.covoiturage.beta.gouv.fr';
   }
@@ -50,6 +54,10 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 
 @Container.provider()
 class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
+  async boot(): Promise<void> {
+    return;
+  }
+
   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
     return;
   }
@@ -69,6 +77,9 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
 
 @Container.provider()
 class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
+  async boot(): Promise<void> {
+    return;
+  }
   async patchUser(id: string, patch: any, context: any): Promise<User> {
     return new User({
       ...mockUser,

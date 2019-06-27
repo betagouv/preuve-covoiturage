@@ -39,7 +39,10 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
   /*
    * List users, filtered by Territory, Operator, skip & limit
    */
-  public async list(filters: UserRepositoryListFiltersInterface, pagination: UserRepositoryListPaginationInterface): Promise<{ users: User[]; total: number }> {
+  public async list(
+    filters: UserRepositoryListFiltersInterface,
+    pagination: UserRepositoryListPaginationInterface,
+  ): Promise<{ users: User[]; total: number }> {
     let result = [];
 
     const collection = await this.getCollection();
