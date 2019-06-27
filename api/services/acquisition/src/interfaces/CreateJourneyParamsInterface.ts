@@ -1,7 +1,4 @@
-import { IdentityInterface } from './IdentityInterface';
-import { PositionInterface } from './PositionInterface';
-import { IncentiveInterface } from './IncentiveInterface';
-import { PaymentInterface } from './PaymentInterface';
+import { IdentityInterface, PositionInterface, IncentiveInterface, PaymentInterface } from '.';
 
 export interface CreateJourneyParamsInterface {
   journey_id: string;

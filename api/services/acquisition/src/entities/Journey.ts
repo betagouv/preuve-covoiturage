@@ -1,10 +1,11 @@
 // tslint:disable: variable-name
-
-import { JourneyInterface } from '../interfaces/JourneyInterfaces';
-import { IdentityInterface } from '../interfaces/IdentityInterface';
-import { PositionInterface } from '../interfaces/PositionInterface';
-import { IncentiveInterface } from '../interfaces/IncentiveInterface';
-import { PaymentInterface } from '../interfaces/PaymentInterface';
+import {
+  JourneyInterface,
+  IdentityInterface,
+  PositionInterface,
+  IncentiveInterface,
+  PaymentInterface,
+} from '../interfaces';
 
 export class Journey implements JourneyInterface {
   public _id?: string;
