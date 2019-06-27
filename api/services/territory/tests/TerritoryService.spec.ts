@@ -1,5 +1,5 @@
 // tslint:disable max-classes-per-file
-import axios, { AxiosInstance } from 'axios';
+import supertest from 'supertest';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { describe } from 'mocha';
@@ -8,27 +8,19 @@ import { MongoProvider } from '@ilos/provider-mongo';
 import { Interfaces } from '@ilos/core';
 
 let transport: Interfaces.TransportInterface;
-let request: AxiosInstance;
+let request;
 
 chai.use(chaiNock);
 
 const { expect } = chai;
-const port = '8082';
+const port = '8081';
 
 describe('Territory service', () => {
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
 
     transport = await bootstrap.boot(['', '', 'http', port]);
-
-    request = axios.create({
-      baseURL: `http://127.0.0.1:${port}`,
-      timeout: 1000,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
+    request = supertest(transport.getInstance());
   });
 
   after(async () => {
@@ -42,13 +34,13 @@ describe('Territory service', () => {
     await transport.down();
   });
 
-  it('create, update, delete territory', async () => {
-    let _id: string;
-    let patchedName: string;
+  // Database _id
+  let _id: string;
 
-    try {
-      // Create a territory
-      const { status: createStatus, data: createData } = await request.post('/', {
+  it('Creates a territory', () =>
+    request
+      .post('/')
+      .send({
         id: 1,
         jsonrpc: '2.0',
         method: 'territory:create',
@@ -62,28 +54,30 @@ describe('Territory service', () => {
             },
           },
         },
-      });
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id');
+        expect(response.body.result).to.have.property('name', 'Toto');
 
-      _id = createData.result._id;
-      expect(createData.result.name).to.eq('Toto');
-      expect(createStatus).equal(200);
-    } catch (e) {
-      console.log('CREATE', e.message);
-      throw e;
-    }
+        // store the _id
+        _id = response.body.result._id;
+      }));
 
-    try {
-      // patch the name
-      const { status: patchStatus, data: patchData } = await request.post('/', {
+  it('Update a territory', () =>
+    request
+      .post('/')
+      .send({
         id: 1,
         jsonrpc: '2.0',
         method: 'territory:patch',
         params: {
           params: {
             _id,
-            patch: {
-              name: 'Yop',
-            },
+            patch: { name: 'Yop' },
           },
           _context: {
             call: {
@@ -93,23 +87,28 @@ describe('Territory service', () => {
             },
           },
         },
-      });
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id', _id);
+        expect(response.body.result).to.have.property('name', 'Yop');
 
-      patchedName = patchData.result.name;
-      expect(patchedName).to.eq('Yop');
-      expect(patchStatus).equal(200);
-    } catch (e) {
-      console.log('PATCH', e.message);
-      throw e;
-    }
+        // store the _id
+        _id = response.body.result._id;
+      }));
 
-    try {
-      // list all territories and find the patched item
-      const { status: listStatus, data: listData } = await request.post('/', {
+  it('Lists all territories', () =>
+    request
+      .post('/')
+      .send({
         id: 1,
         jsonrpc: '2.0',
         method: 'territory:all',
         params: {
+          params: {},
           _context: {
             call: {
               user: {
@@ -118,19 +117,21 @@ describe('Territory service', () => {
             },
           },
         },
-      });
-      const list = listData.result;
-      expect(list.length).eq(1);
-      expect(list[0].name).eq(patchedName);
-      expect(listStatus).equal(200);
-    } catch (e) {
-      console.log('FIND', e.message);
-      throw e;
-    }
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result.length).to.eq(1);
+        expect(response.body.result[0]).to.have.property('_id', _id);
+        expect(response.body.result[0]).to.have.property('name', 'Yop');
+      }));
 
-    try {
-      // delete the item
-      const { status: deleteStatus, data: deleteData } = await request.post('/', {
+  it('Deletes the territory', () =>
+    request
+      .post('/')
+      .send({
         id: 1,
         jsonrpc: '2.0',
         method: 'territory:delete',
@@ -144,12 +145,11 @@ describe('Territory service', () => {
             },
           },
         },
-      });
-      expect(deleteStatus).equal(200);
-      expect(deleteData.result).equal(true);
-    } catch (e) {
-      console.log('DELETE', e.message);
-      throw e;
-    }
-  });
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result', true);
+      }));
 });
