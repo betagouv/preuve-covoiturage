@@ -72,7 +72,6 @@ describe('Operator service', () => {
       .then((db) => db.dropDatabase());
 
     await transport.down();
-    process.exit(0);
   });
 
   it('should validate request on create', async () => {

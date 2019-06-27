@@ -95,7 +95,6 @@ describe('Journey repository', () => {
   after(async () => {
     await mongoClient.getDb(process.env.APP_MONGO_DB).then((db) => db.dropDatabase());
     await mongoClient.close();
-    process.exit(0);
   });
 
   it('works', async () => {

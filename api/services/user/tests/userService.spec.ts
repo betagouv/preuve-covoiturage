@@ -17,7 +17,6 @@ const { expect } = chai;
 let nockRequest;
 
 before(async () => {
-  console.log('> setup database');
   await fakeMongoServer.startServer();
   await fakeMongoServer.startTransport();
 });
@@ -25,8 +24,6 @@ before(async () => {
 after(async () => {
   await fakeMongoServer.stopServer();
   await fakeMongoServer.stopTransport();
-  process.exit(0);
-  console.log('> cleared database');
 });
 
 beforeEach(() => {

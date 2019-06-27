@@ -2,6 +2,7 @@
 import axios, { AxiosInstance } from 'axios';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
+import { describe } from 'mocha';
 import { bootstrap } from '@ilos/framework';
 import { MongoProvider } from '@ilos/provider-mongo';
 import { Interfaces } from '@ilos/core';
@@ -12,7 +13,7 @@ let request: AxiosInstance;
 chai.use(chaiNock);
 
 const { expect } = chai;
-const port = '8081';
+const port = '8082';
 
 describe('Territory service', () => {
   before(async () => {
@@ -39,7 +40,6 @@ describe('Territory service', () => {
       .then((db) => db.dropDatabase());
 
     await transport.down();
-    process.exit(0);
   });
 
   it('create, update, delete territory', async () => {
