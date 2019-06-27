@@ -3,5 +3,5 @@ import { User } from '../entities/User';
 
 export interface UserListResponseInterface {
   data: User[];
-  metadata: { pagination: PaginationInterface };
+  meta: { pagination: PaginationInterface };
 }

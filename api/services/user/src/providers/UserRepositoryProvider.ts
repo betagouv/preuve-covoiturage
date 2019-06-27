@@ -120,10 +120,10 @@ export class UserRepositoryProvider extends ParentRepositoryProvider implements 
 
   private normalizeContextFilters(contextFilter: { territory?: string; operator?: string }) {
     const normalizedFilters: { territory?: ObjectId; operator?: ObjectId } = {};
-    if ('territory' in contextFilter) {
+    if (!!contextFilter.territory) {
       normalizedFilters.territory = new ObjectId(contextFilter.territory);
     }
-    if ('operator' in contextFilter) {
+    if (!!contextFilter.operator) {
       normalizedFilters.operator = new ObjectId(contextFilter.operator);
     }
     return normalizedFilters;

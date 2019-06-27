@@ -28,7 +28,7 @@ export class CreateUserAction extends Parents.Action {
             }
           },
           (params, context) => {
-            if ('operator' in params && params.territory === context.call.user.territory) {
+            if ('operator' in params && params.operator === context.call.user.operator) {
               return 'operator.users.add';
             }
           },

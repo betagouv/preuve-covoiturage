@@ -32,7 +32,7 @@ export class ContentWhitelistMiddleware implements Interfaces.MiddlewareInterfac
     return isArray ? data : data[0];
   }
 
-  protected whitelist(model: any[], keys: object): any[] | any {
+  protected whitelist(model: any[] | any, keys: object): any[] | any {
     if (Array.isArray(model)) {
       return model.map((m) => this.whitelist(m, keys));
     }
@@ -41,10 +41,14 @@ export class ContentWhitelistMiddleware implements Interfaces.MiddlewareInterfac
     Reflect.ownKeys(keys).map((key: string) => {
       const keyValue = keys[key];
       if (keyValue === true) {
-        result[key] = model[key];
+        if (key === '*') {
+          result = model;
+        } else {
+          result[key] = model[key];
+        }
       } else if (key === '*') {
         result = this.whitelist(model, keyValue);
-      } else {
+      } else if (key in model) {
         result[key] = this.whitelist(model[key], keyValue);
       }
     });

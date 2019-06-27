@@ -24,19 +24,23 @@ export class ListUserAction extends Parents.Action {
         ['user.list'],
         [
           (_params, context) => {
-            if ('territory' in context.call.user) {
+            if (!!context.call.user.territory) {
               return 'territory.users.list';
             }
           },
           (_params, context) => {
-            if ('operator' in context.call.user) {
+            if (!!context.call.user.operator) {
               return 'operator.users.list';
             }
           },
         ],
       ],
     ],
-    ['content.whitelist', userWhiteListFilterOutput.map((key: string) => `data.${key}`)],
+    ['content.whitelist', [
+        ...userWhiteListFilterOutput.map((key: string) => `data.*.${key}`),
+        'meta.*',
+      ],
+    ],
   ];
 
   constructor(
@@ -52,11 +56,11 @@ export class ListUserAction extends Parents.Action {
   ): Promise<UserListResponseInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
-    if ('territory' in context.call.user) {
+    if (!!context.call.user.territory) {
       contextParam.territory = context.call.user.territory;
     }
 
-    if ('operator' in context.call.user) {
+    if (!!context.call.user.operator) {
       contextParam.operator = context.call.user.operator;
     }
 
@@ -69,7 +73,7 @@ export class ListUserAction extends Parents.Action {
 
     return {
       data: data.users,
-      metadata: {
+      meta: {
         pagination: {
           total: data.total,
           count: data.users.length,

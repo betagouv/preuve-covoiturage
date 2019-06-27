@@ -37,7 +37,7 @@ const mockOutputPagination = {
 const mockContext = {
   call: {
     user: mockConnectedUser,
-    metadata: {},
+    meta: {},
   },
   channel: { service: '' },
 };

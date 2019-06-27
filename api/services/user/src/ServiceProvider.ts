@@ -7,6 +7,7 @@ import { CryptoProviderInterfaceResolver, CryptoProvider } from '@pdc/provider-c
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 import { NotificationProvider, NotificationProviderInterfaceResolver } from '@ilos/provider-notification';
 import { TemplateProviderInterfaceResolver, HandlebarsProvider } from '@ilos/provider-template';
+import { MongoProvider } from '@ilos/provider-mongo';
 
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
@@ -21,21 +22,28 @@ import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
 import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
 import { LoginUserAction } from './actions/LoginUserAction';
 import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
+import { RegisterUserAction } from './actions/RegisterUserAction';
+
 import { UserRepositoryProviderInterfaceResolver } from './interfaces/repository/UserRepositoryProviderInterface';
-import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
-import { userPatchSchema } from './schemas/userPatchSchema';
-import { userDeleteSchema } from './schemas/userDeleteSchema';
-import { userCreateSchema } from './schemas/userCreateSchema';
-import { userFindSchema } from './schemas/userFindSchema';
-import { userListSchema } from './schemas/userListSchema';
-import { userResetPasswordSchema } from './schemas/userResetPasswordSchema';
-import { userForgottenPasswordSchema } from './schemas/userForgottenPasswordSchema';
-import { userConfirmEmailSchema } from './schemas/userConfirmEmailSchema';
-import { userChangePasswordSchema } from './schemas/userChangePasswordSchema';
-import { userChangeEmailSchema } from './schemas/userChangeEmailSchema';
-import { userLoginSchema } from './schemas/userLoginSchema';
-import { userChangeRoleSchema } from './schemas/userChangeRoleSchema';
+
+import {
+  userPatchSchema,
+  userDeleteSchema,
+  userCreateSchema,
+  userFindSchema,
+  userListSchema,
+  userRegisterSchema,
+  userResetPasswordSchema,
+  userForgottenPasswordSchema,
+  userConfirmEmailSchema,
+  userChangePasswordSchema,
+  userChangeEmailSchema,
+  userLoginSchema,
+  userChangeRoleSchema,
+} from './schemas';
+
+import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
 import { ContentBlacklistMiddleware } from './middlewares/ContentBlacklistMiddleware';
 import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddleware';
 
@@ -46,8 +54,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [TemplateProviderInterfaceResolver, HandlebarsProvider],
     [NotificationProviderInterfaceResolver, NotificationProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
-    [ConfigProviderInterfaceResolver, ConfigProvider],
-    [EnvProviderInterfaceResolver, EnvProvider],
+    MongoProvider,
   ];
 
   readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
@@ -64,6 +71,7 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     LoginUserAction,
     PatchUserAction,
     ResetPasswordUserAction,
+    RegisterUserAction,
   ];
 
   readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
@@ -87,12 +95,14 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     ['user.login', userLoginSchema],
     ['user.delete', userDeleteSchema],
     ['user.resetPassword', userResetPasswordSchema],
+    ['user.register', userRegisterSchema]
   ];
 
   public async boot() {
+    this.registerEnv();
+    this.registerConfig();
     await super.boot();
     this.registerValidators();
-    this.registerConfig();
     this.registerTemplate();
   }
 
@@ -105,10 +115,23 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
 
   protected registerConfig() {
     this.getContainer()
+      .bind(ConfigProviderInterfaceResolver)
+      .to(ConfigProvider);
+
+    this.getContainer()
       .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
   }
 
+  protected registerEnv() {
+    if (!this.getContainer()
+        .isBound(EnvProviderInterfaceResolver)
+      ) {
+    this.getContainer()
+      .bind(EnvProviderInterfaceResolver)
+      .to(EnvProvider);
+    }
+  }
   protected registerTemplate() {
     this.getContainer()
       .get(TemplateProviderInterfaceResolver)

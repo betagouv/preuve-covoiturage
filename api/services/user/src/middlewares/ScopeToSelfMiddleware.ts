@@ -14,15 +14,24 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
     options: ScopeToSelfMiddlewareOptionsType,
   ): Promise<Types.ResultType> {
     const [basePermissions, callbackPermissions] = options;
+
     if (!basePermissions || callbackPermissions.length === 0) {
       throw new Exceptions.InvalidParamsException('No permissions defined');
     }
 
-    if (!context || !('call' in context) || !('permissions' in context.call.user)) {
-      throw new Exceptions.ForbiddenException('Invalid permissions');
+    let permissions = [];
+
+    if (!!context.call 
+      && !!context.call.user 
+      && !!context.call.user.permissions
+      && !!context.call.user.permissions.length
+    ) {
+      permissions = context.call.user.permissions;
     }
 
-    const { permissions } = context.call.user;
+    if (permissions.length === 0) {
+      throw new Exceptions.ForbiddenException('Invalid permissions');
+    }
 
     // Si l'utilisateur à une des permissions "de base", on laisse passer
     if (permissions.filter((value) => -1 !== basePermissions.indexOf(value)).length) {
