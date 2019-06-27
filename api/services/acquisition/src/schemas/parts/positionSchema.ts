@@ -6,6 +6,7 @@ export const positionSchema = {
   dependencies: {
     lat: ['lon'],
     lon: ['lat'],
+    country: ['literal'],
   },
   properties: {
     datetime: { macro: 'timestamp' },

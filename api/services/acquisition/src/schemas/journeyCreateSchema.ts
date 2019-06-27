@@ -8,19 +8,9 @@ export const journeyCreateSchema = {
   anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
   additionalProperties: false,
   properties: {
-    journey_id: {
-      type: 'string',
-      maxLength: 128,
-    },
-    operator_journey_id: {
-      type: 'string',
-      maxLength: 128,
-    },
-    operator_class: {
-      type: 'string',
-      maxLength: 1,
-      enum: ['A', 'B', 'C'],
-    },
+    journey_id: { macro: 'varchar' },
+    operator_journey_id: { macro: 'varchar' },
+    operator_class: { enum: ['A', 'B', 'C'] },
     operator_id: { macro: 'objectid' },
     passenger: {
       type: 'object',
@@ -33,7 +23,7 @@ export const journeyCreateSchema = {
           additionalProperties: false,
           properties: {
             ...identitySchema,
-            over_18: { enum: [true, false, null] },
+            over_18: { enum: [true, false, null], default: null },
           },
         },
         start: positionSchema,
@@ -67,7 +57,7 @@ export const journeyCreateSchema = {
         duration: {
           type: 'integer',
           minimum: 0,
-          maximum: 100000,
+          maximum: 86400,
         },
       },
     },
@@ -99,6 +89,7 @@ export const journeyCreateSchema = {
         incentives: {
           type: 'array',
           minItems: 0,
+          maxItems: 20,
           items: { $ref: '#/definitions/incentive' },
         },
         distance: {
@@ -109,7 +100,7 @@ export const journeyCreateSchema = {
         duration: {
           type: 'integer',
           minimum: 0,
-          maximum: 100000,
+          maximum: 86400,
         },
       },
     },
@@ -124,7 +115,7 @@ export const journeyCreateSchema = {
           type: 'integer',
           minimum: 0,
         },
-        siren: { macro: 'siren' },
+        siret: { macro: 'siret' },
         amount: {
           type: 'number',
           minimum: -200,

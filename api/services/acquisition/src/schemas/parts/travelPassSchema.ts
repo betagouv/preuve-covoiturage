@@ -4,6 +4,6 @@ export const travelPassSchema = {
   additionalProperties: false,
   properties: {
     name: { macro: 'varchar' },
-    user_id: { macro: 'objectid' },
+    user_id: { macro: 'varchar' },
   },
 };

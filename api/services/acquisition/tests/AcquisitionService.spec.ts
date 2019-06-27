@@ -101,6 +101,32 @@ describe('Acquisition service', async () => {
       });
   });
 
+  it('Wrong permissions', async () => {
+    return request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'acquisition:createJourney',
+        params: {
+          params: passingJourney,
+          _context: {
+            call: {
+              user: {
+                permissions: ['wrong:permission'],
+              },
+            },
+          },
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(503);
+        expect(response.body).to.have.property('error');
+      });
+  });
+
   it('Method not found', async () => {
     return request
       .post('/')
