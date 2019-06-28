@@ -31,13 +31,13 @@ services:
     ports:
       - 8080:8080
       - 9229:9229
-    env_file: api/.env
     environment:
       CONFIG_DIR: '/code/config'
       API_URL: 'http://localhost:8080'
       APP_URL: 'http://localhost:4200'
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin1234
+      APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
     networks:
       - front
       - api
@@ -54,10 +54,10 @@ services:
     command: 'yarn worker-dev'
     ports:
       - 9230:9230
-    env_file: api/.env
     environment:
       CONFIG_DIR: '/code/config'
       MQ_WORKER: 'true'
+      APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
     networks:
       - front
       - api
