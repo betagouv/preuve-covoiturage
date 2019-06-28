@@ -1,29 +1,35 @@
 import chai from 'chai';
 import nock from 'nock';
+import supertest from 'supertest';
 import chaiNock from 'chai-nock';
+import chaiAsPromised from 'chai-as-promised';
+import { describe } from 'mocha';
 import { Exceptions } from '@ilos/core';
 
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';
 import { territories, operators, registry } from '../src/config/permissions';
 
-const fakeMongoServer = new FakeMongoServer();
+const mockServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
 
+chai.use(chaiAsPromised);
 chai.use(chaiNock);
 
 const { expect } = chai;
 
+let superRequest;
 let nockRequest;
 
 before(async () => {
-  await fakeMongoServer.startServer();
-  await fakeMongoServer.startTransport();
+  await mockServer.startServer();
+  await mockServer.startTransport();
+  superRequest = supertest(mockServer.server);
 });
 
 after(async () => {
-  await fakeMongoServer.stopServer();
-  await fakeMongoServer.stopTransport();
+  await mockServer.stopServer();
+  await mockServer.stopTransport();
 });
 
 beforeEach(() => {
@@ -154,9 +160,9 @@ describe('USER SERVICE : Creation', () => {
 
 describe('USER SERVICE : Deletion', () => {
   before(async () => {
-    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
-    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
   });
 
   it('registry user - should delete his profile', async () => {
@@ -177,69 +183,84 @@ describe('USER SERVICE : Deletion', () => {
   });
 
   it("registry user - shouldn't delete other profile", async () => {
-    const response = await request.post(
-      '/',
-      mockFactory.call(
-        'user:delete',
-        { _id: newTerritoryUser._id },
-        {
-          group: 'registry',
-          role: 'admin',
-          permissions: ['profile.delete'],
-          _id: newRegistryUser._id,
-        },
-      ),
+    const payload = mockFactory.call(
+      'user:delete',
+      { _id: newTerritoryUser._id },
+      {
+        group: 'registry',
+        role: 'admin',
+        permissions: ['profile.delete'],
+        _id: newRegistryUser._id,
+      },
     );
-    expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
+
+    superRequest
+      .post('/')
+      .send(payload)
+      .set('Accept', 'application/json')
+      .expect((response) => {
+        expect(response.status).to.eq(503);
+        expect(response.body).to.have.property('error');
+      });
   });
 
   it('registry territory - should delete user from territory', async () => {
-    const { status: status, data: data } = await request.post(
-      '/',
-      mockFactory.call(
-        'user:delete',
-        { _id: newTerritoryUser._id, territory: newTerritoryUser.territory },
-        {
-          group: 'territory',
-          role: 'admin',
-          permissions: ['territory.users.delete'],
-          territory: newTerritoryUser.territory,
-          _id: newTerritoryUser._id,
-        },
-      ),
+    const payload = mockFactory.call(
+      'user:delete',
+      { _id: newTerritoryUser._id, territory: newTerritoryUser.territory },
+      {
+        group: 'territory',
+        role: 'admin',
+        permissions: ['territory.users.delete'],
+        territory: newTerritoryUser.territory,
+        _id: newTerritoryUser._id,
+      },
     );
-    expect(status).equal(200);
+
+    superRequest
+      .post('/')
+      .send(payload)
+      .set('Accept', 'application/json')
+      .expect((response) => {
+        expect(response.status).to.eq(503);
+        expect(response.body).to.have.property('error');
+      });
   });
 
   it('registry operator - should delete user from opertor', async () => {
-    const { status: status, data: data } = await request.post(
-      '/',
-      mockFactory.call(
-        'user:delete',
-        { _id: newOperatorUser._id, operator: newOperatorUser.operator },
-        {
-          group: 'operator',
-          role: 'admin',
-          permissions: ['operator.users.delete'],
-          operator: newTerritoryUser.operator,
-          _id: newOperatorUser._id,
-        },
-      ),
+    const payload = mockFactory.call(
+      'user:delete',
+      { _id: newOperatorUser._id, territory: newOperatorUser.territory },
+      {
+        group: 'operator',
+        role: 'admin',
+        permissions: ['operator.users.delete'],
+        operator: newOperatorUser.operator,
+        _id: newOperatorUser._id,
+      },
     );
-    expect(status).equal(200);
+
+    superRequest
+      .post('/')
+      .send(payload)
+      .set('Accept', 'application/json')
+      .expect((response) => {
+        expect(response.status).to.eq(503);
+        expect(response.body).to.have.property('error');
+      });
   });
 });
 
 describe('USER SERVICE : Find', () => {
   before(async () => {
-    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
-    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
   });
 
   after(async () => {
-    fakeMongoServer.clearCollection();
+    mockServer.clearCollection();
   });
 
   it('registry admin - should find registry user', async () => {
@@ -285,21 +306,26 @@ describe('USER SERVICE : Find', () => {
     expect(status).equal(200);
   });
 
-  it('registry user - should not be able to find other profile', async () => {
-    const response = await request.post(
-      '/',
-      mockFactory.call(
-        'user:find',
-        { _id: newTerritoryUser._id },
-        {
-          group: 'registry',
-          role: 'user',
-          permissions: ['profile.read'],
-          _id: newRegistryUser._id,
-        },
-      ),
+  it("registry user - should not be able to find others' profile", async () => {
+    const payload = mockFactory.call(
+      'user:find',
+      { _id: newTerritoryUser._id },
+      {
+        group: 'registry',
+        role: 'user',
+        permissions: ['profile.read'],
+        _id: newRegistryUser._id,
+      },
     );
-    expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
+
+    superRequest
+      .post('/')
+      .send(payload)
+      .set('Accept', 'application/json')
+      .expect((response) => {
+        expect(response.status).to.eq(503);
+        expect(response.body).to.have.property('error');
+      });
   });
 
   it('registry admin - should find territory user', async () => {
@@ -388,14 +414,14 @@ describe('USER SERVICE : Find', () => {
 
 describe('USER SERVICE : List', () => {
   before(async () => {
-    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
-    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
   });
 
   after(() => {
-    fakeMongoServer.clearCollection();
+    mockServer.clearCollection();
   });
 
   it('registry admin - should list users', async () => {
@@ -473,14 +499,14 @@ describe('USER SERVICE : List', () => {
 
 describe('USER SERVICE : Patch', () => {
   before(async () => {
-    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
-    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
   });
 
   after(() => {
-    fakeMongoServer.clearCollection();
+    mockServer.clearCollection();
   });
 
   it('registry admin - should patch registry user', async () => {
@@ -542,29 +568,32 @@ describe('USER SERVICE : Patch', () => {
     expect(status).equal(200);
   });
 
-  it("registry user - shouldn't patch other profile", async () => {
-    const mockUpdatedProperties = {
-      firstname: 'johnny3',
-      lastname: 'smith3',
-    };
-
-    const response = await request.post(
-      '/',
-      mockFactory.call(
-        'user:patch',
-        {
-          _id: newTerritoryUser._id,
-          patch: mockUpdatedProperties,
+  it("registry user - shouldn't patch other's profile", async () => {
+    const payload = mockFactory.call(
+      'user:patch',
+      {
+        _id: newTerritoryUser._id,
+        patch: {
+          firstname: 'johnny3',
+          lastname: 'smith3',
         },
-        {
-          group: 'registry',
-          role: 'user',
-          permissions: ['profile.update'],
-          _id: newRegistryUser._id,
-        },
-      ),
+      },
+      {
+        group: 'registry',
+        role: 'user',
+        permissions: ['profile.update'],
+        _id: newRegistryUser._id,
+      },
     );
-    expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Invalid permissions')));
+
+    superRequest
+      .post('/')
+      .send(payload)
+      .set('Accept', 'application/json')
+      .expect((response) => {
+        expect(response.status).to.eq(503);
+        expect(response.body).to.have.property('error');
+      });
   });
 
   it('territory admin - should patch territory user', async () => {
@@ -632,17 +661,17 @@ describe('USER SERVICE : Patch', () => {
 
 describe('USER SERVICE : Change Password', () => {
   before(async () => {
-    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
-    newRegistryUser = await fakeMongoServer.addUser({
+    newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await mockServer.addUser({
       ...mockFactory.newRegistryUserModel,
       password: 'passwordRegistryUser',
     });
   });
 
   after(() => {
-    fakeMongoServer.clearCollection();
+    mockServer.clearCollection();
   });
 
   const newPassword = 'newPassword';
@@ -675,36 +704,41 @@ describe('USER SERVICE : Change Password', () => {
   });
 
   it("registry admin - shouldn't change password with wrong old password", async () => {
-    const response = await request.post(
-      '/',
-      mockFactory.call(
-        'user:changePassword',
-        {
-          newPassword,
-          oldPassword: 'wrongPassword',
-        },
-        {
-          group: 'registry',
-          role: 'admin',
-          permissions: ['profile.update'],
-          _id: newRegistryUser._id,
-        },
-      ),
+    const payload = mockFactory.call(
+      'user:changePassword',
+      {
+        newPassword,
+        oldPassword: 'wrongPassword',
+      },
+      {
+        group: 'registry',
+        role: 'admin',
+        permissions: ['profile.update'],
+        _id: newRegistryUser._id,
+      },
     );
-    expect(response).to.deep.include(mockFactory.error(new Exceptions.ForbiddenException('Wrong credentials')));
+
+    superRequest
+      .post('/')
+      .send(payload)
+      .set('Accept', 'application/json')
+      .expect((response) => {
+        expect(response.status).to.eq(501);
+        expect(response.body).to.have.property('error');
+      });
   });
 });
 
 describe('USER SERVICE : Change Email', () => {
   before(async () => {
-    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
-    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
   });
 
   after(() => {
-    fakeMongoServer.clearCollection();
+    mockServer.clearCollection();
   });
 
   const newEmail = 'newEmail@example.com';
@@ -741,14 +775,14 @@ describe('USER SERVICE : Change Email', () => {
 
 describe('USER SERVICE : Forgotten Password', () => {
   before(async () => {
-    newTerritoryUser = await fakeMongoServer.addUser(mockFactory.newTerritoryUserModel);
-    newOperatorUser = await fakeMongoServer.addUser(mockFactory.newOperatorUserModel);
-    newRegistryAdmin = await fakeMongoServer.addUser(mockFactory.newRegistryAdminModel);
-    newRegistryUser = await fakeMongoServer.addUser(mockFactory.newRegistryUserModel);
+    newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
+    newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
+    newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
+    newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
   });
 
   after(() => {
-    fakeMongoServer.clearCollection();
+    mockServer.clearCollection();
   });
 
   it('anonymous - should send email to reset password', async () => {
@@ -782,7 +816,7 @@ describe('USER SERVICE : Forgotten Password', () => {
 
 describe('USER SERVICE : Login', () => {
   before(async () => {
-    newRegistryAdmin = await fakeMongoServer.addUser({
+    newRegistryAdmin = await mockServer.addUser({
       ...mockFactory.newRegistryAdminModel,
       password: 'password',
       status: 'active',
@@ -790,7 +824,7 @@ describe('USER SERVICE : Login', () => {
   });
 
   after(async () => {
-    fakeMongoServer.clearCollection();
+    mockServer.clearCollection();
   });
 
   it('registry admin - should login', async () => {

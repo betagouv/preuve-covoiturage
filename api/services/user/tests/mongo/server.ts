@@ -13,6 +13,7 @@ export class FakeMongoServer {
   dbName: string;
   kernel: KernelInterface;
   transport: TransportInterface;
+  server;
   port = '8088';
   collection: CollectionInterface;
   key: string;
@@ -26,6 +27,7 @@ export class FakeMongoServer {
   public async startTransport(): Promise<any> {
     this.transport = await bootstrap.boot(['', '', 'http', this.port]);
     this.kernel = this.transport.getKernel();
+    this.server = this.transport.getInstance();
   }
 
   public async stopServer(): Promise<void> {

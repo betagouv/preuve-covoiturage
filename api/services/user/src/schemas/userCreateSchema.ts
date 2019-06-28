@@ -16,7 +16,7 @@ export const userCreateSchema = {
   allOf: [
     {
       if: {
-        properties: { group: { const: 'territory' } },
+        properties: { group: { const: 'territories' } },
       },
       then: {
         required: ['email', 'lastname', 'firstname', 'group', 'territory'],
@@ -24,7 +24,7 @@ export const userCreateSchema = {
     },
     {
       if: {
-        properties: { group: { const: 'operator' } },
+        properties: { group: { const: 'operators' } },
       },
       then: {
         required: ['email', 'lastname', 'firstname', 'group', 'operator'],
