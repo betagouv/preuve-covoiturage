@@ -1,11 +1,13 @@
 // tslint:disable max-classes-per-file
+
 import supertest from 'supertest';
 import chai from 'chai';
 import path from 'path';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { Interfaces, Parents, Container, Exceptions } from '@ilos/core';
+
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
-import { Interfaces, Parents, Container, Exceptions } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 @Container.handler({
   service: 'user',
@@ -25,9 +27,7 @@ class UserLoginAction extends Parents.Action implements Interfaces.HandlerInterf
   protected async handle(params): Promise<any> {
     const { login, password } = params;
 
-    const user = this.users.find((user) => {
-      return user.login === login;
-    });
+    const user = this.users.find((u) => u.login === login);
 
     if (!user || user.password !== password) {
       throw new Exceptions.ForbiddenException();
@@ -56,6 +56,7 @@ const { expect } = chai;
 const kernel = new ThinKernel();
 const app = new HttpTransport(kernel);
 let request;
+
 describe('Proxy auth', async () => {
   before(async () => {
     await kernel.boot();
@@ -78,11 +79,11 @@ describe('Proxy auth', async () => {
     });
 
     // cookie should not be sent
-    let cookie = undefined;
+    const cookie = undefined;
     if ('set-cookie' in r.header) {
       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
-    expect(cookie).to.be.undefined;
+    expect(cookie).to.eq(undefined);
   });
 
   it('should return error on login failure', async () => {
@@ -95,11 +96,11 @@ describe('Proxy auth', async () => {
       message: 'Forbidden',
     });
 
-    let cookie = undefined;
+    const cookie = undefined;
     if ('set-cookie' in r.header) {
       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
-    expect(cookie).to.be.undefined;
+    expect(cookie).to.eq(undefined);
   });
 
   it('should return session cookie on login', async () => {
@@ -158,11 +159,11 @@ describe('Proxy auth', async () => {
     expect(r.status).to.eq(204);
 
     // cookie should not be sent
-    let cookie = undefined;
+    const cookie = undefined;
     if ('set-cookie' in r.header) {
       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
-    expect(cookie).to.be.undefined;
+    expect(cookie).to.eq(undefined);
 
     const rr = await request.get('/profile').set('Cookie', cookies);
 

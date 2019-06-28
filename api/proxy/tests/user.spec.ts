@@ -1,7 +1,9 @@
 // tslint:disable max-classes-per-file
 import supertest from 'supertest';
 import chai from 'chai';
+import { describe } from 'mocha';
 import { Types } from '@ilos/core';
+
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 
@@ -11,7 +13,7 @@ const { expect } = chai;
 const kernel = new Kernel();
 const app = new HttpTransport(kernel);
 let request;
-let userId = undefined;
+let userId;
 let cookies;
 
 const user = {
@@ -24,7 +26,7 @@ const user = {
   password: 'Admin12345',
 };
 
-function callAdminFactory(params):Types.CallType {
+function callAdminFactory(params): Types.CallType {
   return {
     params,
     method: '',
@@ -44,6 +46,7 @@ function callAdminFactory(params):Types.CallType {
     },
   };
 }
+
 describe('User service', async () => {
   before(async () => {
     await kernel.boot();
@@ -64,7 +67,6 @@ describe('User service', async () => {
     });
     await deleteAction.call(callAdminFactory({ _id: userId }));
     await app.down();
-    // await kernel.shutown();
   });
 
   beforeEach(async () => {
@@ -80,11 +82,11 @@ describe('User service', async () => {
     cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
   });
 
-
   it('should return session content on profile', async () => {
-    const r = await request.get('/profile')
-    .set('Cookie', cookies)
-    .expect(200);
+    const r = await request
+      .get('/profile')
+      .set('Cookie', cookies)
+      .expect(200);
     expect(r.body.payload.data).to.deep.include({
       firstname: user.firstname,
       lastname: user.lastname,
@@ -92,7 +94,8 @@ describe('User service', async () => {
   });
 
   it('should list user', async () => {
-    const r = await request.get('/users')
+    const r = await request
+      .get('/users')
       .set('Cookie', cookies)
       .expect(200);
     const data = r.body.payload.data;
@@ -105,7 +108,8 @@ describe('User service', async () => {
   });
 
   it('should get user', async () => {
-    const r = await request.get(`/users/${userId}`)
+    const r = await request
+      .get(`/users/${userId}`)
       .set('Cookie', cookies)
       .expect(200);
     const data = r.body.payload.data;
@@ -117,7 +121,8 @@ describe('User service', async () => {
 
   it('should patch user', async () => {
     user.firstname = 'Jean';
-    const r = await request.put(`/users/${userId}`)
+    const r = await request
+      .put(`/users/${userId}`)
       .set('Cookie', cookies)
       .send({ patch: { firstname: 'Jean' } })
       .expect(200);
@@ -127,10 +132,11 @@ describe('User service', async () => {
       lastname: user.lastname,
     });
   });
-  
+
   it('should patch profile', async () => {
     user.firstname = 'john';
-    const r = await request.put('/profile')
+    const r = await request
+      .put('/profile')
       .set('Cookie', cookies)
       .send({ patch: { firstname: 'john' } })
       .expect(200);
