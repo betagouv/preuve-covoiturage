@@ -2,6 +2,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
+import { describe } from 'mocha';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { Container, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
