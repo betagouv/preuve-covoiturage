@@ -13,9 +13,9 @@ const { expect } = chai;
 const kernel = new Kernel();
 const app = new HttpTransport(kernel);
 let request;
-let userId;
 let cookies;
 
+let userId;
 const user = {
   email: 'admin@example.com',
   firstname: 'john',
@@ -24,6 +24,12 @@ const user = {
   group: 'registry',
   role: 'admin',
   password: 'Admin12345',
+};
+
+let operatorId;
+const operator = {
+  nom_commercial: 'Maxi covoit',
+  raison_sociale: 'Maxi covoit inc.',
 };
 
 function callAdminFactory(params): Types.CallType {
@@ -36,7 +42,12 @@ function callAdminFactory(params): Types.CallType {
         user: {
           role: 'admin',
           group: 'registry',
-          permissions: ['user.create', 'user.delete', 'user.patch'],
+          permissions: [
+            'user.create',
+            'user.delete',
+            'operator.create',
+            'operator.delete',
+          ],
         },
       },
       channel: {
@@ -47,7 +58,7 @@ function callAdminFactory(params): Types.CallType {
   };
 }
 
-describe('User service', async () => {
+describe('Operator service', async () => {
   before(async () => {
     await kernel.boot();
     await app.up();
@@ -56,8 +67,15 @@ describe('User service', async () => {
       service: 'user',
       method: 'register',
     });
-    const { _id } = await registerAction.call(callAdminFactory(user));
-    userId = _id;
+    const { _id: userDbId } = await registerAction.call(callAdminFactory(user));
+    userId = userDbId;
+
+    const createOperatorAction = kernel.getContainer().getHandler({
+      service: 'operator',
+      method: 'create',
+    });
+    const { _id: operatorDbId } = await createOperatorAction.call(callAdminFactory(operator));
+    operatorId = operatorDbId;
   });
 
   after(async () => {
@@ -66,6 +84,12 @@ describe('User service', async () => {
       method: 'delete',
     });
     await deleteAction.call(callAdminFactory({ _id: userId }));
+
+    const deleteOperatorAction = kernel.getContainer().getHandler({
+      service: 'operator',
+      method: 'delete',
+    });
+    await deleteOperatorAction.call(callAdminFactory({ _id: operatorId }));
     await app.down();
   });
 
@@ -82,68 +106,50 @@ describe('User service', async () => {
     cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
   });
 
-  it('should return session content on profile', async () => {
+  it('should create and delete operator', async () => {
+    const customOperator = {
+      nom_commercial: 'Mega covoit',
+      raison_sociale: 'Mega covoit inc.',
+    };
+
     const r = await request
-      .get('/profile')
+      .post('/operators')
+      .send(customOperator)
       .set('Cookie', cookies)
       .expect(200);
-    expect(r.body.payload.data).to.deep.include({
-      firstname: user.firstname,
-      lastname: user.lastname,
-    });
+
+    expect(r.body.payload.data).to.deep.include(customOperator);
+    const { _id } = r.body.payload.data;
+
+    await request
+      .delete(`/operators/${_id}`)
+      .set('Cookie', cookies)
+      .expect(200);
   });
 
-  it('should list user', async () => {
+  it('should list operator', async () => {
     const r = await request
-      .get('/users')
+      .get('/operators')
       .set('Cookie', cookies)
       .expect(200);
     const data = r.body.payload.data;
     expect(data).to.be.an('array');
     expect(data.length).to.eq(1);
-    expect(data[0]).to.deep.include({
-      firstname: user.firstname,
-      lastname: user.lastname,
-    });
+    expect(data[0]).to.deep.include(operator);
   });
 
-  it('should get user', async () => {
+  it('should patch operator', async () => {
+    operator.nom_commercial = 'Maxi';
     const r = await request
-      .get(`/users/${userId}`)
+      .put(`/operators/${operatorId}`)
+      .send({
+        patch: {
+          nom_commercial: 'Maxi',
+        }
+      })
       .set('Cookie', cookies)
       .expect(200);
     const data = r.body.payload.data;
-    expect(data).to.deep.include({
-      firstname: user.firstname,
-      lastname: user.lastname,
-    });
-  });
-
-  it('should patch user', async () => {
-    user.firstname = 'Jean';
-    const r = await request
-      .put(`/users/${userId}`)
-      .set('Cookie', cookies)
-      .send({ patch: { firstname: 'Jean' } })
-      .expect(200);
-    const data = r.body.payload.data;
-    expect(data).to.deep.include({
-      firstname: user.firstname,
-      lastname: user.lastname,
-    });
-  });
-
-  it('should patch profile', async () => {
-    user.firstname = 'john';
-    const r = await request
-      .put('/profile')
-      .set('Cookie', cookies)
-      .send({ patch: { firstname: 'john' } })
-      .expect(200);
-    const data = r.body.payload.data;
-    expect(data).to.deep.include({
-      firstname: user.firstname,
-      lastname: user.lastname,
-    });
+    expect(data).to.deep.include(operator);
   });
 });

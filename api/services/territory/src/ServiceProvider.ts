@@ -20,11 +20,9 @@ import { territoryDeleteSchema } from './schemas/territoryDeleteSchema';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
-    [ConfigProviderInterfaceResolver, ConfigProvider],
     [TerritoryRepositoryProviderInterfaceResolver, TerritoryRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
     [MongoProviderInterfaceResolver, MongoProvider],
-    [EnvProviderInterfaceResolver, EnvProvider],
   ];
 
   handlers = [AllTerritoryAction, CreateTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction];
@@ -41,21 +39,34 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
-    await super.boot();
+    this.registerEnv();
     this.registerConfig();
+    await super.boot();
     this.registerValidators();
   }
 
+  protected registerValidators() {
+    const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
+    this.validators.forEach(([name, schema]) => {
+      validator.registerValidator(schema, name);
+    });
+  }
+
   protected registerConfig() {
+    this.getContainer()
+      .bind(ConfigProviderInterfaceResolver)
+      .to(ConfigProvider);
+
     this.getContainer()
       .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
   }
 
-  private registerValidators() {
-    const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
-    this.validators.forEach(([name, schema]) => {
-      validator.registerValidator(schema, name);
-    });
+  protected registerEnv() {
+    if (!this.getContainer().isBound(EnvProviderInterfaceResolver)) {
+      this.getContainer()
+        .bind(EnvProviderInterfaceResolver)
+        .to(EnvProvider);
+    }
   }
 }

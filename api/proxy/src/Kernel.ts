@@ -5,6 +5,8 @@ import { CommandProvider } from '@ilos/cli';
 import { SentryProvider } from '@pdc/provider-sentry';
 
 import { serviceProviders as userServiceProviders } from '@pdc/service-user';
+import { serviceProviders as territoryServiceProviders } from '@pdc/service-territory';
+import { serviceProviders as operatorServiceProviders } from '@pdc/service-operator';
 
 export class Kernel extends Parents.Kernel {
   alias = [
@@ -14,5 +16,9 @@ export class Kernel extends Parents.Kernel {
     SentryProvider,
   ];
 
-  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [...userServiceProviders];
+  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [
+    ...userServiceProviders,
+    ...territoryServiceProviders,
+    ...operatorServiceProviders,
+  ];
 }

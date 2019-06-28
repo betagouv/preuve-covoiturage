@@ -25,8 +25,6 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     [OperatorRepositoryProviderInterfaceResolver, OperatorRepositoryProvider],
     [ValidatorProviderInterfaceResolver, ValidatorProvider],
     [MongoProviderInterfaceResolver, MongoProvider],
-    [ConfigProviderInterfaceResolver, ConfigProvider],
-    [EnvProviderInterfaceResolver, EnvProvider],
   ];
 
   readonly handlers = [AllOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction];
@@ -43,21 +41,34 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
-    await super.boot();
+    this.registerEnv();
     this.registerConfig();
+    await super.boot();
     this.registerValidators();
   }
 
+  protected registerValidators() {
+    const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
+    this.validators.forEach(([name, schema]) => {
+      validator.registerValidator(schema, name);
+    });
+  }
+
   protected registerConfig() {
+    this.getContainer()
+      .bind(ConfigProviderInterfaceResolver)
+      .to(ConfigProvider);
+
     this.getContainer()
       .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);
   }
 
-  private registerValidators() {
-    const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
-    this.validators.forEach(([name, schema]) => {
-      validator.registerValidator(schema, name);
-    });
+  protected registerEnv() {
+    if (!this.getContainer().isBound(EnvProviderInterfaceResolver)) {
+      this.getContainer()
+        .bind(EnvProviderInterfaceResolver)
+        .to(EnvProvider);
+    }
   }
 }

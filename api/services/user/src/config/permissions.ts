@@ -137,6 +137,7 @@ export const registry = {
       'user.delete',
       ...territories.admin.permissions,
       ...operators.admin.permissions,
+      'operator.delete',
       'journey.import',
       'journey.process',
     ],
