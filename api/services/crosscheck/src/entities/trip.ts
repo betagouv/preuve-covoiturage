@@ -29,6 +29,7 @@ export class Trip implements TripInterface {
     this.status = data.status;
     this.start = data.start;
     this.people = data.people;
+    this.incentives = data.incentives;
   }
 
 }
@@ -51,12 +52,12 @@ export class Person implements PersonInterface {
   territory: string[];
 
   seats?: number;
-  cost?: number;
+  cost: number;
   incentive?: number;
-  remaining_fee?: number;
+  remaining_fee: number;
   contribution?: number;
   revenue?: number;
-  expense?: number;
+  expense: number;
 
   validation?: {
     step: number;
@@ -83,12 +84,12 @@ export class Person implements PersonInterface {
     territory: string[];
 
     seats?: number;
-    cost?: number;
+    cost: number;
     incentive?: number;
-    remaining_fee?: number;
+    remaining_fee: number;
     contribution?: number;
     revenue?: number;
-    expense?: number;
+    expense: number;
 
     validation?: {
       step: number;
