@@ -2,7 +2,7 @@ import {identitySchema} from './parts/identitySchema';
 import {positionSchema} from './parts/positionSchema';
 
 
-export const tripDbSchema = {
+export const tripSchema = {
   $id: 'trip',
   type: 'object',
   required: [], // todo: complete

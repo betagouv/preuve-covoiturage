@@ -4,15 +4,15 @@ import { MongoException, MongoProvider, ObjectId } from '@ilos/provider-mongo';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import {Trip} from '../entities/trip';
-import {tripSchema} from '../entities/tripSchema';
-import {TripRepositoryProviderInterface} from '../interfaces/repository/TripRepositoryProviderInterface';
+import {tripSchema} from '../schema/tripSchema';
+import {CrosscheckRepositoryProviderInterface} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
 import {PersonInterface} from '../interfaces/TripInterface';
 
 /*
  * Trip specific repository
  */
 @Container.provider()
-export class CrosscheckRepositoryProvider extends ParentRepositoryProvider implements TripRepositoryProviderInterface {
+export class CrosscheckRepositoryProvider extends ParentRepositoryProvider implements CrosscheckRepositoryProviderInterface {
   constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
     super(config, mongoProvider);
   }

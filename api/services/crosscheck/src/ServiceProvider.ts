@@ -4,14 +4,14 @@ import {ValidatorProviderInterfaceResolver} from '@ilos/provider-validator';
 
 import { CrosscheckProcessAction } from './actions/CrosscheckProcessAction';
 
-import {TripRepositoryProviderInterfaceResolver} from './interfaces/repository/TripRepositoryProviderInterface';
+import {CrosscheckRepositoryProviderInterfaceResolver} from './interfaces/repository/CrosscheckRepositoryProviderInterface';
 
 import {CrosscheckRepositoryProvider} from './providers/CrosscheckRepositoryProvider';
 
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
-    [TripRepositoryProviderInterfaceResolver, CrosscheckRepositoryProvider],
+    [CrosscheckRepositoryProviderInterfaceResolver, CrosscheckRepositoryProvider],
   ];
 
   readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [

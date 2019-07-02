@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import moment from 'moment';
 
 import {Person, Trip} from '../entities/trip';
-import {TripRepositoryProviderInterfaceResolver} from '../interfaces/repository/TripRepositoryProviderInterface';
+import {CrosscheckRepositoryProviderInterfaceResolver} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
 import {PersonInterface, TripInterface} from '../interfaces/TripInterface';
 import {JourneyInterface} from '../interfaces/JourneyInterface';
 
@@ -12,7 +12,7 @@ interface CrosscheckProcessParamsInterface {
 }
 
 /*
- * Build trip
+ * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
  */
 @Container.handler({
   service: 'crosscheck',
@@ -20,7 +20,7 @@ interface CrosscheckProcessParamsInterface {
 })
 export class CrosscheckProcessAction extends Parents.Action {
   constructor(
-    private tripRepository: TripRepositoryProviderInterfaceResolver,
+    private crosscheckRepository: CrosscheckRepositoryProviderInterfaceResolver,
 
   ) {
     super();
@@ -33,7 +33,7 @@ export class CrosscheckProcessAction extends Parents.Action {
 
     // find by ( operator_journey_id & operator._id )
     try {
-      trip = await this.tripRepository.findByOperatorJourneyIdAndOperatorId({
+      trip = await this.crosscheckRepository.findByOperatorJourneyIdAndOperatorId({
         operator_journey_id: param.journey.operator_journey_id,
         operator_id: param.journey.operator._id,
       });
@@ -54,7 +54,7 @@ export class CrosscheckProcessAction extends Parents.Action {
                .add(2, 'h')
                .toDate(),
        };
-      trip = await this.tripRepository.findByPhoneAndTimeRange(driverPhone, startTimeRange);
+      trip = await this.crosscheckRepository.findByPhoneAndTimeRange(driverPhone, startTimeRange);
     } catch (e) {
       //
     }
@@ -94,7 +94,7 @@ export class CrosscheckProcessAction extends Parents.Action {
 
     const newStartDate = this.reduceStartDate(journey, sourceTrip);
 
-    return this.tripRepository.findByIdAndPushPeople(sourceTrip._id, people, newStartDate);
+    return this.crosscheckRepository.findByIdAndPushPeople(sourceTrip._id, people, newStartDate);
 
     // await Journey.findByIdAndUpdate({ _id: journey._id }, { trip_id: trip._id });
   }
