@@ -25,10 +25,7 @@ export const tripSchema = {
       type: 'array',
       items: { $ref: '#/definitions/person' },
     },
-    incentives: {
-      type: 'array',
-      items: { $ref: '#/definitions/incentive' },
-    },
+    // incentives ?
     createdAt: { macro: 'timestamp' },
     updatedAt: { macro: 'timestamp' },
     deletedAt: { macro: 'timestamp' },
