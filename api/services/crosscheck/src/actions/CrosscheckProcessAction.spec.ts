@@ -1,25 +1,26 @@
 // tslint:disable max-classes-per-file
 import chai from 'chai';
-import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
-import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
-
-
-
+import { Container, Interfaces, Types } from '@ilos/core';
+import {ConfigProviderInterfaceResolver} from '@ilos/provider-config';
+import { ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+
 import {CrosscheckRepositoryProviderInterfaceResolver} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
-import {journey} from '../../tests/mocks/journey';
 import {TripInterface} from '../interfaces/TripInterface';
+
 import {Trip} from '../entities/trip';
+
+import {journey} from '../../tests/mocks/journey';
+
 import {CrosscheckProcessAction} from './CrosscheckProcessAction';
-import {ConfigProviderInterfaceResolver} from '@ilos/provider-config';
+
 
 const { expect } = chai;
 
 const mockJourney = {
   ...journey,
 };
-
 
 const mockTripId = '5d08a59aeb5e79d7607d29cd';
 
@@ -55,12 +56,12 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   }
 }
 
-// @Container.provider()
-// class FakeValidatorProvider extends ValidatorProviderInterfaceResolver{
-//   async boot() {
-//     return;
-//   }
-// }
+@Container.provider()
+class FakeValidatorProvider extends ValidatorProviderInterfaceResolver{
+  async boot() {
+    return;
+  }
+}
 
 class ServiceProvider extends BaseServiceProvider {
   readonly handlers = [CrosscheckProcessAction];
@@ -68,12 +69,14 @@ class ServiceProvider extends BaseServiceProvider {
     [ConfigProviderInterfaceResolver, FakeConfigProvider],
     [CrosscheckRepositoryProviderInterfaceResolver, FakeCrosscheckRepository],
     [Interfaces.KernelInterfaceResolver, FakeKernelProvider],
-    [ValidatorProviderInterfaceResolver, ValidatorProvider],
+    [ValidatorProviderInterfaceResolver, FakeValidatorProvider],
   ];
 
-  protected registerConfig() {}
+  protected registerConfig() {
+  }
 
-
+  protected registerValidators() {
+  }
 }
 
 let serviceProvider;
@@ -95,8 +98,6 @@ describe('CROSSCHECK ACTION - process', () => {
       params: { journey: mockJourney },
     });
 
-    console.log({result})
-
-    expect(result).to.eql(undefined);
+    expect(result).to.be.an.instanceof(Trip);
   });
 });

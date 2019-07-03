@@ -28,7 +28,6 @@ export class CrosscheckProcessAction extends Parents.Action {
 
   public async handle(param: CrosscheckProcessParamsInterface, context: Types.ContextType): Promise<Trip> {
 
-
     let trip: TripInterface | null;
 
     // find by ( operator_journey_id & operator._id )
@@ -60,7 +59,7 @@ export class CrosscheckProcessAction extends Parents.Action {
     }
 
     if (!trip) {
-      this.createFromJourney(param.journey);
+      trip = await this.createFromJourney(param.journey);
     } else {
       this.addJourney(param.journey, trip);
     }
@@ -139,6 +138,7 @@ export class CrosscheckProcessAction extends Parents.Action {
 
   // find the oldest start date
   private reduceStartDate(journey: JourneyInterface, trip: TripInterface | null = null): Date {
+
     const arr: Date[] = [journey.driver.start.datetime];
 
     if (trip) {

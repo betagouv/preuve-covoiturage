@@ -15,10 +15,12 @@ export const journey = {
         phone: '062244558899',
       },
       start: {
+        datetime: new Date(),
         lat: 1,
         lon: 2,
       },
       end: {
+        datetime: new Date(+2),
         lat: 1,
         lon: 2,
       },
@@ -37,10 +39,12 @@ export const journey = {
         phone: '062244558899',
       },
       start: {
+        datetime: new Date(),
         lat: 1,
         lon: 2,
       },
       end: {
+        datetime: new Date(+2),
         lat: 1,
         lon: 2,
       },
