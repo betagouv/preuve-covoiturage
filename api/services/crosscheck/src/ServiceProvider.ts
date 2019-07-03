@@ -10,6 +10,7 @@ import { CrosscheckRepositoryProviderInterfaceResolver } from './interfaces/repo
 import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
 
 import { crosscheckProcessSchema } from './schema/crosscheckProcessSchema';
+import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
 
 export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   readonly alias = [
@@ -28,9 +29,10 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   ];
 
   public async boot() {
+    this.registerEnv();
+    this.registerConfig();
     await super.boot();
     this.registerValidators();
-    this.registerConfig();
   }
 
   protected registerValidators() {
@@ -38,6 +40,14 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
     this.validators.forEach(([name, schema]) => {
       validator.registerValidator(schema, name);
     });
+  }
+
+  protected registerEnv() {
+    if (!this.getContainer().isBound(EnvProviderInterfaceResolver)) {
+      this.getContainer()
+        .bind(EnvProviderInterfaceResolver)
+        .to(EnvProvider);
+    }
   }
 
   protected registerConfig() {
