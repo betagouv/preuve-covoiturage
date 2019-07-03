@@ -26,7 +26,7 @@ export class CrosscheckProcessAction extends Parents.Action {
     super();
   }
 
-  public async handle(param: CrosscheckProcessParamsInterface, context: Types.ContextType): Promise<void> {
+  public async handle(param: CrosscheckProcessParamsInterface, context: Types.ContextType): Promise<Trip> {
 
 
     let trip: TripInterface | null;
@@ -65,7 +65,7 @@ export class CrosscheckProcessAction extends Parents.Action {
       this.addJourney(param.journey, trip);
     }
 
-    return;
+    return trip;
   }
 
   private async createFromJourney(journey: JourneyInterface): Promise<Trip> {
@@ -83,7 +83,7 @@ export class CrosscheckProcessAction extends Parents.Action {
     return trip;
   }
 
-  private async addJourney(journey: JourneyInterface, sourceTrip: TripInterface): Promise<Trip> {
+  public async addJourney(journey: JourneyInterface, sourceTrip: TripInterface): Promise<Trip> {
     // extract existing phone number to compare identities
     const phones = _.uniq(sourceTrip.people.map((p: PersonInterface) => p.identity.phone));
 

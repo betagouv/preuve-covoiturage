@@ -13,6 +13,7 @@ export interface JourneyInterface {
     identity: IdentityInterface;
     start: PositionInterface;
     end: PositionInterface;
+    expense: number;
     seats: number;
     contribution: number;
     distance?: number;

@@ -14,6 +14,7 @@ export class Trip implements TripInterface {
   public createdAt?: Date;
   public updatedAt?: Date;
   constructor(data: {
+    _id?: string;
     operator_id: string;
     operator_journey_id?: string;
     territory?: string[];
@@ -21,6 +22,7 @@ export class Trip implements TripInterface {
     start: Date;
     people: PersonInterface[];
   }) {
+    this._id = data._id;
     this.operator_id = data.operator_id;
     this.operator_journey_id = data.operator_journey_id;
     this.territory = data.territory;
@@ -120,84 +122,3 @@ export class Person implements PersonInterface {
     this.validation = data.validation;
   }
 }
-
-// class Identity {
-//   phone: string;
-//   firstname?: string;
-//   lastname?: string;
-//   email?: string;
-//   company?: string;
-//   travelPass?: {
-//     name: string;
-//     userId: string;
-//   };
-//   over18?: boolean;
-//   constructor(data: {
-//     phone: string;
-//     firstname?: string;
-//     lastname?: string;
-//     email?: string;
-//     company?: string;
-//     travelPass?: {
-//       name: string;
-//       userId: string;
-//     };
-//     over18?: boolean;
-//   }) {
-//     this.phone = data.phone;
-//     this.firstname = data.firstname;
-//     this.lastname = data.lastname;
-//     this.email = data.email;
-//     this.company = data.company;
-//     this.travelPass = data.travelPass;
-//     this.over18 = data.over18;
-//   }
-// }
-//
-// class Incentive {
-//   incentiveId: string;
-//   distributor: string;
-//   status: string;
-//   constructor(data: {
-//     incentiveId: string;
-//     distributor: string;
-//     status: string;
-//   }) {
-//     this.incentiveId = data.incentiveId;
-//     this.distributor = data.distributor;
-//     this.status = data.status;
-//   }
-// }
-//
-// class Position {
-//   datetime: string;
-//   country?: string;
-//   insee?: string;
-//   lat?: number;
-//   lon?: number;
-//   literal?: string;
-//   postcodes?: string[];
-//   territories?: any[];
-//   town?: string;
-//   constructor(data: {
-//     datetime: string;
-//     country?: string;
-//     insee?: string;
-//     lat?: number;
-//     lon?: number;
-//     literal?: string;
-//     postcodes?: string[];
-//     territories?: any[];
-//     town?: string;
-//   }) {
-//     this.datetime = data.datetime;
-//     this.country = data.country;
-//     this.insee = data.insee;
-//     this.lat = data.lat;
-//     this.lon = data.lon;
-//     this.literal = data.literal;
-//     this.postcodes = data.postcodes;
-//     this.territories = data.territories;
-//     this.town = data.town;
-//   }
-// }
