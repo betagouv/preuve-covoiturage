@@ -19,6 +19,7 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
+    "serve": "yarn workspace @pdc/proxy ilos http 8080",
     "clean": "rm -rf ./**/dist",
     "watch": "lerna run --parallel watch-ts",
     "ls": "lerna ls",

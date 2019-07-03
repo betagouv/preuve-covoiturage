@@ -27,7 +27,7 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn dev'
+    command: 'yarn serve'
     ports:
       - 8080:8080
       - 9229:9229
@@ -38,6 +38,7 @@ services:
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin1234
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
+      APP_MONGO_DB: pdc-local
     networks:
       - front
       - api
@@ -58,6 +59,7 @@ services:
       CONFIG_DIR: '/code/config'
       MQ_WORKER: 'true'
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
+      APP_MONGO_DB: pdc-local
     networks:
       - front
       - api
@@ -81,10 +83,10 @@ services:
     depends_on:
       - api
 
-  editor:
-    image: 'swaggerapi/swagger-editor'
-    ports:
-      - 8081:8080
+  # editor:
+  #   image: 'swaggerapi/swagger-editor'
+  #   ports:
+  #     - 8081:8080
 
 networks:
   front:
