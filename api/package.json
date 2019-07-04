@@ -36,7 +36,9 @@
     "process-trip": "yarn workspace @pdc/proxy process-trip",
     "fix-permissions": "yarn workspace @pdc/proxy fix-permissions",
     "test": "NODE_ENV=test mocha -t 5000",
-    "lint": "eslint --ignore-path .gitignore ."
+    "lint": "eslint --ignore-path .gitignore .",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@pdc/package-geo": "0.0.1",
@@ -47,7 +49,8 @@
     "google-libphonenumber": "^3.2.2",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
-    "mongoose": "^5.4"
+    "mongoose": "^5.4",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -84,5 +87,6 @@
       "test/*"
     ],
     "delay": "200"
-  }
+  },
+  "snyk": true
 }
