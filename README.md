@@ -40,11 +40,27 @@ Merci pour votre contribution !
 3. Edit the `.env` file
 4. `docker-compose build`
 5. `docker-compose run api yarn`
-6. `docker-compose run dashboard yarn`
-7. `docker-compose run worker yarn`
-8. `docker-compose run api yarn migrate`
-9. `docker-compose run api yarn seed`
-   `
+6. `docker-compose run api yarn run build`
+7. `docker-compose run dashboard yarn`
+8. `docker-compose run worker yarn`
+9. `docker-compose run api yarn migrate`
+10. `docker-compose run api yarn seed`
+
+#### clone ilos locally
+
+You can clone the ilos framework locally to use different
+branches, tags or contribute.
+
+```shell
+cd api
+git clone https://github.com/betagouv/ilos.git ilos
+cd ilos
+yarn
+yarn run build
+cd .. (api/)
+yarn
+yarn run build
+```
 
 ### Run the stack
 
