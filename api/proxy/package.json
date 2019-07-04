@@ -15,7 +15,9 @@
     "seed": "node cli/seed.js",
     "process": "yarn workspace @pdc/service-acquisition process",
     "process-trip": "yarn workspace @pdc/service-acquisition process-trip",
-    "fix-permissions": "node cli/fix-permissions.js"
+    "fix-permissions": "node cli/fix-permissions.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@pdc/package-email": "0.0.1",
@@ -65,10 +67,12 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "slugify": "^1.3.4",
-    "swagger-ui-express": "^4.0.2"
+    "swagger-ui-express": "^4.0.2",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "faker": "^4.1.0",
     "supertest": "^4.0"
-  }
+  },
+  "snyk": true
 }
