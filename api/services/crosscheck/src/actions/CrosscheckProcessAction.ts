@@ -1,11 +1,11 @@
-import { Parents, Container, Types, Interfaces } from '@ilos/core';
+import { Parents, Container, Types, Interfaces, Exceptions } from '@ilos/core';
 import * as _ from 'lodash';
 import moment from 'moment';
 
-import {Person, Trip} from '../entities/trip';
-import {CrosscheckRepositoryProviderInterfaceResolver} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
-import {PersonInterface, TripInterface} from '../interfaces/TripInterface';
-import {JourneyInterface} from '../interfaces/JourneyInterface';
+import { Person, Trip } from '../entities/Trip';
+import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
+import { PersonInterface, TripInterface } from '../interfaces/TripInterface';
+import { JourneyInterface } from '../interfaces/JourneyInterface';
 
 interface CrosscheckProcessParamsInterface {
   journey: JourneyInterface;
@@ -19,25 +19,19 @@ interface CrosscheckProcessParamsInterface {
   method: 'process',
 })
 export class CrosscheckProcessAction extends Parents.Action {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'crosscheck.process'],
-  ];
-  constructor(
-    private crosscheckRepository: CrosscheckRepositoryProviderInterfaceResolver,
-
-  ) {
+  public readonly middlewares: (string | [string, any])[] = [['validate', 'crosscheck.process']];
+  constructor(private crosscheckRepository: CrosscheckRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(param: CrosscheckProcessParamsInterface, context: Types.ContextType): Promise<Trip> {
-
     let trip: TripInterface | null;
 
-    // find by ( operator_journey_id & operator._id )
+    // find by ( operator_journey_id & operator_id )
     try {
       trip = await this.crosscheckRepository.findByOperatorJourneyIdAndOperatorId({
         operator_journey_id: param.journey.operator_journey_id,
-        operator_id: param.journey.operator._id,
+        operator_id: param.journey.operator_id,
       });
     } catch (e) {
       //
@@ -45,77 +39,75 @@ export class CrosscheckProcessAction extends Parents.Action {
 
     // find by ( driver phone & start time range )
     try {
-       const driverPhone = _.get(param.journey, 'driver.identity.phone', null);
-       const startTimeRange = {
-         min: moment
-               .utc(param.journey.driver.start.datetime)
-               .subtract(2, 'h')
-               .toDate(),
-         max: moment
-               .utc(param.journey.driver.start.datetime)
-               .add(2, 'h')
-               .toDate(),
-       };
+      const driverPhone = _.get(param.journey, 'driver.identity.phone', null);
+      const startTimeRange = {
+        min: moment
+          .utc(param.journey.driver.start.datetime)
+          .subtract(2, 'h')
+          .toDate(),
+        max: moment
+          .utc(param.journey.driver.start.datetime)
+          .add(2, 'h')
+          .toDate(),
+      };
       trip = await this.crosscheckRepository.findByPhoneAndTimeRange(driverPhone, startTimeRange);
     } catch (e) {
       //
     }
 
     if (!trip) {
-      trip = await this.createFromJourney(param.journey);
+      trip = await this.createTripFromJourney(param.journey);
     } else {
-      this.addJourney(param.journey, trip);
+      trip = await this.consolidateTripWithJourney(param.journey, trip);
     }
 
     return trip;
   }
 
-  private async createFromJourney(journey: JourneyInterface): Promise<Trip> {
+  private async createTripFromJourney(journey: JourneyInterface): Promise<Trip> {
     const trip = new Trip({
-      operator_id: journey.operator._id,
-      operator_journey_id: journey.operator_journey_id,
       status: 'pending',
-      territory: journey.territory,
+      territory: this.mapTerritories(journey),
       start: this.reduceStartDate(journey),
       people: this.mapPeople(journey),
     });
-
-    // await Journey.findByIdAndUpdate({ _id: journey._id }, { trip_id: trip._id });
-
-    return trip;
+    return this.crosscheckRepository.create(trip);
   }
 
-  public async addJourney(journey: JourneyInterface, sourceTrip: TripInterface): Promise<Trip> {
+  private async consolidateTripWithJourney(journey: JourneyInterface, sourceTrip: TripInterface): Promise<Trip> {
     // extract existing phone number to compare identities
     const phones = _.uniq(sourceTrip.people.map((p: PersonInterface) => p.identity.phone));
 
     // filter mapped people by their phone number. Keep non matching ones
     const people = this.mapPeople(journey).filter(
-      (person:PersonInterface) => phones.indexOf(person.identity.phone) === -1,
+      (person: PersonInterface) => phones.indexOf(person.identity.phone) === -1,
     );
 
+    // filter mapped territories. Keep non matching ones
+    const territories = this.mapTerritories(journey).filter(
+      (territory: string) => sourceTrip.territory.indexOf(territory) === -1,
+    );
+
+    // find the oldest start date
     const newStartDate = this.reduceStartDate(journey, sourceTrip);
 
-    return this.crosscheckRepository.findByIdAndPushPeople(sourceTrip._id, people, newStartDate);
-
-    // await Journey.findByIdAndUpdate({ _id: journey._id }, { trip_id: trip._id });
+    return this.crosscheckRepository.findByIdAndPushPeople(sourceTrip._id, people, territories, newStartDate);
   }
 
   /*
    * map people from journey
    */
   private mapPeople(journey: JourneyInterface): Person[] {
-
     const people: Person[] = [];
     if ('driver' in journey) {
       const driver = journey.driver;
       people.push(
         new Person({
           journey_id: journey.journey_id,
-          class: journey.operator_class,
+          operator_journey_id: journey.operator_journey_id,
           operator_class: journey.operator_class,
-          operator: journey.operator,
-          territory: journey.territory,
+          operator_id: journey.operator_id,
+          class: journey.operator_class,
           is_driver: true,
           ...driver,
         }),
@@ -127,9 +119,9 @@ export class CrosscheckProcessAction extends Parents.Action {
         new Person({
           journey_id: journey.journey_id,
           class: journey.operator_class,
+          operator_journey_id: journey.operator_journey_id,
           operator_class: journey.operator_class,
-          operator: journey.operator,
-          territory: journey.territory,
+          operator_id: journey.operator_id,
           is_driver: false,
           ...passenger,
         }),
@@ -141,14 +133,25 @@ export class CrosscheckProcessAction extends Parents.Action {
 
   // find the oldest start date
   private reduceStartDate(journey: JourneyInterface, trip: TripInterface | null = null): Date {
-
-    const arr: Date[] = [journey.driver.start.datetime];
-
     if (trip) {
-      arr.push(trip.start);
+      const arr: Date[] = [journey.driver.start.datetime, trip.start];
+      return arr.reduce((p, c) => (new Date(p).getTime() < new Date(c).getTime() ? p : c), new Date());
     }
-
-    return arr.reduce((p, c) => (p.getTime() < c.getTime() ? p : c), new Date());
+    return journey.driver.start.datetime;
   }
 
+  // recuperate all territories from journey
+  private mapTerritories(journey: JourneyInterface): string[] {
+    let territories: string[] = [];
+    if ('driver' in journey) {
+      territories = territories.concat(journey.driver.start.territory);
+      territories = territories.concat(journey.driver.end.territory);
+    }
+    if ('passenger' in journey) {
+      territories = territories.concat(journey.driver.start.territory);
+      territories = territories.concat(journey.driver.end.territory);
+    }
+
+    return _.uniq(territories);
+  }
 }
