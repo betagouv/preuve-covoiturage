@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
-import { Container, Exceptions, Interfaces, Parents } from '@ilos/core';
-import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
-import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
+import { Container, Exceptions, Interfaces } from '@ilos/core';
+import { ValidatorInterfaceResolver } from '@ilos/validator';
 
 import { GeoInterface } from './interfaces/GeoInterface';
 import { PositionInterface } from './interfaces/PositionInterface';
@@ -11,46 +9,16 @@ import { DeKomootPhoton } from './providers/de.komoot.photon';
 import { FrGouvDataApiAdresse } from './providers/fr.gouv.data.api-adresse';
 import { FrGouvApiGeo } from './providers/fr.gouv.api.geo';
 import { OrgOpenstreetmapNominatim } from './providers/org.openstreetmap.nominatim';
+import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
 
-@Container.provider()
-export class GeoProvider extends Parents.ServiceProvider implements Interfaces.ProviderInterface {
-  readonly alias = [
-    [ValidatorProviderInterfaceResolver, ValidatorProvider],
-    [ConfigProviderInterfaceResolver, ConfigProvider],
-    [EnvProviderInterfaceResolver, EnvProvider],
-  ];
-
-  protected validator: ValidatorProviderInterfaceResolver;
-  protected readonly validators: [string, any][] = [
-    [
-      'position',
-      {
-        $id: 'position',
-        type: 'object',
-        additionalProperties: false,
-        minProperties: 1,
-        dependencies: {
-          lon: ['lat'],
-          lat: ['lon'],
-        },
-        properties: {
-          lat: { macro: 'lat' },
-          lon: { macro: 'lon' },
-          insee: { macro: 'insee' },
-          literal: { macro: 'longchar' },
-        },
-      },
-    ],
-  ];
-
-  public async boot() {
-    await super.boot();
-
-    // register validators
-    this.validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
-    this.validators.forEach(([name, schema]) => {
-      this.validator.registerValidator(schema, name);
-    });
+@Container.provider({
+  identifier: GeoProviderInterfaceResolver,
+})
+export class GeoProvider implements Interfaces.ProviderInterface {
+  constructor(
+    protected validator: ValidatorInterfaceResolver,
+  ) {
+    //
   }
 
   public async getTown(position: GeoInterface): Promise<PositionInterface> {

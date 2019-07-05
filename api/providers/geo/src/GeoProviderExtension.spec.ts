@@ -3,13 +3,32 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
+import { Parents, Interfaces, Container } from '@ilos/core';
+import { ConfigExtension } from '@ilos/config';
+import { ValidatorExtension } from '@pdc/provider-validator';
 
-import { GeoProvider } from './GeoProvider';
+import { GeoProviderExtension } from './GeoProviderExtension';
+import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-const geoProvider = new GeoProvider();
+@Container.serviceProvider({
+  config: {},
+  validator: [],
+  geo: true,
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    ConfigExtension,
+    ValidatorExtension,
+    GeoProviderExtension,
+  ];
+}
+
+const serviceProvider = new ServiceProvider();
+
+let geoProvider;
 
 const nullResponse = {
   lon: null,
@@ -21,7 +40,9 @@ const nullResponse = {
 };
 
 before(async () => {
-  await geoProvider.boot();
+  await serviceProvider.register();
+  await serviceProvider.init();
+  geoProvider = serviceProvider.getContainer().get(GeoProviderInterfaceResolver);
 });
 
 // TOWN

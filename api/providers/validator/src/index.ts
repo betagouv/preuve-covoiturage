@@ -1,7 +1,7 @@
 export {
-  ValidatorProviderInterface,
-  ValidatorProviderInterfaceResolver,
+  ValidatorInterface,
+  ValidatorInterfaceResolver,
   ValidatorMiddleware,
-} from '@ilos/provider-validator';
+} from '@ilos/validator';
 
-export { ValidatorProvider } from './ValidatorProvider';
+export { ValidatorExtension } from './ValidatorExtension';

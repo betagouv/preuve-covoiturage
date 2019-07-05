@@ -1,11 +1,11 @@
 import { Container, Interfaces } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { Sentry } from './Sentry';
 
 @Container.provider()
 export class SentryProvider implements Interfaces.ProviderInterface {
-  constructor(protected config: ConfigProviderInterfaceResolver) {}
+  constructor(protected config: ConfigInterfaceResolver) {}
 
   boot() {
     const sentryDSN = this.config.get('sentry.dsn', null);
