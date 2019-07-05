@@ -1,7 +1,6 @@
-import {identitySchema} from './parts/identitySchema';
-import {positionSchema} from './parts/positionSchema';
-import {validationSchema} from './parts/validationSchema';
-
+import { identitySchema } from './parts/identitySchema';
+import { positionSchema } from './parts/positionSchema';
+import { validationSchema } from './parts/validationSchema';
 
 export const tripSchema = {
   $id: 'trip',
@@ -34,9 +33,19 @@ export const tripSchema = {
     person: {
       type: 'object',
       additionalProperties: false,
-      required: ['journey_id', 'identity', 'is_driver', 'start', 'end', 'cost', 'expense', 'operator_class', 'operator'],
+      required: [
+        'journey_id',
+        'identity',
+        'is_driver',
+        'start',
+        'end',
+        'cost',
+        'expense',
+        'operator_class',
+        'operator',
+      ],
       properties: {
-        journey_id: {macro: 'objectid'},
+        journey_id: { macro: 'objectid' },
         class: {
           type: 'string',
           maxLength: 1,
@@ -54,7 +63,7 @@ export const tripSchema = {
             },
           },
         },
-        is_driver: {type: 'boolean'},
+        is_driver: { type: 'boolean' },
         start: positionSchema,
         end: positionSchema,
         seats: {
@@ -91,7 +100,7 @@ export const tripSchema = {
         incentives: {
           type: 'array',
           minItems: 0,
-          items: {$ref: '#/definitions/incentive'},
+          items: { $ref: '#/definitions/incentive' },
         },
         distance: {
           type: 'integer',
@@ -111,8 +120,8 @@ export const tripSchema = {
         operator: {
           type: 'object',
           properties: {
-            _id: {macro: 'objectid'},
-            name: {macro: 'varchar'},
+            _id: { macro: 'objectid' },
+            name: { macro: 'varchar' },
           },
         },
         validation: validationSchema,
@@ -137,4 +146,3 @@ export const tripSchema = {
     },
   },
 };
-

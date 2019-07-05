@@ -1,8 +1,7 @@
 import { identitySchema } from './parts/identitySchema';
 import { positionSchema } from './parts/positionSchema';
 
-export const crosscheckProcessSchema = {
-  $id: 'crosscheck.process',
+const journeySchema = {
   type: 'object',
   required: ['journey_id', 'operator_class', 'operator_id'],
   anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
@@ -40,6 +39,16 @@ export const crosscheckProcessSchema = {
           maximum: 1000000,
         },
         contribution: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 1000000,
+        },
+        cost: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 1000000,
+        },
+        remaining_fee: {
           type: 'integer',
           minimum: 0,
           maximum: 1000000,
@@ -86,6 +95,16 @@ export const crosscheckProcessSchema = {
           minimum: 0,
           maximum: 1000000,
         },
+        remaining_fee: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 1000000,
+        },
+        cost: {
+          type: 'integer',
+          minimum: 0,
+          maximum: 1000000,
+        },
         incentives: {
           type: 'array',
           minItems: 0,
@@ -104,6 +123,16 @@ export const crosscheckProcessSchema = {
         },
       },
     },
+  },
+};
+
+export const crosscheckProcessSchema = {
+  $id: 'crosscheck.process',
+  type: 'object',
+  required: ['journey'],
+  additionalProperties: false,
+  properties: {
+    journey: journeySchema,
   },
   definitions: {
     incentive: {

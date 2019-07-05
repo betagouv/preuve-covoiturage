@@ -13,5 +13,10 @@ export const positionSchema = {
     lon: { macro: 'lon' },
     insee: { macro: 'insee' },
     literal: { macro: 'longchar' },
+    territory: {
+      type: 'array',
+      minItems: 0,
+      items: { macro: 'objectid' },
+    },
   },
 };
