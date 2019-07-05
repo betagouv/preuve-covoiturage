@@ -73,6 +73,8 @@ export function routeMapping(
 ): void {
   const routes: Map<string, Map<string, ObjectRouteMapType>> = new Map();
 
+  // normalize configured routes to routeMap to support
+  // object or array configuration or the routes
   definitions.forEach((def) => {
     let normalizedDefinition: ObjectRouteMapType;
     if (Array.isArray(def)) {
