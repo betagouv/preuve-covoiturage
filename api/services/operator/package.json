@@ -60,13 +60,14 @@
   "dependencies": {
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
-    "@ilos/provider-config": "~0",
-    "@ilos/provider-env": "~0",
+    "@ilos/config": "~0",
+    "@ilos/env": "~0",
     "@ilos/cli": "~0",
     "@ilos/package-acl": "~0",
-    "@pdc/provider-validator": "~0",
-    "@ilos/provider-mongo": "~0",
-    "@ilos/provider-repository": "~0"
+    "@ilos/connection-mongo": "~0",
+    "@ilos/connection-manager": "~0",
+    "@ilos/repository": "~0",
+    "@pdc/provider-validator": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

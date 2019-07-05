@@ -59,8 +59,7 @@
   },
   "dependencies": {
     "@ilos/core": "~0",
-    "@ilos/provider-config": "~0",
-    "@ilos/provider-mongo": "~0",
+    "@ilos/config": "~0",
     "@pdc/provider-geo": "~0",
     "lodash": "^4.17.11"
   },

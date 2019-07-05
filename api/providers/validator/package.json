@@ -43,7 +43,7 @@
     "instrument": true
   },
   "dependencies": {
-    "@ilos/provider-validator": "~0",
+    "@ilos/validator": "~0",
     "ajv": "^6.10.0",
     "google-libphonenumber": "^3.2.2",
     "ibantools": "^2.1.0",
@@ -51,7 +51,7 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0",
-    "@ilos/provider-config": "~0"
+    "@ilos/config": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
