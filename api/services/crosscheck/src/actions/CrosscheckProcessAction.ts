@@ -19,6 +19,9 @@ interface CrosscheckProcessParamsInterface {
   method: 'process',
 })
 export class CrosscheckProcessAction extends Parents.Action {
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'crosscheck.process'],
+  ];
   constructor(
     private crosscheckRepository: CrosscheckRepositoryProviderInterfaceResolver,
 
