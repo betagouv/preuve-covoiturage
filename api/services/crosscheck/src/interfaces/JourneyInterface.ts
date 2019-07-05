@@ -1,67 +1,38 @@
-import {PositionInterface} from './PositionInterface';
+import { PositionInterface } from './PositionInterface';
+import { PaymentInterface } from './PaymentInterface';
 
 export interface JourneyInterface {
-  _id: string;
   journey_id: string;
   operator_journey_id: string;
   operator_class?: string;
-  operator: {
-    _id: string;
-    name: string;
-  };
+  operator_id: string;
   passenger?: {
     identity: IdentityInterface;
     start: PositionInterface;
     end: PositionInterface;
-    expense: number;
     seats: number;
     contribution: number;
+    expense: number;
+    cost: number;
+    remaining_fee: number;
+    incentives: IncentiveInterface[];
+    payments?: PaymentInterface[];
     distance?: number;
     duration?: number;
-    cost: number;
-    incentive: number;
-    remaining_fee: number;
   };
   driver?: {
     identity: IdentityInterface;
     start: PositionInterface;
     end: PositionInterface;
-    expense: number;
     revenue: number;
+    cost: number;
+    expense: number;
+    remaining_fee: number;
+    incentives: IncentiveInterface[];
+    payments?: PaymentInterface[];
     distance?: number;
     duration?: number;
-    cost: number;
-    incentive: number;
-    remaining_fee: number;
   };
-  territory?: string[];
-}
-
-export interface PassengerInterface {
-  identity: IdentityInterface;
-  start: PositionInterface;
-  end: PositionInterface;
-  seats: number;
-  contribution: number;
-  distance?: number;
-  duration?: number;
-  cost: number;
-  incentive: number;
-  remaining_fee: number;
-  territory?: string[];
-}
-
-export interface DriverInterface {
-  expense: number;
-  identity: IdentityInterface;
-  start: PositionInterface;
-  end: PositionInterface;
-  revenue: number;
-  distance?: number;
-  duration?: number;
-  cost: number;
-  incentive: number;
-  remaining_fee: number;
 }
 
 export interface IdentityInterface {
@@ -77,3 +48,8 @@ export interface IdentityInterface {
   over18?: boolean;
 }
 
+export interface IncentiveInterface {
+  incentive_id: string;
+  distributor: string;
+  status: string;
+}

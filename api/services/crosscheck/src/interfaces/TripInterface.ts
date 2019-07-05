@@ -1,14 +1,13 @@
-import {PositionInterface} from './PositionInterface';
+import { PositionInterface } from './PositionInterface';
+import { IdentityInterface, IncentiveInterface } from './JourneyInterface';
+import { PaymentInterface } from './PaymentInterface';
 
 export interface TripInterface {
   _id?: string;
-  operator_id: string;
-  operator_journey_id?: string;
   territory?: string[];
   status: string;
   start: Date;
   people: PersonInterface[];
-  incentives?: IncentiveInterface[];
   deletedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -16,12 +15,11 @@ export interface TripInterface {
 
 export interface PersonInterface {
   journey_id: string;
-  class: string;
+  operator_journey_id: string;
   operator_class: string;
-  operator: {
-    _id: string;
-    name: string;
-  };
+  operator_id: string;
+  class: string;
+
   is_driver: boolean;
   identity: IdentityInterface;
 
@@ -32,11 +30,12 @@ export interface PersonInterface {
 
   seats?: number;
   cost?: number;
-  incentive?: number;
   remaining_fee?: number;
   contribution?: number;
   revenue?: number;
   expense?: number;
+  incentives?: IncentiveInterface[];
+  payments?: PaymentInterface[];
 
   validation?: {
     step: number;
@@ -45,23 +44,4 @@ export interface PersonInterface {
     tests: any;
     rank: string;
   };
-}
-
-export interface IdentityInterface {
-  phone: string;
-  firstname?: string;
-  lastname?: string;
-  email?: string;
-  company?: string;
-  travel_pass?: {
-    name: string;
-    userId: string;
-  };
-  over18?: boolean;
-}
-
-export interface IncentiveInterface {
-  incentive_id: string;
-  distributor: string;
-  status: string;
 }
