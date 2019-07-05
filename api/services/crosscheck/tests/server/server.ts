@@ -3,9 +3,8 @@ import { MongoProvider, ObjectId, CollectionInterface } from '@ilos/provider-mon
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { KernelInterface } from '@ilos/core/dist/interfaces';
 
-
 import { TripInterface } from '../../src/interfaces/TripInterface';
-import { Trip } from '../../src/entities/trip';
+import { Trip } from '../../src/entities/Trip';
 
 export class FakeServer {
   dbName: string;
@@ -38,13 +37,12 @@ export class FakeServer {
     await this.transport.down();
   }
 
-  public async addTrip(trip: TripInterface): Promise<Trip> {
-
+  public async addTrip(trip: any): Promise<Trip> {
     this.kernel = this.transport.getKernel();
     this.key = this.kernel
       .getContainer()
       .get(ConfigProviderInterfaceResolver)
-      .get('user.collectionName');
+      .get('trip.collectionName');
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
       this.key,
       this.dbName,
@@ -71,7 +69,7 @@ export class FakeServer {
     this.key = this.kernel
       .getContainer()
       .get(ConfigProviderInterfaceResolver)
-      .get('user.collectionName');
+      .get('trip.collectionName');
 
     this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
       this.key,

@@ -1,20 +1,19 @@
 // tslint:disable max-classes-per-file
 import chai from 'chai';
 import { Container, Interfaces, Types } from '@ilos/core';
-import {ConfigProviderInterfaceResolver} from '@ilos/provider-config';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
 
-import {CrosscheckRepositoryProviderInterfaceResolver} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
-import {TripInterface} from '../interfaces/TripInterface';
+import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
+import { TripInterface } from '../interfaces/TripInterface';
 
-import {Trip} from '../entities/trip';
+import { Trip } from '../entities/Trip';
 
-import {journey} from '../../tests/mocks/journey';
+import { journey } from '../../tests/mocks/journey';
 
-import {CrosscheckProcessAction} from './CrosscheckProcessAction';
-
+import { CrosscheckProcessAction } from './CrosscheckProcessAction';
 
 const { expect } = chai;
 
@@ -32,7 +31,6 @@ class FakeCrosscheckRepository extends CrosscheckRepositoryProviderInterfaceReso
   public async create(trip: TripInterface): Promise<Trip> {
     return new Trip({ ...trip, _id: mockTripId });
   }
-
 }
 
 @Container.provider()
@@ -57,7 +55,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 }
 
 @Container.provider()
-class FakeValidatorProvider extends ValidatorProviderInterfaceResolver{
+class FakeValidatorProvider extends ValidatorProviderInterfaceResolver {
   async boot() {
     return;
   }
@@ -72,11 +70,9 @@ class ServiceProvider extends BaseServiceProvider {
     [ValidatorProviderInterfaceResolver, FakeValidatorProvider],
   ];
 
-  protected registerConfig() {
-  }
+  protected registerConfig() {}
 
-  protected registerValidators() {
-  }
+  protected registerValidators() {}
 }
 
 let serviceProvider;

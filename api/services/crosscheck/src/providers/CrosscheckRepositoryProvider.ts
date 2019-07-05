@@ -3,16 +3,17 @@ import { ParentRepositoryProvider } from '@ilos/provider-repository';
 import { MongoException, MongoProvider, ObjectId } from '@ilos/provider-mongo';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import {Trip} from '../entities/trip';
-import {tripSchema} from '../schema/tripSchema';
-import {CrosscheckRepositoryProviderInterface} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
-import {PersonInterface} from '../interfaces/TripInterface';
+import { Trip } from '../entities/Trip';
+import { tripSchema } from '../schema/tripSchema';
+import { CrosscheckRepositoryProviderInterface } from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
+import { PersonInterface } from '../interfaces/TripInterface';
 
 /*
  * Trip specific repository
  */
 @Container.provider()
-export class CrosscheckRepositoryProvider extends ParentRepositoryProvider implements CrosscheckRepositoryProviderInterface {
+export class CrosscheckRepositoryProvider extends ParentRepositoryProvider
+  implements CrosscheckRepositoryProviderInterface {
   constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
     super(config, mongoProvider);
   }
@@ -33,7 +34,10 @@ export class CrosscheckRepositoryProvider extends ParentRepositoryProvider imple
     return Trip;
   }
 
-  public async findByOperatorJourneyIdAndOperatorId(params: { operator_journey_id?: string, operator_id: string }): Promise<Trip> {
+  public async findByOperatorJourneyIdAndOperatorId(params: {
+    operator_journey_id?: string;
+    operator_id: string;
+  }): Promise<Trip> {
     const normalizedOperatorIds = this.normalizeOperatorIds(params);
     const collection = await this.getCollection();
     const result = await collection.findOne({ ...normalizedOperatorIds });
@@ -41,7 +45,7 @@ export class CrosscheckRepositoryProvider extends ParentRepositoryProvider imple
     return this.instanciate(result);
   }
 
-  public async findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date, max: Date }): Promise<Trip> {
+  public async findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<Trip> {
     const collection = await this.getCollection();
     const result = await collection.findOne({
       'people.identity.phone': phone,
@@ -55,21 +59,32 @@ export class CrosscheckRepositoryProvider extends ParentRepositoryProvider imple
     return this.instanciate(result);
   }
 
-  public async findByIdAndPushPeople(id: string, people: PersonInterface[], newStartDate: Date): Promise<Trip> {
+  /**
+   * Add people and territories to trip
+   */
+  public async findByIdAndPushPeople(
+    id: string,
+    people: PersonInterface[],
+    territory: string[],
+    newStartDate: Date,
+  ): Promise<Trip> {
     const collection = await this.getCollection();
     const result = await collection.findOneAndUpdate(
-      { _id: id },
+      { _id: new ObjectId(id) },
       {
-        $push: { people },
-        start: newStartDate,
+        $push: { people: { $each: people } },
+        $set: { start: newStartDate },
       },
-      { returnOriginal:false },
+      { returnOriginal: false },
     );
     if (!result) throw new Exceptions.NotFoundException('Trip not found');
-    return this.instanciate(result);
+    return this.instanciate(result.value);
   }
 
-  private normalizeOperatorIds(params: { operator_journey_id?: string, operator_id: string }): { operator_journey_id?: ObjectId, operator_id?: ObjectId } {
+  private normalizeOperatorIds(params: {
+    operator_journey_id?: string;
+    operator_id: string;
+  }): { operator_journey_id?: ObjectId; operator_id?: ObjectId } {
     const normalizedFilters: { operator_journey_id?: ObjectId; operator_id?: ObjectId } = {};
     if ('operator_journey_id' in params) {
       normalizedFilters.operator_journey_id = new ObjectId(params.operator_journey_id);
@@ -77,5 +92,4 @@ export class CrosscheckRepositoryProvider extends ParentRepositoryProvider imple
     normalizedFilters.operator_id = new ObjectId(params.operator_id);
     return normalizedFilters;
   }
-
 }

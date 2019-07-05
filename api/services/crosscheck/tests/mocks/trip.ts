@@ -1,74 +1,28 @@
-export const trip = {
-  operator_journey_id: 'operatorJourneyId',
-  operator_class: 'A',
-  operator_id: '5d0b616f9f611aef34deb309',
-  territory: ['5d0b616f9f611aef34deb310'],
-  status: 'active',
-  start: new Date(),
+import { journey } from './journey';
+import { Person, Trip } from '../../src/entities/Trip';
+
+export const trip = <Trip>{
+  territory: [journey.passenger.start.territory[0], journey.passenger.end.territory[0]],
+  status: 'pending',
+  start: journey.passenger.start.datetime,
   people: [
     {
-      journey_id: '5d0b616f9f611aef34deb307',
+      ...journey.passenger,
+      operator_journey_id: journey.operator_journey_id,
+      journey_id: journey.journey_id,
       class: 'A',
-      operator_class:'A',
-      operator: {
-        _id: '5d0b616f9f611aef34deb300',
-        name: 'passengerOperatorName',
-      },
+      operator_class: journey.operator_class,
+      operator_id: journey.operator_id,
       is_driver: false,
-      identity: {
-        firstname: 'passengerFirstName',
-        lastname: 'passengerLastName',
-        email: 'passenger@example.com',
-        phone: '062244558899',
-      },
-      start: {
-        datetime: new Date(),
-        lat: 1,
-        lon: 2,
-      },
-      end: {
-        datetime: new Date(+2),
-        lat: 1,
-        lon: 2,
-      },
-      distance: 2,
-      duration: 50,
-      cost: 1,
-      incentive: 1,
-      remaining_fee: 1,
-      expense: 1,
     },
     {
-      journey_id: '5d0b616f9f611aef34deb307',
+      ...journey.driver,
+      operator_journey_id: journey.operator_journey_id,
+      journey_id: journey.journey_id,
       class: 'A',
-      operator_class:'A',
-      operator: {
-        _id: '5d0b616f9f611aef34deb300',
-        name: 'driverOperatorName',
-      },
+      operator_class: journey.operator_class,
+      operator_id: journey.operator_id,
       is_driver: true,
-      identity: {
-        firstname: 'driverFirstName',
-        lastname: 'driverLastName',
-        email: 'driver@example.com',
-        phone: '062244558899',
-      },
-      start: {
-        datetime: new Date(),
-        lat: 1,
-        lon: 2,
-      },
-      end: {
-        datetime: new Date(+2),
-        lat: 1,
-        lon: 2,
-      },
-      distance: 2,
-      duration: 50,
-      cost: 1,
-      incentive: 1,
-      remaining_fee: 1,
-      contribution: 1,
     },
   ],
 };
