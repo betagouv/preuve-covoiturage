@@ -72,7 +72,10 @@ export class CrosscheckRepositoryProvider extends ParentRepositoryProvider
     const result = await collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       {
-        $push: { people: { $each: people } },
+        $push: {
+          people: { $each: people },
+          territory: { $each: territory },
+        },
         $set: { start: newStartDate },
       },
       { returnOriginal: false },

@@ -4,7 +4,7 @@ import { Person, Trip } from '../../src/entities/Trip';
 export const trip = <Trip>{
   territory: [journey.passenger.start.territory[0], journey.passenger.end.territory[0]],
   status: 'pending',
-  start: journey.passenger.start.datetime,
+  start: journey.driver.start.datetime,
   people: [
     {
       ...journey.passenger,

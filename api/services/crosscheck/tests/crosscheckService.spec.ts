@@ -107,6 +107,13 @@ describe('SERVICE CROSSCHECK : Process - consolidate trip with journey', () => {
     const { data, status } = await request.post('/', mockFactory.call('crosscheck:process', processParams));
 
     expect(data.result._id).to.eql(existingTripId);
+    expect(data.result.status).to.eql(trip.status);
+
+    // check consolidation ot territories
+    expect(data.result.territory).to.eql([...trip.territory, secondJourney.passenger.end.territory[0]]);
+
+    // check oldest start time
+    expect(data.result.start).to.eql(secondJourney.passenger.start.datetime.toISOString());
 
     const passenger = <any>{
       ...trip.people[0],
@@ -166,55 +173,54 @@ describe('SERVICE CROSSCHECK : Process - consolidate trip with journey', () => {
   });
 
   it('should consolidate trip with phone', async () => {
-    try {
-      const { data, status } = await request.post('/', mockFactory.call('crosscheck:process', processParams));
+    const { data, status } = await request.post('/', mockFactory.call('crosscheck:process', processParams));
 
-      expect(data.result._id).to.eql(existingTripId);
+    expect(data.result._id).to.eql(existingTripId);
 
-      const passenger = {
-        ...trip.people[0],
-        start: { ...trip.people[0].start },
-        end: { ...trip.people[0].end },
-      };
-      passenger.start.datetime = <any>passenger.start.datetime.toISOString();
-      passenger.end.datetime = <any>passenger.end.datetime.toISOString();
+    // check consolidation ot territories
+    expect(data.result.territory).to.eql([...trip.territory, secondJourney.passenger.end.territory[0]]);
 
-      const driver = <any>{
-        ...trip.people[1],
-        start: { ...trip.people[1].start },
-        end: { ...trip.people[1].end },
-      };
-      driver.start.datetime = driver.start.datetime.toISOString();
-      driver.end.datetime = driver.end.datetime.toISOString();
+    // check oldest start time
+    expect(data.result.start).to.eql(secondJourney.passenger.start.datetime.toISOString());
 
-      const secondPassager = {
-        ...secondJourney.passenger,
-        start: { ...secondJourney.passenger.start },
-        end: { ...secondJourney.passenger.end },
-        journey_id: secondJourney.journey_id,
-        class: secondJourney.operator_class,
-        operator_journey_id: 'differentOperatorJourneyId',
-        operator_class: secondJourney.operator_class,
-        operator_id: secondJourney.operator_id,
-        is_driver: false,
-        revenue: null,
-        payments: null,
-        validation: null,
-      };
+    const passenger = {
+      ...trip.people[0],
+      start: { ...trip.people[0].start },
+      end: { ...trip.people[0].end },
+    };
+    passenger.start.datetime = <any>passenger.start.datetime.toISOString();
+    passenger.end.datetime = <any>passenger.end.datetime.toISOString();
 
-      secondPassager.start.datetime = <any>secondPassager.start.datetime.toISOString();
-      secondPassager.end.datetime = <any>secondPassager.end.datetime.toISOString();
+    const driver = <any>{
+      ...trip.people[1],
+      start: { ...trip.people[1].start },
+      end: { ...trip.people[1].end },
+    };
+    driver.start.datetime = driver.start.datetime.toISOString();
+    driver.end.datetime = driver.end.datetime.toISOString();
 
-      expect(data.result.people[0]).to.eql(passenger);
-      expect(data.result.people[1]).to.eql(driver);
-      expect(data.result.people[2]).to.eql(secondPassager);
+    const secondPassager = {
+      ...secondJourney.passenger,
+      start: { ...secondJourney.passenger.start },
+      end: { ...secondJourney.passenger.end },
+      journey_id: secondJourney.journey_id,
+      class: secondJourney.operator_class,
+      operator_journey_id: 'differentOperatorJourneyId',
+      operator_class: secondJourney.operator_class,
+      operator_id: secondJourney.operator_id,
+      is_driver: false,
+      revenue: null,
+      payments: null,
+      validation: null,
+    };
 
-      expect(status).equal(200);
-    } catch (e) {
-      console.log(e);
-      if ('response' in e) {
-        console.log(e.response.data);
-      }
-    }
+    secondPassager.start.datetime = <any>secondPassager.start.datetime.toISOString();
+    secondPassager.end.datetime = <any>secondPassager.end.datetime.toISOString();
+
+    expect(data.result.people[0]).to.eql(passenger);
+    expect(data.result.people[1]).to.eql(driver);
+    expect(data.result.people[2]).to.eql(secondPassager);
+
+    expect(status).equal(200);
   });
 });
