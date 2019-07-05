@@ -1,5 +1,5 @@
 import { Parents, Interfaces, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
 import { MongoProvider } from '@ilos/provider-mongo';
 import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
@@ -47,6 +47,10 @@ export class ServiceProvider extends Parents.ServiceProvider implements Interfac
   }
 
   protected registerConfig() {
+    this.getContainer()
+      .bind(ConfigProviderInterfaceResolver)
+      .to(ConfigProvider);
+
     this.getContainer()
       .get(ConfigProviderInterfaceResolver)
       .loadConfigDirectory(__dirname);

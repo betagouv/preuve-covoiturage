@@ -55,11 +55,9 @@ export class CrosscheckProcessAction extends Parents.Action {
       //
     }
 
-    if (!trip) {
-      trip = await this.createTripFromJourney(param.journey);
-    } else {
-      trip = await this.consolidateTripWithJourney(param.journey, trip);
-    }
+    trip = !trip
+      ? await this.createTripFromJourney(param.journey)
+      : await this.consolidateTripWithJourney(param.journey, trip);
 
     return trip;
   }

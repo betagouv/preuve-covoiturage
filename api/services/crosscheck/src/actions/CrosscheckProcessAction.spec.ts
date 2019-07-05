@@ -2,7 +2,7 @@
 import chai from 'chai';
 import { Container, Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
+import { ValidatorProvider, ValidatorProviderInterfaceResolver } from '@pdc/provider-validator';
 
 import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
 
@@ -38,13 +38,6 @@ class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   async boot() {
     return;
   }
-  async call(
-    method: string,
-    params: any[] | { [p: string]: any },
-    context: Types.ContextType,
-  ): Promise<Types.ResultType> {
-    return undefined;
-  }
 }
 
 @Container.provider()
@@ -61,13 +54,21 @@ class FakeValidatorProvider extends ValidatorProviderInterfaceResolver {
   }
 }
 
+// todo: temp hack because of a postconstruc error with the validator
+class FakeCrosscheckProcessAction extends CrosscheckProcessAction {
+  constructor(crosscheckRepository: CrosscheckRepositoryProviderInterfaceResolver) {
+    super(crosscheckRepository);
+  }
+  public readonly middlewares = [];
+}
+
 class ServiceProvider extends BaseServiceProvider {
-  readonly handlers = [CrosscheckProcessAction];
+  readonly handlers = [FakeCrosscheckProcessAction];
   readonly alias: any[] = [
-    [ConfigProviderInterfaceResolver, FakeConfigProvider],
     [CrosscheckRepositoryProviderInterfaceResolver, FakeCrosscheckRepository],
+    [ValidatorProviderInterfaceResolver, ValidatorProvider],
+    [ConfigProviderInterfaceResolver, FakeConfigProvider],
     [Interfaces.KernelInterfaceResolver, FakeKernelProvider],
-    [ValidatorProviderInterfaceResolver, FakeValidatorProvider],
   ];
 
   protected registerConfig() {}
@@ -93,7 +94,6 @@ describe('CROSSCHECK ACTION - process', () => {
       context: { call: { user: {} }, channel: { service: '' } },
       params: { journey: mockJourney },
     });
-
     expect(result).to.be.an.instanceof(Trip);
   });
 });
