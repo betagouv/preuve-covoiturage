@@ -1,25 +1,27 @@
 import { Container } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { ParentRepositoryProvider } from '@ilos/provider-repository';
-import { MongoException, MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
+import { ConfigInterfaceResolver } from '@ilos/config';
+import { ParentRepository } from '@ilos/repository';
+import { MongoException, MongoConnection } from '@ilos/connection-mongo';
 
 import { Journey } from '../entities/Journey';
-import { JourneyRepositoryProviderInterface } from '../interfaces/JourneyRepositoryProviderInterface';
+import { JourneyRepositoryProviderInterface, JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 
-@Container.provider()
-export class JourneyRepositoryProvider extends ParentRepositoryProvider implements JourneyRepositoryProviderInterface {
+@Container.provider({
+  identifier: JourneyRepositoryProviderInterfaceResolver,
+})
+export class JourneyRepositoryProvider extends ParentRepository implements JourneyRepositoryProviderInterface {
   constructor(
-    protected config: ConfigProviderInterfaceResolver,
-    protected mongoProvider: MongoProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
+    protected connection: MongoConnection,
   ) {
-    super(config, mongoProvider);
+    super(config, connection);
   }
 
   public getKey(): string {
     return this.config.get('acquisition.collectionName', 'journeys');
   }
 
-  public getDatabase(): string {
+  public getDbName(): string {
     return this.config.get('acquisition.db');
   }
 

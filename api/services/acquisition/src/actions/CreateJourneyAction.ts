@@ -1,5 +1,5 @@
 import { Parents, Container, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
@@ -7,7 +7,7 @@ import { CreateJourneyParamsInterface } from '../interfaces/CreateJourneyParamsI
 
 @Container.handler({
   service: 'acquisition',
-  method: 'create',
+  method: 'createJourney',
 })
 export class CreateJourneyAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
@@ -17,7 +17,7 @@ export class CreateJourneyAction extends Parents.Action {
 
   constructor(
     private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
-    private configProvider: ConfigProviderInterfaceResolver,
+    private configProvider: ConfigInterfaceResolver,
   ) {
     super();
   }

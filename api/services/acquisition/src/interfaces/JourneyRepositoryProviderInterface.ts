@@ -1,15 +1,15 @@
 import {
-  ParentRepositoryProviderInterface,
-  ParentRepositoryProviderInterfaceResolver,
-} from '@ilos/provider-repository';
+  ParentRepositoryInterface,
+  ParentRepositoryInterfaceResolver,
+} from '@ilos/repository';
 
 import { Journey } from '../entities/Journey';
 
-export interface JourneyRepositoryProviderInterface extends ParentRepositoryProviderInterface {
+export interface JourneyRepositoryProviderInterface extends ParentRepositoryInterface {
   createMany(journeys: Journey[]): Promise<Journey[]>;
 }
 
-export abstract class JourneyRepositoryProviderInterfaceResolver extends ParentRepositoryProviderInterfaceResolver {
+export abstract class JourneyRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver {
   async createMany(journeys: Journey[]): Promise<Journey[]> {
     throw new Error();
   }
