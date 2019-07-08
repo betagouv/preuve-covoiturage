@@ -1,5 +1,5 @@
-import { Parents, Container, Types, Interfaces } from '@ilos/core';
-import { NotificationProviderInterfaceResolver } from '@ilos/provider-notification';
+import { Parents, Container, Types } from '@ilos/core';
+import { NotificationInterfaceResolver } from '@ilos/notification';
 
 import { UserNotifyParamsInterface } from '../interfaces/actions/UserNotifyParamsInterface';
 import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
@@ -12,7 +12,7 @@ import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateBy
   method: 'notify',
 })
 export class NotifyUserAction extends Parents.Action {
-  constructor(private notificationProvider: NotificationProviderInterfaceResolver) {
+  constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();
   }
 

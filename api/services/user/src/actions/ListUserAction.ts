@@ -1,5 +1,5 @@
 import { Parents, Container } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
@@ -41,7 +41,7 @@ export class ListUserAction extends Parents.Action {
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private config: ConfigProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }

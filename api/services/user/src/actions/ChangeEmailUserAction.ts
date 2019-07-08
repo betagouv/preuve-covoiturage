@@ -1,5 +1,5 @@
 import { Parents, Container, Interfaces, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
@@ -43,7 +43,7 @@ export class ChangeEmailUserAction extends Parents.Action {
     ['content.whitelist', userWhiteListFilterOutput],
   ];
   constructor(
-    private config: ConfigProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private kernel: Interfaces.KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,

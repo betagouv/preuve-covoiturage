@@ -1,39 +1,50 @@
-import { bootstrap } from '@ilos/framework';
-import { MongoProvider, ObjectId, CollectionInterface } from '@ilos/provider-mongo';
+import path from 'path';
+import { Interfaces } from '@ilos/core';
+import { MongoConnection, ObjectId, CollectionInterface } from '@ilos/connection-mongo';
 import { CryptoProvider } from '@pdc/provider-crypto';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { TransportInterface, KernelInterface } from '@ilos/core/dist/interfaces';
-
+import { ConfigInterfaceResolver } from '@ilos/config';
 import { User } from '../../src/entities/User';
 import { MockFactory } from '../mocks/factory';
+import { ServiceProvider } from '../../src/ServiceProvider';
+import { bootstrap } from '../../src/bootstrap';
 
 const crypto = new CryptoProvider();
 
 export class FakeMongoServer {
   dbName: string;
-  kernel: KernelInterface;
-  transport: TransportInterface;
+  kernel: Interfaces.KernelInterface;
+  service: Interfaces.ServiceContainerInterface;
+  transport: Interfaces.TransportInterface;
+  mongo;
   server;
   port = '8088';
   collection: CollectionInterface;
-  key: string;
 
   public async startServer(): Promise<any> {
     process.env.APP_URL = `http://localhost:${this.port}`;
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+    const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
+    process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
     this.dbName = process.env.APP_MONGO_DB;
   }
 
   public async startTransport(): Promise<any> {
-    this.transport = await bootstrap.boot(['', '', 'http', this.port]);
+    this.transport = await bootstrap.boot('http', this.port);
     this.kernel = this.transport.getKernel();
+    const children = this.kernel.getContainer().getAll('children');
+    console.log(children[0], ServiceProvider, children[0] === ServiceProvider);
+    this.service = this.kernel.getContainer().get(ServiceProvider);
+    this.mongo = this.service.getContainer().get(MongoConnection).getClient();
+    const key = this.kernel
+    .getContainer()
+    .get(ConfigInterfaceResolver)
+    .get('user.collectionName');
+    this.collection = this.mongo.db(this.dbName).collection(key);
     this.server = this.transport.getInstance();
   }
 
   public async stopServer(): Promise<void> {
-    await (<MongoProvider>this.kernel.getContainer().get(MongoProvider))
-      .getDb(process.env.APP_MONGO_DB)
-      .then((db) => db.dropDatabase());
+    await this.mongo.db(process.env.APP_MONGO_DB).dropDatabase();
   }
 
   public async stopTransport(): Promise<void> {
@@ -44,16 +55,6 @@ export class FakeMongoServer {
     if (!('password' in user)) {
       user.password = MockFactory.generatePassword();
     }
-
-    this.kernel = this.transport.getKernel();
-    this.key = this.kernel
-      .getContainer()
-      .get(ConfigProviderInterfaceResolver)
-      .get('user.collectionName');
-    this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
-      this.key,
-      this.dbName,
-    );
 
     const normalizedUser = { ...user };
     if ('operator' in user) {
@@ -78,17 +79,6 @@ export class FakeMongoServer {
 
   public async clearCollection(): Promise<void> {
     this.kernel = this.transport.getKernel();
-
-    this.key = this.kernel
-      .getContainer()
-      .get(ConfigProviderInterfaceResolver)
-      .get('user.collectionName');
-
-    this.collection = await (<MongoProvider>this.kernel.getContainer().get(MongoProvider)).getCollectionFromDb(
-      this.key,
-      this.dbName,
-    );
-
     await this.collection.drop();
   }
 }

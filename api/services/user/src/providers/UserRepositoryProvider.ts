@@ -1,11 +1,16 @@
 import { Container, Exceptions } from '@ilos/core';
-import { ParentRepositoryProvider } from '@ilos/provider-repository';
-import { MongoException, MongoProvider, ObjectId } from '@ilos/provider-mongo';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ParentRepository } from '@ilos/repository';
+import { MongoException, MongoConnection, ObjectId } from '@ilos/connection-mongo';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterface } from '../interfaces/repository/UserRepositoryProviderInterface';
+
+import {
+  UserRepositoryProviderInterface,
+  UserRepositoryProviderInterfaceResolver,
+} from '../interfaces/repository/UserRepositoryProviderInterface';
+
 import {
   UserRepositoryListFiltersInterface,
   UserRepositoryListPaginationInterface,
@@ -14,18 +19,20 @@ import {
 /*
  * User specific repository
  */
-@Container.provider()
-export class UserRepositoryProvider extends ParentRepositoryProvider implements UserRepositoryProviderInterface {
-  constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
-    super(config, mongoProvider);
+@Container.provider({
+  identifier: UserRepositoryProviderInterfaceResolver,
+})
+export class UserRepositoryProvider extends ParentRepository implements UserRepositoryProviderInterface {
+  constructor(protected config: ConfigInterfaceResolver, protected mongoConnection: MongoConnection) {
+    super(config, mongoConnection);
   }
 
   public getKey(): string {
     return this.config.get('user.collectionName');
   }
 
-  public getDatabase(): string {
-    return this.config.get('mongo.db');
+  public getDbName(): string {
+    return this.config.get('user.db');
   }
 
   public getSchema(): object | null {

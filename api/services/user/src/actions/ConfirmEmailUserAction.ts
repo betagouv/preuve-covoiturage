@@ -1,5 +1,5 @@
 import { Parents, Container, Types, Exceptions } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
@@ -21,7 +21,7 @@ export class ConfirmEmailUserAction extends Parents.Action {
   ];
 
   constructor(
-    private config: ConfigProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
