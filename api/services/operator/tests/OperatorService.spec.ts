@@ -1,9 +1,10 @@
 // tslint:disable max-classes-per-file
 import supertest from 'supertest';
+import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { bootstrap } from '@ilos/framework';
-import { MongoProvider } from '@ilos/provider-mongo';
+import { bootstrap } from '../src/bootstrap';
+import { MongoConnection } from '@ilos/connection-mongo';
 
 let transport;
 let request;
@@ -36,18 +37,24 @@ const callFactory = (method: string, data: any, permissions: string[]) => ({
 describe('Operator service', () => {
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017';
+    
+    const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
+    process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    transport = await bootstrap.boot(['', '', 'http', port]);
+    transport = await bootstrap.boot('http', port);
     request = supertest(transport.getInstance());
   });
 
   after(async () => {
-    await (<MongoProvider>transport
-      .getKernel()
-      .getContainer()
-      .get(MongoProvider))
-      .getDb(process.env.APP_MONGO_DB)
-      .then((db) => db.dropDatabase());
+    // TODO : refactor
+    // await (<MongoConnection>transport
+    //   .getKernel()
+    //   .getContainer()
+    //   .get(MongoConnection))
+    //   .getClient()
+    //   .db(process.env.APP_MONGO_DB)
+    //   .dropDatabase();
 
     await transport.down();
   });

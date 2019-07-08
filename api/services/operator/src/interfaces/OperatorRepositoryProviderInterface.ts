@@ -1,5 +1,5 @@
-import { ParentRepositoryProviderInterface, ParentRepositoryProviderInterfaceResolver } from '@ilos/provider-repository';
+import { ParentRepositoryInterface, ParentRepositoryInterfaceResolver } from '@ilos/repository';
 
-export interface OperatorRepositoryProviderInterface extends ParentRepositoryProviderInterface {}
+export interface OperatorRepositoryProviderInterface extends ParentRepositoryInterface {}
 
-export abstract class OperatorRepositoryProviderInterfaceResolver extends ParentRepositoryProviderInterfaceResolver {}
+export abstract class OperatorRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver {}

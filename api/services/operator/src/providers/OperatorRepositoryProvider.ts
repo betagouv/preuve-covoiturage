@@ -1,17 +1,19 @@
 import { Container } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
-import { ParentRepositoryProvider } from '@ilos/provider-repository';
+import { ConfigInterfaceResolver } from '@ilos/config';
+import { MongoConnection } from '@ilos/connection-mongo';
+import { ParentRepository } from '@ilos/repository';
 
 import { Operator } from '../entities/Operator';
-import { OperatorRepositoryProviderInterface } from '../interfaces/OperatorRepositoryProviderInterface';
+import { OperatorRepositoryProviderInterface, OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 
-@Container.provider()
-export class OperatorRepositoryProvider extends ParentRepositoryProvider
+@Container.provider({
+  identifier: OperatorRepositoryProviderInterfaceResolver,
+})
+export class OperatorRepositoryProvider extends ParentRepository
   implements OperatorRepositoryProviderInterface {
   constructor(
-    protected config: ConfigProviderInterfaceResolver,
-    protected mongoProvider: MongoProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
+    protected mongoProvider: MongoConnection,
   ) {
     super(config, mongoProvider);
   }
@@ -20,8 +22,8 @@ export class OperatorRepositoryProvider extends ParentRepositoryProvider
     return this.config.get('operator.collectionName');
   }
 
-  public getDatabase(): string {
-    return this.config.get('mongo.db');
+  public getDbName(): string {
+    return this.config.get('operator.db');
   }
 
   public getModel() {
