@@ -21,7 +21,7 @@ process.env.APP_MONGO_DB = '';
 })
 class Kernel extends ParentKernel {}
 
-describe('User service provider', () => {
+describe('Application service provider', () => {
   it('boots', async () => {
     const sp = new Kernel();
     await expect(sp.register()).to.become(undefined);

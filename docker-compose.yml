@@ -39,6 +39,7 @@ services:
       APP_SUPERUSER_PASSWORD: admin1234
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
       APP_MONGO_DB: pdc-local
+      APP_JWT_SECRET: iamasecret
     networks:
       - front
       - api

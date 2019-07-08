@@ -59,6 +59,7 @@ export class HttpTransport implements Interfaces.TransportInterface {
     this.registerSessionHandler();
     this.registerSecurity();
     this.registerGlobalMiddlewares();
+    this.registerServerAuth();
     this.registerAuth();
     this.registerSwagger();
     this.registerBullArena();
@@ -129,9 +130,18 @@ export class HttpTransport implements Interfaces.TransportInterface {
     this.app.use(dataWrapMiddleware);
   }
 
-  private registerAuth() {
-    // TODO add token parser for operator application > inject in sessions
+  private registerServerAuth() {
+    // inject the operator_id in the query
+    this.app.use((req: express.Request, response: express.Response, next: Function) => {
+      const token = req.headers.authorization.toString().replace('Bearer ', '');
+      // validate token against the application service
+      // throw if unauthorized
+      // inject operator data
+      // inject permissions
+    });
+  }
 
+  private registerAuth() {
     this.app.post(
       '/login',
       asyncHandler(async (req, res, next) => {
@@ -148,13 +158,13 @@ export class HttpTransport implements Interfaces.TransportInterface {
       }),
     );
 
-    this.app.get('/profile', (req, res, next) => {
-      if (!('user' in req.session)) {
-        throw new Error('Unauthenticated');
-      }
+    // this.app.get('/profile', (req, res, next) => {
+    //   if (!('user' in req.session)) {
+    //     throw new Error('Unauthenticated');
+    //   }
 
-      res.json(req.session.user);
-    });
+    //   res.json(req.session.user);
+    // });
 
     this.app.post('/logout', (req, res, next) => {
       req.session.destroy((err) => {
