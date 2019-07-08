@@ -1,5 +1,16 @@
 import { ObjectRouteMapType, ArrayRouteMapType } from '../helpers/routeMapping';
 
+/**
+ * Route format
+ * [verb, route, signature, mapRequest, mapResponse]
+ *
+ * - verb:        get | post | put | patch | delete
+ * - route:       /abc/:prop
+ * - signature:   service:action
+ * - mapRequest:  (body: any, query?: any, params?: any, session?: any) => any
+ * - mapResponse: (result: any, error: any, session?: any) => any
+ */
+
 export const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
   // USERS
   ['put', '/profile', 'user:patch', (body, _query, _params, session) => ({ ...body, _id: session.user._id })],
