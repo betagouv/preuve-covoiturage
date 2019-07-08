@@ -49,7 +49,7 @@ function callAdminFactory(params): Types.CallType {
 
 describe('User service', async () => {
   before(async () => {
-    await kernel.boot();
+    await kernel.bootstrap();
     await app.up();
 
     const registerAction = kernel.getContainer().getHandler({

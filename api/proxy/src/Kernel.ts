@@ -1,26 +1,23 @@
-import { CommandProvider } from '@ilos/cli';
-import { Parents, Types, Interfaces } from '@ilos/core';
-import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
+import {  Container } from '@ilos/core';
+import { Kernel as BaseKernel } from '@ilos/framework';
 import { SentryProvider } from '@pdc/provider-sentry';
 
-import { serviceProviders as journeyServiceProviders } from '@pdc/service-acquisition';
-import { serviceProviders as userServiceProviders } from '@pdc/service-user';
-import { serviceProviders as territoryServiceProviders } from '@pdc/service-territory';
-import { serviceProviders as operatorServiceProviders } from '@pdc/service-operator';
+import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
+import { bootstrap as userBootstrap } from '@pdc/service-user';
+import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
+import { bootstrap as operatorBootstrap } from '@pdc/service-operator';
 
-export class Kernel extends Parents.Kernel {
-  alias = [
-    [ConfigProviderInterfaceResolver, ConfigProvider],
-    [EnvProviderInterfaceResolver, EnvProvider],
-    CommandProvider,
+@Container.kernel({
+  env: null,
+  config: __dirname,
+  children: [
+    ...acquisitionBootstrap.serviceProviders,
+    ...userBootstrap.serviceProviders,
+    ...territoryBootstrap.serviceProviders,
+    ...operatorBootstrap.serviceProviders,
+  ],
+  providers: [
     SentryProvider,
-  ];
-
-  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [
-    ...journeyServiceProviders,
-    ...userServiceProviders,
-    ...territoryServiceProviders,
-    ...operatorServiceProviders,
-  ];
-}
+  ],
+})
+export class Kernel extends BaseKernel {}

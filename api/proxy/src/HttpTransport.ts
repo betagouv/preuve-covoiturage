@@ -8,8 +8,8 @@ import swaggerUiExpress from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 
 import { Interfaces } from '@ilos/core';
-import { ConfigProviderInterface, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { EnvProviderInterface, EnvProviderInterfaceResolver } from '@ilos/provider-env';
+import { ConfigInterface, ConfigInterfaceResolver } from '@ilos/config';
+import { EnvInterface, EnvInterfaceResolver } from '@ilos/env';
 
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 
@@ -20,8 +20,8 @@ import { makeCall, routeMapping } from './helpers/routeMapping';
 
 export class HttpTransport implements Interfaces.TransportInterface {
   app: express.Express;
-  config: ConfigProviderInterface;
-  env: EnvProviderInterface;
+  config: ConfigInterface;
+  env: EnvInterface;
   port: string;
   server: http.Server;
 
@@ -76,8 +76,8 @@ export class HttpTransport implements Interfaces.TransportInterface {
   }
 
   private async getProviders() {
-    this.config = this.kernel.getContainer().get(ConfigProviderInterfaceResolver);
-    this.env = this.kernel.getContainer().get(EnvProviderInterfaceResolver);
+    this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
+    this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
   }
 
   private registerBeforeAllHandlers() {
