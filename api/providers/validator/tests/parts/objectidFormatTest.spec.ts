@@ -1,13 +1,11 @@
 import { expect } from 'chai';
 import { NewableType } from '@ilos/core/dist/types';
+import { ValidatorInterface } from '../../src';
 
-import { ValidatorProvider } from '../../src/ValidatorProvider';
-
-export function objectidFormatTest(fakeConfigProvider, FakeObject: NewableType<any>) {
+export function objectidFormatTest(getProvider, FakeObject: NewableType<any>) {
+  let provider: ValidatorInterface;  
   return () => {
-    let provider;
-
-    beforeEach(async () => {
+    before(async () => {
       const schema = {
         $schema: 'http://json-schema.org/draft-07/schema#',
         $id: 'myschema',
@@ -22,11 +20,8 @@ export function objectidFormatTest(fakeConfigProvider, FakeObject: NewableType<a
         },
         required: ['_id'],
       };
-
-      provider = new ValidatorProvider(fakeConfigProvider);
-      await provider.boot();
-
-      provider.addSchema(schema, FakeObject);
+      provider = await getProvider();
+      provider.registerValidator(schema, FakeObject);
     });
 
     it('valid ObjectId', async () => {

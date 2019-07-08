@@ -1,25 +1,32 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon from 'sinon';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { Parents, Container } from '@ilos/core';
+import { ConfigExtension } from '@ilos/config';
+import { EnvExtension } from '@ilos/env';
 
-import { ValidatorProvider } from '../src/ValidatorProvider';
 import { phoneFormatTest } from './parts/phoneFormatTest.spec';
 import { bicFormatTest } from './parts/bicFormatTest.spec';
 import { objectidFormatTest } from './parts/objectidFormatTest.spec';
 import { coordinatesKeywordTest } from './parts/coordinatesKeywordTest.spec';
 import { macroKeywordTest } from './parts/macroKeywordTest.spec';
+import { ValidatorExtension } from '../src/ValidatorExtension';
+import { ValidatorInterfaceResolver } from '../src';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-// tslint:disable prefer-type-cast
-const fakeConfigProvider = sinon.createStubInstance(ConfigProviderInterfaceResolver, {
-  get() {
-    return {};
-  },
-});
-
+@Container.serviceProvider({
+  env: null,
+  config: {},
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  extensions = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+  ]
+}
 let provider;
 
 class FakeObject {
@@ -30,10 +37,16 @@ class FakeObject {
   }
 }
 
+async function getProvider() {
+  const serviceProvider = new ServiceProvider();
+  await serviceProvider.register();
+  await serviceProvider.init();
+  return serviceProvider.getContainer().get(ValidatorInterfaceResolver);
+}
+
 describe('Json Schema provider', () => {
   beforeEach(async () => {
-    provider = new ValidatorProvider(fakeConfigProvider);
-    await provider.boot();
+    provider = await getProvider();
   });
 
   it('should work', async () => {
@@ -137,9 +150,9 @@ describe('Json Schema provider', () => {
   });
 
   // check formats
-  describe('Phone custom format', phoneFormatTest(fakeConfigProvider, FakeObject));
-  describe('BIC custom format', bicFormatTest(fakeConfigProvider, FakeObject));
-  describe('ObjectId custom format', objectidFormatTest(fakeConfigProvider, FakeObject));
+  describe('Phone custom format', phoneFormatTest(getProvider, FakeObject));
+  describe('BIC custom format', bicFormatTest(getProvider, FakeObject));
+  describe('ObjectId custom format', objectidFormatTest(getProvider, FakeObject));
   // EU VAT
   // IBAN
   // INSEE
@@ -150,7 +163,7 @@ describe('Json Schema provider', () => {
   // SIRET
 
   // check keywords
-  describe('Coordinates keyword', coordinatesKeywordTest(fakeConfigProvider, FakeObject));
+  describe('Coordinates keyword', coordinatesKeywordTest(getProvider, FakeObject));
 
-  describe('Macro keyword', macroKeywordTest(fakeConfigProvider, FakeObject));
+  describe('Macro keyword', macroKeywordTest(getProvider, FakeObject));
 });
