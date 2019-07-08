@@ -1,17 +1,22 @@
 import { Container } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { ParentRepositoryProvider } from '@ilos/provider-repository';
-import { MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
+import { ConfigInterfaceResolver } from '@ilos/config';
+import { ParentRepository } from '@ilos/repository';
+import { MongoConnection } from '@ilos/connection-mongo';
 
 import { Territory } from '../entities/Territory';
-import { TerritoryRepositoryProviderInterface } from '../interfaces/TerritoryRepositoryProviderInterface';
+import {
+  TerritoryRepositoryProviderInterface,
+  TerritoryRepositoryProviderInterfaceResolver,
+} from '../interfaces/TerritoryRepositoryProviderInterface';
 
-@Container.provider()
-export class TerritoryRepositoryProvider extends ParentRepositoryProvider
+@Container.provider({
+  identifier: TerritoryRepositoryProviderInterfaceResolver,
+})
+export class TerritoryRepositoryProvider extends ParentRepository
   implements TerritoryRepositoryProviderInterface {
   constructor(
-    protected config: ConfigProviderInterfaceResolver,
-    protected mongoProvider: MongoProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
+    protected mongoProvider: MongoConnection,
   ) {
     super(config, mongoProvider);
   }
@@ -20,8 +25,8 @@ export class TerritoryRepositoryProvider extends ParentRepositoryProvider
     return this.config.get('territory.collectionName');
   }
 
-  public getDatabase(): string {
-    return this.config.get('mongo.db');
+  public getDbName(): string {
+    return this.config.get('territory.db');
   }
 
   public getModel() {

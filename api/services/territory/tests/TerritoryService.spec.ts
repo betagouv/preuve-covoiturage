@@ -1,10 +1,11 @@
 // tslint:disable max-classes-per-file
 import supertest from 'supertest';
+import path from 'path';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { describe } from 'mocha';
-import { bootstrap } from '@ilos/framework';
-import { MongoProvider } from '@ilos/provider-mongo';
+import { bootstrap } from '../src/bootstrap';
+import { MongoConnection } from '@ilos/connection-mongo';
 import { Interfaces } from '@ilos/core';
 
 let transport: Interfaces.TransportInterface;
@@ -18,18 +19,21 @@ const port = '8086';
 describe('Territory service', () => {
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
+    const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
+    process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    transport = await bootstrap.boot(['', '', 'http', port]);
+    transport = await bootstrap.boot('http', port);
     request = supertest(transport.getInstance());
   });
 
   after(async () => {
-    await (<MongoProvider>transport
-      .getKernel()
-      .getContainer()
-      .get(MongoProvider))
-      .getDb(process.env.APP_MONGO_DB)
-      .then((db) => db.dropDatabase());
+    // await (<MongoConnection>transport
+    //   .getKernel()
+    //   .getContainer()
+    //   .get(MongoConnection))
+    //   .getClient()
+    //   .db(process.env.APP_MONGO_DB)
+    //   .dropDatabase();
 
     await transport.down();
   });

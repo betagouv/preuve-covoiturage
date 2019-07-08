@@ -1,12 +1,10 @@
-import { Parents, Interfaces, Types } from '@ilos/core';
+import { Parents, Interfaces, Extensions, Container } from '@ilos/core';
 import { PermissionMiddleware } from '@ilos/package-acl';
-import { ConfigProviderInterfaceResolver, ConfigProvider } from '@ilos/provider-config';
-import { EnvProviderInterfaceResolver, EnvProvider } from '@ilos/provider-env';
-import { MongoProviderInterfaceResolver, MongoProvider } from '@ilos/provider-mongo';
+import { MongoConnection } from '@ilos/connection-mongo';
+import { ConfigExtension } from '@ilos/config';
+import { ConnectionManagerExtension } from '@ilos/connection-manager';
+import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
-import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
-
-import { TerritoryRepositoryProviderInterfaceResolver } from './interfaces/TerritoryRepositoryProviderInterface';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 
 import { AllTerritoryAction } from './actions/AllTerritoryAction';
@@ -18,55 +16,32 @@ import { territoryCreateSchema } from './schemas/territoryCreateSchema';
 import { territoryPatchSchema } from './schemas/territoryPatchSchema';
 import { territoryDeleteSchema } from './schemas/territoryDeleteSchema';
 
-export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
-  readonly alias = [
-    [TerritoryRepositoryProviderInterfaceResolver, TerritoryRepositoryProvider],
-    [ValidatorProviderInterfaceResolver, ValidatorProvider],
-    [MongoProviderInterfaceResolver, MongoProvider],
-  ];
-
-  handlers = [AllTerritoryAction, CreateTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction];
-
-  readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
-    ['can', PermissionMiddleware],
-    ['validate', ValidatorMiddleware],
-  ];
-
-  protected readonly validators: [string, any][] = [
+@Container.serviceProvider({
+  config: __dirname,
+  providers: [
+    TerritoryRepositoryProvider,
+  ],
+  validator: [
     ['territory.create', territoryCreateSchema],
     ['territory.patch', territoryPatchSchema],
     ['territory.delete', territoryDeleteSchema],
+  ],
+  middlewares: [
+    ['can', PermissionMiddleware],
+    ['validate', ValidatorMiddleware],
+  ],
+  connections: [
+    [MongoConnection, 'mongo'],
+  ],
+  handlers: [AllTerritoryAction, CreateTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction],
+})
+export class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    ConfigExtension,
+    ConnectionManagerExtension,
+    ValidatorExtension,
+    Extensions.Middlewares,
+    Extensions.Providers,
+    Extensions.Handlers,
   ];
-
-  public async boot() {
-    this.registerEnv();
-    this.registerConfig();
-    await super.boot();
-    this.registerValidators();
-  }
-
-  protected registerValidators() {
-    const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
-    this.validators.forEach(([name, schema]) => {
-      validator.registerValidator(schema, name);
-    });
-  }
-
-  protected registerConfig() {
-    this.getContainer()
-      .bind(ConfigProviderInterfaceResolver)
-      .to(ConfigProvider);
-
-    this.getContainer()
-      .get(ConfigProviderInterfaceResolver)
-      .loadConfigDirectory(__dirname);
-  }
-
-  protected registerEnv() {
-    if (!this.getContainer().isBound(EnvProviderInterfaceResolver)) {
-      this.getContainer()
-        .bind(EnvProviderInterfaceResolver)
-        .to(EnvProvider);
-    }
-  }
 }
