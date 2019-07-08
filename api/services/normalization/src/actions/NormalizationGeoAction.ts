@@ -1,7 +1,7 @@
 import { Parents, Container, Types, Interfaces } from '@ilos/core';
 import * as _ from 'lodash';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { PositionInterface } from '../interfaces/PositionInterface';
 import { Journey } from '../entities/journey';
@@ -21,7 +21,7 @@ export class NormalizationGeoAction extends Parents.Action {
   constructor(
     private kernel: Interfaces.KernelInterfaceResolver,
     private geoProvider: GeoProviderInterfaceResolver,
-    private config: ConfigProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }

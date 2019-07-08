@@ -1,9 +1,7 @@
 import { Parents, Container, Types, Interfaces, Exceptions } from '@ilos/core';
 import * as _ from 'lodash';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { ObjectId } from '@ilos/provider-mongo';
-
+import { ConfigInterfaceResolver } from '@ilos/config';
 import { PositionInterface } from '../interfaces/PositionInterface';
 
 interface NormalizationTerritoryParamsInterface {
@@ -21,7 +19,7 @@ export class NormalizationTerritoryAction extends Parents.Action {
   constructor(
     private kernel: Interfaces.KernelInterfaceResolver,
     private geoProvider: GeoProviderInterfaceResolver,
-    private config: ConfigProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
@@ -56,7 +54,7 @@ export class NormalizationTerritoryAction extends Parents.Action {
     return;
   }
 
-  public async findTerritories(position: PositionInterface, context: Types.ContextType): Promise<ObjectId[]> {
+  public async findTerritories(position: PositionInterface, context: Types.ContextType): Promise<object> {
     if ('insee' in position) {
       return this.kernel.call(
         'territory:findByInsee',

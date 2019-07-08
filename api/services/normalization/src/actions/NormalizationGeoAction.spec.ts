@@ -3,7 +3,7 @@
 // import * as _ from 'lodash';
 // import { Container, Interfaces, Types } from '@ilos/core';
 // import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-// import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+// import { ConfigInterfaceResolver } from '@ilos/config';
 // import { ValidatorProviderInterfaceResolver, ValidatorProvider } from '@ilos/provider-validator';
 //
 // import { journey } from '../../tests/mocks/journey';
@@ -37,7 +37,7 @@
 // }
 //
 // @Container.provider()
-// class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+// class FakeConfigProvider extends ConfigInterfaceResolver {
 //   async boot(): Promise<void> {
 //     return;
 //   }
@@ -51,7 +51,7 @@
 // class ServiceProvider extends BaseServiceProvider {
 //   readonly handlers = [FindUserAction];
 //   readonly alias: any[] = [
-//     [ConfigProviderInterfaceResolver, FakeConfigProvider],
+//     [ConfigInterfaceResolver, FakeConfigProvider],
 //     [ValidatorProviderInterfaceResolver, ValidatorProvider],
 //     [Interfaces.KernelInterfaceResolver, FakeKernelProvider],
 //   ];

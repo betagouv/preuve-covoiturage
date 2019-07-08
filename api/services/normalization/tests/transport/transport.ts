@@ -1,4 +1,4 @@
-import { bootstrap } from '@ilos/framework';
+import { bootstrap } from '../../src/bootstrap';
 
 export class Transport {
   port = '8084';
@@ -7,7 +7,7 @@ export class Transport {
 
   public async start(): Promise<any> {
     process.env.APP_URL = `http://localhost:${this.port}`;
-    this.transport = await bootstrap.boot(['', '', 'http', this.port]);
+    this.transport = await bootstrap.boot('http', this.port);
   }
 
   public async stop(): Promise<void> {

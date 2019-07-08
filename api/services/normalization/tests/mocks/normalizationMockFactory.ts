@@ -1,13 +1,13 @@
 import { Exceptions } from '@ilos/core';
 import axios from 'axios';
-import { bootstrap } from '@ilos/framework';
+import { bootstrap } from '../../src/bootstrap';
 
 export class MockFactory {
   port = '8083';
   transport;
 
   public async startTransport(): Promise<any> {
-    this.transport = await bootstrap.boot(['', '', 'http', this.port]);
+    this.transport = await bootstrap.boot('http', this.port);
   }
 
   public async stopTransport(): Promise<void> {
