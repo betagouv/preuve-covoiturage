@@ -1,29 +1,33 @@
 import { Container, Exceptions } from '@ilos/core';
-import { ParentRepositoryProvider } from '@ilos/provider-repository';
-import { MongoException, MongoProvider, ObjectId } from '@ilos/provider-mongo';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
+import { ConfigInterfaceResolver } from '@ilos/config';
+import { ParentRepository } from '@ilos/repository';
 
 import { Trip } from '../entities/Trip';
 import { tripSchema } from '../schema/tripSchema';
-import { CrosscheckRepositoryProviderInterface } from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
+import {
+  CrosscheckRepositoryProviderInterface,
+  CrosscheckRepositoryProviderInterfaceResolver,
+} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
 import { PersonInterface } from '../interfaces/TripInterface';
 
 /*
  * Trip specific repository
  */
-@Container.provider()
-export class CrosscheckRepositoryProvider extends ParentRepositoryProvider
-  implements CrosscheckRepositoryProviderInterface {
-  constructor(protected config: ConfigProviderInterfaceResolver, protected mongoProvider: MongoProvider) {
-    super(config, mongoProvider);
+@Container.provider({
+  identifier: CrosscheckRepositoryProviderInterfaceResolver,
+})
+export class CrosscheckRepositoryProvider extends ParentRepository implements CrosscheckRepositoryProviderInterface {
+  constructor(protected config: ConfigInterfaceResolver, protected connection: MongoConnection) {
+    super(config, connection);
   }
 
   public getKey(): string {
-    return this.config.get('trip.collectionName');
+    return this.config.get('trip.collectionName', 'trips');
   }
 
-  public getDatabase(): string {
-    return this.config.get('mongo.db');
+  public getDbName(): string {
+    return this.config.get('trip.db');
   }
 
   public getSchema(): object | null {

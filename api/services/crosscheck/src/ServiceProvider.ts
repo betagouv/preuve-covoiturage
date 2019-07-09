@@ -1,58 +1,28 @@
-import { Parents, Interfaces, Types } from '@ilos/core';
-import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { ValidatorProvider, ValidatorProviderInterfaceResolver, ValidatorMiddleware } from '@pdc/provider-validator';
-import { MongoProvider } from '@ilos/provider-mongo';
-import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
+import { Parents, Interfaces, Container, Extensions } from '@ilos/core';
+import { ConfigExtension } from '@ilos/config';
+import { ConnectionManagerExtension } from '@ilos/connection-manager';
+import { MongoConnection } from '@ilos/connection-mongo';
+import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
 import { CrosscheckProcessAction } from './actions/CrosscheckProcessAction';
-import { CrosscheckRepositoryProviderInterfaceResolver } from './interfaces/repository/CrosscheckRepositoryProviderInterface';
 import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
 import { crosscheckProcessSchema } from './schema/crosscheckProcessSchema';
 
-export class ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
-  readonly alias = [
-    [CrosscheckRepositoryProviderInterfaceResolver, CrosscheckRepositoryProvider],
-    [ValidatorProviderInterfaceResolver, ValidatorProvider],
-    MongoProvider,
+@Container.serviceProvider({
+  config: __dirname,
+  providers: [CrosscheckRepositoryProvider],
+  validator: [['crosscheck.process', crosscheckProcessSchema]],
+  middlewares: [['validate', ValidatorMiddleware]],
+  connections: [[MongoConnection, 'mongo']],
+  handlers: [CrosscheckProcessAction],
+})
+export class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    ConfigExtension,
+    ConnectionManagerExtension,
+    ValidatorExtension,
+    Extensions.Middlewares,
+    Extensions.Providers,
+    Extensions.Handlers,
   ];
-
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [CrosscheckProcessAction];
-
-  readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
-    ['validate', ValidatorMiddleware],
-  ];
-
-  protected readonly validators: [string, any][] = [['crosscheck.process', crosscheckProcessSchema]];
-
-  public async boot() {
-    this.registerEnv();
-    this.registerConfig();
-    await super.boot();
-    this.registerValidators();
-  }
-
-  protected registerValidators() {
-    const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
-    this.validators.forEach(([name, schema]) => {
-      validator.registerValidator(schema, name);
-    });
-  }
-
-  protected registerEnv() {
-    if (!this.getContainer().isBound(EnvProviderInterfaceResolver)) {
-      this.getContainer()
-        .bind(EnvProviderInterfaceResolver)
-        .to(EnvProvider);
-    }
-  }
-
-  protected registerConfig() {
-    this.getContainer()
-      .bind(ConfigProviderInterfaceResolver)
-      .to(ConfigProvider);
-
-    this.getContainer()
-      .get(ConfigProviderInterfaceResolver)
-      .loadConfigDirectory(__dirname);
-  }
 }
