@@ -49,10 +49,7 @@ import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddle
 
 @Container.serviceProvider({
   config: __dirname,
-  providers: [
-    UserRepositoryProvider,
-    CryptoProvider,
-  ],
+  providers: [UserRepositoryProvider, CryptoProvider],
   validator: [
     ['user.create', userCreateSchema],
     ['user.changePassword', userChangePasswordSchema],
@@ -75,9 +72,7 @@ import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddle
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
   ],
-  connections: [
-    [MongoConnection, 'mongo'],
-  ],
+  connections: [[MongoConnection, 'mongo']],
   handlers: [
     ChangeEmailUserAction,
     ChangePasswordUserAction,
@@ -101,8 +96,6 @@ import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddle
   },
 })
 export class ServiceProvider extends Parents.ServiceProvider {
-  public static test = 'tutu';
-  public test2 = 'tata';
   readonly extensions: Interfaces.ExtensionStaticInterface[] = [
     ConfigExtension,
     ConnectionManagerExtension,
