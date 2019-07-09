@@ -18,6 +18,12 @@ Les listes des cartes de transport et des Titres-Mobilité autorisés sont dispo
 
 Merci pour votre contribution !
 
+## Pour contribuer
+
+1. Créer un _fork_ du _repository_ dans votre compte Github
+2. Commitez vos modifications sur une nouvelle branche de _feature_
+3. Proposez une _Pull Request_ sur le _repository_ principal
+
 ### Requirements
 
 - `docker` && `docker-compose`
