@@ -41,6 +41,7 @@ const IdentitySchema = new Schema(
       match: regex.email,
       trim: true,
       lowercase: true,
+      index: true,
     },
     phone: {
       type: String,
@@ -48,6 +49,7 @@ const IdentitySchema = new Schema(
       set: setters.phone,
       validate: validators.phone,
       trim: true,
+      index: true,
     },
     company: { type: String, trim: true },
     over_18: { type: Boolean, default: null },

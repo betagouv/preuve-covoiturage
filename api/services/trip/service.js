@@ -1,15 +1,15 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase,no-console,max-len */
 const _ = require('lodash');
 const moment = require('moment');
 const serviceFactory = require('@pdc/shared/providers/mongo/service-factory');
 const Journey = require('@pdc/service-acquisition/entities/models/journey');
 const Trip = require('./entities/models/trip');
 
-const mapPeople = journey => [journey.driver, journey.passenger]
-  .filter(p => !!p)
-  .map(p => (p && _.isFunction(p.toObject) ? p.toObject() : p))
+const mapPeople = (journey) => [journey.driver, journey.passenger]
+  .filter((p) => !!p)
+  .map((p) => (p && _.isFunction(p.toObject) ? p.toObject() : p))
   .map((p, idx) => {
-    const is_driver = (idx === 0);
+    const is_driver = idx === 0;
     return {
       journey_id: journey.journey_id,
       safe_journey_id: journey.safe_journey_id,
@@ -43,9 +43,7 @@ const mapPeople = journey => [journey.driver, journey.passenger]
 
 // find the oldest start date
 const reduceStartDate = (journey, trip = null) => {
-  let arr = [
-    _.get(journey.toObject(), 'driver.start.datetime', null),
-  ].filter(i => !!i);
+  let arr = [_.get(journey.toObject(), 'driver.start.datetime', null)].filter((i) => !!i);
 
   if (trip) {
     arr = arr.concat([trip.start]);
@@ -55,29 +53,34 @@ const reduceStartDate = (journey, trip = null) => {
 };
 
 const createFromJourney = async (journey) => {
-  const trip = await (new Trip({
+  const _startCreateFromJourney = new Date();
+  const trip = await new Trip({
     operator_id: journey.operator._id,
     operator_journey_id: journey.operator_journey_id,
     status: 'pending',
     aom: journey.aom,
     start: reduceStartDate(journey),
     people: mapPeople(journey),
-  })).save();
+  }).save();
 
   await Journey.findByIdAndUpdate({ _id: journey._id }, { trip_id: trip._id });
 
+  console.log(`>> [trip] complete createFromJourney: ${new Date() - _startCreateFromJourney}ms`);
   return trip;
 };
 
 const addJourney = async (journey, sourceTrip) => {
+  const _startAddJourney = new Date();
+
   // extract existing phone number to compare identities
-  const phones = _.uniq(_.get(sourceTrip.toObject(), 'people', [])
-    .map(i => _.get(i, 'identity.phone', null))
-    .filter(i => !!i));
+  const phones = _.uniq(
+    _.get(sourceTrip.toObject(), 'people', [])
+      .map((i) => _.get(i, 'identity.phone', null))
+      .filter((i) => !!i),
+  );
 
   // filter mapped people by their phone number. Keep non matching ones
-  const people = mapPeople(journey)
-    .filter(person => phones.indexOf(person.identity.phone) === -1);
+  const people = mapPeople(journey).filter((person) => phones.indexOf(person.identity.phone) === -1);
 
   // push the list of people to the trip
   const trip = await Trip.findByIdAndUpdate(
@@ -91,6 +94,7 @@ const addJourney = async (journey, sourceTrip) => {
 
   await Journey.findByIdAndUpdate({ _id: journey._id }, { trip_id: trip._id });
 
+  console.log(`>> [trip] complete addJourney: ${new Date() - _startAddJourney}ms`);
   return trip;
 };
 
@@ -108,8 +112,14 @@ const detectors = {
       'people.identity.phone': _.get(journey, 'driver.identity.phone', null),
       'people.is_driver': true,
       start: {
-        $gte: moment.utc(startTime).subtract(2, 'h').toDate(),
-        $lte: moment.utc(startTime).add(2, 'h').toDate(),
+        $gte: moment
+          .utc(startTime)
+          .subtract(2, 'h')
+          .toDate(),
+        $lte: moment
+          .utc(startTime)
+          .add(2, 'h')
+          .toDate(),
       },
     }).exec();
   },
@@ -122,18 +132,17 @@ const tripService = serviceFactory(Trip, {
 
     // apply all detectors and get the last trip from the list
     // returns null if no trip is found
-    const trip = (await Promise.all([
-      'operatorJourneyId',
-      'driverIdentity',
-    ].reduce((p, c, idx) => {
-      if (_.isFunction(detectors[c])) {
-        // eslint-disable-next-line no-param-reassign
-        p[idx] = detectors[c](journey);
-      }
+    const trip = (await Promise.all(
+      ['operatorJourneyId', 'driverIdentity'].reduce((p, c, idx) => {
+        if (_.isFunction(detectors[c])) {
+          // eslint-disable-next-line no-param-reassign
+          p[idx] = detectors[c](journey);
+        }
 
-      return p;
-    }, [])))
-      .filter(p => !!p)
+        return p;
+      }, []),
+    ))
+      .filter((p) => !!p)
       .pop() || null;
 
     if (!trip) {
