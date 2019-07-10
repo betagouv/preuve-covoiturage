@@ -1,4 +1,4 @@
-import { ValidatorExtension as ValidatorParentExtension, ValidatorInterfaceResolver} from '@ilos/validator';
+import { ValidatorExtension as ValidatorParentExtension, ValidatorInterfaceResolver } from '@ilos/validator';
 import { Interfaces } from '@ilos/core';
 
 import { bicCustomFormat } from './formats/bicCustomFormat';

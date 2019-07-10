@@ -1,4 +1,4 @@
-import {  Container } from '@ilos/core';
+import { Container } from '@ilos/core';
 import { Kernel as BaseKernel } from '@ilos/framework';
 import { SentryProvider } from '@pdc/provider-sentry';
 
@@ -16,8 +16,6 @@ import { bootstrap as operatorBootstrap } from '@pdc/service-operator';
     ...territoryBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,
   ],
-  providers: [
-    SentryProvider,
-  ],
+  providers: [SentryProvider],
 })
 export class Kernel extends BaseKernel {}

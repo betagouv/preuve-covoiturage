@@ -11,19 +11,10 @@ import { journeyCreateSchema } from './schemas/journeyCreateSchema';
 
 @Container.serviceProvider({
   config: __dirname,
-  providers: [
-    JourneyRepositoryProvider,
-  ],
-  validator: [
-    ['journey.create', journeyCreateSchema]
-  ],
-  middlewares: [
-    ['can', PermissionMiddleware],
-    ['validate', ValidatorMiddleware],
-  ],
-  connections: [
-    [MongoConnection, 'mongo'],
-  ],
+  providers: [JourneyRepositoryProvider],
+  validator: [['journey.create', journeyCreateSchema]],
+  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
+  connections: [[MongoConnection, 'mongo']],
   handlers: [CreateJourneyAction],
 })
 export class ServiceProvider extends Parents.ServiceProvider {

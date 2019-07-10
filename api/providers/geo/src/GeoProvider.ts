@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Container, Exceptions, Interfaces } from '@ilos/core';
-import { ValidatorInterfaceResolver } from '@ilos/validator';
+import { ValidatorInterfaceResolver } from '@pdc/provider-validator';
 
 import { GeoInterface } from './interfaces/GeoInterface';
 import { PositionInterface } from './interfaces/PositionInterface';
@@ -15,9 +15,7 @@ import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface'
   identifier: GeoProviderInterfaceResolver,
 })
 export class GeoProvider implements Interfaces.ProviderInterface {
-  constructor(
-    protected validator: ValidatorInterfaceResolver,
-  ) {
+  constructor(protected validator: ValidatorInterfaceResolver) {
     //
   }
 

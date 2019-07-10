@@ -2,6 +2,7 @@ import { Parents, Container, Types, Interfaces, Exceptions } from '@ilos/core';
 import * as _ from 'lodash';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 import { ConfigInterfaceResolver } from '@ilos/config';
+
 import { PositionInterface } from '../interfaces/PositionInterface';
 
 interface NormalizationTerritoryParamsInterface {
@@ -31,11 +32,13 @@ export class NormalizationTerritoryAction extends Parents.Action {
       ...param.journey,
     };
 
-    await Promise.all(paths.map(async (path) => {
-      const position = _.get(param.journey, path);
-      const territories = await this.findTerritories(position, context);
-      _.set(territoriesEnrichedJourney, `${path}.territories`, territories);
-    }));
+    await Promise.all(
+      paths.map(async (path) => {
+        const position = _.get(param.journey, path);
+        const territories = await this.findTerritories(position, context);
+        _.set(territoriesEnrichedJourney, `${path}.territories`, territories);
+      }),
+    );
 
     // await this.kernel.notify( // todo: should be notify
     //   'crosscheck:process',

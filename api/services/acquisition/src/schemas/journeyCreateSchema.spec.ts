@@ -19,16 +19,10 @@ const { expect } = chai;
 @Container.serviceProvider({
   env: null,
   config: {},
-  validator: [
-    ['journey.create', journeyCreateSchema],
-  ],
+  validator: [['journey.create', journeyCreateSchema]],
 })
 class MockServiceProvider extends Parents.ServiceProvider {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
-    EnvExtension,
-    ConfigExtension,
-    ValidatorExtension,
-  ];
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [EnvExtension, ConfigExtension, ValidatorExtension];
 }
 
 let sp: MockServiceProvider;
@@ -40,10 +34,25 @@ let fail: Function;
  */
 const expectFactory = (s: MockServiceProvider, fulfilled = true) => (schema: any, errorStatus?: string) =>
   fulfilled
-    ? expect(s.getContainer().get(ValidatorInterfaceResolver).validate(schema, 'journey.create')).to.be.fulfilled
+    ? expect(
+        s
+          .getContainer()
+          .get(ValidatorInterfaceResolver)
+          .validate(schema, 'journey.create'),
+      ).to.be.fulfilled
     : errorStatus
-    ? expect(s.getContainer().get(ValidatorInterfaceResolver).validate(schema, 'journey.create')).to.be.rejectedWith(errorStatus)
-    : expect(s.getContainer().get(ValidatorInterfaceResolver).validate(schema, 'journey.create')).to.be.rejected;
+    ? expect(
+        s
+          .getContainer()
+          .get(ValidatorInterfaceResolver)
+          .validate(schema, 'journey.create'),
+      ).to.be.rejectedWith(errorStatus)
+    : expect(
+        s
+          .getContainer()
+          .get(ValidatorInterfaceResolver)
+          .validate(schema, 'journey.create'),
+      ).to.be.rejected;
 
 describe('Journey Create Schema : ', () => {
   before(async () => {
@@ -57,22 +66,22 @@ describe('Journey Create Schema : ', () => {
     it('Fails on missing journey_id', () => {
       fail({}, "data should have required property '.journey_id'");
     });
-  
+
     it('Fails on missing operator_class', () => {
       fail({ journey_id: '1234', operator_id: 'A' }, "data should have required property 'operator_class'");
     });
-  
+
     it('Fails on missing operator_id', () => {
       fail({ journey_id: '1234', operator_class: 'A' }, "data should have required property '.operator_id'");
     });
-  
+
     it('Fails on unsupported operator_class', () => {
       fail(
         { journey_id: '1234', operator_id: 'A', operator_class: 'Z' },
         'data.operator_class should be equal to one of the allowed values',
       );
     });
-  
+
     it('Fails on no passenger, no driver', () => {
       fail(
         { journey_id: '1234', operator_class: 'A', operator_id: '5d148b878ddca84ffe6535cd' },
@@ -80,7 +89,7 @@ describe('Journey Create Schema : ', () => {
       );
     });
   });
-  
+
   describe('Passenger and driver', () => {
     it('Succeeds on passenger only', () => {
       succeed({
@@ -96,7 +105,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Succeeds on driver only', () => {
       succeed({
         journey_id: '1234',
@@ -111,7 +120,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Fails on null passenger', () => {
       fail(
         {
@@ -130,7 +139,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger should be object',
       );
     });
-  
+
     it('Fails on null driver', () => {
       fail(
         {
@@ -149,7 +158,7 @@ describe('Journey Create Schema : ', () => {
         'data.driver should be object',
       );
     });
-  
+
     it('Succeeds on passenger and driver', () => {
       succeed({
         journey_id: '1234',
@@ -171,7 +180,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Succeeds on over_18 true', () => {
       succeed({
         journey_id: '1234',
@@ -186,7 +195,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Succeeds on over_18 false', () => {
       succeed({
         journey_id: '1234',
@@ -201,7 +210,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Succeeds on over_18 null', () => {
       succeed({
         journey_id: '1234',
@@ -216,7 +225,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Succeeds on missing over_18 (defaults to null)', () => {
       succeed({
         journey_id: '1234',
@@ -231,7 +240,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Fails on over_18 truthy/falsy values', () => {
       [1, 'TRUE', 'oui', 'yes', 'on', 'checked', 0, 'False', 'non', ''].forEach((value) => {
         fail(
@@ -252,7 +261,7 @@ describe('Journey Create Schema : ', () => {
       });
     });
   });
-  
+
   describe('Position', () => {
     it('Fails on empty', () => {
       fail(
@@ -271,7 +280,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.start should NOT have fewer than 2 properties',
       );
     });
-  
+
     it('Fails on missing required datetime (1 property)', () => {
       fail(
         {
@@ -289,7 +298,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.start should NOT have fewer than 2 properties',
       );
     });
-  
+
     it('Fails on missing required datetime (2 properties)', () => {
       fail(
         {
@@ -307,7 +316,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.start should NOT have fewer than 2 properties',
       );
     });
-  
+
     it('Succeeds on lat/lon only', () => {
       succeed({
         journey_id: '1234',
@@ -322,7 +331,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Fails on missing lat', () => {
       fail(
         {
@@ -340,7 +349,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.start should have property lat when property lon is present',
       );
     });
-  
+
     it('Fails on missing lon', () => {
       fail(
         {
@@ -358,7 +367,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.start should have property lon when property lat is present',
       );
     });
-  
+
     it('Succeeds on insee only', () => {
       succeed({
         journey_id: '1234',
@@ -373,7 +382,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Succeeds on literal only', () => {
       succeed({
         journey_id: '1234',
@@ -388,7 +397,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Fails on country only', () => {
       fail(
         {
@@ -406,7 +415,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.start should have property literal when property country is present',
       );
     });
-  
+
     it('Succeeds on all', () => {
       succeed({
         journey_id: '1234',
@@ -429,7 +438,7 @@ describe('Journey Create Schema : ', () => {
       });
     });
   });
-  
+
   describe('Incentives', () => {
     it('Fails on missing', () => {
       fail(
@@ -447,7 +456,7 @@ describe('Journey Create Schema : ', () => {
         "data.passenger should have required property 'incentives'",
       );
     });
-  
+
     it('Succeeds on empty []', () => {
       succeed({
         journey_id: '1234',
@@ -462,7 +471,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Fails on missing properties (all required) - 1 item', () => {
       fail(
         {
@@ -485,7 +494,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.incentives[0] should NOT have fewer than 3 properties',
       );
     });
-  
+
     it('Fails on missing properties (all required) - 2 items', () => {
       fail(
         {
@@ -513,7 +522,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.incentives[1] should NOT have fewer than 3 properties',
       );
     });
-  
+
     it('Succeeds on all', () => {
       succeed({
         journey_id: '1234',
@@ -534,7 +543,7 @@ describe('Journey Create Schema : ', () => {
         },
       });
     });
-  
+
     it('Fails on index not being an integer', () => {
       fail(
         {
@@ -559,7 +568,7 @@ describe('Journey Create Schema : ', () => {
       );
     });
   });
-  
+
   describe('Travel pass', () => {
     it('Fails if missing any prop - 0 items', () => {
       fail(
@@ -581,7 +590,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.identity.travel_pass should NOT have fewer than 2 properties',
       );
     });
-  
+
     it('Fails if missing any prop - 1 item', () => {
       fail(
         {
@@ -604,7 +613,7 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.identity.travel_pass should NOT have fewer than 2 properties',
       );
     });
-  
+
     it('Fails if missing any prop - 1 item', () => {
       fail(
         {
@@ -627,5 +636,5 @@ describe('Journey Create Schema : ', () => {
         'data.passenger.identity.travel_pass should NOT have fewer than 2 properties',
       );
     });
-  });  
+  });
 });

@@ -1,5 +1,6 @@
 import { Interfaces } from '@ilos/core';
-import { ValidatorInterfaceResolver } from '@ilos/validator';
+import { ValidatorInterfaceResolver } from '@pdc/provider-validator';
+
 import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
 import { GeoProvider } from './GeoProvider';
 
