@@ -11,15 +11,7 @@
   overflow: hidden;
   overflow-y: scroll;
   height: calc(100vh - #{$navbar-height});
-  .ui-messages.ui-messages-info{
-    color: white;
-    margin: 10px;
-    a{
-      color: #1e67a0;
-    }
-  }
 }
-
 
 .subtitle {
   color: #c8c8c8;
@@ -78,4 +70,13 @@
 .graph--toggle-title {
   margin-top: 0;
   margin-bottom: 2em;
+}
+
+.stats--disclaimer {
+  padding: 1em 2em;
+  line-height: 1.4;
+  text-align: left;
+  border: 1px solid $primary;
+  border-radius: 0.4em;
+  background: transparentize($primary, 0.9);
 }
