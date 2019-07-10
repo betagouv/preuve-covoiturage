@@ -12,7 +12,6 @@ import { MAIN } from '~/config/main';
 })
 export class StatisticsContentComponent implements OnInit {
   public loaded = false;
-  public bannerOpen = true;
   public toggle = {
     journeysPerDaySwitch: true,
     distancePerDaySwitch: true,
@@ -145,10 +144,6 @@ export class StatisticsContentComponent implements OnInit {
     if (!dArr || !dArr.length) return 0;
     if (!dArr[0] || !dArr[0].total) return 0;
     return parseInt(dArr[0].total, 10);
-  }
-
-  private closeBanner(): void {
-    this.bannerOpen = false;
   }
 
   ngOnInit(): void {
