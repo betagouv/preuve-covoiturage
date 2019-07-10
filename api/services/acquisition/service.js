@@ -57,73 +57,58 @@ const journeyService = serviceFactory(Journey, {
 
     const operator = await operatorService.findOne(operatorId);
 
-    const dup = await (new Journey(Object.assign(
-      Object.create(null),
-      _.omit(journey, ['_id', 'createdAt', 'updatedAt', '__v']),
-      {
+    const dup = await new Journey(
+      Object.assign(Object.create(null), _.omit(journey, ['_id', 'createdAt', 'updatedAt', '__v']), {
         safe_journey_id: journey._id,
         operator,
-      },
-    ))).save();
+      }),
+    ).save();
 
     // mark safe journey as duplicated
-    SafeJourney
-      .findByIdAndUpdate(journey._id, { duplicatedAt: new Date() })
-      .exec();
+    SafeJourney.findByIdAndUpdate(journey._id, { duplicatedAt: new Date() }).exec();
 
     return dup;
   },
 
   async fillOutCoordinates(j) {
     const journey = j.toObject();
+    return (
+      Promise.all(
+        ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map(async (path) => Promise.resolve({ journey, path })
+          .then(pathToPosition)
+          .then(findTown)
+          .then(findAomFromPosition)
+          .then(({ position }) => position)),
+      )
 
-    return Promise.all([
-      'passenger.start',
-      'passenger.end',
-      'driver.start',
-      'driver.end',
-    ].map(async path => Promise
-      .resolve({ journey, path })
-      .then(pathToPosition)
-      .then(findTown)
-      // .then(findTownByInsee)
-      .then(findAomFromPosition)
-      .then(({ position }) => position)))
+        // Filter ou duplicates and null
+        .then((positions) => {
+          const idTrack = [];
+          const aomsClean = positions
+            // concat existing and new AOM in an array
+            .reduce((p, position) => p.concat(position.aom || []), journey.aom || [])
+            // filter out duplicates and null
+            .filter((aom) => {
+              if (!aom || !aom._id) return false;
+              if (idTrack.indexOf(aom._id.toString()) > -1) return false;
+              idTrack.push(aom._id.toString());
+              return true;
+            });
 
-    // Filter ou duplicates and null
-      .then((positions) => {
-        const idTrack = [];
-        const aomsClean = positions
-        // concat existing and new AOM in an array
-          .reduce((p, position) => p.concat(position.aom || []), journey.aom || [])
-          // filter out duplicates and null
-          .filter((aom) => {
-            if (!aom || !aom._id) return false;
-            if (idTrack.indexOf(aom._id.toString()) > -1) return false;
-            idTrack.push(aom._id.toString());
-            return true;
-          });
+          _.set(journey, 'aom', aomsClean);
+        })
 
-        _.set(journey, 'aom', aomsClean);
-      })
-
-      // save the updated journey
-      // ! journey.save() fails here ;(
-      .then(() => {
-        if (!journey || !journey._id) throw new Error(`FAIL ${journey._id}`);
-        return Journey.findOneAndUpdate(
-          { _id: journey._id },
-          _.omit(journey, [
-            '_id',
-            '__v',
-            'createdAt',
-            'updatedAt',
-            'safe_journey_id',
-            'validation',
-          ]),
-          { new: true },
-        ).exec();
-      });
+        // save the updated journey
+        // ! journey.save() fails here ;(
+        .then(() => {
+          if (!journey || !journey._id) throw new Error(`FAIL ${journey._id}`);
+          return Journey.findOneAndUpdate(
+            { _id: journey._id },
+            _.omit(journey, ['_id', '__v', 'createdAt', 'updatedAt', 'safe_journey_id', 'validation']),
+            { new: true },
+          ).exec();
+        })
+    );
   },
 
   async validate(journey, step = 0) {
@@ -137,15 +122,19 @@ const journeyService = serviceFactory(Journey, {
     const validated = validator.isValid(results);
 
     // find and update journey
-    const updated = await Journey.findByIdAndUpdate(journey._id, {
-      validation: {
-        validated,
-        tests: results,
-        rank,
-        step,
-        validatedAt: validated ? Date.now() : null,
+    const updated = await Journey.findByIdAndUpdate(
+      journey._id,
+      {
+        validation: {
+          validated,
+          tests: results,
+          rank,
+          step,
+          validatedAt: validated ? Date.now() : null,
+        },
       },
-    }, { new: true }).exec();
+      { new: true },
+    ).exec();
 
     eventBus.emit('journey.validate', updated.toObject());
 
@@ -181,9 +170,7 @@ const journeyService = serviceFactory(Journey, {
 
   async process({ safe_journey_id }) {
     // search for the matching journey
-    const journey = await Journey
-      .findOne({ safe_journey_id: ObjectId(safe_journey_id) })
-      .exec();
+    const journey = await Journey.findOne({ safe_journey_id: ObjectId(safe_journey_id) }).exec();
 
     if (journey) {
       if (journey.status === 'processed') {
@@ -195,9 +182,7 @@ const journeyService = serviceFactory(Journey, {
     }
 
     // get the safe journey to duplicate it again
-    const safeJourney = await SafeJourney
-      .findOne({ _id: ObjectId(safe_journey_id) })
-      .exec();
+    const safeJourney = await SafeJourney.findOne({ _id: ObjectId(safe_journey_id) }).exec();
 
     if (!safeJourney) {
       throw new NotFoundError(`SafeJourney not found: ${safe_journey_id}`);

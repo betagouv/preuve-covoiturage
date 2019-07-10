@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase,no-console */
 const tripService = require('@pdc/service-trip/service');
 const NotFoundError = require('@pdc/shared/errors/not-found');
 const Journey = require('./entities/models/journey');
@@ -7,6 +7,7 @@ const journeyService = require('./service');
 const journeysQueue = require('./queue');
 
 const onCreate = async (db, job) => {
+  const _startOnCreate = new Date();
   const safeJourney = await SafeJourney.findById(job.data.safe_journey_id).exec();
 
   if (!safeJourney) {
@@ -14,15 +15,22 @@ const onCreate = async (db, job) => {
   }
 
   // duplicate from safe-journeys to journeys
+  const _startDuplication = new Date();
   let duplicate = await journeyService.duplicateFromSafe(safeJourney, job.data.operator);
+  console.log(`>> duplication: ${new Date() - _startDuplication}ms`);
 
   // fill-out missing coordinates and bind AOMs
+  const _startFillOut = new Date();
   duplicate = await journeyService.fillOutCoordinates(duplicate);
+  console.log(`>> fillOutCoordinates: ${new Date() - _startFillOut}ms`);
 
   // consolidate trip
+  const _startConsolidate = new Date();
   await tripService.consolidate(duplicate);
+  console.log(`>> consolidation: ${new Date() - _startConsolidate}ms`);
 
   const jid = duplicate._id.toString();
+  console.log('>> journeyId', jid);
 
   // clear planned step1 and step2 validations
   const existingJobs = await journeysQueue.getDelayed();
@@ -36,23 +44,37 @@ const onCreate = async (db, job) => {
   // schedule next validations
   if (process.env.NODE_ENV !== 'test') {
     // set immediate tests
-    journeysQueue.add(`${duplicate.operator.nom_commercial} - step-0`, {
-      type: 'step-0',
-      journey_id: jid,
-    }, { delay: 1000 });
+    journeysQueue.add(
+      `${duplicate.operator.nom_commercial} - step-0`,
+      {
+        type: 'step-0',
+        journey_id: jid,
+      },
+      { delay: 1000 },
+    );
 
     // set delayed 24h (24 * 3600)
-    journeysQueue.add(`${duplicate.operator.nom_commercial} - step-1`, {
-      type: 'step-1',
-      journey_id: jid,
-    }, { delay: (process.env.JOURNEY_DELAY_1 || 86400) * 1000 });
+    journeysQueue.add(
+      `${duplicate.operator.nom_commercial} - step-1`,
+      {
+        type: 'step-1',
+        journey_id: jid,
+      },
+      { delay: (process.env.JOURNEY_DELAY_1 || 86400) * 1000 },
+    );
 
     // set delayed 48h (48 * 3600)
-    journeysQueue.add(`${duplicate.operator.nom_commercial} - step-2`, {
-      type: 'step-2',
-      journey_id: jid,
-    }, { delay: (process.env.JOURNEY_DELAY_2 || 172800) * 1000 });
+    journeysQueue.add(
+      `${duplicate.operator.nom_commercial} - step-2`,
+      {
+        type: 'step-2',
+        journey_id: jid,
+      },
+      { delay: (process.env.JOURNEY_DELAY_2 || 172800) * 1000 },
+    );
   }
+
+  console.log(`>> complete onCreate: ${new Date() - _startOnCreate}ms`);
 
   return {
     _id: duplicate._id.toString(),
@@ -63,10 +85,7 @@ const onCreate = async (db, job) => {
 const onValidate = async (db, job) => {
   const step = parseInt(String(job.data.type).replace('step-', ''), 10);
 
-  return journeyService.validate(
-    await Journey.findOne({ _id: job.data.journey_id }).exec(),
-    step,
-  );
+  return journeyService.validate(await Journey.findOne({ _id: job.data.journey_id }).exec(), step);
 };
 
 const onProcess = async (db, job) => {
@@ -86,7 +105,7 @@ const onProcessTrip = async (db, job) => {
   return { journey, trip };
 };
 
-module.exports = db => async (job) => {
+module.exports = (db) => async (job) => {
   let res;
 
   switch (job.data.type) {

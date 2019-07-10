@@ -1,6 +1,6 @@
 const { promisify } = require('util');
 const _ = require('lodash');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { ObjectId } = require('mongoose').Types;
 const BadRequestError = require('@pdc/shared/errors/bad-request');

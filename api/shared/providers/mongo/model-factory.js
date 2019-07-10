@@ -1,7 +1,7 @@
-/* eslint-disable func-names,no-param-reassign */
+/* eslint-disable func-names,no-param-reassign,max-len */
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const toJSON = require('./to-json');
 const toCSV = require('./to-csv');
 const listKeys = require('./list-keys');
@@ -34,17 +34,16 @@ const saveAndUpdateHook = async (schema, doc) => {
   // on the first level only !
   // does not support nested objects/schemas
   return Promise.all(
-    listKeys('crypt', true, schema.obj, ['password'])
-      .map(async (field) => {
-        if (!_.has(docObj, field)) return field;
-        if ((isDoc && doc.isModified(field)) || !isDoc || isNew) {
-          return bcrypt.hash(docObj[field], 10).then((hash) => {
-            doc[field] = hash;
-          });
-        }
+    listKeys('crypt', true, schema.obj, ['password']).map(async (field) => {
+      if (!_.has(docObj, field)) return field;
+      if ((isDoc && doc.isModified(field)) || !isDoc || isNew) {
+        return bcrypt.hash(docObj[field], 10).then((hash) => {
+          doc[field] = hash;
+        });
+      }
 
-        return field;
-      }),
+      return field;
+    }),
   );
 };
 
@@ -70,24 +69,18 @@ const saveAndUpdateHook = async (schema, doc) => {
  * @param query
  * @returns {Model}
  */
-const modelFactory = (modelName, {
-  pre = {},
-  schema = {},
-  methods = {},
-  virtuals = {},
-  statics = {},
-  query = {},
-}) => {
-  const S = (schema instanceof mongoose.Schema)
-    ? schema
-    : new mongoose.Schema(schema);
+const modelFactory = (modelName, { pre = {}, schema = {}, methods = {}, virtuals = {}, statics = {}, query = {} }) => {
+  const S = schema instanceof mongoose.Schema ? schema : new mongoose.Schema(schema);
 
   // fill out 'pre' middlewares with default names
-  pre = _.assign({
-    save: [],
-    findOneAndUpdate: [],
-    updateOne: [],
-  }, pre);
+  pre = _.assign(
+    {
+      save: [],
+      findOneAndUpdate: [],
+      updateOne: [],
+    },
+    pre,
+  );
 
   // bind middlewares
   _.map(pre, (list, name) => {
@@ -109,7 +102,7 @@ const modelFactory = (modelName, {
           doc = this.getUpdate();
         }
 
-        await Promise.all(list.map(fn => fn(schema, doc)));
+        await Promise.all(list.map((fn) => fn(schema, doc)));
         next();
       });
     }

@@ -11,7 +11,7 @@
     "@pdc/service-user": "0.0.1",
     "@sentry/node": "^5.1.0",
     "api-query-params": "^4.9.0",
-    "bcrypt": "^3.0.2",
+    "bcryptjs": "^2.4.3",
     "bull": "^3.8.1",
     "express-mung": "^0.5.1",
     "flat": "^4.1.0",

@@ -33,16 +33,18 @@ describe('Trips', () => {
     })
     .set('Authorization', `Bearer ${storage.user.token}`)
     .set('accept', 'json')
-    .expect(assertResponse(201, {
-      app(appId) {
-        storage.appId = appId;
-        return true;
-      },
-      token(appToken) {
-        storage.appToken = appToken;
-        return true;
-      },
-    })));
+    .expect(
+      assertResponse(201, {
+        app(appId) {
+          storage.appId = appId;
+          return true;
+        },
+        token(appToken) {
+          storage.appToken = appToken;
+          return true;
+        },
+      }),
+    ));
 
   it('POST /journeys/push :: generate couples', async () => {
     const operatorJourneyId = faker.random.uuid();
