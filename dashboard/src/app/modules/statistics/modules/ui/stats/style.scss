@@ -11,11 +11,15 @@
   overflow: hidden;
   overflow-y: scroll;
   height: calc(100vh - #{$navbar-height});
+  .ui-messages.ui-messages-info{
+    color: white;
+    margin: 10px;
+    a{
+      color: #1e67a0;
+    }
+  }
 }
 
-.stats--message{
-  color: grey;
-}
 
 .subtitle {
   color: #c8c8c8;
