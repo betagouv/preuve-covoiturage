@@ -132,18 +132,29 @@ const tripService = serviceFactory(Trip, {
 
     // apply all detectors and get the last trip from the list
     // returns null if no trip is found
-    const trip = (await Promise.all(
-      ['operatorJourneyId', 'driverIdentity'].reduce((p, c, idx) => {
-        if (_.isFunction(detectors[c])) {
-          // eslint-disable-next-line no-param-reassign
-          p[idx] = detectors[c](journey);
-        }
+    const _startDetectorOperatorJourneyId = new Date();
+    let trip = await detectors.operatorJourneyId(journey);
+    console.log(`>> [trip] search by op journey id: ${new Date() - _startDetectorOperatorJourneyId}ms`);
 
-        return p;
-      }, []),
-    ))
-      .filter((p) => !!p)
-      .pop() || null;
+    if (!trip) {
+      const _startDetectorDriverIdentity = new Date();
+      trip = await detectors.driverIdentity(journey);
+      console.log(`>> [trip] search by driver identity: ${new Date() - _startDetectorDriverIdentity}ms`);
+    }
+
+    // const trip =
+    //   (await Promise.all(
+    //     ['operatorJourneyId', 'driverIdentity'].reduce((p, c, idx) => {
+    //       if (_.isFunction(detectors[c])) {
+    //         // eslint-disable-next-line no-param-reassign
+    //         p[idx] = detectors[c](journey);
+    //       }
+
+    //       return p;
+    //     }, []),
+    //   ))
+    //     .filter((p) => !!p)
+    //     .pop() || null;
 
     if (!trip) {
       return createFromJourney(journey);
