@@ -1,9 +1,15 @@
-<div *ngIf="!loaded" class="absolute-center">
-  <p-progressSpinner></p-progressSpinner>
-</div>
+<!--<div *ngIf="!loaded" class="absolute-center">-->
+<!--  <p-progressSpinner></p-progressSpinner>-->
+<!--</div>-->
 
-<div *ngIf="loaded">
+<!--<div *ngIf="loaded">-->
   <h1 class="has-text-centered">Statistiques</h1>
+
+  <div class="p-grid p-justify-center">
+    <div class="p-col-10 has-text-centered">
+      <h5 class="" style="color: grey">Ces données sont collectées à partir des informations communiquées par les <a href="http://covoiturage.beta.gouv.fr/#partenaires">opérateurs partenaires</a>.<br> Il ne s'agit en aucun cas d'une représentation exhaustive du covoiturage en France.</h5>
+    </div>
+  </div>
 
   <h3 class="subtitle has-text-centered">Résumé</h3>
 
@@ -115,4 +121,4 @@
       Informations sur les méthodes de calculs utilisées.
     </a>
   </div>
-</div>
+<!--</div>-->
