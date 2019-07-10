@@ -71,3 +71,12 @@
   margin-top: 0;
   margin-bottom: 2em;
 }
+
+.stats--disclaimer {
+  padding: 1em 2em;
+  line-height: 1.4;
+  text-align: left;
+  border: 1px solid $primary;
+  border-radius: 0.4em;
+  background: transparentize($primary, 0.9);
+}

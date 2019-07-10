@@ -5,6 +5,27 @@
 <div *ngIf="loaded">
   <h1 class="has-text-centered">Statistiques</h1>
 
+  <!-- Disclaimer -->
+  <div class="p-grid p-justify-center stats--cards-wrapper">
+    <div class="p-col-10 has-text-centered">
+      <div class="stats--disclaimer">
+        <p>
+          Ces données sont collectées à partir des informations communiquées par les
+          <a target="_blank" href="http://covoiturage.beta.gouv.fr/#operateurs">opérateurs partenaires</a>.
+        </p>
+        <p>Il ne s'agit en aucun cas d'une représentation exhaustive du covoiturage en France.</p>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="subtitle has-text-centered">Calculs</h4>
+
+  <div class="has-text-centered padding-fat-bottom">
+    <a target="_blank" href="{{ gitbookLinkStats }}">
+      Informations sur les méthodes de calculs utilisées.
+    </a>
+  </div>
+
   <h3 class="subtitle has-text-centered">Résumé</h3>
 
   <div class="p-grid p-justify-center stats--cards-wrapper">
@@ -106,13 +127,5 @@
         ></p-chart>
       </p-card>
     </div>
-  </div>
-
-  <h4 class="subtitle has-text-centered">Calculs</h4>
-
-  <div class="has-text-centered padding-fat-bottom">
-    <a href="{{ gitbookLinkStats }}">
-      Informations sur les méthodes de calculs utilisées.
-    </a>
   </div>
 </div>
