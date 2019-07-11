@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { Container, Interfaces } from '@ilos/core';
 
-import { TokenProviderInterfaceResolver, TokenProviderInterface } from './interfaces';
+import { TokenProviderInterfaceResolver, TokenProviderInterface, TokenPayloadInterface } from './interfaces';
 import { TokenProviderConfig } from './interfaces/TokenProviderConfig';
 
 @Container.provider({
@@ -31,14 +31,14 @@ export class TokenProvider implements Interfaces.ProviderInterface, TokenProvide
     this.verifyOptions = { ...config.verifyOptions };
   }
 
-  async sign(payload: string | object | Buffer, options: jwt.SignOptions = {}): Promise<string> {
+  async sign(payload: TokenPayloadInterface, options: jwt.SignOptions = {}): Promise<string> {
     return jwt.sign(payload, this.secret, { ...this.signOptions, ...options });
   }
 
-  async verify(token: string, options: jwt.VerifyOptions = {}): Promise<object | string> {
-    const decoded = await jwt.verify(token, this.secret, { ...this.verifyOptions, ...options });
+  async verify(token: string, options: jwt.VerifyOptions = {}): Promise<TokenPayloadInterface> {
+    const decoded = <TokenPayloadInterface>await jwt.verify(token, this.secret, { ...this.verifyOptions, ...options });
 
-    if (typeof decoded === 'object' && 'iat' in decoded) {
+    if (this.ttl > -1 && typeof decoded === 'object' && 'iat' in decoded) {
       // tslint:disable-next-line: no-bitwise
       const expired = ((new Date().getTime() / 1000) | 0) - parseInt((decoded as any).iat, 10) > this.ttl;
       if (expired) throw new jwt.JsonWebTokenError('Expired token');

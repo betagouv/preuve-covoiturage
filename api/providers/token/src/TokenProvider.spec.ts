@@ -1,3 +1,5 @@
+// tslint:disable: no-unused-expression
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
@@ -37,6 +39,13 @@ describe('TokenProvider', () => {
     // tslint:disable-next-line: no-bitwise
     const oldToken = await tp.sign({ appId, operatorId, iat: (new Date(2019, 1, 1).getTime() / 1000) | 0 });
     expect(tp.verify(oldToken)).to.be.rejectedWith(JsonWebTokenError, 'Expired token');
+  });
+
+  it('passes on never expire', async () => {
+    const tp = new TokenProvider({ secret: 'notsosecret', ttl: -1 });
+    // tslint:disable-next-line: no-bitwise
+    const oldToken = await tp.sign({ appId, operatorId, iat: (new Date(2019, 1, 1).getTime() / 1000) | 0 });
+    expect(tp.verify(oldToken)).to.be.fulfilled;
   });
 
   // throws on wrong issuer
