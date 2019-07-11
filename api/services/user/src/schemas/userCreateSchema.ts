@@ -30,5 +30,13 @@ export const userCreateSchema = {
         required: ['email', 'lastname', 'firstname', 'group', 'operator'],
       },
     },
+    {
+      if: {
+        properties: { group: { const: 'registry' } },
+      },
+      then: {
+        required: ['email', 'lastname', 'firstname', 'group'],
+      },
+    },
   ],
 };
