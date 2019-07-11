@@ -1,3 +1,5 @@
+import { UserInterface } from '../interfaces/UserInterfaces';
+
 export class User {
   public _id?: string;
   public email: string;
@@ -23,31 +25,7 @@ export class User {
   public createdAt?: Date;
   public updatedAt?: Date;
 
-  constructor(data: {
-    _id?: string;
-    email: string;
-    lastname: string;
-    firstname: string;
-    group: string;
-    permissions: string[];
-    password?: string;
-    role?: string;
-    phone?: string;
-    status?: string;
-    forgottenReset?: string;
-    forgottenToken?: string;
-    emailConfirm?: string;
-    emailToken?: string;
-    operator?: string;
-    territory?: string;
-    hasResetPassword?: boolean;
-    forgottenAt?: Date;
-    emailChangeAt?: Date;
-    lastConnectedAt?: Date;
-    deletedAt?: Date;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }) {
+  constructor(data: UserInterface) {
     this._id = data._id;
     this.email = data.email;
     this.lastname = data.lastname;

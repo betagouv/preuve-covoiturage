@@ -6,7 +6,8 @@ export interface UserRepositoryProviderInterface extends ParentRepositoryInterfa
   list(filters, pagination): Promise<{ users: User[]; total: number }>;
   deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void>;
   findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User>;
-  findUserByParams(params: { [prop: string]: string }): Promise<User>;
+  findUserByEmail(email: string): Promise<User>;
+  findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User>;
   patchUser(_id: string, patch: any, contextParam: { territory?: string; operator?: string }): Promise<User>;
 }
 
@@ -23,7 +24,11 @@ export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepo
     throw new Error();
   }
 
-  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
+  public async findUserByEmail(email: string): Promise<User> {
+    throw new Error();
+  }
+
+  public async findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
     throw new Error();
   }
 
