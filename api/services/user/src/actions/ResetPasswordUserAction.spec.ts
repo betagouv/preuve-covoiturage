@@ -13,14 +13,14 @@ import { ResetPasswordUserAction } from './ResetPasswordUserAction';
 import { User } from '../entities/User';
 
 import { FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
-import { mockUserBase, newPassword } from '../../tests/mocks/userBase';
+import { mockUserInDataBase, newPassword } from '../../tests/mocks/userBase';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
 const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
-  token: mockUserBase.forgottenToken,
-  reset: mockUserBase.forgottenReset,
+  token: mockUserInDataBase.forgottenToken,
+  reset: mockUserInDataBase.forgottenReset,
   password: newPassword,
 };
 
@@ -29,7 +29,7 @@ const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
 })
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
-    return plainToken === mockResetPasswordParams.token && cryptedToken === mockUserBase.forgottenToken;
+    return plainToken === mockResetPasswordParams.token && cryptedToken === mockUserInDataBase.forgottenToken;
   }
   async cryptPassword(plainPassword: string): Promise<string> {
     return 'cryptedNewPassword';

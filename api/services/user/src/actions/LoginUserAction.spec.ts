@@ -11,13 +11,13 @@ import { LoginUserAction } from './LoginUserAction';
 import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
 
 import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
-import { mockUserBase, password } from '../../tests/mocks/userBase';
+import { mockUserInDataBase, password } from '../../tests/mocks/userBase';
 import { User } from '../entities/User';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-const mockUser = { ...mockUserBase, status: 'active' };
+const mockUser = { ...mockUserInDataBase, status: 'active' };
 
 const mockLoginParams = <UserLoginParamsInterface>{
   password,

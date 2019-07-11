@@ -11,7 +11,7 @@ import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
 import { ChangeRoleUserAction } from './ChangeRoleUserAction';
 
-import { mockConnectedUserBase, mockUserBase } from '../../tests/mocks/userBase';
+import { mockConnectedUserBase, mockUserInDataBase } from '../../tests/mocks/userBase';
 import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
 
 import { User } from '../entities/User';
@@ -55,11 +55,11 @@ describe('USER ACTION - Change role', () => {
   });
 
   // change role
-  it('permission "user.update" - should change role to "user"', async () => {
+  it('should change role to "user"', async () => {
     const result = await action.call({
       method: 'user:changeRole',
       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-      params: { _id: mockUserBase._id, role: newRole },
+      params: { _id: mockUserInDataBase._id, role: newRole },
     });
 
     expect(result).to.be.instanceof(User);

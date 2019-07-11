@@ -5,7 +5,7 @@ import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../../src/interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../../src/entities/User';
-import { mockCreateUserParams, mockUserBase, password } from '../mocks/userBase';
+import { mockCreateUserParams, mockUserInDataBase, password } from '../mocks/userBase';
 import { UserInterface } from '../../src/interfaces/UserInterfaces';
 import { mockOutputPagination } from '../mocks/pagination';
 
@@ -18,30 +18,30 @@ export class FakeUserRepository extends UserRepositoryProviderInterfaceResolver 
   }
 
   public async create(user: UserInterface): Promise<User> {
-    return new User({ ...user, _id: mockUserBase._id });
+    return new User({ ...user, _id: mockUserInDataBase._id });
   }
 
   async find(id: string): Promise<User> {
-    return new User({ ...mockUserBase, _id: id });
+    return new User({ ...mockUserInDataBase, _id: id });
   }
 
   public async findUserByEmail(email: string): Promise<User> {
-    if (email === mockUserBase.email) {
+    if (email === mockUserInDataBase.email) {
       return new User({
-        ...mockUserBase,
+        ...mockUserInDataBase,
       });
     }
   }
 
   public async findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
     return new User({
-      ...mockUserBase,
+      ...mockUserInDataBase,
     });
   }
 
   async patchUser(id: string, patch: any, context: any): Promise<User> {
     return new User({
-      ...mockUserBase,
+      ...mockUserInDataBase,
       ...patch,
       _id: id,
     });
@@ -49,14 +49,18 @@ export class FakeUserRepository extends UserRepositoryProviderInterfaceResolver 
 
   async patch(id: string, patch: any): Promise<User> {
     return new User({
-      ...mockUserBase,
+      ...mockUserInDataBase,
       ...patch,
       _id: id,
     });
   }
 
   async list(filters, pagination): Promise<any> {
-    return { users: [new User(mockUserBase)], total: mockOutputPagination.total, count: mockOutputPagination.count };
+    return {
+      users: [new User(mockUserInDataBase)],
+      total: mockOutputPagination.total,
+      count: mockOutputPagination.count,
+    };
   }
 
   public async update(user: any): Promise<User> {
@@ -71,7 +75,7 @@ export class FakeUserRepository extends UserRepositoryProviderInterfaceResolver 
 })
 export class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   async comparePassword(plainPassword: string, cryptedPassword: string): Promise<boolean> {
-    if (cryptedPassword === mockUserBase.password && plainPassword === password) {
+    if (cryptedPassword === mockUserInDataBase.password && plainPassword === password) {
       return true;
     }
   }

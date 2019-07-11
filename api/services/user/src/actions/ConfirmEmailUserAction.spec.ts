@@ -11,14 +11,14 @@ import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfi
 import { FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
 import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
 import { User } from '../entities/User';
-import { mockUserBase } from '../../tests/mocks/userBase';
+import { mockUserInDataBase } from '../../tests/mocks/userBase';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
 const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
-  token: mockUserBase.emailToken,
-  confirm: mockUserBase.emailConfirm,
+  token: mockUserInDataBase.emailToken,
+  confirm: mockUserInDataBase.emailConfirm,
 };
 
 @Container.provider({
@@ -26,7 +26,7 @@ const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
 })
 class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
-    if (plainToken === mockResetPasswordParams.token && cryptedToken === mockUserBase.emailToken) {
+    if (plainToken === mockResetPasswordParams.token && cryptedToken === mockUserInDataBase.emailToken) {
       return true;
     }
     return false;

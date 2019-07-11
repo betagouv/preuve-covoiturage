@@ -8,6 +8,7 @@ import { describe } from 'mocha';
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';
 import { territories, operators, registry } from '../src/config/permissions';
+import { mockUserBase, password } from './mocks/userBase';
 
 const mockServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
@@ -38,7 +39,7 @@ describe('USER SERVICE', () => {
   });
 
   after(async () => {
-    await mockServer.stopServer();
+    // await mockServer.stopServer();
     await mockServer.stopTransport();
   });
 
@@ -816,13 +817,13 @@ describe('USER SERVICE', () => {
     before(async () => {
       newRegistryAdmin = await mockServer.addUser({
         ...mockFactory.newRegistryAdminModel,
-        password: 'password',
+        password,
         status: 'active',
       });
     });
 
     after(async () => {
-      mockServer.clearCollection();
+      // mockServer.clearCollection();
     });
 
     it('registry admin - should login', async () => {
@@ -831,8 +832,8 @@ describe('USER SERVICE', () => {
         mockFactory.call(
           'user:login',
           {
+            password,
             email: newRegistryAdmin.email,
-            password: 'password',
           },
           {
             group: 'registry',

@@ -10,7 +10,7 @@ import { ValidatorExtension } from '@pdc/provider-validator/dist';
 import { User } from '../entities/User';
 
 import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
-import { mockConnectedUserBase, mockUserBase } from '../../tests/mocks/userBase';
+import { mockConnectedUserBase, mockUserInDataBase } from '../../tests/mocks/userBase';
 import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
 
 import { CreateUserAction } from './CreateUserAction';
@@ -26,7 +26,7 @@ const mockConnectedUser = {
   permissions: ['user.list'],
 };
 
-const mockUsers = [new User({ ...mockUserBase })];
+const mockUsers = [new User({ ...mockUserInDataBase })];
 
 const mockContext = {
   call: {

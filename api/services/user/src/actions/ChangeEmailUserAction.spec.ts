@@ -13,7 +13,7 @@ import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChange
 import { ChangeEmailUserAction } from './ChangeEmailUserAction';
 
 import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
-import { mockConnectedUserBase, mockUserBase } from '../../tests/mocks/userBase';
+import { mockConnectedUserBase, mockUserInDataBase } from '../../tests/mocks/userBase';
 
 import { User } from '../entities/User';
 
@@ -27,7 +27,7 @@ const mockConnectedUser = <UserBaseInterface>{
 };
 
 const mockChangeEmailParams = <UserChangeEmailParamsInterface>{
-  _id: mockUserBase._id,
+  _id: mockUserInDataBase._id,
   email: 'newEmail@example.com',
 };
 
@@ -70,7 +70,7 @@ describe('USER ACTION - Change email', () => {
       params: mockChangeEmailParams,
     });
     expect(result).to.be.instanceof(User);
-    expect(result._id).to.eql(mockUserBase._id);
+    expect(result._id).to.eql(mockUserInDataBase._id);
     expect(result.status).to.eql('user.status.notActive');
   });
 

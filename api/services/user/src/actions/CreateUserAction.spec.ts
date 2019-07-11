@@ -8,7 +8,7 @@ import { ValidatorExtension } from '@pdc/provider-validator/dist';
 
 import { CreateUserAction } from './CreateUserAction';
 import { UserBaseInterface, UserInterface } from '../interfaces/UserInterfaces';
-import { mockConnectedUserBase, mockCreateUserParams, mockUserBase } from '../../tests/mocks/userBase';
+import { mockConnectedUserBase, mockCreateUserParams, mockUserInDataBase } from '../../tests/mocks/userBase';
 import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
 import { User } from '../entities/User';
 
@@ -60,7 +60,7 @@ describe('USER ACTION  - Create user', () => {
     });
 
     expect(result).to.be.instanceof(User);
-    expect(result._id).to.be.eql(mockUserBase._id);
+    expect(result._id).to.be.eql(mockUserInDataBase._id);
     expect(result.email).to.be.eql('newemail@example.com');
   });
 

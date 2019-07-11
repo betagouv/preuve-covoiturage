@@ -25,15 +25,19 @@ export const mockConnectedUserBase = <UserInterface>{
 
 export const mockUserBase = <UserInterface>{
   ...mockCreateUserParams,
+  permissions: [],
+  role: 'admin',
+  status: 'active',
+};
+
+export const mockUserInDataBase = <UserInterface>{
+  ...mockUserBase,
   _id: '5d07f9c61cf0b9ce019da281',
   emailChangeAt: new Date(),
   emailConfirm: 'Y5ySSJRrlX49aSC9G1eIBb0dMWLv95aW',
   emailToken: 'W0mn7FUNQI53qAaKW8lxIiTB9b03GP1N',
   forgottenToken: 'S2A01eh84ba5pQ2b1kSVPSkaWnfR6EvH',
   forgottenReset: 'Txl6jbKHyIFNjBkWaeVmDbc7eaKDWnAK',
-  permissions: [],
-  password: 'cryptedPassword',
-  role: 'admin',
-  status: 'active',
   forgottenAt: new Date(),
+  password: 'cryptedPassword',
 };

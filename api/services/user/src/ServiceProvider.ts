@@ -91,7 +91,7 @@ import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddle
   ],
   template: null,
   notification: {
-    templatePath: path.resolve(__dirname, 'templates'),
+    template: path.join(__dirname, 'templates'),
     templateMeta: 'template',
   },
 })
