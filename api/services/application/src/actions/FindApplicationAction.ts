@@ -4,12 +4,12 @@ import { ApplicationRepositoryProviderInterfaceResolver, CheckApplicationParamsI
 
 @Container.handler({
   service: 'application',
-  method: 'check',
+  method: 'find',
 })
-export class CheckApplicationAction extends Parents.Action {
+export class FindApplicationAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['application.revoke']],
-    ['validate', ['application.revoke']],
+    ['can', ['application.find']],
+    ['validate', 'application.find'],
   ];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
@@ -17,6 +17,6 @@ export class CheckApplicationAction extends Parents.Action {
   }
 
   public async handle(params: CheckApplicationParamsInterface): Promise<boolean> {
-    return this.applicationRepository.check(params);
+    return this.applicationRepository.find(params._id);
   }
 }

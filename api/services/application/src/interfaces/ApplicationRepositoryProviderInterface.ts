@@ -3,15 +3,10 @@ import { ParentRepositoryInterface, ParentRepositoryInterfaceResolver } from '@i
 declare type Model = any;
 
 export interface ApplicationRepositoryProviderInterface extends ParentRepositoryInterface {
-  check(params: { _id: string; operatorId: string }): Promise<boolean>;
   softDelete(params: { _id: string; operatorId: string }): Promise<boolean>;
 }
 
-export abstract class ApplicationRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver
-  implements ApplicationRepositoryProviderInterface {
-  async check(params: { _id: string; operatorId: string }): Promise<boolean> {
-    throw new Error('Not implemented');
-  }
+export abstract class ApplicationRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver {
   async softDelete(params: { _id: string; operatorId: string }): Promise<Model> {
     throw new Error('Not implemented');
   }

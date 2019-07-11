@@ -1,0 +1,9 @@
+export const applicationFindSchema = {
+  $id: 'application.find',
+  type: 'object',
+  required: ['_id'],
+  additionalProperties: false,
+  properties: {
+    _id: { macro: 'objectid' },
+  },
+};

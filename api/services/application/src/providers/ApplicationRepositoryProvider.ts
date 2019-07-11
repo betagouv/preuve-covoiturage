@@ -18,7 +18,7 @@ export class ApplicationRepositoryProvider extends ParentRepository implements A
     return this.config.get('application.collectionName');
   }
 
-  public getDatabase(): string {
+  public getDbName(): string {
     return this.config.get('application.db');
   }
 
@@ -26,13 +26,7 @@ export class ApplicationRepositoryProvider extends ParentRepository implements A
     return Application;
   }
 
-  public async check(params: { _id: string; operatorId: string }): Promise<boolean> {
-    // TODO check with _id and operatorId if the app is in the DB
-    throw new Error('TODO');
-  }
-
   public async softDelete(params: { _id: string; operatorId: string }): Promise<any> {
-    // TODO patch the doc with delete_at = now()
-    throw new Error('TODO');
+    return this.patch(params._id, { deleted_at: new Date() });
   }
 }
