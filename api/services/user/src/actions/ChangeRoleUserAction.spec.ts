@@ -1,123 +1,94 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import chaiSubset from 'chai-subset';
-// import { Container, Exceptions } from '@ilos/core';
-// import { ConfigInterfaceResolver } from '@ilos/config';
+// tslint:disable max-classes-per-file
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import chaiSubset from 'chai-subset';
+import { Container, Extensions, Interfaces, Parents } from '@ilos/core';
+import { ConfigExtension } from '@ilos/config';
+import { EnvExtension } from '@ilos/env';
+import { ValidatorExtension } from '@pdc/provider-validator/dist';
 
-// import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-// import { UserBaseInterface } from '../interfaces/UserInterfaces';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
-// import { User } from '../entities/User';
+import { ChangeRoleUserAction } from './ChangeRoleUserAction';
 
-// import { ChangeRoleUserAction } from './ChangeRoleUserAction';
+import { mockConnectedUserBase, mockUserBase } from '../../tests/mocks/userBase';
+import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
 
-// import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+import { User } from '../entities/User';
 
-// import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
-// import { mockId, mockNewUserBase } from '../../tests/mocks/newUserBase';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+chai.use(chaiAsPromised);
+chai.use(chaiSubset);
+const { expect } = chai;
 
-// chai.use(chaiAsPromised);
-// chai.use(chaiSubset);
-// const { expect } = chai;
+const mockConnectedUser = <UserBaseInterface>{
+  ...mockConnectedUserBase,
+  permissions: ['user.update'],
+};
 
-// const mockConnectedUser = <UserBaseInterface>{
-//   ...mockConnectedUserBase,
-//   permissions: ['user.update'],
-// };
+const newRole = 'user';
 
-// const mockUser = {
-//   ...mockNewUserBase,
-//   role: 'admin',
-//   _id: '5d08a67dea858e4bd08964d3',
-// };
+@Container.serviceProvider({
+  env: null,
+  config: {},
+  providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+  handlers: [ChangeRoleUserAction],
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+    Extensions.Providers,
+  ];
+}
 
-// const newRole = 'user';
+let serviceProvider;
+let action;
 
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   async patchUser(_id: string, patch: any): Promise<User> {
-//     return new User({
-//       ...mockUser,
-//       ...patch,
-//     });
-//   }
-// }
+describe('USER ACTION - Change role', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.register();
+    await serviceProvider.init();
+    action = serviceProvider.getContainer().get(ChangeRoleUserAction);
+  });
 
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
+  // change role
+  it('permission "user.update" - should change role to "user"', async () => {
+    const result = await action.call({
+      method: 'user:changeRole',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: { _id: mockUserBase._id, role: newRole },
+    });
 
-//   get(key: string, fallback?: any): any {
-//     return;
-//   }
-// }
+    expect(result).to.be.instanceof(User);
+    expect(result.role).to.eql(newRole);
+  });
 
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [ChangeRoleUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
-//   ];
-
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
-// }
-
-// let serviceProvider;
-// let handlers;
-// let action;
-
-// describe('USER ACTION - Change role', () => {
-//   before(async () => {
-//     serviceProvider = new ServiceProvider();
-//     await serviceProvider.boot();
-//     handlers = serviceProvider.getContainer().getHandlers();
-//     action = serviceProvider.getContainer().getHandler(handlers[0]);
-//   });
-
-//   it('permission "user.update" - should change role to "user"', async () => {
-//     const result = await action.call({
-//       method: 'user:changeRole',
-//       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-//       params: { _id: mockUser._id, role: newRole },
-//     });
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockUser,
-//       role: newRole,
-//     });
-//   });
-
-//   it('permission "territory.users.update" should change role of territory user', async () => {
-//     const result = await action.call({
-//       method: 'user:changeRole',
-//       context: {
-//         call: {
-//           user: {
-//             ...mockConnectedUser,
-//             permissions: ['territory.users.update'],
-//             territory: '5d0b663b0de4f5b6e93dbca8',
-//           },
-//         },
-//         channel: { service: '' },
-//       },
-//       params: {
-//         _id: mockUser._id,
-//         role: newRole,
-//       },
-//     });
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockUser,
-//       role: newRole,
-//     });
-//   });
-// });
+  //
+  // it('permission "territory.users.update" should change role of territory user', async () => {
+  //   const result = await action.call({
+  //     method: 'user:changeRole',
+  //     context: {
+  //       call: {
+  //         user: {
+  //           ...mockConnectedUser,
+  //           permissions: ['territory.users.update'],
+  //           territory: '5d0b663b0de4f5b6e93dbca8',
+  //         },
+  //       },
+  //       channel: { service: '' },
+  //     },
+  //     params: {
+  //       _id: mockUser._id,
+  //       role: newRole,
+  //     },
+  //   });
+  //   expect(result).to.eql({
+  //     ...defaultUserProperties,
+  //     ...mockUser,
+  //     role: newRole,
+  //   });
+  // });
+});

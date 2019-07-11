@@ -1,113 +1,86 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-// import { ConfigInterfaceResolver } from '@ilos/config';
-// import { Container } from '@ilos/core';
+// tslint:disable max-classes-per-file
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { ConfigExtension } from '@ilos/config';
+import { Container, Exceptions, Extensions, Interfaces, Parents } from '@ilos/core';
+import { EnvExtension } from '@ilos/env';
+import { ValidatorExtension } from '@pdc/provider-validator/dist';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-// import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-// import { UserBaseInterface } from '../interfaces/UserInterfaces';
-// import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
+import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
+import { ResetPasswordUserAction } from './ResetPasswordUserAction';
 
-// import { User } from '../entities/User';
+import { User } from '../entities/User';
 
-// import { ResetPasswordUserAction } from './ResetPasswordUserAction';
+import { FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
+import { mockUserBase, newPassword } from '../../tests/mocks/userBase';
 
-// import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+chai.use(chaiAsPromised);
+const { expect } = chai;
 
-// import { mockNewUserBase } from '../../tests/mocks/newUserBase';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
+  token: mockUserBase.forgottenToken,
+  reset: mockUserBase.forgottenReset,
+  password: newPassword,
+};
 
-// chai.use(chaiAsPromised);
-// const { expect } = chai;
+@Container.provider({
+  identifier: CryptoProviderInterfaceResolver,
+})
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
+  async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
+    return plainToken === mockResetPasswordParams.token && cryptedToken === mockUserBase.forgottenToken;
+  }
+  async cryptPassword(plainPassword: string): Promise<string> {
+    return 'cryptedNewPassword';
+  }
+}
 
-// const mockUser = {
-//   ...mockNewUserBase,
-//   _id: '5d08a43d282eeab274c2f3d7',
-// };
+@Container.serviceProvider({
+  env: null,
+  config: {
+    'user.tokenExpiration.passwordReset': 68600,
+    'user.status.active': 'active',
+  },
+  providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+  handlers: [ResetPasswordUserAction],
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+    Extensions.Providers,
+  ];
+}
 
-// const mockResetPasswordParams = <UserResetPasswordParamsInterface>{
-//   token: 'Txl6jbKHyIFNjBkWaeVmDbc7eaKDWnAK',
-//   reset: 'S2A01eh84ba5pQ2b1kSVPSkaWnfR6EvH',
-//   password: 'LE@XE:E88apg4.^',
-// };
+let serviceProvider;
+let action;
 
-// const cryptedPassword = 'cryptedPassword';
-
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
-//     return new User({
-//       ...mockUser,
-//       forgottenAt: new Date(),
-//     });
-//   }
-
-//   public async update(user: UserBaseInterface): Promise<User> {
-//     return new User({
-//       ...mockUser,
-//     });
-//   }
-// }
-
-// @Container.provider()
-// class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-//   async cryptPassword(plainPassword: string): Promise<string> {
-//     return cryptedPassword;
-//   }
-//   async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
-//     return true;
-//   }
-// }
-
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   get(key: string, fallback?: any): any {
-//     if (key === 'user.tokenExpiration.passwordReset') {
-//       return 86400;
-//     }
-//   }
-// }
-
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [ResetPasswordUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [CryptoProviderInterfaceResolver, FakeCryptoProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
-//   ];
-
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
-// }
-
-// let serviceProvider;
-// let handlers;
-// let action;
-
-// describe('USER ACTION - Reset password', () => {
-//   before(async () => {
-//     serviceProvider = new ServiceProvider();
-//     await serviceProvider.boot();
-//     handlers = serviceProvider.getContainer().getHandlers();
-//     action = serviceProvider.getContainer().getHandler(handlers[0]);
-//   });
-//   it('should work', async () => {
-//     const result = await action.call({
-//       method: 'user:resetPassword',
-//       context: { call: { user: {}, channel: { service: '' } } },
-//       params: mockResetPasswordParams,
-//     });
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockUser,
-//     });
-//   });
-// });
+describe('USER ACTION - Reset password', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.register();
+    await serviceProvider.init();
+    action = serviceProvider.getContainer().get(ResetPasswordUserAction);
+  });
+  it('should work', async () => {
+    const result = await action.call({
+      method: 'user:resetPassword',
+      context: { call: { user: {}, channel: { service: '' } } },
+      params: mockResetPasswordParams,
+    });
+    expect(result).to.be.instanceof(User);
+    expect(result.status).to.be.eql('active');
+  });
+  it('wrong token should throw forbidden error', async () => {
+    await expect(
+      action.call({
+        method: 'user:resetPassword',
+        context: { call: { user: {}, channel: { service: '' } } },
+        params: { ...mockResetPasswordParams, token: 'EhWDV9WbltMgD6hQblL6jleDk1Uwrong' },
+      }),
+    ).to.be.rejectedWith(Exceptions.ForbiddenException);
+  });
+});

@@ -49,7 +49,7 @@ export class CreateUserAction extends Parents.Action {
   public async handle(request: UserCreateParamsInterface, context: Types.ContextType): Promise<User> {
     try {
       // check if the user exists already
-      const foundUser = await this.userRepository.findUserByParams({ email: request.email });
+      const foundUser = await this.userRepository.findUserByEmail(request.email);
       if (foundUser) {
         throw new Exceptions.ConflictException('email conflict');
       }
@@ -57,11 +57,6 @@ export class CreateUserAction extends Parents.Action {
       if (e instanceof Exceptions.ConflictException) {
         throw e;
       }
-    }
-
-    if ('operator' in request && 'territory' in request) {
-      // todo: check this in jsonschema
-      throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 
     // create the new user
@@ -95,7 +90,7 @@ export class CreateUserAction extends Parents.Action {
 
     const requester = new User(context.call.user);
 
-    await this.kernel.call(
+    await this.kernel.notify(
       'user:notify',
       {
         template: this.config.get('email.templates.invite'),

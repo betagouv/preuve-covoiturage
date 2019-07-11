@@ -1,188 +1,124 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-// import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
-// import { ConfigInterfaceResolver } from '@ilos/config';
+// tslint:disable max-classes-per-file
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { Container, Exceptions, Extensions, Interfaces, Parents, Types } from '@ilos/core';
+import { ConfigExtension, ConfigInterfaceResolver } from '@ilos/config';
+import { EnvExtension } from '@ilos/env';
+import { ValidatorExtension } from '@pdc/provider-validator/dist';
 
-// import { CreateUserAction } from './CreateUserAction';
+import { CreateUserAction } from './CreateUserAction';
+import { UserBaseInterface, UserInterface } from '../interfaces/UserInterfaces';
+import { mockConnectedUserBase, mockCreateUserParams, mockUserBase } from '../../tests/mocks/userBase';
+import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
+import { User } from '../entities/User';
 
-// import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-// import { UserBaseInterface } from '../interfaces/UserInterfaces';
+chai.use(chaiAsPromised);
+const { expect } = chai;
 
-// import { User } from '../entities/User';
+const mockConnectedUser = <UserBaseInterface>{
+  ...mockConnectedUserBase,
+  permissions: ['user.create'],
+};
 
-// import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
-// import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+@Container.serviceProvider({
+  env: null,
+  config: {
+    'user.status.notActive': 'noActive',
+    'permissions.registry.admin.permissions': 'permissions.registry.admin.permissions',
+    'email.templates.invite': 'email.templates.invite',
+    'url.appUrl': 'url.appUrl',
+  },
+  providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+  handlers: [CreateUserAction],
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+    Extensions.Providers,
+  ];
+}
 
-// import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+let serviceProvider;
+let action;
 
-// chai.use(chaiAsPromised);
-// const { expect } = chai;
+describe('USER ACTION  - Create user', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.register();
+    await serviceProvider.init();
+    action = serviceProvider.getContainer().get(CreateUserAction);
+  });
 
-// const mockConnectedUser = <UserBaseInterface>{
-//   ...mockConnectedUserBase,
-//   permissions: ['user.create'],
-// };
+  it('should return new user', async () => {
+    const result = await action.call({
+      method: 'user:createUser',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: { ...mockCreateUserParams, email: 'newemail@example.com' },
+    });
 
-// const mockNewUser = {
-//   ...mockNewUserBase,
-// };
+    expect(result).to.be.instanceof(User);
+    expect(result._id).to.be.eql(mockUserBase._id);
+    expect(result.email).to.be.eql('newemail@example.com');
+  });
 
-// const mockCreateUserParams = {
-//   ...mockNewUser,
-// };
+  it('existing email should return conflit error', async () => {
+    await expect(
+      action.call({
+        method: 'user:createUser',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: mockCreateUserParams,
+      }),
+    ).to.be.rejectedWith(Exceptions.ConflictException);
+  });
 
-// delete mockCreateUserParams.permissions;
-
-// const mockNewUserId = '5d08a59aeb5e79d7607d29cd';
-
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   public async create(user: UserBaseInterface): Promise<User> {
-//     return new User({ ...mockNewUser, _id: mockNewUserId });
-//   }
-//   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
-//     return null;
-//   }
-//   async update(user: any): Promise<User> {
-//     return user;
-//   }
-// }
-
-// @Container.provider()
-// class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-//   generateToken(): string {
-//     const list = [
-//       'zHeJha04jbHdEG0FC6jhtKuPnCbiccd3',
-//       'Nwle5ibspKzQbl32b53RAC1GWm9ZRKFK',
-//       'd6QmpInknZudoFmRyy6pX9Z0apeCGTpK',
-//       '8jLAY83TMcZ01Z7QsEyeS25WlZaS5xKC',
-//     ];
-
-//     return list[Math.floor(Math.random() * list.length)];
-//   }
-//   async cryptToken(plainToken: string): Promise<string> {
-//     return 'cryptedToken';
-//   }
-// }
-
-// @Container.provider()
-// class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   async call(
-//     method: string,
-//     params: any[] | { [p: string]: any },
-//     context: Types.ContextType,
-//   ): Promise<Types.ResultType> {
-//     return undefined;
-//   }
-// }
-
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   get(key: string, fallback?: any): any {
-//     if (key === 'user.status.notActive') {
-//       return 'notActive';
-//     }
-//     return 'https://app.covoiturage.beta.gouv.fr';
-//   }
-// }
-
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [CreateUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [CryptoProviderInterfaceResolver, FakeCryptoProvider],
-//     [Interfaces.KernelInterfaceResolver, FakeKernelProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
-//   ];
-
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
-// }
-
-// let serviceProvider;
-// let handlers;
-// let action;
-
-// describe('USER ACTION  - Create user', () => {
-//   before(async () => {
-//     serviceProvider = new ServiceProvider();
-//     await serviceProvider.boot();
-//     handlers = serviceProvider.getContainer().getHandlers();
-//     action = serviceProvider.getContainer().getHandler(handlers[0]);
-//   });
-
-//   it('permission "user.create" should return new user with ', async () => {
-//     const result = await action.call({
-//       method: 'user:createUser',
-//       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-//       params: mockCreateUserParams,
-//     });
-
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockNewUser,
-//       _id: mockNewUserId,
-//     });
-//   });
-
-//   it('permission "territory.users.add" should return new user', async () => {
-//     const result = await action.call({
-//       method: 'user:createUser',
-//       context: {
-//         call: {
-//           user: {
-//             ...mockConnectedUser,
-//             permissions: ['territory.users.add'],
-//             territory: '5d08a77ae2b965a487be64a4',
-//           },
-//         },
-//         channel: { service: '' },
-//       },
-//       params: {
-//         ...mockCreateUserParams,
-//         territory: '5d08a77ae2b965a487be64a4',
-//       },
-//     });
-
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockNewUser,
-//       _id: mockNewUserId,
-//     });
-//   });
-
-//   it('permission "territory.users.add" shouldn\'t create user from other territory - reject forbidden', async () => {
-//     await expect(
-//       action.call({
-//         method: 'user:createUser',
-//         context: {
-//           call: {
-//             user: {
-//               ...mockConnectedUser,
-//               permissions: ['territory.users.add'],
-//               territory: '5d08a77ae2b965a487be64a4',
-//             },
-//           },
-//           channel: { service: '' },
-//         },
-//         params: {
-//           ...mockCreateUserParams,
-//           territory: '5d08a784a197afe4692da7f1',
-//         },
-//       }),
-//     ).to.rejectedWith(Exceptions.ForbiddenException);
-//   });
-// });
+  // it('permission "territory.users.add" should return new user', async () => {
+  //   const result = await action.call({
+  //     method: 'user:createUser',
+  //     context: {
+  //       call: {
+  //         user: {
+  //           ...mockConnectedUser,
+  //           permissions: ['territory.users.add'],
+  //           territory: '5d08a77ae2b965a487be64a4',
+  //         },
+  //       },
+  //       channel: { service: '' },
+  //     },
+  //     params: {
+  //       ...mockCreateUserParams,
+  //       territory: '5d08a77ae2b965a487be64a4',
+  //     },
+  //   });
+  //
+  //   expect(result).to.eql({
+  //     ...defaultUserProperties,
+  //     ...mockNewUser,
+  //     _id: mockNewUserId,
+  //   });
+  // });
+  //
+  // it('permission "territory.users.add" shouldn\'t create user from other territory - reject forbidden', async () => {
+  //   await expect(
+  //     action.call({
+  //       method: 'user:createUser',
+  //       context: {
+  //         call: {
+  //           user: {
+  //             ...mockConnectedUser,
+  //             permissions: ['territory.users.add'],
+  //             territory: '5d08a77ae2b965a487be64a4',
+  //           },
+  //         },
+  //         channel: { service: '' },
+  //       },
+  //       params: {
+  //         ...mockCreateUserParams,
+  //         territory: '5d08a784a197afe4692da7f1',
+  //       },
+  //     }),
+  //   ).to.rejectedWith(Exceptions.ForbiddenException);
+  // });
+});

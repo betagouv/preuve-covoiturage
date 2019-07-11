@@ -81,7 +81,7 @@ export class ChangeEmailUserAction extends Parents.Action {
 
     const patchedUser = this.userRepository.patchUser(params._id, patch, contextParam);
 
-    await this.kernel.call(
+    await this.kernel.notify(
       'user:notify',
       {
         template: this.config.get('email.templates.confirm'),

@@ -1,112 +1,88 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-// import { ConfigInterfaceResolver } from '@ilos/config';
-// import { Container } from '@ilos/core';
+// tslint:disable max-classes-per-file
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { Container, Exceptions, Extensions, Interfaces, Parents } from '@ilos/core';
+import { EnvExtension } from '@ilos/env';
+import { ConfigExtension } from '@ilos/config';
+import { ValidatorExtension } from '@pdc/provider-validator/dist';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-// import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-// import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
-// import { UserBaseInterface } from '../interfaces/UserInterfaces';
+import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
+import { FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
+import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
+import { User } from '../entities/User';
+import { mockUserBase } from '../../tests/mocks/userBase';
 
-// import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
+chai.use(chaiAsPromised);
+const { expect } = chai;
 
-// import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
+  token: mockUserBase.emailToken,
+  confirm: mockUserBase.emailConfirm,
+};
 
-// import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+@Container.provider({
+  identifier: CryptoProviderInterfaceResolver,
+})
+class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
+  async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
+    if (plainToken === mockResetPasswordParams.token && cryptedToken === mockUserBase.emailToken) {
+      return true;
+    }
+    return false;
+  }
+}
 
-// import { User } from '../entities/User';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+@Container.serviceProvider({
+  env: null,
+  config: {
+    'user.tokenExpiration.emailConfirm': 86400,
+    'user.status.active': 'active',
+  },
+  providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+  handlers: [ConfirmEmailUserAction],
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+    Extensions.Providers,
+  ];
+}
 
-// chai.use(chaiAsPromised);
-// const { expect } = chai;
+let serviceProvider;
+let action;
 
-// const mockUser = {
-//   ...mockNewUserBase,
-//   status: 'notActive',
-//   _id: '5d08a669f691dd623ae9378a',
-// };
+describe('USER ACTION - Confirm email', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.register();
+    await serviceProvider.init();
+    action = serviceProvider.getContainer().get(ConfirmEmailUserAction);
+  });
 
-// const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
-//   token: 'W0mn7FUNQI53qAaKW8lxIiTB9b03GP1N',
-//   confirm: 'Y5ySSJRrlX49aSC9G1eIBb0dMWLv95aT',
-// };
+  // works
+  it('should change status to active', async () => {
+    const result = await action.call({
+      method: 'user:confirmEmail',
+      context: { call: { user: {} }, channel: { service: '' } },
+      params: mockResetPasswordParams,
+    });
 
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
-//     return new User({
-//       ...mockUser,
-//       emailChangeAt: new Date(),
-//     });
-//   }
+    expect(result).to.be.instanceof(User);
+    expect(result.status).to.eql('active');
+  });
 
-//   public async update(user: any): Promise<User> {
-//     return new User({
-//       ...user,
-//     });
-//   }
-// }
-
-// @Container.provider()
-// class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-//   async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
-//     return true;
-//   }
-// }
-
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   get(key: string, fallback?: any): any {
-//     if (key === 'user.tokenExpiration.emailConfirm') {
-//       return '86400';
-//     }
-//     return 'active';
-//   }
-// }
-
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [ConfirmEmailUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [CryptoProviderInterfaceResolver, FakeCryptoProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
-//   ];
-
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
-// }
-
-// let serviceProvider;
-// let handlers;
-// let action;
-
-// describe('USER ACTION - Confirm email', () => {
-//   before(async () => {
-//     serviceProvider = new ServiceProvider();
-//     await serviceProvider.boot();
-//     handlers = serviceProvider.getContainer().getHandlers();
-//     action = serviceProvider.getContainer().getHandler(handlers[0]);
-//   });
-
-//   it('should change status to active', async () => {
-//     const result = await action.call({
-//       method: 'user:confirmEmail',
-//       context: { call: { user: {} }, channel: { service: '' } },
-//       params: mockResetPasswordParams,
-//     });
-
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockUser,
-//       status: 'active',
-//     });
-//   });
-// });
+  // wrong token
+  it('wrong token should reject with forbidden', async () => {
+    await expect(
+      action.call({
+        method: 'user:confirmEmail',
+        context: { call: { user: {} }, channel: { service: '' } },
+        params: { ...mockResetPasswordParams, token: 'W0mn7FUNQI53qAaKW8lxIiTB9bG0WRONG' },
+      }),
+    ).to.be.rejectedWith(Exceptions.ForbiddenException);
+  });
+});

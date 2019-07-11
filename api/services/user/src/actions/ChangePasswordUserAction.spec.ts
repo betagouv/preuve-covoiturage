@@ -1,137 +1,81 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import chaiSubset from 'chai-subset';
-// import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-// import { Container, Exceptions } from '@ilos/core';
-// import { ConfigInterfaceResolver } from '@ilos/config';
+// tslint:disable max-classes-per-file
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import chaiSubset from 'chai-subset';
+import { Container, Exceptions, Extensions, Interfaces, Parents } from '@ilos/core';
+import { ConfigExtension } from '@ilos/config';
+import { EnvExtension } from '@ilos/env';
+import { ValidatorExtension } from '@pdc/provider-validator/dist';
 
-// import { User } from '../entities/User';
+import { UserBaseInterface } from '../interfaces/UserInterfaces';
+import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserChangePasswordParamsInterface';
 
-// import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-// import { UserBaseInterface } from '../interfaces/UserInterfaces';
-// import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserChangePasswordParamsInterface';
+import { ChangePasswordUserAction } from './ChangePasswordUserAction';
 
-// import { mockNewUserBase } from '../../tests/mocks/newUserBase';
-// import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
 
-// import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
+import { User } from '../entities/User';
+import { mockConnectedUserBase, newPassword, password } from '../../tests/mocks/userBase';
 
-// import { ChangePasswordUserAction } from './ChangePasswordUserAction';
+chai.use(chaiAsPromised);
+chai.use(chaiSubset);
+const { expect } = chai;
 
-// chai.use(chaiAsPromised);
-// chai.use(chaiSubset);
-// const { expect } = chai;
+const mockConnectedUser = <UserBaseInterface>{
+  ...mockConnectedUserBase,
+  permissions: ['profile.update'],
+};
 
-// const mockConnectedUser = <UserBaseInterface>{
-//   ...mockConnectedUserBase,
-//   permissions: ['profile.update'],
-// };
+@Container.serviceProvider({
+  env: null,
+  config: {},
+  providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+  handlers: [ChangePasswordUserAction],
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+    Extensions.Providers,
+  ];
+}
 
-// const mockUser = {
-//   ...mockNewUserBase,
-//   _id: mockConnectedUserBase._id,
-// };
+let serviceProvider;
+let action;
 
-// const cryptedNewPassword = 'cryptedNewPassword';
-// const cryptedOldPassword = 'cryptedOldPassword';
-// const password = 'password';
+const mockChangePasswordParams = <UserChangePasswordParamsInterface>{
+  newPassword,
+  oldPassword: password,
+};
 
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
+describe('USER ACTION - Change password', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.register();
+    await serviceProvider.init();
+    action = serviceProvider.getContainer().get(ChangePasswordUserAction);
+  });
 
-//   get(key: string, fallback?: any): any {
-//     return;
-//   }
-// }
+  it('should change password of user', async () => {
+    const result = await action.call({
+      method: 'user:changePassword',
+      context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+      params: mockChangePasswordParams,
+    });
+    expect(result).to.be.instanceof(User);
+    expect(result._id).to.be.eql(mockConnectedUser._id);
+    expect(result.password).to.be.eql('cryptedNewPassword');
+  });
 
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot(): Promise<void> {
-//     return;
-//   }
-//   async patch(id: string, patch: any): Promise<User> {
-//     return new User({
-//       ...mockUser,
-//       ...patch,
-//     });
-//   }
-//   async find(id: string): Promise<User> {
-//     return new User({
-//       ...mockUser,
-//       password: cryptedOldPassword,
-//     });
-//   }
-// }
-
-// @Container.provider()
-// class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-//   async comparePassword(plainPassword: string, cryptedPassword: string): Promise<boolean> {
-//     if (cryptedPassword === cryptedOldPassword && plainPassword === password) {
-//       return true;
-//     }
-//   }
-//   async cryptPassword(plainPassword: string): Promise<string> {
-//     return cryptedNewPassword;
-//   }
-// }
-
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [ChangePasswordUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [CryptoProviderInterfaceResolver, FakeCryptoProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
-//   ];
-
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
-// }
-
-// let serviceProvider;
-// let handlers;
-// let action;
-
-// const mockChangePasswordParams = <UserChangePasswordParamsInterface>{
-//   oldPassword: password,
-//   newPassword: 'newPassword',
-// };
-
-// describe('USER ACTION - Change password', () => {
-//   before(async () => {
-//     serviceProvider = new ServiceProvider();
-//     await serviceProvider.boot();
-//     handlers = serviceProvider.getContainer().getHandlers();
-//     action = serviceProvider.getContainer().getHandler(handlers[0]);
-//   });
-
-//   it('permission "profile.update" should change password of user', async () => {
-//     const result = await action.call({
-//       method: 'user:changePassword',
-//       context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-//       params: mockChangePasswordParams,
-//     });
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockUser,
-//     });
-//   });
-
-//   it('wrong password should reject', async () => {
-//     await expect(
-//       action.call({
-//         method: 'user:changePassword',
-//         context: { call: { user: mockConnectedUser }, channel: { service: '' } },
-//         params: {
-//           ...mockChangePasswordParams,
-//           oldPassword: 'wrongPassword',
-//         },
-//       }),
-//     ).to.rejectedWith(Exceptions.ForbiddenException);
-//   });
-// });
+  it('wrong password should throw forbidden exception', async () => {
+    await expect(
+      action.call({
+        method: 'user:changePassword',
+        context: { call: { user: mockConnectedUser }, channel: { service: '' } },
+        params: { ...mockChangePasswordParams, oldPassword: 'wrongPassword' },
+      }),
+    ).to.be.rejectedWith(Exceptions.ForbiddenException);
+  });
+});

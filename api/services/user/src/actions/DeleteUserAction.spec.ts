@@ -2,68 +2,56 @@
 // import chai from 'chai';
 // import chaiAsPromised from 'chai-as-promised';
 // import chaiSubset from 'chai-subset';
-// import { ConfigInterfaceResolver } from '@ilos/config';
-// import { Container, Interfaces } from '@ilos/core';
-
+// import { ConfigExtension, ConfigInterfaceResolver } from '@ilos/config';
+// import { Container, Extensions, Interfaces, Parents } from '@ilos/core';
+//
 // import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 // import { UserBaseInterface } from '../interfaces/UserInterfaces';
 // import { DeleteUserAction } from './DeleteUserAction';
 // import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
-
+//
 // import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
 // import { mockNewUserBase } from '../../tests/mocks/newUserBase';
-
+// import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
+// import { CreateUserAction } from './CreateUserAction';
+// import { EnvExtension } from '@ilos/env';
+// import { ValidatorExtension } from '@pdc/provider-validator/dist';
+//
 // chai.use(chaiAsPromised);
 // chai.use(chaiSubset);
 // const { expect } = chai;
-
+//
 // const mockConnectedUser = <UserBaseInterface>{
 //   ...mockConnectedUserBase,
 //   permissions: ['user.delete'],
 // };
-
+//
 // const mockUser = {
 //   ...mockNewUserBase,
 //   _id: '5d08a5746024760031b33629',
 // };
-
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   async deleteUser(_id: string): Promise<any> {
-//     return;
-//   }
-// }
-
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   get(key: string, fallback?: any): any {
-//     return;
-//   }
-// }
-
-// @Container.provider()
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [DeleteUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
+//
+// @Container.serviceProvider({
+//   env: null,
+//   config: {
+//   },
+//   providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+//   handlers: [DeleteUserAction],
+//   validator: [],
+// })
+// class ServiceProvider extends Parents.ServiceProvider {
+//   readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+//     EnvExtension,
+//     ConfigExtension,
+//     ValidatorExtension,
+//     Extensions.Providers,
 //   ];
-
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
 // }
-
+//
 // let serviceProvider;
 // let handlers;
 // let action;
-
+//
 // describe('USER ACTION - Delete user', () => {
 //   before(async () => {
 //     serviceProvider = new ServiceProvider();

@@ -1,98 +1,84 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import chaiSubset from 'chai-subset';
-// import { ConfigInterfaceResolver } from '@ilos/config';
-// import { Container, Interfaces } from '@ilos/core';
+// tslint:disable max-classes-per-file
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import chaiSubset from 'chai-subset';
+import { ConfigExtension } from '@ilos/config';
+import { Container, Extensions, Interfaces, Parents } from '@ilos/core';
+import { EnvExtension } from '@ilos/env';
+import { ValidatorExtension } from '@pdc/provider-validator/dist';
 
-// import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-// import { ListUserAction } from './ListUserAction';
-// import { User } from '../entities/User';
-// import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
-// import { UserBaseInterface } from '../interfaces/UserInterfaces';
-// import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
-// import { mockNewUserBase } from '../../tests/mocks/newUserBase';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+import { User } from '../entities/User';
 
-// chai.use(chaiAsPromised);
-// chai.use(chaiSubset);
-// const { expect } = chai;
+import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+import { mockConnectedUserBase, mockUserBase } from '../../tests/mocks/userBase';
+import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
 
-// const mockConnectedUser = <UserBaseInterface>{
-//   ...mockConnectedUserBase,
-//   permissions: ['user.list'],
-// };
+import { CreateUserAction } from './CreateUserAction';
+import { ListUserAction } from './ListUserAction';
+import { PaginationInterface } from '../interfaces/PaginationInterface';
 
-// const mockUsers = [{ ...mockNewUserBase, _id: '5d10c15e5060d245502781fc' }];
+chai.use(chaiAsPromised);
+chai.use(chaiSubset);
+const { expect } = chai;
 
-// const mockOutputPagination = {
-//   total: 1,
-//   count: 1,
-//   per_page: 25,
-//   current_page: 1,
-//   total_pages: 1,
-// };
+const mockConnectedUser = {
+  ...mockConnectedUserBase,
+  permissions: ['user.list'],
+};
 
-// const mockContext = {
-//   call: {
-//     user: mockConnectedUser,
-//     meta: {},
-//   },
-//   channel: { service: '' },
-// };
+const mockUsers = [new User({ ...mockUserBase })];
 
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   async list(filters, pagination): Promise<any> {
-//     return { users: [new User(mockUsers[0])], total: mockOutputPagination.total, count: mockOutputPagination.count };
-//   }
-// }
+const mockContext = {
+  call: {
+    user: mockConnectedUser,
+    meta: {},
+  },
+  channel: { service: '' },
+};
 
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   get(key: string, fallback?: any): any {
-//     return ['user.list'];
-//   }
-// }
+@Container.serviceProvider({
+  env: null,
+  config: {
+    'user.status.notActive': 'user.status.notActive',
+    'permissions.registry.admin.permissions': 'permissions.registry.admin.permissions',
+    'pagination.defaultPage': 1,
+    'pagination.defaultLimit': 10,
+    'pagination.maxLimit': 10,
+    'pagination.perPage': 25,
+  },
+  providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+  handlers: [ListUserAction],
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+    Extensions.Providers,
+  ];
+}
 
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [ListUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
-//   ];
+let serviceProvider;
+let action;
 
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
-// }
-
-// let serviceProvider;
-// let handlers;
-// let action;
-
-// describe('USER ACTION  - List', () => {
-//   before(async () => {
-//     serviceProvider = new ServiceProvider();
-//     await serviceProvider.boot();
-//     handlers = serviceProvider.getContainer().getHandlers();
-//     action = serviceProvider.getContainer().getHandler(handlers[0]);
-//   });
-//   it('should work return users', async () => {
-//     const result = await action.call({
-//       method: 'user:list',
-//       context: mockContext,
-//       params: {},
-//     });
-//     expect(result.data[0]).to.eql({
-//       ...defaultUserProperties,
-//       ...mockUsers[0],
-//     });
-//   });
-// });
+describe('USER ACTION  - List', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.register();
+    await serviceProvider.init();
+    action = serviceProvider.getContainer().get(ListUserAction);
+  });
+  it('should work return users', async () => {
+    const result = await action.call({
+      method: 'user:list',
+      context: mockContext,
+      params: {},
+    });
+    expect(result.data[0]).to.eql({
+      ...defaultUserProperties,
+      ...mockUsers[0],
+    });
+    // todo: check pagination
+  });
+});

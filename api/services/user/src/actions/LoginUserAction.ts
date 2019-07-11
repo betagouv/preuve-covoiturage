@@ -3,8 +3,10 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
 import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
+
+import { User } from '../entities/User';
+
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
@@ -30,7 +32,7 @@ export class LoginUserAction extends Parents.Action {
 
   public async handle(params: UserLoginParamsInterface, context: Types.ContextType): Promise<User> {
     try {
-      const user = await this.userRepository.findUserByParams({ email: params.email });
+      const user = await this.userRepository.findUserByEmail(params.email);
 
       if (!(await this.cryptoProvider.comparePassword(params.password, user.password))) {
         throw new Exceptions.ForbiddenException();

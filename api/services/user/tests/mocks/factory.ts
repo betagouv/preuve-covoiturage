@@ -1,7 +1,7 @@
 import { Exceptions } from '@ilos/core';
 import axios from 'axios';
 
-import { mockCreateUserParams, mockNewUserBase } from './newUserBase';
+import { mockCreateUserParams, mockUserBase } from './userBase';
 import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 
 interface TerritoryOperator {
@@ -56,7 +56,7 @@ export class MockFactory {
       ...mockCreateUserParams,
       group,
       role,
-      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
+      email: email || `${mockUserBase.firstname}.${mockUserBase.lastname}@${group}.example.com`,
       ...territoryOperator,
     };
   }
@@ -68,10 +68,10 @@ export class MockFactory {
     email?,
   ) {
     return {
-      ...mockNewUserBase,
+      ...mockUserBase,
       group,
       role,
-      email: email || `${mockNewUserBase.firstname}.${mockNewUserBase.lastname}@${group}.example.com`,
+      email: email || `${mockUserBase.firstname}.${mockUserBase.lastname}@${group}.example.com`,
       ...territoryOperator,
     };
   }

@@ -1,32 +1,93 @@
+// tslint:disable max-classes-per-file
 import { Container, Interfaces, Types } from '@ilos/core';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto/dist';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../../src/interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../../src/entities/User';
-import { mockNewUserBase } from '../mocks/newUserBase';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { mockCreateUserParams, mockUserBase, password } from '../mocks/userBase';
+import { UserInterface } from '../../src/interfaces/UserInterfaces';
+import { mockOutputPagination } from '../mocks/pagination';
 
-@Container.provider()
+@Container.provider({
+  identifier: UserRepositoryProviderInterfaceResolver,
+})
 export class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
   async boot(): Promise<void> {
     return;
   }
-  async patchUser(id: string, patch: any, context: any): Promise<User> {
-    return new User({
-      ...mockNewUserBase,
-      ...patch,
-    });
+
+  public async create(user: UserInterface): Promise<User> {
+    return new User({ ...user, _id: mockUserBase._id });
   }
 
   async find(id: string): Promise<User> {
-    return new User(mockNewUserBase);
+    return new User({ ...mockUserBase, _id: id });
+  }
+
+  public async findUserByEmail(email: string): Promise<User> {
+    if (email === mockUserBase.email) {
+      return new User({
+        ...mockUserBase,
+      });
+    }
+  }
+
+  public async findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
+    return new User({
+      ...mockUserBase,
+    });
+  }
+
+  async patchUser(id: string, patch: any, context: any): Promise<User> {
+    return new User({
+      ...mockUserBase,
+      ...patch,
+      _id: id,
+    });
+  }
+
+  async patch(id: string, patch: any): Promise<User> {
+    return new User({
+      ...mockUserBase,
+      ...patch,
+      _id: id,
+    });
+  }
+
+  async list(filters, pagination): Promise<any> {
+    return { users: [new User(mockUserBase)], total: mockOutputPagination.total, count: mockOutputPagination.count };
+  }
+
+  public async update(user: any): Promise<User> {
+    return new User({
+      ...user,
+    });
   }
 }
 
+@Container.provider({
+  identifier: CryptoProviderInterfaceResolver,
+})
 export class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
+  async comparePassword(plainPassword: string, cryptedPassword: string): Promise<boolean> {
+    if (cryptedPassword === mockUserBase.password && plainPassword === password) {
+      return true;
+    }
+  }
+  async cryptPassword(plainPassword: string): Promise<string> {
+    return 'cryptedNewPassword';
+  }
   async cryptToken(plainToken: string): Promise<string> {
     return 'cryptedToken';
   }
+
+  async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
+    if (cryptedToken === 'cryptedToken' && plainToken === 'token') {
+      return true;
+    }
+  }
+
   generateToken(length?: number): string {
     const tokens = [
       'EhWDV9WbltMgD6hQblL6jleDk1UMaorU',
@@ -39,8 +100,10 @@ export class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
   }
 }
 
-@Container.provider()
-export class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
+@Container.provider({
+  identifier: Interfaces.KernelInterfaceResolver,
+})
+export class FakeKernel extends Interfaces.KernelInterfaceResolver {
   async boot(): Promise<void> {
     return;
   }
@@ -58,8 +121,10 @@ export class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
   }
 }
 
-@Container.provider()
-export class FakeConfigProvider extends ConfigInterfaceResolver {
+@Container.provider({
+  identifier: ConfigInterfaceResolver,
+})
+export class FakeConfig extends ConfigInterfaceResolver {
   async boot() {
     return;
   }

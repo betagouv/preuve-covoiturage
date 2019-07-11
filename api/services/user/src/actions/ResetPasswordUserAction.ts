@@ -29,7 +29,7 @@ export class ResetPasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: UserResetPasswordParamsInterface, context: Types.ContextType): Promise<User> {
-    const user = await this.userRepository.findUserByParams({ forgottenReset: params.reset });
+    const user = await this.userRepository.findUserByToken({ forgottenReset: params.reset });
 
     if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgottenToken))) {
       throw new Exceptions.ForbiddenException('Invalid token');

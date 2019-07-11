@@ -98,11 +98,21 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
   }
 
   /**
-   * Find user by email or confirm or reset
+   * Find user by email
    */
-  public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
+  public async findUserByEmail(email: string): Promise<User> {
     const collection = await this.getCollection();
-    const result = await collection.findOne(params);
+    const result = await collection.findOne({ email });
+    if (!result) throw new Exceptions.NotFoundException('User not found');
+    return this.instanciate(result);
+  }
+
+  /**
+   * Find user by token ( emailConfirm | forgottenReset )
+   */
+  public async findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
+    const collection = await this.getCollection();
+    const result = await collection.findOne(param);
     if (!result) throw new Exceptions.NotFoundException('User not found');
     return this.instanciate(result);
   }

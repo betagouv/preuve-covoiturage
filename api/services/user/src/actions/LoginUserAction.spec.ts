@@ -1,108 +1,73 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-// import { ConfigInterfaceResolver } from '@ilos/config';
-// import { Container, Interfaces } from '@ilos/core';
+// tslint:disable max-classes-per-file
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { ConfigExtension } from '@ilos/config';
+import { Container, Exceptions, Extensions, Interfaces, Parents } from '@ilos/core';
+import { EnvExtension } from '@ilos/env';
+import { ValidatorExtension } from '@pdc/provider-validator';
 
-// import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
-// import { UserBaseInterface } from '../interfaces/UserInterfaces';
-// import { User } from '../entities/User';
-// import { LoginUserAction } from './LoginUserAction';
-// import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
-// import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
-// import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+import { LoginUserAction } from './LoginUserAction';
 
-// chai.use(chaiAsPromised);
-// const { expect } = chai;
+import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
 
-// const mockUser = { ...mockNewUserBase, _id: 'mockUserId', status: 'active' };
+import { FakeCryptoProvider, FakeKernel, FakeUserRepository } from '../../tests/providers/fakeUserProviders';
+import { mockUserBase, password } from '../../tests/mocks/userBase';
+import { User } from '../entities/User';
 
-// const cryptedPassword = 'cryptedPassword';
+chai.use(chaiAsPromised);
+const { expect } = chai;
 
-// const mockLoginParams = <UserLoginParamsInterface>{
-//   email: mockUser.email,
-//   password: 'password',
-// };
+const mockUser = { ...mockUserBase, status: 'active' };
 
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   get(key: string, fallback?: any): any {
-//     return 'active';
-//   }
-// }
+const mockLoginParams = <UserLoginParamsInterface>{
+  password,
+  email: mockUser.email,
+};
 
-// @Container.provider()
-// class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
-//     if (params.email === mockUser.email) {
-//       return new User({
-//         ...mockUser,
-//         password: cryptedPassword,
-//       });
-//     }
-//   }
+@Container.serviceProvider({
+  env: null,
+  config: {
+    'user.status.active': 'active',
+  },
+  providers: [FakeUserRepository, FakeCryptoProvider, FakeKernel],
+  handlers: [LoginUserAction],
+  validator: [],
+})
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    ValidatorExtension,
+    Extensions.Providers,
+  ];
+}
 
-//   public async patch(id: string, user: UserBaseInterface): Promise<User> {
-//     return new User({
-//       ...mockUser,
-//       lastConnectedAt: new Date(),
-//     });
-//   }
-// }
+let serviceProvider;
+let action;
 
-// @Container.provider()
-// class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   async comparePassword(plain: string, crypted: string): Promise<boolean> {
-//     if (crypted === cryptedPassword && plain === mockLoginParams.password) {
-//       return true;
-//     }
-//   }
-// }
+describe('USER ACTION - Login', () => {
+  before(async () => {
+    serviceProvider = new ServiceProvider();
+    await serviceProvider.register();
+    await serviceProvider.init();
+    action = serviceProvider.getContainer().get(LoginUserAction);
+  });
+  it('should login with correct email & pwd', async () => {
+    const result = await action.call({
+      method: 'user:login',
+      context: { call: { user: {} }, channel: { service: '' } },
+      params: mockLoginParams,
+    });
+    expect(result).to.be.instanceof(User);
+  });
 
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [LoginUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [CryptoProviderInterfaceResolver, FakeCryptoProvider],
-//     [UserRepositoryProviderInterfaceResolver, FakeUserRepository],
-//   ];
-
-//   protected registerConfig() {}
-
-//   protected registerTemplate() {}
-// }
-
-// let serviceProvider;
-// let handlers;
-// let action;
-
-// describe('USER ACTION - Login', () => {
-//   before(async () => {
-//     serviceProvider = new ServiceProvider();
-//     await serviceProvider.boot();
-//     handlers = serviceProvider.getContainer().getHandlers();
-//     action = serviceProvider.getContainer().getHandler(handlers[0]);
-//   });
-//   it('should login with right email & pwd', async () => {
-//     const result = await action.call({
-//       method: 'user:login',
-//       context: { call: { user: {} }, channel: { service: '' } },
-//       params: mockLoginParams,
-//     });
-//     expect(result).to.eql({
-//       ...defaultUserProperties,
-//       ...mockUser,
-//     });
-//   });
-// });
+  it('wrong password should throw forbidden exception', async () => {
+    await expect(
+      action.call({
+        method: 'user:login',
+        context: { call: { user: {} }, channel: { service: '' } },
+        params: { ...mockLoginParams, password: 'wrongPassword' },
+      }),
+    ).to.be.rejectedWith(Exceptions.ForbiddenException);
+  });
+});

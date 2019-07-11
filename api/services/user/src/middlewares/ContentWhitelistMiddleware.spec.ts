@@ -5,8 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { UserBaseInterface } from '../interfaces/UserInterfaces';
 import { User } from '../entities/User';
 import { ContentWhitelistMiddleware } from './ContentWhitelistMiddleware';
-import { mockConnectedUserBase } from '../../tests/mocks/connectedUserBase';
-import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+import { mockConnectedUserBase, mockUserBase } from '../../tests/mocks/userBase';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -16,11 +15,11 @@ const mockConnectedUser = <UserBaseInterface>{
 };
 
 const mockUser = new User({
-  ...mockNewUserBase,
+  ...mockUserBase,
 });
 
 const mockUser2 = new User({
-  ...mockNewUserBase,
+  ...mockUserBase,
 });
 
 const mockListUsers = [
