@@ -7,20 +7,20 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 
 import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
 
-import { CreateApplicationAction, RevokeApplicationAction, CheckApplicationAction } from './actions';
-import { applicationCheckSchema, applicationCreateSchema, applicationRevokeSchema } from './schemas';
+import { FindApplicationAction, CreateApplicationAction, RevokeApplicationAction } from './actions';
+import { applicationFindSchema, applicationCreateSchema, applicationRevokeSchema } from './schemas';
 
 @Container.serviceProvider({
   config: __dirname,
   providers: [ApplicationRepositoryProvider],
   validator: [
-    ['application.check', applicationCheckSchema],
+    ['application.find', applicationFindSchema],
     ['application.create', applicationCreateSchema],
     ['application.revoke', applicationRevokeSchema],
   ],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
   connections: [[MongoConnection, 'mongo']],
-  handlers: [CheckApplicationAction, CreateApplicationAction, RevokeApplicationAction],
+  handlers: [FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
 })
 export class ServiceProvider extends Parents.ServiceProvider {
   readonly extensions: Interfaces.ExtensionStaticInterface[] = [

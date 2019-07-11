@@ -1,7 +1,7 @@
 export const applicationCreateSchema = {
   $id: 'application.create',
   type: 'object',
-  required: ['name', 'operator', 'permissions'],
+  required: ['name', 'operator_id', 'permissions'],
   additionalProperties: false,
   properties: {
     name: { macro: 'varchar' },

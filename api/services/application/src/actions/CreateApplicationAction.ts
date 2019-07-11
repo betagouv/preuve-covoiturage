@@ -13,7 +13,7 @@ import {
 export class CreateApplicationAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
     ['can', ['application.create']],
-    ['validate', ['application.create']],
+    ['validate', 'application.create'],
   ];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {

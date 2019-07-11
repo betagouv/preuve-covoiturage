@@ -14,14 +14,14 @@ export class Application implements ApplicationInterface {
   constructor(data: {
     _id: string;
     name: string;
-    operatorId: string;
+    operator_id: string;
     permissions: string[];
     created_at: Date;
     deleted_at?: Date;
   }) {
     this._id = data._id;
     this.name = data.name;
-    this.operator_id = data.operatorId;
+    this.operator_id = data.operator_id;
     this.permissions = data.permissions;
     this.created_at = data.created_at;
     this.deleted_at = data.deleted_at;
