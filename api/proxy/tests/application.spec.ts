@@ -2,8 +2,6 @@ import chai from 'chai';
 import supertest from 'supertest';
 import { describe } from 'mocha';
 
-import { TokenProvider } from '@pdc/provider-token';
-
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 import { requestJourney } from './mocks/requestJourneyV2';
@@ -14,27 +12,26 @@ const { expect } = chai;
 const kernel = new Kernel();
 const app = new HttpTransport(kernel);
 let request;
-let token;
-let operator;
-let application;
+let operatorAUser;
+let operatorA;
+let operatorBUser;
+let operatorB;
+let cookies;
+let applicationA;
+let applicationB;
 
-const tokenProvider = new TokenProvider({
-  secret: process.env.APP_JWT_SECRET || 'notsosecret',
-  ttl: -1,
-});
-
-describe('Operators applications', () => {
+describe('Operator applications', () => {
   before(async () => {
     await kernel.bootstrap();
     await app.up();
 
     request = supertest(app.app);
 
-    operator = await kernel.call(
+    operatorA = await kernel.call(
       'operator:create',
       {
-        nom_commercial: 'Maxi covoit',
-        raison_sociale: 'Maxi covoit inc.',
+        nom_commercial: 'Operator A',
+        raison_sociale: 'Operator A inc.',
       },
       {
         call: { user: { permissions: ['operator.create'] } },
@@ -45,72 +42,200 @@ describe('Operators applications', () => {
       },
     );
 
-    application = await kernel.call(
-      'application:create',
+    operatorB = await kernel.call(
+      'operator:create',
       {
-        name: 'Application',
-        operator_id: operator._id.toString(),
-        permissions: ['journey.create'],
+        nom_commercial: 'Operator B',
+        raison_sociale: 'Operator B inc.',
       },
       {
-        call: {
-          user: { permissions: ['application.create'] },
-        },
+        call: { user: { permissions: ['operator.create'] } },
         channel: {
-          service: 'application',
+          service: 'operator',
           transport: 'http',
         },
       },
     );
 
-    token = await tokenProvider.sign({
-      appId: application._id.toString(),
-      operatorId: application.operator_id,
-      permissions: application.permissions,
-    });
+    operatorAUser = await kernel.call(
+      'user:register',
+      {
+        email: 'operatorA@example.com',
+        password: 'Admin12345',
+        firstname: 'John',
+        lastname: 'Schmidt',
+        phone: '+33624857425',
+        group: 'operators',
+        role: 'admin',
+        operator: operatorA._id.toString(),
+      },
+      {
+        call: { user: { permissions: ['user.register'] } },
+        channel: {
+          service: 'user',
+          transport: 'http',
+        },
+      },
+    );
+
+    operatorBUser = await kernel.call(
+      'user:register',
+      {
+        email: 'operatorB@example.com',
+        password: 'Admin12345',
+        firstname: 'John',
+        lastname: 'Schmidt',
+        phone: '+33624857425',
+        group: 'operators',
+        role: 'admin',
+        operator: operatorB._id.toString(),
+      },
+      {
+        call: { user: { permissions: ['user.register'] } },
+        channel: {
+          service: 'user',
+          transport: 'http',
+        },
+      },
+    );
   });
 
   after(async () => {
     await app.down();
   });
 
-  it('REST post a journey using the server token', async () => {
-    return request
-      .post('/journeys/push')
-      .send(requestJourney)
-      .set('Authorization', `Bearer ${token}`)
-      .set('Accept', 'application/json')
-      .set('Content-type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.eq(200);
-        expect(response.body).to.have.property('sha256');
-        expect(response.body).to.have.property('payload');
-        expect(response.body.payload).to.have.property('data');
-        expect(response.body.payload.data).to.have.property('operator_id', application.operator_id);
+  describe('Operator A CRUD operations', () => {
+    beforeEach(async () => {
+      // log the operatorUser
+      const res = await request.post('/login').send({
+        email: operatorAUser.email,
+        password: 'Admin12345',
       });
+      const re = new RegExp('; path=/; httponly', 'gi');
+
+      // Save the cookie to use it later to retrieve the session
+      if (!res.headers['set-cookie']) {
+        throw new Error('Failed to set cookie');
+      }
+
+      cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
+    });
+
+    it('REST create app A', async () => {
+      return request
+        .post(`/operators/${operatorA._id.toString()}/applications`)
+        .send({ name: 'Application A', permissions: ['journey.create'] })
+        .set('Cookie', cookies)
+        .set('Accept', 'application/json')
+        .set('Content-type', 'application/json')
+        .expect((response: supertest.Response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('sha256');
+          expect(response.body).to.have.property('payload');
+          expect(response.body.payload).to.have.property('data');
+          expect(response.body.payload.data).to.have.property('name', 'Application A');
+          expect(response.body.payload.data).to.have.property('operator_id', operatorA._id);
+
+          applicationA = response.body.payload.data;
+        });
+    });
+
+    it('REST create app B', async () => {
+      return request
+        .post(`/operators/${operatorA._id.toString()}/applications`)
+        .send({ name: 'Application B', permissions: ['journey.create'] })
+        .set('Cookie', cookies)
+        .set('Accept', 'application/json')
+        .set('Content-type', 'application/json')
+        .expect((response: supertest.Response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('sha256');
+          expect(response.body).to.have.property('payload');
+          expect(response.body.payload).to.have.property('data');
+          expect(response.body.payload.data).to.have.property('name', 'Application B');
+          expect(response.body.payload.data).to.have.property('operator_id', operatorA._id);
+
+          applicationB = response.body.payload.data;
+        });
+    });
+
+    it('REST all', async () => {
+      return request
+        .get(`/operators/${operatorA._id.toString()}/applications`)
+        .set('Cookie', cookies)
+        .set('Accept', 'application/json')
+        .set('Content-type', 'application/json')
+        .expect((response: supertest.Response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('sha256');
+          expect(response.body).to.have.property('payload');
+          expect(response.body.payload).to.have.property('data');
+          expect(response.body.payload.data).to.be.an.instanceOf(Array);
+          expect(response.body.payload.data.length).to.be.eq(2);
+        });
+    });
+
+    it('REST find Application A', async () => {
+      return request
+        .get(`/operators/${operatorA._id.toString()}/applications/${applicationA._id.toString()}`)
+        .set('Cookie', cookies)
+        .set('Accept', 'application/json')
+        .set('Content-type', 'application/json')
+        .expect((response: supertest.Response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('sha256');
+          expect(response.body).to.have.property('payload');
+          expect(response.body.payload).to.have.property('data');
+          expect(response.body.payload.data).to.have.property('name', 'Application A');
+          expect(response.body.payload.data).to.have.property('_id', applicationA._id.toString());
+          expect(response.body.payload.data).to.have.property('operator_id', operatorA._id);
+        });
+    });
+
+    it('REST find Application B', async () => {
+      return request
+        .get(`/operators/${operatorA._id.toString()}/applications/${applicationB._id.toString()}`)
+        .set('Cookie', cookies)
+        .set('Accept', 'application/json')
+        .set('Content-type', 'application/json')
+        .expect((response: supertest.Response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('sha256');
+          expect(response.body).to.have.property('payload');
+          expect(response.body.payload).to.have.property('data');
+          expect(response.body.payload.data).to.have.property('name', 'Application B');
+          expect(response.body.payload.data).to.have.property('_id', applicationB._id.toString());
+          expect(response.body.payload.data).to.have.property('operator_id', operatorA._id);
+        });
+    });
   });
 
-  it('RPC post a journey using the server token', async () => {
-    return request
-      .post('/rpc')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'acquisition:create',
-        params: {
-          params: requestJourney,
-        },
-      })
-      .set('Authorization', `Bearer ${token}`)
-      .set('Accept', 'application/json')
-      .set('Content-type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.eq(200);
-        expect(response.body).to.have.property('sha256');
-        expect(response.body).to.have.property('payload');
-        expect(response.body.payload).to.have.property('data');
-        expect(response.body.payload.data).to.have.property('result');
-        expect(response.body.payload.data.result).to.have.property('operator_id', application.operator_id);
+  describe('Operator B Rogue operations', () => {
+    beforeEach(async () => {
+      // log the operatorUser
+      const res = await request.post('/login').send({
+        email: operatorBUser.email,
+        password: 'Admin12345',
       });
+      const re = new RegExp('; path=/; httponly', 'gi');
+
+      // Save the cookie to use it later to retrieve the session
+      if (!res.headers['set-cookie']) {
+        throw new Error('Failed to set cookie');
+      }
+
+      cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
+    });
+
+    it("REST fails to access someone else's applications", async () => {
+      return request
+        .get(`/operators/${operatorA._id.toString()}/applications/${applicationA._id.toString()}`)
+        .set('Cookie', cookies)
+        .set('Accept', 'application/json')
+        .set('Content-type', 'application/json')
+        .expect((response: supertest.Response) => {
+          expect(response.status).to.eq(403);
+        });
+    });
   });
 });

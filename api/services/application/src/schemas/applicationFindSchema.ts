@@ -5,5 +5,6 @@ export const applicationFindSchema = {
   additionalProperties: false,
   properties: {
     _id: { macro: 'objectid' },
+    operator_id: { macro: 'objectid' },
   },
 };

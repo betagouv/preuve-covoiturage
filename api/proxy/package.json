@@ -76,6 +76,7 @@
     "@ilos/config": "~0",
     "@ilos/env": "~0",
     "@ilos/notification": "~0",
+    "@ilos/transport-http": "~0",
     "@pdc/provider-sentry": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/service-acquisition": "~0",

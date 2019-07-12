@@ -12,7 +12,7 @@ import { ObjectRouteMapType, ArrayRouteMapType } from '../helpers/routeMapping';
  */
 
 export const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
-  // USERS
+  // PROFILE
   ['put', '/profile', 'user:patch', (body, _query, _params, session) => ({ ...body, _id: session.user._id })],
   ['delete', '/profile', 'user:delete', (_body, _query, _params, session) => ({ _id: session.user._id })],
   [
@@ -21,22 +21,24 @@ export const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
     'user:changePassword',
     (body, _query, _params, session) => ({ ...body, _id: session.user._id }),
   ],
-  // ['post', '/signin', 'user:???'],
 
+  // AUTHENTICATION
   ['post', '/forgotten', 'user:forgottenPassword', 'auto'],
   ['post', '/reset', 'user:resetPassword', 'auto'],
 
+  // USERS
   ['post', '/users/invite', 'user:create', 'auto'],
   ['get', '/users/:_id', 'user:find', 'auto'],
   ['put', '/users/:_id', 'user:patch', 'auto'],
   ['delete', '/users/:_id', 'user:delete', 'auto'],
   ['get', '/users', 'user:list', 'auto'],
-  // ['post', '/users/', 'user: ???'],
 
+  // add users to a territory
   ['post', '/territories/:territory/users/add', 'user:create', 'auto'],
   ['post', '/territories/:territory/users/remove', 'user:delete', 'auto'],
   ['get', '/territories/:territory/users', 'user:list', 'auto'],
 
+  // add users to an operator
   ['post', '/operators/:operator/users/add', 'user:create', 'auto'],
   ['post', '/operators/:operator/users/remove', 'user:delete', 'auto'],
   ['get', '/operators/:operator/users', 'user:list', 'auto'],
@@ -47,6 +49,12 @@ export const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
   ['delete', '/operators/:_id', 'operator:delete', 'auto'],
   ['get', '/operators', 'operator:all'],
   ['post', '/operators', 'operator:create'],
+
+  // Operator applications
+  ['get', '/operators/:operator_id/applications', 'application:all', 'auto'],
+  ['get', '/operators/:operator_id/applications/:_id', 'application:find', 'auto'],
+  ['post', '/operators/:operator_id/applications', 'application:create', 'auto'],
+  ['delete', '/operators/:operator_id/applications/:_id', 'application:revoke', 'auto'],
 
   // TERRITORIES
   ['put', '/territories/:_id', 'territory:patch', 'auto'],

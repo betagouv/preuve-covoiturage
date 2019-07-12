@@ -5,9 +5,17 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
+// TODO copied from user. Find a better way when refactoring
+import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
+
 import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
 
-import { FindApplicationAction, CreateApplicationAction, RevokeApplicationAction } from './actions';
+import {
+  AllApplicationAction,
+  FindApplicationAction,
+  CreateApplicationAction,
+  RevokeApplicationAction,
+} from './actions';
 import { applicationFindSchema, applicationCreateSchema, applicationRevokeSchema } from './schemas';
 
 @Container.serviceProvider({
@@ -18,9 +26,9 @@ import { applicationFindSchema, applicationCreateSchema, applicationRevokeSchema
     ['application.create', applicationCreateSchema],
     ['application.revoke', applicationRevokeSchema],
   ],
-  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
+  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scopeIt', ScopeToSelfMiddleware]],
   connections: [[MongoConnection, 'mongo']],
-  handlers: [FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
+  handlers: [AllApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
 })
 export class ServiceProvider extends Parents.ServiceProvider {
   readonly extensions: Interfaces.ExtensionStaticInterface[] = [
