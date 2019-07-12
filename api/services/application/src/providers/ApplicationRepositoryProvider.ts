@@ -26,7 +26,7 @@ export class ApplicationRepositoryProvider extends ParentRepository implements A
     return Application;
   }
 
-  public async softDelete(params: { _id: string; operatorId: string }): Promise<any> {
+  public async softDelete(params: { _id: string; operator_id: string }): Promise<any> {
     return this.patch(params._id, { deleted_at: new Date() });
   }
 }

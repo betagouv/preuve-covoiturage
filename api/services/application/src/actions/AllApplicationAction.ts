@@ -1,22 +1,17 @@
 import { Parents, Container } from '@ilos/core';
 
-import {
-  ApplicationInterface,
-  ApplicationRepositoryProviderInterfaceResolver,
-  CreateApplicationParamsInterface,
-} from '../interfaces';
+import { ApplicationInterface, ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @Container.handler({
   service: 'application',
-  method: 'create',
+  method: 'all',
 })
-export class CreateApplicationAction extends Parents.Action {
+export class AllApplicationAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'application.create'],
     [
       'scopeIt',
       [
-        ['application.create'],
+        ['application.all'],
         [
           (params, context) => {
             // make sure the operator_id in the params matches the one of the user
@@ -26,7 +21,7 @@ export class CreateApplicationAction extends Parents.Action {
               'operator_id' in params &&
               params.operator_id === context.call.user.operator
             ) {
-              return 'operator.application.create';
+              return 'operator.application.all';
             }
           },
         ],
@@ -38,7 +33,8 @@ export class CreateApplicationAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: CreateApplicationParamsInterface): Promise<ApplicationInterface> {
-    return this.applicationRepository.create(params);
+  public async handle(): Promise<ApplicationInterface[]> {
+    // TODO pass params to filter the query
+    return this.applicationRepository.all();
   }
 }

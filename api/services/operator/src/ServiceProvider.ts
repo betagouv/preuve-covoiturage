@@ -18,27 +18,15 @@ import { operatorDeleteSchema } from './schemas/operatorDeleteSchema';
 
 @Container.serviceProvider({
   config: __dirname,
-  providers: [
-    OperatorRepositoryProvider,
-  ],
+  providers: [OperatorRepositoryProvider],
   validator: [
     ['operator.create', operatorCreateSchema],
     ['operator.patch', operatorPatchSchema],
     ['operator.delete', operatorDeleteSchema],
   ],
-  handlers: [
-    AllOperatorAction,
-    CreateOperatorAction,
-    PatchOperatorAction,
-    DeleteOperatorAction,
-  ],
-  connections: [
-    [MongoConnection, 'mongo'],
-  ],
-  middlewares: [
-    ['can', PermissionMiddleware],
-    ['validate', ValidatorMiddleware],
-  ],
+  handlers: [AllOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction],
+  connections: [[MongoConnection, 'mongo']],
+  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
 })
 export class ServiceProvider extends Parents.ServiceProvider {
   readonly extensions: Interfaces.ExtensionStaticInterface[] = [

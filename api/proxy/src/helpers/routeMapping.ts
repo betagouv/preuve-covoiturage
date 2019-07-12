@@ -1,5 +1,6 @@
 import express from 'express';
 import { Interfaces, Types } from '@ilos/core';
+import { mapStatusCode } from '@ilos/transport-http';
 
 export type MapRequestType = (body: any, query?: any, params?: any, session?: any) => any;
 export type MapResponseType = (result: any, error: any, session?: any) => any;
@@ -138,7 +139,9 @@ export function routeMapping(
                   res.json(mapResponseFinal(response.result, response.error, req.session));
                 }
                 if ('error' in response) {
-                  res.status(500).json(mapResponseFinal(response.result, response.error, req.session));
+                  res
+                    .status(mapStatusCode(response))
+                    .json(mapResponseFinal(response.result, response.error, req.session));
                 }
               }
             } catch (e) {

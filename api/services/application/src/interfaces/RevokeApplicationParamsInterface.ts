@@ -1,4 +1,4 @@
 export interface RevokeApplicationParamsInterface {
   _id: string;
-  operatorId: string;
+  operator_id: string;
 }

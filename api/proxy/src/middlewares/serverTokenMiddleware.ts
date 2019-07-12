@@ -1,4 +1,5 @@
 import express from 'express';
+import { get } from 'lodash';
 
 import { Interfaces, Exceptions } from '@ilos/core';
 import { TokenProvider } from '@pdc/provider-token';
@@ -11,12 +12,12 @@ interface Request extends express.Request {
 export function serverTokenMiddleware(kernel: Interfaces.KernelInterface, tokenProvider: TokenProvider) {
   return async (req: Request, res: express.Response, next: Function): Promise<void> => {
     try {
-      if (!('authorization' in req.headers)) {
-        next();
+      const token = get(req, 'headers.authorization', null);
+      if (!token) {
+        return next();
       }
 
-      const token = req.headers.authorization.toString().replace('Bearer ', '');
-      const payload = await tokenProvider.verify(token);
+      const payload = await tokenProvider.verify(token.toString().replace('Bearer ', ''));
 
       // TODO add application:check call
 

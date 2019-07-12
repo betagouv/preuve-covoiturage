@@ -1,5 +1,5 @@
 export interface CreateApplicationParamsInterface {
-  operatorId: string;
+  operator_id: string;
   name: string;
   permissions: string[];
 }
