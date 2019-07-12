@@ -65,30 +65,4 @@ describe('USER ACTION - Change role', () => {
     expect(result).to.be.instanceof(User);
     expect(result.role).to.eql(newRole);
   });
-
-  //
-  // it('permission "territory.users.update" should change role of territory user', async () => {
-  //   const result = await action.call({
-  //     method: 'user:changeRole',
-  //     context: {
-  //       call: {
-  //         user: {
-  //           ...mockConnectedUser,
-  //           permissions: ['territory.users.update'],
-  //           territory: '5d0b663b0de4f5b6e93dbca8',
-  //         },
-  //       },
-  //       channel: { service: '' },
-  //     },
-  //     params: {
-  //       _id: mockUser._id,
-  //       role: newRole,
-  //     },
-  //   });
-  //   expect(result).to.eql({
-  //     ...defaultUserProperties,
-  //     ...mockUser,
-  //     role: newRole,
-  //   });
-  // });
 });

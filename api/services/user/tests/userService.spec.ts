@@ -8,7 +8,7 @@ import { describe } from 'mocha';
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';
 import { territories, operators, registry } from '../src/config/permissions';
-import { mockUserBase, password } from './mocks/userBase';
+import { password } from './mocks/userBase';
 
 const mockServer = new FakeMongoServer();
 const mockFactory = new MockFactory();
@@ -23,14 +23,21 @@ let nockRequest;
 
 const request = mockFactory.request();
 
+// users in database
 let newTerritoryUser;
 let newOperatorUser;
 let newRegistryUser;
 let newRegistryAdmin;
 
+// params for users
 let territoryUserParams;
 let operatorUserParams;
 let registryUserParams;
+
+// request and connected user params to pass call method of factory
+let requestParams;
+let callUserProperties;
+
 describe('USER SERVICE', () => {
   before(async () => {
     await mockServer.startServer();
@@ -39,7 +46,7 @@ describe('USER SERVICE', () => {
   });
 
   after(async () => {
-    // await mockServer.stopServer();
+    await mockServer.stopServer();
     await mockServer.stopTransport();
   });
 
@@ -155,6 +162,30 @@ describe('USER SERVICE', () => {
       });
       expect(createStatus).equal(200);
     });
+
+    it('permission "territory.users.add" shouldn\'t create user from other territory - reject forbidden', async () => {
+      const payload = mockFactory.call(
+        'user:changeEmail',
+        {
+          ...territoryUserParams,
+        },
+        {
+          group: territoryUserParams.group,
+          role: 'admin',
+          permissions: ['territory.users.add'],
+          territory: '5d08a77ae2b965a487be64a4', // different territory from user in database
+        },
+      );
+
+      await superRequest
+        .post('/')
+        .send(payload)
+        .set('Accept', 'application/json')
+        .expect((response) => {
+          expect(response.status).to.eq(400);
+          expect(response.body).to.have.property('error');
+        });
+    });
   });
 
   describe('Deletion', () => {
@@ -193,53 +224,7 @@ describe('USER SERVICE', () => {
         },
       );
 
-      superRequest
-        .post('/')
-        .send(payload)
-        .set('Accept', 'application/json')
-        .expect((response) => {
-          expect(response.status).to.eq(503);
-          expect(response.body).to.have.property('error');
-        });
-    });
-
-    it('registry territory - should delete user from territory', async () => {
-      const payload = mockFactory.call(
-        'user:delete',
-        { _id: newTerritoryUser._id, territory: newTerritoryUser.territory },
-        {
-          group: 'territory',
-          role: 'admin',
-          permissions: ['territory.users.delete'],
-          territory: newTerritoryUser.territory,
-          _id: newTerritoryUser._id,
-        },
-      );
-
-      superRequest
-        .post('/')
-        .send(payload)
-        .set('Accept', 'application/json')
-        .expect((response) => {
-          expect(response.status).to.eq(503);
-          expect(response.body).to.have.property('error');
-        });
-    });
-
-    it('registry operator - should delete user from opertor', async () => {
-      const payload = mockFactory.call(
-        'user:delete',
-        { _id: newOperatorUser._id, territory: newOperatorUser.territory },
-        {
-          group: 'operator',
-          role: 'admin',
-          permissions: ['operator.users.delete'],
-          operator: newOperatorUser.operator,
-          _id: newOperatorUser._id,
-        },
-      );
-
-      superRequest
+      await superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
@@ -305,7 +290,7 @@ describe('USER SERVICE', () => {
       expect(status).equal(200);
     });
 
-    it("registry user - should not be able to find others' profile", async () => {
+    it("registry user - should'nt be able to find others' profile - forbidden error", async () => {
       const payload = mockFactory.call(
         'user:find',
         { _id: newTerritoryUser._id },
@@ -317,7 +302,7 @@ describe('USER SERVICE', () => {
         },
       );
 
-      superRequest
+      await superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
@@ -408,6 +393,28 @@ describe('USER SERVICE', () => {
         ...mockFactory.newOperatorUserModel,
       });
       expect(status).equal(200);
+    });
+
+    it('no permission - should throw forbidden error', async () => {
+      const payload = mockFactory.call(
+        'user:changeEmail',
+        { _id: newOperatorUser._id },
+        {
+          group: 'registry',
+          role: 'admin',
+          permissions: [],
+          operator: newOperatorUser.operator,
+        },
+      );
+
+      await superRequest
+        .post('/')
+        .send(payload)
+        .set('Accept', 'application/json')
+        .expect((response) => {
+          expect(response.status).to.eq(503);
+          expect(response.body).to.have.property('error');
+        });
     });
   });
 
@@ -585,7 +592,7 @@ describe('USER SERVICE', () => {
         },
       );
 
-      superRequest
+      await superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
@@ -656,6 +663,34 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
+
+    it('should raise error if data not valid', async () => {
+      const payload = mockFactory.call(
+        'user:patch',
+        {
+          _id: newOperatorUser._id,
+          patch: {
+            password: 'newPassword',
+          },
+        },
+        {
+          group: 'operator',
+          role: 'admin',
+          permissions: ['operator.users.update'],
+          operator: newOperatorUser.operator,
+          _id: newOperatorUser._id,
+        },
+      );
+
+      await superRequest
+        .post('/')
+        .send(payload)
+        .set('Accept', 'application/json')
+        .expect((response) => {
+          expect(response.status).to.eq(400);
+          expect(response.body).to.have.property('error');
+        });
+    });
   });
 
   describe('Change Password', () => {
@@ -692,9 +727,6 @@ describe('USER SERVICE', () => {
         ),
       );
 
-      // nockRequest.on('request', (req, interceptor, body) => {
-      //   expect(body).to.deep.equal(`{"Email":"${newRegistryUser.email}"}`);
-      // });
       expect(data.result).to.eql({
         _id: newRegistryUser._id,
         ...mockFactory.newRegistryUserModel,
@@ -717,12 +749,12 @@ describe('USER SERVICE', () => {
         },
       );
 
-      superRequest
+      await superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
         .expect((response) => {
-          expect(response.status).to.eq(501);
+          expect(response.status).to.eq(503);
           expect(response.body).to.have.property('error');
         });
     });
@@ -734,6 +766,15 @@ describe('USER SERVICE', () => {
       newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
       newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
       newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
+      requestParams = {
+        _id: newRegistryUser._id,
+        email: newEmail,
+      };
+      callUserProperties = {
+        group: 'registry',
+        role: 'admin',
+        permissions: ['user.update'],
+      };
     });
 
     after(() => {
@@ -746,20 +787,10 @@ describe('USER SERVICE', () => {
         expect(body).to.include(newEmail);
         expect(body).to.include('confirm-email');
       });
+
       const { status: status, data: data } = await request.post(
         '/',
-        mockFactory.call(
-          'user:changeEmail',
-          {
-            _id: newRegistryUser._id,
-            email: newEmail,
-          },
-          {
-            group: 'registry',
-            role: 'admin',
-            permissions: ['user.update'],
-          },
-        ),
+        mockFactory.call('user:changeEmail', requestParams, callUserProperties),
       );
 
       expect(data.result).to.eql({
@@ -769,6 +800,21 @@ describe('USER SERVICE', () => {
         email: newEmail,
       });
       expect(status).equal(200);
+    });
+
+    it('permission "profile.update" shouldn\'t change email of other profile - reject with forbidden', async () => {
+      requestParams.permissions = ['profile.update'];
+
+      const payload = mockFactory.call('user:changeEmail', requestParams, callUserProperties);
+
+      await superRequest
+        .post('/')
+        .send(payload)
+        .set('Accept', 'application/json')
+        .expect((response) => {
+          expect(response.status).to.eq(400);
+          expect(response.body).to.have.property('error');
+        });
     });
   });
 
