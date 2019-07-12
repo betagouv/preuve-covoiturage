@@ -13,6 +13,11 @@ export const positionSchema = {
     lat: { macro: 'lat' },
     lon: { macro: 'lon' },
     insee: { macro: 'insee' },
+    postcodes: {
+      type: 'array',
+      items: { type: 'string' },
+      minItems: 0,
+    },
     literal: { macro: 'longchar' },
     country: { macro: 'varchar' },
   },
