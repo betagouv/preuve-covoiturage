@@ -1,12 +1,13 @@
-declare function env(key: string, fallback?: string): any;
+declare function env(key: string, fallback?: string | number): any;
 
-export const appUrl = env('APP_URL', 'nope');
-export const apiUrl = env('API_URL', 'nope');
-export const jwtSecret = env('APP_JWT_SECRET', 'Set me in .env file!!!');
+export const appUrl = env('APP_APP_URL', 'nope');
+export const apiUrl = env('APP_API_URL', 'nope');
+
 export const session = {
   secret: env('APP_SESSION_SECRET', 'Set me in .env file!!!'),
   name: env('APP_SESSION_NAME', 'pdc-session'),
 };
+
 export const rpc = {
   open: env('APP_ENV', null) !== 'production',
   endpoint: env('APP_RPC_ENDPOINT', '/rpc'),

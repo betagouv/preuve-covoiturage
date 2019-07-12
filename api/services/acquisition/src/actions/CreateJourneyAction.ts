@@ -8,12 +8,12 @@ import { CreateJourneyParamsInterface } from '../interfaces/CreateJourneyParamsI
 
 @handler({
   service: 'acquisition',
-  method: 'createJourney',
+  method: 'create',
 })
 export class CreateJourneyAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'journey.create'],
     ['can', ['journey.create']],
+    ['validate', 'journey.create'],
   ];
 
   constructor(

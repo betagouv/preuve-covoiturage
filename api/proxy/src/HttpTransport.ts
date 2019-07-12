@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import swaggerUiExpress from 'swagger-ui-express';
 import bodyParser from 'body-parser';
+import { get, set } from 'lodash';
 
 import {
   TransportInterface,
@@ -17,11 +18,13 @@ import {
 } from '@ilos/common';
 
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
+import { TokenProvider } from '@pdc/provider-token';
 
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall, routeMapping } from './helpers/routeMapping';
+import { serverTokenRestMiddleware } from './middlewares/serverTokenRestMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -63,8 +66,8 @@ export class HttpTransport implements TransportInterface {
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
-    this.registerGlobalMiddlewares();
     this.registerServerAuth();
+    this.registerGlobalMiddlewares();
     this.registerAuth();
     this.registerSwagger();
     this.registerBullArena();
@@ -136,14 +139,13 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerServerAuth() {
-    // inject the operator_id in the query
-    this.app.use((req: express.Request, response: express.Response, next: Function) => {
-      const token = req.headers.authorization.toString().replace('Bearer ', '');
-      // validate token against the application service
-      // throw if unauthorized
-      // inject operator data
-      // inject permissions
+    const tokenProvider = new TokenProvider({
+      secret: this.config.get('jwt.secret'),
+      ttl: this.config.get('jwt.ttl'),
     });
+
+    // inject the operator_id in the query
+    this.app.use(serverTokenRestMiddleware(this.kernel, tokenProvider));
   }
 
   private registerAuth() {
@@ -231,11 +233,27 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
+    // register the POST route to /rpc
     this.app.post(
       endpoint,
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle(req.body);
-        res.json(response);
+        // inject the req.session.user to context in the body
+        const isBatch = Array.isArray(req.body);
+        const _context = get(isBatch ? req.body[0] : req.body, 'params._context', {});
+        const user = get(req, 'session.user', null);
+        if (user) {
+          set(_context, 'call.user', user);
+          if (isBatch) {
+            req.body = req.body.map((doc) => {
+              set(doc, 'params._context', _context);
+            });
+          } else {
+            set(req.body, 'params._context', _context);
+          }
+        }
+
+        // pass the request to the kernel
+        res.json(await this.kernel.handle(req.body));
       }),
     );
   }

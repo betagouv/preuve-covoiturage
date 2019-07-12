@@ -4,14 +4,14 @@ import { positionSchema } from './parts/positionSchema';
 export const journeyCreateSchema = {
   $id: 'journey.create',
   type: 'object',
-  required: ['journey_id', 'operator_class', 'operator_id'],
+  required: ['journey_id', 'operator_class'],
   anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
   additionalProperties: false,
   properties: {
     journey_id: { macro: 'varchar' },
+    operator_id: { macro: 'objectid' },
     operator_journey_id: { macro: 'varchar' },
     operator_class: { enum: ['A', 'B', 'C'] },
-    operator_id: { macro: 'objectid' },
     passenger: {
       type: 'object',
       required: ['identity', 'start', 'end', 'contribution', 'incentives'],
@@ -23,7 +23,6 @@ export const journeyCreateSchema = {
           additionalProperties: false,
           properties: {
             ...identitySchema,
-            over_18: { enum: [true, false, null], default: null },
           },
         },
         start: positionSchema,
