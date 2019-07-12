@@ -50,6 +50,6 @@ export class ChangeRoleUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.patchUser(params._id, { role: params.role }, contextParam);
+    return this.userRepository.patchByContext(params._id, { role: params.role }, contextParam);
   }
 }

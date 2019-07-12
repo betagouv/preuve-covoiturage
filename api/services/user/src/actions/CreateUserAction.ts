@@ -49,7 +49,7 @@ export class CreateUserAction extends Parents.Action {
   public async handle(request: UserCreateParamsInterface, context: Types.ContextType): Promise<User> {
     try {
       // check if the user exists already
-      const foundUser = await this.userRepository.findUserByEmail(request.email);
+      const foundUser = await this.userRepository.findByEmail(request.email);
       if (foundUser) {
         throw new Exceptions.ConflictException('email conflict');
       }

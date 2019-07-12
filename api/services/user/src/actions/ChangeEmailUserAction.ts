@@ -79,7 +79,7 @@ export class ChangeEmailUserAction extends Parents.Action {
       status: this.config.get('user.status.notActive'),
     };
 
-    const patchedUser = this.userRepository.patchUser(params._id, patch, contextParam);
+    const patchedUser = this.userRepository.patchByContext(params._id, patch, contextParam);
 
     await this.kernel.notify(
       'user:notify',

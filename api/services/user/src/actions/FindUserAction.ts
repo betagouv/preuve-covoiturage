@@ -55,6 +55,6 @@ export class FindUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.findUser(request._id, contextParam);
+    return this.userRepository.findByContext(request._id, contextParam);
   }
 }

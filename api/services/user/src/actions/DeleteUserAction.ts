@@ -53,6 +53,6 @@ export class DeleteUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.deleteUser(request._id, contextParam);
+    return this.userRepository.deleteByContext(request._id, contextParam);
   }
 }

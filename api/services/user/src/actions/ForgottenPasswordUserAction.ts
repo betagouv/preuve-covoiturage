@@ -26,7 +26,7 @@ export class ForgottenPasswordUserAction extends Parents.Action {
   }
 
   public async handle(params: { email: string }, context: Types.ContextType): Promise<void> {
-    const user = await this.userRepository.findUserByEmail(params.email);
+    const user = await this.userRepository.findByEmail(params.email);
 
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();

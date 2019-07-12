@@ -32,7 +32,7 @@ export class LoginUserAction extends Parents.Action {
 
   public async handle(params: UserLoginParamsInterface, context: Types.ContextType): Promise<User> {
     try {
-      const user = await this.userRepository.findUserByEmail(params.email);
+      const user = await this.userRepository.findByEmail(params.email);
 
       if (!(await this.cryptoProvider.comparePassword(params.password, user.password))) {
         throw new Exceptions.ForbiddenException();

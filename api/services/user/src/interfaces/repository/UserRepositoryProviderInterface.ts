@@ -4,11 +4,11 @@ import { User } from '../../entities/User';
 
 export interface UserRepositoryProviderInterface extends ParentRepositoryInterface {
   list(filters, pagination): Promise<{ users: User[]; total: number }>;
-  deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void>;
-  findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User>;
-  findUserByEmail(email: string): Promise<User>;
-  findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User>;
-  patchUser(_id: string, patch: any, contextParam: { territory?: string; operator?: string }): Promise<User>;
+  deleteByContext(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void>;
+  findByContext(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User>;
+  findByEmail(email: string): Promise<User>;
+  findByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User>;
+  patchByContext(_id: string, patch: any, contextParam: { territory?: string; operator?: string }): Promise<User>;
 }
 
 export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver {
@@ -16,23 +16,23 @@ export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepo
     throw new Error();
   }
 
-  public async deleteUser(id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
+  public async deleteByContext(id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
     throw new Error();
   }
 
-  public async findUser(id: string, contextParam: { territory?: string; operator?: string }): Promise<User> {
+  public async findByContext(id: string, contextParam: { territory?: string; operator?: string }): Promise<User> {
     throw new Error();
   }
 
-  public async findUserByEmail(email: string): Promise<User> {
+  public async findByEmail(email: string): Promise<User> {
     throw new Error();
   }
 
-  public async findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
+  public async findByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
     throw new Error();
   }
 
-  public async patchUser(
+  public async patchByContext(
     id: string,
     patch: any,
     contextParam: { territory?: string; operator?: string },

@@ -76,7 +76,7 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
   /**
    * Delete user by id & ( territory | operator)
    */
-  public async deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
+  public async deleteByContext(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const result = await collection.deleteOne({ _id: new ObjectId(_id), ...normalizedFilters });
@@ -89,7 +89,7 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
   /**
    * Find User by id & ( territory | operator)
    */
-  public async findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User> {
+  public async findByContext(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User> {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const result = await collection.findOne({ _id: new ObjectId(_id), ...normalizedFilters });
@@ -100,7 +100,7 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
   /**
    * Find user by email
    */
-  public async findUserByEmail(email: string): Promise<User> {
+  public async findByEmail(email: string): Promise<User> {
     const collection = await this.getCollection();
     const result = await collection.findOne({ email });
     if (!result) throw new Exceptions.NotFoundException('User not found');
@@ -110,7 +110,7 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
   /**
    * Find user by token ( emailConfirm | forgottenReset )
    */
-  public async findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
+  public async findByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
     const collection = await this.getCollection();
     const result = await collection.findOne(param);
     if (!result) throw new Exceptions.NotFoundException('User not found');
@@ -120,7 +120,7 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
   /**
    * Patch User by id & ( territory | operator)
    */
-  public async patchUser(_id: string, patch: any, contextParam: { territory?: string; operator?: string }) {
+  public async patchByContext(_id: string, patch: any, contextParam: { territory?: string; operator?: string }) {
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const result = await collection.findOneAndUpdate(

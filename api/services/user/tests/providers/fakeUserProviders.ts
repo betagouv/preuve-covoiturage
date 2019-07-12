@@ -25,7 +25,7 @@ export class FakeUserRepository extends UserRepositoryProviderInterfaceResolver 
     return new User({ ...mockUserInDataBase, _id: id });
   }
 
-  public async findUserByEmail(email: string): Promise<User> {
+  public async findByEmail(email: string): Promise<User> {
     if (email === mockUserInDataBase.email) {
       return new User({
         ...mockUserInDataBase,
@@ -33,13 +33,13 @@ export class FakeUserRepository extends UserRepositoryProviderInterfaceResolver 
     }
   }
 
-  public async findUserByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
+  public async findByToken(param: { emailConfirm?: string; forgottenReset?: string }): Promise<User> {
     return new User({
       ...mockUserInDataBase,
     });
   }
 
-  async patchUser(id: string, patch: any, context: any): Promise<User> {
+  async patchByContext(id: string, patch: any, context: any): Promise<User> {
     return new User({
       ...mockUserInDataBase,
       ...patch,

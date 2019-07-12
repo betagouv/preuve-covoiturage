@@ -56,6 +56,6 @@ export class PatchUserAction extends Parents.Action {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.patchUser(params._id, params.patch, contextParam);
+    return this.userRepository.patchByContext(params._id, params.patch, contextParam);
   }
 }
