@@ -8,7 +8,7 @@ interface Request extends express.Request {
   permissions: string[];
 }
 
-export function serverTokenRestMiddleware(kernel: Interfaces.KernelInterface, tokenProvider: TokenProvider) {
+export function serverTokenMiddleware(kernel: Interfaces.KernelInterface, tokenProvider: TokenProvider) {
   return async (req: Request, res: express.Response, next: Function): Promise<void> => {
     try {
       if (!('authorization' in req.headers)) {

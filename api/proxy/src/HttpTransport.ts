@@ -24,7 +24,7 @@ import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } fr
 import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall, routeMapping } from './helpers/routeMapping';
-import { serverTokenRestMiddleware } from './middlewares/serverTokenRestMiddleware';
+import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -145,7 +145,7 @@ export class HttpTransport implements TransportInterface {
     });
 
     // inject the operator_id in the query
-    this.app.use(serverTokenRestMiddleware(this.kernel, tokenProvider));
+    this.app.use(serverTokenMiddleware(this.kernel, tokenProvider));
   }
 
   private registerAuth() {
