@@ -1,5 +1,5 @@
-import { ValidatorExtension as ValidatorParentExtension, ValidatorInterfaceResolver } from '@ilos/validator';
-import { Interfaces } from '@ilos/core';
+import { ValidatorExtension as ValidatorParentExtension } from '@ilos/validator';
+import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '@ilos/common'
 
 import { bicCustomFormat } from './formats/bicCustomFormat';
 import { euVatCustomFormat } from './formats/euVatCustomFormat';
@@ -16,10 +16,13 @@ import { coordinatesKeyword } from './keywords/coordinatesKeyword';
 import { macroKeyword } from './keywords/macroKeyword';
 import { rnaCustomFormat } from './formats/rnaCustomFormat';
 
+@extension({
+  name: 'validator',
+  autoload: true,
+  override: true,
+})
 export class ValidatorExtension extends ValidatorParentExtension {
-  static readonly key: string = ValidatorParentExtension.key;
-
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     await super.init(serviceContainer);
     const validator = serviceContainer.getContainer().get(ValidatorInterfaceResolver);
 

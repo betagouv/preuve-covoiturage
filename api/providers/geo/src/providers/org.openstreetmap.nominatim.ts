@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import axios from 'axios';
-import { Exceptions } from '@ilos/core';
+import { NotFoundException } from '@ilos/common';
 
 export class OrgOpenstreetmapNominatim {
   private static domain = 'https://nominatim.openstreetmap.org/';
@@ -18,7 +18,7 @@ export class OrgOpenstreetmapNominatim {
     );
 
     if (data.error) {
-      throw new Exceptions.NotFoundException(`Not found on Nominatim (${lat}, ${lon}). ${data.error}`);
+      throw new NotFoundException(`Not found on Nominatim (${lat}, ${lon}). ${data.error}`);
     }
 
     return {

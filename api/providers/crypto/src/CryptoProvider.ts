@@ -1,12 +1,12 @@
-import { Container, Interfaces } from '@ilos/core';
+import { provider, ProviderInterface } from '@ilos/common';
 import * as bcrypt from 'bcryptjs';
 
 import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface';
 
-@Container.provider({
+@provider({
   identifier: CryptoProviderInterfaceResolver,
 })
-export class CryptoProvider implements Interfaces.ProviderInterface {
+export class CryptoProvider implements ProviderInterface {
   async boot() {}
 
   async cryptPassword(plainPassword: string): Promise<string> {

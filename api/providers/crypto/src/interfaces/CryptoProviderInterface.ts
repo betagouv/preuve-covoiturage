@@ -1,6 +1,6 @@
-import { Interfaces } from '@ilos/core';
+import { ProviderInterface } from '@ilos/common';
 
-export interface CryptoProviderInterface extends Interfaces.ProviderInterface{
+export interface CryptoProviderInterface extends ProviderInterface {
   boot();
   cryptPassword(plainPassword): Promise<string>;
   cryptToken(plainToken): Promise<string>;

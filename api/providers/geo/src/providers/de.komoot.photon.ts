@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import axios from 'axios';
-import { Exceptions } from '@ilos/core';
+import { NotFoundException } from '@ilos/common';
 
 interface Feature {
   properties: {
@@ -28,7 +28,7 @@ export class DeKomootPhoton {
     );
 
     if (!_.get(res, 'data.features', []).length) {
-      throw new Exceptions.NotFoundException(`Literal not found on Komoot (${query})`);
+      throw new NotFoundException(`Literal not found on Komoot (${query})`);
     }
 
     const data = _.get(res, 'data.features', [{ properties: {} }])[0];

@@ -1,10 +1,9 @@
-import { Container, Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { provider, ProviderInterface, ConfigInterfaceResolver } from '@ilos/common';
 
 import { Sentry } from './Sentry';
 
-@Container.provider()
-export class SentryProvider implements Interfaces.ProviderInterface {
+@provider()
+export class SentryProvider implements ProviderInterface {
   constructor(protected config: ConfigInterfaceResolver) {}
 
   boot() {

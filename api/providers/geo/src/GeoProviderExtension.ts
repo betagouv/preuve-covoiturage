@@ -1,10 +1,14 @@
-import { Interfaces } from '@ilos/core';
-import { ValidatorInterfaceResolver } from '@pdc/provider-validator';
+import {
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+  ValidatorInterfaceResolver,
+} from '@ilos/common';
 
 import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
 import { GeoProvider } from './GeoProvider';
 
-export class GeoProviderExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+export class GeoProviderExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key: string = 'geo';
 
   protected readonly validators: [string, any][] = [
@@ -32,12 +36,12 @@ export class GeoProviderExtension implements Interfaces.RegisterHookInterface, I
   constructor(protected needed: boolean) {
     //
   }
-  public async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  public async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     container.bind(GeoProviderInterfaceResolver).to(GeoProvider);
   }
 
-  public async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  public async init(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
 
     // register validators

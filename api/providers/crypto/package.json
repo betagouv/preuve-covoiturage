@@ -14,7 +14,8 @@
     "test": "mocha --exit src/*.spec.ts src/**/*.spec.ts"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3"
+    "bcryptjs": "^2.4.3",
+    "@ilos/common": "~0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

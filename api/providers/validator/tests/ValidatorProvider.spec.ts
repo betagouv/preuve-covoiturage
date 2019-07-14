@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { Parents, Container } from '@ilos/core';
+import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
+import { serviceProvider } from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
 
@@ -15,12 +16,12 @@ import { ValidatorInterfaceResolver } from '../src';
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-@Container.serviceProvider({
+@serviceProvider({
   env: null,
   config: {},
   validator: [],
 })
-class ServiceProvider extends Parents.ServiceProvider {
+class ServiceProvider extends BaseServiceProvider {
   extensions = [
     EnvExtension,
     ConfigExtension,
