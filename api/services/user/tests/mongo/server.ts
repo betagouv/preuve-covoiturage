@@ -1,10 +1,5 @@
 import path from 'path';
-import {
-  KernelInterface,
-  ServiceContainerInterface,
-  TransportInterface,
-  ConfigInterfaceResolver,
-} from '@ilos/common';
+import { KernelInterface, ServiceContainerInterface, TransportInterface, ConfigInterfaceResolver } from '@ilos/common';
 
 import { MongoConnection, ObjectId, CollectionInterface } from '@ilos/connection-mongo';
 import { CryptoProvider } from '@pdc/provider-crypto';
@@ -37,14 +32,15 @@ export class FakeMongoServer {
   public async startTransport(): Promise<any> {
     this.transport = await bootstrap.boot('http', this.port);
     this.kernel = this.transport.getKernel();
-    const children = this.kernel.getContainer().getAll('children');
-    console.log(children[0], ServiceProvider, children[0] === ServiceProvider);
     this.service = this.kernel.getContainer().get(ServiceProvider);
-    this.mongo = this.service.getContainer().get(MongoConnection).getClient();
+    this.mongo = this.service
+      .getContainer()
+      .get(MongoConnection)
+      .getClient();
     const key = this.kernel
-    .getContainer()
-    .get(ConfigInterfaceResolver)
-    .get('user.collectionName');
+      .getContainer()
+      .get(ConfigInterfaceResolver)
+      .get('user.collectionName');
     this.collection = this.mongo.db(this.dbName).collection(key);
     this.server = this.transport.getInstance();
   }

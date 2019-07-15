@@ -59,13 +59,13 @@ describe('USER SERVICE', () => {
       operatorUserParams = mockFactory.createUserParams('operators', 'user', { operator: '5cef990d133992029c1abe41' });
       registryUserParams = mockFactory.createUserParams('registry', 'user');
     });
-  
+
     it('registry admin - should create user registry', async () => {
       nockRequest.on('request', (req, interceptor, body) => {
         expect(body).to.include(registryUserParams.email);
         expect(body).to.include('reset-password');
       });
-  
+
       const { status: createStatus, data: createData } = await request.post(
         '/',
         mockFactory.call(
@@ -80,7 +80,7 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(createData.result).to.have.property('_id');
       delete createData.result._id;
       expect(createData.result).to.eql({
@@ -90,13 +90,13 @@ describe('USER SERVICE', () => {
       });
       expect(createStatus).equal(200);
     });
-  
+
     it('territory admin - should create user territory', async () => {
       nockRequest.on('request', (req, interceptor, body) => {
         expect(body).to.include(territoryUserParams.email);
         expect(body).to.include('reset-password');
       });
-  
+
       const { status: createStatus, data: createData } = await request.post(
         '/',
         mockFactory.call(
@@ -112,7 +112,7 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(createData.result).to.have.property('_id');
       delete createData.result._id;
       expect(createData.result).to.eql({
@@ -122,13 +122,13 @@ describe('USER SERVICE', () => {
       });
       expect(createStatus).equal(200);
     });
-  
+
     it('operator admin - should create user operator', async () => {
       nockRequest.on('request', (req, interceptor, body) => {
         expect(body).to.include(operatorUserParams.email);
         expect(body).to.include('reset-password');
       });
-  
+
       const { status: createStatus, data: createData } = await request.post(
         '/',
         mockFactory.call(
@@ -144,7 +144,7 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(createData.result).to.have.property('_id');
       delete createData.result._id;
       expect(createData.result).to.eql({
@@ -155,14 +155,14 @@ describe('USER SERVICE', () => {
       expect(createStatus).equal(200);
     });
   });
-  
+
   describe('Deletion', () => {
     before(async () => {
       newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
       newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
       newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
     });
-  
+
     it('registry user - should delete his profile', async () => {
       const { status, data } = await request.post(
         '/',
@@ -179,7 +179,7 @@ describe('USER SERVICE', () => {
       );
       expect(status).equal(200);
     });
-  
+
     it("registry user - shouldn't delete other profile", async () => {
       const payload = mockFactory.call(
         'user:delete',
@@ -191,17 +191,17 @@ describe('USER SERVICE', () => {
           _id: newRegistryUser._id,
         },
       );
-  
+
       superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
         .expect((response) => {
-          expect(response.status).to.eq(503);
+          expect(response.status).to.eq(403);
           expect(response.body).to.have.property('error');
         });
     });
-  
+
     it('registry territory - should delete user from territory', async () => {
       const payload = mockFactory.call(
         'user:delete',
@@ -214,17 +214,17 @@ describe('USER SERVICE', () => {
           _id: newTerritoryUser._id,
         },
       );
-  
+
       superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
         .expect((response) => {
-          expect(response.status).to.eq(503);
+          expect(response.status).to.eq(403);
           expect(response.body).to.have.property('error');
         });
     });
-  
+
     it('registry operator - should delete user from opertor', async () => {
       const payload = mockFactory.call(
         'user:delete',
@@ -237,18 +237,18 @@ describe('USER SERVICE', () => {
           _id: newOperatorUser._id,
         },
       );
-  
+
       superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
         .expect((response) => {
-          expect(response.status).to.eq(503);
+          expect(response.status).to.eq(403);
           expect(response.body).to.have.property('error');
         });
     });
   });
-  
+
   describe('Find', () => {
     before(async () => {
       newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
@@ -256,11 +256,11 @@ describe('USER SERVICE', () => {
       newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
       newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
     });
-  
+
     after(async () => {
       mockServer.clearCollection();
     });
-  
+
     it('registry admin - should find registry user', async () => {
       const { status, data } = await request.post(
         '/',
@@ -274,14 +274,14 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(data.result).to.eql({
         _id: newRegistryUser._id,
         ...mockFactory.newRegistryUserModel,
       });
       expect(status).equal(200);
     });
-  
+
     it('registry user - should find his profile', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -296,14 +296,14 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(data.result).to.eql({
         _id: newRegistryUser._id,
         ...mockFactory.newRegistryUserModel,
       });
       expect(status).equal(200);
     });
-  
+
     it("registry user - should not be able to find others' profile", async () => {
       const payload = mockFactory.call(
         'user:find',
@@ -315,17 +315,17 @@ describe('USER SERVICE', () => {
           _id: newRegistryUser._id,
         },
       );
-  
+
       superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
         .expect((response) => {
-          expect(response.status).to.eq(503);
+          expect(response.status).to.eq(403);
           expect(response.body).to.have.property('error');
         });
     });
-  
+
     it('registry admin - should find territory user', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -339,14 +339,14 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(data.result).to.eql({
         _id: newTerritoryUser._id,
         ...mockFactory.newTerritoryUserModel,
       });
       expect(status).equal(200);
     });
-  
+
     it('registry admin - should find operator user', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -366,7 +366,7 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
-  
+
     it('territory admin - should find territory user', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -387,7 +387,7 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
-  
+
     it('operator admin - should find operator user', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -409,7 +409,7 @@ describe('USER SERVICE', () => {
       expect(status).equal(200);
     });
   });
-  
+
   describe('List', () => {
     before(async () => {
       newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
@@ -417,11 +417,11 @@ describe('USER SERVICE', () => {
       newOperatorUser = await mockServer.addUser(mockFactory.newOperatorUserModel);
       newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
     });
-  
+
     after(() => {
       mockServer.clearCollection();
     });
-  
+
     it('registry admin - should list users', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -449,7 +449,7 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
-  
+
     it('territory admin - should list territory users', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -464,14 +464,14 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(data.result.data[0]).to.eql({
         _id: newTerritoryUser._id,
         ...mockFactory.newTerritoryUserModel,
       });
       expect(status).equal(200);
     });
-  
+
     it('operator admin - should list operator users', async () => {
       const { status: status, data: data } = await request.post(
         '/',
@@ -486,7 +486,7 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(data.result.data[0]).to.eql({
         _id: newOperatorUser._id,
         ...mockFactory.newOperatorUserModel,
@@ -494,7 +494,7 @@ describe('USER SERVICE', () => {
       expect(status).equal(200);
     });
   });
-  
+
   describe('Patch', () => {
     before(async () => {
       newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
@@ -502,17 +502,17 @@ describe('USER SERVICE', () => {
       newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
       newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
     });
-  
+
     after(() => {
       mockServer.clearCollection();
     });
-  
+
     it('registry admin - should patch registry user', async () => {
       const mockUpdatedProperties = {
         firstname: 'johnny',
         lastname: 'smith',
       };
-  
+
       const { status: status, data: data } = await request.post(
         '/',
         mockFactory.call(
@@ -535,13 +535,13 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
-  
+
     it('registry user - should patch his profile', async () => {
       const mockUpdatedProperties = {
         firstname: 'johnny2',
         lastname: 'smith2',
       };
-  
+
       const { status: status, data: data } = await request.post(
         '/',
         mockFactory.call(
@@ -565,7 +565,7 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
-  
+
     it("registry user - shouldn't patch other's profile", async () => {
       const payload = mockFactory.call(
         'user:patch',
@@ -583,23 +583,23 @@ describe('USER SERVICE', () => {
           _id: newRegistryUser._id,
         },
       );
-  
+
       superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
         .expect((response) => {
-          expect(response.status).to.eq(503);
+          expect(response.status).to.eq(403);
           expect(response.body).to.have.property('error');
         });
     });
-  
+
     it('territory admin - should patch territory user', async () => {
       const mockUpdatedProperties = {
         firstname: 'samuel',
         lastname: 'goldschmidt',
       };
-  
+
       const { status: status, data: data } = await request.post(
         '/',
         mockFactory.call(
@@ -624,13 +624,13 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
-  
+
     it('operator admin - should patch operator user', async () => {
       const mockUpdatedProperties = {
         firstname: 'samuel',
         lastname: 'goldschmidt',
       };
-  
+
       const { status: status, data: data } = await request.post(
         '/',
         mockFactory.call(
@@ -656,7 +656,7 @@ describe('USER SERVICE', () => {
       expect(status).equal(200);
     });
   });
-  
+
   describe('Change Password', () => {
     before(async () => {
       newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
@@ -667,11 +667,11 @@ describe('USER SERVICE', () => {
         password: 'passwordRegistryUser',
       });
     });
-  
+
     after(() => {
       mockServer.clearCollection();
     });
-  
+
     const newPassword = 'newPassword';
     it('registry admin - should change password', async () => {
       const { status: status, data: data } = await request.post(
@@ -690,7 +690,7 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       // nockRequest.on('request', (req, interceptor, body) => {
       //   expect(body).to.deep.equal(`{"Email":"${newRegistryUser.email}"}`);
       // });
@@ -700,7 +700,7 @@ describe('USER SERVICE', () => {
       });
       expect(status).equal(200);
     });
-  
+
     it("registry admin - shouldn't change password with wrong old password", async () => {
       const payload = mockFactory.call(
         'user:changePassword',
@@ -715,18 +715,18 @@ describe('USER SERVICE', () => {
           _id: newRegistryUser._id,
         },
       );
-  
+
       superRequest
         .post('/')
         .send(payload)
         .set('Accept', 'application/json')
         .expect((response) => {
-          expect(response.status).to.eq(501);
+          expect(response.status).to.eq(401);
           expect(response.body).to.have.property('error');
         });
     });
   });
-  
+
   describe('Change Email', () => {
     before(async () => {
       newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
@@ -734,11 +734,11 @@ describe('USER SERVICE', () => {
       newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
       newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
     });
-  
+
     after(() => {
       mockServer.clearCollection();
     });
-  
+
     const newEmail = 'newEmail@example.com';
     it('registry admin - should change email registry user', async () => {
       nockRequest.on('request', (req, interceptor, body) => {
@@ -760,7 +760,7 @@ describe('USER SERVICE', () => {
           },
         ),
       );
-  
+
       expect(data.result).to.eql({
         _id: newRegistryUser._id,
         ...mockFactory.newRegistryUserModel,
@@ -770,7 +770,7 @@ describe('USER SERVICE', () => {
       expect(status).equal(200);
     });
   });
-  
+
   describe('Forgotten Password', () => {
     before(async () => {
       newTerritoryUser = await mockServer.addUser(mockFactory.newTerritoryUserModel);
@@ -778,11 +778,11 @@ describe('USER SERVICE', () => {
       newRegistryAdmin = await mockServer.addUser(mockFactory.newRegistryAdminModel);
       newRegistryUser = await mockServer.addUser(mockFactory.newRegistryUserModel);
     });
-  
+
     after(() => {
       mockServer.clearCollection();
     });
-  
+
     it('anonymous - should send email to reset password', async () => {
       nockRequest.on('request', (req, interceptor, body) => {
         expect(body).to.include(newRegistryUser.email);
@@ -807,11 +807,11 @@ describe('USER SERVICE', () => {
           },
         },
       });
-  
+
       expect(status).equal(200);
     });
   });
-  
+
   describe('Login', () => {
     before(async () => {
       newRegistryAdmin = await mockServer.addUser({
@@ -820,11 +820,11 @@ describe('USER SERVICE', () => {
         status: 'active',
       });
     });
-  
+
     after(async () => {
       mockServer.clearCollection();
     });
-  
+
     it('registry admin - should login', async () => {
       const { status: status, data: data } = await request.post(
         '/',
