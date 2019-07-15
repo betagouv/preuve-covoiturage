@@ -1,6 +1,10 @@
 import { Parents, Container } from '@ilos/core';
 
-import { ApplicationInterface, ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
+import {
+  ApplicationInterface,
+  AllApplicationParamsInterface,
+  ApplicationRepositoryProviderInterfaceResolver,
+} from '../interfaces';
 
 @Container.handler({
   service: 'application',
@@ -8,6 +12,7 @@ import { ApplicationInterface, ApplicationRepositoryProviderInterfaceResolver } 
 })
 export class AllApplicationAction extends Parents.Action {
   public readonly middlewares: (string | [string, any])[] = [
+    ['validate', 'application.all'],
     [
       'scopeIt',
       [
@@ -33,8 +38,7 @@ export class AllApplicationAction extends Parents.Action {
     super();
   }
 
-  public async handle(): Promise<ApplicationInterface[]> {
-    // TODO pass params to filter the query
-    return this.applicationRepository.all();
+  public async handle(params: AllApplicationParamsInterface): Promise<ApplicationInterface[]> {
+    return this.applicationRepository.allByOperator({ operator_id: params.operator_id });
   }
 }
