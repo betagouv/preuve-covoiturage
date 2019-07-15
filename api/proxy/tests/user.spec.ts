@@ -7,25 +7,7 @@ import { Types } from '@ilos/core';
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 
-process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
-
 const { expect } = chai;
-const kernel = new Kernel();
-const app = new HttpTransport(kernel);
-let request;
-let userId;
-let cookies;
-
-const user = {
-  email: 'admin@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  password: 'Admin12345',
-};
-
 function callAdminFactory(params): Types.CallType {
   return {
     params: { ...params },
@@ -48,9 +30,28 @@ function callAdminFactory(params): Types.CallType {
 }
 
 describe('User service', async () => {
+  const kernel = new Kernel();
+  const app = new HttpTransport(kernel);
+  let request;
+  let userId;
+  let cookies;
+
+  const user = {
+    email: 'admin@example.com',
+    firstname: 'john',
+    lastname: 'schmidt',
+    phone: '0624857425',
+    group: 'registry',
+    role: 'admin',
+    password: 'Admin12345',
+  };
+
   before(async () => {
+    process.env.APP_MONGO_DB = `pdc-test-user-${new Date().getTime()}`;
     await kernel.bootstrap();
     await app.up();
+
+    request = supertest(app.app);
 
     const registerAction = kernel.getContainer().getHandler({
       service: 'user',
@@ -70,8 +71,6 @@ describe('User service', async () => {
   });
 
   beforeEach(async () => {
-    request = supertest(app.app);
-
     const res = await request.post('/login').send({
       email: user.email,
       password: user.password,
@@ -82,16 +81,15 @@ describe('User service', async () => {
     cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
   });
 
-  it('should return session content on profile', async () => {
-    const r = await request
+  it('should return session content on profile', async () =>
+    request
       .get('/profile')
       .set('Cookie', cookies)
-      .expect(200);
-    expect(r.body.payload.data).to.deep.include({
-      firstname: user.firstname,
-      lastname: user.lastname,
-    });
-  });
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.payload.data).to.have.property('email', user.email);
+        expect(response.body.payload.data).to.have.property('firstname', user.firstname);
+      }));
 
   it('should list user', async () => {
     const r = await request

@@ -7,8 +7,6 @@ import { Types } from '@ilos/core';
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 
-process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
-
 const { expect } = chai;
 const kernel = new Kernel();
 const app = new HttpTransport(kernel);
@@ -42,12 +40,7 @@ function callAdminFactory(params): Types.CallType {
         user: {
           role: 'admin',
           group: 'registry',
-          permissions: [
-            'user.create',
-            'user.delete',
-            'territory.create',
-            'territory.delete',
-          ],
+          permissions: ['user.create', 'user.delete', 'territory.create', 'territory.delete'],
         },
       },
       channel: {
@@ -60,6 +53,7 @@ function callAdminFactory(params): Types.CallType {
 
 describe('Territory service', async () => {
   before(async () => {
+    process.env.APP_MONGO_DB = `pdc-test-territory-${new Date().getTime()}`;
     await kernel.bootstrap();
     await app.up();
 
@@ -145,7 +139,7 @@ describe('Territory service', async () => {
       .send({
         patch: {
           name: 'Paris',
-        }
+        },
       })
       .set('Cookie', cookies)
       .expect(200);

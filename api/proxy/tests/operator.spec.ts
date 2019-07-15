@@ -1,4 +1,3 @@
-// tslint:disable max-classes-per-file
 import supertest from 'supertest';
 import chai from 'chai';
 import { describe } from 'mocha';
@@ -7,15 +6,13 @@ import { Types } from '@ilos/core';
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 
-process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
-
 const { expect } = chai;
 const kernel = new Kernel();
 const app = new HttpTransport(kernel);
 let request;
 let cookies;
 
-let userId;
+let operatorId;
 const user = {
   email: 'admin@example.com',
   firstname: 'john',
@@ -24,12 +21,6 @@ const user = {
   group: 'registry',
   role: 'admin',
   password: 'Admin12345',
-};
-
-let operatorId;
-const operator = {
-  nom_commercial: 'Maxi covoit',
-  raison_sociale: 'Maxi covoit inc.',
 };
 
 function callAdminFactory(params): Types.CallType {
@@ -42,12 +33,7 @@ function callAdminFactory(params): Types.CallType {
         user: {
           role: 'admin',
           group: 'registry',
-          permissions: [
-            'user.create',
-            'user.delete',
-            'operator.create',
-            'operator.delete',
-          ],
+          permissions: ['user.create', 'user.delete', 'operator.create', 'operator.delete'],
         },
       },
       channel: {
@@ -60,42 +46,20 @@ function callAdminFactory(params): Types.CallType {
 
 describe('Operator service', async () => {
   before(async () => {
+    process.env.APP_MONGO_DB = `pdc-test-operator-${new Date().getTime()}`;
     await kernel.bootstrap();
     await app.up();
+
+    request = supertest(app.app);
 
     const registerAction = kernel.getContainer().getHandler({
       service: 'user',
       method: 'register',
     });
-    const { _id: userDbId } = await registerAction.call(callAdminFactory(user));
-    userId = userDbId;
-
-    const createOperatorAction = kernel.getContainer().getHandler({
-      service: 'operator',
-      method: 'create',
-    });
-    const { _id: operatorDbId } = await createOperatorAction.call(callAdminFactory(operator));
-    operatorId = operatorDbId;
-  });
-
-  after(async () => {
-    const deleteAction = kernel.getContainer().getHandler({
-      service: 'user',
-      method: 'delete',
-    });
-    await deleteAction.call(callAdminFactory({ _id: userId }));
-
-    const deleteOperatorAction = kernel.getContainer().getHandler({
-      service: 'operator',
-      method: 'delete',
-    });
-    await deleteOperatorAction.call(callAdminFactory({ _id: operatorId }));
-    await app.down();
+    await registerAction.call(callAdminFactory(user));
   });
 
   beforeEach(async () => {
-    request = supertest(app.app);
-
     const res = await request.post('/login').send({
       email: user.email,
       password: user.password,
@@ -106,50 +70,60 @@ describe('Operator service', async () => {
     cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
   });
 
-  it('should create and delete operator', async () => {
+  after(async () => {
+    await app.down();
+  });
+
+  it('should create operator', async () => {
     const customOperator = {
       nom_commercial: 'Mega covoit',
       raison_sociale: 'Mega covoit inc.',
     };
 
-    const r = await request
+    return request
       .post('/operators')
       .send(customOperator)
       .set('Cookie', cookies)
-      .expect(200);
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.payload.data).to.have.property('_id');
+        expect(response.body.payload.data).to.have.property('nom_commercial', 'Mega covoit');
+        expect(response.body.payload.data).to.have.property('raison_sociale', 'Mega covoit inc.');
 
-    expect(r.body.payload.data).to.deep.include(customOperator);
-    const { _id } = r.body.payload.data;
-
-    await request
-      .delete(`/operators/${_id}`)
-      .set('Cookie', cookies)
-      .expect(200);
+        // store operatorId for re-use
+        operatorId = response.body.payload.data._id;
+      });
   });
 
-  it('should list operator', async () => {
-    const r = await request
+  it('should list operator', async () =>
+    request
       .get('/operators')
       .set('Cookie', cookies)
-      .expect(200);
-    const data = r.body.payload.data;
-    expect(data).to.be.an('array');
-    expect(data.length).to.eq(1);
-    expect(data[0]).to.deep.include(operator);
-  });
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.payload.data).to.be.an('array');
+        expect(response.body.payload.data.length).to.be.greaterThan(0);
+      }));
 
-  it('should patch operator', async () => {
-    operator.nom_commercial = 'Maxi';
-    const r = await request
+  it('should patch operator', async () =>
+    request
       .put(`/operators/${operatorId}`)
       .send({
         patch: {
           nom_commercial: 'Maxi',
-        }
+        },
       })
       .set('Cookie', cookies)
-      .expect(200);
-    const data = r.body.payload.data;
-    expect(data).to.deep.include(operator);
-  });
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.payload.data).to.have.property('nom_commercial', 'Maxi');
+      }));
+
+  it('should delete operator', async () =>
+    request
+      .delete(`/operators/${operatorId}`)
+      .set('Cookie', cookies)
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.eq(200);
+      }));
 });
