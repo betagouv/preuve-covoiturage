@@ -1,19 +1,11 @@
-import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-  KernelInterfaceResolver,
-  ConfigInterfaceResolver,
-} from '@ilos/common';
 import * as _ from 'lodash';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 
-import { PositionInterface } from '../interfaces/PositionInterface';
-import { Journey } from '../entities/journey';
+import { NormalizationGeoParamsInterface } from '../interfaces/NormalizationGeoParamsInterface';
 
-interface NormalizationGeoParamsInterface {
-  journey: Journey;
-}
+import { PositionInterface } from '../interfaces/PositionInterface';
 
 /*
  * Enrich journey with Geo data
@@ -23,24 +15,20 @@ interface NormalizationGeoParamsInterface {
   method: 'geo',
 })
 export class NormalizationGeoAction extends AbstractAction {
-  constructor(
-    private kernel: KernelInterfaceResolver,
-    private geoProvider: GeoProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
-  ) {
+  constructor(private kernel: KernelInterfaceResolver, private geoProvider: GeoProviderInterfaceResolver) {
     super();
   }
 
   public async handle(param: NormalizationGeoParamsInterface, context: ContextType): Promise<void> {
-    const paths = this.config.get('normalization.positionPaths');
-
     let normalizedJourney = {};
 
-    await Promise.all(paths.map(async (path) => {
-      const position = _.get(param.journey, path);
-      const positionEnrichedWithTown = await this.findTown(position);
-      normalizedJourney = this.processTownResponse(param.journey, path, position, positionEnrichedWithTown);
-    }));
+    await Promise.all(
+      ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map(async (path) => {
+        const position = _.get(param.journey, path);
+        const positionEnrichedWithTown = await this.findTown(position);
+        normalizedJourney = this.processTownResponse(param.journey, path, position, positionEnrichedWithTown);
+      }),
+    );
 
     await this.kernel.notify(
       'normalization:territory',
@@ -62,7 +50,12 @@ export class NormalizationGeoAction extends AbstractAction {
   }
 
   private async findTown(position: PositionInterface): Promise<PositionInterface> {
-    const foundPosition = await this.geoProvider.getTown({ lon: position.lon, lat: position.lat, insee: position.insee, literal: position.literal });
+    const foundPosition = await this.geoProvider.getTown({
+      lon: position.lon,
+      lat: position.lat,
+      insee: position.insee,
+      literal: position.literal,
+    });
     return {
       ...position,
       ...foundPosition,

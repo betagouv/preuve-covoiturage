@@ -1,13 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-  ConfigInterfaceResolver,
-} from '@ilos/common';
+import { handler, ContextType, ConfigInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserRegisterParamsInterface } from '../interfaces/actions/UserRegisterParamsInterface';
 
 /*

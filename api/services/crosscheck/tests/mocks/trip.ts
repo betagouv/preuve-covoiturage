@@ -1,5 +1,5 @@
 import { journey } from './journey';
-import { Person, Trip } from '../../src/entities/Trip';
+import { Trip } from '../../src/entities/Trip';
 
 export const trip = <Trip>{
   territory: [journey.passenger.start.territory[0], journey.passenger.end.territory[0]],

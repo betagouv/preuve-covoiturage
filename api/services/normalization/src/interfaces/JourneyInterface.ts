@@ -35,7 +35,6 @@ export interface JourneyInterface {
   };
 }
 
-
 export interface IdentityInterface {
   phone: string;
   firstname?: string;
@@ -48,4 +47,3 @@ export interface IdentityInterface {
   };
   over18?: boolean;
 }
-

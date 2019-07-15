@@ -1,10 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ConfigInterfaceResolver,
-} from '@ilos/common';
+import { handler, ConfigInterfaceResolver } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
 import { ListUserParamsInterface } from '../interfaces/actions/UserListParamsInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';

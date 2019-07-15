@@ -3,5 +3,5 @@ export interface UserNotifyParamsInterface {
   email: string;
   fullname: string;
   organization: string;
-  link:string;
+  link: string;
 }

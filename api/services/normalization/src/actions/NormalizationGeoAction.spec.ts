@@ -7,7 +7,6 @@
 // import { ValidatorProviderInterfaceResolver, ValidatorProvider } from '@ilos/provider-validator';
 //
 // import { journey } from '../../tests/mocks/journey';
-// import { positionPaths } from '../config/normalization';
 // import { NormalizationGeoAction } from './NormalizationGeoAction';
 // import { ServiceProvider as BaseServiceProvider } from '../../../user/src/ServiceProvider';
 // import { FindUserAction } from '../../../user/src/actions/FindUserAction';
@@ -64,7 +63,7 @@
 //
 // const journeyMarseilleLyon = { ...journey };
 //
-// positionPaths.map((path:string) => {
+// ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map((path:string) => {
 //   _.set(journeyMarseilleLyon, `${path}lon`, 5.3682);
 //   _.set(journeyMarseilleLyon, `${path}lat`, 43.2392);
 // });
@@ -88,7 +87,7 @@
 //     const expectedResult = { ...journeyMarseilleLyon };
 //
 //
-//     positionPaths.map((path:string) => {
+//     ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map((path:string) => {
 //       _.set(expectedResult,
 //         path,
 //         {

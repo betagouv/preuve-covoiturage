@@ -36,9 +36,7 @@ export class GeoProviderExtension implements RegisterHookInterface, InitHookInte
     ],
   ];
 
-  constructor() {
-    //
-  }
+  constructor() {}
 
   public async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();

@@ -1,14 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-  ConfigInterfaceResolver,
-  ForbiddenException,
-} from '@ilos/common';
+import { handler, ContextType, ConfigInterfaceResolver, ForbiddenException } from '@ilos/common';
 
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';

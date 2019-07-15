@@ -11,12 +11,8 @@ import {
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
-export class TerritoryRepositoryProvider extends ParentRepository
-  implements TerritoryRepositoryProviderInterface {
-  constructor(
-    protected config: ConfigInterfaceResolver,
-    protected mongoProvider: MongoConnection,
-  ) {
+export class TerritoryRepositoryProvider extends ParentRepository implements TerritoryRepositoryProviderInterface {
+  constructor(protected config: ConfigInterfaceResolver, protected mongoProvider: MongoConnection) {
     super(config, mongoProvider);
   }
 

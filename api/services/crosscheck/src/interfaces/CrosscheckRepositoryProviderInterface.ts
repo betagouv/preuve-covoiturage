@@ -1,15 +1,15 @@
-import { ParentRepositoryInterface, ParentRepositoryInterfaceResolver } from '@ilos/repository';
+import { RepositoryInterfaceResolver, RepositoryInterface } from '@ilos/common';
 
-import { Trip } from '../../entities/Trip';
-import { PersonInterface } from '../TripInterface';
+import { Trip } from '../entities/Trip';
+import { PersonInterface } from './TripInterface';
 
-export interface CrosscheckRepositoryProviderInterface extends ParentRepositoryInterface {
+export interface CrosscheckRepositoryProviderInterface extends RepositoryInterface {
   findByOperatorJourneyIdAndOperatorId(params: { operator_journey_id?: string; operator_id: string }): Promise<Trip>;
   findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<Trip>;
   findByIdAndPushPeople(id: string, people: PersonInterface[], territory: string[], newStartDate: Date): Promise<Trip>;
 }
 
-export abstract class CrosscheckRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver {
+export abstract class CrosscheckRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
   public async findByOperatorJourneyIdAndOperatorId(params: {
     operator_journey_id?: string;
     operator_id: string;

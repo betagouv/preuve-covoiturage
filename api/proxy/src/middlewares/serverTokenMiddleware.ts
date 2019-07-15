@@ -1,15 +1,15 @@
 import express from 'express';
 import { get } from 'lodash';
 
-import { Interfaces, Exceptions } from '@ilos/core';
 import { TokenProvider } from '@pdc/provider-token';
+import { KernelInterface, UnauthorizedException } from '@ilos/common';
 
 interface Request extends express.Request {
   operator: string;
   permissions: string[];
 }
 
-export function serverTokenMiddleware(kernel: Interfaces.KernelInterface, tokenProvider: TokenProvider) {
+export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProvider) {
   return async (req: Request, res: express.Response, next: Function): Promise<void> => {
     try {
       const token = get(req, 'headers.authorization', null);
@@ -37,7 +37,7 @@ export function serverTokenMiddleware(kernel: Interfaces.KernelInterface, tokenP
       next();
     } catch (e) {
       console.log(`Token: ${e.message}`);
-      next(new Exceptions.UnauthorizedException(`Token: ${e.message}`));
+      next(new UnauthorizedException(`Token: ${e.message}`));
     }
   };
 }

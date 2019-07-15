@@ -1,13 +1,13 @@
 import * as jwt from 'jsonwebtoken';
-import { Container, Interfaces } from '@ilos/core';
+import { provider, ProviderInterface } from '@ilos/common';
 
 import { TokenProviderInterfaceResolver, TokenProviderInterface, TokenPayloadInterface } from './interfaces';
 import { TokenProviderConfig } from './interfaces/TokenProviderConfig';
 
-@Container.provider({
+@provider({
   identifier: TokenProviderInterfaceResolver,
 })
-export class TokenProvider implements Interfaces.ProviderInterface, TokenProviderInterface {
+export class TokenProvider implements ProviderInterface, TokenProviderInterface {
   private secret: string | Buffer;
   private ttl: number;
   private signOptions: jwt.SignOptions = {};

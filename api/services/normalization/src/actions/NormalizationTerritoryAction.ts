@@ -1,19 +1,10 @@
-import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-  KernelInterfaceResolver,
-  ConfigInterfaceResolver,
-  InvalidParamsException,
-} from '@ilos/common';
 import * as _ from 'lodash';
-import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
+
+import { Action as AbstractAction } from '@ilos/core';
+import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
 
 import { PositionInterface } from '../interfaces/PositionInterface';
-
-interface NormalizationTerritoryParamsInterface {
-  journey: any;
-}
+import { NormalizationTerritoryParamsInterface } from '../interfaces/NormalizationTerritoryParamsInterface';
 
 /*
  * Enrich journey with Territories
@@ -23,26 +14,22 @@ interface NormalizationTerritoryParamsInterface {
   method: 'territory',
 })
 export class NormalizationTerritoryAction extends AbstractAction {
-  constructor(
-    private kernel: KernelInterfaceResolver,
-    private geoProvider: GeoProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
-  ) {
+  constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
   public async handle(param: NormalizationTerritoryParamsInterface, context: ContextType): Promise<void> {
-    const paths = this.config.get('normalization.positionPaths');
-
     const territoriesEnrichedJourney = {
       ...param.journey,
     };
 
-    await Promise.all(paths.map(async (path) => {
-      const position = _.get(param.journey, path);
-      const territories = await this.findTerritories(position, context);
-      _.set(territoriesEnrichedJourney, `${path}.territory`, territories);
-    }));
+    await Promise.all(
+      ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map(async (path) => {
+        const position = _.get(param.journey, path);
+        const territories = await this.findTerritories(position, context);
+        _.set(territoriesEnrichedJourney, `${path}.territory`, territories);
+      }),
+    );
 
     // await this.kernel.notify( // todo: should be notify
     //   'crosscheck:process',
@@ -61,7 +48,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
     return;
   }
 
-  public async findTerritories(position: PositionInterface, context: ContextType): Promise<object> {
+  private async findTerritories(position: PositionInterface, context: ContextType): Promise<object> {
     if ('insee' in position) {
       return this.kernel.call(
         'territory:findByInsee',

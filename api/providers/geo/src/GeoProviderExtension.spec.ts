@@ -1,13 +1,9 @@
 // tslint:disable: no-unused-expression
-
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import {
-  NewableType,
-  ExtensionInterface,
-  serviceProvider as serviceProviderDecorator,
-} from '@ilos/common';
+
+import { NewableType, ExtensionInterface, serviceProvider as serviceProviderDecorator } from '@ilos/common';
 import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
 import { EnvExtension } from '@ilos/env';
 import { ConfigExtension } from '@ilos/config';
@@ -34,26 +30,26 @@ class ServiceProvider extends BaseServiceProvider {
   ];
 }
 
-const serviceProvider = new ServiceProvider();
-
-let geoProvider;
-
-const nullResponse = {
-  lon: null,
-  lat: null,
-  insee: null,
-  town: null,
-  postcodes: [],
-  country: null,
-};
-
 describe('Geo provider', () => {
+  const serviceProvider = new ServiceProvider();
+
+  let geoProvider;
+
+  const nullResponse = {
+    lon: null,
+    lat: null,
+    insee: null,
+    town: null,
+    postcodes: [],
+    country: null,
+  };
+
   before(async () => {
     await serviceProvider.register();
     await serviceProvider.init();
     geoProvider = serviceProvider.get(GeoProviderInterfaceResolver);
   });
-  // TOWN
+
   describe('find Town common', () => {
     it('empty object', () => {
       expect(geoProvider.getTown({})).to.be.rejected;

@@ -17,20 +17,21 @@ chai.use(chaiNock);
 
 const { expect } = chai;
 
-let superRequest;
-let nockRequest;
+describe('User Service', () => {
+  let superRequest;
+  let nockRequest;
 
-const request = mockFactory.request();
+  const request = mockFactory.request();
 
-let newTerritoryUser;
-let newOperatorUser;
-let newRegistryUser;
-let newRegistryAdmin;
+  let newTerritoryUser;
+  let newOperatorUser;
+  let newRegistryUser;
+  let newRegistryAdmin;
 
-let territoryUserParams;
-let operatorUserParams;
-let registryUserParams;
-describe('USER SERVICE', () => {
+  let territoryUserParams;
+  let operatorUserParams;
+  let registryUserParams;
+
   before(async () => {
     await mockServer.startServer();
     await mockServer.startTransport();

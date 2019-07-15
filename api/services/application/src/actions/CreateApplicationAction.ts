@@ -1,4 +1,5 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import {
   ApplicationInterface,
@@ -6,11 +7,11 @@ import {
   CreateApplicationParamsInterface,
 } from '../interfaces';
 
-@Container.handler({
+@handler({
   service: 'application',
   method: 'create',
 })
-export class CreateApplicationAction extends Parents.Action {
+export class CreateApplicationAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'application.create'],
     [

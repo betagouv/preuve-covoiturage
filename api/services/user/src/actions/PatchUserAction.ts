@@ -1,10 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-} from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserPatchParamsInterface } from '../interfaces/actions/UserPatchParamsInterface';
 
 import { User } from '../entities/User';

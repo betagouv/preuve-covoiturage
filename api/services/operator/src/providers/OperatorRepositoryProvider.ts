@@ -3,17 +3,16 @@ import { MongoConnection } from '@ilos/connection-mongo';
 import { ParentRepository } from '@ilos/repository';
 
 import { Operator } from '../entities/Operator';
-import { OperatorRepositoryProviderInterface, OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
+import {
+  OperatorRepositoryProviderInterface,
+  OperatorRepositoryProviderInterfaceResolver,
+} from '../interfaces/OperatorRepositoryProviderInterface';
 
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
 })
-export class OperatorRepositoryProvider extends ParentRepository
-  implements OperatorRepositoryProviderInterface {
-  constructor(
-    protected config: ConfigInterfaceResolver,
-    protected mongoProvider: MongoConnection,
-  ) {
+export class OperatorRepositoryProvider extends ParentRepository implements OperatorRepositoryProviderInterface {
+  constructor(protected config: ConfigInterfaceResolver, protected mongoProvider: MongoConnection) {
     super(config, mongoProvider);
   }
 

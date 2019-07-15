@@ -7,103 +7,102 @@ import expressSession from 'express-session';
 
 import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping';
 
-const app = express();
+describe('Route mapping', () => {
+  const app = express();
 
-let request;
-const fakeUser = {
-  id: '1',
-  firstName: 'Nicolas',
-  lastName: 'Test',
-};
-
-function responseFactory(method, params) {
-  return {
-    method,
-    params,
-    _context: {
-      call: {
-        user: fakeUser,
-      },
-      channel: {
-        service: 'proxy',
-        transport: 'http',
-      },
-    },
+  let request;
+  const fakeUser = {
+    id: '1',
+    firstName: 'Nicolas',
+    lastName: 'Test',
   };
-}
 
-app.use(bodyParser.json({ limit: '2mb' }));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(
-  expressSession({
-    secret: 'SECRET',
-  }),
-);
-
-app.use((req, res, next) => {
-  req.session.user = fakeUser;
-  next();
-});
-
-class Kernel extends AbstractKernel {
-  async handle(call) {
+  function responseFactory(method, params) {
     return {
-      jsonrpc: '2.0',
-      id: call.id,
-      result: {
-        method: call.method,
-        ...call.params,
+      method,
+      params,
+      _context: {
+        call: {
+          user: fakeUser,
+        },
+        channel: {
+          service: 'proxy',
+          transport: 'http',
+        },
       },
     };
   }
-}
 
-const kernel = new Kernel();
-const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
-  {
-    verb: 'post',
-    route: '/user/:id',
-    signature: 'user:update',
-    mapRequest(body, query, params) {
-      return {
-        ...body,
-        id: params.id,
-      };
-    },
-  },
-  {
-    verb: 'get',
-    route: '/user/:id',
-    signature: 'user:read',
-    mapResponse(response) {
-      return {
-        ...response,
-        params: fakeUser,
-      };
-    },
-  },
-  ['post', '/user', 'user:create'],
-  // {
-  //   verb:'post',
-  //   route:'/user',
-  //   signature:'user:create'
-  // },
-  {
-    verb: 'get',
-    route: '/user',
-    signature: 'user:list',
-    mapRequest(body, query, params) {
-      return {
-        ...body,
-        ...query,
-      };
-    },
-  },
-];
+  app.use(bodyParser.json({ limit: '2mb' }));
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(
+    expressSession({
+      secret: 'SECRET',
+    }),
+  );
 
-routeMapping(routeMap, app, kernel);
+  app.use((req, res, next) => {
+    req.session.user = fakeUser;
+    next();
+  });
 
-describe('Route mapping', () => {
+  class Kernel extends AbstractKernel {
+    async handle(call) {
+      return {
+        jsonrpc: '2.0',
+        id: call.id,
+        result: {
+          method: call.method,
+          ...call.params,
+        },
+      };
+    }
+  }
+
+  const kernel = new Kernel();
+  const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
+    {
+      verb: 'post',
+      route: '/user/:id',
+      signature: 'user:update',
+      mapRequest(body, query, params) {
+        return {
+          ...body,
+          id: params.id,
+        };
+      },
+    },
+    {
+      verb: 'get',
+      route: '/user/:id',
+      signature: 'user:read',
+      mapResponse(response) {
+        return {
+          ...response,
+          params: fakeUser,
+        };
+      },
+    },
+    ['post', '/user', 'user:create'],
+    // {
+    //   verb:'post',
+    //   route:'/user',
+    //   signature:'user:create'
+    // },
+    {
+      verb: 'get',
+      route: '/user',
+      signature: 'user:list',
+      mapRequest(body, query, params) {
+        return {
+          ...body,
+          ...query,
+        };
+      },
+    },
+  ];
+
+  routeMapping(routeMap, app, kernel);
   before(async () => {
     request = supertest(app);
   });

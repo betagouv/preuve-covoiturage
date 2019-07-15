@@ -1,4 +1,5 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import {
   ApplicationInterface,
@@ -6,11 +7,11 @@ import {
   RevokeApplicationParamsInterface,
 } from '../interfaces';
 
-@Container.handler({
+@handler({
   service: 'application',
   method: 'revoke',
 })
-export class RevokeApplicationAction extends Parents.Action {
+export class RevokeApplicationAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['can', ['application.revoke']],
     ['validate', 'application.revoke'],

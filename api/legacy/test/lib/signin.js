@@ -24,25 +24,27 @@ export default {
         password: user.password,
       })
       .set('accept', 'json')
-      .expect(assertResponse(200, {
-        user: {
-          _id(id) {
-            if (!id) throw new Error('Missing user._id');
-            user.id = id;
+      .expect(
+        assertResponse(200, {
+          user: {
+            _id(id) {
+              if (!id) throw new Error('Missing user._id');
+              user.id = id;
+
+              return true;
+            },
+          },
+          token(jwtToken) {
+            // return the payload synchronously or throw
+            jwt.verify(jwtToken, jwtSecret);
+
+            // set the token for reuse
+            user.token = jwtToken;
 
             return true;
           },
-        },
-        token(jwtToken) {
-          // return the payload synchronously or throw
-          jwt.verify(jwtToken, jwtSecret);
-
-          // set the token for reuse
-          user.token = jwtToken;
-
-          return true;
-        },
-      }));
+        }),
+      );
 
     return user;
   },

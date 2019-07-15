@@ -1,57 +1,58 @@
-// tslint:disable max-classes-per-file
 import supertest from 'supertest';
 import chai from 'chai';
 import { describe } from 'mocha';
+
 import { CallType } from '@ilos/common';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 
 const { expect } = chai;
-const kernel = new Kernel();
-const app = new HttpTransport(kernel);
-let request;
-let cookies;
-
-let userId;
-const user = {
-  email: 'admin@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  password: 'Admin12345',
-};
-
-let territoryId;
-const territory = {
-  name: 'La commune libre de Paris',
-  shortname: 'Paris',
-};
-
-function callAdminFactory(params): CallType {
-  return {
-    params: { ...params },
-    method: '',
-    result: null,
-    context: {
-      call: {
-        user: {
-          role: 'admin',
-          group: 'registry',
-          permissions: ['user.create', 'user.delete', 'territory.create', 'territory.delete'],
-        },
-      },
-      channel: {
-        service: 'proxy',
-        transport: 'http',
-      },
-    },
-  };
-}
 
 describe('Territory service', async () => {
+  const kernel = new Kernel();
+  const app = new HttpTransport(kernel);
+  let request;
+  let cookies;
+
+  let userId;
+  const user = {
+    email: 'admin@example.com',
+    firstname: 'john',
+    lastname: 'schmidt',
+    phone: '0624857425',
+    group: 'registry',
+    role: 'admin',
+    password: 'Admin12345',
+  };
+
+  let territoryId;
+  const territory = {
+    name: 'La commune libre de Paris',
+    shortname: 'Paris',
+  };
+
+  function callAdminFactory(params): CallType {
+    return {
+      params: { ...params },
+      method: '',
+      result: null,
+      context: {
+        call: {
+          user: {
+            role: 'admin',
+            group: 'registry',
+            permissions: ['user.create', 'user.delete', 'territory.create', 'territory.delete'],
+          },
+        },
+        channel: {
+          service: 'proxy',
+          transport: 'http',
+        },
+      },
+    };
+  }
+
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-territory-${new Date().getTime()}`;
     await kernel.bootstrap();

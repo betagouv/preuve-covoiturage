@@ -1,10 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-} from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { UserChangeRoleParamsInterface } from '../interfaces/actions/UserChangeRoleParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';

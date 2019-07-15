@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';

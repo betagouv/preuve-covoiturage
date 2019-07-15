@@ -57,14 +57,14 @@
     "instrument": true
   },
   "dependencies": {
-    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@ilos/framework": "~0",
-    "@ilos/package-acl": "~0",
     "@ilos/config": "~0",
-    "@ilos/env": "~0",
     "@ilos/connection-manager": "~0",
     "@ilos/connection-mongo": "~0",
+    "@ilos/core": "~0",
+    "@ilos/env": "~0",
+    "@ilos/framework": "~0",
+    "@ilos/package-acl": "~0",
     "@ilos/repository": "~0",
     "@pdc/provider-validator": "~0",
     "lodash": "^4.17.11"
@@ -79,6 +79,7 @@
     "chai-as-promised": "^7.1.1",
     "chai-nock": "^1.1.0",
     "concurrently": "^4.1.0",
+    "json-schema": "^0.2.3",
     "json-schema-faker": "^0.5.0-rc17",
     "mocha": "^6.1.4",
     "nock": "^10.0.6",

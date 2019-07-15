@@ -1,33 +1,13 @@
 import supertest from 'supertest';
 import chai from 'chai';
 import { describe } from 'mocha';
+
 import { CallType } from '@ilos/common';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 
 const { expect } = chai;
-
-function callAdminFactory(params): CallType {
-  return {
-    params: { ...params },
-    method: '',
-    result: null,
-    context: {
-      call: {
-        user: {
-          role: 'admin',
-          group: 'registry',
-          permissions: ['user.create', 'user.delete', 'operator.create', 'operator.delete'],
-        },
-      },
-      channel: {
-        service: 'proxy',
-        transport: 'http',
-      },
-    },
-  };
-}
 
 describe('Operator service', async () => {
   const kernel = new Kernel();
@@ -45,6 +25,27 @@ describe('Operator service', async () => {
     role: 'admin',
     password: 'Admin12345',
   };
+
+  function callAdminFactory(params): CallType {
+    return {
+      params: { ...params },
+      method: '',
+      result: null,
+      context: {
+        call: {
+          user: {
+            role: 'admin',
+            group: 'registry',
+            permissions: ['user.create', 'user.delete', 'operator.create', 'operator.delete'],
+          },
+        },
+        channel: {
+          service: 'proxy',
+          transport: 'http',
+        },
+      },
+    };
+  }
 
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-operator-${new Date().getTime()}`;

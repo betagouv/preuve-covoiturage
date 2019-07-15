@@ -1,13 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  ConfigInterfaceResolver,
-  handler,
-  ContextType,
-  KernelInterfaceResolver,
-} from '@ilos/common';
+import { ConfigInterfaceResolver, handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChangeEmailParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';

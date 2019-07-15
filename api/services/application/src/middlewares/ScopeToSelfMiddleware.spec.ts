@@ -1,14 +1,15 @@
-import { Types, Exceptions, Interfaces, Container } from '@ilos/core';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { describe } from 'mocha';
+
+import { ContextType, ForbiddenException } from '@ilos/common';
 
 import { ScopeToSelfMiddleware } from './ScopeToSelfMiddleware';
-import { UserBaseInterface } from '../interfaces/UserInterfaces';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
-const mockConnectedUser = <UserBaseInterface>{
+const mockConnectedUser = {
   _id: '1ab',
   email: 'john.schmidt@example.com',
   firstname: 'john',
@@ -34,23 +35,8 @@ const mockCreateUserParameters = {
   password: 'password',
 };
 
-function error(err: Exceptions.RPCException) {
-  return {
-    status: 200,
-    data: {
-      jsonrpc: '2.0',
-      id: 1,
-      error: {
-        code: err.rpcError.code,
-        message: err.rpcError.message,
-        data: err.rpcError.data,
-      },
-    },
-  };
-}
-
 function contextFactory(params) {
-  return <Types.ContextType>{
+  return <ContextType>{
     call: {
       user: {
         ...mockConnectedUser,
@@ -133,7 +119,7 @@ describe('MIDDLEWARE SCOPETOSELF', () => {
           },
         ],
       ]),
-    ).to.rejectedWith(Exceptions.ForbiddenException);
+    ).to.rejectedWith(ForbiddenException);
   });
 });
 
@@ -157,6 +143,6 @@ describe('MIDDLEWARE SCOPETOSELF', () => {
           },
         ],
       ]),
-    ).to.rejectedWith(Exceptions.ForbiddenException);
+    ).to.rejectedWith(ForbiddenException);
   });
 });

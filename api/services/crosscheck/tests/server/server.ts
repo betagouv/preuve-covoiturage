@@ -1,18 +1,16 @@
 import path from 'path';
+import { CollectionInterface, MongoConnection } from '@ilos/connection-mongo';
+import { KernelInterface, ServiceContainerInterface, TransportInterface, ConfigInterfaceResolver } from '@ilos/common';
 
 import { bootstrap } from '../../src/bootstrap';
-import { CollectionInterface, MongoConnection } from '@ilos/connection-mongo';
-import { ConfigInterfaceResolver } from '@ilos/config';
-import { Interfaces } from '@ilos/core';
-
 import { ServiceProvider } from '../../src/ServiceProvider';
 import { Trip } from '../../src/entities/Trip';
 
 export class FakeServer {
   dbName: string;
-  kernel: Interfaces.KernelInterface;
-  service: Interfaces.ServiceContainerInterface;
-  transport: Interfaces.TransportInterface;
+  kernel: KernelInterface;
+  service: ServiceContainerInterface;
+  transport: TransportInterface;
   mongo;
   server;
   port = '8088';

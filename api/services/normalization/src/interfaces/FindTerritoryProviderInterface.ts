@@ -1,0 +1,3 @@
+export interface FindTerritoryProviderInterface {}
+
+export class FindTerritoryProviderInterfaceResolver implements FindTerritoryProviderInterface {}

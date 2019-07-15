@@ -1,5 +1,5 @@
-import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { Action as AbstractAction } from '@ilos/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 

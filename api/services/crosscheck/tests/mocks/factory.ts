@@ -1,5 +1,7 @@
-import { Exceptions } from '@ilos/core';
+// TODO refactor to remove axios
 import axios from 'axios';
+
+import { RPCException } from '@ilos/common';
 
 export class MockFactory {
   port = '8088';
@@ -24,7 +26,7 @@ export class MockFactory {
     };
   }
 
-  public error(err: Exceptions.RPCException) {
+  public error(err: RPCException) {
     return {
       status: 200,
       data: {

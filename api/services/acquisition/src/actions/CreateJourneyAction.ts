@@ -1,7 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ConfigInterfaceResolver, ContextType } from '@ilos/common';
 
-
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 import { CreateJourneyParamsInterface } from '../interfaces/CreateJourneyParamsInterface';

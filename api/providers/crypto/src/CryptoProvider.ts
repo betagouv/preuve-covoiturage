@@ -1,5 +1,6 @@
-import { provider, ProviderInterface } from '@ilos/common';
 import * as bcrypt from 'bcryptjs';
+
+import { provider, ProviderInterface } from '@ilos/common';
 
 import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface';
 

@@ -9,4 +9,3 @@ export interface PositionInterface {
   territories?: any[];
   town?: string;
 }
-

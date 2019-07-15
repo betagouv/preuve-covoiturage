@@ -1,6 +1,6 @@
 import path from 'path';
-import { KernelInterface, ServiceContainerInterface, TransportInterface, ConfigInterfaceResolver } from '@ilos/common';
 
+import { KernelInterface, ServiceContainerInterface, TransportInterface, ConfigInterfaceResolver } from '@ilos/common';
 import { MongoConnection, ObjectId, CollectionInterface } from '@ilos/connection-mongo';
 import { CryptoProvider } from '@pdc/provider-crypto';
 

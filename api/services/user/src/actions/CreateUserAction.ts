@@ -10,7 +10,7 @@ import {
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { User } from '../entities/User';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserCreateParamsInterface } from '../interfaces/actions/UserCreateParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 

@@ -1,6 +1,6 @@
 import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
 
-import { User } from '../../entities/User';
+import { User } from '../entities/User';
 
 export interface UserRepositoryProviderInterface extends RepositoryInterface {
   list(filters, pagination): Promise<{ users: User[]; total: number }>;

@@ -18,6 +18,7 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0",
+    "@ilos/common": "~0",
     "@ilos/config": "~0"
   },
   "devDependencies": {

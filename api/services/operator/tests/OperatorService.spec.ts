@@ -1,9 +1,7 @@
-// tslint:disable max-classes-per-file
 import supertest from 'supertest';
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
 

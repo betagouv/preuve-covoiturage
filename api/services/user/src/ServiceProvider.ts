@@ -1,10 +1,7 @@
 import path from 'path';
+
 import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import {
-  serviceProvider,
-  NewableType,
-  ExtensionInterface,
-} from '@ilos/common';
+import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ConfigExtension } from '@ilos/config';
@@ -54,10 +51,7 @@ import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddle
 
 @serviceProvider({
   config: __dirname,
-  providers: [
-    UserRepositoryProvider,
-    CryptoProvider,
-  ],
+  providers: [UserRepositoryProvider, CryptoProvider],
   validator: [
     ['user.create', userCreateSchema],
     ['user.changePassword', userChangePasswordSchema],
@@ -80,9 +74,7 @@ import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddle
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
   ],
-  connections: [
-    [MongoConnection, 'mongo'],
-  ],
+  connections: [[MongoConnection, 'mongo']],
   handlers: [
     ChangeEmailUserAction,
     ChangePasswordUserAction,

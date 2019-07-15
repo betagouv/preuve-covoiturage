@@ -1,8 +1,8 @@
-// tslint:disable max-classes-per-file
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
+
 import { Kernel as ParentKernel } from '@ilos/framework';
 import { kernel } from '@ilos/common';
 

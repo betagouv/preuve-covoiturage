@@ -9,7 +9,7 @@ export interface CryptoProviderInterface extends ProviderInterface {
   generateToken(length: number): string;
 }
 
-export abstract class CryptoProviderInterfaceResolver implements CryptoProviderInterface{
+export abstract class CryptoProviderInterfaceResolver implements CryptoProviderInterface {
   async boot() {
     //
   }

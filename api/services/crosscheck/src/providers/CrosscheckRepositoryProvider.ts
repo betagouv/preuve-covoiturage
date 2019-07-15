@@ -1,6 +1,5 @@
-import { Container, Exceptions } from '@ilos/core';
+import { provider, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
-import { ConfigInterfaceResolver } from '@ilos/config';
 import { ParentRepository } from '@ilos/repository';
 
 import { Trip } from '../entities/Trip';
@@ -8,13 +7,13 @@ import { tripSchema } from '../schema/tripSchema';
 import {
   CrosscheckRepositoryProviderInterface,
   CrosscheckRepositoryProviderInterfaceResolver,
-} from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
+} from '../interfaces/CrosscheckRepositoryProviderInterface';
 import { PersonInterface } from '../interfaces/TripInterface';
 
 /*
  * Trip specific repository
  */
-@Container.provider({
+@provider({
   identifier: CrosscheckRepositoryProviderInterfaceResolver,
 })
 export class CrosscheckRepositoryProvider extends ParentRepository implements CrosscheckRepositoryProviderInterface {
@@ -45,7 +44,7 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
     const normalizedOperatorIds = this.normalizeOperatorIds(params);
     const collection = await this.getCollection();
     const result = await collection.findOne({ ...normalizedOperatorIds });
-    if (!result) throw new Exceptions.NotFoundException('Trip not found');
+    if (!result) throw new NotFoundException('Trip not found');
     return this.instanciate(result);
   }
 
@@ -59,7 +58,7 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
         $lte: startTimeRange.max,
       },
     });
-    if (!result) throw new Exceptions.NotFoundException('Trip not found');
+    if (!result) throw new NotFoundException('Trip not found');
     return this.instanciate(result);
   }
 
@@ -84,7 +83,7 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
       },
       { returnOriginal: false },
     );
-    if (!result) throw new Exceptions.NotFoundException('Trip not found');
+    if (!result) throw new NotFoundException('Trip not found');
     return this.instanciate(result.value);
   }
 

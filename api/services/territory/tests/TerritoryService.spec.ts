@@ -1,23 +1,22 @@
-// tslint:disable max-classes-per-file
 import supertest from 'supertest';
 import path from 'path';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { describe } from 'mocha';
-import { MongoConnection } from '@ilos/connection-mongo';
 import { TransportInterface } from '@ilos/common';
 
 import { bootstrap } from '../src/bootstrap';
 
-let transport: TransportInterface;
-let request;
-
 chai.use(chaiNock);
 
 const { expect } = chai;
-const port = '8086';
 
 describe('Territory service', () => {
+  const port = '8086';
+
+  let transport: TransportInterface;
+  let request;
+
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';

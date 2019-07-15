@@ -9,19 +9,20 @@ import { Kernel } from '../src/Kernel';
 import { requestJourney } from './mocks/requestJourneyV2';
 
 const { expect } = chai;
-const kernel = new Kernel();
-const app = new HttpTransport(kernel);
-let request;
-let token;
-let operator;
-let application;
-
-const tokenProvider = new TokenProvider({
-  secret: process.env.APP_JWT_SECRET || 'notsosecret',
-  ttl: -1,
-});
 
 describe('Send journey using application token', () => {
+  const kernel = new Kernel();
+  const app = new HttpTransport(kernel);
+  let request;
+  let token;
+  let operator;
+  let application;
+
+  const tokenProvider = new TokenProvider({
+    secret: process.env.APP_JWT_SECRET || 'notsosecret',
+    ttl: -1,
+  });
+
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-server-${new Date().getTime()}`;
     await kernel.bootstrap();

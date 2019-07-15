@@ -1,12 +1,11 @@
-import { Container } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
 import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 
 import { Application } from '../entities/Application';
 import { ApplicationRepositoryProviderInterface, ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
 
-@Container.provider({
+@provider({
   identifier: ApplicationRepositoryProviderInterfaceResolver,
 })
 export class ApplicationRepositoryProvider extends ParentRepository implements ApplicationRepositoryProviderInterface {

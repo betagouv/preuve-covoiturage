@@ -6,12 +6,12 @@ import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { ObjectId } from 'bson';
 
-import { Interfaces } from '@ilos/core';
+import { TransportInterface } from '@ilos/common';
 
 import { bootstrap } from '../src/bootstrap';
 import { Application } from '../src/entities/Application';
 
-let transport: Interfaces.TransportInterface;
+let transport: TransportInterface;
 let request;
 
 chai.use(chaiAsPromised);

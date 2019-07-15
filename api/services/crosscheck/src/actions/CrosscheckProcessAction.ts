@@ -1,9 +1,11 @@
-import { Parents, Container, Types, Interfaces, Exceptions } from '@ilos/core';
 import * as _ from 'lodash';
 import moment from 'moment';
 
+import { Action } from '@ilos/core';
+import { handler, ContextType } from '@ilos/common';
+
 import { Person, Trip } from '../entities/Trip';
-import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/repository/CrosscheckRepositoryProviderInterface';
+import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
 import { PersonInterface, TripInterface } from '../interfaces/TripInterface';
 import { JourneyInterface } from '../interfaces/JourneyInterface';
 
@@ -14,17 +16,17 @@ interface CrosscheckProcessParamsInterface {
 /*
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
  */
-@Container.handler({
+@handler({
   service: 'crosscheck',
   method: 'process',
 })
-export class CrosscheckProcessAction extends Parents.Action {
+export class CrosscheckProcessAction extends Action {
   public readonly middlewares: (string | [string, any])[] = [['validate', 'crosscheck.process']];
   constructor(private crosscheckRepository: CrosscheckRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(param: CrosscheckProcessParamsInterface, context: Types.ContextType): Promise<Trip> {
+  public async handle(param: CrosscheckProcessParamsInterface, context: ContextType): Promise<Trip> {
     let trip: TripInterface | null;
 
     // find by ( operator_journey_id & operator_id )

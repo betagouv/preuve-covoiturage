@@ -1,22 +1,30 @@
-import { Types, Exceptions, Interfaces, Container } from '@ilos/core';
+import {
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ContextType,
+  ResultType,
+  InvalidParamsException,
+  ForbiddenException,
+} from '@ilos/common';
 
 export type ScopeToSelfMiddlewareOptionsType = [string[], Function[]];
 
 /*
  * Verify default permission - else verify permissions according to params, context & callback function
  */
-@Container.middleware()
-export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
+@middleware()
+export class ScopeToSelfMiddleware implements MiddlewareInterface {
   async process(
-    params: Types.ParamsType,
-    context: Types.ContextType,
+    params: ParamsType,
+    context: ContextType,
     next: Function,
     options: ScopeToSelfMiddlewareOptionsType,
-  ): Promise<Types.ResultType> {
+  ): Promise<ResultType> {
     const [basePermissions, callbackPermissions] = options;
 
     if (!basePermissions || callbackPermissions.length === 0) {
-      throw new Exceptions.InvalidParamsException('No permissions defined');
+      throw new InvalidParamsException('No permissions defined');
     }
 
     let permissions = [];
@@ -26,7 +34,7 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
     }
 
     if (permissions.length === 0) {
-      throw new Exceptions.ForbiddenException('Invalid permissions');
+      throw new ForbiddenException('Invalid permissions');
     }
 
     // If the user has one of basePermissions --> OK
@@ -40,6 +48,6 @@ export class ScopeToSelfMiddleware implements Interfaces.MiddlewareInterface {
         return next(params, context);
       }
     }
-    throw new Exceptions.ForbiddenException('Invalid permissions');
+    throw new ForbiddenException('Invalid permissions');
   }
 }

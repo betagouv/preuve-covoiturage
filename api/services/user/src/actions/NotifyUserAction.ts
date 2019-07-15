@@ -1,9 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-  NotificationInterfaceResolver,
-} from '@ilos/common';
+import { handler, ContextType, NotificationInterfaceResolver } from '@ilos/common';
 
 import { UserNotifyParamsInterface } from '../interfaces/actions/UserNotifyParamsInterface';
 import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';

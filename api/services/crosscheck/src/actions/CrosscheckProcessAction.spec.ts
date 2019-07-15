@@ -1,6 +1,6 @@
-// tslint:disable max-classes-per-file
 import chai from 'chai';
-import { Container, Extensions, Interfaces, Parents, Types } from '@ilos/core';
+import { Extensions } from '@ilos/core';
+import { provider, NewableType, ExtensionInterface, serviceProvider } from '@ilos/common';
 import { EnvExtension } from '@ilos/env';
 import { ConfigExtension } from '@ilos/config';
 import { ValidatorExtension } from '@pdc/provider-validator';
@@ -15,13 +15,7 @@ import { trip } from '../../tests/mocks/trip';
 
 const { expect } = chai;
 
-const mockJourney = {
-  ...journey,
-};
-
-const mockTripId = '5d08a59aeb5e79d7607d29cd';
-
-@Container.provider({
+@provider({
   identifier: CrosscheckRepositoryProviderInterfaceResolver,
 })
 class FakeCrosscheckRepository extends CrosscheckRepositoryProviderInterfaceResolver {
@@ -29,11 +23,11 @@ class FakeCrosscheckRepository extends CrosscheckRepositoryProviderInterfaceReso
     return;
   }
   public async create(trip: TripInterface): Promise<Trip> {
-    return new Trip({ ...trip, _id: mockTripId });
+    return new Trip({ ...trip, _id: '5d08a59aeb5e79d7607d29cd' });
   }
 }
 
-@Container.serviceProvider({
+@serviceProvider({
   env: null,
   config: {},
   validator: [],
@@ -41,7 +35,7 @@ class FakeCrosscheckRepository extends CrosscheckRepositoryProviderInterfaceReso
   handlers: [CrosscheckProcessAction],
 })
 class ServiceProvider extends BaseServiceProvider {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+  readonly extensions: NewableType<ExtensionInterface>[] = [
     EnvExtension,
     ConfigExtension,
     ValidatorExtension,
@@ -49,15 +43,19 @@ class ServiceProvider extends BaseServiceProvider {
   ];
 }
 
-let serviceProvider;
-let action;
+describe('Crosscheck Action - process', () => {
+  let sp;
+  let action;
 
-describe('CROSSCHECK ACTION - process', () => {
+  const mockJourney = {
+    ...journey,
+  };
+
   before(async () => {
-    serviceProvider = new ServiceProvider();
-    await serviceProvider.register();
-    await serviceProvider.init();
-    action = serviceProvider.getContainer().get(CrosscheckProcessAction);
+    sp = new ServiceProvider();
+    await sp.register();
+    await sp.init();
+    action = sp.getContainer().get(CrosscheckProcessAction);
   });
 
   it('should create ', async () => {

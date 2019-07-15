@@ -1,11 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ForbiddenException,
-} from '@ilos/common';
+import { handler, ForbiddenException } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 import { User } from '../entities/User';
 import { UserChangePasswordParamsInterface } from '../interfaces/actions/UserChangePasswordParamsInterface';

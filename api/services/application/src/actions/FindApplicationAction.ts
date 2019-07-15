@@ -1,4 +1,5 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import {
   ApplicationInterface,
@@ -6,11 +7,11 @@ import {
   ApplicationRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
-@Container.handler({
+@handler({
   service: 'application',
   method: 'find',
 })
-export class FindApplicationAction extends Parents.Action {
+export class FindApplicationAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'application.find'],
     [

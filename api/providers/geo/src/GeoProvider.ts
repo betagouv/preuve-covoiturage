@@ -15,9 +15,7 @@ import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface'
   identifier: GeoProviderInterfaceResolver,
 })
 export class GeoProvider implements ProviderInterface {
-  constructor(protected validator: ValidatorInterfaceResolver) {
-    //
-  }
+  constructor(protected validator: ValidatorInterfaceResolver) {}
 
   public async getTown(position: GeoInterface): Promise<PositionInterface> {
     await this.validator.validate(position, 'position');

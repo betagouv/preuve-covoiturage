@@ -1,15 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
-import {
-  handler,
-  ContextType,
-  ConfigInterfaceResolver,
-  KernelInterfaceResolver,
-} from '@ilos/common';
+import { handler, ContextType, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * find user by email and send email to set new password

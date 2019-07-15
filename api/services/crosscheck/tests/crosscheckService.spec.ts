@@ -8,24 +8,24 @@ import { FakeServer } from './server/server';
 import { MockFactory } from './mocks/factory';
 import { journey, secondJourney } from './mocks/journey';
 import { trip } from './mocks/trip';
-import { Person, Trip } from '../src/entities/Trip';
+import { Trip } from '../src/entities/Trip';
 
 chai.use(chaiAsPromised);
 
 const { expect } = chai;
 
-const mockServer = new FakeServer();
-const mockFactory = new MockFactory();
+describe('Service Crosscheck', () => {
+  const mockServer = new FakeServer();
+  const mockFactory = new MockFactory();
 
-let superRequest;
+  let superRequest;
 
-const request = mockFactory.request();
+  const request = mockFactory.request();
 
-const existingTripId = '5d0b616f9f611aef34deb304';
-let processParams;
-let addedTrip: Trip | null;
+  const existingTripId = '5d0b616f9f611aef34deb304';
+  let processParams;
+  let addedTrip: Trip | null;
 
-describe('SERVICE CROSSCHECK', () => {
   before(async () => {
     await mockServer.startServer();
     await mockServer.startTransport();

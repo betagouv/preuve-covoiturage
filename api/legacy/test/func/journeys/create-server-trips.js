@@ -26,23 +26,26 @@ describe('Trips', () => {
     });
   });
 
-  it('POST /operators/applications :: Create', async () => request
-    .post('/operators/applications')
-    .send({
-      name: 'Dummy Application',
-    })
-    .set('Authorization', `Bearer ${storage.user.token}`)
-    .set('accept', 'json')
-    .expect(assertResponse(201, {
-      app(appId) {
-        storage.appId = appId;
-        return true;
-      },
-      token(appToken) {
-        storage.appToken = appToken;
-        return true;
-      },
-    })));
+  it('POST /operators/applications :: Create', async () =>
+    request
+      .post('/operators/applications')
+      .send({
+        name: 'Dummy Application',
+      })
+      .set('Authorization', `Bearer ${storage.user.token}`)
+      .set('accept', 'json')
+      .expect(
+        assertResponse(201, {
+          app(appId) {
+            storage.appId = appId;
+            return true;
+          },
+          token(appToken) {
+            storage.appToken = appToken;
+            return true;
+          },
+        }),
+      ));
 
   it('POST /journeys/push :: generate couples', async () => {
     const operatorJourneyId = faker.random.uuid();

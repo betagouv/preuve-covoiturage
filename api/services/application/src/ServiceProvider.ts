@@ -1,4 +1,5 @@
-import { Parents, Container, Extensions, Interfaces } from '@ilos/core';
+import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { PermissionMiddleware } from '@ilos/package-acl';
@@ -24,7 +25,7 @@ import {
   applicationRevokeSchema,
 } from './schemas';
 
-@Container.serviceProvider({
+@serviceProvider({
   config: __dirname,
   providers: [ApplicationRepositoryProvider],
   validator: [
@@ -37,8 +38,8 @@ import {
   connections: [[MongoConnection, 'mongo']],
   handlers: [AllApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
 })
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+export class ServiceProvider extends AbstractServiceProvider {
+  readonly extensions: NewableType<ExtensionInterface>[] = [
     ConfigExtension,
     ConnectionManagerExtension,
     ValidatorExtension,

@@ -4,11 +4,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import {
-  serviceProvider,
-  NewableType,
-  ExtensionInterface,
-} from '@ilos/common';
+import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
@@ -38,25 +34,28 @@ let fail: Function;
 /**
  * Sugar function to run tests (succeed / fail)
  */
-const expectFactory = (s: MockServiceProvider, fulfilled = true) => (schema: any, errorStatus?: string) =>
+const expectFactory = (mockServiceProvider: MockServiceProvider, fulfilled = true) => (
+  schema: any,
+  errorStatus?: string,
+) =>
   fulfilled
     ? expect(
-        s
+        mockServiceProvider
           .getContainer()
-          .get(ValidatorInterfaceResolver)
+          .get<ValidatorInterfaceResolver>(ValidatorInterfaceResolver)
           .validate(schema, 'journey.create'),
       ).to.be.fulfilled
     : errorStatus
     ? expect(
-        s
+        mockServiceProvider
           .getContainer()
-          .get(ValidatorInterfaceResolver)
+          .get<ValidatorInterfaceResolver>(ValidatorInterfaceResolver)
           .validate(schema, 'journey.create'),
       ).to.be.rejectedWith(errorStatus)
     : expect(
-        s
+        mockServiceProvider
           .getContainer()
-          .get(ValidatorInterfaceResolver)
+          .get<ValidatorInterfaceResolver>(ValidatorInterfaceResolver)
           .validate(schema, 'journey.create'),
       ).to.be.rejected;
 
@@ -68,6 +67,7 @@ describe('Journey Create Schema : ', () => {
     await sp.register();
     await sp.init();
   });
+
   describe('Required fields', () => {
     it('Fails on missing journey_id', () => {
       fail({}, "data should have required property '.journey_id'");
