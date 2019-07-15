@@ -4,7 +4,7 @@ import {
   ContextType,
   KernelInterfaceResolver,
   ConfigInterfaceResolver,
-  InvalidParamsException
+  InvalidParamsException,
 } from '@ilos/common';
 import * as _ from 'lodash';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';

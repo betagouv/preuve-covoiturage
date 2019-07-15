@@ -1,5 +1,5 @@
 import { ValidatorExtension as ValidatorParentExtension } from '@ilos/validator';
-import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '@ilos/common'
+import { ValidatorInterfaceResolver, ServiceContainerInterface, extension } from '@ilos/common';
 
 import { bicCustomFormat } from './formats/bicCustomFormat';
 import { euVatCustomFormat } from './formats/euVatCustomFormat';

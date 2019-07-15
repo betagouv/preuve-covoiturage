@@ -2,7 +2,7 @@ import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/co
 import {
   serviceProvider,
   NewableType,
-  ExtensionInterface
+  ExtensionInterface,
 } from '@ilos/common';
 
 import { PermissionMiddleware } from '@ilos/package-acl';

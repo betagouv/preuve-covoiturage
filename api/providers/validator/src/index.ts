@@ -2,7 +2,7 @@ export {
   ValidatorMiddleware,
 } from '@ilos/validator';
 
-export { 
+export {
   ValidatorInterface,
   ValidatorInterfaceResolver,
 } from '@ilos/common';

@@ -13,7 +13,7 @@ import {
   ConfigInterface,
   ConfigInterfaceResolver,
   EnvInterface,
-  EnvInterfaceResolver
+  EnvInterfaceResolver,
 } from '@ilos/common';
 
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
