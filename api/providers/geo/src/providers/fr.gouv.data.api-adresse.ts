@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import axios from 'axios';
-import { Exceptions } from '@ilos/core';
+import { NotFoundException } from '@ilos/common';
 
 const domain = 'https://api-adresse.data.gouv.fr';
 
@@ -12,7 +12,7 @@ export class FrGouvDataApiAdresse {
     const res = await axios.get(`${domain}/search?q=france&citycode=${code}`);
 
     if (!_.get(res, 'data.features', []).length) {
-      throw new Exceptions.NotFoundException(`INSEE Not found on BAN (${code})`);
+      throw new NotFoundException(`INSEE Not found on BAN (${code})`);
     }
 
     const data = _.get(res, 'data.features', [{ properties: {} }])[0].properties;
@@ -39,7 +39,7 @@ export class FrGouvDataApiAdresse {
     const res = await axios.get(`${domain}/reverse?lon=${lon}&lat=${lat}`);
 
     if (!_.get(res, 'data.features', []).length) {
-      throw new Exceptions.NotFoundException(`Not found on BAN (${lat}, ${lon})`);
+      throw new NotFoundException(`Not found on BAN (${lat}, ${lon})`);
     }
 
     const data = _.get(res, 'data.features', [{ properties: {} }])[0].properties;
@@ -60,7 +60,7 @@ export class FrGouvDataApiAdresse {
       const res = await axios.get(`${domain}/search?q=${encodeURIComponent(literal)}`);
 
       if (!_.get(res, 'data.features', []).length) {
-        throw new Exceptions.NotFoundException();
+        throw new NotFoundException();
       }
 
       const data = _.get(res, 'data.features', [{ properties: {} }])[0].properties;
@@ -72,7 +72,7 @@ export class FrGouvDataApiAdresse {
         country: 'France',
       };
     } catch (res) {
-      throw new Exceptions.NotFoundException();
+      throw new NotFoundException();
     }
   }
 }

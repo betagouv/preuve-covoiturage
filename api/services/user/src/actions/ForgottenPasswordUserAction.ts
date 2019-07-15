@@ -1,5 +1,10 @@
-import { Parents, Container, Types, Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  ConfigInterfaceResolver,
+  KernelInterfaceResolver,
+} from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
@@ -9,23 +14,23 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * find user by email and send email to set new password
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'forgottenPassword',
 })
-export class ForgottenPasswordUserAction extends Parents.Action {
+export class ForgottenPasswordUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [['validate', 'user.forgottenPassword']];
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(params: { email: string }, context: Types.ContextType): Promise<void> {
+  public async handle(params: { email: string }, context: ContextType): Promise<void> {
     const user = await this.userRepository.findUserByParams({ email: params.email });
 
     const reset = this.cryptoProvider.generateToken();

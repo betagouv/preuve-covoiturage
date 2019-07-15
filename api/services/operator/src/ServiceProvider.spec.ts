@@ -3,7 +3,7 @@ import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { Kernel as ParentKernel } from '@ilos/framework';
-import { Container } from '@ilos/core';
+import { kernel } from '@ilos/common';
 
 import { ServiceProvider } from './ServiceProvider';
 
@@ -15,7 +15,7 @@ process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 process.env.APP_ENV = 'testing';
 process.env.APP_MONGO_DB = '';
 
-@Container.kernel({
+@kernel({
   children: [ServiceProvider],
 })
 class Kernel extends ParentKernel {}

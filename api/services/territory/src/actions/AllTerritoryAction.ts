@@ -1,12 +1,13 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 
-@Container.handler({
+@handler({
   service: 'territory',
   method: 'all',
 })
-export class AllTerritoryAction extends Parents.Action {
+export class AllTerritoryAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

@@ -1,15 +1,16 @@
-import { Parents, Container, Types } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler, ConfigInterfaceResolver, ContextType } from '@ilos/common';
+
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 import { CreateJourneyParamsInterface } from '../interfaces/CreateJourneyParamsInterface';
 
-@Container.handler({
+@handler({
   service: 'acquisition',
   method: 'createJourney',
 })
-export class CreateJourneyAction extends Parents.Action {
+export class CreateJourneyAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'journey.create'],
     ['can', ['journey.create']],
@@ -28,7 +29,7 @@ export class CreateJourneyAction extends Parents.Action {
 
   protected async handle(
     params: CreateJourneyParamsInterface | CreateJourneyParamsInterface[],
-    context: Types.ContextType,
+    context: ContextType,
   ): Promise<Journey | Journey[]> {
     if (Array.isArray(params)) {
       const journeys = params.map((journeyData) => this.cast(journeyData, context.call.user.operator_id));

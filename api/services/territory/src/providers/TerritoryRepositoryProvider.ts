@@ -1,5 +1,4 @@
-import { Container } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
 import { MongoConnection } from '@ilos/connection-mongo';
 
@@ -9,7 +8,7 @@ import {
   TerritoryRepositoryProviderInterfaceResolver,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 
-@Container.provider({
+@provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
 export class TerritoryRepositoryProvider extends ParentRepository

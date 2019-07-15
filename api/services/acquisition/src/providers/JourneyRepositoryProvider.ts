@@ -1,12 +1,11 @@
-import { Container } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { ConfigInterfaceResolver, provider } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
 import { MongoException, MongoConnection } from '@ilos/connection-mongo';
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterface, JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 
-@Container.provider({
+@provider({
   identifier: JourneyRepositoryProviderInterfaceResolver,
 })
 export class JourneyRepositoryProvider extends ParentRepository implements JourneyRepositoryProviderInterface {

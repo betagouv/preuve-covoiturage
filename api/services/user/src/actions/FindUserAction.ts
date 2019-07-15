@@ -1,4 +1,5 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
@@ -8,11 +9,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Find user by id
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'find',
 })
-export class FindUserAction extends Parents.Action {
+export class FindUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.find'],
     [

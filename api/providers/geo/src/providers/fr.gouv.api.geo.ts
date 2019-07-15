@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import axios from 'axios';
-
-import { Exceptions } from '@ilos/core';
+import { NotFoundException } from '@ilos/common';
 
 export class FrGouvApiGeo {
   private static domain = 'https://geo.api.gouv.fr';
@@ -37,7 +36,7 @@ export class FrGouvApiGeo {
       `${FrGouvApiGeo.domain}/communes?lon=${lon}&lat=${lat}&fields=nom,code,codesPostaux&format=json`,
     );
     if (!data.length) {
-      throw new Exceptions.NotFoundException(`Not found on Geo (${lat}, ${lon})`);
+      throw new NotFoundException(`Not found on Geo (${lat}, ${lon})`);
     }
 
     if (Array.isArray(data)) {

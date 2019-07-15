@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Container, Exceptions, Interfaces } from '@ilos/core';
+import { provider, ProviderInterface, InvalidParamsException } from '@ilos/common';
 import { ValidatorInterfaceResolver } from '@pdc/provider-validator';
 
 import { GeoInterface } from './interfaces/GeoInterface';
@@ -11,10 +11,10 @@ import { FrGouvApiGeo } from './providers/fr.gouv.api.geo';
 import { OrgOpenstreetmapNominatim } from './providers/org.openstreetmap.nominatim';
 import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
 
-@Container.provider({
+@provider({
   identifier: GeoProviderInterfaceResolver,
 })
-export class GeoProvider implements Interfaces.ProviderInterface {
+export class GeoProvider implements ProviderInterface {
   constructor(protected validator: ValidatorInterfaceResolver) {
     //
   }
@@ -152,7 +152,7 @@ export class GeoProvider implements Interfaces.ProviderInterface {
       }
     }
 
-    throw new Exceptions.InvalidParamsException();
+    throw new InvalidParamsException();
   }
 
   private cleanPostcodes(p) {

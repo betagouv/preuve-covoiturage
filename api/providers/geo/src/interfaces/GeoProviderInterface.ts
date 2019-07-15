@@ -1,9 +1,9 @@
-import { Interfaces } from '@ilos/core';
+import { ProviderInterface } from '@ilos/common';
 
 import { GeoInterface } from './GeoInterface';
 import { PositionInterface } from './PositionInterface';
 
-export interface GeoProviderInterface extends Interfaces.ProviderInterface {
+export interface GeoProviderInterface extends ProviderInterface {
   getTown({ lon, lat, insee, literal }: GeoInterface): Promise<PositionInterface>;
 }
 

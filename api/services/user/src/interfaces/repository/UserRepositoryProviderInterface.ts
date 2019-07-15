@@ -1,8 +1,8 @@
-import { ParentRepositoryInterface, ParentRepositoryInterfaceResolver } from '@ilos/repository';
+import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
 
 import { User } from '../../entities/User';
 
-export interface UserRepositoryProviderInterface extends ParentRepositoryInterface {
+export interface UserRepositoryProviderInterface extends RepositoryInterface {
   list(filters, pagination): Promise<{ users: User[]; total: number }>;
   deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void>;
   findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<User>;
@@ -10,7 +10,7 @@ export interface UserRepositoryProviderInterface extends ParentRepositoryInterfa
   patchUser(_id: string, patch: any, contextParam: { territory?: string; operator?: string }): Promise<User>;
 }
 
-export abstract class UserRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver {
+export abstract class UserRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
   public async list(filters, pagination): Promise<{ users: User[]; total: number }> {
     throw new Error();
   }

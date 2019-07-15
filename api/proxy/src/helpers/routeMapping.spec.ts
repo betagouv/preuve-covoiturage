@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import supertest from 'supertest';
-import { Parents } from '@ilos/core';
+import { Kernel as AbstractKernel } from '@ilos/core';
 import express from 'express';
 import bodyParser from 'body-parser';
 import expressSession from 'express-session';
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
   next();
 });
 
-class Kernel extends Parents.Kernel {
+class Kernel extends AbstractKernel {
   async handle(call) {
     return {
       jsonrpc: '2.0',

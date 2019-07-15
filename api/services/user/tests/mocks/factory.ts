@@ -1,4 +1,4 @@
-import { Exceptions } from '@ilos/core';
+import { RPCException } from '@ilos/common';
 import axios from 'axios';
 
 import { mockCreateUserParams, mockNewUserBase } from './newUserBase';
@@ -90,7 +90,7 @@ export class MockFactory {
     return this.newUser('registry', 'admin', {}, null);
   }
 
-  public error(err: Exceptions.RPCException) {
+  public error(err: RPCException) {
     return {
       status: 200,
       data: {

@@ -1,7 +1,12 @@
-import { Parents, Container, Types, Interfaces } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  KernelInterfaceResolver,
+  ConfigInterfaceResolver,
+} from '@ilos/common';
 import * as _ from 'lodash';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { PositionInterface } from '../interfaces/PositionInterface';
 import { Journey } from '../entities/journey';
@@ -13,20 +18,20 @@ interface NormalizationGeoParamsInterface {
 /*
  * Enrich journey with Geo data
  */
-@Container.handler({
+@handler({
   service: 'normalization',
   method: 'geo',
 })
-export class NormalizationGeoAction extends Parents.Action {
+export class NormalizationGeoAction extends AbstractAction {
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
     private geoProvider: GeoProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(param: NormalizationGeoParamsInterface, context: Types.ContextType): Promise<void> {
+  public async handle(param: NormalizationGeoParamsInterface, context: ContextType): Promise<void> {
     const paths = this.config.get('normalization.positionPaths');
 
     let normalizedJourney = {};

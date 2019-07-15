@@ -1,4 +1,10 @@
-import { Parents, Interfaces, Extensions, Container } from '@ilos/core';
+import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import {
+  serviceProvider,
+  NewableType,
+  ExtensionInterface,
+} from '@ilos/common';
+
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ConfigExtension } from '@ilos/config';
@@ -9,7 +15,7 @@ import { JourneyRepositoryProvider } from './providers/JourneyRepositoryProvider
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { journeyCreateSchema } from './schemas/journeyCreateSchema';
 
-@Container.serviceProvider({
+@serviceProvider({
   config: __dirname,
   providers: [JourneyRepositoryProvider],
   validator: [['journey.create', journeyCreateSchema]],
@@ -17,8 +23,8 @@ import { journeyCreateSchema } from './schemas/journeyCreateSchema';
   connections: [[MongoConnection, 'mongo']],
   handlers: [CreateJourneyAction],
 })
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+export class ServiceProvider extends AbstractServiceProvider {
+  readonly extensions: NewableType<ExtensionInterface>[] = [
     ConfigExtension,
     ConnectionManagerExtension,
     ValidatorExtension,

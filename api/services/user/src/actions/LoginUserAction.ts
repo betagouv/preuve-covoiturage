@@ -1,6 +1,11 @@
-import { Parents, Container, Types, Exceptions } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  ConfigInterfaceResolver,
+  ForbiddenException,
+} from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
@@ -10,11 +15,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Authenticate user by email & pwd - else throws forbidden error
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'login',
 })
-export class LoginUserAction extends Parents.Action {
+export class LoginUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.login'],
     ['content.whitelist', userWhiteListFilterOutput],
@@ -28,21 +33,21 @@ export class LoginUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: UserLoginParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserLoginParamsInterface, context: ContextType): Promise<User> {
     try {
       const user = await this.userRepository.findUserByParams({ email: params.email });
 
       if (!(await this.cryptoProvider.comparePassword(params.password, user.password))) {
-        throw new Exceptions.ForbiddenException();
+        throw new ForbiddenException();
       }
 
       if (user.status !== this.config.get('user.status.active')) {
-        throw new Exceptions.ForbiddenException();
+        throw new ForbiddenException();
       }
 
       return this.userRepository.patch(user._id, { lastConnectedAt: new Date() });
     } catch (e) {
-      throw new Exceptions.ForbiddenException();
+      throw new ForbiddenException();
     }
   }
 }

@@ -1,5 +1,10 @@
-import { Types, Interfaces, Container } from '@ilos/core';
-
+import {
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
 export type FilterOutputMiddlewareOptionsType = {
   whiteList?: string[],
   blackList?: string[],
@@ -9,14 +14,14 @@ export type FilterOutputMiddlewareOptionsType = {
 /*
  * Delete properties from model or array of models on output of handler
  */
-@Container.middleware()
-export class FilterOutputMiddleware implements Interfaces.MiddlewareInterface {
+@middleware()
+export class FilterOutputMiddleware implements MiddlewareInterface {
   async process(
-    params: Types.ParamsType,
-    context: Types.ContextType,
+    params: ParamsType,
+    context: ContextType,
     next: Function,
     filterProperties: FilterOutputMiddlewareOptionsType,
-  ): Promise<Types.ResultType> {
+  ): Promise<ResultType> {
     let result = await next(params, context);
 
     if ('whiteList' in filterProperties && 'blackList' in filterProperties) {

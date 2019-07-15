@@ -1,5 +1,9 @@
-import { Parents, Container, Types } from '@ilos/core';
-import { NotificationInterfaceResolver } from '@ilos/notification';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  NotificationInterfaceResolver,
+} from '@ilos/common';
 
 import { UserNotifyParamsInterface } from '../interfaces/actions/UserNotifyParamsInterface';
 import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
@@ -7,16 +11,16 @@ import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateBy
 /*
  * Send email to user
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'notify',
 })
-export class NotifyUserAction extends Parents.Action {
+export class NotifyUserAction extends AbstractAction {
   constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();
   }
 
-  public async handle(params: UserNotifyParamsInterface, context: Types.ContextType): Promise<void> {
+  public async handle(params: UserNotifyParamsInterface, context: ContextType): Promise<void> {
     const sendTemplateByEmailParams: SendTemplateByEmailParamsInterface = {
       template: params.template,
       email: params.email,

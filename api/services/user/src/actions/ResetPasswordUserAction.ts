@@ -1,6 +1,12 @@
-import { Parents, Container, Types, Exceptions } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  ConfigInterfaceResolver,
+  ForbiddenException,
+} from '@ilos/common';
+
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
@@ -10,11 +16,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Find user by forgottenReset and update password
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'resetPassword',
 })
-export class ResetPasswordUserAction extends Parents.Action {
+export class ResetPasswordUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.resetPassword'],
     ['content.whitelist', userWhiteListFilterOutput],
@@ -28,11 +34,11 @@ export class ResetPasswordUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: UserResetPasswordParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserResetPasswordParamsInterface, context: ContextType): Promise<User> {
     const user = await this.userRepository.findUserByParams({ forgottenReset: params.reset });
 
     if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgottenToken))) {
-      throw new Exceptions.ForbiddenException('Invalid token');
+      throw new ForbiddenException('Invalid token');
     }
 
     // Token expired after 1 day
@@ -41,7 +47,7 @@ export class ResetPasswordUserAction extends Parents.Action {
       user.forgottenToken = undefined;
       await this.userRepository.update(user);
 
-      throw new Exceptions.ForbiddenException('Expired token');
+      throw new ForbiddenException('Expired token');
     }
 
     user.password = await this.cryptoProvider.cryptPassword(params.password);

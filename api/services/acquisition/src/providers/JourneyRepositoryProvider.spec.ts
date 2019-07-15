@@ -1,6 +1,6 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { ConfigInterfaceResolver } from '@ilos/common';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 import { Journey } from '../entities/Journey';

@@ -1,6 +1,13 @@
-import { Parents, Container, Exceptions, Types, Interfaces } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  ConfigInterfaceResolver,
+  InvalidRequestException,
+  ConflictException,
+  KernelInterfaceResolver,
+} from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
@@ -10,11 +17,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Create user and call forgotten password action
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'create',
 })
-export class CreateUserAction extends Parents.Action {
+export class CreateUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.create'],
     [
@@ -41,27 +48,27 @@ export class CreateUserAction extends Parents.Action {
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(request: UserCreateParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(request: UserCreateParamsInterface, context: ContextType): Promise<User> {
     try {
       // check if the user exists already
       const foundUser = await this.userRepository.findUserByParams({ email: request.email });
       if (foundUser) {
-        throw new Exceptions.ConflictException('email conflict');
+        throw new ConflictException('email conflict');
       }
     } catch (e) {
-      if (e instanceof Exceptions.ConflictException) {
+      if (e instanceof ConflictException) {
         throw e;
       }
     }
 
     if ('operator' in request && 'territory' in request) {
       // todo: check this in jsonschema
-      throw new Exceptions.InvalidRequestException('Cannot assign operator and AOM at the same time');
+      throw new InvalidRequestException('Cannot assign operator and AOM at the same time');
     }
 
     // create the new user
@@ -82,7 +89,7 @@ export class CreateUserAction extends Parents.Action {
     return userCreated;
   }
 
-  async createInvitation(user: User, context: Types.ContextType) {
+  async createInvitation(user: User, context: ContextType) {
     // generate new token for a password reset on first access
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();

@@ -1,4 +1,8 @@
-import { Parents, Container, Types } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+} from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
@@ -8,11 +12,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Update role of user
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'changeRole',
 })
-export class ChangeRoleUserAction extends Parents.Action {
+export class ChangeRoleUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.changeRole'],
     [
@@ -39,7 +43,7 @@ export class ChangeRoleUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: UserChangeRoleParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserChangeRoleParamsInterface, context: ContextType): Promise<User> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {

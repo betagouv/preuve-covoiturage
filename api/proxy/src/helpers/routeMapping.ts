@@ -1,5 +1,9 @@
 import express from 'express';
-import { Interfaces, Types } from '@ilos/core';
+import {
+  KernelInterface,
+  ParamsType,
+  RPCSingleCallType,
+} from '@ilos/common';
 
 export type MapRequestType = (body: any, query?: any, params?: any, session?: any) => any;
 export type MapResponseType = (result: any, error: any, session?: any) => any;
@@ -41,7 +45,7 @@ export type RouteHandlerType = (
   next: express.NextFunction,
 ) => Promise<void>;
 
-export function makeCall(method: string, params: Types.ParamsType, callContext?: any): Types.RPCSingleCallType {
+export function makeCall(method: string, params: ParamsType, callContext?: any): RPCSingleCallType {
   const baseRPCCall = {
     jsonrpc: '2.0',
     id: 1,
@@ -69,7 +73,7 @@ export function makeCall(method: string, params: Types.ParamsType, callContext?:
 export function routeMapping(
   definitions: (ObjectRouteMapType | ArrayRouteMapType)[],
   router: express.Router,
-  kernel: Interfaces.KernelInterface,
+  kernel: KernelInterface,
 ): void {
   const routes: Map<string, Map<string, ObjectRouteMapType>> = new Map();
 

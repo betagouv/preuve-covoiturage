@@ -1,5 +1,9 @@
-import { Parents, Container, Types } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  ConfigInterfaceResolver,
+} from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { User } from '../entities/User';
@@ -9,11 +13,11 @@ import { UserRegisterParamsInterface } from '../interfaces/actions/UserRegisterP
 /*
  * Create user and call forgotten password action
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'register',
 })
-export class RegisterUserAction extends Parents.Action {
+export class RegisterUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     // TODO internal call only
     ['validate', 'user.register'],
@@ -26,7 +30,7 @@ export class RegisterUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(request: UserRegisterParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(request: UserRegisterParamsInterface, context: ContextType): Promise<User> {
     // create the new user
     const newHashPassword = await this.cryptoProvider.cryptPassword(request.password);
 

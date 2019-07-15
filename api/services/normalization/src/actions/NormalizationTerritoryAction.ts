@@ -1,7 +1,13 @@
-import { Parents, Container, Types, Interfaces, Exceptions } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+  KernelInterfaceResolver,
+  ConfigInterfaceResolver,
+  InvalidParamsException,
+} from '@ilos/common';
 import * as _ from 'lodash';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { PositionInterface } from '../interfaces/PositionInterface';
 
@@ -12,20 +18,20 @@ interface NormalizationTerritoryParamsInterface {
 /*
  * Enrich journey with Territories
  */
-@Container.handler({
+@handler({
   service: 'normalization',
   method: 'territory',
 })
-export class NormalizationTerritoryAction extends Parents.Action {
+export class NormalizationTerritoryAction extends AbstractAction {
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
     private geoProvider: GeoProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(param: NormalizationTerritoryParamsInterface, context: Types.ContextType): Promise<void> {
+  public async handle(param: NormalizationTerritoryParamsInterface, context: ContextType): Promise<void> {
     const paths = this.config.get('normalization.positionPaths');
 
     const territoriesEnrichedJourney = {
@@ -57,7 +63,7 @@ export class NormalizationTerritoryAction extends Parents.Action {
     return;
   }
 
-  public async findTerritories(position: PositionInterface, context: Types.ContextType): Promise<object> {
+  public async findTerritories(position: PositionInterface, context: ContextType): Promise<object> {
     if ('insee' in position) {
       return this.kernel.call(
         'territory:findByInsee',
@@ -89,6 +95,6 @@ export class NormalizationTerritoryAction extends Parents.Action {
         },
       );
     }
-    throw new Exceptions.InvalidParamsException('missing insee or lat & lon');
+    throw new InvalidParamsException('missing insee or lat & lon');
   }
 }

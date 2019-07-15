@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "@sentry/node": "^5.1.0",
-    "@ilos/config": "~0"
+    "@ilos/config": "~0",
+    "@ilos/common": "~0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

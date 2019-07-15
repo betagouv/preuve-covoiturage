@@ -5,15 +5,16 @@ import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import { bootstrap } from '../src/bootstrap';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { Interfaces } from '@ilos/core';
+import { TransportInterface } from '@ilos/common';
+
+import { bootstrap } from '../src/bootstrap';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 const port = '8082';
 
-let transport: Interfaces.TransportInterface;
+let transport: TransportInterface;
 let request: supertest.SuperTest<supertest.Test>;
 
 const callFactory = (params: any = {}) => ({

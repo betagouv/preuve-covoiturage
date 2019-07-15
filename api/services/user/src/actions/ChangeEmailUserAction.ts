@@ -1,5 +1,10 @@
-import { Parents, Container, Interfaces, Types } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  ConfigInterfaceResolver,
+  handler,
+  ContextType,
+  KernelInterfaceResolver,
+} from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
@@ -10,11 +15,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Update email of user and send email for confirmation
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'changeEmail',
 })
-export class ChangeEmailUserAction extends Parents.Action {
+export class ChangeEmailUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.changeEmail'],
     [
@@ -45,13 +50,13 @@ export class ChangeEmailUserAction extends Parents.Action {
   constructor(
     private config: ConfigInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(params: UserChangeEmailParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserChangeEmailParamsInterface, context: ContextType): Promise<User> {
     const user = await this.userRepository.find(params._id);
     const contextParam: { territory?: string; operator?: string } = {};
 

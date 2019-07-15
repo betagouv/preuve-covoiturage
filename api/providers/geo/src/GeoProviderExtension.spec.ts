@@ -3,7 +3,12 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import { Parents, Interfaces, Container } from '@ilos/core';
+import {
+  NewableType,
+  ExtensionInterface,
+  serviceProvider as serviceProviderDecorator,
+} from '@ilos/common';
+import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
 import { EnvExtension } from '@ilos/env';
 import { ConfigExtension } from '@ilos/config';
 import { ValidatorExtension } from '@pdc/provider-validator';
@@ -14,14 +19,14 @@ import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface'
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-@Container.serviceProvider({
+@serviceProviderDecorator({
   env: null,
   config: {},
   validator: [],
   geo: true,
 })
-class ServiceProvider extends Parents.ServiceProvider {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+class ServiceProvider extends BaseServiceProvider {
+  readonly extensions: NewableType<ExtensionInterface>[] = [
     EnvExtension,
     ConfigExtension,
     ValidatorExtension,
@@ -46,7 +51,7 @@ describe('Geo provider', () => {
   before(async () => {
     await serviceProvider.register();
     await serviceProvider.init();
-    geoProvider = serviceProvider.getContainer().get(GeoProviderInterfaceResolver);
+    geoProvider = serviceProvider.get(GeoProviderInterfaceResolver);
   });
   // TOWN
   describe('find Town common', () => {

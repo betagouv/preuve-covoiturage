@@ -1,12 +1,13 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 
-@Container.handler({
+@handler({
   service: 'operator',
   method: 'delete',
 })
-export class DeleteOperatorAction extends Parents.Action {
+export class DeleteOperatorAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['can', ['operator.delete']],
     ['validate', 'operator.delete'],

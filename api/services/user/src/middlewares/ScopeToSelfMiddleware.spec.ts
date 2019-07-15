@@ -1,4 +1,5 @@
-import { Types, Exceptions, Interfaces, Container } from '@ilos/core';
+import { RPCException, ContextType, ForbiddenException } from '@ilos/common';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -34,7 +35,7 @@ const mockCreateUserParameters = {
   password: 'password',
 };
 
-function error(err: Exceptions.RPCException) {
+function error(err: RPCException) {
   return {
     status: 200,
     data: {
@@ -50,7 +51,7 @@ function error(err: Exceptions.RPCException) {
 }
 
 function contextFactory(params) {
-  return <Types.ContextType>{
+  return <ContextType>{
     call: {
       user: {
         ...mockConnectedUser,
@@ -133,7 +134,7 @@ describe('MIDDLEWARE SCOPETOSELF', () => {
           },
         ],
       ]),
-    ).to.rejectedWith(Exceptions.ForbiddenException);
+    ).to.rejectedWith(ForbiddenException);
   });
 });
 
@@ -157,6 +158,6 @@ describe('MIDDLEWARE SCOPETOSELF', () => {
           },
         ],
       ]),
-    ).to.rejectedWith(Exceptions.ForbiddenException);
+    ).to.rejectedWith(ForbiddenException);
   });
 });

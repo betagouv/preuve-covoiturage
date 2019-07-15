@@ -1,4 +1,4 @@
-import { Types, Exceptions } from '@ilos/core';
+import { RPCException, ContextType } from '@ilos/common';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -40,7 +40,7 @@ async function listNestedUsers(params, context): Promise<{ data: User[] }> {
   return { data: mockListUsers };
 }
 
-function error(err: Exceptions.RPCException) {
+function error(err: RPCException) {
   return {
     status: 200,
     data: {
@@ -56,7 +56,7 @@ function error(err: Exceptions.RPCException) {
 }
 
 function contextFactory(params) {
-  return <Types.ContextType>{
+  return <ContextType>{
     call: {
       user: {
         ...mockConnectedUser,
