@@ -227,9 +227,20 @@ describe('Operator applications', () => {
       cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
     });
 
-    it("REST fails to access someone else's applications", async () => {
+    it("REST fails to access someone else's application by Id", async () => {
       return request
         .get(`/operators/${operatorA._id.toString()}/applications/${applicationA._id.toString()}`)
+        .set('Cookie', cookies)
+        .set('Accept', 'application/json')
+        .set('Content-type', 'application/json')
+        .expect((response: supertest.Response) => {
+          expect(response.status).to.eq(403);
+        });
+    });
+
+    it("REST fails to access someone else's applications", async () => {
+      return request
+        .get(`/operators/${operatorA._id.toString()}/applications`)
         .set('Cookie', cookies)
         .set('Accept', 'application/json')
         .set('Content-type', 'application/json')

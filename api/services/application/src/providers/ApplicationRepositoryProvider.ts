@@ -1,7 +1,7 @@
 import { Container } from '@ilos/core';
 import { ConfigInterfaceResolver } from '@ilos/config';
 import { ParentRepository } from '@ilos/repository';
-import { MongoConnection } from '@ilos/connection-mongo';
+import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 
 import { Application } from '../entities/Application';
 import { ApplicationRepositoryProviderInterface, ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
@@ -10,6 +10,8 @@ import { ApplicationRepositoryProviderInterface, ApplicationRepositoryProviderIn
   identifier: ApplicationRepositoryProviderInterfaceResolver,
 })
 export class ApplicationRepositoryProvider extends ParentRepository implements ApplicationRepositoryProviderInterface {
+  castObjectIds = ['operator_id'];
+
   constructor(protected config: ConfigInterfaceResolver, protected mongoProvider: MongoConnection) {
     super(config, mongoProvider);
   }
@@ -24,6 +26,13 @@ export class ApplicationRepositoryProvider extends ParentRepository implements A
 
   public getModel() {
     return Application;
+  }
+
+  public async allByOperator({ operator_id }): Promise<Application[]> {
+    const collection = await this.getCollection();
+    const results = await collection.find({ operator_id: new ObjectId(operator_id) }).toArray();
+
+    return this.instanciateMany(results);
   }
 
   public async softDelete(params: { _id: string; operator_id: string }): Promise<any> {

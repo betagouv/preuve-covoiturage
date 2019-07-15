@@ -16,12 +16,19 @@ import {
   CreateApplicationAction,
   RevokeApplicationAction,
 } from './actions';
-import { applicationFindSchema, applicationCreateSchema, applicationRevokeSchema } from './schemas';
+
+import {
+  applicationAllSchema,
+  applicationFindSchema,
+  applicationCreateSchema,
+  applicationRevokeSchema,
+} from './schemas';
 
 @Container.serviceProvider({
   config: __dirname,
   providers: [ApplicationRepositoryProvider],
   validator: [
+    ['application.all', applicationAllSchema],
     ['application.find', applicationFindSchema],
     ['application.create', applicationCreateSchema],
     ['application.revoke', applicationRevokeSchema],
