@@ -1,0 +1,452 @@
+{
+  "x-send-defaults": true,
+  "openapi": "3.0.0",
+  "x-api-id": "registre-preuve-covoiturage",
+  "info": {
+    "description": "Le registre de preuve de covoiturage est à la fois un label et une plate-forme technique pour\n\ndistribuer à grande échelle des incitations monétaires ou non monétaires, sans risque de\n\nfraude massive.",
+    "version": "1.0.0",
+    "title": "Api client du Registre de preuve de covoiturage",
+    "termsOfService": "https://registre-preuve-de-covoiturage.gitbook.io/produit/cgu",
+    "contact": {
+      "email": "contact@covoiturage.beta.gouv.fr"
+    },
+    "license": {
+      "name": "GNU Affero General Public License v3.0",
+      "url": "https://github.com/betagouv/preuve-covoiturage/blob/master/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.covoiturage.beta.gouv.fr"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "post",
+        "deprecated": false,
+        "summary": "",
+        "description": "json rpc",
+        "tags": ["JSONRPC"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonRpcRequired"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-headers": [],
+  "x-explorer-enabled": true,
+  "x-proxy-enabled": true,
+  "x-samples-enabled": true,
+  "x-samples-languages": ["javascript"],
+  "components": {
+    "schemas": {
+      "user.create": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.create"
+              },
+              "params": {
+                "title": "Parameters",
+                "type": "object",
+                "required": ["email", "lastname", "firstname", "group"],
+                "additionalProperties": false,
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "lastname": {
+                    "type": "string"
+                  },
+                  "firstname": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "group": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  },
+                  "operator": {
+                    "type": "string"
+                  },
+                  "territory": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.changeEmail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.changeEmail"
+              },
+              "params": {
+                "title": "Parameters",
+                "type": "object",
+                "required": ["_id", "email"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.changePassword": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.changePassword"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["oldPassword", "newPassword"],
+                "additionalProperties": false,
+                "properties": {
+                  "oldPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.changeRole": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.changeRole"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["_id", "role"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.confirmEmail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.confirmEmail"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["confirm", "token"],
+                "additionalProperties": false,
+                "properties": {
+                  "confirm": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.delete": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.delete"
+              },
+              "params": {
+                "title": "Parameters",
+                "type": "object",
+                "required": ["_id"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.find": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.find"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["_id"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.forgottenPassword": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.forgottenPassword"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["email"],
+                "additionalProperties": false,
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.list": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.list"
+              },
+              "params": {
+                "title": "Parameters",
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "number",
+                    "default": 1
+                  },
+                  "limit": {
+                    "type": "number",
+                    "default": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.login": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.login"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["password", "email"],
+                "additionalProperties": false,
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.patch": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.patch"
+              },
+              "params": {
+                "title": "Parameters",
+                "type": "object",
+                "required": ["_id", "patch"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "patch": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "additionalProperties": false,
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "lastname": {
+                        "type": "string"
+                      },
+                      "firstname": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.resetPassword": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "user.resetPassword"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["token", "reset", "password"],
+                "additionalProperties": false,
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "reset": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "JsonRpcRequired": {
+        "type": "object",
+        "required": ["method", "id", "jsonrpc"],
+        "properties": {
+          "method": {
+            "type": "string",
+            "description": "Method name"
+          },
+          "id": {
+            "type": "integer",
+            "default": 1,
+            "format": "int32",
+            "description": "Request ID"
+          },
+          "jsonrpc": {
+            "type": "string",
+            "default": "2.0",
+            "description": "JSON-RPC Version (2.0)"
+          }
+        },
+        "discriminator": {
+          "propertyName": "method_name"
+        }
+      }
+    }
+  },
+  "tags": []
+}
