@@ -17,7 +17,16 @@
   },
   "servers": [
     {
-      "url": "https://api.covoiturage.beta.gouv.fr"
+      "url": "https://api.covoiturage.beta.gouv.fr",
+      "description": "prod"
+    },
+    {
+      "url": "https://api-staging.covoiturage.beta.gouv.fr",
+      "description": "staging"
+    },
+    {
+      "url": "http://localhost:8080",
+      "description": "local"
     }
   ],
   "paths": {
@@ -31,7 +40,18 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/user.create.response"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "requestBody": {
@@ -421,6 +441,302 @@
             }
           }
         ]
+      },
+      "territory.all": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "territory.all"
+              }
+            }
+          }
+        ]
+      },
+      "territory.patch": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "territory.patch"
+              },
+              "params": {
+                "title": "territory",
+                "required": ["_id", "patch"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "patch": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "shortname": {
+                        "type": "string"
+                      },
+                      "acronym": {
+                        "type": "string"
+                      },
+                      "insee": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "insee_main": {
+                        "type": "string"
+                      },
+                      "network_id": {
+                        "type": "integer"
+                      },
+                      "company": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/Company"
+                          },
+                          {
+                            "properties": {
+                              "region": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/Address"
+                      },
+                      "bank": {
+                        "$ref": "#/components/schemas/Bank"
+                      },
+                      "contacts": {
+                        "$ref": "#/components/schemas/Contacts"
+                      },
+                      "cgu": {
+                        "$ref": "#/components/schemas/CGU"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "operator.all": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "operator.all"
+              }
+            }
+          }
+        ]
+      },
+      "operator.patch": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequired"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "operator.patch"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["_id", "patch"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "patch": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "additionalProperties": false,
+                    "properties": {
+                      "nom_commercial": {
+                        "type": "string"
+                      },
+                      "raison_sociale": {
+                        "type": "string"
+                      },
+                      "company": {
+                        "$ref": "#/components/schemas/Company"
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/Address"
+                      },
+                      "bank": {
+                        "$ref": "#/components/schemas/Bank"
+                      },
+                      "contacts": {
+                        "$ref": "#/components/schemas/Contacts"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "user.create.response": {
+        "$ref": "#/components/schemas/User"
+      },
+      "User": {
+        "type": "object",
+        "required": ["_id", "email", "lastname", "firstname", "group"],
+        "additionalProperties": false,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "territory": {
+            "type": "string"
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "required": ["siren"],
+        "additionalProperties": false,
+        "properties": {
+          "siren": {
+            "type": "string"
+          },
+          "naf_etablissement": {
+            "type": "string"
+          },
+          "naf_entreprise": {
+            "type": "string"
+          },
+          "nature_juridique": {
+            "type": "string"
+          },
+          "cle_nic": {
+            "type": "string"
+          },
+          "rna": {
+            "type": "string"
+          },
+          "vat_intra": {
+            "type": "string"
+          }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "required": ["street", "city", "country", "postcode"],
+        "additionalProperties": false,
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postcode": {
+            "type": "string"
+          },
+          "cedex": {
+            "type": "string"
+          }
+        }
+      },
+      "Bank": {
+        "type": "object",
+        "required": ["bank_name", "client_name", "iban", "bic"],
+        "additionalProperties": false,
+        "properties": {
+          "bank_name": {
+            "type": "string"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "iban": {
+            "type": "string"
+          },
+          "bic": {
+            "type": "string"
+          }
+        }
+      },
+      "Contacts": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "rgpd_dpo": {
+            "type": "string"
+          },
+          "rgpd_controller": {
+            "type": "string"
+          },
+          "technical": {
+            "type": "string"
+          }
+        }
+      },
+      "CGU": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "default": false
+          },
+          "acceptedAt": {
+            "type": "string"
+          },
+          "acceptedBy": {
+            "type": "string"
+          }
+        }
       },
       "JsonRpcRequired": {
         "type": "object",
