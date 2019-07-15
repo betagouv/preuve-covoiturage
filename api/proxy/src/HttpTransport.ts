@@ -7,9 +7,14 @@ import cors from 'cors';
 import swaggerUiExpress from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 
-import { Interfaces } from '@ilos/core';
-import { ConfigInterface, ConfigInterfaceResolver } from '@ilos/config';
-import { EnvInterface, EnvInterfaceResolver } from '@ilos/env';
+import {
+  TransportInterface,
+  KernelInterface,
+  ConfigInterface,
+  ConfigInterfaceResolver,
+  EnvInterface,
+  EnvInterfaceResolver
+} from '@ilos/common';
 
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 
@@ -18,14 +23,14 @@ import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall, routeMapping } from './helpers/routeMapping';
 
-export class HttpTransport implements Interfaces.TransportInterface {
+export class HttpTransport implements TransportInterface {
   app: express.Express;
   config: ConfigInterface;
   env: EnvInterface;
   port: string;
   server: http.Server;
 
-  constructor(private kernel: Interfaces.KernelInterface) {}
+  constructor(private kernel: KernelInterface) {}
 
   getKernel() {
     return this.kernel;

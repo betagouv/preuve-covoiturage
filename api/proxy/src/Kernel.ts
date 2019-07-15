@@ -1,4 +1,4 @@
-import { Container } from '@ilos/core';
+import { kernel } from '@ilos/common';
 import { Kernel as BaseKernel } from '@ilos/framework';
 import { SentryProvider } from '@pdc/provider-sentry';
 
@@ -7,7 +7,7 @@ import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as operatorBootstrap } from '@pdc/service-operator';
 
-@Container.kernel({
+@kernel({
   env: null,
   config: __dirname,
   children: [

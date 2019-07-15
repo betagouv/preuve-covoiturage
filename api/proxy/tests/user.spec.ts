@@ -2,7 +2,7 @@
 import supertest from 'supertest';
 import chai from 'chai';
 import { describe } from 'mocha';
-import { Types } from '@ilos/core';
+import { CallType } from '@ilos/common';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
@@ -26,7 +26,7 @@ const user = {
   password: 'Admin12345',
 };
 
-function callAdminFactory(params): Types.CallType {
+function callAdminFactory(params): CallType {
   return {
     params: { ...params },
     method: '',
