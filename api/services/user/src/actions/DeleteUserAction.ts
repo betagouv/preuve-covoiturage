@@ -1,4 +1,5 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
@@ -6,11 +7,11 @@ import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 /*
  *  Find user by id and delete user
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'delete',
 })
-export class DeleteUserAction extends Parents.Action {
+export class DeleteUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.delete'],
     [

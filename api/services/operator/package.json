@@ -58,6 +58,7 @@
     "instrument": true
   },
   "dependencies": {
+    "@ilos/common": "~0",
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@ilos/config": "~0",

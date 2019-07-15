@@ -59,6 +59,7 @@
     "instrument": true
   },
   "dependencies": {
+    "@ilos/common": "~0",
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@ilos/connection-mongo": "~0",

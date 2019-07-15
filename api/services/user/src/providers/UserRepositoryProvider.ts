@@ -1,7 +1,11 @@
-import { Container, Exceptions } from '@ilos/core';
+import {
+  NotFoundException,
+  provider,
+  ConfigInterfaceResolver,
+} from '@ilos/common';
+
 import { ParentRepository } from '@ilos/repository';
 import { MongoException, MongoConnection, ObjectId } from '@ilos/connection-mongo';
-import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
@@ -19,7 +23,7 @@ import {
 /*
  * User specific repository
  */
-@Container.provider({
+@provider({
   identifier: UserRepositoryProviderInterfaceResolver,
 })
 export class UserRepositoryProvider extends ParentRepository implements UserRepositoryProviderInterface {
@@ -93,7 +97,7 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
     const normalizedFilters = this.normalizeContextFilters(contextParam);
     const collection = await this.getCollection();
     const result = await collection.findOne({ _id: new ObjectId(_id), ...normalizedFilters });
-    if (!result) throw new Exceptions.NotFoundException('User not found');
+    if (!result) throw new NotFoundException('User not found');
     return this.instanciate(result);
   }
 
@@ -103,7 +107,7 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
     const collection = await this.getCollection();
     const result = await collection.findOne(params);
-    if (!result) throw new Exceptions.NotFoundException('User not found');
+    if (!result) throw new NotFoundException('User not found');
     return this.instanciate(result);
   }
 

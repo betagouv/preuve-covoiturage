@@ -1,12 +1,12 @@
 import {
-  ParentRepositoryInterface,
-  ParentRepositoryInterfaceResolver,
-} from '@ilos/repository';
+  RepositoryInterface,
+  RepositoryInterfaceResolver,
+} from '@ilos/common';
 
-export interface TerritoryRepositoryProviderInterface extends ParentRepositoryInterface {
+export interface TerritoryRepositoryProviderInterface extends RepositoryInterface {
   //
 }
 
-export abstract class TerritoryRepositoryProviderInterfaceResolver extends ParentRepositoryInterfaceResolver {
+export abstract class TerritoryRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
   //
 }

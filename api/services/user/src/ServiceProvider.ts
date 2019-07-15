@@ -1,5 +1,10 @@
 import path from 'path';
-import { Parents, Interfaces, Extensions, Container } from '@ilos/core';
+import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import {
+  serviceProvider,
+  NewableType,
+  ExtensionInterface,
+} from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ConfigExtension } from '@ilos/config';
@@ -47,7 +52,7 @@ import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
 import { ContentBlacklistMiddleware } from './middlewares/ContentBlacklistMiddleware';
 import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddleware';
 
-@Container.serviceProvider({
+@serviceProvider({
   config: __dirname,
   providers: [
     UserRepositoryProvider,
@@ -100,10 +105,8 @@ import { ContentWhitelistMiddleware } from './middlewares/ContentWhitelistMiddle
     templateMeta: 'template',
   },
 })
-export class ServiceProvider extends Parents.ServiceProvider {
-  public static test = 'tutu';
-  public test2 = 'tata';
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+export class ServiceProvider extends AbstractServiceProvider {
+  readonly extensions: NewableType<ExtensionInterface>[] = [
     ConfigExtension,
     ConnectionManagerExtension,
     ValidatorExtension,

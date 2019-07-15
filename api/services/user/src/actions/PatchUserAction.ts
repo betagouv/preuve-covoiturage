@@ -1,4 +1,8 @@
-import { Parents, Container, Types } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ContextType,
+} from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserPatchParamsInterface } from '../interfaces/actions/UserPatchParamsInterface';
@@ -9,11 +13,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Update properties of user ( firstname, lastname, phone )
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'patch',
 })
-export class PatchUserAction extends Parents.Action {
+export class PatchUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.patch'],
     [
@@ -45,7 +49,7 @@ export class PatchUserAction extends Parents.Action {
     super();
   }
 
-  public async handle(params: UserPatchParamsInterface, context: Types.ContextType): Promise<User> {
+  public async handle(params: UserPatchParamsInterface, context: ContextType): Promise<User> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {

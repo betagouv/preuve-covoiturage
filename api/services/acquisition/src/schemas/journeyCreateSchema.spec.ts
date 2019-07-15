@@ -3,7 +3,13 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import { Parents, Interfaces, Container } from '@ilos/core';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import {
+  serviceProvider,
+  NewableType,
+  ExtensionInterface,
+} from '@ilos/common';
+
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
 import { ValidatorExtension, ValidatorInterfaceResolver } from '@pdc/provider-validator';
@@ -16,13 +22,13 @@ const { expect } = chai;
 /**
  * Mock the Acquisition Service Provider
  */
-@Container.serviceProvider({
+@serviceProvider({
   env: null,
   config: {},
   validator: [['journey.create', journeyCreateSchema]],
 })
-class MockServiceProvider extends Parents.ServiceProvider {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [EnvExtension, ConfigExtension, ValidatorExtension];
+class MockServiceProvider extends AbstractServiceProvider {
+  readonly extensions: NewableType<ExtensionInterface>[] = [EnvExtension, ConfigExtension, ValidatorExtension];
 }
 
 let sp: MockServiceProvider;

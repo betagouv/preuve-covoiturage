@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "@ilos/core": "~0",
+    "@ilos/common": "~0",
     "@ilos/framework": "~0",
     "@ilos/package-acl": "~0",
     "@ilos/config": "~0",

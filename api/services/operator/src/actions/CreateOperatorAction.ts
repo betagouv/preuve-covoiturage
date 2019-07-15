@@ -1,13 +1,14 @@
-import { Parents, Container } from '@ilos/core';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { CreateOperatorParamsInterface, OperatorDbInterface } from '../interfaces/OperatorInterfaces';
 
-@Container.handler({
+@handler({
   service: 'operator',
   method: 'create',
 })
-export class CreateOperatorAction extends Parents.Action {
+export class CreateOperatorAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['can', ['operator.create']],
     ['validate', 'operator.create'],

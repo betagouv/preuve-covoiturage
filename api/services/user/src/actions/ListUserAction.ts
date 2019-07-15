@@ -1,5 +1,8 @@
-import { Parents, Container } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { Action as AbstractAction } from '@ilos/core';
+import {
+  handler,
+  ConfigInterfaceResolver,
+} from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
 import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
@@ -11,11 +14,11 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * list users filtered by territory or operator and paginate with limit & skip
  */
-@Container.handler({
+@handler({
   service: 'user',
   method: 'list',
 })
-export class ListUserAction extends Parents.Action {
+export class ListUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.list'],
     [

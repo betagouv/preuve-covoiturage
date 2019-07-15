@@ -1,10 +1,12 @@
-import { Parents, Container } from '@ilos/core';
+import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
+import { serviceProvider } from '@ilos/common';
+
 import { GeoProvider } from '@pdc/provider-geo';
 
 import { NormalizationGeoAction } from './actions/NormalizationGeoAction';
 import { NormalizationTerritoryAction } from './actions/NormalizationTerritoryAction';
 
-@Container.serviceProvider({
+@serviceProvider({
   providers: [GeoProvider],
   handlers: [
     NormalizationGeoAction,
@@ -12,4 +14,4 @@ import { NormalizationTerritoryAction } from './actions/NormalizationTerritoryAc
   ],
   config: __dirname,
 })
-export class ServiceProvider extends Parents.ServiceProvider {}
+export class ServiceProvider extends BaseServiceProvider {}
