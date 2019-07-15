@@ -4,7 +4,6 @@ import supertest from 'supertest';
 import chaiNock from 'chai-nock';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import { Exceptions } from '@ilos/core';
 
 import { FakeMongoServer } from './mongo/server';
 import { MockFactory } from './mocks/factory';

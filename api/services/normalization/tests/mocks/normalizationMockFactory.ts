@@ -1,5 +1,6 @@
-import { Exceptions } from '@ilos/core';
+import { RPCException } from '@ilos/common';
 import axios from 'axios';
+
 import { bootstrap } from '../../src/bootstrap';
 
 export class MockFactory {
@@ -54,7 +55,7 @@ export class MockFactory {
     };
   }
 
-  public error(err: Exceptions.RPCException) {
+  public error(err: RPCException) {
     return {
       status: 200,
       data: {

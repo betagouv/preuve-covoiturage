@@ -4,11 +4,12 @@ import path from 'path';
 import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { describe } from 'mocha';
-import { bootstrap } from '../src/bootstrap';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { Interfaces } from '@ilos/core';
+import { TransportInterface } from '@ilos/common';
 
-let transport: Interfaces.TransportInterface;
+import { bootstrap } from '../src/bootstrap';
+
+let transport: TransportInterface;
 let request;
 
 chai.use(chaiNock);

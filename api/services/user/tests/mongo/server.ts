@@ -1,8 +1,14 @@
 import path from 'path';
-import { Interfaces } from '@ilos/core';
+import {
+  KernelInterface,
+  ServiceContainerInterface,
+  TransportInterface,
+  ConfigInterfaceResolver,
+} from '@ilos/common';
+
 import { MongoConnection, ObjectId, CollectionInterface } from '@ilos/connection-mongo';
 import { CryptoProvider } from '@pdc/provider-crypto';
-import { ConfigInterfaceResolver } from '@ilos/config';
+
 import { User } from '../../src/entities/User';
 import { MockFactory } from '../mocks/factory';
 import { ServiceProvider } from '../../src/ServiceProvider';
@@ -12,9 +18,9 @@ const crypto = new CryptoProvider();
 
 export class FakeMongoServer {
   dbName: string;
-  kernel: Interfaces.KernelInterface;
-  service: Interfaces.ServiceContainerInterface;
-  transport: Interfaces.TransportInterface;
+  kernel: KernelInterface;
+  service: ServiceContainerInterface;
+  transport: TransportInterface;
   mongo;
   server;
   port = '8088';
