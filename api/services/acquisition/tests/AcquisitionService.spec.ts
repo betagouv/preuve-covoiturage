@@ -20,7 +20,7 @@ let request: supertest.SuperTest<supertest.Test>;
 const callFactory = (params: any = {}) => ({
   id: 1,
   jsonrpc: '2.0',
-  method: 'acquisition:createJourney',
+  method: 'acquisition:create',
   params: {
     params,
     _context: {
@@ -51,7 +51,6 @@ const passingJourney = {
 describe('Acquisition service', async () => {
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
-    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017';
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
@@ -90,7 +89,7 @@ describe('Acquisition service', async () => {
       .send({
         id: 1,
         jsonrpc: '2.0',
-        method: 'acquisition:createJourney',
+        method: 'acquisition:create',
         params: {
           params: passingJourney,
           _context: {
@@ -103,7 +102,7 @@ describe('Acquisition service', async () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(503);
+        expect(response.status).to.equal(403);
         expect(response.body).to.have.property('error');
       });
   });
@@ -114,7 +113,7 @@ describe('Acquisition service', async () => {
       .send({
         id: 1,
         jsonrpc: '2.0',
-        method: 'acquisition:createJourney',
+        method: 'acquisition:create',
         params: {
           params: passingJourney,
           _context: {
@@ -129,7 +128,7 @@ describe('Acquisition service', async () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(503);
+        expect(response.status).to.equal(403);
         expect(response.body).to.have.property('error');
       });
   });

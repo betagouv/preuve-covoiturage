@@ -83,9 +83,6 @@ describe('Journey repository', () => {
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
 
-    process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@localhost:27017';
-    process.env.APP_MONGO_DB = 'acquisition';
-
     config.set('mongo.url', process.env.APP_MONGO_URL);
     config.set('acquisition.db', process.env.APP_MONGO_DB);
 
@@ -95,7 +92,10 @@ describe('Journey repository', () => {
   });
 
   after(async () => {
-    await mongoClient.getClient().db(process.env.APP_MONGO_DB).dropDatabase();
+    await mongoClient
+      .getClient()
+      .db(process.env.APP_MONGO_DB)
+      .dropDatabase();
     await mongoClient.down();
   });
 

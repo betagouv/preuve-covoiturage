@@ -73,7 +73,7 @@ describe('Operator service', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(503);
+        expect(response.status).to.equal(403);
         expect(response.body).to.have.property('error');
         expect(response.body.error.data).to.eq('Invalid permissions');
       });

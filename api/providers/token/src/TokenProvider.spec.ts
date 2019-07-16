@@ -23,7 +23,7 @@ describe('TokenProvider', () => {
   });
 
   it('verify the token', async () => {
-    const tp = new TokenProvider({ secret: 'notsosecret' });
+    const tp = new TokenProvider({ secret: 'notsosecret', ttl: -1 });
     const valid = await tp.verify(token);
     expect(valid).to.have.property('appId', appId);
     expect(valid).to.have.property('operatorId', operatorId);
