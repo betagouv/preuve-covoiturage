@@ -64,13 +64,52 @@ $mat-secondary-blue: (
   ),
 );
 
+$mat-error: (
+  50 : #ffeded,
+  100 : #ffd2d2,
+  200 : #ffb5b5,
+  300 : #ff9797,
+  400 : #ff8080,
+  500 : #ff6a6a,
+  600 : #ff6262,
+  700 : #ff5757,
+  800 : #ff4d4d,
+  900 : #ff3c3c,
+  A100 : #ffffff,
+  A200 : #ffffff,
+  A400 : #ffe5e5,
+  A700 : #ffcbcb,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #000000,
+  )
+);
+
 // COLORS
 $color-primary: map-get($mat-primary-blue, 500);
 $color-primary-dark: map-get($mat-primary-blue, 900);
 $color-secondary: map-get($mat-secondary-blue, 500);
+$color-error: map-get($mat-error, 500);
+$color-success: #4FD569;
+$color-warning: #FFA351;
+$color-punch: #FAB348;
+$white: #ffffff;
+$black: #000000;
+
 $background-white: #ffffff;
 $background-light: #e3e3e3;
-$white: #ffffff;
 $color-background-help: #e3ebf7;
 $color-border-help: #cadaef;
 
