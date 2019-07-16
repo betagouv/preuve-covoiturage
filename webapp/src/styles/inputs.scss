@@ -1,0 +1,26 @@
+@import 'variables';
+
+mat-form-field.mat-form-field-appearance-outline {
+  &.mat-form-field-can-float {
+    &.mat-form-field-should-float .mat-form-field-label,
+    .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
+      transform: translateY(-1em) scale(0.75);
+    }
+
+    &.mat-form-field-should-float .mat-form-field-outline-gap {
+      border-top-color: inherit;
+    }
+  }
+
+  & .mat-form-field-outline {
+    & > * {
+      background: $white;
+    }
+  }
+
+  &.small {
+    .mat-form-field-infix {
+      padding: 0.5em 0;
+    }
+  }
+}

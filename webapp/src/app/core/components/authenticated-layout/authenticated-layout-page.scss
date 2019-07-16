@@ -1,0 +1,25 @@
+@import '../../../../styles/variables';
+
+.page {
+  &-header {
+    background: $background-white;
+    padding: 10px 5% 0 5%;
+  }
+
+  &-title {
+    font-size: $font-size-title;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+
+  &-menu {
+    .mat-tab-nav-bar {
+      border-bottom: none;
+    }
+  }
+
+  &-content {
+    width: 90%;
+    margin: auto;
+  }
+}

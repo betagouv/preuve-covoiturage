@@ -1,0 +1,18 @@
+<div class="Login">
+  <form [formGroup]="loginForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" required />
+      <mat-error *ngIf="controls.email.hasError('email')"> L'email est invalide.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Mot de passe</mat-label>
+      <input matInput formControlName="password" type="password" required />
+    </mat-form-field>
+
+    <button type="submit" mat-flat-button (click)="onLogin()" [disabled]="!loginForm.valid" color="primary">
+      Connexion
+    </button>
+  </form>
+</div>

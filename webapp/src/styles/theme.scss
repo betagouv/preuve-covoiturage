@@ -1,0 +1,12 @@
+@import 'variables';
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+$carpooling-primary: mat-palette($mat-primary-blue);
+$carpooling-accent: mat-palette($mat-secondary-blue);
+$carpooling-warn: mat-palette($mat-red);
+
+$carpooling-theme: mat-light-theme($carpooling-primary, $carpooling-accent, $carpooling-warn);
+
+@include angular-material-theme($carpooling-theme);

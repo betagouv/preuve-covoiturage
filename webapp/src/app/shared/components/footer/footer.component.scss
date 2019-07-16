@@ -1,0 +1,34 @@
+@import '../../../../styles/variables';
+
+.Footer {
+  display: flex;
+  padding: 40px 5%;
+  background: $background-white;
+
+  & > * {
+    width: 200px;
+
+    & > img {
+      max-width: 50%;
+    }
+  }
+
+  &-title {
+    font-weight: 600;
+  }
+
+  ul {
+    padding: 0;
+
+    & > li {
+      list-style-type: none;
+      font-size: $font-size-medium;
+      font-weight: 600;
+
+      & > a:link,
+      & > a:visited {
+        color: $color-primary-dark;
+      }
+    }
+  }
+}
