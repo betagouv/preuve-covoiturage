@@ -1,3 +1,5 @@
+@import 'variables';
+
 button {
   &.mat-raised-button,
   &.mat-flat-button,
@@ -11,6 +13,17 @@ button {
 
     &.large {
       line-height: 60px;
+    }
+  }
+
+  &.color-punch:not([disabled]) {
+    &.mat-flat-button {
+      background: $color-punch;
+      color: $white;
+    }
+
+    &.mat-stroked-button {
+      color: $color-punch;
     }
   }
 }
