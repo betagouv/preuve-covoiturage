@@ -1,6 +1,6 @@
 {
   "x-send-defaults": true,
-  "openapi": "3.0.2",
+  "openapi": "3.0.1",
   "x-api-id": "registre-preuve-covoiturage",
   "info": {
     "description": "Le registre de preuve de covoiturage est à la fois un label et une plate-forme technique pour\n\ndistribuer à grande échelle des incitations monétaires ou non monétaires, sans risque de\n\nfraude massive.",
@@ -151,26 +151,84 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
+                "oneOf": [
                   {
-                    "$ref": "#/components/schemas/JsonRpcRequest"
+                    "$ref": "#/components/schemas/application.all"
                   },
                   {
-                    "properties": {
-                      "params": {
-                        "title": "parameters",
-                        "oneOf": [
-                          {
-                            "type": "object"
-                          },
-                          {
-                            "type": "array"
-                          }
-                        ]
-                      }
-                    }
+                    "$ref": "#/components/schemas/application.create"
+                  },
+                  {
+                    "$ref": "#/components/schemas/application.find"
+                  },
+                  {
+                    "$ref": "#/components/schemas/application.revoke"
+                  },
+                  {
+                    "$ref": "#/components/schemas/operator.all"
+                  },
+                  {
+                    "$ref": "#/components/schemas/operator.patch"
+                  },
+                  {
+                    "$ref": "#/components/schemas/territory.all"
+                  },
+                  {
+                    "$ref": "#/components/schemas/territory.patch"
+                  },
+                  {
+                    "$ref": "#/components/schemas/trip.list"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.create"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.changeEmail"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.changePassword"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.changeRole"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.confirmEmail"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.delete"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.find"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.forgottenPassword"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.list"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.login"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.patch"
+                  },
+                  {
+                    "$ref": "#/components/schemas/user.resetPassword"
                   }
                 ]
+              },
+              "example": {
+                "method": "user.create",
+                "id": 1,
+                "params": {
+                  "email": "example@domaine.com",
+                  "lastname": "john",
+                  "firstname": "scodt",
+                  "phone": "0513452745",
+                  "group": "operator",
+                  "role": "user",
+                  "operator": "5d0b616f9f611aef34deb304"
+                }
               }
             }
           }
@@ -185,6 +243,281 @@
   "x-samples-languages": ["javascript"],
   "components": {
     "schemas": {
+      "application.all": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "application.all"
+              }
+            }
+          }
+        ]
+      },
+      "application.create": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "application.create"
+              },
+              "params": {
+                "$ref": "#/components/schemas/Application"
+              }
+            }
+          }
+        ]
+      },
+      "application.find": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "application.find"
+              },
+              "params": {
+                "type": "object",
+                "required": ["_id"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "operator_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "application.revoke": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "application.revoke"
+              },
+              "params": {
+                "type": "object",
+                "required": ["_id"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "operator.all": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "operator.all"
+              }
+            }
+          }
+        ]
+      },
+      "operator.patch": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "operator.patch"
+              },
+              "params": {
+                "title": "Parameters",
+                "required": ["_id", "patch"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "patch": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "required": ["nom_commercial", "raison_sociale"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "nom_commercial": {
+                        "type": "string"
+                      },
+                      "raison_sociale": {
+                        "type": "string"
+                      },
+                      "company": {
+                        "$ref": "#/components/schemas/Company"
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/Address"
+                      },
+                      "bank": {
+                        "$ref": "#/components/schemas/Bank"
+                      },
+                      "contacts": {
+                        "$ref": "#/components/schemas/Contacts"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "territory.all": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "territory.all"
+              }
+            }
+          }
+        ]
+      },
+      "territory.patch": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "territory.patch"
+              },
+              "params": {
+                "title": "territory",
+                "required": ["_id", "patch"],
+                "additionalProperties": false,
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "patch": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "shortname": {
+                        "type": "string"
+                      },
+                      "acronym": {
+                        "type": "string"
+                      },
+                      "insee": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "insee_main": {
+                        "type": "string"
+                      },
+                      "network_id": {
+                        "type": "integer"
+                      },
+                      "company": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/Company"
+                          },
+                          {
+                            "properties": {
+                              "region": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/Address"
+                      },
+                      "bank": {
+                        "$ref": "#/components/schemas/Bank"
+                      },
+                      "contacts": {
+                        "$ref": "#/components/schemas/Contacts"
+                      },
+                      "cgu": {
+                        "$ref": "#/components/schemas/CGU"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "trip.list": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "trip.list"
+              },
+              "params": {
+                "title": "Parameters",
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "number",
+                    "default": 1
+                  },
+                  "limit": {
+                    "type": "number",
+                    "default": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
       "user.create": {
         "allOf": [
           {
@@ -554,194 +887,88 @@
           }
         ]
       },
-      "territory.all": {
+      "application.create.response": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequest"
+            "$ref": "#/components/schemas/Application"
           },
           {
-            "type": "object",
             "properties": {
-              "method": {
-                "description": "territory.all"
+              "_id": {
+                "type": "string"
               }
             }
           }
         ]
       },
-      "territory.patch": {
+      "application.list.response": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequest"
+            "$ref": "#/components/schemas/Application"
           },
           {
-            "type": "object",
             "properties": {
-              "method": {
-                "description": "territory.patch"
-              },
-              "params": {
-                "title": "territory",
-                "required": ["_id", "patch"],
-                "additionalProperties": false,
-                "properties": {
-                  "_id": {
-                    "type": "string"
-                  },
-                  "patch": {
-                    "type": "object",
-                    "minProperties": 1,
-                    "additionalProperties": false,
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "shortname": {
-                        "type": "string"
-                      },
-                      "acronym": {
-                        "type": "string"
-                      },
-                      "insee": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "insee_main": {
-                        "type": "string"
-                      },
-                      "network_id": {
-                        "type": "integer"
-                      },
-                      "company": {
-                        "allOf": [
-                          {
-                            "$ref": "#/components/schemas/Company"
-                          },
-                          {
-                            "properties": {
-                              "region": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        ]
-                      },
-                      "address": {
-                        "$ref": "#/components/schemas/Address"
-                      },
-                      "bank": {
-                        "$ref": "#/components/schemas/Bank"
-                      },
-                      "contacts": {
-                        "$ref": "#/components/schemas/Contacts"
-                      },
-                      "cgu": {
-                        "$ref": "#/components/schemas/CGU"
-                      }
-                    }
-                  }
-                }
+              "_id": {
+                "type": "string"
               }
             }
           }
         ]
       },
-      "operator.all": {
+      "application.patch.response": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequest"
+            "$ref": "#/components/schemas/Application"
           },
           {
-            "type": "object",
             "properties": {
-              "method": {
-                "description": "operator.all"
+              "_id": {
+                "type": "string"
               }
             }
           }
         ]
       },
-      "operator.patch": {
+      "application.revoke.response": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequest"
+            "$ref": "#/components/schemas/Application"
           },
           {
-            "type": "object",
             "properties": {
-              "method": {
-                "description": "operator.patch"
-              },
-              "params": {
-                "title": "Parameters",
-                "required": ["_id", "patch"],
-                "additionalProperties": false,
-                "properties": {
-                  "_id": {
-                    "type": "string"
-                  },
-                  "patch": {
-                    "type": "object",
-                    "minProperties": 1,
-                    "required": ["nom_commercial", "raison_sociale"],
-                    "additionalProperties": false,
-                    "properties": {
-                      "nom_commercial": {
-                        "type": "string"
-                      },
-                      "raison_sociale": {
-                        "type": "string"
-                      },
-                      "company": {
-                        "$ref": "#/components/schemas/Company"
-                      },
-                      "address": {
-                        "$ref": "#/components/schemas/Address"
-                      },
-                      "bank": {
-                        "$ref": "#/components/schemas/Bank"
-                      },
-                      "contacts": {
-                        "$ref": "#/components/schemas/Contacts"
-                      }
-                    }
-                  }
-                }
+              "_id": {
+                "type": "string"
               }
             }
           }
         ]
       },
-      "trip.list": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/JsonRpcRequest"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "method": {
-                "description": "trip.list"
-              },
-              "params": {
-                "title": "Parameters",
-                "type": "object",
-                "properties": {
-                  "page": {
-                    "type": "number",
-                    "default": 1
-                  },
-                  "limit": {
-                    "type": "number",
-                    "default": 1
-                  }
-                }
-              }
-            }
-          }
-        ]
+      "operator.create.response": {
+        "$ref": "#/components/schemas/Operator"
+      },
+      "operator.list.response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Operator"
+        }
+      },
+      "operator.patch.response": {
+        "$ref": "#/components/schemas/Operator"
+      },
+      "operator.read.response": {
+        "$ref": "#/components/schemas/Operator"
+      },
+      "territory.list.response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Territory"
+        }
+      },
+      "territory.read.response": {
+        "$ref": "#/components/schemas/Territory"
+      },
+      "trip.list.response": {
+        "$ref": "#/components/schemas/Trip"
       },
       "user.create.response": {
         "$ref": "#/components/schemas/User"
@@ -761,72 +988,172 @@
       "user.read.response": {
         "$ref": "#/components/schemas/User"
       },
-      "territory.list.response": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Territory"
-        }
-      },
-      "territory.read.response": {
-        "$ref": "#/components/schemas/Territory"
-      },
-      "operator.create.response": {
-        "$ref": "#/components/schemas/Operator"
-      },
-      "operator.list.response": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Operator"
-        }
-      },
-      "operator.patch.response": {
-        "$ref": "#/components/schemas/Operator"
-      },
-      "operator.read.response": {
-        "$ref": "#/components/schemas/Operator"
-      },
-      "trip.list.response": {
-        "$ref": "#/components/schemas/Trip"
-      },
-      "Trip": {
+      "Address": {
         "type": "object",
-        "required": ["operator_id", "people"],
+        "required": ["street", "city", "country", "postcode"],
         "additionalProperties": false,
         "properties": {
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postcode": {
+            "type": "string"
+          },
+          "cedex": {
+            "type": "string"
+          }
+        }
+      },
+      "Application": {
+        "type": "object",
+        "required": ["name", "operator_id", "permissions"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
           "operator_id": {
             "type": "string"
           },
-          "operator_journey_id": {
-            "type": "string"
-          },
-          "territory": {
+          "permissions": {
             "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
             "items": {
               "type": "string"
             }
-          },
-          "status": {
-            "type": "string",
-            "enum": ["pending", "active", "error"],
-            "default": "pending"
-          },
-          "start": {
+          }
+        }
+      },
+      "Bank": {
+        "type": "object",
+        "required": ["bank_name", "client_name", "iban", "bic"],
+        "additionalProperties": false,
+        "properties": {
+          "bank_name": {
             "type": "string"
           },
-          "people": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Person"
-            }
-          },
-          "createdAt": {
+          "client_name": {
             "type": "string"
           },
-          "updatedAt": {
+          "iban": {
             "type": "string"
           },
-          "deletedAt": {
+          "bic": {
             "type": "string"
+          }
+        }
+      },
+      "CGU": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "default": false
+          },
+          "acceptedAt": {
+            "type": "string"
+          },
+          "acceptedBy": {
+            "type": "string"
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "required": ["siren"],
+        "additionalProperties": false,
+        "properties": {
+          "siren": {
+            "type": "string"
+          },
+          "naf_etablissement": {
+            "type": "string"
+          },
+          "naf_entreprise": {
+            "type": "string"
+          },
+          "nature_juridique": {
+            "type": "string"
+          },
+          "cle_nic": {
+            "type": "string"
+          },
+          "rna": {
+            "type": "string"
+          },
+          "vat_intra": {
+            "type": "string"
+          }
+        }
+      },
+      "Contacts": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "rgpd_dpo": {
+            "type": "string"
+          },
+          "rgpd_controller": {
+            "type": "string"
+          },
+          "technical": {
+            "type": "string"
+          }
+        }
+      },
+      "Identity": {
+        "type": "object",
+        "required": ["phone"],
+        "additionalProperties": false,
+        "properties": {
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "company": {
+            "type": "string"
+          },
+          "over_18": {
+            "enum": [true, false, null],
+            "default": null
+          },
+          "travel_pass": {
+            "$ref": "#/components/schemas/TravelPass"
+          }
+        }
+      },
+      "Incentive": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 3,
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "siret": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": -200,
+            "maximum": 200
           }
         }
       },
@@ -975,145 +1302,6 @@
           }
         }
       },
-      "Territory": {
-        "type": "object",
-        "required": ["name"],
-        "additionalProperties": false,
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "shortname": {
-            "type": "string"
-          },
-          "acronym": {
-            "type": "string"
-          },
-          "insee": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "insee_main": {
-            "type": "string"
-          },
-          "network_id": {
-            "type": "integer"
-          },
-          "company": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Company"
-              },
-              {
-                "properties": {
-                  "region": {
-                    "type": "string"
-                  }
-                }
-              }
-            ]
-          },
-          "address": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "bank": {
-            "$ref": "#/components/schemas/Bank"
-          },
-          "contacts": {
-            "$ref": "#/components/schemas/Contacts"
-          },
-          "cgu": {
-            "$ref": "#/components/schemas/CGU"
-          }
-        }
-      },
-      "User": {
-        "type": "object",
-        "required": ["_id", "email", "lastname", "firstname", "group"],
-        "additionalProperties": false,
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "firstname": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          },
-          "group": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string"
-          },
-          "operator": {
-            "type": "string"
-          },
-          "territory": {
-            "type": "string"
-          }
-        }
-      },
-      "Identity": {
-        "type": "object",
-        "required": ["phone"],
-        "additionalProperties": false,
-        "properties": {
-          "firstname": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          },
-          "company": {
-            "type": "string"
-          },
-          "over_18": {
-            "enum": [true, false, null],
-            "default": null
-          },
-          "travel_pass": {
-            "$ref": "#/components/schemas/TravelPass"
-          }
-        }
-      },
-      "Incentive": {
-        "type": "object",
-        "additionalProperties": false,
-        "minProperties": 3,
-        "properties": {
-          "index": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "siret": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number",
-            "minimum": -200,
-            "maximum": 200
-          }
-        }
-      },
       "Person": {
         "type": "object",
         "additionalProperties": false,
@@ -1257,19 +1445,6 @@
           }
         }
       },
-      "TravelPass": {
-        "type": "object",
-        "required": ["name", "userId"],
-        "additionalProperties": false,
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          }
-        }
-      },
       "Position": {
         "type": "object",
         "required": ["datetime"],
@@ -1303,102 +1478,148 @@
           }
         }
       },
-      "Company": {
+      "Territory": {
         "type": "object",
-        "required": ["siren"],
+        "required": ["name"],
         "additionalProperties": false,
         "properties": {
-          "siren": {
+          "_id": {
             "type": "string"
           },
-          "naf_etablissement": {
+          "name": {
             "type": "string"
           },
-          "naf_entreprise": {
+          "shortname": {
             "type": "string"
           },
-          "nature_juridique": {
+          "acronym": {
             "type": "string"
           },
-          "cle_nic": {
+          "insee": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "insee_main": {
             "type": "string"
           },
-          "rna": {
+          "network_id": {
+            "type": "integer"
+          },
+          "company": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Company"
+              },
+              {
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "bank": {
+            "$ref": "#/components/schemas/Bank"
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/Contacts"
+          },
+          "cgu": {
+            "$ref": "#/components/schemas/CGU"
+          }
+        }
+      },
+      "TravelPass": {
+        "type": "object",
+        "required": ["name", "userId"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
             "type": "string"
           },
-          "vat_intra": {
+          "userId": {
             "type": "string"
           }
         }
       },
-      "Address": {
+      "Trip": {
         "type": "object",
-        "required": ["street", "city", "country", "postcode"],
+        "required": ["operator_id", "people"],
         "additionalProperties": false,
         "properties": {
-          "street": {
+          "operator_id": {
             "type": "string"
           },
-          "city": {
+          "operator_journey_id": {
             "type": "string"
           },
-          "country": {
+          "territory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "active", "error"],
+            "default": "pending"
+          },
+          "start": {
             "type": "string"
           },
-          "postcode": {
+          "people": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "createdAt": {
             "type": "string"
           },
-          "cedex": {
+          "updatedAt": {
+            "type": "string"
+          },
+          "deletedAt": {
             "type": "string"
           }
         }
       },
-      "Bank": {
+      "User": {
         "type": "object",
-        "required": ["bank_name", "client_name", "iban", "bic"],
+        "required": ["_id", "email", "lastname", "firstname", "group"],
         "additionalProperties": false,
         "properties": {
-          "bank_name": {
+          "_id": {
             "type": "string"
           },
-          "client_name": {
+          "email": {
             "type": "string"
           },
-          "iban": {
+          "lastname": {
             "type": "string"
           },
-          "bic": {
-            "type": "string"
-          }
-        }
-      },
-      "Contacts": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "rgpd_dpo": {
+          "firstname": {
             "type": "string"
           },
-          "rgpd_controller": {
+          "phone": {
             "type": "string"
           },
-          "technical": {
-            "type": "string"
-          }
-        }
-      },
-      "CGU": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "accepted": {
-            "type": "boolean",
-            "default": false
-          },
-          "acceptedAt": {
+          "group": {
             "type": "string"
           },
-          "acceptedBy": {
+          "role": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "territory": {
             "type": "string"
           }
         }
