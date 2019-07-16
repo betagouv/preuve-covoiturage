@@ -10,20 +10,20 @@ export const journey = <JourneyInterface>{
       firstname: 'passengerFirstName',
       lastname: 'passengerLastName',
       email: 'passenger@example.com',
-      phone: '0622445588',
+      phone: '+33622445588',
       over_18: true,
     },
     start: {
       datetime: new Date(2018, 11, 24, 10, 33, 30),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5678'],
+      territories: ['5d0b616f9f611aef34de5678'],
     },
     end: {
       datetime: new Date(2018, 11, 24, 12, 33, 30),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5679'],
+      territories: ['5d0b616f9f611aef34de5679'],
     },
     distance: 2,
     duration: 50,
@@ -31,9 +31,7 @@ export const journey = <JourneyInterface>{
     contribution: 1,
     expense: 1,
     seats: 1,
-    incentives: [
-      // todo: fill
-    ],
+    incentives: [],
     remaining_fee: 1,
   },
   driver: {
@@ -41,28 +39,26 @@ export const journey = <JourneyInterface>{
       firstname: 'driverFirstName',
       lastname: 'driverLastName',
       email: 'driver@example.com',
-      phone: '0622445599',
+      phone: '+33622445599',
     },
     start: {
       datetime: new Date(2018, 11, 24, 10, 13, 27),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5678'],
+      territories: ['5d0b616f9f611aef34de5678'],
     },
     end: {
       datetime: new Date(2018, 11, 24, 12, 33, 32),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5679'],
+      territories: ['5d0b616f9f611aef34de5679'],
     },
     distance: 2,
     duration: 50,
     expense: 1,
     cost: 1,
     revenue: 1,
-    incentives: [
-      // todo: fill
-    ],
+    incentives: [],
     remaining_fee: 1,
   },
 };
@@ -77,20 +73,20 @@ export const secondJourney = <JourneyInterface>{
       firstname: 'secondPassengerFirstName',
       lastname: 'secondPassengerLastName',
       email: 'secondpassenger@example.com',
-      phone: '0622445587',
+      phone: '+33622445587',
       over_18: true,
     },
     start: {
       datetime: new Date(2018, 11, 24, 9, 33, 30),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5678'],
+      territories: ['5d0b616f9f611aef34de5678'],
     },
     end: {
       datetime: new Date(2018, 11, 24, 11, 33, 30),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5680'],
+      territories: ['5d0b616f9f611aef34de5680'],
     },
     distance: 1,
     duration: 25,
@@ -98,9 +94,7 @@ export const secondJourney = <JourneyInterface>{
     cost: 1,
     expense: 1,
     seats: 1,
-    incentives: [
-      // todo: fill
-    ],
+    incentives: [],
     remaining_fee: 1,
   },
   driver: {
@@ -108,19 +102,19 @@ export const secondJourney = <JourneyInterface>{
       firstname: 'driverFirstName',
       lastname: 'driverLastName',
       email: 'driver@example.com',
-      phone: '0622445599',
+      phone: '+33622445599',
     },
     start: {
       datetime: new Date(2018, 11, 24, 9, 33, 30),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5678'],
+      territories: ['5d0b616f9f611aef34de5678'],
     },
     end: {
       datetime: new Date(2018, 11, 24, 11, 33, 30),
       lat: 1,
       lon: 2,
-      territory: ['5d0b616f9f611aef34de5680'],
+      territories: ['5d0b616f9f611aef34de5680'],
     },
     distance: 2,
     duration: 50,
@@ -128,8 +122,6 @@ export const secondJourney = <JourneyInterface>{
     cost: 1,
     revenue: 1,
     remaining_fee: 1,
-    incentives: [
-      // todo: fill
-    ],
+    incentives: [],
   },
 };

@@ -41,10 +41,18 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
     operator_journey_id?: string;
     operator_id: string;
   }): Promise<Trip> {
-    const normalizedOperatorIds = this.normalizeOperatorIds(params);
     const collection = await this.getCollection();
-    const result = await collection.findOne({ ...normalizedOperatorIds });
+
+    // cast all params to ObjectId
+    const findParams = Object.keys(params).reduce(
+      (p: object, c: string): object => ({ ...p, c: new ObjectId(params[c]) }),
+      {},
+    );
+
+    const result = await collection.findOne(findParams);
+
     if (!result) throw new NotFoundException('Trip not found');
+
     return this.instanciate(result);
   }
 
@@ -58,7 +66,9 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
         $lte: startTimeRange.max,
       },
     });
+
     if (!result) throw new NotFoundException('Trip not found');
+
     return this.instanciate(result);
   }
 
@@ -83,19 +93,9 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
       },
       { returnOriginal: false },
     );
-    if (!result) throw new NotFoundException('Trip not found');
-    return this.instanciate(result.value);
-  }
 
-  private normalizeOperatorIds(params: {
-    operator_journey_id?: string;
-    operator_id: string;
-  }): { operator_journey_id?: ObjectId; operator_id?: ObjectId } {
-    const normalizedFilters: { operator_journey_id?: ObjectId; operator_id?: ObjectId } = {};
-    if ('operator_journey_id' in params) {
-      normalizedFilters.operator_journey_id = new ObjectId(params.operator_journey_id);
-    }
-    normalizedFilters.operator_id = new ObjectId(params.operator_id);
-    return normalizedFilters;
+    if (!result) throw new NotFoundException('Trip not found');
+
+    return this.instanciate(result.value);
   }
 }

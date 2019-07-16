@@ -4,7 +4,7 @@ import { PaymentInterface } from './PaymentInterface';
 
 export interface TripInterface {
   _id?: string;
-  territory?: string[];
+  territories?: string[];
   status: string;
   start: Date;
   people: PersonInterface[];
