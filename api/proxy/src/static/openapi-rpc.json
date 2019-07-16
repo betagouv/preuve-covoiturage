@@ -50,6 +50,36 @@
                     },
                     {
                       "$ref": "#/components/schemas/user.login.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/user.patch.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/user.read.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/user.list.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/trip.list.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/territory.list.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/territory.read.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/operator.create.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/operator.list.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/operator.patch.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/operator.read.response"
                     }
                   ]
                 }
@@ -655,6 +685,7 @@
                   "patch": {
                     "type": "object",
                     "minProperties": 1,
+                    "required": ["nom_commercial", "raison_sociale"],
                     "additionalProperties": false,
                     "properties": {
                       "nom_commercial": {
@@ -683,11 +714,323 @@
           }
         ]
       },
+      "trip.list": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JsonRpcRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "method": {
+                "description": "trip.list"
+              },
+              "params": {
+                "title": "Parameters",
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "number",
+                    "default": 1
+                  },
+                  "limit": {
+                    "type": "number",
+                    "default": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
       "user.create.response": {
         "$ref": "#/components/schemas/User"
       },
       "user.login.response": {
         "$ref": "#/components/schemas/User"
+      },
+      "user.list.response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/User"
+        }
+      },
+      "user.patch.response": {
+        "$ref": "#/components/schemas/User"
+      },
+      "user.read.response": {
+        "$ref": "#/components/schemas/User"
+      },
+      "territory.list.response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Territory"
+        }
+      },
+      "territory.read.response": {
+        "$ref": "#/components/schemas/Territory"
+      },
+      "operator.create.response": {
+        "$ref": "#/components/schemas/Operator"
+      },
+      "operator.list.response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Operator"
+        }
+      },
+      "operator.patch.response": {
+        "$ref": "#/components/schemas/Operator"
+      },
+      "operator.read.response": {
+        "$ref": "#/components/schemas/Operator"
+      },
+      "trip.list.response": {
+        "$ref": "#/components/schemas/Trip"
+      },
+      "Trip": {
+        "type": "object",
+        "required": ["operator_id", "people"],
+        "additionalProperties": false,
+        "properties": {
+          "operator_id": {
+            "type": "string"
+          },
+          "operator_journey_id": {
+            "type": "string"
+          },
+          "territory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "active", "error"],
+            "default": "pending"
+          },
+          "start": {
+            "type": "string"
+          },
+          "people": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "deletedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "Journey": {
+        "type": "object",
+        "required": ["journey_id", "operator_class"],
+        "anyOf": [
+          {
+            "required": ["passenger"]
+          },
+          {
+            "required": ["driver"]
+          }
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "journey_id": {
+            "type": "string"
+          },
+          "operator_id": {
+            "type": "string"
+          },
+          "operator_journey_id": {
+            "type": "string"
+          },
+          "operator_class": {
+            "enum": ["A", "B", "C"]
+          },
+          "passenger": {
+            "type": "object",
+            "required": ["identity", "start", "end", "contribution", "incentives"],
+            "additionalProperties": false,
+            "properties": {
+              "identity": {
+                "$ref": "#/components/schemas/Identity"
+              },
+              "start": {
+                "$ref": "#/components/schemas/Position"
+              },
+              "end": {
+                "$ref": "#/components/schemas/Position"
+              },
+              "seats": {
+                "type": "integer",
+                "default": 1,
+                "minimum": 1,
+                "maximum": 8
+              },
+              "expense": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "contribution": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "incentives": {
+                "type": "array",
+                "minItems": 0,
+                "items": {
+                  "$ref": "#/components/schemas/Incentive"
+                }
+              },
+              "distance": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 86400
+              }
+            }
+          },
+          "driver": {
+            "type": "object",
+            "required": ["identity", "start", "end", "revenue", "incentives"],
+            "additionalProperties": false,
+            "properties": {
+              "identity": {
+                "$ref": "#/components/schemas/Identity"
+              },
+              "start": {
+                "$ref": "#/components/schemas/Position"
+              },
+              "end": {
+                "$ref": "#/components/schemas/Position"
+              },
+              "expense": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "revenue": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "incentives": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/components/schemas/Incentive"
+                }
+              },
+              "distance": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 86400
+              }
+            }
+          }
+        }
+      },
+      "Operator": {
+        "type": "object",
+        "required": ["nom_commercial", "raison_sociale"],
+        "additionalProperties": false,
+        "properties": {
+          "nom_commercial": {
+            "type": "string"
+          },
+          "raison_sociale": {
+            "type": "string"
+          },
+          "company": {
+            "$ref": "#/components/schemas/Company"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "bank": {
+            "$ref": "#/components/schemas/Bank"
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/Contacts"
+          }
+        }
+      },
+      "Territory": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortname": {
+            "type": "string"
+          },
+          "acronym": {
+            "type": "string"
+          },
+          "insee": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "insee_main": {
+            "type": "string"
+          },
+          "network_id": {
+            "type": "integer"
+          },
+          "company": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Company"
+              },
+              {
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "bank": {
+            "$ref": "#/components/schemas/Bank"
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/Contacts"
+          },
+          "cgu": {
+            "$ref": "#/components/schemas/CGU"
+          }
+        }
       },
       "User": {
         "type": "object",
@@ -719,6 +1062,243 @@
             "type": "string"
           },
           "territory": {
+            "type": "string"
+          }
+        }
+      },
+      "Identity": {
+        "type": "object",
+        "required": ["phone"],
+        "additionalProperties": false,
+        "properties": {
+          "firstname": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "company": {
+            "type": "string"
+          },
+          "over_18": {
+            "enum": [true, false, null],
+            "default": null
+          },
+          "travel_pass": {
+            "$ref": "#/components/schemas/TravelPass"
+          }
+        }
+      },
+      "Incentive": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 3,
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "siret": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": -200,
+            "maximum": 200
+          }
+        }
+      },
+      "Person": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "journey_id",
+          "identity",
+          "is_driver",
+          "start",
+          "end",
+          "cost",
+          "expense",
+          "operator_class",
+          "operator"
+        ],
+        "properties": {
+          "journey_id": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string",
+            "maxLength": 1,
+            "enum": ["A", "B", "C", "Z"]
+          },
+          "identity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "properties": {
+                  "over_18": {
+                    "type": "boolean",
+                    "default": true
+                  }
+                }
+              }
+            ]
+          },
+          "is_driver": {
+            "type": "boolean"
+          },
+          "start": {
+            "$ref": "#/components/schemas/Position"
+          },
+          "end": {
+            "$ref": "#/components/schemas/Position"
+          },
+          "seats": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 8
+          },
+          "expense": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "contribution": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "revenue": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "cost": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "remaining_fee": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "incentives": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "$ref": "#/components/schemas/Incentive"
+            }
+          },
+          "distance": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "operator_class": {
+            "type": "string",
+            "maxLength": 1,
+            "enum": ["A", "B", "C", "Z"]
+          },
+          "operator": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "validation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["step", "rank"],
+            "properties": {
+              "step": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10
+              },
+              "validated": {
+                "type": "boolean",
+                "default": false
+              },
+              "validatedAt": {
+                "type": "string"
+              },
+              "tests": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "rank": {
+                "type": "string",
+                "maxLength": 1,
+                "enum": ["A", "B", "C", "Z"]
+              }
+            }
+          }
+        }
+      },
+      "TravelPass": {
+        "type": "object",
+        "required": ["name", "userId"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "required": ["datetime"],
+        "additionalProperties": false,
+        "minProperties": 2,
+        "properties": {
+          "datetime": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "number"
+          },
+          "lon": {
+            "type": "number"
+          },
+          "insee": {
+            "type": "string"
+          },
+          "postcodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0
+          },
+          "literal": {
+            "type": "string"
+          },
+          "country": {
             "type": "string"
           }
         }
