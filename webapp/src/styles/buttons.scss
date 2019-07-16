@@ -1,0 +1,16 @@
+button {
+  &.mat-raised-button,
+  &.mat-flat-button,
+  &.mat-stroked-button {
+    min-width: 164px;
+    line-height: 40px;
+
+    &:not([disabled]) {
+      border-color: inherit;
+    }
+
+    &.large {
+      line-height: 60px;
+    }
+  }
+}

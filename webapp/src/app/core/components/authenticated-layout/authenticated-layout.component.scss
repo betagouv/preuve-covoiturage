@@ -1,0 +1,21 @@
+.AuthenticatedLayout {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  app-header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+  }
+
+  &-body {
+    margin-top: 68.5px;
+    height: calc(100% - 68.5px);
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
