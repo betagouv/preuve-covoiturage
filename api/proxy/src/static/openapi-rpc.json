@@ -1,11 +1,11 @@
 {
   "x-send-defaults": true,
-  "openapi": "3.0.0",
+  "openapi": "3.0.2",
   "x-api-id": "registre-preuve-covoiturage",
   "info": {
     "description": "Le registre de preuve de covoiturage est à la fois un label et une plate-forme technique pour\n\ndistribuer à grande échelle des incitations monétaires ou non monétaires, sans risque de\n\nfraude massive.",
     "version": "1.0.0",
-    "title": "Api client du Registre de preuve de covoiturage",
+    "title": "Api client du Registre de Preuve de Covoiturage",
     "termsOfService": "https://registre-preuve-de-covoiturage.gitbook.io/produit/cgu",
     "contact": {
       "email": "contact@covoiturage.beta.gouv.fr"
@@ -35,7 +35,7 @@
         "operationId": "post",
         "deprecated": false,
         "summary": "",
-        "description": "json rpc",
+        "description": "",
         "tags": ["JSONRPC"],
         "parameters": [],
         "responses": {
@@ -47,8 +47,71 @@
                   "oneOf": [
                     {
                       "$ref": "#/components/schemas/user.create.response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/user.login.response"
                     }
                   ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequestError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnauthorizedError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ForbiddenError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFoundError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ConflictError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -58,7 +121,26 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/JsonRpcRequired"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/JsonRpcRequest"
+                  },
+                  {
+                    "properties": {
+                      "params": {
+                        "title": "parameters",
+                        "oneOf": [
+                          {
+                            "type": "object"
+                          },
+                          {
+                            "type": "array"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
               }
             }
           }
@@ -76,7 +158,7 @@
       "user.create": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -123,7 +205,7 @@
       "user.changeEmail": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -152,7 +234,7 @@
       "user.changePassword": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -180,7 +262,7 @@
       "user.changeRole": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -208,7 +290,7 @@
       "user.confirmEmail": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -236,7 +318,7 @@
       "user.delete": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -262,7 +344,7 @@
       "user.find": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -287,7 +369,7 @@
       "user.forgottenPassword": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -312,7 +394,7 @@
       "user.list": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -341,7 +423,7 @@
       "user.login": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -369,7 +451,7 @@
       "user.patch": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -414,7 +496,7 @@
       "user.resetPassword": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -445,7 +527,7 @@
       "territory.all": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -460,7 +542,7 @@
       "territory.patch": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -539,7 +621,7 @@
       "operator.all": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -554,7 +636,7 @@
       "operator.patch": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/JsonRpcRequired"
+            "$ref": "#/components/schemas/JsonRpcRequest"
           },
           {
             "type": "object",
@@ -602,6 +684,9 @@
         ]
       },
       "user.create.response": {
+        "$ref": "#/components/schemas/User"
+      },
+      "user.login.response": {
         "$ref": "#/components/schemas/User"
       },
       "User": {
@@ -738,7 +823,7 @@
           }
         }
       },
-      "JsonRpcRequired": {
+      "JsonRpcRequest": {
         "type": "object",
         "required": ["method", "id", "jsonrpc"],
         "properties": {
@@ -760,6 +845,17 @@
         },
         "discriminator": {
           "propertyName": "method_name"
+        }
+      },
+      "Error": {
+        "required": ["name", "message"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
         }
       }
     }
