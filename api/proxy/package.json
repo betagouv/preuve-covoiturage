@@ -4,9 +4,9 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc",
     "ilos": "ilos",
-    "watch-ts": "tsc -w",
+    "build": "tsc",
+    "watch": "tsc -w",
     "test": "NODE_ENV=testing mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../coverage/proxy --temp-dir=../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",

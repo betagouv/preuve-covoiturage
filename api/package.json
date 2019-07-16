@@ -19,10 +19,10 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
-    "serve": "yarn workspace @pdc/proxy ilos http 8080",
+    "serve": "yarn workspace @pdc/proxy ilos http $PORT",
     "serve-dev": "nodemon",
     "clean": "rm -rf ./**/dist",
-    "watch": "lerna run --parallel watch-ts",
+    "watch": "lerna run --parallel watch",
     "ls": "lerna ls",
     "build": "run-s clean build:providers build:services build:proxy",
     "build:proxy": "lerna run --scope @pdc/proxy build",
