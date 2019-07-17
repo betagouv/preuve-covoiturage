@@ -1,8 +1,8 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { CreateOperatorParamsInterface, OperatorInterface } from '@pdc/provider-schema';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { CreateOperatorParamsInterface, OperatorDbInterface } from '../interfaces/OperatorInterfaces';
 
 @handler({
   service: 'operator',
@@ -18,7 +18,7 @@ export class CreateOperatorAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: CreateOperatorParamsInterface): Promise<OperatorDbInterface> {
+  public async handle(params: CreateOperatorParamsInterface): Promise<OperatorInterface> {
     return this.operatorRepository.create(params);
   }
 }

@@ -1,7 +1,7 @@
-import { companySchema } from './parts/companySchema';
-import { addressSchema } from './parts/addressSchema';
-import { bankSchema } from './parts/bankSchema';
-import { contactsSchema } from './parts/contactsSchema';
+import { companySchema } from '../../company';
+import { addressSchema } from '../../address';
+import { bankSchema } from '../../bank';
+import { contactsSchema } from '../../contacts';
 
 export const operatorPatchSchema = {
   $id: 'operator.patch',

@@ -1,8 +1,8 @@
-import { companySchema } from './parts/companySchema';
-import { addressSchema } from './parts/addressSchema';
-import { bankSchema } from './parts/bankSchema';
-import { contactsSchema } from './parts/contactsSchema';
-import { cguSchema } from './parts/cguSchema';
+import { companySchema } from '../../company';
+import { addressSchema } from '../../address';
+import { bankSchema } from '../../bank';
+import { cguSchema } from '../../cgu';
+import { contactsSchema } from '../../contacts';
 
 export const operatorCreateSchema = {
   $id: 'operator.create',

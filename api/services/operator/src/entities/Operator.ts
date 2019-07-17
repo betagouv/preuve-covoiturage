@@ -1,89 +1,34 @@
-import { OperatorDbInterface } from '../interfaces/OperatorInterfaces';
+import {
+  OperatorInterface,
+  CompanyInterface,
+  AddressInterface,
+  BankInterface,
+  ContactsInterface,
+  CguInterface,
+} from '@pdc/provider-schema';
 
-export class Operator implements OperatorDbInterface {
+export class Operator implements OperatorInterface {
   public _id: string;
+
   // tslint:disable-next-line
   public nom_commercial: string;
   // tslint:disable-next-line
   public raison_sociale: string;
-  public company: {
-    siren: string;
-    naf_etablissement: string;
-    naf_entreprise: string;
-    nature_juridique: string;
-    cle_nic: string;
-    rna: string;
-    vat_intra: string;
-  };
-  public address: {
-    street: string;
-    city: string;
-    country: string;
-    postcode: string;
-    cedex: string;
-  };
-  public bank: {
-    bank_name: string;
-    client_name: string;
-    iban: string;
-    bic: string;
-  };
-  public contacts: {
-    rgpd_dpo: string;
-    rgpd_controller: string;
-    technical: string;
-  };
-  public cgu: {
-    accepted: boolean;
-    acceptedAt: Date;
-    acceptedBy: string;
-  };
-  public applications: any; // TODO
-  public createdAt: Date;
-  public updatedAt: Date;
-  public deletedAt: Date;
 
-  public constructor(data: {
-    _id: string;
-    nom_commercial: string;
-    raison_sociale: string;
-    company: {
-      siren: string;
-      naf_etablissement: string;
-      naf_entreprise: string;
-      nature_juridique: string;
-      cle_nic: string;
-      rna: string;
-      vat_intra: string;
-    };
-    address: {
-      street: string;
-      city: string;
-      country: string;
-      postcode: string;
-      cedex: string;
-    };
-    bank: {
-      bank_name: string;
-      client_name: string;
-      iban: string;
-      bic: string;
-    };
-    contacts: {
-      rgpd_dpo: string;
-      rgpd_controller: string;
-      technical: string;
-    };
-    cgu: {
-      accepted: boolean;
-      acceptedAt: Date;
-      acceptedBy: string;
-    };
-    applications: any; // TODO
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-  }) {
+  public company: CompanyInterface;
+  public address: AddressInterface;
+  public bank: BankInterface;
+  public contacts: ContactsInterface;
+  public cgu: CguInterface;
+
+  // tslint:disable-next-line: variable-name
+  public created_at: Date;
+  // tslint:disable-next-line: variable-name
+  public updated_at: Date;
+  // tslint:disable-next-line: variable-name
+  public deleted_at: Date;
+
+  public constructor(data: OperatorInterface) {
     this._id = data._id;
     this.nom_commercial = data.nom_commercial;
     this.raison_sociale = data.raison_sociale;
@@ -92,9 +37,8 @@ export class Operator implements OperatorDbInterface {
     this.bank = data.bank;
     this.contacts = data.contacts;
     this.cgu = data.cgu;
-    this.applications = data.applications;
-    this.createdAt = data.createdAt;
-    this.updatedAt = data.updatedAt;
-    this.deletedAt = data.deletedAt;
+    this.created_at = data.created_at;
+    this.updated_at = data.updated_at;
+    this.deleted_at = data.deleted_at;
   }
 }

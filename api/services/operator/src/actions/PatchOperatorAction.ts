@@ -1,8 +1,8 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { PatchOperatorParamsInterface, OperatorInterface } from '@pdc/provider-schema';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
-import { PatchOperatorParamsInterface, OperatorDbInterface } from '../interfaces/OperatorInterfaces';
 
 @handler({
   service: 'operator',
@@ -18,7 +18,7 @@ export class PatchOperatorAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: { _id: string; patch: PatchOperatorParamsInterface }): Promise<OperatorDbInterface> {
+  public async handle(params: { _id: string; patch: PatchOperatorParamsInterface }): Promise<OperatorInterface> {
     return this.operatorRepository.patch(params._id, params.patch);
   }
 }
