@@ -1,18 +1,15 @@
 import { NotFoundException, provider, ConfigInterfaceResolver } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
 import { MongoException, MongoConnection, ObjectId } from '@ilos/connection-mongo';
+import { userSchema } from '@pdc/provider-schema';
 
-import { userSchema } from '../entities/userSchema';
 import { User } from '../entities/User';
 import {
   UserRepositoryProviderInterface,
   UserRepositoryProviderInterfaceResolver,
 } from '../interfaces/UserRepositoryProviderInterface';
-
-import {
-  UserRepositoryListFiltersInterface,
-  UserRepositoryListPaginationInterface,
-} from '../interfaces/UserRepositoryListParamsInterface';
+import { UserRepositoryListFiltersInterface } from '../interfaces/UserRepositoryListParamsInterface';
+import { UserRepositoryListPaginationInterface } from '../interfaces/UserRepositoryListPaginationInterface';
 
 /*
  * User specific repository

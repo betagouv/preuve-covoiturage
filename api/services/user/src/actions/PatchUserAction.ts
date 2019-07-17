@@ -1,9 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { UserPatchParamsInterface } from '@pdc/provider-schema';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserPatchParamsInterface } from '../interfaces/actions/UserPatchParamsInterface';
-
 import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 

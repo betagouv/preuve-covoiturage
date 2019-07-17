@@ -11,3 +11,4 @@ export * from './userLoginSchema';
 export * from './userPatchSchema';
 export * from './userRegisterSchema';
 export * from './userResetPasswordSchema';
+export * from './userSchema';

@@ -1,15 +1,14 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConfigInterfaceResolver, ForbiddenException } from '@ilos/common';
-
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { UserResetPasswordParamsInterface } from '@pdc/provider-schema';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserResetPasswordParamsInterface } from '../interfaces/actions/UserResetPasswordParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
- * Find user by forgottenReset and update password
+ * Find user by forgotten_reset and update password
  */
 @handler({
   service: 'user',
@@ -30,16 +29,16 @@ export class ResetPasswordUserAction extends AbstractAction {
   }
 
   public async handle(params: UserResetPasswordParamsInterface, context: ContextType): Promise<User> {
-    const user = await this.userRepository.findUserByParams({ forgottenReset: params.reset });
+    const user = await this.userRepository.findUserByParams({ forgotten_reset: params.reset });
 
-    if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgottenToken))) {
+    if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgotten_token))) {
       throw new ForbiddenException('Invalid token');
     }
 
     // Token expired after 1 day
-    if ((Date.now() - user.forgottenAt.getTime()) / 1000 > this.config.get('user.tokenExpiration.passwordReset')) {
-      user.forgottenReset = undefined;
-      user.forgottenToken = undefined;
+    if ((Date.now() - user.forgotten_at.getTime()) / 1000 > this.config.get('user.tokenExpiration.passwordReset')) {
+      user.forgotten_reset = undefined;
+      user.forgotten_token = undefined;
       await this.userRepository.update(user);
 
       throw new ForbiddenException('Expired token');
@@ -47,7 +46,7 @@ export class ResetPasswordUserAction extends AbstractAction {
 
     user.password = await this.cryptoProvider.cryptPassword(params.password);
 
-    user.hasResetPassword = true;
+    user.has_reset_password = true;
 
     user.status = this.config.get('user.status.active');
 

@@ -40,7 +40,7 @@
 //   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
 //     return new User({
 //       ...mockUser,
-//       emailChangeAt: new Date(),
+//       email_change_at: new Date(),
 //     });
 //   }
 
@@ -64,7 +64,7 @@
 //     return;
 //   }
 //   get(key: string, fallback?: any): any {
-//     if (key === 'user.tokenExpiration.emailConfirm') {
+//     if (key === 'user.tokenExpiration.email_confirm') {
 //       return '86400';
 //     }
 //     return 'active';

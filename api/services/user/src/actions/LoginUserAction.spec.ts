@@ -53,7 +53,7 @@
 //   public async patch(id: string, user: UserBaseInterface): Promise<User> {
 //     return new User({
 //       ...mockUser,
-//       lastConnectedAt: new Date(),
+//       last_connected_at: new Date(),
 //     });
 //   }
 // }

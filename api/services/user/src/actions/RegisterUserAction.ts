@@ -1,10 +1,10 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConfigInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { UserRegisterParamsInterface } from '@pdc/provider-schema';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserRegisterParamsInterface } from '../interfaces/actions/UserRegisterParamsInterface';
 
 /*
  * Create user and call forgotten password action
@@ -35,7 +35,7 @@ export class RegisterUserAction extends AbstractAction {
       status: this.config.get('user.status.active'),
       password: newHashPassword,
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-      emailChangeAt: new Date(),
+      email_change_at: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);

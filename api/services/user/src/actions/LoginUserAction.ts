@@ -1,10 +1,10 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConfigInterfaceResolver, ForbiddenException } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { UserLoginParamsInterface } from '@pdc/provider-schema';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
@@ -40,7 +40,7 @@ export class LoginUserAction extends AbstractAction {
         throw new ForbiddenException();
       }
 
-      return this.userRepository.patch(user._id, { lastConnectedAt: new Date() });
+      return this.userRepository.patch(user._id, { last_connected_at: new Date() });
     } catch (e) {
       throw new ForbiddenException();
     }

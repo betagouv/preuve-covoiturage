@@ -14,6 +14,21 @@ import {
   ContentBlacklistMiddleware,
   ContentWhitelistMiddleware,
 } from '@pdc/provider-middleware';
+import {
+  userPatchSchema,
+  userDeleteSchema,
+  userCreateSchema,
+  userFindSchema,
+  userListSchema,
+  userRegisterSchema,
+  userResetPasswordSchema,
+  userForgottenPasswordSchema,
+  userConfirmEmailSchema,
+  userChangePasswordSchema,
+  userChangeEmailSchema,
+  userLoginSchema,
+  userChangeRoleSchema,
+} from '@pdc/provider-schema';
 
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
@@ -30,21 +45,6 @@ import { LoginUserAction } from './actions/LoginUserAction';
 import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
 import { RegisterUserAction } from './actions/RegisterUserAction';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
-import {
-  userPatchSchema,
-  userDeleteSchema,
-  userCreateSchema,
-  userFindSchema,
-  userListSchema,
-  userRegisterSchema,
-  userResetPasswordSchema,
-  userForgottenPasswordSchema,
-  userConfirmEmailSchema,
-  userChangePasswordSchema,
-  userChangeEmailSchema,
-  userLoginSchema,
-  userChangeRoleSchema,
-} from './schemas';
 
 @serviceProvider({
   config: __dirname,

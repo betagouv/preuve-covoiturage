@@ -1,8 +1,9 @@
-import { RPCException } from '@ilos/common';
 import axios from 'axios';
 
+import { RPCException } from '@ilos/common';
+import { UserInterface } from '@pdc/provider-schema';
+
 import { mockCreateUserParams, mockNewUserBase } from './newUserBase';
-import { UserBaseInterface } from '../../src/interfaces/UserInterfaces';
 
 interface TerritoryOperator {
   territory?: string;
@@ -18,7 +19,7 @@ export class MockFactory {
       .substring(2, 15);
   }
 
-  public call(method: string, params: any, callUserProperties: UserBaseInterface) {
+  public call(method: string, params: any, callUserProperties: any) {
     const callUser = {
       group: 'registry',
       role: 'admin',

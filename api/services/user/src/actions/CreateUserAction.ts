@@ -8,10 +8,10 @@ import {
   KernelInterfaceResolver,
 } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { UserCreateParamsInterface } from '@pdc/provider-schema';
 
 import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserCreateParamsInterface } from '../interfaces/actions/UserCreateParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
@@ -79,7 +79,7 @@ export class CreateUserAction extends AbstractAction {
         .toString(36)
         .substring(2, 15),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-      emailChangeAt: new Date(),
+      email_change_at: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);
@@ -94,9 +94,9 @@ export class CreateUserAction extends AbstractAction {
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
     // set forgotten password properties to set first password
-    user.forgottenReset = reset;
-    user.forgottenToken = await this.cryptoProvider.cryptToken(token);
-    user.forgottenAt = new Date();
+    user.forgotten_reset = reset;
+    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
+    user.forgotten_at = new Date();
 
     await this.userRepository.update(user);
 

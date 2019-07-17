@@ -1,4 +1,7 @@
-export class User {
+// tslint:disable: variable-name
+import { UserInterface } from '@pdc/provider-schema';
+
+export class User implements UserInterface {
   public _id?: string;
   public email: string;
   public lastname: string;
@@ -9,45 +12,21 @@ export class User {
   public password?: string;
   public role?: string;
   public status?: string;
-  public forgottenReset?: string;
-  public forgottenToken?: string;
-  public emailConfirm?: string;
-  public emailToken?: string;
+  public forgotten_reset?: string;
+  public forgotten_token?: string;
+  public email_confirm?: string;
+  public email_token?: string;
   public operator?: string;
   public territory?: string;
-  public hasResetPassword?: boolean;
-  public forgottenAt?: Date;
-  public emailChangeAt?: Date;
-  public lastConnectedAt?: Date;
-  public deletedAt?: Date;
-  public createdAt?: Date;
-  public updatedAt?: Date;
+  public has_reset_password?: boolean;
+  public forgotten_at?: Date;
+  public email_change_at?: Date;
+  public last_connected_at?: Date;
+  public deleted_at?: Date;
+  public created_at?: Date;
+  public updated_at?: Date;
 
-  constructor(data: {
-    _id?: string;
-    email: string;
-    lastname: string;
-    firstname: string;
-    group: string;
-    permissions: string[];
-    password?: string;
-    role?: string;
-    phone?: string;
-    status?: string;
-    forgottenReset?: string;
-    forgottenToken?: string;
-    emailConfirm?: string;
-    emailToken?: string;
-    operator?: string;
-    territory?: string;
-    hasResetPassword?: boolean;
-    forgottenAt?: Date;
-    emailChangeAt?: Date;
-    lastConnectedAt?: Date;
-    deletedAt?: Date;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }) {
+  constructor(data: UserInterface) {
     this._id = data._id;
     this.email = data.email;
     this.lastname = data.lastname;
@@ -58,19 +37,19 @@ export class User {
     this.permissions = data.permissions;
     this.password = data.password;
     this.status = data.status;
-    this.forgottenReset = data.forgottenReset;
-    this.forgottenToken = data.forgottenToken;
-    this.emailConfirm = data.emailConfirm;
-    this.emailToken = data.emailToken;
+    this.forgotten_reset = data.forgotten_reset;
+    this.forgotten_token = data.forgotten_token;
+    this.email_confirm = data.email_confirm;
+    this.email_token = data.email_token;
     this.operator = data.operator;
     this.territory = data.territory;
-    this.hasResetPassword = data.hasResetPassword;
-    this.forgottenAt = data.forgottenAt;
-    this.emailChangeAt = data.emailChangeAt;
-    this.lastConnectedAt = data.lastConnectedAt;
-    this.deletedAt = data.deletedAt;
-    this.createdAt = data.createdAt;
-    this.updatedAt = data.updatedAt;
+    this.has_reset_password = data.has_reset_password;
+    this.forgotten_at = data.forgotten_at;
+    this.email_change_at = data.email_change_at;
+    this.last_connected_at = data.last_connected_at;
+    this.deleted_at = data.deleted_at;
+    this.created_at = data.created_at;
+    this.updated_at = data.updated_at;
   }
 
   get fullname() {

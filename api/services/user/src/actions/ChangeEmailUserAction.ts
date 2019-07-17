@@ -1,10 +1,10 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { ConfigInterfaceResolver, handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { UserChangeEmailParamsInterface } from '@pdc/provider-schema';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserChangeEmailParamsInterface } from '../interfaces/actions/UserChangeEmailParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
@@ -63,7 +63,7 @@ export class ChangeEmailUserAction extends AbstractAction {
       contextParam.operator = context.call.user.operator;
     }
 
-    const emailChangeAt = new Date();
+    const email_change_at = new Date();
     const confirm = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
@@ -72,9 +72,9 @@ export class ChangeEmailUserAction extends AbstractAction {
     const requester = new User(context.call.user);
 
     const patch = {
-      emailChangeAt,
-      emailConfirm: confirm,
-      emailToken: cryptedToken,
+      email_change_at,
+      email_confirm: confirm,
+      email_token: cryptedToken,
       email: params.email,
       status: this.config.get('user.status.notActive'),
     };

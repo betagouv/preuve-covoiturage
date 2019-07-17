@@ -14,6 +14,7 @@ export * from './models/position';
 export * from './models/territory';
 export * from './models/travelPass';
 export * from './models/trip';
+export * from './models/user';
 
 export { SchemaProvider } from './SchemaProvider';
 export { SchemaProviderInterface } from './interfaces/SchemaProviderInterface';

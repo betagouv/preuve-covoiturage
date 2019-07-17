@@ -1,5 +1,5 @@
-import { UserBaseInterface } from './UserInterfaces';
+import { UserInterface } from '@pdc/provider-schema';
 
 export interface UserContextInterface {
-  call?: { user: UserBaseInterface };
+  call?: { user: UserInterface };
 }

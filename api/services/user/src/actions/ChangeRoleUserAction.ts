@@ -1,9 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { UserChangeRoleParamsInterface } from '@pdc/provider-schema';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
-import { UserChangeRoleParamsInterface } from '../interfaces/actions/UserChangeRoleParamsInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*

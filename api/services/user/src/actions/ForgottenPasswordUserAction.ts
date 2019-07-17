@@ -30,9 +30,9 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
-    user.forgottenReset = reset;
-    user.forgottenToken = await this.cryptoProvider.cryptToken(token);
-    user.forgottenAt = new Date();
+    user.forgotten_reset = reset;
+    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
+    user.forgotten_at = new Date();
     user.status = this.config.get('user.status.notActive');
 
     const updatedUser = await this.userRepository.update(user);
