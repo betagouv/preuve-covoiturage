@@ -1,7 +1,7 @@
 import { RepositoryInterfaceResolver, RepositoryInterface } from '@ilos/common';
+import { PersonInterface } from '@pdc/provider-schema';
 
 import { Trip } from '../entities/Trip';
-import { PersonInterface } from './TripInterface';
 
 export interface CrosscheckRepositoryProviderInterface extends RepositoryInterface {
   findByOperatorJourneyIdAndOperatorId(params: { operator_journey_id?: string; operator_id: string }): Promise<Trip>;

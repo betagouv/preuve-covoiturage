@@ -1,14 +1,13 @@
 import { provider, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 import { ParentRepository } from '@ilos/repository';
+import { PersonInterface, tripSchema } from '@pdc/provider-schema';
 
 import { Trip } from '../entities/Trip';
-import { tripSchema } from '../schema/tripSchema';
 import {
   CrosscheckRepositoryProviderInterface,
   CrosscheckRepositoryProviderInterfaceResolver,
 } from '../interfaces/CrosscheckRepositoryProviderInterface';
-import { PersonInterface } from '../interfaces/TripInterface';
 
 /*
  * Trip specific repository

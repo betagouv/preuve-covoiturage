@@ -3,11 +3,11 @@ import moment from 'moment';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { JourneyInterface, TripInterface, PersonInterface } from '@pdc/provider-schema';
 
-import { Person, Trip } from '../entities/Trip';
 import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
-import { PersonInterface, TripInterface } from '../interfaces/TripInterface';
-import { JourneyInterface } from '../interfaces/JourneyInterface';
+import { Trip } from '../entities/Trip';
+import { Person } from '../entities/Person';
 
 interface CrosscheckProcessParamsInterface {
   journey: JourneyInterface;
@@ -96,32 +96,12 @@ export class CrosscheckProcessAction extends Action {
 
     if ('driver' in journey) {
       const driver = journey.driver;
-      people.push(
-        new Person({
-          journey_id: journey.journey_id,
-          operator_journey_id: journey.operator_journey_id,
-          operator_class: journey.operator_class,
-          operator_id: journey.operator_id,
-          class: journey.operator_class,
-          is_driver: true,
-          ...driver,
-        }),
-      );
+      people.push(new Person({ is_driver: true, ...driver }));
     }
 
     if ('passenger' in journey) {
       const passenger = journey.passenger;
-      people.push(
-        new Person({
-          journey_id: journey.journey_id,
-          class: journey.operator_class,
-          operator_journey_id: journey.operator_journey_id,
-          operator_class: journey.operator_class,
-          operator_id: journey.operator_id,
-          is_driver: false,
-          ...passenger,
-        }),
-      );
+      people.push(new Person({ is_driver: false, ...passenger }));
     }
 
     return people;
@@ -131,8 +111,10 @@ export class CrosscheckProcessAction extends Action {
   private reduceStartDate(journey: JourneyInterface, trip: TripInterface | null = null): Date {
     if (trip) {
       const arr: Date[] = [journey.driver.start.datetime, trip.start];
+
       return arr.reduce((p, c) => (new Date(p).getTime() < new Date(c).getTime() ? p : c), new Date());
     }
+
     return journey.driver.start.datetime;
   }
 
@@ -141,12 +123,12 @@ export class CrosscheckProcessAction extends Action {
     let territories: string[] = [];
 
     if ('driver' in journey) {
-      territories = territories.concat(journey.driver.start.territory);
-      territories = territories.concat(journey.driver.end.territory);
+      territories = territories.concat(journey.driver.start.territories);
+      territories = territories.concat(journey.driver.end.territories);
     }
     if ('passenger' in journey) {
-      territories = territories.concat(journey.driver.start.territory);
-      territories = territories.concat(journey.driver.end.territory);
+      territories = territories.concat(journey.driver.start.territories);
+      territories = territories.concat(journey.driver.end.territories);
     }
 
     return uniq(territories);
