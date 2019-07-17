@@ -8,15 +8,13 @@ import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInte
   identifier: CryptoProviderInterfaceResolver,
 })
 export class CryptoProvider implements ProviderInterface {
-  async boot() {}
+  private saltRounds = 10;
 
   async cryptPassword(plainPassword: string): Promise<string> {
-    const saltRounds = 10;
-    return bcrypt.hash(plainPassword, saltRounds);
+    return bcrypt.hash(plainPassword, this.saltRounds);
   }
   async cryptToken(plainToken: string): Promise<string> {
-    const saltRounds = 10;
-    return bcrypt.hash(plainToken, saltRounds);
+    return bcrypt.hash(plainToken, this.saltRounds);
   }
   async comparePassword(plainPwd: string, hashedPwd: string): Promise<boolean> {
     return bcrypt.compare(plainPwd, hashedPwd);
@@ -26,7 +24,7 @@ export class CryptoProvider implements ProviderInterface {
     return bcrypt.compare(plainToken, hashedToken);
   }
 
-  generateToken(length: number = 12): string {
+  public generateToken(length: number = 12): string {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
