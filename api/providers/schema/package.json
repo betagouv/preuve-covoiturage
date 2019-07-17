@@ -17,7 +17,9 @@
   "peerDependencies": {
     "@ilos/common": "~0",
     "@ilos/config": "~0",
-    "@ilos/core": "~0"
+    "@ilos/core": "~0",
+    "@ilos/env": "~0",
+    "@pdc/provider-validator": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

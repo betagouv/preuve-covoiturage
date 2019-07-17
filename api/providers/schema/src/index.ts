@@ -1,4 +1,5 @@
-export * from './services';
+export * from './common';
+export * from './acquisition';
 
 export { SchemaProvider } from './SchemaProvider';
 export { SchemaProviderInterface } from './interfaces/SchemaProviderInterface';

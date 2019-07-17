@@ -1,9 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ConfigInterfaceResolver, ContextType } from '@ilos/common';
+import { CreateJourneyParamsInterface } from '@pdc/provider-schema';
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
-import { CreateJourneyParamsInterface } from '../interfaces/CreateJourneyParamsInterface';
 
 @handler({
   service: 'acquisition',

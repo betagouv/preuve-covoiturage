@@ -1,5 +1,5 @@
-import { identitySchema } from './parts/identitySchema';
-import { positionSchema } from './parts/positionSchema';
+import { identitySchema } from '../../common/identitySchema';
+import { positionSchema } from '../../common/positionSchema';
 
 export const journeyCreateSchema = {
   $id: 'journey.create',

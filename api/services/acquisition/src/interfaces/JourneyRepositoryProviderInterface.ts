@@ -1,7 +1,4 @@
-import {
-  RepositoryInterface,
-  RepositoryInterfaceResolver,
-} from '@ilos/common';
+import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
 
 import { Journey } from '../entities/Journey';
 

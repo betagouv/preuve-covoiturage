@@ -19,8 +19,6 @@ const { expect } = chai;
  * Mock the Acquisition Service Provider
  */
 @serviceProvider({
-  env: null,
-  config: {},
   validator: [['journey.create', journeyCreateSchema]],
 })
 class MockServiceProvider extends AbstractServiceProvider {
@@ -34,32 +32,29 @@ let fail: Function;
 /**
  * Sugar function to run tests (succeed / fail)
  */
-const expectFactory = (mockServiceProvider: MockServiceProvider, fulfilled = true) => (
+const expectFactory = (mockServiceProvider: MockServiceProvider, fulfilled = true) => async (
   schema: any,
   errorStatus?: string,
-) =>
-  fulfilled
-    ? expect(
-        mockServiceProvider
-          .getContainer()
-          .get<ValidatorInterfaceResolver>(ValidatorInterfaceResolver)
-          .validate(schema, 'journey.create'),
-      ).to.be.fulfilled
-    : errorStatus
-    ? expect(
-        mockServiceProvider
-          .getContainer()
-          .get<ValidatorInterfaceResolver>(ValidatorInterfaceResolver)
-          .validate(schema, 'journey.create'),
-      ).to.be.rejectedWith(errorStatus)
-    : expect(
-        mockServiceProvider
-          .getContainer()
-          .get<ValidatorInterfaceResolver>(ValidatorInterfaceResolver)
-          .validate(schema, 'journey.create'),
-      ).to.be.rejected;
+): Promise<void> => {
+  let isValid: string | boolean;
 
-describe('Journey Create Schema : ', () => {
+  try {
+    isValid = await mockServiceProvider
+      .getContainer()
+      .get<ValidatorInterfaceResolver>(ValidatorInterfaceResolver)
+      .validate(schema, 'journey.create');
+  } catch (e) {
+    isValid = e.message;
+  } finally {
+    fulfilled
+      ? expect(isValid).to.be.true
+      : errorStatus
+      ? expect(isValid).to.eq(errorStatus)
+      : expect(isValid).to.be.an.instanceof(String);
+  }
+};
+
+describe('Journey Create Schema', () => {
   before(async () => {
     sp = new MockServiceProvider();
     succeed = expectFactory(sp, true);
@@ -69,27 +64,30 @@ describe('Journey Create Schema : ', () => {
   });
 
   describe('Required fields', () => {
-    it('Fails on missing journey_id', () => {
-      fail({}, "data should have required property '.journey_id'");
+    it('Fails on missing journey_id', async () => {
+      await fail({}, "data should have required property '.journey_id'");
     });
 
-    it('Fails on missing operator_class', () => {
-      fail({ journey_id: '1234', operator_id: 'A' }, "data should have required property 'operator_class'");
+    it('Fails on missing operator_class', async () => {
+      await fail({ journey_id: '1234', operator_id: 'A' }, "data should have required property 'operator_class'");
     });
 
-    it('Fails on missing operator_id', () => {
-      fail({ journey_id: '1234', operator_class: 'A' }, "data should have required property '.operator_id'");
+    it('Fails on missing operator_id', async () => {
+      await fail(
+        { journey_id: '1234', operator_class: 'A' },
+        "data should have required property '.passenger', data should have required property '.driver', data should match some schema in anyOf",
+      );
     });
 
-    it('Fails on unsupported operator_class', () => {
-      fail(
+    it('Fails on unsupported operator_class', async () => {
+      await fail(
         { journey_id: '1234', operator_id: 'A', operator_class: 'Z' },
         'data.operator_class should be equal to one of the allowed values',
       );
     });
 
-    it('Fails on no passenger, no driver', () => {
-      fail(
+    it('Fails on no passenger, no driver', async () => {
+      await fail(
         { journey_id: '1234', operator_class: 'A', operator_id: '5d148b878ddca84ffe6535cd' },
         "data should have required property '.passenger', data should have required property '.driver', data should match some schema in anyOf",
       );
@@ -97,8 +95,8 @@ describe('Journey Create Schema : ', () => {
   });
 
   describe('Passenger and driver', () => {
-    it('Succeeds on passenger only', () => {
-      succeed({
+    it('Succeeds on passenger only', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -112,8 +110,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Succeeds on driver only', () => {
-      succeed({
+    it('Succeeds on driver only', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -127,8 +125,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Fails on null passenger', () => {
-      fail(
+    it('Fails on null passenger', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -146,8 +144,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Fails on null driver', () => {
-      fail(
+    it('Fails on null driver', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -165,8 +163,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Succeeds on passenger and driver', () => {
-      succeed({
+    it('Succeeds on passenger and driver', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -187,8 +185,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Succeeds on over_18 true', () => {
-      succeed({
+    it('Succeeds on over_18 true', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -202,8 +200,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Succeeds on over_18 false', () => {
-      succeed({
+    it('Succeeds on over_18 false', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -217,8 +215,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Succeeds on over_18 null', () => {
-      succeed({
+    it('Succeeds on over_18 null', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -232,8 +230,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Succeeds on missing over_18 (defaults to null)', () => {
-      succeed({
+    it('Succeeds on missing over_18 (defaults to null)', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -247,9 +245,9 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Fails on over_18 truthy/falsy values', () => {
-      [1, 'TRUE', 'oui', 'yes', 'on', 'checked', 0, 'False', 'non', ''].forEach((value) => {
-        fail(
+    it('Fails on over_18 truthy/falsy values', async () => {
+      for await (const value of [1, 'TRUE', 'oui', 'yes', 'on', 'checked', 0, 'False', 'non', '']) {
+        await fail(
           {
             journey_id: '1234',
             operator_class: 'A',
@@ -264,13 +262,13 @@ describe('Journey Create Schema : ', () => {
           },
           'data.passenger.identity.over_18 should be equal to one of the allowed values',
         );
-      });
+      }
     });
   });
 
   describe('Position', () => {
-    it('Fails on empty', () => {
-      fail(
+    it('Fails on empty', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -287,8 +285,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Fails on missing required datetime (1 property)', () => {
-      fail(
+    it('Fails on missing required datetime (1 property)', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -305,8 +303,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Fails on missing required datetime (2 properties)', () => {
-      fail(
+    it('Fails on missing required datetime (2 properties)', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -323,8 +321,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Succeeds on lat/lon only', () => {
-      succeed({
+    it('Succeeds on lat/lon only', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -338,8 +336,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Fails on missing lat', () => {
-      fail(
+    it('Fails on missing lat', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -356,8 +354,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Fails on missing lon', () => {
-      fail(
+    it('Fails on missing lon', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -374,8 +372,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Succeeds on insee only', () => {
-      succeed({
+    it('Succeeds on insee only', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -389,8 +387,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Succeeds on literal only', () => {
-      succeed({
+    it('Succeeds on literal only', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -404,8 +402,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Fails on country only', () => {
-      fail(
+    it('Fails on country only', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -422,8 +420,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Succeeds on all', () => {
-      succeed({
+    it('Succeeds on all', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -446,8 +444,8 @@ describe('Journey Create Schema : ', () => {
   });
 
   describe('Incentives', () => {
-    it('Fails on missing', () => {
-      fail(
+    it('Fails on missing', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -463,8 +461,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Succeeds on empty []', () => {
-      succeed({
+    it('Succeeds on empty []', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -478,8 +476,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Fails on missing properties (all required) - 1 item', () => {
-      fail(
+    it('Fails on missing properties (all required) - 1 item', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -501,8 +499,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Fails on missing properties (all required) - 2 items', () => {
-      fail(
+    it('Fails on missing properties (all required) - 2 items', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -529,8 +527,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Succeeds on all', () => {
-      succeed({
+    it('Succeeds on all', async () => {
+      await succeed({
         journey_id: '1234',
         operator_class: 'A',
         operator_id: '5d148b878ddca84ffe6535cd',
@@ -550,8 +548,8 @@ describe('Journey Create Schema : ', () => {
       });
     });
 
-    it('Fails on index not being an integer', () => {
-      fail(
+    it('Fails on index not being an integer', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -576,8 +574,8 @@ describe('Journey Create Schema : ', () => {
   });
 
   describe('Travel pass', () => {
-    it('Fails if missing any prop - 0 items', () => {
-      fail(
+    it('Fails if missing any prop - 0 items', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -597,8 +595,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Fails if missing any prop - 1 item', () => {
-      fail(
+    it('Fails if missing any prop - 1 item', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',
@@ -620,8 +618,8 @@ describe('Journey Create Schema : ', () => {
       );
     });
 
-    it('Fails if missing any prop - 1 item', () => {
-      fail(
+    it('Fails if missing any prop - 1 item', async () => {
+      await fail(
         {
           journey_id: '1234',
           operator_class: 'A',

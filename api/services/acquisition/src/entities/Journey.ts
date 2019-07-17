@@ -5,7 +5,7 @@ import {
   PositionInterface,
   IncentiveInterface,
   PaymentInterface,
-} from '../interfaces';
+} from '@pdc/provider-schema';
 
 export class Journey implements JourneyInterface {
   public _id?: string;

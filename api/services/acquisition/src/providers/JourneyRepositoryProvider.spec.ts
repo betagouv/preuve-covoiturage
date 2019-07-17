@@ -2,10 +2,10 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import { ConfigInterfaceResolver } from '@ilos/common';
 import { MongoConnection } from '@ilos/connection-mongo';
+import { CreateJourneyParamsInterface } from '@pdc/provider-schema';
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProvider } from './JourneyRepositoryProvider';
-import { CreateJourneyParamsInterface } from '../interfaces/CreateJourneyParamsInterface';
 
 class FakeConfigProvider extends ConfigInterfaceResolver {
   protected conf = {};

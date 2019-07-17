@@ -60,6 +60,7 @@
     "@ilos/framework": "~0",
     "@ilos/package-acl": "~0",
     "@ilos/repository": "~0",
+    "@pdc/provider-schema": "~0",
     "@pdc/provider-validator": "~0",
     "lodash": "^4.17.11"
   },
