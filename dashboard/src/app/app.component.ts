@@ -7,7 +7,7 @@ import { IconService } from './core/services/icon.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  title = 'webapp';
+  title = 'registre de preuve de covoiturage';
 
   constructor(private iconService: IconService) {}
 

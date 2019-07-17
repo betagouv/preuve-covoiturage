@@ -5,7 +5,8 @@ import {
   MatIconModule,
   MatInputModule,
   MatMenuModule,
-  MatSelectModule, MatStepperModule,
+  MatSelectModule,
+  MatStepperModule,
   MatTabsModule,
 } from '@angular/material';
 
@@ -19,7 +20,7 @@ import {
     MatMenuModule,
     MatIconModule,
     MatTabsModule,
-    MatStepperModule
+    MatStepperModule,
   ],
   exports: [
     MatButtonModule,
@@ -29,7 +30,7 @@ import {
     MatMenuModule,
     MatIconModule,
     MatTabsModule,
-    MatStepperModule
+    MatStepperModule,
   ],
 })
 export class MaterialModule {}

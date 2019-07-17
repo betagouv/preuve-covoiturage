@@ -1,0 +1,22 @@
+<form [formGroup]="profileForm">
+  <mat-form-field appearance="outline">
+    <mat-label>Prénom</mat-label>
+    <input matInput formControlName="firstname" required />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="lastname" required />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" required />
+    <mat-error *ngIf="controls.email.hasError('email')"> L'email est invalide.</mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Numéro</mat-label>
+    <input matInput formControlName="phone" />
+  </mat-form-field>
+  <button type="submit" mat-flat-button (click)="onUpdateProfile()" [disabled]="!profileForm.valid" color="primary">
+    Mettre à jour
+  </button>
+</form>

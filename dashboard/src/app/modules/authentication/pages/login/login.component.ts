@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { JsonRPCService } from '../../../../core/services/api/json-rpc.service';
-import { AuthenticationService } from '../../../../core/services/authentication/authentication.service';
+
+import { JsonRPCService } from '~/core/services/api/json-rpc.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-login',
