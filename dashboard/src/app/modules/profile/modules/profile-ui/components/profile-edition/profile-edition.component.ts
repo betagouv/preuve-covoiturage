@@ -24,7 +24,7 @@ export class ProfileEditionComponent implements OnInit {
   }
 
   public onUpdateProfile(): void {
-    this.profileService.patch(this.profileForm.getRawValue());
+    this.profileService.patch(this.profileForm.value);
   }
 
   private initProfilForm(): void {

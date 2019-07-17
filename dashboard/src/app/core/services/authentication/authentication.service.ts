@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
@@ -30,6 +31,22 @@ export class AuthenticationService {
       email,
       password,
     };
+
+    this.jsonRPC.call(jsonRPCParam).subscribe(
+      (data) => {
+        console.log('success', data);
+      },
+      (err) => {
+        console.log('error', err);
+      },
+    );
+  }
+
+  public changePassword(oldPassword: string, newPassword: string): void {
+    const jsonRPCParam = new JsonRPCParam('user.changePassword', {
+      oldPassword,
+      newPassword,
+    });
 
     this.jsonRPC.call(jsonRPCParam).subscribe(
       (data) => {
