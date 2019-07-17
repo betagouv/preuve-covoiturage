@@ -5,25 +5,22 @@ import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
+import {
+  applicationAllSchema,
+  applicationFindSchema,
+  applicationCreateSchema,
+  applicationRevokeSchema,
+} from '@pdc/provider-schema';
 
-// TODO copied from user. Find a better way when refactoring
-import { ScopeToSelfMiddleware } from './middlewares/ScopeToSelfMiddleware';
+import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
 import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
-
 import {
   AllApplicationAction,
   FindApplicationAction,
   CreateApplicationAction,
   RevokeApplicationAction,
 } from './actions';
-
-import {
-  applicationAllSchema,
-  applicationFindSchema,
-  applicationCreateSchema,
-  applicationRevokeSchema,
-} from './schemas';
 
 @serviceProvider({
   config: __dirname,

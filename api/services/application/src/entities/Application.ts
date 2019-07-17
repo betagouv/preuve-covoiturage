@@ -1,4 +1,4 @@
-import { ApplicationInterface } from '../interfaces';
+import { ApplicationInterface } from '@pdc/provider-schema';
 
 export class Application implements ApplicationInterface {
   public _id: string;

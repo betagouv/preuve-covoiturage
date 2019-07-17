@@ -51,7 +51,7 @@ function contextFactory(params) {
 
 const middleware = new ScopeToSelfMiddleware();
 
-describe('MIDDLEWARE SCOPETOSELF', () => {
+describe('Middleware Scopetoself', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['user.create'] });
 
   it('should have permission to create user', async () => {
@@ -75,7 +75,7 @@ describe('MIDDLEWARE SCOPETOSELF', () => {
   });
 });
 
-describe('MIDDLEWARE SCOPETOSELF', () => {
+describe('Middleware Scopetoself', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: mockCreateUserParameters.aom });
 
   it('Has no permission to create user - should throw permission error', async () => {
@@ -99,7 +99,7 @@ describe('MIDDLEWARE SCOPETOSELF', () => {
   });
 });
 
-describe('MIDDLEWARE SCOPETOSELF', () => {
+describe('Middleware Scopetoself', () => {
   const mockCreateUserContext = contextFactory({ permissions: [], aom: mockCreateUserParameters.aom });
 
   it('Aom admin - has no permission to create aom user - should throw permission error', async () => {
@@ -123,7 +123,7 @@ describe('MIDDLEWARE SCOPETOSELF', () => {
   });
 });
 
-describe('MIDDLEWARE SCOPETOSELF', () => {
+describe('Middleware Scopetoself', () => {
   const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: 'wrongAomId' });
 
   it('Aom registry - has wrong aom to create aom user - should throw permission error', async () => {
