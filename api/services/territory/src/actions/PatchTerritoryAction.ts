@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { PatchTerritoryParamsInterface, TerritoryInterface } from '@pdc/provider-schema';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { PatchTerritoryParamsInterface, TerritoryDbInterface } from '../interfaces/TerritoryInterfaces';
 
 @handler({
   service: 'territory',
@@ -18,7 +18,7 @@ export class PatchTerritoryAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: { _id: string; patch: PatchTerritoryParamsInterface }): Promise<TerritoryDbInterface> {
+  public async handle(params: { _id: string; patch: PatchTerritoryParamsInterface }): Promise<TerritoryInterface> {
     return this.territoryRepository.patch(params._id, params.patch);
   }
 }

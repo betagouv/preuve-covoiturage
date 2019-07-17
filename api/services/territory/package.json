@@ -59,7 +59,8 @@
     "@ilos/connection-manager": "~0",
     "@ilos/repository": "~0",
     "@ilos/package-acl": "~0",
-    "@pdc/provider-validator": "~0"
+    "@pdc/provider-validator": "~0",
+    "@pdc/provider-schema": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

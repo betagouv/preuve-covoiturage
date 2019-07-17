@@ -11,6 +11,7 @@ export * from './models/operator';
 export * from './models/payment';
 export * from './models/person';
 export * from './models/position';
+export * from './models/territory';
 export * from './models/travelPass';
 export * from './models/trip';
 

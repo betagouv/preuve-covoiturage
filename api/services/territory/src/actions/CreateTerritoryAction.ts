@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { CreateTerritoryParamsInterface, TerritoryInterface } from '@pdc/provider-schema';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { CreateTerritoryParamsInterface, TerritoryDbInterface } from '../interfaces/TerritoryInterfaces';
 
 @handler({
   service: 'territory',
@@ -18,7 +18,7 @@ export class CreateTerritoryAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: CreateTerritoryParamsInterface): Promise<TerritoryDbInterface> {
+  public async handle(params: CreateTerritoryParamsInterface): Promise<TerritoryInterface> {
     return this.territoryRepository.create(params);
   }
 }
