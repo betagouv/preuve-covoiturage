@@ -28,8 +28,8 @@ const journey1: CreateJourneyParamsInterface = {
   operator_id: '5d10c5ec63214bba0f9fa2d4',
   passenger: {
     identity: { phone: '+33612345678' },
-    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
-    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
+    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
     seats: 1,
     expense: 1,
     contribution: 1,
@@ -39,8 +39,8 @@ const journey1: CreateJourneyParamsInterface = {
   },
   driver: {
     identity: { phone: '+33687654321' },
-    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
-    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
+    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
     expense: 1,
     revenue: 1,
     incentives: [],
@@ -56,8 +56,8 @@ const journey2: CreateJourneyParamsInterface = {
   operator_id: '5d10c5ec63214bba0f9fa2d4',
   passenger: {
     identity: { phone: '+33687652134' },
-    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
-    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
+    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
     seats: 1,
     expense: 1,
     contribution: 1,
@@ -67,8 +67,8 @@ const journey2: CreateJourneyParamsInterface = {
   },
   driver: {
     identity: { phone: '+33687654321' },
-    start: { datetime: '2019-05-01T10:00:00Z', literal: 'Paris' },
-    end: { datetime: '2019-05-01T11:00:00Z', literal: 'Evry' },
+    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
     expense: 1,
     revenue: 1,
     incentives: [],

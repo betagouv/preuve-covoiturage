@@ -18,10 +18,10 @@
     "@ilos/common": "~0",
     "@ilos/config": "~0",
     "@ilos/core": "~0",
-    "@ilos/env": "~0",
-    "@pdc/provider-validator": "~0"
+    "@ilos/env": "~0"
   },
   "devDependencies": {
+    "@pdc/provider-validator": "~0",
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/json-schema": "^7.0.3",

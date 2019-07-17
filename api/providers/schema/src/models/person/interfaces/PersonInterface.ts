@@ -4,7 +4,7 @@ import { IncentiveInterface } from '../../incentive';
 import { PaymentInterface } from '../../payment';
 
 export interface PersonInterface {
-  is_driver: boolean;
+  is_driver?: boolean;
   identity: IdentityInterface;
 
   start: PositionInterface;
@@ -13,7 +13,7 @@ export interface PersonInterface {
   duration?: number;
 
   seats?: number;
-  cost: number;
+  cost?: number;
   incentive?: number;
   contribution?: number;
   revenue?: number;

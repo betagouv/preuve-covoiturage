@@ -1,3 +1,5 @@
+// tslint:disable: variable-name
+
 import { Action as AbstractAction } from '@ilos/core';
 import { ConfigInterfaceResolver, handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
