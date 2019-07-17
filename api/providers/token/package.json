@@ -17,15 +17,15 @@
     "jsonwebtoken": "^8.5.1"
   },
   "peerDependencies": {
-    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0"
+    "@ilos/config": "~0",
+    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/jsonwebtoken": "^8.3.2",
-    "@types/lodash": "^4.14.134",
+    "@types/lodash": "^4.14.136",
     "@types/mocha": "^5.2.6",
     "@types/sinon": "^7.0.11",
     "chai": "^4.2.0",
@@ -35,7 +35,7 @@
     "sinon": "^7.3.2",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.3"
   },
   "mocha": {
     "require": [
