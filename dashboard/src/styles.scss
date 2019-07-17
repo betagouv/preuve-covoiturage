@@ -1,5 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+@font-face {
+  font-family: "WorkSans";
+  src: url("assets/fonts/WorkSans/WorkSans-Medium.ttf") format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "WorkSans";
+  src: url("assets/fonts/WorkSans/WorkSans-SemiBold.ttf") format('truetype');
+  font-weight: 600;
+}
+
 @import 'styles/variables';
 @import 'styles/buttons';
 @import 'styles/inputs';
@@ -7,7 +18,7 @@
 
 html,
 body {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'WorkSans', sans-serif;
   background: $background-light;
   margin: 0;
   width: 100%;
