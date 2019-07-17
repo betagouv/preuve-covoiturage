@@ -4,10 +4,10 @@ export class JsonRPCParam {
   public jsonrpc: string;
   public params: any;
 
-  constructor() {
+  constructor(method?: string, params?: any) {
     this._id = '1';
-    this.method = '';
+    this.method = method ? method : '';
     this.jsonrpc = '2.0';
-    this.params = null;
+    this.params = params ? params : null;
   }
 }
