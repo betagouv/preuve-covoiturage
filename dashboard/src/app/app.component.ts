@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-
-import { AuthenticationService } from './applicativeService/authentication/auth.service';
+import { IconService } from './core/services/icon.service';
 
 @Component({
   selector: 'app-root',
-  template: '<router-outlet></router-outlet>',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  constructor(private authService: AuthenticationService) {}
+  title = 'webapp';
 
-  ngOnInit() {
-    // check the token with the backend
-    this.authService.checkToken();
+  constructor(private iconService: IconService) {}
+
+  ngOnInit(): void {
+    this.iconService.init();
   }
 }
