@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   name: 'dev',
   apiUrl: 'https://pdc-api-dev.scalingo.io',
 };
