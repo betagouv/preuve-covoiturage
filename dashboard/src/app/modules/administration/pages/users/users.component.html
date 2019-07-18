@@ -1,8 +1,8 @@
 <div class="Users">
   <div class="Users-header">
-    <div class="generic-title">
+    <h2>
       Utilisateurs autorisés
-    </div>
+    </h2>
     <form [formGroup]="searchFilters">
       <mat-form-field appearance="outline">
         <mat-label>Rechercher</mat-label>
@@ -27,19 +27,11 @@
     Ajouter un utilisateur
   </button>
   <ng-template #addUserBlock>
-    <div class="generic-title">
+    <h2>
       Ajouter un utilisateur
-    </div>
+    </h2>
     <div class="Users-form">
-      <app-create-edit-user-form #createEditUserForm></app-create-edit-user-form>
+      <app-create-edit-user-form [isCreating]="true" (onCreateEditUser)="closeUserForm()"></app-create-edit-user-form>
     </div>
-    <button mat-flat-button
-            class="large"
-            [appShowSpinner]="isCreating"
-            [disabled]="!createEditUserForm.isFormValid"
-            (click)="createUser(createEditUserForm.formValue)"
-            color="primary">
-      Créer l'utilisateur
-    </button>
   </ng-template>
 </div>

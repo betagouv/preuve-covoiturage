@@ -16,15 +16,15 @@
     <input matInput
            formControlName="email"
            required/>
-    <mat-error *ngIf="controls.email.hasError('email')"> L'email est invalide.</mat-error>
+    <mat-error *ngIf="controls.email.hasError('pattern')"> L'email est invalide.</mat-error>
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Numéro de téléphone</mat-label>
     <input matInput
-           formControlName="phone"
-           required/>
+           formControlName="phone"/>
+    <mat-error *ngIf="controls.phone.hasError('pattern')"> Le numéro de téléphone est invalide.</mat-error>
   </mat-form-field>
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" *ngIf="isCreating">
     <mat-label>Droit d'accès</mat-label>
     <mat-select required formControlName="role">
       <mat-option [value]="1">Option 1</mat-option>
@@ -32,4 +32,15 @@
       <mat-option [value]="3">Option 3</mat-option>
     </mat-select>
   </mat-form-field>
+  <div>
+    <button type="submit"
+            mat-flat-button
+            class="large"
+            (click)="onUpdateUser()"
+            [appShowSpinner]="isCreatingUpdating"
+            [disabled]="!createEditUserForm.valid"
+            color="primary">
+      Mettre à jour
+    </button>
+  </div>
 </form>

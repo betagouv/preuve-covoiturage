@@ -1,4 +1,4 @@
-@import '../../../../../styles/variables';
+@import '../../../../../../styles/variables';
 
 .UsersList {
   ::ng-deep.ListItem {
@@ -15,7 +15,7 @@
       }
 
       &-name {
-        font-weight: 900;
+        font-weight: 600;
 
         &--itself {
           color: $color-primary;

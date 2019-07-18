@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
-import {User} from '../../entities/authentication/user';
+import { User } from '../../entities/authentication/user';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +50,7 @@ export class AuthenticationService {
       newPassword,
     });
 
-    this.jsonRPC.call(jsonRPCParam).subscribe(
+    this._jsonRPC.call(jsonRPCParam).subscribe(
       (data) => {
         console.log('success', data);
       },
@@ -73,8 +73,8 @@ export class AuthenticationService {
         _id: 1,
         firstname: 'Preuve',
         lastname: 'Decovoit',
-        email: 'preuve.decovoit@yopmail.com'
-      })
+        email: 'preuve.decovoit@yopmail.com',
+      }),
     });
   }
 

@@ -1,4 +1,4 @@
-import {IModel} from '../IModel';
+import { IModel } from '../IModel';
 
 export class User implements IModel {
   public _id: string;

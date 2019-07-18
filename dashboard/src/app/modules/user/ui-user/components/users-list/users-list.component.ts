@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {User} from '../../../../core/entities/authentication/user';
-import {UserService} from '../../../../core/services/authentication/user.service';
+import {User} from '../../../../../core/entities/authentication/user';
+import {UserService} from '../../../../../core/services/authentication/user.service';
 import {ToastrService} from 'ngx-toastr';
 
 @Component({
