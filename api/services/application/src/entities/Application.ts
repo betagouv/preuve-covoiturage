@@ -11,14 +11,7 @@ export class Application implements ApplicationInterface {
   // tslint:disable-next-line: variable-name
   public deleted_at?: Date;
 
-  constructor(data: {
-    _id: string;
-    name: string;
-    operator_id: string;
-    permissions: string[];
-    created_at: Date;
-    deleted_at?: Date;
-  }) {
+  constructor(data: ApplicationInterface) {
     this._id = data._id;
     this.name = data.name;
     this.operator_id = data.operator_id;

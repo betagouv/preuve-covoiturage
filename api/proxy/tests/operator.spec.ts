@@ -50,7 +50,7 @@ describe('Operator service', async () => {
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-operator-${new Date().getTime()}`;
     await kernel.bootstrap();
-    await app.up();
+    await app.up(['0']);
 
     request = supertest(app.app);
 

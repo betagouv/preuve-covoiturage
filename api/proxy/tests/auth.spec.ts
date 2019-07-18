@@ -57,7 +57,7 @@
 // describe('Proxy auth', async () => {
 //   before(async () => {
 //     await kernel.bootstrap();
-//     await app.up();
+//     await app.up(['0']);
 //   });
 
 //   after(async () => {

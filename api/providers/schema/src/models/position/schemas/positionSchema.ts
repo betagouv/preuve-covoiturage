@@ -18,8 +18,9 @@ export const positionSchema = {
       items: { type: 'string' },
       minItems: 0,
     },
-    literal: { macro: 'longchar' },
+    town: { macro: 'varchar' },
     country: { macro: 'varchar' },
+    literal: { macro: 'longchar' },
     territories: {
       type: 'array',
       minItems: 0,

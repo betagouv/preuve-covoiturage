@@ -35,11 +35,11 @@ services:
       #CONFIG_DIR: '/code/config'
       # APP_API_URL: 'http://localhost:8080'
       # APP_APP_URL: 'http://localhost:4200'
-      APP_SUPERUSER_EMAIL: admin@example.com
-      APP_SUPERUSER_PASSWORD: admin1234
+      # APP_SUPERUSER_EMAIL: admin@example.com
+      # APP_SUPERUSER_PASSWORD: admin1234
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
-      APP_MONGO_DB: pdc-local
-      APP_JWT_SECRET: notsosecret
+    # APP_MONGO_DB: pdc-local
+    # APP_JWT_SECRET: notsosecret
     networks:
       - front
       - api

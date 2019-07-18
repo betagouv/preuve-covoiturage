@@ -3,7 +3,9 @@ export interface PositionInterface {
   lat?: number;
   lon?: number;
   insee?: string;
-  literal?: string;
+  postcodes?: string[];
+  town?: string;
   country?: string;
+  literal?: string;
   territories?: string[];
 }

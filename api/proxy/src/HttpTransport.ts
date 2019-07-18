@@ -46,8 +46,8 @@ export class HttpTransport implements TransportInterface {
   async up(opts: string[] = []) {
     this.getProviders();
 
-    const [optsPort] = opts;
-    const port = optsPort ? Number(optsPort) : this.config.get('proxy.port', 8080);
+    const optsPort = parseInt(opts[0], 10);
+    const port = optsPort || optsPort === 0 ? optsPort : this.config.get('proxy.port', 8080);
 
     this.app = express();
     this.setup();

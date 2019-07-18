@@ -7,11 +7,8 @@ import { NormalizationGeoAction } from './actions/NormalizationGeoAction';
 import { NormalizationTerritoryAction } from './actions/NormalizationTerritoryAction';
 
 @serviceProvider({
-  providers: [GeoProvider],
-  handlers: [
-    NormalizationGeoAction,
-    NormalizationTerritoryAction,
-  ],
   config: __dirname,
+  providers: [GeoProvider],
+  handlers: [NormalizationGeoAction, NormalizationTerritoryAction],
 })
 export class ServiceProvider extends BaseServiceProvider {}

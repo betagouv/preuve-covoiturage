@@ -2,13 +2,10 @@ import * as _ from 'lodash';
 
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
+import { JourneyInterface, PositionInterface } from '@pdc/provider-schema';
 
-import { PositionInterface } from '../interfaces/PositionInterface';
-import { NormalizationTerritoryParamsInterface } from '../interfaces/NormalizationTerritoryParamsInterface';
+// Find the territories where the driver and passenger started and ended their journey
 
-/*
- * Enrich journey with Territories
- */
 @handler({
   service: 'normalization',
   method: 'territory',
@@ -18,34 +15,17 @@ export class NormalizationTerritoryAction extends AbstractAction {
     super();
   }
 
-  public async handle(param: NormalizationTerritoryParamsInterface, context: ContextType): Promise<void> {
-    const territoriesEnrichedJourney = {
-      ...param.journey,
-    };
+  public async handle(params: { journey: JourneyInterface }, context: ContextType): Promise<void> {
+    // duplicate object
+    const territoriesEnrichedJourney = { ...params.journey };
 
     await Promise.all(
       ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map(async (path) => {
-        const position = _.get(param.journey, path);
+        const position = _.get(params.journey, path);
         const territories = await this.findTerritories(position, context);
         _.set(territoriesEnrichedJourney, `${path}.territory`, territories);
       }),
     );
-
-    // await this.kernel.notify( // todo: should be notify
-    //   'crosscheck:process',
-    //   {
-    //     journey: territoriesEnrichedJourney,
-    //   },
-    //   {
-    //     call: context.call,
-    //     channel: {
-    //       ...context.channel,
-    //       service: 'normalization',
-    //     },
-    //   },
-    // );
-
-    return;
   }
 
   private async findTerritories(position: PositionInterface, context: ContextType): Promise<object> {
@@ -64,6 +44,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
         },
       );
     }
+
     if ('lat' in position && 'lon' in position) {
       return this.kernel.call(
         'territory:findByLatLon',
@@ -80,6 +61,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
         },
       );
     }
-    throw new InvalidParamsException('missing insee or lat & lon');
+
+    throw new InvalidParamsException('Missing INSEE code or lat & lon');
   }
 }

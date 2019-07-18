@@ -1,15 +1,12 @@
 import * as _ from 'lodash';
+
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
+import { JourneyInterface, PositionInterface } from '@pdc/provider-schema';
 
-import { NormalizationGeoParamsInterface } from '../interfaces/NormalizationGeoParamsInterface';
+// Enrich position data
 
-import { PositionInterface } from '../interfaces/PositionInterface';
-
-/*
- * Enrich journey with Geo data
- */
 @handler({
   service: 'normalization',
   method: 'geo',
@@ -19,7 +16,7 @@ export class NormalizationGeoAction extends AbstractAction {
     super();
   }
 
-  public async handle(param: NormalizationGeoParamsInterface, context: ContextType): Promise<void> {
+  public async handle(param: { journey: JourneyInterface }, context: ContextType): Promise<void> {
     let normalizedJourney = {};
 
     await Promise.all(
@@ -30,6 +27,7 @@ export class NormalizationGeoAction extends AbstractAction {
       }),
     );
 
+    // Call the next step asynchronously
     await this.kernel.notify(
       'normalization:territory',
       {
@@ -45,8 +43,6 @@ export class NormalizationGeoAction extends AbstractAction {
         },
       },
     );
-
-    return;
   }
 
   private async findTown(position: PositionInterface): Promise<PositionInterface> {

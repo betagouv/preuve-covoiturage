@@ -70,3 +70,4 @@ export const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
   // ['post', '/journeys', 'journey:create'],
   ['post', '/journeys/push', 'acquisition:create'], // server push
 ];
+console.log('proxy.routeMap');

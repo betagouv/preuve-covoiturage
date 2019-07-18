@@ -1,6 +1,7 @@
-version: 2.1
+version: 2
 jobs:
-  api-ts:
+  # api-ts:
+  build:
     docker:
       - image: circleci/node:10
       - image: circleci/mongo:4.0
@@ -9,14 +10,14 @@ jobs:
     parallelism: 1
     environment:
       NODE_ENV: test
-      MONGO_URL: mongodb://127.0.0.1:27017/pdc-test
-      REDIS_URL: redis://127.0.0.1:6379
+      APP_MONGO_URL: mongodb://127.0.0.1:27017/pdc-test
+      APP_REDIS_URL: redis://127.0.0.1:6379
     steps:
       - checkout:
           path: ~/repo
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-{{ checksum "package.json" }}
       # - run:
       #     name: Setup Code Climate test-reporter
       #     command: |
@@ -32,13 +33,15 @@ jobs:
             yarn build
             cd ~/repo
       - run: yarn
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn run build
-      - run: yarn run lint
-      - run: yarn run test
+      # - run: yarn run lint
+      # - run: yarn run test
+      - run: yarn workspace @pdc/proxy run test
+      - run: yarn workspace @pdc/proxy run test:integration
       # - run:
       #     name: Run tests with coverage
       #     command: |
@@ -47,30 +50,29 @@ jobs:
       #       cat coverage/**/lcov.info > coverage/lcov.info
       #       ./cc-test-reporter format-coverage -t lcov
       #       ./cc-test-reporter upload-coverage
+#   front-angular:
+#     docker:
+#       - image: circleci/node:8
+#     working_directory: ~/repo/dashboard
+#     steps:
+#       - checkout:
+#           path: ~/repo
+#       - restore_cache:
+#           keys:
+#             - v1-dependencies-{{ checksum "package.json" }}
+#       - run: yarn
+#       - save_cache:
+#           paths:
+#             - node_modules
+#           key: v1-dependencies-{{ checksum "package.json" }}
+#       - run: yarn lint
+#       - run: yarn build --configuration=production
 
-  front-angular:
-    docker:
-      - image: circleci/node:8
-    working_directory: ~/repo/dashboard
-    steps:
-      - checkout:
-          path: ~/repo
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn lint
-      - run: yarn build --configuration=production
-
-workflows:
-  version: 1
-  backend-tests:
-    jobs:
-      - api-ts
-  frontend-tests:
-    jobs:
-      - front-angular
+# workflows:
+#   version: 2
+#   backend-tests:
+#     jobs:
+#       - api-ts
+#   frontend-tests:
+#     jobs:
+#       - front-angular
