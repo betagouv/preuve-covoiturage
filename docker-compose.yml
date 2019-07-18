@@ -27,7 +27,7 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn serve'
+    command: 'yarn start-dev'
     ports:
       - 8080:8080
       - 9229:9229

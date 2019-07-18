@@ -19,8 +19,8 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
-    "serve": "yarn workspace @pdc/proxy ilos http $PORT",
-    "serve-dev": "nodemon",
+    "start": "yarn workspace @pdc/proxy ilos http $PORT",
+    "start-dev": "nodemon",
     "clean": "rm -rf ./**/dist",
     "watch": "lerna run --parallel watch",
     "ls": "lerna ls",
