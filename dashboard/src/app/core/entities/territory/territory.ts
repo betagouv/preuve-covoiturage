@@ -38,7 +38,9 @@ class Territory {
     contacts?: Contacts;
     cgu?: CGU;
   }) {
-    this._id = data._id;
+    if ('_id' in data) {
+      this._id = data._id;
+    }
     this.name = data.name;
     this.shortname = data.shortname;
     this.acronym = data.acronym;
