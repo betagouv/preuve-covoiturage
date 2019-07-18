@@ -1,3 +1,4 @@
+import path from 'path';
 import chai from 'chai';
 import supertest from 'supertest';
 import { describe } from 'mocha';
@@ -25,6 +26,9 @@ describe('Send journey using application token', () => {
 
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-server-${new Date().getTime()}`;
+    const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
+    process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
+
     await kernel.bootstrap();
     await app.up(['0']);
 

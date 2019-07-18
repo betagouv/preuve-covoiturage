@@ -1,5 +1,6 @@
 // // tslint:disable max-classes-per-file
 
+// import path from 'path';
 // import supertest from 'supertest';
 // import chai from 'chai';
 // import { Interfaces, Parents, Container, Exceptions } from '@ilos/core';
@@ -56,6 +57,9 @@
 
 // describe('Proxy auth', async () => {
 //   before(async () => {
+// const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
+// process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
+
 //     await kernel.bootstrap();
 //     await app.up(['0']);
 //   });
