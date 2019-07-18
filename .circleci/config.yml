@@ -28,7 +28,7 @@ jobs:
           command: |
             git clone https://github.com/betagouv/ilos
             cd ilos
-            git checkout debug-ci
+            git checkout dev
             yarn
             yarn build
             cd ~/repo
@@ -39,9 +39,7 @@ jobs:
       #     key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn run build
       # - run: yarn run lint
-      # - run: yarn run test
-      - run: yarn workspace @pdc/proxy run test
-      - run: yarn workspace @pdc/proxy run test:integration
+      - run: yarn run test
       # - run:
       #     name: Run tests with coverage
       #     command: |
