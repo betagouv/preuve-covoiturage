@@ -3,11 +3,15 @@
     <img src="assets/img/covoituragebetagouvfr.svg" alt="Logo de la Marianne, covoiturage.beta.gouv.fr" />
   </div>
   <div class="Header-menu" *ngIf="user">
-    <div class="Header-menu-item">
+    <div class="Header-menu-item"
+         [routerLink]="'/campaign'"
+         routerLinkActive="active">
       Campagnes
     </div>
-    <div class="Header-menu-item">
-      Statistiques
+    <div class="Header-menu-item"
+         [routerLink]="'/trip'"
+         routerLinkActive="active">
+      Trajets
     </div>
   </div>
   <div class="Header-user" *ngIf="user">

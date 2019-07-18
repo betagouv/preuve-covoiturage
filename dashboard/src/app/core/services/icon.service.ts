@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
+
 import { ICONS } from '../const/icons.const';
 
 @Injectable({

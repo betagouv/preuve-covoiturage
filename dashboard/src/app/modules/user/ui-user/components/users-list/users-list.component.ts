@@ -1,15 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {User} from '../../../../../core/entities/authentication/user';
-import {UserService} from '../../../../../core/services/authentication/user.service';
-import {ToastrService} from 'ngx-toastr';
+import { Component, Input, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
+import { User } from '~/core/entities/authentication/user';
+import { UserService } from '~/core/services/authentication/user.service';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
-  styleUrls: ['./users-list.component.scss']
+  styleUrls: ['./users-list.component.scss'],
 })
 export class UsersListComponent implements OnInit {
-
   @Input() users: User[];
 
   constructor(public userService: UserService,
@@ -22,7 +22,7 @@ export class UsersListComponent implements OnInit {
   onDelete(user: User) {
     this.userService.delete(user).subscribe(() => {
       this.toastr.success(`L'utilisateur ${user.firstname} ${user.lastname} a été supprimé`);
-    }, err => {
+    }, (err) => {
       this.toastr.error(err.message);
     });
   }
@@ -30,5 +30,4 @@ export class UsersListComponent implements OnInit {
   onSendInvitation(user: User) {
     console.log('SEND INVITATION');
   }
-
 }

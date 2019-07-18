@@ -10,6 +10,7 @@ import { HelpCardComponent } from './components/help-card/help-card.component';
 import { ListItemComponent } from './components/list-item/list-item.component';
 import { ButtonSpinnerDirective } from './directives/button-spinner.directive';
 import { StatCardComponent } from './components/stat-card/stat-card.component';
+import { MenuCardComponent } from './components/menu-card/menu-card.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { StatCardComponent } from './components/stat-card/stat-card.component';
     ListItemComponent,
     ButtonSpinnerDirective,
     StatCardComponent,
+    MenuCardComponent,
   ],
   imports: [
     MaterialModule,
@@ -33,6 +35,7 @@ import { StatCardComponent } from './components/stat-card/stat-card.component';
     ListItemComponent,
     ButtonSpinnerDirective,
     StatCardComponent,
+    MenuCardComponent,
   ],
   entryComponents: [
     MatSpinner,

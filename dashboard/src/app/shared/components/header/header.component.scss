@@ -23,9 +23,13 @@
       padding: 10px 15px;
       transition: 0.3s all;
 
-      &:hover {
+      &:hover, &.active {
         background: $color-secondary;
         color: $white;
+      }
+
+      &:not(:last-child) {
+        margin-right: 10px;
       }
     }
   }
