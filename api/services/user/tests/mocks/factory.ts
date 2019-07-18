@@ -11,8 +11,6 @@ interface TerritoryOperator {
 }
 
 export class MockFactory {
-  port = '8088';
-
   static generatePassword() {
     return Math.random()
       .toString(36)
@@ -104,16 +102,5 @@ export class MockFactory {
         },
       },
     };
-  }
-
-  public request() {
-    return axios.create({
-      baseURL: `http://127.0.0.1:${this.port}`,
-      timeout: 1000,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
   }
 }

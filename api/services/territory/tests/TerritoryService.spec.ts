@@ -12,8 +12,6 @@ chai.use(chaiNock);
 const { expect } = chai;
 
 describe('Territory service', () => {
-  const port = '8086';
-
   let transport: TransportInterface;
   let request;
 
@@ -22,7 +20,7 @@ describe('Territory service', () => {
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    transport = await bootstrap.boot('http', port);
+    transport = await bootstrap.boot('http', 0);
     request = supertest(transport.getInstance());
   });
 

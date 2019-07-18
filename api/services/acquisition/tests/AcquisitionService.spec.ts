@@ -1,18 +1,15 @@
 // tslint:disable: no-unused-expression
-
 import supertest from 'supertest';
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import { MongoConnection } from '@ilos/connection-mongo';
 import { TransportInterface } from '@ilos/common';
 
 import { bootstrap } from '../src/bootstrap';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
-const port = '8082';
 
 let transport: TransportInterface;
 let request: supertest.SuperTest<supertest.Test>;
@@ -54,7 +51,7 @@ describe('Acquisition service', async () => {
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    transport = await bootstrap.boot('http', port);
+    transport = await bootstrap.boot('http', 0);
     request = supertest(transport.getInstance());
   });
 

@@ -16,7 +16,7 @@ let request;
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
-const port = '8086';
+
 // tslint:disable-next-line: variable-name
 const operator_id = new ObjectId().toString();
 
@@ -26,7 +26,7 @@ describe('Application service', () => {
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    transport = await bootstrap.boot('http', port);
+    transport = await bootstrap.boot('http', 0);
     request = supertest(transport.getInstance());
   });
 

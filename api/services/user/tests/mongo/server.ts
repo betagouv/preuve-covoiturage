@@ -18,11 +18,11 @@ export class FakeMongoServer {
   transport: TransportInterface;
   mongo;
   server;
-  port = '8088';
+  // port = '8088';
   collection: CollectionInterface;
 
   public async startServer(): Promise<any> {
-    process.env.APP_URL = `http://localhost:${this.port}`;
+    // process.env.APP_URL = `http://localhost:${this.port}`;
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
@@ -30,7 +30,7 @@ export class FakeMongoServer {
   }
 
   public async startTransport(): Promise<any> {
-    this.transport = await bootstrap.boot('http', this.port);
+    this.transport = await bootstrap.boot('http', 0);
     this.kernel = this.transport.getKernel();
     this.service = this.kernel.getContainer().get(ServiceProvider);
     this.mongo = this.service

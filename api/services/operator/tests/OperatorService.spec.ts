@@ -5,42 +5,40 @@ import chaiAsPromised from 'chai-as-promised';
 
 import { bootstrap } from '../src/bootstrap';
 
-let transport;
-let request;
-
 chai.use(chaiAsPromised);
-
 const { expect } = chai;
-const port = '8085';
 
-const callFactory = (method: string, data: any, permissions: string[]) => ({
-  method,
-  id: 1,
-  jsonrpc: '2.0',
-  params: {
-    params: data,
-    _context: {
-      channel: {
-        service: 'proxy',
-        transport: 'http',
-      },
-      call: {
-        user: {
-          permissions,
+describe('Operator service', () => {
+  let transport;
+  let request;
+
+  const callFactory = (method: string, data: any, permissions: string[]) => ({
+    method,
+    id: 1,
+    jsonrpc: '2.0',
+    params: {
+      params: data,
+      _context: {
+        channel: {
+          service: 'proxy',
+          transport: 'http',
+        },
+        call: {
+          user: {
+            permissions,
+          },
         },
       },
     },
-  },
-});
+  });
 
-describe('Operator service', () => {
   before(async () => {
     process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
 
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    transport = await bootstrap.boot('http', port);
+    transport = await bootstrap.boot('http', 0);
     request = supertest(transport.getInstance());
   });
 
