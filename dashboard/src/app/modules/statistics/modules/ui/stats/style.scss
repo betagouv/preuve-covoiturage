@@ -79,4 +79,10 @@
   border: 1px solid $primary;
   border-radius: 0.4em;
   background: transparentize($primary, 0.9);
+  ul {
+    padding-left: 1.5em;
+    li {
+      padding-left: 0.5em;
+    }
+  }
 }
