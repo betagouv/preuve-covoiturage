@@ -1,0 +1,49 @@
+<form [formGroup]="territoryForm">
+
+  <mat-form-field class="name" appearance="outline">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="name" required/>
+  </mat-form-field>
+
+  <mat-form-field class="acronym" appearance="outline">
+    <mat-label>Acronyme</mat-label>
+    <input matInput formControlName="acronym"/>
+  </mat-form-field>
+
+  <h3>Structure</h3>
+
+  <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
+
+  <h3>Adresse</h3>
+
+  <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
+
+  <h2>Contacts et responsables</h2>
+
+  <div class="contacts">
+
+    <div>
+      <h3>Délégué à la protection des données</h3>
+
+      <app-form-contact [parentForm]="territoryForm.get('contacts').get('rgpd_dpo')"></app-form-contact>
+    </div>
+
+    <div>
+      <h3>Résponsable du traitement </h3>
+
+      <app-form-contact [parentForm]="territoryForm.get('contacts').get('rgpd_controller')"></app-form-contact>
+    </div>
+
+    <div>
+      <h3>Responsable technique</h3>
+
+      <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+    </div>
+
+  </div>
+
+  <button type="submit" mat-flat-button (click)="onSubmit()" [disabled]="!territoryForm.valid" color="primary">
+    Mettre à jour les informations
+  </button>
+
+</form>
