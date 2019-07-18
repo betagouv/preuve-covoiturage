@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
@@ -14,7 +17,9 @@ export class AuthenticationService {
   private _token$ = new BehaviorSubject<string>(null);
 
   constructor(private _userService: UserService,
-              private _jsonRPC: JsonRPCService) {
+              private _jsonRPC: JsonRPCService,
+              private router: Router,
+              private toastr: ToastrService) {
     this.readToken();
   }
 
@@ -42,6 +47,15 @@ export class AuthenticationService {
         console.log('error', err);
       },
     );
+  }
+
+  public logout() {
+    // TODO CALL BACK
+    this._token$.next(null);
+    this._userService.user = null;
+    this.router.navigate(['/login']).then(() => {
+      this.toastr.success('Vous avez bien été déconnecté');
+    });
   }
 
   public changePassword(oldPassword: string, newPassword: string): void {

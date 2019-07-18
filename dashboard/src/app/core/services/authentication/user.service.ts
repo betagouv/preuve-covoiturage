@@ -1,15 +1,15 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {User} from '../../entities/authentication/user';
-import {ApiService} from '../api/api.service';
-import {HttpClient} from '@angular/common/http';
-import {JsonRPCService} from '../api/json-rpc.service';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+import { User } from '../../entities/authentication/user';
+import { ApiService } from '../api/api.service';
+import { JsonRPCService } from '../api/json-rpc.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService extends ApiService<User> {
-  // tslint:disable-next-line:variable-name
   private _user$ = new BehaviorSubject<User>(null);
 
   constructor(private _http: HttpClient,

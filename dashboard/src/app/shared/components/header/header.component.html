@@ -9,9 +9,6 @@
     <div class="Header-menu-item">
       Statistiques
     </div>
-    <div class="Header-menu-item">
-      Administration
-    </div>
   </div>
   <div class="Header-user" *ngIf="user">
     <button mat-button [matMenuTriggerFor]="menu">
@@ -20,8 +17,8 @@
       <mat-icon>keyboard_arrow_down</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>Item 1</button>
-      <button mat-menu-item>Item 2</button>
+      <button mat-menu-item [routerLink]="'/admin'">Administration</button>
+      <button mat-menu-item (click)="onLogout()">Déconnexion</button>
     </mat-menu>
   </div>
 </div>
