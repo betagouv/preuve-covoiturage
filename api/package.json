@@ -21,7 +21,7 @@
   "scripts": {
     "scalingo-prebuild": "/bin/sh ./scalingo/prebuild.sh",
     "scalingo-build": "run-s build:providers build:services build:proxy",
-    "scalingo-postbuild": "find . -type d -name node_modules -exec rm -rf {} \\;",
+    "scalingo-postbuild": "find . -type d -name node_modules -exec rm -rf {} +",
     "start": "yarn workspace @pdc/proxy ilos http $PORT",
     "start-dev": "nodemon",
     "clean": "rm -rf ./**/dist",
