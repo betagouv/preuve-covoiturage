@@ -19,6 +19,7 @@
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
   "scripts": {
+    "scalingo-prebuild": "yarn global add npm-run-all lerna",
     "start": "yarn workspace @pdc/proxy ilos http $PORT",
     "start-dev": "nodemon",
     "clean": "rm -rf ./**/dist",
