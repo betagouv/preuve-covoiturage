@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "webapp": {
+    "dashboard": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/webapp",
+            "outputPath": "dist/dashboard",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -129,24 +129,24 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "webapp:build"
+            "browserTarget": "dashboard:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "webapp:build:production"
+              "browserTarget": "dashboard:build:production"
             },
             "staging": {
-              "browserTarget": "webapp:build:staging"
+              "browserTarget": "dashboard:build:staging"
             },
             "dev": {
-              "browserTarget": "webapp:build:dev"
+              "browserTarget": "dashboard:build:dev"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "webapp:build"
+            "browserTarget": "dashboard:build"
           }
         },
         "test": {
@@ -172,18 +172,18 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "webapp:serve"
+            "devServerTarget": "dashboard:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "webapp:serve:production"
+              "devServerTarget": "dashboard:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "webapp",
+  "defaultProject": "dashboard",
   "cli": {
     "packageManager": "yarn"
   }
