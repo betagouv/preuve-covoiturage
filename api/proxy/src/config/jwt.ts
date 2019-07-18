@@ -10,11 +10,9 @@ declare function env(key: string, fallback?: string | number): any;
  * will have to recreate them !
  */
 export const secret = env('APP_JWT_SECRET', 'notsosecret');
-console.log('proxy.secret', secret);
 
 /**
  * Time to life: Token lifetime in seconds
  * -1 means infinity
  */
 export const ttl = env('APP_JWT_TTL', -1);
-console.log('proxy.ttl', ttl);
