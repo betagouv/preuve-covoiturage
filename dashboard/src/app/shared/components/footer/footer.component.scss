@@ -23,12 +23,6 @@
     & > li {
       list-style-type: none;
       font-size: $font-size-medium;
-      font-weight: 600;
-
-      & > a:link,
-      & > a:visited {
-        color: $color-primary-dark;
-      }
     }
   }
 }

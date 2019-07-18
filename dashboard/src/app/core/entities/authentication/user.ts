@@ -1,4 +1,6 @@
-export class User {
+import {IModel} from '../IModel';
+
+export class User implements IModel {
   public _id: string;
   public email: string;
   public lastname: string;
@@ -16,6 +18,7 @@ export class User {
 
   constructor(obj?: any) {
     this._id = (obj && obj._id) || null;
+    this.email = (obj && obj.email) || null;
     this.lastname = (obj && obj.lastname) || null;
     this.firstname = (obj && obj.firstname) || null;
     this.fullname = (obj && obj.fullName) || null;

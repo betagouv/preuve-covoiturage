@@ -1,0 +1,35 @@
+<form class="CreateEditUserForm" [formGroup]="createEditUserForm">
+  <mat-form-field appearance="outline"required>
+    <mat-label>Prénom</mat-label>
+    <input matInput
+           formControlName="firstname"
+           required/>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Nom</mat-label>
+    <input matInput
+           formControlName="lastname"
+           required/>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput
+           formControlName="email"
+           required/>
+    <mat-error *ngIf="controls.email.hasError('email')"> L'email est invalide.</mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Numéro de téléphone</mat-label>
+    <input matInput
+           formControlName="phone"
+           required/>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Droit d'accès</mat-label>
+    <mat-select required formControlName="role">
+      <mat-option [value]="1">Option 1</mat-option>
+      <mat-option [value]="2">Option 2</mat-option>
+      <mat-option [value]="3">Option 3</mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>

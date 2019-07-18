@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../../core/services/authentication/user.service';
-import { User } from '../../../core/entities/authentication/user';
+import {Component, OnInit} from '@angular/core';
+import {UserService} from '../../../core/services/authentication/user.service';
+import {User} from '../../../core/entities/authentication/user';
 
 @Component({
   selector: 'app-header',
@@ -8,12 +8,14 @@ import { User } from '../../../core/entities/authentication/user';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
+
   user: User;
 
-  constructor(public userService: UserService) {}
+  constructor(private userService: UserService) {
+  }
 
   ngOnInit() {
-    this.userService.user$.subscribe((user) => {
+    this.userService.user$.subscribe(user => {
       this.user = user;
     });
   }

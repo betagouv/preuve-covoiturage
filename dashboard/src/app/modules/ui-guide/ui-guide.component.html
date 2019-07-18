@@ -47,6 +47,21 @@
       <button mat-flat-button class="large" disabled>Disabled</button>
       <button mat-flat-button class="large color-punch">Punch</button>
     </div>
+    <div class="UiGuide-subtitle">
+      Spinner Buttons
+    </div>
+    <div class="UiGuide-components">
+      <button mat-flat-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="primary">Primary</button>
+      <button mat-flat-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="accent">Accent</button>
+      <button mat-stroked-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="primary">Primary</button>
+      <button mat-stroked-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="accent">Accent</button>
+    </div>
+    <div class="UiGuide-title">
+      Links
+    </div>
+    <div class="UiGuide-components">
+      <a class="link">A Link</a>
+    </div>
     <div class="UiGuide-title">
       Forms
     </div>
@@ -110,6 +125,17 @@
         [button]="'Importer'"
       >
       </app-help-card>
+    </div>
+    <div class="UiGuide-title">
+      Stat Card
+    </div>
+    <div class="UiGuide-components">
+      <app-stat-card
+        [svgIcon]="'new_car'"
+        [title]="'68 008'"
+        [hint]="'Trajets réalisés'"
+        [link]="'Voir en graphique'">
+      </app-stat-card>
     </div>
     <div class="UiGuide-title">
       Stepper

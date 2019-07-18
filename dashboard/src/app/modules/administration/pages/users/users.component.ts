@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {User} from '../../../../core/entities/authentication/user';
+import {UserService} from '../../../../core/services/authentication/user.service';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-users',
@@ -6,7 +11,91 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent implements OnInit {
-  constructor() {}
 
-  ngOnInit() {}
+  usersToShow: User[];
+  users: User[];
+  searchFilters: FormGroup;
+  showCreateUserForm = false;
+  isCreating = false;
+
+  constructor(public userService: UserService,
+              private fb: FormBuilder,
+              private toastr: ToastrService) {
+  }
+
+  ngOnInit() {
+    this.loadUsers();
+    this.initSearchForm();
+  }
+
+  addUser() {
+    this.showCreateUserForm = true;
+  }
+
+  createUser(user: User) {
+    this.isCreating = true;
+    this.userService.create(user).subscribe(() => {
+      this.toastr.success(`Un email a été envoyé à ${user.email}`, `L'utilisateur ${user.firstname} ${user.lastname} a été crée`);
+      this.showCreateUserForm = false;
+      this.isCreating = false;
+    }, (err) => {
+      // TODO DELETE WHEN BACK IS OK
+      const auxArray = this.userService._entities$.value;
+      auxArray.push(user);
+      this.userService._entities$.next(auxArray);
+
+      this.toastr.error(err.message);
+      this.isCreating = false;
+    });
+  }
+
+  private loadUsers() {
+    this.userService.load().subscribe(() => {}, err => {
+      // TODO TMP DELETE WHEN BACK IS LINKED
+      const user1 = {
+        firstname: 'Thomas',
+        lastname: 'Durant',
+        email: 'thomas.durant@beta.gouv.fr'
+      };
+      const user2 = {
+        firstname: 'Margot',
+        lastname: 'Sanchez',
+        email: 'margot.sanchez@beta.gouv.fr'
+      };
+      const user3 = {
+        firstname: 'John',
+        lastname: 'Doe',
+        email: 'john.doe@beta.gouv.fr'
+      };
+      this.userService._entities$.next([new User(user1), new User(user2), new User(user3)]);
+    });
+    this.userService.entities$.subscribe(users => {
+      this.users = users;
+      this.usersToShow = users;
+    });
+  }
+
+  private initSearchForm() {
+    this.searchFilters = this.fb.group({
+      query: ['']
+    });
+
+    this.searchFilters.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe((value) => {
+      if (!value) {
+        return this.usersToShow = this.users;
+      }
+      this.filterUsers();
+    });
+  }
+
+  private filterUsers() {
+    const query = this.searchFilters.controls.query.value;
+    this.usersToShow = this.users.filter(u => {
+      return u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query);
+    });
+  }
 }
