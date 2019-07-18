@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # script runs from the api folder
-export NPM_CONFIG_PRODUCTION=false
 
 # install global dependencies
 yarn global add npm-run-all lerna typescript
