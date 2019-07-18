@@ -28,7 +28,7 @@ jobs:
           command: |
             git clone https://github.com/betagouv/ilos
             cd ilos
-            git checkout dev
+            git checkout debug-ci
             yarn
             yarn build
             cd ~/repo
