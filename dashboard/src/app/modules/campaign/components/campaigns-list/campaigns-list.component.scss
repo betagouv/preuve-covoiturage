@@ -1,0 +1,16 @@
+@import '../../../../../styles/variables';
+
+.CampaignsList {
+  ::ng-deep.ListItem {
+    margin-bottom: 10px;
+  }
+
+  &-item {
+    display: flex;
+    width: 100%;
+
+    & > * {
+      flex: 1;
+    }
+  }
+}

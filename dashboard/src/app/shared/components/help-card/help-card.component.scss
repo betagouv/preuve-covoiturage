@@ -17,22 +17,12 @@
   }
 
   &-title {
-    font-weight: 900;
+    font-weight: 600;
     margin: 20px 0 10px 0;
-  }
-
-  &-hint {
-    font-size: $font-size-medium;
   }
 
   &-link {
     margin-top: 20px;
     cursor: pointer;
-    font-weight: 900;
-
-    & > a:link,
-    & > a:visited {
-      color: $color-primary-dark;
-    }
   }
 }

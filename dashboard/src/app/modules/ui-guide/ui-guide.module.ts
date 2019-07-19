@@ -10,4 +10,5 @@ import { SharedModule } from '../../shared/shared.module';
   declarations: [UiGuideComponent],
   imports: [CommonModule, UiGuideRoutingModule, MaterialModule, SharedModule],
 })
-export class UiGuideModule {}
+export class UiGuideModule {
+}

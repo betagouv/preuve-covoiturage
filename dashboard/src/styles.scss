@@ -11,6 +11,20 @@
   font-weight: 600;
 }
 
+@font-face {
+  font-family: 'OpenSans';
+  src: url('assets/fonts/OpenSans/OpenSans-Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'OpenSans';
+  src: url('assets/fonts/OpenSans/OpenSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+}
+
+@import '~ngx-toastr/toastr';
+
 @import 'styles/variables';
 @import 'styles/buttons';
 @import 'styles/inputs';
@@ -23,4 +37,25 @@ body {
   margin: 0;
   width: 100%;
   height: 100%;
+}
+
+h1 {
+  font-size: $font-size-title;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: $font-size-title-2;
+  font-weight: 600;
+}
+
+p {
+  font-family: 'OpenSans', sans-serif;
+  font-size: $font-size-paragraph;
+}
+
+a.link, a.link:link, a.link:visited {
+  cursor: pointer;
+  color: $color-primary-dark;
+  text-decoration: underline;
 }

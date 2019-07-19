@@ -1,0 +1,16 @@
+<div class="StatCard">
+  <div class="StatCard-icon">
+    <mat-icon [svgIcon]="svgIcon"></mat-icon>
+  </div>
+  <div class="StatCard-content">
+    <div class="StatCard-title">
+      {{ title }}
+    </div>
+    <p class="StatCard-hint">
+      {{ hint }}
+    </p>
+    <div class="StatCard-link" *ngIf="link">
+      <a class="link" (click)="onLinkClick()">{{ link }}</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+@import '../../../../../../styles/variables';
+
+.UsersList {
+  ::ng-deep.ListItem {
+    margin-bottom: 10px;
+  }
+
+  &-list {
+    &-item {
+      display: flex;
+      width: 100%;
+
+      & > * {
+        flex: 1;
+      }
+
+      &-name {
+        font-weight: 600;
+
+        &--itself {
+          color: $color-primary;
+          font-style: italic;
+        }
+      }
+
+      &-email {
+        font-style: italic;
+      }
+
+      &-actions {
+        text-align: right;
+
+        & > *:not(:last-child) {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}

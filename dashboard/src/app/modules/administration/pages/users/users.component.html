@@ -1,1 +1,37 @@
-<p>users works!</p>
+<div class="Users">
+  <div class="Users-header">
+    <h2>
+      Utilisateurs autorisés
+    </h2>
+    <form [formGroup]="searchFilters">
+      <mat-form-field appearance="outline">
+        <mat-label>Rechercher</mat-label>
+        <input matInput
+               placeholder="Nom d'utilisateur, email"
+               formControlName="query"/>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
+  <div class="Users-loading" *ngIf="userService.loading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="Users-list">
+    <app-users-list *ngIf="usersToShow" [users]="usersToShow"></app-users-list>
+  </div>
+  <button mat-flat-button
+          class="large"
+          *ngIf="!showCreateUserForm; else addUserBlock"
+          (click)="addUser()"
+          color="primary">
+    Ajouter un utilisateur
+  </button>
+  <ng-template #addUserBlock>
+    <h2>
+      Ajouter un utilisateur
+    </h2>
+    <div class="Users-form">
+      <app-create-edit-user-form [isCreating]="true" (onCreateEditUser)="closeUserForm()"></app-create-edit-user-form>
+    </div>
+  </ng-template>
+</div>

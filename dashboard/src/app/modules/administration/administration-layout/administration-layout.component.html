@@ -1,18 +1,16 @@
 <div class="Administration">
   <div class="page-header">
-    <div class="page-title">
+    <h1 class="page-title">
       Administration
-    </div>
+    </h1>
     <div class="page-menu">
       <nav mat-tab-nav-bar>
-        <a
-          mat-tab-link
-          *ngFor="let link of menu"
-          [routerLink]="link.path"
-          routerLinkActive
-          #rla="routerLinkActive"
-          [active]="rla.isActive"
-        >
+        <a mat-tab-link
+           *ngFor="let link of menu"
+           [routerLink]="link.path"
+           routerLinkActive
+           #rla="routerLinkActive"
+           [active]="rla.isActive">
           {{ link.label }}
         </a>
       </nav>

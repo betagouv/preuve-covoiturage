@@ -14,9 +14,11 @@ export class HelpCardComponent implements OnInit {
 
   @Output() buttonClicked: EventEmitter<boolean> = new EventEmitter();
 
-  constructor() {}
+  constructor() {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   onButtonClick(): void {
     this.buttonClicked.emit(true);
