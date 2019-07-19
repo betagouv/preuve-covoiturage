@@ -262,29 +262,3 @@ export class HttpTransport implements TransportInterface {
     this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
   }
 }
-
-// const { expressErrorHandler } = require('@pdc/package-express-errors');
-
-// const { sentry: Sentry } = require('@pdc/shared-providers');
-// const { signResponse, dataWrap, jwtUser } = require('@pdc/shared-middlewares');
-
-// const { eventBus } = require('@pdc/shared-worker').bus;
-// const { bus: journeyBus } = require('@pdc/service-acquisition').acquisition.transports;
-
-// const { PORT, sessionSecret } = require('@pdc/shared-config');
-// const { appUrl } = require('@pdc/shared-helpers').url(process.env.APP_URL, process.env.API_URL);
-
-// default response
-// this.app.use('/auth', require('@pdc/service-auth').auth.transports.http);
-// this.app.use('/stats', require('@pdc/service-stats').stats.transports.http);
-// this.app.use('/profile', jwtUser, require('@pdc/service-user').user.transports.profileHttp);
-// this.app.use('/users', jwtUser, require('@pdc/service-user').user.transports.userHttp);
-// this.app.use('/aom', jwtUser, require('@pdc/service-organization').transports.aomHttp);
-// this.app.use('/operators', jwtUser, require('@pdc/service-organization').transports.operatorHttp);
-// this.app.use('/trips', jwtUser, require('@pdc/service-trip').trip.transports.http);
-// this.app.use('/incentive/incentives', jwtUser, require('@pdc/service-incentive').incentive.transports.http);
-// this.app.use('/incentive/parameters', jwtUser, require('@pdc/service-policy').policy.transports.parameterHttp);
-// this.app.use('/incentive/campaigns', jwtUser, require('@pdc/service-policy').policy.transports.campaignHttp);
-// this.app.use('/incentive/policies', jwtUser, require('@pdc/service-policy').policy.transports.policyHttp);
-// this.app.use('/incentive/units', jwtUser, require('@pdc/service-policy').policy.transports.unitHttp);
-// this.app.use('/journeys', require('@pdc/service-acquisition').acquisition.transports.http);

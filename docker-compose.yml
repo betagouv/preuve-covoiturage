@@ -27,7 +27,7 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn start-dev'
+    command: 'yarn start:http:dev'
     ports:
       - 8080:8080
       - 9229:9229
@@ -39,7 +39,7 @@ services:
       APP_SUPERUSER_PASSWORD: admin1234
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
       APP_MONGO_DB: pdc-local
-      # APP_JWT_SECRET: notsosecret
+      APP_REDIS_URL: redis://redis:6379
     networks:
       - front
       - api
@@ -53,14 +53,14 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn worker-dev'
+    command: 'yarn start:queue'
     ports:
       - 9230:9230
     environment:
-      CONFIG_DIR: '/code/config'
-      MQ_WORKER: 'true'
+      APP_WORKER: 'true'
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
       APP_MONGO_DB: pdc-local
+      APP_REDIS_URL: redis://redis:6379
     networks:
       - front
       - api

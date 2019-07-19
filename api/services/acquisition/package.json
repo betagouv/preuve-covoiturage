@@ -53,8 +53,10 @@
   "dependencies": {
     "@ilos/common": "~0",
     "@ilos/config": "~0",
+    "@ilos/queue": "~0",
     "@ilos/connection-manager": "~0",
     "@ilos/connection-mongo": "~0",
+    "@ilos/connection-redis": "~0",
     "@ilos/core": "~0",
     "@ilos/env": "~0",
     "@ilos/framework": "~0",

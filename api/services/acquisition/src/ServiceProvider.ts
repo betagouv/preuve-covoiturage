@@ -2,7 +2,9 @@ import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/co
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
+import { RedisConnection } from '@ilos/connection-redis';
 import { ConfigExtension } from '@ilos/config';
+import { QueueExtension } from '@ilos/queue';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { journeyCreateSchema } from '@pdc/provider-schema';
@@ -12,10 +14,11 @@ import { CreateJourneyAction } from './actions/CreateJourneyAction';
 
 @serviceProvider({
   config: __dirname,
+  queues: ['acquisition'],
   providers: [JourneyRepositoryProvider],
   validator: [['journey.create', journeyCreateSchema]],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
-  connections: [[MongoConnection, 'mongo']],
+  connections: [[MongoConnection, 'mongo'], [RedisConnection, 'redis']],
   handlers: [CreateJourneyAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
@@ -26,5 +29,6 @@ export class ServiceProvider extends AbstractServiceProvider {
     Extensions.Middlewares,
     Extensions.Providers,
     Extensions.Handlers,
+    QueueExtension,
   ];
 }
