@@ -31,8 +31,8 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     this.originalInnerText = this.el.nativeElement.innerText;
 
     // Set the button to maintain the same dimensions, even once we put the spinner inside.
-    this.el.nativeElement.style.width = `${(this.el.nativeElement as HTMLElement).offsetWidth}px`;
-    this.el.nativeElement.style.height = `${(this.el.nativeElement as HTMLElement).offsetHeight}px`;
+    this.el.nativeElement.style.width = `${(<HTMLElement>this.el.nativeElement).offsetWidth}px`;
+    this.el.nativeElement.style.height = `${(<HTMLElement>this.el.nativeElement).offsetHeight}px`;
 
     // Create the spinner
     const factory = this.componentFactoryResolver.resolveComponentFactory(MatSpinner);
@@ -47,7 +47,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     this.renderer.setStyle(this.spinner._elementRef.nativeElement, 'display', 'none');
 
     // Apply new styles to the button content's container
-    const span = this.el.nativeElement.querySelector('.mat-button-wrapper') as HTMLSpanElement;
+    const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
     this.renderer.setStyle(span, 'display', 'flex');
     this.renderer.setStyle(span, 'align-items', 'center');
     this.renderer.setStyle(span, 'justify-content', 'center');
@@ -57,7 +57,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     if (typeof (changes.showSpinner) === 'object' && !changes.showSpinner.isFirstChange()) {
       if (changes.showSpinner.currentValue === true) {
         // Clear the button's text
-        const span = this.el.nativeElement.querySelector('.mat-button-wrapper') as HTMLSpanElement;
+        const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
         span.innerText = '';
 
         // Append the spinner
@@ -74,7 +74,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
         // Remove the spinner
         this.renderer.removeChild(this.el.nativeElement.firstChild, this.spinner._elementRef.nativeElement);
 
-        const span = this.el.nativeElement.querySelector('.mat-button-wrapper') as HTMLSpanElement;
+        const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
         span.innerText = this.originalInnerText;
       }
 
