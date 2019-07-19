@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { password } from '~/shared/config/validators';
+import { password } from '~/core/config/validators';
 
 @Component({
   selector: 'app-change-password',

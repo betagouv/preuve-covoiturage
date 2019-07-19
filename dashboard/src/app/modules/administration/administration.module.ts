@@ -14,14 +14,10 @@ import { AdministrationLayoutComponent } from './administration-layout/administr
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
+import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
 
 @NgModule({
-  declarations: [
-    AdministrationLayoutComponent,
-    ProfileComponent,
-    TerritoryComponent,
-    UsersComponent,
-  ],
+  declarations: [AdministrationLayoutComponent, ProfileComponent, TerritoryComponent, UsersComponent],
   imports: [
     AdministrationRoutingModule,
     ChangePasswordModule,
@@ -30,9 +26,9 @@ import { UsersComponent } from './pages/users/users.component';
     ProfileUiModule,
     UiUserModule,
     ToastrModule,
+    TerritoryUiModule,
     FormsModule,
     ReactiveFormsModule,
   ],
 })
-export class AdministrationModule {
-}
+export class AdministrationModule {}

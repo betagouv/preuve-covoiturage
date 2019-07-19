@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { regexp } from '~/shared/config/validators';
+import { regexp } from '~/core/config/validators';
 
 import { ProfileService } from '../../../../services/profile.service';
 

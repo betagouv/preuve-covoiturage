@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { IconService } from './core/services/icon.service';
 
 @Component({

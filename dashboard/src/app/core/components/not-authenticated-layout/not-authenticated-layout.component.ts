@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../services/authentication/user.service';
 import { Router } from '@angular/router';
+
+import { UserService } from '../../services/authentication/user.service';
 
 @Component({
   selector: 'app-not-authenticated-layout',

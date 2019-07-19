@@ -1,0 +1,20 @@
+form {
+  display: flex;
+  flex-direction: column;
+  mat-form-field {
+    &.name {
+      width: 558px;
+    }
+    &.acronym {
+      width: 260px;
+    }
+  }
+  .contacts {
+    display: flex;
+    flex-wrap: wrap;
+    //justify-content: space-evenly;
+  }
+  button {
+    width: 269px;
+  }
+}

@@ -12,8 +12,7 @@ import { JsonRPCService } from '../api/json-rpc.service';
 export class UserService extends ApiService<User> {
   private _user$ = new BehaviorSubject<User>(null);
 
-  constructor(private _http: HttpClient,
-              private _jsonRPC: JsonRPCService) {
+  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
     super(_http, _jsonRPC, 'user');
   }
 

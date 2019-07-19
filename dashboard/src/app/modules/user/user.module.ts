@@ -6,11 +6,6 @@ import { SharedModule } from '~/shared/shared.module';
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    SharedModule,
-    MaterialModule
-  ],
+  imports: [CommonModule, SharedModule, MaterialModule],
 })
-export class UserModule {
-}
+export class UserModule {}

@@ -80,8 +80,8 @@ export class UsersComponent implements OnInit {
 
   private filterUsers() {
     const query = this.searchFilters.controls.query.value;
-    this.usersToShow = this.users.filter((u) => {
-      return u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query);
-    });
+    this.usersToShow = this.users.filter(
+      (u) => u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query),
+    );
   }
 }

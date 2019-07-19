@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-stat-card',
   templateUrl: './stat-card.component.html',
-  styleUrls: ['./stat-card.component.scss']
+  styleUrls: ['./stat-card.component.scss'],
 })
 export class StatCardComponent implements OnInit {
   @Input() svgIcon: string;
@@ -13,13 +13,11 @@ export class StatCardComponent implements OnInit {
 
   @Output() linkClicked: EventEmitter<boolean> = new EventEmitter();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   onLinkClick(): void {
     this.linkClicked.emit(true);
   }
-
 }

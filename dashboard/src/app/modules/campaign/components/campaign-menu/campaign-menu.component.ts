@@ -6,7 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./campaign-menu.component.scss'],
 })
 export class CampaignMenuComponent implements OnInit {
-
   menus = [
     {
       title: 'Simulez votre campagne',
@@ -15,17 +14,14 @@ export class CampaignMenuComponent implements OnInit {
       svgIcon: 'test',
     },
     {
-      title: 'Cherchez l\'inspiration',
+      title: "Cherchez l'inspiration",
       hint: 'Retrouvez des exemples de campagnes incitiatives et inspirez-vous en',
       button: 'Découvrir',
       svgIcon: 'recherche',
     },
   ];
 
-  constructor() {
-  }
+  constructor() {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
