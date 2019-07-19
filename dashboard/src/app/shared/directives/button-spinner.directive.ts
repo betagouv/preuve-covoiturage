@@ -7,12 +7,12 @@ import {
   OnInit,
   Renderer2,
   SimpleChanges,
-  ViewContainerRef
+  ViewContainerRef,
 } from '@angular/core';
-import {MatSpinner} from '@angular/material';
+import { MatSpinner } from '@angular/material';
 
 @Directive({
-  selector: 'button[appShowSpinner]'
+  selector: 'button[appShowSpinner]',
 })
 export class ButtonSpinnerDirective implements OnInit, OnChanges {
   // tslint:disable-next-line:no-input-rename
@@ -20,11 +20,12 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
   originalInnerText: string;
   spinner: MatSpinner;
 
-  constructor(private el: ElementRef,
-              private renderer: Renderer2,
-              private viewContainerRef: ViewContainerRef,
-              private componentFactoryResolver: ComponentFactoryResolver) {
-  }
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
+    private viewContainerRef: ViewContainerRef,
+    private componentFactoryResolver: ComponentFactoryResolver,
+  ) {}
 
   ngOnInit() {
     // Record the button's original text
@@ -54,7 +55,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (typeof (changes.showSpinner) === 'object' && !changes.showSpinner.isFirstChange()) {
+    if (typeof changes.showSpinner === 'object' && !changes.showSpinner.isFirstChange()) {
       if (changes.showSpinner.currentValue === true) {
         // Clear the button's text
         const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');

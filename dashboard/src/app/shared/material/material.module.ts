@@ -22,7 +22,7 @@ import {
     MatIconModule,
     MatTabsModule,
     MatStepperModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatButtonModule,
@@ -33,7 +33,7 @@ import {
     MatIconModule,
     MatTabsModule,
     MatStepperModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
 })
 export class MaterialModule {}

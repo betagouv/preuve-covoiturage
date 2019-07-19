@@ -21,10 +21,7 @@ export class TripLayoutComponent implements OnInit {
     },
   ];
 
-  constructor() {
-  }
+  constructor() {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

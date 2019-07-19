@@ -8,10 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class CampaignsListComponent implements OnInit {
   @Input() campaigns: any[];
 
-  constructor() {
-  }
+  constructor() {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }
