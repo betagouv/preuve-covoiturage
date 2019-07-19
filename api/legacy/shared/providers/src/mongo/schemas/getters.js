@@ -1,4 +1,0 @@
-/**
- * Mongoose getters
- */
-export default {};
