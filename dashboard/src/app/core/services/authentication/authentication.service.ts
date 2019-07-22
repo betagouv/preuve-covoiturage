@@ -16,10 +16,12 @@ export class AuthenticationService {
   public static STORAGE_KEY = 'CARPOOLING_USER';
   private _token$ = new BehaviorSubject<string>(null);
 
-  constructor(private _userService: UserService,
-              private _jsonRPC: JsonRPCService,
-              private router: Router,
-              private toastr: ToastrService) {
+  constructor(
+    private _userService: UserService,
+    private _jsonRPC: JsonRPCService,
+    private router: Router,
+    private toastr: ToastrService,
+  ) {
     this.readToken();
   }
 
@@ -72,6 +74,22 @@ export class AuthenticationService {
         console.log('error', err);
       },
     );
+  }
+
+  public hasAnyGroup(groups: string[]): string {
+    const user = this._userService.user;
+    if (!user) return null;
+
+    // no groups mean all
+    if (!groups.length) {
+      return user.group;
+    }
+
+    if (user && groups.includes(user.group)) {
+      return user.group;
+    }
+
+    return null;
   }
 
   private readToken() {
