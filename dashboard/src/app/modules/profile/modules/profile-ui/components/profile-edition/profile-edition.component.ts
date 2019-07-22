@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { regexp } from '~/core/config/validators';
+import { UserService } from '~/core/services/authentication/user.service';
 
+import { ProfileInterface } from '../../../../interfaces/profileInterface';
 import { ProfileService } from '../../../../services/profile.service';
 
 @Component({
@@ -13,10 +15,11 @@ import { ProfileService } from '../../../../services/profile.service';
 export class ProfileEditionComponent implements OnInit {
   public profileForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService) {}
+  constructor(private fb: FormBuilder, private profileService: ProfileService, private _userService: UserService) {}
 
   ngOnInit() {
     this.initProfilForm();
+    this.initProfilFormValue();
   }
 
   get controls() {
@@ -25,6 +28,11 @@ export class ProfileEditionComponent implements OnInit {
 
   public onUpdateProfile(): void {
     this.profileService.patch(this.profileForm.value);
+  }
+
+  private initProfilFormValue(): void {
+    const { firstname, lastname, email, phone } = <ProfileInterface>this._userService.user;
+    this.profileForm.setValue({ firstname, lastname, email, phone });
   }
 
   private initProfilForm(): void {
