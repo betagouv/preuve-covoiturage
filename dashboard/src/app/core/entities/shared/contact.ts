@@ -4,15 +4,10 @@ export class Contact {
   email: string;
   phone?: string;
 
-  constructor(obj: {
-    firstname: string;
-    lastname: string;
-    email: string;
-    phone?: string;
-  }) {
-    this.firstname = obj.firstname;
-    this.lastname = obj.lastname;
-    this.email = obj.email;
-    this.phone = obj.phone;
+  constructor(obj: { firstname: string; lastname: string; email: string; phone?: string }) {
+    this.firstname = obj && obj.firstname;
+    this.lastname = obj && obj.lastname;
+    this.email = obj && obj.email;
+    this.phone = (obj && obj.phone) || null;
   }
 }
