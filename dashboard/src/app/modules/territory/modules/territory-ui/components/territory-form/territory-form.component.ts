@@ -7,6 +7,7 @@ import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { Contact } from '~/core/entities/shared/contact';
+import { Territory } from '~/core/entities/territory/territory';
 
 import { TerritoryService } from '../../../../services/territory.service';
 
@@ -18,10 +19,11 @@ import { TerritoryService } from '../../../../services/territory.service';
 export class TerritoryFormComponent implements OnInit {
   public territoryForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private territoryService: TerritoryService) {}
+  constructor(private fb: FormBuilder, private _territoryService: TerritoryService) {}
 
   ngOnInit() {
     this.initTerritoryForm();
+    this.initTerritoryFormValue();
   }
 
   get controls() {
@@ -30,8 +32,36 @@ export class TerritoryFormComponent implements OnInit {
 
   public onSubmit(): void {
     if ('_id' in this.territoryForm.value) {
-      this.territoryService.patch(this.territoryForm.value);
+      this._territoryService.patch(this.territoryForm.value);
     }
+  }
+
+  private initTerritoryFormValue(): void {
+    this._territoryService.loadTerritory().subscribe(
+      () => {},
+      (err) => {
+        console.log('yo');
+        // TODO TMP DELETE WHEN BACK IS LINKED
+        const territory = new Territory({
+          _id: '5c66d89760e6ee004a6cab1f',
+          name: 'AOM Name',
+          acronym: 'Aom acronym',
+          company: new Company({
+            siren: '123456789',
+            naf_entreprise: 'naf',
+          }),
+        });
+
+        this._territoryService._territory$.next(territory);
+      },
+    );
+    this._territoryService._territory$.subscribe((territory: Territory | null) => {
+      console.log({ territory });
+      if (territory) {
+        const { name, acronym, address, company, contacts } = territory;
+        this.territoryForm.setValue({ name, acronym, address, company, contacts });
+      }
+    });
   }
 
   private initTerritoryForm(): void {
