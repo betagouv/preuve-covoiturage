@@ -5,16 +5,13 @@ import { CGU } from '../shared/cgu';
 import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
 
-
 class Territory {
-  public _id?: string;
+  public _id: string;
   public name: string;
   public shortname?: string;
   public acronym?: string;
   public insee?: string[];
-  // tslint:disable-next-line: variable-name
   public insee_main?: string;
-  // tslint:disable-next-line: variable-name
   public network_id?: number;
 
   public company?: Company;
@@ -26,7 +23,7 @@ class Territory {
   public cgu?: CGU;
 
   constructor(data: {
-    _id?: string;
+    _id: string;
     name: string;
     shortname?: string;
     acronym?: string;
@@ -38,19 +35,17 @@ class Territory {
     contacts?: Contacts;
     cgu?: CGU;
   }) {
-    if ('_id' in data) {
-      this._id = data._id;
-    }
+    this._id = data._id;
     this.name = data.name;
     this.shortname = data.shortname;
     this.acronym = data.acronym;
     this.insee = data.insee;
     this.insee_main = data.insee_main;
     this.network_id = data.network_id;
-    this.company = data.company;
-    this.address = data.address;
-    this.contacts = data.contacts;
-    this.cgu = data.cgu;
+    this.company = data.company || new Company({ siren: null });
+    this.address = data.address || new Address({ street: null, postcode: null, city: null, country: null });
+    this.contacts = data.contacts || new Contacts();
+    this.cgu = data.cgu || new CGU();
   }
 }
 
