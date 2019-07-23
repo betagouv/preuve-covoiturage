@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { AuthGuard } from '~/core/guards/auth-guard.service';
+
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
@@ -10,6 +12,7 @@ const routes: Routes = [
   {
     path: '',
     component: AdministrationLayoutComponent,
+    canActivateChild: [AuthGuard],
     children: [
       {
         path: 'profile',
@@ -21,6 +24,7 @@ const routes: Routes = [
       },
       {
         path: 'users',
+        data: { role: 'admin' },
         component: UsersComponent,
       },
       {
@@ -36,5 +40,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrationRoutingModule {
-}
+export class AdministrationRoutingModule {}

@@ -76,20 +76,21 @@ export class AuthenticationService {
     );
   }
 
-  public hasAnyGroup(groups: string[]): string {
+  /**
+   * Check if connected user has any of list of groups
+   */
+  public hasAnyGroup(groups: string[]): boolean {
     const user = this._userService.user;
-    if (!user) return null;
+    return ('group' in user && !groups.length) || groups.includes(user.group);
+  }
 
-    // no groups mean all
-    if (!groups.length) {
-      return user.group;
-    }
-
-    if (user && groups.includes(user.group)) {
-      return user.group;
-    }
-
-    return null;
+  /**
+   * Check if connected user has role
+   */
+  public hasRole(role: string): boolean {
+    const user = this._userService.user;
+    console.log(role, user);
+    return 'role' in user && (!role || role === user.role);
   }
 
   private readToken() {

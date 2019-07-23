@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { AuthGuard } from '~/core/guards/auth-guard.service';
+
 // tslint:disable-next-line:max-line-length
 import { NotAuthenticatedLayoutComponent } from './core/components/not-authenticated-layout/not-authenticated-layout.component';
 import { AuthenticatedLayoutComponent } from './core/components/authenticated-layout/authenticated-layout.component';
@@ -14,21 +16,23 @@ const routes: Routes = [
   {
     path: '',
     component: AuthenticatedLayoutComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'campaign',
-        loadChildren: () =>
-          import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
+        loadChildren: () => import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
+        canLoad: [AuthGuard],
       },
       {
         path: 'trip',
-        loadChildren: () =>
-          import('./modules/trip/trip.module').then((mod) => mod.TripModule),
+        loadChildren: () => import('./modules/trip/trip.module').then((mod) => mod.TripModule),
+        canLoad: [AuthGuard],
       },
       {
         path: 'admin',
         loadChildren: () =>
           import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule),
+        canLoad: [AuthGuard],
       },
       {
         path: 'ui-guide',
@@ -53,5 +57,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
