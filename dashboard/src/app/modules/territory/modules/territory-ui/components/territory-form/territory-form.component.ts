@@ -40,7 +40,6 @@ export class TerritoryFormComponent implements OnInit {
     this._territoryService.loadTerritory().subscribe(
       () => {},
       (err) => {
-        console.log('yo');
         // TODO TMP DELETE WHEN BACK IS LINKED
         const territory = new Territory({
           _id: '5c66d89760e6ee004a6cab1f',
@@ -56,7 +55,6 @@ export class TerritoryFormComponent implements OnInit {
       },
     );
     this._territoryService._territory$.subscribe((territory: Territory | null) => {
-      console.log({ territory });
       if (territory) {
         const { name, acronym, address, company, contacts } = territory;
         this.territoryForm.setValue({ name, acronym, address, company, contacts });

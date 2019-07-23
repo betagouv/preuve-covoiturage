@@ -16,7 +16,7 @@ export class NotAuthenticatedLayoutComponent implements OnInit {
     this.userService.user$.subscribe((user) => {
       console.log('USER', user);
       if (user) {
-        this.router.navigate(['/ui-guide']);
+        this.router.navigate(['/trip/stats']);
       }
     });
   }

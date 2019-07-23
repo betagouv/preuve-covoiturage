@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 
 import { SharedModule } from '~/shared/shared.module';
+import { AuthGuard } from '~/core/guards/auth-guard.service';
 
 // tslint:disable-next-line:max-line-length
 import { NotAuthenticatedLayoutComponent } from './components/not-authenticated-layout/not-authenticated-layout.component';
@@ -24,6 +25,6 @@ import { HttpApiInterceptor } from './interceptor/http.interceptor';
     SharedModule,
     ToastrModule.forRoot(),
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpApiInterceptor, multi: true }],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpApiInterceptor, multi: true }, AuthGuard],
 })
 export class CoreModule {}
