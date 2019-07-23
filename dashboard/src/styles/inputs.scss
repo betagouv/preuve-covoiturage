@@ -18,6 +18,22 @@ mat-form-field.mat-form-field-appearance-outline {
     }
   }
 
+  .mat-form-field-label {
+    .mat-form-field-required-marker,
+    mat-label {
+      color: $grey;
+    }
+  }
+
+  &.mat-form-field-should-float {
+    .mat-form-field-label {
+      .mat-form-field-required-marker,
+      mat-label {
+        color: $color-primary;
+      }
+    }
+  }
+
   &.small {
     .mat-form-field-infix {
       padding: 0.5em 0;
