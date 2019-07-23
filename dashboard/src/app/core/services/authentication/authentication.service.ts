@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+
+import { PermissionType } from '~/core/types/permissionType';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -31,6 +32,10 @@ export class AuthenticationService {
 
   public get token() {
     return this._token$.value;
+  }
+
+  public get isAdmin(): boolean {
+    return this.hasRole('admin');
   }
 
   public login(email: string, password: string) {
@@ -77,11 +82,25 @@ export class AuthenticationService {
   }
 
   /**
+   * Check if connected user has any of list of permissions
+   */
+  public hasAnyPermission(permissions: PermissionType[]): boolean {
+    const user = this._userService.user;
+    if (!permissions.length) {
+      return true;
+    }
+    if ('permissions' in user) {
+      return user.permissions.filter((permission: PermissionType) => permissions.includes(permission)).length > 1;
+    }
+    return true;
+  }
+
+  /**
    * Check if connected user has any of list of groups
    */
   public hasAnyGroup(groups: string[]): boolean {
     const user = this._userService.user;
-    return ('group' in user && !groups.length) || groups.includes(user.group);
+    return !groups.length || ('group' in user && groups.includes(user.group));
   }
 
   /**
@@ -89,8 +108,7 @@ export class AuthenticationService {
    */
   public hasRole(role: string): boolean {
     const user = this._userService.user;
-    console.log(role, user);
-    return 'role' in user && (!role || role === user.role);
+    return !role || ('role' in user && role === user.role);
   }
 
   private readToken() {
@@ -107,6 +125,7 @@ export class AuthenticationService {
         firstname: 'Preuve',
         lastname: 'Decovoit',
         email: 'preuve.decovoit@yopmail.com',
+        role: 'admin',
       }),
     });
   }
