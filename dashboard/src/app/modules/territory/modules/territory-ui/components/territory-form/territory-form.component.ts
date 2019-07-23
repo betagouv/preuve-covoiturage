@@ -8,6 +8,7 @@ import { Address } from '~/core/entities/shared/address';
 import { Company } from '~/core/entities/shared/company';
 import { Contact } from '~/core/entities/shared/contact';
 import { Territory } from '~/core/entities/territory/territory';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 import { TerritoryService } from '../../../../services/territory.service';
 
@@ -19,11 +20,16 @@ import { TerritoryService } from '../../../../services/territory.service';
 export class TerritoryFormComponent implements OnInit {
   public territoryForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private _territoryService: TerritoryService) {}
+  constructor(
+    public authService: AuthenticationService,
+    private fb: FormBuilder,
+    private _territoryService: TerritoryService,
+  ) {}
 
   ngOnInit() {
     this.initTerritoryForm();
     this.initTerritoryFormValue();
+    this.checkPermissions();
   }
 
   get controls() {
@@ -74,5 +80,11 @@ export class TerritoryFormComponent implements OnInit {
         technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
     });
+  }
+
+  private checkPermissions(): void {
+    if (!this.authService.hasAnyPermission(['territory.update'])) {
+      this.territoryForm.disable({ onlySelf: true });
+    }
   }
 }
