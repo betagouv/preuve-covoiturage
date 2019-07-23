@@ -4,7 +4,9 @@
       <div class="UsersList-list-item">
         <div class="UsersList-list-item-name">
           {{ user.firstname }} {{ user.lastname }}
-          <span *ngIf="userService.user && user._id === userService.user._id" class="UsersList-list-item-name--itself">(Vous)</span>
+          <span *ngIf="userService.user && user._id === userService.user._id" class="UsersList-list-item-name--itself"
+            >(Vous)</span
+          >
         </div>
         <div class="UsersList-list-item-email">
           {{ user.email }}
@@ -14,7 +16,12 @@
         </div>
         <div class="UsersList-list-item-actions">
           <a class="link" (click)="onSendInvitation(user)">Renvoyer l'invitation</a>
-          <a class="link" (click)="onDelete(user)">Supprimer l'accès</a>
+          <a
+            class="link"
+            *ngIf="authService.hasAnyPermission(['user.delete', 'territory.users.remove', 'operator.users.remove'])"
+            (click)="onDelete(user)"
+            >Supprimer l'accès</a
+          >
         </div>
       </div>
     </app-list-item>
