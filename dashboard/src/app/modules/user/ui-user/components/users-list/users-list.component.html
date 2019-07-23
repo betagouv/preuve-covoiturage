@@ -15,7 +15,9 @@
           {{ user.email }}
         </div>
         <div class="UsersList-list-item-actions">
-          <a class="link" (click)="onSendInvitation(user)">Renvoyer l'invitation</a>
+          <a class="link" *ngIf="authService.hasAnyPermission(['user.invite'])" (click)="onSendInvitation(user)"
+            >Renvoyer l'invitation</a
+          >
           <a
             class="link"
             *ngIf="authService.hasAnyPermission(['user.delete', 'territory.users.remove', 'operator.users.remove'])"
