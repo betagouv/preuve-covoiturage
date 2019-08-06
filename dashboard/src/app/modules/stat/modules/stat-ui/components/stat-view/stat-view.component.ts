@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Stat } from '~/core/entities/stat/stat';
+import { statDataNameType } from '~/core/types/statDataNameType';
 
 import { StatService } from '../../../../services/stat.service';
 import { mockStats } from '../../../../mocks/stats';
@@ -11,10 +12,10 @@ import { mockStats } from '../../../../mocks/stats';
   styleUrls: ['./stat-view.component.scss'],
 })
 export class StatViewComponent implements OnInit {
-  public graphName: string;
+  public graphName: statDataNameType;
 
   constructor(public statService: StatService) {}
-  @Input() statViewConfig: { names: string[]; defaultGraphName: string };
+  @Input() statViewConfig: { names: statDataNameType[]; defaultGraphName: statDataNameType };
 
   ngOnInit() {
     this.initStat();
@@ -33,6 +34,6 @@ export class StatViewComponent implements OnInit {
   }
 
   public showGraph(graphName: string): void {
-    this.graphName = graphName;
+    this.graphName = <statDataNameType>graphName;
   }
 }

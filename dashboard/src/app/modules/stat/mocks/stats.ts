@@ -5,18 +5,18 @@ import { Stat } from '~/core/entities/stat/stat';
 export const mockStatsData = {
   distance: {
     days: [...Array(100)].map(() => ~~(Math.random() * 500000)),
-    months: [...Array(6)].map(() => ~~(Math.random() * 10000000)),
+    months: [...Array(7)].map(() => ~~(Math.random() * 10000000)),
   },
   carpoolers: {
     days: [...Array(100)].map(() => ~~(Math.random() * 40)),
-    months: [...Array(6)].map(() => ~~(Math.random() * 400)),
+    months: [...Array(7)].map(() => ~~(Math.random() * 400)),
   },
   carpoolers_per_vehicule: {
-    days: [...Array(100)].map(() => ~~(Math.random() * 2)),
+    days: [...Array(100)].map((val, idx) => (Math.random() * idx) / 50 + 2),
   },
   trips: {
     days: [...Array(100)].map(() => ~~(Math.random() * 100)),
-    months: [...Array(6)].map(() => ~~(Math.random() * 3000)),
+    months: [...Array(7)].map(() => ~~(Math.random() * 3000)),
   },
 };
 
@@ -71,12 +71,14 @@ export const mockStats = <Stat>{
       return {
         date: mockDates.days[idx],
         total: val,
+        total_subsidized: val / 2,
       };
     }),
     months: mockStatsData.trips.months.map((val, idx) => {
       return {
         date: mockDates.months[idx],
         total: val,
+        total_subsidized: val / 2,
       };
     }),
   },

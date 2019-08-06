@@ -1,4 +1,12 @@
-.numbers {
-  display: flex;
-  flex-wrap: wrap;
+.stats {
+  width: 849px;
+  margin: auto;
+  @media (min-width: 1400px) {
+    width: 1272px;
+  }
+  .stats-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+  }
 }

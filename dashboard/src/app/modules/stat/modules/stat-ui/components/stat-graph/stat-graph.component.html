@@ -1,1 +1,156 @@
-<p>stat-graph works!</p>
+<h3>{{ title }}</h3>
+
+<!--Distance-->
+<div *ngIf="_displayGraph === 'distance'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.distance">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par jour" value="daily">
+      Par jour
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <ngx-chartjs
+    [data]="data.distance.daily"
+    *ngIf="toggleChart.distance === 'daily'"
+    type="bar"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+  <ngx-chartjs
+    [data]="data.distance.monthly"
+    *ngIf="toggleChart.distance === 'monthly'"
+    type="bar"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+  <ngx-chartjs
+    [data]="data.distance.cumulated"
+    *ngIf="toggleChart.distance === 'cumulated'"
+    type="line"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+</div>
+
+<!--Trips-->
+<div *ngIf="_displayGraph === 'trips'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.trips">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par jour" value="daily">
+      Par jour
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <ngx-chartjs
+    [data]="data.trips.daily"
+    *ngIf="toggleChart.trips === 'daily'"
+    type="bar"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+  <ngx-chartjs
+    [data]="data.trips.monthly"
+    *ngIf="toggleChart.trips === 'monthly'"
+    type="bar"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+  <ngx-chartjs
+    [data]="data.trips.cumulated"
+    *ngIf="toggleChart.trips === 'cumulated'"
+    type="line"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+</div>
+
+<!--Carpoolers-->
+<div *ngIf="_displayGraph === 'carpoolers'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.carpoolers">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <ngx-chartjs
+    [data]="data.carpoolers.monthly"
+    *ngIf="toggleChart.carpoolers === 'monthly'"
+    type="bar"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+  <ngx-chartjs
+    [data]="data.carpoolers.cumulated"
+    *ngIf="toggleChart.carpoolers === 'cumulated'"
+    type="line"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+</div>
+
+<!--Essence-->
+<div *ngIf="_displayGraph === 'petrol'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.petrol">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <ngx-chartjs
+    [data]="data.petrol.monthly"
+    *ngIf="toggleChart.petrol === 'monthly'"
+    type="bar"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+  <ngx-chartjs
+    [data]="data.petrol.cumulated"
+    *ngIf="toggleChart.petrol === 'cumulated'"
+    type="line"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+</div>
+
+<!--CO2-->
+<div *ngIf="_displayGraph === 'co2'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.co2">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <ngx-chartjs
+    [data]="data.co2.monthly"
+    *ngIf="toggleChart.co2 === 'monthly'"
+    type="bar"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+  <ngx-chartjs
+    [data]="data.co2.cumulated"
+    *ngIf="toggleChart.co2 === 'cumulated'"
+    type="line"
+    [height]="70"
+    [options]="options"
+  ></ngx-chartjs>
+</div>
+
+<!--Vehicule-->
+<div *ngIf="_displayGraph === 'carpoolersPerVehicule'">
+  <ngx-chartjs [data]="data.carpoolersPerVehicule.daily" type="line" [height]="70" [options]="options"></ngx-chartjs>
+</div>

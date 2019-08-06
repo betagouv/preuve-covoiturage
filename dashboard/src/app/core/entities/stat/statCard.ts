@@ -1,4 +1,4 @@
-import { StatCardInterface } from '~/core/interfaces/statCardInterface';
+import { StatCardInterface } from '~/core/interfaces/stat/statCardInterface';
 
 export class StatCard {
   public svgIcon: string;

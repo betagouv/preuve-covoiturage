@@ -1,6 +1,8 @@
 <div class="stats" *ngIf="statService._loaded$.value">
-  <div class="graph">graphs</div>
-  <div class="numbers">
+  <div class="stats-graph">
+    <app-stat-graph [graphName]="graphName"></app-stat-graph>
+  </div>
+  <div class="stats-numbers">
     <app-stat-number
       *ngFor="let statNumberName of statViewConfig.names"
       [statNumberName]="statNumberName"

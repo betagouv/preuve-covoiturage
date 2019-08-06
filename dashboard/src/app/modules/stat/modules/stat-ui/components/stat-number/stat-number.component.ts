@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as _ from 'lodash';
 
-import { StatCardInterface } from '~/core/interfaces/statCardInterface';
-import { statCards } from '~/modules/stat/modules/stat-ui/config/statCards';
+import { StatCardInterface } from '~/core/interfaces/stat/statCardInterface';
 import { StatCard } from '~/core/entities/stat/statCard';
+
+import { statCards } from '../../../../config/statCards';
 
 import { StatService } from '../../../../services/stat.service';
 
@@ -28,6 +29,7 @@ export class StatNumberComponent implements OnInit {
   ngOnInit() {}
 
   private initStatCard(statNumberName: string): void {
+    console.log(statNumberName);
     console.log(this.statService.stat);
     let title = _.get(this.statService.stat, statCards[statNumberName].path);
     const statCard = statCards[statNumberName];
@@ -40,11 +42,12 @@ export class StatNumberComponent implements OnInit {
       title,
       hint: statCard.hint,
       svgIcon: statCard.svgIcon,
+      link: statCard.link,
     });
   }
 
   public onLinkClick(): void {
-    if (this.statNumberName) {
+    if (this._statNumberName) {
       this.linkClicked.emit(this._statNumberName);
     }
   }

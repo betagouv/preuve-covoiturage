@@ -1,4 +1,4 @@
-import { StatDateTotal, StatInterface } from '../../interfaces/statInterface';
+import { StatDateTotal, StatInterface } from '../../interfaces/stat/statInterface';
 
 export class Stat {
   public carpoolers: {
