@@ -7,15 +7,22 @@ export class Person {
   is_driver: boolean;
   start: string;
   end: string;
-  incentive: Incentive[];
+  incentives: Incentive[];
 
-  constructor(obj?: any) {
-    this.class = (obj && obj.class) || null;
-    this.operator = (obj && obj.operator) || null;
-    this.is_driver = (obj && obj.is_driver) || null;
-    this.start = (obj && obj.start) || null;
-    this.end = (obj && obj.end) || null;
-    this.incentive = (obj && obj.incentive) || null;
+  constructor(obj?: {
+    class: TripClass;
+    operator: Operator;
+    is_driver: boolean;
+    start: string;
+    end: string;
+    incentives: Incentive[];
+  }) {
+    this.class = obj.class;
+    this.operator = obj.operator;
+    this.is_driver = obj.is_driver;
+    this.start = obj.start;
+    this.end = obj.end;
+    this.incentives = obj.incentives;
   }
 }
 

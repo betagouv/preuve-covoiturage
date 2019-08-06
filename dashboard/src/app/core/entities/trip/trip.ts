@@ -11,11 +11,21 @@ export class Trip implements IModel {
   public class: TripClass;
   public campaigns: any[];
 
-  constructor(obj?: any) {
-    this._id = (obj && obj._id) || null;
-    this.status = (obj && obj.status) || null;
-    this.start = (obj && obj.start) || null;
-    this.people = (obj && obj.people) || null;
-    this.class = (obj && obj.class) || null;
+  constructor(obj?: {
+    _id?: string;
+    status: TripStatus;
+    start: Date;
+    people: Person[];
+    class: TripClass;
+    campaigns: [];
+  }) {
+    if ('_id' in obj) {
+      this._id = obj._id;
+    }
+    this.status = obj.status;
+    this.start = obj.start;
+    this.people = obj.people;
+    this.class = obj.class;
+    this.campaigns = obj.campaigns;
   }
 }
