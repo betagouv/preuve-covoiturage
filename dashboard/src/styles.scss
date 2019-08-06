@@ -29,14 +29,16 @@
 @import 'styles/buttons';
 @import 'styles/inputs';
 @import 'styles/stepper';
+@import 'styles/table';
 
 html,
 body {
   font-family: 'WorkSans', sans-serif;
-  background: $background-light;
+  background: $background-blue;
   margin: 0;
   width: 100%;
   height: 100%;
+  color: $color-text-black;
 }
 
 h1 {
@@ -54,7 +56,9 @@ p {
   font-size: $font-size-paragraph;
 }
 
-a.link, a.link:link, a.link:visited {
+a.link,
+a.link:link,
+a.link:visited {
   cursor: pointer;
   color: $color-primary-dark;
   text-decoration: underline;

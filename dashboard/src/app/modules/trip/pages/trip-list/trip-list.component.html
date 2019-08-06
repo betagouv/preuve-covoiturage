@@ -1,1 +1,26 @@
-<p>trip-list works!</p>
+<div
+  class="TripList"
+  infiniteScroll
+  [infiniteScrollDistance]="1"
+  [infiniteScrollThrottle]="150"
+  [infiniteScrollContainer]="'.AuthenticatedLayout-body'"
+  [fromRoot]="true"
+  (scrolled)="onScroll()"
+>
+  <div class="TripList-loading" *ngIf="tripService.loading && !trips">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="TripList-header" *ngIf="trips">
+    <span class="TripList-header-results"> {{ trips.length }} résultats </span>
+    <div>
+      <button mat-flat-button [appShowSpinner]="isExporting" (click)="exportTrips()" color="primary">
+        <mat-icon>get_app</mat-icon>
+        Téléchargez (.csv)
+      </button>
+    </div>
+  </div>
+  <div class="TripList-content" *ngIf="trips">
+    <app-trip-table [data]="trips"></app-trip-table>
+    <mat-progress-bar mode="indeterminate" *ngIf="tripService.loading"></mat-progress-bar>
+  </div>
+</div>
