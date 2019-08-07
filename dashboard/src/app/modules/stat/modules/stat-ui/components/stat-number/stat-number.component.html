@@ -1,20 +1,20 @@
 <div
-  class="StatCard"
+  class="stat-number"
   (click)="onLinkClick()"
-  [class.StatCard--selected]="_selected"
-  [class.StatCard--disabled]="_disabled"
+  [class.stat-number--selected]="_selected"
+  [class.stat-number--disabled]="_disabled"
 >
-  <div class="StatCard-icon">
+  <div class="stat-number-icon">
     <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>
   </div>
-  <div class="StatCard-content">
-    <div class="StatCard-title">
+  <div class="stat-number-content">
+    <div class="stat-number-title">
       {{ statNumber.title }}
     </div>
-    <p class="StatCard-hint">
+    <p class="stat-number-hint">
       {{ statNumber.hint }}
     </p>
-    <div class="StatCard-link" *ngIf="statNumber.link">
+    <div class="stat-number-link" *ngIf="statNumber.link">
       <a class="link" (click)="onLinkClick()">{{ statNumber.link }}</a>
     </div>
   </div>

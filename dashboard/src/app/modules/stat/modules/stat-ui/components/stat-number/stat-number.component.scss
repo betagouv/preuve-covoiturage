@@ -1,6 +1,6 @@
 @import '~src/styles/variables';
 
-.StatCard {
+.stat-number {
   width: 360px;
   height: 120px;
   margin: 10px;
@@ -28,6 +28,10 @@
       height: 100%;
       width: 100%;
     }
+  }
+
+  &-hint {
+    margin-top: 3px;
   }
 
   &-content {

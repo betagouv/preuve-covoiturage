@@ -5,13 +5,13 @@ import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface'
 export const statNumbers: GraphNamesInterface & { [key: string]: StatNumberConfigInterface } = {
   carpoolersPerVehicule: {
     svgIcon: 'carpooling',
-    hint: 'Personnes par véhicule',
+    hint: 'personnes par véhicule',
     path: 'total.carpoolersPerVehicule',
     link: 'Voir en graphique',
   },
   carpoolers: {
     svgIcon: 'carpooler',
-    hint: 'Covoitureurs',
+    hint: 'covoitureurs',
     path: 'total.carpoolers',
     link: 'Voir en graphique',
   },
@@ -24,26 +24,26 @@ export const statNumbers: GraphNamesInterface & { [key: string]: StatNumberConfi
   },
   distance: {
     svgIcon: 'distance',
-    hint: 'Distance parcourue',
+    hint: 'parcourue',
     path: 'total.distance',
     unit: 'km',
     link: 'Voir en graphique',
   },
   operators: {
     svgIcon: 'operator',
-    hint: 'Opérateurs',
+    hint: 'opérateurs',
     path: 'total.operators',
   },
   petrol: {
     svgIcon: 'petrol',
-    hint: 'Essence économisée',
+    hint: "d'essence économisée",
     path: 'total.petrol',
     unit: 'l',
     link: 'Voir en graphique',
   },
   trips: {
     svgIcon: 'journey',
-    hint: 'Trajets réalisés',
+    hint: 'trajets réalisés',
     path: 'total.trips',
     link: 'Voir en graphique',
   },
