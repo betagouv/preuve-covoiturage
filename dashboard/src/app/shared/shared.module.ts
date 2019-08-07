@@ -11,7 +11,6 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { HelpCardComponent } from './components/help-card/help-card.component';
 import { ListItemComponent } from './components/list-item/list-item.component';
-import { StatCardComponent } from './components/stat-card/stat-card.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 
 @NgModule({
@@ -21,14 +20,9 @@ import { MenuCardComponent } from './components/menu-card/menu-card.component';
     HelpCardComponent,
     ListItemComponent,
     ButtonSpinnerDirective,
-    StatCardComponent,
     MenuCardComponent,
   ],
-  imports: [
-    MaterialModule,
-    CommonModule,
-    RouterModule,
-  ],
+  imports: [MaterialModule, CommonModule, RouterModule],
   exports: [
     FooterComponent,
     HeaderComponent,
@@ -36,12 +30,8 @@ import { MenuCardComponent } from './components/menu-card/menu-card.component';
     CommonModule,
     ListItemComponent,
     ButtonSpinnerDirective,
-    StatCardComponent,
     MenuCardComponent,
   ],
-  entryComponents: [
-    MatSpinner,
-  ],
+  entryComponents: [MatSpinner],
 })
-export class SharedModule {
-}
+export class SharedModule {}
