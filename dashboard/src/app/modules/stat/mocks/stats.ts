@@ -4,18 +4,19 @@ import { Stat } from '~/core/entities/stat/stat';
 
 export const mockStatsData = {
   distance: {
-    days: [...Array(100)].map(() => ~~(Math.random() * 500000)),
+    days: [...Array(mockDates.days.length)].map(() => ~~(Math.random() * 500000)),
     months: [...Array(7)].map(() => ~~(Math.random() * 10000000)),
   },
   carpoolers: {
-    days: [...Array(100)].map(() => ~~(Math.random() * 40)),
+    days: [...Array(mockDates.days.length)].map(() => ~~(Math.random() * 40)),
     months: [...Array(7)].map(() => ~~(Math.random() * 400)),
   },
   carpoolers_per_vehicule: {
-    days: [...Array(100)].map((val, idx) => (Math.random() * idx) / 50 + 2),
+    days: [...Array(mockDates.days.length)].map((val, idx) => (Math.random() * idx) / 50 + 2),
+    months: [...Array(7)].map((val, idx) => (Math.random() * idx) / 50 + 2),
   },
   trips: {
-    days: [...Array(100)].map(() => ~~(Math.random() * 100)),
+    days: [...Array(mockDates.days.length)].map(() => ~~(Math.random() * 100)),
     months: [...Array(7)].map(() => ~~(Math.random() * 3000)),
   },
 };
@@ -37,10 +38,16 @@ export const mockStats = <Stat>{
     }),
   },
   carpoolers_per_vehicule: {
-    total: 1.2,
+    total: 2.5,
     days: mockStatsData.carpoolers_per_vehicule.days.map((val, idx) => {
       return {
         date: mockDates.days[idx],
+        total: val,
+      };
+    }),
+    months: mockStatsData.carpoolers_per_vehicule.months.map((val, idx) => {
+      return {
+        date: mockDates.months[idx],
         total: val,
       };
     }),

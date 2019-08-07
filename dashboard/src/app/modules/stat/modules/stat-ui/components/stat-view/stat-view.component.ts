@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Stat } from '~/core/entities/stat/stat';
-import { statDataNameType } from '~/core/types/statDataNameType';
+import { statDataNameType } from '~/core/types/stat/statDataNameType';
+import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 
 import { StatService } from '../../../../services/stat.service';
 import { mockStats } from '../../../../mocks/stats';
@@ -13,16 +14,28 @@ import { mockStats } from '../../../../mocks/stats';
 })
 export class StatViewComponent implements OnInit {
   public graphName: statDataNameType;
+  public selected: GraphNamesInterface;
+  public disabled: GraphNamesInterface = {
+    carpoolers: false,
+    carpoolersPerVehicule: false,
+    co2: false,
+    distance: false,
+    petrol: false,
+    trips: false,
+    operators: true,
+  };
 
   constructor(public statService: StatService) {}
   @Input() statViewConfig: { names: statDataNameType[]; defaultGraphName: statDataNameType };
 
   ngOnInit() {
+    this.resetSelected();
     this.initStat();
     this.graphName = this.statViewConfig.defaultGraphName;
+    this.selected.trips = true;
   }
 
-  private initStat() {
+  private initStat(): void {
     this.statService.load().subscribe(
       () => {},
       (err) => {
@@ -33,7 +46,31 @@ export class StatViewComponent implements OnInit {
     );
   }
 
+  /**
+   * select graph to be displayed
+   */
   public showGraph(graphName: string): void {
     this.graphName = <statDataNameType>graphName;
+    this.resetSelected();
+    this.selected[graphName] = true;
+    this.scrollToTop();
+  }
+
+  public resetSelected(): void {
+    this.selected = {
+      carpoolers: false,
+      carpoolersPerVehicule: false,
+      co2: false,
+      distance: false,
+      petrol: false,
+      trips: false,
+    };
+  }
+
+  /**
+   * scroll to top of div.AuthenticatedLayout-body
+   */
+  public scrollToTop(): void {
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
   }
 }

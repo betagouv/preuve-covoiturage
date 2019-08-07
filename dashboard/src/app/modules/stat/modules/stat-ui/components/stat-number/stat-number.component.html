@@ -1,8 +1,21 @@
-<app-stat-card
-  [svgIcon]="statCard.svgIcon"
-  [title]="statCard.title"
-  [hint]="statCard.hint"
-  [link]="statCard.link"
-  (linkClicked)="onLinkClick()"
+<div
+  class="StatCard"
+  (click)="onLinkClick()"
+  [class.StatCard--selected]="_selected"
+  [class.StatCard--disabled]="_disabled"
 >
-</app-stat-card>
+  <div class="StatCard-icon">
+    <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>
+  </div>
+  <div class="StatCard-content">
+    <div class="StatCard-title">
+      {{ statNumber.title }}
+    </div>
+    <p class="StatCard-hint">
+      {{ statNumber.hint }}
+    </p>
+    <div class="StatCard-link" *ngIf="statNumber.link">
+      <a class="link" (click)="onLinkClick()">{{ statNumber.link }}</a>
+    </div>
+  </div>
+</div>

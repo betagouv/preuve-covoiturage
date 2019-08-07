@@ -1,6 +1,6 @@
-import { GraphNamesInterface } from '~/core/interfaces/stat/graphInterface';
+import { graphType } from '~/core/types/stat/graphType';
 
-export const statGraphs: GraphNamesInterface = {
+export const statGraphs: { [key: string]: graphType } = {
   trips: {
     daily: {
       title: 'Trajets par jour',
@@ -41,28 +41,32 @@ export const statGraphs: GraphNamesInterface = {
   },
   petrol: {
     monthly: {
-      title: 'Essence économisé par mois',
+      title: 'Essence économisée par mois',
       graphs: ['petrolPerMonth'],
     },
     cumulated: {
-      title: 'Essence économisé cumulé',
+      title: 'Essence économisée cumulé',
       graphs: ['petrolPerDayCumulated'],
     },
   },
   co2: {
     monthly: {
-      title: 'Essence économisé par mois',
+      title: 'Co2 économisé par mois',
       graphs: ['co2PerMonth'],
     },
     cumulated: {
-      title: 'Essence économisé cumulé',
+      title: 'Co2 économisé cumulé',
       graphs: ['co2PerDayCumulated'],
     },
   },
   carpoolersPerVehicule: {
     daily: {
-      title: 'Covoitureurs par voiture par jour',
-      graphs: ['carpoolersPerVehiculePerDayCumulated'],
+      title: 'Personnes par véhicule par jour',
+      graphs: ['carpoolersPerVehiculePerDay'],
+    },
+    monthly: {
+      title: 'Personnes par véhicule par mois',
+      graphs: ['carpoolersPerVehiculePerMonth'],
     },
   },
   operators: {},

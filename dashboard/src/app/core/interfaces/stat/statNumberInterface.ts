@@ -1,4 +1,4 @@
-export interface StatCardConfigInterface {
+export interface StatNumberConfigInterface {
   hint: string;
   path?: string;
   svgIcon: string;
@@ -6,7 +6,7 @@ export interface StatCardConfigInterface {
   link?: string;
   unit?: string;
 }
-export interface StatCardInterface {
+export interface StatNumberInterface {
   hint: string;
   svgIcon: string;
   title: string;

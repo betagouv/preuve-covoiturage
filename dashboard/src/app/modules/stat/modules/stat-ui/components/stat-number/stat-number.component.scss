@@ -1,7 +1,45 @@
-::ng-deep {
-  .StatCard {
-    width: 360px;
-    height: 120px;
-    margin: 10px;
+@import '~src/styles/variables';
+
+.StatCard {
+  width: 360px;
+  height: 120px;
+  margin: 10px;
+  padding: 20px;
+  background: $background-white;
+  border: 2px solid $background-white;
+  border-radius: 5px;
+  display: flex;
+  transition: 0.3s all;
+
+  &:hover,
+  &--selected {
+    border: 2px solid $color-primary;
+  }
+
+  &--disabled {
+    pointer-events: none;
+  }
+
+  &-icon {
+    width: 80px;
+    margin-right: 40px;
+
+    .mat-icon {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  &-content {
+    margin-right: 20px;
+  }
+
+  &-title {
+    font-weight: 600;
+    font-size: $font-size-title;
+  }
+
+  &-link {
+    margin-top: 20px;
   }
 }

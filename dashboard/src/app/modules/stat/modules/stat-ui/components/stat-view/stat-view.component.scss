@@ -1,6 +1,9 @@
 .stats {
   width: 849px;
+  max-width: 100%;
   margin: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
   @media (min-width: 1400px) {
     width: 1272px;
   }

@@ -1,10 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { get } from 'lodash';
 
-import { statGraphs, statChartStyles } from '~/modules/stat/config/statGraphs';
+import { statGraphs } from '~/modules/stat/config/statGraphs';
 import { StatService } from '~/modules/stat/services/stat.service';
-import { GraphNamesInterface } from '~/core/interfaces/stat/graphInterface';
-import { statDataNameType } from '~/core/types/statDataNameType';
+import { statDataNameType } from '~/core/types/stat/statDataNameType';
+import { statChartColors } from '~/modules/stat/config/statChartColors';
+import { chartsType, chartType } from '~/core/types/stat/chartType';
+import { statChartOptions } from '~/modules/stat/config/statChartOptions';
+import { chartNamesType } from '~/core/types/stat/chartNameType';
+import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 
 @Component({
   selector: 'app-stat-graph',
@@ -12,43 +16,7 @@ import { statDataNameType } from '~/core/types/statDataNameType';
   styleUrls: ['./stat-graph.component.scss'],
 })
 export class StatGraphComponent implements OnInit {
-  public options = {
-    scales: {
-      xAxes: [
-        {
-          type: 'time',
-          time: {
-            unit: 'month',
-            locale: 'fr',
-          },
-          stacked: true,
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          offset: true,
-        },
-      ],
-      yAxes: [
-        {
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-          stacked: false,
-          ticks: {
-            display: false,
-          },
-        },
-      ],
-    },
-    legend: {
-      position: 'top',
-      labels: {
-        boxWidth: 12,
-      },
-    },
-  };
+  public options: chartNamesType;
 
   // toggle chart to be displayed
   public toggleChart: GraphNamesInterface = {
@@ -74,18 +42,8 @@ export class StatGraphComponent implements OnInit {
   constructor(private statService: StatService) {}
 
   ngOnInit() {
-    this.initCharts();
-  }
+    this.options = statChartOptions;
 
-  private displayGraph(name: statDataNameType) {
-    this._displayGraph = name;
-    if (this.data) {
-      // todo: fix this with async
-      this.graphTitle = this.data[name][this.toggleChart[name]].title;
-    }
-  }
-
-  private initCharts() {
     const data: GraphNamesInterface = {
       trips: this.loadGraph('trips'),
       distance: this.loadGraph('distance'),
@@ -94,12 +52,24 @@ export class StatGraphComponent implements OnInit {
       co2: this.loadGraph('co2'),
       carpoolersPerVehicule: this.loadGraph('carpoolersPerVehicule'),
     };
-    this.graphTitle = data.trips.monthly.title;
+    this.graphTitle = data.trips.monthly.graphTitle;
     this.data = data;
   }
 
-  private loadGraph(name) {
-    const ret: { cumulated?: object; monthly?: object; daily?: object } = {};
+  private displayGraph(name: statDataNameType): void {
+    this._displayGraph = name;
+    if (this.data) {
+      this.graphTitle = this.data[name][this.toggleChart[name]].graphTitle;
+    }
+  }
+
+  public setGraphTitle(): void {
+    const graphName = this._displayGraph;
+    this.graphTitle = this.data[graphName][this.toggleChart[graphName]].graphTitle;
+  }
+
+  private loadGraph(name): chartsType {
+    const ret: chartsType = {};
     if ('cumulated' in statGraphs[name]) {
       ret.cumulated = this.loadData(name, 'cumulated');
     }
@@ -113,7 +83,7 @@ export class StatGraphComponent implements OnInit {
     return ret;
   }
 
-  private loadData(name, type) {
+  private loadData(name: statDataNameType, type: chartType): object {
     const graphs = statGraphs[name][type].graphs;
     const graphTitle = statGraphs[name][type].title;
 
@@ -123,9 +93,10 @@ export class StatGraphComponent implements OnInit {
     const datasets = graphs.map((graphName) => {
       return {
         data: get(this.statService.stat.graph, graphName).y,
-        ...statChartStyles[graphName],
+        ...statChartColors[graphName],
       };
     });
+
     return {
       graphTitle,
       labels,

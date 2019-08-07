@@ -1,5 +1,3 @@
-import { GraphNamesInterface } from '~/core/interfaces/stat/graphInterface';
-
 export interface FormatedStatInterface {
   total: {
     trips: number;
@@ -23,7 +21,8 @@ export interface FormatedStatInterface {
     petrolPerDayCumulated: Axes;
     co2PerMonth: Axes;
     co2PerDayCumulated: Axes;
-    carpoolersPerVehiculePerDayCumulated: Axes;
+    carpoolersPerVehiculePerDay: Axes;
+    carpoolersPerVehiculePerMonth: Axes;
   };
 }
 

@@ -6,6 +6,8 @@
     <app-stat-number
       *ngFor="let statNumberName of statViewConfig.names"
       [statNumberName]="statNumberName"
+      [selected]="selected[statNumberName]"
+      [disabled]="disabled[statNumberName]"
       (linkClicked)="showGraph($event)"
     >
     </app-stat-number>
