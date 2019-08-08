@@ -1,8 +1,8 @@
-<h3>{{ graphTitle }}</h3>
+<h3 *ngIf="!lightMode">{{ graphTitle }}</h3>
 
 <!--Distance-->
 <div class="graph" *ngIf="_displayGraph === 'distance'">
-  <div class="graph-header">
+  <div class="graph-header" *ngIf="!lightMode">
     <mat-button-toggle-group [(ngModel)]="toggleChart.distance" (ngModelChange)="setGraphTitle()">
       <mat-button-toggle aria-label="cumulé" value="cumulated">
         Cumulé
@@ -55,7 +55,7 @@
         </div>
       </div>
     </div>
-    <div class="graph-trips-toggle-wrapper">
+    <div class="graph-trips-toggle-wrapper" *ngIf="!lightMode">
       <mat-button-toggle-group [(ngModel)]="toggleChart.trips" (ngModelChange)="setGraphTitle()">
         <mat-button-toggle aria-label="cumulé" value="cumulated">
           Cumulé
@@ -94,7 +94,7 @@
 
 <!--Carpoolers-->
 <div class="graph" *ngIf="_displayGraph === 'carpoolers'">
-  <mat-button-toggle-group [(ngModel)]="toggleChart.carpoolers" (ngModelChange)="setGraphTitle()">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.carpoolers" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
     <mat-button-toggle aria-label="cumulé" value="cumulated">
       Cumulé
     </mat-button-toggle>
@@ -120,7 +120,7 @@
 
 <!--Petrol-->
 <div class="graph" *ngIf="_displayGraph === 'petrol'">
-  <mat-button-toggle-group [(ngModel)]="toggleChart.petrol" (ngModelChange)="setGraphTitle()">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.petrol" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
     <mat-button-toggle aria-label="cumulé" value="cumulated">
       Cumulé
     </mat-button-toggle>
@@ -146,7 +146,7 @@
 
 <!--CO2-->
 <div class="graph" *ngIf="_displayGraph === 'co2'">
-  <mat-button-toggle-group [(ngModel)]="toggleChart.co2" (ngModelChange)="setGraphTitle()">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.co2" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
     <mat-button-toggle aria-label="cumulé" value="cumulated">
       Cumulé
     </mat-button-toggle>
@@ -172,7 +172,11 @@
 
 <!--Carpoolers per vehicule-->
 <div class="graph" *ngIf="_displayGraph === 'carpoolersPerVehicule'">
-  <mat-button-toggle-group [(ngModel)]="toggleChart.carpoolersPerVehicule" (ngModelChange)="setGraphTitle()">
+  <mat-button-toggle-group
+    [(ngModel)]="toggleChart.carpoolersPerVehicule"
+    (ngModelChange)="setGraphTitle()"
+    *ngIf="!lightMode"
+  >
     <mat-button-toggle aria-label="par jour" value="daily">
       Par jour
     </mat-button-toggle>

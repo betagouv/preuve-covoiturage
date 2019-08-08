@@ -5,12 +5,14 @@
         {{ campaign.name }}
       </div>
       <div class="CampaignsList-item-amount">
-        <span>{{ campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0' }}</span>
+        <span *ngIf="campaign.status !== campaignStatus.DRAFT">{{
+          campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0'
+        }}</span>
         <span>Budget: {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}</span>
       </div>
       <div class="CampaignsList-item-trips">
-        <span>{{ campaign.trips_number }} trajets</span>
-        <span>Plafond: {{ campaign.max_trips }}</span>
+        <span *ngIf="campaign.status !== campaignStatus.DRAFT">{{ campaign.trips_number }} trajets</span>
+        <span>Plafond: {{ campaign.max_trips }} trajets</span>
       </div>
       <div class="CampaignsList-item-date">
         <span>Du {{ campaign.start | date: 'dd MMMM' }} au {{ campaign.end | date: 'dd MMMM' }}</span>

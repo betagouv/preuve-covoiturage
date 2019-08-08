@@ -30,20 +30,8 @@ export class StatViewComponent implements OnInit {
 
   ngOnInit() {
     this.resetSelected();
-    this.initStat();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
-  }
-
-  private initStat(): void {
-    this.statService.load().subscribe(
-      () => {},
-      (err) => {
-        // TODO TMP DELETE WHEN BACK IS LINKED
-        const stat = new Stat(mockStats);
-        this.statService.formatData(stat);
-      },
-    );
   }
 
   /**

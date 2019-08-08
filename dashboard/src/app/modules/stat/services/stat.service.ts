@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import { get } from 'lodash';
 import * as moment from 'moment';
 
@@ -11,6 +11,7 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
+import { mockStats } from '~/modules/stat/mocks/stats';
 
 @Injectable({
   providedIn: 'root',
@@ -18,14 +19,28 @@ import { co2Factor, petrolFactor } from '../config/stat';
 export class StatService {
   _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
   _loaded$ = new BehaviorSubject<boolean>(false);
+  protected _loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {}
+  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
+    this.load().subscribe(
+      () => {},
+      (err) => {
+        // TODO TMP DELETE WHEN BACK IS LINKED
+        const stat = new Stat(mockStats);
+        this.formatData(stat);
+      },
+    );
+  }
 
   public load(): Observable<Stat[]> {
+    this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`stat.list`);
     return this._jsonRPC.call(jsonRPCParam).pipe(
       tap((data) => {
         this.formatData(data);
+      }),
+      finalize(() => {
+        this._loading$.next(false);
       }),
     );
   }
@@ -36,6 +51,10 @@ export class StatService {
 
   get stat$(): Observable<FormatedStatInterface> {
     return this._formatedStat$;
+  }
+
+  get loading(): boolean {
+    return this._loading$.value;
   }
 
   formatData(d: Stat | null) {

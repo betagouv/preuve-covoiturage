@@ -1,9 +1,7 @@
 .stats {
   width: 849px;
   max-width: 100%;
-  margin: auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin: 30px auto;
   @media (min-width: 1400px) {
     width: 1272px;
   }
@@ -11,5 +9,10 @@
     display: flex;
     flex-wrap: wrap;
     margin: auto;
+  }
+
+  &--loading {
+    display: flex;
+    justify-content: space-around;
   }
 }
