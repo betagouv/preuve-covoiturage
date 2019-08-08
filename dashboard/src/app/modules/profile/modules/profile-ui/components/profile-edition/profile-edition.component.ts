@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { regexp } from '~/core/config/validators';
 import { UserService } from '~/core/services/authentication/user.service';
 
-import { ProfileInterface } from '../../../../interfaces/profileInterface';
+import { ProfileInterface } from '../../../../../../core/interfaces/profileInterface';
 import { ProfileService } from '../../../../services/profile.service';
 
 @Component({

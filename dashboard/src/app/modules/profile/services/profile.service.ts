@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 
-import { ProfileInterface } from '../../profile/interfaces/profileInterface';
+import { ProfileInterface } from '../../../core/interfaces/profileInterface';
 
 @Injectable({
   providedIn: 'root',
