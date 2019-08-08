@@ -1,0 +1,34 @@
+.CampaignForm {
+  mat-horizontal-stepper {
+    ::ng-deep.mat-horizontal-stepper-header-container,
+    ::ng-deep.mat-horizontal-content-container {
+      padding: 0 5%;
+    }
+  }
+
+  &-content {
+    margin-top: 50px;
+
+    &-wrapper {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      app-policy-form,
+      app-rules-form,
+      app-parameters-form {
+        flex: 3;
+      }
+
+      app-help-card {
+        flex: 1;
+      }
+    }
+
+    &-actions {
+      button:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
+}

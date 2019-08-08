@@ -1,0 +1,73 @@
+<div class="CampaignForm">
+  <mat-horizontal-stepper #stepper [linear]="true">
+    <mat-step [stepControl]="templateFormGroup">
+      <ng-template matStepLabel>Campagne</ng-template>
+      <div class="CampaignForm-content">
+        <div class="CampaignForm-content-wrapper">
+          <app-policy-form [control]="templateFormGroup.get('templateCtrl')"></app-policy-form>
+          <app-help-card
+            [svgIcon]="helpCard.svgIcon"
+            [title]="helpCard.title"
+            [hint]="helpCard.hint"
+            [link]="helpCard.link"
+          >
+          </app-help-card>
+        </div>
+        <div class="CampaignForm-content-actions">
+          <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!templateFormGroup.valid">
+            Suivant
+          </button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Éligibilité</ng-template>
+      <div class="CampaignForm-content">
+        <div class="CampaignForm-content-wrapper">
+          <app-rules-form></app-rules-form>
+          <app-help-card
+            [svgIcon]="helpCard.svgIcon"
+            [title]="helpCard.title"
+            [hint]="helpCard.hint"
+            [link]="helpCard.link"
+          >
+          </app-help-card>
+        </div>
+        <div class="CampaignForm-content-actions">
+          <button mat-flat-button class="large" matStepperPrevious>Précédent</button>
+          <button mat-flat-button class="large" color="primary" matStepperNext>Suivant</button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Rétribution</ng-template>
+      <div class="CampaignForm-content">
+        <div class="CampaignForm-content-wrapper">
+          <app-parameters-form></app-parameters-form>
+          <app-help-card
+            [svgIcon]="helpCard.svgIcon"
+            [title]="helpCard.title"
+            [hint]="helpCard.hint"
+            [link]="helpCard.link"
+          >
+          </app-help-card>
+        </div>
+        <div class="CampaignForm-content-actions">
+          <button mat-flat-button class="large" matStepperPrevious>Précédent</button>
+          <button mat-flat-button class="large" color="primary" matStepperNext>Suivant</button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Récapitulatif</ng-template>
+      <div class="CampaignForm-content">
+        <div class="CampaignForm-content-wrapper">
+          <app-summary-form></app-summary-form>
+        </div>
+        <div class="CampaignForm-content-actions">
+          <button mat-flat-button class="large" matStepperPrevious>Précédent</button>
+        </div>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
