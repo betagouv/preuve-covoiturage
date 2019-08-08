@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { Stat } from '~/core/entities/stat/stat';
-import { mockStats } from '~/modules/stat/mocks/stats';
 import { StatService } from '~/modules/stat/services/stat.service';
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-campaign-dashboard',
@@ -12,10 +12,14 @@ import { StatService } from '~/modules/stat/services/stat.service';
   styleUrls: ['./campaign-dashboard.component.scss'],
 })
 export class CampaignDashboardComponent implements OnInit {
-  campaigns: any[];
+  campaigns: Campaign[];
   campaignStatus = CampaignStatus;
 
-  constructor(public statService: StatService) {}
+  constructor(
+    public statService: StatService,
+    public campaignService: CampaignService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit() {
     this.loadCampaigns();
@@ -26,10 +30,20 @@ export class CampaignDashboardComponent implements OnInit {
   }
 
   private loadCampaigns(): void {
-    this.campaigns = [];
-    for (let i = 0; i < 20; i = i + 1) {
-      this.campaigns.push(this.generateCampaigns(i));
-    }
+    this.campaignService.load().subscribe(
+      (campaigns) => {
+        this.campaigns = campaigns;
+      },
+      (err) => {
+        this.toastr.error(err.message);
+
+        // TODO TMP TO DELETE
+        this.campaigns = [];
+        for (let i = 0; i < 20; i = i + 1) {
+          this.campaigns.push(this.generateCampaigns(i));
+        }
+      },
+    );
   }
 
   private generateCampaigns(idx): any {

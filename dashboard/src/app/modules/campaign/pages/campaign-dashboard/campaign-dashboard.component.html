@@ -14,6 +14,9 @@
       <a class="link" [routerLink]="'/trip'">Voir toutes les statistiques</a>
     </div>
   </div>
+  <div class="CampaignDashboard-trips--loading" *ngIf="campaignService.loading && !campaigns">
+    <mat-spinner></mat-spinner>
+  </div>
   <div class="CampaignDashboard-content" *ngIf="campaigns">
     <app-campaign-menu></app-campaign-menu>
     <div class="CampaignDashboard-content-header">
