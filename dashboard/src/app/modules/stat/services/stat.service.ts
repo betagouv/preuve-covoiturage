@@ -100,6 +100,7 @@ export class StatService {
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
+            // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total / 1000) | 0),
         },
         distancePerDayCumulated: {
@@ -137,6 +138,7 @@ export class StatService {
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
+            // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total * petrolFactor) | 0),
         },
         petrolPerDayCumulated: {
@@ -158,6 +160,7 @@ export class StatService {
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
+            // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total * co2Factor) | 0),
         },
         co2PerDayCumulated: {
