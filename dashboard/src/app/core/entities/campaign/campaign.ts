@@ -1,6 +1,7 @@
 import { Territory } from '~/core/entities/territory/territory';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { CampaignInterface } from '~/core/interfaces/campaignInterface';
+import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
 
 export class Campaign {
   public _id: string;
@@ -15,6 +16,7 @@ export class Campaign {
   public max_amount: number;
   public trips_number?: number;
   public amount_spent?: number;
+  public rules?: IncentiveRules;
 
   constructor(obj: CampaignInterface) {
     this._id = obj._id;
@@ -28,5 +30,6 @@ export class Campaign {
     this.max_amount = obj.max_amount;
     this.trips_number = obj.trips_number;
     this.amount_spent = obj.amount_spent;
+    this.rules = obj.rules;
   }
 }
