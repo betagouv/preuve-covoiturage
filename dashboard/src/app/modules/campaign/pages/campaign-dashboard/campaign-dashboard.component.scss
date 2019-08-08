@@ -1,6 +1,8 @@
 @import '../../../../../styles/variables';
 
 .CampaignDashboard {
+  margin-bottom: 50px;
+
   &-trips {
     background: $background-white;
     padding: 0 5% 50px 5%;
