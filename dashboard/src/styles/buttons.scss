@@ -27,3 +27,20 @@ button {
     }
   }
 }
+
+mat-button-toggle-group {
+  mat-button-toggle {
+    height: 36px;
+    .mat-button-toggle-button {
+      .mat-button-toggle-label-content {
+        line-height: 38px;
+      }
+    }
+  }
+  .mat-button-toggle-checked {
+    &.mat-button-toggle-appearance-standard {
+      color: $white;
+      background-color: $color-primary;
+    }
+  }
+}

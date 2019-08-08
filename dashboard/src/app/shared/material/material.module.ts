@@ -14,11 +14,13 @@ import {
   MatProgressBarModule,
   MatTooltipModule,
 } from '@angular/material';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [],
   imports: [
     MatButtonModule,
+    MatButtonToggleModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
@@ -34,6 +36,7 @@ import {
   ],
   exports: [
     MatButtonModule,
+    MatButtonToggleModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,

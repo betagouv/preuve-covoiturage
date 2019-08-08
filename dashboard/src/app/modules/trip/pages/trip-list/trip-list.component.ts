@@ -8,7 +8,7 @@ import { TripService } from '~/modules/trip/services/trip.service';
 import { Trip } from '~/core/entities/trip/trip';
 import { TripClass } from '~/core/entities/trip/trip-class';
 import { TripStatus } from '~/core/entities/trip/trip-status';
-import { Person } from '~/core/entities/trip/person';
+import { TripInterface } from '~/core/interfaces/tripInterface';
 
 @Component({
   selector: 'app-trip-list',
@@ -65,19 +65,23 @@ export class TripListComponent implements OnInit {
 
   // TODO TMP TO DELETE
   private generateTrip(): Trip {
-    const tripToReturn = new Trip();
     const randomClass = Math.floor(Math.random() * Object.keys(TripClass).length);
-    tripToReturn.class = TripClass[Object.keys(TripClass)[randomClass]];
-    tripToReturn.start = new Date();
     const randomStatus = Math.floor(Math.random() * Object.keys(TripStatus).length);
-    tripToReturn.status = TripStatus[Object.keys(TripStatus)[randomStatus]];
-    tripToReturn.campaigns = [];
+
+    const tripToReturn: TripInterface = {
+      _id: 'AZFAFZAF34345345',
+      class: TripClass[Object.keys(TripClass)[randomClass]],
+      start: new Date(),
+      status: TripStatus[Object.keys(TripStatus)[randomStatus]],
+      campaigns: [],
+      people: [],
+    };
 
     const nbCampaigns = Math.floor(Math.random() * 10);
     for (let i = 0; i < nbCampaigns; i = i + 1) {
       tripToReturn.campaigns.push({ name: `Campagne n°${i}` });
     }
 
-    return tripToReturn;
+    return new Trip(tripToReturn);
   }
 }

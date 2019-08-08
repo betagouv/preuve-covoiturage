@@ -1,21 +1,23 @@
 import { TripClass } from '~/core/entities/trip/trip-class';
+import { OperatorNameInterface } from '~/core/interfaces/operatorInterface';
+import { IncentiveInterface } from '~/core/interfaces/incentiveInterface';
 
 export class Person {
   class: TripClass;
-  operator: Operator;
+  operator: OperatorNameInterface;
   // tslint:disable-next-line:variable-name
   is_driver: boolean;
   start: string;
   end: string;
-  incentives: Incentive[];
+  incentives: IncentiveInterface[];
 
   constructor(obj?: {
     class: TripClass;
-    operator: Operator;
+    operator: OperatorNameInterface;
     is_driver: boolean;
     start: string;
     end: string;
-    incentives: Incentive[];
+    incentives: IncentiveInterface[];
   }) {
     this.class = obj.class;
     this.operator = obj.operator;
@@ -24,8 +26,4 @@ export class Person {
     this.end = obj.end;
     this.incentives = obj.incentives;
   }
-}
-
-export class Incentive {
-  amount: number;
 }

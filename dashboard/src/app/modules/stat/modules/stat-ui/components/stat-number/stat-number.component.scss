@@ -1,6 +1,9 @@
-@import '../../../../styles/variables';
+@import '~src/styles/variables';
 
-.StatCard {
+.stat-number {
+  width: 360px;
+  height: 120px;
+  margin: 10px;
   padding: 20px;
   background: $background-white;
   border: 2px solid $background-white;
@@ -8,8 +11,13 @@
   display: flex;
   transition: 0.3s all;
 
-  &:hover {
+  &:hover,
+  &--selected {
     border: 2px solid $color-primary;
+  }
+
+  &--disabled {
+    pointer-events: none;
   }
 
   &-icon {
@@ -20,6 +28,10 @@
       height: 100%;
       width: 100%;
     }
+  }
+
+  &-hint {
+    margin-top: 3px;
   }
 
   &-content {

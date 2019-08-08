@@ -25,7 +25,7 @@
             "aot": true,
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.scss", "src/styles/theme.scss"],
-            "scripts": []
+            "scripts": ["./node_modules/moment/min/moment.min.js", "./node_modules/moment/locale/fr.js"]
           },
           "configurations": {
             "production": {

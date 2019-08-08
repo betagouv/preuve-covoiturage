@@ -53,7 +53,9 @@
     <div class="UiGuide-components">
       <button mat-flat-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="primary">Primary</button>
       <button mat-flat-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="accent">Accent</button>
-      <button mat-stroked-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="primary">Primary</button>
+      <button mat-stroked-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="primary">
+        Primary
+      </button>
       <button mat-stroked-button [appShowSpinner]="showSpinner" (click)="onShowSpinner()" color="accent">Accent</button>
     </div>
     <div class="UiGuide-title">
@@ -107,6 +109,23 @@
     <div class="UiGuide-components">
       <mat-checkbox color="primary">Check me!</mat-checkbox>
     </div>
+    <div class="UiGuide-subtitle">
+      Button toggle
+    </div>
+    <div class="UiGuide-components">
+      <mat-button-toggle-group>
+        <mat-button-toggle value="left" aria-label="left">
+          Left
+        </mat-button-toggle>
+        <mat-button-toggle value="center" aria-label="center">
+          center
+        </mat-button-toggle>
+        <mat-button-toggle value="right" aria-label="right">
+          right
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
     <div class="UiGuide-title">
       Help Card
     </div>
@@ -119,7 +138,7 @@
       >
       </app-help-card>
       <app-help-card
-        [svgIcon]="'covoitureur'"
+        [svgIcon]="'carpooling'"
         [title]="'Vous êtes nouveau sur Preuve de covoiturage ?'"
         [hint]="'Découvrez comment développer une politique de covoiturage efficace dans votre collectivité'"
         [button]="'Importer'"
@@ -127,25 +146,15 @@
       </app-help-card>
     </div>
     <div class="UiGuide-title">
-      Stat Card
-    </div>
-    <div class="UiGuide-components">
-      <app-stat-card
-        [svgIcon]="'new_car'"
-        [title]="'68 008'"
-        [hint]="'Trajets réalisés'"
-        [link]="'Voir en graphique'">
-      </app-stat-card>
-    </div>
-    <div class="UiGuide-title">
       Menu Card
     </div>
     <div class="UiGuide-components">
       <app-menu-card
-              [svgIcon]="'recherche'"
-              [title]="'Cherchez l\'inspiration'"
-              [hint]="'Retrouvez des exemples de campagnes incitiatives et inspirez-vous en'"
-              [button]="'Découvrir'">
+        [svgIcon]="'recherche'"
+        [title]="'Cherchez l\'inspiration'"
+        [hint]="'Retrouvez des exemples de campagnes incitiatives et inspirez-vous en'"
+        [button]="'Découvrir'"
+      >
       </app-menu-card>
     </div>
     <div class="UiGuide-title">

@@ -2,13 +2,11 @@
   <div class="CampaignDashboard-trips">
     <div class="CampaignDashboard-trips-header">
       <h1>Toutes vos campagnes</h1>
-      <button mat-flat-button
-              [routerLink]="'/campaign/create'"
-              class="color-punch">
+      <button mat-flat-button [routerLink]="'/campaign/create'" class="color-punch">
         Créer une nouvelle campagne
       </button>
     </div>
-    <app-trip-chart></app-trip-chart>
+    <!--    <app-trip-chart></app-trip-chart>-->
     <div>
       <a class="link" [routerLink]="'/trip'">Voir toutes les statistiques</a>
     </div>
@@ -17,9 +15,7 @@
     <app-campaign-menu></app-campaign-menu>
     <div class="CampaignDashboard-content-header">
       <h2>Vos campagnes en cours</h2>
-      <button mat-flat-button
-              [routerLink]="'/campaign/create'"
-              color="primary">
+      <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
         Nouvelle campagne
       </button>
     </div>
@@ -28,9 +24,7 @@
     </div>
     <div class="CampaignDashboard-content-header">
       <h2>Vos campagnes en brouillon ou terminées</h2>
-      <button mat-flat-button
-              [routerLink]="'/campaign/create'"
-              color="primary">
+      <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
         Nouveau brouillon
       </button>
     </div>
