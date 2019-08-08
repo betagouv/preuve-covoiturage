@@ -1,5 +1,6 @@
 import { Territory } from '~/core/entities/territory/territory';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
 
 export interface CampaignInterface {
   _id: string;
@@ -14,4 +15,5 @@ export interface CampaignInterface {
   max_amount: number;
   trips_number?: number;
   amount_spent?: number;
+  rules?: IncentiveRules;
 }
