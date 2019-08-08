@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { Campaign } from '~/core/entities/campaign/campaign';
+import { Stat } from '~/core/entities/stat/stat';
+import { mockStats } from '~/modules/stat/mocks/stats';
+import { StatService } from '~/modules/stat/services/stat.service';
 
 @Component({
   selector: 'app-campaign-dashboard',
@@ -12,7 +15,7 @@ export class CampaignDashboardComponent implements OnInit {
   campaigns: any[];
   campaignStatus = CampaignStatus;
 
-  constructor() {}
+  constructor(public statService: StatService) {}
 
   ngOnInit() {
     this.loadCampaigns();

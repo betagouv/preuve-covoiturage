@@ -39,6 +39,8 @@ export class StatGraphComponent implements OnInit {
     this.displayGraph(name);
   }
 
+  @Input() lightMode = false;
+
   constructor(private statService: StatService) {}
 
   ngOnInit() {
