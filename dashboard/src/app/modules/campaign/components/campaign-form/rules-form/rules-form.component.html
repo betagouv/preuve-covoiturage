@@ -1,3 +1,76 @@
 <div class="RulesForm">
   <h2>Définissez des conditions d'éligibilités</h2>
+  <div>
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Jours de la semaine
+          </mat-panel-title>
+          <mat-panel-description>
+            Type your name and age
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="RulesForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Jours de la semaine</mat-label>
+            <mat-select multiple>
+              <mat-option [value]="0">Lundi</mat-option>
+              <mat-option [value]="1">Mardi</mat-option>
+              <mat-option [value]="2">Mercredi</mat-option>
+              <mat-option [value]="3">Jeudi</mat-option>
+              <mat-option [value]="4">Vendredi</mat-option>
+              <mat-option [value]="5">Samedi</mat-option>
+              <mat-option [value]="6">Dimanche</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Distance
+          </mat-panel-title>
+          <mat-panel-description>
+            Type your name and age
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="RulesForm-inputs"></div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Classe de preuve
+          </mat-panel-title>
+          <mat-panel-description>
+            Type your name and age
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="RulesForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Classe de preuve</mat-label>
+            <mat-select multiple>
+              <mat-option *ngFor="let tripClass of tripClassKeys" [value]="tripClass">{{ tripClass }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Cible
+          </mat-panel-title>
+          <mat-panel-description>
+            Type your name and age
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="RulesForm-target RulesForm-inputs">
+          <mat-label>Qui souhaitez vous rémunérer ?</mat-label>
+          <mat-checkbox color="primary">Conducteurs</mat-checkbox>
+          <mat-checkbox color="primary">Passagers</mat-checkbox>
+          <mat-checkbox color="primary">Personnes majeurs uniquement</mat-checkbox>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
 </div>
