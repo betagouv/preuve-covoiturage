@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import { get } from 'lodash';
 import * as moment from 'moment';
 
@@ -12,16 +12,26 @@ import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterf
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
+import { mockStats } from '~/modules/stat/mocks/stats';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatService {
   public _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
-  protected _loaded$ = new BehaviorSubject<boolean>(false);
+  public _loaded$ = new BehaviorSubject<boolean>(false);
   protected _loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {}
+  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
+    this.load().subscribe(
+      () => {},
+      (err) => {
+        // TODO TMP DELETE WHEN BACK IS LINKED
+        const stat = new Stat(mockStats);
+        this.formatData(stat);
+      },
+    );
+  }
 
   public load(filter: FilterInterface = {}): Observable<Stat[]> {
     this._loading$.next(true);

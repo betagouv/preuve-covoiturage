@@ -17,6 +17,11 @@
     .link {
       margin-top: 20px;
     }
+
+    &--loading {
+      display: flex;
+      justify-content: space-around;
+    }
   }
 
   &-content {
