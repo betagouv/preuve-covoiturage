@@ -126,6 +126,20 @@
       </mat-button-toggle-group>
     </div>
 
+    <div class="UiGuide-subtitle">
+      Slider range
+    </div>
+    <div class="UiGuide-components">
+      <nouislider
+        [connect]="true"
+        [min]="0"
+        [max]="100"
+        [step]="5"
+        [tooltips]="[true, true]"
+        [(ngModel)]="sliderRange"
+      ></nouislider>
+    </div>
+
     <div class="UiGuide-title">
       Help Card
     </div>
