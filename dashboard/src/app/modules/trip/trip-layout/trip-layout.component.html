@@ -5,18 +5,36 @@
     </h1>
     <div class="page-menu">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link
-           *ngFor="let link of menu"
-           [routerLink]="link.path"
-           routerLinkActive
-           #rla="routerLinkActive"
-           [active]="rla.isActive">
+        <a
+          mat-tab-link
+          *ngFor="let link of menu"
+          [routerLink]="link.path"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [active]="rla.isActive"
+        >
           {{ link.label }}
         </a>
       </nav>
+      <button
+        class="page-menu-filter-button"
+        mat-flat-button
+        color="primary"
+        [matBadge]="filterNumber"
+        matBadgeColor="accent"
+        (click)="toggleFilterDisplay()"
+      >
+        <mat-icon>filter_list_rounded</mat-icon>
+        Affiner les résultats
+      </button>
     </div>
   </div>
-  <div class="page-content">
+  <div class="page-content" [class.filter-triangle]="showFilter">
+    <app-filter
+      (filterNumber)="setFilterNumber($event)"
+      [showFilter]="showFilter"
+      (hideFilter)="toggleFilterDisplay()"
+    ></app-filter>
     <router-outlet></router-outlet>
   </div>
 </div>
