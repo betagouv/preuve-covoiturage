@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UiGuideComponent implements OnInit {
   showSpinner = false;
+  sliderRange = [0, 40];
 
   constructor() {}
 

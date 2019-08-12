@@ -29,5 +29,10 @@ nouislider {
         background-color: $color-primary;
       }
     }
+
+    .noUi-tooltip {
+      background: none;
+      border: none;
+    }
   }
 }

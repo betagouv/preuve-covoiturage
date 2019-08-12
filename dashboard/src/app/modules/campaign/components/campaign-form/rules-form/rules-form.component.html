@@ -45,12 +45,13 @@
               {{ showDistanceLabel() }}
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <div class="RulesForm-inputs">
+          <div class="RulesForm-inputs RulesForm-range">
             <nouislider
               [connect]="true"
               [min]="0"
               [max]="100"
               [step]="5"
+              [tooltips]="[true, true]"
               [formControl]="rulesForm.get('range')"
             ></nouislider>
           </div>
