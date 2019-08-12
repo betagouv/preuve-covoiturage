@@ -29,6 +29,10 @@ export class CampaignFormComponent implements OnInit {
 
     this.campaignFormGroup = this._formBuilder.group({
       rules: [],
+      start: [null, Validators.required],
+      end: [null, Validators.required],
+      max_amount: [null, [Validators.required, Validators.min(1)]],
+      max_trips: [null, [Validators.required, Validators.min(1)]],
     });
   }
 }

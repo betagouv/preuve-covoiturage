@@ -43,7 +43,7 @@
       <ng-template matStepLabel>Rétribution</ng-template>
       <div class="CampaignForm-content">
         <div class="CampaignForm-content-wrapper">
-          <app-parameters-form></app-parameters-form>
+          <app-parameters-form [campaignForm]="campaignFormGroup"></app-parameters-form>
           <app-help-card
             [svgIcon]="helpCard.svgIcon"
             [title]="helpCard.title"

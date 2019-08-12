@@ -14,6 +14,7 @@ import {
   MatProgressBarModule,
   MatTooltipModule,
   MatExpansionModule,
+  MatDatepickerModule,
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
@@ -35,6 +36,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatProgressBarModule,
     MatTooltipModule,
     MatExpansionModule,
+    MatDatepickerModule,
   ],
   exports: [
     MatButtonModule,
@@ -52,6 +54,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatProgressBarModule,
     MatTooltipModule,
     MatExpansionModule,
+    MatDatepickerModule,
   ],
 })
 export class MaterialModule {}
