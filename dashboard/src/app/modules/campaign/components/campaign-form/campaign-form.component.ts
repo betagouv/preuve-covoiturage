@@ -14,6 +14,7 @@ export class CampaignFormComponent implements OnInit {
     link: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/boite-a-outils/guide-des-incitations',
   };
   templateFormGroup: FormGroup;
+  campaignFormGroup: FormGroup;
 
   constructor(private _formBuilder: FormBuilder) {}
 
@@ -24,6 +25,10 @@ export class CampaignFormComponent implements OnInit {
   private initForms() {
     this.templateFormGroup = this._formBuilder.group({
       templateCtrl: [null, Validators.required],
+    });
+
+    this.campaignFormGroup = this._formBuilder.group({
+      rules: [],
     });
   }
 }
