@@ -1,36 +1,6 @@
 @import '../../../../../../styles/variables';
 
 .RulesForm {
-  margin-bottom: 30px;
-
-  mat-expansion-panel {
-    &.mat-expansion-panel {
-      margin: 16px 0;
-      box-shadow: none;
-      border-radius: 5px;
-    }
-
-    .mat-expansion-panel-header-title {
-      flex: 1;
-      color: $grey;
-    }
-
-    .mat-expansion-panel-header-description {
-      flex: 2;
-      font-weight: bold;
-      color: $color-text-black;
-    }
-
-    ::ng-deep.mat-expansion-panel-body {
-      padding: 0;
-    }
-  }
-
-  &-inputs {
-    background: $background-light;
-    padding: 16px 24px;
-  }
-
   &-date {
     display: flex;
 

@@ -1,3 +1,93 @@
-<div class="ParametersForm">
+<div class="ParametersForm CampaignSubForm">
   <h2>Définissez des rétributions</h2>
+  <form [formGroup]="campaignForm">
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Dates de début et de fin
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showDateLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <!-- Waiting for moment implementation
+          <mat-form-field appearance="outline">
+            <mat-label>Date de début</mat-label>
+            <input matInput [matDatepicker]="pickerBegin" placeholder="Choose a date">
+            <mat-datepicker-toggle matSuffix [for]="pickerBegin"></mat-datepicker-toggle>
+            <mat-datepicker #pickerBegin></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Date de fin</mat-label>
+            <input matInput [matDatepicker]="pickerEnd" placeholder="Choose a date">
+            <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+          </mat-form-field> -->
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel
+        [ngClass]="{ 'mat-expansion-panel-error': controls.max_amount.touched && !controls.max_amount.valid }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Rétribution totale
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ controls.max_amount.value ? (controls.max_amount.value | currency: 'EUR':'symbol':'1.0-0') : '' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Rétribution totale</mat-label>
+            <input matInput type="number" placeholder="50000" formControlName="max_amount" required />
+            <mat-icon matSuffix>euro_symbol</mat-icon>
+            <mat-error *ngIf="controls.max_amount.hasError('required')">
+              Le montant de rétribution totale est obligatoire.
+            </mat-error>
+            <mat-error *ngIf="controls.max_amount.hasError('min')">
+              Le montant de rétribution totale doit être supérieur à 0€.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel
+        [ngClass]="{ 'mat-expansion-panel-error': controls.max_trips.touched && !controls.max_trips.valid }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Nombre de trajets max
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ controls.max_trips.value ? (controls.max_trips.value | number: '1.0-0':'FR') : '' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de trajets max</mat-label>
+            <input matInput type="number" placeholder="20000" formControlName="max_trips" required />
+            <mat-icon matSuffix>directions_car</mat-icon>
+            <mat-error *ngIf="controls.max_trips.hasError('required')">
+              Le nombre de trajets maximum est obligatoire.
+            </mat-error>
+            <mat-error *ngIf="controls.max_trips.hasError('min')">
+              Le ombre de trajets maximum doit être supérieur à 0.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Mode de rétribution
+          </mat-panel-title>
+          <mat-panel-description>
+            Plep
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs"></div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </form>
 </div>
