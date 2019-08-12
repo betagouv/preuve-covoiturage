@@ -42,10 +42,18 @@
               Distance
             </mat-panel-title>
             <mat-panel-description>
-              Type your name and age
+              {{ showDistanceLabel() }}
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <div class="RulesForm-inputs"></div>
+          <div class="RulesForm-inputs">
+            <nouislider
+              [connect]="true"
+              [min]="0"
+              [max]="100"
+              [step]="5"
+              [formControl]="rulesForm.get('range')"
+            ></nouislider>
+          </div>
         </mat-expansion-panel>
         <mat-expansion-panel>
           <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
