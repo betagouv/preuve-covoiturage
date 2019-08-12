@@ -13,7 +13,8 @@
   &-body {
     margin-top: 68.5px;
     height: calc(100% - 68.5px);
-    overflow-x: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
