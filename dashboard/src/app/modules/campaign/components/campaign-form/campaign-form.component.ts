@@ -33,6 +33,7 @@ export class CampaignFormComponent implements OnInit {
       end: [null, Validators.required],
       max_amount: [null, [Validators.required, Validators.min(1)]],
       max_trips: [null, [Validators.required, Validators.min(1)]],
+      incentiveMode: [],
     });
   }
 }

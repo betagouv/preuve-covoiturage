@@ -82,11 +82,37 @@
           <mat-panel-title>
             Mode de rétribution
           </mat-panel-title>
-          <mat-panel-description>
-            Plep
-          </mat-panel-description>
+          <mat-panel-description> </mat-panel-description>
         </mat-expansion-panel-header>
-        <div class="CampaignSubForm-inputs"></div>
+        <div class="CampaignSubForm-inputs ParametersForm-incentiveMode">
+          <div>
+            <mat-button-toggle-group formControlName="incentiveMode">
+              <mat-button-toggle value="per_trip" aria-label="per_trip">
+                Par trajet
+              </mat-button-toggle>
+              <mat-button-toggle value="per_distance" aria-label="per_distance">
+                Par distance
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+          <div *ngIf="controls.incentiveMode.value" class="ParametersForm-incentiveMode-value">
+            <mat-form-field appearance="outline">
+              <mat-label>Montant</mat-label>
+              <input matInput type="number" placeholder="0,1" required />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Unité</mat-label>
+              <mat-select required>
+                <mat-option [value]="0">€</mat-option>
+                <mat-option [value]="1">points</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ng-container [ngSwitch]="controls.incentiveMode.value">
+              <span *ngSwitchCase="'per_trip'">par trajet</span>
+              <span *ngSwitchCase="'per_distance'">par km</span>
+            </ng-container>
+          </div>
+        </div>
       </mat-expansion-panel>
     </mat-accordion>
   </form>
