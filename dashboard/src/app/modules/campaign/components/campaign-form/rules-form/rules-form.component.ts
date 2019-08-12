@@ -7,7 +7,7 @@ import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 @Component({
   selector: 'app-rules-form',
   templateUrl: './rules-form.component.html',
-  styleUrls: ['./rules-form.component.scss'],
+  styleUrls: ['./rules-form.component.scss', '../campaign-sub-form.scss'],
 })
 export class RulesFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
@@ -20,8 +20,12 @@ export class RulesFormComponent implements OnInit {
     this.initRulesForm();
   }
 
-  get rulesForm() {
-    return this.campaignForm.get('rules');
+  get rulesForm(): FormGroup {
+    return <FormGroup>this.campaignForm.get('rules');
+  }
+
+  get controls() {
+    return this.rulesForm.controls;
   }
 
   get timeCtrlArray(): FormArray {
@@ -118,10 +122,10 @@ export class RulesFormComponent implements OnInit {
 
   private initRulesForm() {
     this.campaignForm.controls.rules = this._formBuilder.group({
-      weekday: [],
+      weekday: [null, Validators.required],
       time: this._formBuilder.array([]),
       range: [[0, 50]],
-      ranks: [],
+      ranks: [null, Validators.required],
       onlyMajorPeople: [],
       forDriver: [],
       forPassenger: [],
