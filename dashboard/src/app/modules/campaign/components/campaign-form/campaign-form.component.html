@@ -24,7 +24,7 @@
       <ng-template matStepLabel>Éligibilité</ng-template>
       <div class="CampaignForm-content">
         <div class="CampaignForm-content-wrapper">
-          <app-rules-form></app-rules-form>
+          <app-rules-form [campaignForm]="campaignFormGroup"></app-rules-form>
           <app-help-card
             [svgIcon]="helpCard.svgIcon"
             [title]="helpCard.title"
