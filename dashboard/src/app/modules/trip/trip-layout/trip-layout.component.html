@@ -16,9 +16,25 @@
           {{ link.label }}
         </a>
       </nav>
+      <button
+        class="page-menu-filter-button"
+        mat-flat-button
+        color="primary"
+        [matBadge]="filterNumber"
+        matBadgeColor="accent"
+        (click)="toggleFilterDisplay()"
+      >
+        <mat-icon>filter_list_rounded</mat-icon>
+        Affiner les résultats
+      </button>
     </div>
   </div>
-  <div class="page-content">
+  <div class="page-content" [class.filter-triangle]="showFilter">
+    <app-filter
+      (filterNumber)="setFilterNumber($event)"
+      [showFilter]="showFilter"
+      (hideFilter)="toggleFilterDisplay()"
+    ></app-filter>
     <router-outlet></router-outlet>
   </div>
 </div>
