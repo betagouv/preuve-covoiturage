@@ -11,6 +11,6 @@ export class IncentiveRules {
 }
 
 export class IncentiveTimeRule {
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
 }

@@ -31,6 +31,29 @@
     padding: 16px 24px;
   }
 
+  &-date {
+    display: flex;
+
+    & > div {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-time {
+      display: flex;
+      align-items: center;
+
+      & > mat-icon {
+        cursor: pointer;
+        margin: 0 0 14px 20px;
+        font-size: 30px;
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
   &-target {
     display: flex;
     flex-direction: column;
