@@ -16,7 +16,7 @@ import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
   styleUrls: ['./range-time-picker.component.scss'],
 })
 export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
-  private timeRangeForm: FormGroup;
+  timeRangeForm: FormGroup;
 
   timeRange: IncentiveTimeRule = new IncentiveTimeRule();
 

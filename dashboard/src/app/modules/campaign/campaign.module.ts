@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NouisliderModule } from 'ng2-nouislider';
 
 import { CampaignRoutingModule } from '~/modules/campaign/campaign-routing.module';
 import { MaterialModule } from '~/shared/material/material.module';
@@ -39,6 +40,7 @@ import { SummaryFormComponent } from './components/campaign-form/summary-form/su
     StatUIModule,
     FormsModule,
     ReactiveFormsModule,
+    NouisliderModule,
   ],
 })
 export class CampaignModule {}

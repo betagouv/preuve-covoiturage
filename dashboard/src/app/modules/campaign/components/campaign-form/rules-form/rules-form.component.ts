@@ -80,6 +80,20 @@ export class RulesFormComponent implements OnInit {
     return label;
   }
 
+  showDistanceLabel(): string {
+    const range = this.rulesForm.get('range').value;
+    if (range && range.length < 2) {
+      return '';
+    }
+    if (range[1] > 99) {
+      return `A partir de ${range[0]}km`;
+    }
+    if (range[0] < 1) {
+      return `Jusqu'à ${range[1]}km`;
+    }
+    return `De ${range[0]}km à ${range[1]}km`;
+  }
+
   showTripClassLabel(): string {
     const tripClass = this.rulesForm.get('ranks').value;
     if (!tripClass) {
@@ -106,7 +120,7 @@ export class RulesFormComponent implements OnInit {
     this.campaignForm.controls.rules = this._formBuilder.group({
       weekday: [],
       time: this._formBuilder.array([]),
-      range: [],
+      range: [[0, 50]],
       ranks: [],
       onlyMajorPeople: [],
       forDriver: [],
