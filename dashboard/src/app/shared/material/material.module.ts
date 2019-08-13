@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import {
+  MatBadgeModule,
   MatButtonModule,
+  MatButtonToggleModule,
   MatCheckboxModule,
+  MatDatepickerModule,
   MatIconModule,
   MatInputModule,
   MatMenuModule,
@@ -13,18 +16,25 @@ import {
   MatSortModule,
   MatProgressBarModule,
   MatTooltipModule,
+  MatNativeDateModule,
+  MatAutocompleteModule,
+  MatChipsModule,
 } from '@angular/material';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [],
   imports: [
+    MatAutocompleteModule,
+    MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatChipsModule,
+    MatDatepickerModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
     MatMenuModule,
+    MatNativeDateModule,
     MatIconModule,
     MatTabsModule,
     MatStepperModule,
@@ -35,12 +45,17 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatTooltipModule,
   ],
   exports: [
+    MatAutocompleteModule,
+    MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatChipsModule,
+    MatDatepickerModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
     MatMenuModule,
+    MatNativeDateModule,
     MatIconModule,
     MatTabsModule,
     MatStepperModule,
@@ -50,5 +65,6 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatProgressBarModule,
     MatTooltipModule,
   ],
+  providers: [MatDatepickerModule],
 })
 export class MaterialModule {}
