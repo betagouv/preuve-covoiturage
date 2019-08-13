@@ -1,0 +1,111 @@
+<form [formGroup]="filterForm">
+  <div class="filter-wrapper" *ngIf="_showFilter">
+    <div class="filter-wrapper-close">
+      <button mat-mini-fab color="primary" type="button" (click)="onCloseClick()">
+        <mat-icon>close_rounded</mat-icon>
+      </button>
+    </div>
+    <div class="filter">
+      <div class="filter-content">
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Campagne</p>
+          </div>
+          <app-campaign-auto-complete [parentForm]="filterForm"></app-campaign-auto-complete>
+        </div>
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Dates & horaires</p>
+          </div>
+          <div class="filter-dates">
+            <mat-form-field appearance="outline">
+              <mat-label>Début</mat-label>
+              <input
+                matInput
+                formControlName="startDate"
+                [matDatepicker]="startDatePicker"
+                placeholder="Choisir une date"
+              />
+              <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Fin</mat-label>
+              <input
+                matInput
+                formControlName="endDate"
+                [matDatepicker]="endDatePicker"
+                placeholder="Choisir une date"
+              />
+              <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="filter-timeAndDays">
+            <mat-form-field class="start-time" appearance="outline">
+              <mat-label>De</mat-label>
+              <input matInput formControlName="startTime" type="time" />
+            </mat-form-field>
+            <mat-form-field class="end-time" appearance="outline">
+              <mat-label>A</mat-label>
+              <input matInput formControlName="endTime" type="time" />
+            </mat-form-field>
+            <mat-form-field class="days" appearance="outline">
+              <mat-label>Jours de la semaine</mat-label>
+              <mat-select formControlName="days" multiple>
+                <mat-option value="0">lundi</mat-option>
+                <mat-option value="1">mardi</mat-option>
+                <mat-option value="2">mercredi</mat-option>
+                <mat-option value="3">jeudi</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Géographie</p>
+          </div>
+          <div class="filter-distances">
+            <mat-form-field class="min-distance" appearance="outline">
+              <mat-label>Km min</mat-label>
+              <input matInput formControlName="minDistance" type="number" step="5" />
+            </mat-form-field>
+            <mat-form-field class="max-distance" appearance="outline">
+              <mat-label>Km max</mat-label>
+              <input matInput formControlName="maxDistance" type="number" step="5" />
+            </mat-form-field>
+          </div>
+          <div class="filter-geography">
+            <app-towns-autocomplete [parentForm]="filterForm"></app-towns-autocomplete>
+          </div>
+        </div>
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Types de trajets</p>
+          </div>
+          <mat-form-field class="class" appearance="outline">
+            <mat-label>Classe</mat-label>
+            <mat-select formControlName="classes" multiple>
+              <mat-option value="A">A</mat-option>
+              <mat-option value="B">B</mat-option>
+              <mat-option value="C">C</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="class" appearance="outline">
+            <mat-label>Statut</mat-label>
+            <mat-select formControlName="classes" multiple>
+              <mat-option value="pending">En cours</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-operators-autocomplete [parentForm]="filterForm"></app-operators-autocomplete>
+        </div>
+      </div>
+      <div class="filter-footer">
+        <button mat-flat-button color="primary" (click)="filterClick()">Affiner les résultats</button>
+        <button class="filter-footer-reinitialize" mat-button (click)="reinitializeClick()">
+          Réinitialiser les filtres
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
