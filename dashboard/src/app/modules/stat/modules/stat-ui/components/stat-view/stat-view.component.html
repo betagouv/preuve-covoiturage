@@ -1,5 +1,5 @@
 <div class="stats" *ngIf="statService._loaded$.value">
-  <div class="stats-graph">
+  <div class="stats-graph" id="graph">
     <app-stat-graph [graphName]="graphName"></app-stat-graph>
   </div>
   <div class="stats-numbers">
