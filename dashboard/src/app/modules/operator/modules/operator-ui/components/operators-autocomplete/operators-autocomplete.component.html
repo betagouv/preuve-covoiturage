@@ -1,0 +1,29 @@
+<mat-form-field [formGroup]="parentForm" class="operators" appearance="outline">
+  <mat-label>Opérateurs</mat-label>
+  <mat-chip-list #chipList>
+    <mat-chip
+      *ngFor="let operator of this.operatorForm.value"
+      [selectable]="true"
+      [removable]="true"
+      (removed)="remove(operator)"
+    >
+      {{ operator.name }}
+      <mat-icon matChipRemove>remove</mat-icon>
+    </mat-chip>
+    <input
+      matInput
+      placeholder="+ ajouter"
+      aria-label="Ajouter une ville"
+      #operatorInput
+      [formControl]="operatorCtrl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputAddOnBlur]="false"
+    />
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOperatorSelect($event)">
+    <mat-option *ngFor="let operator of filteredOperators" [value]="operator._id">
+      {{ operator.nom_commercial }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
