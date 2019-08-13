@@ -71,6 +71,7 @@ export class StatViewComponent implements OnInit {
    * scroll to top of div.AuthenticatedLayout-body
    */
   public scrollToTop(): void {
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
+    const offsetTop = document.getElementById('graph').offsetTop;
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = offsetTop;
   }
 }
