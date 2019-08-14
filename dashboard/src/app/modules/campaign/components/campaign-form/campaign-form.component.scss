@@ -23,6 +23,15 @@
       app-help-card {
         flex: 1;
       }
+
+      &--summary {
+        justify-content: space-between;
+      }
+
+      app-summary-form {
+        flex: 1;
+        max-width: 75%;
+      }
     }
 
     &-actions {

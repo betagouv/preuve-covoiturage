@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NouisliderModule } from 'ng2-nouislider';
 
@@ -42,5 +42,6 @@ import { SummaryFormComponent } from './components/campaign-form/summary-form/su
     ReactiveFormsModule,
     NouisliderModule,
   ],
+  providers: [CurrencyPipe],
 })
 export class CampaignModule {}

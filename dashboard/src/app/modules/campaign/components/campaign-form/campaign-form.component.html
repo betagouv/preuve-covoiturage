@@ -4,7 +4,7 @@
       <ng-template matStepLabel>Campagne</ng-template>
       <div class="CampaignForm-content">
         <div class="CampaignForm-content-wrapper">
-          <app-policy-form [control]="templateFormGroup.get('templateCtrl')"></app-policy-form>
+          <app-policy-form [control]="templateFormGroup.get('templateCtrl')" [matStepper]="stepper"></app-policy-form>
           <app-help-card
             [svgIcon]="helpCard.svgIcon"
             [title]="helpCard.title"
@@ -14,7 +14,14 @@
           </app-help-card>
         </div>
         <div class="CampaignForm-content-actions">
-          <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!templateFormGroup.valid">
+          <button
+            mat-flat-button
+            class="large"
+            color="primary"
+            matStepperNext
+            (click)="setCampaignTemplate()"
+            [disabled]="!templateFormGroup.valid"
+          >
             Étape suivante
           </button>
         </div>
@@ -61,8 +68,8 @@
     <mat-step>
       <ng-template matStepLabel>Récapitulatif</ng-template>
       <div class="CampaignForm-content">
-        <div class="CampaignForm-content-wrapper">
-          <app-summary-form></app-summary-form>
+        <div class="CampaignForm-content-wrapper CampaignForm-content-wrapper--summary">
+          <app-summary-form [campaignForm]="campaignFormGroup"></app-summary-form>
         </div>
         <div class="CampaignForm-content-actions">
           <button mat-flat-button class="large" matStepperPrevious>Étape Précédente</button>

@@ -120,6 +120,10 @@ export class RulesFormComponent implements OnInit {
     return label;
   }
 
+  isTimeCtrlArrayTouched() {
+    return false;
+  }
+
   private initRulesForm() {
     this.campaignForm.controls.rules = this._formBuilder.group({
       weekday: [null, Validators.required],

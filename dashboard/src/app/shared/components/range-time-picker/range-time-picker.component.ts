@@ -1,4 +1,4 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
@@ -18,14 +18,14 @@ import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
   timeRangeForm: FormGroup;
 
-  timeRange: IncentiveTimeRule = new IncentiveTimeRule();
+  @Input() timeRange: IncentiveTimeRule = new IncentiveTimeRule();
 
   constructor(private _formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.timeRangeForm = this._formBuilder.group({
-      start: [null, Validators.required],
-      end: [null, Validators.required],
+      start: [this.timeRange ? this.timeRange.start : null, Validators.required],
+      end: [this.timeRange ? this.timeRange.end : null, Validators.required],
     });
 
     this.timeRangeForm.valueChanges.subscribe((value: IncentiveTimeRule) => {
