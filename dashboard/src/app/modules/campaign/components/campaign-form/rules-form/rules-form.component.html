@@ -6,7 +6,7 @@
         [expanded]="true"
         [ngClass]="{
           'mat-expansion-panel-error':
-            (controls.weekday.touched && !controls.weekday.valid) || (timeCtrlArray.touched && !timeCtrlArray.valid)
+            (controls.weekday.touched && !controls.weekday.valid) || (!timeCtrlArray.valid && isTimeCtrlArrayTouched())
         }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
@@ -35,7 +35,7 @@
           </mat-form-field>
           <div>
             <div *ngFor="let timeCtrl of timeCtrlArray.controls; let idx = index" class="RulesForm-date-time">
-              <app-range-time-picker [formControl]="timeCtrl"></app-range-time-picker>
+              <app-range-time-picker [formControl]="timeCtrl" [timeRange]="timeCtrl.value"></app-range-time-picker>
               <mat-icon color="error" (click)="removeTimeFilter(idx)">delete_outline</mat-icon>
             </div>
             <button mat-stroked-button color="primary" (click)="addTimeFilter()" [disabled]="!timeCtrlArray.valid">

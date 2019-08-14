@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { Campaign } from '~/core/entities/campaign/campaign';
 
 @Component({
   selector: 'app-campaign-form',
@@ -22,6 +24,27 @@ export class CampaignFormComponent implements OnInit {
     this.initForms();
   }
 
+  setCampaignTemplate() {
+    const template: Campaign = this.templateFormGroup.get('templateCtrl').value;
+    if (!template) {
+      return;
+    }
+    this.campaignFormGroup.get('name').setValue(template.name);
+    const rulesForm = this.campaignFormGroup.get('rules');
+    rulesForm.get('weekday').setValue(template.rules.weekday);
+    if (template.rules.range) {
+      rulesForm.get('range').setValue([template.rules.range.min, template.rules.range.max]);
+    }
+    rulesForm.get('ranks').setValue(template.rules.ranks);
+    rulesForm.get('onlyMajorPeople').setValue(template.rules.onlyMajorPeople);
+    rulesForm.get('forDriver').setValue(template.rules.forDriver);
+    rulesForm.get('forPassenger').setValue(template.rules.forPassenger);
+    template.rules.time.forEach((time) => {
+      const timeFormArray = <FormArray>rulesForm.get('time');
+      timeFormArray.push(this._formBuilder.control(time, Validators.required));
+    });
+  }
+
   private initForms() {
     this.templateFormGroup = this._formBuilder.group({
       templateCtrl: [null, Validators.required],
@@ -33,7 +56,10 @@ export class CampaignFormComponent implements OnInit {
       end: [null, Validators.required],
       max_amount: [null, [Validators.required, Validators.min(1)]],
       max_trips: [null, [Validators.required, Validators.min(1)]],
+      name: [null, Validators.required],
+      description: [null],
       incentiveMode: [],
+      saveAsTemplate: [],
     });
   }
 }

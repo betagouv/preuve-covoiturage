@@ -72,7 +72,7 @@
               Le nombre de trajets maximum est obligatoire.
             </mat-error>
             <mat-error *ngIf="controls.max_trips.hasError('min')">
-              Le ombre de trajets maximum doit être supérieur à 0.
+              Le nombre de trajets maximum doit être supérieur à 0.
             </mat-error>
           </mat-form-field>
         </div>
@@ -99,6 +99,9 @@
             <mat-form-field appearance="outline">
               <mat-label>Montant</mat-label>
               <input matInput type="number" placeholder="0,1" required />
+              <mat-error *ngIf="true">
+                Le montant du mode de rétribution doit être supérieur à 0.
+              </mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Unité</mat-label>
