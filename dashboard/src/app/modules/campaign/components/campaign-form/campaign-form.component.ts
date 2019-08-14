@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { ToastrService } from 'ngx-toastr';
+import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 
 @Component({
   selector: 'app-campaign-form',
@@ -18,7 +21,11 @@ export class CampaignFormComponent implements OnInit {
   templateFormGroup: FormGroup;
   campaignFormGroup: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor(
+    private _formBuilder: FormBuilder,
+    private campaignService: CampaignService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit() {
     this.initForms();
@@ -43,6 +50,22 @@ export class CampaignFormComponent implements OnInit {
       const timeFormArray = <FormArray>rulesForm.get('time');
       timeFormArray.push(this._formBuilder.control(time, Validators.required));
     });
+  }
+
+  saveCampaign(isDraft) {
+    const campaignToSave: Campaign = new Campaign(this.campaignFormGroup.getRawValue());
+    if (!isDraft && campaignToSave.status === CampaignStatus.DRAFT) {
+      campaignToSave.status = CampaignStatus.VALIDATED;
+    }
+    this.campaignService.create(this.campaignFormGroup.getRawValue()).subscribe(
+      (campaignSaved: Campaign) => {
+        this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistrée`);
+      },
+      (error) => {
+        console.error(error);
+        this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
+      },
+    );
   }
 
   private initForms() {
