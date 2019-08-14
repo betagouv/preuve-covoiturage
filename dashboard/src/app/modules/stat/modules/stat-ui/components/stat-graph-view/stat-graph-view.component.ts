@@ -17,15 +17,20 @@ export class StatGraphViewComponent implements OnInit {
   constructor(public statService: StatService) {}
 
   ngOnInit() {
-    if (!this.statService._loaded$.value) {
-      this.statService.load().subscribe(
-        () => {},
-        (err) => {
-          // TODO TMP DELETE WHEN BACK IS LINKED
-          const stat = new Stat(mockStats);
-          this.statService.formatData(stat);
-        },
-      );
+    this.loadStat();
+  }
+
+  private loadStat(): void {
+    if (this.statService.loading) {
+      return;
     }
+    this.statService.load().subscribe(
+      () => {},
+      (err) => {
+        // TODO TMP DELETE WHEN BACK IS LINKED
+        const stat = new Stat(mockStats);
+        this.statService.formatData(stat);
+      },
+    );
   }
 }

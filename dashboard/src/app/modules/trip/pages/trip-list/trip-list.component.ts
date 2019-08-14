@@ -9,6 +9,8 @@ import { Trip } from '~/core/entities/trip/trip';
 import { TripClass } from '~/core/entities/trip/trip-class';
 import { TripStatus } from '~/core/entities/trip/trip-status';
 import { TripInterface } from '~/core/interfaces/tripInterface';
+import { FilterService } from '~/core/services/filter.service';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 @Component({
   selector: 'app-trip-list',
@@ -19,10 +21,17 @@ export class TripListComponent implements OnInit {
   isExporting: boolean;
   trips: Trip[] = [];
 
-  constructor(public tripService: TripService, private toastr: ToastrService, private cd: ChangeDetectorRef) {}
+  constructor(
+    public filterService: FilterService,
+    public tripService: TripService,
+    private toastr: ToastrService,
+    private cd: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
-    this.loadTrips();
+    this.filterService._filter$.subscribe((filter: FilterInterface) => {
+      this.loadTrips(filter);
+    });
   }
 
   onScroll() {
@@ -42,11 +51,11 @@ export class TripListComponent implements OnInit {
     );
   }
 
-  private loadTrips(): void {
+  private loadTrips(filter: FilterInterface = {}): void {
     if (this.tripService.loading) {
       return;
     }
-    this.tripService.load().subscribe(
+    this.tripService.load(filter).subscribe(
       (trips) => {
         this.trips = trips;
       },

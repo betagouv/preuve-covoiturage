@@ -38,9 +38,9 @@ export class ApiService<T extends IModel> {
   }
 
   // ==== CRUD ======
-  public load(): Observable<T[]> {
+  public load(parameters: object = {}): Observable<T[]> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.list`);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}.list`, parameters);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((data) => {
         this._entities$.next(data);
