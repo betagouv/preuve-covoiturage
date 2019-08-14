@@ -17,18 +17,24 @@ import { co2Factor, petrolFactor } from '../config/stat';
   providedIn: 'root',
 })
 export class StatService {
-  _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
-  _loaded$ = new BehaviorSubject<boolean>(false);
+  public _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
+  protected _loaded$ = new BehaviorSubject<boolean>(false);
+  protected _loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {}
 
-  public load(filter: FilterInterface): Observable<Stat[]> {
+  public load(filter: FilterInterface = {}): Observable<Stat[]> {
+    this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`stat.list`, filter);
     return this._jsonRPC.call(jsonRPCParam).pipe(
       tap((data) => {
         this.formatData(data);
       }),
     );
+  }
+
+  get loading(): boolean {
+    return this._loading$.value;
   }
 
   get stat(): FormatedStatInterface {
@@ -188,6 +194,7 @@ export class StatService {
 
     this._formatedStat$.next(formatedStat);
     this._loaded$.next(true);
+    this._loading$.next(false);
   }
 
   private reduceCumulativeData(p, c, i): any[] {

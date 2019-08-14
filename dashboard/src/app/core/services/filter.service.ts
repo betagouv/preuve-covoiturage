@@ -12,6 +12,9 @@ export class FilterService {
 
   constructor() {}
 
+  /**
+   * Change filter format from form compatible to object for JsonApi
+   */
   public formatDataForApi(data: FilterViewInterface): FilterInterface {
     const filter: FilterInterface = {};
     if (data.campaign) {

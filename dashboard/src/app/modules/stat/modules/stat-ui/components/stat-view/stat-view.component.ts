@@ -27,8 +27,9 @@ export class StatViewComponent implements OnInit {
     operators: true,
   };
 
-  constructor(public statService: StatService, public filterService: FilterService) {}
   @Input() statViewConfig: { names: statDataNameType[]; defaultGraphName: statDataNameType };
+
+  constructor(public statService: StatService, public filterService: FilterService) {}
 
   ngOnInit() {
     this.resetSelected();
@@ -40,6 +41,9 @@ export class StatViewComponent implements OnInit {
   }
 
   private loadStat(filter: FilterInterface = {}): void {
+    if (this.statService.loading) {
+      return;
+    }
     this.statService.load(filter).subscribe(
       () => {},
       (err) => {
