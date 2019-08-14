@@ -29,7 +29,7 @@ export class TripLayoutComponent implements OnInit {
   ngOnInit() {}
 
   public setFilterNumber(filterNumber: number) {
-    this.filterNumber = filterNumber.toString();
+    this.filterNumber = filterNumber === 0 ? '' : filterNumber.toString();
   }
 
   public toggleFilterDisplay(): void {

@@ -1,9 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { Form, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatAutocompleteSelectedEvent, MatChipInputEvent } from '@angular/material';
-import { tap } from 'rxjs/operators';
-import * as _ from 'lodash';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+import { FilterService } from '~/core/services/filter.service';
 
 @Component({
   selector: 'app-filter',
@@ -20,11 +18,10 @@ export class FilterComponent implements OnInit {
 
   @Output() filterNumber = new EventEmitter();
   @Output() hideFilter = new EventEmitter();
-  @Output() filter = new EventEmitter();
 
   @ViewChild('townInput', { static: false }) townInput: ElementRef;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private filterService: FilterService) {}
 
   ngOnInit() {
     this.filterForm = this.fb.group({
@@ -43,15 +40,22 @@ export class FilterComponent implements OnInit {
     });
   }
 
-  public onCloseClick() {
+  public onCloseClick(): void {
     this.hideFilter.emit();
   }
 
-  public filterClick() {
-    console.log(this.filterForm.value);
+  public filterClick(): void {
+    this.filterService.setFilter(this.filterForm.value);
+    this.filterNumber.emit(this.countFilters);
+    this.hideFilter.emit();
   }
 
-  public reinitializeClick() {
+  public reinitializeClick(): void {
     this.filterForm.reset();
+    this.filterNumber.emit(0);
+  }
+
+  public get countFilters(): number {
+    return Object.values(this.filterForm.value).filter((val) => !!val).length;
   }
 }

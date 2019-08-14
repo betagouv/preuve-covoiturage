@@ -1,9 +1,6 @@
 <mat-form-field [formGroup]="parentForm" class="campaign" appearance="outline">
   <mat-label>Campagne</mat-label>
   <mat-select formControlName="campaign">
-    <mat-option value="21313435">Campagne n°1</mat-option>
-    <mat-option value="546465">Campagne n°2</mat-option>
-    <mat-option value="Campagne3">Campagne n°3</mat-option>
-    <mat-option value="Campagne4">Campagne n°4</mat-option>
+    <mat-option *ngFor="let campaign of campaigns" value="{{ campaign._id }}">{{ campaign.name }}</mat-option>
   </mat-select>
 </mat-form-field>
