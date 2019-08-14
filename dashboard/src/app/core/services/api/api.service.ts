@@ -11,10 +11,7 @@ export class ApiService<T extends IModel> {
   protected _loading$ = new BehaviorSubject<boolean>(false);
   protected _loaded$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _httpClient: HttpClient,
-              private _jsonRPCService: JsonRPCService,
-              protected _method: string) {
-  }
+  constructor(private _httpClient: HttpClient, private _jsonRPCService: JsonRPCService, protected _method: string) {}
 
   // ===== Get ======
   get entities$(): Observable<T[]> {
@@ -55,6 +52,16 @@ export class ApiService<T extends IModel> {
     );
   }
 
+  public get(itemId: T): Observable<T> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}.get`, itemId);
+    this._loading$.next(true);
+    return this._jsonRPCService.call(jsonRPCParam).pipe(
+      finalize(() => {
+        this._loading$.next(false);
+      }),
+    );
+  }
+
   public create(item: T): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.create`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
@@ -63,7 +70,8 @@ export class ApiService<T extends IModel> {
         auxArray.push(entity);
         this._entities$.next(auxArray);
         console.log(`created ${this._method} id=${entity._id}`);
-      }));
+      }),
+    );
   }
 
   public patch(item: T): Observable<T> {
@@ -73,7 +81,8 @@ export class ApiService<T extends IModel> {
       tap((entity) => {
         console.log(`updated ${this._method} id=${entity.id}`);
         this.updateEntityArray(entity);
-      }));
+      }),
+    );
   }
 
   public delete(item: T): Observable<T> {
@@ -89,6 +98,7 @@ export class ApiService<T extends IModel> {
         }
         this._entities$.next(auxArray);
         console.log(`deleted ${this._method} id=${item._id}`);
-      }));
+      }),
+    );
   }
 }

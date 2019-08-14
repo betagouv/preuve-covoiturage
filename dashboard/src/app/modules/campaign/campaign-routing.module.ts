@@ -14,11 +14,14 @@ const routes: Routes = [
     path: 'create',
     component: CampaignCreateEditComponent,
   },
+  {
+    path: ':campaignId',
+    component: CampaignCreateEditComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class CampaignRoutingModule {
-}
+export class CampaignRoutingModule {}

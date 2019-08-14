@@ -5,6 +5,8 @@ import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { ToastrService } from 'ngx-toastr';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+import { ActivatedRoute, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-campaign-form',
@@ -20,15 +22,21 @@ export class CampaignFormComponent implements OnInit {
   };
   templateFormGroup: FormGroup;
   campaignFormGroup: FormGroup;
+  loading = false;
 
   constructor(
     private _formBuilder: FormBuilder,
     private campaignService: CampaignService,
     private toastr: ToastrService,
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
     this.initForms();
+    this.route.params.pipe(filter((p) => p.campaignId)).subscribe((params) => {
+      this.loadCampaign(params.campaignId);
+    });
   }
 
   setCampaignTemplate() {
@@ -36,32 +44,23 @@ export class CampaignFormComponent implements OnInit {
     if (!template) {
       return;
     }
-    this.campaignFormGroup.get('name').setValue(template.name);
-    const rulesForm = this.campaignFormGroup.get('rules');
-    rulesForm.get('weekday').setValue(template.rules.weekday);
-    if (template.rules.range) {
-      rulesForm.get('range').setValue([template.rules.range.min, template.rules.range.max]);
-    }
-    rulesForm.get('ranks').setValue(template.rules.ranks);
-    rulesForm.get('onlyMajorPeople').setValue(template.rules.onlyMajorPeople);
-    rulesForm.get('forDriver').setValue(template.rules.forDriver);
-    rulesForm.get('forPassenger').setValue(template.rules.forPassenger);
-    template.rules.time.forEach((time) => {
-      const timeFormArray = <FormArray>rulesForm.get('time');
-      timeFormArray.push(this._formBuilder.control(time, Validators.required));
-    });
+    this.setCampaignToForm(template, true);
   }
 
   saveCampaign(isDraft) {
+    this.loading = true;
     const campaignToSave: Campaign = new Campaign(this.campaignFormGroup.getRawValue());
     if (!isDraft && campaignToSave.status === CampaignStatus.DRAFT) {
       campaignToSave.status = CampaignStatus.VALIDATED;
     }
     this.campaignService.create(this.campaignFormGroup.getRawValue()).subscribe(
       (campaignSaved: Campaign) => {
+        this.loading = false;
         this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistrée`);
+        this.router.navigate(['/campaign']);
       },
       (error) => {
+        this.loading = false;
         console.error(error);
         this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
       },
@@ -74,6 +73,8 @@ export class CampaignFormComponent implements OnInit {
     });
 
     this.campaignFormGroup = this._formBuilder.group({
+      _id: [],
+      status: [],
       rules: [],
       start: [null, Validators.required],
       end: [null, Validators.required],
@@ -83,6 +84,34 @@ export class CampaignFormComponent implements OnInit {
       description: [null],
       incentiveMode: [],
       saveAsTemplate: [],
+    });
+  }
+
+  private setCampaignToForm(campaign, isTemplate = false) {
+    if (!isTemplate) {
+      this.campaignFormGroup.get('_id').setValue(campaign._id);
+      this.campaignFormGroup.get('description').setValue(campaign.description);
+      this.campaignFormGroup.get('status').setValue(campaign.status);
+    }
+    this.campaignFormGroup.get('name').setValue(campaign.name);
+    const rulesForm = this.campaignFormGroup.get('rules');
+    rulesForm.get('weekday').setValue(campaign.rules.weekday);
+    if (campaign.rules.range) {
+      rulesForm.get('range').setValue([campaign.rules.range.min, campaign.rules.range.max]);
+    }
+    rulesForm.get('ranks').setValue(campaign.rules.ranks);
+    rulesForm.get('onlyMajorPeople').setValue(campaign.rules.onlyMajorPeople);
+    rulesForm.get('forDriver').setValue(campaign.rules.forDriver);
+    rulesForm.get('forPassenger').setValue(campaign.rules.forPassenger);
+    campaign.rules.time.forEach((time) => {
+      const timeFormArray = <FormArray>rulesForm.get('time');
+      timeFormArray.push(this._formBuilder.control(time, Validators.required));
+    });
+  }
+
+  private loadCampaign(campaignId) {
+    this.campaignService.get(campaignId).subscribe((campaign: Campaign) => {
+      this.setCampaignToForm(campaign);
     });
   }
 }

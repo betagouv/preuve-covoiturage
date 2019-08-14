@@ -37,8 +37,12 @@
       </mat-error>
     </mat-form-field>
     <div class="SummaryForm-actions">
-      <button mat-flat-button class="large" color="primary" (click)="saveCampaign()">Lancer la campagne</button>
-      <button mat-button class="large" (click)="saveCampaign(true)">Enregistrer en brouillon</button>
+      <button [appShowSpinner]="loading" mat-flat-button class="large" color="primary" (click)="saveCampaign()">
+        Lancer la campagne
+      </button>
+      <button [appShowSpinner]="loading" mat-button class="large" (click)="saveCampaign(true)">
+        Enregistrer en brouillon
+      </button>
     </div>
   </form>
   <div class="SummaryForm-simulation">
