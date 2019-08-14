@@ -71,6 +71,7 @@
         <div class="CampaignForm-content-wrapper CampaignForm-content-wrapper--summary">
           <app-summary-form
             [campaignForm]="campaignFormGroup"
+            [loading]="loading"
             (onSaveCampaign)="saveCampaign($event)"
           ></app-summary-form>
         </div>

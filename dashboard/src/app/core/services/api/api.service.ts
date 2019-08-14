@@ -52,6 +52,16 @@ export class ApiService<T extends IModel> {
     );
   }
 
+  public get(itemId: T): Observable<T> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}.get`, itemId);
+    this._loading$.next(true);
+    return this._jsonRPCService.call(jsonRPCParam).pipe(
+      finalize(() => {
+        this._loading$.next(false);
+      }),
+    );
+  }
+
   public create(item: T): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.create`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
