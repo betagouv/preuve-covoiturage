@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 
@@ -12,6 +12,7 @@ import { Campaign } from '~/core/entities/campaign/campaign';
 })
 export class SummaryFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
+  @Output() onSaveCampaign: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(private currencyPipe: CurrencyPipe, public utils: UtilsService) {}
 
@@ -44,6 +45,6 @@ export class SummaryFormComponent implements OnInit {
   }
 
   saveCampaign(isDraft: boolean = false) {
-    console.log('Poulet');
+    this.onSaveCampaign.emit(isDraft);
   }
 }

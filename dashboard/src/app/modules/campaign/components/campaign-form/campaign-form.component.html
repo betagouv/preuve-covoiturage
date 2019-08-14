@@ -69,7 +69,10 @@
       <ng-template matStepLabel>Récapitulatif</ng-template>
       <div class="CampaignForm-content">
         <div class="CampaignForm-content-wrapper CampaignForm-content-wrapper--summary">
-          <app-summary-form [campaignForm]="campaignFormGroup"></app-summary-form>
+          <app-summary-form
+            [campaignForm]="campaignFormGroup"
+            (onSaveCampaign)="saveCampaign($event)"
+          ></app-summary-form>
         </div>
         <div class="CampaignForm-content-actions">
           <button mat-flat-button class="large" matStepperPrevious>Étape Précédente</button>

@@ -25,7 +25,7 @@ export class Campaign {
     this.territory = obj.territory;
     this.start = obj.start;
     this.end = obj.end;
-    this.status = obj.status;
+    this.status = obj.status || CampaignStatus.DRAFT;
     this.max_trips = obj.max_trips;
     this.max_amount = obj.max_amount;
     this.trips_number = obj.trips_number;
