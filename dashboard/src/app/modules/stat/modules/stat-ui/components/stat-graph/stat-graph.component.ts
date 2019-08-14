@@ -52,7 +52,6 @@ export class StatGraphComponent implements OnInit {
       co2: this.loadGraph('co2'),
       carpoolersPerVehicule: this.loadGraph('carpoolersPerVehicule'),
     };
-    console.log(data);
     this.graphTitle = data.trips.monthly.graphTitle;
     this.data = data;
   }
