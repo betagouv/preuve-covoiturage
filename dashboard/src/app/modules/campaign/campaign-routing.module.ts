@@ -14,6 +14,10 @@ const routes: Routes = [
     path: 'create',
     component: CampaignCreateEditComponent,
   },
+  {
+    path: ':campaignId',
+    component: CampaignCreateEditComponent,
+  },
 ];
 
 @NgModule({

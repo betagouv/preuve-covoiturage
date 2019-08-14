@@ -12,6 +12,7 @@ import { Campaign } from '~/core/entities/campaign/campaign';
 })
 export class SummaryFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
+  @Input() loading: boolean;
   @Output() onSaveCampaign: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(private currencyPipe: CurrencyPipe, public utils: UtilsService) {}
