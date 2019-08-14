@@ -22,19 +22,24 @@ export class SummaryFormComponent implements OnInit {
   }
 
   getSummaryText(): string {
-    const campaign: Campaign = this.campaignForm.value;
-    let summaryText = `Campagne d’incitation au covoiturage du <b>${campaign.start} au
-    ${campaign.end}</b>, limitée à
-    <b>${this.currencyPipe.transform(campaign.max_amount, 'EUR', 'symbol', '1.0-0')}</b>.`;
-    summaryText += '<br/><br/>';
-    summaryText += `Sont rémunérés les <b>${
+    const campaign: Campaign = this.campaignForm.getRawValue();
+    let summaryText = `Campagne d’incitation au covoiturage du <b>${campaign.start} au`;
+    summaryText += ` ${campaign.end}</b>, limitée à`;
+    summaryText += ` <b>${this.currencyPipe.transform(campaign.max_amount, 'EUR', 'symbol', '1.0-0')}</b>.`;
+    summaryText += '<br/><br/>\r\n\r\n';
+    summaryText += `Sont rémunérés les <b>`;
+    summaryText += ` ${
       campaign.rules.forDriver && campaign.rules.forPassenger
         ? 'conducteurs et passagers'
         : campaign.rules.forDriver
         ? 'conducteurs'
         : 'passagers'
-    }
-      ${campaign.rules.onlyMajorPeople ? 'majeurs' : ''}</b> à raison de`;
+    }`;
+    summaryText += ` ${campaign.rules.onlyMajorPeople ? 'majeurs' : ''}</b>`;
+    summaryText += ` à raison de <b>0,1€ par km et par passager</b>.`;
+    summaryText += '<br/><br/>\r\n\r\n';
+    summaryText += `L’opération est limitée aux opérateurs proposant des registres de preuve`;
+    summaryText += ` <b>${campaign.rules.ranks ? campaign.rules.ranks.join(' ou ') : ''}</b>.`;
     return summaryText;
   }
 
