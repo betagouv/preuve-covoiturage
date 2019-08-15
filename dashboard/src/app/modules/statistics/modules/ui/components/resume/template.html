@@ -1,9 +1,0 @@
-<div class="p-grid p-justify-center" *ngIf="data">
-    <div class="p-col-12 p-sm-6 p-xl-6" *ngFor="let resumeData of data">
-        <p-card [style]="{ 'padding': '1em 2em 0', 'min-height': '120px'}" class="resumeCard has-text-centered">
-            <img *ngIf="resumeData.img" src="assets/icons/{{resumeData.img}}" alt="">
-            <p class="title">{{resumeData.title}}</p>
-            <app-stat-number [unit]="resumeData.unit" [number]="resumeData.lastValue"></app-stat-number>
-        </p-card>
-    </div>
-</div>
