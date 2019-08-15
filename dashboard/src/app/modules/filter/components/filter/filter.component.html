@@ -1,5 +1,5 @@
-<form [formGroup]="filterForm">
-  <div class="filter-wrapper" *ngIf="_showFilter">
+<form [formGroup]="filterForm" [@collapse]="_showFilter ? 'open' : 'closed'">
+  <div class="filter-wrapper">
     <div class="filter-wrapper-close">
       <button mat-mini-fab color="primary" type="button" (click)="onCloseClick()">
         <mat-icon>close_rounded</mat-icon>
@@ -53,10 +53,7 @@
             <mat-form-field class="days" appearance="outline">
               <mat-label>Jours de la semaine</mat-label>
               <mat-select formControlName="days" multiple>
-                <mat-option value="0">lundi</mat-option>
-                <mat-option value="1">mardi</mat-option>
-                <mat-option value="2">mercredi</mat-option>
-                <mat-option value="3">jeudi</mat-option>
+                <mat-option *ngFor="let day of days" value="{{ day.id }}">{{ day.french }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -68,11 +65,11 @@
           <div class="filter-distances">
             <mat-form-field class="min-distance" appearance="outline">
               <mat-label>Km min</mat-label>
-              <input matInput formControlName="minDistance" type="number" step="5" />
+              <input matInput formControlName="minDistance" type="number" step="1" min="0" />
             </mat-form-field>
             <mat-form-field class="max-distance" appearance="outline">
               <mat-label>Km max</mat-label>
-              <input matInput formControlName="maxDistance" type="number" step="5" />
+              <input matInput formControlName="maxDistance" type="number" step="1" min="0" />
             </mat-form-field>
           </div>
           <div class="filter-geography">
@@ -86,23 +83,21 @@
           <mat-form-field class="class" appearance="outline">
             <mat-label>Classe</mat-label>
             <mat-select formControlName="classes" multiple>
-              <mat-option value="A">A</mat-option>
-              <mat-option value="B">B</mat-option>
-              <mat-option value="C">C</mat-option>
+              <mat-option *ngFor="let name of classes" value="{{ name }}">{{ name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field class="class" appearance="outline">
             <mat-label>Statut</mat-label>
-            <mat-select formControlName="classes" multiple>
-              <mat-option value="pending">En cours</mat-option>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let status of tripStatusList" value="{{ status.id }}">{{ status.french }}</mat-option>
             </mat-select>
           </mat-form-field>
           <app-operators-autocomplete [parentForm]="filterForm"></app-operators-autocomplete>
         </div>
       </div>
       <div class="filter-footer">
-        <button mat-flat-button color="primary" (click)="filterClick()">Affiner les résultats</button>
-        <button class="filter-footer-reinitialize" mat-button (click)="reinitializeClick()">
+        <button mat-flat-button type="button" color="primary" (click)="filterClick()">Affiner les résultats</button>
+        <button mat-button class="filter-footer-reinitialize" type="button" (click)="reinitializeClick()">
           Réinitialiser les filtres
         </button>
       </div>
