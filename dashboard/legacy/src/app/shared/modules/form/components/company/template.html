@@ -1,0 +1,71 @@
+<p-fieldset legend="Entreprise" [toggleable]="true" [formGroup]="parentForm">
+  <div class="p-grid ui-fluid">
+    <div class="p-col-12 p-md-2">
+      <label>Siren</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <p-inputMask formControlName="siren" mask="999-999-999" [unmask]="true"></p-inputMask>
+      <p-message
+        severity="error"
+        [text]="parentForm.controls['siren'].errors['required'] ? 'Le numéro siren est obligatoire.' : parentForm.controls['siren'].errors['pattern'] ? 'Le numéro de siren est invalide.' : ''"
+        *ngIf="!parentForm.controls['siren'].valid&&parentForm.controls['siren'].dirty">
+      </p-message>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Naf établissement</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <p-inputMask formControlName="naf_etablissement" mask="99.99a" [unmask]="true"></p-inputMask>
+      <p-message
+        severity="error"
+        [text]="parentForm.controls['naf_etablissement'].errors['pattern'] ? 'Le code NAF est invalide.' : ''"
+        *ngIf="!parentForm.controls['naf_etablissement'].valid&&parentForm.controls['naf_etablissement'].dirty">
+      </p-message>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Naf entreprise</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <p-inputMask formControlName="naf_entreprise" mask="99.99a" [unmask]="true"></p-inputMask>
+      <p-message
+        severity="error"
+        [text]="parentForm.controls['naf_entreprise'].errors['pattern'] ? 'Le code NAF est invalide.' : ''"
+        *ngIf="!parentForm.controls['naf_entreprise'].valid&&parentForm.controls['naf_entreprise'].dirty">
+      </p-message>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Nature juridique</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <input type="text" pInputText formControlName="nature_juridique">
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>Clé nic</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <p-inputMask formControlName="cle_nic" mask="99999" [unmask]="true"></p-inputMask>
+      <p-message
+        severity="error"
+        [text]="parentForm.controls['cle_nic'].errors['pattern'] ? 'La clé NIC est invalide.' : ''"
+        *ngIf="!parentForm.controls['cle_nic'].valid&&parentForm.controls['cle_nic'].dirty">
+      </p-message>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>RNA</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <p-inputMask formControlName="rna" mask="a-999-999-999" [unmask]="true"></p-inputMask>
+    </div>
+    <div class="p-col-12 p-md-2">
+      <label>N° TVA intracommunautaire</label>
+    </div>
+    <div class="p-col-12 p-md-4">
+      <input type="text" pInputText formControlName="vat_intra">
+      <p-message
+        severity="error"
+        [text]="parentForm.controls['vat_intra'].errors['pattern'] ? 'Le numéro de TVA intracommunautaire est invalide.' : ''"
+        *ngIf="!parentForm.controls['vat_intra'].valid&&parentForm.controls['vat_intra'].dirty">
+      </p-message>
+    </div>
+  </div>
+</p-fieldset>

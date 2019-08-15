@@ -1,0 +1,32 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="newPassordForm">
+      <br><br>
+      <div class="p-grid has-text-centered">
+            <div class="p-col-12">
+                        <label>Mot de passe actuel</label>
+            </div>
+            <div class="p-col-12">
+                  <input type="password"  pInputText formControlName="password">
+                  <p-message
+                      severity="error"
+                      [text]="newPassordForm.controls['password'].errors['required'] ? 'Entrez votre ancien mot de passe.' : ''"
+                      *ngIf="!newPassordForm.controls['password'].valid&&newPassordForm.submitted">
+                  </p-message>
+            </div>
+            <div class="p-col-12">
+                  <label>Nouveau mot de passe</label>
+            </div>
+            <div class="p-col-12">
+                  <input type="password" pPassword formControlName="newPassword">
+                  <p-message
+                      severity="error"
+                      [text]="newPassordForm.controls['newPassword'].errors['required'] ? 'Entrez un nouveau mot de passe d\' au moins 6 caractères' : ''"
+                      *ngIf="!newPassordForm.controls['newPassword'].valid&&newPassordForm.submitted">
+                  </p-message>
+            </div>
+            <div class="p-col-12 has-text-centered">
+                  <p-button label="Enregistrer"></p-button>
+            </div>
+      </div>
+      <br><br>
+
+</form>

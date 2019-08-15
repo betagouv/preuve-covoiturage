@@ -1,0 +1,53 @@
+<div class="p-grid p-justify-end">
+  <div class="p-col-12">
+    <h4>
+      Description de la campagne
+    </h4>
+    <hr>
+  </div>
+  <div class="p-col-11-5">
+    <p><b>{{ campaign.description }}</b></p>
+  </div>
+</div>
+
+
+
+
+<div class="p-grid p-justify-end">
+  <div class="p-col-12">
+    <h4>
+      Politiques incitatives
+    </h4>
+    <hr>
+  </div>
+  <div class="p-col-12" *ngFor="let policy of campaign.policies">
+    <div class="p-grid policyContainer">
+      <div class="p-col-12 has-text-centered">
+        <label> {{policy.policy.name}} ( <b> {{policy.policy.unit.name}}  </b> )</label>
+      </div>
+      <div class="p-col-6 has-text-centered">
+        <h5>
+          Formule d'incitation
+        </h5>
+        <br>
+        <p>
+          <b>{{policy.policy.formula}}</b>
+        </p>
+        <br>
+      </div>
+      <div class="p-col-6">
+        <h5>
+          Paramètres de la formule d'incitation
+        </h5>
+        <ul>
+          <li *ngFor="let parameter of policy.parameters">
+            {{parameter.key}} : {{parameter.value}}
+          </li>
+        </ul>
+        <br>
+      </div>
+    </div>
+
+  </div>
+</div>
+

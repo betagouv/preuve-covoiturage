@@ -1,0 +1,55 @@
+@import '../../../../styles/variables';
+
+.Header {
+  display: flex;
+  align-items: center;
+  padding: 10px 5%;
+  background: $background-white;
+
+  &-logo {
+    & > img {
+      height: 45px;
+    }
+
+    margin-right: 30px;
+  }
+
+  &-menu {
+    display: flex;
+
+    &-item {
+      cursor: pointer;
+      border-radius: 5px;
+      padding: 10px 15px;
+      transition: 0.3s all;
+
+      &:hover,
+      &.active {
+        background: $color-secondary;
+        color: $white;
+      }
+
+      &:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  &-user {
+    margin-left: auto;
+
+    button {
+      height: 45px;
+
+      mat-icon {
+        &:first-child {
+          margin-right: 10px;
+        }
+
+        &:last-child {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}

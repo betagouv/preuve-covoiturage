@@ -1,0 +1,38 @@
+<header class="navbar" role="navigation">
+  <div class="navbar__container">
+    <a class="navbar__home" routerLink="/dashboard/home">
+      <img class="navbar__logo"
+           src="assets/icons/covoituragebetagouvfr.svg"
+           alt="Registre de preuve de Covoiturage">
+    </a>
+
+    <nav>
+      <ul class="nav__links">
+        <li *ngIf="company"
+            class="nav__item"
+            [pTooltip]="company.nicename"
+            tooltipPosition="bottom">
+          <a [routerLink]="company.link">
+            <fa-icon [icon]="company.icon" *ngIf="company.icon"></fa-icon>
+            {{ company.acronym }}
+          </a>
+        </li>
+        <li *ngIf="user"
+            class="nav__item"
+            [pTooltip]="user.fullname"
+            tooltipPosition="bottom">
+          <a routerLink="/dashboard/users/settings">
+            <fa-icon icon="user"></fa-icon>
+          </a>
+        </li>
+        <li class="nav__item"
+            pTooltip="Se déconnecter"
+            tooltipPosition="left">
+          <a (click)="logOut()">
+            <fa-icon icon="power-off"></fa-icon>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
