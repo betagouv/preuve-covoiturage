@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 import { FilterService } from '~/core/services/filter.service';
 
@@ -7,10 +8,75 @@ import { FilterService } from '~/core/services/filter.service';
   selector: 'app-filter',
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.scss'],
+  animations: [
+    trigger('collapse', [
+      state(
+        'open',
+        style({
+          'max-height': '1800px',
+        }),
+      ),
+      state(
+        'closed',
+        style({
+          'max-height': '0',
+          display: 'none',
+        }),
+      ),
+      transition('open => closed', [style({ 'margin-top': '30px' }), animate('0.3s')]),
+      transition('closed => open', [animate('0s')]),
+    ]),
+  ],
 })
 export class FilterComponent implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
+  public classes = ['A', 'B', 'C'];
+  public tripStatusList = [
+    {
+      id: 'pending',
+      french: 'En cours',
+    },
+    {
+      id: 'active',
+      french: 'Actif',
+    },
+    {
+      id: 'error',
+      french: 'Anomalie',
+    },
+  ];
+
+  public days = [
+    {
+      id: 0,
+      french: 'Lundi',
+    },
+    {
+      id: 1,
+      french: 'Mardi',
+    },
+    {
+      id: 2,
+      french: 'Mercredi',
+    },
+    {
+      id: 3,
+      french: 'Jeudi',
+    },
+    {
+      id: 4,
+      french: 'Vendredi',
+    },
+    {
+      id: 5,
+      french: 'Samedi',
+    },
+    {
+      id: 6,
+      french: 'Dimanche',
+    },
+  ];
 
   @Input() set showFilter(showFilter: boolean) {
     this._showFilter = showFilter;

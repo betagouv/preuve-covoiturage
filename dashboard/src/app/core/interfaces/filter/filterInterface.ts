@@ -43,7 +43,7 @@ export interface FilterViewInterface {
   minDistance: number;
   maxDistance: number;
   classes: classEnum[];
-  status: statusEnum[];
+  status: statusEnum;
   operators: OperatorNameInterface[];
 }
 
