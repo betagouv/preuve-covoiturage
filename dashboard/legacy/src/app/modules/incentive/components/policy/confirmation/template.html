@@ -1,0 +1,23 @@
+<h3 class="has-text-centered" style="color: grey;">
+  Vous êtes sur le point de créer une nouvelle politique.
+</h3>
+<div class="p-grid p-justify-center has-text-centered">
+  <div class="p-col-10">
+    <label>Nom</label>
+    <p>
+      <b> {{ policy.name }}</b>
+    </p>
+    <br>
+    <div *ngIf="policy.description">
+      <label >Description</label>
+      <p>
+        {{ policy.description }}
+      </p>
+    </div>
+    <br><br>
+  </div>
+</div>
+<div class="p-grid p-justify-center">
+  <button pButton type="button" (click)="onSubmit()" label="Confirmation" icon="pi pi-check" style="margin-right: .25em"></button>
+</div>
+<br>

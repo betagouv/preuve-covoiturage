@@ -1,0 +1,85 @@
+<app-journeys-filter [columns]="columns" [data]="dt" (applyFilters)="applyFilters($event)"></app-journeys-filter>
+
+<div class="ui-g">
+  <div class="ui-g-6">
+    <h3 *ngIf="total" style="margin-top: 0.3em;">{{ total || 0 }} résultats</h3>
+  </div>
+  <div class="ui-g-6 has-text-right">
+    <p-button label="Exporter" icon="pi pi-file" (onClick)="export('csv')"></p-button>
+  </div>
+</div>
+
+<p-table
+  dataKey="_id"
+  #dt
+  [columns]="selectedColumns"
+  [value]="journeys"
+  [paginator]="true"
+  [rows]="perPage"
+  [lazy]="true"
+  [totalRecords]="total"
+  [loading]="loading"
+  (onLazyLoad)="lazyLoad($event)"
+>
+  <ng-template *ngIf="hasAnyGroup(['registry'])" pTemplate="caption">
+    <div style="text-align:left">
+      <p-multiSelect
+        [options]="columns"
+        [(ngModel)]="selectedColumns"
+        optionLabel="header"
+        selectedItemsLabel="{0} colonnes sélectionnées"
+        [style]="{ minWidth: '200px' }"
+        defaultLabel="Sélectionner des colonnes"
+      ></p-multiSelect>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns" [pSortableColumn]="getSortableField(col.field)">
+        <span>
+          {{ col.header }}
+        </span>
+        <p-sortIcon
+          *ngIf="sortList.indexOf(col.field) !== -1"
+          [field]="col.field"
+          ariaLabel="Cliquer pour ordonner"
+          ariaLabelDesc="Ordre descendant"
+          ariaLabelAsc="Ordre ascendant"
+        ></p-sortIcon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
+    <tr>
+      <td *ngFor="let col of columns" [ngClass]="isNaN(getValue(rowData, col.field)) ? 'text' : 'number'">
+        <span>{{ getValue(rowData, col.field) }}</span>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+    <tr>
+      <td [attr.colspan]="columns.length">
+        <p-table [columns]="subColumns" [value]="getSubArray(rowData['driver'], rowData['passenger'])">
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th>&nbsp;</th>
+              <th *ngFor="let column of subColumns">
+                <span>
+                  {{ getKey(column.header) }}
+                </span>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowIndex="rowIndex" let-columns="subColumns" let-rowData>
+            <tr>
+              <td>{{ subTableTitles[rowIndex] }}</td>
+              <td *ngFor="let col of subColumns">
+                <span>{{ getValue(rowData, col.field) }}</span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -1,0 +1,54 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-12">
+    <h2 class="has-text-centered">Création d'une politique incitative</h2>
+  </div>
+  <div class="p-col-11">
+    <p-steps [model]="steps" [activeIndex]="activeIndex" [readonly]="false"></p-steps>
+    <br><br><br>
+  </div>
+  <div class="p-col-10">
+    <section *ngIf='activeIndex === 0'>
+      <app-incentive-unit-picker [incentiveUnitForm]="policyForm.get('unit')" (submit)='incentiveUnitPicked()'></app-incentive-unit-picker>
+    </section>
+
+    <section *ngIf='activeIndex === 1'>
+      <app-incentive-parameter-form
+          [incentiveFormulaForm]="policyForm.get('formula')"
+          [incentiveParametersForm]="policyForm.get('parameters')"
+          (submit)='incentiveParameterSet()'
+      ></app-incentive-parameter-form>
+    </section>
+
+    <section *ngIf='activeIndex === 2'>
+      <app-incentive-filter-form [incentiveFiltersForm]="policyForm.get('rules')" ></app-incentive-filter-form>
+    </section>
+  </div>
+  <div class="p-col-10" *ngIf="activeIndex === 3">
+    <app-incentive-policy-summary [incentivePolicy]='policyForm.value'></app-incentive-policy-summary>
+  </div>
+  <div class="p-col-4">
+    <br><br>
+    <section *ngIf='activeIndex === 3'>
+      <p-card>
+        <app-incentive-policy-general-form
+            [policyForm]="policyForm"
+            [policyNameForm]="policyForm.get('name')"
+            [policyDescriptionForm]="policyForm.get('description')"
+            (submit)='policySubmit($event)'>
+        </app-incentive-policy-general-form>
+      </p-card>
+    </section>
+  </div>
+  <div class="p-col-11">
+    <hr>
+  </div>
+  <div class="p-col-10">
+    <div class="p-grid" [ngClass]="activeIndex === 0 ? 'p-justify-end' : activeIndex === 3 ? '' : 'p-justify-between'  ">
+      <p-button icon="pi pi-angle-left" *ngIf="activeIndex !== 0" (onClick)="setActiveIndex(activeIndex - 1)" label="Précédent"></p-button>
+      <p-button iconPos="right" icon="pi pi-angle-right" *ngIf="activeIndex !== 3" (onClick)="setActiveIndex(activeIndex + 1)" label="Suivant"></p-button>
+    </div>
+  </div>
+</div>
+
+
+

@@ -1,0 +1,12 @@
+@import "~src/assets/scss/variables";
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 68px);
+}
+
+.subtitle {
+  color: #c8c8c8;
+}
+

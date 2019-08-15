@@ -1,0 +1,14 @@
+<p-autoComplete
+    [suggestions]="filteredAoms"
+    [(ngModel)]="selectedAoms"
+    (completeMethod)="filter($event)"
+    field="value"
+    (onSelect)="onSelect()"
+    (onUnselect)="unSelect()"
+    [multiple]="true"
+    [dropdown]="true"
+    styleClass="width-max"
+    [style]="{ 'width': '100%'}"
+    [inputStyle]="{ 'width': '100%'}"
+    [disabled]="!aoms.length">
+</p-autoComplete>

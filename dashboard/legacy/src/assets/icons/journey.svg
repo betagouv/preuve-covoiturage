@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" version="1.1" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <style>.cls-1,.cls-2{fill:none;stroke-linecap:round;stroke-width:4px;}.cls-1,.cls-2,.cls-5{stroke:#65c8d0;}.cls-1,.cls-2,.cls-3,.cls-4,.cls-5{stroke-miterlimit:10;}.cls-2{stroke-dasharray:12.71 12.71;}.cls-3{fill:#fff;fill-rule:evenodd;}.cls-3,.cls-4{stroke:#2977ff;}.cls-4{fill:#2977ff;}.cls-5{fill:#65c8d0;}</style>
+ </defs>
+ <title>Trajet</title>
+ <g transform="matrix(.90345 0 0 .90345 5.9306 11.596)" data-name="Calque 2">
+  <g stroke-miterlimit="10" data-name="Calque 1">
+   <g fill="none" stroke="#65c8d0" stroke-linecap="round" stroke-width="4px">
+    <path class="cls-1" d="m22.9 114s1.71-1.48 4.73-3.69"/>
+    <path class="cls-2" d="m38.26 103.34a93.1 93.1 0 0 1 26.8-10.82c13.94-3 25.89-14.31 33.14-22.8" stroke-dasharray="12.71, 12.71"/>
+    <path class="cls-1" d="m102.19 64.77c2.24-2.95 3.47-4.89 3.47-4.89"/>
+   </g>
+   <path class="cls-3" d="m22.9 112.63s-21.4-20-21.4-37a21.4 21.4 0 1 1 42.8 0c0 17.01-21.4 37-21.4 37z" fill="#fff" fill-rule="evenodd" stroke="#2977ff"/>
+   <path class="cls-4" d="m22.9 114-0.68-0.64c-0.89-0.83-21.72-20.48-21.72-37.71a22.4 22.4 0 1 1 44.8 0c0 17.23-20.83 36.88-21.72 37.71zm0-58.74a20.42 20.42 0 0 0-20.4 20.39c0 14.67 16.77 32 20.4 35.59 3.62-3.57 20.4-20.92 20.4-35.59a20.42 20.42 0 0 0-20.4-20.4z" fill="#2977ff" stroke="#2977ff"/>
+   <path class="cls-5" d="m22.9 89.1a14.86 14.86 0 1 1 14.86-14.86 14.88 14.88 0 0 1-14.86 14.86zm0-27.72a12.86 12.86 0 1 0 12.86 12.86 12.87 12.87 0 0 0-12.86-12.86z" fill="#65c8d0" stroke="#65c8d0"/>
+   <path class="cls-3" d="m105.65 59.88s-21.4-20-21.4-37a21.4 21.4 0 1 1 42.8 0c0 17.01-21.4 37-21.4 37z" fill="#fff" fill-rule="evenodd" stroke="#2977ff"/>
+   <path class="cls-4" d="m105.65 61.24-0.68-0.64c-0.89-0.83-21.72-20.48-21.72-37.71a22.4 22.4 0 1 1 44.8 0c0 17.23-20.83 36.88-21.72 37.71zm0-58.74a20.42 20.42 0 0 0-20.4 20.4c0 14.67 16.77 32 20.4 35.59 3.62-3.57 20.4-20.92 20.4-35.59a20.42 20.42 0 0 0-20.4-20.4z" fill="#2977ff" stroke="#2977ff"/>
+   <path class="cls-5" d="m105.65 36.35a14.86 14.86 0 1 1 14.86-14.86 14.88 14.88 0 0 1-14.86 14.86zm0-27.72a12.86 12.86 0 1 0 12.86 12.86 12.87 12.87 0 0 0-12.86-12.86z" fill="#65c8d0" stroke="#65c8d0"/>
+  </g>
+ </g>
+</svg>

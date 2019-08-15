@@ -1,0 +1,21 @@
+<br>
+<div class="p-grid p-justify-center">
+    <div class="ui-inputgroup">
+      <button pButton type="button" label="Recherche"></button>
+      <input type="text" pInputText [(ngModel)]="policySearch" placeholder="Nom de la politique">
+    </div>
+</div>
+<br>
+<hr>
+<div class="p-grid" style="overflow: auto; max-height: 50vh;">
+  <div class="p-col-4" *ngFor="let policy of filteredPolicies">
+    <p-card
+      [header]="policy.name"
+      styleClass="ui-card-fixed"
+      (click)='onSubmit(policy)'>
+        <p>
+          {{ policy.description }}
+        <p>
+    </p-card>
+  </div>
+</div>

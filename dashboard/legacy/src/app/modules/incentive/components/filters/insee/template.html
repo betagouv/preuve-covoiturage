@@ -1,0 +1,69 @@
+<div class="p-grid ui-fluid container">
+  <div class="p-col-12">
+    <p-tabMenu [model]="items" [activeItem]="items[0]" ></p-tabMenu>
+    <p-messages [(value)]="msgs"></p-messages>
+
+    <br>
+    <br>
+    <section *ngIf="showBlackList">
+      <span class="has-text-centered"><i>Les trajets dont les insees ne font pas partie de ces listes.</i></span>
+      <br>
+      <br>
+
+      <h3>Les trajets dont les INSEES ne se trouvent pas au départ ET à l'arrivée dans ces listes :  </h3>
+
+      <p>Insee au départ</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.blackList.and.start"  (selectedInseeChange)="setInsees($event, 'blackList', 'and', 'start')" ></app-aom-insee-multiple-dropdown>
+
+      <p>Insee à l'arrivée</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId"  [selectedInseesInput]="filterForm.value.blackList.and.end"  (selectedInseeChange)="setInsees($event, 'blackList', 'and', 'end')" ></app-aom-insee-multiple-dropdown>
+
+      <br>
+      <br>
+
+      <h3>Les trajets dont les INSEES ne se trouvent pas au départ OU à l'arrivée dans ces listes :  </h3>
+
+      <p>Insee au départ</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.blackList.or.start"  (selectedInseeChange)="setInsees($event, 'blackList', 'or', 'start')" ></app-aom-insee-multiple-dropdown>
+
+      <p>Insee à l'arrivée</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId"  [selectedInseesInput]="filterForm.value.blackList.or.end"  (selectedInseeChange)="setInsees($event, 'blackList', 'or', 'end')" ></app-aom-insee-multiple-dropdown>
+
+
+
+    </section>
+
+
+    <section *ngIf="!showBlackList">
+      <span class="has-text-centered"><i>Les trajets dont les insees font partie de cette liste.</i></span>
+      <br>
+      <br>
+      <h3>Les trajets dont les INSEES se trouvent au départ ET à l'arrivée dans ces listes :  </h3>
+
+      <p>Insee au départ</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.whiteList.and.start" (selectedInseeChange)="setInsees($event, 'whiteList', 'and', 'start')" ></app-aom-insee-multiple-dropdown>
+
+      <p>Insee à l'arrivée</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.whiteList.and.end" (selectedInseeChange)="setInsees($event, 'whiteList', 'and', 'end')" ></app-aom-insee-multiple-dropdown>
+
+      <br>
+      <br>
+
+      <h3>Les trajets dont les INSEES se trouvent au départ OU à l'arrivée dans ces listes :  </h3>
+
+      <p>Insee au départ</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId" [selectedInseesInput]="filterForm.value.whiteList.or.start"  (selectedInseeChange)="setInsees($event, 'whiteList', 'or', 'start')" ></app-aom-insee-multiple-dropdown>
+
+      <p>Insee à l'arrivée</p>
+      <app-aom-insee-multiple-dropdown [aomId]="aomId"  [selectedInseesInput]="filterForm.value.whiteList.or.end"  (selectedInseeChange)="setInsees($event, 'whiteList', 'or', 'end')" ></app-aom-insee-multiple-dropdown>
+
+
+    </section>
+
+    <br>
+    <br>
+    <br>
+  </div>
+</div>
+<p-button (onClick)="onSubmit()" [disabled]="error" label="Enregistrer"></p-button>
+

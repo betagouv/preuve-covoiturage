@@ -1,0 +1,12 @@
+<div class="p-grid p-justify-center p-dir-col">
+  <br>
+  <div class="p-col-4 p-offset-4" *ngFor="let weekday of weekdays">
+    <p-checkbox
+      [formControl]="filterControl"
+      [value]="weekday.key"
+      [label]="weekday.label"
+      ></p-checkbox>
+  </div>
+</div>
+<br>
+<p-button (onClick)="onSubmit()" label="Enregistrer"></p-button>

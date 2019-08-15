@@ -1,0 +1,23 @@
+@import 'variables';
+
+.mat-stepper-horizontal {
+  .mat-step-header {
+    border-bottom: 2px solid transparent;
+    transition: 0.3s all;
+
+    &[aria-selected='true'] {
+      border-bottom: 2px solid $color-primary;
+    }
+  }
+
+  .mat-stepper-horizontal-line {
+    border: solid $black;
+    border-width: 0 1px 1px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    min-width: auto;
+    margin: 0;
+  }
+}

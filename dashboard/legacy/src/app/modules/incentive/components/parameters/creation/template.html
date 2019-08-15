@@ -1,0 +1,26 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="incentiveParameterForm">
+  <div class="p-grid ui-fluid">
+    <div class="p-col-12 p-md-4">
+      <label>Nom</label>
+    </div>
+    <div class="p-col-12 p-md-8">
+      <input type="text" pInputText formControlName="label">
+    </div>
+
+    <div class="p-col-12 p-md-4">
+      <label>Aide</label>
+    </div>
+    <div class="p-col-12 p-md-8">
+      <textarea pInputTextarea formControlName="helper"></textarea>
+    </div>
+    <!--[ EXPERT MODE ]-->
+    <!--<div class="p-col-12 p-md-4">-->
+      <!--<label>Formule</label>-->
+    <!--</div>-->
+    <!--<div class="p-col-12 p-md-8">-->
+      <!--<input type="number" step="1" pInputText formControlName="formula">-->
+    <!--</div>-->
+  </div>
+  <hr/>
+  <p-button (onClick)="onSubmit" label="Enregistrer"></p-button>
+</form>

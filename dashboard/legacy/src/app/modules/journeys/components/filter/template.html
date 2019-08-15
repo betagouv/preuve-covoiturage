@@ -1,0 +1,180 @@
+<div class="app-journeys-filters__wrapper">
+  <p-card>
+
+    <!--Header -->
+    <div class="p-grid">
+      <div class="p-col-6">
+        <h2>Filtres</h2>
+      </div>
+      <div class="p-col-6" style="text-align: right;">
+        <a class="filters__more" *ngIf="!showMoreFilters" (click)="showMoreFilters = true">Afficher plus de filtres</a>
+        <a class="filters__more" *ngIf="showMoreFilters" (click)="showMoreFilters = false">Afficher moins de filtres</a>
+      </div>
+    </div>
+
+    <!-- Dates -->
+    <div class="p-grid">
+      <div class="p-col-4">
+        <div class="p-grid">
+          <div class="p-col-6">
+            <p class="filter-label">Début</p>
+            <p-calendar [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [locale]="fr" dateFormat="dd/mm/yy"
+                        [defaultDate]="defaultMinDate"
+                        [(ngModel)]="minDate" (onSelect)="onDateChange()"></p-calendar>
+          </div>
+          <div class="p-col-6">
+            <p class="filter-label">Fin</p>
+            <p-calendar [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [locale]="fr" dateFormat="dd/mm/yy"
+                        [defaultDate]="defaultMaxDate"
+                        [(ngModel)]="maxDate" (onSelect)="onDateChange()"></p-calendar>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-4" *ngIf="showTimeFilter">
+        <div class="p-grid">
+          <div class="p-col-6">
+            <p class="filter-label">Heure min</p>
+            <p-calendar [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [timeOnly]="true" [stepMinute]='60'
+                        [defaultDate]="defaultHourDate" [(ngModel)]="minTime" (onSelect)="onTimeChange()"></p-calendar>
+          </div>
+          <div class="p-col-6">
+            <p class="filter-label">Heure max</p>
+            <p-calendar [inputStyle]="{'width':'100%'}" [timeOnly]="true" [stepMinute]='60'
+                        [defaultDate]="defaultHourDate" [(ngModel)]="maxTime" (onSelect)="onTimeChange()"></p-calendar>
+          </div>
+
+        </div>
+      </div>
+      <div class="p-col-4" *ngIf="showDayFilter">
+        <p class="filter-label">Jour</p>
+        <p-multiSelect [style]="{'width':'100%'}" (onChange)="onDayChange()" [options]="days" defaultLabel="Selection"
+                       [filter]="false"
+                       [displaySelectedLabel]="false" [(ngModel)]="selectedDays"
+                       [panelStyle]="{minWidth:'12em'}"></p-multiSelect>
+      </div>
+    </div>
+
+    <!-- More filters -->
+
+    <!-- INSEE -->
+    <div *ngIf="showMoreFilters" class="p-grid">
+      <div class="p-col-4">
+        <div class="p-grid">
+          <div class="p-col-6">
+            <p class="filter-label">Commune départ</p>
+            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.start.town')"
+                   [value]="dt.filters['passenger.start.town'] ? dt.filters['passenger.start.town'].value : ''">
+          </div>
+          <div class="p-col-6">
+            <p class="filter-label">Commune arrivée</p>
+            <input style="width: 100%" pInputText (input)="filterText($event, 'passenger.end.town')"
+                   [value]="dt.filters['passenger.end.town'] ? dt.filters['passenger.end.town'].value : ''">
+          </div>
+        </div>
+      </div>
+
+      <!-- Distance -->
+      <div class="p-col-4">
+        <div class="p-grid">
+          <div class="p-col-12">
+            <p class="filter-label has-text-centered">Distance</p>
+            <div class="p-grid p-justify-center">
+              <div class="p-col-10">
+                <p-slider [(ngModel)]="distanceRange" [step]="1000" [style]="{'width':'100%'}" [range]="true"
+                          (onChange)="onDistanceChange($event)" [min]="0" [max]="distanceMax"></p-slider>
+                <br>
+                <p class="has-text-centered"> {{distanceRange[0] ? distanceRange[0] / 1000 : 0}}
+                  - {{distanceRange[1] ? distanceRange[1] / 1000 : '&#8734;'}} km </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter by AOM -->
+      <div class="p-col-4" *ngIf="hasAnyGroup(['registry'])">
+        <div class="p-grid">
+          <div class="p-col-12 has-text-centered">
+            <p class="filter-label">Aoms</p>
+            <app-aom-multiple-dropdown
+                [aomIds]="aomIds"
+                (aomIdsChange)="onAomChange($event)">
+            </app-aom-multiple-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classes -->
+    <div *ngIf="showMoreFilters" class="p-grid ">
+      <div class="p-col-4">
+        <div class="p-grid">
+          <div class="p-col-12">
+            <p class="filter-label has-text-centered">Classes</p>
+            <div class="p-grid  p-justify-center">
+              <div class="p-col-2">
+                <p-checkbox name="class" label="A" value="A" [(ngModel)]="classes"
+                            (onChange)="onClassChange()"></p-checkbox>
+              </div>
+              <div class="p-col-2">
+                <p-checkbox name="class" label="B" value="B" [(ngModel)]="classes"
+                            (onChange)="onClassChange()"></p-checkbox>
+              </div>
+              <div class="p-col-2">
+                <p-checkbox name="class" label="C" value="C" [(ngModel)]="classes"
+                            (onChange)="onClassChange()"></p-checkbox>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-4" *ngIf="hasAnyGroup(['registry', 'aom'])">
+        <div class="p-grid">
+          <div class="p-col-12 has-text-centered">
+            <p class="filter-label">Opérateurs</p>
+            <app-operator-multiple-dropdown
+                [operatorIds]="operatorIds"
+                (operatorIdsChange)="onOperatorChange($event)">
+            </app-operator-multiple-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passenger age -->
+      <div class="p-col-4">
+        <div class="p-grid">
+          <div class="p-col-12">
+            <p class="filter-label has-text-centered">Age des passagers</p>
+            <div class="p-grid p-justify-center">
+              <div class="p-col-3">
+                <p-checkbox name="age" label="Majeur" value="true" [(ngModel)]="ages"
+                            (onChange)="onAgeChange()"></p-checkbox>
+              </div>
+              <div class="p-col-3">
+                <p-checkbox name="age" label="Mineur" value="false" [(ngModel)]="ages"
+                            (onChange)="onAgeChange()"></p-checkbox>
+              </div>
+              <div class="p-col-3">
+                <p-checkbox name="age" label="Non communiqué" value="nc" [(ngModel)]="ages"
+                            (onChange)="onAgeChange()"></p-checkbox>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <br>
+    <br>
+
+    <div class="filters__actions" style="display: flex; justify-content: space-between;">
+      <div>
+        <p-button [label]="'Filter'" (onClick)="apply()"></p-button>
+        <p-button [label]="'Réinitialiser'" (onClick)="reset()"></p-button>
+      </div>
+    </div>
+  </p-card>
+</div>
