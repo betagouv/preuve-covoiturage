@@ -1,6 +1,15 @@
 @import '~src/styles/variables';
 
 .Login {
+  max-width: 515px;
+  background: $background-white;
+  padding: 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+
   &-wrapper {
     margin-top: 40px;
     margin-bottom: 30px;
@@ -43,14 +52,10 @@
     }
   }
 
-  max-width: 515px;
-  background: $background-white;
-  padding: 20px;
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 50px;
+  &-forgotten-password-link {
+    margin-top: 30px;
+  }
+
   form {
     text-align: center;
     width: 100%;
