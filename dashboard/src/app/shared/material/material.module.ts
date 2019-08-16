@@ -20,7 +20,6 @@ import {
   MatAutocompleteModule,
   MatChipsModule,
   MatExpansionModule,
-  MatDatepickerModule,
 } from '@angular/material';
 
 @NgModule({
