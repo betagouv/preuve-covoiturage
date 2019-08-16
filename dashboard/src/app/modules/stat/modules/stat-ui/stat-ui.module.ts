@@ -9,10 +9,11 @@ import { MaterialModule } from '~/shared/material/material.module';
 import { StatNumberComponent } from './components/stat-number/stat-number.component';
 import { StatGraphComponent } from './components/stat-graph/stat-graph.component';
 import { StatViewComponent } from './components/stat-view/stat-view.component';
+import { StatGraphViewComponent } from './components/stat-graph-view/stat-graph-view.component';
 
 @NgModule({
-  declarations: [StatNumberComponent, StatGraphComponent, StatViewComponent],
+  declarations: [StatNumberComponent, StatGraphComponent, StatViewComponent, StatGraphViewComponent],
   imports: [CommonModule, ChartjsModule, FormsModule, MaterialModule, SharedModule],
-  exports: [StatGraphComponent, StatViewComponent],
+  exports: [StatGraphComponent, StatViewComponent, StatGraphViewComponent],
 })
 export class StatUIModule {}

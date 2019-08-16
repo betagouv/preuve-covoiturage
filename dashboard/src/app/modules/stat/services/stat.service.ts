@@ -9,6 +9,7 @@ import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Stat } from '~/core/entities/stat/stat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
 
@@ -16,18 +17,24 @@ import { co2Factor, petrolFactor } from '../config/stat';
   providedIn: 'root',
 })
 export class StatService {
-  _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
-  _loaded$ = new BehaviorSubject<boolean>(false);
+  public _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
+  protected _loaded$ = new BehaviorSubject<boolean>(false);
+  protected _loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {}
 
-  public load(): Observable<Stat[]> {
-    const jsonRPCParam = new JsonRPCParam(`stat.list`);
+  public load(filter: FilterInterface = {}): Observable<Stat[]> {
+    this._loading$.next(true);
+    const jsonRPCParam = new JsonRPCParam(`stat.list`, filter);
     return this._jsonRPC.call(jsonRPCParam).pipe(
       tap((data) => {
         this.formatData(data);
       }),
     );
+  }
+
+  get loading(): boolean {
+    return this._loading$.value;
   }
 
   get stat(): FormatedStatInterface {
@@ -100,6 +107,7 @@ export class StatService {
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
+            // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total / 1000) | 0),
         },
         distancePerDayCumulated: {
@@ -137,6 +145,7 @@ export class StatService {
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
+            // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total * petrolFactor) | 0),
         },
         petrolPerDayCumulated: {
@@ -158,6 +167,7 @@ export class StatService {
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
+            // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total * co2Factor) | 0),
         },
         co2PerDayCumulated: {
@@ -184,6 +194,7 @@ export class StatService {
 
     this._formatedStat$.next(formatedStat);
     this._loaded$.next(true);
+    this._loading$.next(false);
   }
 
   private reduceCumulativeData(p, c, i): any[] {

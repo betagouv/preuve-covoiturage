@@ -1,8 +1,11 @@
-<div class="stats" *ngIf="statService._loaded$.value">
-  <div class="stats-graph">
+<div class="stats">
+  <div class="stats--loading" *ngIf="statService.loading && !statService.stat">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="statService.stat" class="stats-graph" id="graph">
     <app-stat-graph [graphName]="graphName"></app-stat-graph>
   </div>
-  <div class="stats-numbers">
+  <div *ngIf="statService.stat" class="stats-numbers">
     <app-stat-number
       *ngFor="let statNumberName of statViewConfig.names"
       [statNumberName]="statNumberName"

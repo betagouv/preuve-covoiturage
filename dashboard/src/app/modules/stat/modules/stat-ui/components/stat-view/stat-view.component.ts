@@ -3,6 +3,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Stat } from '~/core/entities/stat/stat';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
+import { FilterService } from '~/core/services/filter.service';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 import { StatService } from '../../../../services/stat.service';
 import { mockStats } from '../../../../mocks/stats';
@@ -25,18 +27,24 @@ export class StatViewComponent implements OnInit {
     operators: true,
   };
 
-  constructor(public statService: StatService) {}
   @Input() statViewConfig: { names: statDataNameType[]; defaultGraphName: statDataNameType };
+
+  constructor(public statService: StatService, public filterService: FilterService) {}
 
   ngOnInit() {
     this.resetSelected();
-    this.initStat();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
+    this.filterService._filter$.subscribe((filter: FilterInterface) => {
+      this.loadStat(filter);
+    });
   }
 
-  private initStat(): void {
-    this.statService.load().subscribe(
+  private loadStat(filter: FilterInterface = {}): void {
+    if (this.statService.loading) {
+      return;
+    }
+    this.statService.load(filter).subscribe(
       () => {},
       (err) => {
         // TODO TMP DELETE WHEN BACK IS LINKED
@@ -71,6 +79,7 @@ export class StatViewComponent implements OnInit {
    * scroll to top of div.AuthenticatedLayout-body
    */
   public scrollToTop(): void {
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
+    const offsetTop = document.getElementById('graph').offsetTop;
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = offsetTop;
   }
 }

@@ -1,5 +1,4 @@
 .stats {
-  width: 849px;
   max-width: 100%;
   margin: auto;
   margin-top: 30px;
@@ -7,9 +6,16 @@
   @media (min-width: 1400px) {
     width: 1272px;
   }
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
   .stats-numbers {
     display: flex;
     flex-wrap: wrap;
     margin: auto;
+    @media (max-width: 1400px) {
+      justify-content: space-evenly;
+    }
   }
 }

@@ -1,0 +1,76 @@
+@import '~src/styles/variables';
+
+.filter {
+  &-wrapper {
+    background-color: $background-white;
+    border-radius: 6px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    padding: 10px 15px 15px 15px;
+    &-close {
+      height: 0;
+      button {
+        box-shadow: none;
+        position: relative;
+        top: -32px;
+        left: calc(100% - 6px);
+      }
+    }
+  }
+
+  &-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    &-column {
+      width: 240px;
+      &-title {
+        text-align: left;
+        font-weight: 600;
+      }
+    }
+  }
+
+  &-dates mat-form-field,
+  .days,
+  ::ng-deep .campaign,
+  ::ng-deep .towns {
+    width: 240px;
+  }
+
+  &-timeAndDays,
+  &-dates,
+  &-distances {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  &-dates {
+    margin-bottom: 32px;
+  }
+
+  &-footer {
+    button {
+      font-weight: 600;
+    }
+    &-reinitialize {
+      margin-left: 30px;
+      text-decoration: underline;
+    }
+  }
+}
+
+.start-time,
+.end-time,
+.min-distance,
+.max-distance {
+  width: 116px;
+}
+
+:host ::ng-deep {
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+}

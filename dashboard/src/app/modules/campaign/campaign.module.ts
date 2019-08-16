@@ -5,6 +5,7 @@ import { CampaignRoutingModule } from '~/modules/campaign/campaign-routing.modul
 import { MaterialModule } from '~/shared/material/material.module';
 import { SharedModule } from '~/shared/shared.module';
 import { UiTripModule } from '~/modules/trip/ui-trip/ui-trip.module';
+import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 
 import { CampaignDashboardComponent } from './pages/campaign-dashboard/campaign-dashboard.component';
 import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.component';
@@ -18,6 +19,6 @@ import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campai
     CampaignsListComponent,
     CampaignCreateEditComponent,
   ],
-  imports: [CampaignRoutingModule, CommonModule, MaterialModule, SharedModule, UiTripModule],
+  imports: [CampaignRoutingModule, CommonModule, MaterialModule, SharedModule, UiTripModule, StatUIModule],
 })
 export class CampaignModule {}

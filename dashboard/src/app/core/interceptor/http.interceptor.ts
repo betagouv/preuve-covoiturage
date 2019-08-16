@@ -19,7 +19,8 @@ export class HttpApiInterceptor implements HttpInterceptor {
     }
     this.currentToken = this.authService.token;
     const update: any = {};
-    if (this.APIMETHODS.indexOf(req.method) !== -1) {
+
+    if (this.APIMETHODS.indexOf(req.method) !== -1 && !req.url.startsWith('https://')) {
       update.url = this.api + req.url;
       update.setHeaders = {
         Authorization: 'Bearer ' + this.currentToken,
