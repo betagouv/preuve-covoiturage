@@ -10,6 +10,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 })
 export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
+  public passwordType = 'password';
 
   constructor(private fb: FormBuilder, private authService: AuthenticationService) {}
 
@@ -17,18 +18,21 @@ export class LoginComponent implements OnInit {
     this.initLoginForm();
   }
 
-  get controls() {
+  public get controls() {
     return this.loginForm.controls;
   }
 
-  onLogin() {
+  public onLogin() {
     this.authService.login(this.controls.email.value, this.controls.password.value);
+  }
+
+  public onPasswordTypeToggle() {
+    this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
   }
 
   /**
    * PRIVATE FUNCTIONS
    */
-
   private initLoginForm() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
