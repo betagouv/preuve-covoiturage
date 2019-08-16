@@ -7,7 +7,7 @@
   background: $background-white;
 
   &-logo {
-    & > img {
+    & img {
       height: 45px;
     }
 
@@ -37,10 +37,15 @@
 
   &-user {
     margin-left: auto;
-
+    &-button-text {
+      display: inline-block;
+      width: 150px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
     button {
       height: 45px;
-
+      width: 240px;
       mat-icon {
         &:first-child {
           margin-right: 10px;
@@ -51,5 +56,11 @@
         }
       }
     }
+  }
+}
+
+::ng-deep {
+  .mat-menu-content {
+    width: 240px;
   }
 }
