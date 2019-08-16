@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
@@ -110,6 +110,56 @@ export class AuthenticationService {
   public hasRole(role: string): boolean {
     const user = this._userService.user;
     return !role || ('role' in user && role === user.role);
+  }
+
+  public sendForgottenPasswordEmail(email: string): Observable<any> {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user.forgottenPassword';
+    jsonRPCParam.params = {
+      email,
+    };
+
+    return this._jsonRPC.call(jsonRPCParam);
+  }
+
+  /**
+   * Check validity of token & reset
+   */
+  public checkPasswordToken(reset: string, token: string): Observable<any> {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user.checkPasswordToken';
+    jsonRPCParam.params = {
+      reset,
+      token,
+    };
+
+    return this._jsonRPC.call(jsonRPCParam);
+  }
+
+  /**
+   * Check validity of token & reset
+   */
+  public checkEmailToken(reset: string, token: string): Observable<any> {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user.checkEmailToken';
+    jsonRPCParam.params = {
+      reset,
+      token,
+    };
+
+    return this._jsonRPC.call(jsonRPCParam);
+  }
+
+  public sendNewPassword(password: string, reset: string, token: string): Observable<any> {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user.resetPassword';
+    jsonRPCParam.params = {
+      password,
+      reset,
+      token,
+    };
+
+    return this._jsonRPC.call(jsonRPCParam);
   }
 
   private readToken() {
