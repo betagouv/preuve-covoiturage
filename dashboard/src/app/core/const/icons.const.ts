@@ -8,6 +8,10 @@ export const ICONS = [
     path: 'assets/icons/carpooling.svg',
   },
   {
+    label: 'car_with_passengers',
+    path: 'assets/img/car_with_passengers.svg',
+  },
+  {
     label: 'co2',
     path: 'assets/icons/co2.svg',
   },

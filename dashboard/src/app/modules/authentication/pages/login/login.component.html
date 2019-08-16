@@ -5,7 +5,7 @@
   </div>
   <div class="Login-content">
     <div class="Login-introduction">
-      <mat-icon [svgIcon]="'carpooling'"></mat-icon>
+      <img src="assets/img/car_with_passengers.svg" alt="Covoiturage" />
       <p>
         Attestez la réalité des trajets réalisés sur votre territoire
       </p>
@@ -13,7 +13,7 @@
         Créez des campagnes d’incitation sur des trajets spécifiques
       </p>
       <p>
-        Développez le covoiturage dans votre ville ou votre région
+        Développez le covoiturage sur votre collectivité ou votre région
       </p>
     </div>
     <div class="Login">
@@ -27,7 +27,10 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Mot de passe</mat-label>
-          <input matInput formControlName="password" type="password" required />
+          <input matInput formControlName="password" [type]="passwordType" required />
+          <button matSuffix mat-icon-button (click)="onPasswordTypeToggle()">
+            <mat-icon>remove_red_eye</mat-icon>
+          </button>
         </mat-form-field>
 
         <button type="submit" mat-flat-button (click)="onLogin()" [disabled]="!loginForm.valid" color="primary">
