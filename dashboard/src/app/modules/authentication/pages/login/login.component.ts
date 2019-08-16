@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
@@ -12,7 +11,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private jsonRPC: JsonRPCService, private authService: AuthenticationService) {}
+  constructor(private fb: FormBuilder, private authService: AuthenticationService) {}
 
   ngOnInit() {
     this.initLoginForm();
@@ -23,7 +22,6 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin() {
-    console.log(this.loginForm.getRawValue());
     this.authService.login(this.controls.email.value, this.controls.password.value);
   }
 
