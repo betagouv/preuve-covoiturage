@@ -1,6 +1,8 @@
 <div class="Header">
   <div class="Header-logo">
-    <img src="assets/img/covoituragebetagouvfr.svg" alt="Logo de la Marianne, covoiturage.beta.gouv.fr" />
+    <a href="/">
+      <img src="assets/img/covoituragebetagouvfr.svg" alt="Logo de la Marianne, covoiturage.beta.gouv.fr" />
+    </a>
   </div>
   <div class="Header-menu" *ngIf="user">
     <div class="Header-menu-item" [routerLink]="'/campaign'" routerLinkActive="active">
@@ -11,14 +13,22 @@
     </div>
   </div>
   <div class="Header-user" *ngIf="user">
-    <button mat-button [matMenuTriggerFor]="menu">
+    <button mat-stroked-button [matMenuTriggerFor]="menu">
       <mat-icon>account_circle_outline</mat-icon>
-      {{ user.firstname + ' ' + user.lastname }}
+      <span class="Header-user-button-text">
+        {{ user.firstname + ' ' + user.lastname }}
+      </span>
       <mat-icon>keyboard_arrow_down</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item [routerLink]="'/admin'">Administration</button>
-      <button mat-menu-item (click)="onLogout()">Déconnexion</button>
+      <button mat-menu-item [routerLink]="'/admin'">
+        <mat-icon>settings_applications</mat-icon>
+        Administration
+      </button>
+      <button mat-menu-item (click)="onLogout()">
+        <mat-icon>exit_to_app</mat-icon>
+        Déconnexion
+      </button>
     </mat-menu>
   </div>
 </div>
