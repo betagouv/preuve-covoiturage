@@ -1,4 +1,4 @@
-@import '../../../../styles/variables';
+@import '~src/styles/variables';
 
 .Footer {
   display: flex;
@@ -15,6 +15,10 @@
 
   &-title {
     font-weight: 600;
+  }
+
+  &-link {
+    margin: 5px;
   }
 
   ul {
