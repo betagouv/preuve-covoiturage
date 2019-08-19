@@ -8,4 +8,8 @@ import { FormGroup } from '@angular/forms';
 })
 export class FormAddressComponent {
   @Input() parentForm: FormGroup;
+
+  ngOnInit() {
+    console.log(this.parentForm);
+  }
 }

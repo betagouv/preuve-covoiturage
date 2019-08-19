@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 import { PermissionType } from '~/core/types/permissionType';
+import { territoriesPermissions } from '~/core/config/permissions';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -90,7 +91,7 @@ export class AuthenticationService {
       return true;
     }
     if ('permissions' in user) {
-      return user.permissions.filter((permission: PermissionType) => permissions.includes(permission)).length > 1;
+      return user.permissions.filter((permission: PermissionType) => permissions.includes(permission)).length > 0;
     }
     return true;
   }
@@ -126,6 +127,7 @@ export class AuthenticationService {
         lastname: 'Decovoit',
         email: 'preuve.decovoit@yopmail.com',
         role: 'admin',
+        permissions: territoriesPermissions.admin,
       }),
     });
   }

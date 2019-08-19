@@ -53,7 +53,13 @@ export class TerritoryFormComponent implements OnInit {
           acronym: 'Aom acronym',
           company: new Company({
             siren: '123456789',
-            naf_entreprise: 'naf',
+            naf_entreprise: '1234A',
+          }),
+          address: new Address({
+            street: '5 rue de brest',
+            postcode: '69002',
+            city: 'Lyon',
+            country: 'France',
           }),
         });
 
