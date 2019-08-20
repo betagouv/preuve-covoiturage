@@ -33,7 +33,7 @@ class Operator {
     this.company = data.company || new Company({ siren: null });
     this.address = data.address || new Address({ street: null, postcode: null, city: null, country: null });
     this.contacts = data.contacts || new Contacts();
-    this.bank = data.bank || null;
+    this.bank = data.bank || new Bank();
   }
 }
 

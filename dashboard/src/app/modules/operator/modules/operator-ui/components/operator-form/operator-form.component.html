@@ -1,8 +1,15 @@
 <form class="operatorForm" [formGroup]="operatorForm">
-  <mat-form-field class="name" appearance="outline">
-    <mat-label>Nom</mat-label>
-    <input matInput formControlName="name" required />
-    <mat-error *ngIf="operatorForm.controls.name.hasError('required')">Le nom est obligatoire.</mat-error>
+  <mat-form-field class="nom_commercial" appearance="outline">
+    <mat-label>Nom commercial</mat-label>
+    <input matInput formControlName="nom_commercial" required />
+    <mat-error *ngIf="operatorForm.controls.nom_commercial.hasError('required')">Le nom est obligatoire.</mat-error>
+  </mat-form-field>
+  <mat-form-field class="raison_sociale" appearance="outline">
+    <mat-label>Raison sociale</mat-label>
+    <input matInput formControlName="raison_sociale" required />
+    <mat-error *ngIf="operatorForm.controls.raison_sociale.hasError('required')"
+      >La raison sociale est obligatoire.</mat-error
+    >
   </mat-form-field>
 
   <h3>Structure</h3>
@@ -35,8 +42,12 @@
     </div>
   </div>
 
+  <h3>Banque</h3>
+
+  <app-form-bank [parentForm]="operatorForm.get('bank')"></app-form-bank>
+
   <button
-    *ngIf="authService.hasAnyPermission(['territory.update'])"
+    *ngIf="authService.hasAnyPermission(['operator.update'])"
     type="submit"
     mat-flat-button
     (click)="onSubmit()"

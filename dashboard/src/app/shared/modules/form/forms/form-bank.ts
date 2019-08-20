@@ -11,10 +11,8 @@ export class FormBank {
 
   constructor(bank: Bank) {
     this.bank_name.setValue(bank.bank_name);
-    // this.bank_name.setValidators([Validators.required]);
 
     this.client_name.setValue(bank.client_name);
-    // this.client_name.setValidators([Validators.required]);
 
     this.iban.setValue(bank.iban);
     this.iban.setValidators([Validators.pattern(regexp.iban)]);
