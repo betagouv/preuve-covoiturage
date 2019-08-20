@@ -1,7 +1,6 @@
 /* tslint:disable:variable-name*/
 export class Company {
   siren: string;
-  naf_etablissement?: string;
   naf_entreprise?: string;
   nature_juridique?: string;
   cle_nic?: string;
@@ -10,7 +9,6 @@ export class Company {
 
   constructor(obj: {
     siren: string;
-    naf_etablissement?: string;
     naf_entreprise?: string;
     nature_juridique?: string;
     cle_nic?: string;
@@ -18,7 +16,6 @@ export class Company {
     vat_intra?: string;
   }) {
     this.siren = obj.siren;
-    this.naf_etablissement = obj.naf_etablissement || null;
     this.naf_entreprise = obj.naf_entreprise || null;
     this.nature_juridique = obj.nature_juridique || null;
     this.cle_nic = obj.cle_nic || null;
