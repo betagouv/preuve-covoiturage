@@ -4,7 +4,7 @@ import { NouisliderModule } from 'ng2-nouislider';
 
 import { FormsModule } from '@angular/forms';
 
-import { MaterialModule } from '~/shared/material/material.module';
+import { MaterialModule } from '~/shared/modules/material/material.module';
 import { SharedModule } from '~/shared/shared.module';
 
 import { UiGuideRoutingModule } from './ui-guide-routing.module';

@@ -44,7 +44,7 @@ export class StatViewComponent implements OnInit {
     if (this.statService.loading) {
       return;
     }
-    this.statService.load(filter).subscribe(
+    this.statService.loadOne(filter).subscribe(
       () => {},
       (err) => {
         // TODO TMP DELETE WHEN BACK IS LINKED

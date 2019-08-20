@@ -24,7 +24,7 @@ export class StatGraphViewComponent implements OnInit {
     if (this.statService.loading) {
       return;
     }
-    this.statService.load().subscribe(
+    this.statService.loadOne().subscribe(
       () => {},
       (err) => {
         // TODO TMP DELETE WHEN BACK IS LINKED

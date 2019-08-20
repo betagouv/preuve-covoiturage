@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NouisliderModule } from 'ng2-nouislider';
 
 import { CampaignRoutingModule } from '~/modules/campaign/campaign-routing.module';
-import { MaterialModule } from '~/shared/material/material.module';
+import { MaterialModule } from '~/shared/modules/material/material.module';
 import { SharedModule } from '~/shared/shared.module';
-import { UiTripModule } from '~/modules/trip/ui-trip/ui-trip.module';
+import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 
 import { CampaignDashboardComponent } from './pages/campaign-dashboard/campaign-dashboard.component';
