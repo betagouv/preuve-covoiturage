@@ -1,9 +1,9 @@
-<div class="Administration">
-  <div class="page-header">
+<div class="TripLayout">
+  <app-page-header>
     <h1 class="page-title">
       Les trajets
     </h1>
-    <div class="page-menu">
+    <div class="page-menu TripLayout-menu">
       <nav mat-tab-nav-bar>
         <a
           mat-tab-link
@@ -17,7 +17,7 @@
         </a>
       </nav>
       <button
-        class="page-menu-filter-button"
+        class="TripLayout-menu-filter-button"
         mat-flat-button
         color="primary"
         [matBadge]="filterNumber"
@@ -28,13 +28,15 @@
         Affiner les résultats
       </button>
     </div>
-  </div>
-  <div class="page-content" [class.filter-triangle]="showFilter">
-    <app-filter
-      (filterNumber)="setFilterNumber($event)"
-      [showFilter]="showFilter"
-      (hideFilter)="toggleFilterDisplay()"
-    ></app-filter>
-    <router-outlet></router-outlet>
-  </div>
+  </app-page-header>
+  <app-page-content>
+    <div class="TripLayout-content" [class.filter-triangle]="showFilter">
+      <app-filter
+        (filterNumber)="setFilterNumber($event)"
+        [showFilter]="showFilter"
+        (hideFilter)="toggleFilterDisplay()"
+      ></app-filter>
+      <router-outlet></router-outlet>
+    </div>
+  </app-page-content>
 </div>

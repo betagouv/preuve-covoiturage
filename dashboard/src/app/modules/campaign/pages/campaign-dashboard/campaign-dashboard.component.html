@@ -1,47 +1,48 @@
 <div class="CampaignDashboard">
-  <div class="CampaignDashboard-trips">
-    <div class="CampaignDashboard-trips-header">
-      <h1>Toutes vos campagnes</h1>
-      <button mat-flat-button [routerLink]="'/campaign/create'" class="color-punch">
-        Créer une nouvelle campagne
-      </button>
+  <app-page-header>
+    <div class="CampaignDashboard-trips">
+      <div class="CampaignDashboard-trips-header">
+        <h1>Toutes vos campagnes</h1>
+        <button mat-flat-button [routerLink]="'/campaign/create'" class="color-punch">
+          Créer une nouvelle campagne
+        </button>
+      </div>
+      <app-stat-graph-view [graphName]="'trips'"></app-stat-graph-view>
+      <div>
+        <a class="link" [routerLink]="'/trip'">Voir toutes les statistiques</a>
+      </div>
     </div>
-    <div class="CampaignDashboard-trips--loading" *ngIf="statService.loading && !statService._loaded$.value">
+  </app-page-header>
+  <app-page-content>
+    <div class="CampaignDashboard-trips--loading" *ngIf="campaignService.loading && !campaigns">
       <mat-spinner></mat-spinner>
     </div>
-    <app-stat-graph *ngIf="statService._loaded$.value" [graphName]="'trips'" [lightMode]="true"></app-stat-graph>
-    <div>
-      <a class="link" [routerLink]="'/trip'">Voir toutes les statistiques</a>
+    <div class="CampaignDashboard-content" *ngIf="campaigns">
+      <app-campaign-menu></app-campaign-menu>
+      <div class="CampaignDashboard-content-header">
+        <h2>Vos campagnes en cours</h2>
+        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
+          Nouvelle campagne
+        </button>
+      </div>
+      <div class="CampaignDashboard-content-list">
+        <app-campaigns-list [campaigns]="getCampaignsByStatus(campaignStatus.VALIDATED)"></app-campaigns-list>
+      </div>
+      <div class="CampaignDashboard-content-header">
+        <h2>Vos campagnes en brouillon</h2>
+        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
+          Nouveau brouillon
+        </button>
+      </div>
+      <div class="CampaignDashboard-content-list">
+        <app-campaigns-list [campaigns]="getCampaignsByStatus(campaignStatus.DRAFT)"></app-campaigns-list>
+      </div>
+      <div class="CampaignDashboard-content-header">
+        <h2>Vos campagnes terminées</h2>
+      </div>
+      <div class="CampaignDashboard-content-list">
+        <app-campaigns-list [campaigns]="getCampaignsByStatus(campaignStatus.ARCHIVED)"></app-campaigns-list>
+      </div>
     </div>
-  </div>
-  <div class="CampaignDashboard-trips--loading" *ngIf="campaignService.loading && !campaigns">
-    <mat-spinner></mat-spinner>
-  </div>
-  <div class="CampaignDashboard-content" *ngIf="campaigns">
-    <app-campaign-menu></app-campaign-menu>
-    <div class="CampaignDashboard-content-header">
-      <h2>Vos campagnes en cours</h2>
-      <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
-        Nouvelle campagne
-      </button>
-    </div>
-    <div class="CampaignDashboard-content-list">
-      <app-campaigns-list [campaigns]="getCampaignsByStatus(campaignStatus.VALIDATED)"></app-campaigns-list>
-    </div>
-    <div class="CampaignDashboard-content-header">
-      <h2>Vos campagnes en brouillon</h2>
-      <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
-        Nouveau brouillon
-      </button>
-    </div>
-    <div class="CampaignDashboard-content-list">
-      <app-campaigns-list [campaigns]="getCampaignsByStatus(campaignStatus.DRAFT)"></app-campaigns-list>
-    </div>
-    <div class="CampaignDashboard-content-header">
-      <h2>Vos campagnes terminées</h2>
-    </div>
-    <div class="CampaignDashboard-content-list">
-      <app-campaigns-list [campaigns]="getCampaignsByStatus(campaignStatus.ARCHIVED)"></app-campaigns-list>
-    </div>
-  </div>
+  </app-page-content>
 </div>
