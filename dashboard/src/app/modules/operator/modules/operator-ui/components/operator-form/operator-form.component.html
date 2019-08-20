@@ -1,0 +1,48 @@
+<form class="operatorForm" [formGroup]="operatorForm">
+  <mat-form-field class="name" appearance="outline">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="name" required />
+    <mat-error *ngIf="operatorForm.controls.name.hasError('required')">Le nom est obligatoire.</mat-error>
+  </mat-form-field>
+
+  <h3>Structure</h3>
+
+  <app-form-company [parentForm]="operatorForm.get('company')"></app-form-company>
+
+  <h3>Adresse</h3>
+
+  <app-form-address [parentForm]="operatorForm.get('address')"></app-form-address>
+
+  <h2>Contacts et responsables</h2>
+
+  <div class="contacts">
+    <div>
+      <h3>Délégué à la protection des données</h3>
+
+      <app-form-contact [parentForm]="operatorForm.get('contacts').get('rgpd_dpo')"></app-form-contact>
+    </div>
+
+    <div>
+      <h3>Résponsable du traitement</h3>
+
+      <app-form-contact [parentForm]="operatorForm.get('contacts').get('rgpd_controller')"></app-form-contact>
+    </div>
+
+    <div>
+      <h3>Responsable technique</h3>
+
+      <app-form-contact [parentForm]="operatorForm.get('contacts').get('technical')"></app-form-contact>
+    </div>
+  </div>
+
+  <button
+    *ngIf="authService.hasAnyPermission(['territory.update'])"
+    type="submit"
+    mat-flat-button
+    (click)="onSubmit()"
+    [disabled]="!operatorForm.valid"
+    color="primary"
+  >
+    Mettre à jour les informations
+  </button>
+</form>
