@@ -100,8 +100,11 @@ const addJourney = async (journey, sourceTrip) => {
 
 const detectors = {
   async operatorJourneyId(journey) {
+    console.log(`>>> search for opJid (${journey.operator_journey_id}) for operator (${journey.operator._id})`);
+    if (!journey.operator_journey_id) return null;
+
     return Trip.findOne({
-      operator_journey_id: journey.operator_journey_id || { $exists: true },
+      operator_journey_id: journey.operator_journey_id,
       operator_id: journey.operator._id,
     }).exec();
   },
