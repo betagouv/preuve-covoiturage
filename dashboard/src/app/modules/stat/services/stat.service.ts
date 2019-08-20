@@ -10,30 +10,24 @@ import { Stat } from '~/core/entities/stat/stat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { ApiService } from '~/core/services/api/api.service';
+import { StatInterface } from '~/core/interfaces/stat/statInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
-import { mockStats } from '~/modules/stat/mocks/stats';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StatService {
+export class StatService extends ApiService<StatInterface> {
   public _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
   public _loaded$ = new BehaviorSubject<boolean>(false);
   protected _loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
-    this.load().subscribe(
-      () => {},
-      (err) => {
-        // TODO TMP DELETE WHEN BACK IS LINKED
-        const stat = new Stat(mockStats);
-        this.formatData(stat);
-      },
-    );
+    super(_http, _jsonRPC, 'stat');
   }
 
-  public load(filter: FilterInterface = {}): Observable<Stat[]> {
+  public loadOne(filter: FilterInterface = {}): Observable<Stat[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`stat.list`, filter);
     return this._jsonRPC.call(jsonRPCParam).pipe(

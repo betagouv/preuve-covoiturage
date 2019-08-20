@@ -22,6 +22,7 @@ export const mockStatsData = {
 };
 
 export const mockStats = <Stat>{
+  _id: 'randomStatId',
   carpoolers: {
     total: 5678,
     days: mockStatsData.carpoolers.days.map((val, idx) => {

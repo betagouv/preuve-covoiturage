@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { MaterialModule } from '~/shared/material/material.module';
+import { MaterialModule } from '~/shared/modules/material/material.module';
 
 import { ProfileEditionComponent } from './components/profile-edition/profile-edition.component';
 
