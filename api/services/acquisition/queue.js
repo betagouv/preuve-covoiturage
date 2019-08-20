@@ -7,11 +7,11 @@ const Sentry = require('@pdc/shared/providers/sentry/sentry');
  */
 const journeysQueue = Queue('journeys');
 journeysQueue.client.on('connect', () => {
-  console.log('🐮/journeys: Redis connection OK');
+  // console.log('🐮/journeys: Redis connection OK');
 });
 
 journeysQueue.client.on('close', () => {
-  console.log('🐮/journeys: Redis connection closed');
+  // console.log('🐮/journeys: Redis connection closed');
 });
 
 journeysQueue.on('error', (err) => {
@@ -38,6 +38,5 @@ journeysQueue.on('failed', (job, err) => {
   console.log(`🐮/journeys: failed ${job.id} ${job.data.type}`, err.message);
   Sentry.captureException(err);
 });
-
 
 module.exports = journeysQueue;
