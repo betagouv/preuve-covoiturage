@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ToastrService } from 'ngx-toastr';
+
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { StatService } from '~/modules/stat/services/stat.service';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-campaign-dashboard',
