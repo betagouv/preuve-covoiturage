@@ -18,7 +18,7 @@ import { IncentiveRestriction } from '~/core/entities/campaign/incentive-restric
 export class RestrictionFormComponent implements OnInit {
   restrictionForm: FormGroup;
 
-  @Input() timeRange: IncentiveRestriction = new IncentiveRestriction();
+  @Input() incentiveRestriction: IncentiveRestriction = new IncentiveRestriction();
   @Input() formControl: FormControl;
 
   constructor(private _formBuilder: FormBuilder) {}
@@ -40,7 +40,7 @@ export class RestrictionFormComponent implements OnInit {
 
   writeValue(value: IncentiveRestriction) {
     if (value) {
-      this.timeRange = value;
+      this.incentiveRestriction = value;
     }
   }
 
