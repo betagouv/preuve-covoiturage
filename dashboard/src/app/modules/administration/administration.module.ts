@@ -9,15 +9,23 @@ import { ChangePasswordModule } from '~/modules/authentication/modules/change-pa
 import { UiUserModule } from '~/modules/user/modules/ui-user/ui-user.module';
 import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
 import { SharedModule } from '~/shared/shared.module';
+import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operator-ui.module';
 
 import { AdministrationRoutingModule } from './administration-routing.module';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
+import { OperatorComponent } from './pages/operator/operator.component';
 
 @NgModule({
-  declarations: [AdministrationLayoutComponent, ProfileComponent, TerritoryComponent, UsersComponent],
+  declarations: [
+    AdministrationLayoutComponent,
+    OperatorComponent,
+    ProfileComponent,
+    TerritoryComponent,
+    UsersComponent,
+  ],
   imports: [
     AdministrationRoutingModule,
     ChangePasswordModule,
@@ -30,6 +38,7 @@ import { UsersComponent } from './pages/users/users.component';
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
+    OperatorUiModule,
   ],
 })
 export class AdministrationModule {}

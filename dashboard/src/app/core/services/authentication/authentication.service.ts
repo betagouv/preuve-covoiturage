@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 import { PermissionType } from '~/core/types/permissionType';
-import { territoriesPermissions } from '~/core/config/permissions';
+import { operatorsPermissions, territoriesPermissions } from '~/core/config/permissions';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -99,7 +99,10 @@ export class AuthenticationService {
   /**
    * Check if connected user has any of list of groups
    */
-  public hasAnyGroup(groups: string[]): boolean {
+  public hasAnyGroup(groups: string[] | null = null): boolean {
+    if (!groups) {
+      return true;
+    }
     const user = this._userService.user;
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
@@ -107,7 +110,10 @@ export class AuthenticationService {
   /**
    * Check if connected user has role
    */
-  public hasRole(role: string): boolean {
+  public hasRole(role: string | null): boolean {
+    if (!role) {
+      return true;
+    }
     const user = this._userService.user;
     return !role || ('role' in user && role === user.role);
   }
@@ -177,7 +183,8 @@ export class AuthenticationService {
         lastname: 'Decovoit',
         email: 'preuve.decovoit@yopmail.com',
         role: 'admin',
-        permissions: territoriesPermissions.admin,
+        group: 'operator',
+        permissions: operatorsPermissions.admin,
       }),
     });
   }

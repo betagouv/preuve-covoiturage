@@ -12,6 +12,6 @@ import { FormCompanyComponent } from './components/form-company/form-company.com
 @NgModule({
   declarations: [FormBankComponent, FormAddressComponent, FormCompanyComponent, FormContactComponent],
   imports: [CommonModule, FormsModule, MaterialModule, ReactiveFormsModule],
-  exports: [FormContactComponent, FormCompanyComponent, FormAddressComponent],
+  exports: [FormContactComponent, FormCompanyComponent, FormAddressComponent, FormBankComponent],
 })
 export class FormModule {}
