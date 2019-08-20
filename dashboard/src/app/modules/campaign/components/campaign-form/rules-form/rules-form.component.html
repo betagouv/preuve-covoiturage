@@ -58,7 +58,7 @@
             [connect]="true"
             [min]="0"
             [max]="100"
-            [step]="5"
+            [step]="1"
             [tooltips]="[true, true]"
             [formControl]="rulesForm.get('range')"
           ></nouislider>
@@ -107,6 +107,29 @@
           <mat-checkbox color="primary" formControlName="forDriver">Conducteurs</mat-checkbox>
           <mat-checkbox color="primary" formControlName="forPassenger">Passagers</mat-checkbox>
           <mat-checkbox color="primary" formControlName="onlyMajorPeople">Personnes majeurs uniquement</mat-checkbox>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel
+        [ngClass]="{ 'mat-expansion-panel-error': controls.operators.touched && !controls.operators.valid }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Opérateurs
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showOperatorsLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Opérateurs</mat-label>
+            <mat-select multiple formControlName="operators" required>
+              <mat-option [value]="0">Lundi</mat-option>
+            </mat-select>
+            <mat-error *ngIf="controls.operators.hasError('required')">
+              Vous devez sélectionner au moins un opérateur.
+            </mat-error>
+          </mat-form-field>
         </div>
       </mat-expansion-panel>
     </mat-accordion>

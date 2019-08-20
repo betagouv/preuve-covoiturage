@@ -16,4 +16,5 @@ export interface CampaignInterface {
   trips_number?: number;
   amount_spent?: number;
   rules?: IncentiveRules;
+  parameters?: any;
 }
