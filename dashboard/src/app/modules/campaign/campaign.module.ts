@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NouisliderModule } from 'ng2-nouislider';
 
@@ -18,6 +18,9 @@ import { PolicyFormComponent } from './components/campaign-form/policy-form/poli
 import { RulesFormComponent } from './components/campaign-form/rules-form/rules-form.component';
 import { ParametersFormComponent } from './components/campaign-form/parameters-form/parameters-form.component';
 import { SummaryFormComponent } from './components/campaign-form/summary-form/summary-form.component';
+import { RestrictionFormComponent } from './components/campaign-form/restriction-form/restriction-form.component';
+import { RetributionFormComponent } from './components/campaign-form/retribution-form/retribution-form.component';
+import { StaggeredFormComponent } from './components/campaign-form/staggered-form/staggered-form.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,9 @@ import { SummaryFormComponent } from './components/campaign-form/summary-form/su
     RulesFormComponent,
     ParametersFormComponent,
     SummaryFormComponent,
+    RestrictionFormComponent,
+    RetributionFormComponent,
+    StaggeredFormComponent,
   ],
   imports: [
     CampaignRoutingModule,
@@ -42,6 +48,6 @@ import { SummaryFormComponent } from './components/campaign-form/summary-form/su
     ReactiveFormsModule,
     NouisliderModule,
   ],
-  providers: [CurrencyPipe],
+  providers: [CurrencyPipe, DecimalPipe],
 })
 export class CampaignModule {}

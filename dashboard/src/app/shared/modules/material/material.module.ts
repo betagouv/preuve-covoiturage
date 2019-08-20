@@ -20,6 +20,7 @@ import {
   MatAutocompleteModule,
   MatChipsModule,
   MatExpansionModule,
+  MatSlideToggleModule,
 } from '@angular/material';
 
 @NgModule({
@@ -46,6 +47,7 @@ import {
     MatTooltipModule,
     MatExpansionModule,
     MatDatepickerModule,
+    MatSlideToggleModule,
   ],
   exports: [
     MatAutocompleteModule,
@@ -69,6 +71,7 @@ import {
     MatTooltipModule,
     MatExpansionModule,
     MatDatepickerModule,
+    MatSlideToggleModule,
   ],
   providers: [MatDatepickerModule],
 })

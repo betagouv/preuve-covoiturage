@@ -1,5 +1,5 @@
 <div class="CampaignForm">
-  <mat-horizontal-stepper #stepper [linear]="false">
+  <mat-horizontal-stepper #stepper [linear]="true">
     <mat-step [stepControl]="templateFormGroup">
       <ng-template matStepLabel>Campagne</ng-template>
       <app-page-content>
@@ -45,7 +45,15 @@
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>Étape Précédente</button>
-            <button mat-flat-button class="large" color="primary" matStepperNext>Étape suivante</button>
+            <button
+                    mat-flat-button
+                    class="large"
+                    color="primary"
+                    matStepperNext
+                    [disabled]="!campaignFormGroup.get('rules').valid"
+            >
+              Étape suivante
+            </button>
           </div>
         </div>
       </app-page-content>
@@ -66,7 +74,9 @@
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>Étape Précédente</button>
-            <button mat-flat-button class="large" color="primary" matStepperNext>Voir le récapitulatif</button>
+            <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!campaignFormGroup.valid">
+              Voir le récapitulatif
+            </button>
           </div>
         </div>
       </app-page-content>

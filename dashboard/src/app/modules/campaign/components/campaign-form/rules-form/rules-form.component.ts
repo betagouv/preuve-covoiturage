@@ -115,12 +115,28 @@ export class RulesFormComponent implements OnInit {
       label += this.rulesForm.get('forDriver').value ? ' et passagers' : 'Passagers';
     }
     if (this.rulesForm.get('onlyMajorPeople').value) {
-      label += ' majeurs uniquement';
+      label += ', majeurs uniquement';
+    }
+    return label;
+  }
+
+  showOperatorsLabel(): string {
+    let label = '';
+    const operators = this.rulesForm.get('operators').value;
+    if (operators) {
+      const multipleOperators = operators.length > 1;
+      label += `${operators.length} opérateur${multipleOperators ? 's' : ''}
+      participant${multipleOperators ? 's' : ''} à la campagne`;
     }
     return label;
   }
 
   isTimeCtrlArrayTouched() {
+    for (const control of this.timeCtrlArray.controls) {
+      if (!control.valid && control.touched) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -133,6 +149,7 @@ export class RulesFormComponent implements OnInit {
       onlyMajorPeople: [],
       forDriver: [],
       forPassenger: [],
+      operators: [],
     });
   }
 }

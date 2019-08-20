@@ -1,5 +1,12 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  NG_VALUE_ACCESSOR,
+  Validators,
+} from '@angular/forms';
 
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 
@@ -19,6 +26,7 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
   timeRangeForm: FormGroup;
 
   @Input() timeRange: IncentiveTimeRule = new IncentiveTimeRule();
+  @Input() formControl: FormControl;
 
   constructor(private _formBuilder: FormBuilder) {}
 
@@ -71,6 +79,12 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
     } else {
       this.writeValue(null);
       this.onChange(null);
+    }
+  }
+
+  onTouched() {
+    if (this.formControl) {
+      this.formControl.markAsTouched();
     }
   }
 }
