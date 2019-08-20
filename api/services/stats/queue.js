@@ -7,11 +7,11 @@ const Sentry = require('@pdc/shared/providers/sentry/sentry');
  */
 const statsQueue = Queue('stats');
 statsQueue.client.on('connect', () => {
-  console.log('🐮/stats: Redis connection OK');
+  // console.log('🐮/stats: Redis connection OK');
 });
 
 statsQueue.client.on('close', () => {
-  console.log('🐮/stats: Redis connection closed');
+  // console.log('🐮/stats: Redis connection closed');
 });
 
 statsQueue.on('error', (err) => {

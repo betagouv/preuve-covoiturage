@@ -7,11 +7,11 @@ const Sentry = require('../providers/sentry/sentry');
  */
 const emailsQueue = Queue('emails');
 emailsQueue.client.on('connect', () => {
-  console.log('🐮/emails: Redis connection OK');
+  // console.log('🐮/emails: Redis connection OK');
 });
 
 emailsQueue.client.on('close', () => {
-  console.log('🐮/emails: Redis connection closed');
+  // console.log('🐮/emails: Redis connection closed');
 });
 
 emailsQueue.on('error', (err) => {

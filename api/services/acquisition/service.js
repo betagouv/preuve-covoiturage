@@ -49,6 +49,15 @@ const journeyService = serviceFactory(Journey, {
       throw new InternalServerError('Cannot duplicate null journey');
     }
 
+    // return an already existing duplicate if found
+    const existing = await Journey.findOne({ journey_id: doc.journey_id }).exec();
+
+    // track for debug
+    console.log(`>> journey (${doc.journey_id}) exists:`, !!existing);
+    if (existing) {
+      return existing;
+    }
+
     const journey = doc.toObject();
 
     if (!operatorId) {
