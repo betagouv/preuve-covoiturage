@@ -1,0 +1,57 @@
+@import '../../../../../../styles/variables';
+
+.ParametersForm {
+  &-incentiveMode {
+    div:first-child {
+      text-align: center;
+    }
+
+    mat-button-toggle-group {
+      height: 88px;
+      border-radius: 0;
+      border: none;
+
+      ::ng-deep.mat-button-toggle {
+        height: calc(100% - 6px);
+        border-radius: 5px;
+        width: 250px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        background-color: $background-white;
+        border: 3px solid $background-white;
+
+        &:hover {
+          background-color: $background-light;
+          border-color: $background-light;
+        }
+
+        &.mat-button-toggle-checked {
+          background-color: $background-white;
+          border: 3px solid $color-primary;
+          color: $black;
+        }
+
+        &:not(:first-child) {
+          margin-left: 10px;
+        }
+
+        &-button {
+          height: 100%;
+          font-size: 16px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    &-value {
+      margin-top: 20px;
+
+      mat-form-field {
+        width: 100px;
+      }
+
+      span {
+        margin-left: 10px;
+      }
+    }
+  }
+}

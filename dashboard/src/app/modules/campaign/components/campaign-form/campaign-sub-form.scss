@@ -1,0 +1,39 @@
+@import '../../../../../styles/variables';
+
+.CampaignSubForm {
+  margin: 0 20px 30px 0;
+
+  mat-expansion-panel {
+    &.mat-expansion-panel {
+      margin: 16px 0;
+      box-shadow: none;
+      border-radius: 5px;
+      transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: 2px solid $background-blue;
+
+      &.mat-expansion-panel-error {
+        border-color: $color-error;
+      }
+    }
+
+    .mat-expansion-panel-header-title {
+      flex: 1;
+      color: $grey;
+    }
+
+    .mat-expansion-panel-header-description {
+      flex: 2;
+      font-weight: bold;
+      color: $color-text-black;
+    }
+
+    ::ng-deep.mat-expansion-panel-body {
+      padding: 0;
+    }
+  }
+
+  &-inputs {
+    background: $background-light;
+    padding: 16px 24px;
+  }
+}

@@ -1,0 +1,49 @@
+@import '../../../../../../styles/variables';
+
+.PolicyForm {
+  font-family: WorkSans, sans-serif;
+
+  p,
+  span {
+    font-family: WorkSans, sans-serif;
+  }
+
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  &-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &-templateCard {
+    max-width: 235px;
+    height: 125px;
+    padding: 20px;
+    background: $background-white;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 2px solid $background-white;
+    transition: 0.3s all;
+    cursor: pointer;
+
+    &-name {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    &:hover,
+    &--selected {
+      border: 2px solid $color-primary;
+    }
+  }
+
+  &-custom {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}

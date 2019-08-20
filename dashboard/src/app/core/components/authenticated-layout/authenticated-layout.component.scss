@@ -1,8 +1,9 @@
+@import '~src/styles/variables';
+
 .AuthenticatedLayout {
   width: 100%;
   height: 100%;
   overflow: hidden;
-
   app-header {
     position: fixed;
     width: 100%;
@@ -11,12 +12,12 @@
   }
 
   &-body {
-    margin-top: 68.5px;
-    height: calc(100% - 68.5px);
+    margin-top: var(--header-height);
+    height: calc(100% - var(--header-height));
+    &-content {
+      min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    }
     overflow-y: auto;
     overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
   }
 }

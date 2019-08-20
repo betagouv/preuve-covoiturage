@@ -1,0 +1,51 @@
+<div class="SummaryForm">
+  <h2>Récapitulatif</h2>
+  <div class="SummaryForm-summary">
+    <h3>RESOLUTION</h3>
+    <p class="SummaryForm-summary-text" [innerHTML]="getSummaryText()" #summaryText></p>
+    <div class="SummaryForm-summary-actions">
+      <button mat-button (click)="utils.copyToClipboard(summaryText.textContent)">Copier le texte</button>
+      <span>Attention: Texte indicatif</span>
+    </div>
+  </div>
+  <form [formGroup]="campaignForm">
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Donnez un nom à votre campagne</mat-label>
+        <input matInput formControlName="name" required />
+        <mat-error *ngIf="controls.name.hasError('required')">
+          Le nom de la campagne est obligatoire.
+        </mat-error>
+      </mat-form-field>
+      <div class="SummaryForm-template">
+        <mat-checkbox color="primary" formControlName="saveAsTemplate" #saveAsTemplate>
+          Enregistrer en tant que template
+        </mat-checkbox>
+        <mat-icon
+          [matTooltip]="'Enregistrer cette campagne en tant que template vous permettra de la réutiliser par la suite.'"
+          color="accent"
+        >
+          info
+        </mat-icon>
+      </div>
+    </div>
+    <mat-form-field appearance="outline" *ngIf="saveAsTemplate.checked">
+      <mat-label>Description de la campagne</mat-label>
+      <textarea matInput formControlName="description" required></textarea>
+      <mat-error *ngIf="controls.description.hasError('required')">
+        La description de la campagne est obligatoire.
+      </mat-error>
+    </mat-form-field>
+    <div class="SummaryForm-actions">
+      <button [appShowSpinner]="loading" mat-flat-button class="large" color="primary" (click)="saveCampaign()">
+        Lancer la campagne
+      </button>
+      <button [appShowSpinner]="loading" mat-button class="large" (click)="saveCampaign(true)">
+        Enregistrer en brouillon
+      </button>
+    </div>
+  </form>
+  <div class="SummaryForm-simulation">
+    <h3>Estimation de votre campagne</h3>
+  </div>
+</div>

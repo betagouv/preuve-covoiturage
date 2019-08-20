@@ -43,7 +43,7 @@ export class TerritoryFormComponent implements OnInit {
   }
 
   private initTerritoryFormValue(): void {
-    this._territoryService.loadTerritory().subscribe(
+    this._territoryService.loadOne().subscribe(
       () => {},
       (err) => {
         // TODO TMP DELETE WHEN BACK IS LINKED
@@ -63,10 +63,10 @@ export class TerritoryFormComponent implements OnInit {
           }),
         });
 
-        this._territoryService._territory$.next(territory);
+        this._territoryService._entity$.next(territory);
       },
     );
-    this._territoryService._territory$.subscribe((territory: Territory | null) => {
+    this._territoryService.territory$.subscribe((territory: Territory | null) => {
       if (territory) {
         const { name, acronym, address, company, contacts } = territory;
         this.territoryForm.setValue({ name, acronym, address, company, contacts });

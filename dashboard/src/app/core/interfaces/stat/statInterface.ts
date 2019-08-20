@@ -1,4 +1,5 @@
 export interface StatInterface {
+  _id: string;
   carpoolers: {
     total: number;
     days: StatDateTotal[];

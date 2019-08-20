@@ -15,7 +15,7 @@ import { AuthenticatedLayoutComponent } from './components/authenticated-layout/
 import { HttpApiInterceptor } from './interceptor/http.interceptor';
 
 @NgModule({
-  declarations: [NotAuthenticatedLayoutComponent, AuthenticatedLayoutComponent],
+  declarations: [AuthenticatedLayoutComponent, NotAuthenticatedLayoutComponent],
   imports: [
     CommonModule,
     BrowserModule,

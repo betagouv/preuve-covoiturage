@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import { get } from 'lodash';
 import * as moment from 'moment';
 
@@ -10,20 +10,24 @@ import { Stat } from '~/core/entities/stat/stat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { ApiService } from '~/core/services/api/api.service';
+import { StatInterface } from '~/core/interfaces/stat/statInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StatService {
+export class StatService extends ApiService<StatInterface> {
   public _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
-  protected _loaded$ = new BehaviorSubject<boolean>(false);
+  public _loaded$ = new BehaviorSubject<boolean>(false);
   protected _loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {}
+  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
+    super(_http, _jsonRPC, 'stat');
+  }
 
-  public load(filter: FilterInterface = {}): Observable<Stat[]> {
+  public loadOne(filter: FilterInterface = {}): Observable<Stat[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`stat.list`, filter);
     return this._jsonRPC.call(jsonRPCParam).pipe(

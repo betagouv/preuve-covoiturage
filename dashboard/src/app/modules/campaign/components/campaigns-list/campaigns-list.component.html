@@ -1,5 +1,25 @@
 <div class="CampaignsList">
   <app-list-item *ngFor="let campaign of campaigns">
-    <div class="CampaignsList-item"></div>
+    <div class="CampaignsList-item">
+      <div class="CampaignsList-item-name">
+        {{ campaign.name }}
+      </div>
+      <div class="CampaignsList-item-amount">
+        <span *ngIf="campaign.status !== campaignStatus.DRAFT">{{
+          campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0'
+        }}</span>
+        <span>Budget: {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}</span>
+      </div>
+      <div class="CampaignsList-item-trips">
+        <span *ngIf="campaign.status !== campaignStatus.DRAFT">{{ campaign.trips_number }} trajets</span>
+        <span>Plafond: {{ campaign.max_trips }} trajets</span>
+      </div>
+      <div class="CampaignsList-item-date">
+        <span>Du {{ campaign.start | date: 'dd MMMM' }} au {{ campaign.end | date: 'dd MMMM' }}</span>
+      </div>
+      <div class="CampaignsList-item-actions">
+        <a class="link">Voir le détail</a>
+      </div>
+    </div>
   </app-list-item>
 </div>

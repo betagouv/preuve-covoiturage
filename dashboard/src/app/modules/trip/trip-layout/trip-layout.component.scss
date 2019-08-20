@@ -1,6 +1,7 @@
-@import '~src/app/core/components/authenticated-layout/authenticated-layout-page';
+@import '~src/styles/variables';
+@import '~src/app/shared/components/page-header/page-header';
 
-.page {
+.TripLayout {
   &-content {
     &.filter-triangle:before {
       content: '';

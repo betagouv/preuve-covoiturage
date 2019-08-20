@@ -1,14 +1,13 @@
 .stats {
   max-width: 100%;
-  margin: auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin: 30px auto;
   @media (min-width: 1400px) {
     width: 1272px;
   }
   &--loading {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+    padding: 174.5px;
   }
   .stats-numbers {
     display: flex;
@@ -17,5 +16,10 @@
     @media (max-width: 1400px) {
       justify-content: space-evenly;
     }
+  }
+
+  &--loading {
+    display: flex;
+    justify-content: space-around;
   }
 }

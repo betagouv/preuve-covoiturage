@@ -7,10 +7,40 @@
 
   &-item {
     display: flex;
+    align-items: center;
     width: 100%;
+    font-family: 'WorkSans', sans-serif;
+
+    p,
+    span {
+      font-family: 'WorkSans', sans-serif;
+    }
 
     & > * {
       flex: 1;
+    }
+
+    &-amount,
+    &-trips {
+      display: flex;
+      flex-direction: column;
+
+      > span:nth-child(1) {
+        font-size: 21px;
+      }
+
+      > span:nth-child(2) {
+        color: $color-primary;
+        font-size: 13px;
+      }
+    }
+
+    &-date {
+      font-size: 14px;
+    }
+
+    &-actions {
+      text-align: right;
     }
   }
 }

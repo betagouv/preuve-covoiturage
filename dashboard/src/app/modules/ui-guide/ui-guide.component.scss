@@ -1,4 +1,4 @@
-@import '../../core/components/authenticated-layout/authenticated-layout-page';
+@import '~src/app/shared/components/page-header/page-header';
 
 .UiGuide {
   &-title {
@@ -26,6 +26,11 @@
 
     & > app-help-card {
       width: 25%;
+    }
+
+    & .ng2-nouislider {
+      width: 100%;
+      margin-top: 30px;
     }
   }
 }

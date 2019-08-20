@@ -121,3 +121,15 @@ $color-border-help: #cadaef;
 $font-size-paragraph: 14px;
 $font-size-title: 26px;
 $font-size-title-2: 20px;
+
+// HEADER & FOOTER
+:root {
+  --header-height: 68.5px;
+  --footer-height: 163px;
+}
+
+// RESPONSIVE
+$size-small-padding: 15px;
+$size-large-width: 1272px;
+
+$responsive-large: 1400px;

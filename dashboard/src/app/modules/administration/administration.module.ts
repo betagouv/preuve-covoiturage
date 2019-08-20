@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ProfileUiModule } from '~/modules/profile/modules/profile-ui/profile-ui.module';
-import { MaterialModule } from '~/shared/material/material.module';
+import { ProfileUiModule } from '~/modules/user/modules/profile-ui/profile-ui.module';
+import { MaterialModule } from '~/shared/modules/material/material.module';
 import { ChangePasswordModule } from '~/modules/authentication/modules/change-password/change-password.module';
-import { UiUserModule } from '~/modules/user/ui-user/ui-user.module';
+import { UiUserModule } from '~/modules/user/modules/ui-user/ui-user.module';
 import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
 
 import { AdministrationRoutingModule } from './administration-routing.module';
@@ -14,6 +14,7 @@ import { AdministrationLayoutComponent } from './administration-layout/administr
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
+import { SharedModule } from '~/shared/shared.module';
 
 @NgModule({
   declarations: [AdministrationLayoutComponent, ProfileComponent, TerritoryComponent, UsersComponent],
@@ -28,6 +29,7 @@ import { UsersComponent } from './pages/users/users.component';
     TerritoryUiModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedModule,
   ],
 })
 export class AdministrationModule {}

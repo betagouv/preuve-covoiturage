@@ -1,0 +1,114 @@
+<div class="RulesForm CampaignSubForm">
+  <h2>Définissez des conditions d'éligibilités</h2>
+  <form [formGroup]="rulesForm">
+    <mat-accordion>
+      <mat-expansion-panel
+        [expanded]="true"
+        [ngClass]="{
+          'mat-expansion-panel-error':
+            (controls.weekday.touched && !controls.weekday.valid) || (!timeCtrlArray.valid && isTimeCtrlArrayTouched())
+        }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Jours de la semaine
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showDateLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs RulesForm-date">
+          <mat-form-field appearance="outline">
+            <mat-label>Jours de la semaine</mat-label>
+            <mat-select multiple formControlName="weekday" required>
+              <mat-option [value]="0">Lundi</mat-option>
+              <mat-option [value]="1">Mardi</mat-option>
+              <mat-option [value]="2">Mercredi</mat-option>
+              <mat-option [value]="3">Jeudi</mat-option>
+              <mat-option [value]="4">Vendredi</mat-option>
+              <mat-option [value]="5">Samedi</mat-option>
+              <mat-option [value]="6">Dimanche</mat-option>
+            </mat-select>
+            <mat-error *ngIf="controls.weekday.hasError('required')">
+              Les jours de la semaine sont obligatoires.
+            </mat-error>
+          </mat-form-field>
+          <div>
+            <div *ngFor="let timeCtrl of timeCtrlArray.controls; let idx = index" class="RulesForm-date-time">
+              <app-range-time-picker [formControl]="timeCtrl" [timeRange]="timeCtrl.value"></app-range-time-picker>
+              <mat-icon color="error" (click)="removeTimeFilter(idx)">delete_outline</mat-icon>
+            </div>
+            <button mat-stroked-button color="primary" (click)="addTimeFilter()" [disabled]="!timeCtrlArray.valid">
+              Ajouter un filtre horaire
+            </button>
+          </div>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.range.touched && !controls.range.valid }">
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Distance
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showDistanceLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs RulesForm-range">
+          <nouislider
+            [connect]="true"
+            [min]="0"
+            [max]="100"
+            [step]="5"
+            [tooltips]="[true, true]"
+            [formControl]="rulesForm.get('range')"
+          ></nouislider>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.ranks.touched && !controls.ranks.valid }">
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Classe de preuve
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showTripClassLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Classe de preuve</mat-label>
+            <mat-select multiple formControlName="ranks" required>
+              <mat-option *ngFor="let tripClass of tripClassKeys" [value]="tripClass">{{ tripClass }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="controls.ranks.hasError('required')">
+              Les classes de preuves sont obligatoires.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel
+        [ngClass]="{
+          'mat-expansion-panel-error':
+            controls.forDriver.touched &&
+            !controls.forDriver.value &&
+            controls.forPassenger.touched &&
+            !controls.forPassenger.value
+        }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Cible
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showTargetLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="RulesForm-target CampaignSubForm-inputs">
+          <mat-label>Qui souhaitez vous rémunérer ?</mat-label>
+          <mat-checkbox color="primary" formControlName="forDriver">Conducteurs</mat-checkbox>
+          <mat-checkbox color="primary" formControlName="forPassenger">Passagers</mat-checkbox>
+          <mat-checkbox color="primary" formControlName="onlyMajorPeople">Personnes majeurs uniquement</mat-checkbox>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </form>
+</div>

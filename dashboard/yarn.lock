@@ -5002,6 +5002,11 @@ neo-async@^2.5.0, neo-async@^2.6.0:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.1.tgz#ac27ada66167fa8849a6addd837f6b189ad2081c"
   integrity sha512-iyam8fBuCUpWeKPGpaNMetEocMt364qkCsfL9JuhjXX6dRnguRVOfk2GZaDpPjcOKiiXCPINZC1GczQ7iTq3Zw==
 
+ng2-nouislider@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/ng2-nouislider/-/ng2-nouislider-1.8.2.tgz#4d4aab402d307020415da1714a5e9f46817fe97c"
+  integrity sha512-apCpRxwX/3VapLuPozZkUfM3HAE1unuCm2UdRMDvAHbbY6CLobaZcsWUYQ6b02VzxccyV4G1z0xsq2un8J2Lqw==
+
 ngx-infinite-scroll@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/ngx-infinite-scroll/-/ngx-infinite-scroll-8.0.0.tgz#4fc1e1d1bb50baedc4793c28115faec656a8d027"
@@ -5131,6 +5136,11 @@ normalize-url@1.9.1:
     prepend-http "^1.0.0"
     query-string "^4.1.0"
     sort-keys "^1.0.0"
+
+nouislider@^14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/nouislider/-/nouislider-14.0.2.tgz#673e7e7362345d938db9d74f84bea5f3c31505de"
+  integrity sha512-N4AQStV4frh+XcLUwMI/hZpBP6tRboDE/4LZ7gzfxMVXFi/2J9URphnm40Ff4KEyrAVGSGaWApvljoMzTNWBlA==
 
 npm-bundled@^1.0.1:
   version "1.0.6"

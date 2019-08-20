@@ -1,6 +1,7 @@
 import { StatDateTotal, StatInterface } from '../../interfaces/stat/statInterface';
 
 export class Stat {
+  public _id: string;
   public carpoolers: {
     total: number;
     days: StatDateTotal[];
@@ -35,6 +36,7 @@ export class Stat {
     }[];
   };
   constructor(obj: StatInterface) {
+    this._id = obj._id;
     this.carpoolers = obj.carpoolers;
     this.carpoolers_per_vehicule = obj.carpoolers_per_vehicule;
     this.distance = obj.distance;
