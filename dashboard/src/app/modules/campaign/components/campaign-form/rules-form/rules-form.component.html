@@ -124,7 +124,9 @@
           <mat-form-field appearance="outline">
             <mat-label>Opérateurs</mat-label>
             <mat-select multiple formControlName="operators" required>
-              <mat-option [value]="0">Lundi</mat-option>
+              <mat-option *ngFor="let operator of operatorService.entities$ | async" [value]="operator._id">
+                {{ operator.nom_commercial }}
+              </mat-option>
             </mat-select>
             <mat-error *ngIf="controls.operators.hasError('required')">
               Vous devez sélectionner au moins un opérateur.
