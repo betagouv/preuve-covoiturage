@@ -5,7 +5,11 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from './modules/material/material.module';
+
 import { ButtonSpinnerDirective } from './directives/button-spinner.directive';
+
+import { PageContentComponent } from './components/page-content/page-content.component';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { HelpCardComponent } from './components/help-card/help-card.component';
@@ -22,6 +26,8 @@ import { RangeTimePickerComponent } from './components/range-time-picker/range-t
     ButtonSpinnerDirective,
     MenuCardComponent,
     RangeTimePickerComponent,
+    PageContentComponent,
+    PageHeaderComponent,
   ],
   imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   exports: [
@@ -33,6 +39,8 @@ import { RangeTimePickerComponent } from './components/range-time-picker/range-t
     ButtonSpinnerDirective,
     MenuCardComponent,
     RangeTimePickerComponent,
+    PageContentComponent,
+    PageHeaderComponent,
   ],
   entryComponents: [MatSpinner],
 })

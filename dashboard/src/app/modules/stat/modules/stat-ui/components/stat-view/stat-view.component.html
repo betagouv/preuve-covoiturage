@@ -1,4 +1,4 @@
-<div class="stats stats--loading" *ngIf="statService.loading && !statService._loaded$.value">
+<div class="stats--loading" *ngIf="statService.loading && !statService._loaded$.value">
   <mat-spinner></mat-spinner>
 </div>
 <div class="stats" *ngIf="statService._loaded$.value">

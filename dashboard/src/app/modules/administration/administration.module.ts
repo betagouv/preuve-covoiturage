@@ -14,6 +14,7 @@ import { AdministrationLayoutComponent } from './administration-layout/administr
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
+import { SharedModule } from '~/shared/shared.module';
 
 @NgModule({
   declarations: [AdministrationLayoutComponent, ProfileComponent, TerritoryComponent, UsersComponent],
@@ -28,6 +29,7 @@ import { UsersComponent } from './pages/users/users.component';
     TerritoryUiModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedModule,
   ],
 })
 export class AdministrationModule {}
