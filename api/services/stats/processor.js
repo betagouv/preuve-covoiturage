@@ -40,8 +40,8 @@ const castToObjectId = {
 };
 
 const castToISODate = {
-  find: [['passenger.start.datetime', '$gte']],
-  aggregate: [[0, '$match', 'passenger.start.datetime', '$gte']],
+  find: [['passenger.start.datetime', '$gte'], ['passenger.start.datetime', '$lt']],
+  aggregate: [[0, '$match', 'passenger.start.datetime', '$gte'], [0, '$match', 'passenger.start.datetime', '$lt']],
 };
 
 const castArgs = (command, args) => {
@@ -79,7 +79,7 @@ const castArgs = (command, args) => {
   return args;
 };
 
-module.exports = db => async (job) => {
+module.exports = (db) => async (job) => {
   const { key, collection, commands } = job.data;
 
   const cache = await commands.reduce(
