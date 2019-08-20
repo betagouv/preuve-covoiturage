@@ -3,6 +3,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { TripClass } from '~/core/entities/trip/trip-class';
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
+import { OperatorService } from '~/modules/operator/services/operator.service';
+import { Operator } from '~/core/entities/operator/operator';
 
 @Component({
   selector: 'app-rules-form',
@@ -14,10 +16,11 @@ export class RulesFormComponent implements OnInit {
 
   tripClassKeys = Object.keys(TripClass);
 
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {}
 
   ngOnInit() {
     this.initRulesForm();
+    this.loadOperators();
   }
 
   get rulesForm(): FormGroup {
@@ -151,5 +154,31 @@ export class RulesFormComponent implements OnInit {
       forPassenger: [],
       operators: [],
     });
+  }
+
+  private loadOperators() {
+    this.operatorService.load().subscribe(
+      () => {
+        // TODO DELETE
+        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+      },
+      (err) => {
+        this.operatorService._entities$.next([
+          {
+            _id: '1',
+            nom_commercial: 'Maxicovoit',
+          },
+          {
+            _id: '2',
+            nom_commercial: 'Supercovoit',
+          },
+          {
+            _id: '3',
+            nom_commercial: 'Batcovoit',
+          },
+        ]);
+        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+      },
+    );
   }
 }

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 
 import { UtilsService } from '~/core/services/utils.service';
@@ -47,5 +47,15 @@ export class SummaryFormComponent implements OnInit {
 
   saveCampaign(isDraft: boolean = false) {
     this.onSaveCampaign.emit(isDraft);
+  }
+
+  saveAsTemplateChange($event) {
+    if ($event.checked) {
+      this.controls.description.setValidators(Validators.required);
+    } else {
+      this.controls.description.setValue(null);
+      this.controls.description.setValidators(null);
+    }
+    this.controls.description.updateValueAndValidity();
   }
 }
