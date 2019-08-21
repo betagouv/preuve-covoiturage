@@ -10,11 +10,11 @@ import { StatService } from '../../../../services/stat.service';
 import { mockStats } from '../../../../mocks/stats';
 
 @Component({
-  selector: 'app-stat-view',
-  templateUrl: './stat-view.component.html',
-  styleUrls: ['./stat-view.component.scss'],
+  selector: 'app-stat-territory-view',
+  templateUrl: './stat-territory-view.component.html',
+  styleUrls: ['./stat-territory-view.component.scss'],
 })
-export class StatViewComponent implements OnInit {
+export class StatTerritoryViewComponent implements OnInit {
   public graphName: statDataNameType;
   public selected: GraphNamesInterface;
   public disabled: GraphNamesInterface = {

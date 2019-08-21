@@ -1,8 +1,13 @@
-@import '../../../../../styles/variables';
+@import '~src/styles/variables';
 
 .CampaignsList {
   ::ng-deep.ListItem {
     margin-bottom: 10px;
+  }
+
+  &--loading {
+    display: flex;
+    justify-content: space-around;
   }
 
   &-item {

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+
 import { tripStats } from '../../config/tripStats';
 
 @Component({
@@ -9,8 +12,9 @@ import { tripStats } from '../../config/tripStats';
 })
 export class TripStatsComponent implements OnInit {
   public tripStats = tripStats;
+  public campaignStatusEnum = CampaignStatus;
 
-  constructor() {}
+  constructor(public authenticationService: AuthenticationService) {}
 
   ngOnInit() {}
 }

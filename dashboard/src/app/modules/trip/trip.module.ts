@@ -8,6 +8,7 @@ import { SharedModule } from '~/shared/shared.module';
 import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 import { FilterModule } from '~/modules/filter/filter.module';
+import { CampaignModule } from '~/modules/campaign/campaign.module';
 
 import { TripLayoutComponent } from './trip-layout/trip-layout.component';
 import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
@@ -25,6 +26,7 @@ import { TripListComponent } from './pages/trip-list/trip-list.component';
     UiTripModule,
     InfiniteScrollModule,
     StatUIModule,
+    CampaignModule,
   ],
 })
 export class TripModule {}
