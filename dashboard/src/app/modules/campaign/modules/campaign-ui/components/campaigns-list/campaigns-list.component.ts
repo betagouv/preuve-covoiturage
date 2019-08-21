@@ -1,0 +1,50 @@
+import { Component, Input, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
+import { Campaign } from '~/core/entities/campaign/campaign';
+import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
+
+@Component({
+  selector: 'app-campaigns-list',
+  templateUrl: './campaigns-list.component.html',
+  styleUrls: ['./campaigns-list.component.scss'],
+})
+export class CampaignsListComponent implements OnInit {
+  @Input() campaignStatus: CampaignStatus | null;
+  campaigns: Campaign[];
+  campaignStatusType = CampaignStatus;
+
+  constructor(public campaignService: CampaignService, private toastr: ToastrService) {}
+
+  ngOnInit() {
+    this.loadCampaigns();
+  }
+
+  private loadCampaigns(): void {
+    this.campaignService._entities$.subscribe((campaigns: Campaign[]) => {
+      this.filterCampaignsByStatus(campaigns);
+    });
+
+    if (this.campaignService.loading) {
+      return;
+    }
+    this.campaignService.load().subscribe(
+      (campaigns) => {
+        //
+      },
+      (err) => {
+        this.toastr.error(err.message);
+
+        // TODO TMP TO DELETE
+        this.campaignService._entities$.next(campaignMocks);
+      },
+    );
+  }
+
+  public filterCampaignsByStatus(campaigns: Campaign[]): void {
+    const status = this.campaignStatus;
+    this.campaigns = campaigns.filter((c: Campaign) => !status || c.status === status);
+  }
+}

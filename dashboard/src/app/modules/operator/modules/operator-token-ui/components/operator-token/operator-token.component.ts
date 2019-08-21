@@ -17,7 +17,7 @@ export class OperatorTokenComponent implements OnInit {
 
   constructor(
     public authenticationService: AuthenticationService,
-    private operatorTokenService: OperatorTokenService,
+    public operatorTokenService: OperatorTokenService,
     private toastr: ToastrService,
   ) {}
 
