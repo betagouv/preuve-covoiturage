@@ -29,6 +29,12 @@ export class AdministrationLayoutComponent implements OnInit {
       role: 'admin',
       label: 'Utilisateurs & accès',
     },
+    {
+      path: '/admin/api',
+      role: 'admin',
+      groups: ['operator'],
+      label: 'API',
+    },
   ];
 
   constructor(public authenticationService: AuthenticationService) {}

@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import * as _ from 'lodash';
 
-import { OperatorNameInterface } from '~/core/interfaces/operatorInterface';
+import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 
 @Component({
   selector: 'app-operators-autocomplete',

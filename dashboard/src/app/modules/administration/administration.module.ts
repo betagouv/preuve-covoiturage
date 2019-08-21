@@ -17,6 +17,9 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
 import { OperatorComponent } from './pages/operator/operator.component';
+import { ApiComponent } from './pages/api/api.component';
+import { OperatorModule } from '~/modules/operator/operator.module';
+import { OperatorTokenUiModule } from '~/modules/operator/modules/operator-token-ui/operator-token-ui.module';
 
 @NgModule({
   declarations: [
@@ -25,6 +28,7 @@ import { OperatorComponent } from './pages/operator/operator.component';
     ProfileComponent,
     TerritoryComponent,
     UsersComponent,
+    ApiComponent,
   ],
   imports: [
     AdministrationRoutingModule,
@@ -39,6 +43,8 @@ import { OperatorComponent } from './pages/operator/operator.component';
     ReactiveFormsModule,
     SharedModule,
     OperatorUiModule,
+    OperatorModule,
+    OperatorTokenUiModule,
   ],
 })
 export class AdministrationModule {}

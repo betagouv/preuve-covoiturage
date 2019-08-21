@@ -1,6 +1,15 @@
+import {
+  OperatorsPermissionsAdminType,
+  OperatorsPermissionsUserType,
+  RegistryPermissionsAdminType,
+  RegistryPermissionsUserType,
+  TerritoriesPermissionsAdminType,
+  TerritoriesPermissionsUserType,
+} from '~/core/types/permissionType';
+
 export const TERRITORIESPERMISSIONS = {
   // todo: temp used for mocks
-  admin: [
+  admin: <TerritoriesPermissionsAdminType[]>[
     'user.list',
     'user.invite',
     'user.create',
@@ -51,7 +60,7 @@ export const TERRITORIESPERMISSIONS = {
     'incentive-campaign.update',
     'incentive-campaign.delete',
   ],
-  user: [
+  user: <TerritoriesPermissionsUserType[]>[
     'territory.stats',
     'user.list',
     'journey.read',
@@ -74,7 +83,7 @@ export const TERRITORIESPERMISSIONS = {
 };
 
 export const operatorsPermissions = {
-  admin: [
+  admin: <OperatorsPermissionsAdminType[]>[
     'user.list',
     'user.invite',
     'user.create',
@@ -103,7 +112,7 @@ export const operatorsPermissions = {
     'profile.password',
     'profile.delete',
   ],
-  user: [
+  user: <OperatorsPermissionsUserType[]>[
     'journey.read',
     'journey.list',
     'user.list',
@@ -115,7 +124,7 @@ export const operatorsPermissions = {
 };
 
 export const registryPermissions = {
-  admin: [
+  admin: <RegistryPermissionsAdminType[]>[
     'user.list',
     'user.invite',
     'user.create',
@@ -128,5 +137,11 @@ export const registryPermissions = {
     'journey.import',
     'journey.process',
   ],
-  user: ['user.list', 'profile.read', 'profile.update', 'profile.password', 'profile.delete'],
+  user: <RegistryPermissionsUserType[]>[
+    'user.list',
+    'profile.read',
+    'profile.update',
+    'profile.password',
+    'profile.delete',
+  ],
 };

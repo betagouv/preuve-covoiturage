@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { REGEXP } from '~/core/const/validators.const';
 import { UserService } from '~/core/services/authentication/user.service';
-import { ProfileInterface } from '~/core/interfaces/profileInterface';
+import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 
 import { ProfileService } from '../../../../services/profile.service';
 
