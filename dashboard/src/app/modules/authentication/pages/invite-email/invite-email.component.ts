@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { MAIN } from '~/core/const/main.const';
-import { password } from '~/core/config/validators';
+import { PASSWORD } from '~/core/const/validators.const';
 
 import { passwordMatchValidator } from '../../validators/password-match.validator';
 
@@ -33,10 +33,10 @@ export class InviteEmailComponent implements OnInit {
     this.confirmEmail();
     this.newPasswordForm = this.fb.group(
       {
-        password: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
+        password: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
         passwordVerification: [
           '',
-          [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)],
+          [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
         ],
       },
       { validator: passwordMatchValidator },

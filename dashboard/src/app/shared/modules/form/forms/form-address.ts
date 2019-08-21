@@ -1,7 +1,7 @@
 import { FormControl, Validators } from '@angular/forms';
 
 import { Address } from '~/core/entities/shared/address';
-import { regexp } from '~/core/config/validators';
+import { REGEXP } from '~/core/const/validators.const';
 
 export class FormAddress {
   street = new FormControl();
@@ -14,10 +14,10 @@ export class FormAddress {
     this.street.setValue(address.street);
 
     this.postcode.setValue(address.postcode);
-    this.postcode.setValidators([Validators.pattern(regexp.postcode)]);
+    this.postcode.setValidators([Validators.pattern(REGEXP.postcode)]);
 
     this.cedex.setValue(address.cedex);
-    this.cedex.setValidators([Validators.pattern(regexp.cedex)]);
+    this.cedex.setValidators([Validators.pattern(REGEXP.cedex)]);
 
     this.city.setValue(address.city);
 
