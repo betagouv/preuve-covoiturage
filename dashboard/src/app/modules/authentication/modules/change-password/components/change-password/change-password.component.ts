@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { password } from '~/core/config/validators';
+import { PASSWORD } from '~/core/const/validators.const';
 
 @Component({
   selector: 'app-change-password',
@@ -30,8 +30,8 @@ export class ChangePasswordComponent implements OnInit {
 
   private initProfilForm(): void {
     this.changePasswordForm = this.fb.group({
-      oldPassword: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
-      newPassword: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
+      oldPassword: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
+      newPassword: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
     });
   }
 }

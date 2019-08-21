@@ -1,4 +1,4 @@
-export const territoriesPermissions = {
+export const TERRITORIESPERMISSIONS = {
   // todo: temp used for mocks
   admin: [
     'user.list',
@@ -122,7 +122,7 @@ export const registryPermissions = {
     'user.read',
     'user.update',
     'user.delete',
-    ...territoriesPermissions.admin,
+    ...TERRITORIESPERMISSIONS.admin,
     ...operatorsPermissions.admin,
     'operator.delete',
     'journey.import',

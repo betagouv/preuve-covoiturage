@@ -1,4 +1,4 @@
-export const regexp = {
+export const REGEXP = {
   phone: /^(?:(?:\+|00)33|0)(\s*\(0\))?\s*[1-9](?:[\s.-]*\d{2}){4}$/,
   email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, // tslint:disable max-line-length
   insee: /^[0-9][0-9AB][0-9]{3}$/,
@@ -15,7 +15,7 @@ export const regexp = {
   bic: /([a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?)/,
 };
 
-export const password = {
+export const PASSWORD = {
   min: 6,
   max: 128,
 };

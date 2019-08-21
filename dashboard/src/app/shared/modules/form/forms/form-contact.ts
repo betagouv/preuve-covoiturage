@@ -1,7 +1,7 @@
 import { FormControl, Validators } from '@angular/forms';
 
 import { Contact } from '~/core/entities/shared/contact';
-import { regexp } from '~/core/config/validators';
+import { REGEXP } from '~/core/const/validators.const';
 
 export class FormContact {
   firstname = new FormControl();
@@ -14,9 +14,9 @@ export class FormContact {
     this.lastname.setValue(contact.lastname);
 
     this.email.setValue(contact.email);
-    this.email.setValidators([Validators.pattern(regexp.email)]);
+    this.email.setValidators([Validators.pattern(REGEXP.email)]);
 
     this.phone.setValue(contact.phone);
-    this.phone.setValidators([Validators.pattern(regexp.phone)]);
+    this.phone.setValidators([Validators.pattern(REGEXP.phone)]);
   }
 }

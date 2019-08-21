@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 import { PermissionType } from '~/core/types/permissionType';
-import { operatorsPermissions, territoriesPermissions } from '~/core/config/permissions';
+import { operatorsPermissions, TERRITORIESPERMISSIONS } from '~/core/const/permissions.const';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
