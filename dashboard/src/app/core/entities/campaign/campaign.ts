@@ -1,6 +1,6 @@
 import { Territory } from '~/core/entities/territory/territory';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
-import { CampaignInterface } from '~/core/interfaces/campaignInterface';
+import { CampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 

@@ -1,7 +1,7 @@
-import { IncentiveInterface } from './incentiveInterface';
+import { IncentiveInterface } from '../campaign/incentiveInterface';
 
-import { TripStatus } from '../entities/trip/trip-status';
-import { TripClass } from '../entities/trip/trip-class';
+import { TripStatus } from '../../entities/trip/trip-status';
+import { TripClass } from '../../entities/trip/trip-class';
 
 export interface TripInterface {
   _id: string;

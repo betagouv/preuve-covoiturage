@@ -8,7 +8,7 @@ import { TripService } from '~/modules/trip/services/trip.service';
 import { Trip } from '~/core/entities/trip/trip';
 import { TripClass } from '~/core/entities/trip/trip-class';
 import { TripStatus } from '~/core/entities/trip/trip-status';
-import { TripInterface } from '~/core/interfaces/tripInterface';
+import { TripInterface } from '~/core/interfaces/trip/tripInterface';
 import { FilterService } from '~/core/services/filter.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 

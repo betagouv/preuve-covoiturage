@@ -1,6 +1,6 @@
 // tslint:disable-next-line:max-line-length
 import { CampaignNameInterface } from '~/modules/campaign/modules/campaign-ui/components/campaign-auto-complete/campaign-auto-complete.component';
-import { OperatorNameInterface } from '~/core/interfaces/operatorInterface';
+import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 
 export interface FilterInterface {
   filter?: {

@@ -1,6 +1,6 @@
 import { TripClass } from '~/core/entities/trip/trip-class';
-import { OperatorNameInterface } from '~/core/interfaces/operatorInterface';
-import { IncentiveInterface } from '~/core/interfaces/incentiveInterface';
+import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
+import { IncentiveInterface } from '~/core/interfaces/campaign/incentiveInterface';
 
 export class Person {
   class: TripClass;

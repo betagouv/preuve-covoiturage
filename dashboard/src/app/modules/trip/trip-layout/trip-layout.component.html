@@ -5,16 +5,18 @@
     </h1>
     <div class="page-menu TripLayout-menu">
       <nav mat-tab-nav-bar>
-        <a
-          mat-tab-link
-          *ngFor="let link of menu"
-          [routerLink]="link.path"
-          routerLinkActive
-          #rla="routerLinkActive"
-          [active]="rla.isActive"
-        >
-          {{ link.label }}
-        </a>
+        <ng-container *ngFor="let link of menu">
+          <a
+            mat-tab-link
+            *ngIf="authenticationService.hasAnyGroup(link.groups) && authenticationService.hasRole(link.role)"
+            [routerLink]="link.path"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [active]="rla.isActive"
+          >
+            {{ link.label }}
+          </a>
+        </ng-container>
       </nav>
       <button
         class="TripLayout-menu-filter-button"
