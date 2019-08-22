@@ -12,7 +12,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class HeaderComponent implements OnInit {
   user: User;
 
-  constructor(private userService: UserService, private authService: AuthenticationService) {}
+  constructor(private userService: UserService, public authService: AuthenticationService) {}
 
   ngOnInit() {
     this.userService.user$.subscribe((user) => {

@@ -14,11 +14,11 @@ export class JsonRPCService {
     this.url = '/api';
   }
 
-  public call(methods: JsonRPCParam[] | JsonRPCParam): Observable<any> {
+  public call(methods: JsonRPCParam[] | JsonRPCParam, options = {}): Observable<any> {
     if (methods instanceof JsonRPCParam) {
       // tslint:disable-next-line:no-parameter-reassignment
       methods = [methods];
     }
-    return this.http.post(this.url, methods);
+    return this.http.post(this.url, methods, options);
   }
 }

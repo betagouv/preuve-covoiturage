@@ -10,6 +10,7 @@ import { CampaignCreateEditComponent } from '~/modules/campaign/pages/campaign-c
 const routes: Routes = [
   {
     path: '',
+    data: { groups: ['territory'] },
     canActivateChild: [AuthGuard],
     children: [
       {
