@@ -29,7 +29,7 @@
         </div>
       </app-page-content>
     </mat-step>
-    <mat-step>
+    <mat-step [stepControl]="campaignFormGroup.get('rules')">
       <ng-template matStepLabel>Éligibilité</ng-template>
       <app-page-content>
         <div class="CampaignForm-content">
@@ -44,13 +44,13 @@
             </app-help-card>
           </div>
           <div class="CampaignForm-content-actions">
-            <button mat-flat-button class="large" matStepperPrevious>Étape Précédente</button>
+            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
             <button
-                    mat-flat-button
-                    class="large"
-                    color="primary"
-                    matStepperNext
-                    [disabled]="!campaignFormGroup.get('rules').valid"
+              mat-flat-button
+              class="large"
+              color="primary"
+              matStepperNext
+              [disabled]="!campaignFormGroup.get('rules').valid"
             >
               Étape suivante
             </button>
@@ -58,7 +58,7 @@
         </div>
       </app-page-content>
     </mat-step>
-    <mat-step>
+    <mat-step [stepControl]="campaignFormGroup">
       <ng-template matStepLabel>Rétribution</ng-template>
       <app-page-content>
         <div class="CampaignForm-content">
@@ -73,7 +73,7 @@
             </app-help-card>
           </div>
           <div class="CampaignForm-content-actions">
-            <button mat-flat-button class="large" matStepperPrevious>Étape Précédente</button>
+            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
             <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!campaignFormGroup.valid">
               Voir le récapitulatif
             </button>
@@ -93,7 +93,7 @@
             ></app-summary-form>
           </div>
           <div class="CampaignForm-content-actions">
-            <button mat-flat-button class="large" matStepperPrevious>Étape Précédente</button>
+            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
           </div>
         </div>
       </app-page-content>

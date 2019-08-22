@@ -7,7 +7,9 @@
           Créer une nouvelle campagne
         </button>
       </div>
-      <app-stat-graph-view [graphName]="'trips'"></app-stat-graph-view>
+      <div class="CampaignDashboard-trips-graph">
+        <app-stat-graph-view [graphName]="'trips'"></app-stat-graph-view>
+      </div>
       <div>
         <a class="link" [routerLink]="'/trip'">Voir toutes les statistiques</a>
       </div>
