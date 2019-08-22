@@ -31,6 +31,11 @@ export class SummaryFormComponent implements OnInit {
     return this.campaignForm.controls;
   }
 
+  get retributionParametersControls() {
+    const formGroup = <FormGroup>this.campaignForm.get('retributionParameters');
+    return formGroup.controls;
+  }
+
   getSummaryText(): string {
     const campaign: Campaign = this.campaignForm.getRawValue();
     let summaryText = `Campagne d’incitation au covoiturage du <b>`;
@@ -63,26 +68,29 @@ export class SummaryFormComponent implements OnInit {
       summaryText += ` compris entre ${campaign.rules.range[0]} à ${campaign.rules.range[1]} km`;
     }
     summaryText += ` à raison de:`;
-    const parameters = <FormArray>this.campaignForm.controls.parameters;
-    for (const param of parameters.controls) {
-      const paramFormGroup: FormGroup = <FormGroup>param;
-      const valueForDriver = paramFormGroup.controls.valueForDriver.value;
-      const valueForPassenger = paramFormGroup.controls.valueForPassenger.value;
-      const start = paramFormGroup.controls.start.value;
-      const end = paramFormGroup.controls.end.value;
+    const retributions = <FormArray>this.campaignForm.controls.retributions;
+    const conductorProportionalPassengers = this.retributionParametersControls.conductorProportionalPassengers.value;
+    for (const retribution of retributions.controls) {
+      const retributionFormGroup: FormGroup = <FormGroup>retribution;
+      const valueForDriver = retributionFormGroup.controls.valueForDriver.value;
+      const valueForPassenger = retributionFormGroup.controls.valueForPassenger.value;
+      const start = retributionFormGroup.controls.start.value;
+      const end = retributionFormGroup.controls.end.value;
       summaryText += `<br/>\r\n<b>- `;
       if (valueForDriver !== null) {
         // tslint:disable-next-line:max-line-length
         summaryText += `${valueForDriver} ${Campaign.getIncentiveUnitLabel(this.controls.amount_unit.value)} par ${
           this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
-        } par conducteur`;
+        }`;
+        summaryText += conductorProportionalPassengers ? ' par passager' : '';
+        summaryText += ' pour le conducteur';
       }
       summaryText += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
       if (valueForPassenger !== null) {
         // tslint:disable-next-line:max-line-length
         summaryText += `${valueForPassenger} ${Campaign.getIncentiveUnitLabel(this.controls.amount_unit.value)} par ${
           this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
-        } par passager`;
+        } pour le(s) passager(s)`;
       }
       if (start || end) {
         if (!end) {

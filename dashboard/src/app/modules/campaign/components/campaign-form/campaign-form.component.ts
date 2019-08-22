@@ -88,7 +88,8 @@ export class CampaignFormComponent implements OnInit {
       incentiveMode: [null, Validators.required],
       saveAsTemplate: [],
       restrictions: this._formBuilder.array([]),
-      parameters: this._formBuilder.array([]),
+      retributionParameters: [],
+      retributions: this._formBuilder.array([]),
     });
   }
 
