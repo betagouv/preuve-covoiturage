@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -33,9 +34,13 @@ export class TripLayoutComponent implements OnInit {
     },
   ];
 
-  constructor(public authenticationService: AuthenticationService) {}
+  constructor(public authenticationService: AuthenticationService, public router: Router) {}
 
   ngOnInit() {}
+
+  get showFilterButton(): boolean {
+    return !['/trip/import'].includes(this.router.url);
+  }
 
   public setFilterNumber(filterNumber: number) {
     this.filterNumber = filterNumber === 0 ? '' : filterNumber.toString();
