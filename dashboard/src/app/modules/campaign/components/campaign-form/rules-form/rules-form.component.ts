@@ -93,12 +93,12 @@ export class RulesFormComponent implements OnInit {
       return '';
     }
     if (range[1] > 99) {
-      return `A partir de ${range[0]}km`;
+      return `A partir de ${range[0]} km`;
     }
     if (range[0] < 1) {
-      return `Jusqu'à ${range[1]}km`;
+      return `Jusqu'à ${range[1]} km`;
     }
-    return `De ${range[0]}km à ${range[1]}km`;
+    return `De ${range[0]} à ${range[1]} km`;
   }
 
   showTripClassLabel(): string {

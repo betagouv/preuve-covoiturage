@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-campaign-menu',
@@ -21,7 +22,11 @@ export class CampaignMenuComponent implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor(private _router: Router) {}
 
   ngOnInit() {}
+
+  createCampaign() {
+    this._router.navigate(['/campaign/create']);
+  }
 }
