@@ -24,18 +24,18 @@ export class CampaignMenuComponent implements OnInit {
     },
   ];
 
-  constructor(private _router: Router) {}
+  constructor(public router: Router) {}
 
   ngOnInit() {
     this.menus[0].callback = this.createCampaign;
     this.menus[1].callback = this.discoverCampaign;
   }
 
-  createCampaign = () => {
-    this._router.navigate(['/campaign/create']);
-  };
+  createCampaign(router: Router) {
+    router.navigate(['/campaign/create']);
+  }
 
-  discoverCampaign = () => {
-    this._router.navigate(['/campaign/discover']);
-  };
+  discoverCampaign(router: Router) {
+    router.navigate(['/campaign/discover']);
+  }
 }
