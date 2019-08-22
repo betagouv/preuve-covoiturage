@@ -1,0 +1,18 @@
+<div class="CampaignDiscover">
+  <app-page-header>
+    <h1 class="page-title">Campagnes incitatives ({{ campaigns ? campaigns.length : 0 }})</h1>
+  </app-page-header>
+  <app-page-content>
+    <div class="CampaignDiscover--loading" *ngIf="campaignService.loading && !campaigns">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div class="CampaignDiscover-wrapper" *ngIf="campaigns">
+      <div class="CampaignDiscover-cards">
+        <app-campaign-card *ngFor="let campaign of campaigns" [campaign]="campaign"></app-campaign-card>
+      </div>
+      <div class="CampaignDiscover-map">
+        <app-campaign-map></app-campaign-map>
+      </div>
+    </div>
+  </app-page-content>
+</div>

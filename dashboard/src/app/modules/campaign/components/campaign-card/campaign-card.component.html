@@ -1,0 +1,19 @@
+<div class="CampaignCard">
+  <div class="CampaignCard-name">
+    {{ campaign.name }}
+  </div>
+  <div class="CampaignCard-territory">
+    {{ campaign.territory?.name }}
+  </div>
+  <div class="CampaignCard-incentiveType">
+    Incitation financière
+  </div>
+  <div class="CampaignCard-status" [ngClass]="getCampaignClass()">
+    {{ campaign.status }}
+  </div>
+  <div class="CampaignCard-actions">
+    <button mat-flat-button color="primary" [routerLink]="'/campaign/' + campaign._id">
+      Voir le détail
+    </button>
+  </div>
+</div>
