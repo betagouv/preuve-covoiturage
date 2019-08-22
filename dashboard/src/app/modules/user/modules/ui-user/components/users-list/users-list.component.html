@@ -11,19 +11,20 @@
         <div class="UsersList-list-item-email">
           {{ user.email }}
         </div>
-        <div class="UsersList-list-item-permission">
-          {{ user.email }}
+        <div class="UsersList-list-item-role">
+          {{ user.role }}
         </div>
         <div class="UsersList-list-item-actions">
-          <a class="link" *ngIf="authService.hasAnyPermission(['user.invite'])" (click)="onSendInvitation(user)"
-            >Renvoyer l'invitation</a
-          >
+          <a class="link" *ngIf="authService.hasAnyPermission(['user.invite'])" (click)="onSendInvitation(user)">
+            Renvoyer l'invitation
+          </a>
           <a
             class="link"
             *ngIf="authService.hasAnyPermission(['user.delete', 'territory.users.remove', 'operator.users.remove'])"
             (click)="onDelete(user)"
-            >Supprimer l'accès</a
           >
+            Supprimer l'accès
+          </a>
         </div>
       </div>
     </app-list-item>
