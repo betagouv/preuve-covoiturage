@@ -6,6 +6,7 @@ import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { CampaignDashboardComponent } from '~/modules/campaign/pages/campaign-dashboard/campaign-dashboard.component';
 // tslint:disable-next-line:max-line-length
 import { CampaignCreateEditComponent } from '~/modules/campaign/pages/campaign-create-edit/campaign-create-edit.component';
+import { CampaignDiscoverComponent } from '~/modules/campaign/pages/campaign-discover/campaign-discover.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
         path: 'create',
         data: { role: 'admin' },
         component: CampaignCreateEditComponent,
+      },
+      {
+        path: 'discover',
+        component: CampaignDiscoverComponent,
       },
       {
         path: ':campaignId',

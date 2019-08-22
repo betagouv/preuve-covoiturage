@@ -1,0 +1,42 @@
+@import '~src/styles/variables';
+
+.CampaignCard {
+  background: $background-white;
+  border: 2px solid $background-white;
+  transition: 0.3s border-color;
+  width: 215px;
+  min-height: 230px;
+  border-radius: 5px;
+  padding: 10px 20px;
+
+  &:hover {
+    border-color: $color-primary;
+  }
+
+  & > * {
+    margin: 10px 0;
+
+    &.CampaignCard-actions {
+      margin-top: 20px;
+    }
+  }
+
+  &-territory {
+    font-style: italic;
+    font-weight: lighter;
+  }
+
+  &-status {
+    &--validated {
+      color: $color-success;
+    }
+
+    &--archived {
+      color: $color-error;
+    }
+  }
+
+  &-actions {
+    text-align: center;
+  }
+}

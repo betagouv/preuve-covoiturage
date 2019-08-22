@@ -21,6 +21,9 @@ import { SummaryFormComponent } from './components/campaign-form/summary-form/su
 import { RestrictionFormComponent } from './components/campaign-form/restriction-form/restriction-form.component';
 import { RetributionFormComponent } from './components/campaign-form/retribution-form/retribution-form.component';
 import { StaggeredFormComponent } from './components/campaign-form/staggered-form/staggered-form.component';
+import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-discover.component';
+import { CampaignCardComponent } from './components/campaign-card/campaign-card.component';
+import { CampaignMapComponent } from './components/campaign-map/campaign-map.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +39,9 @@ import { StaggeredFormComponent } from './components/campaign-form/staggered-for
     RestrictionFormComponent,
     RetributionFormComponent,
     StaggeredFormComponent,
+    CampaignDiscoverComponent,
+    CampaignCardComponent,
+    CampaignMapComponent,
   ],
   imports: [
     CampaignRoutingModule,

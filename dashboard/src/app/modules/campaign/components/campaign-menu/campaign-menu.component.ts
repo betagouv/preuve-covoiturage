@@ -13,20 +13,29 @@ export class CampaignMenuComponent implements OnInit {
       hint: 'Simulez et configurez en quelques clics votre campagne incitative au covoiturage',
       button: 'Découvrir',
       svgIcon: 'test',
+      callback: null,
     },
     {
       title: "Cherchez l'inspiration",
       hint: 'Retrouvez des exemples de campagnes incitiatives et inspirez-vous en',
       button: 'Découvrir',
       svgIcon: 'recherche',
+      callback: null,
     },
   ];
 
   constructor(private _router: Router) {}
 
-  ngOnInit() {}
-
-  createCampaign() {
-    this._router.navigate(['/campaign/create']);
+  ngOnInit() {
+    this.menus[0].callback = this.createCampaign;
+    this.menus[1].callback = this.discoverCampaign;
   }
+
+  createCampaign = () => {
+    this._router.navigate(['/campaign/create']);
+  };
+
+  discoverCampaign = () => {
+    this._router.navigate(['/campaign/discover']);
+  };
 }
