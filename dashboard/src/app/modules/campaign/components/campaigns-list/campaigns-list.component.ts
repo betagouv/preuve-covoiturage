@@ -25,7 +25,7 @@ export class CampaignsListComponent implements OnInit {
 
   deleteCampaign(campaign: Campaign) {
     this._dialog
-      .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`)
+      .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer')
       .subscribe((result) => {
         if (result) {
           this._campaignService.delete(campaign).subscribe(
