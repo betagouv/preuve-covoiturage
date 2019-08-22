@@ -76,7 +76,7 @@
         <div class="CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Rétribution totale</mat-label>
-            <input matInput type="number" placeholder="50000" formControlName="max_amount" required />
+            <input matInput type="number" min="0" placeholder="50000" formControlName="max_amount" required />
             <mat-error *ngIf="controls.max_amount.hasError('required')">
               Le montant de rétribution totale est obligatoire.
             </mat-error>
@@ -111,7 +111,7 @@
         <div class="CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Nombre de trajets max</mat-label>
-            <input matInput type="number" placeholder="20000" formControlName="max_trips" />
+            <input matInput type="number" min="0" placeholder="20000" formControlName="max_trips" />
             <mat-icon matSuffix>directions_car</mat-icon>
             <mat-error *ngIf="controls.max_trips.hasError('min')">
               Le nombre de trajets maximum doit être supérieur à 0.
@@ -149,7 +149,7 @@
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel
-        [ngClass]="{ 'mat-expansion-panel-error': !parameterFormArray.valid && parameterFormArray.touched }"
+        [ngClass]="{ 'mat-expansion-panel-error': !retributionsFormArray.valid && retributionsFormArray.touched }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
@@ -169,54 +169,58 @@
                 Par distance
               </mat-button-toggle>
             </mat-button-toggle-group>
-            <mat-slide-toggle
-              color="primary"
-              #staggeredMode
-              (change)="onStaggeredChange($event)"
-              [disabled]="!controls.incentiveMode.valid"
-            >
-              Échelonné (mode avancé)
-            </mat-slide-toggle>
+            <mat-form-field appearance="outline">
+              <mat-label>Options</mat-label>
+              <mat-select multiple [disabled]="!controls.incentiveMode.valid">
+                <mat-option #staggeredMode (onSelectionChange)="onStaggeredChange($event)">Mode échelonné</mat-option>
+                <mat-option
+                  *ngIf="controls.rules.get('forDriver').value"
+                  (onSelectionChange)="onConductorProportionalPassengers($event)"
+                >
+                  Indexer la rétribution du conducteur sur le nombre de passagers
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
           <ng-container *ngIf="controls.incentiveMode.value">
             <div
               class="ParametersForm-incentiveMode-value"
-              *ngFor="let parameterFormGroup of parameterFormArray.controls; let idx = index"
+              *ngFor="let retributionFormGroup of retributionsFormArray.controls; let idx = index"
             >
               <div>
                 <app-retribution-form
                   [campaignForm]="campaignForm"
-                  [formGroup]="parameterFormGroup"
+                  [formGroup]="retributionFormGroup"
                   [forDriver]="true"
                   *ngIf="controls.rules.get('forDriver').value"
                 >
                 </app-retribution-form>
                 <app-retribution-form
                   [campaignForm]="campaignForm"
-                  [formGroup]="parameterFormGroup"
+                  [formGroup]="retributionFormGroup"
                   [forPassenger]="true"
                   *ngIf="controls.rules.get('forPassenger').value"
                 >
                 </app-retribution-form>
               </div>
-              <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.checked">
+              <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.selected">
                 <app-staggered-form
-                  [formGroup]="parameterFormGroup"
-                  [previousFormGroup]="parameterFormArray.at(idx - 1)"
+                  [formGroup]="retributionFormGroup"
+                  [previousFormGroup]="retributionsFormArray.at(idx - 1)"
                   [isFirst]="idx === 0"
-                  [isLast]="parameterFormArray.length === idx + 1"
+                  [isLast]="retributionsFormArray.length === idx + 1"
                 >
                 </app-staggered-form>
                 <mat-icon
                   color="error"
-                  *ngIf="idx !== 0 && parameterFormArray.length !== idx + 1"
+                  *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1"
                   (click)="removeStaggered(idx)"
                 >
                   delete_outline
                 </mat-icon>
               </div>
             </div>
-            <div *ngIf="staggeredMode.checked" class="ParametersForm-incentiveMode-actions">
+            <div *ngIf="staggeredMode.selected" class="ParametersForm-incentiveMode-actions">
               <button mat-stroked-button color="primary" (click)="addStaggered()">
                 Ajouter un échelon
               </button>

@@ -1,7 +1,7 @@
 <form [formGroup]="restrictionForm" *ngIf="restrictionForm" class="RestrictionForm">
   <mat-form-field appearance="outline" class="RestrictionForm-howMuch">
     <mat-label>Combien</mat-label>
-    <input matInput type="number" placeholder="1" required formControlName="howMuch" (blur)="onTouched()" />
+    <input matInput type="number" min="0" placeholder="1" required formControlName="howMuch" (blur)="onTouched()" />
   </mat-form-field>
   <mat-form-field appearance="outline" class="RestrictionForm-what">
     <mat-label>Quoi</mat-label>

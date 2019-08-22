@@ -26,7 +26,8 @@ export class ParametersFormComponent implements OnInit {
   constructor(private currencyPipe: CurrencyPipe, private numberPipe: DecimalPipe, private _formBuilder: FormBuilder) {}
 
   ngOnInit() {
-    this.parameterFormArray.push(this.generateStaggeredFormGroup());
+    this.initForm();
+    this.retributionsFormArray.push(this.generateStaggeredFormGroup());
   }
 
   get controls() {
@@ -37,8 +38,12 @@ export class ParametersFormComponent implements OnInit {
     return <FormArray>this.campaignForm.get('restrictions');
   }
 
-  get parameterFormArray(): FormArray {
-    return <FormArray>this.campaignForm.get('parameters');
+  get retributionsFormArray(): FormArray {
+    return <FormArray>this.campaignForm.get('retributions');
+  }
+
+  get retributionParametersForm(): FormGroup {
+    return <FormGroup>this.campaignForm.get('retributionParameters');
   }
 
   showDateLabel(): string {
@@ -70,15 +75,25 @@ export class ParametersFormComponent implements OnInit {
   }
 
   showRetributionLabel(): string {
+    let label = '';
     const incentiveMode = this.controls.incentiveMode.value;
     switch (incentiveMode) {
       case 'per_trip':
-        return `Par trajet ${this.parameterFormArray.length > 1 ? ' (échelonné)' : ''}`;
+        label += `Par trajet`;
+        break;
       case 'per_distance':
-        return `Par distance ${this.parameterFormArray.length > 1 ? ' (échelonné)' : ''}`;
+        label += `Par distance`;
+        break;
       default:
         return '';
     }
+    if (this.retributionsFormArray.length > 1) {
+      label += ' - échelonné';
+    }
+    if (this.retributionParametersForm.get('conductorProportionalPassengers').value) {
+      label += ' - indéxé sur le nombre de passagers';
+    }
+    return label;
   }
 
   addRestriction() {
@@ -99,19 +114,23 @@ export class ParametersFormComponent implements OnInit {
   }
 
   onStaggeredChange($event) {
-    this.parameterFormArray.clear();
-    this.parameterFormArray.push(this.generateStaggeredFormGroup());
-    if ($event.checked) {
-      this.parameterFormArray.push(this.generateStaggeredFormGroup());
+    this.retributionsFormArray.clear();
+    this.retributionsFormArray.push(this.generateStaggeredFormGroup());
+    if ($event.source._selected) {
+      this.retributionsFormArray.push(this.generateStaggeredFormGroup());
     }
   }
 
+  onConductorProportionalPassengers($event) {
+    this.retributionParametersForm.controls.conductorProportionalPassengers.setValue($event.source._selected);
+  }
+
   addStaggered() {
-    this.parameterFormArray.push(this.generateStaggeredFormGroup());
+    this.retributionsFormArray.push(this.generateStaggeredFormGroup());
   }
 
   removeStaggered(idx) {
-    this.parameterFormArray.removeAt(idx);
+    this.retributionsFormArray.removeAt(idx);
   }
 
   generateStaggeredFormGroup(): FormGroup {
@@ -120,6 +139,12 @@ export class ParametersFormComponent implements OnInit {
       valueForPassenger: [null, [Validators.required, Validators.min(0)]],
       start: [null],
       end: [null],
+    });
+  }
+
+  private initForm() {
+    this.campaignForm.controls.retributionParameters = this._formBuilder.group({
+      conductorProportionalPassengers: [false],
     });
   }
 }

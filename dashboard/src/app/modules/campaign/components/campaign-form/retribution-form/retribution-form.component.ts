@@ -23,6 +23,10 @@ export class RetributionFormComponent implements OnInit {
     return this.campaignForm.controls;
   }
 
+  get retributionParametersForm(): FormGroup {
+    return <FormGroup>this.campaignForm.get('retributionParameters');
+  }
+
   get controls() {
     return this.formGroup.controls;
   }

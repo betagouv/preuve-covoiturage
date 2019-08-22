@@ -4,7 +4,7 @@
   <span>{{ controls.start.value !== null ? controls.start.value : '?' }}</span>
   <span *ngIf="!isLast"> à</span>
   <mat-form-field appearance="outline" *ngIf="!isLast">
-    <input matInput type="number" required [formControl]="controls.end" />
+    <input matInput type="number" min="0" required [formControl]="controls.end" />
   </mat-form-field>
   <span> km</span>
 </div>
