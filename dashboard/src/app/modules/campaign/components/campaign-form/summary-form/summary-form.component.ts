@@ -55,12 +55,12 @@ export class SummaryFormComponent implements OnInit {
     }`;
     summaryText += ` ${campaign.rules.onlyMajorPeople ? 'majeurs' : ''}</b>`;
     summaryText += ` effectuant un trajet`;
-    if (campaign.rules.range.max > 99) {
-      summaryText += ` d'au moins ${campaign.rules.range.min} km`;
-    } else if (campaign.rules.range.min < 1) {
-      summaryText += ` d'au plus ${campaign.rules.range.max} km`;
+    if (campaign.rules.range[1] > 99) {
+      summaryText += ` d'au moins ${campaign.rules.range[0]} km`;
+    } else if (campaign.rules.range[0] < 1) {
+      summaryText += ` d'au plus ${campaign.rules.range[1]} km`;
     } else {
-      summaryText += ` compris entre ${campaign.rules.range.min} à ${campaign.rules.range.max} km`;
+      summaryText += ` compris entre ${campaign.rules.range[0]} à ${campaign.rules.range[1]} km`;
     }
     summaryText += ` à raison de:`;
     const parameters = <FormArray>this.campaignForm.controls.parameters;
