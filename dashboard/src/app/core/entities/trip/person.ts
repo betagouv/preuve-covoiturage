@@ -1,9 +1,9 @@
-import { TripClass } from '~/core/entities/trip/trip-class';
+import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 import { IncentiveInterface } from '~/core/interfaces/campaign/incentiveInterface';
 
 export class Person {
-  class: TripClass;
+  class: TripClassEnum;
   operator: OperatorNameInterface;
   // tslint:disable-next-line:variable-name
   is_driver: boolean;
@@ -12,7 +12,7 @@ export class Person {
   incentives: IncentiveInterface[];
 
   constructor(obj?: {
-    class: TripClass;
+    class: TripClassEnum;
     operator: OperatorNameInterface;
     is_driver: boolean;
     start: string;

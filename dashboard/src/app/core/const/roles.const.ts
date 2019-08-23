@@ -1,4 +1,6 @@
-export const ROLES = ['user', 'admin'];
+import { roleType } from '~/core/types/mainType';
+
+export const ROLES: roleType[] = ['user', 'admin'];
 export const ROLESFR = [
   {
     name: 'user',

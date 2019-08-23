@@ -6,8 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 
 import { TripService } from '~/modules/trip/services/trip.service';
 import { Trip } from '~/core/entities/trip/trip';
-import { TripClass } from '~/core/entities/trip/trip-class';
-import { TripStatus } from '~/core/entities/trip/trip-status';
+import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { TripInterface } from '~/core/interfaces/trip/tripInterface';
 import { FilterService } from '~/core/services/filter.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
@@ -74,14 +74,14 @@ export class TripListComponent implements OnInit {
 
   // TODO TMP TO DELETE
   private generateTrip(): Trip {
-    const randomClass = Math.floor(Math.random() * Object.keys(TripClass).length);
-    const randomStatus = Math.floor(Math.random() * Object.keys(TripStatus).length);
+    const randomClass = Math.floor(Math.random() * Object.keys(TripClassEnum).length);
+    const randomStatus = Math.floor(Math.random() * Object.keys(TripStatusEnum).length);
 
     const tripToReturn: TripInterface = {
       _id: 'AZFAFZAF34345345',
-      class: TripClass[Object.keys(TripClass)[randomClass]],
+      class: TripClassEnum[Object.keys(TripClassEnum)[randomClass]],
       start: new Date(),
-      status: TripStatus[Object.keys(TripStatus)[randomStatus]],
+      status: TripStatusEnum[Object.keys(TripStatusEnum)[randomStatus]],
       campaigns: [],
       people: [],
     };

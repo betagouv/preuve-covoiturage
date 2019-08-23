@@ -53,6 +53,9 @@ export class FilterService {
     if (data.operators) {
       _.set(filter, 'filter["people.operator._id"].$in', data.operators);
     }
+    if (data.territories) {
+      _.set(filter, 'filter["territories"].$in', data.territories);
+    }
     return filter;
   }
 

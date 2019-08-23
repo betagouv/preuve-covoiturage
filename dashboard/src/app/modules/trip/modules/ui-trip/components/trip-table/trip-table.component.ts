@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Trip } from '~/core/entities/trip/trip';
-import { TripStatus } from '~/core/entities/trip/trip-status';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 
 @Component({
   selector: 'app-trip-table',
@@ -25,24 +25,24 @@ export class TripTableComponent implements OnInit {
 
   ngOnInit() {}
 
-  getIconStatus(status: TripStatus) {
+  getIconStatus(status: TripStatusEnum) {
     switch (status) {
-      case TripStatus.ACTIVE:
+      case TripStatusEnum.ACTIVE:
         return 'check_circle';
-      case TripStatus.PENDING:
+      case TripStatusEnum.PENDING:
         return 'warning';
-      case TripStatus.ERROR:
+      case TripStatusEnum.ERROR:
         return 'error';
     }
   }
 
-  getIconClass(status: TripStatus) {
+  getIconClass(status: TripStatusEnum) {
     switch (status) {
-      case TripStatus.ACTIVE:
+      case TripStatusEnum.ACTIVE:
         return 'success';
-      case TripStatus.PENDING:
+      case TripStatusEnum.PENDING:
         return 'warning';
-      case TripStatus.ERROR:
+      case TripStatusEnum.ERROR:
         return 'error';
     }
   }

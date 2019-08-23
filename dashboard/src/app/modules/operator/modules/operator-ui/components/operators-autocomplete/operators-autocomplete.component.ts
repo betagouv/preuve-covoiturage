@@ -45,7 +45,6 @@ export class OperatorsAutocompleteComponent implements OnInit {
 
   public remove(operator: OperatorNameInterface): void {
     const index = this.operatorForm.value.indexOf(operator);
-    console.log(index, this.operatorForm.value);
     if (index >= 0) {
       const operators = [...this.operatorForm.value];
       operators.splice(index, 1);

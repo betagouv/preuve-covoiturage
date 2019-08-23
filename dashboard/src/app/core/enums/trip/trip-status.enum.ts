@@ -1,4 +1,4 @@
-export enum TripStatus {
+export enum TripStatusEnum {
   PENDING = 'pending',
   ACTIVE = 'active',
   ERROR = 'error',

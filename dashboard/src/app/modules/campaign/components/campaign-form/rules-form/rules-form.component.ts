@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { TripClass } from '~/core/entities/trip/trip-class';
+import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { Operator } from '~/core/entities/operator/operator';
@@ -14,7 +14,7 @@ import { Operator } from '~/core/entities/operator/operator';
 export class RulesFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
 
-  tripClassKeys = Object.keys(TripClass);
+  tripClassKeys = Object.keys(TripClassEnum);
 
   constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {}
 

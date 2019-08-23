@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 import { FilterService } from '~/core/services/filter.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CLASSES } from '~/core/const/classes.const';
 
 @Component({
   selector: 'app-filter',
@@ -31,7 +33,7 @@ import { FilterService } from '~/core/services/filter.service';
 export class FilterComponent implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
-  public classes = ['A', 'B', 'C'];
+  public classes = CLASSES;
   public tripStatusList = [
     {
       id: 'pending',
@@ -87,7 +89,11 @@ export class FilterComponent implements OnInit {
 
   @ViewChild('townInput', { static: false }) townInput: ElementRef;
 
-  constructor(private fb: FormBuilder, private filterService: FilterService) {}
+  constructor(
+    public authService: AuthenticationService,
+    private fb: FormBuilder,
+    private filterService: FilterService,
+  ) {}
 
   ngOnInit() {
     this.filterForm = this.fb.group({
@@ -103,6 +109,7 @@ export class FilterComponent implements OnInit {
       classes: [null],
       status: [null],
       operators: [null],
+      territories: [null],
     });
   }
 

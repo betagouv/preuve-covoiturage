@@ -56,7 +56,6 @@ export class StatGraphComponent implements OnInit {
     };
     this.graphTitle = data.trips.monthly.graphTitle;
     this.data = data;
-    console.log({ data });
   }
 
   private displayGraph(name: statDataNameType): void {

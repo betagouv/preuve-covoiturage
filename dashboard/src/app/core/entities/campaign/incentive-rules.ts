@@ -1,10 +1,10 @@
-import { TripClass } from '~/core/entities/trip/trip-class';
+import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 
 export class IncentiveRules {
   weekday: number[];
   time: IncentiveTimeRule[];
   range: { min: number; max: number };
-  ranks: TripClass[];
+  ranks: TripClassEnum[];
   onlyMajorPeople: boolean;
   forDriver: boolean;
   forPassenger: boolean;
