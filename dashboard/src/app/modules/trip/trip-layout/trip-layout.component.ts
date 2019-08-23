@@ -38,7 +38,7 @@ export class TripLayoutComponent implements OnInit {
 
   ngOnInit() {}
 
-  get showFilterButton(): boolean {
+  get hasCorrectUrl(): boolean {
     return !['/trip/import'].includes(this.router.url);
   }
 

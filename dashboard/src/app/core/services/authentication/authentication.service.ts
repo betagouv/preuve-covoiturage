@@ -179,14 +179,27 @@ export class AuthenticationService {
     this.onLoggin({
       user: new User({
         _id: 1,
-        firstname: 'Preuve',
+        firstname: 'Opérateur',
         lastname: 'Decovoit',
         email: 'preuve.decovoit@yopmail.com',
         role: 'admin',
-        group: 'territory',
-        permissions: TERRITORIES_PERMISSIONS.admin,
+        group: 'operator',
+        permissions: OPERATORS_PERMISSIONS.admin,
       }),
     });
+    //
+    //   // TODO DELETE WHEN LOGIN IS OK
+    //   this.onLoggin({
+    //     user: new User({
+    //       _id: 1,
+    //       firstname: 'AOM',
+    //       lastname: 'Decovoit',
+    //       email: 'preuve.decovoit@yopmail.com',
+    //       role: 'admin',
+    //       group: 'territory',
+    //       permissions: TERRITORIES_PERMISSIONS.admin,
+    //     }),
+    //   });
   }
 
   private onLoggin(response) {

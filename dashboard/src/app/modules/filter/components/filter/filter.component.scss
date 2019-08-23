@@ -35,7 +35,8 @@
   &-dates mat-form-field,
   .days,
   ::ng-deep .campaign,
-  ::ng-deep .towns {
+  ::ng-deep .towns,
+  ::ng-deep .territoriesAutocomplete {
     width: 240px;
   }
 
@@ -47,7 +48,8 @@
     justify-content: space-between;
   }
 
-  &-dates {
+  &-dates,
+  &-towns {
     margin-bottom: 32px;
   }
 

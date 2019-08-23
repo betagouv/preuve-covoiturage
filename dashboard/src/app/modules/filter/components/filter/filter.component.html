@@ -72,8 +72,14 @@
               <input matInput formControlName="maxDistance" type="number" step="1" min="0" />
             </mat-form-field>
           </div>
-          <div class="filter-geography">
+          <div class="filter-towns">
             <app-towns-autocomplete [parentForm]="filterForm"></app-towns-autocomplete>
+          </div>
+          <div class="filter-territories">
+            <app-territories-autocomplete
+              *ngIf="authService.hasAnyGroup(['operator', 'registry'])"
+              [parentForm]="filterForm"
+            ></app-territories-autocomplete>
           </div>
         </div>
         <div class="filter-content-column">
@@ -92,7 +98,10 @@
               <mat-option *ngFor="let status of tripStatusList" value="{{ status.id }}">{{ status.french }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <app-operators-autocomplete [parentForm]="filterForm"></app-operators-autocomplete>
+          <app-operators-autocomplete
+            *ngIf="authService.hasAnyGroup(['territory', 'registry'])"
+            [parentForm]="filterForm"
+          ></app-operators-autocomplete>
         </div>
       </div>
       <div class="filter-footer">

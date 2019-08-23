@@ -8,10 +8,19 @@ import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operato
 
 import { FilterComponent } from './components/filter/filter.component';
 import { TownsAutocompleteComponent } from './components/towns-autocomplete/towns-autocomplete.component';
+import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
 
 @NgModule({
   declarations: [FilterComponent, TownsAutocompleteComponent],
-  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, CampaignUiModule, OperatorUiModule],
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CampaignUiModule,
+    OperatorUiModule,
+    TerritoryUiModule,
+  ],
   exports: [FilterComponent],
 })
 export class FilterModule {}
