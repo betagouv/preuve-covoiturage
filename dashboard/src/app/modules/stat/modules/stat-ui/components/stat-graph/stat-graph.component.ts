@@ -56,6 +56,7 @@ export class StatGraphComponent implements OnInit {
     };
     this.graphTitle = data.trips.monthly.graphTitle;
     this.data = data;
+    console.log({ data });
   }
 
   private displayGraph(name: statDataNameType): void {
@@ -68,6 +69,10 @@ export class StatGraphComponent implements OnInit {
   public setGraphTitle(): void {
     const graphName = this._displayGraph;
     this.graphTitle = this.data[graphName][this.toggleChart[graphName]].graphTitle;
+  }
+
+  public isEmptyDataset(object: { datasets: { data: [] }[] }): boolean {
+    return object.datasets[0].data.length > 0;
   }
 
   private loadGraph(name): chartsType {

@@ -7,7 +7,7 @@ import {
   TerritoriesPermissionsUserType,
 } from '~/core/types/permissionType';
 
-export const TERRITORIESPERMISSIONS = {
+export const TERRITORIES_PERMISSIONS = {
   // todo: temp used for mocks
   admin: <TerritoriesPermissionsAdminType[]>[
     'user.list',
@@ -82,7 +82,7 @@ export const TERRITORIESPERMISSIONS = {
   ],
 };
 
-export const operatorsPermissions = {
+export const OPERATORS_PERMISSIONS = {
   admin: <OperatorsPermissionsAdminType[]>[
     'user.list',
     'user.invite',
@@ -123,7 +123,7 @@ export const operatorsPermissions = {
   ],
 };
 
-export const registryPermissions = {
+export const REGISTRYPERMISSIONS = {
   admin: <RegistryPermissionsAdminType[]>[
     'user.list',
     'user.invite',
@@ -131,8 +131,8 @@ export const registryPermissions = {
     'user.read',
     'user.update',
     'user.delete',
-    ...TERRITORIESPERMISSIONS.admin,
-    ...operatorsPermissions.admin,
+    ...TERRITORIES_PERMISSIONS.admin,
+    ...OPERATORS_PERMISSIONS.admin,
     'operator.delete',
     'journey.import',
     'journey.process',
