@@ -47,16 +47,19 @@ export class UsersComponent implements OnInit {
           firstname: 'Thomas',
           lastname: 'Durant',
           email: 'thomas.durant@beta.gouv.fr',
+          role: 'Utilisateur',
         };
         const user2 = {
           firstname: 'Margot',
           lastname: 'Sanchez',
           email: 'margot.sanchez@beta.gouv.fr',
+          role: 'Administrateur',
         };
         const user3 = {
           firstname: 'John',
           lastname: 'Doe',
           email: 'john.doe@beta.gouv.fr',
+          role: 'Utilisateur',
         };
         this.userService._entities$.next([new User(user1), new User(user2), new User(user3)]);
       },
