@@ -12,7 +12,7 @@
           {{ user.email }}
         </div>
         <div class="UsersList-list-item-role">
-          {{ user.role }}
+          {{ getFrenchRole(user.role) }}
         </div>
         <div class="UsersList-list-item-actions">
           <a class="link" *ngIf="authService.hasAnyPermission(['user.invite'])" (click)="onSendInvitation(user)">
