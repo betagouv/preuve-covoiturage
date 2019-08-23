@@ -76,9 +76,12 @@ export class NewPasswordComponent implements OnInit {
    * Called on each input in either password field
    */
   public onPasswordInput(): void {
-    console.log(this.password);
     if (this.newPasswordForm.hasError('passwordMismatch')) {
-      this.passwordVerification.setErrors([{ passwordMismatch: true }]);
+      const errors = this.passwordVerification.errors || {};
+      this.passwordVerification.setErrors({
+        ...errors,
+        passwordMismatch: true,
+      });
     } else {
       this.passwordVerification.setErrors(null);
     }

@@ -24,7 +24,13 @@
         <mat-error *ngIf="passwordVerification.hasError('maxlength')">
           Le mot de passe ne peut pas faire plus de 128 caractères.</mat-error
         >
-        <mat-error *ngIf="passwordVerification.invalid && !passwordVerification.hasError('required')"
+        <mat-error
+          *ngIf="
+            !passwordVerification.hasError('maxlength') &&
+            !passwordVerification.hasError('minlength') &&
+            !passwordVerification.hasError('required') &&
+            passwordVerification.hasError('passwordMismatch')
+          "
           >Les mot de passe ne correspondent pas</mat-error
         >
       </mat-form-field>

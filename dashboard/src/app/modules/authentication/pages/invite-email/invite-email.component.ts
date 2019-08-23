@@ -73,7 +73,11 @@ export class InviteEmailComponent implements OnInit {
    */
   public onPasswordInput(): void {
     if (this.newPasswordForm.hasError('passwordMismatch')) {
-      this.passwordVerification.setErrors([{ passwordMismatch: true }]);
+      const errors = this.passwordVerification.errors || {};
+      this.passwordVerification.setErrors({
+        ...errors,
+        passwordMismatch: true,
+      });
     } else {
       this.passwordVerification.setErrors(null);
     }
