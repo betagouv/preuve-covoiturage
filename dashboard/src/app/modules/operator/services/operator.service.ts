@@ -2,15 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { Operator } from '~/core/entities/operator/operator';
-import { ApiService } from '~/core/services/api/api.service';
-
-import { HttpClient } from '@angular/common/http';
-
-import { Operator } from '~/core/entities/operator/operator';
 import { ApiService } from '~/core/services/api/api.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
+import { Operator } from '~/core/entities/operator/operator';
 
 @Injectable({
   providedIn: 'root',

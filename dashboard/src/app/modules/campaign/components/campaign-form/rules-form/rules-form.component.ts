@@ -167,14 +167,17 @@ export class RulesFormComponent implements OnInit {
           {
             _id: '1',
             nom_commercial: 'Maxicovoit',
+            raison_sociale: 'Maxicovoit SAS',
           },
           {
             _id: '2',
             nom_commercial: 'Supercovoit',
+            raison_sociale: 'Supercovoit SAS',
           },
           {
             _id: '3',
             nom_commercial: 'Batcovoit',
+            raison_sociale: 'Batcovoit SAS',
           },
         ]);
         this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
