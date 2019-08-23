@@ -5,5 +5,13 @@ form {
   justify-content: space-between;
   mat-form-field {
     width: 560px;
+    &.bank_name,
+    &.iban {
+      width: 359px;
+    }
+    &.client_name,
+    &.bic {
+      width: 190px;
+    }
   }
 }
