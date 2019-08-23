@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from '~/shared/modules/material/material.module';
 import { FormModule } from '~/shared/modules/form/form.module';
+// tslint:disable-next-line:max-line-length
 import { OperatorImportComponent } from '~/modules/operator/modules/operator-ui/components/operator-import/operator-import.component';
 
 import { OperatorsAutocompleteComponent } from './components/operators-autocomplete/operators-autocomplete.component';

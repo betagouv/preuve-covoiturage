@@ -5,6 +5,7 @@ import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
+import { DialogService } from '~/core/services/dialog.service';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -16,7 +17,7 @@ export class CampaignsListComponent implements OnInit {
   campaigns: Campaign[];
   campaignStatusType = CampaignStatus;
 
-  constructor(public campaignService: CampaignService, private toastr: ToastrService) {}
+  constructor(private dialog: DialogService, public campaignService: CampaignService, private toastr: ToastrService) {}
 
   ngOnInit() {
     this.loadCampaigns();
@@ -46,5 +47,22 @@ export class CampaignsListComponent implements OnInit {
   public filterCampaignsByStatus(campaigns: Campaign[]): void {
     const status = this.campaignStatus;
     this.campaigns = campaigns.filter((c: Campaign) => !status || c.status === status);
+  }
+
+  deleteCampaign(campaign: Campaign) {
+    this.dialog
+      .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer')
+      .subscribe((result) => {
+        if (result) {
+          this.campaignService.delete(campaign).subscribe(
+            () => {
+              this.toastr.success('La campagne a bien été supprimée');
+            },
+            (err) => {
+              this.toastr.error(err.message);
+            },
+          );
+        }
+      });
   }
 }
