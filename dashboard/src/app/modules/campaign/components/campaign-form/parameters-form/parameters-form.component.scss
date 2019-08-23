@@ -1,9 +1,39 @@
 @import '../../../../../../styles/variables';
 
 .ParametersForm {
-  &-incentiveMode {
-    div:first-child {
-      text-align: center;
+  &-date {
+    mat-form-field:not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+
+  &-restriction {
+    display: flex;
+    align-items: center;
+
+    & > mat-icon {
+      cursor: pointer;
+      margin: 0 0 14px 20px;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  &-incentiveMode,
+  &-incentiveMode.CampaignSubForm-inputs {
+    padding: 0;
+
+    > div:first-child {
+      padding: 16px 24px 20px 24px;
+      background: $background-white;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    > div:not(:first-child) {
+      padding: 0 24px 16px 24px;
     }
 
     mat-button-toggle-group {
@@ -16,12 +46,12 @@
         border-radius: 5px;
         width: 250px;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        background-color: $background-white;
-        border: 3px solid $background-white;
+        background-color: $background-light;
+        border: 3px solid $background-light;
 
         &:hover {
-          background-color: $background-light;
-          border-color: $background-light;
+          background-color: $background-white;
+          border-color: $background-white;
         }
 
         &.mat-button-toggle-checked {
@@ -44,14 +74,46 @@
 
     &-value {
       margin-top: 20px;
+      display: flex;
 
-      mat-form-field {
-        width: 100px;
-      }
-
-      span {
-        margin-left: 10px;
+      & > * {
+        flex: 1;
+        position: relative;
       }
     }
+
+    &-staggered {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::before {
+        display: block;
+        position: absolute;
+        height: 100%;
+        content: '';
+        left: 0;
+        border-left: 2px solid $color-secondary;
+      }
+
+      mat-icon {
+        cursor: pointer;
+        font-size: 30px;
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        right: 0;
+        bottom: 43%;
+      }
+    }
+
+    &-actions {
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+
+  .shortFormField {
+    width: 100px;
   }
 }

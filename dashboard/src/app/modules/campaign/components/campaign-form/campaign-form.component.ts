@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { ToastrService } from 'ngx-toastr';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import * as moment from 'moment';
+
+import { Campaign } from '~/core/entities/campaign/campaign';
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 
 @Component({
   selector: 'app-campaign-form',
@@ -79,11 +81,15 @@ export class CampaignFormComponent implements OnInit {
       start: [null, Validators.required],
       end: [null, Validators.required],
       max_amount: [null, [Validators.required, Validators.min(1)]],
-      max_trips: [null, [Validators.required, Validators.min(1)]],
+      amount_unit: [null, Validators.required],
+      max_trips: [null, Validators.min(1)],
       name: [null, Validators.required],
       description: [null],
-      incentiveMode: [],
+      incentiveMode: [null, Validators.required],
       saveAsTemplate: [],
+      restrictions: this._formBuilder.array([]),
+      retributionParameters: [],
+      retributions: this._formBuilder.array([]),
     });
   }
 

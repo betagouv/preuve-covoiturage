@@ -3,6 +3,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { TripClass } from '~/core/entities/trip/trip-class';
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
+import { OperatorService } from '~/modules/operator/services/operator.service';
+import { Operator } from '~/core/entities/operator/operator';
 
 @Component({
   selector: 'app-rules-form',
@@ -14,10 +16,11 @@ export class RulesFormComponent implements OnInit {
 
   tripClassKeys = Object.keys(TripClass);
 
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {}
 
   ngOnInit() {
     this.initRulesForm();
+    this.loadOperators();
   }
 
   get rulesForm(): FormGroup {
@@ -90,12 +93,12 @@ export class RulesFormComponent implements OnInit {
       return '';
     }
     if (range[1] > 99) {
-      return `A partir de ${range[0]}km`;
+      return `A partir de ${range[0]} km`;
     }
     if (range[0] < 1) {
-      return `Jusqu'à ${range[1]}km`;
+      return `Jusqu'à ${range[1]} km`;
     }
-    return `De ${range[0]}km à ${range[1]}km`;
+    return `De ${range[0]} à ${range[1]} km`;
   }
 
   showTripClassLabel(): string {
@@ -115,12 +118,28 @@ export class RulesFormComponent implements OnInit {
       label += this.rulesForm.get('forDriver').value ? ' et passagers' : 'Passagers';
     }
     if (this.rulesForm.get('onlyMajorPeople').value) {
-      label += ' majeurs uniquement';
+      label += ', majeurs uniquement';
+    }
+    return label;
+  }
+
+  showOperatorsLabel(): string {
+    let label = '';
+    const operators = this.rulesForm.get('operators').value;
+    if (operators) {
+      const multipleOperators = operators.length > 1;
+      label += `${operators.length} opérateur${multipleOperators ? 's' : ''}
+      participant${multipleOperators ? 's' : ''} à la campagne`;
     }
     return label;
   }
 
   isTimeCtrlArrayTouched() {
+    for (const control of this.timeCtrlArray.controls) {
+      if (!control.valid && control.touched) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -133,6 +152,33 @@ export class RulesFormComponent implements OnInit {
       onlyMajorPeople: [],
       forDriver: [],
       forPassenger: [],
+      operators: [],
     });
+  }
+
+  private loadOperators() {
+    this.operatorService.load().subscribe(
+      () => {
+        // TODO DELETE
+        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+      },
+      (err) => {
+        this.operatorService._entities$.next([
+          {
+            _id: '1',
+            nom_commercial: 'Maxicovoit',
+          },
+          {
+            _id: '2',
+            nom_commercial: 'Supercovoit',
+          },
+          {
+            _id: '3',
+            nom_commercial: 'Batcovoit',
+          },
+        ]);
+        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+      },
+    );
   }
 }

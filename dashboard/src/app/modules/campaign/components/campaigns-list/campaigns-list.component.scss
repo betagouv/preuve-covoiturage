@@ -41,6 +41,10 @@
 
     &-actions {
       text-align: right;
+
+      & > a:last-child {
+        margin-left: 10px;
+      }
     }
   }
 }

@@ -8,6 +8,7 @@ import { FormGroup } from '@angular/forms';
 })
 export class FormContactComponent implements OnInit {
   @Input() parentForm: FormGroup;
+  @Input() showPhoneNumber = true;
 
   ngOnInit(): void {
     //
