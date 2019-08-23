@@ -1,4 +1,4 @@
-const excluded = key => [
+const excluded = (key) => [
   '_id',
   'createdAt',
   'updatedAt',
@@ -33,22 +33,43 @@ const excluded = key => [
   'passenger.end.literal',
 ].indexOf(key) > -1;
 
+const round = (num, p = 3) => {
+  const factor = 10 ** p;
+  return Math.round(num * factor) / factor;
+};
+
 const anonymize = (line) => {
-  const filtered = Object.keys(line).reduce((acc, key) => {
-    const val = line[key];
+  const filtered = { ...line };
+  // const filtered = Object.keys(line).reduce((acc, key) => {
+  //   const val = line[key];
 
-    // remove GDPR data by keys
-    // QUICK solution to be refactored
-    // as a 'personal' key in the JSON Schema
-    // #migrateme
-    if (excluded(key)) {
-      return acc;
-    }
+  //   // remove GDPR data by keys
+  //   // QUICK solution to be refactored
+  //   // as a 'personal' key in the JSON Schema
+  //   // #migrateme
+  //   if (excluded(key)) {
+  //     return acc;
+  //   }
 
-    acc[key] = val;
+  //   acc[key] = val;
 
-    return acc;
-  }, {});
+  //   return acc;
+  // }, {});
+
+  filtered['passenger.start.datetime'] = new Date(filtered['passenger.start.datetime']).toISOString();
+  filtered['passenger.end.datetime'] = new Date(filtered['passenger.end.datetime']).toISOString();
+  filtered['driver.start.datetime'] = new Date(filtered['driver.start.datetime']).toISOString();
+  filtered['driver.end.datetime'] = new Date(filtered['driver.end.datetime']).toISOString();
+
+  filtered['passenger.start.lon'] = round(filtered['passenger.start.lon']);
+  filtered['passenger.start.lat'] = round(filtered['passenger.start.lat']);
+  filtered['passenger.end.lon'] = round(filtered['passenger.end.lon']);
+  filtered['passenger.end.lat'] = round(filtered['passenger.end.lat']);
+
+  filtered['driver.start.lon'] = round(filtered['driver.start.lon']);
+  filtered['driver.start.lat'] = round(filtered['driver.start.lat']);
+  filtered['driver.end.lon'] = round(filtered['driver.end.lon']);
+  filtered['driver.end.lat'] = round(filtered['driver.end.lat']);
 
   return filtered;
 };

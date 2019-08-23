@@ -64,6 +64,7 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
     let authorizedOps = [];
     const filterOps = (doc) => {
       const d = doc;
+      if (!d.operator || !d.operator._id) return d;
       const oI = d.operator._id.toString();
       if (authorizedOps.indexOf(oI) === -1) {
         d.name = 'hidden';
@@ -108,11 +109,39 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
 
       res.flushHeaders();
 
+      // const transformer = (doc) => flat(filterOps(doc.toJSON()));
       const transformer = (doc) => anonymize(flat(filterOps(doc.toJSON())));
 
       // update limits
       req.query.limit = _.get(req, 'query.limit', 50000);
       req.query.skip = _.get(req, 'query.skip', 0);
+      req.query.fields = [
+        '-journey_id',
+        '-trip_id',
+        '-createdAt',
+        '-updatedAt',
+        '-deletedAt',
+        '-operator',
+        '-name',
+        '-safe_journey_id',
+        '-status',
+        '-validation',
+        '-driver.identity',
+        '-passenger.identity',
+        '-driver.start.postcodes',
+        '-driver.end.postcodes',
+        '-passenger.start.postcodes',
+        '-passenger.end.postcodes',
+        '-driver.start.literal',
+        '-driver.end.literal',
+        '-passenger.start.literal',
+        '-passenger.end.literal',
+        '-driver.start.aom',
+        '-driver.end.aom',
+        '-passenger.start.aom',
+        '-passenger.end.aom',
+        '-aom',
+      ];
 
       journeyService
         .findCursor(req.query)
