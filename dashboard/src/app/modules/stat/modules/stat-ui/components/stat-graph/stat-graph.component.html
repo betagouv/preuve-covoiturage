@@ -17,11 +17,14 @@
   </div>
   <ngx-chartjs
     [data]="data.distance.daily"
-    *ngIf="toggleChart.distance === 'daily'"
+    *ngIf="isEmptyDataset(data.trips.daily) && toggleChart.distance === 'daily'"
     type="bar"
     [height]="70"
     [options]="options.distancePerDay"
   ></ngx-chartjs>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'">
+    Aucun trajet n'a été réalisé la semaine dernière.
+  </div>
   <ngx-chartjs
     [data]="data.distance.monthly"
     *ngIf="toggleChart.distance === 'monthly'"
@@ -71,11 +74,14 @@
   </div>
   <ngx-chartjs
     [data]="data.trips.daily"
-    *ngIf="toggleChart.trips === 'daily'"
+    *ngIf="isEmptyDataset(data.trips.daily) && toggleChart.trips === 'daily'"
     type="bar"
     [height]="70"
     [options]="options.tripsPerDay"
   ></ngx-chartjs>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.trips.daily) && toggleChart.trips === 'daily'">
+    Aucun trajet n'a été réalisé la semaine dernière.
+  </div>
   <ngx-chartjs
     [data]="data.trips.monthly"
     *ngIf="toggleChart.trips === 'monthly'"
@@ -192,10 +198,16 @@
     [options]="options.carpoolersPerVehiculePerMonth"
   ></ngx-chartjs>
   <ngx-chartjs
-    *ngIf="toggleChart.carpoolersPerVehicule === 'daily'"
+    *ngIf="isEmptyDataset(data.carpoolersPerVehicule.daily) && toggleChart.carpoolersPerVehicule === 'daily'"
     [data]="data.carpoolersPerVehicule.daily"
     type="bar"
     [height]="70"
     [options]="options.carpoolersPerVehiculePerDay"
   ></ngx-chartjs>
+  <div
+    class="graph-message"
+    *ngIf="!isEmptyDataset(data.carpoolersPerVehicule.daily) && toggleChart.carpoolersPerVehicule === 'daily'"
+  >
+    Aucun trajet n'a été réalisé la semaine dernière.
+  </div>
 </div>

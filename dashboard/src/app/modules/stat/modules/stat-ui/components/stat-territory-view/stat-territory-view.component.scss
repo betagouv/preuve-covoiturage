@@ -9,13 +9,18 @@
     justify-content: center;
     padding: 174.5px;
   }
-  .stats-numbers {
+  &-numbers {
     display: flex;
     flex-wrap: wrap;
     margin: auto;
     @media (max-width: 1400px) {
       justify-content: space-evenly;
     }
+  }
+
+  &-docLink {
+    margin-top: 30px;
+    text-align: center;
   }
 
   &--loading {

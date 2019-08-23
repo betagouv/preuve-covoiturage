@@ -5,6 +5,7 @@ import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { FilterService } from '~/core/services/filter.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { MAIN } from '~/core/const/main.const';
 
 import { StatService } from '../../../../services/stat.service';
 import { mockStats } from '../../../../mocks/stats';
@@ -15,6 +16,7 @@ import { mockStats } from '../../../../mocks/stats';
   styleUrls: ['./stat-territory-view.component.scss'],
 })
 export class StatTerritoryViewComponent implements OnInit {
+  public gitbookLinkStats: string = MAIN.gitbookLinkStats;
   public graphName: statDataNameType;
   public selected: GraphNamesInterface;
   public disabled: GraphNamesInterface = {

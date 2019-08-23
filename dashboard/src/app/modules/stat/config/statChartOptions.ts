@@ -1,6 +1,7 @@
 import { ChartOptions, TimeScale } from 'chart.js';
 
 import { chartNamesType } from '~/core/types/stat/chartNameType';
+import * as moment from 'moment';
 
 const commonOptions: ChartOptions = {
   scales: {
