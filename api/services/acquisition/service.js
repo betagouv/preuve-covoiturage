@@ -53,7 +53,6 @@ const journeyService = serviceFactory(Journey, {
     const existing = await Journey.findOne({ journey_id: doc.journey_id }).exec();
 
     // track for debug
-    console.log(`>> journey (${doc.journey_id}) exists:`, !!existing);
     if (existing) {
       return existing;
     }
