@@ -20,7 +20,7 @@
   <mat-form-field appearance="outline" *ngIf="isCreating">
     <mat-label>Droit d'accès</mat-label>
     <mat-select required formControlName="role">
-      <mat-option *ngFor="let role of roles" [value]="role.name">{{ role.fr }}</mat-option>
+      <mat-option *ngFor="let role of roles" [value]="role">{{ getFrenchRole(role) }}</mat-option>
     </mat-select>
   </mat-form-field>
   <div>

@@ -6,7 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { UserService } from '~/core/services/authentication/user.service';
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
-import { ROLESFR } from '~/core/const/roles.const';
+import { ROLES } from '~/core/const/roles.const';
+import { roleType } from '~/core/types/mainType';
+import { ROLE_FR } from '~/modules/user/const/role_fr.const';
 
 @Component({
   selector: 'app-create-edit-user-form',
@@ -21,7 +23,7 @@ export class CreateEditUserFormComponent implements OnInit {
 
   createEditUserForm: FormGroup;
   isCreatingUpdating = false;
-  public roles = ROLESFR;
+  public roles = ROLES;
 
   constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {}
 
@@ -64,6 +66,10 @@ export class CreateEditUserFormComponent implements OnInit {
         this._userService._entities$.next(auxArray);
       },
     );
+  }
+
+  public getFrenchRole(role: roleType): string {
+    return ROLE_FR[role];
   }
 
   private initForm(): void {
