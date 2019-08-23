@@ -9,17 +9,6 @@ import { FormGroup } from '@angular/forms';
 export class FormBankComponent {
   @Input() parentForm: FormGroup;
 
-  public allBankFieldsRequiredError = false;
-
-  ngOnInit() {
-    this.parentForm.valueChanges.subscribe((val) => {
-      console.log('error', this.parentForm.hasError('allBankFieldsRequired'));
-      // if (this.parentForm.hasError('allBankFieldsRequired')) {
-      //   this.allBankFieldsRequiredError = true;
-      // }
-    });
-  }
-
   public get bank_nameControl() {
     return this.parentForm.controls.bank_name;
   }

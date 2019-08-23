@@ -20,6 +20,10 @@
 
   <app-form-address [parentForm]="operatorForm.get('address')"></app-form-address>
 
+  <h3>Banque</h3>
+
+  <app-form-bank [parentForm]="operatorForm.get('bank')"></app-form-bank>
+
   <h2>Contacts et responsables</h2>
 
   <div class="contacts">
@@ -41,10 +45,6 @@
       <app-form-contact [parentForm]="operatorForm.get('contacts').get('technical')"></app-form-contact>
     </div>
   </div>
-
-  <h3>Banque</h3>
-
-  <app-form-bank [parentForm]="operatorForm.get('bank')"></app-form-bank>
 
   <button
     *ngIf="authService.hasAnyPermission(['operator.update'])"
