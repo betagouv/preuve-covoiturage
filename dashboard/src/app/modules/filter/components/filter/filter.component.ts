@@ -1,8 +1,16 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import * as moment from 'moment';
+import { WeekDay } from '@angular/common';
 
 import { FilterService } from '~/core/services/filter.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CLASSES } from '~/core/const/classes.const';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { STATUS_FR } from '~/modules/filter/const/status_fr.const';
+import { TRIP_STATUS } from '~/core/const/trip/tripStatus.const';
+import { TripStatusType } from '~/core/types/trip/statusType';
 
 @Component({
   selector: 'app-filter',
@@ -31,52 +39,10 @@ import { FilterService } from '~/core/services/filter.service';
 export class FilterComponent implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
-  public classes = ['A', 'B', 'C'];
-  public tripStatusList = [
-    {
-      id: 'pending',
-      french: 'En cours',
-    },
-    {
-      id: 'active',
-      french: 'Actif',
-    },
-    {
-      id: 'error',
-      french: 'Anomalie',
-    },
-  ];
+  public classes = CLASSES;
+  public tripStatusList = TRIP_STATUS;
 
-  public days = [
-    {
-      id: 0,
-      french: 'Lundi',
-    },
-    {
-      id: 1,
-      french: 'Mardi',
-    },
-    {
-      id: 2,
-      french: 'Mercredi',
-    },
-    {
-      id: 3,
-      french: 'Jeudi',
-    },
-    {
-      id: 4,
-      french: 'Vendredi',
-    },
-    {
-      id: 5,
-      french: 'Samedi',
-    },
-    {
-      id: 6,
-      french: 'Dimanche',
-    },
-  ];
+  public days: WeekDay[] = [0, 1, 2, 3, 4, 5, 6];
 
   @Input() set showFilter(showFilter: boolean) {
     this._showFilter = showFilter;
@@ -87,7 +53,11 @@ export class FilterComponent implements OnInit {
 
   @ViewChild('townInput', { static: false }) townInput: ElementRef;
 
-  constructor(private fb: FormBuilder, private filterService: FilterService) {}
+  constructor(
+    public authService: AuthenticationService,
+    private fb: FormBuilder,
+    private filterService: FilterService,
+  ) {}
 
   ngOnInit() {
     this.filterForm = this.fb.group({
@@ -103,6 +73,7 @@ export class FilterComponent implements OnInit {
       classes: [null],
       status: [null],
       operators: [null],
+      territories: [null],
     });
   }
 
@@ -123,5 +94,15 @@ export class FilterComponent implements OnInit {
 
   public get countFilters(): number {
     return Object.values(this.filterForm.value).filter((val) => !!val).length;
+  }
+
+  public getStatusFrench(status: TripStatusType) {
+    return STATUS_FR[status];
+  }
+
+  public getDaysFrench(day: WeekDay) {
+    return moment()
+      .isoWeekday(day + 1)
+      .format('dddd');
   }
 }

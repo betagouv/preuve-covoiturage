@@ -11,7 +11,7 @@ import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 
 import { CampaignDashboardComponent } from './pages/campaign-dashboard/campaign-dashboard.component';
 import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.component';
-import { CampaignsListComponent } from './components/campaigns-list/campaigns-list.component';
+import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campaign-create-edit.component';
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
 import { PolicyFormComponent } from './components/campaign-form/policy-form/policy-form.component';
@@ -49,5 +49,6 @@ import { StaggeredFormComponent } from './components/campaign-form/staggered-for
     NouisliderModule,
   ],
   providers: [CurrencyPipe, DecimalPipe],
+  exports: [CampaignsListComponent],
 })
 export class CampaignModule {}

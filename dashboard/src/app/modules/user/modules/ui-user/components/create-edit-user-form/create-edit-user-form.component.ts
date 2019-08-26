@@ -4,8 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 
 import { UserService } from '~/core/services/authentication/user.service';
-import { regexp } from '~/core/config/validators';
+import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
+import { ROLES } from '~/core/const/roles.const';
+import { roleType } from '~/core/types/mainType';
+import { ROLE_FR } from '~/modules/user/const/role_fr.const';
 
 @Component({
   selector: 'app-create-edit-user-form',
@@ -16,10 +19,11 @@ export class CreateEditUserFormComponent implements OnInit {
   @Input() user: User;
   @Input() isCreating: boolean;
 
-  @Output() onCreateEditUser: EventEmitter<User> = new EventEmitter<User>();
+  @Output() onCloseEditUser: EventEmitter<User> = new EventEmitter<User>();
 
   createEditUserForm: FormGroup;
   isCreatingUpdating = false;
+  public roles = ROLES;
 
   constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {}
 
@@ -50,7 +54,7 @@ export class CreateEditUserFormComponent implements OnInit {
         } else {
           this.toastr.success(`Les informations de votre profil ont bien été modifiées`);
         }
-        this.onCreateEditUser.emit(user);
+        this.onCloseEditUser.emit(user);
       },
       (err) => {
         this.isCreatingUpdating = false;
@@ -64,12 +68,16 @@ export class CreateEditUserFormComponent implements OnInit {
     );
   }
 
+  public getFrenchRole(role: roleType): string {
+    return ROLE_FR[role];
+  }
+
   private initForm(): void {
     this.createEditUserForm = this.fb.group({
       firstname: [this.user.firstname, Validators.required],
       lastname: [this.user.lastname, Validators.required],
-      email: [this.user.email, [Validators.required, Validators.pattern(regexp.email)]],
-      phone: [this.user.phone, Validators.pattern(regexp.phone)],
+      email: [this.user.email, [Validators.required, Validators.pattern(REGEXP.email)]],
+      phone: [this.user.phone, Validators.pattern(REGEXP.phone)],
       role: [this.user.role, this.isCreating ? Validators.required : null],
     });
   }

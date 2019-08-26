@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { password } from '~/core/config/validators';
+import { PASSWORD } from '~/core/const/validators.const';
 
 import { passwordMatchValidator } from '../../validators/password-match.validator';
 
@@ -31,10 +31,10 @@ export class NewPasswordComponent implements OnInit {
     this.checkToken();
     this.newPasswordForm = this.fb.group(
       {
-        password: ['', [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)]],
+        password: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
         passwordVerification: [
           '',
-          [Validators.required, Validators.minLength(password.min), Validators.maxLength(password.max)],
+          [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
         ],
       },
       { validator: passwordMatchValidator },
@@ -76,9 +76,12 @@ export class NewPasswordComponent implements OnInit {
    * Called on each input in either password field
    */
   public onPasswordInput(): void {
-    console.log(this.password);
     if (this.newPasswordForm.hasError('passwordMismatch')) {
-      this.passwordVerification.setErrors([{ passwordMismatch: true }]);
+      const errors = this.passwordVerification.errors || {};
+      this.passwordVerification.setErrors({
+        ...errors,
+        passwordMismatch: true,
+      });
     } else {
       this.passwordVerification.setErrors(null);
     }

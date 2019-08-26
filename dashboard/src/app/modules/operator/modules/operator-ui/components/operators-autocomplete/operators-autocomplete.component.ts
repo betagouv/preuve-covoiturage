@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import * as _ from 'lodash';
 
-import { OperatorNameInterface } from '~/core/interfaces/operatorInterface';
+import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 
 @Component({
   selector: 'app-operators-autocomplete',
@@ -45,7 +45,6 @@ export class OperatorsAutocompleteComponent implements OnInit {
 
   public remove(operator: OperatorNameInterface): void {
     const index = this.operatorForm.value.indexOf(operator);
-    console.log(index, this.operatorForm.value);
     if (index >= 0) {
       const operators = [...this.operatorForm.value];
       operators.splice(index, 1);

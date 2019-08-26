@@ -5,7 +5,12 @@
     </a>
   </div>
   <div class="Header-menu" *ngIf="user">
-    <div class="Header-menu-item" [routerLink]="'/campaign'" routerLinkActive="active">
+    <div
+      class="Header-menu-item"
+      *ngIf="authService.hasAnyGroup(['territory'])"
+      [routerLink]="'/campaign'"
+      routerLinkActive="active"
+    >
       Campagnes
     </div>
     <div class="Header-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
@@ -22,7 +27,7 @@
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item [routerLink]="'/admin'">
-        <mat-icon>settings_applications</mat-icon>
+        <mat-icon>settings</mat-icon>
         Administration
       </button>
       <button mat-menu-item (click)="onLogout()">

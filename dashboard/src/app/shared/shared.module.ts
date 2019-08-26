@@ -16,6 +16,7 @@ import { HelpCardComponent } from './components/help-card/help-card.component';
 import { ListItemComponent } from './components/list-item/list-item.component';
 import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { RangeTimePickerComponent } from './components/range-time-picker/range-time-picker.component';
+import { UploadComponent } from './components/upload/upload.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { RangeTimePickerComponent } from './components/range-time-picker/range-t
     RangeTimePickerComponent,
     PageContentComponent,
     PageHeaderComponent,
+    UploadComponent,
   ],
   imports: [MaterialModule, CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   exports: [
@@ -41,6 +43,7 @@ import { RangeTimePickerComponent } from './components/range-time-picker/range-t
     RangeTimePickerComponent,
     PageContentComponent,
     PageHeaderComponent,
+    UploadComponent,
   ],
   entryComponents: [MatSpinner],
 })

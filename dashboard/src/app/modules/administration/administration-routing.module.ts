@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuard } from '~/core/guards/auth-guard.service';
+import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 
+import { OperatorComponent } from './pages/operator/operator.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
@@ -19,7 +21,16 @@ const routes: Routes = [
         component: ProfileComponent,
       },
       {
+        path: 'operator',
+        component: OperatorComponent,
+      },
+      {
+        path: 'api',
+        component: ApiComponent,
+      },
+      {
         path: 'territory',
+        data: { groups: ['territory'] },
         component: TerritoryComponent,
       },
       {

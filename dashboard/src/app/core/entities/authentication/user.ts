@@ -1,3 +1,5 @@
+import { groupType, roleType } from '~/core/types/mainType';
+
 import { IModel } from '../IModel';
 
 export class User implements IModel {
@@ -8,8 +10,8 @@ export class User implements IModel {
   public fullname: string;
   public password: string;
   public phone: string;
-  public group: string;
-  public role: string;
+  public group: groupType;
+  public role: roleType;
   public aom: string;
   public operator: string;
   public permissions: [string];

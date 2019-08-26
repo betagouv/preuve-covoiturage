@@ -1,23 +1,23 @@
 import { Person } from '~/core/entities/trip/person';
-import { TripStatus } from '~/core/entities/trip/trip-status';
-import { TripClass } from '~/core/entities/trip/trip-class';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { IModel } from '~/core/entities/IModel';
-import { CampaignShortInterface } from '~/core/interfaces/tripInterface';
+import { CampaignShortInterface } from '~/core/interfaces/trip/tripInterface';
 
 export class Trip implements IModel {
   public _id: string;
-  public status: TripStatus;
+  public status: TripStatusEnum;
   public start: Date;
   public people: Person[];
-  public class: TripClass;
+  public class: TripClassEnum;
   public campaigns: any[];
 
   constructor(obj?: {
     _id: string;
-    status: TripStatus;
+    status: TripStatusEnum;
     start: Date;
     people: Person[];
-    class: TripClass;
+    class: TripClassEnum;
     campaigns: CampaignShortInterface[];
   }) {
     this.status = obj.status;

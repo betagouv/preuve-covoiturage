@@ -1,6 +1,9 @@
 // tslint:disable-next-line:max-line-length
 import { CampaignNameInterface } from '~/modules/campaign/modules/campaign-ui/components/campaign-auto-complete/campaign-auto-complete.component';
-import { OperatorNameInterface } from '~/core/interfaces/operatorInterface';
+import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
+import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
+import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 
 export interface FilterInterface {
   filter?: {
@@ -11,7 +14,7 @@ export interface FilterInterface {
     'people.end.date'?: {
       $lt: Date;
     };
-    status?: statusEnum;
+    status?: TripStatusEnum;
     'people.town'?: {
       $in: string[];
     };
@@ -20,9 +23,12 @@ export interface FilterInterface {
       $lt?: number;
     };
     'people.class'?: {
-      $in: classEnum[];
+      $in: TripClassEnum[];
     };
     'people.operator._id'?: {
+      $in: string[];
+    };
+    territories?: {
       $in: string[];
     };
   };
@@ -30,7 +36,7 @@ export interface FilterInterface {
     start?: string;
     end?: string;
   };
-  days?: daysType[];
+  days?: weekDaysType[];
 }
 
 export interface FilterViewInterface {
@@ -39,25 +45,14 @@ export interface FilterViewInterface {
   endDate: Date;
   startTime: string;
   endTime: string;
-  days: daysType[];
+  days: weekDaysType[];
   towns: string[];
   minDistance: number;
   maxDistance: number;
-  classes: classEnum[];
-  status: statusEnum;
+  classes: TripClassEnum[];
+  status: TripStatusEnum;
   operators: OperatorNameInterface[];
+  territories: TerritoryNameInterface[];
 }
 
-type daysType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
-enum classEnum {
-  A = 'A',
-  B = 'B',
-  C = 'C',
-}
-
-enum statusEnum {
-  pending = 'pending',
-  active = 'active',
-  deleted = 'deleted',
-}
+type weekDaysType = 0 | 1 | 2 | 3 | 4 | 5 | 6;

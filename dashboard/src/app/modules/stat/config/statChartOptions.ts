@@ -1,4 +1,5 @@
 import { ChartOptions, TimeScale } from 'chart.js';
+import * as moment from 'moment';
 
 import { chartNamesType } from '~/core/types/stat/chartNameType';
 

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { regexp } from '~/core/config/validators';
+import { REGEXP } from '~/core/const/validators.const';
 import { UserService } from '~/core/services/authentication/user.service';
-import { ProfileInterface } from '~/core/interfaces/profileInterface';
+import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 
 import { ProfileService } from '../../../../services/profile.service';
 
@@ -39,8 +39,8 @@ export class ProfileEditionComponent implements OnInit {
     this.profileForm = this.fb.group({
       firstname: [null, Validators.required],
       lastname: [null, Validators.required],
-      email: [null, [Validators.required, Validators.pattern(regexp.email)]],
-      phone: [null, Validators.pattern(regexp.phone)],
+      email: [null, [Validators.required, Validators.pattern(REGEXP.email)]],
+      phone: [null, Validators.pattern(REGEXP.phone)],
     });
   }
 }

@@ -20,13 +20,24 @@
   <mat-form-field appearance="outline" *ngIf="isCreating">
     <mat-label>Droit d'accès</mat-label>
     <mat-select required formControlName="role">
-      <mat-option [value]="1">Option 1</mat-option>
-      <mat-option [value]="2">Option 2</mat-option>
-      <mat-option [value]="3">Option 3</mat-option>
+      <mat-option *ngFor="let role of roles" [value]="role">{{ getFrenchRole(role) }}</mat-option>
     </mat-select>
   </mat-form-field>
   <div>
     <button
+      *ngIf="isCreating"
+      type="submit"
+      mat-flat-button
+      class="large"
+      (click)="onUpdateUser()"
+      [appShowSpinner]="isCreatingUpdating"
+      [disabled]="!createEditUserForm.valid"
+      color="primary"
+    >
+      Créer
+    </button>
+    <button
+      *ngIf="!isCreating"
       type="submit"
       mat-flat-button
       class="large"
@@ -36,6 +47,15 @@
       color="primary"
     >
       Mettre à jour
+    </button>
+    <button
+      (click)="onCloseEditUser.emit()"
+      class="CreateEditUserForm-close"
+      type="button"
+      mat-icon-button
+      color="secondary"
+    >
+      <mat-icon color="error">delete_outline</mat-icon>
     </button>
   </div>
 </form>

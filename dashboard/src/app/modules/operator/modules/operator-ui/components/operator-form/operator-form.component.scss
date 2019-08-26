@@ -1,0 +1,17 @@
+form {
+  display: flex;
+  flex-direction: column;
+  mat-form-field {
+    &.nom_commercial,
+    &.raison_sociale {
+      width: 558px;
+    }
+  }
+  .contacts {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  button {
+    width: 269px;
+  }
+}

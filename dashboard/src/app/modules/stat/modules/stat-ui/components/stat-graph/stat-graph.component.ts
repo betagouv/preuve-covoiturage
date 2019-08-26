@@ -70,6 +70,10 @@ export class StatGraphComponent implements OnInit {
     this.graphTitle = this.data[graphName][this.toggleChart[graphName]].graphTitle;
   }
 
+  public isEmptyDataset(object: { datasets: { data: [] }[] }): boolean {
+    return object.datasets[0].data.length > 0;
+  }
+
   private loadGraph(name): chartsType {
     const ret: chartsType = {};
     if ('cumulated' in statGraphs[name]) {
