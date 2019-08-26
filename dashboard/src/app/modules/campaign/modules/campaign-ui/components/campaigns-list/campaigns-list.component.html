@@ -22,7 +22,7 @@
       </div>
       <div class="CampaignsList-item-actions">
         <a class="link">Voir le détail</a>
-        <a class="link" (click)="deleteCampaign(campaign)" *ngIf="campaign.status === campaignStatus.DRAFT"
+        <a class="link" (click)="deleteCampaign(campaign)" *ngIf="campaign.status === campaignStatusType.DRAFT"
           >Supprimer</a
         >
       </div>
