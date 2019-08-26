@@ -21,6 +21,7 @@ class Territory {
   public contacts?: Contacts;
 
   public cgu?: CGU;
+  public coordinates: any[];
 
   constructor(data: {
     _id: string;
@@ -34,6 +35,7 @@ class Territory {
     address?: Address;
     contacts?: Contacts;
     cgu?: CGU;
+    coordinates?: [];
   }) {
     this._id = data._id;
     this.name = data.name;
@@ -46,6 +48,7 @@ class Territory {
     this.address = data.address || new Address({ street: null, postcode: null, city: null, country: null });
     this.contacts = data.contacts || new Contacts();
     this.cgu = data.cgu || new CGU();
+    this.coordinates = data.coordinates || null;
   }
 }
 
