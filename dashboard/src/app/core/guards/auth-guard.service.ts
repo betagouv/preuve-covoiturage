@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
     if (!isInGroups || !hasRole) {
       this.router.navigate(['/']).then(() => {
-        this.toastr.error("Vousm n'êtes pas authorisé à accéder à cette page.");
+        this.toastr.error("Vous n'êtes pas authorisé à accéder à cette page.");
       });
       return false;
     }
