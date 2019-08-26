@@ -8,10 +8,10 @@
     </div>
     <div class="CampaignDiscover-wrapper" *ngIf="campaigns">
       <div class="CampaignDiscover-cards">
-        <app-campaign-card *ngFor="let campaign of campaigns" [campaign]="campaign"></app-campaign-card>
+        <app-campaign-card *ngFor="let campaign of campaignsToShow" [campaign]="campaign"></app-campaign-card>
       </div>
       <div class="CampaignDiscover-map">
-        <app-campaign-map></app-campaign-map>
+        <app-campaign-map [campaigns]="campaigns" (onMapResize)="onMapResize($event)"></app-campaign-map>
       </div>
     </div>
   </app-page-content>
