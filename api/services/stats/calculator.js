@@ -1,4 +1,4 @@
-const CACHE_DURATION_HOURS = 1;
+const CACHE_DURATION_HOURS = 6;
 
 // generate a uniq key based on the args signature
 const fullKeyGenerator = (key, args = {}, id = null) => [
