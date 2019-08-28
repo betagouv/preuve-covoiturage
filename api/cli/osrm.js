@@ -1,4 +1,6 @@
-const { MongoClient, ObjectId } = require('mongodb');
+/* eslint-disable */
+
+const { MongoClient } = require('mongodb');
 const assert = require('assert');
 const axios = require('axios');
 
