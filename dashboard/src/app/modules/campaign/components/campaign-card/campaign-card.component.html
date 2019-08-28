@@ -5,8 +5,13 @@
   <div class="CampaignCard-territory">
     {{ campaign.territory?.name }}
   </div>
-  <div class="CampaignCard-incentiveType">
-    Incitation financière
+  <div class="CampaignCard-incentiveType" [ngSwitch]="campaign.amount_unit">
+    <span *ngSwitchCase="incentiveUnit.EUR">
+      Incitation financière
+    </span>
+    <span *ngSwitchCase="incentiveUnit.POINT">
+      Incitation non-financière
+    </span>
   </div>
   <div class="CampaignCard-status" [ngClass]="getCampaignClass()">
     {{ campaignStatusFr[campaign.status] }}
