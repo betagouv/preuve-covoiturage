@@ -1,4 +1,4 @@
-const round = (num, p = 4) => {
+const round = (num, p = 3) => {
   const factor = 10 ** p;
   return Math.round(num * factor) / factor;
 };
