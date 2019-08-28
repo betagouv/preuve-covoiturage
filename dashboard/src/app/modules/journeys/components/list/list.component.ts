@@ -147,6 +147,12 @@ export class JourneyListComponent {
     this.journeyService.get(filters).subscribe((response: ApiResponse) => {
       this.setTotal(response.meta);
       this.journeys = response.data.map((j) => {
+        // use calc_distance on missing distance
+        if (j.passenger.distance === 0 && j.passenger.calc_distance) {
+          j.passenger.distance = j.passenger.calc_distance;
+        }
+
+        // translate operator name
         if (j.operator && j.operator.nom_commercial === 'hidden') {
           j.operator.nom_commercial = 'Masqué';
         }
