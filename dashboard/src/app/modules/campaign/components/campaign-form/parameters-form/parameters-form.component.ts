@@ -156,10 +156,23 @@ export class ParametersFormComponent implements OnInit {
   }
 
   setExpertMode($event) {
-    this.isExpertMode = $event.source._checked;
-
-    // show modal to confirm if form is not null
-    // reset forms
+    if (!$event.source._checked) {
+      this.dialog
+        .confirm(
+          'Quitter le mode expert',
+          `Attention, vous risquez de perdre les données non enregistrées !`,
+          'Confirmer',
+        )
+        .subscribe((result) => {
+          if (result) {
+            this.isExpertMode = $event.source._checked;
+            this.formulasFormArray.clear();
+            this.controls.formula_expression.setValue(null);
+          }
+        });
+    } else {
+      this.isExpertMode = $event.source._checked;
+    }
   }
 
   addFormula(): void {

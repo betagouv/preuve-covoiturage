@@ -6,7 +6,6 @@ import { CampaignService } from '~/modules/campaign/services/campaign.service';
 
 export function formulaValidator(campaignService: CampaignService, formulaIndex: number): ValidatorFn {
   return (control: FormControl): ValidationErrors | null => {
-    console.log({ formulaIndex });
     const formula = control.value;
     const formulaParameters = campaignService._parameters$.value;
     const formattedParameters = formulaParameters
