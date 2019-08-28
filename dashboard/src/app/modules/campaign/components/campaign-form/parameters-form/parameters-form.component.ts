@@ -5,7 +5,7 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
-import { IncentiveUnit, IncentiveUnitFr } from '~/core/entities/campaign/Incentive-unit';
+import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-parameters-form',
@@ -19,8 +19,8 @@ import { IncentiveUnit, IncentiveUnitFr } from '~/core/entities/campaign/Incenti
 export class ParametersFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
   minDate = moment().add(1, 'days');
-  incentiveUnitKeys = Object.values(IncentiveUnit);
-  incentiveUnitFr = IncentiveUnitFr;
+  incentiveUnitKeys = Object.values(IncentiveUnitEnum);
+  incentiveUnitFr = INCENTIVE_UNITS_FR;
 
   constructor(private currencyPipe: CurrencyPipe, private numberPipe: DecimalPipe, private _formBuilder: FormBuilder) {}
 
@@ -58,7 +58,7 @@ export class ParametersFormComponent implements OnInit {
     const amount = this.controls.max_amount.value;
     const unit = this.controls.amount_unit.value;
     if (amount && unit) {
-      if (unit === IncentiveUnit.EUR) {
+      if (unit === IncentiveUnitEnum.EUR) {
         return this.currencyPipe.transform(amount, 'EUR', 'symbol', '1.0-0');
       }
       return `${this.numberPipe.transform(amount, '1.0-0', 'FR')} points`;

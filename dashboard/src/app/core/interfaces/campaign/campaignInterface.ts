@@ -1,7 +1,7 @@
 import { Territory } from '~/core/entities/territory/territory';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
-import { IncentiveUnit } from '~/core/entities/campaign/Incentive-unit';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 export interface CampaignInterface {
   _id: string;
@@ -10,7 +10,7 @@ export interface CampaignInterface {
   territory?: Territory;
   start: Date;
   end: Date;
-  status: CampaignStatus;
+  status: CampaignStatusEnum;
   /* tslint:disable:variable-name */
   max_trips: number;
   max_amount: number;
@@ -18,5 +18,5 @@ export interface CampaignInterface {
   amount_spent?: number;
   rules?: IncentiveRules;
   parameters?: any;
-  amount_unit?: IncentiveUnit;
+  amount_unit?: IncentiveUnitEnum;
 }

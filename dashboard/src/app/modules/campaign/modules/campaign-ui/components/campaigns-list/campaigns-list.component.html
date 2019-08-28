@@ -8,13 +8,13 @@
         {{ campaign.name }}
       </div>
       <div class="CampaignsList-item-amount">
-        <span *ngIf="campaign.status !== campaignStatusType.DRAFT">{{
+        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT">{{
           campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0'
         }}</span>
         <span>Budget: {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}</span>
       </div>
       <div class="CampaignsList-item-trips">
-        <span *ngIf="campaign.status !== campaignStatusType.DRAFT">{{ campaign.trips_number }} trajets</span>
+        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT">{{ campaign.trips_number }} trajets</span>
         <span>Plafond: {{ campaign.max_trips }} trajets</span>
       </div>
       <div class="CampaignsList-item-date">
@@ -22,7 +22,7 @@
       </div>
       <div class="CampaignsList-item-actions">
         <a class="link">Voir le détail</a>
-        <a class="link" (click)="deleteCampaign(campaign)" *ngIf="campaign.status === campaignStatusType.DRAFT"
+        <a class="link" (click)="deleteCampaign(campaign)" *ngIf="campaign.status === CampaignStatusEnum.DRAFT"
           >Supprimer</a
         >
       </div>

@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignStatus, CampaignStatusFr } from '~/core/entities/campaign/campaign-status';
-import { IncentiveUnit } from '~/core/entities/campaign/Incentive-unit';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-campaign-card',
@@ -11,9 +11,9 @@ import { IncentiveUnit } from '~/core/entities/campaign/Incentive-unit';
 })
 export class CampaignCardComponent implements OnInit {
   @Input() campaign: Campaign;
-  campaignStatus = CampaignStatus;
-  campaignStatusFr = CampaignStatusFr;
-  incentiveUnit = IncentiveUnit;
+  campaignStatus = CampaignStatusEnum;
+  CAMPAIGN_STATUS_FR = CAMPAIGN_STATUS_FR;
+  incentiveUnit = IncentiveUnitEnum;
 
   constructor() {}
 
@@ -22,10 +22,10 @@ export class CampaignCardComponent implements OnInit {
   getCampaignClass(): string {
     let statusClass = 'CampaignCard-status';
     switch (this.campaign.status) {
-      case CampaignStatus.VALIDATED:
+      case CampaignStatusEnum.VALIDATED:
         statusClass += '--validated';
         break;
-      case CampaignStatus.ARCHIVED:
+      case CampaignStatusEnum.ARCHIVED:
         statusClass += '--archived';
         break;
     }

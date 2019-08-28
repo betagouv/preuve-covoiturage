@@ -1,14 +1,14 @@
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { Campaign } from '~/core/entities/campaign/campaign';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 function randomStatus() {
-  return Math.floor(Math.random() * Object.keys(CampaignStatus).length);
+  return Math.floor(Math.random() * Object.keys(CampaignStatusEnum).length);
 }
 
 export const campaignMocks = [...Array(20)].map(
   (val, idx) =>
     <Campaign>{
-      status: CampaignStatus[Object.keys(CampaignStatus)[randomStatus()]],
+      status: CampaignStatusEnum[Object.keys(CampaignStatusEnum)[randomStatus()]],
       name: `Name ${idx}`,
       description: `Description ${idx}`,
       start: new Date(),

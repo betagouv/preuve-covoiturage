@@ -14,7 +14,7 @@
     </span>
   </div>
   <div class="CampaignCard-status" [ngClass]="getCampaignClass()">
-    {{ campaignStatusFr[campaign.status] }}
+    {{ CAMPAIGN_STATUS_FR[campaign.status] }}
   </div>
   <div class="CampaignCard-actions">
     <button mat-flat-button color="primary" [routerLink]="'/campaign/' + campaign._id">

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-campaign-dashboard',
@@ -8,7 +8,7 @@ import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
   styleUrls: ['./campaign-dashboard.component.scss'],
 })
 export class CampaignDashboardComponent implements OnInit {
-  campaignStatus = CampaignStatus;
+  campaignStatus = CampaignStatusEnum;
 
   constructor() {}
 

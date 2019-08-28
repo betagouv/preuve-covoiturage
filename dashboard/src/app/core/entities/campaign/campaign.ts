@@ -1,8 +1,8 @@
 import { Territory } from '~/core/entities/territory/territory';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { CampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
-import { IncentiveUnit } from '~/core/entities/campaign/Incentive-unit';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 export class Campaign {
   public _id: string;
@@ -11,11 +11,11 @@ export class Campaign {
   public territory?: Territory;
   public start: Date;
   public end: Date;
-  public status: CampaignStatus;
+  public status: CampaignStatusEnum;
   /* tslint:disable:variable-name */
   public max_trips: number;
   public max_amount: number;
-  public amount_unit?: IncentiveUnit;
+  public amount_unit?: IncentiveUnitEnum;
   public trips_number?: number;
   public amount_spent?: number;
   public rules?: IncentiveRules;
@@ -28,7 +28,7 @@ export class Campaign {
     this.territory = obj.territory;
     this.start = obj.start;
     this.end = obj.end;
-    this.status = obj.status || CampaignStatus.DRAFT;
+    this.status = obj.status || CampaignStatusEnum.DRAFT;
     this.max_trips = obj.max_trips;
     this.max_amount = obj.max_amount;
     this.trips_number = obj.trips_number;

@@ -4,8 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { User } from '~/core/entities/authentication/user';
 import { UserService } from '~/core/services/authentication/user.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { roleType } from '~/core/types/mainType';
-import { ROLE_FR } from '~/core/const/roles.const';
+import { USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 @Component({
   selector: 'app-users-list',
@@ -45,8 +44,8 @@ export class UsersListComponent implements OnInit {
     );
   }
 
-  public getFrenchRole(role: roleType): string {
-    return ROLE_FR[role];
+  public getFrenchRole(role: UserRoleEnum): string {
+    return USER_ROLES_FR[role];
   }
 
   public onSendInvitation(user: User) {

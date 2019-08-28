@@ -6,9 +6,8 @@ import { WeekDay } from '@angular/common';
 
 import { FilterService } from '~/core/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CLASSES } from '~/core/const/classes.const';
-import { TRIP_STATUS, TRIP_STATUS_FR } from '~/core/const/trip/tripStatus.const';
-import { TripStatusType } from '~/core/types/trip/statusType';
+import { TRIP_CLASSES } from '~/core/enums/trip/trip-class.enum';
+import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 
 @Component({
   selector: 'app-filter',
@@ -37,7 +36,7 @@ import { TripStatusType } from '~/core/types/trip/statusType';
 export class FilterComponent implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
-  public classes = CLASSES;
+  public classes = TRIP_CLASSES;
   public tripStatusList = TRIP_STATUS;
 
   public days: WeekDay[] = [0, 1, 2, 3, 4, 5, 6];
@@ -94,7 +93,7 @@ export class FilterComponent implements OnInit {
     return Object.values(this.filterForm.value).filter((val) => !!val).length;
   }
 
-  public getStatusFrench(status: TripStatusType) {
+  public getStatusFrench(status: TripStatusEnum) {
     return TRIP_STATUS_FR[status];
   }
 

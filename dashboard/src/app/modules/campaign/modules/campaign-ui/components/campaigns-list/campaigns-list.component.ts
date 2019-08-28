@@ -2,10 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 import { DialogService } from '~/core/services/dialog.service';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -13,9 +13,9 @@ import { DialogService } from '~/core/services/dialog.service';
   styleUrls: ['./campaigns-list.component.scss'],
 })
 export class CampaignsListComponent implements OnInit {
-  @Input() campaignStatus: CampaignStatus | null;
+  @Input() campaignStatus: CampaignStatusEnum | null;
   campaigns: Campaign[];
-  campaignStatusType = CampaignStatus;
+  CampaignStatusEnum = CampaignStatusEnum;
 
   constructor(private dialog: DialogService, public campaignService: CampaignService, private toastr: ToastrService) {}
 
