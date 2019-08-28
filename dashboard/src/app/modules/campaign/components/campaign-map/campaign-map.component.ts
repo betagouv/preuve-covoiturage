@@ -1,83 +1,47 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
-import { Map, View } from 'ol';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
-import GeoJSON from 'ol/format/GeoJSON';
-import { Cluster, OSM, Vector as VectorSource } from 'ol/source';
-import { fromLonLat, transformExtent } from 'ol/proj';
-import Select from 'ol/interaction/Select';
-import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
-import { pointerMove } from 'ol/events/condition';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
+import * as L from 'leaflet';
+import * as M from 'leaflet.markercluster';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { Territory } from '~/core/entities/territory/territory';
+import { GEOJSON_CITIES } from '~/core/const/cities.const';
 
 @Component({
   selector: 'app-campaign-map',
   templateUrl: './campaign-map.component.html',
   styleUrls: ['./campaign-map.component.scss'],
 })
-export class CampaignMapComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CampaignMapComponent implements OnInit, OnDestroy {
   @Input() private campaigns: Campaign[];
-  private map: Map;
-  private viewport;
-  private initialZoom;
+  private map: L.Map;
 
   @Output() onMapResize = new EventEmitter();
 
-  constructor() {}
+  constructor() {
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: '/assets/leaflet/dist/images/marker-icon-2x.png',
+      iconUrl: '/assets/leaflet/dist/images/marker-icon.png',
+      shadowUrl: '/assets/leaflet/dist/images/marker-shadow.png',
+    });
+  }
 
-  ngOnInit() {}
-
-  ngAfterViewInit() {
-    this.viewport = document.getElementById('map');
-    this.initialZoom = this.getMinZoom();
+  ngOnInit() {
     this.initMap();
     this.initTerritoryViews();
-    this.map.on('moveend', this.catchUserEvents.bind(this));
+    this.map.on('move', this.catchUserEvents.bind(this));
   }
 
   ngOnDestroy() {}
 
-  private getMinZoom() {
-    const width = this.viewport.clientWidth;
-    return Math.ceil(Math.LOG2E * Math.log(width / 256));
-  }
-
   private initMap() {
-    this.map = new Map({
-      target: 'map',
-      layers: [
-        new TileLayer({
-          source: new OSM(),
-        }),
-      ],
-      view: new View({
-        // Center on FRANCE
-        center: fromLonLat([2.213749, 46.227638]),
-        zoom: 5.5,
-        minZoom: this.initialZoom,
-      }),
-    });
-    this.map.addInteraction(
-      new Select({
-        condition: pointerMove,
-      }),
-    );
+    this.map = L.map('map', { minZoom: 2, maxZoom: 12 }).setView([46.227638, 2.213749], 5.5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(this.map);
   }
 
   private initTerritoryViews() {
-    const style = new Style({
-      fill: new Fill({
-        color: 'rgba(255, 255, 255, 0.6)',
-      }),
-      stroke: new Stroke({
-        color: '#007ad9',
-        width: 1,
-      }),
-    });
     const territories: Territory[] = [...new Set(this.campaigns.map((c) => c.territory))];
     const uniqueTerritories = Array.from(new Set(territories.map((t) => t._id))).map((id) =>
       territories.find((t) => t._id === id),
@@ -85,58 +49,32 @@ export class CampaignMapComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(uniqueTerritories);
 
     // ADD THE TERRITORIES LAYER
-    const source = new VectorSource({
-      url: `assets/data/cities.geojson`,
-      format: new GeoJSON(),
-    });
-    const vectorLayer = new VectorLayer({
-      source,
-      style,
-    });
-    this.map.addLayer(vectorLayer);
+    // TODO GET GEOJSON FROM UNIQUE TERRITORIES
+    // @ts-ignore
+    L.geoJSON(GEOJSON_CITIES).addTo(this.map);
 
     // ADD THE CAMPAIGNS POINTS
+    // TODO Calculate points lat/lon with previous polygon (polygon.getBounds().getCenter();)
     this.generatePointsCluster(territories);
   }
 
   private generatePointsCluster(territories: Territory[]) {
-    let points = territories.map((t) => t.coordinates);
-    points = points.map((p) => new Feature(new Point(fromLonLat(p))));
-
-    const clusterSource = new Cluster({
-      distance: 50,
-      source: new VectorSource({ features: points }),
+    const points = territories.map((t) => t.coordinates);
+    // @ts-ignore
+    const markersCluster = new M.MarkerClusterGroup({
+      spiderfyOnMaxZoom: false,
+      showCoverageOnHover: false,
     });
-
-    const clusters = new VectorLayer({
-      source: clusterSource,
-      style: (feature) => {
-        const size = feature.get('features').length;
-        return new Style({
-          image: new CircleStyle({
-            radius: 10,
-            stroke: new Stroke({
-              color: '#fff',
-            }),
-            fill: new Fill({
-              color: '#007ad9',
-            }),
-          }),
-          text: new Text({
-            text: size.toString(),
-            fill: new Fill({
-              color: '#fff',
-            }),
-          }),
-        });
-      },
+    points.forEach((p) => {
+      const marker = L.marker(L.latLng(p[1], p[0]));
+      markersCluster.addLayer(marker);
     });
-    this.map.addLayer(clusters);
+    this.map.addLayer(markersCluster);
   }
 
-  private catchUserEvents(this) {
-    let extent = this.map.getView().calculateExtent(this.map.getSize());
-    extent = transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
-    this.onMapResize.emit(extent);
+  private catchUserEvents() {
+    const bounds = this.map.getBounds();
+    const boundsArray = [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()];
+    this.onMapResize.emit(boundsArray);
   }
 }

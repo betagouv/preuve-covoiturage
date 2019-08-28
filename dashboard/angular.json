@@ -24,7 +24,13 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss", "src/styles/theme.scss", "node_modules/ol/ol.css"],
+            "styles": [
+              "./node_modules/leaflet/dist/leaflet.css",
+              "./node_modules/leaflet.markercluster/dist/MarkerCluster.css",
+              "./node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css",
+              "src/styles.scss",
+              "src/styles/theme.scss"
+            ],
             "scripts": ["./node_modules/moment/min/moment.min.js", "./node_modules/moment/locale/fr.js"]
           },
           "configurations": {
