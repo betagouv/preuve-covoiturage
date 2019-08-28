@@ -1,22 +1,22 @@
-{
-  "type": "FeatureCollection",
-  "features": [
+export const GEOJSON_CITIES = {
+  type: 'FeatureCollection',
+  features: [
     {
-      "type": "Feature",
-      "properties": {
-        "gml_id": "adr_voie_lieu.adrmetropole.6226",
-        "nom": "Métropole de Lyon",
-        "theme": "ADMINISTRATION",
-        "soustheme": "Métropole",
-        "identifiant": "S5759",
-        "idexterne": "69M",
-        "siret": "20004697700019",
-        "datecreation": "2014-11-14",
-        "gid": "6226"
+      type: 'Feature',
+      properties: {
+        gml_id: 'adr_voie_lieu.adrmetropole.6226',
+        nom: 'Métropole de Lyon',
+        theme: 'ADMINISTRATION',
+        soustheme: 'Métropole',
+        identifiant: 'S5759',
+        idexterne: '69M',
+        siret: '20004697700019',
+        datecreation: '2014-11-14',
+        gid: '6226',
       },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
           [
             [4.766603, 45.557073999056975],
             [4.766858, 45.557211999056967],
@@ -11623,17 +11623,17 @@
             [4.765665, 45.558227999056967],
             [4.765719, 45.558259999056965],
             [4.766571, 45.55711399905698],
-            [4.766603, 45.557073999056975]
-          ]
-        ]
-      }
+            [4.766603, 45.557073999056975],
+          ],
+        ],
+      },
     },
     {
-      "type": "Feature",
-      "properties": { "code": "", "nom": "metropole", "origine": "G�ofla", "Saisie": "2014" },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: 'Feature',
+      properties: { code: '', nom: 'metropole', origine: 'G�ofla', Saisie: '2014' },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
           [
             [5.669164886494834, 43.319409822232139],
             [5.681720625364974, 43.319036081747342],
@@ -12056,7 +12056,7 @@
             [5.688144699412138, 43.341001199420838],
             [5.689950435949473, 43.330811121704897],
             [5.682961103432615, 43.321849618525619],
-            [5.669164886494834, 43.319409822232139]
+            [5.669164886494834, 43.319409822232139],
           ],
           [
             [5.02199913522062, 43.556161451379076],
@@ -12100,16 +12100,16 @@
             [5.047407097561628, 43.523563180037435],
             [5.035414242175648, 43.534517058926482],
             [5.032375387651237, 43.544780281933917],
-            [5.02199913522062, 43.556161451379076]
-          ]
-        ]
-      }
+            [5.02199913522062, 43.556161451379076],
+          ],
+        ],
+      },
     },
     {
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
           [
             [2.59052, 49.07965],
             [2.59602, 49.08171],
@@ -14608,11 +14608,11 @@
             [2.58273, 49.08245],
             [2.58302, 49.08065],
             [2.58655, 49.07979],
-            [2.59052, 49.07965]
-          ]
-        ]
+            [2.59052, 49.07965],
+          ],
+        ],
       },
-      "properties": { "code": "11", "nom": "\u00cele-de-France" }
-    }
-  ]
-}
+      properties: { code: '11', nom: '\u00cele-de-France' },
+    },
+  ],
+};
