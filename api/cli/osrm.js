@@ -71,8 +71,8 @@ client.connect(async (err) => {
 
   const docs = await col
     .find({ 'passenger.calc_distance': { $exists: false } })
-    // .find({ _id: ObjectId('5cd569772bb79a0042864942') })
     .project({
+      'passenger.start.datetime': 1,
       'passenger.start.lon': 1,
       'passenger.start.lat': 1,
       'passenger.end.lon': 1,
@@ -82,6 +82,7 @@ client.connect(async (err) => {
       'driver.end.lon': 1,
       'driver.end.lat': 1,
     })
+    .sort({ 'passenger.start.datetime': -1 })
     .limit(process.env.MONGO_LIMIT ? parseInt(process.env.MONGO_LIMIT, 10) : 1)
     .toArray();
 
