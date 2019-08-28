@@ -2,13 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
 
 import { IncentiveFormulaParameterInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { formulaValidator } from '~/modules/campaign/validators/formula.validator';
-import { Campaign } from '~/core/entities/campaign/campaign';
-import { DialogService } from '~/core/services/dialog.service';
 
 @Component({
   selector: 'app-formula-form',
