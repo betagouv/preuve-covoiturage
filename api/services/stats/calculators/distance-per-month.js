@@ -13,7 +13,7 @@ module.exports = {
         $project: {
           year: { $year: '$passenger.start.datetime' },
           month: { $month: '$passenger.start.datetime' },
-          distance: '$passenger.distance',
+          distance: { $max: ['$passenger.distance', '$passenger.calc_distance'] },
         },
       },
       {

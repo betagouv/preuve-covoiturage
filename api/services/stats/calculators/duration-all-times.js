@@ -15,7 +15,7 @@ module.exports = {
             name: 'duration',
           },
           total: {
-            $sum: '$passenger.duration',
+            $sum: { $max: ['$passenger.duration', '$passenger.calc_duration'] },
           },
         },
       },

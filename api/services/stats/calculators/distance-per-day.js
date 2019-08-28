@@ -14,7 +14,7 @@ module.exports = {
           year: { $year: '$passenger.start.datetime' },
           month: { $month: '$passenger.start.datetime' },
           day: { $dayOfMonth: '$passenger.start.datetime' },
-          distance: '$passenger.distance',
+          distance: { $max: ['$passenger.distance', '$passenger.calc_distance'] },
         },
       },
       {

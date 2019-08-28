@@ -15,7 +15,7 @@ module.exports = {
             name: 'distance',
           },
           total: {
-            $sum: '$passenger.distance',
+            $sum: { $max: ['$passenger.distance', '$passenger.calc_distance'] },
           },
         },
       },
