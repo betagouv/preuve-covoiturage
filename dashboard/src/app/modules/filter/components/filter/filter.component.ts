@@ -7,9 +7,7 @@ import { WeekDay } from '@angular/common';
 import { FilterService } from '~/core/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CLASSES } from '~/core/const/classes.const';
-import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
-import { STATUS_FR } from '~/modules/filter/const/status_fr.const';
-import { TRIP_STATUS } from '~/core/const/trip/tripStatus.const';
+import { TRIP_STATUS, TRIP_STATUS_FR } from '~/core/const/trip/tripStatus.const';
 import { TripStatusType } from '~/core/types/trip/statusType';
 
 @Component({
@@ -97,7 +95,7 @@ export class FilterComponent implements OnInit {
   }
 
   public getStatusFrench(status: TripStatusType) {
-    return STATUS_FR[status];
+    return TRIP_STATUS_FR[status];
   }
 
   public getDaysFrench(day: WeekDay) {

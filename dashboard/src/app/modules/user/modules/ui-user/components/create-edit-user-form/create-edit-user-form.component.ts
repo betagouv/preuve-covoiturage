@@ -6,9 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { UserService } from '~/core/services/authentication/user.service';
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
-import { ROLES } from '~/core/const/roles.const';
+import { ROLE_FR, ROLES } from '~/core/const/roles.const';
 import { roleType } from '~/core/types/mainType';
-import { ROLE_FR } from '~/modules/user/const/role_fr.const';
 
 @Component({
   selector: 'app-create-edit-user-form',

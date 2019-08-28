@@ -4,3 +4,10 @@ export enum CampaignStatus {
   ARCHIVED = 'archived',
   TEMPLATE = 'template',
 }
+
+export enum CampaignStatusFr {
+  draft = 'Brouillon',
+  validated = 'En cours',
+  archived = 'Archivée',
+  template = 'Terminée',
+}

@@ -9,7 +9,7 @@
     Incitation financière
   </div>
   <div class="CampaignCard-status" [ngClass]="getCampaignClass()">
-    {{ campaign.status }}
+    {{ campaignStatusFr[campaign.status] }}
   </div>
   <div class="CampaignCard-actions">
     <button mat-flat-button color="primary" [routerLink]="'/campaign/' + campaign._id">
