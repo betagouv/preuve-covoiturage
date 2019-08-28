@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+import { CampaignStatus, CampaignStatusFr } from '~/core/entities/campaign/campaign-status';
 
 @Component({
   selector: 'app-campaign-card',
@@ -11,6 +11,7 @@ import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 export class CampaignCardComponent implements OnInit {
   @Input() campaign: Campaign;
   campaignStatus = CampaignStatus;
+  campaignStatusFr = CampaignStatusFr;
 
   constructor() {}
 
