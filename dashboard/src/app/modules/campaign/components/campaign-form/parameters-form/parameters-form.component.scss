@@ -1,6 +1,12 @@
-@import '../../../../../../styles/variables';
+@import '~src/styles/variables';
 
 .ParametersForm {
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &-date {
     mat-form-field:not(:first-child) {
       margin-left: 10px;
@@ -110,6 +116,39 @@
     &-actions {
       display: flex;
       justify-content: space-around;
+    }
+  }
+
+  &-formulaExpression {
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  &-arrow {
+    width: 90%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  &-formula {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    app-formula-form {
+      width: 90%;
+    }
+    &-actions {
+      display: flex;
+      justify-content: space-around;
+    }
+    mat-icon {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
     }
   }
 

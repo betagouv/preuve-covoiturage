@@ -6,6 +6,7 @@ import { MatStepper } from '@angular/material';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
+import { CampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
 
 @Component({
   selector: 'app-policy-form',
@@ -15,7 +16,7 @@ import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
 export class PolicyFormComponent implements OnInit {
   @Input() control: FormControl;
   @Input() matStepper: MatStepper;
-  templates: Campaign[];
+  templates: CampaignInterface[];
 
   constructor(public campaignService: CampaignService, private toastr: ToastrService) {}
 
@@ -23,10 +24,12 @@ export class PolicyFormComponent implements OnInit {
     this.loadCampaignTemplates();
   }
 
-  onTemplateCardClick(template: Campaign) {
-    this.control.setValue(template);
+  public onTemplateCardClick(template: CampaignInterface | null) {
     if (template === null) {
+      this.control.setValue(new Campaign());
       this.matStepper.next();
+    } else {
+      this.control.setValue(template);
     }
   }
 

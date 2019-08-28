@@ -1,3 +1,5 @@
+// tslint:disable:variable-name
+
 import { Territory } from '~/core/entities/territory/territory';
 import { CampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
@@ -12,7 +14,6 @@ export class Campaign {
   public start: Date;
   public end: Date;
   public status: CampaignStatusEnum;
-  /* tslint:disable:variable-name */
   public max_trips: number;
   public max_amount: number;
   public amount_unit?: IncentiveUnitEnum;
@@ -21,14 +22,26 @@ export class Campaign {
   public rules?: IncentiveRules;
   public parameters?: any;
 
-  constructor(obj: CampaignInterface) {
+  constructor(
+    obj: CampaignInterface = {
+      _id: null,
+      name: '',
+      description: '',
+      amount_unit: null,
+      start: null,
+      end: null,
+      status: null,
+      max_trips: null,
+      max_amount: null,
+    },
+  ) {
     this._id = obj._id;
     this.name = obj.name;
     this.description = obj.description;
     this.territory = obj.territory;
     this.start = obj.start;
     this.end = obj.end;
-    this.status = obj.status || CampaignStatusEnum.DRAFT;
+    this.status = obj.status;
     this.max_trips = obj.max_trips;
     this.max_amount = obj.max_amount;
     this.trips_number = obj.trips_number;

@@ -90,6 +90,8 @@ export class CampaignFormComponent implements OnInit {
       restrictions: this._formBuilder.array([]),
       retributionParameters: [],
       retributions: this._formBuilder.array([]),
+      formula_expression: [null],
+      formulas: this._formBuilder.array([]),
     });
   }
 

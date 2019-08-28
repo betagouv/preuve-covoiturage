@@ -4,8 +4,11 @@ import * as moment from 'moment';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
+import { Campaign } from '~/core/entities/campaign/campaign';
+import { DialogService } from '~/core/services/dialog.service';
 
 @Component({
   selector: 'app-parameters-form',
@@ -18,15 +21,22 @@ import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/inc
 })
 export class ParametersFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
+  public isExpertMode = false;
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnitEnum);
   incentiveUnitFr = INCENTIVE_UNITS_FR;
 
-  constructor(private currencyPipe: CurrencyPipe, private numberPipe: DecimalPipe, private _formBuilder: FormBuilder) {}
+  constructor(
+    private currencyPipe: CurrencyPipe,
+    private numberPipe: DecimalPipe,
+    private _formBuilder: FormBuilder,
+    private dialog: DialogService,
+  ) {}
 
   ngOnInit() {
     this.initForm();
     this.retributionsFormArray.push(this.generateStaggeredFormGroup());
+    this.formulasFormArray.push(this.generateFormulaFormGroup());
   }
 
   get controls() {
@@ -43,6 +53,10 @@ export class ParametersFormComponent implements OnInit {
 
   get retributionParametersForm(): FormGroup {
     return <FormGroup>this.campaignForm.get('retributionParameters');
+  }
+
+  get formulasFormArray(): FormArray {
+    return <FormArray>this.campaignForm.get('formulas');
   }
 
   showDateLabel(): string {
@@ -138,6 +152,35 @@ export class ParametersFormComponent implements OnInit {
       valueForPassenger: [null, [Validators.required, Validators.min(0)]],
       start: [null],
       end: [null],
+    });
+  }
+
+  setExpertMode($event) {
+    this.isExpertMode = $event.source._checked;
+
+    // show modal to confirm if form is not null
+    // reset forms
+  }
+
+  addFormula(): void {
+    this.formulasFormArray.push(this.generateFormulaFormGroup());
+  }
+
+  public removeFormula(idx): void {
+    this.dialog
+      .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer cette formule ?`, 'Supprimer')
+      .subscribe((result) => {
+        if (result) {
+          this.formulasFormArray.removeAt(idx);
+        }
+      });
+  }
+
+  generateFormulaFormGroup(): FormGroup {
+    return this._formBuilder.group({
+      formula: [''],
+      unit: [null],
+      parameters: [[]],
     });
   }
 

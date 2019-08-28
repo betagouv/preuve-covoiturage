@@ -24,6 +24,7 @@ import { StaggeredFormComponent } from './components/campaign-form/staggered-for
 import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-discover.component';
 import { CampaignCardComponent } from './components/campaign-card/campaign-card.component';
 import { CampaignMapComponent } from './components/campaign-map/campaign-map.component';
+import { FormulaFormComponent } from './components/campaign-form/formula-form/formula-form.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { CampaignMapComponent } from './components/campaign-map/campaign-map.com
     CampaignDiscoverComponent,
     CampaignCardComponent,
     CampaignMapComponent,
+    FormulaFormComponent,
   ],
   imports: [
     CampaignRoutingModule,
