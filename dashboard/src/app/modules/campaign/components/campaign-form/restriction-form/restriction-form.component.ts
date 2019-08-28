@@ -25,10 +25,9 @@ export class RestrictionFormComponent implements OnInit {
 
   ngOnInit() {
     this.restrictionForm = this._formBuilder.group({
-      howMuch: [null, [Validators.required, Validators.min(0)]],
-      what: [null, Validators.required],
-      who: [null, Validators.required],
-      when: [null, Validators.required],
+      quantity: [null, [Validators.required, Validators.min(0)]],
+      is_driver: [null, Validators.required],
+      period: [null, Validators.required],
     });
 
     this.restrictionForm.valueChanges.subscribe((value: IncentiveRestriction) => {
