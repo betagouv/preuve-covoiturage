@@ -1,6 +1,6 @@
-import { groupType, roleType } from '~/core/types/mainType';
-
 import { IModel } from '../IModel';
+import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 export class User implements IModel {
   public _id: string;
@@ -10,8 +10,8 @@ export class User implements IModel {
   public fullname: string;
   public password: string;
   public phone: string;
-  public group: groupType;
-  public role: roleType;
+  public group: UserGroupEnum;
+  public role: UserRoleEnum;
   public aom: string;
   public operator: string;
   public permissions: [string];

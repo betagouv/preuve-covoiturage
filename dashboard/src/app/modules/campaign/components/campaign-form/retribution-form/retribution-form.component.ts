@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-import { IncentiveUnitFr } from '~/core/entities/campaign/Incentive-unit';
+import { INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-retribution-form',
@@ -13,7 +13,7 @@ export class RetributionFormComponent implements OnInit {
   @Input() forDriver: boolean;
   @Input() forPassenger: boolean;
   @Input() formGroup: FormGroup;
-  incentiveUnitFr = IncentiveUnitFr;
+  incentiveUnitFr = INCENTIVE_UNITS_FR;
 
   constructor() {}
 

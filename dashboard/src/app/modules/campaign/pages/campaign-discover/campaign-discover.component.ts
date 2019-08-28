@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { IncentiveUnit } from '~/core/entities/campaign/Incentive-unit';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-campaign-discover',
@@ -54,8 +54,8 @@ export class CampaignDiscoverComponent implements OnInit {
 
   private generateCampaigns(idx): any {
     const campaignToReturn: any = {};
-    const randomStatus = Math.floor(Math.random() * Object.keys(CampaignStatus).length);
-    campaignToReturn.status = CampaignStatus[Object.keys(CampaignStatus)[randomStatus]];
+    const randomStatus = Math.floor(Math.random() * Object.keys(CampaignStatusEnum).length);
+    campaignToReturn.status = CampaignStatusEnum[Object.keys(CampaignStatusEnum)[randomStatus]];
     campaignToReturn.name = `Name ${idx}`;
     campaignToReturn.description = `Description ${idx}`;
     campaignToReturn.start = new Date();
@@ -66,7 +66,7 @@ export class CampaignDiscoverComponent implements OnInit {
     campaignToReturn.amount_spent = Math.floor(Math.random() * 20000);
     campaignToReturn.territory = {};
     campaignToReturn.territory._id = Math.floor(Math.random() * 3);
-    campaignToReturn.amount_unit = [IncentiveUnit.EUR, IncentiveUnit.POINT][Math.floor(Math.random() * 2)];
+    campaignToReturn.amount_unit = [IncentiveUnitEnum.EUR, IncentiveUnitEnum.POINT][Math.floor(Math.random() * 2)];
     switch (campaignToReturn.territory._id) {
       case 0:
         campaignToReturn.territory.coordinates = [5.36978, 43.296482];

@@ -8,7 +8,7 @@ import * as moment from 'moment';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-campaign-form',
@@ -52,8 +52,8 @@ export class CampaignFormComponent implements OnInit {
   saveCampaign(isDraft) {
     this.loading = true;
     const campaignToSave: Campaign = new Campaign(this.campaignFormGroup.getRawValue());
-    if (!isDraft && campaignToSave.status === CampaignStatus.DRAFT) {
-      campaignToSave.status = CampaignStatus.VALIDATED;
+    if (!isDraft && campaignToSave.status === CampaignStatusEnum.DRAFT) {
+      campaignToSave.status = CampaignStatusEnum.VALIDATED;
     }
     this.campaignService.create(this.campaignFormGroup.getRawValue()).subscribe(
       (campaignSaved: Campaign) => {
