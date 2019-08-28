@@ -109,14 +109,14 @@ router.get('/', jwtUser, can('journey.list'), async (req, res, next) => {
 
       res.flushHeaders();
 
-      // const transformer = (doc) => flat(filterOps(doc.toJSON()));
-      const transformer = (doc) => anonymize(flat(filterOps(doc.toJSON())));
+      const transformer = (doc) => anonymize(flat(doc.toJSON()));
 
       // update limits
       req.query.limit = _.get(req, 'query.limit', 50000);
       req.query.skip = _.get(req, 'query.skip', 0);
       req.query.fields = [
         '-journey_id',
+        '-operator_journey_id',
         '-trip_id',
         '-createdAt',
         '-updatedAt',
