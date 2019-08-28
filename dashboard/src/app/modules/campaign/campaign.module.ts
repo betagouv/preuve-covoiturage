@@ -21,6 +21,7 @@ import { SummaryFormComponent } from './components/campaign-form/summary-form/su
 import { RestrictionFormComponent } from './components/campaign-form/restriction-form/restriction-form.component';
 import { RetributionFormComponent } from './components/campaign-form/retribution-form/retribution-form.component';
 import { StaggeredFormComponent } from './components/campaign-form/staggered-form/staggered-form.component';
+import { FormulaFormComponent } from './components/campaign-form/formula-form/formula-form.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { StaggeredFormComponent } from './components/campaign-form/staggered-for
     RestrictionFormComponent,
     RetributionFormComponent,
     StaggeredFormComponent,
+    FormulaFormComponent,
   ],
   imports: [
     CampaignRoutingModule,

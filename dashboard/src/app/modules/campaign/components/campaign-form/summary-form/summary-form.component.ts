@@ -108,7 +108,7 @@ export class SummaryFormComponent implements OnInit {
     summaryText += '<br/><br/>\r\n\r\n';
     const nbOperators = rules.controls.operators.value ? rules.controls.operators.value.length : 0;
     if (nbOperators === this.operatorService.entities.length) {
-      summaryText += `La campagne est accessible à tout les opérateurs présents sur le registre (${nbOperators}).`;
+      summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
     } else {
       summaryText += `La campagne est limitée à ${nbOperators} présents sur le registre.`;
     }

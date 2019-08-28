@@ -99,7 +99,7 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public create(item: T): Observable<T> {
+  public create(item: object): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.create`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((entity) => {
@@ -111,7 +111,7 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public createOne(item: T): Observable<T> {
+  public createOne(item: object): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.create`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((entity: T) => {
