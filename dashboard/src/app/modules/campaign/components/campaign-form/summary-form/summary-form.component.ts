@@ -5,7 +5,7 @@ import * as moment from 'moment';
 
 import { UtilsService } from '~/core/services/utils.service';
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
+import { IncentiveUnit, IncentiveUnitFr } from '~/core/entities/campaign/Incentive-unit';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 
 @Component({
@@ -79,7 +79,7 @@ export class SummaryFormComponent implements OnInit {
       summaryText += `<br/>\r\n<b>- `;
       if (valueForDriver !== null) {
         // tslint:disable-next-line:max-line-length
-        summaryText += `${valueForDriver} ${Campaign.getIncentiveUnitLabel(this.controls.amount_unit.value)} par ${
+        summaryText += `${valueForDriver} ${IncentiveUnitFr[this.controls.amount_unit.value]} par ${
           this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
         }`;
         summaryText += conductorProportionalPassengers ? ' par passager' : '';
@@ -88,7 +88,7 @@ export class SummaryFormComponent implements OnInit {
       summaryText += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
       if (valueForPassenger !== null) {
         // tslint:disable-next-line:max-line-length
-        summaryText += `${valueForPassenger} ${Campaign.getIncentiveUnitLabel(this.controls.amount_unit.value)} par ${
+        summaryText += `${valueForPassenger} ${IncentiveUnitFr[this.controls.amount_unit.value]} par ${
           this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
         } pour le(s) passager(s)`;
       }

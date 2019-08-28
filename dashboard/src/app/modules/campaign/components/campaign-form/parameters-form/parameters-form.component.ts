@@ -5,8 +5,7 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
-import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
-import { Campaign } from '~/core/entities/campaign/campaign';
+import { IncentiveUnit, IncentiveUnitFr } from '~/core/entities/campaign/Incentive-unit';
 
 @Component({
   selector: 'app-parameters-form',
@@ -21,7 +20,7 @@ export class ParametersFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnit);
-  getIncentiveUnitLabel = Campaign.getIncentiveUnitLabel;
+  incentiveUnitFr = IncentiveUnitFr;
 
   constructor(private currencyPipe: CurrencyPipe, private numberPipe: DecimalPipe, private _formBuilder: FormBuilder) {}
 
