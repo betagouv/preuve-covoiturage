@@ -178,7 +178,7 @@
             <mat-form-field appearance="outline">
               <mat-label>Options</mat-label>
               <mat-select multiple [disabled]="!controls.incentiveMode.valid">
-                <mat-option #staggeredMode (onSelectionChange)="onStaggeredChange($event)">Mode échelonné</mat-option>
+                <!--                <mat-option #staggeredMode (onSelectionChange)="onStaggeredChange($event)">Mode échelonné</mat-option>-->
                 <mat-option
                   *ngIf="controls.rules.get('forDriver').value"
                   (onSelectionChange)="onConductorProportionalPassengers($event)"
@@ -209,28 +209,30 @@
                 >
                 </app-retribution-form>
               </div>
-              <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.selected">
-                <app-staggered-form
-                  [formGroup]="retributionFormGroup"
-                  [previousFormGroup]="retributionsFormArray.at(idx - 1)"
-                  [isFirst]="idx === 0"
-                  [isLast]="retributionsFormArray.length === idx + 1"
-                >
-                </app-staggered-form>
-                <mat-icon
-                  color="error"
-                  *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1"
-                  (click)="removeStaggered(idx)"
-                >
-                  delete_outline
-                </mat-icon>
-              </div>
+
+              <!--              MODE ECHELONNE -->
+              <!--              <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.selected">-->
+              <!--                <app-staggered-form-->
+              <!--                  [formGroup]="retributionFormGroup"-->
+              <!--                  [previousFormGroup]="retributionsFormArray.at(idx - 1)"-->
+              <!--                  [isFirst]="idx === 0"-->
+              <!--                  [isLast]="retributionsFormArray.length === idx + 1"-->
+              <!--                >-->
+              <!--                </app-staggered-form>-->
+              <!--                <mat-icon-->
+              <!--                  color="error"-->
+              <!--                  *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1"-->
+              <!--                  (click)="removeStaggered(idx)"-->
+              <!--                >-->
+              <!--                  delete_outline-->
+              <!--                </mat-icon>-->
+              <!--              </div>-->
             </div>
-            <div *ngIf="staggeredMode.selected" class="ParametersForm-incentiveMode-actions">
-              <button mat-stroked-button color="primary" (click)="addStaggered()">
-                Ajouter un échelon
-              </button>
-            </div>
+            <!--            <div *ngIf="staggeredMode.selected" class="ParametersForm-incentiveMode-actions">-->
+            <!--              <button mat-stroked-button color="primary" (click)="addStaggered()">-->
+            <!--                Ajouter un échelon-->
+            <!--              </button>-->
+            <!--            </div>-->
           </ng-container>
         </div>
       </mat-expansion-panel>
