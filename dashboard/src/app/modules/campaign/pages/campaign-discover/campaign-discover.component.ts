@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { IncentiveUnit } from '~/core/entities/campaign/Incentive-unit';
 
 @Component({
   selector: 'app-campaign-discover',
@@ -65,6 +66,7 @@ export class CampaignDiscoverComponent implements OnInit {
     campaignToReturn.amount_spent = Math.floor(Math.random() * 20000);
     campaignToReturn.territory = {};
     campaignToReturn.territory._id = Math.floor(Math.random() * 3);
+    campaignToReturn.amount_unit = [IncentiveUnit.EUR, IncentiveUnit.POINT][Math.floor(Math.random() * 2)];
     switch (campaignToReturn.territory._id) {
       case 0:
         campaignToReturn.territory.coordinates = [5.36978, 43.296482];

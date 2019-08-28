@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignStatus, CampaignStatusFr } from '~/core/entities/campaign/campaign-status';
+import { IncentiveUnit } from '~/core/entities/campaign/Incentive-unit';
 
 @Component({
   selector: 'app-campaign-card',
@@ -12,6 +13,7 @@ export class CampaignCardComponent implements OnInit {
   @Input() campaign: Campaign;
   campaignStatus = CampaignStatus;
   campaignStatusFr = CampaignStatusFr;
+  incentiveUnit = IncentiveUnit;
 
   constructor() {}
 
