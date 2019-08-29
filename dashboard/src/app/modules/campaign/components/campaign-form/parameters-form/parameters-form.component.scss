@@ -31,11 +31,9 @@
     padding: 0;
 
     > div:first-child {
+      text-align: right;
       padding: 16px 24px 20px 24px;
       background: $background-white;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
     }
 
     > div:not(:first-child) {
@@ -82,34 +80,40 @@
       margin-top: 20px;
       display: flex;
 
-      & > * {
+      &-inputs {
+        flex: 2;
+        position: relative;
+      }
+
+      &-remove {
         flex: 1;
         position: relative;
+        display: flex;
+        align-items: center;
+        mat-icon {
+          cursor: pointer;
+          font-size: 30px;
+          width: 30px;
+          height: 30px;
+        }
       }
     }
 
     &-staggered {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      margin-right: 20px;
 
-      &::before {
+      &::after {
         display: block;
         position: absolute;
         height: 100%;
         content: '';
-        left: 0;
-        border-left: 2px solid $color-secondary;
-      }
-
-      mat-icon {
-        cursor: pointer;
-        font-size: 30px;
-        width: 30px;
-        height: 30px;
-        position: absolute;
         right: 0;
-        bottom: 43%;
+        border-left: 2px solid $color-secondary;
       }
     }
 

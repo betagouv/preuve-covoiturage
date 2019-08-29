@@ -49,15 +49,15 @@ export class StaggeredFormComponent implements OnInit {
   }
 
   initForm() {
-    this.controls.start.setValidators(Validators.required);
-    this.controls.end.setValidators(Validators.required);
-    this.controls.end.enable();
+    this.controls.min.setValidators(Validators.required);
+    this.controls.max.setValidators(Validators.required);
+    this.controls.max.enable();
     if (this.isFirst) {
-      this.controls.end.setValidators([Validators.required, Validators.min(1)]);
-      this.controls.start.setValue(0);
+      this.controls.max.setValidators([Validators.required, Validators.min(1)]);
+      this.controls.min.setValue(0);
     }
     if (this.isLast) {
-      this.controls.end.disable();
+      this.controls.max.disable();
     }
   }
 
@@ -73,16 +73,16 @@ export class StaggeredFormComponent implements OnInit {
 
   onPreviousValueChange() {
     const value = this.previousFormGroup.value;
-    if (value.end) {
-      const previousEnd = Number(value.end);
-      this.controls.start.setValue(previousEnd);
+    if (value.max) {
+      const previousMax = Number(value.max);
+      this.controls.min.setValue(previousMax);
 
       if (!this.isLast) {
-        this.controls.end.setValidators([Validators.required, Validators.min(previousEnd + 1)]);
-        this.controls.end.updateValueAndValidity();
+        this.controls.max.setValidators([Validators.required, Validators.min(previousMax + 1)]);
+        this.controls.max.updateValueAndValidity();
       }
     } else {
-      this.controls.start.setValue(null);
+      this.controls.min.setValue(null);
     }
   }
 }

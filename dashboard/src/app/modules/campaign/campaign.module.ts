@@ -25,6 +25,7 @@ import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-di
 import { CampaignCardComponent } from './components/campaign-card/campaign-card.component';
 import { CampaignMapComponent } from './components/campaign-map/campaign-map.component';
 import { FormulaFormComponent } from './components/campaign-form/formula-form/formula-form.component';
+import { FormulaGuideComponent } from './components/campaign-form/formula-guide/formula-guide.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { FormulaFormComponent } from './components/campaign-form/formula-form/fo
     CampaignCardComponent,
     CampaignMapComponent,
     FormulaFormComponent,
+    FormulaGuideComponent,
   ],
   imports: [
     CampaignRoutingModule,
