@@ -7,6 +7,7 @@ const BadRequestError = require('@pdc/shared/errors/bad-request');
 const InternalServerError = require('@pdc/shared/errors/internal-server');
 const eventBus = require('@pdc/shared/bus');
 const importer = require('@pdc/package-importer/importer');
+const geo = require('@pdc/package-geo/geo');
 const Operator = require('@pdc/service-organization/entities/models/operator');
 const operatorService = require('@pdc/service-organization/operator');
 const tripService = require('@pdc/service-trip/service');
@@ -104,6 +105,40 @@ const journeyService = serviceFactory(Journey, {
             });
 
           _.set(journey, 'aom', aomsClean);
+        })
+
+        // calc distance and duration for passenger
+        .then(async () => {
+          const passengerRoute = await geo.route(
+            {
+              lon: journey.passenger.start.lon,
+              lat: journey.passenger.start.lat,
+            },
+            {
+              lon: journey.passenger.end.lon,
+              lat: journey.passenger.end.lat,
+            },
+          );
+
+          _.set(journey, 'passenger.calc_distance', passengerRoute.distance);
+          _.set(journey, 'passenger.calc_duration', passengerRoute.duration);
+        })
+
+        // calc distance and duration for driver
+        .then(async () => {
+          const driverRoute = await geo.route(
+            {
+              lon: journey.driver.start.lon,
+              lat: journey.driver.start.lat,
+            },
+            {
+              lon: journey.driver.end.lon,
+              lat: journey.driver.end.lat,
+            },
+          );
+
+          _.set(journey, 'driver.calc_distance', driverRoute.distance);
+          _.set(journey, 'driver.calc_duration', driverRoute.duration);
         })
 
         // save the updated journey

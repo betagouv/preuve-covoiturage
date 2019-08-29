@@ -8,6 +8,8 @@ const geoApi = require('./providers/fr.gouv.api.geo');
 const addressApi = require('./providers/fr.gouv.data.api-adresse');
 const nominatimApi = require('./providers/org.openstreetmap.nominatim');
 const komootApi = require('./providers/de.komoot.photon');
+const osrmBetaRoute = require('./providers/fr.gouv.beta.covoiturage.osrm');
+const osrmProject = require('./providers/org.project-osrm.map');
 
 /**
  * Search for an AOM object
@@ -50,7 +52,7 @@ const aom = async ({ lon, lat, insee }) => {
   }).exec();
 };
 
-const cleanPostcodes = p => (Array.isArray(p) ? p : [p].filter(i => !!i)) || [];
+const cleanPostcodes = (p) => (Array.isArray(p) ? p : [p].filter((i) => !!i)) || [];
 
 const town = async ({ lon, lat, insee, literal }) => {
   if ((_.isNil(lon) || _.isNil(lat)) && _.isNil(insee) && _.isNil(literal)) {
@@ -212,9 +214,15 @@ const postcodes = async ({ lon, lat, insee }) => {
   return _.get(await town({ lon, lat }), 'postcodes', []);
 };
 
+const route = async (start, end) => [osrmBetaRoute.route, osrmProject.route].reduce(
+  (promiseAcc, func) => promiseAcc.then((res) => res).catch(() => func(start, end)),
+  Promise.reject(),
+);
+
 module.exports = {
   aom,
   town,
   insee,
   postcodes,
+  route,
 };

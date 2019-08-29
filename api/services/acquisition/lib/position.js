@@ -2,14 +2,7 @@ const _ = require('lodash');
 const geo = require('@pdc/package-geo/geo');
 const BadRequestError = require('@pdc/shared/errors/bad-request');
 
-const processTownResponse = ({ jrn, path, pos }) => async ({
-  town,
-  postcodes,
-  insee,
-  country,
-  lon,
-  lat,
-}) => {
+const processTownResponse = ({ jrn, path, pos }) => async ({ town, postcodes, insee, country, lon, lat }) => {
   const position = Object.assign({}, pos);
   const journey = Object.assign({}, jrn);
 
@@ -70,9 +63,7 @@ const findTownByInsee = async ({ journey, path, position }) => {
   const jrn = Object.assign({}, journey);
 
   if (_.get(position, 'insee', null) !== null) {
-    return geo
-      .town({ insee: pos.insee })
-      .then(processTownResponse({ jrn, path, pos }));
+    return geo.town({ insee: pos.insee }).then(processTownResponse({ jrn, path, pos }));
   }
 
   return { journey, path, position };

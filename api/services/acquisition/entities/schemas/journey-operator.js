@@ -13,6 +13,8 @@ const schema = {
   end: { type: position, validate: validators.position, required: true },
   distance: { type: Number, min: 0, default: 0 },
   duration: { type: Number, min: 0, default: 0 },
+  calc_distance: { type: Number },
+  calc_duration: { type: Number },
   cost: { type: Number, min: 0, default: 0 },
   incentive: { type: Number, min: 0, default: 0 },
   remaining_fee: { type: Number, min: 0, default: 0 },
