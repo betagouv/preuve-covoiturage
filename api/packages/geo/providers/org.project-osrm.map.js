@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 const _ = require('lodash');
 const axios = require('axios');
 

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const _ = require('lodash');
 const geo = require('@pdc/package-geo/geo');
 const BadRequestError = require('@pdc/shared/errors/bad-request');
