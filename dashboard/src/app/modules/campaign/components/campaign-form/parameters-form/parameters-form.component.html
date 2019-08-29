@@ -1,7 +1,7 @@
 <div class="ParametersForm CampaignSubForm">
   <div class="ParametersForm-title">
     <h2>Définissez des rétributions</h2>
-    <mat-slide-toggle class="example-margin" color="accent" [checked]="isExpertMode" (change)="setExpertMode($event)">
+    <mat-slide-toggle color="accent" [checked]="isExpertMode" (change)="setExpertMode($event)">
       Mode expert
     </mat-slide-toggle>
   </div>
@@ -63,6 +63,8 @@
           </mat-form-field>
         </div>
       </mat-expansion-panel>
+
+      <!-- MAX RETRIBUTION -->
       <mat-expansion-panel
         [ngClass]="{
           'mat-expansion-panel-error':
@@ -102,6 +104,8 @@
           </mat-form-field>
         </div>
       </mat-expansion-panel>
+
+      <!-- MAX TRIPS -->
       <mat-expansion-panel
         [ngClass]="{ 'mat-expansion-panel-error': controls.max_trips.touched && !controls.max_trips.valid }"
       >
@@ -124,6 +128,8 @@
           </mat-form-field>
         </div>
       </mat-expansion-panel>
+
+      <!-- RESTRICTIONS -->
       <mat-expansion-panel
         [ngClass]="{ 'mat-expansion-panel-error': !restrictionFormArray.valid && isRestrictionFormArrayTouched() }"
       >
@@ -153,6 +159,8 @@
           </button>
         </div>
       </mat-expansion-panel>
+
+      <!-- RETRIBUTION -->
       <mat-expansion-panel
         *ngIf="!isExpertMode"
         [ngClass]="{ 'mat-expansion-panel-error': !retributionsFormArray.valid && retributionsFormArray.touched }"
@@ -166,34 +174,26 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs ParametersForm-incentiveMode">
-          <div>
-            <mat-button-toggle-group formControlName="incentiveMode">
-              <mat-button-toggle value="per_trip" aria-label="per_trip">
-                Par trajet
-              </mat-button-toggle>
-              <mat-button-toggle value="per_distance" aria-label="per_distance">
-                Par distance
-              </mat-button-toggle>
-            </mat-button-toggle-group>
-            <mat-form-field appearance="outline">
-              <mat-label>Options</mat-label>
-              <mat-select multiple [disabled]="!controls.incentiveMode.valid">
-                <!--                <mat-option #staggeredMode (onSelectionChange)="onStaggeredChange($event)">Mode échelonné</mat-option>-->
-                <mat-option
-                  *ngIf="controls.rules.get('forDriver').value"
-                  (onSelectionChange)="onConductorProportionalPassengers($event)"
-                >
-                  Indexer la rétribution du conducteur sur le nombre de passagers
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+          <div class="ParametersForm-incentiveMode-toggle">
+            <mat-slide-toggle #staggeredMode color="accent" (change)="onStaggeredChange($event)">
+              Mode échelonné
+            </mat-slide-toggle>
           </div>
-          <ng-container *ngIf="controls.incentiveMode.value">
+          <ng-container>
             <div
               class="ParametersForm-incentiveMode-value"
               *ngFor="let retributionFormGroup of retributionsFormArray.controls; let idx = index"
             >
-              <div>
+              <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.checked">
+                <app-staggered-form
+                  [formGroup]="retributionFormGroup"
+                  [previousFormGroup]="retributionsFormArray.at(idx - 1)"
+                  [isFirst]="idx === 0"
+                  [isLast]="retributionsFormArray.length === idx + 1"
+                >
+                </app-staggered-form>
+              </div>
+              <div class="ParametersForm-incentiveMode-value-inputs">
                 <app-retribution-form
                   [campaignForm]="campaignForm"
                   [formGroup]="retributionFormGroup"
@@ -209,33 +209,26 @@
                 >
                 </app-retribution-form>
               </div>
-
-              <!--              MODE ECHELONNE -->
-              <!--              <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.selected">-->
-              <!--                <app-staggered-form-->
-              <!--                  [formGroup]="retributionFormGroup"-->
-              <!--                  [previousFormGroup]="retributionsFormArray.at(idx - 1)"-->
-              <!--                  [isFirst]="idx === 0"-->
-              <!--                  [isLast]="retributionsFormArray.length === idx + 1"-->
-              <!--                >-->
-              <!--                </app-staggered-form>-->
-              <!--                <mat-icon-->
-              <!--                  color="error"-->
-              <!--                  *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1"-->
-              <!--                  (click)="removeStaggered(idx)"-->
-              <!--                >-->
-              <!--                  delete_outline-->
-              <!--                </mat-icon>-->
-              <!--              </div>-->
+              <div class="ParametersForm-incentiveMode-value-remove">
+                <mat-icon
+                  color="error"
+                  *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1"
+                  (click)="removeStaggered(idx)"
+                >
+                  delete_outline
+                </mat-icon>
+              </div>
             </div>
-            <!--            <div *ngIf="staggeredMode.selected" class="ParametersForm-incentiveMode-actions">-->
-            <!--              <button mat-stroked-button color="primary" (click)="addStaggered()">-->
-            <!--                Ajouter un échelon-->
-            <!--              </button>-->
-            <!--            </div>-->
+            <div *ngIf="staggeredMode.checked" class="ParametersForm-incentiveMode-actions">
+              <button mat-stroked-button color="primary" (click)="addStaggered()">
+                Ajouter un échelon
+              </button>
+            </div>
           </ng-container>
         </div>
       </mat-expansion-panel>
+
+      <!-- FORMULAS -->
       <mat-expansion-panel
         *ngIf="isExpertMode"
         [ngClass]="{ 'mat-expansion-panel-error': !formulasFormArray.valid && formulasFormArray.touched }"

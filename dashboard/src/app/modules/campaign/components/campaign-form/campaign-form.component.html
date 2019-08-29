@@ -1,5 +1,6 @@
 <div class="CampaignForm">
-  <mat-horizontal-stepper #stepper [linear]="true">
+  <!--  TODO: should be linear-->
+  <mat-horizontal-stepper #stepper [linear]="false">
     <mat-step [stepControl]="templateFormGroup">
       <ng-template matStepLabel>Campagne</ng-template>
       <app-page-content>
@@ -63,14 +64,19 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-parameters-form [campaignForm]="campaignFormGroup"></app-parameters-form>
+            <app-parameters-form
+              [campaignForm]="campaignFormGroup"
+              (onShowGuide)="onShowGuide($event)"
+            ></app-parameters-form>
             <app-help-card
+              *ngIf="!showGuide"
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
               [hint]="helpCard.hint"
               [link]="helpCard.link"
             >
             </app-help-card>
+            <app-formula-guide *ngIf="showGuide"></app-formula-guide>
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>

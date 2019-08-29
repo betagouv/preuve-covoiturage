@@ -5,9 +5,7 @@
   <div class="HelpCard-title">
     {{ title }}
   </div>
-  <p class="HelpCard-hint">
-    {{ hint }}
-  </p>
+  <p class="HelpCard-hint" [innerHTML]="hint"></p>
   <div class="HelpCard-link" *ngIf="link">
     <a class="link" target="_blank" [href]="link">En savoir plus</a>
   </div>

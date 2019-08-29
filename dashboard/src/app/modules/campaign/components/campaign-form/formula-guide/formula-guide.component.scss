@@ -1,11 +1,14 @@
 @import '~src/styles/variables';
 
-.HelpCard {
+.formula-guide {
   text-align: center;
   padding: 20px;
   background: $color-background-help;
   border: 2px solid $color-border-help;
   border-radius: 5px;
+  max-width: 382px;
+  max-height: 553px;
+  overflow: auto;
 
   &-icon {
     height: 80px;
@@ -20,9 +23,15 @@
     font-weight: 600;
     margin: 20px 0 10px 0;
   }
-
-  &-link {
-    margin-top: 20px;
-    cursor: pointer;
+  &-content {
+    &-functions,
+    &-operations {
+      text-align: center;
+    }
+    &-parameters {
+      text-align: left;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
   }
 }

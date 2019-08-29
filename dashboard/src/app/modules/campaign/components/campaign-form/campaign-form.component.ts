@@ -25,6 +25,7 @@ export class CampaignFormComponent implements OnInit {
   templateFormGroup: FormGroup;
   campaignFormGroup: FormGroup;
   loading = false;
+  showGuide = false;
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -67,6 +68,10 @@ export class CampaignFormComponent implements OnInit {
         this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
       },
     );
+  }
+
+  onShowGuide($event) {
+    this.showGuide = $event;
   }
 
   private initForms() {

@@ -12,6 +12,7 @@ export class RetributionFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() forDriver: boolean;
   @Input() forPassenger: boolean;
+  @Input() forTrip = false;
   @Input() formGroup: FormGroup;
   getIncentiveUnitLabel = Campaign.getIncentiveUnitLabel;
 

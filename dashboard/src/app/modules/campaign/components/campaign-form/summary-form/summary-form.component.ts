@@ -74,8 +74,8 @@ export class SummaryFormComponent implements OnInit {
       const retributionFormGroup: FormGroup = <FormGroup>retribution;
       const valueForDriver = retributionFormGroup.controls.valueForDriver.value;
       const valueForPassenger = retributionFormGroup.controls.valueForPassenger.value;
-      const start = retributionFormGroup.controls.start.value;
-      const end = retributionFormGroup.controls.end.value;
+      const start = retributionFormGroup.controls.min.value;
+      const end = retributionFormGroup.controls.max.value;
       summaryText += `<br/>\r\n<b>- `;
       if (valueForDriver !== null) {
         // tslint:disable-next-line:max-line-length

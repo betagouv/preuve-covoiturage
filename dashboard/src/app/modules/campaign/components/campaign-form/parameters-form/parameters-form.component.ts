@@ -1,14 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { ToastrService } from 'ngx-toastr';
 
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { DialogService } from '~/core/services/dialog.service';
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
 
 @Component({
   selector: 'app-parameters-form',
@@ -21,7 +21,9 @@ import { DialogService } from '~/core/services/dialog.service';
 })
 export class ParametersFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
-  public isExpertMode = false;
+  @Output() onShowGuide = new EventEmitter();
+
+  isExpertMode = false;
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnit);
   getIncentiveUnitLabel = Campaign.getIncentiveUnitLabel;
@@ -31,11 +33,13 @@ export class ParametersFormComponent implements OnInit {
     private numberPipe: DecimalPipe,
     private _formBuilder: FormBuilder,
     private dialog: DialogService,
+    private campaignService: CampaignService,
   ) {}
 
   ngOnInit() {
     this.initForm();
-    this.retributionsFormArray.push(this.generateStaggeredFormGroup());
+    this.initFormArrayChangeDetection();
+    this.initRetributionFormArray();
     this.formulasFormArray.push(this.generateFormulaFormGroup());
   }
 
@@ -150,13 +154,18 @@ export class ParametersFormComponent implements OnInit {
     return this._formBuilder.group({
       valueForDriver: [null, [Validators.required, Validators.min(0)]],
       valueForPassenger: [null, [Validators.required, Validators.min(0)]],
-      start: [null],
-      end: [null],
+      perPassenger: [false],
+      free: [false],
+      perKmForDriver: [false],
+      perKmForPassenger: [false],
+      min: [null],
+      max: [null],
     });
   }
 
   setExpertMode($event) {
-    if (!$event.source._checked) {
+    if (this.isExpertMode) {
+      $event.source.checked = true;
       this.dialog
         .confirm(
           'Quitter le mode expert',
@@ -165,13 +174,17 @@ export class ParametersFormComponent implements OnInit {
         )
         .subscribe((result) => {
           if (result) {
-            this.isExpertMode = $event.source._checked;
+            this.isExpertMode = false;
+            this.onShowGuide.emit(false);
             this.formulasFormArray.clear();
+            this.retributionsFormArray.clear();
+            this.initRetributionFormArray();
             this.controls.formula_expression.setValue(null);
           }
         });
     } else {
-      this.isExpertMode = $event.source._checked;
+      this.isExpertMode = true;
+      this.onShowGuide.emit(true);
     }
   }
 
@@ -179,7 +192,7 @@ export class ParametersFormComponent implements OnInit {
     this.formulasFormArray.push(this.generateFormulaFormGroup());
   }
 
-  public removeFormula(idx): void {
+  removeFormula(idx): void {
     this.dialog
       .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer cette formule ?`, 'Supprimer')
       .subscribe((result) => {
@@ -200,6 +213,19 @@ export class ParametersFormComponent implements OnInit {
   private initForm() {
     this.campaignForm.controls.retributionParameters = this._formBuilder.group({
       conductorProportionalPassengers: [false],
+    });
+  }
+
+  private initRetributionFormArray() {
+    this.retributionsFormArray.push(this.generateStaggeredFormGroup());
+  }
+
+  private initFormArrayChangeDetection() {
+    this.retributionsFormArray.valueChanges.subscribe((event) => {
+      const formula = this.campaignService.tranformIntoFormula(event);
+
+      // change formula value
+      // change formula expression ( use code from recap)
     });
   }
 }
