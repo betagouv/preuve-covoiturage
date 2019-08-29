@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { finalize, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { FormArray, FormGroup } from '@angular/forms';
 
 import { ApiService } from '~/core/services/api/api.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -12,6 +12,7 @@ import { IncentiveFormulaParameter } from '~/core/entities/campaign/incentive-fo
 import { RetributionInterface } from '~/core/interfaces/campaign/retributionInterface';
 import { FormulaParametersEnum } from '~/core/enums/campaign/formula-parameters.enum';
 import { FormulaFunctionsEnum } from '~/core/enums/campaign/formula-functions.enum';
+import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +53,7 @@ export class CampaignService extends ApiService<Campaign> {
     );
   }
 
-  public tranformIntoFormula(retributions: RetributionInterface[]) {
+  public tranformIntoFormula(retributions: RetributionInterface[]): string {
     let formula = '';
     retributions.forEach((retribution, idx) => {
       if (idx > 0) {
@@ -85,8 +86,50 @@ export class CampaignService extends ApiService<Campaign> {
         formula += this.getRangeFormula(retribution.min, retribution.max);
       }
     });
-    console.log({ formula });
     return formula;
+  }
+
+  public getExplanationFromRetributions(retributions: RetributionInterface[], unit: IncentiveUnit) {
+    let text = '';
+    for (const retribution of retributions) {
+      const valueForDriver = retribution.valueForDriver;
+      const valueForPassenger = retribution.valueForPassenger;
+      const perKmForDriver = retribution.perKmForDriver;
+      const perKmForPassenger = retribution.perKmForPassenger;
+      const free = retribution.free;
+      const perPassenger = retribution.perPassenger;
+      const min = retribution.min;
+      const max = retribution.max;
+      text += `\r\n- `;
+
+      // CONDUCTEUR
+      if (valueForDriver !== null) {
+        // tslint:disable-next-line:max-line-length
+        text += ` ${valueForDriver} ${Campaign.getIncentiveUnitLabel(unit)} par trajet`;
+        text += perKmForDriver ? ' par km' : '';
+        text += perPassenger ? ' par passager' : '';
+        text += ' pour le conducteur';
+      }
+      text += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
+
+      // PASSAGERS
+      if (free) {
+        text += ' gratuit pour le(s) passager(s)';
+      } else if (valueForPassenger !== null) {
+        text += ` ${valueForPassenger} ${Campaign.getIncentiveUnitLabel(unit)} par trajet`;
+        text += perKmForPassenger ? ' par km' : '';
+        text += ` pour le(s) passager(s)`;
+      }
+      if (min || max) {
+        if (!max) {
+          text += ` à partir de ${min} km`;
+        } else {
+          text += ` de ${min} à ${max} km`;
+        }
+      }
+      text += `.`;
+    }
+    return text;
   }
 
   private getRangeFormula(min, max) {

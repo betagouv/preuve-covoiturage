@@ -163,6 +163,7 @@
       <!-- RETRIBUTION -->
       <mat-expansion-panel
         *ngIf="!isExpertMode"
+        [disabled]="!campaignForm.controls.amount_unit.value"
         [ngClass]="{ 'mat-expansion-panel-error': !retributionsFormArray.valid && retributionsFormArray.touched }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
@@ -231,6 +232,7 @@
       <!-- FORMULAS -->
       <mat-expansion-panel
         *ngIf="isExpertMode"
+        [disabled]="!campaignForm.controls.amount_unit.value"
         [ngClass]="{ 'mat-expansion-panel-error': !formulasFormArray.valid && formulasFormArray.touched }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">

@@ -9,6 +9,8 @@ import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { IncentiveFormulaInterface } from '~/core/interfaces/campaign/campaignInterface';
+import { IncentiveFormula } from '~/core/entities/campaign/incentive-formula';
 
 @Component({
   selector: 'app-parameters-form',
@@ -202,11 +204,9 @@ export class ParametersFormComponent implements OnInit {
       });
   }
 
-  generateFormulaFormGroup(): FormGroup {
+  generateFormulaFormGroup(incentiveFormula: IncentiveFormula = { formula: '' }): FormGroup {
     return this._formBuilder.group({
-      formula: [''],
-      unit: [null],
-      parameters: [[]],
+      formula: [incentiveFormula.formula],
     });
   }
 
@@ -221,11 +221,19 @@ export class ParametersFormComponent implements OnInit {
   }
 
   private initFormArrayChangeDetection() {
-    this.retributionsFormArray.valueChanges.subscribe((event) => {
-      const formula = this.campaignService.tranformIntoFormula(event);
-
-      // change formula value
-      // change formula expression ( use code from recap)
+    this.retributionsFormArray.valueChanges.subscribe((retribution) => {
+      const formula = this.campaignService.tranformIntoFormula(retribution);
+      // tslint:disable-next-line:max-line-length
+      const explanation = this.campaignService.getExplanationFromRetributions(
+        retribution,
+        this.campaignForm.controls.amount_unit.value,
+      );
+      const incentiveFormula = new IncentiveFormula({
+        formula,
+      });
+      this.formulasFormArray.clear();
+      this.campaignForm.controls.formula_expression.setValue(explanation);
+      this.formulasFormArray.push(this.generateFormulaFormGroup(incentiveFormula));
     });
   }
 }

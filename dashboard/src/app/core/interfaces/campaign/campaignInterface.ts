@@ -24,10 +24,7 @@ export interface CampaignInterface extends CreateCampaignInterface {
 }
 
 export interface IncentiveFormulaInterface {
-  name?: string;
   formula: string;
-  unit: FormulaUnitType;
-  parameters: IncentiveFormulaParameterInterface[];
 }
 
 export interface IncentiveFormulaParameterInterface {
