@@ -5,7 +5,6 @@
     "ng": "ng",
     "start": "node server/app.js",
     "precommit": "run-s format:fix lint",
-    "build:review": "eval \"echo \\\"$(cat src/environments/environment.review.ts.template)\\\"\" | sed 's|$REVIEW_ID|'$REVIEW_ID'|g' | sed 's|$BRANCH|'$BRANCH'|g' > src/environments/environment.review.ts && cp -f src/environments/environment.review.ts src/environments/environment.ts && ng build --configuration=review",
     "build": "ng build --configuration=$NODE_ENV",
     "test": "ng test",
     "lint": "ng lint",
