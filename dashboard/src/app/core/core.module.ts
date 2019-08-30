@@ -15,9 +15,15 @@ import { MaterialModule } from '~/shared/modules/material/material.module';
 import { NotAuthenticatedLayoutComponent } from './components/not-authenticated-layout/not-authenticated-layout.component';
 import { AuthenticatedLayoutComponent } from './components/authenticated-layout/authenticated-layout.component';
 import { HttpApiInterceptor } from './interceptor/http.interceptor';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
-  declarations: [AuthenticatedLayoutComponent, NotAuthenticatedLayoutComponent, ConfirmDialogComponent],
+  declarations: [
+    AuthenticatedLayoutComponent,
+    NotAuthenticatedLayoutComponent,
+    ConfirmDialogComponent,
+    NotFoundComponent,
+  ],
   imports: [
     CommonModule,
     BrowserModule,

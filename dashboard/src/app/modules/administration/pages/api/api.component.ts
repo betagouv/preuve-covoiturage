@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { MAIN } from '~/core/const/main.const';
+import { URLS } from '~/core/const/main.const';
 
 @Component({
   selector: 'app-api',
@@ -8,9 +8,9 @@ import { MAIN } from '~/core/const/main.const';
   styleUrls: ['./api.component.scss'],
 })
 export class ApiComponent implements OnInit {
-  public gitbookLinkAPIConnexion = MAIN.gitbookLinkAPIConnexion;
-  public gitbookLinkAPIFormat = MAIN.gitbookLinkAPIFormat;
-  public faqOperator = MAIN.faqOperator;
+  public gitbookLinkAPIConnexion = URLS.gitbookLinkAPIConnexion;
+  public gitbookLinkAPIFormat = URLS.gitbookLinkAPIFormat;
+  public faqOperator = URLS.faqOperator;
 
   constructor() {}
 

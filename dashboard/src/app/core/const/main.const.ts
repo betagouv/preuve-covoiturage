@@ -1,4 +1,5 @@
-export const MAIN = {
+export const URLS = {
+  betaGouvSiteLink: 'https://beta.gouv.fr',
   mainSiteLink: 'http://covoiturage.beta.gouv.fr',
   gitbookLink: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/',
   gitbookLinkCSV: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/api/schema-csv',
@@ -13,6 +14,8 @@ export const MAIN = {
     'https://registre-preuve-de-covoiturage.gitbook.io/produit/faq-foire-aux-questions#technique-and-donnees',
   faqTerritory: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/faq-foire-aux-questions',
   contactEmail: 'contact@covoiturage.beta.gouv.fr',
+  legalMentions: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/mentions-legales',
+  githubLink: 'https://github.com/betagouv/preuve-covoiturage',
 };
 
 export const HTTP = {
