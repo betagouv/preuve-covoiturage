@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
-import { MAIN } from '~/core/const/main.const';
+import { URLS } from '~/core/const/main.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class ConfirmEmailComponent implements OnInit {
   public hasError = false;
   public isSuccess = false;
-  public contactEmail = MAIN.contactEmail;
+  public contactEmail = URLS.contactEmail;
 
   constructor(
     private activatedRoute: ActivatedRoute,

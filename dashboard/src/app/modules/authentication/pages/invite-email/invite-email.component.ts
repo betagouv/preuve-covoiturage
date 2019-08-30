@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { MAIN } from '~/core/const/main.const';
+import { URLS } from '~/core/const/main.const';
 import { PASSWORD } from '~/core/const/validators.const';
 
 import { passwordMatchValidator } from '../../validators/password-match.validator';
@@ -19,7 +19,7 @@ export class InviteEmailComponent implements OnInit {
   public newPasswordForm: FormGroup;
   public hasError = false;
   public isSuccess = false;
-  public contactEmail = MAIN.contactEmail;
+  public contactEmail = URLS.contactEmail;
 
   constructor(
     private activatedRoute: ActivatedRoute,

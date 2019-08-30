@@ -1,6 +1,13 @@
 .changeAuthLayout {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
+  align-items: center;
+
+  & > * {
+    flex: 1;
+    max-width: 515px;
+  }
+
   &-box {
     padding: 30px;
     background-color: white;
