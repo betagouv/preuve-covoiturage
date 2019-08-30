@@ -95,7 +95,7 @@ export class CampaignFormComponent implements OnInit {
       restrictions: this._formBuilder.array([]),
       retributionParameters: [],
       retributions: this._formBuilder.array([]),
-      formula_expression: [null],
+      formula_expression: [''],
       formulas: this._formBuilder.array([]),
     });
   }
@@ -113,7 +113,7 @@ export class CampaignFormComponent implements OnInit {
       rulesForm.get('range').setValue([campaign.rules.range.min, campaign.rules.range.max]);
     }
     rulesForm.get('ranks').setValue(campaign.rules.ranks);
-    rulesForm.get('onlyMajorPeople').setValue(campaign.rules.onlyMajorPeople);
+    rulesForm.get('onlyAdult').setValue(campaign.rules.onlyAdult);
     rulesForm.get('forDriver').setValue(campaign.rules.forDriver);
     rulesForm.get('forPassenger').setValue(campaign.rules.forPassenger);
     campaign.rules.time.forEach((time) => {

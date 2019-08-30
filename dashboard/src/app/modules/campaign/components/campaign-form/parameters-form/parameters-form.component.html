@@ -209,6 +209,13 @@
                   *ngIf="controls.rules.get('forPassenger').value"
                 >
                 </app-retribution-form>
+                <app-retribution-form
+                  [campaignForm]="campaignForm"
+                  [formGroup]="retributionFormGroup"
+                  [forTrip]="true"
+                  *ngIf="controls.rules.get('forTrip').value"
+                >
+                </app-retribution-form>
               </div>
               <div class="ParametersForm-incentiveMode-value-remove">
                 <mat-icon

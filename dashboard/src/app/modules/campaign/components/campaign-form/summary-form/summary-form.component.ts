@@ -58,7 +58,7 @@ export class SummaryFormComponent implements OnInit {
         ? 'conducteurs'
         : 'passagers'
     }`;
-    summaryText += ` ${campaign.rules.onlyMajorPeople ? 'majeurs' : ''}</b>`;
+    summaryText += ` ${campaign.rules.onlyAdult ? 'majeurs' : ''}</b>`;
     summaryText += ` effectuant un trajet`;
     if (campaign.rules.range[1] > 99) {
       summaryText += ` d'au moins ${campaign.rules.range[0]} km`;
@@ -68,39 +68,8 @@ export class SummaryFormComponent implements OnInit {
       summaryText += ` compris entre ${campaign.rules.range[0]} à ${campaign.rules.range[1]} km`;
     }
     summaryText += ` à raison de:`;
-    // const retributions = <FormArray>this.campaignForm.controls.retributions;
-    // const conductorProportionalPassengers = this.retributionParametersControls.conductorProportionalPassengers.value;
-    // for (const retribution of retributions.controls) {
-    //   const retributionFormGroup: FormGroup = <FormGroup>retribution;
-    //   const valueForDriver = retributionFormGroup.controls.valueForDriver.value;
-    //   const valueForPassenger = retributionFormGroup.controls.valueForPassenger.value;
-    //   const start = retributionFormGroup.controls.min.value;
-    //   const end = retributionFormGroup.controls.max.value;
-    //   summaryText += `<br/>\r\n<b>- `;
-    //   if (valueForDriver !== null) {
-    //     // tslint:disable-next-line:max-line-length
-    //     summaryText += `${valueForDriver} ${Campaign.getIncentiveUnitLabel(this.controls.amount_unit.value)} par ${
-    //       this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
-    //     }`;
-    //     summaryText += conductorProportionalPassengers ? ' par passager' : '';
-    //     summaryText += ' pour le conducteur';
-    //   }
-    //   summaryText += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
-    //   if (valueForPassenger !== null) {
-    //     // tslint:disable-next-line:max-line-length
-    //     summaryText += `${valueForPassenger} ${Campaign.getIncentiveUnitLabel(this.controls.amount_unit.value)} par ${
-    //       this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
-    //     } pour le(s) passager(s)`;
-    //   }
-    //   if (start || end) {
-    //     if (!end) {
-    //       summaryText += ` à partir de ${start} km`;
-    //     } else {
-    //       summaryText += ` de ${start} à ${end} km`;
-    //     }
-    //   }
-    //   summaryText += `</b>.`;
-    // }
+    summaryText += '<br/>\r\n';
+    summaryText += `${campaign.formula_expression.replace(/\r\n/g, '<br>\r\n')}`;
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `L’opération est limitée aux opérateurs proposant des registres de preuve`;
     summaryText += ` <b>${campaign.rules.ranks ? campaign.rules.ranks.join(' ou ') : ''}</b>.`;

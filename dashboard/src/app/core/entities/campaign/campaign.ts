@@ -2,9 +2,10 @@
 
 import { Territory } from '~/core/entities/territory/territory';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
-import { CampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
+import { CampaignInterface, IncentiveFormulaInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
+import { IncentiveFormula } from '~/core/entities/campaign/incentive-formula';
 
 export class Campaign {
   public _id: string;
@@ -21,6 +22,8 @@ export class Campaign {
   public amount_spent?: number;
   public rules?: IncentiveRules;
   public parameters?: any;
+  public formula_expression;
+  public formulas: IncentiveFormula[];
 
   constructor(
     obj: CampaignInterface = {
@@ -33,6 +36,8 @@ export class Campaign {
       status: null,
       max_trips: null,
       max_amount: null,
+      formula_expression: null,
+      formulas: [],
     },
   ) {
     this._id = obj._id;
@@ -48,6 +53,8 @@ export class Campaign {
     this.amount_spent = obj.amount_spent;
     this.rules = obj.rules;
     this.parameters = obj.parameters;
+    this.formula_expression = obj.formula_expression;
+    this.formulas = obj.formulas;
   }
 
   static getIncentiveUnitLabel(unit: string): string {
