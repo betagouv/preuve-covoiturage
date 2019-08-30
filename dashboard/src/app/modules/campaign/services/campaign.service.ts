@@ -89,8 +89,13 @@ export class CampaignService extends ApiService<Campaign> {
     return formula;
   }
 
-  public getExplanationFromRetributions(retributions: RetributionInterface[], unit: IncentiveUnit) {
+  public getExplanationFromRetributions(
+    retributions: RetributionInterface[],
+    unit: IncentiveUnit,
+    forTrip: boolean | null,
+  ) {
     let text = '';
+
     for (const retribution of retributions) {
       const valueForDriver = retribution.valueForDriver;
       const valueForPassenger = retribution.valueForPassenger;
@@ -100,6 +105,9 @@ export class CampaignService extends ApiService<Campaign> {
       const perPassenger = retribution.perPassenger;
       const min = retribution.min;
       const max = retribution.max;
+      if (!valueForDriver && !valueForPassenger && !free) {
+        continue;
+      }
       text += `\r\n- `;
 
       // CONDUCTEUR
@@ -108,7 +116,9 @@ export class CampaignService extends ApiService<Campaign> {
         text += ` ${valueForDriver} ${Campaign.getIncentiveUnitLabel(unit)} par trajet`;
         text += perKmForDriver ? ' par km' : '';
         text += perPassenger ? ' par passager' : '';
-        text += ' pour le conducteur';
+        if (!forTrip) {
+          text += ' pour le conducteur';
+        }
       }
       text += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
 

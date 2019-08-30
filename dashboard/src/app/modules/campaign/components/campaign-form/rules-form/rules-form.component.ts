@@ -21,6 +21,7 @@ export class RulesFormComponent implements OnInit {
   ngOnInit() {
     this.initRulesForm();
     this.loadOperators();
+    this.initTargetChangeDetection();
   }
 
   get rulesForm(): FormGroup {
@@ -111,14 +112,29 @@ export class RulesFormComponent implements OnInit {
 
   showTargetLabel(): string {
     let label = '';
-    if (this.rulesForm.get('forDriver').value) {
+    const forDriver = this.rulesForm.get('forDriver').value;
+    const forPassenger = this.rulesForm.get('forPassenger').value;
+    const forTrip = this.rulesForm.get('forTrip').value;
+    const onlyAdult = this.rulesForm.get('onlyAdult').value;
+
+    if (!(forDriver || forPassenger || forTrip)) {
+      return '';
+    }
+
+    if (forDriver) {
       label += 'Conducteurs';
     }
-    if (this.rulesForm.get('forPassenger').value) {
-      label += this.rulesForm.get('forDriver').value ? ' et passagers' : 'Passagers';
+    if (forPassenger) {
+      label += forDriver ? ' et passagers' : 'Passagers';
+      if (onlyAdult) {
+        label += ', majeurs uniquement';
+      }
     }
-    if (this.rulesForm.get('onlyMajorPeople').value) {
-      label += ', majeurs uniquement';
+    if (forTrip) {
+      label += 'Trajets';
+      if (onlyAdult) {
+        label += ', passagers majeurs uniquement';
+      }
     }
     return label;
   }
@@ -149,10 +165,35 @@ export class RulesFormComponent implements OnInit {
       time: this._formBuilder.array([]),
       range: [[0, 50]],
       ranks: [null, Validators.required],
-      onlyMajorPeople: [],
+      onlyAdult: [],
       forDriver: [],
       forPassenger: [],
+      forTrip: [],
       operators: [],
+    });
+  }
+
+  private initTargetChangeDetection() {
+    this.controls.forDriver.valueChanges.subscribe((checked) => {
+      if (checked) {
+        this.controls.forTrip.setValue(null);
+        if (!this.controls.forPassenger.value) {
+          this.controls.onlyAdult.setValue(null);
+        }
+      }
+    });
+    this.controls.forPassenger.valueChanges.subscribe((checked) => {
+      if (checked) {
+        this.controls.forTrip.setValue(null);
+      } else if (this.controls.forDriver.value) {
+        this.controls.onlyAdult.setValue(null);
+      }
+    });
+    this.controls.forTrip.valueChanges.subscribe((checked) => {
+      if (checked) {
+        this.controls.forPassenger.setValue(null);
+        this.controls.forDriver.setValue(null);
+      }
     });
   }
 

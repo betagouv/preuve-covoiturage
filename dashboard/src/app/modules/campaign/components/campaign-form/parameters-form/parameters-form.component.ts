@@ -61,6 +61,10 @@ export class ParametersFormComponent implements OnInit {
     return <FormGroup>this.campaignForm.get('retributionParameters');
   }
 
+  get rulesForm(): FormGroup {
+    return <FormGroup>this.campaignForm.get('rules');
+  }
+
   get formulasFormArray(): FormArray {
     return <FormArray>this.campaignForm.get('formulas');
   }
@@ -226,6 +230,7 @@ export class ParametersFormComponent implements OnInit {
       // tslint:disable-next-line:max-line-length
       const explanation = this.campaignService.getExplanationFromRetributions(
         retribution,
+        this.campaignForm.controls.amount_unit.value,
         this.campaignForm.controls.amount_unit.value,
       );
       const incentiveFormula = new IncentiveFormula({

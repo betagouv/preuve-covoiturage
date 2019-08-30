@@ -5,7 +5,7 @@ export class IncentiveRules {
   time: IncentiveTimeRule[];
   range: { min: number; max: number };
   ranks: TripClassEnum[];
-  onlyMajorPeople: boolean;
+  onlyAdult: boolean;
   forDriver: boolean;
   forPassenger: boolean;
 }

@@ -18,6 +18,8 @@ export interface CreateCampaignInterface {
   amount_spent?: number;
   rules?: IncentiveRules;
   parameters?: any;
+  formula_expression: string;
+  formulas: IncentiveFormulaInterface[];
 }
 
 export interface CampaignInterface extends CreateCampaignInterface {
