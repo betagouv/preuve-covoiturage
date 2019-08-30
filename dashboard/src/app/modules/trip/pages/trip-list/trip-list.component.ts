@@ -11,6 +11,7 @@ import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { TripInterface } from '~/core/interfaces/trip/tripInterface';
 import { FilterService } from '~/core/services/filter.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 
 @Component({
   selector: 'app-trip-list',
@@ -86,11 +87,33 @@ export class TripListComponent implements OnInit {
       people: [],
     };
 
-    const nbCampaigns = Math.floor(Math.random() * 10);
-    for (let i = 0; i < nbCampaigns; i = i + 1) {
-      tripToReturn.campaigns.push({ name: `Campagne n°${i}` });
+    const nbPeople = Math.floor(Math.random() * 5);
+    for (let i = 0; i <= nbPeople; i = i + 1) {
+      this.generatePeople(tripToReturn, i);
     }
 
+    const nbCampaigns = Math.floor(Math.random() * 10);
+    tripToReturn.campaigns = tripToReturn.campaigns.concat([...campaignMocks].splice(0, nbCampaigns));
+
     return new Trip(tripToReturn);
+  }
+
+  generatePeople(trip, i) {
+    trip.people.push({
+      class: TripClassEnum.A,
+      operator: {
+        _id: '1',
+        nom_commercial: 'Batcovoit 🦇',
+      },
+      is_driver: i === 0,
+      start: 'Mulhouse',
+      end: 'Gotham city',
+      incentives: [
+        {
+          amount: Math.floor(Math.random() * 10),
+          amount_unit: ['eur', 'point'][Math.floor(Math.random() * 2)],
+        },
+      ],
+    });
   }
 }

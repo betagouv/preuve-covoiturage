@@ -14,4 +14,15 @@ table.mat-table {
       color: $color-error;
     }
   }
+
+  .mat-cell {
+    & > span {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+::ng-deep .mat-tooltip {
+  white-space: pre-line;
 }
