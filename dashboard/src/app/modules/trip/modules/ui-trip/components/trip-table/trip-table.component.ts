@@ -83,7 +83,7 @@ export class TripTableComponent implements OnInit {
     if (!trip.people) {
       return 0;
     }
-    let incentives: any[] = _.flattenDeep(trip.people.map((p) => p.incentives));
+    const incentives: any[] = _.flattenDeep(trip.people.map((p) => p.incentives));
     return incentives.reduce((a, b) => a + (b.amount || 0), 0);
   }
 
@@ -91,17 +91,17 @@ export class TripTableComponent implements OnInit {
     if (!trip.people) {
       return '';
     }
-    let incentives: any[] = _.flattenDeep(trip.people.map((p) => p.incentives));
-    const is_eur = !!incentives.find((i) => i.amount_unit === IncentiveUnit.EUR);
-    const is_point = !!incentives.find((i) => i.amount_unit === IncentiveUnit.POINT);
+    const incentives: any[] = _.flattenDeep(trip.people.map((p) => p.incentives));
+    const isEur = !!incentives.find((i) => i.amount_unit === IncentiveUnit.EUR);
+    const isPoint = !!incentives.find((i) => i.amount_unit === IncentiveUnit.POINT);
     // TODO Utiliser IncentiveUnitFr quand il sera mergé
-    if (is_eur && is_point) {
+    if (isEur && isPoint) {
       return '€ / points';
-    } else if (is_eur) {
-      return '€';
-    } else {
-      return 'points';
     }
+    if (isEur) {
+      return '€';
+    }
+    return 'points';
   }
 
   getIncetivesTooltip(trip: Trip): string {
