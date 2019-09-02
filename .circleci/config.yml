@@ -79,10 +79,10 @@ workflows:
       - front-angular
       - cypress/install:
           # run a custom app build step
-          yarn: true
-          cache-key: 'yarn-packages-{{ arch }}-{{ checksum "yarn.lock" }}'
           build: 'npm run build'
       - cypress/run:
+          yarn: true
+          cache-key: 'yarn-packages-{{ arch }}-{{ checksum "yarn.lock" }}'
           requires:
             - cypress/install
           record: true
