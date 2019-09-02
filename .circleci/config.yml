@@ -79,9 +79,11 @@ workflows:
       - front-angular
       - cypress/install:
           # run a custom app build step
+          yarn: true
           build: 'npm run build'
       - cypress/run:
           requires:
             - cypress/install
+          yarn: true
           record: true
           start: 'yarn start'
