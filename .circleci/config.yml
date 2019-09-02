@@ -68,9 +68,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn lint
       - run: yarn build --configuration=production
-      - cypress/run:
-          record: true
-          start: 'yarn start'
 
 workflows:
   version: 2.1
@@ -80,3 +77,6 @@ workflows:
   frontend-tests:
     jobs:
       - front-angular
+      - cypress/run:
+        record: true
+        start: 'yarn start'
