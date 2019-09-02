@@ -78,6 +78,7 @@ workflows:
     jobs:
       - front-angular
       - cypress/run:
+          working_directory: ~/repo/dashboard
           yarn: true
           record: true
           start: 'yarn start'
