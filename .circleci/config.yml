@@ -77,6 +77,11 @@ workflows:
   frontend-tests:
     jobs:
       - front-angular
+      - cypress/install:
+          # run a custom app build step
+          build: 'npm run build'
       - cypress/run:
-        record: true
-        start: 'yarn start'
+          requires:
+            - cypress/install
+          record: true
+          start: 'yarn start'
