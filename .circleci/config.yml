@@ -68,7 +68,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn lint
       - run: yarn build --configuration=production
-      - run: cypress run
 
 workflows:
   version: 2.1
@@ -78,3 +77,9 @@ workflows:
   frontend-tests:
     jobs:
       - front-angular
+      - cypress/run:
+          working_directory: ~/repo/dashboard
+          cache-key: 'v1-dependencies-{{ checksum "package.json" }}'
+          yarn: true
+          record: true
+          start: 'yarn start'
