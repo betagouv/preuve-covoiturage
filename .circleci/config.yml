@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+orbs:
+  # import Cypress orb by specifying an exact version x.y.z
+  # or the latest version 1.x.x using "@1" syntax
+  cypress: cypress-io/cypress@1
 jobs:
   api-ts:
     docker:
@@ -64,6 +68,9 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn lint
       - run: yarn build --configuration=production
+      - cypress/run:
+          record: true
+          start: 'yarn start'
 
 workflows:
   version: 2
