@@ -77,13 +77,7 @@ workflows:
   frontend-tests:
     jobs:
       - front-angular
-      - cypress/install:
-          # run a custom app build step
-          build: 'npm run build'
       - cypress/run:
           yarn: true
-          cache-key: 'yarn-packages-{{ arch }}-{{ checksum "yarn.lock" }}'
-          requires:
-            - cypress/install
           record: true
           start: 'yarn start'
