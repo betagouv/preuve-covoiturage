@@ -73,7 +73,7 @@ jobs:
           start: 'yarn start'
 
 workflows:
-  version: 2
+  version: 2.1
   backend-tests:
     jobs:
       - api-ts
