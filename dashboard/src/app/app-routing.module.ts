@@ -23,13 +23,13 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: './modules/journeys/journey.module#JourneyModule',
   },
-  {
-    path: 'dashboard/incentives',
-    component: LayoutComponent,
-    data: { groups: ['aom', 'registry'] },
-    canActivate: [AuthGuard],
-    loadChildren: './modules/incentive/incentive.module#IncentiveModule',
-  },
+  // {
+  //   path: 'dashboard/incentives',
+  //   component: LayoutComponent,
+  //   data: { groups: ['aom', 'registry'] },
+  //   canActivate: [AuthGuard],
+  //   loadChildren: './modules/incentive/incentive.module#IncentiveModule',
+  // },
   {
     path: 'dashboard/operators',
     component: LayoutComponent,
