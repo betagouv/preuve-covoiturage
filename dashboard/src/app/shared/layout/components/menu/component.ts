@@ -51,25 +51,25 @@ export class MenuComponent implements OnInit {
           },
         ],
       },
-      {
-        label: 'INCITATIONS',
-        icon: 'pi pi-fw pi-briefcase',
-        visible: this.hasAnyGroup(['aom']),
-        items: [
-          {
-            label: 'Politiques',
-            icon: 'pi pi-fw pi-copy',
-            routerLink: '/dashboard/incentives/policies',
-            routerLinkActive: 'is-active',
-          },
-          {
-            label: 'Campagnes',
-            icon: 'pi pi-fw pi-calendar',
-            routerLink: '/dashboard/incentives/campaigns',
-            routerLinkActive: 'is-active',
-          },
-        ],
-      },
+      // {
+      //   label: 'INCITATIONS',
+      //   icon: 'pi pi-fw pi-briefcase',
+      //   visible: this.hasAnyGroup(['aom']),
+      //   items: [
+      //     {
+      //       label: 'Politiques',
+      //       icon: 'pi pi-fw pi-copy',
+      //       routerLink: '/dashboard/incentives/policies',
+      //       routerLinkActive: 'is-active',
+      //     },
+      //     {
+      //       label: 'Campagnes',
+      //       icon: 'pi pi-fw pi-calendar',
+      //       routerLink: '/dashboard/incentives/campaigns',
+      //       routerLinkActive: 'is-active',
+      //     },
+      //   ],
+      // },
       {
         label: 'ADMINISTRATION',
         visible: this.hasAnyGroup(['registry', 'operators']),
