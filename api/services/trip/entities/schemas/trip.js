@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const aom = require('@pdc/service-organization/entities/schemas/aom');
+const aom = require('@pdc/shared/entities/schemas/aom');
 const IdentitySchema = require('@pdc/shared/entities/schemas/identity');
 const position = require('@pdc/shared/entities/schemas/position');
 const rank = require('@pdc/shared/entities/schemas/rank');
