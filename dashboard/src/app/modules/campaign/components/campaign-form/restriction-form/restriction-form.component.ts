@@ -9,7 +9,7 @@ import { FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators } fr
 export class RestrictionFormComponent implements OnInit {
   @Input() restrictionformGroup: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor() {}
 
   ngOnInit() {
     this.initValidators();

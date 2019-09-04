@@ -118,6 +118,7 @@ export class SummaryFormComponent implements OnInit {
       this.controls.status.setValue(CampaignStatus.TEMPLATE);
       this.controls.description.setValidators(Validators.required);
     } else {
+      this.controls.status.setValue(CampaignStatus.DRAFT);
       this.controls.description.setValue(null);
       this.controls.description.setValidators(null);
     }
