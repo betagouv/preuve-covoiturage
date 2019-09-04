@@ -1,0 +1,1 @@
+export const CAMPAIGN_RULES_MAX_DISTANCE = 150;

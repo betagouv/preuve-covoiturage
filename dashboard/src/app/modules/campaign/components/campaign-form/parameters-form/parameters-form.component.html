@@ -7,8 +7,50 @@
       </mat-slide-toggle>
     </div>
     <mat-accordion>
+      <!-- MAX RETRIBUTION -->
       <mat-expansion-panel
         [expanded]="true"
+        [ngClass]="{
+          'mat-expansion-panel-error':
+            (controls.max_amount.touched && !controls.max_amount.valid) ||
+            (controls.amount_unit.touched && !controls.amount_unit.valid)
+        }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Rétribution totale
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showAmountLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Rétribution totale</mat-label>
+            <input matInput type="number" min="0" placeholder="50000" formControlName="max_amount" required />
+            <mat-error *ngIf="controls.max_amount.hasError('required')">
+              Le montant de rétribution totale est obligatoire.
+            </mat-error>
+            <mat-error *ngIf="controls.max_amount.hasError('min')">
+              Le montant de rétribution totale doit être supérieur à 0.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="shortFormField">
+            <mat-label>Unité</mat-label>
+            <mat-select formControlName="amount_unit" required>
+              <mat-option *ngFor="let incentiveUnit of incentiveUnitKeys" [value]="incentiveUnit">
+                {{ getIncentiveUnitLabel(incentiveUnit) }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="controls.amount_unit.hasError('required')">
+              L'unité de rétribution est obligatoire.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- START AND END DATES   -->
+      <mat-expansion-panel
         [ngClass]="{
           'mat-expansion-panel-error':
             (controls.start.touched && !controls.start.valid) || (controls.end.touched && !controls.end.valid)
@@ -59,47 +101,6 @@
             </mat-error>
             <mat-error *ngIf="controls.end.hasError('required')">
               Le date de fin de votre campagne est obligatoire.
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </mat-expansion-panel>
-
-      <!-- MAX RETRIBUTION -->
-      <mat-expansion-panel
-        [ngClass]="{
-          'mat-expansion-panel-error':
-            (controls.max_amount.touched && !controls.max_amount.valid) ||
-            (controls.amount_unit.touched && !controls.amount_unit.valid)
-        }"
-      >
-        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
-          <mat-panel-title>
-            Rétribution totale
-          </mat-panel-title>
-          <mat-panel-description>
-            {{ showAmountLabel() }}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div class="CampaignSubForm-inputs">
-          <mat-form-field appearance="outline">
-            <mat-label>Rétribution totale</mat-label>
-            <input matInput type="number" min="0" placeholder="50000" formControlName="max_amount" required />
-            <mat-error *ngIf="controls.max_amount.hasError('required')">
-              Le montant de rétribution totale est obligatoire.
-            </mat-error>
-            <mat-error *ngIf="controls.max_amount.hasError('min')">
-              Le montant de rétribution totale doit être supérieur à 0.
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="shortFormField">
-            <mat-label>Unité</mat-label>
-            <mat-select formControlName="amount_unit" required>
-              <mat-option *ngFor="let incentiveUnit of incentiveUnitKeys" [value]="incentiveUnit">
-                {{ getIncentiveUnitLabel(incentiveUnit) }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="controls.amount_unit.hasError('required')">
-              L'unité de rétribution est obligatoire.
             </mat-error>
           </mat-form-field>
         </div>

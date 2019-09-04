@@ -5,6 +5,7 @@ import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { Operator } from '~/core/entities/operator/operator';
+import { CAMPAIGN_RULES_MAX_DISTANCE } from '~/core/const/campaign/rules.const';
 
 @Component({
   selector: 'app-rules-form',
@@ -15,6 +16,7 @@ export class RulesFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
 
   tripClassKeys = Object.keys(TripClassEnum);
+  maxDistance = CAMPAIGN_RULES_MAX_DISTANCE;
 
   constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {}
 
@@ -92,10 +94,10 @@ export class RulesFormComponent implements OnInit {
 
   get showDistanceLabel(): string {
     const range = this.rulesForm.get('range').value;
-    if (range && range.length < 2) {
+    if (range && (range.length < 2 || range === [0, 0])) {
       return '';
     }
-    if (range[1] > 99) {
+    if (range[1] >= CAMPAIGN_RULES_MAX_DISTANCE) {
       return `A partir de ${range[0]} km`;
     }
     if (range[0] < 1) {

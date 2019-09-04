@@ -12,6 +12,7 @@ import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { RulesRangeType } from '~/core/types/campaign/rulesRangeType';
 import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
+import { DialogService } from '~/core/services/dialog.service';
 
 @Component({
   selector: 'app-campaign-form',
@@ -28,13 +29,15 @@ export class CampaignFormComponent implements OnInit {
   campaignFormGroup: FormGroup;
   requestLoading = false;
   loading = true;
-  private _defaultRange: RulesRangeType = [0, 50];
+  creation = false;
   currentStep = 0;
-
   matStepperCompleted = false;
+
+  private _defaultRange: RulesRangeType = [0, 50];
   @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
 
   constructor(
+    private _dialog: DialogService,
     private _formBuilder: FormBuilder,
     private campaignService: CampaignService,
     private toastr: ToastrService,
@@ -47,28 +50,61 @@ export class CampaignFormComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       // todo: go to last accessible step
       if (params.has('campaignId')) {
+        this.creation = false;
         this.loadCampaign(params.get('campaignId'));
       } else {
+        this.creation = true;
         this.loading = false;
       }
     });
-    this.campaignFormGroup.valueChanges.subscribe((val) => console.log(this.campaignFormGroup));
   }
 
   public get controls() {
     return this.campaignFormGroup.controls;
   }
 
-  saveCampaign(isDraft) {
-    this.requestLoading = true;
+  get showFirstPageNextStep() {
+    return this.campaignFormGroup.controls.template_id.value || this.campaignFormGroup.controls._id.value;
+  }
+
+  saveOrLaunchCampaign(saveAsDraft) {
     const campaignToSave: Campaign = new Campaign(this.campaignFormGroup.getRawValue());
-    if (!isDraft && campaignToSave.status === CampaignStatus.DRAFT) {
-      campaignToSave.status = CampaignStatus.VALIDATED;
+    if (!saveAsDraft && campaignToSave.status === CampaignStatus.DRAFT) {
+      this.launchCampaign(campaignToSave);
+    } else {
+      this.saveCampaign(campaignToSave);
     }
-    this.campaignService.create(campaignToSave).subscribe(
+  }
+
+  private launchCampaign(campaign: Campaign) {
+    campaign.status = CampaignStatus.VALIDATED;
+    this._dialog
+      .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
+      .subscribe((result) => {
+        if (result) {
+          this.campaignService.create(campaign).subscribe(
+            (campaignSaved: Campaign) => {
+              this.requestLoading = false;
+              // tslint:disable-next-line:max-line-length
+              this.toastr.success(`La campagne ${campaignSaved.name} a bien été lancé`);
+              this.router.navigate(['/campaign']);
+            },
+            (error) => {
+              this.requestLoading = false;
+              console.error(error);
+              this.toastr.error('Une erreur est survenue lors du lancement de la campagne');
+            },
+          );
+        }
+      });
+  }
+
+  private saveCampaign(campaign: Campaign) {
+    this.campaignService.create(campaign).subscribe(
       (campaignSaved: Campaign) => {
         this.requestLoading = false;
-        this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistrée`);
+        // tslint:disable-next-line:max-line-length
+        this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
         this.router.navigate(['/campaign']);
       },
       (error) => {
@@ -177,8 +213,8 @@ export class CampaignFormComponent implements OnInit {
     });
 
     // set defaults
-    if (!rulesForm.get('ranks').value || rulesForm.get('ranks').value.length < 2) {
-      rulesForm.get('ranks').setValue(this._defaultRange);
+    if (!rulesForm.get('range').value || rulesForm.get('range').value.length < 2) {
+      rulesForm.get('range').setValue(this._defaultRange);
     }
 
     this.matStepperCompleted = true;
@@ -258,6 +294,7 @@ export class CampaignFormComponent implements OnInit {
 
   private setLastAvailableStep(): void {
     setTimeout(() => {
+      // tslint:disable-next-line:prefer-conditional-expression
       if (this.campaignFormGroup.get('rules').valid) {
         this.currentStep = 2;
       } else {

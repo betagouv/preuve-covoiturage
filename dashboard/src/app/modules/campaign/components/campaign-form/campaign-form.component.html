@@ -21,6 +21,11 @@
             >
             </app-help-card>
           </div>
+          <div class="CampaignForm-content-actions">
+            <button mat-flat-button class="large" color="primary" matStepperNext *ngIf="showFirstPageNextStep">
+              Étape suivante
+            </button>
+          </div>
         </div>
       </app-page-content>
     </mat-step>
@@ -86,7 +91,7 @@
             <app-summary-form
               [campaignForm]="campaignFormGroup"
               [loading]="requestLoading"
-              (onSaveCampaign)="saveCampaign($event)"
+              (onSaveCampaign)="saveOrLaunchCampaign($event)"
             ></app-summary-form>
           </div>
           <div class="CampaignForm-content-actions">

@@ -40,6 +40,8 @@ export class ParametersFormComponent implements OnInit {
   ngOnInit() {
     this.initRetributionFormArray();
     this.initFormArrayChangeDetection();
+    this.initRestrictionFormArray();
+    this.initFormulasFormArray();
   }
 
   get controls() {
@@ -96,7 +98,7 @@ export class ParametersFormComponent implements OnInit {
   }
 
   addRestriction() {
-    this.restrictionFormArray.push(this._formBuilder.control(null, Validators.required));
+    this.restrictionFormArray.push(this.generateRestrictionFormGroup());
   }
 
   removeRestriction(idx) {
@@ -188,8 +190,22 @@ export class ParametersFormComponent implements OnInit {
     });
   }
 
+  generateRestrictionFormGroup(): FormGroup {
+    return this._formBuilder.group({
+      quantity: [null],
+      is_driver: [null],
+      period: [null],
+    });
+  }
+
   private initRetributionFormArray() {
     this.retributionsFormArray.push(this.generateStaggeredFormGroup());
+  }
+
+  private initRestrictionFormArray() {
+    if (this.restrictionFormArray.controls.length === 0) {
+      this.restrictionFormArray.push(this.generateRestrictionFormGroup());
+    }
   }
 
   private initFormulasFormArray() {

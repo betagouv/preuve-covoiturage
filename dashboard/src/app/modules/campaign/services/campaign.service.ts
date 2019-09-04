@@ -149,6 +149,7 @@ export class CampaignService extends ApiService<Campaign> {
       }
       text += `.`;
     }
+    text += `\r\n`;
     return text;
   }
 

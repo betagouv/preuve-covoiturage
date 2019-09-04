@@ -10,6 +10,7 @@ import { CampaignInterface, CreateCampaignInterface } from '~/core/interfaces/ca
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
+import { DialogService } from '~/core/services/dialog.service';
 
 @Component({
   selector: 'app-campaign-templates',
@@ -22,7 +23,7 @@ export class CampaignTemplatesComponent implements OnInit {
   @Output() setTemplate = new EventEmitter();
   templates: CreateCampaignInterface[];
 
-  constructor(public campaignService: CampaignService, private toastr: ToastrService) {}
+  constructor(public campaignService: CampaignService, private _dialog: DialogService, private toastr: ToastrService) {}
 
   ngOnInit() {
     this.loadCampaignTemplates();
@@ -33,8 +34,22 @@ export class CampaignTemplatesComponent implements OnInit {
   }
 
   public onTemplateCardClick(templateId: string | null) {
-    this.matStepper.next();
-    this.setTemplate.emit(templateId);
+    // if campaign form has template_id or _id
+    if (this.campaignForm.controls._id.value || this.campaignForm.controls.template_id.value) {
+      const title = templateId ? "Chargement d'un modèle" : 'Réinitialisation';
+      const message = templateId
+        ? 'Êtes-vous sûr de vouloir charger un nouveau modèle ?'
+        : "Êtes-vous sûr de vouloir repartir d'un modèle vierge ?";
+      this._dialog.confirm(title, message, 'Confirmer').subscribe((result) => {
+        if (result) {
+          this.matStepper.next();
+          this.setTemplate.emit(templateId);
+        }
+      });
+    } else {
+      this.matStepper.next();
+      this.setTemplate.emit(templateId);
+    }
   }
 
   private loadCampaignTemplates() {
