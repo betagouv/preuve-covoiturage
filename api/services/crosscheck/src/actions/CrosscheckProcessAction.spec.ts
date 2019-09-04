@@ -9,7 +9,7 @@
 // import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
 // import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
-// import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
+// import { TripRepositoryProviderInterfaceResolver } from '../interfaces/TripRepositoryProviderInterface';
 // import { TripInterface } from '../interfaces/TripInterface';
 // import { Person, Trip } from '../entities/Trip';
 // import { journey } from '../../tests/mocks/journey';
@@ -25,9 +25,9 @@
 // process.env.APP_MONGO_DB = '';
 
 // @provider({
-//   identifier: CrosscheckRepositoryProviderInterfaceResolver,
+//   identifier: TripRepositoryProviderInterfaceResolver,
 // })
-// class FakeCrosscheckRepository extends CrosscheckRepositoryProviderInterfaceResolver {
+// class FakeTripRepository extends TripRepositoryProviderInterfaceResolver {
 //   async boot() {
 //     return;
 //   }
@@ -39,7 +39,7 @@
 // @serviceProvider({
 //   validator: [['crosscheck.process', crosscheckProcessSchema]],
 //   middlewares: [['validate', ValidatorMiddleware]],
-//   providers: [FakeCrosscheckRepository],
+//   providers: [FakeTripRepository],
 //   handlers: [CrosscheckProcessAction],
 // })
 // class ServiceProvider extends BaseServiceProvider {

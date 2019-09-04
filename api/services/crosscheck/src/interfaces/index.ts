@@ -1,1 +1,1 @@
-export * from './CrosscheckRepositoryProviderInterface';
+export * from './TripRepositoryProviderInterface';

@@ -1,7 +1,3 @@
-import { IdentityInterface } from '../../identity';
-import { IncentiveInterface } from '../../incentive';
-import { PaymentInterface } from '../../payment';
-import { PositionInterface } from '../../position';
 import { PersonInterface } from '../../person';
 
 export interface CreateJourneyParamsInterface {

@@ -12,6 +12,8 @@ import { AllTerritoryAction } from './actions/AllTerritoryAction';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { PatchTerritoryAction } from './actions/PatchTerritoryAction';
 import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
+import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
+import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 
 @serviceProvider({
   config: __dirname,
@@ -23,7 +25,14 @@ import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
   ],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
   connections: [[MongoConnection, 'mongo']],
-  handlers: [AllTerritoryAction, CreateTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction],
+  handlers: [
+    AllTerritoryAction,
+    CreateTerritoryAction,
+    PatchTerritoryAction,
+    DeleteTerritoryAction,
+    FindTerritoryByInseeAction,
+    FindTerritoryByPositionAction,
+  ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [

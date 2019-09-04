@@ -5,17 +5,17 @@ import { PersonInterface, tripSchema } from '@pdc/provider-schema';
 
 import { Trip } from '../entities/Trip';
 import {
-  CrosscheckRepositoryProviderInterface,
-  CrosscheckRepositoryProviderInterfaceResolver,
-} from '../interfaces/CrosscheckRepositoryProviderInterface';
+  TripRepositoryProviderInterface,
+  TripRepositoryProviderInterfaceResolver,
+} from '../interfaces/TripRepositoryProviderInterface';
 
 /*
  * Trip specific repository
  */
 @provider({
-  identifier: CrosscheckRepositoryProviderInterfaceResolver,
+  identifier: TripRepositoryProviderInterfaceResolver,
 })
-export class CrosscheckRepositoryProvider extends ParentRepository implements CrosscheckRepositoryProviderInterface {
+export class TripRepositoryProvider extends ParentRepository implements TripRepositoryProviderInterface {
   constructor(protected config: ConfigInterfaceResolver, protected connection: MongoConnection) {
     super(config, connection);
   }
@@ -74,13 +74,16 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
   /**
    * Add people and territories to trip
    */
-  public async findByIdAndPushPeople(
+  public async findByIdAndPatch(
     id: string,
-    people: PersonInterface[],
-    territory: string[],
-    newStartDate: Date,
+    data: {
+      people: PersonInterface[];
+      territory: string[];
+      [k: string]: any;
+    },
   ): Promise<Trip> {
     const collection = await this.getCollection();
+    const { people, territory, ...patch } = data;
     const result = await collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       {
@@ -88,7 +91,7 @@ export class CrosscheckRepositoryProvider extends ParentRepository implements Cr
           people: { $each: people },
           territory: { $each: territory },
         },
-        $set: { start: newStartDate },
+        $set: patch,
       },
       { returnOriginal: false },
     );

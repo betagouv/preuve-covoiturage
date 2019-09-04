@@ -1,67 +1,62 @@
 import * as _ from 'lodash';
 
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
+import { handler, ContextType, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
 import { JourneyInterface, PositionInterface } from '@pdc/provider-schema';
+import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Find the territories where the driver and passenger started and ended their journey
+const context: ContextType = {
+  call: {
+    user: {},
+  },
+  channel: {
+    service: 'normalization',
+  },
+};
 
 @handler({
   service: 'normalization',
   method: 'territory',
 })
 export class NormalizationTerritoryAction extends AbstractAction {
-  constructor(private kernel: KernelInterfaceResolver) {
+  // TODO : middleware
+  constructor(protected kernel: KernelInterfaceResolver, protected wf: WorkflowProvider) {
     super();
   }
 
-  public async handle(params: { journey: JourneyInterface }, context: ContextType): Promise<void> {
-    // duplicate object
-    const territoriesEnrichedJourney = { ...params.journey };
+  public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
+    const normalizedJourney = { ...journey };
 
-    await Promise.all(
-      ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map(async (path) => {
-        const position = _.get(params.journey, path);
-        const territories = await this.findTerritories(position, context);
-        _.set(territoriesEnrichedJourney, `${path}.territory`, territories);
-      }),
-    );
+    const promises: Promise<void>[] = [];
+
+    for (const dataPath of ['passenger.start', 'passenger.end', 'driver.start', 'driver.end']) {
+      promises.push(this.fillTerritories(normalizedJourney, dataPath));
+    }
+    await Promise.all(promises);
+
+    await this.wf.next('normalization:territory', normalizedJourney);
+
+    return normalizedJourney;
   }
 
-  private async findTerritories(position: PositionInterface, context: ContextType): Promise<object> {
+  private async fillTerritories(journey: JourneyInterface, dataPath: string): Promise<void> {
+    const position: PositionInterface = _.get(journey, dataPath);
     if ('insee' in position) {
-      return this.kernel.call(
-        'territory:findByInsee',
-        {
-          insee: position.insee,
-        },
-        {
-          call: context.call,
-          channel: {
-            ...context.channel,
-            service: 'normalization',
-          },
-        },
-      );
-    }
-
-    if ('lat' in position && 'lon' in position) {
-      return this.kernel.call(
-        'territory:findByLatLon',
+      const data = await this.kernel.call('territory:findByInsee', { insee: position.insee }, context);
+      _.set(journey, `${dataPath}.territory`, data._id);
+    } else if ('lat' in position && 'lon' in position) {
+      const data = await this.kernel.call(
+        'territory:findByPosition',
         {
           lat: position.lat,
           lon: position.lon,
         },
-        {
-          call: context.call,
-          channel: {
-            ...context.channel,
-            service: 'normalization',
-          },
-        },
+        context,
       );
+      _.set(journey, `${dataPath}.territory`, data);
+    } else {
+      throw new InvalidParamsException('Missing INSEE code or lat & lon');
     }
-
-    throw new InvalidParamsException('Missing INSEE code or lat & lon');
   }
 }

@@ -1,29 +1,20 @@
-import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { ConfigExtension } from '@ilos/config';
-import { ConnectionManagerExtension } from '@ilos/connection-manager';
+import { serviceProvider } from '@ilos/common';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
+import { RedisConnection } from '@ilos/connection-redis';
+import { ValidatorMiddleware } from '@pdc/provider-validator';
 import { journeyCreateSchema } from '@pdc/provider-schema';
 
 import { CrosscheckProcessAction } from './actions/CrosscheckProcessAction';
-import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [CrosscheckRepositoryProvider],
-  validator: [['crosscheck.process', journeyCreateSchema]],
+  providers: [TripRepositoryProvider],
+  // validator: [['crosscheck.process', journeyCreateSchema]],
   middlewares: [['validate', ValidatorMiddleware]],
-  connections: [[MongoConnection, 'mongo']],
+  connections: [[MongoConnection, 'mongo'], [RedisConnection, 'redis']],
   handlers: [CrosscheckProcessAction],
+  queues: ['crosscheck'],
 })
-export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [
-    ConfigExtension,
-    ConnectionManagerExtension,
-    ValidatorExtension,
-    Extensions.Middlewares,
-    Extensions.Providers,
-    Extensions.Handlers,
-  ];
-}
+export class ServiceProvider extends AbstractServiceProvider {}

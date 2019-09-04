@@ -14,7 +14,7 @@ import { CreateJourneyAction } from './actions/CreateJourneyAction';
 
 @serviceProvider({
   config: __dirname,
-  queues: ['acquisition'],
+  queues: ['normalization'],
   providers: [JourneyRepositoryProvider],
   validator: [['journey.create', journeyCreateSchema]],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],

@@ -10,8 +10,19 @@ export class Trip implements TripInterface {
   public updatedAt?: Date;
   public deletedAt?: Date;
 
-  constructor(data: { _id?: string; territories?: string[]; status: string; start: Date; people: PersonInterface[] }) {
-    this._id = data._id;
+  constructor(data: {
+    _id?: string;
+    territories?: string[];
+    status: string;
+    start: Date;
+    people: PersonInterface[];
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
+  }) {
+    if ('_id' in data) {
+      this._id = data._id;
+    }
     this.territories = data.territories;
     this.status = data.status;
     this.start = data.start;
