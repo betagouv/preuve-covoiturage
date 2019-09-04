@@ -33,7 +33,7 @@ export class OperatorMultipleDropdownComponent implements OnInit {
     if (this.selectedOperatorIds.length > 0) {
       this.getSelectedOperators();
     }
-    this.getOperators();
+    this.getOperatorsDropdown();
   }
 
   public getSelectedOperators() {
@@ -59,6 +59,14 @@ export class OperatorMultipleDropdownComponent implements OnInit {
         return normalizedItem;
       });
     });
+  }
+
+  /**
+   * TODO @front : passer les filtres de get() dans dropdown
+   *               et utiliser /dropdown dans getSelectedOperators ci-dessus
+   */
+  public getOperatorsDropdown() {
+    return this.operatorService.dropdown();
   }
 
   public filter(event) {

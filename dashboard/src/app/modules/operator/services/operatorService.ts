@@ -26,4 +26,9 @@ export class OperatorService extends ApiService {
       orgType: 'aom',
     });
   }
+
+  // TODO @front
+  dropdown() {
+    return this.http.get(`${this.endPoint}/dropdown?limit=400`);
+  }
 }

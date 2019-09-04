@@ -30,4 +30,8 @@ export class JourneyService extends ApiService {
   listAom() {
     return this.http.get(`${this.aomEndPoint}?limit=1000`);
   }
+
+  dropdownAom() {
+    return this.http.get(`${this.aomEndPoint}/dropdown?limit=1000`);
+  }
 }

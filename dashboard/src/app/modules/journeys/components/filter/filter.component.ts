@@ -79,7 +79,7 @@ export class JourneyFilterComponent implements OnInit {
     this.defaultHourDate = new Date(JOURNEY_HOUR.defaultDate);
     this.resetVar();
 
-    this.journeyService.listAom().subscribe((response: any[]) => {
+    this.journeyService.dropdownAom().subscribe((response: any[]) => {
       this.aomList = (response['data'] || []).map((aom) => ({
         value: aom._id._id,
         label: aom._id.name,
