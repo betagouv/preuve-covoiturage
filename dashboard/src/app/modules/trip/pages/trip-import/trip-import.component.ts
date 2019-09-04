@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 
 import { requiredFileTypeValidator } from '~/modules/trip/validators/required-file-type.validator';
 import { TripService } from '~/modules/trip/services/trip.service';
-import { HTTP, MAIN } from '~/core/const/main.const';
+import { HTTP, URLS } from '~/core/const/main.const';
 
 @Component({
   selector: 'app-trip-import',
@@ -13,7 +13,7 @@ import { HTTP, MAIN } from '~/core/const/main.const';
   styleUrls: ['./trip-import.component.scss'],
 })
 export class TripImportComponent implements OnInit {
-  public gitbookLinkCSVImport = MAIN.gitbookLinkCSVImport;
+  public gitbookLinkCSVImport = URLS.gitbookLinkCSVImport;
   public tripImportForm: FormGroup;
   public progress = 0;
 

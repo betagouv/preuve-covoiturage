@@ -8,12 +8,10 @@
     </div>
     <ul>
       <li class="Footer-link">
-        <a class="link" target="_blank" href="https://beta.gouv.fr/">Qui sommes-nous </a>
+        <a class="link" target="_blank" [href]="URLS.betaGouvSiteLink">Qui sommes-nous </a>
       </li>
       <li class="Footer-link">
-        <a class="link" target="_blank" href="https://registre-preuve-de-covoiturage.gitbook.io/produit/cgu"
-          >Mentions légales
-        </a>
+        <a class="link" target="_blank" [href]="URLS.legalMentions">Mentions légales</a>
       </li>
     </ul>
   </div>
@@ -23,12 +21,12 @@
     </div>
     <ul>
       <li class="Footer-link">
-        <a class="link" target="_blank" href="https://registre-preuve-de-covoiturage.gitbook.io/produit/">
+        <a class="link" target="_blank" [href]="URLS.gitbookLink">
           Documentation
         </a>
       </li>
       <li class="Footer-link">
-        <a class="link" target="_blank" href="https://github.com/betagouv/preuve-covoiturage">Code source </a>
+        <a class="link" target="_blank" [href]="URLS.githubLink">Code source </a>
       </li>
     </ul>
   </div>
@@ -38,7 +36,7 @@
     </div>
     <ul>
       <li class="Footer-link">
-        <a class="link" target="_blank" href="mailto:contact@covoiturage.beta.gouv.fr">Par e-mail </a>
+        <a class="link" target="_blank" [href]="'mailto:' + URLS.contactEmail">Par e-mail </a>
       </li>
     </ul>
   </div>
