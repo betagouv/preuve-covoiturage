@@ -18,11 +18,11 @@ export class FormulaGuideComponent implements OnInit {
   }
 
   get loading(): boolean {
-    return this.campaignService.loading && !this.campaignService._paramatersLoaded$.value;
+    return this.campaignService.loading && !this.campaignService._parametersLoaded$.value;
   }
 
   public initParameters() {
-    if (!this.campaignService._paramatersLoaded$.value) {
+    if (!this.campaignService._parametersLoaded$.value) {
       this.campaignService.loadFormulaParameters().subscribe(
         () => {
           //

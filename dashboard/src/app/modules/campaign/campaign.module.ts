@@ -14,7 +14,7 @@ import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.
 import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campaign-create-edit.component';
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
-import { PolicyFormComponent } from './components/campaign-form/policy-form/policy-form.component';
+import { CampaignTemplatesComponent } from './components/campaign-form/campaign-templates/campaign-templates.component';
 import { RulesFormComponent } from './components/campaign-form/rules-form/rules-form.component';
 import { ParametersFormComponent } from './components/campaign-form/parameters-form/parameters-form.component';
 import { SummaryFormComponent } from './components/campaign-form/summary-form/summary-form.component';
@@ -31,7 +31,7 @@ import { FormulaGuideComponent } from './components/campaign-form/formula-guide/
     CampaignsListComponent,
     CampaignCreateEditComponent,
     CampaignFormComponent,
-    PolicyFormComponent,
+    CampaignTemplatesComponent,
     RulesFormComponent,
     ParametersFormComponent,
     SummaryFormComponent,

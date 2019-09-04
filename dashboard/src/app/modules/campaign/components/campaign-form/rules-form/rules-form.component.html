@@ -14,7 +14,7 @@
             Jours de la semaine
           </mat-panel-title>
           <mat-panel-description>
-            {{ showDateLabel() }}
+            <span [innerHTML]="showDateLabel"> </span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs RulesForm-date">
@@ -50,14 +50,16 @@
             Distance
           </mat-panel-title>
           <mat-panel-description>
-            {{ showDistanceLabel() }}
+            <span>
+              {{ showDistanceLabel }}
+            </span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs RulesForm-range">
           <nouislider
             [connect]="true"
             [min]="0"
-            [max]="100"
+            [max]="150"
             [step]="1"
             [tooltips]="[true, true]"
             [formControl]="rulesForm.get('range')"

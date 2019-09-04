@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { finalize, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { FormArray, FormGroup } from '@angular/forms';
 
 import { ApiService } from '~/core/services/api/api.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -13,14 +12,15 @@ import { RetributionInterface } from '~/core/interfaces/campaign/retributionInte
 import { FormulaParametersEnum } from '~/core/enums/campaign/formula-parameters.enum';
 import { FormulaFunctionsEnum } from '~/core/enums/campaign/formula-functions.enum';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
+import { TemplateInterface } from '~/core/interfaces/campaign/campaignInterface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CampaignService extends ApiService<Campaign> {
-  _templates$ = new BehaviorSubject<Campaign[]>([]);
+  _templates$ = new BehaviorSubject<TemplateInterface[]>([]);
   _parameters$ = new BehaviorSubject<IncentiveFormulaParameter[]>([]);
-  _paramatersLoaded$ = new BehaviorSubject<boolean>(false);
+  _parametersLoaded$ = new BehaviorSubject<boolean>(false);
 
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
     super(_http, _jsonRPC, 'campaign');
@@ -30,8 +30,9 @@ export class CampaignService extends ApiService<Campaign> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}.listTemplates`);
     return this._jsonRPC.call(jsonRPCParam).pipe(
-      tap((data) => {
-        this._templates$.next(data);
+      tap((templates: Campaign[]) => {
+        templates.forEach((campaignTemplate) => (campaignTemplate.template_id = campaignTemplate._id));
+        this._templates$.next(templates);
       }),
       finalize(() => {
         this._loading$.next(false);
@@ -39,13 +40,22 @@ export class CampaignService extends ApiService<Campaign> {
     );
   }
 
+  public getLoadedTemplate(templateId: string): TemplateInterface {
+    const template = this._templates$.value.filter((tmp) => tmp.template_id === templateId)[0];
+    if (!template) {
+      console.log('template not found !');
+    }
+    return template;
+  }
+
   public loadFormulaParameters(): Observable<IncentiveFormulaParameter[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}.listFormulaParameters`);
     return this._jsonRPC.call(jsonRPCParam).pipe(
       tap((data) => {
+        console.log('loaded');
         this._parameters$.next(data);
-        this._paramatersLoaded$.next(true);
+        this._parametersLoaded$.next(true);
       }),
       finalize(() => {
         this._loading$.next(false);
