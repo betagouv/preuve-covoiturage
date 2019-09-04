@@ -90,7 +90,7 @@ export class FormulaFormComponent implements OnInit {
   }
 
   public initFormValidator() {
-    // this.controls.formula.setValidators([Validators.required, formulaValidator(this.campaignService, this.index)]);
+    this.controls.formula.setValidators([Validators.required, formulaValidator(this.campaignService, this.index)]);
   }
 
   public onParameterSelect(event) {

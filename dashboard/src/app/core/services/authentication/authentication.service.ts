@@ -189,7 +189,7 @@ export class AuthenticationService {
     });
     //
     // TODO DELETE WHEN LOGIN IS OK
-    /** this.onLoggin({
+    this.onLoggin({
       user: new User({
         _id: 1,
         firstname: 'AOM',
@@ -199,7 +199,7 @@ export class AuthenticationService {
         group: 'territory',
         permissions: TERRITORIES_PERMISSIONS.admin,
       }),
-    }); **/
+    });
   }
 
   private onLoggin(response) {

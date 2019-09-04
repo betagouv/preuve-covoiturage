@@ -1,5 +1,5 @@
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
-import { Campaign } from '~/core/entities/campaign/campaign';
+import { CampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
 
 function randomStatus() {
   return Math.floor(Math.random() * Object.keys(CampaignStatus).length);
@@ -7,7 +7,8 @@ function randomStatus() {
 
 export const campaignMocks = [...Array(20)].map(
   (val, idx) =>
-    <Campaign>{
+    <CampaignInterface>{
+      _id: '5d6fa2995623dc991b288f11',
       status: CampaignStatus[Object.keys(CampaignStatus)[randomStatus()]],
       name: `Name ${idx}`,
       description: `Description ${idx}`,
