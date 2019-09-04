@@ -1,18 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { IncentiveFormulaParameterInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { formulaValidator } from '~/modules/campaign/validators/formula.validator';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-formula-form',
   templateUrl: './formula-form.component.html',
   styleUrls: ['./formula-form.component.scss'],
 })
-export class FormulaFormComponent implements OnInit {
+export class FormulaFormComponent extends DestroyObservable implements OnInit {
   @Input() isFirst: boolean;
   @Input() index: number;
   @Input() formulaFormGroup: FormGroup;
@@ -20,7 +21,9 @@ export class FormulaFormComponent implements OnInit {
   public parameterCtrl = new FormControl();
   public filteredParameters: Observable<IncentiveFormulaParameterInterface[]>;
 
-  constructor(public campaignService: CampaignService) {}
+  constructor(public campaignService: CampaignService) {
+    super();
+  }
 
   ngOnInit() {
     this.initParameters();
@@ -45,47 +48,50 @@ export class FormulaFormComponent implements OnInit {
 
   public initParameters() {
     if (!this.campaignService._parametersLoaded$.value) {
-      this.campaignService.loadFormulaParameters().subscribe(
-        () => {
-          //
-        },
-        () => {
-          // todo: remove
-          this.campaignService._parameters$.next([
-            {
-              _id: null,
-              varname: 'pour_conducteur',
-              internal: true,
-              helper: 'Incitation pour le conducteur',
-            },
-            {
-              _id: null,
-              varname: 'distance',
-              internal: true,
-              helper: 'Distance en mètre',
-            },
-            {
-              _id: null,
-              varname: 'nombre_passager',
-              internal: false,
-              helper: 'Le nombre de passagers présents dans le véhicule',
-            },
-            {
-              _id: null,
-              varname: 'somme_incitations_passager',
-              internal: false,
-              helper: 'Sommes des incitations de tous les passagers',
-            },
-            {
-              _id: null,
-              varname: 'incitation',
-              internal: true,
-              helper: 'Incitation calculé précédemment de la personne',
-            },
-          ]);
-          this.campaignService._parametersLoaded$.next(true);
-        },
-      );
+      this.campaignService
+        .loadFormulaParameters()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          () => {
+            //
+          },
+          () => {
+            // todo: remove
+            this.campaignService._parameters$.next([
+              {
+                _id: null,
+                varname: 'pour_conducteur',
+                internal: true,
+                helper: 'Incitation pour le conducteur',
+              },
+              {
+                _id: null,
+                varname: 'distance',
+                internal: true,
+                helper: 'Distance en mètre',
+              },
+              {
+                _id: null,
+                varname: 'nombre_passager',
+                internal: false,
+                helper: 'Le nombre de passagers présents dans le véhicule',
+              },
+              {
+                _id: null,
+                varname: 'somme_incitations_passager',
+                internal: false,
+                helper: 'Sommes des incitations de tous les passagers',
+              },
+              {
+                _id: null,
+                varname: 'incitation',
+                internal: true,
+                helper: 'Incitation calculé précédemment de la personne',
+              },
+            ]);
+            this.campaignService._parametersLoaded$.next(true);
+          },
+        );
     }
   }
 

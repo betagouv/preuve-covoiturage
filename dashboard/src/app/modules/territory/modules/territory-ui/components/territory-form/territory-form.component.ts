@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
@@ -9,6 +10,7 @@ import { Company } from '~/core/entities/shared/company';
 import { Contact } from '~/core/entities/shared/contact';
 import { Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { TerritoryService } from '../../../../services/territory.service';
 
@@ -17,14 +19,16 @@ import { TerritoryService } from '../../../../services/territory.service';
   templateUrl: './territory-form.component.html',
   styleUrls: ['./territory-form.component.scss'],
 })
-export class TerritoryFormComponent implements OnInit {
+export class TerritoryFormComponent extends DestroyObservable implements OnInit {
   public territoryForm: FormGroup;
 
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
     private _territoryService: TerritoryService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.initTerritoryForm();
@@ -43,30 +47,33 @@ export class TerritoryFormComponent implements OnInit {
   }
 
   private initTerritoryFormValue(): void {
-    this._territoryService.loadOne().subscribe(
-      () => {},
-      (err) => {
-        // TODO TMP DELETE WHEN BACK IS LINKED
-        const territory = new Territory({
-          _id: '5c66d89760e6ee004a6cab1f',
-          name: 'AOM Name',
-          acronym: 'Aom acronym',
-          company: new Company({
-            siren: '123456789',
-            naf_entreprise: '1234A',
-          }),
-          address: new Address({
-            street: '5 rue de brest',
-            postcode: '69002',
-            city: 'Lyon',
-            country: 'France',
-          }),
-        });
+    this._territoryService
+      .loadOne()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        () => {},
+        (err) => {
+          // TODO TMP DELETE WHEN BACK IS LINKED
+          const territory = new Territory({
+            _id: '5c66d89760e6ee004a6cab1f',
+            name: 'AOM Name',
+            acronym: 'Aom acronym',
+            company: new Company({
+              siren: '123456789',
+              naf_entreprise: '1234A',
+            }),
+            address: new Address({
+              street: '5 rue de brest',
+              postcode: '69002',
+              city: 'Lyon',
+              country: 'France',
+            }),
+          });
 
-        this._territoryService._entity$.next(territory);
-      },
-    );
-    this._territoryService.territory$.subscribe((territory: Territory | null) => {
+          this._territoryService._entity$.next(territory);
+        },
+      );
+    this._territoryService.territory$.pipe(takeUntil(this.destroy$)).subscribe((territory: Territory | null) => {
       if (territory) {
         const { name, acronym, address, company, contacts } = territory;
         this.territoryForm.setValue({ name, acronym, address, company, contacts });

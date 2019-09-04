@@ -1,13 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-staggered-form',
   templateUrl: './staggered-form.component.html',
   styleUrls: ['./staggered-form.component.scss'],
 })
-export class StaggeredFormComponent implements OnInit {
+export class StaggeredFormComponent extends DestroyObservable implements OnInit {
   @Input() isFirst: boolean;
   @Input() formGroup: FormGroup;
 
@@ -38,7 +41,9 @@ export class StaggeredFormComponent implements OnInit {
 
   previousSubscription: Subscription;
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnInit() {
     this.subscribeToPreviousFormValue();
@@ -66,7 +71,7 @@ export class StaggeredFormComponent implements OnInit {
       return;
     }
     this.onPreviousValueChange();
-    this.previousSubscription = this.previousFormGroup.valueChanges.subscribe(() => {
+    this.previousSubscription = this.previousFormGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.onPreviousValueChange();
     });
   }

@@ -1,17 +1,18 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import * as _ from 'lodash';
 
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-operators-autocomplete',
   templateUrl: './operators-autocomplete.component.html',
   styleUrls: ['./operators-autocomplete.component.scss'],
 })
-export class OperatorsAutocompleteComponent implements OnInit {
+export class OperatorsAutocompleteComponent extends DestroyObservable implements OnInit {
   public operatorCtrl = new FormControl();
   public operatorForm;
 
@@ -33,12 +34,15 @@ export class OperatorsAutocompleteComponent implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnInit() {
     this.filterOperators();
     this.operatorForm = this.parentForm.get('operators');
     this.operatorForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
       .pipe(tap((operators: OperatorNameInterface[]) => this.filterOperators(operators)))
       .subscribe();
   }

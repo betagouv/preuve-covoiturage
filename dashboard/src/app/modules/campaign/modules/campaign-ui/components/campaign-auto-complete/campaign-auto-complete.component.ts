@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
+import { DestroyObservable } from '~/core/components/destroy-observable';
+
 export interface CampaignNameInterface {
   _id: string;
   name: string;
@@ -11,7 +13,7 @@ export interface CampaignNameInterface {
   templateUrl: './campaign-auto-complete.component.html',
   styleUrls: ['./campaign-auto-complete.component.scss'],
 })
-export class CampaignAutoCompleteComponent implements OnInit {
+export class CampaignAutoCompleteComponent extends DestroyObservable implements OnInit {
   @Input() parentForm: FormGroup;
 
   // todo: tmp remove
@@ -26,7 +28,9 @@ export class CampaignAutoCompleteComponent implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnInit() {}
 }

@@ -2,16 +2,17 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import * as _ from 'lodash';
-import { tap } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-territories-autocomplete',
   templateUrl: './territories-autocomplete.component.html',
   styleUrls: ['./territories-autocomplete.component.scss'],
 })
-export class TerritoriesAutocompleteComponent implements OnInit {
+export class TerritoriesAutocompleteComponent extends DestroyObservable implements OnInit {
   public territoryCtrl = new FormControl();
   public territoryForm;
 
@@ -33,12 +34,15 @@ export class TerritoriesAutocompleteComponent implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnInit() {
     this.filterTerritories();
     this.territoryForm = this.parentForm.get('territories');
     this.territoryForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
       .pipe(tap((territories: TerritoryNameInterface[]) => this.filterTerritories(territories)))
       .subscribe();
   }

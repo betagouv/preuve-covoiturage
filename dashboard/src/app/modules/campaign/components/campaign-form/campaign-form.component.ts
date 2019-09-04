@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
 import * as moment from 'moment';
+import { takeUntil } from 'rxjs/operators';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
@@ -13,13 +14,14 @@ import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { RulesRangeType } from '~/core/types/campaign/rulesRangeType';
 import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
 import { DialogService } from '~/core/services/dialog.service';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-campaign-form',
   templateUrl: './campaign-form.component.html',
   styleUrls: ['./campaign-form.component.scss'],
 })
-export class CampaignFormComponent implements OnInit {
+export class CampaignFormComponent extends DestroyObservable implements OnInit {
   helpCard = {
     svgIcon: 'new_car',
     title: 'Vous êtes nouveau sur Preuve de covoiturage ?',
@@ -43,11 +45,13 @@ export class CampaignFormComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private route: ActivatedRoute,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.initForms();
-    this.route.paramMap.subscribe((params: ParamMap) => {
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
       // todo: go to last accessible step
       if (params.has('campaignId')) {
         this.creation = false;
@@ -80,39 +84,46 @@ export class CampaignFormComponent implements OnInit {
     campaign.status = CampaignStatus.VALIDATED;
     this._dialog
       .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
+      .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
-          this.campaignService.create(campaign).subscribe(
-            (campaignSaved: Campaign) => {
-              this.requestLoading = false;
-              // tslint:disable-next-line:max-line-length
-              this.toastr.success(`La campagne ${campaignSaved.name} a bien été lancé`);
-              this.router.navigate(['/campaign']);
-            },
-            (error) => {
-              this.requestLoading = false;
-              console.error(error);
-              this.toastr.error('Une erreur est survenue lors du lancement de la campagne');
-            },
-          );
+          this.campaignService
+            .create(campaign)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+              (campaignSaved: Campaign) => {
+                this.requestLoading = false;
+                // tslint:disable-next-line:max-line-length
+                this.toastr.success(`La campagne ${campaignSaved.name} a bien été lancé`);
+                this.router.navigate(['/campaign']);
+              },
+              (error) => {
+                this.requestLoading = false;
+                console.error(error);
+                this.toastr.error('Une erreur est survenue lors du lancement de la campagne');
+              },
+            );
         }
       });
   }
 
   private saveCampaign(campaign: Campaign) {
-    this.campaignService.create(campaign).subscribe(
-      (campaignSaved: Campaign) => {
-        this.requestLoading = false;
-        // tslint:disable-next-line:max-line-length
-        this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
-        this.router.navigate(['/campaign']);
-      },
-      (error) => {
-        this.requestLoading = false;
-        console.error(error);
-        this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
-      },
-    );
+    this.campaignService
+      .create(campaign)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (campaignSaved: Campaign) => {
+          this.requestLoading = false;
+          // tslint:disable-next-line:max-line-length
+          this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
+          this.router.navigate(['/campaign']);
+        },
+        (error) => {
+          this.requestLoading = false;
+          console.error(error);
+          this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
+        },
+      );
   }
 
   private initForms() {
@@ -229,68 +240,71 @@ export class CampaignFormComponent implements OnInit {
   }
 
   private loadCampaign(campaignId: string) {
-    this.campaignService.get(campaignId).subscribe(
-      (campaign: Campaign) => {
-        this.setCampaignToForm(campaign, false);
-      },
-      () => {
-        if (campaignId !== '5d6fa2995623dc991b288f11') {
-          this.router.navigate(['/campaign']);
-        }
-        this.setCampaignToForm(
-          new Campaign({
-            _id: '5d6fa2995623dc991b288f11',
-            template_id: null,
-            status: CampaignStatus.DRAFT,
-            name: "Campagne d'incitation en idf",
-            description: 'Délibération 2019/143',
-            rules: <IncentiveRules>{
-              weekday: [0, 1, 2, 3, 4, 5, 6],
-              range: [2, 150],
-              time: [],
-              ranks: ['A', 'B', 'C'],
-              onlyAdult: false,
-              forDriver: false,
-              forPassenger: false,
-              forTrip: true,
-              operators: [],
-            },
-            start: moment()
-              .add(1, 'days')
-              .toDate(),
-            end: moment()
-              .add(3, 'months')
-              .toDate(),
-            max_trips: null,
-            max_amount: 2000000,
-            amount_unit: IncentiveUnit.EUR,
-            restrictions: [
-              {
-                quantity: 2,
-                is_driver: true,
-                period: restrictionEnum.DAY,
+    this.campaignService
+      .get(campaignId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (campaign: Campaign) => {
+          this.setCampaignToForm(campaign, false);
+        },
+        () => {
+          if (campaignId !== '5d6fa2995623dc991b288f11') {
+            this.router.navigate(['/campaign']);
+          }
+          this.setCampaignToForm(
+            new Campaign({
+              _id: '5d6fa2995623dc991b288f11',
+              template_id: null,
+              status: CampaignStatus.DRAFT,
+              name: "Campagne d'incitation en idf",
+              description: 'Délibération 2019/143',
+              rules: <IncentiveRules>{
+                weekday: [0, 1, 2, 3, 4, 5, 6],
+                range: [2, 150],
+                time: [],
+                ranks: ['A', 'B', 'C'],
+                onlyAdult: false,
+                forDriver: false,
+                forPassenger: false,
+                forTrip: true,
+                operators: [],
               },
-            ],
-            formula_expression:
-              // tslint:disable-next-line:max-line-length
-              '10c€ par passager par trajet avec un plancher de 1,5€ pour les trajets de moins de 15 km et un maximum de 3€ par passager ',
-            formulas: [
-              {
-                formula:
-                  // tslint:disable-next-line:max-line-length
-                  'smaller(distance/1000, 30)*0.1*pour_conducteur*(distance/1000)*nombre_passager + largerEq(distance/1000, 30)*3',
-              },
-              {
-                formula:
-                  // tslint:disable-next-line:max-line-length
-                  'smaller(distance/1000, 15)*(largerEq(incitation, 1.5)*(distance/1000)*1.5/somme_incitations_passager  + smaller(incitation, 1.5)*incitation) + largerEq(distance/1000, 15)*incitation',
-              },
-            ],
-            expertMode: true,
-          }),
-        );
-      },
-    );
+              start: moment()
+                .add(1, 'days')
+                .toDate(),
+              end: moment()
+                .add(3, 'months')
+                .toDate(),
+              max_trips: null,
+              max_amount: 2000000,
+              amount_unit: IncentiveUnit.EUR,
+              restrictions: [
+                {
+                  quantity: 2,
+                  is_driver: true,
+                  period: restrictionEnum.DAY,
+                },
+              ],
+              formula_expression:
+                // tslint:disable-next-line:max-line-length
+                '10c€ par passager par trajet avec un plancher de 1,5€ pour les trajets de moins de 15 km et un maximum de 3€ par passager ',
+              formulas: [
+                {
+                  formula:
+                    // tslint:disable-next-line:max-line-length
+                    'smaller(distance/1000, 30)*0.1*pour_conducteur*(distance/1000)*nombre_passager + largerEq(distance/1000, 30)*3',
+                },
+                {
+                  formula:
+                    // tslint:disable-next-line:max-line-length
+                    'smaller(distance/1000, 15)*(largerEq(incitation, 1.5)*(distance/1000)*1.5/somme_incitations_passager  + smaller(incitation, 1.5)*incitation) + largerEq(distance/1000, 15)*incitation',
+                },
+              ],
+              expertMode: true,
+            }),
+          );
+        },
+      );
   }
 
   private setLastAvailableStep(): void {

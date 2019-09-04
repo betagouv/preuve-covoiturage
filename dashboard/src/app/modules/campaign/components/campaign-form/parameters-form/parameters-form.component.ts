@@ -4,13 +4,14 @@ import * as moment from 'moment';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
 
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { IncentiveFormulaInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { IncentiveFormula } from '~/core/entities/campaign/incentive-formula';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-parameters-form',
@@ -21,7 +22,7 @@ import { IncentiveFormula } from '~/core/entities/campaign/incentive-formula';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class ParametersFormComponent implements OnInit {
+export class ParametersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
 
   retributionsFormArray: FormArray = new FormArray([]);
@@ -35,7 +36,9 @@ export class ParametersFormComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private dialog: DialogService,
     private campaignService: CampaignService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.initRetributionFormArray();
@@ -156,6 +159,7 @@ export class ParametersFormComponent implements OnInit {
           `Attention, vous risquez de perdre les données non enregistrées !`,
           'Confirmer',
         )
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result) => {
           if (result) {
             this.exportModeControl.setValue(false);
@@ -177,6 +181,7 @@ export class ParametersFormComponent implements OnInit {
   removeFormula(idx): void {
     this.dialog
       .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer cette formule ?`, 'Supprimer')
+      .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
           this.formulasFormArray.removeAt(idx);
@@ -215,7 +220,7 @@ export class ParametersFormComponent implements OnInit {
   }
 
   private initFormArrayChangeDetection() {
-    this.retributionsFormArray.valueChanges.subscribe((retribution) => {
+    this.retributionsFormArray.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((retribution) => {
       const formula = this.campaignService.tranformIntoFormula(retribution);
       // tslint:disable-next-line:max-line-length
       const explanation = this.campaignService.getExplanationFromRetributions(
