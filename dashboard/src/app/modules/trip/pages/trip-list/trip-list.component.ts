@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-
 import cloneDeep from 'lodash/cloneDeep';
-
 import { ToastrService } from 'ngx-toastr';
+import { takeUntil } from 'rxjs/operators';
 
 import { TripService } from '~/modules/trip/services/trip.service';
 import { Trip } from '~/core/entities/trip/trip';
@@ -12,13 +11,14 @@ import { TripInterface } from '~/core/interfaces/trip/tripInterface';
 import { FilterService } from '~/core/services/filter.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-trip-list',
   templateUrl: './trip-list.component.html',
   styleUrls: ['./trip-list.component.scss'],
 })
-export class TripListComponent implements OnInit {
+export class TripListComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
   trips: Trip[] = [];
 
@@ -27,10 +27,12 @@ export class TripListComponent implements OnInit {
     public tripService: TripService,
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
-    this.filterService._filter$.subscribe((filter: FilterInterface) => {
+    this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
       this.loadTrips(filter);
     });
   }
@@ -41,36 +43,42 @@ export class TripListComponent implements OnInit {
 
   exportTrips() {
     this.isExporting = true;
-    this.tripService.exportTrips().subscribe(
-      () => {
-        this.isExporting = false;
-      },
-      (err) => {
-        this.isExporting = false;
-        this.toastr.error(err.message);
-      },
-    );
+    this.tripService
+      .exportTrips()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        () => {
+          this.isExporting = false;
+        },
+        (err) => {
+          this.isExporting = false;
+          this.toastr.error(err.message);
+        },
+      );
   }
 
   private loadTrips(filter: FilterInterface = {}): void {
     if (this.tripService.loading) {
       return;
     }
-    this.tripService.load(filter).subscribe(
-      (trips) => {
-        this.trips = trips;
-      },
-      (err) => {
-        this.toastr.error(err.message);
+    this.tripService
+      .load(filter)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (trips) => {
+          this.trips = trips;
+        },
+        (err) => {
+          this.toastr.error(err.message);
 
-        // TODO TMP TO DELETE
-        for (let i = 0; i < 20; i = i + 1) {
-          this.trips.push(this.generateTrip());
-        }
-        this.trips = cloneDeep(this.trips);
-        this.cd.detectChanges();
-      },
-    );
+          // TODO TMP TO DELETE
+          for (let i = 0; i < 20; i = i + 1) {
+            this.trips.push(this.generateTrip());
+          }
+          this.trips = cloneDeep(this.trips);
+          this.cd.detectChanges();
+        },
+      );
   }
 
   // TODO TMP TO DELETE

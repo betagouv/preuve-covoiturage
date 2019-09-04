@@ -2,13 +2,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-retribution-form',
   templateUrl: './retribution-form.component.html',
   styleUrls: ['./retribution-form.component.scss'],
 })
-export class RetributionFormComponent implements OnInit {
+export class RetributionFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() forDriver: boolean;
   @Input() forPassenger: boolean;
@@ -16,7 +17,9 @@ export class RetributionFormComponent implements OnInit {
   @Input() formGroup: FormGroup;
   getIncentiveUnitLabel = Campaign.getIncentiveUnitLabel;
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnInit() {}
 

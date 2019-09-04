@@ -7,10 +7,10 @@ import { WeekDay } from '@angular/common';
 import { FilterService } from '~/core/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CLASSES } from '~/core/const/classes.const';
-import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { STATUS_FR } from '~/modules/filter/const/status_fr.const';
 import { TRIP_STATUS } from '~/core/const/trip/tripStatus.const';
 import { TripStatusType } from '~/core/types/trip/statusType';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-filter',
@@ -36,7 +36,7 @@ import { TripStatusType } from '~/core/types/trip/statusType';
     ]),
   ],
 })
-export class FilterComponent implements OnInit {
+export class FilterComponent extends DestroyObservable implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
   public classes = CLASSES;
@@ -57,7 +57,9 @@ export class FilterComponent implements OnInit {
     public authService: AuthenticationService,
     private fb: FormBuilder,
     private filterService: FilterService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.filterForm = this.fb.group({

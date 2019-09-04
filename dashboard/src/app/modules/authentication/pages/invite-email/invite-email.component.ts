@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { URLS } from '~/core/const/main.const';
 import { PASSWORD } from '~/core/const/validators.const';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { passwordMatchValidator } from '../../validators/password-match.validator';
 
@@ -13,7 +15,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
   templateUrl: './invite-email.component.html',
   styleUrls: ['./invite-email.component.scss'],
 })
-export class InviteEmailComponent implements OnInit {
+export class InviteEmailComponent extends DestroyObservable implements OnInit {
   public confirm = '';
   public token = '';
   public newPasswordForm: FormGroup;
@@ -27,7 +29,9 @@ export class InviteEmailComponent implements OnInit {
     private fb: FormBuilder,
     private toastr: ToastrService,
     private router: Router,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.confirmEmail();
@@ -51,20 +55,23 @@ export class InviteEmailComponent implements OnInit {
   }
 
   confirmEmail(): void {
-    this.activatedRoute.paramMap.subscribe((params: Params) => {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
       this.confirm = params.get('confirm');
       this.token = params.get('token');
 
-      this.authService.checkEmailToken(this.confirm, this.token).subscribe(
-        () => {
-          this.isSuccess = true;
-          this.toastr.success('Vous pouvez créer votre mot de passe', 'Email confirmé');
-        },
-        (error) => {
-          this.hasError = true;
-          this.toastr.error('Email non confirmé');
-        },
-      );
+      this.authService
+        .checkEmailToken(this.confirm, this.token)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          () => {
+            this.isSuccess = true;
+            this.toastr.success('Vous pouvez créer votre mot de passe', 'Email confirmé');
+          },
+          (error) => {
+            this.hasError = true;
+            this.toastr.error('Email non confirmé');
+          },
+        );
     });
   }
 
@@ -84,17 +91,20 @@ export class InviteEmailComponent implements OnInit {
   }
 
   public changePassword(): void {
-    this.authService.sendNewPassword(this.newPasswordForm.controls.password.value, this.confirm, this.token).subscribe(
-      (data) => {
-        this.hasError = false;
-        this.router.navigate(['/login']).then(() => {
-          this.toastr.success('Votre mot de passe a été créé');
-        });
-      },
-      (error) => {
-        this.hasError = true;
-        this.toastr.error('Une erreur est survenue lors de la création de votre mot de passe.');
-      },
-    );
+    this.authService
+      .sendNewPassword(this.newPasswordForm.controls.password.value, this.confirm, this.token)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (data) => {
+          this.hasError = false;
+          this.router.navigate(['/login']).then(() => {
+            this.toastr.success('Votre mot de passe a été créé');
+          });
+        },
+        (error) => {
+          this.hasError = true;
+          this.toastr.error('Une erreur est survenue lors de la création de votre mot de passe.');
+        },
+      );
   }
 }

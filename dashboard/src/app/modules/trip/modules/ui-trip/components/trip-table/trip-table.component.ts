@@ -5,13 +5,14 @@ import { Trip } from '~/core/entities/trip/trip';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { Person } from '~/core/entities/trip/person';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-trip-table',
   templateUrl: './trip-table.component.html',
   styleUrls: ['./trip-table.component.scss'],
 })
-export class TripTableComponent implements OnInit {
+export class TripTableComponent extends DestroyObservable implements OnInit {
   displayedColumns: string[] = [
     'startCity',
     'endCity',
@@ -24,7 +25,9 @@ export class TripTableComponent implements OnInit {
   ];
   @Input() data: Trip[];
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnInit() {}
 

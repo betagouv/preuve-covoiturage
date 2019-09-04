@@ -1,24 +1,28 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 
 import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { Operator } from '~/core/entities/operator/operator';
 import { CAMPAIGN_RULES_MAX_DISTANCE } from '~/core/const/campaign/rules.const';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-rules-form',
   templateUrl: './rules-form.component.html',
   styleUrls: ['./rules-form.component.scss', '../campaign-sub-form.scss'],
 })
-export class RulesFormComponent implements OnInit {
+export class RulesFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
 
   tripClassKeys = Object.keys(TripClassEnum);
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE;
 
-  constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {}
+  constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {
+    super();
+  }
 
   ngOnInit() {
     this.loadOperators();
@@ -164,7 +168,7 @@ export class RulesFormComponent implements OnInit {
   }
 
   private initTargetChangeDetection() {
-    this.controls.forDriver.valueChanges.subscribe((checked) => {
+    this.controls.forDriver.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
         this.controls.forTrip.setValue(null);
         if (!this.controls.forPassenger.value) {
@@ -172,14 +176,14 @@ export class RulesFormComponent implements OnInit {
         }
       }
     });
-    this.controls.forPassenger.valueChanges.subscribe((checked) => {
+    this.controls.forPassenger.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
         this.controls.forTrip.setValue(null);
       } else if (this.controls.forDriver.value) {
         this.controls.onlyAdult.setValue(null);
       }
     });
-    this.controls.forTrip.valueChanges.subscribe((checked) => {
+    this.controls.forTrip.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
         this.controls.forPassenger.setValue(null);
         this.controls.forDriver.setValue(null);
@@ -188,31 +192,34 @@ export class RulesFormComponent implements OnInit {
   }
 
   private loadOperators() {
-    this.operatorService.load().subscribe(
-      () => {
-        // TODO DELETE
-        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
-      },
-      (err) => {
-        this.operatorService._entities$.next([
-          {
-            _id: '1',
-            nom_commercial: 'Maxicovoit',
-            raison_sociale: 'Maxicovoit SAS',
-          },
-          {
-            _id: '2',
-            nom_commercial: 'Supercovoit',
-            raison_sociale: 'Supercovoit SAS',
-          },
-          {
-            _id: '3',
-            nom_commercial: 'Batcovoit',
-            raison_sociale: 'Batcovoit SAS',
-          },
-        ]);
-        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
-      },
-    );
+    this.operatorService
+      .load()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        () => {
+          // TODO DELETE
+          this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+        },
+        (err) => {
+          this.operatorService._entities$.next([
+            {
+              _id: '1',
+              nom_commercial: 'Maxicovoit',
+              raison_sociale: 'Maxicovoit SAS',
+            },
+            {
+              _id: '2',
+              nom_commercial: 'Supercovoit',
+              raison_sociale: 'Supercovoit SAS',
+            },
+            {
+              _id: '3',
+              nom_commercial: 'Batcovoit',
+              raison_sociale: 'Batcovoit SAS',
+            },
+          ]);
+          this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+        },
+      );
   }
 }

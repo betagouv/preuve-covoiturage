@@ -19,9 +19,12 @@ export class ChangeAuthLayoutComponent extends DestroyObservable implements OnIn
 
   ngOnInit() {
     this.setImgSrc(this._router.url);
-    this._router.events.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.setImgSrc(this._router.url);
-    });
+    this._router.events
+      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.setImgSrc(this._router.url);
+      });
   }
 
   private setImgSrc(url: string): void {

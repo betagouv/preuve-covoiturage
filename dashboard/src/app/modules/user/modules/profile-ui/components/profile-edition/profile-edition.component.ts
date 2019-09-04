@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { REGEXP } from '~/core/const/validators.const';
 import { UserService } from '~/core/services/authentication/user.service';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { ProfileService } from '../../../../services/profile.service';
 
@@ -12,10 +13,12 @@ import { ProfileService } from '../../../../services/profile.service';
   templateUrl: './profile-edition.component.html',
   styleUrls: ['./profile-edition.component.scss'],
 })
-export class ProfileEditionComponent implements OnInit {
+export class ProfileEditionComponent extends DestroyObservable implements OnInit {
   public profileForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService, private _userService: UserService) {}
+  constructor(private fb: FormBuilder, private profileService: ProfileService, private _userService: UserService) {
+    super();
+  }
 
   ngOnInit() {
     this.initProfilForm();

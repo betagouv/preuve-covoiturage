@@ -8,13 +8,14 @@ import { Campaign } from '~/core/entities/campaign/campaign';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-summary-form',
   templateUrl: './summary-form.component.html',
   styleUrls: ['./summary-form.component.scss'],
 })
-export class SummaryFormComponent implements OnInit {
+export class SummaryFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() loading: boolean;
   @Output() onSaveCampaign: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -24,7 +25,9 @@ export class SummaryFormComponent implements OnInit {
     public utils: UtilsService,
     private numberPipe: DecimalPipe,
     private operatorService: OperatorService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {}
 

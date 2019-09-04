@@ -1,18 +1,19 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { debounceTime, tap } from 'rxjs/operators';
+import { debounceTime, takeUntil, tap } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import * as _ from 'lodash';
 
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
 import { TownService } from '~/modules/filter/services/town.service';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-towns-autocomplete',
   templateUrl: './towns-autocomplete.component.html',
   styleUrls: ['./towns-autocomplete.component.scss'],
 })
-export class TownsAutocompleteComponent implements OnInit {
+export class TownsAutocompleteComponent extends DestroyObservable implements OnInit {
   public townCtrl = new FormControl();
   public townForm;
   public filteredTowns: TownInterface[] = [];
@@ -21,11 +22,14 @@ export class TownsAutocompleteComponent implements OnInit {
 
   @ViewChild('townInput', { static: false }) townInput: ElementRef;
 
-  constructor(private townService: TownService) {}
+  constructor(private townService: TownService) {
+    super();
+  }
 
   ngOnInit() {
     this.townForm = this.parentForm.get('towns');
     this.townForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
       .pipe(
         tap((towns: TownInterface[]) => {
           this.filteredTowns = _.differenceWith(this.filteredTowns, towns, (x, y) => x.name === y.name);
@@ -33,6 +37,7 @@ export class TownsAutocompleteComponent implements OnInit {
       )
       .subscribe();
     this.townCtrl.valueChanges
+      .pipe(takeUntil(this.destroy$))
       .pipe(
         debounceTime(1000),
         tap((literal: string) => this.findTowns(literal)),
@@ -53,9 +58,12 @@ export class TownsAutocompleteComponent implements OnInit {
     if (!literal) {
       return;
     }
-    this.townService.findTowns(literal).subscribe((towns: TownInterface[]) => {
-      this.filteredTowns = _.differenceWith(towns, this.townForm.value, (x, y) => x.name === y.name);
-    });
+    this.townService
+      .findTowns(literal)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((towns: TownInterface[]) => {
+        this.filteredTowns = _.differenceWith(towns, this.townForm.value, (x, y) => x.name === y.name);
+      });
   }
 
   public onTownSelect(event: MatAutocompleteSelectedEvent): void {
