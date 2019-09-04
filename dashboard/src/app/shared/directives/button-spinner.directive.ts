@@ -17,7 +17,7 @@ import { MatSpinner } from '@angular/material';
 export class ButtonSpinnerDirective implements OnInit, OnChanges {
   // tslint:disable-next-line:no-input-rename
   @Input('appShowSpinner') showSpinner: boolean;
-  originalInnerText: string;
+  originalInnerHTML: string;
   spinner: MatSpinner;
 
   constructor(
@@ -29,7 +29,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
 
   ngOnInit() {
     // Record the button's original text
-    this.originalInnerText = this.el.nativeElement.innerText;
+    this.originalInnerHTML = this.el.nativeElement.querySelector('.mat-button-wrapper').innerHTML;
 
     // Set the button to maintain the same dimensions, even once we put the spinner inside.
     this.el.nativeElement.style.width = `${(<HTMLElement>this.el.nativeElement).offsetWidth}px`;
@@ -57,6 +57,9 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (typeof changes.showSpinner === 'object' && !changes.showSpinner.isFirstChange()) {
       if (changes.showSpinner.currentValue === true) {
+        // Record the button's original text
+        this.originalInnerHTML = this.el.nativeElement.querySelector('.mat-button-wrapper').innerHTML;
+
         // Clear the button's text
         const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
         span.innerText = '';
@@ -76,7 +79,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
         this.renderer.removeChild(this.el.nativeElement.firstChild, this.spinner._elementRef.nativeElement);
 
         const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
-        span.innerText = this.originalInnerText;
+        span.innerHTML = this.originalInnerHTML;
       }
 
       this.el.nativeElement.disabled = changes.showSpinner.currentValue;

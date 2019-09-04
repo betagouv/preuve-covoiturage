@@ -1,7 +1,0 @@
-{
-  "baseUrl": "http://localhost:4200",
-  "pageLoadTimeout": 20000,
-  "viewportWidth": 1200,
-  "viewportHeight": 800,
-  "projectId": "j8ihas"
-}
