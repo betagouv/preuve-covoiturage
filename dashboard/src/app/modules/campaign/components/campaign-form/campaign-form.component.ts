@@ -231,14 +231,15 @@ export class CampaignFormComponent implements OnInit {
   private loadCampaign(campaignId: string) {
     this.campaignService.get(campaignId).subscribe(
       (campaign: Campaign) => {
-        // todo: if not found --> 404
         this.setCampaignToForm(campaign, false);
-        // get step according to data filled
       },
       () => {
+        if (campaignId !== '5d6fa2995623dc991b288f11') {
+          this.router.navigate(['/campaign']);
+        }
         this.setCampaignToForm(
           new Campaign({
-            _id: '5d6e4e5e26251e6c9d1156df',
+            _id: '5d6fa2995623dc991b288f11',
             template_id: null,
             status: CampaignStatus.DRAFT,
             name: "Campagne d'incitation en idf",

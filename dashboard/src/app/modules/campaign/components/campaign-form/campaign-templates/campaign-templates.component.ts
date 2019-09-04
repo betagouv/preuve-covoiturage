@@ -11,19 +11,22 @@ import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { DialogService } from '~/core/services/dialog.service';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-campaign-templates',
   templateUrl: './campaign-templates.html',
   styleUrls: ['./campaign-templates.component.scss'],
 })
-export class CampaignTemplatesComponent implements OnInit {
+export class CampaignTemplatesComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() matStepper: MatStepper;
   @Output() setTemplate = new EventEmitter();
   templates: CreateCampaignInterface[];
 
-  constructor(public campaignService: CampaignService, private _dialog: DialogService, private toastr: ToastrService) {}
+  constructor(public campaignService: CampaignService, private _dialog: DialogService, private toastr: ToastrService) {
+    super();
+  }
 
   ngOnInit() {
     this.loadCampaignTemplates();
