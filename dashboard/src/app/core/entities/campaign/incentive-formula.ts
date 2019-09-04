@@ -1,8 +1,4 @@
-import {
-  FormulaUnitType,
-  IncentiveFormulaInterface,
-  IncentiveFormulaParameterInterface,
-} from '~/core/interfaces/campaign/campaignInterface';
+import { IncentiveFormulaInterface } from '~/core/interfaces/campaign/campaignInterface';
 
 export class IncentiveFormula {
   formula: string;

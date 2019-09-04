@@ -20,7 +20,7 @@ export class FormulaFormComponent implements OnInit {
   public parameterCtrl = new FormControl();
   public filteredParameters: Observable<IncentiveFormulaParameterInterface[]>;
 
-  constructor(private campaignService: CampaignService) {}
+  constructor(public campaignService: CampaignService) {}
 
   ngOnInit() {
     this.initParameters();
@@ -44,12 +44,13 @@ export class FormulaFormComponent implements OnInit {
   }
 
   public initParameters() {
-    if (!this.campaignService._paramatersLoaded$.value) {
+    if (!this.campaignService._parametersLoaded$.value) {
       this.campaignService.loadFormulaParameters().subscribe(
         () => {
           //
         },
         () => {
+          // todo: remove
           this.campaignService._parameters$.next([
             {
               _id: null,
@@ -65,6 +66,12 @@ export class FormulaFormComponent implements OnInit {
             },
             {
               _id: null,
+              varname: 'nombre_passager',
+              internal: false,
+              helper: 'Le nombre de passagers présents dans le véhicule',
+            },
+            {
+              _id: null,
               varname: 'somme_incitations_passager',
               internal: false,
               helper: 'Sommes des incitations de tous les passagers',
@@ -76,13 +83,14 @@ export class FormulaFormComponent implements OnInit {
               helper: 'Incitation calculé précédemment de la personne',
             },
           ]);
+          this.campaignService._parametersLoaded$.next(true);
         },
       );
     }
   }
 
   public initFormValidator() {
-    this.controls.formula.setValidators([Validators.required, formulaValidator(this.campaignService, this.index)]);
+    // this.controls.formula.setValidators([Validators.required, formulaValidator(this.campaignService, this.index)]);
   }
 
   public onParameterSelect(event) {

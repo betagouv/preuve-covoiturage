@@ -23,9 +23,8 @@ import { IncentiveFormula } from '~/core/entities/campaign/incentive-formula';
 })
 export class ParametersFormComponent implements OnInit {
   @Input() campaignForm: FormGroup;
-  @Output() onShowGuide = new EventEmitter();
 
-  isExpertMode = false;
+  retributionsFormArray: FormArray = new FormArray([]);
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnitEnum);
   incentiveUnitFr = INCENTIVE_UNITS_FR;
@@ -39,10 +38,8 @@ export class ParametersFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.initForm();
-    this.initFormArrayChangeDetection();
     this.initRetributionFormArray();
-    this.formulasFormArray.push(this.generateFormulaFormGroup());
+    this.initFormArrayChangeDetection();
   }
 
   get controls() {
@@ -51,10 +48,6 @@ export class ParametersFormComponent implements OnInit {
 
   get restrictionFormArray(): FormArray {
     return <FormArray>this.campaignForm.get('restrictions');
-  }
-
-  get retributionsFormArray(): FormArray {
-    return <FormArray>this.campaignForm.get('retributions');
   }
 
   get retributionParametersForm(): FormGroup {
@@ -69,11 +62,16 @@ export class ParametersFormComponent implements OnInit {
     return <FormArray>this.campaignForm.get('formulas');
   }
 
+  get exportModeControl() {
+    return this.controls.expertMode;
+  }
+
   showDateLabel(): string {
     const dateBegin = this.controls.start.value;
     const dateEnd = this.controls.end.value;
+
     if (dateBegin && dateEnd) {
-      return `Du ${dateBegin.format('dddd DD MMMM YYYY')} au ${dateEnd.format('dddd DD MMMM YYYY')}`;
+      return `Du ${moment(dateBegin).format('dddd DD MMMM YYYY')} au ${moment(dateEnd).format('dddd DD MMMM YYYY')}`;
     }
     return '';
   }
@@ -95,28 +93,6 @@ export class ParametersFormComponent implements OnInit {
       return `${this.restrictionFormArray.length} restriction${multipleRestrictions ? 's' : ''}`;
     }
     return 'Pas de restrictions';
-  }
-
-  showRetributionLabel(): string {
-    let label = '';
-    const incentiveMode = this.controls.incentiveMode.value;
-    switch (incentiveMode) {
-      case 'per_trip':
-        label += `Par trajet`;
-        break;
-      case 'per_distance':
-        label += `Par distance`;
-        break;
-      default:
-        return '';
-    }
-    if (this.retributionsFormArray.length > 1) {
-      label += ' - échelonné';
-    }
-    if (this.retributionParametersForm.get('conductorProportionalPassengers').value) {
-      label += ' - indéxé sur le nombre de passagers';
-    }
-    return label;
   }
 
   addRestriction() {
@@ -170,7 +146,7 @@ export class ParametersFormComponent implements OnInit {
   }
 
   setExpertMode($event) {
-    if (this.isExpertMode) {
+    if (this.exportModeControl.value) {
       $event.source.checked = true;
       this.dialog
         .confirm(
@@ -180,8 +156,7 @@ export class ParametersFormComponent implements OnInit {
         )
         .subscribe((result) => {
           if (result) {
-            this.isExpertMode = false;
-            this.onShowGuide.emit(false);
+            this.exportModeControl.setValue(false);
             this.formulasFormArray.clear();
             this.retributionsFormArray.clear();
             this.initRetributionFormArray();
@@ -189,8 +164,7 @@ export class ParametersFormComponent implements OnInit {
           }
         });
     } else {
-      this.isExpertMode = true;
-      this.onShowGuide.emit(true);
+      this.exportModeControl.setValue(true);
     }
   }
 
@@ -214,14 +188,14 @@ export class ParametersFormComponent implements OnInit {
     });
   }
 
-  private initForm() {
-    this.campaignForm.controls.retributionParameters = this._formBuilder.group({
-      conductorProportionalPassengers: [false],
-    });
-  }
-
   private initRetributionFormArray() {
     this.retributionsFormArray.push(this.generateStaggeredFormGroup());
+  }
+
+  private initFormulasFormArray() {
+    if (this.campaignForm.controls.expertMode.value && this.formulasFormArray.controls.length === 0) {
+      this.formulasFormArray.push(this.generateFormulaFormGroup());
+    }
   }
 
   private initFormArrayChangeDetection() {

@@ -75,7 +75,7 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public get(itemId: T): Observable<T> {
+  public get(itemId: string): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.get`, itemId);
     this._loading$.next(true);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
@@ -85,7 +85,7 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public getOne(itemId: T): Observable<T> {
+  public getOne(itemId: string): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.get`, itemId);
     this._loading$.next(true);
     return this._jsonRPCService.call(jsonRPCParam).pipe(

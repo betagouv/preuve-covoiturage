@@ -7,6 +7,7 @@ import { UtilsService } from '~/core/services/utils.service';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 import { OperatorService } from '~/modules/operator/services/operator.service';
+import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 
 @Component({
   selector: 'app-summary-form',
@@ -67,8 +68,8 @@ export class SummaryFormComponent implements OnInit {
     } else {
       summaryText += ` compris entre ${campaign.rules.range[0]} à ${campaign.rules.range[1]} km`;
     }
-    summaryText += ` à raison de:`;
-    summaryText += '<br/>\r\n';
+    summaryText += ` à raison de : `;
+    summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `${campaign.formula_expression.replace(/\r\n/g, '<br>\r\n')}`;
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `L’opération est limitée aux opérateurs proposant des registres de preuve`;
@@ -81,29 +82,30 @@ export class SummaryFormComponent implements OnInit {
     } else {
       summaryText += `La campagne est limitée à ${nbOperators} présents sur le registre.`;
     }
-    const restrictions = <FormArray>this.controls.restrictions;
-    if (restrictions.length > 0) {
-      // tslint:disable-next-line:max-line-length
-      const restrictionsWho: string[] = [
-        ...new Set(
-          restrictions.controls.map((formControl: FormControl) => {
-            if (formControl.value && formControl.value.who) {
-              switch (formControl.value.who) {
-                case 'driver':
-                  return 'conducteurs';
-                case 'passenger':
-                  return 'passagers';
-                case 'operator':
-                  return 'opérateurs';
-              }
-            }
-          }),
-        ),
-      ];
-      summaryText += ` Des restrictions concernant les ${restrictionsWho.join(', ')} seront appliqué.`;
-    } else {
-      summaryText += ` Aucune restriction concernant les conducteurs, passagers ou opérateurs n'est appliquée.`;
-    }
+    // todo: fix this part
+    // const restrictions = <FormArray>this.controls.restrictions;
+    // if (restrictions.length > 0) {
+    //   // tslint:disable-next-line:max-line-length
+    //   const restrictionsWho: string[] = [
+    //     ...new Set(
+    //       restrictions.controls.map((formControl: FormControl) => {
+    //         if (formControl.value && formControl.value.who) {
+    //           switch (formControl.value.who) {
+    //             case 'driver':
+    //               return 'conducteurs';
+    //             case 'passenger':
+    //               return 'passagers';
+    //             case 'operator':
+    //               return 'opérateurs';
+    //           }
+    //         }
+    //       }),
+    //     ),
+    //   ];
+    //   summaryText += ` Des restrictions concernant les ${restrictionsWho.join(', ')} seront appliqué.`;
+    // } else {
+    //   summaryText += ` Aucune restriction concernant les conducteurs, passagers ou opérateurs n'est appliquée.`;
+    // }
     return summaryText;
   }
 
@@ -113,6 +115,7 @@ export class SummaryFormComponent implements OnInit {
 
   saveAsTemplateChange($event) {
     if ($event.checked) {
+      this.controls.status.setValue(CampaignStatus.TEMPLATE);
       this.controls.description.setValidators(Validators.required);
     } else {
       this.controls.description.setValue(null);

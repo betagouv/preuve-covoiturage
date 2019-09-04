@@ -20,12 +20,7 @@
         </mat-error>
       </mat-form-field>
       <div class="SummaryForm-template">
-        <mat-checkbox
-          color="primary"
-          formControlName="saveAsTemplate"
-          (change)="saveAsTemplateChange($event)"
-          #saveAsTemplate
-        >
+        <mat-checkbox color="primary" (change)="saveAsTemplateChange($event)" #saveAsTemplate>
           Enregistrer en tant que modèle
         </mat-checkbox>
         <mat-icon
@@ -66,6 +61,7 @@
     </div>
   </form>
   <div class="SummaryForm-simulation">
-    <h3>Estimation de votre campagne</h3>
+    <br /><br />
+    <!--    <h3>Estimation de votre campagne</h3>-->
   </div>
 </div>

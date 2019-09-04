@@ -1,4 +1,4 @@
-<div class="formula-form" [formGroup]="formulaFormGroup">
+<div class="formula-form" [formGroup]="formulaFormGroup" *ngIf="campaignService._parametersLoaded$.value">
   <mat-form-field appearance="outline" class="formula-form-field">
     <mat-label>Formule</mat-label>
     <input matInput type="text" placeholder="" required formControlName="formula" />

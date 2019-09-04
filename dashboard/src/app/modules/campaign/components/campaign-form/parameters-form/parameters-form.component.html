@@ -1,11 +1,11 @@
 <div class="ParametersForm CampaignSubForm">
-  <div class="ParametersForm-title">
-    <h2>Définissez des rétributions</h2>
-    <mat-slide-toggle color="accent" [checked]="isExpertMode" (change)="setExpertMode($event)">
-      Mode expert
-    </mat-slide-toggle>
-  </div>
   <form [formGroup]="campaignForm">
+    <div class="ParametersForm-title">
+      <h2>Définissez des rétributions</h2>
+      <mat-slide-toggle color="accent" [checked]="exportModeControl.value" (change)="setExpertMode($event)">
+        Mode expert
+      </mat-slide-toggle>
+    </div>
     <mat-accordion>
       <mat-expansion-panel
         [expanded]="true"
@@ -143,10 +143,10 @@
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs">
           <div
-            *ngFor="let restrictionFormCtrl of restrictionFormArray.controls; let idx = index"
+            *ngFor="let restrictionFormGroup of restrictionFormArray.controls; let idx = index"
             class="ParametersForm-restriction"
           >
-            <app-restriction-form [formControl]="restrictionFormCtrl"></app-restriction-form>
+            <app-restriction-form [restrictionformGroup]="restrictionFormGroup"></app-restriction-form>
             <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
           </div>
           <button
@@ -162,17 +162,14 @@
 
       <!-- RETRIBUTION -->
       <mat-expansion-panel
-        *ngIf="!isExpertMode"
+        *ngIf="!exportModeControl.value"
         [disabled]="!campaignForm.controls.amount_unit.value"
         [ngClass]="{ 'mat-expansion-panel-error': !retributionsFormArray.valid && retributionsFormArray.touched }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
-            Mode de rétribution
+            Rétribution
           </mat-panel-title>
-          <mat-panel-description>
-            {{ showRetributionLabel() }}
-          </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs ParametersForm-incentiveMode">
           <div class="ParametersForm-incentiveMode-toggle">
@@ -238,7 +235,7 @@
 
       <!-- FORMULAS -->
       <mat-expansion-panel
-        *ngIf="isExpertMode"
+        *ngIf="exportModeControl.value"
         [disabled]="!campaignForm.controls.amount_unit.value"
         [ngClass]="{ 'mat-expansion-panel-error': !formulasFormArray.valid && formulasFormArray.touched }"
       >
@@ -260,7 +257,7 @@
             </mat-form-field>
           </div>
           <ng-container *ngFor="let formulaFormGroup of formulasFormArray.controls; let idx = index">
-            <div class="ParametersForm-arrow" *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1">
+            <div class="ParametersForm-arrow" *ngIf="idx !== 0">
               <mat-icon>
                 arrow_downward
               </mat-icon>
@@ -268,11 +265,7 @@
             <div class="ParametersForm-formula">
               <app-formula-form [formulaFormGroup]="formulaFormGroup" [isFirst]="idx === 0" [index]="idx">
               </app-formula-form>
-              <mat-icon
-                color="error"
-                *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1"
-                (click)="removeFormula(idx)"
-              >
+              <mat-icon color="error" *ngIf="idx !== 0" (click)="removeFormula(idx)">
                 delete_outline
               </mat-icon>
             </div>

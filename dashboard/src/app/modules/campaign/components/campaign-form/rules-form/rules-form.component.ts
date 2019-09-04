@@ -19,7 +19,6 @@ export class RulesFormComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {}
 
   ngOnInit() {
-    this.initRulesForm();
     this.loadOperators();
     this.initTargetChangeDetection();
   }
@@ -44,7 +43,7 @@ export class RulesFormComponent implements OnInit {
     this.timeCtrlArray.removeAt(idx);
   }
 
-  showDateLabel() {
+  get showDateLabel() {
     let label = '';
     const weekDays = this.rulesForm.get('weekday').value;
     if (!weekDays) {
@@ -75,6 +74,9 @@ export class RulesFormComponent implements OnInit {
 
     const timeRanges = this.timeCtrlArray.value;
     if (timeRanges && timeRanges.length > 0) {
+      if (weekDays.length > 0) {
+        label += ' <br>';
+      }
       label += ' De ';
       label += timeRanges
         .map((timeRange: IncentiveTimeRule) => {
@@ -88,7 +90,7 @@ export class RulesFormComponent implements OnInit {
     return label;
   }
 
-  showDistanceLabel(): string {
+  get showDistanceLabel(): string {
     const range = this.rulesForm.get('range').value;
     if (range && range.length < 2) {
       return '';
@@ -157,20 +159,6 @@ export class RulesFormComponent implements OnInit {
       }
     }
     return false;
-  }
-
-  private initRulesForm() {
-    this.campaignForm.controls.rules = this._formBuilder.group({
-      weekday: [null, Validators.required],
-      time: this._formBuilder.array([]),
-      range: [[0, 50]],
-      ranks: [null, Validators.required],
-      onlyAdult: [],
-      forDriver: [],
-      forPassenger: [],
-      forTrip: [],
-      operators: [],
-    });
   }
 
   private initTargetChangeDetection() {
