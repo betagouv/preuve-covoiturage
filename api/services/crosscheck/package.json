@@ -56,6 +56,7 @@
     "@ilos/connection-mongo": "~0",
     "@ilos/core": "~0",
     "@ilos/env": "~0",
+    "@ilos/connection-redis": "~0",
     "@ilos/repository": "~0",
     "@pdc/provider-schema": "~0",
     "@pdc/provider-validator": "~0",

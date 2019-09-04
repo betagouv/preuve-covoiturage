@@ -6,7 +6,7 @@ import { JourneyInterface, PositionInterface } from '@pdc/provider-schema';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Find the territories where the driver and passenger started and ended their journey
-const context: ContextType = {
+const callContext: ContextType = {
   call: {
     user: {},
   },
@@ -43,7 +43,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
   private async fillTerritories(journey: JourneyInterface, dataPath: string): Promise<void> {
     const position: PositionInterface = _.get(journey, dataPath);
     if ('insee' in position) {
-      const data = await this.kernel.call('territory:findByInsee', { insee: position.insee }, context);
+      const data = await this.kernel.call('territory:findByInsee', { insee: position.insee }, callContext);
       _.set(journey, `${dataPath}.territory`, data._id);
     } else if ('lat' in position && 'lon' in position) {
       const data = await this.kernel.call(
@@ -52,7 +52,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
           lat: position.lat,
           lon: position.lon,
         },
-        context,
+        callContext,
       );
       _.set(journey, `${dataPath}.territory`, data);
     } else {

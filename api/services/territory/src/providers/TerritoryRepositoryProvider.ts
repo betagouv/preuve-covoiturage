@@ -30,9 +30,6 @@ export class TerritoryRepositoryProvider extends ParentRepository implements Ter
 
   /**
    * Find a terroritory by insee.
-   * @param {Number} insee
-   * @returns {Promise<Journey>}
-   * @memberof TerritoryRepositoryProvider
    */
   async findByInsee(insee: String): Promise<Territory> {
     const collection = await this.getCollection();
@@ -43,10 +40,6 @@ export class TerritoryRepositoryProvider extends ParentRepository implements Ter
 
   /**
    * Find a terroritory by position (lon, lat).
-   * @param {Number} lon
-   * @param {Number} lat
-   * @returns {Promise<Territory>}
-   * @memberof TerritoryRepositoryProvider
    */
   async findByPosition(lon: Number, lat: Number): Promise<Territory> {
     const collection = await this.getCollection();

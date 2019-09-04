@@ -122,7 +122,7 @@ export class CrosscheckProcessAction extends Action {
 
   // get all territories from journey
   private mapTerritories(journey: JourneyInterface): string[] {
-    let territories: string[] = [];
+    const territories: string[] = [];
 
     if ('driver' in journey) {
       territories.push(journey.driver.start.territory);

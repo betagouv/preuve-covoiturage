@@ -18,7 +18,7 @@ export class NormalizationCostAction extends AbstractAction {
   }
 
   public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
-    let normalizedJourney = { ...journey };
+    const normalizedJourney = { ...journey };
     // TODO: implementation
     // need to add duration and distance enrichment
 

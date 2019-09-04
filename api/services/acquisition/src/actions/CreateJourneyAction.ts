@@ -5,7 +5,7 @@ import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-sch
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 
-const context = {
+const callContext = {
   channel: {
     service: 'acquisition',
   },
@@ -43,20 +43,20 @@ export class CreateJourneyAction extends AbstractAction {
       result = await this.journeyRepository.createMany(journeys);
       const promises: Promise<void>[] = [];
       for (const journey of journeys) {
-        promises.push(this.kernel.notify('normalization:geo', journey, context));
+        promises.push(this.kernel.notify('normalization:geo', journey, callContext));
       }
       await Promise.all(promises);
     } else {
       result = await this.journeyRepository.create(this.cast(params, context.call.user.operator_id));
-      await this.kernel.notify('normalization:geo', result, context);
+      await this.kernel.notify('normalization:geo', result, callContext);
     }
     return result;
   }
 
-  protected cast(journey: CreateJourneyParamsInterface, operator_id: string): Journey {
+  protected cast(journey: CreateJourneyParamsInterface, operatorId: string): Journey {
     return new Journey({
       ...journey,
-      operator_id,
+      operator_id: operatorId,
       driver: this.castPerson(journey.driver, true),
       passenger: this.castPerson(journey.passenger, false),
       created_at: new Date(),
