@@ -1,0 +1,16 @@
+@import '~src/styles/variables';
+
+:host ::ng-deep {
+  .mat-stepper-horizontal {
+    background-color: white;
+  }
+  .mat-horizontal-stepper-header-container {
+    @media (min-width: 1400px) {
+      width: 1272px;
+    }
+    margin: auto;
+  }
+  .mat-horizontal-content-container {
+    background-color: $background-blue;
+  }
+}

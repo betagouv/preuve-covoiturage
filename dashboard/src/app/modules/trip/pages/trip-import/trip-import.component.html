@@ -1,0 +1,55 @@
+<div class="tripStats">
+  <h2>
+    Importez des données au format CSV
+  </h2>
+  <div class="tripStats-content">
+    <div class="tripStats-content-import">
+      <form [formGroup]="tripImportForm">
+        <app-upload formControlName="file" [progress]="progress"></app-upload>
+        <mat-error *ngIf="tripImportForm.controls.file.hasError('requiredFileType')">
+          Le fichier doit être au format 'CSV'
+        </mat-error>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="!tripImportForm.valid"
+          (click)="onTripImport()"
+        >
+          <mat-icon matSuffix>arrow_upward</mat-icon>
+          Importer
+        </button>
+      </form>
+      <h3>
+        Télécharger le fichier modèle
+      </h3>
+
+      <a
+        mat-flat-button
+        color="primary"
+        href="https://drive.google.com/uc?id=1EEgjYnq8OMOei-QnjYTgEsKhN7SZ_t3q&export=download"
+        download
+      >
+        <mat-icon matSuffix>arrow_downward</mat-icon>
+        Télécharger
+      </a>
+
+      <!--      TODO: uncomment when api route is made -->
+      <!--      <button-->
+      <!--        mat-flat-button-->
+      <!--        color="primary"-->
+      <!--        type="button"-->
+      <!--        (click)="onModelDownload()">-->
+      <!--        <mat-icon matSuffix>arrow_downward</mat-icon>-->
+      <!--        Télécharger-->
+      <!--      </button>-->
+    </div>
+    <app-help-card
+      [svgIcon]="'new_car'"
+      [title]="'Vous êtes nouveau sur Preuve de covoiturage ?'"
+      [hint]="'Retrouvez la documentation pour correctement importer des trajets sur le registre.'"
+      [link]="gitbookLinkCSVImport"
+    >
+    </app-help-card>
+  </div>
+</div>

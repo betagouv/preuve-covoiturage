@@ -1,0 +1,24 @@
+<form (ngSubmit)="onSubmit()">
+  <div class="p-grid ui-fluid" [formGroup]="resetPasswordForm">
+    <div class="p-col-12">
+      <input type="password" pPassword formControlName="password" />
+      <p-message
+        *ngIf="!resetPasswordForm.controls['password'].valid && submitted"
+        severity="error"
+        [text]="
+          resetPasswordForm.controls['password'].errors['required']
+            ? 'Le mot de passe doit contenir au moins 6 caractères.'
+            : ''
+        "
+      >
+      </p-message>
+    </div>
+  </div>
+  <p>
+    <p-button
+      (onClick)="(onSubmit)"
+      label="Envoyer"
+      [disabled]="!resetPasswordForm.controls['password'].valid"
+    ></p-button>
+  </p>
+</form>

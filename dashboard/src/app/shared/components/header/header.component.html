@@ -1,0 +1,39 @@
+<div class="Header">
+  <div class="Header-logo">
+    <a href="/">
+      <img src="assets/img/covoituragebetagouvfr.svg" alt="Logo de la Marianne, covoiturage.beta.gouv.fr" />
+    </a>
+  </div>
+  <div class="Header-menu" *ngIf="user">
+    <div
+      class="Header-menu-item"
+      *ngIf="authService.hasAnyGroup(['territory'])"
+      [routerLink]="'/campaign'"
+      routerLinkActive="active"
+    >
+      Campagnes
+    </div>
+    <div class="Header-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
+      Trajets
+    </div>
+  </div>
+  <div class="Header-user" *ngIf="user">
+    <button mat-stroked-button [matMenuTriggerFor]="menu">
+      <mat-icon>account_circle_outline</mat-icon>
+      <span class="Header-user-button-text">
+        {{ user.firstname + ' ' + user.lastname }}
+      </span>
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [routerLink]="'/admin'">
+        <mat-icon>settings</mat-icon>
+        Administration
+      </button>
+      <button mat-menu-item (click)="onLogout()">
+        <mat-icon>exit_to_app</mat-icon>
+        Déconnexion
+      </button>
+    </mat-menu>
+  </div>
+</div>

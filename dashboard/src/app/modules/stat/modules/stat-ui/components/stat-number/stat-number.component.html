@@ -1,0 +1,21 @@
+<div
+  class="stat-number"
+  (click)="onLinkClick()"
+  [class.stat-number--selected]="_selected"
+  [class.stat-number--disabled]="_disabled"
+>
+  <div class="stat-number-icon">
+    <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>
+  </div>
+  <div class="stat-number-content">
+    <div class="stat-number-title">
+      {{ statNumber.title }}
+    </div>
+    <p class="stat-number-hint">
+      {{ statNumber.hint }}
+    </p>
+    <div class="stat-number-link" *ngIf="statNumber.link">
+      <a class="link" (click)="onLinkClick()">{{ statNumber.link }}</a>
+    </div>
+  </div>
+</div>

@@ -1,143 +1,73 @@
+/* You can add global styles to this file, and also import other style files */
 @font-face {
-  font-family: "SourceSansPro";
-  src: url("assets/fonts/SourceSansPro/SourceSansPro-Regular.otf") format('opentype');
+  font-family: 'WorkSans';
+  src: url('assets/fonts/WorkSans/WorkSans-ExtraLight.ttf') format('truetype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'WorkSans';
+  src: url('assets/fonts/WorkSans/WorkSans-Medium.ttf') format('truetype');
   font-weight: normal;
 }
 
 @font-face {
-  font-family: "SourceSansPro";
-  src: url("assets/fonts/SourceSansPro/SourceSansPro-Bold.otf") format('opentype');
-  font-weight: bold;
+  font-family: 'WorkSans';
+  src: url('assets/fonts/WorkSans/WorkSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
 }
 
 @font-face {
-  font-family: "SourceSansPro";
-  src: url("assets/fonts/SourceSansPro/SourceSansPro-It.otf") format('opentype');
-  font-style: italic;
+  font-family: 'OpenSans';
+  src: url('assets/fonts/OpenSans/OpenSans-Regular.ttf') format('truetype');
   font-weight: normal;
 }
 
 @font-face {
-  font-family: "Evolventa";
-  src: url("assets/fonts/Evolventa/Evolventa-Regular.ttf") format('truetype');
-  font-weight: normal;
+  font-family: 'OpenSans';
+  src: url('assets/fonts/OpenSans/OpenSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
 }
 
-@font-face {
-  font-family: "Evolventa";
-  src: url("assets/fonts/Evolventa/Evolventa-Bold.ttf") format('truetype');
-  font-weight: bold;
-}
+@import '~ngx-toastr/toastr';
 
-@import 'assets/scss/variables';
-@import 'assets/scss/loader';
-@import "~primeicons/primeicons.css";
-@import "~primeng/resources/themes/nova-light/theme.css";
-@import "~primeng/resources/primeng.min.css";
-@import "~primeflex/primeflex.scss";
+@import 'styles/variables';
+@import 'styles/buttons';
+@import 'styles/inputs';
+@import 'styles/stepper';
+@import 'styles/table';
+@import 'styles/range';
 
-html {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #fdfdfd;
-}
-
+html,
 body {
+  font-family: 'WorkSans', sans-serif;
+  background: $background-blue;
   margin: 0;
-  padding: 0;
-  font-family: $family-secondary;
-  font-size: $font-size-base;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: $family-primary;
-}
-
-// wrap main content with padding
-.main__wrapper {
-  padding: 1rem 1rem 5rem;
-}
-
-// contain content with a max-width
-.main__container {
-  margin: 0 auto;
-  max-width: $container-width;
-}
-
-.auth__wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  max-width: 100%;
-  transform: translate(-50%, -50%);
-}
-
-a:hover {
-  cursor: pointer;
-}
-
-label {
-  color: grey;
-}
-
-.is-ellipsis {
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.button.is-white {
-  background-color: transparent;
-}
-
-.has-text-centered {
-  text-align: center;
-}
-
-.has-text-right {
-  text-align: right;
-}
-
-.has-text-left {
-  text-align: left;
-}
-
-.no-padding {
-  padding: 0;
-}
-
-.width-max {
   width: 100%;
+  height: 100%;
+  color: $color-text-black;
 }
 
-.is-hidden-touch {
-  @media(max-width: 768px) {
-    display: none;
-  }
+h1 {
+  font-size: $font-size-title;
+  font-weight: 600;
 }
 
-span.required {
-  font-weight: normal;
-  color: #d00;
+h2 {
+  font-size: $font-size-title-2;
+  font-weight: 600;
 }
 
-// table
-.options-column {
-  width: 80px;
-
-  div {
-    display: flex;
-    justify-content: space-around;
-
-    span {
-      cursor: pointer;
-    }
-  }
+p,
+span {
+  font-family: 'OpenSans', sans-serif;
+  font-size: $font-size-paragraph;
 }
 
-//body .ui-autocomplete.ui-autocomplete-multiple .ui-autocomplete-multiple-container {
-//  width: calc(100% - 33px);
-//}
+a.link,
+a.link:link,
+a.link:visited {
+  cursor: pointer;
+  color: $color-primary-dark;
+  text-decoration: underline;
+}

@@ -1,0 +1,39 @@
+@import '../../../../../../styles/variables';
+
+.RulesForm {
+  &-date {
+    display: flex;
+
+    & > div {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-time {
+      display: flex;
+      align-items: center;
+
+      & > mat-icon {
+        cursor: pointer;
+        margin: 0 0 14px 20px;
+        font-size: 30px;
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
+  &-range.CampaignSubForm-inputs {
+    padding-top: 36px;
+  }
+
+  &-target {
+    display: flex;
+    flex-direction: column;
+
+    mat-checkbox:last-child {
+      margin-top: 15px;
+    }
+  }
+}

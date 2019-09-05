@@ -1,0 +1,20 @@
+<div class="PolicyForm">
+  <h2>Choisissez l'objectif de votre campagne</h2>
+  <div class="PolicyForm--loading" *ngIf="campaignService.loading && !templates">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="templates && control" class="PolicyForm-wrapper">
+    <div
+      *ngFor="let template of templates"
+      class="PolicyForm-templateCard"
+      (click)="onTemplateCardClick(template)"
+      [ngClass]="{ 'PolicyForm-templateCard--selected': control.value && template._id === control.value._id }"
+    >
+      <span class="PolicyForm-templateCard-name">{{ template.name }}</span>
+      <span class="PolicyForm-templateCard-description">{{ template.description }}</span>
+    </div>
+  </div>
+  <div class="PolicyForm-custom">
+    <a class="link" (click)="onTemplateCardClick(null)">Définir un modèle personnalisé</a>
+  </div>
+</div>

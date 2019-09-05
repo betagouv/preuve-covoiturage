@@ -1,0 +1,28 @@
+<div class="RetributionForm">
+  <mat-form-field appearance="outline" class="shortFormField">
+    <mat-label>Montant</mat-label>
+    <input
+      matInput
+      type="number"
+      min="0"
+      placeholder="0,1"
+      required
+      [formControl]="forDriver ? controls.valueForDriver : controls.valueForPassenger"
+    />
+    <mat-error *ngIf="true">
+      Le montant du mode de rétribution doit être supérieur à 0.
+    </mat-error>
+  </mat-form-field>
+  <span>
+    {{ incentiveUnitFr[campaignFormControls.amount_unit.value] }}
+  </span>
+  <ng-container [ngSwitch]="campaignFormControls.incentiveMode.value">
+    <span *ngIf="forDriver && retributionParametersForm.get('conductorProportionalPassengers').value">
+      par passager
+    </span>
+    <span *ngSwitchCase="'per_trip'">par trajet</span>
+    <span *ngSwitchCase="'per_distance'">par km</span>
+  </ng-container>
+  <span *ngIf="forDriver"> pour le conducteur</span>
+  <span *ngIf="forPassenger"> pour le(s) passager(s)</span>
+</div>

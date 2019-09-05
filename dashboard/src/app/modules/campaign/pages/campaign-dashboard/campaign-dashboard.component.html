@@ -1,0 +1,47 @@
+<div class="CampaignDashboard">
+  <app-page-header>
+    <div class="CampaignDashboard-trips">
+      <div class="CampaignDashboard-trips-header">
+        <h1>Toutes vos campagnes</h1>
+        <button mat-flat-button [routerLink]="'/campaign/create'" class="color-punch">
+          Créer une nouvelle campagne
+        </button>
+      </div>
+      <div class="CampaignDashboard-trips-graph">
+        <app-stat-graph-view [graphName]="'trips'"></app-stat-graph-view>
+      </div>
+      <div>
+        <a class="link" [routerLink]="'/trip'">Voir toutes les statistiques</a>
+      </div>
+    </div>
+  </app-page-header>
+  <app-page-content>
+    <div class="CampaignDashboard-content">
+      <app-campaign-menu></app-campaign-menu>
+      <div class="CampaignDashboard-content-header">
+        <h2>Vos campagnes en cours</h2>
+        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
+          Nouvelle campagne
+        </button>
+      </div>
+      <div class="CampaignDashboard-content-list">
+        <app-campaigns-list [campaignStatus]="campaignStatus.VALIDATED"></app-campaigns-list>
+      </div>
+      <div class="CampaignDashboard-content-header">
+        <h2>Vos campagnes en brouillon</h2>
+        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
+          Nouveau brouillon
+        </button>
+      </div>
+      <div class="CampaignDashboard-content-list">
+        <app-campaigns-list [campaignStatus]="campaignStatus.DRAFT"></app-campaigns-list>
+      </div>
+      <div class="CampaignDashboard-content-header">
+        <h2>Vos campagnes terminées</h2>
+      </div>
+      <div class="CampaignDashboard-content-list">
+        <app-campaigns-list [campaignStatus]="campaignStatus.ARCHIVED"></app-campaigns-list>
+      </div>
+    </div>
+  </app-page-content>
+</div>

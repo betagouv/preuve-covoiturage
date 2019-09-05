@@ -1,0 +1,59 @@
+@import '~src/styles/variables';
+
+h3 {
+  padding-left: 30px;
+}
+
+.graph {
+  margin-bottom: 20px;
+  &-header {
+    margin-bottom: 15px;
+  }
+  &-message {
+    height: 249px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &-trips {
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    &-legend {
+      &-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 470px;
+      }
+      display: flex;
+      flex-wrap: wrap;
+      &-label span {
+        font-size: 16px;
+        color: #636363;
+      }
+    }
+  }
+}
+
+mat-button-toggle-group {
+  float: right;
+}
+
+.legend-square {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
+  border-radius: 3px;
+  &-primary-color {
+    background-color: $color-primary;
+  }
+  &-secondary-color {
+    background-color: $color-secondary;
+  }
+}

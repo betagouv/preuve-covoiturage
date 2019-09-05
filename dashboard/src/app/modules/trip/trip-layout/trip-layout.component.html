@@ -1,0 +1,46 @@
+<div class="TripLayout">
+  <app-page-header>
+    <h1 class="page-title">
+      Les trajets
+    </h1>
+    <div class="page-menu TripLayout-menu">
+      <nav mat-tab-nav-bar>
+        <ng-container *ngFor="let link of menu">
+          <a
+            mat-tab-link
+            *ngIf="authenticationService.hasAnyGroup(link.groups) && authenticationService.hasRole(link.role)"
+            [routerLink]="link.path"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [active]="rla.isActive"
+          >
+            {{ link.label }}
+          </a>
+        </ng-container>
+      </nav>
+      <button
+        *ngIf="hasCorrectUrl"
+        class="TripLayout-menu-filter-button"
+        mat-flat-button
+        color="primary"
+        [matBadge]="filterNumber"
+        matBadgeColor="accent"
+        (click)="toggleFilterDisplay()"
+      >
+        <mat-icon>filter_list_rounded</mat-icon>
+        Affiner les résultats
+      </button>
+    </div>
+  </app-page-header>
+  <app-page-content>
+    <div class="TripLayout-content" [class.filter-triangle]="showFilter && hasCorrectUrl">
+      <app-filter
+        *ngIf="hasCorrectUrl"
+        (filterNumber)="setFilterNumber($event)"
+        [showFilter]="showFilter"
+        (hideFilter)="toggleFilterDisplay()"
+      ></app-filter>
+      <router-outlet></router-outlet>
+    </div>
+  </app-page-content>
+</div>

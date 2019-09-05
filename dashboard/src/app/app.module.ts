@@ -1,88 +1,24 @@
-/* Angular */
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-/* PrimeNg */
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
-import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
+import { LOCALE_ID, NgModule } from '@angular/core';
 
-/* Local services */
-import { HttpApiInterceptor } from './applicativeService/interceptor/httpApiInterceptor';
-import { HeaderBag } from './applicativeService/interceptor/header-bag';
-import { Logged } from './applicativeService/authguard/logged';
-import { AuthGuard } from './applicativeService/authguard/service';
-import { AuthenticationService } from './applicativeService/authentication/service';
-import { LoggerService } from './applicativeService/logger/service';
-/* Local component */
-import { NotDeletedPipe } from './filters/notDeleted/pipe';
-import { AppComponent } from './app.component';
+import { registerLocaleData } from '@angular/common';
+
+import fr from '@angular/common/locales/fr';
+
 import { AppRoutingModule } from './app-routing.module';
-// Layout
-import { HeaderComponent } from './shared/layout/components/header/component';
-import { MenuComponent } from './shared/layout/components/menu/component';
-import { LayoutComponent } from './shared/layout/main/component';
-/* Feature modules */
-/* Shared modules */
-import { GraphicModule } from './shared/modules/graphic/graphic.module';
+import { AppComponent } from './app.component';
+import { CoreModule } from './core/core.module';
 
-/* Libs */
-
+registerLocaleData(fr);
 
 @NgModule({
-  declarations: [
-
-    // main
-    AppComponent,
-
-
-    // Layout Component
-    LayoutComponent,
-    HeaderComponent,
-    MenuComponent,
-
-    // pipes
-    NotDeletedPipe,
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule, // useful for primeng
-    AppRoutingModule,
-    HttpClientModule,
-
-    // Common module
-    GraphicModule,
-
-    // PrimeNg
-    ToastModule,
-    TooltipModule,
-    ConfirmDialogModule,
-    MenuModule,
-  ],
+  declarations: [AppComponent],
+  imports: [CoreModule, AppRoutingModule],
   providers: [
     {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpApiInterceptor,
-      multi: true,
+      provide: LOCALE_ID,
+      useValue: 'fr-FR',
     },
-    HttpClient,
-    AuthenticationService,
-    HeaderBag,
-    AuthGuard,
-    Logged,
-
-    // tools
-    LoggerService,
-
-    /* Prime ng*/
-    MessageService,
-    ConfirmationService,
   ],
   bootstrap: [AppComponent],
 })
-
-export class AppModule {
-}
+export class AppModule {}

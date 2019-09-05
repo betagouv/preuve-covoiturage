@@ -1,0 +1,11 @@
+<div class="CampaignMenu">
+  <app-menu-card
+    *ngFor="let menu of menus"
+    [button]="menu.button"
+    [title]="menu.title"
+    [hint]="menu.hint"
+    [svgIcon]="menu.svgIcon"
+    (buttonClicked)="menu.callback(router)"
+  >
+  </app-menu-card>
+</div>

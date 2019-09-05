@@ -1,47 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FieldsetModule } from 'primeng/fieldset';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { InputMaskModule } from 'primeng/inputmask';
-import { ButtonModule } from 'primeng/button';
 
-import { GraphicModule } from '~/shared/modules/graphic/graphic.module';
-import { ContactsFormComponent } from '~/shared/modules/form/components/contacts/component';
-import { UserUIModule } from '~/modules/user/modules/ui/ui.module';
+import { MaterialModule } from '~/shared/modules/material/material.module';
+import { FormContactComponent } from '~/shared/modules/form/components/form-contact/form-contact.component';
 
-import { AddressFormComponent } from './components/address/component';
-import { BankFormComponent } from './components/bank/component';
-import { CompanyFormComponent } from './components/company/component';
+import { FormBankComponent } from './components/form-bank/form-bank.component';
+import { FormAddressComponent } from './components/form-address/form-address.component';
+import { FormCompanyComponent } from './components/form-company/form-company.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    GraphicModule,
-    FieldsetModule,
-    InputTextModule,
-    InputMaskModule,
-    MessageModule,
-    ButtonModule,
-    UserUIModule,
-
-  ],
-  declarations: [
-    AddressFormComponent,
-    BankFormComponent,
-    CompanyFormComponent,
-    ContactsFormComponent,
-  ],
-  exports: [
-    FormsModule,
-    ReactiveFormsModule,
-    AddressFormComponent,
-    BankFormComponent,
-    CompanyFormComponent,
-    ContactsFormComponent,
-  ],
+  declarations: [FormBankComponent, FormAddressComponent, FormCompanyComponent, FormContactComponent],
+  imports: [CommonModule, FormsModule, MaterialModule, ReactiveFormsModule],
+  exports: [FormContactComponent, FormCompanyComponent, FormAddressComponent, FormBankComponent],
 })
-export class FormModule { }
+export class FormModule {}
