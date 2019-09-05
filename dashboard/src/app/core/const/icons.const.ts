@@ -20,6 +20,10 @@ export const ICONS = [
     path: 'assets/icons/borne.svg',
   },
   {
+    label: 'documentation',
+    path: 'assets/icons/documentation.svg',
+  },
+  {
     label: 'new_car',
     path: 'assets/icons/new_car.svg',
   },

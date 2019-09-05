@@ -32,6 +32,7 @@
     "leaflet": "^1.5.1",
     "leaflet.markercluster": "^1.4.1",
     "lodash": "^4.17.15",
+    "mathjs": "^6.1.0",
     "moment": "^2.24.0",
     "ngx-infinite-scroll": "^8.0.0",
     "ng2-nouislider": "^1.8.2",

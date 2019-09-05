@@ -1,0 +1,18 @@
+<div class="formula-form" [formGroup]="formulaFormGroup" *ngIf="campaignService._parametersLoaded$.value">
+  <mat-form-field appearance="outline" class="formula-form-field">
+    <mat-label>Formule</mat-label>
+    <input matInput type="text" placeholder="" required formControlName="formula" />
+    <mat-error *ngIf="formulaFormGroup.controls.formula.hasError('incorrectFormula')">
+      La formule n'est pas valide.
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="formula-form-select">
+    <input matInput placeholder="Variables" [matAutocomplete]="auto" [formControl]="parameterCtrl" />
+    <mat-icon matSuffix>youtube_searched_for</mat-icon>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onParameterSelect($event)">
+      <mat-option *ngFor="let parameter of filteredParameters | async" value="">
+        {{ parameter.varname }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</div>

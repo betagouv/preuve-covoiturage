@@ -7,13 +7,15 @@ import { UtilsService } from '~/core/services/utils.service';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 import { OperatorService } from '~/modules/operator/services/operator.service';
+import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-summary-form',
   templateUrl: './summary-form.component.html',
   styleUrls: ['./summary-form.component.scss'],
 })
-export class SummaryFormComponent implements OnInit {
+export class SummaryFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() loading: boolean;
   @Output() onSaveCampaign: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -23,7 +25,9 @@ export class SummaryFormComponent implements OnInit {
     public utils: UtilsService,
     private numberPipe: DecimalPipe,
     private operatorService: OperatorService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {}
 
@@ -58,7 +62,7 @@ export class SummaryFormComponent implements OnInit {
         ? 'conducteurs'
         : 'passagers'
     }`;
-    summaryText += ` ${campaign.rules.onlyMajorPeople ? 'majeurs' : ''}</b>`;
+    summaryText += ` ${campaign.rules.onlyAdult ? 'majeurs' : ''}</b>`;
     summaryText += ` effectuant un trajet`;
     if (campaign.rules.range[1] > 99) {
       summaryText += ` d'au moins ${campaign.rules.range[0]} km`;
@@ -67,40 +71,9 @@ export class SummaryFormComponent implements OnInit {
     } else {
       summaryText += ` compris entre ${campaign.rules.range[0]} à ${campaign.rules.range[1]} km`;
     }
-    summaryText += ` à raison de:`;
-    const retributions = <FormArray>this.campaignForm.controls.retributions;
-    const conductorProportionalPassengers = this.retributionParametersControls.conductorProportionalPassengers.value;
-    for (const retribution of retributions.controls) {
-      const retributionFormGroup: FormGroup = <FormGroup>retribution;
-      const valueForDriver = retributionFormGroup.controls.valueForDriver.value;
-      const valueForPassenger = retributionFormGroup.controls.valueForPassenger.value;
-      const start = retributionFormGroup.controls.start.value;
-      const end = retributionFormGroup.controls.end.value;
-      summaryText += `<br/>\r\n<b>- `;
-      if (valueForDriver !== null) {
-        // tslint:disable-next-line:max-line-length
-        summaryText += `${valueForDriver} ${INCENTIVE_UNITS_FR[this.controls.amount_unit.value]} par ${
-          this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
-        }`;
-        summaryText += conductorProportionalPassengers ? ' par passager' : '';
-        summaryText += ' pour le conducteur';
-      }
-      summaryText += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
-      if (valueForPassenger !== null) {
-        // tslint:disable-next-line:max-line-length
-        summaryText += `${valueForPassenger} ${INCENTIVE_UNITS_FR[this.controls.amount_unit.value]} par ${
-          this.controls.incentiveMode.value === 'per_trip' ? 'trajet' : 'km'
-        } pour le(s) passager(s)`;
-      }
-      if (start || end) {
-        if (!end) {
-          summaryText += ` à partir de ${start} km`;
-        } else {
-          summaryText += ` de ${start} à ${end} km`;
-        }
-      }
-      summaryText += `</b>.`;
-    }
+    summaryText += ` à raison de : `;
+    summaryText += '<br/><br/>\r\n\r\n';
+    summaryText += `${campaign.formula_expression.replace(/\r\n/g, '<br>\r\n')}`;
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `L’opération est limitée aux opérateurs proposant des registres de preuve`;
     summaryText += ` <b>${campaign.rules.ranks ? campaign.rules.ranks.join(' ou ') : ''}</b>.`;
@@ -108,33 +81,34 @@ export class SummaryFormComponent implements OnInit {
     summaryText += '<br/><br/>\r\n\r\n';
     const nbOperators = rules.controls.operators.value ? rules.controls.operators.value.length : 0;
     if (nbOperators === this.operatorService.entities.length) {
-      summaryText += `La campagne est accessible à tout les opérateurs présents sur le registre (${nbOperators}).`;
+      summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
     } else {
       summaryText += `La campagne est limitée à ${nbOperators} présents sur le registre.`;
     }
-    const restrictions = <FormArray>this.controls.restrictions;
-    if (restrictions.length > 0) {
-      // tslint:disable-next-line:max-line-length
-      const restrictionsWho: string[] = [
-        ...new Set(
-          restrictions.controls.map((formControl: FormControl) => {
-            if (formControl.value && formControl.value.who) {
-              switch (formControl.value.who) {
-                case 'driver':
-                  return 'conducteurs';
-                case 'passenger':
-                  return 'passagers';
-                case 'operator':
-                  return 'opérateurs';
-              }
-            }
-          }),
-        ),
-      ];
-      summaryText += ` Des restrictions concernant les ${restrictionsWho.join(', ')} seront appliqué.`;
-    } else {
-      summaryText += ` Aucune restriction concernant les conducteurs, passagers ou opérateurs n'est appliquée.`;
-    }
+    // todo: fix this part
+    // const restrictions = <FormArray>this.controls.restrictions;
+    // if (restrictions.length > 0) {
+    //   // tslint:disable-next-line:max-line-length
+    //   const restrictionsWho: string[] = [
+    //     ...new Set(
+    //       restrictions.controls.map((formControl: FormControl) => {
+    //         if (formControl.value && formControl.value.who) {
+    //           switch (formControl.value.who) {
+    //             case 'driver':
+    //               return 'conducteurs';
+    //             case 'passenger':
+    //               return 'passagers';
+    //             case 'operator':
+    //               return 'opérateurs';
+    //           }
+    //         }
+    //       }),
+    //     ),
+    //   ];
+    //   summaryText += ` Des restrictions concernant les ${restrictionsWho.join(', ')} seront appliqué.`;
+    // } else {
+    //   summaryText += ` Aucune restriction concernant les conducteurs, passagers ou opérateurs n'est appliquée.`;
+    // }
     return summaryText;
   }
 
@@ -144,8 +118,10 @@ export class SummaryFormComponent implements OnInit {
 
   saveAsTemplateChange($event) {
     if ($event.checked) {
+      this.controls.status.setValue(CampaignStatusEnum.TEMPLATE);
       this.controls.description.setValidators(Validators.required);
     } else {
+      this.controls.status.setValue(CampaignStatusEnum.DRAFT);
       this.controls.description.setValue(null);
       this.controls.description.setValidators(null);
     }

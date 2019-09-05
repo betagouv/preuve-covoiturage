@@ -1,26 +1,32 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 
 import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { Operator } from '~/core/entities/operator/operator';
+import { CAMPAIGN_RULES_MAX_DISTANCE } from '~/core/const/campaign/rules.const';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-rules-form',
   templateUrl: './rules-form.component.html',
   styleUrls: ['./rules-form.component.scss', '../campaign-sub-form.scss'],
 })
-export class RulesFormComponent implements OnInit {
+export class RulesFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
 
   tripClassKeys = Object.keys(TripClassEnum);
+  maxDistance = CAMPAIGN_RULES_MAX_DISTANCE;
 
-  constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {}
+  constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {
+    super();
+  }
 
   ngOnInit() {
-    this.initRulesForm();
     this.loadOperators();
+    this.initTargetChangeDetection();
   }
 
   get rulesForm(): FormGroup {
@@ -43,7 +49,7 @@ export class RulesFormComponent implements OnInit {
     this.timeCtrlArray.removeAt(idx);
   }
 
-  showDateLabel() {
+  get showDateLabel() {
     let label = '';
     const weekDays = this.rulesForm.get('weekday').value;
     if (!weekDays) {
@@ -74,6 +80,9 @@ export class RulesFormComponent implements OnInit {
 
     const timeRanges = this.timeCtrlArray.value;
     if (timeRanges && timeRanges.length > 0) {
+      if (weekDays.length > 0) {
+        label += ' <br>';
+      }
       label += ' De ';
       label += timeRanges
         .map((timeRange: IncentiveTimeRule) => {
@@ -87,12 +96,12 @@ export class RulesFormComponent implements OnInit {
     return label;
   }
 
-  showDistanceLabel(): string {
+  get showDistanceLabel(): string {
     const range = this.rulesForm.get('range').value;
-    if (range && range.length < 2) {
+    if (range && (range.length < 2 || range === [0, 0])) {
       return '';
     }
-    if (range[1] > 99) {
+    if (range[1] >= CAMPAIGN_RULES_MAX_DISTANCE) {
       return `A partir de ${range[0]} km`;
     }
     if (range[0] < 1) {
@@ -111,14 +120,29 @@ export class RulesFormComponent implements OnInit {
 
   showTargetLabel(): string {
     let label = '';
-    if (this.rulesForm.get('forDriver').value) {
+    const forDriver = this.rulesForm.get('forDriver').value;
+    const forPassenger = this.rulesForm.get('forPassenger').value;
+    const forTrip = this.rulesForm.get('forTrip').value;
+    const onlyAdult = this.rulesForm.get('onlyAdult').value;
+
+    if (!(forDriver || forPassenger || forTrip)) {
+      return '';
+    }
+
+    if (forDriver) {
       label += 'Conducteurs';
     }
-    if (this.rulesForm.get('forPassenger').value) {
-      label += this.rulesForm.get('forDriver').value ? ' et passagers' : 'Passagers';
+    if (forPassenger) {
+      label += forDriver ? ' et passagers' : 'Passagers';
+      if (onlyAdult) {
+        label += ', majeurs uniquement';
+      }
     }
-    if (this.rulesForm.get('onlyMajorPeople').value) {
-      label += ', majeurs uniquement';
+    if (forTrip) {
+      label += 'Trajets';
+      if (onlyAdult) {
+        label += ', passagers majeurs uniquement';
+      }
     }
     return label;
   }
@@ -143,45 +167,59 @@ export class RulesFormComponent implements OnInit {
     return false;
   }
 
-  private initRulesForm() {
-    this.campaignForm.controls.rules = this._formBuilder.group({
-      weekday: [null, Validators.required],
-      time: this._formBuilder.array([]),
-      range: [[0, 50]],
-      ranks: [null, Validators.required],
-      onlyMajorPeople: [],
-      forDriver: [],
-      forPassenger: [],
-      operators: [],
+  private initTargetChangeDetection() {
+    this.controls.forDriver.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
+      if (checked) {
+        this.controls.forTrip.setValue(null);
+        if (!this.controls.forPassenger.value) {
+          this.controls.onlyAdult.setValue(null);
+        }
+      }
+    });
+    this.controls.forPassenger.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
+      if (checked) {
+        this.controls.forTrip.setValue(null);
+      } else if (this.controls.forDriver.value) {
+        this.controls.onlyAdult.setValue(null);
+      }
+    });
+    this.controls.forTrip.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
+      if (checked) {
+        this.controls.forPassenger.setValue(null);
+        this.controls.forDriver.setValue(null);
+      }
     });
   }
 
   private loadOperators() {
-    this.operatorService.load().subscribe(
-      () => {
-        // TODO DELETE
-        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
-      },
-      (err) => {
-        this.operatorService._entities$.next([
-          {
-            _id: '1',
-            nom_commercial: 'Maxicovoit',
-            raison_sociale: 'Maxicovoit SAS',
-          },
-          {
-            _id: '2',
-            nom_commercial: 'Supercovoit',
-            raison_sociale: 'Supercovoit SAS',
-          },
-          {
-            _id: '3',
-            nom_commercial: 'Batcovoit',
-            raison_sociale: 'Batcovoit SAS',
-          },
-        ]);
-        this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
-      },
-    );
+    this.operatorService
+      .load()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        () => {
+          // TODO DELETE
+          this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+        },
+        (err) => {
+          this.operatorService._entities$.next([
+            {
+              _id: '1',
+              nom_commercial: 'Maxicovoit',
+              raison_sociale: 'Maxicovoit SAS',
+            },
+            {
+              _id: '2',
+              nom_commercial: 'Supercovoit',
+              raison_sociale: 'Supercovoit SAS',
+            },
+            {
+              _id: '3',
+              nom_commercial: 'Batcovoit',
+              raison_sociale: 'Batcovoit SAS',
+            },
+          ]);
+          this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+        },
+      );
   }
 }

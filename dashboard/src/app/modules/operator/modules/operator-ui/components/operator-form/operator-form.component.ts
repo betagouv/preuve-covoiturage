@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { OperatorService } from '~/modules/operator/services/operator.service';
@@ -10,20 +11,23 @@ import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { Contact } from '~/core/entities/shared/contact';
 import { FormBank } from '~/shared/modules/form/forms/form-bank';
 import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-operator-form',
   templateUrl: './operator-form.component.html',
   styleUrls: ['./operator-form.component.scss'],
 })
-export class OperatorFormComponent implements OnInit {
+export class OperatorFormComponent extends DestroyObservable implements OnInit {
   public operatorForm: FormGroup;
 
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
     private _operatorService: OperatorService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.initOperatorForm();
@@ -42,30 +46,33 @@ export class OperatorFormComponent implements OnInit {
   }
 
   private initOperatorFormValue(): void {
-    this._operatorService.loadOne().subscribe(
-      () => {},
-      (err) => {
-        // TODO TMP DELETE WHEN BACK IS LINKED
-        const operator = new Operator({
-          _id: '5c66d89760e6ee004a6cab1f',
-          nom_commercial: 'Opérateur',
-          raison_sociale: 'Opérateur SAS',
-          company: new Company({
-            siren: '123456789',
-            naf_entreprise: '1234A',
-          }),
-          address: new Address({
-            street: '5 rue de brest',
-            postcode: '69002',
-            city: 'Lyon',
-            country: 'France',
-          }),
-        });
+    this._operatorService
+      .loadOne()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        () => {},
+        (err) => {
+          // TODO TMP DELETE WHEN BACK IS LINKED
+          const operator = new Operator({
+            _id: '5c66d89760e6ee004a6cab1f',
+            nom_commercial: 'Opérateur',
+            raison_sociale: 'Opérateur SAS',
+            company: new Company({
+              siren: '123456789',
+              naf_entreprise: '1234A',
+            }),
+            address: new Address({
+              street: '5 rue de brest',
+              postcode: '69002',
+              city: 'Lyon',
+              country: 'France',
+            }),
+          });
 
-        this._operatorService._entity$.next(operator);
-      },
-    );
-    this._operatorService.operator$.subscribe((operator: Operator | null) => {
+          this._operatorService._entity$.next(operator);
+        },
+      );
+    this._operatorService.operator$.pipe(takeUntil(this.destroy$)).subscribe((operator: Operator | null) => {
       if (operator) {
         const { raison_sociale, nom_commercial, address, company, contacts, bank } = operator;
         this.operatorForm.setValue({ raison_sociale, nom_commercial, address, company, contacts, bank });

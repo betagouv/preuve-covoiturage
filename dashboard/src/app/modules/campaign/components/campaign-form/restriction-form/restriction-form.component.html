@@ -1,28 +1,21 @@
-<form [formGroup]="restrictionForm" *ngIf="restrictionForm" class="RestrictionForm">
+<form [formGroup]="restrictionformGroup" class="RestrictionForm">
   <mat-form-field appearance="outline" class="RestrictionForm-howMuch">
     <mat-label>Combien</mat-label>
-    <input matInput type="number" min="0" placeholder="1" required formControlName="howMuch" (blur)="onTouched()" />
+    <input matInput type="number" min="0" placeholder="1" required formControlName="quantity" />
   </mat-form-field>
-  <mat-form-field appearance="outline" class="RestrictionForm-what">
-    <mat-label>Quoi</mat-label>
-    <mat-select required formControlName="what" required (blur)="onTouched()">
-      <mat-option [value]="'trip'">trajets</mat-option>
-      <mat-option [value]="'amount'">€ / points</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <span>maximum par</span>
+  <span>trajets maximum par</span>
   <mat-form-field appearance="outline" class="RestrictionForm-who">
     <mat-label>Qui</mat-label>
-    <mat-select required formControlName="who" required (blur)="onTouched()">
-      <mat-option [value]="'driver'">conducteur</mat-option>
-      <mat-option [value]="'passenger'">passager</mat-option>
-      <mat-option [value]="'operator'">opérateur</mat-option>
+    <mat-select required formControlName="is_driver">
+      <mat-option [value]="true">conducteur</mat-option>
+      <mat-option [value]="false">passager</mat-option>
     </mat-select>
   </mat-form-field>
   <span>par</span>
   <mat-form-field appearance="outline">
     <mat-label>Quand</mat-label>
-    <mat-select required formControlName="when" required (blur)="onTouched()">
+    <mat-select required formControlName="period">
+      <!--      TODO: for loop from enum -->
       <mat-option [value]="'day'">jour</mat-option>
       <mat-option [value]="'week'">semaine</mat-option>
       <mat-option [value]="'month'">mois</mat-option>

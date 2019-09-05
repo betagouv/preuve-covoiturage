@@ -1,19 +1,20 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { ToastrService } from 'ngx-toastr';
+import { takeUntil } from 'rxjs/operators';
 
 import { UserService } from '~/core/services/authentication/user.service';
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { USER_ROLES, USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-create-edit-user-form',
   templateUrl: './create-edit-user-form.component.html',
   styleUrls: ['./create-edit-user-form.component.scss'],
 })
-export class CreateEditUserFormComponent implements OnInit {
+export class CreateEditUserFormComponent extends DestroyObservable implements OnInit {
   @Input() user: User;
   @Input() isCreating: boolean;
 
@@ -23,7 +24,9 @@ export class CreateEditUserFormComponent implements OnInit {
   isCreatingUpdating = false;
   public roles = USER_ROLES;
 
-  constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {}
+  constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {
+    super();
+  }
 
   ngOnInit() {
     if (!this.user) {
@@ -41,7 +44,7 @@ export class CreateEditUserFormComponent implements OnInit {
     const jsonRPCRequest = this.isCreating
       ? this._userService.create(this.createEditUserForm.value)
       : this._userService.patch(this.createEditUserForm.value);
-    jsonRPCRequest.subscribe(
+    jsonRPCRequest.pipe(takeUntil(this.destroy$)).subscribe(
       (user) => {
         this.isCreatingUpdating = false;
         if (this.isCreating) {

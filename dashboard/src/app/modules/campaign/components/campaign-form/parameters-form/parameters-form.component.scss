@@ -1,6 +1,12 @@
-@import '../../../../../../styles/variables';
+@import '~src/styles/variables';
 
 .ParametersForm {
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &-date {
     mat-form-field:not(:first-child) {
       margin-left: 10px;
@@ -25,11 +31,9 @@
     padding: 0;
 
     > div:first-child {
+      text-align: right;
       padding: 16px 24px 20px 24px;
       background: $background-white;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
     }
 
     > div:not(:first-child) {
@@ -76,40 +80,79 @@
       margin-top: 20px;
       display: flex;
 
-      & > * {
+      &-inputs {
+        flex: 2;
+        position: relative;
+      }
+
+      &-remove {
         flex: 1;
         position: relative;
+        display: flex;
+        align-items: center;
+        mat-icon {
+          cursor: pointer;
+          font-size: 30px;
+          width: 30px;
+          height: 30px;
+        }
       }
     }
 
     &-staggered {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      margin-right: 20px;
 
-      &::before {
+      &::after {
         display: block;
         position: absolute;
         height: 100%;
         content: '';
-        left: 0;
-        border-left: 2px solid $color-secondary;
-      }
-
-      mat-icon {
-        cursor: pointer;
-        font-size: 30px;
-        width: 30px;
-        height: 30px;
-        position: absolute;
         right: 0;
-        bottom: 43%;
+        border-left: 2px solid $color-secondary;
       }
     }
 
     &-actions {
       display: flex;
       justify-content: space-around;
+    }
+  }
+
+  &-formulaExpression {
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  &-arrow {
+    width: 90%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  &-formula {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    app-formula-form {
+      width: 90%;
+    }
+    &-actions {
+      display: flex;
+      justify-content: space-around;
+    }
+    mat-icon {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
     }
   }
 

@@ -14,7 +14,7 @@ import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.
 import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campaign-create-edit.component';
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
-import { PolicyFormComponent } from './components/campaign-form/policy-form/policy-form.component';
+import { CampaignTemplatesComponent } from './components/campaign-form/campaign-templates/campaign-templates.component';
 import { RulesFormComponent } from './components/campaign-form/rules-form/rules-form.component';
 import { ParametersFormComponent } from './components/campaign-form/parameters-form/parameters-form.component';
 import { SummaryFormComponent } from './components/campaign-form/summary-form/summary-form.component';
@@ -24,6 +24,8 @@ import { StaggeredFormComponent } from './components/campaign-form/staggered-for
 import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-discover.component';
 import { CampaignCardComponent } from './components/campaign-card/campaign-card.component';
 import { CampaignMapComponent } from './components/campaign-map/campaign-map.component';
+import { FormulaFormComponent } from './components/campaign-form/formula-form/formula-form.component';
+import { FormulaGuideComponent } from './components/campaign-form/formula-guide/formula-guide.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,7 @@ import { CampaignMapComponent } from './components/campaign-map/campaign-map.com
     CampaignsListComponent,
     CampaignCreateEditComponent,
     CampaignFormComponent,
-    PolicyFormComponent,
+    CampaignTemplatesComponent,
     RulesFormComponent,
     ParametersFormComponent,
     SummaryFormComponent,
@@ -42,6 +44,8 @@ import { CampaignMapComponent } from './components/campaign-map/campaign-map.com
     CampaignDiscoverComponent,
     CampaignCardComponent,
     CampaignMapComponent,
+    FormulaFormComponent,
+    FormulaGuideComponent,
   ],
   imports: [
     CampaignRoutingModule,

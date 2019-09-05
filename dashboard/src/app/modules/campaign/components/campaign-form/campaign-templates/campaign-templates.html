@@ -1,0 +1,20 @@
+<div class="CampaignTemplates">
+  <h2>Choisissez l'objectif de votre campagne</h2>
+  <div class="CampaignTemplates--loading" *ngIf="campaignService.loading && !templates">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="templates" class="CampaignTemplates-wrapper">
+    <div
+      *ngFor="let template of templates"
+      class="CampaignTemplates-templateCard"
+      (click)="onTemplateCardClick(template.template_id)"
+      [ngClass]="{ 'CampaignTemplates-templateCard--selected': templateId && template.template_id === templateId }"
+    >
+      <span class="CampaignTemplates-templateCard-name">{{ template.name }}</span>
+      <span class="CampaignTemplates-templateCard-description">{{ template.description }}</span>
+    </div>
+  </div>
+  <div class="CampaignTemplates-custom">
+    <a class="link" (click)="onTemplateCardClick(null)">Définir un modèle personnalisé</a>
+  </div>
+</div>

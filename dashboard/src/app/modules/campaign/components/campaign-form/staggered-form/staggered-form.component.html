@@ -1,10 +1,10 @@
 <div class="StaggeredForm">
   <span *ngIf="!isLast">De </span>
   <span *ngIf="isLast">A partir de </span>
-  <span>{{ controls.start.value !== null ? controls.start.value : '?' }}</span>
+  <span>{{ controls.min.value !== null ? controls.min.value : '?' }}</span>
   <span *ngIf="!isLast"> à</span>
   <mat-form-field appearance="outline" *ngIf="!isLast">
-    <input matInput type="number" min="0" required [formControl]="controls.end" />
+    <input matInput type="number" min="0" required [formControl]="controls.max" />
   </mat-form-field>
   <span> km</span>
 </div>

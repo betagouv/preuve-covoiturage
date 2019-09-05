@@ -1,11 +1,18 @@
 <div class="CampaignForm">
-  <mat-horizontal-stepper #stepper [linear]="true">
-    <mat-step [stepControl]="templateFormGroup">
+  <div class="CampaignForm--loading" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <mat-horizontal-stepper #stepper [linear]="true" *ngIf="!loading" [selectedIndex]="currentStep">
+    <mat-step [completed]="matStepperCompleted">
       <ng-template matStepLabel>Campagne</ng-template>
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-policy-form [control]="templateFormGroup.get('templateCtrl')" [matStepper]="stepper"></app-policy-form>
+            <app-campaign-templates
+              (setTemplate)="setTemplate($event)"
+              [matStepper]="stepper"
+              [campaignForm]="campaignFormGroup"
+            ></app-campaign-templates>
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
@@ -15,14 +22,7 @@
             </app-help-card>
           </div>
           <div class="CampaignForm-content-actions">
-            <button
-              mat-flat-button
-              class="large"
-              color="primary"
-              matStepperNext
-              (click)="setCampaignTemplate()"
-              [disabled]="!templateFormGroup.valid"
-            >
+            <button mat-flat-button class="large" color="primary" matStepperNext *ngIf="showFirstPageNextStep">
               Étape suivante
             </button>
           </div>
@@ -65,12 +65,14 @@
           <div class="CampaignForm-content-wrapper">
             <app-parameters-form [campaignForm]="campaignFormGroup"></app-parameters-form>
             <app-help-card
+              *ngIf="!campaignFormGroup.controls.expertMode.value"
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
               [hint]="helpCard.hint"
               [link]="helpCard.link"
             >
             </app-help-card>
+            <app-formula-guide *ngIf="campaignFormGroup.controls.expertMode.value"></app-formula-guide>
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
@@ -88,8 +90,8 @@
           <div class="CampaignForm-content-wrapper CampaignForm-content-wrapper--summary">
             <app-summary-form
               [campaignForm]="campaignFormGroup"
-              [loading]="loading"
-              (onSaveCampaign)="saveCampaign($event)"
+              [loading]="requestLoading"
+              (onSaveCampaign)="saveOrLaunchCampaign($event)"
             ></app-summary-form>
           </div>
           <div class="CampaignForm-content-actions">

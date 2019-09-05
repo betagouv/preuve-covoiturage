@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
 import { Stat } from '~/core/entities/stat/stat';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
@@ -6,6 +7,7 @@ import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface'
 import { FilterService } from '~/core/services/filter.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { URLS } from '~/core/const/main.const';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { StatService } from '../../../../services/stat.service';
 import { mockStats } from '../../../../mocks/stats';
@@ -15,7 +17,7 @@ import { mockStats } from '../../../../mocks/stats';
   templateUrl: './stat-territory-view.component.html',
   styleUrls: ['./stat-territory-view.component.scss'],
 })
-export class StatTerritoryViewComponent implements OnInit {
+export class StatTerritoryViewComponent extends DestroyObservable implements OnInit {
   public gitbookLinkStats: string = URLS.gitbookLinkStats;
   public graphName: statDataNameType;
   public selected: GraphNamesInterface;
@@ -31,13 +33,15 @@ export class StatTerritoryViewComponent implements OnInit {
 
   @Input() statViewConfig: { names: statDataNameType[]; defaultGraphName: statDataNameType };
 
-  constructor(public statService: StatService, public filterService: FilterService) {}
+  constructor(public statService: StatService, public filterService: FilterService) {
+    super();
+  }
 
   ngOnInit() {
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
-    this.filterService._filter$.subscribe((filter: FilterInterface) => {
+    this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
       this.loadStat(filter);
     });
   }
@@ -46,14 +50,17 @@ export class StatTerritoryViewComponent implements OnInit {
     if (this.statService.loading) {
       return;
     }
-    this.statService.loadOne(filter).subscribe(
-      () => {},
-      (err) => {
-        // TODO TMP DELETE WHEN BACK IS LINKED
-        const stat = new Stat(mockStats);
-        this.statService.formatData(stat);
-      },
-    );
+    this.statService
+      .loadOne(filter)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        () => {},
+        (err) => {
+          // TODO TMP DELETE WHEN BACK IS LINKED
+          const stat = new Stat(mockStats);
+          this.statService.formatData(stat);
+        },
+      );
   }
 
   /**

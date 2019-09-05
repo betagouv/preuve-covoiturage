@@ -176,17 +176,17 @@ export class AuthenticationService {
     }
 
     // // TODO DELETE WHEN LOGIN IS OK
-    // this.onLoggin({
-    //   user: new User({
-    //     _id: 1,
-    //     firstname: 'Opérateur',
-    //     lastname: 'Decovoit',
-    //     email: 'preuve.decovoit@yopmail.com',
-    //     role: 'admin',
-    //     group: 'operator',
-    //     permissions: OPERATORS_PERMISSIONS.admin,
-    //   }),
-    // });
+    this.onLoggin({
+      user: new User({
+        _id: 1,
+        firstname: 'Opérateur',
+        lastname: 'Decovoit',
+        email: 'preuve.decovoit@yopmail.com',
+        role: 'admin',
+        group: 'operator',
+        permissions: OPERATORS_PERMISSIONS.admin,
+      }),
+    });
     //
     // TODO DELETE WHEN LOGIN IS OK
     this.onLoggin({

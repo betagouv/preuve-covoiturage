@@ -1,4 +1,4 @@
-@import '../../../../../../styles/variables';
+@import '~src/styles/variables';
 
 .RulesForm {
   &-date {
@@ -21,6 +21,16 @@
         width: 30px;
         height: 30px;
       }
+    }
+  }
+
+  &-target {
+    ::ng-deep .mat-checkbox-label {
+      display: flex;
+    }
+    mat-icon {
+      margin-left: 5px;
+      cursor: pointer;
     }
   }
 

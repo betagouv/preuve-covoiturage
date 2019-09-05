@@ -14,7 +14,7 @@
             Jours de la semaine
           </mat-panel-title>
           <mat-panel-description>
-            {{ showDateLabel() }}
+            <span [innerHTML]="showDateLabel"> </span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs RulesForm-date">
@@ -50,14 +50,16 @@
             Distance
           </mat-panel-title>
           <mat-panel-description>
-            {{ showDistanceLabel() }}
+            <span>
+              {{ showDistanceLabel }}
+            </span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="CampaignSubForm-inputs RulesForm-range">
           <nouislider
             [connect]="true"
             [min]="0"
-            [max]="100"
+            [max]="maxDistance"
             [step]="1"
             [tooltips]="[true, true]"
             [formControl]="rulesForm.get('range')"
@@ -88,10 +90,8 @@
       <mat-expansion-panel
         [ngClass]="{
           'mat-expansion-panel-error':
-            controls.forDriver.touched &&
-            !controls.forDriver.value &&
-            controls.forPassenger.touched &&
-            !controls.forPassenger.value
+            (controls.forDriver.touched || controls.forPassenger.touched || controls.forTrip.touched) &&
+            !(controls.forTrip.value || controls.forPassenger.value || controls.forDriver.value)
         }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
@@ -103,10 +103,25 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="RulesForm-target CampaignSubForm-inputs">
-          <mat-label>Qui souhaitez vous rémunérer ?</mat-label>
+          <mat-label>Que souhaitez vous subventionner ?</mat-label>
           <mat-checkbox color="primary" formControlName="forDriver">Conducteurs</mat-checkbox>
-          <mat-checkbox color="primary" formControlName="forPassenger">Passagers</mat-checkbox>
-          <mat-checkbox color="primary" formControlName="onlyMajorPeople">Personnes majeurs uniquement</mat-checkbox>
+          <mat-checkbox color="primary" #forPassenger formControlName="forPassenger">Passagers</mat-checkbox>
+          <mat-checkbox color="primary" #forTrip formControlName="forTrip">
+            Trajets
+            <mat-icon
+              matSuffix
+              color="accent"
+              matTooltip="L'incitation sera affectée au trajet, c'est à la charge de l'opérateur de choisir la répartition entre conducteur et passager(s)"
+              aria-label="Information sur l'affection par trajet"
+              >info</mat-icon
+            >
+          </mat-checkbox>
+          <mat-checkbox
+            [disabled]="!forPassenger.checked && !forTrip.checked"
+            color="primary"
+            formControlName="onlyAdult"
+            >Personnes majeurs uniquement</mat-checkbox
+          >
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel

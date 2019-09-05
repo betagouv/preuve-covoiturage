@@ -6,6 +6,11 @@
     }
   }
 
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
+
   &-content {
     margin-top: 50px;
 
@@ -14,7 +19,7 @@
       justify-content: space-around;
       align-items: center;
 
-      app-policy-form,
+      app-campaign-templates,
       app-rules-form,
       app-parameters-form {
         flex: 3;
