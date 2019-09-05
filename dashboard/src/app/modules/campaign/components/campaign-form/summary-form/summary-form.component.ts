@@ -7,8 +7,8 @@ import { UtilsService } from '~/core/services/utils.service';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 import { OperatorService } from '~/modules/operator/services/operator.service';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-summary-form',
@@ -118,10 +118,10 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
 
   saveAsTemplateChange($event) {
     if ($event.checked) {
-      this.controls.status.setValue(CampaignStatus.TEMPLATE);
+      this.controls.status.setValue(CampaignStatusEnum.TEMPLATE);
       this.controls.description.setValidators(Validators.required);
     } else {
-      this.controls.status.setValue(CampaignStatus.DRAFT);
+      this.controls.status.setValue(CampaignStatusEnum.DRAFT);
       this.controls.description.setValue(null);
       this.controls.description.setValidators(null);
     }

@@ -10,11 +10,11 @@ import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
-import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { RulesRangeType } from '~/core/types/campaign/rulesRangeType';
 import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-campaign-form',
@@ -81,7 +81,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   private launchCampaign(campaign: Campaign) {
-    campaign.status = CampaignStatus.VALIDATED;
+    campaign.status = CampaignStatusEnum.VALIDATED;
     this._dialog
       .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
       .pipe(takeUntil(this.destroy$))
@@ -179,7 +179,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     this.campaignFormGroup.patchValue({
       _id: campaign._id,
       template_id: campaign.template_id,
-      status: isTemplate ? campaign.status : CampaignStatus.DRAFT,
+      status: isTemplate ? campaign.status : CampaignStatusEnum.DRAFT,
       name: campaign.name,
       description: campaign.description,
       start: campaign.start,
@@ -255,7 +255,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
             new Campaign({
               _id: '5d6fa2995623dc991b288f11',
               template_id: null,
-              status: CampaignStatus.DRAFT,
+              status: CampaignStatusEnum.DRAFT,
               name: "Campagne d'incitation en idf",
               description: 'Délibération 2019/143',
               rules: <IncentiveRules>{
@@ -277,7 +277,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
                 .toDate(),
               max_trips: null,
               max_amount: 2000000,
-              amount_unit: IncentiveUnit.EUR,
+              amount_unit: IncentiveUnitEnum.EUR,
               restrictions: [
                 {
                   quantity: 2,

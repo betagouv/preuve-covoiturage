@@ -39,7 +39,7 @@
             <mat-label>Unité</mat-label>
             <mat-select formControlName="amount_unit" required>
               <mat-option *ngFor="let incentiveUnit of incentiveUnitKeys" [value]="incentiveUnit">
-                {{ getIncentiveUnitLabel(incentiveUnit) }}
+                {{ incentiveUnitFr[incentiveUnit] }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="controls.amount_unit.hasError('required')">

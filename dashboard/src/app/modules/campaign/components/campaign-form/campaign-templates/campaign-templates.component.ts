@@ -5,14 +5,12 @@ import { MatStepper } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { Campaign } from '~/core/entities/campaign/campaign';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
-import { CampaignInterface, CreateCampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
-import { CampaignStatus } from '~/core/entities/campaign/campaign-status';
-import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
+import { CreateCampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-campaign-templates',
@@ -92,7 +90,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
             end: null,
             max_trips: null,
             max_amount: null,
-            amount_unit: IncentiveUnit.EUR,
+            amount_unit: IncentiveUnitEnum.EUR,
             restrictions: [],
             formula_expression: '',
             formulas: [],
@@ -117,7 +115,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
             end: null,
             max_trips: null,
             max_amount: null,
-            amount_unit: IncentiveUnit.EUR,
+            amount_unit: IncentiveUnitEnum.EUR,
             restrictions: [],
             formula_expression: '',
             formulas: [],
@@ -142,7 +140,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
             end: null,
             max_trips: null,
             max_amount: null,
-            amount_unit: IncentiveUnit.EUR,
+            amount_unit: IncentiveUnitEnum.EUR,
             restrictions: [],
             formula_expression: '',
             formulas: [],

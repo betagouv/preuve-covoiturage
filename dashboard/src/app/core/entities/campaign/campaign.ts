@@ -1,7 +1,11 @@
 // tslint:disable:variable-name
 
 import { Territory } from '~/core/entities/territory/territory';
-import { CampaignInterface, IncentiveFormulaInterface } from '~/core/interfaces/campaign/campaignInterface';
+import {
+  CampaignInterface,
+  IncentiveFormulaInterface,
+  RestrictionInterface,
+} from '~/core/interfaces/campaign/campaignInterface';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';

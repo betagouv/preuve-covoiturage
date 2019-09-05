@@ -21,9 +21,9 @@
         <span>Du {{ campaign.start | date: 'dd MMMM' }} au {{ campaign.end | date: 'dd MMMM' }}</span>
       </div>
       <div class="CampaignsList-item-actions" [ngSwitch]="campaign.status">
-        <a class="link" *ngSwitchCase="campaignStatusType.DRAFT" routerLink="/campaign/{{ campaign._id }}">Modifier</a>
+        <a class="link" *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/{{ campaign._id }}">Modifier</a>
         <a class="link" *ngSwitchDefault>Voir le détail</a>
-        <a class="link" (click)="deleteCampaign(campaign)" *ngSwitchCase="campaignStatusType.DRAFT">Supprimer</a>
+        <a class="link" (click)="deleteCampaign(campaign)" *ngSwitchCase="CampaignStatusEnum.DRAFT">Supprimer</a>
       </div>
     </div>
   </app-list-item>

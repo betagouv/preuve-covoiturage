@@ -11,8 +11,8 @@ import { IncentiveFormulaParameter } from '~/core/entities/campaign/incentive-fo
 import { RetributionInterface } from '~/core/interfaces/campaign/retributionInterface';
 import { FormulaParametersEnum } from '~/core/enums/campaign/formula-parameters.enum';
 import { FormulaFunctionsEnum } from '~/core/enums/campaign/formula-functions.enum';
-import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
 import { TemplateInterface } from '~/core/interfaces/campaign/campaignInterface';
+import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -101,7 +101,7 @@ export class CampaignService extends ApiService<Campaign> {
 
   public getExplanationFromRetributions(
     retributions: RetributionInterface[],
-    unit: IncentiveUnit,
+    unit: IncentiveUnitEnum,
     forTrip: boolean | null,
   ) {
     let text = '';
@@ -123,7 +123,7 @@ export class CampaignService extends ApiService<Campaign> {
       // CONDUCTEUR
       if (valueForDriver !== null) {
         // tslint:disable-next-line:max-line-length
-        text += ` ${valueForDriver} ${Campaign.getIncentiveUnitLabel(unit)} par trajet`;
+        text += ` ${valueForDriver} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
         text += perKmForDriver ? ' par km' : '';
         text += perPassenger ? ' par passager' : '';
         if (!forTrip) {
@@ -136,7 +136,7 @@ export class CampaignService extends ApiService<Campaign> {
       if (free) {
         text += ' gratuit pour le(s) passager(s)';
       } else if (valueForPassenger !== null) {
-        text += ` ${valueForPassenger} ${Campaign.getIncentiveUnitLabel(unit)} par trajet`;
+        text += ` ${valueForPassenger} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
         text += perKmForPassenger ? ' par km' : '';
         text += ` pour le(s) passager(s)`;
       }
