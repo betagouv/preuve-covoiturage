@@ -14,7 +14,7 @@ import { NormalizationCostAction } from './actions/NormalizationCostAction';
   middlewares: [
     // service origin validator
   ],
-  connections: [[RedisConnection, 'redis']],
+  connections: [[RedisConnection, 'connections.redis']],
   queues: ['normalization', 'crosscheck'],
   validator: [],
 })

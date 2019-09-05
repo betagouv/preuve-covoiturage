@@ -5,7 +5,7 @@ export class Journey implements JourneyInterface {
   public _id?: string;
   public journey_id: string;
   public operator_journey_id: string;
-  public operator_class?: string;
+  public operator_class: string;
   public operator_id: string;
   public passenger?: PersonInterface;
   public driver?: PersonInterface;

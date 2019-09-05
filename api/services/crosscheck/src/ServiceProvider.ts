@@ -13,7 +13,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
   providers: [TripRepositoryProvider],
   // validator: [['crosscheck.process', journeyCreateSchema]],
   middlewares: [['validate', ValidatorMiddleware]],
-  connections: [[MongoConnection, 'mongo'], [RedisConnection, 'redis']],
+  connections: [[MongoConnection, 'connections.mongo'], [RedisConnection, 'connections.redis']],
   handlers: [CrosscheckProcessAction],
   queues: ['crosscheck'],
 })

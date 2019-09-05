@@ -1,4 +1,10 @@
-import { provider, KernelInterface, InitHookInterface, ConfigInterfaceResolver, ContextType } from '@ilos/common';
+import {
+  provider,
+  InitHookInterface,
+  ConfigInterfaceResolver,
+  ContextType,
+  KernelInterfaceResolver,
+} from '@ilos/common';
 
 const context: ContextType = {
   call: {
@@ -11,9 +17,9 @@ const context: ContextType = {
 
 @provider()
 export class WorkflowProvider implements InitHookInterface {
-  protected steps: string[];
+  protected steps: string[] = [];
 
-  constructor(protected config: ConfigInterfaceResolver, protected kernel: KernelInterface) {}
+  constructor(protected config: ConfigInterfaceResolver, protected kernel: KernelInterfaceResolver) {}
 
   async init() {
     this.steps = this.config.get('workflow.steps');
