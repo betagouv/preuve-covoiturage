@@ -49,15 +49,12 @@ export class OperatorMultipleDropdownComponent implements OnInit {
     });
   }
 
-  public getOperators() {
-    this.operatorService.get([['limit', OPERATOR_MAIN.operator_query_limit]]).subscribe((response) => {
-      this.operators = response.data.map((item) => {
-        const normalizedItem = {
+  public getOperators(): void {
+    this.operatorService.dropdown().subscribe((response: ApiResponse) => {
+      this.operators = response.data.map((item) => ({
           key: item._id,
           value: item.nom_commercial,
-        };
-        return normalizedItem;
-      });
+      }));
     });
   }
 

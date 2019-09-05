@@ -92,7 +92,7 @@
       </div>
 
       <!-- Filter by AOM -->
-      <div class="p-col-4" *ngIf="hasAnyGroup(['registry'])">
+      <div class="p-col-4" *ngIf="hasAnyGroup(['registry', 'operators'])">
         <div class="p-grid">
           <div class="p-col-12 has-text-centered">
             <p class="filter-label">Aoms</p>
@@ -129,6 +129,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Operators -->
       <div class="p-col-4" *ngIf="hasAnyGroup(['registry', 'aom'])">
         <div class="p-grid">
           <div class="p-col-12 has-text-centered">

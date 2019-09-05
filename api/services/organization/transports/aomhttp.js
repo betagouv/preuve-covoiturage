@@ -1,8 +1,23 @@
+const _ = require('lodash');
 const router = require('express').Router();
 const can = require('@pdc/shared/middlewares/can');
 const { getStats } = require('@pdc/service-stats/service');
 const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
 const aomService = require('../aom');
+
+/**
+ * List all AOMs with a minimal set of data
+ */
+router.get('/dropdown', can('aom.dropdown'), async (req, res, next) => {
+  try {
+    const results = await aomService.find(req.query);
+    results.data = results.data.map((r) => _.pick(r, ['_id', 'name']));
+
+    res.json(results);
+  } catch (e) {
+    next(e);
+  }
+});
 
 /**
  * Add a user to an aom

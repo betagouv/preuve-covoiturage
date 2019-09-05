@@ -1,3 +1,5 @@
+const _ = require('lodash');
+const { ObjectId } = require('mongoose').Types;
 const router = require('express').Router();
 const can = require('@pdc/shared/middlewares/can');
 const { apiUrl } = require('@pdc/shared/helpers/url/url')(process.env.APP_URL, process.env.API_URL);
@@ -8,38 +10,51 @@ const operatorService = require('../operator');
 router.use('/applications', applications);
 
 /**
+ * List all operators with a minimal set of data
+ */
+router.get('/dropdown', can('operator.dropdown'), async (req, res, next) => {
+  try {
+    let { query } = req;
+
+    /**
+     * Filter by authorised aom ids
+     */
+    if (req.user.aom) {
+      query = { ...query, 'authorisations._id': ObjectId(req.user.aom) };
+    }
+
+    const results = await operatorService.find(query);
+    results.data = results.data.map((r) => _.pick(r, ['_id', 'nom_commercial']));
+
+    res.json(results);
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
  * Add a user to an operator
  */
-router.post(
-  '/:id/authorisations/add',
-  can('operator.authorisations.add'),
-  async (req, res, next) => {
-    try {
-      res.json(
-        await operatorService.addAuthorisations(req.params.id, req.body.orgId, req.body.orgType),
-      );
-    } catch (e) {
-      next(e);
-    }
-  },
-);
+router.post('/:id/authorisations/add', can('operator.authorisations.add'), async (req, res, next) => {
+  try {
+    // eslint-disable-next-line max-len
+    res.json(await operatorService.addAuthorisations(req.params.id, req.body.orgId, req.body.orgType));
+  } catch (e) {
+    next(e);
+  }
+});
 
 /**
  * Remove a user to an operator
  */
-router.post(
-  '/:id/authorisations/remove',
-  can('operator.authorisations.remove'),
-  async (req, res, next) => {
-    try {
-      res.json(
-        await operatorService.removeAuthorisations(req.params.id, req.body.orgId, req.body.orgType),
-      );
-    } catch (e) {
-      next(e);
-    }
-  },
-);
+router.post('/:id/authorisations/remove', can('operator.authorisations.remove'), async (req, res, next) => {
+  try {
+    // eslint-disable-next-line max-len
+    res.json(await operatorService.removeAuthorisations(req.params.id, req.body.orgId, req.body.orgType));
+  } catch (e) {
+    next(e);
+  }
+});
 
 /**
  * List all authorisations from an operator

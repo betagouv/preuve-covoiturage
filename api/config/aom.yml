@@ -12,11 +12,13 @@ roles:
       - aom.users.list
       - aom.users.remove
       - aom.list
+      - aom.dropdown
       - aom.read
       - aom.update
       - aom.delete
       - aom.stats
       - operator.list
+      - operator.dropdown
       - operator.read
       - journey.read
       - journey.list
@@ -49,7 +51,9 @@ roles:
   - slug: user
     name: User
     permissions:
+      - aom.dropdown
       - aom.stats
+      - operator.dropdown
       - user.list
       - journey.read
       - journey.list
