@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiService } from '~/shared/services/apiService';
-import { ApiResponse } from '~/entities/responses/apiResponse';
+import { OPERATOR_MAIN } from '~/modules/operator/config/main';
 
 @Injectable()
 export class OperatorService extends ApiService {
@@ -27,8 +27,7 @@ export class OperatorService extends ApiService {
     });
   }
 
-  // TODO @front
-  dropdown() {
-    return this.http.get(`${this.endPoint}/dropdown?limit=400`);
+  dropdown(): Observable<object> {
+    return this.http.get(`${this.endPoint}/dropdown?limit=${OPERATOR_MAIN.operator_query_limit}`);
   }
 }

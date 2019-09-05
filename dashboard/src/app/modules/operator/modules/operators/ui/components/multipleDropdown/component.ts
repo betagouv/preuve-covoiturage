@@ -33,7 +33,7 @@ export class OperatorMultipleDropdownComponent implements OnInit {
     if (this.selectedOperatorIds.length > 0) {
       this.getSelectedOperators();
     }
-    this.getOperatorsDropdown();
+    this.getOperators();
   }
 
   public getSelectedOperators() {
@@ -49,24 +49,13 @@ export class OperatorMultipleDropdownComponent implements OnInit {
     });
   }
 
-  public getOperators() {
-    this.operatorService.get([['limit', OPERATOR_MAIN.operator_query_limit]]).subscribe((response) => {
-      this.operators = response.data.map((item) => {
-        const normalizedItem = {
+  public getOperators(): void {
+    this.operatorService.dropdown().subscribe((response: ApiResponse) => {
+      this.operators = response.data.map((item) => ({
           key: item._id,
           value: item.nom_commercial,
-        };
-        return normalizedItem;
-      });
+      }));
     });
-  }
-
-  /**
-   * TODO @front : passer les filtres de get() dans dropdown
-   *               et utiliser /dropdown dans getSelectedOperators ci-dessus
-   */
-  public getOperatorsDropdown() {
-    return this.operatorService.dropdown();
   }
 
   public filter(event) {

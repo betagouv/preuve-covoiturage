@@ -63,9 +63,6 @@ export class JourneyFilterComponent implements OnInit {
 
   ages = [];
 
-  aomFiltered: any[] = [];
-  aomList: any[] = [];
-
   /*
    * Saved filters before applyed to query
    */
@@ -78,17 +75,6 @@ export class JourneyFilterComponent implements OnInit {
     this.defaultMaxDate = new Date();
     this.defaultHourDate = new Date(JOURNEY_HOUR.defaultDate);
     this.resetVar();
-
-    this.journeyService.dropdownAom().subscribe((response: any[]) => {
-      this.aomList = (response['data'] || []).map((aom) => ({
-        value: aom._id._id,
-        label: aom._id.name,
-      }));
-    });
-  }
-
-  filterAom(event) {
-    this.aomFiltered = this.aomList.filter((i) => new RegExp(event.query, 'i').test(i.label));
   }
 
   selectAom(selection) {

@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Aom } from '~/entities/database/aom';
 import { ApiResponse } from '~/entities/responses/apiResponse';
 import { AomService } from '~/modules/aom/services/aomService';
-import { JourneyService } from '~/modules/journeys/services/journeyService';
 
 @Component({
   selector: 'app-aom-multiple-dropdown',
@@ -11,7 +10,7 @@ import { JourneyService } from '~/modules/journeys/services/journeyService';
   styleUrls: ['style.scss'],
 })
 export class AomMultipleDropdownComponent implements OnInit {
-  constructor(private aomService: AomService, private journeyService: JourneyService) {}
+  constructor(private aomService: AomService) {}
 
   aoms = [];
   selectedAoms = [];
@@ -49,7 +48,7 @@ export class AomMultipleDropdownComponent implements OnInit {
   }
 
   public getAoms() {
-    this.journeyService.listAom().subscribe((response) => {
+    this.aomService.dropdown().subscribe((response) => {
       this.aoms = response['data'].map(({ _id, name }) => ({
         key: _id,
         value: name,
