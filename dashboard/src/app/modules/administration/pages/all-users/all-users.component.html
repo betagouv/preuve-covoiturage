@@ -1,0 +1,53 @@
+<div class="Users">
+  <div class="Users-header">
+    <h2>
+      Utilisateurs registre autorisés
+    </h2>
+    <mat-button-toggle-group
+      [(ngModel)]="userGroup"
+      (ngModelChange)="loadUsers()"
+      name="userGroup"
+      aria-label="Groupes d'utilisateurs"
+    >
+      <mat-button-toggle *ngFor="let group of availableUserGroups" [value]="group">{{
+        userService.groupLabels[group]
+      }}</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <form [formGroup]="searchFilters">
+      <mat-form-field appearance="outline">
+        <mat-label>Rechercher</mat-label>
+        <input matInput placeholder="Nom d'utilisateur, email" formControlName="query" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
+  <div class="Users-loading" *ngIf="userService.loading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="Users-list">
+    <app-users-list *ngIf="usersToShow" [users]="usersToShow"></app-users-list>
+  </div>
+  <div
+    class="Users-add"
+    *ngIf="authenticationService.hasAnyPermission(['user.create', 'territory.users.add', 'operator.users.add'])"
+  >
+    <button
+      mat-flat-button
+      class="large"
+      *ngIf="!showCreateUserForm; else addUserBlock"
+      (click)="addUser()"
+      color="primary"
+    >
+      Ajouter un utilisateur
+    </button>
+    <ng-template #addUserBlock>
+      <h2>
+        Ajouter un utilisateur
+      </h2>
+      <div class="Users-form">
+        <app-create-edit-user-form [isCreating]="true" (onCloseEditUser)="closeUserForm()"></app-create-edit-user-form>
+      </div>
+    </ng-template>
+  </div>
+</div>

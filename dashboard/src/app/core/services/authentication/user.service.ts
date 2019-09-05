@@ -10,6 +10,12 @@ import { JsonRPCService } from '../api/json-rpc.service';
   providedIn: 'root',
 })
 export class UserService extends ApiService<User> {
+  groupLabels: { [key: string]: string } = {
+    territory: 'Territoire',
+    operator: 'Opérateur',
+    registry: 'Registre',
+  };
+
   private _user$ = new BehaviorSubject<User>(null);
 
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {

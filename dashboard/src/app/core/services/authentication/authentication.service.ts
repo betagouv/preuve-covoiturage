@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 import { PermissionType } from '~/core/types/permissionType';
-import { OPERATORS_PERMISSIONS, TERRITORIES_PERMISSIONS } from '~/core/const/permissions.const';
+import { OPERATORS_PERMISSIONS } from '~/core/const/permissions.const';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -187,7 +187,20 @@ export class AuthenticationService {
     //     permissions: OPERATORS_PERMISSIONS.admin,
     //   }),
     // });
-    //
+
+    //  TODO DELETE WHEN LOGIN IS OK
+    this.onLoggin({
+      user: new User({
+        _id: 1,
+        firstname: 'utilisateur Registre',
+        lastname: 'Decovoit',
+        email: 'preuve.decovoit@yopmail.com',
+        role: 'admin',
+        group: 'registry',
+        permissions: OPERATORS_PERMISSIONS.admin,
+      }),
+    });
+
     // TODO DELETE WHEN LOGIN IS OK
     this.onLoggin({
       user: new User({
