@@ -23,6 +23,14 @@
       <mat-option *ngFor="let role of roles" [value]="role">{{ getFrenchRole(role) }}</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="groupEditable">
+    <mat-label>Groupe</mat-label>
+    <mat-select required formControlName="group">
+      <mat-option *ngFor="let group of groups" [value]="group">{{ getFrenchGroup(group) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <div>
     <button
       *ngIf="isCreating"
