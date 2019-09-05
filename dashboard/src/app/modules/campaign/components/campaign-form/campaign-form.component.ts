@@ -53,12 +53,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     this.initForms();
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
       // todo: go to last accessible step
-      if (params.has('campaignId')) {
-        this.creation = false;
-        this.loadCampaign(params.get('campaignId'));
-      } else {
-        this.creation = true;
+      this.creation = !params.has('campaignId');
+      if (this.creation) {
         this.loading = false;
+      } else {
+        this.loadCampaign(params.get('campaignId'));
       }
     });
   }
