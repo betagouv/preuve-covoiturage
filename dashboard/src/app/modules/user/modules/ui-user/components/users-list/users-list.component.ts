@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { User } from '~/core/entities/authentication/user';
@@ -13,6 +13,9 @@ import { USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 })
 export class UsersListComponent implements OnInit {
   @Input() users: User[];
+  // TODO: implement permission user.edit
+  @Input() canEditUser = false;
+  @Output() editUser = new EventEmitter<User>();
 
   constructor(
     public authService: AuthenticationService,
@@ -50,5 +53,9 @@ export class UsersListComponent implements OnInit {
 
   public onSendInvitation(user: User) {
     console.log('SEND INVITATION');
+  }
+
+  public onEdit(user: User) {
+    this.editUser.emit(user);
   }
 }

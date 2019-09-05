@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,8 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { User } from '~/core/entities/authentication/user';
 import { UserService } from '~/core/services/authentication/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
 
 @Component({
   selector: 'app-all-users',
@@ -17,9 +19,12 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   usersToShow: User[];
   users: User[];
   searchFilters: FormGroup;
-  showCreateUserForm = false;
+  editUserFormVisible = false;
+  isCreatingUser = false;
   userGroup = 'territory';
-  availableUserGroups = ['territory', 'operator', 'registry'];
+  availableUserGroups = USER_GROUPS;
+
+  @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -41,39 +46,54 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     this.initSearchForm();
   }
 
-  addUser() {
-    this.showCreateUserForm = true;
+  showEditForm(user: User = null) {
+    const editedUser =
+      user === null
+        ? new User({ group: this.userGroup }) // create a default user based on selected user group (top filter)
+        : user;
+
+    this.isCreatingUser = !editedUser._id;
+    this.editUserFormVisible = true;
+    this.editForm.startEdit(this.isCreatingUser, true, editedUser);
   }
 
   closeUserForm() {
-    this.showCreateUserForm = false;
+    this.editUserFormVisible = false;
   }
 
-  private loadUsers() {
+  getFrenchGroup(group: UserGroupEnum): string {
+    return USER_GROUPS_FR[group];
+  }
+
+  loadUsers() {
     console.log('-> loadUsers');
     this.userService.load({ group: this.userGroup }).subscribe(
       () => {},
       (err) => {
         // TODO TMP DELETE WHEN BACK IS LINKED
         const user1 = {
+          _id: 1,
           firstname: 'Thomas',
           lastname: 'Durant',
           email: 'thomas.durant@beta.gouv.fr',
           group: 'territory',
         };
         const user2 = {
+          _id: 2,
           firstname: 'Margot',
           lastname: 'Sanchez',
           email: 'margot.sanchez@beta.gouv.fr',
           group: 'territory',
         };
         const user3 = {
+          _id: 3,
           firstname: 'John',
           lastname: 'Doe Admin',
           email: 'john.doe@beta.gouv.fr',
           group: 'registry',
         };
         const user4 = {
+          _id: 4,
           firstname: 'John',
           lastname: 'Doe OP',
           email: 'john.doe@beta.gouv.fr',
