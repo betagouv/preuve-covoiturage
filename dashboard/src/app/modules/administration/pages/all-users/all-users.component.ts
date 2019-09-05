@@ -7,7 +7,6 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { User } from '~/core/entities/authentication/user';
 import { UserService } from '~/core/services/authentication/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { groupType } from '~/core/types/mainType';
 
 @Component({
   selector: 'app-all-users',
@@ -19,8 +18,8 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   users: User[];
   searchFilters: FormGroup;
   showCreateUserForm = false;
-  userGroup: groupType = 'territory';
-  availableUserGroups: groupType[] = ['territory', 'operator', 'registry'];
+  userGroup = 'territory';
+  availableUserGroups = ['territory', 'operator', 'registry'];
 
   constructor(
     public authenticationService: AuthenticationService,
