@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Trip } from '~/core/entities/trip/trip';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { Person } from '~/core/entities/trip/person';
-import { IncentiveUnit } from '~/core/entities/campaign/IncentiveUnit';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-trip-table',
@@ -92,8 +92,8 @@ export class TripTableComponent implements OnInit {
       return '';
     }
     const incentives: any[] = _.flattenDeep(trip.people.map((p) => p.incentives));
-    const isEur = !!incentives.find((i) => i.amount_unit === IncentiveUnit.EUR);
-    const isPoint = !!incentives.find((i) => i.amount_unit === IncentiveUnit.POINT);
+    const isEur = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.EUR);
+    const isPoint = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.POINT);
     // TODO Utiliser IncentiveUnitFr quand il sera mergé
     if (isEur && isPoint) {
       return '€ / points';
