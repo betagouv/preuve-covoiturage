@@ -44,6 +44,7 @@ module.exports = modelFactory('User', {
     },
     async invite(schema, doc, reset, token, requester, organisation) {
       if (environment === 'review') return;
+      if (environment === 'production') return;
 
       emails.invite({
         email: doc.email,
