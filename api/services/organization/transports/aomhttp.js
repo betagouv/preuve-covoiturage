@@ -11,7 +11,7 @@ const aomService = require('../aom');
 router.get('/dropdown', can('aom.dropdown'), async (req, res, next) => {
   try {
     const results = await aomService.find(req.query);
-    results.data = results.data.map((r) => _.pick(r, ['_id', 'name', 'shortname']));
+    results.data = results.data.map((r) => _.pick(r, ['_id', 'name']));
 
     res.json(results);
   } catch (e) {
