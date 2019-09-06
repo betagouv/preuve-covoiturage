@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, ConfigInterfaceResolver, ConflictException } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserRegisterParamsInterface } from '@pdc/provider-schema';
 
@@ -7,7 +7,7 @@ import { User } from '../entities/User';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 /*
- * Create user and call forgotten password action
+ * Register a new user
  */
 @handler({
   service: 'user',
@@ -27,6 +27,19 @@ export class RegisterUserAction extends AbstractAction {
   }
 
   public async handle(request: UserRegisterParamsInterface, context: ContextType): Promise<User> {
+    // check for duplicates
+    // findUserByParams throws an Error when the user is not found
+    // (what we want here...), which is the reason for the try...catch
+    let found = false;
+    try {
+      await this.userRepository.findUserByParams({ email: request.email });
+      found = true;
+    } catch (e) {}
+
+    if (found) {
+      throw new ConflictException();
+    }
+
     // create the new user
     const newHashPassword = await this.cryptoProvider.cryptPassword(request.password);
 
@@ -35,7 +48,7 @@ export class RegisterUserAction extends AbstractAction {
       status: this.config.get('user.status.active'),
       password: newHashPassword,
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-      email_change_at: new Date(),
+      emailChangeAt: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);

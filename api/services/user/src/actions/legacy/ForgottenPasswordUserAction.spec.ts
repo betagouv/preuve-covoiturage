@@ -30,9 +30,9 @@
 // };
 
 // const mockForgottenPasswordParams = {
-//   forgotten_reset: 'KGthmwB33fGzJcfQmgQBokiBxDveMV79',
-//   forgotten_token: 'dsBvJoswU2IeJBjtnZuUAoGFYPBsQs2E',
-//   forgotten_at: new Date(),
+//   forgottenReset: 'KGthmwB33fGzJcfQmgQBokiBxDveMV79',
+//   forgottenToken: 'dsBvJoswU2IeJBjtnZuUAoGFYPBsQs2E',
+//   forgottenAt: new Date(),
 // };
 
 // @Container.provider()
@@ -64,7 +64,7 @@
 //     return tokens[Math.floor(Math.random() * tokens.length)];
 //   }
 //   async cryptToken(plainToken: string): Promise<string> {
-//     return mockForgottenPasswordParams.forgotten_token;
+//     return mockForgottenPasswordParams.forgottenToken;
 //   }
 // }
 
