@@ -12,19 +12,19 @@ export class User implements UserInterface {
   public password?: string;
   public role?: string;
   public status?: string;
-  public forgotten_reset?: string;
-  public forgotten_token?: string;
-  public email_confirm?: string;
-  public email_token?: string;
+  public forgottenReset?: string;
+  public forgottenToken?: string;
+  public emailConfirm?: string;
+  public emailToken?: string;
   public operator?: string;
   public territory?: string;
-  public has_reset_password?: boolean;
-  public forgotten_at?: Date;
-  public email_change_at?: Date;
-  public last_connected_at?: Date;
-  public deleted_at?: Date;
-  public created_at?: Date;
-  public updated_at?: Date;
+  public hasResetPassword?: boolean;
+  public forgottenAt?: Date;
+  public emailChangeAt?: Date;
+  public lastConnectedAt?: Date;
+  public deletedAt?: Date;
+  public createdAt?: Date;
+  public updatedAt?: Date;
 
   constructor(data: UserInterface) {
     this._id = data._id;
@@ -37,19 +37,19 @@ export class User implements UserInterface {
     this.permissions = data.permissions;
     this.password = data.password;
     this.status = data.status;
-    this.forgotten_reset = data.forgotten_reset;
-    this.forgotten_token = data.forgotten_token;
-    this.email_confirm = data.email_confirm;
-    this.email_token = data.email_token;
+    this.forgottenReset = data.forgottenReset;
+    this.forgottenToken = data.forgottenToken;
+    this.emailConfirm = data.emailConfirm;
+    this.emailToken = data.emailToken;
     this.operator = data.operator;
     this.territory = data.territory;
-    this.has_reset_password = data.has_reset_password;
-    this.forgotten_at = data.forgotten_at;
-    this.email_change_at = data.email_change_at;
-    this.last_connected_at = data.last_connected_at;
-    this.deleted_at = data.deleted_at;
-    this.created_at = data.created_at;
-    this.updated_at = data.updated_at;
+    this.hasResetPassword = data.hasResetPassword;
+    this.forgottenAt = data.forgottenAt;
+    this.emailChangeAt = data.emailChangeAt;
+    this.lastConnectedAt = data.lastConnectedAt;
+    this.deletedAt = data.deletedAt;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
   }
 
   get fullname() {

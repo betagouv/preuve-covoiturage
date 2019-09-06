@@ -42,7 +42,7 @@
 //   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
 //     return new User({
 //       ...mockUser,
-//       forgotten_at: new Date(),
+//       forgottenAt: new Date(),
 //     });
 //   }
 

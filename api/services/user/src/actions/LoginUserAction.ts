@@ -40,7 +40,7 @@ export class LoginUserAction extends AbstractAction {
         throw new ForbiddenException();
       }
 
-      return this.userRepository.patch(user._id, { last_connected_at: new Date() });
+      return this.userRepository.patch(user._id, { lastConnectedAt: new Date() });
     } catch (e) {
       throw new ForbiddenException();
     }

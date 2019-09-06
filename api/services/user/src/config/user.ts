@@ -9,6 +9,6 @@ export const status = {
   notActive: 'notActive',
 };
 export const tokenExpiration = {
-  email_confirm: 86400, // 1 day in seconds
+  emailConfirm: 86400, // 1 day in seconds
   passwordReset: 86400, // 1 day in seconds
 };
