@@ -25,6 +25,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   availableUserGroups = USER_GROUPS;
 
   @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
+  public editedUser: User;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -47,14 +48,15 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   }
 
   showEditForm(user: User = null) {
-    const editedUser =
+    this.editedUser =
       user === null
         ? new User({ group: this.userGroup }) // create a default user based on selected user group (top filter)
-        : user;
+        : new User(user);
 
-    this.isCreatingUser = !editedUser._id;
+    this.isCreatingUser = !this.editedUser._id;
     this.editUserFormVisible = true;
-    this.editForm.startEdit(this.isCreatingUser, true, editedUser);
+
+    // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
   }
 
   closeUserForm() {
@@ -77,6 +79,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
           lastname: 'Durant',
           email: 'thomas.durant@beta.gouv.fr',
           group: 'territory',
+          operator: 1,
         };
         const user2 = {
           _id: 2,

@@ -14,6 +14,7 @@ export class User implements IModel {
   public role: UserRoleEnum;
   public aom: string;
   public operator: string;
+  public territory: string;
   public permissions: [string];
 
   // public company: OrganisationCompany;
@@ -29,7 +30,8 @@ export class User implements IModel {
     this.group = (obj && obj.group) || null;
     this.role = (obj && obj.role) || null;
     this.aom = (obj && obj.role) || null;
-    this.operator = (obj && obj.role) || null;
+    this.operator = (obj && obj.operator) || null;
+    this.territory = (obj && obj.territory) || null;
     this.permissions = (obj && obj.permissions) || [];
     /*
      this.company = (obj && obj.company) || {
