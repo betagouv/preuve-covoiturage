@@ -21,4 +21,12 @@ export class OperatorService extends ApiService<Operator> {
   get operator(): Operator {
     return this._entity$.value;
   }
+
+  get operators$(): Observable<Operator[]> {
+    return this._entities$;
+  }
+
+  get operators(): Operator[] {
+    return this._entities$.value;
+  }
 }
