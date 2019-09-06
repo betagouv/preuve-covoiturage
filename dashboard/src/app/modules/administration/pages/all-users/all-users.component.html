@@ -52,6 +52,7 @@
       <div class="Users-form">
         <app-create-edit-user-form
           [isCreating]="isCreatingUser"
+          [user]="editedUser"
           [groupEditable]="true"
           (onCloseEditUser)="closeUserForm()"
         ></app-create-edit-user-form>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/us
   templateUrl: './create-edit-user-form.component.html',
   styleUrls: ['./create-edit-user-form.component.scss'],
 })
-export class CreateEditUserFormComponent extends DestroyObservable implements OnInit {
+export class CreateEditUserFormComponent extends DestroyObservable implements OnInit, OnChanges {
   @Input() user: User;
   @Input() isCreating: boolean;
   @Input() groupEditable: boolean;
@@ -24,11 +24,36 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
   createEditUserForm: FormGroup;
   isCreatingUpdating = false;
+  territoryEditable = false;
+  operatorEditable = false;
+
   public roles = USER_ROLES;
   public groups = USER_GROUPS;
 
   constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {
     super();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['isCreating'] || changes['groupEditable']) {
+      this.updateValidators();
+    }
+
+    if (changes['user']) {
+      this.updateValidators();
+      if (this.createEditUserForm) {
+        this.createEditUserForm.setValue({
+          firstname: this.user.firstname,
+          lastname: this.user.lastname,
+          email: this.user.email,
+          phone: this.user.phone,
+          role: this.user.role,
+          group: this.user.group,
+          territory: this.user.territory,
+          operator: this.user.operator,
+        });
+      }
+    }
   }
 
   ngOnInit() {
@@ -72,20 +97,11 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     );
   }
 
-  public startEdit(isCreating: boolean, groupEditable: boolean, user: User) {
-    // this.initForm(isCreating, groupEditable, user);
-
-    this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
-    this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
-
-    this.createEditUserForm.setValue({
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      group: user.group,
-    });
+  updateValidators(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable) {
+    if (this.createEditUserForm) {
+      this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
+      this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
+    }
   }
 
   public getFrenchRole(role: UserRoleEnum): string {
@@ -109,8 +125,26 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       lastname: [user.lastname, Validators.required],
       email: [user.email, [Validators.required, Validators.pattern(REGEXP.email)]],
       phone: [user.phone, Validators.pattern(REGEXP.phone)],
-      role: [user.role, isCreating ? Validators.required : null],
-      group: [user.group, groupEditable ? Validators.required : null],
+      role: [user.role],
+      group: [user.group],
+      territory: [user.territory],
+      operator: [user.operator],
     });
+
+    this.createEditUserForm.valueChanges.subscribe((formVal) => {
+      const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
+      if (territoryEditable !== this.territoryEditable) {
+        this.territoryEditable = territoryEditable;
+        if (!territoryEditable) this.createEditUserForm.patchValue({ territory: null });
+      }
+
+      const operatorEditable = formVal.group === UserGroupEnum.OPERATOR;
+      if (operatorEditable !== this.operatorEditable) {
+        this.operatorEditable = operatorEditable;
+        if (operatorEditable) this.createEditUserForm.patchValue({ operator: null });
+      }
+    });
+
+    this.updateValidators(isCreating, groupEditable);
   }
 }
