@@ -30,9 +30,9 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
-    user.forgotten_reset = reset;
-    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
-    user.forgotten_at = new Date();
+    user.forgottenReset = reset;
+    user.forgottenToken = await this.cryptoProvider.cryptToken(token);
+    user.forgottenAt = new Date();
     user.status = this.config.get('user.status.notActive');
 
     const updatedUser = await this.userRepository.update(user);
@@ -44,7 +44,7 @@ export class ForgottenPasswordUserAction extends AbstractAction {
       {
         template: this.config.get('email.templates.forgotten'),
         email: updatedUser.email,
-        fullName: updatedUser.fullname,
+        fullname: updatedUser.fullname,
         requester: requester.fullname,
         organization: 'AomOrOperatorOrganisation',
         link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
