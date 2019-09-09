@@ -6,10 +6,11 @@ import { GeoProvider } from '@pdc/provider-geo';
 import { NormalizationGeoAction } from './actions/NormalizationGeoAction';
 import { NormalizationTerritoryAction } from './actions/NormalizationTerritoryAction';
 import { NormalizationCostAction } from './actions/NormalizationCostAction';
+import { WorkflowProvider } from './providers/WorkflowProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [GeoProvider],
+  providers: [GeoProvider, WorkflowProvider],
   handlers: [NormalizationGeoAction, NormalizationTerritoryAction, NormalizationCostAction],
   middlewares: [
     // service origin validator

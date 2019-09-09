@@ -4,6 +4,7 @@ import {
   ConfigInterfaceResolver,
   ContextType,
   KernelInterfaceResolver,
+  HasLogger,
 } from '@ilos/common';
 
 const context: ContextType = {
@@ -16,21 +17,26 @@ const context: ContextType = {
 };
 
 @provider()
-export class WorkflowProvider implements InitHookInterface {
+export class WorkflowProvider extends HasLogger implements InitHookInterface {
   protected steps: string[] = [];
 
-  constructor(protected config: ConfigInterfaceResolver, protected kernel: KernelInterfaceResolver) {}
+  constructor(protected config: ConfigInterfaceResolver, protected kernel: KernelInterfaceResolver) {
+    super();
+  }
 
   async init() {
     this.steps = this.config.get('workflow.steps');
   }
 
   async next(currentState: string, data: any): Promise<void> {
-    const nexStep = this.getNextStep(currentState);
-    return this.kernel.notify(nexStep, data, context);
+    const nextStep = this.getNextStep(currentState);
+    this.logger.debug(`Found ${nextStep}`);
+    return this.kernel.notify(nextStep, data, context);
   }
 
   protected getNextStep(currentState: string): string {
+    this.logger.debug(`Find next step from ${currentState}`, this.steps);
+
     const index = this.steps.indexOf(currentState) + 1;
     if (this.steps.length > index && index !== 0) {
       return this.steps[index];
