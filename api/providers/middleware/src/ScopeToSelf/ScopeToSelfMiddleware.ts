@@ -21,12 +21,6 @@ export class ScopeToSelfMiddleware implements MiddlewareInterface {
     next: Function,
     options: ScopeToSelfMiddlewareOptionsType,
   ): Promise<ResultType> {
-    // TODO remove when Auth is OK !
-    if (process.env.NODE_ENV === 'local') {
-      console.log('> scopeIt skipped');
-      return next(params, context);
-    }
-
     const [basePermissions, callbackPermissions] = options;
 
     if (!basePermissions || callbackPermissions.length === 0) {
