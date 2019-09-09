@@ -239,18 +239,30 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         // inject the req.session.user to context in the body
         const isBatch = Array.isArray(req.body);
-        const _context = get(isBatch ? req.body[0] : req.body, 'params._context', {});
+        // const _context = get(isBatch ? req.body[0] : req.body, 'params._context', {});
         const user = get(req, 'session.user', null);
-        if (user) {
-          set(_context, 'call.user', user);
-          if (isBatch) {
-            req.body = req.body.map((doc) => {
-              set(doc, 'params._context', _context);
-            });
-          } else {
-            set(req.body, 'params._context', _context);
-          }
-        }
+
+        // nest the params and _context and inject the session user
+        // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
+        // to { id: 1, jsonrpc: '2.0', method: 'a:b' params: { params: {}, _context: {} } }
+        const nestParams = (doc, usr = null) => {
+          const params = get(doc, 'params.params', get(doc, 'params', {}));
+          const _context = get(doc, 'params._context', {});
+
+          if (usr) set(_context, 'call.user', usr);
+
+          return {
+            id: doc.id,
+            jsonrpc: doc.jsonrpc,
+            method: doc.method,
+            params: {
+              params,
+              _context,
+            },
+          };
+        };
+
+        req.body = isBatch ? req.body.map((doc) => nestParams(doc, user)) : nestParams(req.body, user);
 
         // pass the request to the kernel
         res.json(await this.kernel.handle(req.body));
