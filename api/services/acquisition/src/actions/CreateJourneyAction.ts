@@ -75,7 +75,7 @@ export class CreateJourneyAction extends AbstractAction {
       payments: [],
       ...person,
       is_driver: driver,
-      seats: 'seats' in person ? person.seats : !driver ? 1 : 0,
+      seats: person && 'seats' in person ? person.seats : !driver ? 1 : 0,
     };
   }
 }

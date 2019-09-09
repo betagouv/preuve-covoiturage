@@ -8,5 +8,5 @@ export interface JourneyInterface {
   operator_id: string;
   passenger?: PersonInterface;
   driver?: PersonInterface;
-  created_at: Date;
+  created_at?: Date;
 }

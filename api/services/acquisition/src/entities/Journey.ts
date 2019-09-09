@@ -9,7 +9,7 @@ export class Journey implements JourneyInterface {
   public operator_id: string;
   public passenger?: PersonInterface;
   public driver?: PersonInterface;
-  public created_at: Date;
+  public created_at?: Date;
 
   constructor(data: JourneyInterface) {
     this._id = data._id;
@@ -20,6 +20,8 @@ export class Journey implements JourneyInterface {
     this.operator_id = data.operator_id;
     this.passenger = data.passenger;
     this.driver = data.driver;
-    this.created_at = data.created_at;
+    if ('created_at' in data) {
+      this.created_at = data.created_at;
+    }
   }
 }
