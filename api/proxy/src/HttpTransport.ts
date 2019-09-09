@@ -66,12 +66,12 @@ export class HttpTransport implements TransportInterface {
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
-    this.registerServerAuth();
+    // this.registerServerAuth(); // disabled as JWT isn't used
     this.registerGlobalMiddlewares();
     this.registerAuth();
     this.registerSwagger();
     this.registerBullArena();
-    this.registerRoutes();
+    // this.registerRoutes(); // disabled REST routes
 
     if (this.config.get('proxy.rpc.open', false)) {
       this.registerCallHandler();
@@ -164,14 +164,6 @@ export class HttpTransport implements TransportInterface {
         }
       }),
     );
-
-    // this.app.get('/profile', (req, res, next) => {
-    //   if (!('user' in req.session)) {
-    //     throw new Error('Unauthenticated');
-    //   }
-
-    //   res.json(req.session.user);
-    // });
 
     this.app.post('/logout', (req, res, next) => {
       req.session.destroy((err) => {
