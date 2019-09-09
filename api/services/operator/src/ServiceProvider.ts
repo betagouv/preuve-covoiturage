@@ -2,8 +2,7 @@ import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/co
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
-// import { PermissionMiddleware } from '@ilos/package-acl';
-import { NoopMiddleware as PermissionMiddleware } from '@pdc/provider-middleware';
+import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { operatorCreateSchema, operatorPatchSchema, operatorDeleteSchema } from '@pdc/provider-schema';
