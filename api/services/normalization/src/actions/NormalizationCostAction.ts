@@ -11,7 +11,7 @@ import { WorkflowProvider } from '../providers/WorkflowProvider';
   method: 'cost',
 })
 export class NormalizationCostAction extends AbstractAction {
-  // TODO : middleware
+  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
 
   constructor(private wf: WorkflowProvider) {
     super();

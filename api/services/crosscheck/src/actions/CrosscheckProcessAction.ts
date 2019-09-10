@@ -17,9 +17,8 @@ import { Person } from '../entities/Person';
   method: 'process',
 })
 export class CrosscheckProcessAction extends Action {
-  // public readonly middlewares: (string | [string, any])[] = [['validate', 'crosscheck.process']];
-  // TODO: middlewares
-  // TODO : 5 days
+  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+
   constructor(private crosscheckRepository: TripRepositoryProviderInterfaceResolver) {
     super();
   }
@@ -34,7 +33,9 @@ export class CrosscheckProcessAction extends Action {
         throw e;
       }
     }
-    return this.mergeJourneyWithTrip(journey, trip);
+    const finalTrip = await this.mergeJourneyWithTrip(journey, trip);
+    // dispatch to [stats, policy, fraudcheck]
+    return finalTrip;
   }
 
   private async findTripOrNull(journey: JourneyInterface): Promise<TripInterface | null> {

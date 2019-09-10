@@ -20,7 +20,8 @@ const callContext: ContextType = {
   method: 'territory',
 })
 export class NormalizationTerritoryAction extends AbstractAction {
-  // TODO : middleware
+  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+
   constructor(protected kernel: KernelInterfaceResolver, protected wf: WorkflowProvider) {
     super();
   }

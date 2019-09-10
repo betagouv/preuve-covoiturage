@@ -12,7 +12,8 @@ import { WorkflowProvider } from '../providers/WorkflowProvider';
   method: 'geo',
 })
 export class NormalizationGeoAction extends AbstractAction {
-  // TODO : middleware
+  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+
   constructor(protected wf: WorkflowProvider, private geoProvider: GeoProviderInterfaceResolver) {
     super();
   }

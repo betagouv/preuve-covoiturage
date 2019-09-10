@@ -1,6 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
+import moment from 'moment';
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
@@ -35,21 +36,42 @@ export class CreateJourneyAction extends AbstractAction {
     params: CreateJourneyParamsInterface | CreateJourneyParamsInterface[],
     context: ContextType,
   ): Promise<Journey | Journey[]> {
-    // TODO 5 days delay !!!
-    let result: Journey | Journey[];
+    const now = new Date();
+    const hasMany = Array.isArray(params);
 
-    if (Array.isArray(params)) {
-      const journeys = params.map((journeyData) => this.cast(journeyData, context.call.user.operator_id));
-      result = await this.journeyRepository.createMany(journeys);
-      const promises: Promise<void>[] = [];
-      for (const journey of journeys) {
-        promises.push(this.kernel.notify('normalization:geo', journey, callContext));
-      }
-      await Promise.all(promises);
-    } else {
-      result = await this.journeyRepository.create(this.cast(params, context.call.user.operator_id));
-      await this.kernel.notify('normalization:geo', result, callContext);
+    const journeys: Journey[] = (Array.isArray(params) ? [...params] : [params])
+      .map((journeyData) => this.cast(journeyData, context.call.user.operator_id))
+
+      // avoid time travelling
+      .filter(
+        (journeyData) =>
+          journeyData.driver.start.datetime < journeyData.driver.end.datetime &&
+          journeyData.driver.end.datetime < now &&
+          journeyData.driver.start.datetime < journeyData.driver.end.datetime &&
+          journeyData.driver.end.datetime < now,
+      );
+
+    if (journeys.length === 0) {
+      return;
     }
+    const result: Journey[] = await this.journeyRepository.createMany(journeys);
+
+    // dispatch only journey done 7 days from now
+    const sevendaysFromNow = moment()
+      .subtract(7, 'days')
+      .toDate();
+    const journeyToDispatch = result.filter((journey) => journey.driver.start.datetime >= sevendaysFromNow);
+    const promises: Promise<void>[] = [];
+    for (const journey of journeyToDispatch) {
+      promises.push(this.kernel.notify('normalization:geo', journey, callContext));
+    }
+
+    await Promise.all(promises);
+
+    if (!hasMany) {
+      return result.pop();
+    }
+
     return result;
   }
 
