@@ -23,7 +23,13 @@ export class LoginComponent implements OnInit {
   }
 
   public onLogin() {
-    this.authService.login(this.controls.email.value, this.controls.password.value);
+    this.authService.login(this.controls.email.value, this.controls.password.value).subscribe((user) => {
+      if (user === null) {
+        console.log('login failed');
+      } else {
+        console.log('login success', user);
+      }
+    });
   }
 
   public onPasswordTypeToggle() {

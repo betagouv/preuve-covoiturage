@@ -12,6 +12,7 @@ import { SharedModule } from '~/shared/shared.module';
 import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operator-ui.module';
 import { OperatorModule } from '~/modules/operator/operator.module';
 import { OperatorTokenUiModule } from '~/modules/operator/modules/operator-token-ui/operator-token-ui.module';
+import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
 
 import { AdministrationRoutingModule } from './administration-routing.module';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
@@ -29,6 +30,7 @@ import { ApiComponent } from './pages/api/api.component';
     TerritoryComponent,
     UsersComponent,
     ApiComponent,
+    AllUsersComponent,
   ],
   imports: [
     AdministrationRoutingModule,

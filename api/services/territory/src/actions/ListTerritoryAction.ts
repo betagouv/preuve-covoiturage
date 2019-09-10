@@ -5,9 +5,9 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
 
 @handler({
   service: 'territory',
-  method: 'all',
+  method: 'list',
 })
-export class AllTerritoryAction extends AbstractAction {
+export class ListTerritoryAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

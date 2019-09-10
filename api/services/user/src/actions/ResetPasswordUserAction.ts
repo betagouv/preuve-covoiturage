@@ -8,7 +8,7 @@ import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
- * Find user by forgotten_reset and update password
+ * Find user by forgottenReset and update password
  */
 @handler({
   service: 'user',
@@ -29,16 +29,16 @@ export class ResetPasswordUserAction extends AbstractAction {
   }
 
   public async handle(params: UserResetPasswordParamsInterface, context: ContextType): Promise<User> {
-    const user = await this.userRepository.findUserByParams({ forgotten_reset: params.reset });
+    const user = await this.userRepository.findUserByParams({ forgottenReset: params.reset });
 
-    if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgotten_token))) {
+    if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.forgottenToken))) {
       throw new ForbiddenException('Invalid token');
     }
 
     // Token expired after 1 day
-    if ((Date.now() - user.forgotten_at.getTime()) / 1000 > this.config.get('user.tokenExpiration.passwordReset')) {
-      user.forgotten_reset = undefined;
-      user.forgotten_token = undefined;
+    if ((Date.now() - user.forgottenAt.getTime()) / 1000 > this.config.get('user.tokenExpiration.passwordReset')) {
+      user.forgottenReset = undefined;
+      user.forgottenToken = undefined;
       await this.userRepository.update(user);
 
       throw new ForbiddenException('Expired token');
@@ -46,7 +46,7 @@ export class ResetPasswordUserAction extends AbstractAction {
 
     user.password = await this.cryptoProvider.cryptPassword(params.password);
 
-    user.has_reset_password = true;
+    user.hasResetPassword = true;
 
     user.status = this.config.get('user.status.active');
 

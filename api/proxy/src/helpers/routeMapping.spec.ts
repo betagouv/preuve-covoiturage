@@ -14,7 +14,7 @@ describe('Route mapping', () => {
   const fakeUser = {
     id: '1',
     firstName: 'Nicolas',
-    lastName: 'Test',
+    lastname: 'Test',
   };
 
   function responseFactory(method, params) {
@@ -112,7 +112,7 @@ describe('Route mapping', () => {
       .post('/user')
       .send({
         firstName: 'John',
-        lastName: 'Doe',
+        lastname: 'Doe',
       })
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
@@ -121,7 +121,7 @@ describe('Route mapping', () => {
     expect(response.body).to.deep.equal(
       responseFactory('user:create', {
         firstName: 'John',
-        lastName: 'Doe',
+        lastname: 'Doe',
       }),
     );
   });
@@ -131,7 +131,7 @@ describe('Route mapping', () => {
       .post('/user/1')
       .send({
         firstName: 'John',
-        lastName: 'Doe',
+        lastname: 'Doe',
       })
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
@@ -141,7 +141,7 @@ describe('Route mapping', () => {
       responseFactory('user:update', {
         id: '1',
         firstName: 'John',
-        lastName: 'Doe',
+        lastname: 'Doe',
       }),
     );
   });

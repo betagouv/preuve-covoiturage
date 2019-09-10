@@ -42,8 +42,8 @@ Merci pour votre contribution !
 ### Installation
 
 1. Clone the repository and `cd` to it
-2. `cp .env.example .env`
-3. Edit the `.env` file
+2. `cp api/proxy/.env.example api/proxy/.env`
+3. Edit the `api/proxy/.env` file
 4. `docker-compose build`
 5. `docker-compose run api yarn`
 6. `docker-compose run api yarn run build`
