@@ -143,6 +143,11 @@ $ docker-compose exec mongo mongorestore -u mongo -p mongo \
 - `yarn workspace @pdc/... run test`
 - `yarn workspace @pdc/... run test:integration`
 
+###### outside the `dashboard` container
+
+- `yarn open:cypress` opens cypress GUI
+- `yarn test` runs integration tests with cypress
+
 ### API documentation
 
 - [Documentation (French)](https://registre-preuve-de-covoiturage.gitbook.io/produit/)
