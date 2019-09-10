@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
-
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
 import { JourneyInterface, PositionInterface } from '@pdc/provider-schema';
+
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Find the territories where the driver and passenger started and ended their journey

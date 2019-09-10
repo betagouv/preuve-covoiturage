@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 import { JourneyInterface, PositionInterface } from '@pdc/provider-schema';
+
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Enrich position data
