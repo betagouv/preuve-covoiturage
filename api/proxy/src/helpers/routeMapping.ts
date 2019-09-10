@@ -129,7 +129,7 @@ export function routeMapping(
             try {
               const response = await kernel.handle(
                 makeCall(serviceDefinition.signature, mapRequestFinal(req.body, req.query, req.params, req.session), {
-                  user: 'session' in req && 'user' in req.session ? req.session.user : null,
+                  user: 'session' in req && 'user' in req.session ? req.session.user : {},
                 }),
               );
               if (!response) {
