@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
 
 import { PermissionType } from '~/core/types/permissionType';
-import { OPERATORS_PERMISSIONS, TERRITORIES_PERMISSIONS } from '~/core/const/permissions.const';
+import { User } from '~/core/entities/authentication/user';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
-import { User } from '../../entities/authentication/user';
 
 @Injectable({
   providedIn: 'root',
@@ -17,12 +18,15 @@ import { User } from '../../entities/authentication/user';
 export class AuthenticationService {
   public static STORAGE_KEY = 'CARPOOLING_USER';
   private _token$ = new BehaviorSubject<string>(null);
+  // private _user$ = new Subject<User>();
+  // private _user: User = null;
 
   constructor(
     private _userService: UserService,
     private _jsonRPC: JsonRPCService,
     private router: Router,
     private toastr: ToastrService,
+    private http: HttpClient,
   ) {
     this.readToken();
   }
@@ -47,14 +51,51 @@ export class AuthenticationService {
       password,
     };
 
-    this._jsonRPC.call(jsonRPCParam).subscribe(
-      (data) => {
-        console.log('success', data);
-      },
-      (err) => {
-        console.log('error', err);
-      },
-    );
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    // console.log('environment.apiUrl+\'/login\' : ', environment.apiUrl + '/login');
+    const url = 'login';
+    return this.http
+      .post(
+        url,
+        {
+          email,
+          password,
+        },
+        {
+          headers,
+        },
+      )
+      .pipe(
+        catchError((error) => {
+          console.log('error : ', error);
+          if (error.error && error.error.message === 'Forbidden') {
+            return of(null);
+          }
+          return throwError(error);
+        }),
+        map((loginPayload) => {
+          if (loginPayload && loginPayload.payload && loginPayload.payload.data) {
+            return loginPayload.payload.data;
+          }
+          return null;
+        }),
+        tap((user) => {
+          this.onLoggin({ user: new User(user) });
+        }),
+      );
+
+    //
+    // this._jsonRPC.call(jsonRPCParam).subscribe(
+    //   (data) => {
+    //     console.log('success', data);
+    //   },
+    //   (err) => {
+    //     console.log('error', err);
+    //   },
+    // );
   }
 
   public logout() {
@@ -169,24 +210,29 @@ export class AuthenticationService {
   }
 
   private readToken() {
-    const responseStr = localStorage.getItem(AuthenticationService.STORAGE_KEY);
-    if (responseStr != null) {
-      const response = JSON.parse(responseStr);
-      this.onLoggin(response);
+    const userJSON = localStorage.getItem('_user');
+    if (userJSON) {
+      this.onLoggin({ user: new User(JSON.parse(userJSON)) });
     }
 
+    // const responseStr = localStorage.getItem(AuthenticationService.STORAGE_KEY);
+    // if (responseStr != null) {
+    //   const response = JSON.parse(responseStr);
+    //   this.onLoggin(response);
+    // }
+
     // // TODO DELETE WHEN LOGIN IS OK
-    this.onLoggin({
-      user: new User({
-        _id: 1,
-        firstname: 'Opérateur',
-        lastname: 'Decovoit',
-        email: 'preuve.decovoit@yopmail.com',
-        role: 'admin',
-        group: 'operator',
-        permissions: OPERATORS_PERMISSIONS.admin,
-      }),
-    });
+    // this.onLoggin({
+    //   user: new User({
+    //     _id: 1,
+    //     firstname: 'Opérateur',
+    //     lastname: 'Decovoit',
+    //     email: 'preuve.decovoit@yopmail.com',
+    //     role: 'admin',
+    //     group: 'operator',
+    //     permissions: OPERATORS_PERMISSIONS.admin,
+    //   }),
+    // });
     //
     // TODO DELETE WHEN LOGIN IS OK
     //   this.onLoggin({
@@ -203,6 +249,7 @@ export class AuthenticationService {
   }
 
   private onLoggin(response) {
+    console.log('> onLoggin', response);
     this._token$.next(response.authToken);
     this._userService.user = response.user;
   }

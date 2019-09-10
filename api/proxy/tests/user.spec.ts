@@ -108,6 +108,24 @@ describe('User service', async () => {
       firstname: user.firstname,
       lastname: user.lastname,
     });
+
+    const r2 = await request
+      .post('/rpc')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'user:list',
+        params: {},
+      })
+      .set('Cookie', cookies)
+      .expect(200);
+    const data2 = r2.body.payload.data.result.data;
+    expect(data2).to.be.an('array');
+    expect(data2.length).to.eq(1);
+    expect(data2[0]).to.deep.include({
+      firstname: user.firstname,
+      lastname: user.lastname,
+    });
   });
 
   it('should get user', async () => {

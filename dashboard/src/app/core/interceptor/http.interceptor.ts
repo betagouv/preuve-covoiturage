@@ -22,9 +22,6 @@ export class HttpApiInterceptor implements HttpInterceptor {
 
     if (this.APIMETHODS.indexOf(req.method) !== -1 && !req.url.startsWith('https://')) {
       update.url = this.api + req.url;
-      update.setHeaders = {
-        Authorization: 'Bearer ' + this.currentToken,
-      };
     }
 
     const clonedRequest: HttpRequest<any> = req.clone(update);

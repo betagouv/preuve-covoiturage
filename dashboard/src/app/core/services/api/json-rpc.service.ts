@@ -11,7 +11,7 @@ export class JsonRPCService {
   private url: string;
 
   constructor(private http: HttpClient) {
-    this.url = '/api';
+    this.url = 'rpc';
   }
 
   public call(methods: JsonRPCParam[] | JsonRPCParam, options = {}): Observable<any> {

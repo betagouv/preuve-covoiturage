@@ -1,14 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
 
 import { UserService } from '~/core/services/authentication/user.service';
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
-
-import { DestroyObservable } from '~/core/components/destroy-observable';
+import { USER_ROLES, USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
@@ -16,7 +13,7 @@ import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/us
   templateUrl: './create-edit-user-form.component.html',
   styleUrls: ['./create-edit-user-form.component.scss'],
 })
-export class CreateEditUserFormComponent extends DestroyObservable implements OnInit, Onchanges {
+export class CreateEditUserFormComponent implements OnInit, OnChanges {
   @Input() user: User;
   @Input() isCreating: boolean;
   @Input() groupEditable: boolean;
@@ -31,9 +28,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   public roles = USER_ROLES;
   public groups = USER_GROUPS;
 
-  constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {
-    super();
-  }
+  constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['isCreating'] || changes['groupEditable']) {
@@ -73,7 +68,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     const jsonRPCRequest = this.isCreating
       ? this._userService.create(this.createEditUserForm.value)
       : this._userService.patch(this.createEditUserForm.value);
-    jsonRPCRequest.pipe(takeUntil(this.destroy$)).subscribe(
+    jsonRPCRequest.subscribe(
       (user) => {
         this.isCreatingUpdating = false;
         if (this.isCreating) {
@@ -109,7 +104,15 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     return USER_ROLES_FR[role];
   }
 
-  private initForm(): void {
+  public getFrenchGroup(group: UserGroupEnum): string {
+    return USER_GROUPS_FR[group];
+  }
+
+  private initForm(
+    isCreating: boolean = this.isCreating,
+    groupEditable: boolean = this.groupEditable,
+    user: User = this.user,
+  ): void {
     this.createEditUserForm = this.fb.group({
       firstname: [user.firstname, Validators.required],
       lastname: [user.lastname, Validators.required],
