@@ -49,7 +49,7 @@ export class ApiService<T extends IModel> {
   // ==== CRUD ======
   public load(parameters: object = {}): Observable<T[]> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.list`, parameters);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:list`, parameters);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((data) => {
         this._entities$.next(data);
@@ -63,7 +63,7 @@ export class ApiService<T extends IModel> {
 
   public loadOne(parameters: object = {}): Observable<T[]> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.find`, parameters);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:find`, parameters);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((data) => {
         this._entity$.next(data);
@@ -76,7 +76,7 @@ export class ApiService<T extends IModel> {
   }
 
   public get(itemId: string): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.get`, itemId);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:get`, itemId);
     this._loading$.next(true);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       finalize(() => {
@@ -86,7 +86,7 @@ export class ApiService<T extends IModel> {
   }
 
   public getOne(itemId: string): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.get`, itemId);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:get`, itemId);
     this._loading$.next(true);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((entity: T) => {
@@ -100,7 +100,7 @@ export class ApiService<T extends IModel> {
   }
 
   public create(item: object): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.create`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((entity) => {
         const auxArray = this._entities$.value;
@@ -112,7 +112,7 @@ export class ApiService<T extends IModel> {
   }
 
   public createOne(item: object): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.create`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((entity: T) => {
         this._entity$.next(entity);
@@ -122,7 +122,7 @@ export class ApiService<T extends IModel> {
   }
 
   public patch(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.patch`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:patch`, item);
 
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((entity: T) => {
@@ -133,7 +133,7 @@ export class ApiService<T extends IModel> {
   }
 
   public patchOne(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.patch`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:patch`, item);
 
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap((entity: T) => {
@@ -144,7 +144,7 @@ export class ApiService<T extends IModel> {
   }
 
   public delete(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.delete`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap(() => {
         const auxArray = this._entities$.value;
@@ -161,7 +161,7 @@ export class ApiService<T extends IModel> {
   }
 
   public deleteOne(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.delete`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, item);
     return this._jsonRPCService.call(jsonRPCParam).pipe(
       tap(() => {
         this._entity$.next(null);

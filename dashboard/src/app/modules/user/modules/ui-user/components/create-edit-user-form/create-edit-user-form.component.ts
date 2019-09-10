@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
 
 import { UserService } from '~/core/services/authentication/user.service';
 import { REGEXP } from '~/core/const/validators.const';
@@ -73,7 +71,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     const jsonRPCRequest = this.isCreating
       ? this._userService.create(this.createEditUserForm.value)
       : this._userService.patch(this.createEditUserForm.value);
-    jsonRPCRequest.pipe(takeUntil(this.destroy$)).subscribe(
+    jsonRPCRequest.subscribe(
       (user) => {
         this.isCreatingUpdating = false;
         if (this.isCreating) {
@@ -118,9 +116,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     groupEditable: boolean = this.groupEditable,
     user: User = this.user,
   ): void {
-    console.log(isCreating);
-    console.log(groupEditable);
-
     this.createEditUserForm = this.fb.group({
       firstname: [user.firstname, Validators.required],
       lastname: [user.lastname, Validators.required],

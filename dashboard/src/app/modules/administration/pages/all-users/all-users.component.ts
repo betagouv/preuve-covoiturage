@@ -70,7 +70,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
 
   loadUsers() {
     console.log('-> loadUsers');
-    this.userService.load({ group: this.userGroup }).subscribe(
+    this.userService.load().subscribe(
       () => {},
       (err) => {
         // TODO TMP DELETE WHEN BACK IS LINKED
