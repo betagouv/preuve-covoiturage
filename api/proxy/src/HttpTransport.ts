@@ -165,6 +165,14 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
+    this.app.get('/profile', (req, res, next) => {
+      if (!('user' in req.session)) {
+        throw new Error('Unauthenticated');
+      }
+
+      res.json(req.session.user);
+    });
+
     this.app.post('/logout', (req, res, next) => {
       req.session.destroy((err) => {
         if (err) {
