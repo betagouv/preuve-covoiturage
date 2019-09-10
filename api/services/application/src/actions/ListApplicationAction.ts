@@ -6,15 +6,15 @@ import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @handler({
   service: 'application',
-  method: 'all',
+  method: 'list',
 })
-export class AllApplicationAction extends AbstractAction {
+export class ListApplicationAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'application.all'],
+    ['validate', 'application.list'],
     [
       'scopeIt',
       [
-        ['application.all'],
+        ['application.list'],
         [
           (params, context) => {
             // make sure the operator_id in the params matches the one of the user
@@ -24,7 +24,7 @@ export class AllApplicationAction extends AbstractAction {
               'operator_id' in params &&
               params.operator_id === context.call.user.operator
             ) {
-              return 'operator.application.all';
+              return 'operator.application.list';
             }
           },
         ],

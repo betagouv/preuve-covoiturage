@@ -2,8 +2,10 @@ import supertest from 'supertest';
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { MongoConnection } from '@ilos/connection-mongo/';
 
 import { bootstrap } from '../src/bootstrap';
+import { ServiceProvider } from '../src/ServiceProvider';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -43,14 +45,13 @@ describe('Operator service', () => {
   });
 
   after(async () => {
-    // TODO : refactor
-    // await (<MongoConnection>transport
-    //   .getKernel()
-    //   .getContainer()
-    //   .get(MongoConnection))
-    //   .getClient()
-    //   .db(process.env.APP_MONGO_DB)
-    //   .dropDatabase();
+    await (<MongoConnection>transport
+      .getKernel()
+      .get(ServiceProvider)
+      .get(MongoConnection))
+      .getClient()
+      .db(process.env.APP_MONGO_DB)
+      .dropDatabase();
 
     await transport.down();
   });
@@ -136,7 +137,7 @@ describe('Operator service', () => {
   it('Lists all operators', () => {
     return request
       .post('/')
-      .send(callFactory('operator:all', {}, ['operator.list']))
+      .send(callFactory('operator:list', {}, ['operator.list']))
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {

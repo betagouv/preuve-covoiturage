@@ -8,12 +8,10 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { territoryCreateSchema, territoryPatchSchema, territoryDeleteSchema } from '@pdc/provider-schema';
 
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
-import { AllTerritoryAction } from './actions/AllTerritoryAction';
+import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { PatchTerritoryAction } from './actions/PatchTerritoryAction';
 import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
-import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
-import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 
 @serviceProvider({
   config: __dirname,
@@ -25,14 +23,7 @@ import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPosition
   ],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
   connections: [[MongoConnection, 'mongo']],
-  handlers: [
-    AllTerritoryAction,
-    CreateTerritoryAction,
-    PatchTerritoryAction,
-    DeleteTerritoryAction,
-    FindTerritoryByInseeAction,
-    FindTerritoryByPositionAction,
-  ],
+  handlers: [ListTerritoryAction, CreateTerritoryAction, PatchTerritoryAction, DeleteTerritoryAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [

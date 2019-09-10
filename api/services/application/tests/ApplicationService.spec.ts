@@ -5,11 +5,12 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { ObjectId } from 'bson';
-
 import { TransportInterface } from '@ilos/common';
+import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
 import { Application } from '../src/entities/Application';
+import { ServiceProvider } from '../src/ServiceProvider';
 
 let transport: TransportInterface;
 let request;
@@ -31,13 +32,13 @@ describe('Application service', () => {
   });
 
   after(async () => {
-    // await (<MongoConnection>transport
-    //   .getKernel()
-    //   .getContainer()
-    //   .get(MongoConnection))
-    //   .getClient()
-    //   .db(process.env.APP_MONGO_DB)
-    //   .dropDatabase();
+    await (<MongoConnection>transport
+      .getKernel()
+      .get(ServiceProvider)
+      .get(MongoConnection))
+      .getClient()
+      .db(process.env.APP_MONGO_DB)
+      .dropDatabase();
 
     await transport.down();
   });
@@ -140,5 +141,33 @@ describe('Application service', () => {
         expect(response.body.result).to.have.property('operator_id', operator_id);
         expect(response.body.result).to.have.property('deletedAt');
         expect(new Date(response.body.result.deletedAt)).to.be.an.instanceOf(Date);
+      }));
+
+  it('List applications', () =>
+    request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'application:list',
+        params: {
+          params: {
+            operator_id,
+          },
+          _context: {
+            call: {
+              user: {
+                permissions: ['application.list'],
+              },
+            },
+          },
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result.length).to.eq(1);
       }));
 });
