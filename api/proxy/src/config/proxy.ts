@@ -8,6 +8,12 @@ export const port = env('PORT', 8080);
 export const session = {
   secret: env('APP_SESSION_SECRET', 'Set me in .env file!!!'),
   name: env('APP_SESSION_NAME', 'pdc-session'),
+
+  /**
+   * Cookie expiration (maxAge) in milliseconds
+   * defaults to 30 days
+   */
+  maxAge: env('APP_SESSION_MAXAGE', 30 * 86400 * 1000),
 };
 
 export const rpc = {
