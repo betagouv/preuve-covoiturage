@@ -1,6 +1,6 @@
-import { provider, ConfigInterfaceResolver } from '@ilos/common';
+import { provider, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
-import { MongoConnection } from '@ilos/connection-mongo';
+import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 
 import { Territory } from '../entities/Territory';
 import {
@@ -26,5 +26,34 @@ export class TerritoryRepositoryProvider extends ParentRepository implements Ter
 
   public getModel() {
     return Territory;
+  }
+
+  /**
+   * Find a terroritory by insee.
+   */
+  async findByInsee(insee: String): Promise<Territory> {
+    const collection = await this.getCollection();
+    const result = await collection.findOne({ insee });
+    if (!result) throw new NotFoundException(`Territory not found (insee: ${JSON.stringify(insee)})`);
+    return this.instanciate(result);
+  }
+
+  /**
+   * Find a terroritory by position (lon, lat).
+   */
+  async findByPosition(lon: Number, lat: Number): Promise<Territory> {
+    const collection = await this.getCollection();
+    const result = await collection.findOne({
+      geometry: {
+        $geoIntersects: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [lon, lat],
+          },
+        },
+      },
+    });
+    if (!result) throw new NotFoundException(`Territory not found (lon: ${lon}, lat: ${lat})`);
+    return this.instanciate(result);
   }
 }

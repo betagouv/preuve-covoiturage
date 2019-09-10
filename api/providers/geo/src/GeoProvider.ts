@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { provider, ProviderInterface, InvalidParamsException } from '@ilos/common';
+import { provider, ProviderInterface, InvalidParamsException, InitHookInterface } from '@ilos/common';
 import { ValidatorInterfaceResolver } from '@pdc/provider-validator';
 
 import { GeoInterface } from './interfaces/GeoInterface';
@@ -11,11 +11,39 @@ import { FrGouvApiGeo } from './providers/fr.gouv.api.geo';
 import { OrgOpenstreetmapNominatim } from './providers/org.openstreetmap.nominatim';
 import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
 
+const validators: [string, any][] = [
+  [
+    'position',
+    {
+      $id: 'position',
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 1,
+      dependencies: {
+        lon: ['lat'],
+        lat: ['lon'],
+      },
+      properties: {
+        lat: { macro: 'lat' },
+        lon: { macro: 'lon' },
+        insee: { macro: 'insee' },
+        literal: { macro: 'longchar' },
+      },
+    },
+  ],
+];
+
 @provider({
   identifier: GeoProviderInterfaceResolver,
 })
-export class GeoProvider implements ProviderInterface {
+export class GeoProvider implements ProviderInterface, InitHookInterface {
   constructor(protected validator: ValidatorInterfaceResolver) {}
+
+  async init() {
+    validators.forEach(([name, schema]) => {
+      this.validator.registerValidator(schema, name);
+    });
+  }
 
   public async getTown(position: GeoInterface): Promise<PositionInterface> {
     await this.validator.validate(position, 'position');

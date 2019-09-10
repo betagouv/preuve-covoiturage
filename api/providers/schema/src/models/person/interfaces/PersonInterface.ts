@@ -13,7 +13,6 @@ export interface PersonInterface {
   duration?: number;
 
   seats?: number;
-  cost?: number;
   incentive?: number;
   contribution?: number;
   revenue?: number;

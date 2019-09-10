@@ -6,6 +6,6 @@ const merge = { ...journeyCreateSchema };
 merge['$id'] = 'trip.crosscheck';
 
 // make operator_id required
-merge.required = ['journey_id', 'operator_class', 'operator_id'];
+merge.definitions.journey.required = ['journey_id', 'operator_class', 'operator_id'];
 
 export const tripCrosscheckSchema = { ...merge };

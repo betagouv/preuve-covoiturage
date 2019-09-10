@@ -1,29 +1,22 @@
-import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { ConfigExtension } from '@ilos/config';
-import { ConnectionManagerExtension } from '@ilos/connection-manager';
+import { serviceProvider } from '@ilos/common';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { journeyCreateSchema } from '@pdc/provider-schema';
+import { RedisConnection } from '@ilos/connection-redis';
+import { ValidatorMiddleware } from '@pdc/provider-validator';
+// import { journeyCreateSchema } from '@pdc/provider-schema';
+import { ChannelTransportMiddleware } from '@pdc/provider-middleware';
 
 import { CrosscheckProcessAction } from './actions/CrosscheckProcessAction';
-import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
+import { DispatchTripAction } from './actions/DispatchTripAction';
 
 @serviceProvider({
   config: __dirname,
-  providers: [CrosscheckRepositoryProvider],
-  validator: [['crosscheck.process', journeyCreateSchema]],
-  middlewares: [['validate', ValidatorMiddleware]],
-  connections: [[MongoConnection, 'mongo']],
-  handlers: [CrosscheckProcessAction],
+  providers: [TripRepositoryProvider],
+  // validator: [['crosscheck.process', journeyCreateSchema]],
+  middlewares: [['validate', ValidatorMiddleware], ['channel.transport', ChannelTransportMiddleware]],
+  connections: [[MongoConnection, 'connections.mongo'], [RedisConnection, 'connections.redis']],
+  handlers: [DispatchTripAction, CrosscheckProcessAction],
+  queues: ['crosscheck'],
 })
-export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [
-    ConfigExtension,
-    ConnectionManagerExtension,
-    ValidatorExtension,
-    Extensions.Middlewares,
-    Extensions.Providers,
-    Extensions.Handlers,
-  ];
-}
+export class ServiceProvider extends AbstractServiceProvider {}

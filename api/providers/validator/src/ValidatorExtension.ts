@@ -13,8 +13,10 @@ import { postcodeCustomFormat } from './formats/postcodeCustomFormat';
 import { sirenCustomFormat } from './formats/sirenCustomFormat';
 import { siretCustomFormat } from './formats/siretCustomFormat';
 import { coordinatesKeyword } from './keywords/coordinatesKeyword';
-import { macroKeyword } from './keywords/macroKeyword';
 import { rnaCustomFormat } from './formats/rnaCustomFormat';
+
+import { macroKeyword } from './keywords/macroKeyword';
+import { castKeyword } from './keywords/castKeyword';
 
 @extension({
   name: 'validator',
@@ -23,7 +25,6 @@ import { rnaCustomFormat } from './formats/rnaCustomFormat';
 })
 export class ValidatorExtension extends ValidatorParentExtension {
   async init(serviceContainer: ServiceContainerInterface) {
-    await super.init(serviceContainer);
     const validator = serviceContainer.getContainer().get(ValidatorInterfaceResolver);
 
     // register string formats
@@ -45,5 +46,8 @@ export class ValidatorExtension extends ValidatorParentExtension {
 
     // register macros
     validator.registerCustomKeyword(macroKeyword);
+    validator.registerCustomKeyword(castKeyword);
+    await super.init(serviceContainer);
+    console.log('VALIDATORS OK');
   }
 }

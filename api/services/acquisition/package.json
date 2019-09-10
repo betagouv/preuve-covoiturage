@@ -64,7 +64,8 @@
     "@ilos/repository": "~0",
     "@pdc/provider-schema": "~0",
     "@pdc/provider-validator": "~0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

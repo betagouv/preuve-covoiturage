@@ -17,7 +17,6 @@ export class Person implements PersonInterface {
   public duration?: number;
 
   public seats?: number;
-  public cost: number;
   public contribution?: number;
   public revenue?: number;
   public expense: number;
@@ -35,7 +34,6 @@ export class Person implements PersonInterface {
     this.duration = data.duration;
 
     this.seats = data.seats;
-    this.cost = data.cost;
     this.revenue = data.revenue;
     this.expense = data.expense;
     this.contribution = data.contribution;

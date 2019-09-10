@@ -2,15 +2,14 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-
 import { NewableType, ExtensionInterface, serviceProvider as serviceProviderDecorator } from '@ilos/common';
-import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
+import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
 import { EnvExtension } from '@ilos/env';
 import { ConfigExtension } from '@ilos/config';
 import { ValidatorExtension } from '@pdc/provider-validator';
 
-import { GeoProviderExtension } from './GeoProviderExtension';
 import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
+import { GeoProvider } from './GeoProvider';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -19,14 +18,14 @@ const { expect } = chai;
   env: null,
   config: {},
   validator: [],
-  geo: true,
+  providers: [GeoProvider],
 })
 class ServiceProvider extends BaseServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
     EnvExtension,
     ConfigExtension,
     ValidatorExtension,
-    GeoProviderExtension,
+    Extensions.Providers,
   ];
 }
 
