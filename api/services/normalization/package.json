@@ -54,8 +54,8 @@
     "@ilos/config": "~0",
     "@ilos/core": "~0",
     "@pdc/provider-geo": "~0",
-    "@pdc/provider-schema": "~0",
     "@pdc/provider-middleware": "~0",
+    "@pdc/provider-schema": "~0",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
