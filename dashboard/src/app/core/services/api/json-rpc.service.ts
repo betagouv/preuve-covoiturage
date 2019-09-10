@@ -1,12 +1,28 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
-import { map } from 'rxjs/operators';
+import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-interface JsonRPCResponse {
-  payload: { meta: string; data: any[] };
+import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
+
+interface RPCOptions {
+  headers?:
+    | HttpHeaders
+    | {
+        [header: string]: string | string[];
+      };
+  // observe?: 'body';
+  params?:
+    | HttpParams
+    | {
+        [param: string]: string | string[];
+      };
+  reportProgress?: boolean;
+  // responseType: 'arraybuffer';
+  withCredentials?: boolean;
 }
 
 @Injectable({
@@ -19,13 +35,16 @@ export class JsonRPCService {
     this.url = 'rpc';
   }
 
-  public call(methods: JsonRPCParam[] | JsonRPCParam, options = {}): Observable<any> {
-    if (methods instanceof JsonRPCParam) {
-      // tslint:disable-next-line:no-parameter-reassignment
-      methods = [methods];
-    }
+  public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload> {
+    return this.call([method], options).pipe(map((datas) => datas[0]));
+  }
+
+  public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload[]> {
+    options.withCredentials = true;
+
     return this.http.post(this.url, methods, options).pipe(
       map((response: JsonRPCResponse) => {
+        const res: JsonRPCPayload[] = [];
         if (response.payload && response.payload.data) {
           response.payload.data.forEach((data) => {
             if (data.error) {
@@ -36,9 +55,11 @@ export class JsonRPCService {
               console.error(errorMessage);
               throw new Error(errorMessage);
             }
+
+            res.push({ id: data.id, data: data.result && data.result.data ? data.result.data : null });
           });
         }
-        return response;
+        return res;
       }),
     );
   }

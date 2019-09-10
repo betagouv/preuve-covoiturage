@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { ApiService } from '~/core/services/api/api.service';
 import { OperatorToken } from '~/core/entities/operator/operatorToken';
@@ -27,7 +27,8 @@ export class OperatorTokenService extends ApiService<OperatorTokenInterface> {
 
   public createToken(item: OperatorToken): Observable<{ token: string }> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.create`, item);
-    return this._jsonRPC.call(jsonRPCParam).pipe(
+    return this._jsonRPC.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
       tap((entity) => {
         const auxArray = this._entities$.value;
         auxArray.push(entity);

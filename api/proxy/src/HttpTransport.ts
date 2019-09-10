@@ -129,12 +129,14 @@ export class HttpTransport implements TransportInterface {
       cors({
         origin: corsOrigin,
         optionsSuccessStatus: 200,
+        credentials: true,
       }),
     );
   }
 
   private registerGlobalMiddlewares() {
     this.app.use(signResponseMiddleware);
+    json - rpc.service;
     this.app.use(dataWrapMiddleware);
   }
 

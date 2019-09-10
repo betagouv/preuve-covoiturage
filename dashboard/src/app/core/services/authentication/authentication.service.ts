@@ -66,6 +66,7 @@ export class AuthenticationService {
         },
         {
           headers,
+          withCredentials: true,
         },
       )
       .pipe(
@@ -113,7 +114,7 @@ export class AuthenticationService {
       newPassword,
     });
 
-    this._jsonRPC.call(jsonRPCParam).subscribe(
+    this._jsonRPC.callOne(jsonRPCParam).subscribe(
       (data) => {
         console.log('success', data);
       },
@@ -166,7 +167,7 @@ export class AuthenticationService {
       email,
     };
 
-    return this._jsonRPC.call(jsonRPCParam);
+    return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   /**
@@ -180,7 +181,7 @@ export class AuthenticationService {
       token,
     };
 
-    return this._jsonRPC.call(jsonRPCParam);
+    return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   /**
@@ -194,7 +195,7 @@ export class AuthenticationService {
       token,
     };
 
-    return this._jsonRPC.call(jsonRPCParam);
+    return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   public sendNewPassword(password: string, reset: string, token: string): Observable<any> {
@@ -206,7 +207,7 @@ export class AuthenticationService {
       token,
     };
 
-    return this._jsonRPC.call(jsonRPCParam);
+    return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   private readToken() {

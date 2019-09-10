@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { ApiService } from '~/core/services/api/api.service';
@@ -29,7 +29,8 @@ export class CampaignService extends ApiService<Campaign> {
   public loadTemplates(): Observable<Campaign[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}.listTemplates`);
-    return this._jsonRPC.call(jsonRPCParam).pipe(
+    return this._jsonRPC.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
       tap((templates: Campaign[]) => {
         templates.forEach((campaignTemplate) => (campaignTemplate.template_id = campaignTemplate._id));
         this._templates$.next(templates);
@@ -51,7 +52,8 @@ export class CampaignService extends ApiService<Campaign> {
   public loadFormulaParameters(): Observable<IncentiveFormulaParameter[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}.listFormulaParameters`);
-    return this._jsonRPC.call(jsonRPCParam).pipe(
+    return this._jsonRPC.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
       tap((data) => {
         console.log('loaded');
         this._parameters$.next(data);
