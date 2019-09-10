@@ -4,6 +4,7 @@ import 'hammerjs';
 import * as moment from 'moment';
 
 import { AppModule } from '~/app.module';
+
 import { environment } from './environments/environment';
 
 if (environment.production) {

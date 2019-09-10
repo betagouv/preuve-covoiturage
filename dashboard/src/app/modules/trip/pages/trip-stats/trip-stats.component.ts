@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 import { tripStats } from '../../config/tripStats';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-trip-stats',
