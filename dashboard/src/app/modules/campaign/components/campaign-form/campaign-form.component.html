@@ -29,7 +29,7 @@
         </div>
       </app-page-content>
     </mat-step>
-    <mat-step [stepControl]="campaignFormGroup.get('rules')">
+    <mat-step [completed]="canGoToThirdStep">
       <ng-template matStepLabel>Éligibilité</ng-template>
       <app-page-content>
         <div class="CampaignForm-content">
@@ -58,7 +58,7 @@
         </div>
       </app-page-content>
     </mat-step>
-    <mat-step [stepControl]="campaignFormGroup">
+    <mat-step [completed]="canGoToLastStep">
       <ng-template matStepLabel>Rétribution</ng-template>
       <app-page-content>
         <div class="CampaignForm-content">
@@ -76,7 +76,7 @@
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
-            <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!campaignFormGroup.valid">
+            <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!canGoToLastStep">
               Voir le récapitulatif
             </button>
           </div>

@@ -24,7 +24,7 @@
             {{ showAmountLabel() }}
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <div class="CampaignSubForm-inputs">
+        <div class="ParametersForm-maxRetribution CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Rétribution totale</mat-label>
             <input matInput type="number" min="0" placeholder="50000" formControlName="max_amount" required />
@@ -118,7 +118,7 @@
             {{ controls.max_trips.value ? (controls.max_trips.value | number: '1.0-0':'FR') + ' trajets' : '' }}
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <div class="CampaignSubForm-inputs">
+        <div class="ParametersForm-maxTrips CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Nombre de trajets max</mat-label>
             <input matInput type="number" min="0" placeholder="20000" formControlName="max_trips" />

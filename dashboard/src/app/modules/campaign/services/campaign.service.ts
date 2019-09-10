@@ -11,8 +11,8 @@ import { IncentiveFormulaParameter } from '~/core/entities/campaign/incentive-fo
 import { RetributionInterface } from '~/core/interfaces/campaign/retributionInterface';
 import { FormulaParametersEnum } from '~/core/enums/campaign/formula-parameters.enum';
 import { FormulaFunctionsEnum } from '~/core/enums/campaign/formula-functions.enum';
-import { TemplateInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
 
 @Injectable({
   providedIn: 'root',

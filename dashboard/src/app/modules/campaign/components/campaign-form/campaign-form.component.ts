@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
@@ -35,7 +36,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   currentStep = 0;
   matStepperCompleted = false;
 
-  private _defaultRange: RulesRangeType = [0, 50];
+  private _defaultRange: RulesRangeType = [0, 150];
   @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
 
   constructor(
@@ -52,7 +53,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   ngOnInit() {
     this.initForms();
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
-      // todo: go to last accessible step
       this.creation = !params.has('campaignId');
       if (this.creation) {
         this.loading = false;
@@ -71,12 +71,45 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   saveOrLaunchCampaign(saveAsDraft) {
-    const campaignToSave: Campaign = new Campaign(this.campaignFormGroup.getRawValue());
+    const formatedCampaign = _.cloneDeep(this.campaignFormGroup.getRawValue());
+
+    // format dates : moment --> Date
+    formatedCampaign.start = formatedCampaign.start.toDate();
+    formatedCampaign.end = formatedCampaign.end.toDate();
+
+    const campaignToSave: Campaign = new Campaign(formatedCampaign);
     if (!saveAsDraft && campaignToSave.status === CampaignStatusEnum.DRAFT) {
       this.launchCampaign(campaignToSave);
     } else {
       this.saveCampaign(campaignToSave);
     }
+  }
+
+  get canGoToThirdStep(): boolean {
+    const rulesFormGroup = this.campaignFormGroup.get('rules');
+    return (
+      rulesFormGroup.get('weekday').valid &&
+      rulesFormGroup.get('range').valid &&
+      rulesFormGroup.get('ranks').valid &&
+      rulesFormGroup.get('operators').valid &&
+      (rulesFormGroup.get('forDriver').value ||
+        rulesFormGroup.get('forPassenger').value ||
+        rulesFormGroup.get('forTrip').value)
+    );
+  }
+
+  get canGoToLastStep(): boolean {
+    return (
+      this.campaignFormGroup.get('rules').valid &&
+      this.campaignFormGroup.get('max_amount').valid &&
+      this.campaignFormGroup.get('max_trips').valid &&
+      this.campaignFormGroup.get('start').valid &&
+      this.campaignFormGroup.get('end').valid &&
+      this.campaignFormGroup.get('amount_unit').valid &&
+      this.campaignFormGroup.get('restrictions').valid &&
+      this.campaignFormGroup.get('formula_expression').valid &&
+      this.campaignFormGroup.get('formulas').valid
+    );
   }
 
   private launchCampaign(campaign: Campaign) {
@@ -140,7 +173,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         forDriver: [],
         forPassenger: [],
         forTrip: [],
-        operators: [],
+        operators: [[], Validators.required],
       }),
       start: [null, Validators.required],
       end: [null, Validators.required],
@@ -178,7 +211,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     this.campaignFormGroup.patchValue({
       _id: campaign._id,
       template_id: campaign.template_id,
-      status: isTemplate ? campaign.status : CampaignStatusEnum.DRAFT,
+      status: isTemplate ? CampaignStatusEnum.DRAFT : campaign.status,
       name: campaign.name,
       description: campaign.description,
       start: campaign.start,
@@ -223,7 +256,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     });
 
     // set defaults
-    if (!rulesForm.get('range').value || rulesForm.get('range').value.length < 2) {
+    if (
+      !rulesForm.get('range').value ||
+      rulesForm.get('range').value.length < 2 ||
+      (rulesForm.get('range').value[0] === 0 && rulesForm.get('range').value[1] === 0)
+    ) {
       rulesForm.get('range').setValue(this._defaultRange);
     }
 
