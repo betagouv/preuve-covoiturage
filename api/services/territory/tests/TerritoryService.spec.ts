@@ -4,8 +4,10 @@ import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { describe } from 'mocha';
 import { TransportInterface } from '@ilos/common';
+import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
+import { ServiceProvider } from '../src/ServiceProvider';
 
 chai.use(chaiNock);
 
@@ -25,13 +27,13 @@ describe('Territory service', () => {
   });
 
   after(async () => {
-    // await (<MongoConnection>transport
-    //   .getKernel()
-    //   .getContainer()
-    //   .get(MongoConnection))
-    //   .getClient()
-    //   .db(process.env.APP_MONGO_DB)
-    //   .dropDatabase();
+    await (<MongoConnection>transport
+      .getKernel()
+      .get(ServiceProvider)
+      .get(MongoConnection))
+      .getClient()
+      .db(process.env.APP_MONGO_DB)
+      .dropDatabase();
 
     await transport.down();
   });
@@ -108,7 +110,7 @@ describe('Territory service', () => {
       .send({
         id: 1,
         jsonrpc: '2.0',
-        method: 'territory:all',
+        method: 'territory:list',
         params: {
           params: {},
           _context: {

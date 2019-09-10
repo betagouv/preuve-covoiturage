@@ -6,7 +6,7 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import {
-  applicationAllSchema,
+  applicationAllSchema as applicationListSchema,
   applicationFindSchema,
   applicationCreateSchema,
   applicationRevokeSchema,
@@ -16,7 +16,7 @@ import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
 import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
 import {
-  AllApplicationAction,
+  ListApplicationAction,
   FindApplicationAction,
   CreateApplicationAction,
   RevokeApplicationAction,
@@ -26,14 +26,14 @@ import {
   config: __dirname,
   providers: [ApplicationRepositoryProvider],
   validator: [
-    ['application.all', applicationAllSchema],
+    ['application.list', applicationListSchema],
     ['application.find', applicationFindSchema],
     ['application.create', applicationCreateSchema],
     ['application.revoke', applicationRevokeSchema],
   ],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scopeIt', ScopeToSelfMiddleware]],
   connections: [[MongoConnection, 'mongo']],
-  handlers: [AllApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
+  handlers: [ListApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
