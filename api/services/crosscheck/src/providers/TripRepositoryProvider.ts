@@ -36,19 +36,23 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
     return Trip;
   }
 
-  public async findByOperatorJourneyIdAndOperatorId(params: {
-    operator_journey_id?: string;
+  async create(data: Trip): Promise<Trip> {
+    return super.create({ ...data, operator_id: [new ObjectId(data.operator_id[0])] });
+  }
+
+  public async findByOperatorTripIdAndOperatorId(params: {
+    operator_trip_id?: string;
     operator_id: string;
   }): Promise<Trip> {
     const collection = await this.getCollection();
+    const query = {
+      operator_id: new ObjectId(params.operator_id),
+    };
 
-    // cast all params to ObjectId
-    const findParams = Object.keys(params).reduce(
-      (p: object, c: string): object => ({ ...p, c: new ObjectId(params[c]) }),
-      {},
-    );
-
-    const result = await collection.findOne(findParams);
+    if (params.operator_trip_id) {
+      query['operator_trip_id'] = params.operator_trip_id;
+    }
+    const result = await collection.findOne(query);
 
     if (!result) throw new NotFoundException('Trip not found');
 
@@ -81,7 +85,7 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
     },
   ): Promise<Trip> {
     const collection = await this.getCollection();
-    const { people, territory, ...patch } = data;
+    const { people, territory, operator_id, ...patch } = data;
     let request = {};
     if (people || territory) {
       let push = {};
@@ -92,6 +96,10 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
 
       if (territory) {
         push = { ...push, territory: { $each: territory } };
+      }
+
+      if (operator_id) {
+        push = { ...push, operator_id: { $each: operator_id.map((opid) => new ObjectId(opid)) } };
       }
 
       request = { ...request, $push: push };

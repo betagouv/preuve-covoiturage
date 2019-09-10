@@ -32,6 +32,8 @@ export class CrosscheckProcessAction extends Action {
     const trip: TripInterface = await this.findTripOrNull(journey);
     let finalTrip: TripInterface;
 
+    this.logger.debug(`Trying to get existing trip for ${journey._id}, found ${trip ? trip._id : 'none'}`);
+
     if (trip === null) {
       try {
         finalTrip = await this.createTrip(journey);
@@ -64,10 +66,11 @@ export class CrosscheckProcessAction extends Action {
   private async findTripOrNull(journey: JourneyInterface): Promise<TripInterface | null> {
     if ('operator_journey_id' in journey) {
       try {
-        return this.tripRepository.findByOperatorJourneyId({
-          operator_journey_id: journey.operator_journey_id,
+        const trip = await this.tripRepository.findByOperatorTripIdAndOperatorId({
+          operator_trip_id: journey.operator_journey_id,
           operator_id: journey.operator_id,
         });
+        return trip;
       } catch (e) {
         return this.guessTrip(journey);
       }
@@ -101,6 +104,8 @@ export class CrosscheckProcessAction extends Action {
   }
   private async createTrip(journey: JourneyInterface): Promise<Trip> {
     const trip = new Trip({
+      operator_id: [journey.operator_id],
+      operator_trip_id: 'operator_journey_id' in journey ? journey.operator_journey_id : null,
       status: this.config.get('rules.status.pending'),
       territories: this.mapTerritories(journey),
       start: this.reduceStartDate(journey),
@@ -128,8 +133,10 @@ export class CrosscheckProcessAction extends Action {
 
     // find the oldest start date
     const newStartDate = this.reduceStartDate(journey, sourceTrip);
+    const operator_id = uniq([...sourceTrip.operator_id, journey.operator_id]);
 
     return this.tripRepository.findByIdAndPatch(sourceTrip._id, {
+      operator_id,
       people,
       territory,
       start: newStartDate,
