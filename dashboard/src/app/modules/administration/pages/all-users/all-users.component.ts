@@ -8,6 +8,7 @@ import { User } from '~/core/entities/authentication/user';
 import { UserService } from '~/core/services/authentication/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
+// tslint:disable-next-line: max-line-length
 import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
 
 @Component({

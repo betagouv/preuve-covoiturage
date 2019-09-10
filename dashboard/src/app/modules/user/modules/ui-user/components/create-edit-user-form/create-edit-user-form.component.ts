@@ -128,7 +128,7 @@ export class CreateEditUserFormComponent implements OnInit, OnChanges {
       const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;
-        if (territoryEditable === false) this.createEditUserForm.patchValue({ territory: null });
+        if (!territoryEditable) this.createEditUserForm.patchValue({ territory: null });
       }
 
       const operatorEditable = formVal.group === UserGroupEnum.OPERATOR;

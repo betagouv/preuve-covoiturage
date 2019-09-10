@@ -1,6 +1,7 @@
-import { IModel } from '../IModel';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+
+import { IModel } from '../IModel';
 
 export class User implements IModel {
   public _id: string;
