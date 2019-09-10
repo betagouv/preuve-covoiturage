@@ -9,8 +9,6 @@ export interface TripRepositoryProviderInterface extends RepositoryInterface {
   findByIdAndPatch(
     id: string,
     data: {
-      people: PersonInterface[];
-      territory: string[];
       [k: string]: any;
     },
   ): Promise<Trip>;
@@ -26,8 +24,6 @@ export abstract class TripRepositoryProviderInterfaceResolver extends Repository
   public async findByIdAndPatch(
     id: string,
     data: {
-      people: PersonInterface[];
-      territory: string[];
       [k: string]: any;
     },
   ): Promise<Trip> {

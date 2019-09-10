@@ -77,24 +77,31 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
   public async findByIdAndPatch(
     id: string,
     data: {
-      people: PersonInterface[];
-      territory: string[];
       [k: string]: any;
     },
   ): Promise<Trip> {
     const collection = await this.getCollection();
     const { people, territory, ...patch } = data;
-    const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      {
-        $push: {
-          people: { $each: people },
-          territory: { $each: territory },
-        },
-        $set: patch,
-      },
-      { returnOriginal: false },
-    );
+    let request = {};
+    if (people || territory) {
+      let push = {};
+
+      if (people) {
+        push = { ...push, people: { $each: people } };
+      }
+
+      if (territory) {
+        push = { ...push, territory: { $each: territory } };
+      }
+
+      request = { ...request, $push: push };
+    }
+
+    if (patch) {
+      request = { ...request, $set: patch };
+    }
+
+    const result = await collection.findOneAndUpdate({ _id: new ObjectId(id) }, request, { returnOriginal: false });
 
     if (!result) throw new NotFoundException('Trip not found');
 

@@ -1,8 +1,7 @@
-import * as _ from 'lodash';
-
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { JourneyInterface } from '@pdc/provider-schema';
+
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Enrich position data
@@ -19,7 +18,7 @@ export class NormalizationCostAction extends AbstractAction {
 
   public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
     const normalizedJourney = { ...journey };
-    // TODO: implementation
+    // TODO: implementation cost enrichment
     // need to add duration and distance enrichment
 
     await this.wf.next('normalization:cost', normalizedJourney);

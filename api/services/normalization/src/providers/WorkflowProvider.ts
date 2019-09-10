@@ -41,6 +41,7 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
     if (this.steps.length > index && index !== 0) {
       return this.steps[index];
     }
+
     throw new Error();
   }
 }
