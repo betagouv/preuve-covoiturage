@@ -13,7 +13,7 @@ import { ObjectRouteMapType, ArrayRouteMapType } from '../helpers/routeMapping';
 
 export const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
   // PROFILE
-  ['get', '/profile', 'user:find', (body, _query, _params, session) => ({ ...body, _id: session.user._id })],
+  // ['get', '/profile', 'user:find', (body, _query, _params, session) => ({ ...body, _id: session.user._id })],
   ['put', '/profile', 'user:patch', (body, _query, _params, session) => ({ ...body, _id: session.user._id })],
   ['delete', '/profile', 'user:delete', (_body, _query, _params, session) => ({ _id: session.user._id })],
   [

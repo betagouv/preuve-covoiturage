@@ -8,7 +8,7 @@ import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
- * Confirm email by getting user from 'confirm' and verifying uncrypted 'token' with crypted 'email_token'
+ * Confirm email by getting user from 'confirm' and verifying uncrypted 'token' with crypted 'emailToken'
  */
 @handler({
   service: 'user',
@@ -29,16 +29,16 @@ export class ConfirmEmailUserAction extends AbstractAction {
   }
 
   public async handle(params: UserConfirmEmailParamsInterface, context: ContextType): Promise<User> {
-    const user = await this.userRepository.findUserByParams({ email_confirm: params.confirm });
+    const user = await this.userRepository.findUserByParams({ emailConfirm: params.confirm });
 
-    if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.email_token))) {
+    if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.emailToken))) {
       throw new ForbiddenException('Invalid token');
     }
 
     // Token expired after 1 day
-    if ((Date.now() - user.email_change_at.getTime()) / 1000 > this.config.get('user.tokenExpiration.email_confirm')) {
-      user.email_confirm = undefined;
-      user.email_token = undefined;
+    if ((Date.now() - user.emailChangeAt.getTime()) / 1000 > this.config.get('user.tokenExpiration.emailConfirm')) {
+      user.emailConfirm = undefined;
+      user.emailToken = undefined;
       await this.userRepository.update(user);
 
       throw new ForbiddenException('Expired token');

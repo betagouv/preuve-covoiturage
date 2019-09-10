@@ -32,6 +32,7 @@ services:
       - 8080:8080
       - 9229:9229
     environment:
+      NODE_ENV: local
       PORT: 8080
       # APP_API_URL: 'http://localhost:8080'
       # APP_APP_URL: 'http://localhost:4200'

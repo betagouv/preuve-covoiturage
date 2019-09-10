@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { get } from 'lodash';
 import * as moment from 'moment';
 
@@ -30,7 +30,8 @@ export class StatService extends ApiService<StatInterface> {
   public loadOne(filter: FilterInterface = {}): Observable<Stat[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`stat.list`, filter);
-    return this._jsonRPC.call(jsonRPCParam).pipe(
+    return this._jsonRPC.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
       tap((data) => {
         this.formatData(data);
       }),

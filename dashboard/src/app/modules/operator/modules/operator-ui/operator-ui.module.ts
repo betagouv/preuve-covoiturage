@@ -9,10 +9,16 @@ import { OperatorImportComponent } from '~/modules/operator/modules/operator-ui/
 
 import { OperatorsAutocompleteComponent } from './components/operators-autocomplete/operators-autocomplete.component';
 import { OperatorFormComponent } from './components/operator-form/operator-form.component';
+import { OperatorAutocompleteComponent } from './components/operator-autocomplete/operator-autocomplete.component';
 
 @NgModule({
-  declarations: [OperatorsAutocompleteComponent, OperatorFormComponent, OperatorImportComponent],
-  exports: [OperatorsAutocompleteComponent, OperatorFormComponent],
+  declarations: [
+    OperatorsAutocompleteComponent,
+    OperatorFormComponent,
+    OperatorImportComponent,
+    OperatorAutocompleteComponent,
+  ],
+  exports: [OperatorsAutocompleteComponent, OperatorFormComponent, OperatorAutocompleteComponent],
   imports: [CommonModule, MaterialModule, ReactiveFormsModule, FormModule],
 })
 export class OperatorUiModule {}

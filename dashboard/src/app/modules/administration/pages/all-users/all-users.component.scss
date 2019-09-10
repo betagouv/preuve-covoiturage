@@ -1,0 +1,20 @@
+.Users {
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-loading {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  &-list {
+    margin-bottom: 20px;
+  }
+
+  &-form {
+    max-width: 550px;
+  }
+}

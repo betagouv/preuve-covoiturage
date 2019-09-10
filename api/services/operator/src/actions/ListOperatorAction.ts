@@ -5,9 +5,9 @@ import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/Opera
 
 @handler({
   service: 'operator',
-  method: 'all',
+  method: 'list',
 })
-export class AllOperatorAction extends AbstractAction {
+export class ListOperatorAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [['can', ['operator.list']]];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {

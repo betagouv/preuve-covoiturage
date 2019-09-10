@@ -16,12 +16,19 @@ export class UserService extends ApiService<User> {
     super(_http, _jsonRPC, 'user');
   }
 
-  set user(user: User) {
-    this._user$.next(user);
+  get user() {
+    return this._user$.value;
   }
 
-  get user(): User {
-    return this._user$.value;
+  set user(user) {
+    if (user !== this._user$.value) {
+      if (user) {
+        localStorage.setItem('_user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('_user');
+      }
+      this._user$.next(user);
+    }
   }
 
   get user$(): Observable<User> {

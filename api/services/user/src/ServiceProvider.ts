@@ -30,6 +30,7 @@ import {
   userChangeRoleSchema,
 } from '@pdc/provider-schema';
 
+import { MeUserAction } from './actions/MeUserAction';
 import { CreateUserAction } from './actions/CreateUserAction';
 import { DeleteUserAction } from './actions/DeleteUserAction';
 import { FindUserAction } from './actions/FindUserAction';
@@ -77,6 +78,7 @@ import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
     ChangePasswordUserAction,
     ChangeRoleUserAction,
     ConfirmEmailUserAction,
+    MeUserAction,
     CreateUserAction,
     DeleteUserAction,
     FindUserAction,
