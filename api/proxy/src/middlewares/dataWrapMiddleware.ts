@@ -1,0 +1,27 @@
+import expressMung from 'express-mung';
+
+/**
+ * Wrap the { results: ... } from JSON RPC
+ * in { meta: ..., data: ... } to normalize a metadata schema
+ * between queries.
+ * Applies to arrays or single objects
+ */
+const mapResults = (doc: any) => {
+  if (!('result' in doc)) return doc;
+
+  if (doc.result && 'data' in doc.result && 'meta' in doc.result) {
+    return doc;
+  }
+
+  doc.result = {
+    meta: null,
+    data: doc.result,
+  };
+
+  return doc;
+};
+
+// eslint-disable-next-line no-unused-vars
+export const dataWrapMiddleware = expressMung.json((body, req, res) =>
+  Array.isArray(body) ? body.map(mapResults) : mapResults(body),
+);

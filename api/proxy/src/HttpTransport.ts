@@ -19,7 +19,7 @@ import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
 import { TokenProvider } from '@pdc/provider-token';
 
-import { signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
+import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
 import { nestParams } from './helpers/nestParams';
@@ -144,6 +144,7 @@ export class HttpTransport implements TransportInterface {
 
   private registerGlobalMiddlewares() {
     this.app.use(signResponseMiddleware);
+    this.app.use(dataWrapMiddleware);
   }
 
   /**
