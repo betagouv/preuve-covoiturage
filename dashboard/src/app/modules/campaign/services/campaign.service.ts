@@ -26,6 +26,10 @@ export class CampaignService extends ApiService<Campaign> {
     super(_http, _jsonRPC, 'campaign');
   }
 
+  get campaignsLoaded(): boolean {
+    return this._loaded$.value;
+  }
+
   public loadTemplates(): Observable<Campaign[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}.listTemplates`);

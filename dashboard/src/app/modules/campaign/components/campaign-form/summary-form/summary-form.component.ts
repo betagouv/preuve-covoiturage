@@ -81,7 +81,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     summaryText += ` <b>${campaign.rules.ranks ? campaign.rules.ranks.join(' ou ') : ''}</b>.`;
     const rules = <FormGroup>this.controls.rules;
     summaryText += '<br/><br/>\r\n\r\n';
-    const nbOperators = rules.controls.operators.value ? rules.controls.operators.value.length : 0;
+    const nbOperators = rules.controls.operatorIds.value ? rules.controls.operatorIds.value.length : 0;
     if (nbOperators === this.operatorService.entities.length) {
       summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
     } else {

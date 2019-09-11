@@ -91,7 +91,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       rulesFormGroup.get('weekday').valid &&
       rulesFormGroup.get('range').valid &&
       rulesFormGroup.get('ranks').valid &&
-      rulesFormGroup.get('operators').valid &&
+      rulesFormGroup.get('operatorIds').valid &&
       (rulesFormGroup.get('forDriver').value ||
         rulesFormGroup.get('forPassenger').value ||
         rulesFormGroup.get('forTrip').value)
@@ -173,7 +173,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         forDriver: [],
         forPassenger: [],
         forTrip: [],
-        operators: [[], Validators.required],
+        operatorIds: [[], Validators.required],
       }),
       start: [null, Validators.required],
       end: [null, Validators.required],
@@ -233,7 +233,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       forDriver: campaign.rules.forDriver,
       forPassenger: campaign.rules.forPassenger,
       forTrip: campaign.rules.forTrip,
-      operators: campaign.rules.operators,
+      operatorIds: campaign.rules.operatorIds,
     });
 
     // patch form arrays
@@ -303,7 +303,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
                 forDriver: false,
                 forPassenger: false,
                 forTrip: true,
-                operators: [],
+                operatorIds: [],
               },
               start: moment()
                 .add(1, 'days')
