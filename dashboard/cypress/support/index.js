@@ -14,7 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './reusables/campaign-create-first-step';
+import './reusables/steps/campaign-create-first-step';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

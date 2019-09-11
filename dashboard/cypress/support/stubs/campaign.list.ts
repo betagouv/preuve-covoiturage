@@ -104,7 +104,17 @@ export const campaignStubs: Campaign[] = [
 export function stubCampaignList() {
   cy.route({
     method: 'POST',
-    url: '/api?methods=campaign.list',
-    response: (data) => campaignStubs,
+    url: '/rpc?methods=campaign:list',
+    response: (data) => ({
+      payload: {
+        data: [
+          {
+            id: 1568215196898,
+            jsonrpc: '2.0',
+            result: campaignStubs,
+          },
+        ],
+      },
+    }),
   });
 }

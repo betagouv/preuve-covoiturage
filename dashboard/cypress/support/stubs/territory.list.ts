@@ -1,4 +1,5 @@
 import { Address, Company, Territory } from '../../../src/app/core/entities/territory/territory';
+import { operatorStubs } from './operator.list';
 
 export const territoryStubs: Territory[] = [
   {
@@ -37,7 +38,17 @@ export const territoryStubs: Territory[] = [
 export function stubTerritoryList() {
   cy.route({
     method: 'POST',
-    url: '/api?methods=territory.list',
-    response: (data) => territoryStubs,
+    url: '/rpc?methods=territory.list',
+    response: (data) => ({
+      payload: {
+        data: [
+          {
+            id: 1568215196898,
+            jsonrpc: '2.0',
+            result: territoryStubs,
+          },
+        ],
+      },
+    }),
   });
 }

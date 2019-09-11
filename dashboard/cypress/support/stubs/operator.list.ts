@@ -1,4 +1,5 @@
 import { Operator } from '../../../src/app/core/entities/operator/operator';
+import { campaignTemplateStubs } from './campaign-template.list';
 
 export const operatorStubs: Operator[] = [
   {
@@ -21,7 +22,17 @@ export const operatorStubs: Operator[] = [
 export function stubOperatorList() {
   cy.route({
     method: 'POST',
-    url: '/api?methods=operator.list',
-    response: (data) => operatorStubs,
+    url: '/rpc?methods=operator:list',
+    response: (data) => ({
+      payload: {
+        data: [
+          {
+            id: 1568215196898,
+            jsonrpc: '2.0',
+            result: operatorStubs,
+          },
+        ],
+      },
+    }),
   });
 }

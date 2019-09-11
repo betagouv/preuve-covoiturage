@@ -2,6 +2,7 @@ import { TemplateInterface } from '../../../src/app/core/interfaces/campaign/tem
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { TripClassEnum } from '../../../src/app/core/enums/trip/trip-class.enum';
+import { campaignStubs } from './campaign.list';
 
 export const campaignTemplateStubs: TemplateInterface[] = [
   {
@@ -101,7 +102,17 @@ export const campaignTemplateStubs: TemplateInterface[] = [
 export function stubCampaignTemplateList() {
   cy.route({
     method: 'POST',
-    url: '/api?methods=campaign.listTemplates',
-    response: (data) => campaignTemplateStubs,
+    url: '/rpc?methods=campaign:listTemplates',
+    response: (data) => ({
+      payload: {
+        data: [
+          {
+            id: 1568215196898,
+            jsonrpc: '2.0',
+            result: campaignTemplateStubs,
+          },
+        ],
+      },
+    }),
   });
 }
