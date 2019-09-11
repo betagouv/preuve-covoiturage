@@ -17,12 +17,12 @@ import { OperatorService } from '../../../../services/operator.service';
 })
 export class OperatorsAutocompleteComponent extends DestroyObservable implements OnInit {
   public operatorCtrl = new FormControl();
-  public operatorForm;
 
   public operators: OperatorNameInterface[] = [];
 
   public filteredOperators: OperatorNameInterface[];
 
+  // with operatorIds control
   @Input() parentForm: FormGroup;
 
   @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
@@ -33,27 +33,36 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   ngOnInit() {
     this.loadOperators();
-    this.filterOperators();
-    this.operatorForm = this.parentForm.get('operators');
-    this.operatorForm.valueChanges
+    this.operatorCtrl.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .pipe(tap((operators: OperatorNameInterface[]) => this.filterOperators(operators)))
+      .pipe(tap((literal) => this.filterOperators(literal)))
       .subscribe();
   }
 
-  public remove(operator: OperatorNameInterface): void {
-    const index = this.operatorForm.value.indexOf(operator);
+  get operatorIdsControl(): FormControl {
+    return <FormControl>this.parentForm.get('operatorIds');
+  }
+
+  /**
+   * todo: refactor when search is made server side
+   */
+  getOperatorLabel(operatorId: string): string {
+    return this.operators.find((operator) => operator._id === operatorId).nom_commercial;
+  }
+
+  public remove(operator: string): void {
+    const index = this.operatorIdsControl.value.indexOf(operator);
     if (index >= 0) {
-      const operators = [...this.operatorForm.value];
+      const operators = [...this.operatorIdsControl.value];
       operators.splice(index, 1);
-      this.operatorForm.setValue(operators);
+      this.operatorIdsControl.setValue(operators);
     }
   }
 
   public onOperatorSelect(event: MatAutocompleteSelectedEvent): void {
-    const operators: OperatorNameInterface[] = this.operatorForm.value || [];
-    operators.push({ _id: event.option.value, nom_commercial: event.option.viewValue });
-    this.operatorForm.setValue(operators.map((operatorNameObj) => operatorNameObj._id));
+    const operatorIds: string[] = this.operatorIdsControl.value || [];
+    operatorIds.push(event.option.value);
+    this.operatorIdsControl.setValue(operatorIds);
     this.operatorInput.nativeElement.value = null;
     this.operatorCtrl.setValue(null);
   }
@@ -109,13 +118,14 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
         nom_commercial: operator.nom_commercial,
       }));
     });
+    this.filterOperators();
   }
 
-  private filterOperators(operators: OperatorNameInterface[] = []): void {
-    this.filteredOperators = _.differenceWith(
-      this.operators,
-      operators,
-      (x: OperatorNameInterface, y: OperatorNameInterface) => x._id === y._id,
+  private filterOperators(literal: string = ''): void {
+    const selectedOperatorIds = this.operatorIdsControl.value || [];
+    this.filteredOperators = this.operators.filter(
+      (operator) =>
+        selectedOperatorIds.indexOf(operator._id) === -1 && operator.nom_commercial.toLowerCase().includes(literal),
     );
   }
 }
