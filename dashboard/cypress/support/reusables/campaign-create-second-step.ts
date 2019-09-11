@@ -66,10 +66,6 @@ export function campaignSecondStepSelectOperators() {
 
     // select first operator
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
-
-    // // focus out of material select
-    // cy.get('.cdk-overlay-backdrop')
-    //   .click({ force: true });
   });
 }
 

@@ -20,14 +20,14 @@ import {
 } from '../../support/reusables/campaign-create-third-step';
 import { endMoment, expectedCampaign, startMoment } from '../../support/formValues/expectedCampaign';
 import { stubOperatorList } from '../../support/stubs/operator.list';
-import { stubCampaignList } from '../../support/stubs/campaign-template.list';
+import { stubCampaignTemplateList } from '../../support/stubs/campaign-template.list';
 
 context('Campaign form', () => {
   before(() => {
     cy.server();
 
     stubOperatorList();
-    stubCampaignList();
+    stubCampaignTemplateList();
 
     cy.visit(`/campaign/create`);
   });

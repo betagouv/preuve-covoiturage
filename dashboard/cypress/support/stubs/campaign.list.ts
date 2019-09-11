@@ -1,12 +1,13 @@
-import { TemplateInterface } from '../../../src/app/core/interfaces/campaign/templateInterface';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { TripClassEnum } from '../../../src/app/core/enums/trip/trip-class.enum';
+import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
 
-export const campaignTemplateStubs: TemplateInterface[] = [
+export const campaignStubs: Campaign[] = [
   {
+    _id: '5d7775bf37043b8463b2a208',
     template_id: '5d6930724f56e6e1d0654542',
-    status: CampaignStatusEnum.TEMPLATE,
+    status: CampaignStatusEnum.VALIDATED,
     name: 'Encourager le covoiturage',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
     rules: {
@@ -36,8 +37,9 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     expertMode: false,
   },
   {
+    _id: '5d777822ff790e51107c6c4f',
     template_id: '5d69319a9763dc801ea78de7',
-    status: CampaignStatusEnum.TEMPLATE,
+    status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter le trafic en semaine',
     description: 'Fusce vehicula dolor arcu, sit amet blandit dolor mollis.',
     rules: {
@@ -71,8 +73,9 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     expertMode: false,
   },
   {
-    template_id: '3',
-    status: CampaignStatusEnum.TEMPLATE,
+    _id: '5d77782eecbdea02802a81eb',
+    template_id: null,
+    status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter la pollution',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
     rules: {
@@ -98,10 +101,10 @@ export const campaignTemplateStubs: TemplateInterface[] = [
   },
 ];
 
-export function stubCampaignTemplateList() {
+export function stubCampaignList() {
   cy.route({
     method: 'POST',
-    url: '/api?methods=campaign.listTemplates',
-    response: (data) => campaignTemplateStubs,
+    url: '/api?methods=campaign.list',
+    response: (data) => campaignStubs,
   });
 }

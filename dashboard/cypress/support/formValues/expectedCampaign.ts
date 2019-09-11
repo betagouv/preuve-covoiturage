@@ -38,7 +38,7 @@ export const expectedCampaign = new Campaign({
     forDriver: true,
     forPassenger: true,
     forTrip: null,
-    operators: [operatorStubs[0]._id],
+    operatorIds: [operatorStubs[0]._id],
   },
   status: CampaignStatusEnum.VALIDATED,
   template_id: null,
