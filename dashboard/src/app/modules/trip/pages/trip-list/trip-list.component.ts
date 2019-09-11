@@ -57,7 +57,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private loadTrips(filter: FilterInterface = {}): void {
+  private loadTrips(filter: FilterInterface | {} = {}): void {
     if (this.tripService.loading) {
       return;
     }

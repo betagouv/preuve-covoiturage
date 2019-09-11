@@ -46,7 +46,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     });
   }
 
-  private loadStat(filter: FilterInterface = {}): void {
+  private loadStat(filter: FilterInterface | {} = {}): void {
     if (this.statService.loading) {
       return;
     }

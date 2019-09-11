@@ -9,6 +9,8 @@ import { IModel } from '../../entities/IModel';
 export class ApiService<T extends IModel> {
   _entities$ = new BehaviorSubject<T[]>([]);
   _entity$ = new BehaviorSubject<T>(null);
+
+  // todo: seperate multiple loaded & single loaded
   protected _loading$ = new BehaviorSubject<boolean>(false);
   protected _loaded$ = new BehaviorSubject<boolean>(false);
 

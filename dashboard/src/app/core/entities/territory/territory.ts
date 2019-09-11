@@ -21,7 +21,7 @@ class Territory {
   public contacts?: Contacts;
 
   public cgu?: CGU;
-  public coordinates: any[];
+  public coordinates?: any[];
 
   constructor(data: {
     _id: string;

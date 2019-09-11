@@ -27,7 +27,7 @@ export class StatService extends ApiService<StatInterface> {
     super(_http, _jsonRPC, 'stat');
   }
 
-  public loadOne(filter: FilterInterface = {}): Observable<Stat[]> {
+  public loadOne(filter: FilterInterface | {} = {}): Observable<Stat[]> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`stat.list`, filter);
     return this._jsonRPC.callOne(jsonRPCParam).pipe(

@@ -52,7 +52,7 @@ export class Campaign {
         forDriver: null,
         forPassenger: null,
         forTrip: null,
-        operators: [],
+        operatorIds: [],
       },
       restrictions: [],
       formula_expression: '',
