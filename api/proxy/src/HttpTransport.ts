@@ -17,11 +17,13 @@ import {
 } from '@ilos/common';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
+import { TokenProvider } from '@pdc/provider-token';
 
-import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
+import { signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
 import { nestParams } from './helpers/nestParams';
+import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -29,6 +31,7 @@ export class HttpTransport implements TransportInterface {
   env: EnvInterface;
   port: string;
   server: http.Server;
+  tokenProvider: TokenProvider;
 
   constructor(private kernel: KernelInterface) {}
 
@@ -63,12 +66,12 @@ export class HttpTransport implements TransportInterface {
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
-    // this.registerServerAuth(); // disabled as JWT isn't used
     this.registerGlobalMiddlewares();
-    this.registerAuth();
+    this.registerAuthRoutes();
+    this.registerLegacyServerRoute();
     // this.registerSwagger();
     // this.registerBullArena();
-    // this.registerRoutes(); // disabled REST routes
+    // this.registerRoutes();
 
     if (this.config.get('proxy.rpc.open', false)) {
       this.registerCallHandler();
@@ -84,6 +87,11 @@ export class HttpTransport implements TransportInterface {
   private async getProviders() {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
+
+    this.tokenProvider = new TokenProvider({
+      secret: this.config.get('jwt.secret'),
+      ttl: this.config.get('jwt.ttl'),
+    });
   }
 
   private registerBeforeAllHandlers() {
@@ -136,20 +144,43 @@ export class HttpTransport implements TransportInterface {
 
   private registerGlobalMiddlewares() {
     this.app.use(signResponseMiddleware);
-    this.app.use(dataWrapMiddleware);
   }
 
-  // private registerServerAuth() {
-  //   const tokenProvider = new TokenProvider({
-  //     secret: this.config.get('jwt.secret'),
-  //     ttl: this.config.get('jwt.ttl'),
-  //   });
+  /**
+   * Operators POST to /journeys/push
+   * being authenticated by a JWT long-lived token with the payload:
+   * {
+   *    appId: string,
+   *    operatorId: string,
+   *    permissions: [string],
+   * }
+   */
+  private registerLegacyServerRoute() {
+    // register the JWT server middleware
+    this.app.use(serverTokenMiddleware(this.kernel, this.tokenProvider));
 
-  //   // inject the operator_id in the query
-  //   this.app.use(serverTokenMiddleware(this.kernel, tokenProvider));
-  // }
+    // Set the POST route
+    this.app.post(
+      '/journeys/push',
 
-  private registerAuth() {
+      // handle JWT token
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+
+      // add the operator_id to the payload
+      (req, res, next) => {
+        req.body.operator_id = get(req, 'session.user.operator_id', null);
+        next();
+      },
+
+      // make the final call
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        res.json(await this.kernel.handle(makeCall('acquisition:create', req.body, { user })));
+      }),
+    );
+  }
+
+  private registerAuthRoutes() {
     this.app.post(
       '/login',
       asyncHandler(async (req, res, next) => {
@@ -159,7 +190,7 @@ export class HttpTransport implements TransportInterface {
             throw new Error('Forbidden');
           }
           req.session.user = response.result;
-          res.json(response.result);
+          res.json(response);
         } catch (e) {
           throw e;
         }
