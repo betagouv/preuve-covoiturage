@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -16,10 +16,7 @@ import { JsonRPCService } from '../api/json-rpc.service';
   providedIn: 'root',
 })
 export class AuthenticationService {
-  public static STORAGE_KEY = 'CARPOOLING_USER';
-  private _token$ = new BehaviorSubject<string>(null);
-  // private _user$ = new Subject<User>();
-  // private _user: User = null;
+  private _hasChecked: boolean;
 
   constructor(
     private _userService: UserService,
@@ -27,17 +24,7 @@ export class AuthenticationService {
     private router: Router,
     private toastr: ToastrService,
     private http: HttpClient,
-  ) {
-    this.readToken();
-  }
-
-  public get token$() {
-    return this._token$;
-  }
-
-  public get token() {
-    return this._token$.value;
-  }
+  ) {}
 
   public get isAdmin(): boolean {
     return this.hasRole('admin');
@@ -84,27 +71,21 @@ export class AuthenticationService {
           return null;
         }),
         tap((user) => {
-          this.onLoggin({ user: new User(user) });
+          if (user) {
+            this.onLoggin(new User(user));
+          } else {
+            this.toastr.error('Mauvais Email ou mot de passe');
+          }
         }),
       );
-
-    //
-    // this._jsonRPC.call(jsonRPCParam).subscribe(
-    //   (data) => {
-    //     console.log('success', data);
-    //   },
-    //   (err) => {
-    //     console.log('error', err);
-    //   },
-    // );
   }
 
   public logout() {
-    // TODO CALL BACK
-    this._token$.next(null);
-    this._userService.user = null;
-    this.router.navigate(['/login']).then(() => {
-      this.toastr.success('Vous avez bien été déconnecté');
+    this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
+      this._userService.user = null;
+      this.router.navigate(['/login']).then(() => {
+        this.toastr.success('Vous avez bien été déconnecté');
+      });
     });
   }
 
@@ -210,48 +191,35 @@ export class AuthenticationService {
     return this._jsonRPC.callOne(jsonRPCParam);
   }
 
-  private readToken() {
-    const userJSON = localStorage.getItem('_user');
-    if (userJSON) {
-      this.onLoggin({ user: new User(JSON.parse(userJSON)) });
+  check(): Observable<User> {
+    console.log('> check');
+    if (this._hasChecked) {
+      console.log('has checked', this._userService.user);
+      return of(this._userService.user);
     }
 
-    // const responseStr = localStorage.getItem(AuthenticationService.STORAGE_KEY);
-    // if (responseStr != null) {
-    //   const response = JSON.parse(responseStr);
-    //   this.onLoggin(response);
-    // }
+    return this._jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
+      map((data) => {
+        // if forbidden return null
+        if (data.data.error && data.data.error.code === -32503) {
+          return null;
+        }
+        return new User(data.data);
+      }),
+      catchError((errorResponse) => {
+        if (errorResponse.status === 401) return of(null);
 
-    // // TODO DELETE WHEN LOGIN IS OK
-    // this.onLoggin({
-    //   user: new User({
-    //     _id: 1,
-    //     firstname: 'Opérateur',
-    //     lastname: 'Decovoit',
-    //     email: 'preuve.decovoit@yopmail.com',
-    //     role: 'admin',
-    //     group: 'operator',
-    //     permissions: OPERATORS_PERMISSIONS.admin,
-    //   }),
-    // });
-    //
-    // TODO DELETE WHEN LOGIN IS OK
-    //   this.onLoggin({
-    //     user: new User({
-    //       _id: 1,
-    //       firstname: 'AOM',
-    //       lastname: 'Decovoit',
-    //       email: 'preuve.decovoit@yopmail.com',
-    //       role: 'admin',
-    //       group: 'territory',
-    //       permissions: TERRITORIES_PERMISSIONS.admin,
-    //     }),
-    //   });
+        throw errorResponse;
+      }),
+      tap((user) => {
+        if (user) this.onLoggin(user);
+        this._hasChecked = true;
+      }),
+    );
   }
 
-  private onLoggin(response) {
-    console.log('> onLoggin', response);
-    this._token$.next(response.authToken);
-    this._userService.user = response.user;
+  private onLoggin(user) {
+    console.log('> onLoggin', user);
+    this._userService.user = user;
   }
 }

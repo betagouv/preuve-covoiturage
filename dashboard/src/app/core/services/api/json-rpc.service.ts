@@ -7,6 +7,7 @@ import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
+import { environment } from '../../../../environments/environment';
 
 interface RPCOptions {
   headers?:
@@ -56,7 +57,7 @@ export class JsonRPCService {
               throw new Error(errorMessage);
             }
 
-            res.push({ id: data.id, data: data.result && data.result.data ? data.result.data : null });
+            res.push({ id: data.id, data: data.result ? data.result : null });
           });
         }
         return res;

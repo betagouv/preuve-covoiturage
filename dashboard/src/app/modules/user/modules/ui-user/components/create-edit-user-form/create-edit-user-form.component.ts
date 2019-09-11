@@ -68,9 +68,13 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
   public onUpdateUser(): void {
     this.isCreatingUpdating = true;
-    const jsonRPCRequest = this.isCreating
-      ? this._userService.create(this.createEditUserForm.value)
-      : this._userService.patch(this.createEditUserForm.value);
+
+    // clean data (avoid API validation issue for non operator | territories
+    const formVal = this.createEditUserForm.value;
+    if (!formVal.territory) delete formVal.territory;
+    if (!formVal.operator) delete formVal.operator;
+
+    const jsonRPCRequest = this.isCreating ? this._userService.create(formVal) : this._userService.patch(formVal);
     jsonRPCRequest.subscribe(
       (user) => {
         this.isCreatingUpdating = false;

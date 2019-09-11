@@ -12,11 +12,6 @@ import { AuthenticatedLayoutComponent } from './core/components/authenticated-la
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
-  {
-    path: '',
     component: AuthenticatedLayoutComponent,
     canActivate: [AuthGuard],
     children: [

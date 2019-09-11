@@ -69,6 +69,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   }
 
   loadUsers() {
+    return;
     console.log('-> loadUsers');
     this.userService.load().subscribe(
       (users) => {

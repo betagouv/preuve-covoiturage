@@ -17,7 +17,8 @@ export class HttpApiInterceptor implements HttpInterceptor {
     if (req.url.includes('assets/icons')) {
       return next.handle(req);
     }
-    this.currentToken = this.authService.token;
+
+    // this.currentToken = this.authService.token;
     const update: any = {};
 
     if (this.APIMETHODS.indexOf(req.method) !== -1 && !req.url.startsWith('https://')) {
