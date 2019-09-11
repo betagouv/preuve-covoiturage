@@ -22,7 +22,7 @@ export interface TerritoryInterface {
     coordinates: any[];
   };
 
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
+  created_at?: Date;
+  updated_at?: Date;
+  deleted_at?: Date;
 }

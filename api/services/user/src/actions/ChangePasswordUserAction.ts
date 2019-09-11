@@ -30,12 +30,12 @@ export class ChangePasswordUserAction extends AbstractAction {
 
   public async handle(params: UserChangePasswordParamsInterface, context: UserContextInterface): Promise<User> {
     const user = await this.userRepository.find(context.call.user._id);
-    if (!(await this.cryptoProvider.comparePassword(params.oldPassword, user.password))) {
+    if (!(await this.cryptoProvider.comparePassword(params.old_password, user.password))) {
       throw new ForbiddenException('Wrong credentials');
     }
 
     // change the password
-    const newHashPassword = await this.cryptoProvider.cryptPassword(params.newPassword);
+    const newHashPassword = await this.cryptoProvider.cryptPassword(params.new_password);
 
     return this.userRepository.patch(user._id, { password: newHashPassword });
   }

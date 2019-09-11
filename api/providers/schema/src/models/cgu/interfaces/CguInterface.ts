@@ -1,5 +1,5 @@
 export interface CguInterface {
   accepted?: boolean;
-  acceptedAt?: Date;
-  acceptedBy?: string;
+  accepted_at?: Date;
+  accepted_by?: string;
 }

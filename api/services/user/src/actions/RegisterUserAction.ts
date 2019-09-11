@@ -48,7 +48,7 @@ export class RegisterUserAction extends AbstractAction {
       status: this.config.get('user.status.active'),
       password: newHashPassword,
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-      emailChangeAt: new Date(),
+      email_change_at: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);

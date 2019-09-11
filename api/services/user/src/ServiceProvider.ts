@@ -57,7 +57,7 @@ import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
     ['user.changeRole', userChangeRoleSchema],
     ['user.confirmEmail', userConfirmEmailSchema],
     ['user.find', userFindSchema],
-    ['user.forgottenPassword', userForgottenPasswordSchema],
+    ['user.forgotten_password', userForgottenPasswordSchema],
     ['user.patch', userPatchSchema],
     ['user.list', userListSchema],
     ['user.login', userLoginSchema],

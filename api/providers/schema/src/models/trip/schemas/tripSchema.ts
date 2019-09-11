@@ -22,9 +22,9 @@ export const tripSchema = {
   //     items: { $ref: '#/definitions/person' },
   //   },
   //   // incentives ?
-  //   createdAt: { macro: 'timestamp' },
-  //   updatedAt: { macro: 'timestamp' },
-  //   deletedAt: { macro: 'timestamp' },
+  //   created_at: { macro: 'timestamp' },
+  //   updated_at: { macro: 'timestamp' },
+  //   deleted_at: { macro: 'timestamp' },
   // },
   // definitions: {
   //   person: {

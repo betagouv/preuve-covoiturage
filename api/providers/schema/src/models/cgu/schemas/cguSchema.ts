@@ -6,7 +6,7 @@ export const cguSchema = {
       type: 'boolean',
       default: false,
     },
-    acceptedAt: { macro: 'timestamp' },
-    acceptedBy: { macro: 'objectid' },
+    accepted_at: { macro: 'timestamp' },
+    accepted_by: { macro: 'objectid' },
   },
 };

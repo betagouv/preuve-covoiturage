@@ -22,15 +22,3 @@ export const rpc = {
 };
 
 export const cors = env('APP_ENV', null) === 'review' ? '*' : appUrl;
-
-// exports.default = {
-//   environment: process.env,
-//   PORT: getHttpPost(process.env.PORT),
-//   mongoDatabase: mongoConfig.database,
-//   mongoUrl,
-//   redisUrl: process.env.REDIS_URL || 'redis://redis:6379',
-//   redisObject: getRedisConfig(process.env.REDIS_URL || 'redis://redis:6379'),
-//   jwtSecret: process.env.JWT_SECRET || 'Set me in .env file!!!',
-//   sessionSecret: process.env.SESSION_SECRET || 'Set me in .env file!!!',
-//   importMaxFileSizeMb: 5,
-// };

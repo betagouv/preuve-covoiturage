@@ -7,16 +7,16 @@ export class Application implements ApplicationInterface {
   public operator_id: string;
   public permissions: string[];
   // tslint:disable-next-line: variable-name
-  public createdAt: Date;
+  public created_at: Date;
   // tslint:disable-next-line: variable-name
-  public deletedAt?: Date;
+  public deleted_at?: Date;
 
   constructor(data: ApplicationInterface) {
     this._id = data._id;
     this.name = data.name;
     this.operator_id = data.operator_id;
     this.permissions = data.permissions;
-    this.createdAt = data.createdAt;
-    this.deletedAt = data.deletedAt;
+    this.created_at = data.created_at;
+    this.deleted_at = data.deleted_at;
   }
 }

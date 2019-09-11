@@ -74,12 +74,12 @@ export class CreateUserAction extends AbstractAction {
     // create the new user
     const user = new User({
       ...request,
-      status: this.config.get('user.status.notActive'),
+      status: this.config.get('user.status.not_active'),
       password: Math.random()
         .toString(36)
         .substring(2, 15),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-      emailChangeAt: new Date(),
+      email_change_at: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);
@@ -94,9 +94,9 @@ export class CreateUserAction extends AbstractAction {
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
     // set forgotten password properties to set first password
-    user.forgottenReset = reset;
-    user.forgottenToken = await this.cryptoProvider.cryptToken(token);
-    user.forgottenAt = new Date();
+    user.forgotten_reset = reset;
+    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
+    user.forgotten_at = new Date();
 
     await this.userRepository.update(user);
 
@@ -109,7 +109,7 @@ export class CreateUserAction extends AbstractAction {
         email: user.email,
         fullname: user.fullname,
         requester: requester.fullname,
-        organization: 'AomOrOperatorOrganisation',
+        organization: 'TerritoryOrOperatorOrganisation',
         link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
       },
       {

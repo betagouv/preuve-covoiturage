@@ -24,7 +24,7 @@ export const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
   // ],
 
   // AUTHENTICATION
-  // ['post', '/forgotten', 'user:forgottenPassword', 'auto'],
+  // ['post', '/forgotten', 'user:forgotten_password', 'auto'],
   // ['post', '/reset', 'user:resetPassword', 'auto'],
 
   // USERS
