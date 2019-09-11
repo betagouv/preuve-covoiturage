@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
             this.toastr.error("Vous n'êtes pas authorisé à accéder à cette page.");
           });
         } else if (state.url === '/') {
-          this.router.navigate(['/stat']);
+          this.router.navigate(['/trip/stats']);
         }
       }),
     );

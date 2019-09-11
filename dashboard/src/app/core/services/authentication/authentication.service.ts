@@ -83,7 +83,11 @@ export class AuthenticationService {
           return null;
         }),
         tap((user) => {
-          this.onLoggin({ user: new User(user) });
+          if (user) {
+            this.onLoggin({ user: new User(user) });
+          } else {
+            this.toastr.error('Mauvais Email ou mot de passe');
+          }
         }),
       );
   }
