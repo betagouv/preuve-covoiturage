@@ -43,7 +43,16 @@ export class JsonRPCService {
   public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload[]> {
     options.withCredentials = true;
 
-    return this.http.post(this.url, methods, options).pipe(
+    let urlWithMethods = this.url;
+    methods.forEach((method, index) => {
+      if (index === 0) {
+        urlWithMethods += '?methods=';
+      } else {
+        urlWithMethods += ',';
+      }
+      urlWithMethods += `${method.method}`;
+    });
+    return this.http.post(urlWithMethods, methods, options).pipe(
       map((response: JsonRPCResponse) => {
         const res: JsonRPCPayload[] = [];
         if (response.payload && response.payload.data) {
