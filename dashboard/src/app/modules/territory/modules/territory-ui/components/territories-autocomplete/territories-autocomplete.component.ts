@@ -6,6 +6,14 @@ import { takeUntil, tap } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { Campaign } from '~/core/entities/campaign/campaign';
+import { TerritoryService } from '~/modules/territory/services/territory.service';
+import { Company } from '~/core/entities/shared/company';
+import { Address } from '~/core/entities/shared/address';
+import { Territory } from '~/core/entities/territory/territory';
 
 @Component({
   selector: 'app-territories-autocomplete',
@@ -13,62 +21,110 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
   styleUrls: ['./territories-autocomplete.component.scss'],
 })
 export class TerritoriesAutocompleteComponent extends DestroyObservable implements OnInit {
+  // with control 'territoryIds'
+  @Input() parentForm: FormGroup;
+
   public territoryCtrl = new FormControl();
-  public territoryForm;
 
   public filteredTerritories: TerritoryNameInterface[];
-
-  @Input() parentForm: FormGroup;
+  public territories: TerritoryNameInterface[] = [];
 
   @ViewChild('territoryInput', { static: false }) territoryInput: ElementRef;
 
-  // TODO TMP REMOVE WHEN FINISHED
-  public mockTerritories: TerritoryNameInterface[] = [
-    {
-      _id: 'eZEFZEF45455',
-      shortname: 'Aom 1',
-    },
-    {
-      _id: 'eZEFZEEEF45455',
-      shortname: 'Aom 2',
-    },
-  ];
-
-  constructor() {
+  constructor(private territoryService: TerritoryService) {
     super();
   }
 
   ngOnInit() {
-    this.filterTerritories();
-    this.territoryForm = this.parentForm.get('territories');
-    this.territoryForm.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .pipe(tap((territories: TerritoryNameInterface[]) => this.filterTerritories(territories)))
-      .subscribe();
+    this.initTerritories();
   }
 
-  public remove(territory: TerritoryNameInterface): void {
-    const index = this.territoryForm.value.indexOf(territory);
+  get territoryIdsControl(): FormControl {
+    return <FormControl>this.parentForm.get('territoryIds');
+  }
+
+  getTerritoryLabel(territoryId): string {
+    return this.territories.find((territory) => territory._id === territoryId).shortname;
+  }
+
+  private initTerritories() {
+    if (!this.territoryService.territoriesLoaded) {
+      this.territoryService
+        .load()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          () => {
+            //
+          },
+          () => {
+            this.territoryService._entities$.next([
+              {
+                _id: '5c66d89760e6ee004a6cab1f',
+                name: 'AOM 1',
+                acronym: 'Aom 1 acronym ',
+                shortname: 'AOM 1 shortname',
+                company: new Company({
+                  siren: '123456789',
+                  naf_entreprise: '1234A',
+                }),
+                address: new Address({
+                  street: '5 rue de brest',
+                  postcode: '69002',
+                  city: 'Lyon',
+                  country: 'France',
+                }),
+              },
+              {
+                _id: '5d7775bf37043b8463b2a208',
+                name: 'AOM 2',
+                acronym: 'Aom acronym 2',
+                company: new Company({
+                  siren: '123456789',
+                  naf_entreprise: '1234A',
+                }),
+                address: new Address({
+                  street: '5 rue de brest',
+                  postcode: '69002',
+                  city: 'Lyon',
+                  country: 'France',
+                }),
+              },
+            ]);
+          },
+        );
+    }
+
+    this.territoryService.entities$.pipe(takeUntil(this.destroy$)).subscribe((territories: Campaign[]) => {
+      this.territories = territories.map((territory: Territory) => ({
+        _id: territory._id,
+        shortname: territory.shortname || territory.acronym || territory.name,
+      }));
+      this.filterTerritories();
+    });
+  }
+
+  public remove(territoryId: string): void {
+    const index = this.territoryIdsControl.value.indexOf(territoryId);
     if (index >= 0) {
-      const territories = [...this.territoryForm.value];
+      const territories = [...this.territoryIdsControl.value];
       territories.splice(index, 1);
-      this.territoryForm.setValue(territories);
+      this.territoryIdsControl.setValue(territories);
     }
   }
 
   public onTerritorySelect(event: MatAutocompleteSelectedEvent): void {
-    const territories: TerritoryNameInterface[] = this.territoryForm.value || [];
-    territories.push({ _id: event.option.value, shortname: event.option.viewValue });
-    this.territoryForm.setValue(territories);
+    const territories: TerritoryNameInterface[] = this.territoryIdsControl.value || [];
+    territories.push(event.option.value);
+    this.territoryIdsControl.setValue(territories);
     this.territoryInput.nativeElement.value = null;
     this.territoryCtrl.setValue(null);
   }
 
-  private filterTerritories(territories: TerritoryNameInterface[] = []): void {
-    this.filteredTerritories = _.differenceWith(
-      this.mockTerritories,
-      territories,
-      (x: TerritoryNameInterface, y: TerritoryNameInterface) => x._id === y._id,
+  private filterTerritories(literal: string = ''): void {
+    const selectedTerritoryIds = this.territoryIdsControl.value || [];
+    this.filteredTerritories = this.territories.filter(
+      (territory) =>
+        selectedTerritoryIds.indexOf(territory._id) === -1 && territory.shortname.toLowerCase().includes(literal),
     );
   }
 }
