@@ -118,8 +118,6 @@ export class HttpTransport implements TransportInterface {
         },
         name: sessionName,
         secret: sessionSecret,
-        resave: false,
-        saveUninitialized: false,
         // store, TODO: use redis
       }),
     );
@@ -185,22 +183,20 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/login',
       asyncHandler(async (req, res, next) => {
-        try {
-          const response = await this.kernel.handle(makeCall('user:login', req.body));
-          if (!response || Array.isArray(response) || 'error' in response) {
-            throw new Error('Forbidden');
-          }
-          req.session.user = response.result;
-          res.json(response);
-        } catch (e) {
-          throw e;
+        const response = await this.kernel.handle(makeCall('user:login', req.body));
+
+        if (!response || Array.isArray(response) || 'error' in response) {
+          res.status(mapStatusCode(response)).json(response);
+        } else {
+          req.session.user = Array.isArray(response) ? response[0].result : response.result;
+          res.status(mapStatusCode(response)).json(response);
         }
       }),
     );
 
     this.app.get('/profile', (req, res, next) => {
       if (!('user' in req.session)) {
-        throw new Error('Unauthenticated');
+        throw new UnauthorizedException();
       }
 
       res.json(req.session.user);

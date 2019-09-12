@@ -71,15 +71,13 @@ describe('Proxy auth', async () => {
   });
 
   it('should return error on profile if user not authenticated', async () => {
-    const r = await request.get('/profile').expect((body) => console.log(body));
-    expect(r.status).to.eq(500);
-    expect(r.body).to.deep.include({
-      message: 'Unauthenticated',
-    });
+    const r = await request.get('/profile');
+    expect(r.status).to.eq(401);
 
     // cookie should not be sent
     const cookie = undefined;
     if ('set-cookie' in r.header) {
+      // tslint:disable-next-line: no-shadowed-variable
       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
     expect(cookie).to.eq(undefined);
@@ -90,13 +88,11 @@ describe('Proxy auth', async () => {
       login: 'test@test.com',
       password: '123456',
     });
-    expect(r.status).to.eq(500);
-    expect(r.body).to.deep.include({
-      message: 'Forbidden',
-    });
+    expect(r.status).to.eq(401);
 
     const cookie = undefined;
     if ('set-cookie' in r.header) {
+      // tslint:disable-next-line: no-shadowed-variable
       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
     expect(cookie).to.eq(undefined);
@@ -109,13 +105,16 @@ describe('Proxy auth', async () => {
     });
     expect(r.status).to.eq(200);
     expect(r.body).to.deep.include({
-      payload: {
+      id: 1,
+      jsonrpc: '2.0',
+      result: {
+        meta: null,
         data: {
           message: 'hello world',
         },
-        meta: null,
       },
     });
+    // tslint:disable-next-line: no-unused-expression
     expect(r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie))).to.not.be.undefined;
   });
 
@@ -133,7 +132,9 @@ describe('Proxy auth', async () => {
 
     expect(r.status).to.eq(200);
     expect(r.body).to.deep.include({
-      payload: {
+      id: 1,
+      jsonrpc: '2.0',
+      result: {
         data: {
           message: 'hello world',
         },
@@ -160,15 +161,13 @@ describe('Proxy auth', async () => {
     // cookie should not be sent
     const cookie = undefined;
     if ('set-cookie' in r.header) {
+      // tslint:disable-next-line: no-shadowed-variable
       r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
     }
     expect(cookie).to.eq(undefined);
 
     const rr = await request.get('/profile').set('Cookie', cookies);
 
-    expect(rr.status).to.eq(500);
-    expect(rr.body).to.deep.include({
-      message: 'Unauthenticated',
-    });
+    expect(rr.status).to.eq(401);
   });
 });

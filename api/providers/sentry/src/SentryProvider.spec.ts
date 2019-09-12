@@ -1,3 +1,3 @@
-describe('CryptoProvider', () => {
+describe('SentryProvider', () => {
   it('WRITE ME', () => true);
 });

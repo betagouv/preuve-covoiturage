@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, ForbiddenException } from '@ilos/common';
+import { handler, ContextType, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { UserLoginParamsInterface } from '@pdc/provider-schema';
 
@@ -33,16 +33,16 @@ export class LoginUserAction extends AbstractAction {
       const user = await this.userRepository.findUserByParams({ email: params.email });
 
       if (!(await this.cryptoProvider.comparePassword(params.password, user.password))) {
-        throw new ForbiddenException();
+        throw new UnauthorizedException();
       }
 
       if (user.status !== this.config.get('user.status.active')) {
-        throw new ForbiddenException();
+        throw new UnauthorizedException();
       }
 
       return this.userRepository.patch(user._id, { last_connected_at: new Date() });
     } catch (e) {
-      throw new ForbiddenException();
+      throw new UnauthorizedException();
     }
   }
 }
