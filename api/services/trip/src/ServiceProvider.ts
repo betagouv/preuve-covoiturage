@@ -6,17 +6,17 @@ import { ValidatorMiddleware } from '@pdc/provider-validator';
 // import { journeyCreateSchema } from '@pdc/provider-schema';
 import { ChannelTransportMiddleware } from '@pdc/provider-middleware';
 
-import { CrosscheckProcessAction } from './actions/CrosscheckProcessAction';
+import { CrosscheckAction } from './actions/CrosscheckAction';
+import { DispatchAction } from './actions/DispatchAction';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
-import { DispatchTripAction } from './actions/DispatchTripAction';
 
 @serviceProvider({
   config: __dirname,
   providers: [TripRepositoryProvider],
-  // validator: [['crosscheck.process', journeyCreateSchema]],
+  // validator: [['trip.crosscheck', journeyCreateSchema]],
   middlewares: [['validate', ValidatorMiddleware], ['channel.transport', ChannelTransportMiddleware]],
   connections: [[MongoConnection, 'connections.mongo'], [RedisConnection, 'connections.redis']],
-  handlers: [DispatchTripAction, CrosscheckProcessAction],
-  queues: ['crosscheck'],
+  handlers: [CrosscheckAction, DispatchAction],
+  queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {}

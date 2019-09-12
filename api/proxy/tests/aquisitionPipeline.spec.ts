@@ -5,9 +5,9 @@ import { describe } from 'mocha';
 import { TokenProvider } from '@pdc/provider-token';
 import { QueueTransport } from '@ilos/transport-redis';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { bootstrap as crosscheckBootstrap } from '@pdc/service-crosscheck';
+import { bootstrap as tripBootstrap } from '@pdc/service-trip';
 
-const CrosscheckServiceProvider = crosscheckBootstrap.serviceProviders[0];
+const TripServiceProvider = tripBootstrap.serviceProviders[0];
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
@@ -115,7 +115,7 @@ describe('Acquisition pipeline', () => {
       .then(() => {
         setTimeout(async () => {
           const trips = await kernel
-            .get(CrosscheckServiceProvider)
+            .get(TripServiceProvider)
             .get(MongoConnection)
             .getClient()
             .db(process.env.APP_MONGO_DB)

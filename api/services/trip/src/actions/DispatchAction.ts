@@ -8,10 +8,10 @@ import { TripRepositoryProviderInterfaceResolver } from '../interfaces/TripRepos
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
  */
 @handler({
-  service: 'crosscheck',
+  service: 'trip',
   method: 'dispatch',
 })
-export class DispatchTripAction extends Action {
+export class DispatchAction extends Action {
   public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
 
   constructor(

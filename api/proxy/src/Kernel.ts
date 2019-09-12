@@ -8,7 +8,7 @@ import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as applicationBootstrap } from '@pdc/service-application';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
 import { bootstrap as normalizationBootstrap } from '@pdc/service-normalization';
-import { bootstrap as crosscheckBootstrap } from '@pdc/service-crosscheck';
+import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 
 @kernel({
   env: null,
@@ -20,7 +20,7 @@ import { bootstrap as crosscheckBootstrap } from '@pdc/service-crosscheck';
     ...territoryBootstrap.serviceProviders,
     ...operatorBootstrap.serviceProviders,
     ...normalizationBootstrap.serviceProviders,
-    ...crosscheckBootstrap.serviceProviders,
+    ...tripcheckBootstrap.serviceProviders,
   ],
   providers: [SentryProvider],
 })

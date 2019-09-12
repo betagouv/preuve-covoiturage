@@ -14,10 +14,10 @@ import { Person } from '../entities/Person';
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
  */
 @handler({
-  service: 'crosscheck',
-  method: 'process',
+  service: 'trip',
+  method: 'crosscheck',
 })
-export class CrosscheckProcessAction extends Action {
+export class CrosscheckAction extends Action {
   public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
 
   constructor(
@@ -46,11 +46,11 @@ export class CrosscheckProcessAction extends Action {
     }
 
     await this.kernel.notify(
-      'crosscheck:dispatch',
+      'trip:dispatch',
       { _id: finalTrip._id },
       {
         channel: {
-          service: 'crosscheck',
+          service: 'trip',
           metadata: {
             delay: this.config.get('rules.maxAge'),
           },
