@@ -18,10 +18,8 @@ export class Journey implements JourneyInterface {
     this.operator_journey_id = data.operator_journey_id;
     this.operator_class = data.operator_class;
     this.operator_id = data.operator_id;
-    this.passenger = data.passenger;
-    this.driver = data.driver;
-    if ('created_at' in data) {
-      this.created_at = data.created_at;
-    }
+    if ('passenger' in data) this.passenger = data.passenger;
+    if ('driver' in data) this.driver = data.driver;
+    if ('created_at' in data) this.created_at = data.created_at;
   }
 }

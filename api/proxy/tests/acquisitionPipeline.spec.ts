@@ -7,20 +7,20 @@ import { QueueTransport } from '@ilos/transport-redis';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { bootstrap as tripBootstrap } from '@pdc/service-trip';
 
-const TripServiceProvider = tripBootstrap.serviceProviders[0];
-
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 import { requestJourney } from './mocks/requestJourneyV2';
+
+const CrosscheckServiceProvider = crosscheckBootstrap.serviceProviders[0];
 
 const { expect } = chai;
 
 class Queue extends QueueTransport {
   async up(opts) {
-    console.log('Here I am');
     await super.up(opts);
   }
 }
+
 describe('Acquisition pipeline', () => {
   const kernel = new Kernel();
   const app = new HttpTransport(kernel);
@@ -36,17 +36,13 @@ describe('Acquisition pipeline', () => {
   });
 
   before(async () => {
-    process.env.APP_MONGO_DB = 'pdc-local';
-    // process.env.APP_MONGO_DB = `pdc-test-server-${new Date().getTime()}`;
+    process.env.APP_MONGO_DB = `pdc-test-acquisition-${new Date().getTime()}`;
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
     await kernel.bootstrap();
     await app.up(['0']);
     await worker.up(['APP_REDIS_URL' in process.env ? process.env.APP_REDIS_URL : 'redis://127.0.0.1:6379']);
-
-    // console.log({ worker: worker.getKernel().getContainer().getHandlers().filter(h => h.service === 'normalization') });
-    // console.log({ app: app.getKernel().getContainer().getHandlers().filter(h => h.service === 'normalization') });
 
     request = supertest(app.app);
 
@@ -95,7 +91,7 @@ describe('Acquisition pipeline', () => {
     await kernel.shutdown();
   });
 
-  it('goes to db', (done) => {
+  it('goes to db', async (done) =>
     request
       .post('/rpc')
       .send({
@@ -125,6 +121,5 @@ describe('Acquisition pipeline', () => {
           console.log({ trips });
           done();
         }, 2000);
-      });
-  });
+      }));
 });

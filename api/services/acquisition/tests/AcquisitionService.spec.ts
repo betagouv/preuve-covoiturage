@@ -5,14 +5,22 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { TransportInterface } from '@ilos/common';
+import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
+import { ServiceProvider } from '../src/ServiceProvider';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
 let transport: TransportInterface;
 let request: supertest.SuperTest<supertest.Test>;
+
+const user = {
+  operator: '5d13c703bb3ed9807cad2745',
+  operator_name: 'MaxiCovoit',
+  permissions: ['journey.create'],
+};
 
 const callFactory = (params: any = {}) => ({
   id: 1,
@@ -22,11 +30,7 @@ const callFactory = (params: any = {}) => ({
     params,
     _context: {
       call: {
-        user: {
-          operator: '5d13c703bb3ed9807cad2745',
-          operator_name: 'MaxiCovoit',
-          permissions: ['journey.create'],
-        },
+        user,
       },
     },
   },
@@ -38,7 +42,7 @@ const passingJourney = {
   operator_id: '5d13c703bb3ed9807cad2745',
   passenger: {
     identity: { phone: '+33612345678' },
-    start: { datetime: new Date(), literal: 'Paris' },
+    start: { datetime: new Date(new Date().getTime() - 1000), literal: 'Paris' },
     end: { datetime: new Date(), literal: 'Evry' },
     contribution: 0,
     incentives: [],
@@ -56,19 +60,18 @@ describe('Acquisition service', async () => {
   });
 
   after(async () => {
-    // TODO : refactor
-    // await (<MongoConnection>transport
-    //   .getKernel()
-    //   .getContainer()
-    //   .get(MongoConnection))
-    //   .getClient()
-    //   .db(process.env.APP_MONGO_DB)
-    //   .dropDatabase();
+    await (<MongoConnection>transport
+      .getKernel()
+      .get(ServiceProvider)
+      .get(MongoConnection))
+      .getClient()
+      .db(process.env.APP_MONGO_DB)
+      .dropDatabase();
 
     await transport.down();
   });
 
-  it('Empty payload fails', async () => {
+  it('#1 - fails on empty payload', async () => {
     return request
       .post('/')
       .send(callFactory())
@@ -80,7 +83,7 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('Missing user authorization', async () => {
+  it('#2 - fails on missing user authorization', async () => {
     return request
       .post('/')
       .send({
@@ -104,7 +107,7 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('Wrong permissions', async () => {
+  it('#3 - fails on wrong permissions', async () => {
     return request
       .post('/')
       .send({
@@ -130,7 +133,7 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('Method not found', async () => {
+  it('#4 - fails on method not found', async () => {
     return request
       .post('/')
       .send({
@@ -147,7 +150,7 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('Creates journey', async () => {
+  it('#5 - succeeds on create journey', async () => {
     return request
       .post('/')
       .send(callFactory(passingJourney))
@@ -156,6 +159,7 @@ describe('Acquisition service', async () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('operator_id', user.operator);
       });
   });
 });

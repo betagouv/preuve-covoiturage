@@ -138,6 +138,9 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
+
+    // register the JWT server middleware
+    this.app.use(serverTokenMiddleware(this.kernel, this.tokenProvider));
   }
 
   private registerGlobalMiddlewares() {
@@ -155,21 +158,19 @@ export class HttpTransport implements TransportInterface {
    * }
    */
   private registerLegacyServerRoute() {
-    // register the JWT server middleware
-    this.app.use(serverTokenMiddleware(this.kernel, this.tokenProvider));
-
     // Set the POST route
     this.app.post(
       '/journeys/push',
 
       // handle JWT token
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      // serverTokenMiddleware(this.kernel, this.tokenProvider),
 
       // add the operator_id to the payload
-      (req, res, next) => {
-        req.body.operator_id = get(req, 'session.user.operator_id', null);
-        next();
-      },
+      // (req, res, next) => {
+      //   console.log(req.session.user);
+      //   req.body.operator_id = get(req, 'session.user.operator_id', null);
+      //   next();
+      // },
 
       // make the final call
       asyncHandler(async (req, res, next) => {

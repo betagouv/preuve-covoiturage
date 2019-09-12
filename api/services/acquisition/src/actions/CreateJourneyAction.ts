@@ -40,27 +40,31 @@ export class CreateJourneyAction extends AbstractAction {
     const hasMany = Array.isArray(params);
 
     const journeys: Journey[] = (Array.isArray(params) ? [...params] : [params])
-      .map((journeyData) => this.cast(journeyData, context.call.user.operator_id))
+      // /!\ operator_id is stored in user.operator
+      .map((journeyData) => this.cast(journeyData, context.call.user.operator))
 
-      // avoid time travelling
-      .filter(
-        (journeyData) =>
-          journeyData.driver.start.datetime < journeyData.driver.end.datetime &&
-          journeyData.driver.end.datetime < now &&
-          journeyData.driver.start.datetime < journeyData.driver.end.datetime &&
-          journeyData.driver.end.datetime < now,
-      );
+      // filter out journeys in the future
+      .filter((journeyData) => {
+        const person = 'driver' in journeyData ? journeyData.driver : journeyData.passenger;
+        return person.start.datetime < person.end.datetime && person.end.datetime < now;
+      });
 
-    if (journeys.length === 0) {
-      return;
-    }
+    if (journeys.length === 0) return [];
+
+    // store the journeys
     const result: Journey[] = await this.journeyRepository.createMany(journeys);
 
     // dispatch only journey done 7 days from now
     const sevendaysFromNow = moment()
       .subtract(7, 'days')
       .toDate();
-    const journeyToDispatch = result.filter((journey) => journey.driver.start.datetime >= sevendaysFromNow);
+
+    const journeyToDispatch = result.filter((journey) => {
+      const person = 'driver' in journey ? journey.driver : journey.passenger;
+      return person.start.datetime >= sevendaysFromNow;
+    });
+
+    // dispatch notifications for geo enrichment
     const promises: Promise<void>[] = [];
     for (const journey of journeyToDispatch) {
       promises.push(this.kernel.notify('normalization:geo', journey, callContext));
@@ -68,21 +72,21 @@ export class CreateJourneyAction extends AbstractAction {
 
     await Promise.all(promises);
 
-    if (!hasMany) {
-      return result.pop();
-    }
-
-    return result;
+    return hasMany ? result : result.pop();
   }
 
-  protected cast(journey: CreateJourneyParamsInterface, operatorId: string): Journey {
-    return new Journey({
-      ...journey,
+  protected cast(jrn: CreateJourneyParamsInterface, operatorId: string): Journey {
+    const journey = new Journey({
+      ...jrn,
       operator_id: operatorId,
-      driver: this.castPerson(journey.driver, true),
-      passenger: this.castPerson(journey.passenger, false),
       created_at: new Date(),
     });
+
+    // driver AND/OR passenger
+    if ('driver' in jrn) journey.driver = this.castPerson(jrn.driver, true);
+    if ('passenger' in jrn) journey.passenger = this.castPerson(jrn.passenger, false);
+
+    return journey;
   }
 
   protected castPerson(person: PersonInterface, driver = false): PersonInterface {

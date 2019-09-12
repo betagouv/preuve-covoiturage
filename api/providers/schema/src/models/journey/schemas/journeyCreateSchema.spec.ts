@@ -71,17 +71,24 @@ describe('Journey Create Schema', () => {
       );
     });
 
+    it('Succeeds on missing operator_id', async () => {
+      await succeed({
+        journey_id: '1234',
+        operator_class: 'A',
+        passenger: {
+          identity: { phone: '+33612345678' },
+          start: { datetime: '2019-01-01T00:00:00Z', lon: 0, lat: 0 },
+          end: { datetime: '2019-01-01T00:00:00Z', lon: 0, lat: 0 },
+          contribution: 0,
+          incentives: [],
+        },
+      });
+    });
+
     it('Fails on missing operator_class', async () => {
       await fail(
         { journey_id: '1234', operator_id: '5d148b878ddca84ffe6535cd' },
         "data should have required property 'operator_class', data should be array, data should match exactly one schema in oneOf",
-      );
-    });
-
-    it('Fails on missing operator_id', async () => {
-      await fail(
-        { journey_id: '1234', operator_class: 'A' },
-        "data should have required property '.passenger', data should have required property '.driver', data should match some schema in anyOf, data should be array, data should match exactly one schema in oneOf",
       );
     });
 
