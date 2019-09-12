@@ -6,10 +6,14 @@ import expressMung from 'express-mung';
  * between queries.
  * Applies to arrays or single objects
  */
-const mapResults = (doc: any) => {
+export const mapResults = (doc: any) => {
   if (!('result' in doc)) return doc;
 
-  if (doc.result && 'data' in doc.result && 'meta' in doc.result) {
+  if (doc.result && 'data' in doc.result) {
+    if (!('meta' in doc.result)) {
+      doc.result.meta = null;
+    }
+
     return doc;
   }
 
@@ -21,7 +25,7 @@ const mapResults = (doc: any) => {
   return doc;
 };
 
+export const patchBody = (body, req, res) => (Array.isArray(body) ? body.map(mapResults) : mapResults(body));
+
 // eslint-disable-next-line no-unused-vars
-export const dataWrapMiddleware = expressMung.json((body, req, res) =>
-  Array.isArray(body) ? body.map(mapResults) : mapResults(body),
-);
+export const dataWrapMiddleware = expressMung.json(patchBody);
