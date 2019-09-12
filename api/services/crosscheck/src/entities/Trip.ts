@@ -1,3 +1,4 @@
+// tslint:disable:variable-name
 import { PersonInterface, TripInterface } from '@pdc/provider-schema';
 
 export class Trip implements TripInterface {

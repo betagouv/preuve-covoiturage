@@ -89,7 +89,6 @@ export class CreateJourneyAction extends AbstractAction {
     return {
       distance: 0,
       duration: 0,
-      incentive: 0,
       contribution: 0,
       revenue: 0,
       expense: 0,

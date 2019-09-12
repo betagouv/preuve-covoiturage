@@ -1,3 +1,4 @@
+// tslint:disable:variable-name
 import { get, uniq } from 'lodash';
 import moment from 'moment';
 
@@ -109,7 +110,20 @@ export class CrosscheckProcessAction extends Action {
       status: this.config.get('rules.status.pending'),
       territories: this.mapTerritories(journey),
       start: this.reduceStartDate(journey),
-      people: [journey.passenger, journey.driver],
+      people: [
+        {
+          ...journey.passenger,
+          operator_class: journey.operator_class, // TODO: add operator_class, maybe operator_id
+          journey_id: journey.journey_id,
+          operator_id: journey.operator_id,
+        },
+        {
+          ...journey.driver,
+          operator_class: journey.operator_class,
+          journey_id: journey.journey_id,
+          operator_id: journey.operator_id,
+        },
+      ],
       createdAt: new Date(),
     });
     return this.tripRepository.create(trip);

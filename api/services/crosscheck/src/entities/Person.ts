@@ -16,6 +16,10 @@ export class Person implements PersonInterface {
   public distance?: number;
   public duration?: number;
 
+  public operator_class?: string;
+  public journey_id?: string;
+  public operator_id?: string;
+
   public seats?: number;
   public contribution?: number;
   public revenue?: number;
@@ -39,5 +43,9 @@ export class Person implements PersonInterface {
     this.contribution = data.contribution;
     this.incentives = data.incentives;
     this.payments = data.payments;
+
+    this.operator_class = data.operator_class;
+    this.journey_id = data.journey_id;
+    this.operator_id = data.operator_id;
   }
 }

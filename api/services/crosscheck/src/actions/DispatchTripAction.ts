@@ -1,13 +1,8 @@
-import { get, uniq } from 'lodash';
-import moment from 'moment';
-
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
-import { JourneyInterface, TripInterface, PersonInterface } from '@pdc/provider-schema';
+import { TripInterface } from '@pdc/provider-schema';
 
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces/TripRepositoryProviderInterface';
-import { Trip } from '../entities/Trip';
-import { Person } from '../entities/Person';
 
 /*
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
@@ -31,6 +26,7 @@ export class DispatchTripAction extends Action {
     const trip = await this.tripRepository.findByIdAndPatch(request._id, {
       status: this.config.get('rules.status.locked'),
     });
+
     // dispatch to
     // - stats
     // - fraudcheck
