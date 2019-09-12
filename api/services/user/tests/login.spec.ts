@@ -14,7 +14,7 @@ chai.use(chaiNock);
 
 const { expect } = chai;
 
-describe('User service: register', () => {
+describe('User service: login', () => {
   let transport: TransportInterface;
   let request;
 
@@ -39,79 +39,42 @@ describe('User service: register', () => {
     await transport.down();
   });
 
-  // Database _id
-  let _id: string;
-
-  it('#5 - succeeds on register Super Admin', () =>
+  it('#1 - Fails on wrong credentials', () =>
     request
       .post('/')
       .send(
-        callFactory('register', {
-          email: 'admin@example.com',
+        callFactory('login', {
+          email: 'unauthorized@example.com',
           password: 'admin1234',
-          firstname: 'Admin',
-          lastname: 'Example',
-          group: 'registry',
-          role: 'admin',
         }),
       )
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('_id');
-        expect(response.body.result).to.have.property('email', 'admin@example.com');
-
-        // store the _id
-        _id = response.body.result._id;
+        expect(response.status).to.equal(401);
+        expect(response.body).to.have.property('error');
       }));
 
-  it('#6 - fails on double register', async () => {
-    const duplicate = {
-      email: 'duplicate@example.com',
-      password: 'admin1234',
-      firstname: 'Admin',
-      lastname: 'Example',
-      group: 'registry',
-      role: 'admin',
-    };
-
-    // register the user once
-    await request
+  it('#2 - Fails on empty credentials', () =>
+    request
       .post('/')
-      .send(callFactory('register', duplicate))
+      .send(callFactory('login', {}))
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('_id');
-        expect(response.body.result).to.have.property('email', 'duplicate@example.com');
-      });
-
-    return request
-      .post('/')
-      .send(callFactory('register', duplicate))
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(409);
+        expect(response.status).to.equal(400);
         expect(response.body).to.have.property('error');
-        expect(response.body.error).to.have.property('message', 'Conflict');
-      });
-  });
+        expect(response.body.error).to.have.property('message', 'Invalid params');
+      }));
 
-  it('#7 - fails on missing email', () =>
+  it('#3 - Fails on invalid credentials', () =>
     request
       .post('/')
       .send(
-        callFactory('register', {
+        callFactory('login', {
+          email: 'admin@example.com',
           password: 'admin1234',
-          firstname: 'Admin',
-          lastname: 'Example',
-          group: 'registry',
-          role: 'admin',
+          additional: 'param',
         }),
       )
       .set('Accept', 'application/json')
@@ -120,20 +83,39 @@ describe('User service: register', () => {
         expect(response.status).to.equal(400);
         expect(response.body).to.have.property('error');
         expect(response.body.error).to.have.property('message', 'Invalid params');
-        expect(response.body.error).to.have.property('data', "data should have required property 'email'");
+        expect(response.body.error).to.have.property('data', 'data should NOT have additional properties');
       }));
 
-  it('#8 - ensure password is encrypted', () =>
-    request
-      .post('/')
-      .send(
-        callFactory('register', {
-          email: 'password@example.com',
+  it('#4 - Succeeds on right credentials', async () => {
+    // register an admin
+    const resp = <any>await transport.getKernel().handle({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'user:register',
+      params: {
+        params: {
+          email: 'admin@example.com',
           password: 'admin1234',
-          firstname: 'Password',
+          firstname: 'Admin',
           lastname: 'Example',
           group: 'registry',
           role: 'admin',
+        },
+        _context: { call: { user: { permissions: ['user.register'] } } },
+      },
+    });
+
+    expect(resp).to.have.property('result');
+    expect(resp.result).to.have.property('_id');
+    expect(resp.result).to.have.property('email', 'admin@example.com');
+
+    // log the user
+    return request
+      .post('/')
+      .send(
+        callFactory('login', {
+          email: 'admin@example.com',
+          password: 'admin1234',
         }),
       )
       .set('Accept', 'application/json')
@@ -141,8 +123,8 @@ describe('User service: register', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('password');
-        expect(response.body.result.password).to.not.eq('admin1234');
-        expect(response.body.result.password).to.match(/^\$2a\$/);
-      }));
+        expect(response.body.result).to.have.property('_id', resp.result._id);
+        expect(response.body.result).to.have.property('email', 'admin@example.com');
+      });
+  });
 });
