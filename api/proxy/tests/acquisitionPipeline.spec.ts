@@ -5,13 +5,10 @@ import { describe } from 'mocha';
 import { TokenProvider } from '@pdc/provider-token';
 import { QueueTransport } from '@ilos/transport-redis';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { bootstrap as tripBootstrap } from '@pdc/service-trip';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 import { requestJourney } from './mocks/requestJourneyV2';
-
-const CrosscheckServiceProvider = crosscheckBootstrap.serviceProviders[0];
 
 const { expect } = chai;
 
