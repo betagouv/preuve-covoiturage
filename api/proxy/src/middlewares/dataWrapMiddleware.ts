@@ -9,6 +9,15 @@ import expressMung from 'express-mung';
 export const mapResults = (doc: any) => {
   if (!('result' in doc)) return doc;
 
+  if (typeof doc.result !== 'object') {
+    doc.result = {
+      meta: null,
+      data: doc.result,
+    };
+
+    return doc;
+  }
+
   if (doc.result && 'data' in doc.result) {
     if (!('meta' in doc.result)) {
       doc.result.meta = null;

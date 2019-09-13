@@ -118,6 +118,8 @@ export class HttpTransport implements TransportInterface {
         },
         name: sessionName,
         secret: sessionSecret,
+        resave: true,
+        saveUninitialized: true,
         // store, TODO: use redis
       }),
     );

@@ -81,4 +81,42 @@ describe('dataWrapMiddleware: mapResults', () => {
 
     expect(mapResults(payload)).to.deep.eq(expectation);
   });
+
+  it('succeeds on non-object results (boolean)', () => {
+    const payload = {
+      id: 1,
+      jsonrpc: '2.0',
+      result: true,
+    };
+
+    const expectation = {
+      id: 1,
+      jsonrpc: '2.0',
+      result: {
+        meta: null,
+        data: true,
+      },
+    };
+
+    expect(mapResults(payload)).to.deep.eq(expectation);
+  });
+
+  it('succeeds on non-object results (string)', () => {
+    const payload = {
+      id: 1,
+      jsonrpc: '2.0',
+      result: 'Hello World!',
+    };
+
+    const expectation = {
+      id: 1,
+      jsonrpc: '2.0',
+      result: {
+        meta: null,
+        data: 'Hello World!',
+      },
+    };
+
+    expect(mapResults(payload)).to.deep.eq(expectation);
+  });
 });
