@@ -9,5 +9,5 @@ yarn global add npm-run-all lerna typescript
 git clone https://github.com/betagouv/ilos
 cd ilos
 git checkout dev
-yarn --production=true
+yarn
 yarn build
