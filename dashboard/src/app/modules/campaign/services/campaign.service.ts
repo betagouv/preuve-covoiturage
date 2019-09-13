@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { finalize, map, tap } from 'rxjs/operators';
+import { finalize, map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as moment from 'moment';
 
@@ -27,8 +27,6 @@ import {
 })
 export class CampaignService extends ApiService<Campaign> {
   _templates$ = new BehaviorSubject<TemplateInterface[]>([]);
-  // _parameters$ = new BehaviorSubject<IncentiveFormulaParameter[]>([]);
-  // _parametersLoaded$ = new BehaviorSubject<boolean>(false);
 
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
     super(_http, _jsonRPC, 'campaign');
@@ -38,10 +36,25 @@ export class CampaignService extends ApiService<Campaign> {
     return this._loaded$.value;
   }
 
+  public launch(campaign: Campaign): Observable<Campaign> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:launch`, campaign);
+
+    return this._jsonRPC.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
+      tap((entity: Campaign) => {
+        console.log(`launch campaign with id=${entity._id}`);
+        this.load()
+          .pipe(take(1))
+          .subscribe();
+        this._entity$.next(entity);
+      }),
+    );
+  }
+
   public toCampaignUxFormat(campaign: Campaign): CampaignUx {
     const { _id, name, description, territory_id, status, unit, parent_id, ui_status } = campaign;
 
-    const campaignUx = {
+    const campaignUx = <CampaignUx>{
       _id,
       name,
       description,
@@ -85,6 +98,14 @@ export class CampaignService extends ApiService<Campaign> {
         campaignUx.retributions.push(parameters);
       }
     });
+
+    if (campaign.amount_spent) {
+      campaignUx.amount_spent = campaign.amount_spent;
+    }
+
+    if (campaign.trips_number) {
+      campaignUx.trips_number = campaign.trips_number;
+    }
 
     return new CampaignUx(campaignUx);
   }
@@ -156,7 +177,7 @@ export class CampaignService extends ApiService<Campaign> {
 
   public loadTemplates(): Observable<Campaign[]> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.listTemplates`);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:listTemplates`);
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((templates: Campaign[]) => {
@@ -175,58 +196,6 @@ export class CampaignService extends ApiService<Campaign> {
     }
     return template;
   }
-
-  // public loadFormulaParameters(): Observable<IncentiveFormulaParameter[]> {
-  //   this._loading$.next(true);
-  //   const jsonRPCParam = new JsonRPCParam(`${this._method}.listFormulaParameters`);
-  //   return this._jsonRPC.callOne(jsonRPCParam).pipe(
-  //     map((data) => data.data),
-  //     tap((data) => {
-  //       console.log('loaded');
-  //       this._parameters$.next(data);
-  //       this._parametersLoaded$.next(true);
-  //     }),
-  //     finalize(() => {
-  //       this._loading$.next(false);
-  //     }),
-  //   );
-  // }
-
-  // public tranformIntoFormula(retributions: RetributionInterface[]): string {
-  //   let formula = '';
-  //   retributions.forEach((retribution, idx) => {
-  //     if (idx > 0) {
-  //       formula += '+';
-  //     }
-  //
-  //     // PASSENGER INCITATION
-  //     if (retribution.free) {
-  //       formula += `${FormulaParametersEnum.POUR_PASSAGER}*${FormulaParametersEnum.PRIX_PASSAGER}`;
-  //     } else if (retribution.valueForPassenger) {
-  //       formula += `${retribution.valueForPassenger}*${FormulaParametersEnum.POUR_PASSAGER}`;
-  //       if (retribution.perKmForPassenger) {
-  //         formula += `*${FormulaParametersEnum.DISTANCE}`;
-  //       }
-  //       formula += this.getRangeFormula(retribution.min, retribution.max);
-  //     }
-  //
-  //     // DRIVER INCITATION
-  //     if (retribution.valueForDriver) {
-  //       if (retribution.valueForPassenger || retribution.free) {
-  //         formula += `+`;
-  //       }
-  //       formula += `${retribution.valueForDriver}*${FormulaParametersEnum.POUR_CONDUCTEUR}`;
-  //       if (retribution.perKmForDriver) {
-  //         formula += `*${FormulaParametersEnum.DISTANCE}`;
-  //       }
-  //       if (retribution.perPassenger) {
-  //         formula += `*${FormulaParametersEnum.NOMBRE_PASSAGERS}`;
-  //       }
-  //       formula += this.getRangeFormula(retribution.min, retribution.max);
-  //     }
-  //   });
-  //   return formula;
-  // }
 
   public getExplanationFromRetributions(
     retributions: RetributionParametersInterface[],
@@ -281,6 +250,61 @@ export class CampaignService extends ApiService<Campaign> {
     text += `\r\n`;
     return text;
   }
+
+  // _parameters$ = new BehaviorSubject<IncentiveFormulaParameter[]>([]);
+  // _parametersLoaded$ = new BehaviorSubject<boolean>(false);
+
+  // public loadFormulaParameters(): Observable<IncentiveFormulaParameter[]> {
+  //   this._loading$.next(true);
+  //   const jsonRPCParam = new JsonRPCParam(`${this._method}.listFormulaParameters`);
+  //   return this._jsonRPC.callOne(jsonRPCParam).pipe(
+  //     map((data) => data.data),
+  //     tap((data) => {
+  //       console.log('loaded');
+  //       this._parameters$.next(data);
+  //       this._parametersLoaded$.next(true);
+  //     }),
+  //     finalize(() => {
+  //       this._loading$.next(false);
+  //     }),
+  //   );
+  // }
+
+  // public tranformIntoFormula(retributions: RetributionInterface[]): string {
+  //   let formula = '';
+  //   retributions.forEach((retribution, idx) => {
+  //     if (idx > 0) {
+  //       formula += '+';
+  //     }
+  //
+  //     // PASSENGER INCITATION
+  //     if (retribution.free) {
+  //       formula += `${FormulaParametersEnum.POUR_PASSAGER}*${FormulaParametersEnum.PRIX_PASSAGER}`;
+  //     } else if (retribution.valueForPassenger) {
+  //       formula += `${retribution.valueForPassenger}*${FormulaParametersEnum.POUR_PASSAGER}`;
+  //       if (retribution.perKmForPassenger) {
+  //         formula += `*${FormulaParametersEnum.DISTANCE}`;
+  //       }
+  //       formula += this.getRangeFormula(retribution.min, retribution.max);
+  //     }
+  //
+  //     // DRIVER INCITATION
+  //     if (retribution.valueForDriver) {
+  //       if (retribution.valueForPassenger || retribution.free) {
+  //         formula += `+`;
+  //       }
+  //       formula += `${retribution.valueForDriver}*${FormulaParametersEnum.POUR_CONDUCTEUR}`;
+  //       if (retribution.perKmForDriver) {
+  //         formula += `*${FormulaParametersEnum.DISTANCE}`;
+  //       }
+  //       if (retribution.perPassenger) {
+  //         formula += `*${FormulaParametersEnum.NOMBRE_PASSAGERS}`;
+  //       }
+  //       formula += this.getRangeFormula(retribution.min, retribution.max);
+  //     }
+  //   });
+  //   return formula;
+  // }
 
   // private getRangeFormula(min, max) {
   //   let rangeFormula = '';

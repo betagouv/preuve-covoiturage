@@ -2,6 +2,7 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { takeUntil, tap } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
+import * as moment from 'moment';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
@@ -104,8 +105,10 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
                   for_passenger: true,
                   for_trip: false,
                 },
-                start: null,
-                end: null,
+                start: moment().toDate(),
+                end: moment()
+                  .add('3', 'months')
+                  .toDate(),
                 retribution_rules: [],
               },
               {
@@ -139,8 +142,10 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
                   for_passenger: true,
                   for_trip: false,
                 },
-                start: null,
-                end: null,
+                start: moment().toDate(),
+                end: moment()
+                  .add('3', 'months')
+                  .toDate(),
                 retribution_rules: [],
               },
             ]);

@@ -61,7 +61,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         this.loadCampaign(params.get('campaignId'));
       }
     });
-    this.campaignFormGroup.valueChanges.subscribe((val) => console.log(this.campaignFormGroup));
   }
 
   public get controls() {
@@ -115,7 +114,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       .subscribe((result) => {
         if (result) {
           this.campaignService
-            .create(campaign)
+            .launch(campaign)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               (campaignSaved: Campaign) => {

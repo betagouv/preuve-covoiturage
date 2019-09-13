@@ -7,35 +7,35 @@ import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
 import { operatorStubs } from '../stubs/operator.list';
 
 export class CypressExpectedCampaign {
-  startMoment = Cypress.moment()
+  static startMoment = Cypress.moment()
     .add(1, 'days')
     .startOf('day');
-  endMoment = Cypress.moment()
+  static endMoment = Cypress.moment()
     .add(3, 'months')
     .startOf('day');
 
-  maxAmount = 10000;
-  maxTrips = 50000;
-  forDriverAmount = 0.1;
-  forPassengerAmount = 0.2;
+  static maxAmount = 10000;
+  static maxTrips = 50000;
+  static forDriverAmount = 0.1;
+  static forPassengerAmount = 0.2;
 
-  get(): Campaign {
+  static get(): Campaign {
     const campaign = new Campaign({
       _id: null,
-      start: this.startMoment.toDate(),
-      end: this.endMoment.toDate(),
+      start: CypressExpectedCampaign.startMoment.toDate(),
+      end: CypressExpectedCampaign.endMoment.toDate(),
       unit: IncentiveUnitEnum.EUR,
       description: '',
       name: "Nouvelle campagne d'incitation",
       retribution_rules: [
         {
           slug: RetributionRulesSlugEnum.MAX_AMOUNT,
-          parameters: { max_amount: this.maxAmount },
+          parameters: { max_amount: CypressExpectedCampaign.maxAmount },
           description: '',
         },
         {
           slug: RetributionRulesSlugEnum.MAX_TRIPS,
-          parameters: { max_trips: this.maxTrips },
+          parameters: { max_trips: CypressExpectedCampaign.maxTrips },
           description: '',
         },
         {
@@ -47,12 +47,12 @@ export class CypressExpectedCampaign {
             for_driver: {
               per_km: true,
               per_passenger: false,
-              amount: this.forDriverAmount,
+              amount: CypressExpectedCampaign.forDriverAmount,
             },
             for_passenger: {
               free: false,
               per_km: false,
-              amount: this.forPassengerAmount,
+              amount: CypressExpectedCampaign.forPassengerAmount,
             },
           },
         },
@@ -72,7 +72,7 @@ export class CypressExpectedCampaign {
         for_passenger: true,
         for_trip: null,
       },
-      status: CampaignStatusEnum.PENDING,
+      status: CampaignStatusEnum.DRAFT,
       parent_id: null,
     });
 

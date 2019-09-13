@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import {
   CampaignInterface,
@@ -17,8 +19,10 @@ export const campaignMocks = [...Array(20)].map(
       status: CampaignStatusEnum[Object.keys(CampaignStatusEnum)[randomStatus()]],
       name: `Name ${idx}`,
       description: `Description ${idx}`,
-      start: new Date(),
-      end: new Date(),
+      start: moment().toDate(),
+      end: moment()
+        .add('3', 'months')
+        .toDate(),
       filters: {
         weekday: [0, 1, 2, 3, 4, 5, 6],
         time: [

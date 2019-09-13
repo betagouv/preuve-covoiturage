@@ -17,8 +17,8 @@ import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
   styleUrls: ['./campaigns-list.component.scss'],
 })
 export class CampaignsListComponent extends DestroyObservable implements OnInit {
-  @Input() campaignStatus: CampaignStatusEnum | null;
-  campaigns: CampaignUx[];
+  @Input() campaignStatusList: CampaignStatusEnum[] = [];
+  campaigns: CampaignUx[] = [];
   CampaignStatusEnum = CampaignStatusEnum;
 
   constructor(private dialog: DialogService, public campaignService: CampaignService, private toastr: ToastrService) {
@@ -30,11 +30,11 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   }
 
   private loadCampaigns(): void {
-    this.campaignService._entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
+    this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.filterCampaignsByStatus(campaigns);
     });
 
-    if (this.campaignService.loading) {
+    if (this.campaignService.campaignsLoaded) {
       return;
     }
     this.campaignService
@@ -54,10 +54,11 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   }
 
   public filterCampaignsByStatus(campaigns: Campaign[]): void {
-    const status = this.campaignStatus;
+    const statusList = this.campaignStatusList;
     this.campaigns = campaigns
-      .filter((c: Campaign) => !status || c.status === status)
-      .map((campaign: Campaign) => this.campaignService.toCampaignUxFormat(campaign));
+      .filter((c: Campaign) => statusList.length === 0 || statusList.indexOf(c.status) !== -1)
+      .map((campaign: Campaign) => this.campaignService.toCampaignUxFormat(campaign))
+      .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
   }
 
   deleteCampaign(campaign: CampaignUx) {

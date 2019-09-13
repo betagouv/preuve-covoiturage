@@ -1,5 +1,7 @@
-import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
+import * as moment from 'moment';
 
+import { CampaignsGenerator } from '../generators/campaigns.generator';
+import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
@@ -21,8 +23,12 @@ export const campaignStubs: Campaign[] = [
       rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
       operator_ids: [],
     },
-    start: null,
-    end: null,
+    start: moment()
+      .subtract('1', 'months')
+      .toDate(),
+    end: moment()
+      .add('2', 'months')
+      .toDate(),
     unit: IncentiveUnitEnum.EUR,
     retribution_rules: [],
     ui_status: {
@@ -30,6 +36,8 @@ export const campaignStubs: Campaign[] = [
       for_passenger: true,
       for_trip: false,
     },
+    trips_number: Math.floor(Math.random() * 10000),
+    amount_spent: Math.floor(Math.random() * 20000),
   },
   {
     _id: '5d777822ff790e51107c6c4f',
@@ -61,10 +69,16 @@ export const campaignStubs: Campaign[] = [
       for_passenger: true,
       for_trip: false,
     },
-    start: null,
-    end: null,
+    start: moment()
+      .subtract('1', 'months')
+      .toDate(),
+    end: moment()
+      .add('2', 'months')
+      .toDate(),
     unit: IncentiveUnitEnum.EUR,
     retribution_rules: [],
+    trips_number: Math.floor(Math.random() * 10000),
+    amount_spent: Math.floor(Math.random() * 20000),
   },
   {
     _id: '5d77782eecbdea02802a81eb',
@@ -96,10 +110,16 @@ export const campaignStubs: Campaign[] = [
       for_passenger: true,
       for_trip: false,
     },
-    start: null,
-    end: null,
+    start: moment()
+      .subtract('1', 'months')
+      .toDate(),
+    end: moment()
+      .add('2', 'months')
+      .toDate(),
     unit: IncentiveUnitEnum.EUR,
     retribution_rules: [],
+    trips_number: Math.floor(Math.random() * 10000),
+    amount_spent: Math.floor(Math.random() * 20000),
   },
 ];
 
@@ -113,7 +133,7 @@ export function stubCampaignList() {
           {
             id: 1568215196898,
             jsonrpc: '2.0',
-            result: campaignStubs,
+            result: [...campaignStubs, ...CampaignsGenerator.list],
           },
         ],
       },

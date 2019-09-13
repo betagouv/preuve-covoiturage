@@ -1,11 +1,17 @@
-export function Cypress_login(email, password) {
-  it('logges in', () => {
-    cy.get('.Login mat-form-field:first-child input').type(email);
+import { stubLogin } from '../stubs/login';
+import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
 
-    cy.get('.Login mat-form-field:nth-child(2) input').type(password);
+export function cypress_stub_login(type: UserGroupEnum) {
+  cy.server();
+  stubLogin(type);
+}
 
-    cy.get('.Login form > button').click();
+export function cypress_login(email, password) {
+  cy.get('.Login mat-form-field:first-child input').type(email);
 
-    cy.wait(1000);
-  });
+  cy.get('.Login mat-form-field:nth-child(2) input').type(password);
+
+  cy.get('.Login form > button').click();
+
+  cy.wait(1000);
 }
