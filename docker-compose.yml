@@ -1,5 +1,18 @@
 version: '3'
 services:
+  postgres:
+    build: './docker/postgres'
+    ports:
+      - 5432:5432
+    networks:
+      - back
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'pdc-local'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    volumes:
+      - ./db/postgres:/var/lib/postgresql/data/pgdata
   mongo:
     image: 'mongo:4.0'
     ports:
