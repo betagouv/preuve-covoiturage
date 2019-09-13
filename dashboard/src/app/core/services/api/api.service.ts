@@ -165,7 +165,7 @@ export class ApiService<T extends IModel> {
   }
 
   public delete(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: item._id });
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap(() => {
