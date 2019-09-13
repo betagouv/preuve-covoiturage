@@ -7,7 +7,6 @@ import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
-import { environment } from '../../../../environments/environment';
 
 interface RPCOptions {
   headers?:
@@ -66,7 +65,12 @@ export class JsonRPCService {
               throw new Error(errorMessage);
             }
 
-            res.push({ id: data.id, data: data.result ? data.result : null });
+            // temporary compatibility solver (for result | result.data)
+            const resultData = data.result ? (data.result.data !== undefined ? data.result.data : data.result) : null;
+
+            const resultMeta = data.result && data.result.meta ? data.result.meta : null;
+
+            res.push({ id: data.id, data: resultData, meta: resultMeta });
           });
         }
         return res;
