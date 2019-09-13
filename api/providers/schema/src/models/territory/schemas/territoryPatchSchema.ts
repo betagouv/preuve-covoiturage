@@ -21,6 +21,7 @@ export const territoryPatchSchema = {
         acronym: { macro: 'varchar' },
         insee: {
           type: 'array',
+          minItems: 1,
           items: { macro: 'insee' },
         },
         insee_main: { macro: 'insee' },

@@ -1,6 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
+import { blacklist } from '../config/filterOutput';
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 
 @handler({
@@ -9,7 +10,7 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
 })
 export class ListTerritoryAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
-    ['content.blacklist', ['insee', 'network_id', 'bank', 'contacts', 'cgu'].map((k) => `data.*.${k}`)],
+    ['content.blacklist', blacklist.map((k) => `data.*.${k}`)],
   ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {

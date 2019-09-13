@@ -1,8 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { CreateTerritoryParamsInterface, TerritoryInterface } from '@pdc/provider-schema';
+import { TerritoryInterface } from '@pdc/provider-schema';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { blacklist } from '../config/filterOutput';
 
 @handler({
   service: 'territory',
@@ -10,7 +11,8 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
 })
 export class FindTerritoryByPositionAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
-    // TODO: middlewares !!!
+    ['validate', 'territory.findByPosition'],
+    ['content.blacklist', blacklist],
   ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
