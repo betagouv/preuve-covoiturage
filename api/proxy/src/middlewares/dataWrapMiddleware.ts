@@ -1,15 +1,40 @@
 import expressMung from 'express-mung';
 
-// eslint-disable-next-line no-unused-vars
-const dataWrap = (body, req, res) => {
-  if (body && body.data && body.meta) {
-    return body;
+/**
+ * Wrap the { results: ... } from JSON RPC
+ * in { meta: ..., data: ... } to normalize a metadata schema
+ * between queries.
+ * Applies to arrays or single objects
+ */
+export const mapResults = (doc: any) => {
+  if (!('result' in doc)) return doc;
+
+  if (typeof doc.result !== 'object') {
+    doc.result = {
+      meta: null,
+      data: doc.result,
+    };
+
+    return doc;
   }
 
-  return {
+  if (doc.result && 'data' in doc.result) {
+    if (!('meta' in doc.result)) {
+      doc.result.meta = null;
+    }
+
+    return doc;
+  }
+
+  doc.result = {
     meta: null,
-    data: body,
+    data: doc.result,
   };
+
+  return doc;
 };
 
-export const dataWrapMiddleware = expressMung.json(dataWrap);
+export const patchBody = (body, req, res) => (Array.isArray(body) ? body.map(mapResults) : mapResults(body));
+
+// eslint-disable-next-line no-unused-vars
+export const dataWrapMiddleware = expressMung.json(patchBody);

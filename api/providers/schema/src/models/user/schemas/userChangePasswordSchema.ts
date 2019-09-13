@@ -1,10 +1,10 @@
 export const userChangePasswordSchema = {
   $id: 'user.changePassword',
   type: 'object',
-  required: ['oldPassword', 'newPassword'],
+  required: ['old_password', 'new_password'],
   additionalProperties: false,
   properties: {
-    oldPassword: { macro: 'password' },
-    newPassword: { macro: 'password' },
+    old_password: { macro: 'password' },
+    new_password: { macro: 'password' },
   },
 };

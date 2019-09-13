@@ -12,6 +12,8 @@ import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateBy
   method: 'notify',
 })
 export class NotifyUserAction extends AbstractAction {
+  // TODO middlewares
+
   constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();
   }

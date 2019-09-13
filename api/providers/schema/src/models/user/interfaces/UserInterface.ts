@@ -9,17 +9,17 @@ export interface UserInterface {
   role?: string;
   phone?: string;
   status?: string;
-  forgottenReset?: string;
-  forgottenToken?: string;
-  emailConfirm?: string;
-  emailToken?: string;
+  forgotten_reset?: string;
+  forgotten_token?: string;
+  email_confirm?: string;
+  email_token?: string;
   operator?: string;
   territory?: string;
-  hasResetPassword?: boolean;
-  forgottenAt?: Date;
-  emailChangeAt?: Date;
-  lastConnectedAt?: Date;
-  deletedAt?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
+  has_reset_password?: boolean;
+  forgotten_at?: Date;
+  email_change_at?: Date;
+  last_connected_at?: Date;
+  deleted_at?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }

@@ -1,4 +1,6 @@
-export function callFactory(method: string, params: any) {
+export function callFactory(method: string, params: any, perms: string[] = null) {
+  const permissions = perms || [`user.${method}`];
+
   return {
     id: 1,
     jsonrpc: '2.0',
@@ -8,7 +10,7 @@ export function callFactory(method: string, params: any) {
       _context: {
         call: {
           user: {
-            permissions: [`user.${method}`],
+            permissions,
           },
         },
       },

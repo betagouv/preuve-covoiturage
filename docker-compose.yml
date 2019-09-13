@@ -5,6 +5,7 @@ services:
     ports:
       - 5432:5432
     networks:
+      - front
       - back
     environment:
       POSTGRES_USER: 'postgres'
@@ -13,6 +14,7 @@ services:
       PGDATA: '/var/lib/postgresql/data/pgdata'
     volumes:
       - ./db/postgres:/var/lib/postgresql/data/pgdata
+
   mongo:
     image: 'mongo:4.0'
     ports:
@@ -28,7 +30,7 @@ services:
       - back
 
   redis:
-    image: 'redis:4'
+    build: './docker/redis'
     ports:
       - 6379:6379
     networks:
@@ -40,20 +42,19 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn start:http:dev'
+    command: 'yarn start:http'
     ports:
       - 8080:8080
       - 9229:9229
     environment:
       NODE_ENV: local
       PORT: 8080
-      # APP_API_URL: 'http://localhost:8080'
-      # APP_APP_URL: 'http://localhost:4200'
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin1234
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
       APP_MONGO_DB: pdc-local
       APP_REDIS_URL: redis://redis:6379
+      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
     networks:
       - front
       - api
@@ -61,27 +62,31 @@ services:
     depends_on:
       - mongo
       - redis
+      - postgres
 
-  worker:
-    build: './docker/api'
-    volumes:
-      - ./api:/code
-    working_dir: '/code'
-    command: 'yarn start:queue'
-    ports:
-      - 9230:9230
-    environment:
-      APP_WORKER: 'true'
-      APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
-      APP_MONGO_DB: pdc-local
-      APP_REDIS_URL: redis://redis:6379
-    networks:
-      - front
-      - api
-      - back
-    depends_on:
-      - mongo
-      - redis
+  # worker:
+  #   build: './docker/api'
+  #   volumes:
+  #     - ./api:/code
+  #   working_dir: '/code'
+  #   command: 'yarn start:queue'
+  #   ports:
+  #     - 9230:9230
+  #   environment:
+  #     NODE_ENV: local
+  #     APP_WORKER: 'true'
+  #     APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
+  #     APP_MONGO_DB: pdc-local
+  #     APP_REDIS_URL: redis://redis:6379
+  #     APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
+  #   networks:
+  #     - front
+  #     - api
+  #     - back
+  #   depends_on:
+  #     - mongo
+  #     - redis
+  #     - postgres
 
   dashboard:
     build: './docker/dashboard'
@@ -97,11 +102,6 @@ services:
       - api
     depends_on:
       - api
-
-  editor:
-    image: 'swaggerapi/swagger-editor'
-    ports:
-      - 8081:8080
 
 networks:
   front:

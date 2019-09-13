@@ -1,6 +1,6 @@
 import { provider, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
-import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
+import { MongoConnection } from '@ilos/connection-mongo';
 
 import { Territory } from '../entities/Territory';
 import {

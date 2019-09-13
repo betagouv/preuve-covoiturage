@@ -13,7 +13,7 @@ export interface OperatorInterface {
   bank?: BankInterface;
   contacts?: ContactsInterface;
   cgu?: CguInterface;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
+  created_at?: Date;
+  updated_at?: Date;
+  deleted_at?: Date;
 }

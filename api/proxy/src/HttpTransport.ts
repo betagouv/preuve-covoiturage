@@ -17,11 +17,13 @@ import {
 } from '@ilos/common';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
+import { TokenProvider } from '@pdc/provider-token';
 
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
 import { nestParams } from './helpers/nestParams';
+import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -29,6 +31,7 @@ export class HttpTransport implements TransportInterface {
   env: EnvInterface;
   port: string;
   server: http.Server;
+  tokenProvider: TokenProvider;
 
   constructor(private kernel: KernelInterface) {}
 
@@ -63,12 +66,10 @@ export class HttpTransport implements TransportInterface {
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
-    // this.registerServerAuth(); // disabled as JWT isn't used
     this.registerGlobalMiddlewares();
-    this.registerAuth();
-    // this.registerSwagger();
+    this.registerAuthRoutes();
+    this.registerLegacyServerRoute();
     // this.registerBullArena();
-    // this.registerRoutes(); // disabled REST routes
 
     if (this.config.get('proxy.rpc.open', false)) {
       this.registerCallHandler();
@@ -84,6 +85,11 @@ export class HttpTransport implements TransportInterface {
   private async getProviders() {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
+
+    this.tokenProvider = new TokenProvider({
+      secret: this.config.get('jwt.secret'),
+      ttl: this.config.get('jwt.ttl'),
+    });
   }
 
   private registerBeforeAllHandlers() {
@@ -132,6 +138,9 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
+
+    // register the JWT server middleware
+    this.app.use(serverTokenMiddleware(this.kernel, this.tokenProvider));
   }
 
   private registerGlobalMiddlewares() {
@@ -139,36 +148,43 @@ export class HttpTransport implements TransportInterface {
     this.app.use(dataWrapMiddleware);
   }
 
-  // private registerServerAuth() {
-  //   const tokenProvider = new TokenProvider({
-  //     secret: this.config.get('jwt.secret'),
-  //     ttl: this.config.get('jwt.ttl'),
-  //   });
+  /**
+   * Operators POST to /journeys/push
+   * being authenticated by a JWT long-lived token with the payload:
+   * {
+   *    appId: string,
+   *    operatorId: string,
+   *    permissions: [string],
+   * }
+   */
+  private registerLegacyServerRoute() {
+    this.app.post(
+      '/journeys/push',
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        res.json(await this.kernel.handle(makeCall('acquisition:create', req.body, { user })));
+      }),
+    );
+  }
 
-  //   // inject the operator_id in the query
-  //   this.app.use(serverTokenMiddleware(this.kernel, tokenProvider));
-  // }
-
-  private registerAuth() {
+  private registerAuthRoutes() {
     this.app.post(
       '/login',
       asyncHandler(async (req, res, next) => {
-        try {
-          const response = await this.kernel.handle(makeCall('user:login', req.body));
-          if (!response || Array.isArray(response) || 'error' in response) {
-            throw new Error('Forbidden');
-          }
-          req.session.user = response.result;
-          res.json(response.result);
-        } catch (e) {
-          throw e;
+        const response = await this.kernel.handle(makeCall('user:login', req.body));
+
+        if (!response || Array.isArray(response) || 'error' in response) {
+          res.status(mapStatusCode(response)).json(response);
+        } else {
+          req.session.user = Array.isArray(response) ? response[0].result : response.result;
+          res.status(mapStatusCode(response)).json(response);
         }
       }),
     );
 
     this.app.get('/profile', (req, res, next) => {
       if (!('user' in req.session)) {
-        throw new Error('Unauthenticated');
+        throw new UnauthorizedException();
       }
 
       res.json(req.session.user);
@@ -184,14 +200,6 @@ export class HttpTransport implements TransportInterface {
     });
   }
 
-  // private registerSwagger() {
-  //   // serve static files
-  //   this.app.use(express.static(path.join(__dirname, 'static')));
-
-  //   // OpenAPI specification UI
-  //   this.app.use('/openapi', swaggerUiExpress.serve, swaggerUiExpress.setup(openapiJson));
-  // }
-
   // private registerBullArena() {
   //   this.app.use('/arena', require('./routes/bull-arena/controller'));
   // }
@@ -203,10 +211,6 @@ export class HttpTransport implements TransportInterface {
     // keep last
     this.app.use(errorHandlerMiddleware);
   }
-
-  // private registerRoutes() {
-  //   routeMapping(this.config.get('routes.routeMap', []), this.app, this.kernel);
-  // }
 
   /**
    * Calls to the /rpc endpoint

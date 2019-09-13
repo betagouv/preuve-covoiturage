@@ -10,16 +10,6 @@ const hashPayload = (payload) => {
   return hash.digest('hex');
 };
 
-/**
- * Nest response body in a payload and hash it
- */
-const signResponse = (body, req, res) => {
-  const signed = {
-    sha256: hashPayload(body),
-    payload: body,
-  };
-
-  return signed;
-};
-
-export const signResponseMiddleware = expressMung.json(signResponse);
+export const signResponseMiddleware = expressMung.json((body, req, res) => {
+  res.header('X-Response-SHA256', hashPayload(body));
+});

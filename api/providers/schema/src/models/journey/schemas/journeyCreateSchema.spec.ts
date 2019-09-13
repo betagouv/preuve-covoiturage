@@ -65,31 +65,100 @@ describe('Journey Create Schema', () => {
 
   describe('Required fields', () => {
     it('Fails on missing journey_id', async () => {
-      await fail({}, "data should have required property '.journey_id'");
+      await fail(
+        {},
+        "data should have required property 'journey_id', data should be array, data should match exactly one schema in oneOf",
+      );
+    });
+
+    it('Succeeds on missing operator_id', async () => {
+      await succeed({
+        journey_id: '1234',
+        operator_class: 'A',
+        passenger: {
+          identity: { phone: '+33612345678' },
+          start: { datetime: '2019-01-01T00:00:00Z', lon: 0, lat: 0 },
+          end: { datetime: '2019-01-01T00:00:00Z', lon: 0, lat: 0 },
+          contribution: 0,
+          incentives: [],
+        },
+      });
     });
 
     it('Fails on missing operator_class', async () => {
-      await fail({ journey_id: '1234', operator_id: 'A' }, "data should have required property 'operator_class'");
-    });
-
-    it('Fails on missing operator_id', async () => {
       await fail(
-        { journey_id: '1234', operator_class: 'A' },
-        "data should have required property '.passenger', data should have required property '.driver', data should match some schema in anyOf",
+        { journey_id: '1234', operator_id: '5d148b878ddca84ffe6535cd' },
+        "data should have required property 'operator_class', data should be array, data should match exactly one schema in oneOf",
       );
     });
 
     it('Fails on unsupported operator_class', async () => {
       await fail(
-        { journey_id: '1234', operator_id: 'A', operator_class: 'Z' },
-        'data.operator_class should be equal to one of the allowed values',
+        { journey_id: '1234', operator_id: '5d148b878ddca84ffe6535cd', operator_class: 'Z' },
+        'data.operator_class should be equal to one of the allowed values, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
     it('Fails on no passenger, no driver', async () => {
       await fail(
         { journey_id: '1234', operator_class: 'A', operator_id: '5d148b878ddca84ffe6535cd' },
-        "data should have required property '.passenger', data should have required property '.driver', data should match some schema in anyOf",
+        "data should have required property '.passenger', data should have required property '.driver', data should match some schema in anyOf, data should be array, data should match exactly one schema in oneOf",
+      );
+    });
+  });
+
+  describe('Array of journeys', () => {
+    it('Succeeds on array with passenger only', async () => {
+      await succeed([
+        {
+          journey_id: '1234',
+          operator_class: 'A',
+          operator_id: '5d148b878ddca84ffe6535cd',
+          passenger: {
+            identity: { phone: '+33612345678' },
+            start: { datetime: '2019-01-01T10:00:00Z', literal: "Saint-Sulpice-d'Excideuil" },
+            end: { datetime: '2019-01-01T11:00:00Z', literal: "Corgnac-sur-l'Isle" },
+            contribution: 0,
+            incentives: [],
+          },
+        },
+        {
+          journey_id: '4321',
+          operator_class: 'A',
+          operator_id: '5d148b878ddca84ffe6535cd',
+          passenger: {
+            identity: { phone: '+33612345678' },
+            start: { datetime: '2019-01-01T10:00:00Z', literal: "Saint-Sulpice-d'Excideuil" },
+            end: { datetime: '2019-01-01T11:00:00Z', literal: "Corgnac-sur-l'Isle" },
+            contribution: 0,
+            incentives: [],
+          },
+        },
+      ]);
+    });
+
+    it('Fails on valid and invalid journeys together', async () => {
+      await fail(
+        [
+          {
+            journey_id: '1234',
+            operator_class: 'A',
+            operator_id: '5d148b878ddca84ffe6535cd',
+            passenger: {
+              identity: { phone: '+33612345678' },
+              start: { datetime: '2019-01-01T10:00:00Z', literal: "Saint-Sulpice-d'Excideuil" },
+              end: { datetime: '2019-01-01T11:00:00Z', literal: "Corgnac-sur-l'Isle" },
+              contribution: 0,
+              incentives: [],
+            },
+          },
+          {
+            journey_id: '4321',
+            operator_class: 'A',
+            operator_id: '5d148b878ddca84ffe6535cd',
+          },
+        ],
+        "data should be object, data[1] should have required property '.passenger', data[1] should have required property '.driver', data[1] should match some schema in anyOf, data should match exactly one schema in oneOf",
       );
     });
   });
@@ -140,7 +209,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger should be object',
+        'data.passenger should be object, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -159,7 +228,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.driver should be object',
+        'data.driver should be object, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -260,7 +329,7 @@ describe('Journey Create Schema', () => {
               incentives: [],
             },
           },
-          'data.passenger.identity.over_18 should be equal to one of the allowed values',
+          'data.passenger.identity.over_18 should be equal to one of the allowed values, data should be array, data should match exactly one schema in oneOf',
         );
       }
     });
@@ -281,7 +350,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.start should NOT have fewer than 2 properties',
+        'data.passenger.start should NOT have fewer than 2 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -299,7 +368,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.start should NOT have fewer than 2 properties',
+        'data.passenger.start should NOT have fewer than 2 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -317,7 +386,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.start should NOT have fewer than 2 properties',
+        'data.passenger.start should NOT have fewer than 2 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -350,7 +419,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.start should have property lat when property lon is present',
+        'data.passenger.start should have property lat when property lon is present, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -368,7 +437,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.start should have property lon when property lat is present',
+        'data.passenger.start should have property lon when property lat is present, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -416,7 +485,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.start should have property literal when property country is present',
+        'data.passenger.start should have property literal when property country is present, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -457,7 +526,7 @@ describe('Journey Create Schema', () => {
             contribution: 0,
           },
         },
-        "data.passenger should have required property 'incentives'",
+        "data.passenger should have required property 'incentives', data should be array, data should match exactly one schema in oneOf",
       );
     });
 
@@ -495,7 +564,7 @@ describe('Journey Create Schema', () => {
             ],
           },
         },
-        'data.passenger.incentives[0] should NOT have fewer than 3 properties',
+        'data.passenger.incentives[0] should NOT have fewer than 3 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -523,7 +592,7 @@ describe('Journey Create Schema', () => {
             ],
           },
         },
-        'data.passenger.incentives[1] should NOT have fewer than 3 properties',
+        'data.passenger.incentives[1] should NOT have fewer than 3 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -568,7 +637,7 @@ describe('Journey Create Schema', () => {
             ],
           },
         },
-        'data.passenger.incentives[0].index should be integer',
+        'data.passenger.incentives[0].index should be integer, data should be array, data should match exactly one schema in oneOf',
       );
     });
   });
@@ -591,7 +660,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.identity.travel_pass should NOT have fewer than 2 properties',
+        'data.passenger.identity.travel_pass should NOT have fewer than 2 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -614,7 +683,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.identity.travel_pass should NOT have fewer than 2 properties',
+        'data.passenger.identity.travel_pass should NOT have fewer than 2 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
 
@@ -637,7 +706,7 @@ describe('Journey Create Schema', () => {
             incentives: [],
           },
         },
-        'data.passenger.identity.travel_pass should NOT have fewer than 2 properties',
+        'data.passenger.identity.travel_pass should NOT have fewer than 2 properties, data should be array, data should match exactly one schema in oneOf',
       );
     });
   });

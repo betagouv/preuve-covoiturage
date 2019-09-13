@@ -48,6 +48,5 @@ export class ValidatorExtension extends ValidatorParentExtension {
     validator.registerCustomKeyword(macroKeyword);
     validator.registerCustomKeyword(castKeyword);
     await super.init(serviceContainer);
-    console.log('VALIDATORS OK');
   }
 }

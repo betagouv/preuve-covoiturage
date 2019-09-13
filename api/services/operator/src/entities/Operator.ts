@@ -22,11 +22,11 @@ export class Operator implements OperatorInterface {
   public cgu: CguInterface;
 
   // tslint:disable-next-line: variable-name
-  public createdAt: Date;
+  public created_at: Date;
   // tslint:disable-next-line: variable-name
-  public updatedAt: Date;
+  public updated_at: Date;
   // tslint:disable-next-line: variable-name
-  public deletedAt: Date;
+  public deleted_at: Date;
 
   public constructor(data: OperatorInterface) {
     this._id = data._id;
@@ -37,8 +37,8 @@ export class Operator implements OperatorInterface {
     this.bank = data.bank;
     this.contacts = data.contacts;
     this.cgu = data.cgu;
-    this.createdAt = data.createdAt;
-    this.updatedAt = data.updatedAt;
-    this.deletedAt = data.deletedAt;
+    this.created_at = data.created_at;
+    this.updated_at = data.updated_at;
+    this.deleted_at = data.deleted_at;
   }
 }

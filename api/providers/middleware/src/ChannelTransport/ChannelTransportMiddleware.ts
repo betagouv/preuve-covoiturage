@@ -7,7 +7,6 @@ import { middleware, MiddlewareInterface, ParamsType, ContextType, ResultType, F
 export class ChannelTransportMiddleware implements MiddlewareInterface {
   async process(params: ParamsType, context: ContextType, next: Function, config: string[]): Promise<ResultType> {
     const transport = 'transport' in context.channel ? context.channel.transport : '';
-    console.log(context.channel);
     if (config.indexOf(transport) < 0) {
       throw new ForbiddenException(`Service is not reachable from ${transport}`);
     }

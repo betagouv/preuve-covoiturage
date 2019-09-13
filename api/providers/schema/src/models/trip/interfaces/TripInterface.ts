@@ -8,7 +8,7 @@ export interface TripInterface {
   status: string;
   start: Date;
   people: PersonInterface[];
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
+  created_at?: Date;
+  updated_at?: Date;
+  deleted_at?: Date;
 }

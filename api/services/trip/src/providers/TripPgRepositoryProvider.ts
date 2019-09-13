@@ -12,7 +12,7 @@ export class TripPgRepositoryProvider {
   protected async findTripIdByOperatorTripId(operatorTripId: string): Promise<{ _id: string }> {
     const query = {
       text: `
-        SELECT _id FROM trips 
+        SELECT _id FROM trips
         WHERE operator_trip_id = $1
         LIMIT 1
       `,
@@ -146,7 +146,7 @@ export class TripPgRepositoryProvider {
           seats,
           contribution,
           revenue,
-          expense, 
+          expense,
           incentives,
           payments
         ) VALUES (

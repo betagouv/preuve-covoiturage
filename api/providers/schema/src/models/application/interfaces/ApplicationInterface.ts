@@ -3,6 +3,6 @@ export interface ApplicationInterface {
   name: string;
   operator_id: string;
   permissions: string[];
-  createdAt: Date;
-  deletedAt?: Date;
+  created_at: Date;
+  deleted_at?: Date;
 }

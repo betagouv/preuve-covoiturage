@@ -11,7 +11,7 @@
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-middleware --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "test": "mocha --exit src/*.spec.ts src/**/*.spec.ts"
+    "test": "mocha --exit src/**/*.spec.ts"
   },
   "dependencies": {
     "@ilos/common": "~0",

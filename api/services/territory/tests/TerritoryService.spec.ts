@@ -127,9 +127,10 @@ describe('Territory service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result.length).to.eq(1);
-        expect(response.body.result[0]).to.have.property('_id', _id);
-        expect(response.body.result[0]).to.have.property('name', 'Yop');
+        expect(response.body.result).to.have.property('data');
+        expect(response.body.result.data.length).to.eq(1);
+        expect(response.body.result.data[0]).to.have.property('_id', _id);
+        expect(response.body.result.data[0]).to.have.property('name', 'Yop');
       }));
 
   it('Deletes the territory', () =>
