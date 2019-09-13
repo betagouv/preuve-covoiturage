@@ -8,11 +8,20 @@ import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/Terr
   method: 'list',
 })
 export class ListTerritoryAction extends AbstractAction {
+  public readonly middlewares: (string | [string, any])[] = [
+    ['content.blacklist', ['insee', 'network_id', 'bank', 'contacts', 'cgu'].map((k) => `data.*.${k}`)],
+  ];
+
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(): Promise<any[]> {
-    return this.territoryRepository.all();
+  public async handle(): Promise<{ data: any[]; meta: any }> {
+    const data = await this.territoryRepository.all();
+
+    return {
+      data,
+      meta: { total: data.length },
+    };
   }
 }
