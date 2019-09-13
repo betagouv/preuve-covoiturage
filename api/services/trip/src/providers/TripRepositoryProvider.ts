@@ -1,13 +1,18 @@
 import { provider, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 import { ParentRepository } from '@ilos/repository';
-import { PersonInterface, tripSchema } from '@pdc/provider-schema';
+import { tripSchema } from '@pdc/provider-schema';
 
 import { Trip } from '../entities/Trip';
 import {
   TripRepositoryProviderInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces/TripRepositoryProviderInterface';
+
+function round(num: number, p = 3) {
+  const factor = 10 ** p;
+  return Math.round(num * factor) / factor;
+}
 
 /*
  * Trip specific repository
@@ -38,6 +43,58 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
 
   async create(data: Trip): Promise<Trip> {
     return super.create({ ...data, operator_id: [new ObjectId(data.operator_id[0])] });
+  }
+
+  public async findByIdAndFilterProperties(
+    id: string | ObjectId,
+    projection: { [k: string]: number } = {
+      _id: 1,
+      operator_id: 1,
+      'people.is_driver': 1,
+      'people.start.datetime': 1,
+      'people.start.lat': 1,
+      'people.start.lon': 1,
+      'people.start.insee': 1,
+      'people.start.postcodes': 1,
+      'people.start.town': 1,
+      'people.start.country': 1,
+      'people.start.territory': 1,
+      'people.identity.phone': 1,
+      'people.end.datetime': 1,
+      'people.end.lat': 1,
+      'people.end.lon': 1,
+      'people.end.insee': 1,
+      'people.end.postcodes': 1,
+      'people.end.town': 1,
+      'people.end.country': 1,
+      'people.end.territory': 1,
+      'people.distance': 1,
+      'people.duration': 1,
+      'people.seats': 1,
+    },
+  ): Promise<any> {
+    const collection = await this.getCollection();
+    const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
+    const trip = await collection.findOne({ _id: normalizedId }, { projection });
+
+    if (!trip) throw new NotFoundException('id not found');
+
+    return {
+      ...trip,
+      people: trip.people.map((p) => ({
+        ...p,
+        start: {
+          ...p.start,
+          lat: round(p.start.lat),
+          lon: round(p.start.lon),
+        },
+        end: {
+          ...p.start,
+          lat: round(p.end.lat),
+          lon: round(p.end.lon),
+        },
+      })),
+    };
   }
 
   public async findByOperatorTripIdAndOperatorId(params: {

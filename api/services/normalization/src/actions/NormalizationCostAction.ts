@@ -19,6 +19,10 @@ export class NormalizationCostAction extends AbstractAction {
   public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
     const normalizedJourney = { ...journey };
     // TODO: implementation cost enrichment
+    // if expense, calculate contribution or revenue by adding incentive
+    // if contribution, calculate expense by adding incentive
+    // if revenue, calculate expense by removing incentive
+
     // need to add duration and distance enrichment
 
     await this.wf.next('normalization:cost', normalizedJourney);

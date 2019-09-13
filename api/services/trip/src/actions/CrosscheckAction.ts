@@ -1,3 +1,4 @@
+// tslint:disable:variable-name
 import { get, uniq } from 'lodash';
 import moment from 'moment';
 
@@ -8,35 +9,46 @@ import { JourneyInterface, TripInterface, PersonInterface } from '@pdc/provider-
 import { TripRepositoryProviderInterfaceResolver } from '../interfaces/TripRepositoryProviderInterface';
 import { Trip } from '../entities/Trip';
 import { Person } from '../entities/Person';
+import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
 
 /*
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
  */
 @handler({
-  service: 'crosscheck',
-  method: 'dispatch',
+  service: 'trip',
+  method: 'crosscheck',
 })
-export class DispatchTripAction extends Action {
+export class CrosscheckAction extends Action {
   public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
 
   constructor(
-    private tripRepository: TripRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
     private config: ConfigInterfaceResolver,
+    private pg: TripPgRepositoryProvider,
   ) {
     super();
   }
 
-  public async handle(request: { _id: string }, context: ContextType): Promise<void> {
-    const trip = await this.tripRepository.findByIdAndPatch(request._id, {
-      status: this.config.get('rules.status.locked'),
+  public async handle(journey: JourneyInterface, context: ContextType): Promise<void> {
+    const trip = await this.pg.findOrCreateTripForJourney({
+      ...journey,
     });
-    // dispatch to
-    // - stats
-    // - fraudcheck
-    // - policy
 
-    // this.kernel.notify('')
+    await this.kernel.notify(
+      'trip:dispatch',
+      { _id: trip._id },
+      {
+        channel: {
+          service: 'trip',
+          metadata: {
+            delay: this.config.get('rules.maxAge'),
+          },
+        },
+        call: {
+          user: {},
+        },
+      },
+    );
 
     return;
   }

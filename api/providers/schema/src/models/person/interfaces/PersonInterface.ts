@@ -6,6 +6,9 @@ import { PaymentInterface } from '../../payment';
 export interface PersonInterface {
   is_driver?: boolean;
   identity: IdentityInterface;
+  operator_class?: string;
+  journey_id?: string;
+  operator_id?: string;
 
   start: PositionInterface;
   end: PositionInterface;
@@ -13,7 +16,6 @@ export interface PersonInterface {
   duration?: number;
 
   seats?: number;
-  incentive?: number;
   contribution?: number;
   revenue?: number;
   expense: number;

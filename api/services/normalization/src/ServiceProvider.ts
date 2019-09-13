@@ -15,7 +15,7 @@ import { WorkflowProvider } from './providers/WorkflowProvider';
   handlers: [NormalizationGeoAction, NormalizationTerritoryAction, NormalizationCostAction],
   middlewares: [['channel.transport', ChannelTransportMiddleware]],
   connections: [[RedisConnection, 'connections.redis']],
-  queues: ['normalization', 'crosscheck'],
+  queues: ['normalization', 'trip'],
   validator: [],
 })
 export class ServiceProvider extends BaseServiceProvider {}

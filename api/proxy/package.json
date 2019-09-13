@@ -86,7 +86,7 @@
     "@pdc/service-operator": "~0",
     "@pdc/service-territory": "~0",
     "@pdc/service-normalization": "~0",
-    "@pdc/service-crosscheck": "~0",
+    "@pdc/service-trip": "~0",
     "@pdc/service-user": "~0",
     "body-parser": "^1.19.0",
     "bull-arena": "^2.6.2",
