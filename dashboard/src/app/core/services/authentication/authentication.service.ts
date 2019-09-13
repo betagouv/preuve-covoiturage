@@ -11,6 +11,7 @@ import { User } from '~/core/entities/authentication/user';
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
+import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
 
 @Injectable({
   providedIn: 'root',
@@ -139,6 +140,10 @@ export class AuthenticationService {
     }
     const user = this._userService.user;
     return !role || ('role' in user && role === user.role);
+  }
+
+  public sendInviteEmail(user: User): Observable<JsonRPCPayload> {
+    return this._jsonRPC.callOne(new JsonRPCParam('user:sendInviteEmail', { _id: user._id }));
   }
 
   public sendForgottenPasswordEmail(email: string): Observable<any> {

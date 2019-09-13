@@ -1,12 +1,12 @@
 export enum UserGroupEnum {
-  TERRITORY = 'territory',
-  OPERATOR = 'operator',
+  TERRITORY = 'territories',
+  OPERATOR = 'operators',
   REGISTRY = 'registry',
 }
 
 export const USER_GROUPS: UserGroupEnum[] = Object.values(UserGroupEnum);
 export const USER_GROUPS_FR = {
-  territory: 'Territoire',
-  operator: 'Opérateur',
+  territories: 'Territoire',
+  operators: 'Opérateur',
   registry: 'Registre',
 };

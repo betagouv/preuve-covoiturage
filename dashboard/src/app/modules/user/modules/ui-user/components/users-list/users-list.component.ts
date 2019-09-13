@@ -60,7 +60,12 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
   }
 
   public onSendInvitation(user: User) {
-    console.log('SEND INVITATION');
+    this.authService
+      .sendInviteEmail(user)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.toastr.success(`L'utilisateur ${user.firstname} ${user.lastname} va recevoir une nouvelle invitation`);
+      });
   }
 
   public onEdit(user: User) {
