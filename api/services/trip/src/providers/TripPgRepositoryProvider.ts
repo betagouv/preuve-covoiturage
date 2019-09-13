@@ -1,6 +1,6 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { JourneyInterface, PersonInterface } from '@pdc/provider-schema/dist';
+import { JourneyInterface, PersonInterface, TripSearchInterface } from '@pdc/provider-schema/dist';
 
 /*
  * Trip specific repository
@@ -235,5 +235,209 @@ export class TripPgRepositoryProvider {
     if (result.rowCount !== 1) {
       throw new Error(`Unable to save journey ${participant.journey_id} on trip ${tripId}`);
     }
+  }
+
+  protected buildWhereClauses(
+    filters: TripSearchInterface,
+  ): {
+    text: string;
+    values: any[];
+  } {
+    const filtersToProcess = [
+      'territory_id',
+      'operator_id',
+      // 'status',
+      'date',
+      'ranks',
+      'distance',
+      // 'campaign_id',
+      'days',
+      'hour',
+    ].filter((key) => key in filters);
+
+    if (filtersToProcess.length === 0) {
+      return;
+    }
+
+    const orderedFilters = filtersToProcess
+      .map((key) => ({ key, value: filters[key] }))
+      .map((filter) => {
+        switch (filter.key) {
+          case 'territory_id':
+            return {
+              text: '(start_territory = ANY ($#) OR end_territory = ANY ($#))',
+              values: [filter.value, filter.value],
+            };
+          case 'operator_id':
+            return {
+              text: 'operator_id = ANY ($#)',
+              values: [filter.value],
+            };
+          case 'status':
+            throw new Error('Unimplemented');
+
+          case 'date':
+            if (filter.value.start && filter.value.end) {
+              return {
+                text: '($# > start_datetime AND start_datetime > $#)',
+                values: [filter.value.start, filter.value.end],
+              };
+            }
+            if (filter.value.start) {
+              return {
+                text: '$# > start_datetime',
+                values: [filter.value.start],
+              };
+            }
+            return {
+              text: 'start_datetime > $#',
+              values: [filter.value.end],
+            };
+          case 'ranks':
+            return {
+              text: 'operator_class = ANY ($#)',
+              values: [filter.value],
+            };
+          case 'distance':
+            if (filter.value.min && filter.value.max) {
+              return {
+                text: '($# > distance AND distance > $#)',
+                values: [filter.value.min, filter.value.max],
+              };
+            }
+            if (filter.value.min) {
+              return {
+                text: '$# > distance',
+                values: [filter.value.min],
+              };
+            }
+            return {
+              text: 'distance > $#',
+              values: [filter.value.max],
+            };
+          case 'campaign_id':
+            throw new Error('Unimplemented');
+
+          case 'days':
+            return {
+              text: 'extract(isodow from start_datetime) = ANY ($#)',
+              values: [filter.value],
+            };
+          case 'hour': {
+            return {
+              text: '($# >= extract(hour from start_datetime) AND extract(hour from start_datetime) >= $#)',
+              values: [filter.value.start, filter.value.end],
+            };
+          }
+        }
+      })
+      .reduce(
+        (acc, current) => {
+          acc.text.push(current.text);
+          acc.values.push(...current.values);
+          return acc;
+        },
+        {
+          text: [],
+          values: [],
+        },
+      );
+
+    const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
+    const whereClausesValues = orderedFilters.values;
+
+    return {
+      text: whereClauses,
+      values: whereClausesValues,
+    };
+  }
+
+  public async stats(params: TripSearchInterface): Promise<any> {
+    const where = this.buildWhereClauses(params);
+    const query = {
+      text: `
+        WITH data AS
+        (
+          SELECT
+            min(start_datetime::date) as day,
+            max(distance) as distance,
+            sum(seats) as carpoolers,
+            count(array_length(incentives, 1) > 0) as carpoolers_subsidized
+          FROM trip_participants
+          ${where ? where.text : ''}
+          GROUP BY trip_id
+        )
+        SELECT
+          day,
+          sum(distance)::int as distance,
+          sum(carpoolers)::int as carpoolers,
+          count(*)::int as trip,
+          count(carpoolers_subsidized > 0)::int as trip_subsidized
+        FROM data
+        GROUP BY day`,
+      values: [
+        // casting to int ?
+        ...(where ? where.values : []),
+      ],
+    };
+
+    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
+      if (idx === origin.length - 1) {
+        return `${acc}${current}`;
+      }
+
+      return `${acc}${current}$${idx + 1}`;
+    }, '');
+
+    const result = await this.connection.getClient().query(query);
+    return result.rows;
+  }
+
+  public async search(
+    params: TripSearchInterface,
+  ): Promise<
+    {
+      trip_id: string;
+      is_driver: boolean;
+      start_town: string;
+      end_town: string;
+      start_datetime: Date;
+      operator_id: string;
+      incentives: any;
+      operator_class: string;
+    }[]
+  > {
+    const { limit, skip } = params;
+    const where = this.buildWhereClauses(params);
+    const query = {
+      text: `
+        SELECT
+          trip_id,
+          is_driver,
+          start_town,
+          end_town,
+          start_datetime,
+          operator_id,
+          incentives,
+          operator_class
+        FROM trip_participants
+        ${where ? where.text : ''}
+        ORDER BY start_datetime DESC
+        LIMIT $#::integer
+        OFFSET $#::integer
+      `,
+      values: [...(where ? where.values : []), limit, skip],
+    };
+
+    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
+      if (idx === origin.length - 1) {
+        return `${acc}${current}`;
+      }
+
+      return `${acc}${current}$${idx + 1}`;
+    }, '');
+
+    const result = await this.connection.getClient().query(query);
+    return result.rows;
   }
 }

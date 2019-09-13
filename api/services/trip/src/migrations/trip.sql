@@ -62,9 +62,9 @@ CREATE TABLE trip_participants (
 -- montant final (+/-) en fonction de la situation
   expense int NULL, 
 
-  incentives json,
+  incentives json[] NOT NULL DEFAULT array[]::json[],
   -- incentives?: IncentiveInterface[];
-  payments json,
+  payments json[] NOT NULL DEFAULT array[]::json[],
   -- payments?: PaymentInterface[];
   -- campaign id
 );
