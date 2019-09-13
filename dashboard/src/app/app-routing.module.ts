@@ -12,17 +12,17 @@ import { AuthenticatedLayoutComponent } from './core/components/authenticated-la
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
-  {
-    path: '',
     component: AuthenticatedLayoutComponent,
     canActivate: [AuthGuard],
     children: [
       {
         path: 'campaign',
         loadChildren: () => import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
+        canLoad: [AuthGuard],
+      },
+      {
+        path: 'registry',
+        loadChildren: () => import('./modules/registry/registry.module').then((mod) => mod.RegistryModule),
         canLoad: [AuthGuard],
       },
       {

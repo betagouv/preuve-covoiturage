@@ -13,7 +13,7 @@ export class ProfileService {
   patch(profile: ProfileInterface): void {
     const jsonRPCParam = new JsonRPCParam('user.patch', profile);
 
-    this.jsonRPC.call(jsonRPCParam).subscribe(
+    this.jsonRPC.callOne(jsonRPCParam).subscribe(
       (data) => {
         console.log('success', data);
       },

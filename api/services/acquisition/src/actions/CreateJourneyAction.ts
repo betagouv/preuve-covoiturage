@@ -1,9 +1,19 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ConfigInterfaceResolver, ContextType } from '@ilos/common';
-import { CreateJourneyParamsInterface } from '@pdc/provider-schema';
+import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
+import moment from 'moment';
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
+
+const callContext = {
+  channel: {
+    service: 'acquisition',
+  },
+  call: {
+    user: {},
+  },
+};
 
 @handler({
   service: 'acquisition',
@@ -17,45 +27,77 @@ export class CreateJourneyAction extends AbstractAction {
 
   constructor(
     private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
-    private configProvider: ConfigInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
-  }
-
-  protected get costByKm(): number {
-    return this.configProvider.get('acquisition.costByKm');
   }
 
   protected async handle(
     params: CreateJourneyParamsInterface | CreateJourneyParamsInterface[],
     context: ContextType,
   ): Promise<Journey | Journey[]> {
-    if (Array.isArray(params)) {
-      const journeys = params.map((journeyData) => this.cast(journeyData, context.call.user.operator_id));
-      return this.journeyRepository.createMany(journeys);
+    const now = new Date();
+    const hasMany = Array.isArray(params);
+
+    const journeys: Journey[] = (Array.isArray(params) ? [...params] : [params])
+      .map((journeyData) => this.cast(journeyData, context.call.user.operator_id))
+
+      // avoid time travelling
+      .filter(
+        (journeyData) =>
+          journeyData.driver.start.datetime < journeyData.driver.end.datetime &&
+          journeyData.driver.end.datetime < now &&
+          journeyData.driver.start.datetime < journeyData.driver.end.datetime &&
+          journeyData.driver.end.datetime < now,
+      );
+
+    if (journeys.length === 0) {
+      return;
+    }
+    const result: Journey[] = await this.journeyRepository.createMany(journeys);
+
+    // dispatch only journey done 7 days from now
+    const sevendaysFromNow = moment()
+      .subtract(7, 'days')
+      .toDate();
+    const journeyToDispatch = result.filter((journey) => journey.driver.start.datetime >= sevendaysFromNow);
+    const promises: Promise<void>[] = [];
+    for (const journey of journeyToDispatch) {
+      promises.push(this.kernel.notify('normalization:geo', journey, callContext));
     }
 
-    return this.journeyRepository.create(this.cast(params, context.call.user.operator_id));
+    await Promise.all(promises);
+
+    if (!hasMany) {
+      return result.pop();
+    }
+
+    return result;
   }
 
-  // tslint:disable-next-line: variable-name
-  protected cast(journey: CreateJourneyParamsInterface, operator_id: string): Journey {
-    // TODO calculate driverExpense, passengerExpense using incentives[]
-
-    const driverExpense = 0;
-    const passengerExpense = 0;
-
+  protected cast(journey: CreateJourneyParamsInterface, operatorId: string): Journey {
     return new Journey({
       ...journey,
-      operator_id,
-      driver: {
-        ...journey.driver,
-        expense: driverExpense,
-      },
-      passenger: {
-        ...journey.passenger,
-        expense: passengerExpense,
-      },
+      operator_id: operatorId,
+      driver: this.castPerson(journey.driver, true),
+      passenger: this.castPerson(journey.passenger, false),
+      created_at: new Date(),
     });
+  }
+
+  protected castPerson(person: PersonInterface, driver = false): PersonInterface {
+    return {
+      distance: 0,
+      duration: 0,
+      incentive: 0,
+      contribution: 0,
+      revenue: 0,
+      expense: 0,
+      incentives: [],
+      payments: [],
+      ...person,
+      is_driver: driver,
+      seats: person && 'seats' in person ? person.seats : !driver ? 1 : 0,
+    };
   }
 }

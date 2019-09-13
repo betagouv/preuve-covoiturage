@@ -1,13 +1,10 @@
-import path from 'path';
 import http from 'http';
 import express from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
-import swaggerUiExpress from 'swagger-ui-express';
 import bodyParser from 'body-parser';
-import { get, set } from 'lodash';
-
+import { get } from 'lodash';
 import {
   TransportInterface,
   KernelInterface,
@@ -15,16 +12,16 @@ import {
   ConfigInterfaceResolver,
   EnvInterface,
   EnvInterfaceResolver,
+  RPCSingleCallType,
+  UnauthorizedException,
 } from '@ilos/common';
-
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
-import { TokenProvider } from '@pdc/provider-token';
+import { mapStatusCode } from '@ilos/transport-http';
 
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
-import openapiJson from './static/openapi.json';
 import { asyncHandler } from './helpers/asyncHandler';
-import { makeCall, routeMapping } from './helpers/routeMapping';
-import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
+import { makeCall } from './helpers/routeMapping';
+import { nestParams } from './helpers/nestParams';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -66,12 +63,12 @@ export class HttpTransport implements TransportInterface {
     this.registerBodyHandler();
     this.registerSessionHandler();
     this.registerSecurity();
-    this.registerServerAuth();
+    // this.registerServerAuth(); // disabled as JWT isn't used
     this.registerGlobalMiddlewares();
     this.registerAuth();
-    this.registerSwagger();
-    this.registerBullArena();
-    this.registerRoutes();
+    // this.registerSwagger();
+    // this.registerBullArena();
+    // this.registerRoutes(); // disabled REST routes
 
     if (this.config.get('proxy.rpc.open', false)) {
       this.registerCallHandler();
@@ -107,8 +104,9 @@ export class HttpTransport implements TransportInterface {
         cookie: {
           path: '/',
           httpOnly: true,
-          secure: false, // true in production
-          maxAge: null,
+          maxAge: this.config.get('proxy.session.maxAge'),
+          // https everywhere but in local development
+          secure: this.env.get('APP_ENV', 'local') !== 'local',
         },
         name: sessionName,
         secret: sessionSecret,
@@ -123,12 +121,15 @@ export class HttpTransport implements TransportInterface {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
+    // set CORS with the Application URL
     const corsOrigin = this.config.get('proxy.cors');
 
     this.app.use(
       cors({
         origin: corsOrigin,
         optionsSuccessStatus: 200,
+        // Allow-Access-Credentials lets XHR requests send Cookies to a different URL
+        credentials: true,
       }),
     );
   }
@@ -138,15 +139,15 @@ export class HttpTransport implements TransportInterface {
     this.app.use(dataWrapMiddleware);
   }
 
-  private registerServerAuth() {
-    const tokenProvider = new TokenProvider({
-      secret: this.config.get('jwt.secret'),
-      ttl: this.config.get('jwt.ttl'),
-    });
+  // private registerServerAuth() {
+  //   const tokenProvider = new TokenProvider({
+  //     secret: this.config.get('jwt.secret'),
+  //     ttl: this.config.get('jwt.ttl'),
+  //   });
 
-    // inject the operator_id in the query
-    this.app.use(serverTokenMiddleware(this.kernel, tokenProvider));
-  }
+  //   // inject the operator_id in the query
+  //   this.app.use(serverTokenMiddleware(this.kernel, tokenProvider));
+  // }
 
   private registerAuth() {
     this.app.post(
@@ -183,17 +184,17 @@ export class HttpTransport implements TransportInterface {
     });
   }
 
-  private registerSwagger() {
-    // serve static files
-    this.app.use(express.static(path.join(__dirname, 'static')));
+  // private registerSwagger() {
+  //   // serve static files
+  //   this.app.use(express.static(path.join(__dirname, 'static')));
 
-    // OpenAPI specification UI
-    this.app.use('/openapi', swaggerUiExpress.serve, swaggerUiExpress.setup(openapiJson));
-  }
+  //   // OpenAPI specification UI
+  //   this.app.use('/openapi', swaggerUiExpress.serve, swaggerUiExpress.setup(openapiJson));
+  // }
 
-  private registerBullArena() {
-    // this.app.use('/arena', require('./routes/bull-arena/controller'));
-  }
+  // private registerBullArena() {
+  //   this.app.use('/arena', require('./routes/bull-arena/controller'));
+  // }
 
   private registerAfterAllHandlers() {
     this.app.use(Sentry.Handlers.errorHandler());
@@ -203,9 +204,9 @@ export class HttpTransport implements TransportInterface {
     this.app.use(errorHandlerMiddleware);
   }
 
-  private registerRoutes() {
-    routeMapping(this.config.get('routes.routeMap', []), this.app, this.kernel);
-  }
+  // private registerRoutes() {
+  //   routeMapping(this.config.get('routes.routeMap', []), this.app, this.kernel);
+  // }
 
   /**
    * Calls to the /rpc endpoint
@@ -236,25 +237,30 @@ export class HttpTransport implements TransportInterface {
     // register the POST route to /rpc
     this.app.post(
       endpoint,
-      asyncHandler(async (req, res, next) => {
-        // inject the req.session.user to context in the body
-        const isBatch = Array.isArray(req.body);
-        const _context = get(isBatch ? req.body[0] : req.body, 'params._context', {});
-        const user = get(req, 'session.user', null);
-        if (user) {
-          set(_context, 'call.user', user);
-          if (isBatch) {
-            req.body = req.body.map((doc) => {
-              set(doc, 'params._context', _context);
-            });
-          } else {
-            set(req.body, 'params._context', _context);
-          }
-        }
+      asyncHandler(
+        async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+          // inject the req.session.user to context in the body
+          const isBatch = Array.isArray(req.body);
+          const user = get(req, 'session.user', null);
 
-        // pass the request to the kernel
-        res.json(await this.kernel.handle(req.body));
-      }),
+          if (!user) {
+            throw new UnauthorizedException();
+          }
+
+          // nest the params and _context and inject the session user
+          // from { id: 1, jsonrpc: '2.0', method: 'a:b' params: {} }
+          // to { id: 1, jsonrpc: '2.0', method: 'a:b' params: { params: {}, _context: {} } }
+          req.body = isBatch
+            ? req.body.map((doc: RPCSingleCallType) => nestParams(doc, user))
+            : nestParams(req.body, user);
+
+          // pass the request to the kernel
+          const rpcResponse = await this.kernel.handle(req.body);
+
+          // send the response
+          res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        },
+      ),
     );
   }
 

@@ -65,7 +65,7 @@ export class ChangeEmailUserAction extends AbstractAction {
       contextParam.operator = context.call.user.operator;
     }
 
-    const email_change_at = new Date();
+    const emailChangeAt = new Date();
     const confirm = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
@@ -74,9 +74,9 @@ export class ChangeEmailUserAction extends AbstractAction {
     const requester = new User(context.call.user);
 
     const patch = {
-      email_change_at,
-      email_confirm: confirm,
-      email_token: cryptedToken,
+      emailChangeAt,
+      emailConfirm: confirm,
+      emailToken: cryptedToken,
       email: params.email,
       status: this.config.get('user.status.notActive'),
     };
@@ -88,7 +88,7 @@ export class ChangeEmailUserAction extends AbstractAction {
       {
         template: this.config.get('email.templates.confirm'),
         email: patch.email,
-        fullName: user.fullname,
+        fullname: user.fullname,
         requester: requester.fullname,
         organization: 'AomOrOperatorOrganisation',
         link: `${this.config.get('url.appUrl')}/confirm-email/${confirm}/${token}`,

@@ -72,9 +72,9 @@ export class ListUserAction extends AbstractAction {
         pagination: {
           total: data.total,
           count: data.users.length,
-          per_page: this.config.get('pagination.perPage'), // not used in front
-          current_page: Math.floor((pagination.skip || 0) / pagination.limit) + 1,
-          total_pages: Math.floor(data.total / pagination.limit),
+          perPage: this.config.get('pagination.perPage'), // not used in front
+          currentPage: Math.floor((pagination.skip || 0) / pagination.limit) + 1,
+          totalPages: Math.floor(data.total / pagination.limit),
         },
       },
     };

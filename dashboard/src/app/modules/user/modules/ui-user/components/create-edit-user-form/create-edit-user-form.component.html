@@ -23,6 +23,38 @@
       <mat-option *ngFor="let role of roles" [value]="role">{{ getFrenchRole(role) }}</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="groupEditable">
+    <mat-label>Groupe</mat-label>
+    <mat-select required formControlName="group">
+      <mat-option *ngFor="let group of groups" [value]="group">{{ getFrenchGroup(group) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!--  <mat-form-field appearance="outline" *ngIf="groupEditable && territoryEditable">-->
+  <!--    <mat-label>Territoire</mat-label>-->
+  <!--    <mat-select required formControlName="territory">-->
+  <!--      <mat-option *ngFor="let territory of ['Test territoire']" [value]="territory">{{ territory }}</mat-option>-->
+  <!--    </mat-select>-->
+  <!--  </mat-form-field>-->
+
+  <app-operator-autocomplete
+    [parentForm]="createEditUserForm"
+    [hidden]="!groupEditable || !operatorEditable"
+  ></app-operator-autocomplete>
+
+  <app-territory-autocomplete
+    [parentForm]="createEditUserForm"
+    [hidden]="!groupEditable || !territoryEditable"
+  ></app-territory-autocomplete>
+
+  <!--  <mat-form-field appearance="outline">-->
+  <!--    <mat-label>Opérateur</mat-label>-->
+  <!--    <mat-select required formControlName="operator">-->
+  <!--      <mat-option *ngFor="let operator of ['Test opérateur']" [value]="operator">{{ operator }}</mat-option>-->
+  <!--    </mat-select>-->
+  <!--  </mat-form-field>-->
+
   <div>
     <button
       *ngIf="isCreating"

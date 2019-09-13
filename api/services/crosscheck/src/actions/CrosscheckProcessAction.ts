@@ -2,16 +2,12 @@ import { get, uniq } from 'lodash';
 import moment from 'moment';
 
 import { Action } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { JourneyInterface, TripInterface, PersonInterface } from '@pdc/provider-schema';
 
-import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
+import { TripRepositoryProviderInterfaceResolver } from '../interfaces/TripRepositoryProviderInterface';
 import { Trip } from '../entities/Trip';
 import { Person } from '../entities/Person';
-
-interface CrosscheckProcessParamsInterface {
-  journey: JourneyInterface;
-}
 
 /*
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
@@ -21,90 +17,131 @@ interface CrosscheckProcessParamsInterface {
   method: 'process',
 })
 export class CrosscheckProcessAction extends Action {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'crosscheck.process']];
-  constructor(private crosscheckRepository: CrosscheckRepositoryProviderInterfaceResolver) {
+  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+
+  constructor(
+    private tripRepository: TripRepositoryProviderInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
+    private config: ConfigInterfaceResolver,
+  ) {
     super();
   }
 
-  public async handle(params: CrosscheckProcessParamsInterface, context: ContextType): Promise<Trip | null> {
-    let trip: TripInterface | null;
+  public async handle(journey: JourneyInterface, context: ContextType): Promise<TripInterface> {
+    // filter 7 days expired journey
+    const trip: TripInterface = await this.findTripOrNull(journey);
+    let finalTrip: TripInterface;
 
-    try {
-      trip = await this.crosscheckRepository.findByOperatorJourneyId({
-        operator_journey_id: params.journey.operator_journey_id,
-        operator_id: params.journey.operator_id,
-      });
-    } catch (e) {}
+    this.logger.debug(`Trying to get existing trip for ${journey._id}, found ${trip ? trip._id : 'none'}`);
 
+    if (trip === null) {
+      try {
+        finalTrip = await this.createTrip(journey);
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      finalTrip = await this.mergeJourneyWithTrip(journey, trip);
+    }
+
+    await this.kernel.notify(
+      'crosscheck:dispatch',
+      { _id: finalTrip._id },
+      {
+        channel: {
+          service: 'crosscheck',
+          metadata: {
+            delay: this.config.get('rules.maxAge'),
+          },
+        },
+        call: {
+          user: {},
+        },
+      },
+    );
+
+    return finalTrip;
+  }
+
+  private async findTripOrNull(journey: JourneyInterface): Promise<TripInterface | null> {
+    if ('operator_journey_id' in journey) {
+      try {
+        const trip = await this.tripRepository.findByOperatorTripIdAndOperatorId({
+          operator_trip_id: journey.operator_journey_id,
+          operator_id: journey.operator_id,
+        });
+        return trip;
+      } catch (e) {
+        return this.guessTrip(journey);
+      }
+    }
+    return this.guessTrip(journey);
+  }
+
+  private async guessTrip(journey: JourneyInterface): Promise<TripInterface | null> {
     try {
-      const driverPhone = get(params.journey, 'driver.identity.phone', null);
+      const driverPhone = get(journey, 'driver.identity.phone', null);
+
       if (!driverPhone) {
-        throw new Error(`No driver phone in: ${params.journey.journey_id}`);
+        throw new Error(`No driver phone in: ${journey.journey_id}`);
       }
 
       const startTimeRange = {
         min: moment
-          .utc(params.journey.driver.start.datetime)
+          .utc(journey.driver.start.datetime)
           .subtract(2, 'h')
           .toDate(),
         max: moment
-          .utc(params.journey.driver.start.datetime)
+          .utc(journey.driver.start.datetime)
           .add(2, 'h')
           .toDate(),
       };
-
-      trip = await this.crosscheckRepository.findByPhoneAndTimeRange(driverPhone, startTimeRange);
-    } catch (e) {}
-
-    return trip ? this.consolidateTripWithJourney(params.journey, trip) : this.createTripFromJourney(params.journey);
+      const r = await this.tripRepository.findByPhoneAndTimeRange(driverPhone, startTimeRange);
+      return r;
+    } catch (e) {
+      return null;
+    }
   }
-
-  private async createTripFromJourney(journey: JourneyInterface): Promise<Trip> {
+  private async createTrip(journey: JourneyInterface): Promise<Trip> {
     const trip = new Trip({
-      status: 'pending',
+      operator_id: [journey.operator_id],
+      operator_trip_id: 'operator_journey_id' in journey ? journey.operator_journey_id : null,
+      status: this.config.get('rules.status.pending'),
       territories: this.mapTerritories(journey),
       start: this.reduceStartDate(journey),
-      people: this.mapPeople(journey),
+      people: [journey.passenger, journey.driver],
+      createdAt: new Date(),
     });
-
-    return this.crosscheckRepository.create(trip);
+    return this.tripRepository.create(trip);
   }
 
-  private async consolidateTripWithJourney(journey: JourneyInterface, sourceTrip: TripInterface): Promise<Trip> {
+  private async mergeJourneyWithTrip(journey: JourneyInterface, sourceTrip: TripInterface): Promise<Trip> {
+    if ('status' in sourceTrip && sourceTrip.status === this.config.get('rules.status.locked')) {
+      throw new Error(`Trip ${sourceTrip._id} is locked, impossible to add journey ${journey._id}`);
+    }
+
     // extract existing phone number to compare identities
     const phones = uniq(sourceTrip.people.map((p: PersonInterface) => p.identity.phone));
 
     // filter mapped people by their phone number. Keep non matching ones
-    const people = this.mapPeople(journey).filter(
+    const people = [journey.passenger, journey.driver].filter(
       (person: PersonInterface) => phones.indexOf(person.identity.phone) === -1,
     );
 
     // filter mapped territories. Keep non matching ones
-    const territories = this.mapTerritories(journey).filter(
-      (territory: string) => sourceTrip.territories.indexOf(territory) === -1,
-    );
+    const territory = this.mapTerritories(journey).filter((t: string) => sourceTrip.territories.indexOf(t) === -1);
 
     // find the oldest start date
     const newStartDate = this.reduceStartDate(journey, sourceTrip);
+    const operator_id = uniq([...sourceTrip.operator_id, journey.operator_id]);
 
-    return this.crosscheckRepository.findByIdAndPushPeople(sourceTrip._id, people, territories, newStartDate);
-  }
-
-  // map people from journey
-  private mapPeople(journey: JourneyInterface): Person[] {
-    const people: Person[] = [];
-
-    if ('driver' in journey) {
-      const driver = journey.driver;
-      people.push(new Person({ is_driver: true, ...driver }));
-    }
-
-    if ('passenger' in journey) {
-      const passenger = journey.passenger;
-      people.push(new Person({ is_driver: false, ...passenger }));
-    }
-
-    return people;
+    return this.tripRepository.findByIdAndPatch(sourceTrip._id, {
+      operator_id,
+      people,
+      territory,
+      start: newStartDate,
+      updatedAt: new Date(),
+    });
   }
 
   // find the oldest start date
@@ -120,15 +157,15 @@ export class CrosscheckProcessAction extends Action {
 
   // get all territories from journey
   private mapTerritories(journey: JourneyInterface): string[] {
-    let territories: string[] = [];
+    const territories: string[] = [];
 
     if ('driver' in journey) {
-      territories = territories.concat(journey.driver.start.territories);
-      territories = territories.concat(journey.driver.end.territories);
+      territories.push(journey.driver.start.territory);
+      territories.push(journey.driver.end.territory);
     }
     if ('passenger' in journey) {
-      territories = territories.concat(journey.driver.start.territories);
-      territories = territories.concat(journey.driver.end.territories);
+      territories.push(journey.driver.start.territory);
+      territories.push(journey.driver.end.territory);
     }
 
     return uniq(territories);

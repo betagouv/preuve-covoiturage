@@ -3,38 +3,34 @@
 // import chaiAsPromised from 'chai-as-promised';
 // import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 // import { ConfigInterfaceResolver } from '@ilos/config';
-// import { Container, Interfaces } from '@ilos/core';
+// import { Container } from '@ilos/core';
 
 // import { UserRepositoryProviderInterfaceResolver } from '../interfaces/repository/UserRepositoryProviderInterface';
+// import { UserConfirmEmailParamsInterface } from '../interfaces/actions/UserConfirmEmailParamsInterface';
 // import { UserBaseInterface } from '../interfaces/UserInterfaces';
-// import { User } from '../entities/User';
-// import { LoginUserAction } from './LoginUserAction';
-// import { UserLoginParamsInterface } from '../interfaces/actions/UserLoginParamsInterface';
+
+// import { ConfirmEmailUserAction } from './ConfirmEmailUserAction';
+
 // import { ServiceProvider as BaseServiceProvider } from '../ServiceProvider';
-// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
+
 // import { mockNewUserBase } from '../../tests/mocks/newUserBase';
+
+// import { User } from '../entities/User';
+// import { defaultUserProperties } from '../../tests/mocks/defaultUserProperties';
 
 // chai.use(chaiAsPromised);
 // const { expect } = chai;
 
-// const mockUser = { ...mockNewUserBase, _id: 'mockUserId', status: 'active' };
-
-// const cryptedPassword = 'cryptedPassword';
-
-// const mockLoginParams = <UserLoginParamsInterface>{
-//   email: mockUser.email,
-//   password: 'password',
+// const mockUser = {
+//   ...mockNewUserBase,
+//   status: 'notActive',
+//   _id: '5d08a669f691dd623ae9378a',
 // };
 
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot() {
-//     return;
-//   }
-//   get(key: string, fallback?: any): any {
-//     return 'active';
-//   }
-// }
+// const mockResetPasswordParams = <UserConfirmEmailParamsInterface>{
+//   token: 'W0mn7FUNQI53qAaKW8lxIiTB9b03GP1N',
+//   confirm: 'Y5ySSJRrlX49aSC9G1eIBb0dMWLv95aT',
+// };
 
 // @Container.provider()
 // class FakeUserRepository extends UserRepositoryProviderInterfaceResolver {
@@ -42,36 +38,41 @@
 //     return;
 //   }
 //   public async findUserByParams(params: { [prop: string]: string }): Promise<User> {
-//     if (params.email === mockUser.email) {
-//       return new User({
-//         ...mockUser,
-//         password: cryptedPassword,
-//       });
-//     }
-//   }
-
-//   public async patch(id: string, user: UserBaseInterface): Promise<User> {
 //     return new User({
 //       ...mockUser,
-//       last_connected_at: new Date(),
+//       emailChangeAt: new Date(),
+//     });
+//   }
+
+//   public async update(user: any): Promise<User> {
+//     return new User({
+//       ...user,
 //     });
 //   }
 // }
 
 // @Container.provider()
 // class FakeCryptoProvider extends CryptoProviderInterfaceResolver {
+//   async compareForgottenToken(plainToken: string, cryptedToken: string): Promise<boolean> {
+//     return true;
+//   }
+// }
+
+// @Container.provider()
+// class FakeConfigProvider extends ConfigInterfaceResolver {
 //   async boot() {
 //     return;
 //   }
-//   async comparePassword(plain: string, crypted: string): Promise<boolean> {
-//     if (crypted === cryptedPassword && plain === mockLoginParams.password) {
-//       return true;
+//   get(key: string, fallback?: any): any {
+//     if (key === 'user.tokenExpiration.emailConfirm') {
+//       return '86400';
 //     }
+//     return 'active';
 //   }
 // }
 
 // class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [LoginUserAction];
+//   readonly handlers = [ConfirmEmailUserAction];
 //   readonly alias: any[] = [
 //     [ConfigInterfaceResolver, FakeConfigProvider],
 //     [CryptoProviderInterfaceResolver, FakeCryptoProvider],
@@ -87,22 +88,25 @@
 // let handlers;
 // let action;
 
-// describe('USER ACTION - Login', () => {
+// describe('USER ACTION - Confirm email', () => {
 //   before(async () => {
 //     serviceProvider = new ServiceProvider();
 //     await serviceProvider.boot();
 //     handlers = serviceProvider.getContainer().getHandlers();
 //     action = serviceProvider.getContainer().getHandler(handlers[0]);
 //   });
-//   it('should login with right email & pwd', async () => {
+
+//   it('should change status to active', async () => {
 //     const result = await action.call({
-//       method: 'user:login',
+//       method: 'user:confirmEmail',
 //       context: { call: { user: {} }, channel: { service: '' } },
-//       params: mockLoginParams,
+//       params: mockResetPasswordParams,
 //     });
+
 //     expect(result).to.eql({
 //       ...defaultUserProperties,
 //       ...mockUser,
+//       status: 'active',
 //     });
 //   });
 // });

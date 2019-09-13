@@ -21,11 +21,11 @@ export class TripService extends ApiService<Trip> {
   public exportTrips(): Observable<any> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}.export`);
     return this._jsonRPC
-      .call(jsonRPCParam, {
+      .callOne(jsonRPCParam, {
         headers: new HttpHeaders({
           Accept: 'text/csv',
         }),
-        responseType: 'blob',
+        // responseType: 'blob',
       })
       .pipe(
         tap((data) => {
@@ -50,9 +50,10 @@ export class TripService extends ApiService<Trip> {
 
   public upload(file: any): Observable<any> {
     const jsonRPCParam = new JsonRPCParam(`acquisition.import`, { csv: file });
-    return this._jsonRPC.call(jsonRPCParam, {
+    return this._jsonRPC.callOne(jsonRPCParam, {
       reportProgress: true,
-      observe: 'events',
+      // TODO: Gilles investigate specific post option paramters
+      // observe: 'events',
     });
   }
 }

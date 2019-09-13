@@ -7,5 +7,5 @@ export interface PositionInterface {
   town?: string;
   country?: string;
   literal?: string;
-  territories?: string[];
+  territory?: string;
 }

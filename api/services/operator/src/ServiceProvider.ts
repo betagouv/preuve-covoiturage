@@ -8,7 +8,7 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { operatorCreateSchema, operatorPatchSchema, operatorDeleteSchema } from '@pdc/provider-schema';
 
 import { OperatorRepositoryProvider } from './providers/OperatorRepositoryProvider';
-import { AllOperatorAction } from './actions/AllOperatorAction';
+import { ListOperatorAction } from './actions/ListOperatorAction';
 import { CreateOperatorAction } from './actions/CreateOperatorAction';
 import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
 import { PatchOperatorAction } from './actions/PatchOperatorAction';
@@ -21,7 +21,7 @@ import { PatchOperatorAction } from './actions/PatchOperatorAction';
     ['operator.patch', operatorPatchSchema],
     ['operator.delete', operatorDeleteSchema],
   ],
-  handlers: [AllOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction],
+  handlers: [ListOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction],
   connections: [[MongoConnection, 'mongo']],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
 })

@@ -48,7 +48,6 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
     let result = [];
 
     const collection = await this.getCollection();
-
     const normalizedFilters = this.normalizeContextFilters(filters);
 
     const skip = 'skip' in pagination ? pagination.skip : this.config.get('user.defaultSkip');
@@ -66,6 +65,14 @@ export class UserRepositoryProvider extends ParentRepository implements UserRepo
       users,
       total,
     };
+  }
+
+  /**
+   * convert operator and territory to ObjectId and create the user
+   */
+  public async create(data: any): Promise<User> {
+    const normalizedData = { ...data, ...this.normalizeContextFilters(data) };
+    return super.create(normalizedData);
   }
 
   /**

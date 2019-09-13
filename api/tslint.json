@@ -48,7 +48,7 @@
       }
     ],
     "unified-signatures": true,
-    "variable-name": [true, "check-format", "ban-keywords", "allow-leading-underscore"],
+    "variable-name": [true, "check-format", "ban-keywords", "allow-leading-underscore", "allow-snake-case"],
     "no-this-assignment": [
       true,
       {
