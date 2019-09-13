@@ -45,6 +45,10 @@ module.exports = {
    * @param link
    */
   invite: ({ email, fullname, requester, organisation, link }) => {
+    // remove invite on production
+    return;
+
+    // eslint-disable-next-line no-unreachable
     const req = requester ? `par ${requester} ` : '';
     const template = `
         Bonjour ${fullname},<br>
