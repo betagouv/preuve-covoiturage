@@ -139,7 +139,7 @@ describe('Application service', () => {
         expect(response.body.result).to.have.property('_id', application._id);
         expect(response.body.result).to.have.property('name', 'Application');
         expect(response.body.result).to.have.property('operator_id', operator_id);
-        expect(response.body.result).to.have.property('deletedAt');
+        expect(response.body.result).to.have.property('deleted_at');
         expect(new Date(response.body.result.deletedAt)).to.be.an.instanceOf(Date);
       }));
 

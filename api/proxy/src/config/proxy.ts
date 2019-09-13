@@ -21,4 +21,4 @@ export const rpc = {
   endpoint: env('APP_RPC_ENDPOINT', '/rpc'),
 };
 
-export const cors = env('APP_ENV', null) === 'review' ? '*' : appUrl;
+export const cors = ['review', 'dev'].indexOf(env('APP_ENV', 'local')) > -1 ? '*' : appUrl;

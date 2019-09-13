@@ -69,9 +69,7 @@ export class HttpTransport implements TransportInterface {
     this.registerGlobalMiddlewares();
     this.registerAuthRoutes();
     this.registerLegacyServerRoute();
-    // this.registerSwagger();
     // this.registerBullArena();
-    // this.registerRoutes();
 
     if (this.config.get('proxy.rpc.open', false)) {
       this.registerCallHandler();
@@ -118,8 +116,8 @@ export class HttpTransport implements TransportInterface {
         },
         name: sessionName,
         secret: sessionSecret,
-        resave: true,
-        saveUninitialized: true,
+        resave: false,
+        saveUninitialized: false,
         // store, TODO: use redis
       }),
     );
@@ -160,21 +158,8 @@ export class HttpTransport implements TransportInterface {
    * }
    */
   private registerLegacyServerRoute() {
-    // Set the POST route
     this.app.post(
       '/journeys/push',
-
-      // handle JWT token
-      // serverTokenMiddleware(this.kernel, this.tokenProvider),
-
-      // add the operator_id to the payload
-      // (req, res, next) => {
-      //   console.log(req.session.user);
-      //   req.body.operator_id = get(req, 'session.user.operator_id', null);
-      //   next();
-      // },
-
-      // make the final call
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
         res.json(await this.kernel.handle(makeCall('acquisition:create', req.body, { user })));
@@ -215,14 +200,6 @@ export class HttpTransport implements TransportInterface {
     });
   }
 
-  // private registerSwagger() {
-  //   // serve static files
-  //   this.app.use(express.static(path.join(__dirname, 'static')));
-
-  //   // OpenAPI specification UI
-  //   this.app.use('/openapi', swaggerUiExpress.serve, swaggerUiExpress.setup(openapiJson));
-  // }
-
   // private registerBullArena() {
   //   this.app.use('/arena', require('./routes/bull-arena/controller'));
   // }
@@ -234,10 +211,6 @@ export class HttpTransport implements TransportInterface {
     // keep last
     this.app.use(errorHandlerMiddleware);
   }
-
-  // private registerRoutes() {
-  //   routeMapping(this.config.get('routes.routeMap', []), this.app, this.kernel);
-  // }
 
   /**
    * Calls to the /rpc endpoint

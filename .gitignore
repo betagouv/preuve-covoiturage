@@ -3,6 +3,7 @@ node_modules
 .vscode
 .env
 db/mongo
+db/postgres
 api/ilos
 
 yarn-error.log

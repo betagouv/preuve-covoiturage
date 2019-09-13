@@ -59,9 +59,9 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       // inject the operatorId and permissions in the request
       // @ts-ignore
       req.session = req.session || {};
-      req.session.user = req.user || {};
+      req.session.user = req.session.user || {};
       req.session.user.application_id = payload.appId;
-      req.session.user.operator_id = payload.operatorId;
+      req.session.user.operator = payload.operatorId;
       req.session.user.permissions = payload.permissions;
 
       next();
