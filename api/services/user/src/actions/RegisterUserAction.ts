@@ -15,7 +15,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 })
 export class RegisterUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
-    // TODO internal call only
+    // TODO internal call only by filtering the incoming channel
     ['validate', 'user.register'],
   ];
   constructor(
