@@ -1,37 +1,32 @@
-<div class="RetributionForm" [formGroup]="formGroup">
+<div class="RetributionForm" [formGroup]="forDriver || forTrip ? forDriverFormGroup : forPassengerFormGroup">
   <h4>
     <span *ngIf="forDriver"> Pour le conducteur</span>
     <span *ngIf="forPassenger"> Pour le(s) passager(s)</span>
     <span *ngIf="forTrip"> Pour le trajet</span>
-    <mat-checkbox *ngIf="!forDriver && !forTrip" class="RetributionForm-free" formControlName="free">
+    <mat-checkbox *ngIf="!forDriver && !forTrip && isEuros" class="RetributionForm-free" formControlName="free">
       gratuit
     </mat-checkbox>
   </h4>
   <div
     class="RetributionForm-inputs"
-    [ngClass]="forPassenger && controls.free.value ? 'RetributionForm-inputs--hidden' : ''"
+    [ngClass]="
+      forPassenger && forPassengerFormGroup.controls.free.value && !isEuros ? 'RetributionForm-inputs--hidden' : ''
+    "
   >
     <mat-form-field appearance="outline" class="shortFormField">
       <mat-label>Montant</mat-label>
-      <input
-        matInput
-        type="number"
-        min="0"
-        placeholder="0,1"
-        required
-        [formControlName]="forDriver || forTrip ? 'valueForDriver' : 'valueForPassenger'"
-      />
+      <input matInput type="number" min="0" placeholder="0,1" required formControlName="amount" />
       <mat-error *ngIf="true">
         Le montant du mode de rétribution doit être supérieur à 0.
       </mat-error>
     </mat-form-field>
     <span>
-    {{ incentiveUnitFr[campaignFormControls.amount_unit.value] }}
-  </span>
+      {{ incentiveUnitFr[campaignFormControls.unit.value] }}
+    </span>
     <span *ngIf="!forTrip">par trajet</span>
-    <mat-checkbox [formControlName]="forDriver || forTrip ? 'perKmForDriver' : 'perKmForPassenger'">
+    <mat-checkbox formControlName="per_km">
       par km
     </mat-checkbox>
-    <mat-checkbox formControlName="perPassenger" *ngIf="forDriver || forTrip">par passager</mat-checkbox>
+    <mat-checkbox formControlName="per_passenger" *ngIf="forDriver || forTrip">par passager</mat-checkbox>
   </div>
 </div>

@@ -1,6 +1,6 @@
 import { FilterInterface } from '../../../src/app/core/interfaces/filter/filterInterface';
 import { TripStatusEnum } from '../../../src/app/core/enums/trip/trip-status.enum';
-import { TripClassEnum } from '../../../src/app/core/enums/trip/trip-class.enum';
+import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
 import { campaignStubs } from '../stubs/campaign.list';
 import { operatorStubs } from '../stubs/operator.list';
@@ -29,8 +29,8 @@ export const expectedFilter: FilterInterface = {
     min: 4,
     max: 123,
   },
-  ranks: [TripClassEnum.A, TripClassEnum.B],
+  ranks: [TripRankEnum.A, TripRankEnum.B],
   status: TripStatusEnum.PENDING,
-  operatorIds: [operatorStubs[0]._id],
+  operator_ids: [operatorStubs[0]._id],
   territoryIds: [territoryStubs[0]._id],
 };

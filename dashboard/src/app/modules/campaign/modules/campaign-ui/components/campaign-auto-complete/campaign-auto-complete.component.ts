@@ -6,10 +6,10 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-campaign-auto-complete',
@@ -79,11 +79,12 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
             this.campaignService._entities$.next([
               {
                 _id: '5d6930724f56e6e1d0654542',
-                template_id: '5d6930724f56e6e1d0654543',
+                parent_id: '5d6930724f56e6e1d0654543',
                 status: CampaignStatusEnum.VALIDATED,
                 name: 'Encourager le covoiturage',
                 description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
-                rules: {
+                unit: IncentiveUnitEnum.EUR,
+                filters: {
                   weekday: [0, 1, 2, 3, 4, 5, 6],
                   time: [
                     {
@@ -91,31 +92,30 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
                       end: '19:00',
                     },
                   ],
-                  range: [0, 100],
-                  ranks: [TripClassEnum.A, TripClassEnum.B],
-                  onlyAdult: false,
-                  forDriver: true,
-                  forPassenger: true,
-                  forTrip: false,
-                  operatorIds: [],
+                  distance_range: {
+                    min: 0,
+                    max: 15,
+                  },
+                  rank: [TripRankEnum.A, TripRankEnum.B],
+                  operator_ids: [],
+                },
+                ui_status: {
+                  for_driver: true,
+                  for_passenger: true,
+                  for_trip: false,
                 },
                 start: null,
                 end: null,
-                max_trips: null,
-                max_amount: null,
-                amount_unit: IncentiveUnitEnum.EUR,
-                restrictions: [],
-                formula_expression: '',
-                formulas: [],
-                expertMode: false,
+                retribution_rules: [],
               },
               {
                 _id: '5d69319a9763dc801ea78de7',
-                template_id: '5d69319a9763dc801ea78de8',
+                parent_id: '5d69319a9763dc801ea78de8',
                 status: CampaignStatusEnum.VALIDATED,
                 name: 'Limiter le trafic en semaine',
                 description: 'Fusce vehicula dolor arcu, sit amet blandit dolor mollis.',
-                rules: {
+                unit: IncentiveUnitEnum.EUR,
+                filters: {
                   weekday: [0, 1, 2, 3, 4],
                   time: [
                     {
@@ -127,23 +127,21 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
                       end: '19:00',
                     },
                   ],
-                  range: [0, 15],
-                  ranks: [TripClassEnum.A, TripClassEnum.B, TripClassEnum.C],
-                  onlyAdult: false,
-                  forDriver: true,
-                  forPassenger: true,
-                  forTrip: false,
-                  operatorIds: [],
+                  distance_range: {
+                    min: 0,
+                    max: 15,
+                  },
+                  rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
+                  operator_ids: [],
+                },
+                ui_status: {
+                  for_driver: true,
+                  for_passenger: true,
+                  for_trip: false,
                 },
                 start: null,
                 end: null,
-                max_trips: null,
-                max_amount: null,
-                amount_unit: IncentiveUnitEnum.EUR,
-                restrictions: [],
-                formula_expression: '',
-                formulas: [],
-                expertMode: false,
+                retribution_rules: [],
               },
             ]);
           },

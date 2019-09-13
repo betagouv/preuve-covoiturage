@@ -1,19 +1,19 @@
 import { IncentiveInterface } from '../campaign/incentiveInterface';
 
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
-import { TripClassEnum } from '../../enums/trip/trip-class.enum';
+import { TripRankEnum } from '../../enums/trip/trip-rank.enum';
 
 export interface TripInterface {
   _id: string;
   status: TripStatusEnum;
   start: Date;
   people: PersonInterface[];
-  class: TripClassEnum;
+  class: TripRankEnum;
   campaigns: CampaignShortInterface[];
 }
 
 export interface PersonInterface {
-  class: TripClassEnum;
+  class: TripRankEnum;
   operator: {
     _id: string;
     // tslint:disable-next-line:variable-name

@@ -2,7 +2,7 @@
 
 import { stubCampaignList } from '../support/stubs/campaign.list';
 import { Cypress_login } from '../support/reusables/cypress_login';
-import { Cypress_campaignCreate } from '../support/reusables/cypress_campaign-create';
+import { cypress_campaignCreate } from '../support/reusables/cypress_campaign_create';
 import { stubOperatorList } from '../support/stubs/operator.list';
 import { stubCampaignTemplateList } from '../support/stubs/campaign-template.list';
 import { Cypress_filterTrips } from '../support/reusables/filter-trips.spec';
@@ -43,6 +43,6 @@ context('TERRITORY', () => {
       cy.get('.CampaignDashboard-trips-header button').click();
     });
 
-    Cypress_campaignCreate();
+    cypress_campaignCreate();
   });
 });

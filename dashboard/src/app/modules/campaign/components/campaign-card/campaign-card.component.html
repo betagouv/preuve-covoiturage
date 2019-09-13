@@ -3,9 +3,9 @@
     {{ campaign.name }}
   </div>
   <div class="CampaignCard-territory">
-    {{ campaign.territory?.name }}
+    {{ getTerritoryLabel(campaign.territory_id) }}
   </div>
-  <div class="CampaignCard-incentiveType" [ngSwitch]="campaign.amount_unit">
+  <div class="CampaignCard-incentiveType" [ngSwitch]="campaign.unit">
     <span *ngSwitchCase="incentiveUnit.EUR">
       Incitation financière
     </span>

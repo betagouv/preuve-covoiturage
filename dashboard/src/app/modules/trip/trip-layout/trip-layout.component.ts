@@ -19,11 +19,11 @@ export class TripLayoutComponent implements OnInit {
       path: '/trip/stats',
       label: 'Chiffres clés',
     },
-    {
-      path: '/trip/maps',
-      groups: [UserGroupEnum.REGISTRY],
-      label: 'Cartes',
-    },
+    // {
+    //   path: '/trip/maps',
+    //   groups: [UserGroupEnum.REGISTRY],
+    //   label: 'Cartes',
+    // },
     {
       path: '/trip/list',
       label: 'Liste détaillée',

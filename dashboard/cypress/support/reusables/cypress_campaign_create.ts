@@ -18,9 +18,11 @@ import {
   campaignThirdStepSetMaxTrips,
   campaignThirdStepSetUnit,
 } from '../../support/reusables/steps/campaign-create-third-step';
-import { endMoment, expectedCampaign, startMoment } from '../../support/formValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../support/formValues/expectedCampaign';
 
-export function Cypress_campaignCreate() {
+export function cypress_campaignCreate() {
+  const expectedCampaign = new CypressExpectedCampaign();
+
   // FIRST STEP
   campaignFirstStepCustom();
 
@@ -41,13 +43,16 @@ export function Cypress_campaignCreate() {
   campaignSecondStepClickNextStep();
 
   // THIRD STEP
-  campaignThirdStepSetMaxRetribution(expectedCampaign.max_amount.toString());
+  campaignThirdStepSetMaxRetribution(expectedCampaign.maxAmount.toString());
 
   campaignThirdStepSetUnit();
 
-  campaignThirdStepSetDates(startMoment.format('DD/MM/YYYY'), endMoment.format('DD/MM/YYYY'));
+  campaignThirdStepSetDates(
+    expectedCampaign.startMoment.format('DD/MM/YYYY'),
+    expectedCampaign.endMoment.format('DD/MM/YYYY'),
+  );
 
-  campaignThirdStepSetMaxTrips(expectedCampaign.max_trips.toString());
+  campaignThirdStepSetMaxTrips(expectedCampaign.maxTrips.toString());
 
   campaignThirdStepCheckDisabledNextStep();
 
@@ -57,7 +62,7 @@ export function Cypress_campaignCreate() {
 
     // passenger amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-form-field input').type(
-      '0.1',
+      expectedCampaign.forPassengerAmount.toString(),
     );
 
     // press 'par km'
@@ -67,7 +72,7 @@ export function Cypress_campaignCreate() {
 
     // driver amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input').type(
-      '0.2',
+      expectedCampaign.forDriverAmount.toString(),
     );
   });
 
@@ -97,21 +102,7 @@ export function Cypress_campaignCreate() {
       const method = xhr.request.body[0].method;
 
       expect(method).equal('campaign:create');
-      expect(new Date(params.start)).eql(expectedCampaign.start);
-      expect(new Date(params.end)).eql(expectedCampaign.end);
-      expect(params.name).eql(expectedCampaign.name);
-      expect(params.description).eql(expectedCampaign.description);
-      expect(params.status).eql(expectedCampaign.status);
-      expect(params.rules).eql(expectedCampaign.rules);
-      expect(params.trips_number).eql(expectedCampaign.trips_number);
-      expect(params.formula_expression).include('0.1 € par trajet par km');
-      expect(params.formula_expression).include('0.2 € par trajet pour le(s) passager(s)');
-      expect(params.formulas).eql(expectedCampaign.formulas);
-      expect(params.max_amount).eql(expectedCampaign.max_amount);
-      expect(params.max_trips).eql(expectedCampaign.max_trips);
-      expect(params.template_id).eql(expectedCampaign.template_id);
-      expect(params.amount_unit).eql(expectedCampaign.amount_unit);
-      expect(params.expertMode).eql(expectedCampaign.expertMode);
+      expect(params).eql(expectedCampaign.get());
     });
   });
 }

@@ -2,9 +2,9 @@
   <form [formGroup]="campaignForm">
     <div class="ParametersForm-title">
       <h2>Définissez des rétributions</h2>
-      <mat-slide-toggle color="accent" [checked]="exportModeControl.value" (change)="setExpertMode($event)">
-        Mode expert
-      </mat-slide-toggle>
+      <!--      <mat-slide-toggle color="accent" [checked]="exportModeControl.value" (change)="setExpertMode($event)">-->
+      <!--        Mode expert-->
+      <!--      </mat-slide-toggle>-->
     </div>
     <mat-accordion>
       <!-- MAX RETRIBUTION -->
@@ -13,7 +13,7 @@
         [ngClass]="{
           'mat-expansion-panel-error':
             (controls.max_amount.touched && !controls.max_amount.valid) ||
-            (controls.amount_unit.touched && !controls.amount_unit.valid)
+            (controls.unit.touched && !controls.unit.valid)
         }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
@@ -37,12 +37,12 @@
           </mat-form-field>
           <mat-form-field appearance="outline" class="shortFormField">
             <mat-label>Unité</mat-label>
-            <mat-select formControlName="amount_unit" required>
+            <mat-select formControlName="unit" required>
               <mat-option *ngFor="let incentiveUnit of incentiveUnitKeys" [value]="incentiveUnit">
                 {{ incentiveUnitFr[incentiveUnit] }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="controls.amount_unit.hasError('required')">
+            <mat-error *ngIf="controls.unit.hasError('required')">
               L'unité de rétribution est obligatoire.
             </mat-error>
           </mat-form-field>
@@ -162,9 +162,9 @@
       </mat-expansion-panel>
 
       <!-- RETRIBUTION -->
+      <!--      *ngIf="!exportModeControl.value"-->
       <mat-expansion-panel
-        *ngIf="!exportModeControl.value"
-        [disabled]="!campaignForm.controls.amount_unit.value"
+        [disabled]="!campaignForm.controls.unit.value"
         [ngClass]="{ 'mat-expansion-panel-error': !retributionsFormArray.valid && retributionsFormArray.touched }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
@@ -197,21 +197,21 @@
                   [campaignForm]="campaignForm"
                   [formGroup]="retributionFormGroup"
                   [forDriver]="true"
-                  *ngIf="controls.rules.get('forDriver').value"
+                  *ngIf="forDriverControl.value"
                 >
                 </app-retribution-form>
                 <app-retribution-form
                   [campaignForm]="campaignForm"
                   [formGroup]="retributionFormGroup"
                   [forPassenger]="true"
-                  *ngIf="controls.rules.get('forPassenger').value"
+                  *ngIf="forPassengerControl.value"
                 >
                 </app-retribution-form>
                 <app-retribution-form
                   [campaignForm]="campaignForm"
                   [formGroup]="retributionFormGroup"
                   [forTrip]="true"
-                  *ngIf="controls.rules.get('forTrip').value"
+                  *ngIf="forTripControl.value"
                 >
                 </app-retribution-form>
               </div>
@@ -235,49 +235,49 @@
       </mat-expansion-panel>
 
       <!-- FORMULAS -->
-      <mat-expansion-panel
-        *ngIf="exportModeControl.value"
-        [disabled]="!campaignForm.controls.amount_unit.value"
-        [ngClass]="{ 'mat-expansion-panel-error': !formulasFormArray.valid && formulasFormArray.touched }"
-      >
-        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
-          <mat-panel-title>
-            Formules de rétribution
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="CampaignSubForm-inputs">
-          <div class="ParametersForm-formulaExpression">
-            <mat-form-field appearance="outline">
-              <mat-label>Explication des calculs</mat-label>
-              <textarea
-                matInput
-                required
-                placeholder="Comment est fait le calcul de l'incitation ?"
-                formControlName="formula_expression"
-              ></textarea>
-            </mat-form-field>
-          </div>
-          <ng-container *ngFor="let formulaFormGroup of formulasFormArray.controls; let idx = index">
-            <div class="ParametersForm-arrow" *ngIf="idx !== 0">
-              <mat-icon>
-                arrow_downward
-              </mat-icon>
-            </div>
-            <div class="ParametersForm-formula">
-              <app-formula-form [formulaFormGroup]="formulaFormGroup" [isFirst]="idx === 0" [index]="idx">
-              </app-formula-form>
-              <mat-icon color="error" *ngIf="idx !== 0" (click)="removeFormula(idx)">
-                delete_outline
-              </mat-icon>
-            </div>
-          </ng-container>
-          <div class="ParametersForm-formula-actions">
-            <button mat-stroked-button color="primary" (click)="addFormula()">
-              Ajouter une formule de calcul d'incitation
-            </button>
-          </div>
-        </div>
-      </mat-expansion-panel>
+      <!--      <mat-expansion-panel-->
+      <!--        *ngIf="exportModeControl.value"-->
+      <!--        [disabled]="!campaignForm.controls.unit.value"-->
+      <!--        [ngClass]="{ 'mat-expansion-panel-error': !formulasFormArray.valid && formulasFormArray.touched }"-->
+      <!--      >-->
+      <!--        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">-->
+      <!--          <mat-panel-title>-->
+      <!--            Formules de rétribution-->
+      <!--          </mat-panel-title>-->
+      <!--        </mat-expansion-panel-header>-->
+      <!--        <div class="CampaignSubForm-inputs">-->
+      <!--          <div class="ParametersForm-formulaExpression">-->
+      <!--            <mat-form-field appearance="outline">-->
+      <!--              <mat-label>Explication des calculs</mat-label>-->
+      <!--              <textarea-->
+      <!--                matInput-->
+      <!--                required-->
+      <!--                placeholder="Comment est fait le calcul de l'incitation ?"-->
+      <!--                formControlName="formula_expression"-->
+      <!--              ></textarea>-->
+      <!--            </mat-form-field>-->
+      <!--          </div>-->
+      <!--          <ng-container *ngFor="let formulaFormGroup of formulasFormArray.controls; let idx = index">-->
+      <!--            <div class="ParametersForm-arrow" *ngIf="idx !== 0">-->
+      <!--              <mat-icon>-->
+      <!--                arrow_downward-->
+      <!--              </mat-icon>-->
+      <!--            </div>-->
+      <!--            <div class="ParametersForm-formula">-->
+      <!--              <app-formula-form [formulaFormGroup]="formulaFormGroup" [isFirst]="idx === 0" [index]="idx">-->
+      <!--              </app-formula-form>-->
+      <!--              <mat-icon color="error" *ngIf="idx !== 0" (click)="removeFormula(idx)">-->
+      <!--                delete_outline-->
+      <!--              </mat-icon>-->
+      <!--            </div>-->
+      <!--          </ng-container>-->
+      <!--          <div class="ParametersForm-formula-actions">-->
+      <!--            <button mat-stroked-button color="primary" (click)="addFormula()">-->
+      <!--              Ajouter une formule de calcul d'incitation-->
+      <!--            </button>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </mat-expansion-panel>-->
     </mat-accordion>
   </form>
 </div>

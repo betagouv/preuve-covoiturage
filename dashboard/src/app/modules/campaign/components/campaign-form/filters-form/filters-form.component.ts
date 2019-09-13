@@ -1,44 +1,53 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
-import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
-import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
-import { OperatorService } from '~/modules/operator/services/operator.service';
-import { Operator } from '~/core/entities/operator/operator';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
+import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/incentive-filters';
 import { CAMPAIGN_RULES_MAX_DISTANCE } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
-  selector: 'app-rules-form',
-  templateUrl: './rules-form.component.html',
-  styleUrls: ['./rules-form.component.scss', '../campaign-sub-form.scss'],
+  selector: 'app-filters-form',
+  templateUrl: './filters-form.component.html',
+  styleUrls: ['./filters-form.component.scss', '../campaign-sub-form.scss'],
 })
-export class RulesFormComponent extends DestroyObservable implements OnInit {
+export class FiltersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
 
-  tripClassKeys = Object.keys(TripClassEnum);
+  tripClassKeys = Object.keys(TripRankEnum);
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE;
 
-  constructor(private _formBuilder: FormBuilder, public operatorService: OperatorService) {
+  constructor(private _formBuilder: FormBuilder) {
     super();
   }
 
   ngOnInit() {
-    this.loadOperators();
     this.initTargetChangeDetection();
   }
 
-  get rulesForm(): FormGroup {
-    return <FormGroup>this.campaignForm.get('rules');
+  get filtersForm(): FormGroup {
+    return <FormGroup>this.campaignForm.get('filters');
   }
 
   get controls() {
-    return this.rulesForm.controls;
+    return this.filtersForm.controls;
+  }
+
+  get forDriverControl(): FormControl {
+    return <FormControl>this.campaignForm.get('ui_status').get('for_driver');
+  }
+
+  get forPassengerControl(): FormControl {
+    return <FormControl>this.campaignForm.get('ui_status').get('for_passenger');
+  }
+
+  get forTripControl(): FormControl {
+    return <FormControl>this.campaignForm.get('ui_status').get('for_trip');
   }
 
   get timeCtrlArray(): FormArray {
-    return <FormArray>this.rulesForm.get('time');
+    return <FormArray>this.filtersForm.get('time');
   }
 
   addTimeFilter() {
@@ -51,7 +60,7 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
 
   get showDateLabel() {
     let label = '';
-    const weekDays = this.rulesForm.get('weekday').value;
+    const weekDays = this.filtersForm.get('weekday').value;
     if (!weekDays) {
       return '';
     }
@@ -85,7 +94,7 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
       }
       label += ' De ';
       label += timeRanges
-        .map((timeRange: IncentiveTimeRule) => {
+        .map((timeRange: IncentiveTimeRuleInterface) => {
           if (!timeRange || !timeRange.start || !timeRange.end) {
             return '';
           }
@@ -97,7 +106,7 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
   }
 
   get showDistanceLabel(): string {
-    const range = this.rulesForm.get('range').value;
+    const range = this.filtersForm.get('distance_range').value;
     if (range && (range.length < 2 || range === [0, 0])) {
       return '';
     }
@@ -111,7 +120,7 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
   }
 
   showTripClassLabel(): string {
-    const tripClass = this.rulesForm.get('ranks').value;
+    const tripClass = this.filtersForm.get('rank').value;
     if (!tripClass) {
       return '';
     }
@@ -120,10 +129,10 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
 
   showTargetLabel(): string {
     let label = '';
-    const forDriver = this.rulesForm.get('forDriver').value;
-    const forPassenger = this.rulesForm.get('forPassenger').value;
-    const forTrip = this.rulesForm.get('forTrip').value;
-    const onlyAdult = this.rulesForm.get('onlyAdult').value;
+    const forDriver = this.forDriverControl.value;
+    const forPassenger = this.forPassengerControl.value;
+    const forTrip = this.forTripControl.value;
+    const onlyAdult = this.campaignForm.get('only_adult').value;
 
     if (!(forDriver || forPassenger || forTrip)) {
       return '';
@@ -149,7 +158,7 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
 
   showOperatorsLabel(): string {
     let label = '';
-    const operators = this.rulesForm.get('operatorIds').value;
+    const operators = this.filtersForm.get('operator_ids').value;
     if (operators) {
       const multipleOperators = operators.length > 1;
       label += `${operators.length} opérateur${multipleOperators ? 's' : ''}
@@ -168,58 +177,26 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
   }
 
   private initTargetChangeDetection() {
-    this.controls.forDriver.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
+    this.forDriverControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.controls.forTrip.setValue(null);
-        if (!this.controls.forPassenger.value) {
-          this.controls.onlyAdult.setValue(null);
+        this.forTripControl.setValue(null);
+        if (!this.forPassengerControl.value) {
+          this.campaignForm.get('only_adult').setValue(null);
         }
       }
     });
-    this.controls.forPassenger.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
+    this.forPassengerControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.controls.forTrip.setValue(null);
-      } else if (this.controls.forDriver.value) {
-        this.controls.onlyAdult.setValue(null);
+        this.forTripControl.setValue(null);
+      } else if (this.forDriverControl.value) {
+        this.controls.only_adult.setValue(null);
       }
     });
-    this.controls.forTrip.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
+    this.forTripControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.controls.forPassenger.setValue(null);
-        this.controls.forDriver.setValue(null);
+        this.forPassengerControl.setValue(null);
+        this.forDriverControl.setValue(null);
       }
     });
-  }
-
-  private loadOperators() {
-    this.operatorService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {
-          // TODO DELETE
-          this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
-        },
-        (err) => {
-          this.operatorService._entities$.next([
-            {
-              _id: '1',
-              nom_commercial: 'Maxicovoit',
-              raison_sociale: 'Maxicovoit SAS',
-            },
-            {
-              _id: '2',
-              nom_commercial: 'Supercovoit',
-              raison_sociale: 'Supercovoit SAS',
-            },
-            {
-              _id: '3',
-              nom_commercial: 'Batcovoit',
-              raison_sociale: 'Batcovoit SAS',
-            },
-          ]);
-          this.controls.operatorIds.setValue(this.operatorService.entities.map((e: Operator) => e._id));
-        },
-      );
   }
 }

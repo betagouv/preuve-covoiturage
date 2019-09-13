@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onPasswordTypeToggle() {
+    console.log('clicked');
     this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
   }
 

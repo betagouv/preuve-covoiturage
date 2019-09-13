@@ -1,15 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 
 import { UtilsService } from '~/core/services/utils.service';
-import { Campaign } from '~/core/entities/campaign/campaign';
-import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
 
 @Component({
   selector: 'app-summary-form',
@@ -43,11 +43,11 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
   }
 
   getSummaryText(): string {
-    const campaign: Campaign = this.campaignForm.getRawValue();
+    const campaign: CampaignUx = this.campaignForm.getRawValue();
     let summaryText = `Campagne d’incitation au covoiturage du <b>`;
     summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
     summaryText += ` ${moment(campaign.end).format('dddd DD MMMM YYYY')}</b>, limitée à`;
-    switch (this.campaignForm.controls.amount_unit.value) {
+    switch (this.campaignForm.controls.unit.value) {
       case IncentiveUnitEnum.EUR:
         summaryText += ` <b>${this.currencyPipe.transform(campaign.max_amount, 'EUR', 'symbol', '1.0-0')}</b>.`;
         break;
@@ -58,30 +58,31 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `Sont rémunérés les <b>`;
     summaryText += ` ${
-      campaign.rules.forDriver && campaign.rules.forPassenger
+      campaign.ui_status.for_driver && campaign.ui_status.for_passenger
         ? 'conducteurs et passagers'
-        : campaign.rules.forDriver
+        : campaign.ui_status.for_driver
         ? 'conducteurs'
         : 'passagers'
     }`;
-    summaryText += ` ${campaign.rules.onlyAdult ? 'majeurs' : ''}</b>`;
+    summaryText += ` ${campaign.only_adult ? 'majeurs' : ''}</b>`;
     summaryText += ` effectuant un trajet`;
-    if (campaign.rules.range[1] > 99) {
-      summaryText += ` d'au moins ${campaign.rules.range[0]} km`;
-    } else if (campaign.rules.range[0] < 1) {
-      summaryText += ` d'au plus ${campaign.rules.range[1]} km`;
+    if (campaign.filters.distance_range[1] > 99) {
+      summaryText += ` d'au moins ${campaign.filters.distance_range[0]} km`;
+    } else if (campaign.filters.distance_range[0] < 1) {
+      summaryText += ` d'au plus ${campaign.filters.distance_range[1]} km`;
     } else {
-      summaryText += ` compris entre ${campaign.rules.range[0]} à ${campaign.rules.range[1]} km`;
+      summaryText += ` compris entre ${campaign.filters.distance_range[0]} à ${campaign.filters.distance_range[1]} km`;
     }
     summaryText += ` à raison de : `;
-    summaryText += '<br/><br/>\r\n\r\n';
-    summaryText += `${campaign.formula_expression.replace(/\r\n/g, '<br>\r\n')}`;
+
+    // todo : generate formula
+    // summaryText += '<br/><br/>\r\n\r\n';
+    // summaryText += `${campaign.formula_expression.replace(/\r\n/g, '<br>\r\n')}`;
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `L’opération est limitée aux opérateurs proposant des registres de preuve`;
-    summaryText += ` <b>${campaign.rules.ranks ? campaign.rules.ranks.join(' ou ') : ''}</b>.`;
-    const rules = <FormGroup>this.controls.rules;
+    summaryText += ` <b>${campaign.filters.rank ? campaign.filters.rank.join(' ou ') : ''}</b>.`;
     summaryText += '<br/><br/>\r\n\r\n';
-    const nbOperators = rules.controls.operatorIds.value ? rules.controls.operatorIds.value.length : 0;
+    const nbOperators = campaign.filters.operator_ids ? campaign.filters.operator_ids.length : 0;
     if (nbOperators === this.operatorService.entities.length) {
       summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
     } else {

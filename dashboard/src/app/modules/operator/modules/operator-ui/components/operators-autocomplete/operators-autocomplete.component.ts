@@ -20,7 +20,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   public operators: OperatorNameInterface[] = [];
 
-  public filteredOperators: OperatorNameInterface[];
+  public filteredOperators: OperatorNameInterface[] = [];
 
   // with operatorIds control
   @Input() parentForm: FormGroup;
@@ -40,7 +40,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   get operatorIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get('operatorIds');
+    return <FormControl>this.parentForm.get('operator_ids');
   }
 
   /**
@@ -117,8 +117,8 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
         _id: operator._id,
         nom_commercial: operator.nom_commercial,
       }));
+      this.filterOperators();
     });
-    this.filterOperators();
   }
 
   private filterOperators(literal: string = ''): void {

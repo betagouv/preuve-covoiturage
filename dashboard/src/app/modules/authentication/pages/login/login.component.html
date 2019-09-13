@@ -28,7 +28,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Mot de passe</mat-label>
           <input matInput formControlName="password" [type]="passwordType" required />
-          <button matSuffix mat-icon-button (click)="onPasswordTypeToggle()">
+          <button type="button" matSuffix mat-icon-button (click)="onPasswordTypeToggle()">
             <mat-icon>remove_red_eye</mat-icon>
           </button>
         </mat-form-field>

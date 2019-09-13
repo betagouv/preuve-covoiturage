@@ -3,11 +3,13 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -16,7 +18,7 @@ import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 })
 export class CampaignsListComponent extends DestroyObservable implements OnInit {
   @Input() campaignStatus: CampaignStatusEnum | null;
-  campaigns: Campaign[];
+  campaigns: CampaignUx[];
   CampaignStatusEnum = CampaignStatusEnum;
 
   constructor(private dialog: DialogService, public campaignService: CampaignService, private toastr: ToastrService) {
@@ -53,17 +55,19 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
 
   public filterCampaignsByStatus(campaigns: Campaign[]): void {
     const status = this.campaignStatus;
-    this.campaigns = campaigns.filter((c: Campaign) => !status || c.status === status);
+    this.campaigns = campaigns
+      .filter((c: Campaign) => !status || c.status === status)
+      .map((campaign: Campaign) => this.campaignService.toCampaignUxFormat(campaign));
   }
 
-  deleteCampaign(campaign: Campaign) {
+  deleteCampaign(campaign: CampaignUx) {
     this.dialog
       .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer')
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
           this.campaignService
-            .delete(campaign)
+            .delete(campaign._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {

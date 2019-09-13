@@ -69,7 +69,7 @@ export class OperatorTokenComponent extends DestroyObservable implements OnInit 
   }
 
   public onDelete(operatorToken: OperatorTokenInterface) {
-    this.operatorTokenService.delete(operatorToken).subscribe(
+    this.operatorTokenService.delete(operatorToken._id).subscribe(
       () => {
         this.toastr.success(`Le token d'accès : "${operatorToken.name} a été supprimé`);
       },

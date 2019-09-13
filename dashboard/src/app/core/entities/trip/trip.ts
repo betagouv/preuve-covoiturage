@@ -1,6 +1,6 @@
 import { Person } from '~/core/entities/trip/person';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
-import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { IModel } from '~/core/entities/IModel';
 import { CampaignShortInterface } from '~/core/interfaces/trip/tripInterface';
 
@@ -9,7 +9,7 @@ export class Trip implements IModel {
   public status: TripStatusEnum;
   public start: Date;
   public people: Person[];
-  public class: TripClassEnum;
+  public class: TripRankEnum;
   public campaigns: any[];
 
   constructor(obj?: {
@@ -17,7 +17,7 @@ export class Trip implements IModel {
     status: TripStatusEnum;
     start: Date;
     people: Person[];
-    class: TripClassEnum;
+    class: TripRankEnum;
     campaigns: CampaignShortInterface[];
   }) {
     this.status = obj.status;

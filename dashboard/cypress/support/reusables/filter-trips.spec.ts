@@ -94,7 +94,7 @@ export function Cypress_filterTrips() {
       expect(params.distance).eql(expectedFilter.distance);
       expect(params.ranks).eql(expectedFilter.ranks);
       expect(params.status).eql(expectedFilter.status);
-      expect(params.operatorIds).eql(expectedFilter.operatorIds);
+      expect(params.operator_ids).eql(expectedFilter.operator_ids);
     });
   });
 }

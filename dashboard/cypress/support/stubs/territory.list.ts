@@ -1,5 +1,4 @@
 import { Address, Company, Territory } from '../../../src/app/core/entities/territory/territory';
-import { operatorStubs } from './operator.list';
 
 export const territoryStubs: Territory[] = [
   {
