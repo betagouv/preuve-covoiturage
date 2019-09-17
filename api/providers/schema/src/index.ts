@@ -4,6 +4,7 @@ export * from './models/bank';
 export * from './models/cgu';
 export * from './models/company';
 export * from './models/contacts';
+export * from './models/campaign';
 export * from './models/identity';
 export * from './models/incentive';
 export * from './models/journey';
