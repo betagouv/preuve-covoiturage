@@ -129,14 +129,25 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public patch(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:patch`, item);
+  // TODO: gilles make id mandatory
+  public patch(item: T, id: string = item._id): Observable<T> {
+    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patch`, item, id);
 
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((entity: T) => {
         console.log(`updated ${this._method} id=${entity._id}`);
+
         this._entity$.next(entity);
+
+        const auxArray = this._entities$.value;
+        if (auxArray) {
+          const ind = auxArray.findIndex((aItem) => aItem._id === entity._id);
+          if (ind !== -1) {
+            auxArray.splice(ind, 1, entity);
+            this._entities$.next(auxArray);
+          }
+        }
       }),
     );
   }
@@ -154,7 +165,7 @@ export class ApiService<T extends IModel> {
   }
 
   public delete(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, item);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: item._id });
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap(() => {

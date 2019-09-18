@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-administration-layout',
@@ -16,12 +17,12 @@ export class AdministrationLayoutComponent implements OnInit {
     },
     {
       path: '/admin/territory',
-      groups: ['territory'],
+      groups: [UserGroupEnum.TERRITORY],
       label: 'Territoire',
     },
     {
       path: '/admin/operator',
-      groups: ['operator'],
+      groups: [UserGroupEnum.OPERATOR],
       label: 'Opérateur',
     },
     // {
@@ -32,14 +33,14 @@ export class AdministrationLayoutComponent implements OnInit {
     // },
     {
       path: '/admin/all-users',
-      groups: ['registry'],
+      groups: [UserGroupEnum.REGISTRY],
       role: 'admin',
       label: 'Utilisateurs & accès',
     },
     {
       path: '/admin/api',
       role: 'admin',
-      groups: ['operator'],
+      groups: [UserGroupEnum.OPERATOR],
       label: 'API',
     },
   ];

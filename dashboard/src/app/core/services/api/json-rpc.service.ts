@@ -3,11 +3,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
-import { environment } from '../../../../environments/environment';
 
 interface RPCOptions {
   headers?:
@@ -36,11 +35,11 @@ export class JsonRPCService {
     this.url = 'rpc';
   }
 
-  public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload> {
+  public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult> {
     return this.call([method], options).pipe(map((datas) => datas[0]));
   }
 
-  public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload[]> {
+  public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult[]> {
     options.withCredentials = true;
 
     let urlWithMethods = this.url;
@@ -53,22 +52,27 @@ export class JsonRPCService {
       urlWithMethods += `${method.method}`;
     });
     return this.http.post(urlWithMethods, methods, options).pipe(
-      map((response: JsonRPCResponse) => {
-        const res: JsonRPCPayload[] = [];
-        if (response.payload && response.payload.data) {
-          response.payload.data.forEach((data) => {
-            if (data.error) {
-              const errorMessage = `JSON RCP Error
+      map((response: JsonRPCResponse[]) => {
+        const res: { id: number; data: any; meta: any }[] = [];
+        // if (response.data) {
+        response.forEach((data: JsonRPCResponse) => {
+          if (data.error) {
+            const errorMessage = `JSON RCP Error
               ${data.id} : ${data.error.code} ::
               ${data.error.message}
               ${data.error.data}`;
-              console.error(errorMessage);
-              throw new Error(errorMessage);
-            }
+            console.error(errorMessage);
+            throw new Error(errorMessage);
+          }
 
-            res.push({ id: data.id, data: data.result ? data.result : null });
-          });
-        }
+          // temporary compatibility solver (for result | result.data)
+          const resultData = data.result ? (data.result.data !== undefined ? data.result.data : data.result) : null;
+
+          const resultMeta = data.result && data.result.meta ? data.result.meta : null;
+
+          res.push({ id: data.id, data: resultData, meta: resultMeta });
+        });
+        // }
         return res;
       }),
     );

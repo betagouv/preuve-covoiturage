@@ -24,7 +24,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" *ngIf="groupEditable">
+  <mat-form-field appearance="outline" *ngIf="groupEditable && isCreating">
     <mat-label>Groupe</mat-label>
     <mat-select required formControlName="group">
       <mat-option *ngFor="let group of groups" [value]="group">{{ getFrenchGroup(group) }}</mat-option>
@@ -40,12 +40,12 @@
 
   <app-operator-autocomplete
     [parentForm]="createEditUserForm"
-    [hidden]="!groupEditable || !operatorEditable"
+    [hidden]="!groupEditable || !operatorEditable || !isCreating"
   ></app-operator-autocomplete>
 
   <app-territory-autocomplete
     [parentForm]="createEditUserForm"
-    [hidden]="!groupEditable || !territoryEditable"
+    [hidden]="!groupEditable || !territoryEditable || !isCreating"
   ></app-territory-autocomplete>
 
   <!--  <mat-form-field appearance="outline">-->

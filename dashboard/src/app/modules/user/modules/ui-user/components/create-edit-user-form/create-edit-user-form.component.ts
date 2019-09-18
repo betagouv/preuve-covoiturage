@@ -70,11 +70,21 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     this.isCreatingUpdating = true;
 
     // clean data (avoid API validation issue for non operator | territories
-    const formVal = this.createEditUserForm.value;
+    const formVal = { ...this.createEditUserForm.value };
     if (!formVal.territory) delete formVal.territory;
     if (!formVal.operator) delete formVal.operator;
 
-    const jsonRPCRequest = this.isCreating ? this._userService.create(formVal) : this._userService.patch(formVal);
+    if (!this.isCreating) {
+      delete formVal.territory;
+      delete formVal.operator;
+      delete formVal.group;
+      delete formVal.role;
+    }
+
+    const jsonRPCRequest = this.isCreating
+      ? this._userService.create(formVal)
+      : this._userService.patch(formVal, this.user._id);
+
     jsonRPCRequest.subscribe(
       (user) => {
         this.isCreatingUpdating = false;
@@ -104,6 +114,14 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     if (this.createEditUserForm) {
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
+
+      this.createEditUserForm.controls['operator'].setValidators(
+        this.groupEditable && this.operatorEditable && this.isCreating ? Validators.required : null,
+      );
+
+      this.createEditUserForm.controls['territory'].setValidators(
+        this.groupEditable && this.territoryEditable && this.isCreating ? Validators.required : null,
+      );
     }
   }
 

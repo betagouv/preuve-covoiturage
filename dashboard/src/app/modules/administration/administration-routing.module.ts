@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 import { OperatorComponent } from './pages/operator/operator.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
@@ -31,17 +33,17 @@ const routes: Routes = [
       },
       {
         path: 'territory',
-        data: { groups: ['territory'] },
+        data: { groups: [UserGroupEnum.TERRITORY] },
         component: TerritoryComponent,
       },
       {
         path: 'users',
-        data: { groups: ['territory', 'operator'], role: 'admin' },
+        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.OPERATOR], role: UserRoleEnum.ADMIN },
         component: UsersComponent,
       },
       {
         path: 'all-users',
-        data: { groups: ['registry'], role: 'admin' },
+        data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
         component: AllUsersComponent,
       },
       {

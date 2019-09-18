@@ -1,3 +1,8 @@
+import { JsonRPCResult } from './jsonRPCResult';
+import { JsonRPCError } from './jsonRPCError';
+
 export interface JsonRPCResponse {
-  payload: { meta: string; data: any[] };
+  id: number;
+  error?: JsonRPCError;
+  result?: JsonRPCResult;
 }

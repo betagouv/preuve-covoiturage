@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-trip-layout',
@@ -20,7 +21,7 @@ export class TripLayoutComponent implements OnInit {
     },
     {
       path: '/trip/maps',
-      groups: ['registry'],
+      groups: [UserGroupEnum.REGISTRY],
       label: 'Cartes',
     },
     {
@@ -29,7 +30,7 @@ export class TripLayoutComponent implements OnInit {
     },
     {
       path: '/trip/import',
-      groups: ['operator'],
+      groups: [UserGroupEnum.OPERATOR],
       label: 'Import',
     },
   ];
