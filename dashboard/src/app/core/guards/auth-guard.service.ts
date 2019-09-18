@@ -9,10 +9,10 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',

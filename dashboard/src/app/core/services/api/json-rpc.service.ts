@@ -36,11 +36,7 @@ export class JsonRPCService {
   }
 
   public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload> {
-    return this.call([method], options).pipe(
-      map((datas) => {
-        return datas[0];
-      }),
-    );
+    return this.call([method], options).pipe(map((datas) => datas[0]));
   }
 
   public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload[]> {

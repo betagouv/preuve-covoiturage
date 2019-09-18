@@ -49,7 +49,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
       .confirm('Utilisateurs', 'Voulez-vous supprimer cet utilisateur ?')
       .pipe(takeUntil(this.destroy$))
       .subscribe((hasConfirmed) => {
-        if (hasConfirmed)
+        if (hasConfirmed) {
           this.userService
             .delete(user)
             .pipe(takeUntil(this.destroy$))
@@ -61,6 +61,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
                 this.toastr.error(err.message);
               },
             );
+        }
       });
   }
 
