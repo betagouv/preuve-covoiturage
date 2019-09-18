@@ -12,13 +12,19 @@ import { CampaignRepositoryProviderInterfaceResolver } from '../src/interfaces/C
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
+const start = new Date();
+start.setMonth(start.getMonth() + 1);
+
+const end = new Date();
+end.setMonth(start.getMonth() + 2);
+
 const territory = '5cef990d133992029c1abe44';
 const fakeCampaign = {
   territory_id: territory,
   name: 'Ma campagne',
   description: 'Incite les covoitureurs',
-  start: '2019-09-07T00:00:00.000Z',
-  end: '2019-10-07T00:00:00.000Z',
+  start: start.toISOString(),
+  end: end.toISOString(),
   unit: 'euro',
   status: 'draft',
   filters: {},
@@ -35,6 +41,7 @@ let db;
 describe('Campaign service', () => {
   let transport;
   let request;
+  let _id;
 
   const callFactory = (method: string, data: any, permissions: string[]) => ({
     method,
@@ -135,8 +142,8 @@ describe('Campaign service', () => {
       });
   });
 
-  it('Create a policy', () => {
-    return request
+  it('Create a campaign', (done) => {
+    request
       .post('/')
       .send(
         callFactory(
@@ -149,18 +156,122 @@ describe('Campaign service', () => {
       )
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
-      .expect(async (response: supertest.Response) => {
+      .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('_id');
+        expect(response.body.result).to.have.property('name');
+        expect(response.body.result.name).to.eq(fakeCampaign.name);
+        _id = response.body.result._id;
+      })
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
 
-        const _id = response.body.result._id;
-        const dbEntry = await transport
+        transport
           .getKernel()
           .get(ServiceProvider)
           .get(CampaignRepositoryProviderInterfaceResolver)
-          .find(_id);
-        expect(_id).to.eq(dbEntry._id);
+          .find(_id)
+          .then((dbEntry) => {
+            expect(_id).to.eq(dbEntry._id);
+            done();
+          });
+      });
+  });
+
+  it('Patch a campaign', (done) => {
+    request
+      .post('/')
+      .send(
+        callFactory(
+          'campaign:patch',
+          {
+            _id: _id,
+            patch: {
+              name: 'Ma nouvelle campagne',
+            },
+          },
+          ['incentive-campaign.update'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id');
+      })
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+        transport
+          .getKernel()
+          .get(ServiceProvider)
+          .get(CampaignRepositoryProviderInterfaceResolver)
+          .find(_id)
+          .then((dbEntry) => {
+            expect(dbEntry.name).to.eq('Ma nouvelle campagne');
+            done();
+          });
+      });
+  });
+
+  it('Launch a campaign', () => {
+    return request
+      .post('/')
+      .send(
+        callFactory(
+          'campaign:launch',
+          {
+            _id: _id,
+          },
+          ['incentive-campaign.create'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('status');
+        expect(response.body.result.status).to.eq('active');
+      });
+  });
+  it('Fail launching campaign if not draft', () => {
+    return request
+      .post('/')
+      .send(
+        callFactory(
+          'campaign:launch',
+          {
+            _id: _id,
+          },
+          ['incentive-campaign.create'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+      });
+  });
+  it('Listing campaign', () => {
+    return request
+      .post('/')
+      .send(callFactory('campaign:list', {}, ['incentive-campaign.list']))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.be.an('array');
+        expect(response.body.result.length).to.be.eq(1);
+        expect(response.body.result[0]).to.have.property('_id');
+        expect(response.body.result[0]._id).to.eq(_id);
       });
   });
 });
