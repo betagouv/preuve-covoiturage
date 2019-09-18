@@ -1,6 +1,6 @@
 import { RetributionRuleInterface } from '@pdc/provider-schema';
 
-export const target: RetributionRuleInterface = {
+export const maxAmount: RetributionRuleInterface = {
   slug: 'max_amount',
   description: "Plafond d'unité par période",
   schema: {

@@ -1,6 +1,6 @@
 import { RetributionRuleInterface } from '@pdc/provider-schema';
 
-export const target: RetributionRuleInterface = {
+export const maxTrip: RetributionRuleInterface = {
   slug: 'max_trip',
   description: 'Plafond de trajet par période',
   schema: {
