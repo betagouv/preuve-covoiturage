@@ -5,6 +5,7 @@ import { IncentiveFiltersInterface, IncentiveFiltersUxInterface } from '~/core/e
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 
 export interface BaseCampaignInterface {
   name: string;
@@ -15,12 +16,7 @@ export interface BaseCampaignInterface {
   parent_id: string;
   amount_spent?: number;
   trips_number?: number;
-  ui_status: {
-    expert_mode?: boolean;
-    for_driver: boolean;
-    for_passenger: boolean;
-    for_trip: boolean;
-  };
+  ui_status: UiStatusInterface;
 }
 
 export interface CampaignInterface extends BaseCampaignInterface {

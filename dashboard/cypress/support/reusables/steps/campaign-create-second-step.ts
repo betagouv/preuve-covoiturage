@@ -44,16 +44,20 @@ export function campaignSecondStepSelectRanks() {
   });
 }
 
-export function campaignSecondStepSelectTargets() {
+export function campaignSecondStepSelectTargets(passenger, driver) {
   it('selects targets: passenger & driver', () => {
     // open TARGET extension
     cy.get('.RulesForm .mat-expansion-panel:nth-child(4)').click();
 
-    // click for driver checkbox
-    cy.get('.RulesForm .RulesForm-target-forDriver .mat-checkbox-layout').click();
+    if (driver) {
+      // click for driver checkbox
+      cy.get('.RulesForm .RulesForm-target-forDriver .mat-checkbox-layout').click();
+    }
 
-    // click for passenger checkbox
-    cy.get('.RulesForm .RulesForm-target-forPassenger .mat-checkbox-layout').click();
+    if (passenger) {
+      // click for passenger checkbox
+      cy.get('.RulesForm .RulesForm-target-forPassenger .mat-checkbox-layout').click();
+    }
   });
 }
 

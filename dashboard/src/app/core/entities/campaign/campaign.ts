@@ -4,6 +4,7 @@ import { CampaignInterface, RetributionRuleType } from '~/core/interfaces/campai
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveFiltersInterface } from '~/core/entities/campaign/incentive-filters';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 
 export class Campaign {
   public _id: string;
@@ -16,12 +17,7 @@ export class Campaign {
   public parent_id: string;
   public unit: IncentiveUnitEnum;
   public filters: IncentiveFiltersInterface;
-  public ui_status: {
-    expert_mode?: boolean;
-    for_driver: boolean;
-    for_passenger: boolean;
-    for_trip: boolean;
-  };
+  public ui_status: UiStatusInterface;
   public amount_spent?: number;
   public trips_number?: number;
 

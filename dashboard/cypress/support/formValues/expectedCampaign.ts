@@ -69,7 +69,7 @@ export class CypressExpectedCampaign {
       },
       ui_status: {
         for_driver: true,
-        for_passenger: true,
+        for_passenger: false,
         for_trip: null,
       },
       status: CampaignStatusEnum.DRAFT,

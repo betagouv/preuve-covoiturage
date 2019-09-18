@@ -129,34 +129,17 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     this.retributionsFormArray.removeAt(idx);
   }
 
-  /**
-   *
-   *  max: number;
-   min: number;
-   for_driver: {
-    per_km: boolean,
-    per_passenger: boolean,
-    amount: number,
-  };
-   for_passenger: {
-    free: boolean,
-    per_km: number,
-    amount: number,
-  };
-   *
-   */
-
   generateRetributionFormGroup(): FormGroup {
     return this._formBuilder.group({
       for_driver: this._formBuilder.group({
-        amount: [null, [Validators.required, Validators.min(0)]],
+        amount: [null],
         per_passenger: [false],
         per_km: [false],
       }),
       for_passenger: this._formBuilder.group({
         free: [false],
         per_km: [false],
-        amount: [null, [Validators.required, Validators.min(0)]],
+        amount: [null],
       }),
       min: [null],
       max: [null],

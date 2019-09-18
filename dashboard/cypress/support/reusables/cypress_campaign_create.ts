@@ -14,6 +14,7 @@ import {
 import {
   campaignThirdStepCheckDisabledNextStep,
   campaignThirdStepClickNextStep,
+  campaignThirdStepClickPreviousStep,
   campaignThirdStepSetDates,
   campaignThirdStepSetMaxRetribution,
   campaignThirdStepSetMaxTrips,
@@ -33,7 +34,7 @@ export function cypress_campaignCreate() {
 
   campaignSecondStepSelectRanks();
 
-  campaignSecondStepSelectTargets();
+  campaignSecondStepSelectTargets(true, true);
 
   // make sure step is complete
   campaignSecondStepCheckDisabledNextStep();
@@ -76,10 +77,21 @@ export function cypress_campaignCreate() {
     );
   });
 
+  // click previous step
+  campaignThirdStepClickPreviousStep();
+
+  // uncheck passenger
+  campaignSecondStepSelectTargets(true, false);
+
+  campaignSecondStepClickNextStep();
+
   campaignThirdStepClickNextStep();
 
   // LAST STEP
   it('sets name of form', () => {
+    // save screenshot to validate text
+    cy.screenshot();
+
     cy.get('.SummaryForm mat-form-field:first-child input').type("Nouvelle campagne d'incitation");
   });
 

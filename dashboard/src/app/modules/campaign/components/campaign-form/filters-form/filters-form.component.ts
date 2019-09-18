@@ -189,7 +189,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
       if (checked) {
         this.forTripControl.setValue(null);
       } else if (this.forDriverControl.value) {
-        this.controls.only_adult.setValue(null);
+        this.campaignForm.get('only_adult').setValue(null);
       }
     });
     this.forTripControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {

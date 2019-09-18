@@ -39,12 +39,15 @@ export function campaignThirdStepSetMaxTrips(maxTrips) {
   });
 }
 
+export function campaignThirdStepClickPreviousStep() {
+  it('clicks on previous step to go to step 3', () => {
+    cy.get('.mat-horizontal-stepper-content:nth-child(3)  .CampaignForm-content-actions button:nth-child(1)').click();
+  });
+}
+
 export function campaignThirdStepClickNextStep() {
   it('clicks on next step to go to step 4', () => {
     cy.get('.mat-horizontal-stepper-content:nth-child(3)  .CampaignForm-content-actions button:nth-child(2)').click();
-
-    // save screenshot to validate text
-    cy.screenshot();
   });
 }
 
