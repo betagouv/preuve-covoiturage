@@ -29,7 +29,7 @@ export class StatService extends ApiService<StatInterface> {
 
   public loadOne(filter: FilterInterface | {} = {}): Observable<Stat[]> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`stat:list`, filter);
+    const jsonRPCParam = new JsonRPCParam(`trip:stats`, filter);
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((data) => {
