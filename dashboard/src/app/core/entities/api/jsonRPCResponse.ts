@@ -1,3 +1,5 @@
 export interface JsonRPCResponse {
-  payload: { meta: string; data: any[] };
+  id: number;
+  error: any;
+  result: { meta: string; data: any[] };
 }

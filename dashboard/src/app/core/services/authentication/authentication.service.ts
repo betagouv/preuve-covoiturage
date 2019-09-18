@@ -7,11 +7,11 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
+import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
-import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
 
 @Injectable({
   providedIn: 'root',
@@ -66,8 +66,8 @@ export class AuthenticationService {
           return throwError(error);
         }),
         map((loginPayload) => {
-          if (loginPayload && loginPayload.payload && loginPayload.payload.data) {
-            return loginPayload.payload.data;
+          if (loginPayload && loginPayload.result && loginPayload.result.data) {
+            return loginPayload.result.data;
           }
           return null;
         }),
@@ -205,6 +205,7 @@ export class AuthenticationService {
 
     return this._jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
       map((data) => {
+        console.log('data : ', data);
         // if forbidden return null
         if (data.data.error && data.data.error.code === -32503) {
           return null;

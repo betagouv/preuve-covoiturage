@@ -22,11 +22,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   selectedOperator: Operator;
   selectedOperatorId: string;
 
-  public operators: Operator[] = [
-    new Operator({ _id: '1', nom_commercial: 'Test', raison_sociale: 'Test' }),
-    new Operator({ _id: '2', nom_commercial: 'Op', raison_sociale: 'Op' }),
-    new Operator({ _id: '3', nom_commercial: 'Pat', raison_sociale: 'Pop' }),
-  ];
+  public operators: Operator[] = [];
 
   public filteredOperators: Observable<Operator[]>;
 
@@ -66,6 +62,13 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     this._operatorForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.selectedOperatorUpdated());
 
     this.selectedOperatorUpdated();
+
+    this.operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+      this.operators = operators;
+      console.log('this.operators : ', this.operators);
+    });
+
+    if (!this.operatorService.operators) this.operatorService.load();
 
     // this.selectedOperatorId = this._operatorForm.value;
     // this.selectedOperator = this.operators.find((operator) => this.selectedOperatorId === operator._id);
