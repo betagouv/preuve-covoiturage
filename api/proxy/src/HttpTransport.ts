@@ -103,6 +103,10 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerSessionHandler() {
+    // needed for reverse-proxy compatibility
+    // must be set before configuring the session
+    this.app.set('trust proxy', 1);
+
     const sessionSecret = this.config.get('proxy.session.secret');
     const sessionName = this.config.get('proxy.session.name');
     this.app.use(
