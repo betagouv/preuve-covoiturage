@@ -7,7 +7,7 @@
   <div class="Header-menu" *ngIf="user">
     <div
       class="Header-menu-item"
-      *ngIf="authService.hasAnyGroup(['territory'])"
+      *ngIf="authService.hasAnyGroup(['territories'])"
       [routerLink]="'/campaign'"
       routerLinkActive="active"
     >
