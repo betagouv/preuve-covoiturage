@@ -11,8 +11,8 @@ import { IncentiveFormulaParameter } from '~/core/entities/campaign/incentive-fo
 import { RetributionInterface } from '~/core/interfaces/campaign/retributionInterface';
 import { FormulaParametersEnum } from '~/core/enums/campaign/formula-parameters.enum';
 import { FormulaFunctionsEnum } from '~/core/enums/campaign/formula-functions.enum';
-import { TemplateInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +24,10 @@ export class CampaignService extends ApiService<Campaign> {
 
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
     super(_http, _jsonRPC, 'campaign');
+  }
+
+  get campaignsLoaded(): boolean {
+    return this._loaded$.value;
   }
 
   public loadTemplates(): Observable<Campaign[]> {

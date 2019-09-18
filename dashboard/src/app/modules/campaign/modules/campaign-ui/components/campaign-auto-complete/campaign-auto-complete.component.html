@@ -1,6 +1,29 @@
-<mat-form-field [formGroup]="parentForm" class="campaign" appearance="outline">
-  <mat-label>Campagne</mat-label>
-  <mat-select formControlName="campaign">
-    <mat-option *ngFor="let campaign of campaigns" value="{{ campaign._id }}">{{ campaign.name }}</mat-option>
-  </mat-select>
+<mat-form-field [formGroup]="parentForm" class="campaigns" appearance="outline">
+  <mat-label>Campagnes</mat-label>
+  <mat-chip-list #chipList>
+    <mat-chip
+      *ngFor="let campaignId of this.campaignIdsControl.value"
+      [selectable]="true"
+      [removable]="true"
+      (removed)="remove(campaignId)"
+    >
+      {{ getCampaignLabel(campaignId) }}
+      <mat-icon matChipRemove>remove</mat-icon>
+    </mat-chip>
+    <input
+      matInput
+      placeholder="+ ajouter"
+      aria-label="Ajouter une campagne"
+      #campaignInput
+      [formControl]="campaignCtrl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputAddOnBlur]="false"
+    />
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCampaignSelect($event)">
+    <mat-option *ngFor="let campaign of filteredCampaigns" [value]="campaign._id">
+      {{ campaign.name }}
+    </mat-option>
+  </mat-autocomplete>
 </mat-form-field>

@@ -1,42 +1,32 @@
+import { WeekDay } from '@angular/common';
+
 // tslint:disable-next-line:max-line-length
-import { CampaignNameInterface } from '~/modules/campaign/modules/campaign-ui/components/campaign-auto-complete/campaign-auto-complete.component';
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 
 export interface FilterInterface {
-  filter?: {
-    'campaigns._id'?: string;
-    'people.start.date'?: {
-      $gte: Date;
-    };
-    'people.end.date'?: {
-      $lt: Date;
-    };
-    status?: TripStatusEnum;
-    'people.town'?: {
-      $in: string[];
-    };
-    'people.distance'?: {
-      $gte?: number;
-      $lt?: number;
-    };
-    'people.class'?: {
-      $in: TripClassEnum[];
-    };
-    'people.operator._id'?: {
-      $in: string[];
-    };
-    territories?: {
-      $in: string[];
-    };
+  campaignIds: string[];
+  date: {
+    start: Date;
+    end: Date;
   };
-  hours?: {
-    start?: string;
-    end?: string;
+  hour: {
+    start: string;
+    end: string;
   };
-  days?: weekDaysType[];
+  days: WeekDay[];
+  towns: string[];
+  distance: {
+    min: number;
+    max: number;
+  };
+  ranks: TripClassEnum[];
+  status: TripStatusEnum;
+  operatorIds: string[];
+  territoryIds: string[];
 }
 
 export interface FilterViewInterface {
@@ -45,7 +35,7 @@ export interface FilterViewInterface {
   endDate: Date;
   startTime: string;
   endTime: string;
-  days: weekDaysType[];
+  days: WeekDay[];
   towns: string[];
   minDistance: number;
   maxDistance: number;
@@ -54,5 +44,3 @@ export interface FilterViewInterface {
   operators: OperatorNameInterface[];
   territories: TerritoryNameInterface[];
 }
-
-type weekDaysType = 0 | 1 | 2 | 3 | 4 | 5 | 6;

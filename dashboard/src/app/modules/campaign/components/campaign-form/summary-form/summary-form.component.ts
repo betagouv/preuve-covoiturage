@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
 
 import { UtilsService } from '~/core/services/utils.service';
 import { Campaign } from '~/core/entities/campaign/campaign';
@@ -25,6 +26,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     public utils: UtilsService,
     private numberPipe: DecimalPipe,
     private operatorService: OperatorService,
+    private toastr: ToastrService,
   ) {
     super();
   }
@@ -79,7 +81,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     summaryText += ` <b>${campaign.rules.ranks ? campaign.rules.ranks.join(' ou ') : ''}</b>.`;
     const rules = <FormGroup>this.controls.rules;
     summaryText += '<br/><br/>\r\n\r\n';
-    const nbOperators = rules.controls.operators.value ? rules.controls.operators.value.length : 0;
+    const nbOperators = rules.controls.operatorIds.value ? rules.controls.operatorIds.value.length : 0;
     if (nbOperators === this.operatorService.entities.length) {
       summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
     } else {
@@ -110,6 +112,11 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     //   summaryText += ` Aucune restriction concernant les conducteurs, passagers ou opérateurs n'est appliquée.`;
     // }
     return summaryText;
+  }
+
+  copySummary(summary: string): void {
+    this.utils.copyToClipboard(summary);
+    this.toastr.success('Le récapitulatif a été copié !');
   }
 
   saveCampaign(isDraft: boolean = false) {

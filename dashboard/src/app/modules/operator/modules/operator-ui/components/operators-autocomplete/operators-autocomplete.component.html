@@ -2,12 +2,12 @@
   <mat-label>Opérateurs</mat-label>
   <mat-chip-list #chipList>
     <mat-chip
-      *ngFor="let operator of this.operatorForm.value"
+      *ngFor="let operatorId of this.operatorIdsControl.value"
       [selectable]="true"
       [removable]="true"
-      (removed)="remove(operator)"
+      (removed)="remove(operatorId)"
     >
-      {{ operator.nom_commercial }}
+      {{ getOperatorLabel(operatorId) }}
       <mat-icon matChipRemove>remove</mat-icon>
     </mat-chip>
     <input
@@ -26,4 +26,7 @@
       {{ operator.nom_commercial }}
     </mat-option>
   </mat-autocomplete>
+  <mat-error *ngIf="parentForm.controls.operatorIds.hasError('required')">
+    Vous devez sélectionner au moins un opérateur.
+  </mat-error>
 </mat-form-field>

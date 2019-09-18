@@ -1,1 +1,1 @@
-export type RulesRangeType = [number, number];
+export type RulesRangeType = number[];

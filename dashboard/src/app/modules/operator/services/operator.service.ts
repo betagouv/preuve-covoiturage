@@ -14,6 +14,10 @@ export class OperatorService extends ApiService<Operator> {
     super(_http, _jsonRPC, 'operator');
   }
 
+  get operatorsLoaded() {
+    return this._loaded$.value;
+  }
+
   get operator$(): Observable<Operator> {
     return this._entity$;
   }

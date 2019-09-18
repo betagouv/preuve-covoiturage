@@ -11,13 +11,13 @@ export interface CreateCampaignInterface {
   start: Date;
   end: Date;
   status: CampaignStatusEnum;
-  amount_unit?: IncentiveUnitEnum;
+  amount_unit: IncentiveUnitEnum;
   template_id: string;
   max_trips: number;
   max_amount: number;
   trips_number?: number;
   amount_spent?: number;
-  rules?: IncentiveRules;
+  rules: IncentiveRules;
   restrictions: RestrictionInterface[];
   parameters?: any;
   formula_expression: string;
@@ -28,9 +28,6 @@ export interface CreateCampaignInterface {
 export interface CampaignInterface extends CreateCampaignInterface {
   _id: string;
 }
-
-// tslint:disable-next-line:no-empty-interface
-export interface TemplateInterface extends CreateCampaignInterface {}
 
 export interface IncentiveFormulaInterface {
   formula: string;

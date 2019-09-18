@@ -14,6 +14,10 @@ export class TerritoryService extends ApiService<Territory> {
     super(_http, _jsonRPC, 'territory');
   }
 
+  get territoriesLoaded(): boolean {
+    return this._loaded$.value;
+  }
+
   get territory$(): Observable<Territory> {
     return this._entity$;
   }

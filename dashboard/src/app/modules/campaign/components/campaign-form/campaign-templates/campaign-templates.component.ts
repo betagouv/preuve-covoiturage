@@ -6,11 +6,11 @@ import { takeUntil } from 'rxjs/operators';
 
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
-import { CreateCampaignInterface } from '~/core/interfaces/campaign/campaignInterface';
 import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
 
 @Component({
   selector: 'app-campaign-templates',
@@ -21,7 +21,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
   @Input() campaignForm: FormGroup;
   @Input() matStepper: MatStepper;
   @Output() setTemplate = new EventEmitter();
-  templates: CreateCampaignInterface[];
+  templates: TemplateInterface[];
 
   constructor(public campaignService: CampaignService, private _dialog: DialogService, private toastr: ToastrService) {
     super();
@@ -70,7 +70,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
 
           // TODO TMP TO DELETE
           this.templates = [];
-          this.templates.push(<CreateCampaignInterface>{
+          this.templates.push(<TemplateInterface>{
             template_id: '5d6930724f56e6e1d0654542',
             status: 'template',
             name: 'Encourager le covoiturage',
@@ -84,7 +84,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
               forDriver: true,
               forPassenger: true,
               forTrip: false,
-              operators: [],
+              operatorIds: [],
             },
             start: null,
             end: null,
@@ -95,7 +95,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
             formula_expression: '',
             formulas: [],
           });
-          this.templates.push(<CreateCampaignInterface>{
+          this.templates.push(<TemplateInterface>{
             template_id: '5d69319a9763dc801ea78de7',
             status: 'template',
             name: 'Limiter le trafic en semaine',
@@ -109,7 +109,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
               forDriver: true,
               forPassenger: true,
               forTrip: false,
-              operators: [],
+              operatorIds: [],
             }),
             start: null,
             end: null,
@@ -120,7 +120,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
             formula_expression: '',
             formulas: [],
           });
-          this.templates.push(<CreateCampaignInterface>{
+          this.templates.push(<TemplateInterface>{
             template_id: '3',
             status: 'template',
             name: 'Limiter la pollution',
@@ -134,7 +134,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
               forDriver: true,
               forPassenger: true,
               forTrip: false,
-              operators: [],
+              operatorIds: [],
             },
             start: null,
             end: null,

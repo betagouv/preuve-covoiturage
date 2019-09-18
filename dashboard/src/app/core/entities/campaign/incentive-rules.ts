@@ -10,7 +10,7 @@ export class IncentiveRules {
   forDriver: boolean;
   forPassenger: boolean;
   forTrip: boolean;
-  operators: string[];
+  operatorIds: string[];
   constructor(obj: IncentiveRulesInterface) {
     this.weekday = obj.weekday;
     this.time = obj.time;
@@ -20,7 +20,7 @@ export class IncentiveRules {
     this.forDriver = obj.forDriver;
     this.forPassenger = obj.forPassenger;
     this.forTrip = obj.forTrip;
-    this.operators = obj.operators;
+    this.operatorIds = obj.operatorIds;
   }
 }
 
@@ -33,7 +33,7 @@ export interface IncentiveRulesInterface {
   forDriver: boolean;
   forPassenger: boolean;
   forTrip: boolean;
-  operators: string[];
+  operatorIds: string[];
 }
 
 export class IncentiveTimeRule {

@@ -3,17 +3,24 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import * as moment from 'moment';
 import { WeekDay } from '@angular/common';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
+import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
 import { FilterService } from '~/core/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TRIP_CLASSES } from '~/core/enums/trip/trip-class.enum';
 import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { TownInterface } from '~/core/interfaces/geography/townInterface';
 
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
+  ],
   animations: [
     trigger('collapse', [
       state(
@@ -61,20 +68,30 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.filterForm = this.fb.group({
-      campaign: [null],
-      startDate: [null],
-      endDate: [null],
-      startTime: [null],
-      endTime: [null],
+      campaignIds: [null],
+      date: this.fb.group({
+        start: [null],
+        end: [null],
+      }),
+      hour: this.fb.group({
+        start: [null],
+        end: [null],
+      }),
       days: [null],
       towns: [null],
-      minDistance: [null],
-      maxDistance: [null],
-      classes: [null],
+      distance: this.fb.group({
+        min: [null],
+        max: [null],
+      }),
+      ranks: [null],
       status: [null],
-      operators: [null],
-      territories: [null],
+      operatorIds: [null],
+      territoryIds: [null],
     });
+  }
+
+  get controls() {
+    return this.filterForm.controls;
   }
 
   public onCloseClick(): void {
@@ -82,7 +99,14 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   public filterClick(): void {
-    this.filterService.setFilter(this.filterForm.value);
+    const filterObj = this.filterForm.value;
+
+    // format for API
+    filterObj.towns = this.filterForm.value.towns.map((town: TownInterface) => town.name);
+
+    console.log(filterObj);
+
+    this.filterService.setFilter(filterObj);
     this.filterNumber.emit(this.countFilters);
     this.hideFilter.emit();
   }

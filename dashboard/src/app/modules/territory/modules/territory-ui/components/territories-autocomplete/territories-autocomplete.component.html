@@ -2,12 +2,12 @@
   <mat-label>Territoires</mat-label>
   <mat-chip-list #chipList>
     <mat-chip
-      *ngFor="let territory of this.territoryForm.value"
+      *ngFor="let territoryId of this.territoryIdsControl.value"
       [selectable]="true"
       [removable]="true"
-      (removed)="remove(territory)"
+      (removed)="remove(territoryId)"
     >
-      {{ territory.shortname }}
+      {{ getTerritoryLabel(territoryId) }}
       <mat-icon matChipRemove>remove</mat-icon>
     </mat-chip>
     <input

@@ -149,7 +149,7 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
 
   showOperatorsLabel(): string {
     let label = '';
-    const operators = this.rulesForm.get('operators').value;
+    const operators = this.rulesForm.get('operatorIds').value;
     if (operators) {
       const multipleOperators = operators.length > 1;
       label += `${operators.length} opérateur${multipleOperators ? 's' : ''}
@@ -218,7 +218,7 @@ export class RulesFormComponent extends DestroyObservable implements OnInit {
               raison_sociale: 'Batcovoit SAS',
             },
           ]);
-          this.controls.operators.setValue(this.operatorService.entities.map((e: Operator) => e._id));
+          this.controls.operatorIds.setValue(this.operatorService.entities.map((e: Operator) => e._id));
         },
       );
   }

@@ -7,7 +7,6 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
-import { Campaign } from '~/core/entities/campaign/campaign';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { IncentiveFormula } from '~/core/entities/campaign/incentive-formula';
