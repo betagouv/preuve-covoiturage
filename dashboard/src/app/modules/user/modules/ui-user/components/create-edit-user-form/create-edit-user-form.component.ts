@@ -114,6 +114,14 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     if (this.createEditUserForm) {
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
+
+      this.createEditUserForm.controls['operator'].setValidators(
+        this.groupEditable && this.operatorEditable && this.isCreating ? Validators.required : null,
+      );
+
+      this.createEditUserForm.controls['territory'].setValidators(
+        this.groupEditable && this.territoryEditable && this.isCreating ? Validators.required : null,
+      );
     }
   }
 

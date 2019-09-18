@@ -40,12 +40,12 @@
 
   <app-operator-autocomplete
     [parentForm]="createEditUserForm"
-    [hidden]="!groupEditable || !operatorEditable || !user._id"
+    [hidden]="!groupEditable || !operatorEditable || !isCreating"
   ></app-operator-autocomplete>
 
   <app-territory-autocomplete
     [parentForm]="createEditUserForm"
-    [hidden]="!groupEditable || !territoryEditable || !user._id"
+    [hidden]="!groupEditable || !territoryEditable || !isCreating"
   ></app-territory-autocomplete>
 
   <!--  <mat-form-field appearance="outline">-->
