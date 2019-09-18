@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -35,11 +35,11 @@ export class JsonRPCService {
     this.url = 'rpc';
   }
 
-  public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload> {
+  public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult> {
     return this.call([method], options).pipe(map((datas) => datas[0]));
   }
 
-  public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCPayload[]> {
+  public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult[]> {
     options.withCredentials = true;
 
     let urlWithMethods = this.url;
@@ -53,9 +53,9 @@ export class JsonRPCService {
     });
     return this.http.post(urlWithMethods, methods, options).pipe(
       map((response: JsonRPCResponse[]) => {
-        const res: JsonRPCPayload[] = [];
+        const res: { id: number; data: any; meta: any }[] = [];
         // if (response.data) {
-        response.forEach((data) => {
+        response.forEach((data: JsonRPCResponse) => {
           if (data.error) {
             const errorMessage = `JSON RCP Error
               ${data.id} : ${data.error.code} ::

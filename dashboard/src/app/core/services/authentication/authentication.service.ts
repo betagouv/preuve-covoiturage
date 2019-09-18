@@ -7,7 +7,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
-import { JsonRPCPayload } from '~/core/entities/api/jsonRPCPayload';
+import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 
 import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -142,7 +142,7 @@ export class AuthenticationService {
     return !role || ('role' in user && role === user.role);
   }
 
-  public sendInviteEmail(user: User): Observable<JsonRPCPayload> {
+  public sendInviteEmail(user: User): Observable<JsonRPCResult> {
     return this._jsonRPC.callOne(new JsonRPCParam('user:sendInviteEmail', { _id: user._id }));
   }
 
