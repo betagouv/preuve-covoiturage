@@ -7,6 +7,7 @@ import { UserService } from '~/core/services/authentication/user.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { DialogService } from '~/core/services/dialog.service';
 
 @Component({
   selector: 'app-users-list',
@@ -23,6 +24,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
     public authService: AuthenticationService,
     public userService: UserService,
     private toastr: ToastrService,
+    private dialogService: DialogService,
   ) {
     super();
   }
@@ -42,17 +44,24 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
       // DELETE
      });
      */
-    this.userService
-      .delete(user)
+
+    this.dialogService
+      .confirm('Utilisateurs', 'Voulez-vous supprimer cet utilisateur ?')
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {
-          this.toastr.success(`L'utilisateur ${user.firstname} ${user.lastname} a été supprimé`);
-        },
-        (err) => {
-          this.toastr.error(err.message);
-        },
-      );
+      .subscribe((hasConfirmed) => {
+        if (hasConfirmed)
+          this.userService
+            .delete(user)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+              () => {
+                this.toastr.success(`L'utilisateur ${user.firstname} ${user.lastname} a été supprimé`);
+              },
+              (err) => {
+                this.toastr.error(err.message);
+              },
+            );
+      });
   }
 
   public getFrenchRole(role: UserRoleEnum): string {
