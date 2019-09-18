@@ -103,6 +103,18 @@ services:
     depends_on:
       - api
 
+  arena:
+    build: ./docker/arena
+    environment:
+      APP_REDIS_URL: redis://redis:6379
+    ports:
+      - 4567:4567
+    networks:
+      - front
+      - back
+    depends_on:
+      - redis
+
 networks:
   front:
   api:
