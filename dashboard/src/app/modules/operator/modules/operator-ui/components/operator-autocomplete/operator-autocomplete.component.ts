@@ -53,6 +53,19 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   }
 
   ngOnInit() {
+    // this.operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+    //   this.operators = operators;
+    //   console.log('this.operators : ', this.operators);
+    // });
+
+    this.operatorService
+      .load()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((operators) => {
+        this.operators = operators;
+        console.log('this.operators : ', this.operators);
+      });
+
     this.filteredOperators = this.operatorCtrl.valueChanges.pipe(
       startWith(''),
       map((value) => this.filter(value)),
@@ -62,30 +75,6 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     this._operatorForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.selectedOperatorUpdated());
 
     this.selectedOperatorUpdated();
-
-    this.operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-      this.operators = operators;
-      console.log('this.operators : ', this.operators);
-    });
-
-    if (!this.operatorService.operators) this.operatorService.load();
-
-    // this.selectedOperatorId = this._operatorForm.value;
-    // this.selectedOperator = this.operators.find((operator) => this.selectedOperatorId === operator._id);
-    // this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : '');
-    // this.filterOperators();
-    // this._operatorForm = this.parentForm.get('operators');
-    // this._operatorForm.valueChanges
-    //   .pipe(tap((operators: OperatorNameInterface[]) => this.filterOperators(operators)))
-    //   .subscribe();
-
-    // setup service
-
-    // this.operatorService.operators$
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((operators) => this.filteredOperators = operators);
-    //
-    // this.operatorService.load();
   }
 
   // private filterOperators(operators: Opera[] = []) {

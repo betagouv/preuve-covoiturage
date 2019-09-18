@@ -22,11 +22,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   selectedTerritory: Territory;
   selectedTerritoryId: string;
 
-  public territories: Territory[] = [
-    new Territory({ _id: '1', name: 'Test' }),
-    new Territory({ _id: '2', name: 'Op' }),
-    new Territory({ _id: '3', name: 'Pat' }),
-  ];
+  public territories: Territory[] = [];
 
   public filteredTerritories: Observable<Territory[]>;
 
@@ -47,16 +43,19 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   onTerritorySelect(territory: MatAutocompleteSelectedEvent) {
     console.log('territory : ', territory.option.value);
-    // this.updateTerritory(territory.option.value);
     this._territoryForm.setValue(territory.option.value);
     this._searchUpdate = false;
-    // this.selectedTerritoryId = territory.option.value;
-    // this.selectedTerritory = this.territories.find((fterritory) => this.selectedTerritoryId === fterritory._id);
-    // this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.nom_commercial : '');
-    // this._territoryForm.setValue(this.selectedTerritoryId);
   }
 
   ngOnInit() {
+    this.territoryService
+      .load()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((territories) => {
+        this.territories = territories;
+        console.log('this.territories : ', this.territories);
+      });
+
     this.filteredTerritories = this.territoryCtrl.valueChanges.pipe(
       startWith(''),
       map((value) => this.filter(value)),

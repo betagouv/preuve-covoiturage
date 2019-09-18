@@ -25,4 +25,11 @@ export class TerritoryService extends ApiService<Territory> {
   get territory(): Territory {
     return this._entity$.value;
   }
+  get territories$(): Observable<Territory[]> {
+    return this._entities$;
+  }
+
+  get territories(): Territory[] {
+    return this._entities$.value;
+  }
 }
