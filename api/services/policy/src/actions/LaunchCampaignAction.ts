@@ -26,7 +26,7 @@ export class LaunchCampaignAction extends AbstractAction {
     };
 
     if (campaign.status !== 'draft') {
-      throw new InvalidParamsException(`Campagain ${params._id} must be a draft to be launched.`);
+      throw new InvalidParamsException(`Campaign ${params._id} must be a draft to be launched.`);
     }
 
     if (campaign.start < new Date()) {
