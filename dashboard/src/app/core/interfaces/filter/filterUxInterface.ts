@@ -4,8 +4,9 @@ import { WeekDay } from '@angular/common';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 
+
 export interface FilterInterface {
-  campaignIds: string[];
+  campaign_id: string[];
   date: {
     start: Date;
     end: Date;
@@ -22,6 +23,6 @@ export interface FilterInterface {
   };
   ranks: TripRankEnum[];
   status: TripStatusEnum;
-  operator_ids: string[];
-  territoryIds: string[];
+  operator_id: string[];
+  territory_id: string[];
 }

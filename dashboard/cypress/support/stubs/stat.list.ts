@@ -1,7 +1,7 @@
 export function stubStatList() {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=stat:list',
+    url: '/rpc?methods=trip:stats',
     response: (data) => ({
       payload: {
         data: [

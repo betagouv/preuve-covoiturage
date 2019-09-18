@@ -9,9 +9,11 @@ import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { TripInterface } from '~/core/interfaces/trip/tripInterface';
 import { FilterService } from '~/core/services/filter.service';
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { FilterInterface, FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserService } from '~/core/services/authentication/user.service';
 
 @Component({
   selector: 'app-trip-list',
@@ -27,6 +29,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     public tripService: TripService,
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
+    private userService: UserService,
   ) {
     super();
   }
@@ -60,6 +63,13 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   private loadTrips(filter: FilterInterface | {} = {}): void {
     if (this.tripService.loading) {
       return;
+    }
+    if (this.userService.user.group === UserGroupEnum.TERRITORY) {
+      filter['territory_id'] = [this.userService.user.territory];
+    }
+    // TODO: temp, remove when filter operator added
+    if ('operator_id' in filter) {
+      delete filter.operator_id;
     }
     this.tripService
       .load(filter)

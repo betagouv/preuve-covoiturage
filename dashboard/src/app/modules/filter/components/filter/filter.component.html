@@ -40,11 +40,11 @@
             <ng-container formGroupName="hour">
               <mat-form-field class="start-time" appearance="outline">
                 <mat-label>De</mat-label>
-                <input matInput formControlName="start" type="time" />
+                <input matInput formControlName="start" type="time" step="3600" />
               </mat-form-field>
               <mat-form-field class="end-time" appearance="outline">
                 <mat-label>A</mat-label>
-                <input matInput formControlName="end" type="time" />
+                <input matInput formControlName="end" type="time" step="3600" />
               </mat-form-field>
             </ng-container>
             <mat-form-field class="days" appearance="outline">
@@ -55,10 +55,13 @@
             </mat-form-field>
           </div>
         </div>
+
         <div class="filter-content-column">
           <div class="filter-content-column-title">
             <p>Géographie</p>
           </div>
+
+          <!--          DISTANCE -->
           <div class="filter-distances" formGroupName="distance">
             <mat-form-field class="min-distance" appearance="outline">
               <mat-label>Km min</mat-label>
@@ -69,9 +72,13 @@
               <input matInput formControlName="max" type="number" step="1" min="0" />
             </mat-form-field>
           </div>
+
+          <!--          TOWNS -->
           <div class="filter-towns">
             <app-towns-autocomplete [parentForm]="filterForm"></app-towns-autocomplete>
           </div>
+
+          <!--          TERRITORIES -->
           <div class="filter-territories">
             <app-territories-autocomplete
               *ngIf="authService.hasAnyGroup(['operators', 'registry'])"
@@ -85,11 +92,13 @@
           </div>
           <div class="filter-trip-types">
             <mat-form-field class="class" appearance="outline">
+              <!--              RANKS -->
               <mat-label>Classe</mat-label>
               <mat-select formControlName="ranks" multiple>
                 <mat-option *ngFor="let name of classes" value="{{ name }}">{{ name }}</mat-option>
               </mat-select>
             </mat-form-field>
+            <!--            STATUS -->
             <mat-form-field class="status" appearance="outline">
               <mat-label>Statut</mat-label>
               <mat-select formControlName="status">
@@ -98,10 +107,13 @@
                 }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <app-operators-autocomplete
-              *ngIf="authService.hasAnyGroup(['territories', 'registry'])"
-              [parentForm]="filterForm"
-            ></app-operators-autocomplete>
+
+
+            <!--            OPERATORS -->
+            <!--            <app-operators-autocomplete-->
+            <!--              *ngIf="authService.hasAnyGroup(['territories', 'registry'])"-->
+            <!--              [parentForm]="filterForm"-->
+            <!--            ></app-operators-autocomplete>-->
           </div>
         </div>
       </div>

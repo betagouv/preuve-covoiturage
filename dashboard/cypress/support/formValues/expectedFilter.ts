@@ -1,4 +1,4 @@
-import { FilterInterface } from '../../../src/app/core/interfaces/filter/filterInterface';
+import { FilterInterface } from '../../../src/app/core/interfaces/filter/filterUxInterface';
 import { TripStatusEnum } from '../../../src/app/core/enums/trip/trip-status.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
@@ -14,14 +14,14 @@ export const filterEndMoment = Cypress.moment()
   .startOf('day');
 
 export const expectedFilter: FilterInterface = {
-  campaignIds: [campaignStubs[0]._id],
-  date: {
-    start: filterStartMoment.toDate(),
-    end: filterEndMoment.toDate(),
+  campaign_id: [campaignStubs[0]._id, campaignStubs[1]._id],
+  date: <any>{
+    start: filterStartMoment.toDate().toISOString(),
+    end: filterEndMoment.toDate().toISOString(),
   },
   hour: {
-    start: '18:00',
-    end: '22:00',
+    start: '18',
+    end: '22',
   },
   days: [0, 1],
   towns: ['Lyon'],
@@ -31,6 +31,6 @@ export const expectedFilter: FilterInterface = {
   },
   ranks: [TripRankEnum.A, TripRankEnum.B],
   status: TripStatusEnum.PENDING,
-  operator_ids: [operatorStubs[0]._id],
-  territoryIds: [territoryStubs[0]._id],
+  operator_id: [operatorStubs[0]._id],
+  territory_id: [territoryStubs[0]._id],
 };
