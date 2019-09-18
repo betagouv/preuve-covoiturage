@@ -11,7 +11,8 @@
     "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../coverage/proxy --temp-dir=../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "lint": "tslint -c ../tslint.json -p tsconfig.json"
+    "lint": "tslint -c ../tslint.json -p tsconfig.json",
+    "ingest": "mocha --exit tests/ingest.spec.ts"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
