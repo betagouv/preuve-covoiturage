@@ -22,5 +22,3 @@ export const rpc = {
 };
 
 export const cors = ['review', 'dev'].indexOf(env('APP_ENV', 'local')) > -1 ? '*' : appUrl;
-// export const cors = appUrl;
-// console.log('cors : ', cors);
