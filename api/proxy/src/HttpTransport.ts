@@ -69,7 +69,6 @@ export class HttpTransport implements TransportInterface {
     this.registerGlobalMiddlewares();
     this.registerAuthRoutes();
     this.registerLegacyServerRoute();
-    // this.registerBullArena();
 
     if (this.config.get('proxy.rpc.open', false)) {
       this.registerCallHandler();
@@ -203,10 +202,6 @@ export class HttpTransport implements TransportInterface {
       });
     });
   }
-
-  // private registerBullArena() {
-  //   this.app.use('/arena', require('./routes/bull-arena/controller'));
-  // }
 
   private registerAfterAllHandlers() {
     this.app.use(Sentry.Handlers.errorHandler());
