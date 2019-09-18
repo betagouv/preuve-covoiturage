@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { TripService } from '~/modules/trip/services/trip.service';
 import { Trip } from '~/core/entities/trip/trip';
-import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { TripInterface } from '~/core/interfaces/trip/tripInterface';
 import { FilterService } from '~/core/services/filter.service';
@@ -83,12 +83,12 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   // TODO TMP TO DELETE
   private generateTrip(): Trip {
-    const randomClass = Math.floor(Math.random() * Object.keys(TripClassEnum).length);
+    const randomClass = Math.floor(Math.random() * Object.keys(TripRankEnum).length);
     const randomStatus = Math.floor(Math.random() * Object.keys(TripStatusEnum).length);
 
     const tripToReturn: TripInterface = {
       _id: 'AZFAFZAF34345345',
-      class: TripClassEnum[Object.keys(TripClassEnum)[randomClass]],
+      class: TripRankEnum[Object.keys(TripRankEnum)[randomClass]],
       start: new Date(),
       status: TripStatusEnum[Object.keys(TripStatusEnum)[randomStatus]],
       campaigns: [],
@@ -108,7 +108,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   generatePeople(trip, i) {
     trip.people.push({
-      class: TripClassEnum.A,
+      class: TripRankEnum.A,
       operator: {
         _id: '1',
         nom_commercial: 'Batcovoit 🦇',

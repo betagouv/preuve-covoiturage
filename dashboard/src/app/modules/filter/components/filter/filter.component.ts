@@ -8,7 +8,7 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 
 import { FilterService } from '~/core/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { TRIP_CLASSES } from '~/core/enums/trip/trip-class.enum';
+import { TRIP_CLASSES } from '~/core/enums/trip/trip-rank.enum';
 import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
@@ -85,7 +85,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
       }),
       ranks: [null],
       status: [null],
-      operatorIds: [null],
+      operator_ids: [null],
       territoryIds: [null],
     });
   }

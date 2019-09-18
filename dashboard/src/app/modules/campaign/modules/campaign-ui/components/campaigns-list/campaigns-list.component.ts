@@ -3,11 +3,13 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -15,8 +17,8 @@ import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
   styleUrls: ['./campaigns-list.component.scss'],
 })
 export class CampaignsListComponent extends DestroyObservable implements OnInit {
-  @Input() campaignStatus: CampaignStatusEnum | null;
-  campaigns: Campaign[];
+  @Input() campaignStatusList: CampaignStatusEnum[] = [];
+  campaigns: CampaignUx[] = [];
   CampaignStatusEnum = CampaignStatusEnum;
 
   constructor(private dialog: DialogService, public campaignService: CampaignService, private toastr: ToastrService) {
@@ -28,11 +30,11 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   }
 
   private loadCampaigns(): void {
-    this.campaignService._entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
+    this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.filterCampaignsByStatus(campaigns);
     });
 
-    if (this.campaignService.loading) {
+    if (this.campaignService.campaignsLoaded) {
       return;
     }
     this.campaignService
@@ -52,18 +54,21 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   }
 
   public filterCampaignsByStatus(campaigns: Campaign[]): void {
-    const status = this.campaignStatus;
-    this.campaigns = campaigns.filter((c: Campaign) => !status || c.status === status);
+    const statusList = this.campaignStatusList;
+    this.campaigns = campaigns
+      .filter((c: Campaign) => statusList.length === 0 || statusList.indexOf(c.status) !== -1)
+      .map((campaign: Campaign) => this.campaignService.toCampaignUxFormat(campaign))
+      .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
   }
 
-  deleteCampaign(campaign: Campaign) {
+  deleteCampaign(campaign: CampaignUx) {
     this.dialog
       .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer')
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
           this.campaignService
-            .delete(campaign)
+            .delete(campaign._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {

@@ -1,5 +1,6 @@
-/// <reference types="Cypress" />
+import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 
+/// <reference types="Cypress" />
 import { campaignFirstStepCustom } from '../../support/reusables/steps/campaign-create-first-step';
 import {
   campaignSecondStepCheckDisabledNextStep,
@@ -13,14 +14,16 @@ import {
 import {
   campaignThirdStepCheckDisabledNextStep,
   campaignThirdStepClickNextStep,
+  campaignThirdStepClickPreviousStep,
   campaignThirdStepSetDates,
   campaignThirdStepSetMaxRetribution,
   campaignThirdStepSetMaxTrips,
   campaignThirdStepSetUnit,
 } from '../../support/reusables/steps/campaign-create-third-step';
-import { endMoment, expectedCampaign, startMoment } from '../../support/formValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
+import { stubCampaignCreate } from '../stubs/campaign.create';
 
-export function Cypress_campaignCreate() {
+export function cypress_campaignCreate() {
   // FIRST STEP
   campaignFirstStepCustom();
 
@@ -31,7 +34,7 @@ export function Cypress_campaignCreate() {
 
   campaignSecondStepSelectRanks();
 
-  campaignSecondStepSelectTargets();
+  campaignSecondStepSelectTargets(true, true);
 
   // make sure step is complete
   campaignSecondStepCheckDisabledNextStep();
@@ -41,13 +44,16 @@ export function Cypress_campaignCreate() {
   campaignSecondStepClickNextStep();
 
   // THIRD STEP
-  campaignThirdStepSetMaxRetribution(expectedCampaign.max_amount.toString());
+  campaignThirdStepSetMaxRetribution(CypressExpectedCampaign.maxAmount.toString());
 
   campaignThirdStepSetUnit();
 
-  campaignThirdStepSetDates(startMoment.format('DD/MM/YYYY'), endMoment.format('DD/MM/YYYY'));
+  campaignThirdStepSetDates(
+    CypressExpectedCampaign.startMoment.format('DD/MM/YYYY'),
+    CypressExpectedCampaign.endMoment.format('DD/MM/YYYY'),
+  );
 
-  campaignThirdStepSetMaxTrips(expectedCampaign.max_trips.toString());
+  campaignThirdStepSetMaxTrips(CypressExpectedCampaign.maxTrips.toString());
 
   campaignThirdStepCheckDisabledNextStep();
 
@@ -55,9 +61,9 @@ export function Cypress_campaignCreate() {
     // open retribution extension
     cy.get('.ParametersForm .mat-expansion-panel:nth-child(5)').click();
 
-    // passenger amount
+    // driver amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-form-field input').type(
-      '0.1',
+      CypressExpectedCampaign.forDriverAmount.toString(),
     );
 
     // press 'par km'
@@ -65,53 +71,46 @@ export function Cypress_campaignCreate() {
       '.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-checkbox:first-of-type .mat-checkbox-layout',
     ).click();
 
-    // driver amount
+    // passenger amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input').type(
-      '0.2',
+      CypressExpectedCampaign.forPassengerAmount.toString(),
     );
   });
+
+  // click previous step
+  campaignThirdStepClickPreviousStep();
+
+  // uncheck passenger
+  campaignSecondStepSelectTargets(true, false);
+
+  campaignSecondStepClickNextStep();
 
   campaignThirdStepClickNextStep();
 
   // LAST STEP
   it('sets name of form', () => {
+    // save screenshot to validate text
+    cy.screenshot();
+
     cy.get('.SummaryForm mat-form-field:first-child input').type("Nouvelle campagne d'incitation");
   });
 
-  it('clicks button to launch campaign', () => {
-    cy.get('.SummaryForm .SummaryForm-actions button:first-child').click();
-  });
-
-  it('confirm', () => {
+  it('clicks button to save campaign', () => {
     cy.server();
 
-    cy.route({
-      method: 'POST',
-      url: '/rpc?methods=campaign:create',
-    }).as('campaignCreate');
+    stubCampaignCreate(CampaignStatusEnum.DRAFT);
 
-    cy.get('app-confirm-dialog button:nth-child(2)').click();
+    cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(2)').click();
 
     cy.wait('@campaignCreate').then((xhr) => {
       const params = xhr.request.body[0].params;
       const method = xhr.request.body[0].method;
 
       expect(method).equal('campaign:create');
-      expect(new Date(params.start)).eql(expectedCampaign.start);
-      expect(new Date(params.end)).eql(expectedCampaign.end);
-      expect(params.name).eql(expectedCampaign.name);
-      expect(params.description).eql(expectedCampaign.description);
-      expect(params.status).eql(expectedCampaign.status);
-      expect(params.rules).eql(expectedCampaign.rules);
-      expect(params.trips_number).eql(expectedCampaign.trips_number);
-      expect(params.formula_expression).include('0.1 € par trajet par km');
-      expect(params.formula_expression).include('0.2 € par trajet pour le(s) passager(s)');
-      expect(params.formulas).eql(expectedCampaign.formulas);
-      expect(params.max_amount).eql(expectedCampaign.max_amount);
-      expect(params.max_trips).eql(expectedCampaign.max_trips);
-      expect(params.template_id).eql(expectedCampaign.template_id);
-      expect(params.amount_unit).eql(expectedCampaign.amount_unit);
-      expect(params.expertMode).eql(expectedCampaign.expertMode);
+      expect(params).eql({
+        ...CypressExpectedCampaign.get(),
+        status: CampaignStatusEnum.DRAFT,
+      });
     });
   });
 }

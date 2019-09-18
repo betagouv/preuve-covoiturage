@@ -5,7 +5,7 @@ import {
   RegistryPermissionsUserType,
   TerritoriesPermissionsAdminType,
   TerritoriesPermissionsUserType,
-} from '~/core/types/permissionType';
+} from '../../../../src/app/core/types/permissionType';
 
 export const TERRITORIES_PERMISSIONS = {
   // todo: temp used for mocks
@@ -123,7 +123,7 @@ export const OPERATORS_PERMISSIONS = {
   ],
 };
 
-export const REGISTRYPERMISSIONS = {
+export const REGISTRY_PERMISSIONS = {
   admin: <RegistryPermissionsAdminType[]>[
     'user.list',
     'user.invite',

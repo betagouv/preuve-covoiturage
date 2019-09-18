@@ -74,7 +74,7 @@
           </div>
           <div class="filter-territories">
             <app-territories-autocomplete
-              *ngIf="authService.hasAnyGroup(['operator', 'registry'])"
+              *ngIf="authService.hasAnyGroup(['operators', 'registry'])"
               [parentForm]="filterForm"
             ></app-territories-autocomplete>
           </div>
@@ -99,7 +99,7 @@
               </mat-select>
             </mat-form-field>
             <app-operators-autocomplete
-              *ngIf="authService.hasAnyGroup(['territory', 'registry'])"
+              *ngIf="authService.hasAnyGroup(['territories', 'registry'])"
               [parentForm]="filterForm"
             ></app-operators-autocomplete>
           </div>

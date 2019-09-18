@@ -51,7 +51,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
       .subscribe((hasConfirmed) => {
         if (hasConfirmed) {
           this.userService
-            .delete(user)
+            .delete(user._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {

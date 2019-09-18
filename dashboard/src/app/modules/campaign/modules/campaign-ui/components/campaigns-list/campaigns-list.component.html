@@ -18,7 +18,7 @@
         <span>Plafond: {{ campaign.max_trips }} trajets</span>
       </div>
       <div class="CampaignsList-item-date">
-        <span>Du {{ campaign.start | date: 'dd MMMM' }} au {{ campaign.end | date: 'dd MMMM' }}</span>
+        <span>Du {{ campaign.start.toDate() | date: 'dd MMMM' }} au {{ campaign.end.toDate() | date: 'dd MMMM' }}</span>
       </div>
       <div class="CampaignsList-item-actions" [ngSwitch]="campaign.status">
         <a class="link" *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/{{ campaign._id }}">Modifier</a>

@@ -1,15 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import * as _ from 'lodash';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
-import { Campaign } from '~/core/entities/campaign/campaign';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { Company } from '~/core/entities/shared/company';
 import { Address } from '~/core/entities/shared/address';
@@ -94,7 +89,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
         );
     }
 
-    this.territoryService.entities$.pipe(takeUntil(this.destroy$)).subscribe((territories: Campaign[]) => {
+    this.territoryService.entities$.pipe(takeUntil(this.destroy$)).subscribe((territories: Territory[]) => {
       this.territories = territories.map((territory: Territory) => ({
         _id: territory._id,
         shortname: territory.shortname || territory.acronym || territory.name,

@@ -7,8 +7,8 @@
     <div
       *ngFor="let template of templates"
       class="CampaignTemplates-templateCard"
-      (click)="onTemplateCardClick(template.template_id)"
-      [ngClass]="{ 'CampaignTemplates-templateCard--selected': templateId && template.template_id === templateId }"
+      (click)="onTemplateCardClick(template._id)"
+      [ngClass]="{ 'CampaignTemplates-templateCard--selected': parentId && template._id === parentId }"
     >
       <span class="CampaignTemplates-templateCard-name">{{ template.name }}</span>
       <span class="CampaignTemplates-templateCard-description">{{ template.description }}</span>

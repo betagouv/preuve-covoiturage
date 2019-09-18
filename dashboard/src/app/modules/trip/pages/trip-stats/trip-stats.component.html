@@ -1,9 +1,9 @@
 <app-stat-territory-view
-  *ngIf="authenticationService.hasAnyGroup(['territory', 'registry'])"
+  *ngIf="authenticationService.hasAnyGroup(['territories', 'registry'])"
   [statViewConfig]="tripStats"
 ></app-stat-territory-view>
 
-<div class="OperatorDashboard" *ngIf="authenticationService.hasAnyGroup(['operator'])">
+<div class="OperatorDashboard" *ngIf="authenticationService.hasAnyGroup(['operators'])">
   <app-page-header>
     <div class="OperatorDashboard-trips">
       <div class="OperatorDashboard-trips-header">
@@ -24,13 +24,13 @@
         <h2>Les campagnes en cours</h2>
       </div>
       <div class="OperatorDashboard-campaigns-list">
-        <app-campaigns-list [campaignStatus]="campaignStatusEnum.VALIDATED"></app-campaigns-list>
+        <app-campaigns-list [campaignStatusList]="campaignStatusEnum.VALIDATED"></app-campaigns-list>
       </div>
       <div class="OperatorDashboard-campaigns-header">
         <h2>Les campagnes terminées</h2>
       </div>
       <div class="OperatorDashboard-campaigns-list">
-        <app-campaigns-list [campaignStatus]="campaignStatusEnum.ARCHIVED"></app-campaigns-list>
+        <app-campaigns-list [campaignStatusList]="campaignStatusEnum.ARCHIVED"></app-campaigns-list>
       </div>
     </div>
   </app-page-content>

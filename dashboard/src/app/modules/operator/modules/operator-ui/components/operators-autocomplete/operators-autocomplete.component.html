@@ -26,7 +26,7 @@
       {{ operator.nom_commercial }}
     </mat-option>
   </mat-autocomplete>
-  <mat-error *ngIf="parentForm.controls.operatorIds.hasError('required')">
+  <mat-error *ngIf="this.operatorIdsControl.hasError('required')">
     Vous devez sélectionner au moins un opérateur.
   </mat-error>
 </mat-form-field>

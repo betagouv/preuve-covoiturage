@@ -19,6 +19,11 @@ export class CampaignCardComponent implements OnInit {
 
   ngOnInit() {}
 
+  getTerritoryLabel(territoryId: string): string {
+    //    todo:
+    return 'territory';
+  }
+
   getCampaignClass(): string {
     let statusClass = 'CampaignCard-status';
     switch (this.campaign.status) {

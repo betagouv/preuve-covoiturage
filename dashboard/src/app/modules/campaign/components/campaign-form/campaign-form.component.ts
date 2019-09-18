@@ -7,15 +7,16 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
-import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { IncentiveRules } from '~/core/entities/campaign/incentive-rules';
-import { RulesRangeType } from '~/core/types/campaign/rulesRangeType';
+import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { Campaign } from '~/core/entities/campaign/campaign';
+import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 
 @Component({
   selector: 'app-campaign-form',
@@ -36,7 +37,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   currentStep = 0;
   matStepperCompleted = false;
 
-  private _defaultRange: RulesRangeType = [0, 150];
+  private _defaultRange: RulesRangeUxType = [0, 150];
   @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
 
   constructor(
@@ -67,17 +68,12 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   get showFirstPageNextStep() {
-    return this.campaignFormGroup.controls.template_id.value || this.campaignFormGroup.controls._id.value;
+    return this.campaignFormGroup.controls.parent_id.value || this.campaignFormGroup.controls._id.value;
   }
 
   saveOrLaunchCampaign(saveAsDraft) {
-    const formatedCampaign = _.cloneDeep(this.campaignFormGroup.getRawValue());
-
-    // format dates : moment --> Date
-    formatedCampaign.start = formatedCampaign.start.toDate();
-    formatedCampaign.end = formatedCampaign.end.toDate();
-
-    const campaignToSave: Campaign = new Campaign(formatedCampaign);
+    const campaign = _.cloneDeep(this.campaignFormGroup.getRawValue());
+    const campaignToSave: Campaign = this.campaignService.toCampaignFormat(campaign);
     if (!saveAsDraft && campaignToSave.status === CampaignStatusEnum.DRAFT) {
       this.launchCampaign(campaignToSave);
     } else {
@@ -86,41 +82,39 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   get canGoToThirdStep(): boolean {
-    const rulesFormGroup = this.campaignFormGroup.get('rules');
+    const filtersFormGroup = this.campaignFormGroup.get('filters');
     return (
-      rulesFormGroup.get('weekday').valid &&
-      rulesFormGroup.get('range').valid &&
-      rulesFormGroup.get('ranks').valid &&
-      rulesFormGroup.get('operatorIds').valid &&
-      (rulesFormGroup.get('forDriver').value ||
-        rulesFormGroup.get('forPassenger').value ||
-        rulesFormGroup.get('forTrip').value)
+      filtersFormGroup.get('weekday').valid &&
+      filtersFormGroup.get('distance_range').valid &&
+      filtersFormGroup.get('rank').valid &&
+      filtersFormGroup.get('operator_ids').valid &&
+      this.campaignFormGroup.get('ui_status').valid &&
+      this.campaignFormGroup.get('only_adult').valid
     );
   }
 
   get canGoToLastStep(): boolean {
     return (
-      this.campaignFormGroup.get('rules').valid &&
+      this.campaignFormGroup.get('filters').valid &&
       this.campaignFormGroup.get('max_amount').valid &&
       this.campaignFormGroup.get('max_trips').valid &&
       this.campaignFormGroup.get('start').valid &&
       this.campaignFormGroup.get('end').valid &&
-      this.campaignFormGroup.get('amount_unit').valid &&
+      this.campaignFormGroup.get('unit').valid &&
       this.campaignFormGroup.get('restrictions').valid &&
-      this.campaignFormGroup.get('formula_expression').valid &&
-      this.campaignFormGroup.get('formulas').valid
+      this.campaignFormGroup.get('retributions').valid
     );
   }
 
   private launchCampaign(campaign: Campaign) {
-    campaign.status = CampaignStatusEnum.VALIDATED;
+    campaign.status = CampaignStatusEnum.PENDING;
     this._dialog
       .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
           this.campaignService
-            .create(campaign)
+            .launch(campaign)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               (campaignSaved: Campaign) => {
@@ -146,7 +140,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       .subscribe(
         (campaignSaved: Campaign) => {
           this.requestLoading = false;
-          // tslint:disable-next-line:max-line-length
           this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
           this.router.navigate(['/campaign']);
         },
@@ -164,53 +157,55 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       name: [null, Validators.required],
       description: [null],
       status: [],
-      rules: this._formBuilder.group({
+      filters: this._formBuilder.group({
         weekday: [null, Validators.required],
         time: this._formBuilder.array([]),
-        range: [this._defaultRange, Validators.required],
-        ranks: [null, Validators.required],
-        onlyAdult: [],
-        forDriver: [],
-        forPassenger: [],
-        forTrip: [],
-        operatorIds: [[], Validators.required],
+        distance_range: [this._defaultRange, Validators.required],
+        rank: [null, Validators.required],
+        operator_ids: [[], Validators.required],
+      }),
+      only_adult: [null],
+      ui_status: this._formBuilder.group({
+        for_driver: [null],
+        for_passenger: [null],
+        for_trip: [null],
       }),
       start: [null, Validators.required],
       end: [null, Validators.required],
       max_amount: [null, [Validators.required, Validators.min(1)]],
-      amount_unit: [null, Validators.required],
+      unit: [null, Validators.required],
       max_trips: [null, Validators.min(1)],
-      template_id: [null],
+      parent_id: [null],
       restrictions: this._formBuilder.array([]),
-      formula_expression: ['', Validators.required],
-      formulas: this._formBuilder.array([]),
-      expertMode: [false],
+      retributions: this._formBuilder.array([]),
     });
   }
 
   public initCampaign() {
-    this.campaignFormGroup.setValue(new Campaign());
+    this.campaignFormGroup.setValue(new CampaignUx());
   }
 
   public setTemplate(templateId: string | null = null) {
-    let campaign = new Campaign();
+    let campaign = new CampaignUx();
+
     if (templateId) {
       // get template from service
-      campaign = {
-        _id: null,
+      campaign = this.campaignService.toCampaignUxFormat({
         ...this.campaignService.getLoadedTemplate(templateId),
-      };
+        _id: null,
+        parent_id: templateId,
+      });
     }
 
     // load it
     this.setCampaignToForm(campaign, true);
   }
 
-  private setCampaignToForm(campaign: Campaign, isTemplate = false) {
+  private setCampaignToForm(campaign: CampaignUx, isTemplate = false) {
     // patch main
     this.campaignFormGroup.patchValue({
       _id: campaign._id,
-      template_id: campaign.template_id,
+      parent_id: campaign.parent_id,
       status: isTemplate ? CampaignStatusEnum.DRAFT : campaign.status,
       name: campaign.name,
       description: campaign.description,
@@ -218,50 +213,45 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       end: campaign.end,
       max_trips: campaign.max_trips,
       max_amount: campaign.max_amount,
-      amount_unit: campaign.amount_unit,
-      formula_expression: campaign.formula_expression,
-      expertMode: campaign.expertMode,
+      unit: campaign.unit,
     });
 
     // patch rules
-    const rulesForm = this.campaignFormGroup.get('rules');
-    rulesForm.patchValue({
-      weekday: campaign.rules.weekday,
-      range: campaign.rules.range,
-      ranks: campaign.rules.ranks,
-      onlyAdult: campaign.rules.onlyAdult,
-      forDriver: campaign.rules.forDriver,
-      forPassenger: campaign.rules.forPassenger,
-      forTrip: campaign.rules.forTrip,
-      operatorIds: campaign.rules.operatorIds,
+    const filtersForm = this.campaignFormGroup.get('filters');
+    filtersForm.patchValue({
+      weekday: campaign.filters.weekday,
+      distance_range: campaign.filters.distance_range,
+      ranks: campaign.filters.rank,
+      operator_ids: campaign.filters.operator_ids,
     });
 
     // patch form arrays
-    const timeFormArray = <FormArray>rulesForm.get('time');
+    const timeFormArray = <FormArray>filtersForm.get('time');
     timeFormArray.clear();
-    campaign.rules.time.forEach((time) => {
+    campaign.filters.time.forEach((time) => {
       timeFormArray.push(this._formBuilder.control(time));
     });
 
     const restrictionFormArray = <FormArray>this.campaignFormGroup.get('restrictions');
     restrictionFormArray.clear();
-    campaign.restrictions.forEach((restriction) => {
+    campaign.retributions.forEach((restriction) => {
       restrictionFormArray.push(this._formBuilder.group(restriction));
     });
 
-    const formulaFormArray = <FormArray>this.campaignFormGroup.get('formulas');
-    formulaFormArray.clear();
-    campaign.formulas.forEach((formula) => {
-      formulaFormArray.push(this._formBuilder.group(formula));
-    });
+    // const formulaFormArray = <FormArray>this.campaignFormGroup.get('formulas');
+    // formulaFormArray.clear();
+    // campaign.formulas.forEach((formula) => {
+    //   formulaFormArray.push(this._formBuilder.group(formula));
+    // });
 
     // set defaults
+    const distanceRange = filtersForm.get('distance_range');
     if (
-      !rulesForm.get('range').value ||
-      rulesForm.get('range').value.length < 2 ||
-      (rulesForm.get('range').value[0] === 0 && rulesForm.get('range').value[1] === 0)
+      !distanceRange.value ||
+      distanceRange.value.length < 2 ||
+      (distanceRange.value[0] === 0 && distanceRange.value[1] === 0)
     ) {
-      rulesForm.get('range').setValue(this._defaultRange);
+      distanceRange.setValue(this._defaultRange);
     }
 
     this.matStepperCompleted = true;
@@ -281,39 +271,38 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (campaign: Campaign) => {
-          this.setCampaignToForm(campaign, false);
+          const campaignUx = this.campaignService.toCampaignUxFormat(campaign);
+          this.setCampaignToForm(campaignUx, false);
         },
         () => {
           if (campaignId !== '5d6fa2995623dc991b288f11') {
             this.router.navigate(['/campaign']);
           }
           this.setCampaignToForm(
-            new Campaign({
+            new CampaignUx({
               _id: '5d6fa2995623dc991b288f11',
-              template_id: null,
+              parent_id: null,
               status: CampaignStatusEnum.DRAFT,
               name: "Campagne d'incitation en idf",
               description: 'Délibération 2019/143',
-              rules: <IncentiveRules>{
+              filters: {
                 weekday: [0, 1, 2, 3, 4, 5, 6],
-                range: [2, 150],
+                distance_range: [2, 150],
                 time: [],
-                ranks: ['A', 'B', 'C'],
-                onlyAdult: false,
-                forDriver: false,
-                forPassenger: false,
-                forTrip: true,
-                operatorIds: [],
+                rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
+                operator_ids: [],
               },
-              start: moment()
-                .add(1, 'days')
-                .toDate(),
-              end: moment()
-                .add(3, 'months')
-                .toDate(),
+              only_adult: false,
+              ui_status: {
+                for_driver: false,
+                for_passenger: false,
+                for_trip: true,
+              },
+              start: moment().add(1, 'days'),
+              end: moment().add(3, 'months'),
               max_trips: null,
               max_amount: 2000000,
-              amount_unit: IncentiveUnitEnum.EUR,
+              unit: IncentiveUnitEnum.EUR,
               restrictions: [
                 {
                   quantity: 2,
@@ -321,22 +310,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
                   period: restrictionEnum.DAY,
                 },
               ],
-              formula_expression:
-                // tslint:disable-next-line:max-line-length
-                '10c€ par passager par trajet avec un plancher de 1,5€ pour les trajets de moins de 15 km et un maximum de 3€ par passager ',
-              formulas: [
-                {
-                  formula:
-                    // tslint:disable-next-line:max-line-length
-                    'smaller(distance/1000, 30)*0.1*pour_conducteur*(distance/1000)*nombre_passager + largerEq(distance/1000, 30)*3',
-                },
-                {
-                  formula:
-                    // tslint:disable-next-line:max-line-length
-                    'smaller(distance/1000, 15)*(largerEq(incitation, 1.5)*(distance/1000)*1.5/somme_incitations_passager  + smaller(incitation, 1.5)*incitation) + largerEq(distance/1000, 15)*incitation',
-                },
-              ],
-              expertMode: true,
+              retributions: [],
             }),
           );
         },
@@ -346,7 +320,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   private setLastAvailableStep(): void {
     setTimeout(() => {
       // tslint:disable-next-line:prefer-conditional-expression
-      if (this.campaignFormGroup.get('rules').valid) {
+      if (this.canGoToThirdStep) {
         this.currentStep = 2;
       } else {
         this.currentStep = 1;

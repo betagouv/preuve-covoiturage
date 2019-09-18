@@ -22,11 +22,6 @@ export class UserService extends ApiService<User> {
 
   set user(user) {
     if (user !== this._user$.value) {
-      // if (user) {
-      //   localStorage.setItem('_user', JSON.stringify(user));
-      // } else {
-      //   localStorage.removeItem('_user');
-      // }
       this._user$.next(user);
     }
   }

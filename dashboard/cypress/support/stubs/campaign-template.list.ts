@@ -1,16 +1,16 @@
 import { TemplateInterface } from '../../../src/app/core/interfaces/campaign/templateInterface';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
-import { TripClassEnum } from '../../../src/app/core/enums/trip/trip-class.enum';
-import { campaignStubs } from './campaign.list';
+import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
 export const campaignTemplateStubs: TemplateInterface[] = [
   {
-    template_id: '5d6930724f56e6e1d0654542',
+    _id: '5d6930724f56e6e1d0654543',
+    parent_id: '5d6930724f56e6e1d0654542',
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Encourager le covoiturage',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
-    rules: {
+    filters: {
       weekday: [0, 1, 2, 3, 4, 5, 6],
       time: [
         {
@@ -18,30 +18,30 @@ export const campaignTemplateStubs: TemplateInterface[] = [
           end: '19:00',
         },
       ],
-      range: [0, 100],
-      ranks: [TripClassEnum.A, TripClassEnum.B],
-      onlyAdult: false,
-      forDriver: true,
-      forPassenger: true,
-      forTrip: false,
-      operatorIds: [],
+      distance_range: {
+        min: 0,
+        max: 100,
+      },
+      rank: [TripRankEnum.A, TripRankEnum.B],
+      operator_ids: [],
+    },
+    ui_status: {
+      for_driver: true,
+      for_passenger: true,
+      for_trip: false,
     },
     start: null,
     end: null,
-    max_trips: null,
-    max_amount: null,
-    amount_unit: IncentiveUnitEnum.EUR,
-    restrictions: [],
-    formula_expression: '',
-    formulas: [],
-    expertMode: false,
+    unit: IncentiveUnitEnum.EUR,
+    retribution_rules: [],
   },
   {
-    template_id: '5d69319a9763dc801ea78de7',
+    _id: '5d69319a9763dc801ea78de6',
+    parent_id: '5d69319a9763dc801ea78de7',
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Limiter le trafic en semaine',
     description: 'Fusce vehicula dolor arcu, sit amet blandit dolor mollis.',
-    rules: {
+    filters: {
       weekday: [0, 1, 2, 3, 4],
       time: [
         {
@@ -53,49 +53,48 @@ export const campaignTemplateStubs: TemplateInterface[] = [
           end: '19:00',
         },
       ],
-      range: [0, 15],
-      ranks: [TripClassEnum.A, TripClassEnum.B, TripClassEnum.C],
-      onlyAdult: false,
-      forDriver: true,
-      forPassenger: true,
-      forTrip: false,
-      operatorIds: [],
+      distance_range: {
+        min: 0,
+        max: 100,
+      },
+      rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
+      operator_ids: [],
+    },
+    ui_status: {
+      for_driver: true,
+      for_passenger: true,
+      for_trip: false,
     },
     start: null,
     end: null,
-    max_trips: null,
-    max_amount: null,
-    amount_unit: IncentiveUnitEnum.EUR,
-    restrictions: [],
-    formula_expression: '',
-    formulas: [],
-    expertMode: false,
+    unit: IncentiveUnitEnum.EUR,
+    retribution_rules: [],
   },
   {
-    template_id: '3',
+    _id: '5d69319a9763dc801ea78de4',
+    parent_id: '5d69319a9763dc801ea78d18',
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Limiter la pollution',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
-    rules: {
+    filters: {
       weekday: [0],
       time: [],
-      range: [0, 15],
-      ranks: [],
-      onlyAdult: false,
-      forDriver: true,
-      forPassenger: true,
-      forTrip: false,
-      operatorIds: [],
+      distance_range: {
+        min: 0,
+        max: 100,
+      },
+      rank: [],
+      operator_ids: [],
+    },
+    ui_status: {
+      for_driver: true,
+      for_passenger: true,
+      for_trip: false,
     },
     start: null,
     end: null,
-    max_trips: null,
-    max_amount: null,
-    amount_unit: IncentiveUnitEnum.EUR,
-    restrictions: [],
-    formula_expression: '',
-    formulas: [],
-    expertMode: false,
+    unit: IncentiveUnitEnum.EUR,
+    retribution_rules: [],
   },
 ];
 

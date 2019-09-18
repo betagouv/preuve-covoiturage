@@ -32,18 +32,10 @@ export class AuthenticationService {
   }
 
   public login(email: string, password: string) {
-    const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user.login';
-    jsonRPCParam.params = {
-      email,
-      password,
-    };
-
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
 
-    // console.log('environment.apiUrl+\'/login\' : ', environment.apiUrl + '/login');
     const url = 'login';
     return this.http
       .post(

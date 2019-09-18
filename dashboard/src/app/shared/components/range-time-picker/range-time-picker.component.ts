@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
+import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/incentive-filters';
 
 @Component({
   providers: [
@@ -25,7 +25,7 @@ import { IncentiveTimeRule } from '~/core/entities/campaign/incentive-rules';
 export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
   timeRangeForm: FormGroup;
 
-  @Input() timeRange: IncentiveTimeRule = new IncentiveTimeRule();
+  @Input() timeRange: IncentiveTimeRuleInterface = { start: null, end: null };
   @Input() formControl: FormControl;
 
   constructor(private _formBuilder: FormBuilder) {}
@@ -36,7 +36,7 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
       end: [this.timeRange ? this.timeRange.end : null, Validators.required],
     });
 
-    this.timeRangeForm.valueChanges.subscribe((value: IncentiveTimeRule) => {
+    this.timeRangeForm.valueChanges.subscribe((value: IncentiveTimeRuleInterface) => {
       this.onValueChange(value);
     });
   }
@@ -47,7 +47,7 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
 
   onChange = (value: any) => {};
 
-  writeValue(value: IncentiveTimeRule) {
+  writeValue(value: IncentiveTimeRuleInterface) {
     if (value) {
       this.timeRange = value;
     }
@@ -59,7 +59,7 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
 
   registerOnTouched() {}
 
-  onValueChange(value: IncentiveTimeRule) {
+  onValueChange(value: IncentiveTimeRuleInterface) {
     if (value.start && value.end) {
       const beginDate = new Date();
       beginDate.setHours(Number(value.start.split(':')[0]), Number(value.start.split(':')[1]), 0, 0);

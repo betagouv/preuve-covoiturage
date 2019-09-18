@@ -1,6 +1,6 @@
 <div class="RulesForm CampaignSubForm">
   <h2>Définissez des conditions d'éligibilités</h2>
-  <form [formGroup]="rulesForm">
+  <form [formGroup]="filtersForm">
     <mat-accordion>
       <mat-expansion-panel
         [expanded]="true"
@@ -44,7 +44,9 @@
           </div>
         </div>
       </mat-expansion-panel>
-      <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.range.touched && !controls.range.valid }">
+      <mat-expansion-panel
+        [ngClass]="{ 'mat-expansion-panel-error': controls.distance_range.touched && !controls.distance_range.valid }"
+      >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
             Distance
@@ -62,11 +64,11 @@
             [max]="maxDistance"
             [step]="1"
             [tooltips]="[true, true]"
-            [formControl]="rulesForm.get('range')"
+            [formControl]="filtersForm.get('distance_range')"
           ></nouislider>
         </div>
       </mat-expansion-panel>
-      <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.ranks.touched && !controls.ranks.valid }">
+      <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.rank.touched && !controls.rank.valid }">
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
             Classe de preuve
@@ -78,10 +80,10 @@
         <div class="RulesForm-ranks CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Classe de preuve</mat-label>
-            <mat-select multiple formControlName="ranks" required>
+            <mat-select multiple formControlName="rank" required>
               <mat-option *ngFor="let tripClass of tripClassKeys" [value]="tripClass">{{ tripClass }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="controls.ranks.hasError('required')">
+            <mat-error *ngIf="controls.rank.hasError('required')">
               Les classes de preuves sont obligatoires.
             </mat-error>
           </mat-form-field>
@@ -90,8 +92,8 @@
       <mat-expansion-panel
         [ngClass]="{
           'mat-expansion-panel-error':
-            (controls.forDriver.touched || controls.forPassenger.touched || controls.forTrip.touched) &&
-            !(controls.forTrip.value || controls.forPassenger.value || controls.forDriver.value)
+            (forDriverControl.touched || forPassengerControl.touched || forTripControl.touched) &&
+            !(forTripControl.value || forPassengerControl.value || forDriverControl.value)
         }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
@@ -104,37 +106,41 @@
         </mat-expansion-panel-header>
         <div class="RulesForm-target CampaignSubForm-inputs">
           <mat-label>Que souhaitez vous subventionner ?</mat-label>
-          <mat-checkbox class="RulesForm-target-forDriver" color="primary" formControlName="forDriver"
-            >Conducteurs</mat-checkbox
-          >
-          <mat-checkbox
-            class="RulesForm-target-forPassenger"
-            color="primary"
-            #forPassenger
-            formControlName="forPassenger"
-            >Passagers</mat-checkbox
-          >
-          <mat-checkbox class="RulesForm-target-forTrip" color="primary" #forTrip formControlName="forTrip">
-            Trajets
-            <mat-icon
-              matSuffix
-              color="accent"
-              matTooltip="L'incitation sera affectée au trajet, c'est à la charge de l'opérateur de choisir la répartition entre conducteur et passager(s)"
-              aria-label="Information sur l'affection par trajet"
-              >info</mat-icon
+          <ng-container [formGroup]="campaignForm.get('ui_status')">
+            <mat-checkbox class="RulesForm-target-forDriver" color="primary" formControlName="for_driver"
+              >Conducteurs</mat-checkbox
             >
-          </mat-checkbox>
-          <mat-checkbox
-            class="RulesForm-target-forAdult"
-            [disabled]="!forPassenger.checked && !forTrip.checked"
-            color="primary"
-            formControlName="onlyAdult"
-            >Personnes majeurs uniquement</mat-checkbox
-          >
+            <mat-checkbox
+              class="RulesForm-target-forPassenger"
+              color="primary"
+              #forPassenger
+              formControlName="for_passenger"
+              >Passagers</mat-checkbox
+            >
+            <mat-checkbox class="RulesForm-target-forTrip" color="primary" #forTrip formControlName="for_trip">
+              Trajets
+              <mat-icon
+                matSuffix
+                color="accent"
+                matTooltip="L'incitation sera affectée au trajet, c'est à la charge de l'opérateur de choisir la répartition entre conducteur et passager(s)"
+                aria-label="Information sur l'affection par trajet"
+                >info</mat-icon
+              >
+            </mat-checkbox>
+          </ng-container>
+          <ng-container [formGroup]="campaignForm">
+            <mat-checkbox
+              class="RulesForm-target-forAdult"
+              [disabled]="!forPassenger.checked && !forTrip.checked"
+              color="primary"
+              formControlName="only_adult"
+              >Personnes majeurs uniquement</mat-checkbox
+            >
+          </ng-container>
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel
-        [ngClass]="{ 'mat-expansion-panel-error': controls.operatorIds.touched && !controls.operatorIds.valid }"
+        [ngClass]="{ 'mat-expansion-panel-error': controls.operator_ids.touched && !controls.operator_ids.valid }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
@@ -145,7 +151,7 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="RulesForm-operators CampaignSubForm-inputs">
-          <app-operators-autocomplete [parentForm]="rulesForm"></app-operators-autocomplete>
+          <app-operators-autocomplete [parentForm]="filtersForm"></app-operators-autocomplete>
         </div>
       </mat-expansion-panel>
     </mat-accordion>

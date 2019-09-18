@@ -1,5 +1,4 @@
 import { Operator } from '../../../src/app/core/entities/operator/operator';
-import { campaignTemplateStubs } from './campaign-template.list';
 
 export const operatorStubs: Operator[] = [
   {

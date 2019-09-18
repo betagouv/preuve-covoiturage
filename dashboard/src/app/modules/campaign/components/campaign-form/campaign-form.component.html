@@ -34,7 +34,7 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-rules-form [campaignForm]="campaignFormGroup"></app-rules-form>
+            <app-filters-form [campaignForm]="campaignFormGroup"></app-filters-form>
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
@@ -45,13 +45,7 @@
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
-            <button
-              mat-flat-button
-              class="large"
-              color="primary"
-              matStepperNext
-              [disabled]="!campaignFormGroup.get('rules').valid"
-            >
+            <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!canGoToThirdStep">
               Étape suivante
             </button>
           </div>
@@ -64,15 +58,15 @@
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
             <app-parameters-form [campaignForm]="campaignFormGroup"></app-parameters-form>
+            <!--            *ngIf="!campaignFormGroup.controls.expertMode.value"-->
             <app-help-card
-              *ngIf="!campaignFormGroup.controls.expertMode.value"
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
               [hint]="helpCard.hint"
               [link]="helpCard.link"
             >
             </app-help-card>
-            <app-formula-guide *ngIf="campaignFormGroup.controls.expertMode.value"></app-formula-guide>
+            <!--            <app-formula-guide *ngIf="campaignFormGroup.controls.expertMode.value"></app-formula-guide>-->
           </div>
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>

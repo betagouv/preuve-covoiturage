@@ -1,6 +1,6 @@
 import { WeekDay } from '@angular/common';
 
-import { TripClassEnum } from '~/core/enums/trip/trip-class.enum';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
@@ -20,7 +20,7 @@ export class Filter {
     min: number;
     max: number;
   };
-  ranks: TripClassEnum[];
+  ranks: TripRankEnum[];
   status: TripStatusEnum;
   operatorIds: string[];
   territoryIds: string[];
@@ -43,7 +43,7 @@ export class Filter {
       },
       ranks: [],
       status: null,
-      operatorIds: [],
+      operator_ids: [],
       territoryIds: [],
     },
   ) {
@@ -55,7 +55,7 @@ export class Filter {
     this.distance = obj.distance;
     this.ranks = obj.ranks;
     this.status = obj.status;
-    this.operatorIds = obj.operatorIds;
+    this.operatorIds = obj.operator_ids;
     this.territoryIds = obj.territoryIds;
   }
 }
