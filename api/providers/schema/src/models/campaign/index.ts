@@ -1,2 +1,2 @@
 export * from './interfaces';
-export * from './schemas/campaignCreateSchema';
+export * from './schemas';
