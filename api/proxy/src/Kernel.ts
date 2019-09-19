@@ -1,6 +1,7 @@
 import { kernel } from '@ilos/common';
 import { Kernel as BaseKernel } from '@ilos/framework';
 import { SentryProvider } from '@pdc/provider-sentry';
+import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { bootstrap as operatorBootstrap } from '@pdc/service-operator';
@@ -23,5 +24,6 @@ import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
     ...tripcheckBootstrap.serviceProviders,
   ],
   providers: [SentryProvider],
+  commands: [UpgradeJourneyCommand],
 })
 export class Kernel extends BaseKernel {}
