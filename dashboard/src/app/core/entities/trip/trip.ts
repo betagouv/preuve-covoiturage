@@ -9,7 +9,6 @@ export class Trip implements IModel {
   public status: TripStatusEnum;
   public start: Date;
   public people: Person[];
-  public class: TripRankEnum;
   public campaigns: any[];
 
   constructor(obj?: {
@@ -23,7 +22,6 @@ export class Trip implements IModel {
     this.status = obj.status;
     this.start = obj.start;
     this.people = obj.people;
-    this.class = obj.class;
     this.campaigns = obj.campaigns;
   }
 }

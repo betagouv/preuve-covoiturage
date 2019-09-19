@@ -12,6 +12,12 @@ import { Operator } from '~/core/entities/operator/operator';
 export class OperatorService extends ApiService<Operator> {
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
     super(_http, _jsonRPC, 'operator');
+    this.load().subscribe();
+  }
+
+  getOperatorName(id: string) {
+    const operator = this.entities.find((e) => e._id === id);
+    return operator ? operator.nom_commercial : null;
   }
 
   get operatorsLoaded() {
