@@ -32,19 +32,6 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
   ngOnInit() {}
 
   onDelete(user: User) {
-    /**
-     this._dialog.confirm('Suppression',
-     `Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.fullname} ?`,
-     'Supprimer')
-     .pipe(takeUntil(this.destroy$))
-     .subscribe((result) => {
-      if(!result) {
-        return;
-      }
-      // DELETE
-     });
-     */
-
     this.dialogService
       .confirm('Utilisateurs', 'Voulez-vous supprimer cet utilisateur ?')
       .pipe(takeUntil(this.destroy$))

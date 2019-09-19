@@ -101,11 +101,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       (err) => {
         this.isCreatingUpdating = false;
         this.toastr.error(err.message);
-
-        // TODO DELETE WHEN BACK IS OK
-        const auxArray = this._userService._entities$.value;
-        auxArray.push(this.createEditUserForm.value);
-        this._userService._entities$.next(auxArray);
       },
     );
   }
