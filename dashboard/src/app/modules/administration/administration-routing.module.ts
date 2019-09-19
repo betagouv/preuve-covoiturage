@@ -12,6 +12,7 @@ import { AdministrationLayoutComponent } from './administration-layout/administr
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
+import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,11 @@ const routes: Routes = [
         path: 'all-users',
         data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
         component: AllUsersComponent,
+      },
+      {
+        path: 'all-territories',
+        data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
+        component: AllTerritoriesComponent,
       },
       {
         path: '',

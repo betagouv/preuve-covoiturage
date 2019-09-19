@@ -10,6 +10,7 @@
   display: flex;
   align-items: center;
   transition: 0.3s all;
+  margin-bottom: 10px;
 
   &:hover {
     border: 1px solid $color-secondary;

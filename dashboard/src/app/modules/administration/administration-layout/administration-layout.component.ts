@@ -38,6 +38,12 @@ export class AdministrationLayoutComponent implements OnInit {
       label: 'Utilisateurs & accès',
     },
     {
+      path: '/admin/all-territories',
+      groups: [UserGroupEnum.REGISTRY],
+      role: 'admin',
+      label: 'Territoires',
+    },
+    {
       path: '/admin/api',
       role: 'admin',
       groups: [UserGroupEnum.OPERATOR],

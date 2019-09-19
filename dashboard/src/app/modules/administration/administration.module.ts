@@ -21,6 +21,7 @@ import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
 import { OperatorComponent } from './pages/operator/operator.component';
 import { ApiComponent } from './pages/api/api.component';
+import { AllTerritoriesComponent } from './pages/all-territories/all-territories.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ApiComponent } from './pages/api/api.component';
     UsersComponent,
     ApiComponent,
     AllUsersComponent,
+    AllTerritoriesComponent,
   ],
   imports: [
     AdministrationRoutingModule,
