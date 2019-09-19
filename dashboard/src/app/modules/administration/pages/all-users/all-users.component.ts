@@ -41,7 +41,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     // listen to user list
     this.userService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
       this.users = users;
-      this.usersToShow = users;
+      this.filterUsers();
     });
     // this.userGroupButtons.writeValue(this.userGroup);
     this.loadUsers();
