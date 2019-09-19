@@ -51,7 +51,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       skip: this.skip,
       limit: this.limit,
     };
-    this.loadTrips(filter);
+    this.loadTrips(filter, true);
   }
 
   exportTrips() {
@@ -70,7 +70,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private loadTrips(filter: FilterInterface | {} = {}): void {
+  private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {
     if (this.tripService.loading) {
       return;
     }
@@ -86,7 +86,11 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (trips) => {
-          this.trips = trips;
+          if (loadMore) {
+            this.trips = this.trips.concat(trips);
+          } else {
+            this.trips = trips;
+          }
         },
         (err) => {
           this.toastr.error(err.message);
