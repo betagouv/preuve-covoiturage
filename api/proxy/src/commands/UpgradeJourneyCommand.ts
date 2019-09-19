@@ -4,7 +4,6 @@ import {
   CommandOptionType,
   ResultType,
   KernelInterfaceResolver,
-  handler,
   ContextType,
 } from '@ilos/common';
 import { MongoConnection } from '@ilos/connection-mongo';
@@ -40,12 +39,14 @@ export class UpgradeJourneyCommand implements CommandInterface {
     {
       signature: '-l, --limit <limit>',
       description: 'Limit to apply',
+      // tslint:disable-next-line: no-unnecessary-callback-wrapper
       coerce: (s: string) => Number(s),
     },
   ];
 
   constructor(protected kernel: KernelInterfaceResolver) {}
 
+  // tslint:disable-next-line: no-shadowed-variable
   public async call(command, options): Promise<ResultType> {
     const connection = new MongoConnection({
       connectionString: options.databaseUri,
@@ -101,6 +102,7 @@ export class UpgradeJourneyCommand implements CommandInterface {
       },
     };
 
+    // tslint:disable-next-line: no-constant-condition
     while (true) {
       if (!(await cursor.hasNext())) {
         break;
@@ -134,6 +136,7 @@ export class UpgradeJourneyCommand implements CommandInterface {
             },
           );
         }
+        // tslint:disable-next-line: no-console
         console.info(`Operation done for ${current._id}`);
       } catch (e) {
         console.log(e);
