@@ -48,8 +48,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
           phone: this.user.phone,
           role: this.user.role,
           group: this.user.group,
-          territory: this.user.territory,
-          operator: this.user.operator,
+          territory: this.user.territory ? this.user.territory : null,
+          operator: this.user.operator ? this.user.operator : null,
         });
       }
     }
@@ -101,11 +101,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       (err) => {
         this.isCreatingUpdating = false;
         this.toastr.error(err.message);
-
-        // TODO DELETE WHEN BACK IS OK
-        const auxArray = this._userService._entities$.value;
-        auxArray.push(this.createEditUserForm.value);
-        this._userService._entities$.next(auxArray);
       },
     );
   }
@@ -115,11 +110,11 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
 
-      this.createEditUserForm.controls[UserGroupEnum.OPERATOR].setValidators(
+      this.createEditUserForm.controls['operator'].setValidators(
         this.groupEditable && this.operatorEditable && this.isCreating ? Validators.required : null,
       );
 
-      this.createEditUserForm.controls[UserGroupEnum.TERRITORY].setValidators(
+      this.createEditUserForm.controls['territory'].setValidators(
         this.groupEditable && this.territoryEditable && this.isCreating ? Validators.required : null,
       );
     }
@@ -153,13 +148,13 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;
-        if (!territoryEditable) this.createEditUserForm.patchValue({ territory: null });
+        if (!territoryEditable) this.createEditUserForm.patchValue({ territory: '' });
       }
 
       const operatorEditable = formVal.group === UserGroupEnum.OPERATOR;
       if (operatorEditable !== this.operatorEditable) {
         this.operatorEditable = operatorEditable;
-        if (operatorEditable) this.createEditUserForm.patchValue({ operator: null });
+        if (operatorEditable) this.createEditUserForm.patchValue({ operator: '' });
       }
     });
 

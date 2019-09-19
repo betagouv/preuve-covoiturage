@@ -32,8 +32,13 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     this.originalInnerHTML = this.el.nativeElement.querySelector('.mat-button-wrapper').innerHTML;
 
     // Set the button to maintain the same dimensions, even once we put the spinner inside.
-    this.el.nativeElement.style.width = `${(<HTMLElement>this.el.nativeElement).offsetWidth}px`;
-    this.el.nativeElement.style.height = `${(<HTMLElement>this.el.nativeElement).offsetHeight}px`;
+    if ((<HTMLElement>this.el.nativeElement).offsetWidth) {
+      this.el.nativeElement.style.width = `${(<HTMLElement>this.el.nativeElement).offsetWidth}px`;
+    }
+
+    if ((<HTMLElement>this.el.nativeElement).offsetHeight) {
+      this.el.nativeElement.style.height = `${(<HTMLElement>this.el.nativeElement).offsetHeight}px`;
+    }
 
     // Create the spinner
     const factory = this.componentFactoryResolver.resolveComponentFactory(MatSpinner);

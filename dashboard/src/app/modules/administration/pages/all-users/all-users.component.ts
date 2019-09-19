@@ -41,7 +41,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     // listen to user list
     this.userService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
       this.users = users;
-      this.usersToShow = users;
+      this.filterUsers();
     });
     // this.userGroupButtons.writeValue(this.userGroup);
     this.loadUsers();
@@ -98,10 +98,10 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
       });
   }
 
-  private filterUsers() {
-    const query = this.searchFilters.controls.query.value;
+  public filterUsers() {
+    const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
     this.usersToShow = this.users.filter(
-      (u) => u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query),
+      (u) => (u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query)) && this.userGroup === u.group,
     );
   }
 }

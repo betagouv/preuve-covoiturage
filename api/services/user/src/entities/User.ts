@@ -16,8 +16,8 @@ export class User implements UserInterface {
   public forgotten_token?: string;
   public email_confirm?: string;
   public email_token?: string;
-  public operator?: string;
-  public territory?: string;
+  public operator?: string = null;
+  public territory?: string = null;
   public has_reset_password?: boolean;
   public forgotten_at?: Date;
   public email_change_at?: Date;

@@ -35,14 +35,12 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   updateOperator(operatorId: string) {}
 
   private selectedOperatorUpdated() {
-    console.log('> selectedOperatorUpdated', this._operatorForm.value);
     this.selectedOperatorId = this._operatorForm.value ? this._operatorForm.value.toString() : null;
     this.selectedOperator = this.operators.find((foperator) => this.selectedOperatorId === foperator._id);
     this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : '');
   }
 
   onOperatorSelect(operator: MatAutocompleteSelectedEvent) {
-    console.log('operator : ', operator.option.value);
     // this.updateOperator(operator.option.value);
     this._operatorForm.setValue(operator.option.value);
     this._searchUpdate = false;
@@ -55,7 +53,6 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   ngOnInit() {
     // this.operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
     //   this.operators = operators;
-    //   console.log('this.operators : ', this.operators);
     // });
 
     this.operatorService
@@ -63,7 +60,6 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
       .pipe(takeUntil(this.destroy$))
       .subscribe((operators) => {
         this.operators = operators;
-        console.log('this.operators : ', this.operators);
       });
 
     this.filteredOperators = this.operatorCtrl.valueChanges.pipe(
@@ -82,12 +78,10 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   // }
   private filter(value: string): Operator[] {
     this._searchUpdate = true;
-    console.log('value : ', value);
     return this.operators.filter((operator) => operator.nom_commercial.toLowerCase().includes(value.toLowerCase()));
   }
 
   inputLostFocus() {
-    console.log('this._searchUpdate : ', this._searchUpdate);
     // if search field has been not been updated and input lost focus it restore original value.
     setTimeout(() => {
       if (this._searchUpdate) {
