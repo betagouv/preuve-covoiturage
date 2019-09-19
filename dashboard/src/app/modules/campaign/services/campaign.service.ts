@@ -22,6 +22,8 @@ import {
   RetributionRulesSlugEnum,
   RetributionRuleType,
 } from '~/core/interfaces/campaign/campaignInterface';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 @Injectable({
   providedIn: 'root',
 })
@@ -177,7 +179,7 @@ export class CampaignService extends ApiService<Campaign> {
 
   public loadTemplates(): Observable<Campaign[]> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:listTemplates`);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:list`, { status: CampaignStatusEnum.TEMPLATE });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((templates: Campaign[]) => {
