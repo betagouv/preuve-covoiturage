@@ -27,4 +27,7 @@
       </div>
     </div>
   </app-list-item>
+  <div *ngIf="campaignService.campaignsLoaded && campaigns && campaigns.length === 0" class="CampaignsList-notfound">
+    <p>Vous n'avez pas de campagnes.</p>
+  </div>
 </div>
