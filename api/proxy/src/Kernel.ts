@@ -8,6 +8,7 @@ import { bootstrap as applicationBootstrap } from '@pdc/service-application';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
 import { bootstrap as normalizationBootstrap } from '@pdc/service-normalization';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
+import { bootstrap as policyBootstrap } from '@pdc/service-policy';
 
 import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 
@@ -22,6 +23,7 @@ import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
     ...operatorBootstrap.serviceProviders,
     ...normalizationBootstrap.serviceProviders,
     ...tripcheckBootstrap.serviceProviders,
+    ...policyBootstrap.serviceProviders,
   ],
   providers: [SentryProvider],
   commands: [UpgradeJourneyCommand],

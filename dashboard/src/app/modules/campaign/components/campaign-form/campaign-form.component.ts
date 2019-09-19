@@ -3,20 +3,16 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
-import * as moment from 'moment';
 import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
-import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
-import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 
 @Component({
   selector: 'app-campaign-form',
@@ -72,12 +68,12 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   saveOrLaunchCampaign(saveAsDraft) {
-    const campaign = _.cloneDeep(this.campaignFormGroup.getRawValue());
-    const campaignToSave: Campaign = this.campaignService.toCampaignFormat(campaign);
-    if (!saveAsDraft && campaignToSave.status === CampaignStatusEnum.DRAFT) {
-      this.launchCampaign(campaignToSave);
+    const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
+    const campaign: Campaign = this.campaignService.toCampaignFormat(campaignUx);
+    if (!saveAsDraft && campaign.status === CampaignStatusEnum.DRAFT) {
+      this.launchCampaign(campaign);
     } else {
-      this.saveCampaign(campaignToSave);
+      this.createCampaign(campaign);
     }
   }
 
@@ -133,7 +129,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       });
   }
 
-  private saveCampaign(campaign: Campaign) {
+  private createCampaign(campaign: Campaign) {
     this.campaignService
       .create(campaign)
       .pipe(takeUntil(this.destroy$))
@@ -169,6 +165,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         for_driver: [null],
         for_passenger: [null],
         for_trip: [null],
+        staggered: [false],
       }),
       start: [null, Validators.required],
       end: [null, Validators.required],
@@ -221,8 +218,17 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     filtersForm.patchValue({
       weekday: campaign.filters.weekday,
       distance_range: campaign.filters.distance_range,
-      ranks: campaign.filters.rank,
+      rank: campaign.filters.rank,
       operator_ids: campaign.filters.operator_ids,
+    });
+
+    // patch uiStatus
+    const uiStatusForm = this.campaignFormGroup.get('ui_status');
+    uiStatusForm.patchValue({
+      for_driver: campaign.ui_status.for_driver,
+      for_passenger: campaign.ui_status.for_passenger,
+      for_trip: campaign.ui_status.for_trip,
+      staggered: campaign.ui_status.staggered,
     });
 
     // patch form arrays
@@ -232,10 +238,25 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       timeFormArray.push(this._formBuilder.control(time));
     });
 
+    // patch restriction
     const restrictionFormArray = <FormArray>this.campaignFormGroup.get('restrictions');
     restrictionFormArray.clear();
     campaign.retributions.forEach((restriction) => {
       restrictionFormArray.push(this._formBuilder.group(restriction));
+    });
+
+    // patch retribution
+    const retributionFormArray = <FormArray>this.campaignFormGroup.get('retributions');
+    retributionFormArray.clear();
+    campaign.retributions.forEach((retribution) => {
+      retributionFormArray.push(
+        this._formBuilder.group({
+          for_passenger: this._formBuilder.group(retribution.for_passenger),
+          for_driver: this._formBuilder.group(retribution.for_driver),
+          min: retribution.min,
+          max: retribution.max,
+        }),
+      );
     });
 
     // const formulaFormArray = <FormArray>this.campaignFormGroup.get('formulas');
@@ -266,55 +287,25 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   private loadCampaign(campaignId: string) {
-    this.campaignService
-      .get(campaignId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (campaign: Campaign) => {
-          const campaignUx = this.campaignService.toCampaignUxFormat(campaign);
-          this.setCampaignToForm(campaignUx, false);
-        },
-        () => {
-          if (campaignId !== '5d6fa2995623dc991b288f11') {
-            this.router.navigate(['/campaign']);
-          }
-          this.setCampaignToForm(
-            new CampaignUx({
-              _id: '5d6fa2995623dc991b288f11',
-              parent_id: null,
-              status: CampaignStatusEnum.DRAFT,
-              name: "Campagne d'incitation en idf",
-              description: 'Délibération 2019/143',
-              filters: {
-                weekday: [0, 1, 2, 3, 4, 5, 6],
-                distance_range: [2, 150],
-                time: [],
-                rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-                operator_ids: [],
-              },
-              only_adult: false,
-              ui_status: {
-                for_driver: false,
-                for_passenger: false,
-                for_trip: true,
-              },
-              start: moment().add(1, 'days'),
-              end: moment().add(3, 'months'),
-              max_trips: null,
-              max_amount: 2000000,
-              unit: IncentiveUnitEnum.EUR,
-              restrictions: [
-                {
-                  quantity: 2,
-                  is_driver: true,
-                  period: restrictionEnum.DAY,
-                },
-              ],
-              retributions: [],
-            }),
-          );
-        },
-      );
+    if (!this.campaignService.campaignsLoaded) {
+      this.campaignService
+        .load()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe();
+    }
+    this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
+      if (campaigns.length === 0) {
+        return;
+      }
+      const foundCampaign = campaigns.filter((campaign) => campaign._id === campaignId)[0];
+      if (foundCampaign) {
+        const campaignUx = this.campaignService.toCampaignUxFormat(foundCampaign);
+        this.setCampaignToForm(campaignUx, false);
+      } else {
+        this.toastr.error("Les données de la campagne n'ont pas pu être chargé");
+        this.router.navigate(['/campaign']);
+      }
+    });
   }
 
   private setLastAvailableStep(): void {

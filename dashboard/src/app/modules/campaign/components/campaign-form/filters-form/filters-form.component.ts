@@ -23,6 +23,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.campaignForm.get('ui_status').get('for_driver').value);
     this.initTargetChangeDetection();
   }
 

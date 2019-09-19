@@ -1,1 +1,1 @@
-export type FormulaUnitType = 'eur' | 'point';
+export type FormulaUnitType = 'euro' | 'point';

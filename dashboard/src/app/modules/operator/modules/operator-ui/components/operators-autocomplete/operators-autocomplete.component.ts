@@ -27,7 +27,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
 
-  constructor(private operatorService: OperatorService) {
+  constructor(public operatorService: OperatorService) {
     super();
   }
 
@@ -72,45 +72,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
       this.operatorService
         .load()
         .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          () => {},
-          (err) => {
-            // TODO TMP REMOVE WHEN FINISHED
-            const mockOperators: Operator[] = [
-              {
-                _id: '5d763d57650de3750ee4eff4',
-                nom_commercial: 'Operateur 1',
-                raison_sociale: 'Opérateur 1 SAS',
-                company: {
-                  siren: '123456789',
-                  naf_entreprise: '1234A',
-                },
-                address: {
-                  street: '5 rue de brest',
-                  postcode: '69002',
-                  city: 'Lyon',
-                  country: 'France',
-                },
-              },
-              {
-                _id: '5d763d5f5684e0b9bafaaeb0',
-                nom_commercial: 'Operateur 2',
-                raison_sociale: 'Opérateur 1 SAS',
-                company: {
-                  siren: '123456789',
-                  naf_entreprise: '1234A',
-                },
-                address: {
-                  street: '5 rue de brest',
-                  postcode: '69002',
-                  city: 'Lyon',
-                  country: 'France',
-                },
-              },
-            ];
-            this.operatorService._entities$.next(mockOperators);
-          },
-        );
+        .subscribe();
     }
     this.operatorService._entities$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators.map((operator) => ({

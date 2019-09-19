@@ -1,4 +1,4 @@
-<mat-form-field [formGroup]="parentForm" class="operators" appearance="outline">
+<mat-form-field [formGroup]="parentForm" class="operators" appearance="outline" *ngIf="operatorService.operatorsLoaded">
   <mat-label>Opérateurs</mat-label>
   <mat-chip-list #chipList>
     <mat-chip

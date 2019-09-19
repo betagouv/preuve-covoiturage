@@ -15,6 +15,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserService } from '~/core/services/authentication/user.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-trip-list',
@@ -130,7 +131,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       incentives: [
         {
           amount: Math.floor(Math.random() * 10),
-          amount_unit: ['eur', 'point'][Math.floor(Math.random() * 2)],
+          amount_unit: [IncentiveUnitEnum.EUR, IncentiveUnitEnum.POINT][Math.floor(Math.random() * 2)],
         },
       ],
     });

@@ -1,5 +1,8 @@
 export const weekdayFilterSchema = {
-  type: 'integer',
-  minimum: 0,
-  maximum: 6,
+  type: 'array',
+  items: {
+    type: 'integer',
+    minimum: 0,
+    maximum: 6,
+  },
 };
