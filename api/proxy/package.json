@@ -89,7 +89,6 @@
     "@pdc/service-trip": "~0",
     "@pdc/service-user": "~0",
     "body-parser": "^1.19.0",
-    "bull-arena": "^2.6.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-mung": "^0.5.1",

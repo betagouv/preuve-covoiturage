@@ -10,47 +10,51 @@ export function errorHandlerMiddleware(
   res: express.Response,
   _next: express.NextFunction,
 ) {
-  let output: express.Response;
+  let code: number;
 
   switch (err.message) {
     case 'MongoError':
       switch (err.message.match(/^([A-Z0-9])+/)[0]) {
         case 'E11000':
-          output = res.status(409);
+          code = 409;
           break;
         default:
-          output = res.status(500);
+          code = 500;
       }
       break;
 
     case 'Bad Request Error':
     case 'Validation Error':
-      output = res.status(400);
+      code = 400;
       break;
 
     case 'Unauthorized Error':
-      output = res.status(401);
+      code = 401;
       break;
 
     case 'Forbidden':
-      output = res.status(403);
+      code = 403;
       break;
 
     case 'Not Found':
-      output = res.status(404);
+      code = 404;
       break;
 
     case 'Conflict':
-      output = res.status(409);
+      code = 409;
       break;
 
     case 'Internal Server Error':
-      output = res.status(500);
+      code = 500;
       break;
 
     default:
-      output = res.status(500);
+      code = 500;
   }
 
-  output.json({ name: err.name, message: err.message });
+  res.status(code).json({
+    id: 1,
+    jsonrpc: '2.0',
+    error: { code, data: err.name, message: err.message },
+  });
 }

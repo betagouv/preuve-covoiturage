@@ -1,3 +1,5 @@
+CREATE EXTENSION postgis;
+
 CREATE TABLE trips
 (
   _id serial primary key,
@@ -7,7 +9,7 @@ CREATE TABLE trips
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW(),
   deleted_at timestamp
-)
+);
 
 CREATE TYPE identitytype AS (
   phone varchar,
@@ -60,11 +62,11 @@ CREATE TABLE trip_participants (
   revenue int,
 
 -- montant final (+/-) en fonction de la situation
-  expense int NULL, 
+  expense int NULL,
 
   incentives json[] NOT NULL DEFAULT array[]::json[],
   -- incentives?: IncentiveInterface[];
-  payments json[] NOT NULL DEFAULT array[]::json[],
+  payments json[] NOT NULL DEFAULT array[]::json[]
   -- payments?: PaymentInterface[];
   -- campaign id
 );

@@ -2,8 +2,7 @@ node_modules
 .idea
 .vscode
 .env
-db/mongo
-db/postgres
+db/*
 api/ilos
 
 yarn-error.log

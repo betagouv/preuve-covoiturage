@@ -30,14 +30,17 @@ Merci pour votre contribution !
 
 ### Architecture
 
-| Service         | slug     | URL                         | Folder     | Port  |
-| --------------- | -------- | --------------------------- | ---------- | ----- |
-| MongoDB         | `mongo`  | mongodb://mongo:27017       | -          | 27017 |
-| Redis           | `redis`  | http://localhost:6379       | -          | 6379  |
-| Arena (bg jobs) | `arena`  | http://localhost:8080/arena | -          | 8080  |
-| API             | `api`    | http://localhost:8080       | /api       | 8080  |
-| OpenAPI Editor  | `editor` | http://localhost:8081       | -          | 8081  |
-| Dashboard       | `dash`   | http://localhost:4200       | /dashboard | 4200  |
+| Service         | slug        | ENV              | URL                               | Folder     |
+| --------------- | ----------- | ---------------- | --------------------------------- | ---------- |
+| Frontend        | `dashboard` | APP_APP_URL      | http://localhost:4200             | /dashboard |
+| API             | `api`       | APP_API_URL      | http://localhost:8080             | /api       |
+| MongoDB         | `mongo`     | APP_MONGO_URL    | mongodb://mongo:mongo@mongo:27017 | -          |
+| Redis           | `redis`     | APP_REDIS_URL    | redis://redis:6379                | -          |
+| Redis Client    | `arena`     | -                | http://localhost:4567             | -          |
+| Postgres        | `postgres`  | APP_POSTGRES_URL | postgresql://postgres:post        | -          |
+| Postgres Client | `pgadmin`   | -                | http://localhost:5050             | -          |
+
+> `docker-compose.yml` is use in `local` environment only
 
 ### Installation
 
