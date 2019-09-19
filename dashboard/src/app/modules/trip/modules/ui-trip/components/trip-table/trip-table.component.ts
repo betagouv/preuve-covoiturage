@@ -6,6 +6,7 @@ import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { Person } from '~/core/entities/trip/person';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { OperatorService } from '~/modules/operator/services/operator.service';
 
 @Component({
   selector: 'app-trip-table',
@@ -25,7 +26,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
   ];
   @Input() data: Trip[];
 
-  constructor() {
+  constructor(private operatorService: OperatorService) {
     super();
   }
 
@@ -39,6 +40,9 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
         return 'warning';
       case TripStatusEnum.ERROR:
         return 'error';
+      // TODO DELETE, just for demo
+      default:
+        return 'check_circle';
     }
   }
 
@@ -50,10 +54,16 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
         return 'warning';
       case TripStatusEnum.ERROR:
         return 'error';
+      // TODO DELETE, just for demo
+      default:
+        return 'success';
     }
   }
 
   getCampaignsName(campaigns: any[]): string {
+    if (!campaigns) {
+      return '';
+    }
     let names = '';
     campaigns.forEach((campaign, idx) => {
       if (idx !== 0) {
@@ -71,23 +81,25 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     if (!driver) {
       return '';
     }
-    return start ? driver.start : driver.end;
+    return start ? driver.start_town : driver.end_town;
   }
 
   getOperator(trip: Trip): string {
     const driver: Person = trip.people ? trip.people.find((p) => p.is_driver) : null;
-    if (!driver || !driver.operator) {
+    if (!driver || !driver.operator_id) {
       return '';
     }
-    return driver.operator.nom_commercial;
+    // TODO delete replace function after back fix
+    return this.operatorService.getOperatorName(driver.operator_id.replace(/\"/g, ''));
   }
 
-  getTotalIncentives(trip: Trip): number {
+  getTotalIncentives(trip: Trip): string {
     if (!trip.people) {
-      return 0;
+      return '-';
     }
     const incentives: any[] = _.flattenDeep(trip.people.map((p) => p.incentives));
-    return incentives.reduce((a, b) => a + (b.amount || 0), 0);
+    const amount = incentives.reduce((a, b) => a + (b.amount || 0), 0);
+    return amount ? amount : '-';
   }
 
   getTotalIncentivesUnit(trip: Trip): string {
@@ -104,7 +116,10 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     if (isEur) {
       return '€';
     }
-    return 'points';
+    if (isPoint) {
+      return 'points';
+    }
+    return '';
   }
 
   getIncetivesTooltip(trip: Trip): string {
@@ -114,13 +129,21 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
 
     if (driver) {
       const incentives = driver.incentives.map((i) => `${i.amount} ${i.amount_unit}`);
-      tooltip += `Conducteur: ${incentives.join(' ,')}`;
+      tooltip += incentives && incentives.length > 0 ? `Conducteur: ${incentives.join(' ,')}` : '';
     }
     passengers.forEach((p, idx) => {
       const incentives = p.incentives.map((i) => `${i.amount} ${i.amount_unit}`);
-      tooltip += `\nPassager n°${idx + 1}: ${incentives.join(' ,')}`;
+      tooltip += incentives && incentives.length > 0 ? `\nPassager n°${idx + 1}: ${incentives.join(' ,')}` : '';
     });
 
     return tooltip;
+  }
+
+  getTripRank(trip: Trip): string {
+    const driver: Person = trip.people ? trip.people.find((p) => p.is_driver) : null;
+    if (!driver) {
+      return '';
+    }
+    return driver.rank;
   }
 }
