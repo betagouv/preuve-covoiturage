@@ -20,6 +20,7 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 export class TripListComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
   trips: Trip[] = [];
+  skip = 0;
   limit = 50;
 
   constructor(
@@ -34,21 +35,23 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
-      this.limit = 50;
       this.loadTrips({
         ...filter,
+        skip: this.skip,
         limit: this.limit,
       });
     });
   }
 
   onScroll() {
-    this.limit += 20;
+    // TODO stop fetching trips when end (count 0) is reached
+    this.skip += 20;
     const filter = {
       ...this.filterService._filter$.value,
+      skip: this.skip,
       limit: this.limit,
     };
-    this.loadTrips(filter);
+    this.loadTrips(filter, true);
   }
 
   exportTrips() {
@@ -67,7 +70,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private loadTrips(filter: FilterInterface | {} = {}): void {
+  private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {
     if (this.tripService.loading) {
       return;
     }
@@ -83,7 +86,11 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (trips) => {
-          this.trips = trips;
+          if (loadMore) {
+            this.trips = this.trips.concat(trips);
+          } else {
+            this.trips = trips;
+          }
         },
         (err) => {
           this.toastr.error(err.message);
