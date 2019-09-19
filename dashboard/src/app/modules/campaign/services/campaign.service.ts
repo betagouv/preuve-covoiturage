@@ -100,8 +100,8 @@ export class CampaignService extends ApiService<Campaign> {
       }
       if (retributionRule.slug === RetributionRulesSlugEnum.RETRIBUTION) {
         const parameters = <RetributionParametersInterface>retributionRule.parameters;
-        parameters.for_passenger.amount = parameters.for_passenger.amount / 100; // to euros
-        parameters.for_driver.amount = parameters.for_driver.amount / 100; // to euros
+        parameters.for_passenger.amount = Number(parameters.for_passenger.amount) / 100; // to euros
+        parameters.for_driver.amount = Number(parameters.for_driver.amount) / 100; // to euros
         campaignUx.retributions.push(parameters);
       }
     });

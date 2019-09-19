@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
-import { Stat } from '~/core/entities/stat/stat';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { FilterService } from '~/core/services/filter.service';

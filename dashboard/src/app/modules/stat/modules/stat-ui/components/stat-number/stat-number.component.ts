@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as _ from 'lodash';
+import { takeUntil } from 'rxjs/operators';
 
 import { StatNumberInterface } from '~/core/interfaces/stat/statNumberInterface';
 import { StatNumber } from '~/core/entities/stat/statNumber';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { statNumbers } from '../../../../config/statNumbers';
-
 import { StatService } from '../../../../services/stat.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { StatService } from '../../../../services/stat.service';
   templateUrl: './stat-number.component.html',
   styleUrls: ['./stat-number.component.scss'],
 })
-export class StatNumberComponent implements OnInit {
+export class StatNumberComponent extends DestroyObservable implements OnInit {
   public statNumber: StatNumberInterface | null = null;
   public _selected = false;
   public _disabled = false;
@@ -30,10 +31,14 @@ export class StatNumberComponent implements OnInit {
 
   @Output() linkClicked: EventEmitter<string> = new EventEmitter();
 
-  constructor(private statService: StatService) {}
+  constructor(private statService: StatService) {
+    super();
+  }
 
   ngOnInit() {
-    this.initStatNumber(this.statNumberName);
+    this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.initStatNumber(this.statNumberName);
+    });
   }
 
   private initStatNumber(statNumberName: string): void {

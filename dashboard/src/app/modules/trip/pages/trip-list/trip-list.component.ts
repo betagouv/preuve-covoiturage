@@ -20,6 +20,7 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 export class TripListComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
   trips: Trip[] = [];
+  limit = 50;
 
   constructor(
     public filterService: FilterService,
@@ -33,12 +34,21 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
-      this.loadTrips(filter);
+      this.limit = 50;
+      this.loadTrips({
+        ...filter,
+        limit: this.limit,
+      });
     });
   }
 
   onScroll() {
-    this.loadTrips();
+    this.limit += 20;
+    const filter = {
+      ...this.filterService._filter$.value,
+      limit: this.limit,
+    };
+    this.loadTrips(filter);
   }
 
   exportTrips() {

@@ -43,6 +43,8 @@ export class StatService extends ApiService<StatInterface> {
       map((data) => data.data),
       tap((data) => {
         this.formatData(data);
+        this._loading$.next(false);
+        console.log('loading should be false', this._loading$.value);
       }),
     );
   }
@@ -73,15 +75,17 @@ export class StatService extends ApiService<StatInterface> {
         // tslint:disable-next-line:no-bitwise
         co2: (get(d, 'distance.total', 0) * co2Factor) | 0,
         // tslint:disable-next-line:no-bitwise
-        carpoolersPerVehicule: get(d, 'carpoolers_per_vehicule.total', 0).toFixed(2),
+        carpoolersPerVehicule: get(d, 'carpoolers_per_vehicule.total', 0)
+          ? get(d, 'carpoolers_per_vehicule.total', 0).toFixed(2)
+          : 0,
         operators: get(d, 'operators.total', 0),
       },
       graph: {
         tripsPerMonth: this.fixMonthDisplay({
-          x: get(d, 'trips.months-temp', [])
+          x: get(d, 'trips.months', [])
             .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'trips.months-temp', [])
+          y: get(d, 'trips.months', [])
             .filter(this.filterOutFutur)
             .map((val) => val.total),
         }),
@@ -102,11 +106,11 @@ export class StatService extends ApiService<StatInterface> {
             .reduce(this.reduceCumulativeData, []),
         },
         tripsSubsidizedPerMonth: this.fixMonthDisplay({
-          x: get(d, 'trips.months-temp', [])
-            // .filter(this.filterOutFutur)
+          x: get(d, 'trips.months', [])
+            .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'trips.months-temp', [])
-            // .filter(this.filterOutFutur)
+          y: get(d, 'trips.months', [])
+            .filter(this.filterOutFutur)
             .map((val) => val.total_subsidized),
         }),
         tripsSubsidizedPerDay: this.fixWeekDisplay({
@@ -126,11 +130,11 @@ export class StatService extends ApiService<StatInterface> {
             .reduce(this.reduceCumulativeSubsidizedData, []),
         },
         distancePerMonth: this.fixMonthDisplay({
-          x: get(d, 'distance.months-temp', [])
-            // .filter(this.filterOutFutur)
+          x: get(d, 'distance.months', [])
+            .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'distance.months-temp', [])
-            // .filter(this.filterOutFutur)
+          y: get(d, 'distance.months', [])
+            .filter(this.filterOutFutur)
             // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total / 1000) | 0),
         }),
@@ -154,11 +158,11 @@ export class StatService extends ApiService<StatInterface> {
             .map((i) => (i / 1000) | 0),
         },
         carpoolersPerMonth: this.fixMonthDisplay({
-          x: get(d, 'carpoolers.months-temp', [])
-            // .filter(this.filterOutFutur)
+          x: get(d, 'carpoolers.months', [])
+            .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'carpoolers.months-temp', [])
-            // .filter(this.filterOutFutur)
+          y: get(d, 'carpoolers.months', [])
+            .filter(this.filterOutFutur)
             .map((val) => val.total),
         }),
         carpoolersPerDay: this.fixWeekDisplay({
@@ -178,11 +182,11 @@ export class StatService extends ApiService<StatInterface> {
             .reduce(this.reduceCumulativeData, []),
         },
         petrolPerMonth: this.fixMonthDisplay({
-          x: get(d, 'distance.months-temp', [])
-            // .filter(this.filterOutFutur)
+          x: get(d, 'distance.months', [])
+            .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'distance.months-temp', [])
-            // .filter(this.filterOutFutur)
+          y: get(d, 'distance.months', [])
+            .filter(this.filterOutFutur)
             // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total * petrolFactor) | 0),
         }),
@@ -207,11 +211,11 @@ export class StatService extends ApiService<StatInterface> {
             .map((i) => (i * petrolFactor) | 0),
         },
         co2PerMonth: this.fixMonthDisplay({
-          x: get(d, 'distance.months-temp', [])
-            // .filter(this.filterOutFutur)
+          x: get(d, 'distance.months', [])
+            .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'distance.months-temp', [])
-            // .filter(this.filterOutFutur)
+          y: get(d, 'distance.months', [])
+            .filter(this.filterOutFutur)
             // tslint:disable-next-line:no-bitwise
             .map((i) => (i.total * co2Factor) | 0),
         }),
@@ -287,6 +291,15 @@ export class StatService extends ApiService<StatInterface> {
     if ('day' in val) {
       return moment().isAfter(val.day);
     }
+    // todo: remove later
+    if ('date' in val) {
+      let month = val.date;
+      if (month.length < 2) {
+        month = `0${month}`;
+      }
+      // todo: fix this
+      return moment().isAfter(moment(`01/${month}/2019`, 'DD/MM/YYYY'));
+    }
     return false;
   }
 
@@ -297,9 +310,12 @@ export class StatService extends ApiService<StatInterface> {
 
   // format ISO to chart js compatible
   private formatMonthDate(date: string): string {
-    return moment(date)
-      .startOf('month')
-      .format('YYYY-MM-DD');
+    let month = date;
+    if (month.length < 2) {
+      month = `0${month}`;
+    }
+    // todo: fix this
+    return moment(`01/${month}/2019`, 'DD/MM/YYYY').format('YYYY-MM-DD');
   }
 
   /**
