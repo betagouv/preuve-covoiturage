@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -47,55 +47,22 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
       this.territoryService
         .load()
         .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          () => {
-            //
-          },
-          () => {
-            this.territoryService._entities$.next([
-              {
-                _id: '5c66d89760e6ee004a6cab1f',
-                name: 'AOM 1',
-                acronym: 'Aom 1 acronym ',
-                shortname: 'AOM 1 shortname',
-                company: new Company({
-                  siren: '123456789',
-                  naf_entreprise: '1234A',
-                }),
-                address: new Address({
-                  street: '5 rue de brest',
-                  postcode: '69002',
-                  city: 'Lyon',
-                  country: 'France',
-                }),
-              },
-              {
-                _id: '5d7775bf37043b8463b2a208',
-                name: 'AOM 2',
-                acronym: 'Aom acronym 2',
-                company: new Company({
-                  siren: '123456789',
-                  naf_entreprise: '1234A',
-                }),
-                address: new Address({
-                  street: '5 rue de brest',
-                  postcode: '69002',
-                  city: 'Lyon',
-                  country: 'France',
-                }),
-              },
-            ]);
-          },
-        );
+        .subscribe();
     }
 
-    this.territoryService.entities$.pipe(takeUntil(this.destroy$)).subscribe((territories: Territory[]) => {
-      this.territories = territories.map((territory: Territory) => ({
-        _id: territory._id,
-        shortname: territory.shortname || territory.acronym || territory.name,
-      }));
-      this.filterTerritories();
-    });
+    this.territoryService.entities$
+      .pipe(
+        takeUntil(this.destroy$),
+        // sort by name A-Z
+        map((d) => d.sort((a, b) => (a.name > b.name ? 1 : -1))),
+      )
+      .subscribe((territories: Territory[]) => {
+        this.territories = territories.map((territory: Territory) => ({
+          _id: territory._id,
+          shortname: territory.shortname || territory.acronym || territory.name,
+        }));
+        this.filterTerritories();
+      });
   }
 
   public remove(territoryId: string): void {
