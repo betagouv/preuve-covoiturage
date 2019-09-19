@@ -10,7 +10,7 @@ export const distanceFilterSchema = {
     max: {
       type: 'integer',
       minimum: 0,
-      maximum: 100000,
+      maximum: 500000,
     },
   },
 };

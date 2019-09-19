@@ -8,6 +8,7 @@ import {
   middleware,
 } from '@ilos/common';
 import { CampaignInterface } from '@pdc/provider-schema';
+
 import { policies } from '../data/policies';
 
 @middleware()
@@ -25,10 +26,10 @@ export class ValidateRetributionInputMiddleware implements MiddlewareInterface, 
     if (retributionRules) {
       const availablePolicies = policies.map((policy) => policy.slug);
 
-      const notAppliablePolicies = retributionRules.filter((policy) => availablePolicies.indexOf(policy.slug) < 0);
-      if (notAppliablePolicies.length > 0) {
+      const notApplicablePolicies = retributionRules.filter((policy) => availablePolicies.indexOf(policy.slug) < 0);
+      if (notApplicablePolicies.length > 0) {
         throw new InvalidParamsException(
-          `Unknown retribution rules: ${notAppliablePolicies.map((rule) => rule.slug).join(', ')}`,
+          `Unknown retribution rules: ${notApplicablePolicies.map((rule) => rule.slug).join(', ')}`,
         );
       }
 

@@ -2,11 +2,11 @@ import { RetributionRuleInterface } from '@pdc/provider-schema';
 
 export const retributionMeltingpot: RetributionRuleInterface = {
   slug: 'retribution_meltingpot',
-  description: 'Le montant ',
+  description: 'Le montant',
   schema: {
     type: 'object',
     required: ['max', 'min', 'for_driver', 'for_passenger'],
-    additionnalProperties: false,
+    additionalProperties: false,
     properties: {
       max: {
         type: 'integer',
@@ -18,7 +18,7 @@ export const retributionMeltingpot: RetributionRuleInterface = {
       },
       for_driver: {
         type: 'object',
-        additionnalProperties: false,
+        additionalProperties: false,
         required: ['per_km', 'per_passenger', 'amount'],
         properties: {
           per_km: {
@@ -35,7 +35,7 @@ export const retributionMeltingpot: RetributionRuleInterface = {
       },
       for_passenger: {
         type: 'object',
-        additionnalProperties: false,
+        additionalProperties: false,
         required: ['per_km', 'free', 'amount'],
         properties: {
           per_km: {

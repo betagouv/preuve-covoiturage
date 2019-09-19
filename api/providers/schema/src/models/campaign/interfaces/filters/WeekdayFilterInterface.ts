@@ -1,3 +1,3 @@
 export interface WeekdayFilterInterface {
-  weekday: number[];
+  weekday: [0, 1, 2, 3, 4, 5, 6][];
 }

@@ -1,4 +1,4 @@
-import { RetributionRuleInterface } from '@pdc/provider-schema/dist';
+import { RetributionRuleInterface } from '@pdc/provider-schema';
 
 import { adultOnly } from './adultOnly';
 import { maxAmount } from './maxAmount';

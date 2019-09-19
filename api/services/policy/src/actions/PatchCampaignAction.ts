@@ -1,4 +1,4 @@
-import { handler, InvalidParamsException } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { CampaignInterface } from '@pdc/provider-schema';
 

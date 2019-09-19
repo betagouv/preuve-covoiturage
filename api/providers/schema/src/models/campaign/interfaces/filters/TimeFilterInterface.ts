@@ -1,6 +1,6 @@
 export interface TimeFilterInterface {
   time: {
-    start: string;
-    end: string;
+    start: number;
+    end: number;
   }[];
 }

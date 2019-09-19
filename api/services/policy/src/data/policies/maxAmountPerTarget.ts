@@ -6,7 +6,7 @@ export const maxAmountPerTarget: RetributionRuleInterface = {
   schema: {
     type: 'object',
     required: ['target', 'amount', 'period'],
-    additionnalProperties: false,
+    additionalProperties: false,
     properties: {
       target: {
         type: 'string',

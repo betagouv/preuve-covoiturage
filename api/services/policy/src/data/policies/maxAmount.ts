@@ -6,7 +6,7 @@ export const maxAmount: RetributionRuleInterface = {
   schema: {
     type: 'object',
     required: ['amount', 'period'],
-    additionnalProperties: false,
+    additionalProperties: false,
     properties: {
       amount: {
         type: 'integer',
