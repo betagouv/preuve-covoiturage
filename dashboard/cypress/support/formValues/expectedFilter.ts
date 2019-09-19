@@ -1,10 +1,11 @@
-import { FilterInterface } from '../../../src/app/core/interfaces/filter/filterUxInterface';
+import { FilterInterface } from '../../../src/app/core/interfaces/filter/filterInterface';
+import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
 import { TripStatusEnum } from '../../../src/app/core/enums/trip/trip-status.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
 import { campaignStubs } from '../stubs/campaign.list';
 import { operatorStubs } from '../stubs/operator.list';
-import { territoryStubs } from '../stubs/territory.list';
+import { cypress_logging_users } from '../stubs/login';
 
 export const filterStartMoment = Cypress.moment()
   .add(1, 'days')
@@ -32,5 +33,5 @@ export const expectedFilter: FilterInterface = {
   ranks: [TripRankEnum.A, TripRankEnum.B],
   status: TripStatusEnum.PENDING,
   operator_id: [operatorStubs[0]._id],
-  territory_id: [territoryStubs[0]._id],
+  territory_id: [cypress_logging_users[UserGroupEnum.TERRITORY].territory],
 };

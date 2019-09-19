@@ -1,3 +1,5 @@
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+
 import { TemplateInterface } from '../../../src/app/core/interfaces/campaign/templateInterface';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
@@ -102,16 +104,15 @@ export function stubCampaignTemplateList() {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=campaign:listTemplates',
-    response: (data) => ({
-      payload: {
-        data: [
-          {
-            id: 1568215196898,
-            jsonrpc: '2.0',
-            result: campaignTemplateStubs,
+    response: (data) =>
+      <JsonRPCResponse[]>[
+        {
+          id: 1568215196898,
+          jsonrpc: '2.0',
+          result: {
+            data: campaignTemplateStubs,
           },
-        ],
-      },
-    }),
+        },
+      ],
   });
 }

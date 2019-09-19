@@ -1,3 +1,5 @@
+import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
+
 import { Address, Company, Territory } from '../../../src/app/core/entities/territory/territory';
 
 export const territoryStubs: Territory[] = [
@@ -38,16 +40,15 @@ export function stubTerritoryList() {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=territory.list',
-    response: (data) => ({
-      payload: {
-        data: [
-          {
-            id: 1568215196898,
-            jsonrpc: '2.0',
-            result: territoryStubs,
+    response: (data) =>
+      <JsonRPCResponse[]>[
+        {
+          id: 1568215196898,
+          jsonrpc: '2.0',
+          result: {
+            data: territoryStubs,
           },
-        ],
-      },
-    }),
+        },
+      ],
   });
 }
