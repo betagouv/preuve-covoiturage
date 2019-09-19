@@ -23,8 +23,8 @@ export function Cypress_filterTrips() {
   });
 
   it('chooses hours', () => {
-    cy.get('.filter-timeAndDays mat-form-field:first-child input').type(expectedFilter.hour.start);
-    cy.get('.filter-timeAndDays mat-form-field:nth-child(2) input').type(expectedFilter.hour.end);
+    cy.get('.filter-timeAndDays mat-form-field:first-child input').type(`${expectedFilter.hour.start}:00`);
+    cy.get('.filter-timeAndDays mat-form-field:nth-child(2) input').type(`${expectedFilter.hour.end}:00`);
   });
 
   it('chooses days', () => {
@@ -66,19 +66,12 @@ export function Cypress_filterTrips() {
   });
 
   // todo: if connected as territory or registry
-  it('chooses operators', () => {
-    cy.get('app-operators-autocomplete mat-form-field input').type('opé');
-    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
-  });
+  // it('chooses operators', () => {
+  //   cy.get('app-operators-autocomplete mat-form-field input').type('opé');
+  //   cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+  // });
 
   it('click filter button', () => {
-    // cy.server();
-    //
-    // cy.route({
-    //   method: 'POST',
-    //   url: '/rpc?methods=trip:list',
-    // }).as('tripList');
-
     cy.get('.filter-footer button:first-child').click();
 
     cy.wait('@tripList').then((xhr) => {
@@ -86,15 +79,16 @@ export function Cypress_filterTrips() {
       const method = xhr.request.body[0].method;
 
       expect(method).equal('trip:list');
-      expect(new Date(params.date.start)).eql(expectedFilter.date.start);
-      expect(new Date(params.date.end)).eql(expectedFilter.date.end);
-      expect(params.hour).eql(expectedFilter.hour);
-      expect(params.days).eql(expectedFilter.days.map(String));
-      expect(params.towns).eql(expectedFilter.towns);
-      expect(params.distance).eql(expectedFilter.distance);
-      expect(params.ranks).eql(expectedFilter.ranks);
-      expect(params.status).eql(expectedFilter.status);
-      expect(params.operator_ids).eql(expectedFilter.operator_ids);
+
+      const filter = {
+        ...expectedFilter,
+        days: expectedFilter.days.map(String),
+      };
+
+      // todo: tmp unit operators connected
+      delete filter.operator_id;
+
+      expect(params).eql(filter);
     });
   });
 }

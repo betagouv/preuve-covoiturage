@@ -1,5 +1,7 @@
 import * as moment from 'moment';
 
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+
 import { CampaignsGenerator } from '../generators/campaigns.generator';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
@@ -127,16 +129,15 @@ export function stubCampaignList() {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=campaign:list',
-    response: (data) => ({
-      payload: {
-        data: [
-          {
-            id: 1568215196898,
-            jsonrpc: '2.0',
-            result: [...campaignStubs, ...CampaignsGenerator.list],
+    response: (data) =>
+      <JsonRPCResponse[]>[
+        {
+          id: 1568215196898,
+          jsonrpc: '2.0',
+          result: {
+            data: [...campaignStubs, ...CampaignsGenerator.list],
           },
-        ],
-      },
-    }),
+        },
+      ],
   });
 }

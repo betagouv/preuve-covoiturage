@@ -12,12 +12,12 @@
   </div>
   <div class="TripList-header" *ngIf="trips">
     <span class="TripList-header-results"> {{ trips.length }} résultats </span>
-    <div>
-      <button mat-flat-button [appShowSpinner]="isExporting" (click)="exportTrips()" color="primary">
-        <mat-icon>get_app</mat-icon>
-        Téléchargez (.csv)
-      </button>
-    </div>
+    <!--    <div>-->
+    <!--      <button mat-flat-button [appShowSpinner]="isExporting" (click)="exportTrips()" color="primary">-->
+    <!--        <mat-icon>get_app</mat-icon>-->
+    <!--        Téléchargez (.csv)-->
+    <!--      </button>-->
+    <!--    </div>-->
   </div>
   <div class="TripList-content" *ngIf="trips">
     <app-trip-table [data]="trips"></app-trip-table>

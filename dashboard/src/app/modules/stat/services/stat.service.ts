@@ -9,9 +9,11 @@ import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Stat } from '~/core/entities/stat/stat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { ApiService } from '~/core/services/api/api.service';
 import { StatInterface } from '~/core/interfaces/stat/statInterface';
+import { UserService } from '~/core/services/authentication/user.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
 
@@ -23,11 +25,18 @@ export class StatService extends ApiService<StatInterface> {
   public _loaded$ = new BehaviorSubject<boolean>(false);
   protected _loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
+  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService, private userService: UserService) {
     super(_http, _jsonRPC, 'stat');
   }
 
   public loadOne(filter: FilterInterface | {} = {}): Observable<Stat[]> {
+    if (this.userService.user.group === UserGroupEnum.TERRITORY) {
+      filter['territory_id'] = [this.userService.user.territory];
+    }
+    // TODO: temp, remove when filter operator added
+    if ('operator_id' in filter) {
+      delete filter.operator_id;
+    }
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`trip:stats`, filter);
     return this._jsonRPC.callOne(jsonRPCParam).pipe(

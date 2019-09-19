@@ -1,3 +1,4 @@
+// tslint:disable:variable-name
 import { WeekDay } from '@angular/common';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
@@ -5,7 +6,7 @@ import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 export class Filter {
-  campaignIds: string[];
+  campaign_id: string[];
   date: {
     start: Date;
     end: Date;
@@ -22,11 +23,11 @@ export class Filter {
   };
   ranks: TripRankEnum[];
   status: TripStatusEnum;
-  operatorIds: string[];
-  territoryIds: string[];
+  operator_id: string[];
+  territory_id: string[];
   constructor(
     obj: FilterInterface = {
-      campaignIds: [],
+      campaign_id: [],
       date: {
         start: null,
         end: null,
@@ -43,11 +44,11 @@ export class Filter {
       },
       ranks: [],
       status: null,
-      operator_ids: [],
-      territoryIds: [],
+      operator_id: [],
+      territory_id: [],
     },
   ) {
-    this.campaignIds = obj.campaignIds;
+    this.campaign_id = obj.campaign_id;
     this.date = obj.date;
     this.hour = obj.hour;
     this.days = obj.days;
@@ -55,7 +56,7 @@ export class Filter {
     this.distance = obj.distance;
     this.ranks = obj.ranks;
     this.status = obj.status;
-    this.operatorIds = obj.operator_ids;
-    this.territoryIds = obj.territoryIds;
+    this.operator_id = obj.operator_id;
+    this.territory_id = obj.territory_id;
   }
 }

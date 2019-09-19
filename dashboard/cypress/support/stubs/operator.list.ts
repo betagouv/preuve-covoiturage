@@ -1,4 +1,5 @@
 import { Operator } from '../../../src/app/core/entities/operator/operator';
+import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
 
 export const operatorStubs: Operator[] = [
   {
@@ -22,16 +23,15 @@ export function stubOperatorList() {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=operator:list',
-    response: (data) => ({
-      payload: {
-        data: [
-          {
-            id: 1568215196898,
-            jsonrpc: '2.0',
-            result: operatorStubs,
+    response: (data) =>
+      <JsonRPCResponse[]>[
+        {
+          id: 1568215196898,
+          jsonrpc: '2.0',
+          result: {
+            data: operatorStubs,
           },
-        ],
-      },
-    }),
+        },
+      ],
   });
 }

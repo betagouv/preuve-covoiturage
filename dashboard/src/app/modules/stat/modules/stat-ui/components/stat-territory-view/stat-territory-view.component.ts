@@ -5,7 +5,7 @@ import { Stat } from '~/core/entities/stat/stat';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { FilterService } from '~/core/services/filter.service';
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
@@ -41,12 +41,12 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
-    this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
+    this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
       this.loadStat(filter);
     });
   }
 
-  private loadStat(filter: FilterInterface | {} = {}): void {
+  private loadStat(filter: FilterUxInterface | {} = {}): void {
     if (this.statService.loading) {
       return;
     }

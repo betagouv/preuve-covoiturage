@@ -1,4 +1,5 @@
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
 import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
@@ -12,19 +13,18 @@ export function stubCampaignCreate(status: CampaignStatusEnum) {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=campaign:create',
-    response: (data) => ({
-      payload: {
-        data: [
-          {
-            id: 1568215196898,
-            jsonrpc: '2.0',
-            result: {
+    response: (data) =>
+      <JsonRPCResponse[]>[
+        {
+          id: 1568215196898,
+          jsonrpc: '2.0',
+          result: {
+            data: {
               ...campaignStub,
               status,
             },
           },
-        ],
-      },
-    }),
+        },
+      ],
   }).as('campaignCreate');
 }
