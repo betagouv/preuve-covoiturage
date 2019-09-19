@@ -272,12 +272,12 @@ export class TripPgRepositoryProvider {
         switch (filter.key) {
           case 'territory_id':
             return {
-              text: '(start_territory = ANY ($#) OR end_territory = ANY ($#))',
+              text: '(start_territory = ANY ($#::text[]) OR end_territory = ANY ($#::text[]))',
               values: [filter.value, filter.value],
             };
           case 'operator_id':
             return {
-              text: 'operator_id = ANY ($#)',
+              text: 'operator_id = ANY ($#::text[])',
               values: [filter.value],
             };
           case 'status':
@@ -286,40 +286,40 @@ export class TripPgRepositoryProvider {
           case 'date':
             if (filter.value.start && filter.value.end) {
               return {
-                text: '($# > start_datetime AND start_datetime > $#)',
+                text: '($#::timestamp > start_datetime AND start_datetime > $#::timestamp)',
                 values: [filter.value.start, filter.value.end],
               };
             }
             if (filter.value.start) {
               return {
-                text: '$# > start_datetime',
+                text: '$#::timestamp > start_datetime',
                 values: [filter.value.start],
               };
             }
             return {
-              text: 'start_datetime > $#',
+              text: 'start_datetime > $#::timestamp',
               values: [filter.value.end],
             };
           case 'ranks':
             return {
-              text: 'operator_class = ANY ($#)',
+              text: 'operator_class = ANY ($#::text[])',
               values: [filter.value],
             };
           case 'distance':
             if (filter.value.min && filter.value.max) {
               return {
-                text: '($# > distance AND distance > $#)',
+                text: '($#::int >= distance AND distance >= $#::int)',
                 values: [filter.value.min, filter.value.max],
               };
             }
             if (filter.value.min) {
               return {
-                text: '$# > distance',
+                text: '$#::int >= distance',
                 values: [filter.value.min],
               };
             }
             return {
-              text: 'distance > $#',
+              text: 'distance >= $#::int',
               values: [filter.value.max],
             };
           case 'campaign_id':
@@ -327,12 +327,12 @@ export class TripPgRepositoryProvider {
 
           case 'days':
             return {
-              text: 'extract(isodow from start_datetime) = ANY ($#)',
+              text: 'extract(isodow from start_datetime) = ANY ($#::int[])',
               values: [filter.value],
             };
           case 'hour': {
             return {
-              text: '($# >= extract(hour from start_datetime) AND extract(hour from start_datetime) >= $#)',
+              text: '($#::int >= extract(hour from start_datetime) AND extract(hour from start_datetime) >= $#::int)',
               values: [filter.value.start, filter.value.end],
             };
           }
