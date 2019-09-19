@@ -23,7 +23,7 @@ export const campaignStubs: Campaign[] = [
         max: 100,
       },
       rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-      operator_ids: [],
+      operators_id: [],
     },
     start: moment()
       .subtract('1', 'months')
@@ -64,7 +64,7 @@ export const campaignStubs: Campaign[] = [
         max: 100,
       },
       rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-      operator_ids: [],
+      operators_id: [],
     },
     ui_status: {
       for_driver: true,
@@ -105,7 +105,7 @@ export const campaignStubs: Campaign[] = [
         max: 100,
       },
       rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-      operator_ids: [],
+      operators_id: [],
     },
     ui_status: {
       for_driver: true,

@@ -40,11 +40,11 @@ export interface CampaignUXInterface extends BaseCampaignInterface {
 }
 
 export enum RetributionRulesSlugEnum {
-  ONLY_ADULT = 'only_adult',
+  ONLY_ADULT = 'adult_only',
   MAX_AMOUNT = 'max_amount',
-  MAX_TRIPS = 'max_trips',
+  MAX_TRIPS = 'max_trip',
   RESTRICTION = 'restriction',
-  RETRIBUTION = 'retribution',
+  RETRIBUTION = 'retribution_meltingpot',
 }
 
 export type RetributionRuleType =
@@ -79,11 +79,8 @@ export class OnlyAdultRetributionRule implements RetributionRuleInterface {
   parameters: {
     only_adult: boolean;
   };
-  constructor(onlyAdult: boolean) {
+  constructor() {
     this.slug = RetributionRulesSlugEnum.ONLY_ADULT;
-    this.parameters = {
-      only_adult: onlyAdult,
-    };
     this.description = '';
   }
 }
@@ -92,12 +89,14 @@ export class MaxAmountRetributionRule implements RetributionRuleInterface {
   description: string;
   slug: RetributionRulesSlugEnum;
   parameters: {
-    max_amount: number;
+    amount: number;
+    period: string;
   };
   constructor(maxAmount: number) {
     this.slug = RetributionRulesSlugEnum.MAX_AMOUNT;
     this.parameters = {
-      max_amount: maxAmount,
+      amount: maxAmount,
+      period: 'campaign',
     };
     this.description = '';
   }
@@ -107,12 +106,14 @@ export class MaxTripsRetributionRule implements RetributionRuleInterface {
   slug: RetributionRulesSlugEnum;
   description: string;
   parameters: {
-    max_trips: number;
+    amount: number;
+    period: string;
   };
   constructor(maxTrips: number) {
     this.slug = RetributionRulesSlugEnum.MAX_TRIPS;
     this.parameters = {
-      max_trips: maxTrips,
+      amount: maxTrips,
+      period: 'campaign',
     };
     this.description = '';
   }

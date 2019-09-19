@@ -30,12 +30,18 @@ export class CypressExpectedCampaign {
       retribution_rules: [
         {
           slug: RetributionRulesSlugEnum.MAX_AMOUNT,
-          parameters: { max_amount: CypressExpectedCampaign.maxAmount },
+          parameters: {
+            amount: CypressExpectedCampaign.maxAmount,
+            period: 'campaign',
+          },
           description: '',
         },
         {
           slug: RetributionRulesSlugEnum.MAX_TRIPS,
-          parameters: { max_trips: CypressExpectedCampaign.maxTrips },
+          parameters: {
+            amount: CypressExpectedCampaign.maxTrips,
+            period: 'campaign',
+          },
           description: '',
         },
         {
@@ -65,12 +71,13 @@ export class CypressExpectedCampaign {
           max: 150,
         },
         rank: [TripRankEnum.A, TripRankEnum.C],
-        operator_ids: [operatorStubs[0]._id],
+        operators_id: [operatorStubs[0]._id],
       },
       ui_status: {
         for_driver: true,
         for_passenger: false,
         for_trip: null,
+        staggered: false,
       },
       status: CampaignStatusEnum.DRAFT,
       parent_id: null,

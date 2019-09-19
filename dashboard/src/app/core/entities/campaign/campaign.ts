@@ -40,13 +40,14 @@ export class Campaign {
           max: 0,
         },
         rank: [],
-        operator_ids: [],
+        operators_id: [],
       },
       retribution_rules: [],
       ui_status: {
         for_driver: null,
         for_passenger: null,
         for_trip: null,
+        staggered: null,
       },
     },
   ) {
