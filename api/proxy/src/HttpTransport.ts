@@ -24,7 +24,6 @@ import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
 import { nestParams } from './helpers/nestParams';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
-import { openCorsInDev } from './middlewares/openCorsInDev';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -148,7 +147,6 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerGlobalMiddlewares() {
-    this.app.use(openCorsInDev);
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
   }
