@@ -148,7 +148,9 @@ export class TripPgRepositoryProvider {
           revenue,
           expense,
           incentives,
-          payments
+          payments,
+          calc_distance,
+          calc_duration
         ) VALUES (
           $1,
           $2,
@@ -179,7 +181,9 @@ export class TripPgRepositoryProvider {
           $27,
           $28,
           $29,
-          $30
+          $30,
+          $31,
+          $32
         )
         ON CONFLICT DO NOTHING
       `,
@@ -228,6 +232,9 @@ export class TripPgRepositoryProvider {
         participant.expense,
         participant.incentives,
         participant.payments,
+
+        Math.round(participant.calc_distance),
+        Math.round(participant.calc_duration),
       ],
     };
 
