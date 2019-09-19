@@ -18,12 +18,13 @@
           </a>
         </ng-container>
       </nav>
+      <!--      TODO: add when filter count is fixed-->
+      <!--        [matBadge]="filterNumber"-->
       <button
         *ngIf="hasCorrectUrl"
         class="TripLayout-menu-filter-button"
         mat-flat-button
         color="primary"
-        [matBadge]="filterNumber"
         matBadgeColor="accent"
         (click)="toggleFilterDisplay()"
       >

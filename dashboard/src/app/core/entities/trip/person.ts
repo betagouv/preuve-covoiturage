@@ -1,3 +1,4 @@
+// tslint:disable:variable-name
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 import { IncentiveInterface } from '~/core/interfaces/campaign/incentiveInterface';
@@ -5,7 +6,6 @@ import { IncentiveInterface } from '~/core/interfaces/campaign/incentiveInterfac
 export class Person {
   operator: OperatorNameInterface;
   operator_id: string;
-  // tslint:disable-next-line:variable-name
   is_driver: boolean;
   start_town: string;
   end_town: string;

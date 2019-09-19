@@ -101,13 +101,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public filterClick(): void {
     const filterObj = this.filterForm.value;
 
-    console.log({ filterObj });
-    console.log(this.filterForm.getRawValue());
-
     // format for API
     filterObj.towns = this.filterForm.value.towns.map((town: TownInterface) => town.name);
-
-    console.log(filterObj);
 
     this.filterService.setFilter(filterObj);
     this.filterNumber.emit(this.countFilters);

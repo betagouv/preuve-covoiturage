@@ -43,6 +43,8 @@ export class StatService extends ApiService<StatInterface> {
       map((data) => data.data),
       tap((data) => {
         this.formatData(data);
+        this._loading$.next(false);
+        console.log('loading should be false', this._loading$.value);
       }),
     );
   }
@@ -73,7 +75,9 @@ export class StatService extends ApiService<StatInterface> {
         // tslint:disable-next-line:no-bitwise
         co2: (get(d, 'distance.total', 0) * co2Factor) | 0,
         // tslint:disable-next-line:no-bitwise
-        carpoolersPerVehicule: get(d, 'carpoolers_per_vehicule.total', 0),
+        carpoolersPerVehicule: get(d, 'carpoolers_per_vehicule.total', 0)
+          ? get(d, 'carpoolers_per_vehicule.total', 0).toFixed(2)
+          : 0,
         operators: get(d, 'operators.total', 0),
       },
       graph: {
@@ -88,7 +92,7 @@ export class StatService extends ApiService<StatInterface> {
         tripsPerDay: this.fixWeekDisplay({
           x: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total),
@@ -96,7 +100,7 @@ export class StatService extends ApiService<StatInterface> {
         tripsPerDayCumulated: {
           x: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, []),
@@ -112,7 +116,7 @@ export class StatService extends ApiService<StatInterface> {
         tripsSubsidizedPerDay: this.fixWeekDisplay({
           x: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total_subsidized),
@@ -120,7 +124,7 @@ export class StatService extends ApiService<StatInterface> {
         tripsSubsidizedPerDayCumulated: {
           x: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeSubsidizedData, []),
@@ -137,7 +141,7 @@ export class StatService extends ApiService<StatInterface> {
         distancePerDay: this.fixWeekDisplay({
           x: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
@@ -147,7 +151,7 @@ export class StatService extends ApiService<StatInterface> {
         distancePerDayCumulated: {
           x: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'distance.days', [])
             .reduce(this.reduceCumulativeData, [])
             // tslint:disable-next-line:no-bitwise
@@ -164,7 +168,7 @@ export class StatService extends ApiService<StatInterface> {
         carpoolersPerDay: this.fixWeekDisplay({
           x: get(d, 'carpoolers.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'carpoolers.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total),
@@ -172,7 +176,7 @@ export class StatService extends ApiService<StatInterface> {
         carpoolersPerDayCumulated: {
           x: get(d, 'carpoolers.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'carpoolers.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, []),
@@ -189,7 +193,7 @@ export class StatService extends ApiService<StatInterface> {
         petrolPerDay: this.fixWeekDisplay({
           x: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
@@ -199,7 +203,7 @@ export class StatService extends ApiService<StatInterface> {
         petrolPerDayCumulated: {
           x: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, [])
@@ -218,7 +222,7 @@ export class StatService extends ApiService<StatInterface> {
         co2PerDay: this.fixWeekDisplay({
           x: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
             // tslint:disable-next-line:no-bitwise
@@ -227,7 +231,7 @@ export class StatService extends ApiService<StatInterface> {
         co2PerDayCumulated: {
           x: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, [])
@@ -237,22 +241,23 @@ export class StatService extends ApiService<StatInterface> {
         carpoolersPerVehiculePerDay: this.fixWeekDisplay({
           x: get(d, 'carpoolers_per_vehicule.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.date)),
+            .map((val) => this.formatDate(val.day)),
           y: get(d, 'carpoolers_per_vehicule.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total.toFixed(2)),
         }),
         carpoolersPerVehiculePerMonth: this.fixMonthDisplay({
-          x: get(d, 'carpoolers_per_vehicule.months', [])
+          x: get(d, 'carpoolers_per_vehicule.months-temp', [])
             .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'carpoolers_per_vehicule.months', [])
+          y: get(d, 'carpoolers_per_vehicule.months-temp', [])
             .filter(this.filterOutFutur)
             .map((val) => val.total.toFixed(2)),
         }),
       },
     };
 
+    console.log('formatedStat', formatedStat);
     this._formatedStat$.next(formatedStat);
     this._loaded$.next(true);
     this._loading$.next(false);
@@ -283,7 +288,19 @@ export class StatService extends ApiService<StatInterface> {
    * Before today
    */
   private filterOutFutur(val, idx, arr): boolean {
-    return moment().isAfter(val.date);
+    if ('day' in val) {
+      return moment().isAfter(val.day);
+    }
+    // todo: remove later
+    if ('date' in val) {
+      let month = val.date;
+      if (month.length < 2) {
+        month = `0${month}`;
+      }
+      // todo: fix this
+      return moment().isAfter(moment(`01/${month}/2019`, 'DD/MM/YYYY'));
+    }
+    return false;
   }
 
   // format ISO to chart js compatible
@@ -293,9 +310,12 @@ export class StatService extends ApiService<StatInterface> {
 
   // format ISO to chart js compatible
   private formatMonthDate(date: string): string {
-    return moment(date)
-      .startOf('month')
-      .format('YYYY-MM-DD');
+    let month = date;
+    if (month.length < 2) {
+      month = `0${month}`;
+    }
+    // todo: fix this
+    return moment(`01/${month}/2019`, 'DD/MM/YYYY').format('YYYY-MM-DD');
   }
 
   /**

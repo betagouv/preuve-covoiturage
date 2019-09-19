@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
-import { Stat } from '~/core/entities/stat/stat';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { FilterService } from '~/core/services/filter.service';
@@ -10,7 +9,6 @@ import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { StatService } from '../../../../services/stat.service';
-import { mockStats } from '../../../../mocks/stats';
 
 @Component({
   selector: 'app-stat-territory-view',
@@ -53,14 +51,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     this.statService
       .loadOne(filter)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {},
-        (err) => {
-          // TODO TMP DELETE WHEN BACK IS LINKED
-          const stat = new Stat(mockStats);
-          this.statService.formatData(stat);
-        },
-      );
+      .subscribe();
   }
 
   /**

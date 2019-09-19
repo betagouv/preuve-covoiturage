@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { get } from 'lodash';
+import { takeUntil } from 'rxjs/operators';
 
 import { statGraphs } from '~/modules/stat/config/statGraphs';
 import { StatService } from '~/modules/stat/services/stat.service';
@@ -9,13 +10,14 @@ import { chartsType, chartType } from '~/core/types/stat/chartType';
 import { statChartOptions } from '~/modules/stat/config/statChartOptions';
 import { chartNamesType } from '~/core/types/stat/chartNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-stat-graph',
   templateUrl: './stat-graph.component.html',
   styleUrls: ['./stat-graph.component.scss'],
 })
-export class StatGraphComponent implements OnInit {
+export class StatGraphComponent extends DestroyObservable implements OnInit {
   public options: chartNamesType;
 
   // toggle chart to be displayed
@@ -41,21 +43,25 @@ export class StatGraphComponent implements OnInit {
 
   @Input() lightMode = false;
 
-  constructor(private statService: StatService) {}
+  constructor(private statService: StatService) {
+    super();
+  }
 
   ngOnInit() {
     this.options = statChartOptions;
 
-    const data: GraphNamesInterface = {
-      trips: this.loadGraph('trips'),
-      distance: this.loadGraph('distance'),
-      carpoolers: this.loadGraph('carpoolers'),
-      petrol: this.loadGraph('petrol'),
-      co2: this.loadGraph('co2'),
-      carpoolersPerVehicule: this.loadGraph('carpoolersPerVehicule'),
-    };
-    this.graphTitle = data.trips.monthly.graphTitle;
-    this.data = data;
+    this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      const data: GraphNamesInterface = {
+        trips: this.loadGraph('trips'),
+        distance: this.loadGraph('distance'),
+        carpoolers: this.loadGraph('carpoolers'),
+        petrol: this.loadGraph('petrol'),
+        co2: this.loadGraph('co2'),
+        carpoolersPerVehicule: this.loadGraph('carpoolersPerVehicule'),
+      };
+      this.graphTitle = data.trips.monthly.graphTitle;
+      this.data = data;
+    });
   }
 
   private displayGraph(name: statDataNameType): void {
