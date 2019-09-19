@@ -11,6 +11,7 @@ export interface TripSearchInterface {
   days?: number[];
 
   status?: string;
+  towns?: string[];
 
   distance?: {
     min?: number;

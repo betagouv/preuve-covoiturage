@@ -282,7 +282,6 @@ export class TripPgRepositoryProvider {
             };
           case 'status':
             throw new Error('Unimplemented');
-
           case 'date':
             if (filter.value.start && filter.value.end) {
               return {
@@ -324,7 +323,11 @@ export class TripPgRepositoryProvider {
             };
           case 'campaign_id':
             throw new Error('Unimplemented');
-
+          case 'towns':
+            return {
+              text: 'start_town LIKE ANY($#::text[]) OR end_town LIKE ANY ($#::text[])',
+              values: [filter.value.map((v: string) => `%${v}%`)],
+            };
           case 'days':
             return {
               text: 'extract(isodow from start_datetime) = ANY ($#::int[])',
