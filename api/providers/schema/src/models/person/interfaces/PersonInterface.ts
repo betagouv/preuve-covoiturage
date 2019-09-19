@@ -22,4 +22,7 @@ export interface PersonInterface {
   incentives?: IncentiveInterface[];
 
   payments?: PaymentInterface[];
+
+  calc_distance?: number;
+  calc_duration?: number;
 }

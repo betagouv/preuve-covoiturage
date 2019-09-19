@@ -148,7 +148,9 @@ export class TripPgRepositoryProvider {
           revenue,
           expense,
           incentives,
-          payments
+          payments,
+          calc_distance,
+          calc_duration
         ) VALUES (
           $1,
           $2,
@@ -179,7 +181,9 @@ export class TripPgRepositoryProvider {
           $27,
           $28,
           $29,
-          $30
+          $30,
+          $31,
+          $32
         )
         ON CONFLICT DO NOTHING
       `,
@@ -228,6 +232,9 @@ export class TripPgRepositoryProvider {
         participant.expense,
         participant.incentives,
         participant.payments,
+
+        Math.round(participant.calc_distance),
+        Math.round(participant.calc_duration),
       ],
     };
 
@@ -362,7 +369,7 @@ export class TripPgRepositoryProvider {
             min(start_datetime::date) as day,
             max(distance) as distance,
             sum(seats) as carpoolers,
-            count(array_length(incentives, 1) > 0) as carpoolers_subsidized
+            count(*) FILTER (WHERE array_length(incentives, 1) > 0)::int as carpoolers_subsidized
           FROM trip_participants
           ${where ? where.text : ''}
           GROUP BY trip_id
@@ -372,7 +379,7 @@ export class TripPgRepositoryProvider {
           sum(distance)::int as distance,
           sum(carpoolers)::int as carpoolers,
           count(*)::int as trip,
-          count(carpoolers_subsidized > 0)::int as trip_subsidized
+          count(*) FILTER (WHERE carpoolers_subsidized > 0)::int as trip_subsidized
         FROM data
         GROUP BY day`,
       values: [

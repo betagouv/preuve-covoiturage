@@ -1,4 +1,5 @@
 CREATE EXTENSION postgis;
+CREATE EXTENSION postgis_topology;
 
 CREATE TABLE trips
 (
@@ -51,8 +52,11 @@ CREATE TABLE trip_participants (
   end_territory text NOT NULL,
   end_literal text,
 
-  distance bigint NOT NULL,
-  duration bigint NOT NULL,
+  distance int NOT NULL,
+  duration int NOT NULL,
+  calc_distance int,
+  calc_duration int,
+
   seats int NOT NULL default 1,
 
 -- montant payé hors incitation non listée

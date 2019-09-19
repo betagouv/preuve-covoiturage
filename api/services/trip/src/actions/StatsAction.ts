@@ -122,7 +122,9 @@ export class StatsAction extends Action {
       distance,
       trips,
       carpoolers_per_vehicule: {
-        total: carpoolers_per_vehicule.days.map((day) => day.total).reduce((acc, value) => acc + value, 0),
+        total:
+          carpoolers_per_vehicule.days.map((day) => day.total).reduce((acc, value) => acc + value, 0) /
+          carpoolers_per_vehicule.days.length,
         months: Object.keys(cpvm).map((key) => ({
           month: key,
           total: cpvm[key].reduce((acc, curr) => acc + curr, 0) / cpvm[key].length,
