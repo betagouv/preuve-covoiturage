@@ -1,7 +1,9 @@
+import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { Trip } from '../../../src/app/core/entities/trip/trip';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '../../../src/app/core/enums/trip/trip-status.enum';
 import { TripInterface } from '../../../src/app/core/interfaces/trip/tripInterface';
+
 import { campaignStubs } from '../stubs/campaign.list';
 
 export class TripGenerator {
@@ -42,7 +44,7 @@ export class TripGenerator {
       incentives: [
         {
           amount: Math.floor(Math.random() * 10),
-          amount_unit: ['eur', 'point'][Math.floor(Math.random() * 2)],
+          amount_unit: [IncentiveUnitEnum.EUR, IncentiveUnitEnum.POINT][Math.floor(Math.random() * 2)],
         },
       ],
     });

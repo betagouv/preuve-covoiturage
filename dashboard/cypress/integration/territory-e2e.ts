@@ -1,4 +1,3 @@
-import { CampaignStatusEnum } from '../../src/app/core/enums/campaign/campaign-status.enum';
 import { UserGroupEnum } from '../../src/app/core/enums/user/user-group.enum';
 
 import { stubCampaignList } from '../support/stubs/campaign.list';
@@ -10,18 +9,19 @@ import { Cypress_filterTrips } from '../support/reusables/filter-trips.spec';
 import { stubTripList } from '../support/stubs/trip.list';
 import { stubStatList } from '../support/stubs/stat.list';
 import { stubUserMe } from '../support/stubs/user.me';
-import { stubCampaignCreate } from '../support/stubs/campaign.create';
+import { campaignStub } from '../support/stubs/campaign.create';
 
 context('TERRITORY', () => {
+  Cypress.Cookies.defaults({
+    whitelist: 'pdc-session',
+  });
+
   beforeEach(() => {
     cy.server();
-    stubCampaignList();
-    stubOperatorList();
-    stubCampaignTemplateList();
-    stubTripList();
-    stubStatList();
-    stubUserMe(UserGroupEnum.TERRITORY);
-    stubCampaignCreate(CampaignStatusEnum.DRAFT);
+    cy.route({
+      method: 'POST',
+      url: '/rpc?methods=campaign:create',
+    }).as('campaignCreate');
   });
 
   it('go to login page', () => {
@@ -29,17 +29,17 @@ context('TERRITORY', () => {
   });
 
   it('Logges in', () => {
-    cypress_stub_login(UserGroupEnum.TERRITORY);
+    // cypress_stub_login(UserGroupEnum.TERRITORY);
     cypress_login('territory@example.com', 'admin1234');
   });
 
-  // TEST FILTERS
-  describe('filter form', () => {
-    it('clicks list tab', () => {
-      cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(2)').click();
-    });
-    Cypress_filterTrips();
-  });
+  // // TEST FILTERS
+  // describe('filter form', () => {
+  //   it('clicks list tab', () => {
+  //     cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(2)').click();
+  //   });
+  //   Cypress_filterTrips();
+  // });
 
   // TEST CAMPAIGNS
   describe('Create new campaign', () => {

@@ -22,13 +22,16 @@ import {
   RetributionRulesSlugEnum,
   RetributionRuleType,
 } from '~/core/interfaces/campaign/campaignInterface';
+import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { UserService } from '~/core/services/authentication/user.service';
 @Injectable({
   providedIn: 'root',
 })
 export class CampaignService extends ApiService<Campaign> {
   _templates$ = new BehaviorSubject<TemplateInterface[]>([]);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
+  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService, private _userService: UserService) {
     super(_http, _jsonRPC, 'campaign');
   }
 
@@ -64,7 +67,10 @@ export class CampaignService extends ApiService<Campaign> {
       unit,
       ui_status,
       filters: {
-        ...campaign.filters,
+        rank: campaign.filters.rank,
+        time: campaign.filters.time,
+        weekday: campaign.filters.weekday,
+        operator_ids: campaign.filters.operators_id,
         distance_range: [campaign.filters.distance_range.min, campaign.filters.distance_range.max],
       },
       retributions: [],
@@ -79,15 +85,14 @@ export class CampaignService extends ApiService<Campaign> {
     campaign.retribution_rules.map((retributionRule: RetributionRuleType) => {
       if (retributionRule.slug === RetributionRulesSlugEnum.MAX_TRIPS) {
         const parameters = <MaxTripsRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.max_trips = parameters.max_trips;
+        campaignUx.max_trips = parameters.amount;
       }
       if (retributionRule.slug === RetributionRulesSlugEnum.MAX_AMOUNT) {
         const parameters = <MaxAmountRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.max_amount = parameters.max_amount;
+        campaignUx.max_amount = parameters.amount;
       }
       if (retributionRule.slug === RetributionRulesSlugEnum.ONLY_ADULT) {
-        const parameters = <OnlyAdultRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.only_adult = parameters.only_adult;
+        campaignUx.only_adult = true;
       }
       if (retributionRule.slug === RetributionRulesSlugEnum.RESTRICTION) {
         const parameters = <RestrictionParametersInterface>retributionRule.parameters;
@@ -95,6 +100,8 @@ export class CampaignService extends ApiService<Campaign> {
       }
       if (retributionRule.slug === RetributionRulesSlugEnum.RETRIBUTION) {
         const parameters = <RetributionParametersInterface>retributionRule.parameters;
+        parameters.for_passenger.amount = parameters.for_passenger.amount / 100; // to euros
+        parameters.for_driver.amount = parameters.for_driver.amount / 100; // to euros
         campaignUx.retributions.push(parameters);
       }
     });
@@ -115,7 +122,6 @@ export class CampaignService extends ApiService<Campaign> {
       _id,
       name,
       description,
-      territory_id,
       status,
       unit,
       parent_id,
@@ -128,8 +134,13 @@ export class CampaignService extends ApiService<Campaign> {
       restrictions,
     } = campaignUx;
 
-    const campaignFilters = {
-      ...filters,
+    let { territory_id } = campaignUx;
+
+    const campaignFilters: Campaign['filters'] = {
+      rank: campaignUx.filters.rank,
+      time: campaignUx.filters.time,
+      weekday: campaignUx.filters.weekday,
+      operators_id: campaignUx.filters.operator_ids,
       distance_range: {
         min: filters.distance_range[0],
         max: filters.distance_range[1],
@@ -147,7 +158,7 @@ export class CampaignService extends ApiService<Campaign> {
     }
 
     if (only_adult) {
-      campaignRetributionRules.push(new OnlyAdultRetributionRule(only_adult));
+      campaignRetributionRules.push(new OnlyAdultRetributionRule());
     }
 
     restrictions.forEach((restriction) => {
@@ -155,10 +166,34 @@ export class CampaignService extends ApiService<Campaign> {
     });
 
     retributions.forEach((retribution) => {
+      // set defaults, reset values according to uiStatus
+      if (retribution.min === null) {
+        retribution.min = -1;
+      }
+      if (retribution.max === null) {
+        retribution.max = -1;
+      }
+      if (retribution.for_driver.amount === null || !campaignUx.ui_status.for_driver) {
+        retribution.for_driver.amount = 0;
+      }
+      if (retribution.for_passenger.amount === null || !campaignUx.ui_status.for_passenger) {
+        retribution.for_passenger.amount = 0;
+      }
+      if (!campaignUx.ui_status.for_passenger) {
+        retribution.for_passenger.free = false;
+      }
+
+      retribution.for_passenger.amount = retribution.for_passenger.amount * 100; // to cents
+      retribution.for_driver.amount = retribution.for_driver.amount * 100; // to cents
       campaignRetributionRules.push(new Retribution(retribution));
     });
 
-    return new Campaign({
+    // set territory of user
+    if (this._userService.user.territory) {
+      territory_id = this._userService.user.territory;
+    }
+
+    const campaign = new Campaign({
       _id,
       name,
       description,
@@ -173,11 +208,26 @@ export class CampaignService extends ApiService<Campaign> {
       start: campaignUx.start.toDate(),
       end: campaignUx.end.toDate(),
     });
+
+    //  remove empty or null values
+    if (campaign.parent_id === null) {
+      delete campaign.parent_id;
+    }
+
+    //  remove description from retribution_rules
+    campaign.retribution_rules.forEach((retributionRule) => {
+      if ('description' in retributionRule) {
+        delete retributionRule.description;
+      }
+      return retributionRule;
+    });
+
+    return campaign;
   }
 
   public loadTemplates(): Observable<Campaign[]> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:listTemplates`);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:list`, { status: CampaignStatusEnum.TEMPLATE });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((templates: Campaign[]) => {

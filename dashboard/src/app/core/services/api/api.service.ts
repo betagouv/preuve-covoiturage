@@ -106,6 +106,9 @@ export class ApiService<T extends IModel> {
   }
 
   public create(item: object): Observable<T> {
+    if ('_id' in item) {
+      delete item['_id'];
+    }
     const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, item);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),

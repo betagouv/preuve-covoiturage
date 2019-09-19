@@ -98,8 +98,6 @@ export function cypress_campaignCreate() {
   it('clicks button to save campaign', () => {
     cy.server();
 
-    stubCampaignCreate(CampaignStatusEnum.DRAFT);
-
     cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(2)').click();
 
     cy.wait('@campaignCreate').then((xhr) => {

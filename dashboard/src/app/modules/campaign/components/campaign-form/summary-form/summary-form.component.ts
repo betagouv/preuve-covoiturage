@@ -10,6 +10,7 @@ import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+import { CampaignService } from '~/modules/campaign/services/campaign.service';
 
 @Component({
   selector: 'app-summary-form',
@@ -27,6 +28,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     private numberPipe: DecimalPipe,
     private operatorService: OperatorService,
     private toastr: ToastrService,
+    private campaignService: CampaignService,
   ) {
     super();
   }
@@ -44,6 +46,15 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
 
   getSummaryText(): string {
     const campaign: CampaignUx = this.campaignForm.getRawValue();
+
+    const forTrip = this.campaignForm.get('ui_status').get('for_trip').value;
+
+    const retributionText = this.campaignService.getExplanationFromRetributions(
+      campaign.retributions,
+      this.campaignForm.controls.unit.value,
+      forTrip,
+    );
+
     let summaryText = `Campagne d’incitation au covoiturage du <b>`;
     summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
     summaryText += ` ${moment(campaign.end).format('dddd DD MMMM YYYY')}</b>, limitée à`;
@@ -76,8 +87,8 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     summaryText += ` à raison de : `;
 
     // todo : generate formula
-    // summaryText += '<br/><br/>\r\n\r\n';
-    // summaryText += `${campaign.formula_expression.replace(/\r\n/g, '<br>\r\n')}`;
+    summaryText += '<br/><br/>\r\n\r\n';
+    summaryText += `${retributionText}`;
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `L’opération est limitée aux opérateurs proposant des registres de preuve`;
     summaryText += ` <b>${campaign.filters.rank ? campaign.filters.rank.join(' ou ') : ''}</b>.`;
@@ -86,7 +97,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     if (nbOperators === this.operatorService.entities.length) {
       summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
     } else {
-      summaryText += `La campagne est limitée à ${nbOperators} présents sur le registre.`;
+      summaryText += `La campagne est limitée à ${nbOperators} opérateur(s) présents sur le registre.`;
     }
     // todo: fix this part
     // const restrictions = <FormArray>this.controls.restrictions;

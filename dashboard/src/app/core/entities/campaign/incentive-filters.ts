@@ -22,7 +22,7 @@ export interface IncentiveFiltersInterface {
   time: IncentiveTimeRuleInterface[];
   distance_range: RulesRangeInterface;
   rank: TripRankEnum[];
-  operator_ids: string[];
+  operators_id: string[];
 }
 
 export interface IncentiveFiltersUxInterface {

@@ -25,7 +25,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
         max: 100,
       },
       rank: [TripRankEnum.A, TripRankEnum.B],
-      operator_ids: [],
+      operators_id: [],
     },
     ui_status: {
       for_driver: true,
@@ -60,7 +60,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
         max: 100,
       },
       rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-      operator_ids: [],
+      operators_id: [],
     },
     ui_status: {
       for_driver: true,
@@ -86,7 +86,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
         max: 100,
       },
       rank: [],
-      operator_ids: [],
+      operators_id: [],
     },
     ui_status: {
       for_driver: true,

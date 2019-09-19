@@ -10,6 +10,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserService } from '~/core/services/authentication/user.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Component({
   selector: 'app-trip-list',

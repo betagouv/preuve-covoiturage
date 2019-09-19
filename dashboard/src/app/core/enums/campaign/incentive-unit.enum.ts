@@ -1,9 +1,9 @@
 export enum IncentiveUnitEnum {
-  EUR = 'eur',
+  EUR = 'euro',
   POINT = 'point',
 }
 
 export const INCENTIVE_UNITS_FR = {
-  eur: '€',
+  euro: '€',
   point: 'points',
 };
