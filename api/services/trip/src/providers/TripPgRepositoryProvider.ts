@@ -381,7 +381,8 @@ export class TripPgRepositoryProvider {
           count(*)::int as trip,
           count(*) FILTER (WHERE carpoolers_subsidized > 0)::int as trip_subsidized
         FROM data
-        GROUP BY day`,
+        GROUP BY day
+        ORDER BY day ASC`,
       values: [
         // casting to int ?
         ...(where ? where.values : []),
