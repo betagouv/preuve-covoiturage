@@ -119,6 +119,8 @@ export class StatsAction extends Action {
     }, {});
     return {
       carpoolers,
+      distance,
+      trips,
       carpoolers_per_vehicule: {
         total: carpoolers_per_vehicule.days.map((day) => day.total).reduce((acc, value) => acc + value, 0),
         months: Object.keys(cpvm).map((key) => ({
@@ -127,8 +129,6 @@ export class StatsAction extends Action {
         })),
         days: carpoolers_per_vehicule.days,
       },
-      distance,
-      trips,
     };
   }
 }
