@@ -9,13 +9,13 @@ import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Stat } from '~/core/entities/stat/stat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { FilterInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { ApiService } from '~/core/services/api/api.service';
 import { StatInterface } from '~/core/interfaces/stat/statInterface';
 import { UserService } from '~/core/services/authentication/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 import { co2Factor, petrolFactor } from '../config/stat';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 @Injectable({
   providedIn: 'root',

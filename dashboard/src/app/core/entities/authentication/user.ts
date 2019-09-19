@@ -1,5 +1,6 @@
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profileInterface';
 
 import { IModel } from '../IModel';
 
@@ -8,38 +9,40 @@ export class User implements IModel {
   public email: string;
   public lastname: string;
   public firstname: string;
-  public fullname: string;
-  public password: string;
   public phone: string;
   public group: UserGroupEnum;
   public role: UserRoleEnum;
-  public aom: string;
-  public operator: string;
-  public territory: string;
-  public permissions: [string];
+  public operator?: string;
+  public territory?: string;
+  public permissions: UserPermissionsType;
 
-  // public company: OrganisationCompany;
+  // todo: don't set default user
+  constructor(
+    obj: UserInterface = {
+      _id: null,
+      email: null,
+      lastname: null,
+      firstname: null,
+      phone: null,
+      group: null,
+      role: null,
+      permissions: [],
+    },
+  ) {
+    this._id = obj._id;
+    this.email = obj.email;
+    this.lastname = obj.lastname;
+    this.firstname = obj.firstname;
+    this.phone = obj.phone;
+    this.group = obj.group;
+    this.role = obj.role;
+    this.permissions = obj.permissions;
 
-  constructor(obj?: any) {
-    this._id = (obj && obj._id) || null;
-    this.email = (obj && obj.email) || null;
-    this.lastname = (obj && obj.lastname) || null;
-    this.firstname = (obj && obj.firstname) || null;
-    this.fullname = (obj && obj.fullName) || null;
-    this.password = (obj && obj.password) || null;
-    this.phone = (obj && obj.phone) || null;
-    this.group = (obj && obj.group) || null;
-    this.role = (obj && obj.role) || null;
-    this.aom = (obj && obj.role) || null;
-    this.operator = (obj && obj.operator) || null;
-    this.territory = (obj && obj.territory) || null;
-    this.permissions = (obj && obj.permissions) || [];
-    /*
-     this.company = (obj && obj.company) || {
-      name: null,
-      link: null,
-      icon: null,
-    };
-    */
+    if (obj.operator) {
+      this.operator = obj.operator;
+    }
+    if (obj.territory) {
+      this.territory = obj.territory;
+    }
   }
 }

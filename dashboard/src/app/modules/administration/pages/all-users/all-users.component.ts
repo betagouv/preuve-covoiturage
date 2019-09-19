@@ -22,7 +22,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   searchFilters: FormGroup;
   editUserFormVisible = false;
   isCreatingUser = false;
-  userGroup = 'territory';
+  userGroup = UserGroupEnum.TERRITORY;
   availableUserGroups = USER_GROUPS;
 
   @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
@@ -49,9 +49,11 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   }
 
   showEditForm(user: User = null) {
+    const emptyUserWithGroup = new User();
+    emptyUserWithGroup.group = this.userGroup;
     this.editedUser =
       user === null
-        ? new User({ group: this.userGroup }) // create a default user based on selected user group (top filter)
+        ? emptyUserWithGroup // create a default user based on selected user group (top filter)
         : new User(user);
 
     this.isCreatingUser = !this.editedUser._id;
@@ -74,44 +76,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
         this.users = users;
         this.filterUsers();
       },
-      (err) => {
-        // TODO TMP DELETE WHEN BACK IS LINKED
-        const user1 = {
-          _id: 1,
-          firstname: 'Thomas',
-          lastname: 'Durant',
-          email: 'thomas.durant@beta.gouv.fr',
-          group: 'territory',
-          operator: 1,
-        };
-        const user2 = {
-          _id: 2,
-          firstname: 'Margot',
-          lastname: 'Sanchez',
-          email: 'margot.sanchez@beta.gouv.fr',
-          group: 'territory',
-        };
-        const user3 = {
-          _id: 3,
-          firstname: 'John',
-          lastname: 'Doe Admin',
-          email: 'john.doe@beta.gouv.fr',
-          group: 'registry',
-        };
-        const user4 = {
-          _id: 4,
-          firstname: 'John',
-          lastname: 'Doe OP',
-          email: 'john.doe@beta.gouv.fr',
-          group: 'operator',
-        };
-
-        this.userService._entities$.next(
-          [new User(user1), new User(user2), new User(user3), new User(user4)].filter(
-            (fUser) => fUser.group === this.userGroup,
-          ),
-        );
-      },
+      (err) => {},
     );
   }
 

@@ -8,7 +8,7 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 
 import { FilterService } from '~/core/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { TRIP_CLASSES } from '~/core/enums/trip/trip-rank.enum';
+import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
 import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
@@ -44,7 +44,7 @@ import { TownInterface } from '~/core/interfaces/geography/townInterface';
 export class FilterComponent extends DestroyObservable implements OnInit {
   public filterForm: FormGroup;
   public _showFilter = false;
-  public classes = TRIP_CLASSES;
+  public classes = TRIP_RANKS;
   public tripStatusList = TRIP_STATUS;
 
   public days: WeekDay[] = [0, 1, 2, 3, 4, 5, 6];
@@ -68,7 +68,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.filterForm = this.fb.group({
-      campaignIds: [null],
+      campaignIds: [[]],
       date: this.fb.group({
         start: [null],
         end: [null],
@@ -77,16 +77,16 @@ export class FilterComponent extends DestroyObservable implements OnInit {
         start: [null],
         end: [null],
       }),
-      days: [null],
-      towns: [null],
+      days: [[]],
+      towns: [[]],
       distance: this.fb.group({
         min: [null],
         max: [null],
       }),
-      ranks: [null],
+      ranks: [[]],
       status: [null],
-      operator_ids: [null],
-      territoryIds: [null],
+      operatorIds: [[]],
+      territoryIds: [[]],
     });
   }
 
@@ -100,6 +100,9 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   public filterClick(): void {
     const filterObj = this.filterForm.value;
+
+    console.log({ filterObj });
+    console.log(this.filterForm.getRawValue());
 
     // format for API
     filterObj.towns = this.filterForm.value.towns.map((town: TownInterface) => town.name);

@@ -1,12 +1,10 @@
 import { WeekDay } from '@angular/common';
 
-// tslint:disable-next-line:max-line-length
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 
-
-export interface FilterInterface {
-  campaign_id: string[];
+export interface FilterUxInterface {
+  campaignIds: string[];
   date: {
     start: Date;
     end: Date;
@@ -23,6 +21,6 @@ export interface FilterInterface {
   };
   ranks: TripRankEnum[];
   status: TripStatusEnum;
-  operator_id: string[];
-  territory_id: string[];
+  operatorIds: string[];
+  territoryIds: string[];
 }

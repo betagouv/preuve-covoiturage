@@ -4,4 +4,4 @@ export enum TripRankEnum {
   C = 'C',
 }
 
-export const TRIP_CLASSES: TripRankEnum[] = Object.values(TripRankEnum);
+export const TRIP_RANKS: TripRankEnum[] = Object.values(TripRankEnum);

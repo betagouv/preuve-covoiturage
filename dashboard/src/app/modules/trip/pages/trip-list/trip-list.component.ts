@@ -9,11 +9,12 @@ import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { TripInterface } from '~/core/interfaces/trip/tripInterface';
 import { FilterService } from '~/core/services/filter.service';
-import { FilterInterface, FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
+import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserService } from '~/core/services/authentication/user.service';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 @Component({
   selector: 'app-trip-list',

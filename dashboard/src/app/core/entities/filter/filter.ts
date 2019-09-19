@@ -3,7 +3,7 @@ import { WeekDay } from '@angular/common';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
-import { FilterInterface } from '~/core/interfaces/filter/filterUxInterface';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 export class Filter {
   campaign_id: string[];

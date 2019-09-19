@@ -106,6 +106,9 @@ export class AuthenticationService {
     if (!permissions.length) {
       return true;
     }
+    if (!user) {
+      return false;
+    }
     if ('permissions' in user) {
       return user.permissions.filter((permission: PermissionType) => permissions.includes(permission)).length > 0;
     }
@@ -120,6 +123,9 @@ export class AuthenticationService {
       return true;
     }
     const user = this._userService.user;
+    if (!user) {
+      return false;
+    }
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
 
@@ -131,6 +137,9 @@ export class AuthenticationService {
       return true;
     }
     const user = this._userService.user;
+    if (!user) {
+      return false;
+    }
     return !role || ('role' in user && role === user.role);
   }
 
