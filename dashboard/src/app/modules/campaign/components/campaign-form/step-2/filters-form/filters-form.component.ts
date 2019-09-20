@@ -10,7 +10,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 @Component({
   selector: 'app-filters-form',
   templateUrl: './filters-form.component.html',
-  styleUrls: ['./filters-form.component.scss', '../campaign-sub-form.scss'],
+  styleUrls: ['./filters-form.component.scss', '../../campaign-sub-form.scss'],
 })
 export class FiltersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
@@ -179,7 +179,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
   private initTargetChangeDetection() {
     this.forDriverControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.forTripControl.setValue(null);
+        this.forTripControl.setValue(false);
         if (!this.forPassengerControl.value) {
           this.campaignForm.get('only_adult').setValue(null);
         }
@@ -187,15 +187,15 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
     });
     this.forPassengerControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.forTripControl.setValue(null);
+        this.forTripControl.setValue(false);
       } else if (this.forDriverControl.value) {
         this.campaignForm.get('only_adult').setValue(null);
       }
     });
     this.forTripControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
-        this.forPassengerControl.setValue(null);
-        this.forDriverControl.setValue(null);
+        this.forPassengerControl.setValue(false);
+        this.forDriverControl.setValue(false);
       }
     });
   }

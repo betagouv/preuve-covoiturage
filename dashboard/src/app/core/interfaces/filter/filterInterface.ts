@@ -10,8 +10,8 @@ export interface FilterInterface {
     end: Date;
   };
   hour: {
-    start: string;
-    end: string;
+    start: number;
+    end: number;
   };
   days: WeekDay[];
   towns: string[];

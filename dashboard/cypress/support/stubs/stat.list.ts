@@ -1,4 +1,5 @@
 import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
+import { StatsGenerator } from '../generators/stats.generator';
 
 export function stubStatList() {
   cy.route({
@@ -10,7 +11,7 @@ export function stubStatList() {
           id: 1568215196898,
           jsonrpc: '2.0',
           result: {
-            data: [],
+            data: StatsGenerator.generateStats,
           },
         },
       ],

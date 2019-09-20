@@ -25,6 +25,7 @@ export class CampaignUx {
   public max_trips: number;
   public only_adult: boolean;
   public restrictions: RestrictionParametersInterface[];
+  public retributions: RetributionParametersInterface[];
 
   public ui_status: {
     expert_mode?: boolean;
@@ -36,8 +37,6 @@ export class CampaignUx {
 
   public amount_spent?: number;
   public trips_number?: number;
-
-  public retributions: RetributionParametersInterface[];
 
   constructor(
     obj: CampaignUXInterface = {
@@ -78,6 +77,7 @@ export class CampaignUx {
     this.parent_id = obj.parent_id;
     this.unit = obj.unit;
     this.filters = obj.filters;
+    this.restrictions = obj.restrictions;
     this.retributions = obj.retributions;
     this.only_adult = obj.only_adult;
     this.ui_status = obj.ui_status;

@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import cloneDeep from 'lodash/cloneDeep';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
@@ -10,7 +9,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserService } from '~/core/services/authentication/user.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';
 
 @Component({
   selector: 'app-trip-list',
@@ -20,8 +19,8 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 export class TripListComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
   trips: Trip[] = [];
-  skip = 0;
-  limit = 50;
+  skip = DEFAULT_TRIP_SKIP;
+  limit = DEFAULT_TRIP_LIMIT;
 
   constructor(
     public filterService: FilterService,
@@ -45,7 +44,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   onScroll() {
     // TODO stop fetching trips when end (count 0) is reached
-    this.skip += 20;
+    this.skip += TRIP_SKIP_SCROLL;
     const filter = {
       ...this.filterService._filter$.value,
       skip: this.skip,
@@ -86,11 +85,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (trips) => {
-          if (loadMore) {
-            this.trips = this.trips.concat(trips);
-          } else {
-            this.trips = trips;
-          }
+          this.trips = loadMore ? this.trips.concat(trips) : trips;
         },
         (err) => {
           this.toastr.error(err.message);

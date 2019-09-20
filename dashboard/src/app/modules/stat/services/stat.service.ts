@@ -44,7 +44,6 @@ export class StatService extends ApiService<StatInterface> {
       tap((data) => {
         this.formatData(data);
         this._loading$.next(false);
-        console.log('loading should be false', this._loading$.value);
       }),
     );
   }
@@ -257,7 +256,6 @@ export class StatService extends ApiService<StatInterface> {
       },
     };
 
-    console.log('formatedStat', formatedStat);
     this._formatedStat$.next(formatedStat);
     this._loaded$.next(true);
     this._loading$.next(false);

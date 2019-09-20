@@ -10,12 +10,12 @@
   <div
     class="RetributionForm-inputs"
     [ngClass]="
-      forPassenger && forPassengerFormGroup.controls.free.value && !isEuros ? 'RetributionForm-inputs--hidden' : ''
+      forPassenger && forPassengerFormGroup.controls.free.value && isEuros ? 'RetributionForm-inputs--hidden' : ''
     "
   >
     <mat-form-field appearance="outline" class="shortFormField">
       <mat-label>Montant</mat-label>
-      <input matInput type="number" min="0" placeholder="0,1" required formControlName="amount" />
+      <input matInput type="number" min="0" placeholder="0,1" formControlName="amount" />
       <mat-error *ngIf="true">
         Le montant du mode de rétribution doit être supérieur à 0.
       </mat-error>

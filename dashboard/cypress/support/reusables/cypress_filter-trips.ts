@@ -1,8 +1,9 @@
-/// <reference types="Cypress" />
+import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '../../../src/app/core/const/filter.const';
 
+/// <reference types="Cypress" />
 import { expectedFilter, filterEndMoment, filterStartMoment } from '../formValues/expectedFilter';
 
-export function Cypress_filterTrips() {
+export function cypress_filterTrips() {
   it('opens filter', () => {
     cy.get('.TripLayout-menu-filter-button').click();
   });
@@ -82,7 +83,8 @@ export function Cypress_filterTrips() {
 
       const filter = {
         ...expectedFilter,
-        days: expectedFilter.days.map(String),
+        skip: DEFAULT_TRIP_SKIP,
+        limit: DEFAULT_TRIP_LIMIT,
       };
 
       // todo: tmp unit operators connected

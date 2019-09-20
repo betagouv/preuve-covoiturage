@@ -31,6 +31,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       for_driver: true,
       for_passenger: true,
       for_trip: false,
+      staggered: false,
     },
     start: null,
     end: null,
@@ -66,6 +67,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       for_driver: true,
       for_passenger: true,
       for_trip: false,
+      staggered: false,
     },
     start: null,
     end: null,
@@ -92,6 +94,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       for_driver: true,
       for_passenger: true,
       for_trip: false,
+      staggered: false,
     },
     start: null,
     end: null,
@@ -103,7 +106,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
 export function stubCampaignTemplateList() {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=campaign:listTemplates',
+    url: '/rpc?methods=campaign:list',
     response: (data) =>
       <JsonRPCResponse[]>[
         {

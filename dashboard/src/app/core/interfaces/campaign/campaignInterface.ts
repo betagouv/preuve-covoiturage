@@ -68,13 +68,13 @@ export class RetributionRule {
 
 export interface RetributionRuleInterface {
   slug: RetributionRulesSlugEnum;
-  description: string;
+  description?: string;
   parameters: { [k: string]: any };
   schema?: object;
 }
 
 export class OnlyAdultRetributionRule implements RetributionRuleInterface {
-  description: string;
+  description?: string;
   slug: RetributionRulesSlugEnum;
   parameters: {
     only_adult: boolean;
@@ -86,7 +86,7 @@ export class OnlyAdultRetributionRule implements RetributionRuleInterface {
 }
 
 export class MaxAmountRetributionRule implements RetributionRuleInterface {
-  description: string;
+  description?: string;
   slug: RetributionRulesSlugEnum;
   parameters: {
     amount: number;
@@ -104,7 +104,7 @@ export class MaxAmountRetributionRule implements RetributionRuleInterface {
 
 export class MaxTripsRetributionRule implements RetributionRuleInterface {
   slug: RetributionRulesSlugEnum;
-  description: string;
+  description?: string;
   parameters: {
     amount: number;
     period: string;
@@ -120,7 +120,7 @@ export class MaxTripsRetributionRule implements RetributionRuleInterface {
 }
 
 export class RestrictionRetributionRule implements RetributionRuleInterface {
-  description: string;
+  description?: string;
   slug: RetributionRulesSlugEnum;
   parameters: RestrictionParametersInterface;
   constructor(parameters: RestrictionParametersInterface) {
@@ -138,7 +138,7 @@ export interface RestrictionParametersInterface {
 
 export class Retribution implements RetributionRuleInterface {
   slug: RetributionRulesSlugEnum;
-  description: string;
+  description?: string;
   parameters: RetributionParametersInterface;
   constructor(parameters: RetributionParametersInterface) {
     this.slug = RetributionRulesSlugEnum.RETRIBUTION;
