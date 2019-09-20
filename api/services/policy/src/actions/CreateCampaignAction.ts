@@ -36,7 +36,7 @@ export class CreateCampaignAction extends AbstractAction {
       try {
         this.campaignRepository.find(params.parent_id);
       } catch (e) {
-        throw new InvalidParamsException(`Parent ${params.parent_id} doest not exist`);
+        throw new InvalidParamsException(`Parent ${params.parent_id} does not exist`);
       }
     }
 
