@@ -118,7 +118,7 @@ export class AuthenticationService {
     });
   }
 
-  public changePassword(oldPassword: string, newPassword: string): Observable<any> {
+  public changePassword(oldPassword: string, newPassword: string): void {
     const jsonRPCParam = new JsonRPCParam('user:changePassword', {
       old_password: oldPassword,
       new_password: newPassword,
@@ -206,7 +206,9 @@ export class AuthenticationService {
   }
 
   public sendForgottenPasswordEmail(email: string): Observable<any> {
-    return this.call('auth/reset-password', {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user:forgottenPassword';
+    jsonRPCParam.params = {
       email,
     });
 
@@ -222,23 +224,27 @@ export class AuthenticationService {
   /**
    * Check validity of token & reset
    */
-  public checkPasswordToken(email: string, token: string): Observable<any> {
-    return this.call('auth/check-token', { email, token });
-    // const jsonRPCParam = new JsonRPCParam();
-    // jsonRPCParam.method = 'user:checkPasswordToken';
-    // jsonRPCParam.params = {
-    //   email,
-    //   token,
-    // };
-    //
-    // return this._jsonRPC.callOne(jsonRPCParam);
+  public checkPasswordToken(reset: string, token: string): Observable<any> {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user:checkPasswordToken';
+    jsonRPCParam.params = {
+      reset,
+      token,
+    };
+
+    return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   /**
    * Check validity of token & reset
    */
-  public confirmEmail(email: string, token: string): Observable<any> {
-    return this.call('auth/confirm-email', { email, token });
+  public checkEmailToken(reset: string, token: string): Observable<any> {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user:checkEmailToken';
+    jsonRPCParam.params = {
+      reset,
+      token,
+    };
 
     // const jsonRPCParam = new JsonRPCParam();
     // jsonRPCParam.method = 'user:confirmEmail';
@@ -250,8 +256,14 @@ export class AuthenticationService {
     // return this._jsonRPC.callOne(jsonRPCParam);
   }
 
-  public sendNewPassword(email: string, password: string, token: string): Observable<any> {
-    return this.call('auth/change-password', { email, password, token });
+  public sendNewPassword(password: string, reset: string, token: string): Observable<any> {
+    const jsonRPCParam = new JsonRPCParam();
+    jsonRPCParam.method = 'user:resetPassword';
+    jsonRPCParam.params = {
+      password,
+      reset,
+      token,
+    };
 
     // const jsonRPCParam = new JsonRPCParam();
     // jsonRPCParam.method = 'user:resetPassword';
