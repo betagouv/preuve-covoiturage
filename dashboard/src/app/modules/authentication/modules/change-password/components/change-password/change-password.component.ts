@@ -24,16 +24,17 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   get password() {
-    return this.changePasswordForm.get('password');
+    return this.changePasswordForm.get('new_password');
   }
+
   get passwordVerification() {
-    return this.changePasswordForm.get('passwordVerification');
+    return this.changePasswordForm.get('password_verification');
   }
 
   onChangePassword(): void {
     this.authentication.changePassword(
-      this.changePasswordForm.value.oldPassword,
-      this.changePasswordForm.value.password,
+      this.changePasswordForm.value.old_password,
+      this.changePasswordForm.value.new_password,
     );
   }
 
@@ -55,9 +56,15 @@ export class ChangePasswordComponent implements OnInit {
   private initProfilForm(): void {
     this.changePasswordForm = this.fb.group(
       {
-        oldPassword: ['', [Validators.required]],
-        password: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
-        passwordVerification: [
+        old_password: [
+          '',
+          [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
+        ],
+        new_password: [
+          '',
+          [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
+        ],
+        password_verification: [
           '',
           [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
         ],

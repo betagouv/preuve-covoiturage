@@ -83,9 +83,9 @@ export class AuthenticationService {
   }
 
   public changePassword(oldPassword: string, newPassword: string): void {
-    const jsonRPCParam = new JsonRPCParam('user.changePassword', {
-      oldPassword,
-      newPassword,
+    const jsonRPCParam = new JsonRPCParam('user:changePassword', {
+      old_password: oldPassword,
+      new_password: newPassword,
     });
 
     this._jsonRPC.callOne(jsonRPCParam).subscribe(
@@ -149,7 +149,7 @@ export class AuthenticationService {
 
   public sendForgottenPasswordEmail(email: string): Observable<any> {
     const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user.forgottenPassword';
+    jsonRPCParam.method = 'user:forgottenPassword';
     jsonRPCParam.params = {
       email,
     };
@@ -162,7 +162,7 @@ export class AuthenticationService {
    */
   public checkPasswordToken(reset: string, token: string): Observable<any> {
     const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user.checkPasswordToken';
+    jsonRPCParam.method = 'user:checkPasswordToken';
     jsonRPCParam.params = {
       reset,
       token,
@@ -176,7 +176,7 @@ export class AuthenticationService {
    */
   public checkEmailToken(reset: string, token: string): Observable<any> {
     const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user.checkEmailToken';
+    jsonRPCParam.method = 'user:checkEmailToken';
     jsonRPCParam.params = {
       reset,
       token,
@@ -187,7 +187,7 @@ export class AuthenticationService {
 
   public sendNewPassword(password: string, reset: string, token: string): Observable<any> {
     const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user.resetPassword';
+    jsonRPCParam.method = 'user:resetPassword';
     jsonRPCParam.params = {
       password,
       reset,
