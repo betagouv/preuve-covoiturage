@@ -4,16 +4,21 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { PASSWORD } from '~/core/const/validators.const';
 import { passwordMatchValidator } from '~/modules/authentication/validators/password-match.validator';
+import { takeUntil } from 'rxjs/operators';
+import { DestroyObservable } from '~/core/components/destroy-observable';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent extends DestroyObservable implements OnInit {
   public changePasswordForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private authentication: AuthenticationService) {}
+  constructor(private fb: FormBuilder, private authentication: AuthenticationService, private toastr: ToastrService) {
+    super();
+  }
 
   ngOnInit(): void {
     this.initProfilForm();
@@ -32,10 +37,23 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   onChangePassword(): void {
-    this.authentication.changePassword(
-      this.changePasswordForm.value.old_password,
-      this.changePasswordForm.value.new_password,
-    );
+    this.authentication
+      .changePassword(this.changePasswordForm.value.old_password, this.changePasswordForm.value.new_password)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (result) => {
+          this.toastr.success('Votre mot de passe a été mis à jour');
+          this.changePasswordForm.setValue({
+            old_password: '',
+            new_password: '',
+            verif_password: '',
+          });
+        },
+        (err) => {
+          debugger;
+          this.toastr.error(err.message);
+        },
+      );
   }
 
   /**
