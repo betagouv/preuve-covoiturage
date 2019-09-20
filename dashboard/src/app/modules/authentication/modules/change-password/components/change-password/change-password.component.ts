@@ -50,7 +50,6 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
           });
         },
         (err) => {
-          debugger;
           this.toastr.error(err.message);
         },
       );
