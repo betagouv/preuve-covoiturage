@@ -1,6 +1,3 @@
-CREATE EXTENSION postgis;
-CREATE EXTENSION postgis_topology;
-
 CREATE TABLE trips
 (
   _id serial primary key,
@@ -10,17 +7,6 @@ CREATE TABLE trips
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW(),
   deleted_at timestamp
-);
-
-CREATE TYPE identitytype AS (
-  phone varchar,
-  firstname varchar,
-  lastname varchar,
-  email varchar,
-  company varchar,
-  travel_pass_name varchar,
-  travel_user_id varchar,
-  over_18 boolean
 );
 
 CREATE TABLE trip_participants (
@@ -74,6 +60,3 @@ CREATE TABLE trip_participants (
   -- payments?: PaymentInterface[];
   -- campaign id
 );
-
-CREATE INDEX ON trip_participants (((identity).phone));
-CREATE UNIQUE INDEX ON trip_participants(trip_id, ((identity).phone));
