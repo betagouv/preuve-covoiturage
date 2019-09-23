@@ -44,6 +44,9 @@ export class ResetPasswordUserAction extends AbstractAction {
     }
 
     user.password = await this.cryptoProvider.cryptPassword(params.password);
+
+    user.has_reset_password = true;
+
     user.status = 'active';
 
     return this.userRepository.update(user);

@@ -33,12 +33,17 @@ export class ConfirmEmailUserAction extends AbstractAction {
       throw new UnauthorizedException('Expired token');
     }
 
-    // user is confirmed, switch the status to active
-    return this.userRepository.update({
-      ...user,
-      status: 'active',
-      forgotten_at: undefined,
-      forgotten_token: undefined,
-    });
+    // Token expired after 1 day
+    if ((Date.now() - user.email_change_at.getTime()) / 1000 > this.config.get('user.tokenExpiration.email_confirm')) {
+      user.email_confirm = undefined;
+      user.email_token = undefined;
+      await this.userRepository.update(user);
+
+      throw new ForbiddenException('Expired token');
+    }
+
+    user.status = 'active';
+
+    return this.userRepository.update(user);
   }
 }

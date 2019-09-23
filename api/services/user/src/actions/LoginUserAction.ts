@@ -43,6 +43,7 @@ export class LoginUserAction extends AbstractAction {
       throw new UnauthorizedException();
     }
 
+    console.log(user.status);
     switch (user.status) {
       case 'pending':
         throw new UnauthorizedException('Account is pending validation');

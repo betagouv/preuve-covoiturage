@@ -32,8 +32,6 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     user.forgotten_at = new Date();
     user.status = 'pending';
 
-    await this.userRepository.update(user);
-
     const link = sprintf(
       '%s/reset-forgotten-password/%s/%s/',
       this.config.get('url.appUrl'),
