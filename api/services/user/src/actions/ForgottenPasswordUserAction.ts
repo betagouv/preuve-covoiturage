@@ -32,16 +32,18 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     user.forgotten_at = new Date();
     user.status = 'pending';
 
+    await this.userRepository.update(user);
+
     const link = sprintf(
-      '%s/reset-forgotten-password/%s/%s/',
+      '%s/login/reset-forgotten-password/%s/%s/',
       this.config.get('url.appUrl'),
       encodeURIComponent(user.email),
       encodeURIComponent(token),
     );
 
     // debug data for testing
-    // if (process.env.NODE_ENV === 'testing') {
-    console.log(`
+    if (process.env.NODE_ENV === 'testing') {
+      console.log(`
 ******************************************
 [test] Forgotten Password
 email: ${user.email}
@@ -49,7 +51,7 @@ token: ${token}
 link:  ${link}
 ******************************************
       `);
-    // }
+    }
 
     // TODO check this
     // generate a context if missing

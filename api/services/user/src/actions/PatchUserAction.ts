@@ -79,25 +79,7 @@ export class PatchUserAction extends AbstractAction {
         patch.forgotten_token = await this.cryptoProvider.cryptToken(token);
         patch.forgotten_at = new Date();
         patch.status = 'pending';
-
-        const link = sprintf(
-          '%s/confirm-email/%s/%s/',
-          this.config.get('url.appUrl'),
-          encodeURIComponent(patch.email),
-          encodeURIComponent(token),
-        );
-
-        // debug data for testing
-        // if (process.env.NODE_ENV === 'testing') {
-        console.log(`
-******************************************
-[test] Patch user
-email: ${patch.email}
-token: ${token}
-link:  ${link}
-******************************************
-                `);
-        // }
+        const link = `${this.config.get('url.appUrl')}/auth/reset-password/${patch.email}/${token}`;
 
         // Notify the new email with a confirmation link
         await this.kernel.call(
