@@ -45,7 +45,7 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
     if (!userData.phone) delete userData.phone;
 
     this._userService
-      .patchOne(userData)
+      .patch(userData)
       .pipe(takeUntil(this.destroy$))
       .subscribe((user) => {
         this.toastr.success('Votre profile as bien été mis à jour');
