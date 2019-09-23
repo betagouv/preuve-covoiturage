@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { finalize, map, tap } from 'rxjs/operators';
+import { finalize, map, mergeMap, tap } from 'rxjs/operators';
 
 import { JsonRPCService } from './json-rpc.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -13,6 +13,8 @@ export class ApiService<T extends IModel> {
   // todo: seperate multiple loaded & single loaded
   protected _loading$ = new BehaviorSubject<boolean>(false);
   protected _loaded$ = new BehaviorSubject<boolean>(false);
+
+  private _listFilters = {};
 
   constructor(private _httpClient: HttpClient, private _jsonRPCService: JsonRPCService, protected _method: string) {}
 
@@ -50,6 +52,7 @@ export class ApiService<T extends IModel> {
 
   // ==== CRUD ======
   public load(parameters: object = {}): Observable<T[]> {
+    this._listFilters = {};
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}:list`, parameters);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
@@ -132,30 +135,19 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  // TODO: gilles make id mandatory
-  public patch(item: T, id: string = item._id): Observable<T> {
-    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patch`, item, id);
-
+  public patchList(item: IModel): Observable<[T, T[]]> {
+    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patch`, item);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      tap((entity: T) => {
-        console.log(`updated ${this._method} id=${entity._id}`);
-
-        this._entity$.next(entity);
-
-        const auxArray = this._entities$.value;
-        if (auxArray) {
-          const ind = auxArray.findIndex((aItem) => aItem._id === entity._id);
-          if (ind !== -1) {
-            auxArray.splice(ind, 1, entity);
-            this._entities$.next(auxArray);
-          }
-        }
+      mergeMap((modifiedEntity: T) => {
+        console.log(`updated ${this._method} id=${modifiedEntity._id}`);
+        this._entity$.next(modifiedEntity);
+        return this.load(this._listFilters).pipe(map((entities) => <[T, T[]]>[modifiedEntity, entities]));
       }),
     );
   }
 
-  public patchOne(item: T): Observable<T> {
+  public patch(item: T): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:patch`, item);
 
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(

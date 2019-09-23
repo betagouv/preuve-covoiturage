@@ -40,17 +40,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
     this.campaignService
       .load()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (campaigns) => {
-          //
-        },
-        (err) => {
-          this.toastr.error(err.message);
-
-          // TODO TMP TO DELETE
-          this.campaignService._entities$.next(campaignMocks);
-        },
-      );
+      .subscribe();
   }
 
   public filterCampaignsByStatus(campaigns: Campaign[]): void {

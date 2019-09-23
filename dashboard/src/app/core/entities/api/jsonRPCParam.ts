@@ -1,12 +1,14 @@
+import { IModel } from '~/core/entities/IModel';
+
 export class JsonRPCParam {
   public id: number;
   public method: string;
   public jsonrpc: string;
   public params: any;
 
-  static createPatchParam(method: string, item: any, id: string): JsonRPCParam {
+  static createPatchParam(method: string, item: IModel): JsonRPCParam {
     const patch = { ...item };
-    const param = { patch, _id: id ? id : item._id };
+    const param = { patch, _id: item._id };
     delete patch._id;
     return new JsonRPCParam(method, param);
   }

@@ -41,7 +41,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
 
   public onSubmit(): void {
     if ('_id' in this.operatorForm.value) {
-      this._operatorService.patch(this.operatorForm.value);
+      this._operatorService.patchList(this.operatorForm.value).subscribe();
     }
   }
 
@@ -49,29 +49,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
     this._operatorService
       .loadOne()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {},
-        (err) => {
-          // TODO TMP DELETE WHEN BACK IS LINKED
-          const operator = new Operator({
-            _id: '5c66d89760e6ee004a6cab1f',
-            nom_commercial: 'Opérateur',
-            raison_sociale: 'Opérateur SAS',
-            company: new Company({
-              siren: '123456789',
-              naf_entreprise: '1234A',
-            }),
-            address: new Address({
-              street: '5 rue de brest',
-              postcode: '69002',
-              city: 'Lyon',
-              country: 'France',
-            }),
-          });
-
-          this._operatorService._entity$.next(operator);
-        },
-      );
+      .subscribe();
     this._operatorService.operator$.pipe(takeUntil(this.destroy$)).subscribe((operator: Operator | null) => {
       if (operator) {
         const { raison_sociale, nom_commercial, address, company, contacts, bank } = operator;

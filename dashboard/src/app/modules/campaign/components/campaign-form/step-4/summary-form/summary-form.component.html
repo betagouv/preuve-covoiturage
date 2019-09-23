@@ -39,22 +39,22 @@
     <div class="SummaryForm-actions">
       <button
         [appShowSpinner]="loading"
-        mat-flat-button
+        mat-button
         class="large"
         color="primary"
         (click)="saveCampaign()"
         [disabled]="!campaignForm.valid"
       >
-        Lancer la campagne
+        Enregistrer en brouillon
       </button>
       <button
         [appShowSpinner]="loading"
-        mat-button
+        mat-flat-button
         class="large"
-        (click)="saveCampaign(true)"
+        (click)="saveCampaign()"
         [disabled]="!campaignForm.valid"
       >
-        Enregistrer en brouillon
+        Créer un modèle
       </button>
     </div>
   </form>
