@@ -11,56 +11,65 @@ import {
   ContentWhitelistMiddleware,
 } from '@pdc/provider-middleware';
 import {
-  userPatchSchema,
-  userDeleteSchema,
+  userChangeEmailSchema,
+  userChangePasswordSchema,
+  userChangePasswordWithTokenSchema,
+  userChangeRoleSchema,
+  userCheckForgottenTokenSchema,
+  userConfirmEmailSchema,
   userCreateSchema,
+  userDeleteSchema,
   userFindSchema,
+  userForgottenPasswordSchema,
   userListSchema,
+  userLoginSchema,
+  userPatchSchema,
   userRegisterSchema,
   userResetPasswordSchema,
-  userForgottenPasswordSchema,
-  userConfirmEmailSchema,
-  userChangePasswordSchema,
-  userChangeEmailSchema,
-  userLoginSchema,
-  userChangeRoleSchema,
 } from '@pdc/provider-schema';
 
-import { MeUserAction } from './actions/MeUserAction';
-import { CreateUserAction } from './actions/CreateUserAction';
-import { DeleteUserAction } from './actions/DeleteUserAction';
-import { FindUserAction } from './actions/FindUserAction';
-import { NotifyUserAction } from './actions/NotifyUserAction';
-import { ListUserAction } from './actions/ListUserAction';
-import { PatchUserAction } from './actions/PatchUserAction';
-import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
-import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
-import { ResetPasswordUserAction } from './actions/ResetPasswordUserAction';
-import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
-import { ChangeEmailUserAction } from './actions/ChangeEmailUserAction';
-import { LoginUserAction } from './actions/LoginUserAction';
-import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
-import { RegisterUserAction } from './actions/RegisterUserAction';
+import {
+  MeUserAction,
+  CreateUserAction,
+  DeleteUserAction,
+  FindUserAction,
+  NotifyUserAction,
+  ListUserAction,
+  PatchUserAction,
+  ConfirmEmailUserAction,
+  ForgottenPasswordUserAction,
+  ResetPasswordUserAction,
+  ChangePasswordUserAction,
+  ChangeEmailUserAction,
+  LoginUserAction,
+  ChangeRoleUserAction,
+  RegisterUserAction,
+  SchemaUserAction,
+  ChangePasswordWithTokenUserAction,
+  CheckForgottenTokenUserAction,
+} from './actions';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
-import { SchemaUserAction } from './actions/SchemaUserAction';
+import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [UserRepositoryProvider, CryptoProvider],
+  providers: [UserRepositoryProvider, CryptoProvider, ForgottenTokenValidatorProvider],
   validator: [
-    ['user.create', userCreateSchema],
-    ['user.changePassword', userChangePasswordSchema],
     ['user.changeEmail', userChangeEmailSchema],
+    ['user.changePassword', userChangePasswordSchema],
+    ['user.changePasswordWithToken', userChangePasswordWithTokenSchema],
     ['user.changeRole', userChangeRoleSchema],
+    ['user.checkForgottenToken', userCheckForgottenTokenSchema],
     ['user.confirmEmail', userConfirmEmailSchema],
+    ['user.create', userCreateSchema],
+    ['user.delete', userDeleteSchema],
     ['user.find', userFindSchema],
-    ['user.forgotten_password', userForgottenPasswordSchema],
-    ['user.patch', userPatchSchema],
+    ['user.forgottenPassword', userForgottenPasswordSchema],
     ['user.list', userListSchema],
     ['user.login', userLoginSchema],
-    ['user.delete', userDeleteSchema],
-    ['user.resetPassword', userResetPasswordSchema],
+    ['user.patch', userPatchSchema],
     ['user.register', userRegisterSchema],
+    ['user.resetPassword', userResetPasswordSchema],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -71,22 +80,24 @@ import { SchemaUserAction } from './actions/SchemaUserAction';
   ],
   connections: [[MongoConnection, 'mongo']],
   handlers: [
-    SchemaUserAction,
     ChangeEmailUserAction,
     ChangePasswordUserAction,
+    ChangePasswordWithTokenUserAction,
     ChangeRoleUserAction,
+    CheckForgottenTokenUserAction,
     ConfirmEmailUserAction,
-    MeUserAction,
     CreateUserAction,
     DeleteUserAction,
     FindUserAction,
     ForgottenPasswordUserAction,
-    NotifyUserAction,
     ListUserAction,
     LoginUserAction,
+    MeUserAction,
+    NotifyUserAction,
     PatchUserAction,
-    ResetPasswordUserAction,
     RegisterUserAction,
+    ResetPasswordUserAction,
+    SchemaUserAction,
   ],
   template: null,
   notification: {

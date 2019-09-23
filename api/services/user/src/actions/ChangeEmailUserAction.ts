@@ -86,7 +86,7 @@ export class ChangeEmailUserAction extends AbstractAction {
     await this.kernel.call(
       'user:notify',
       {
-        template: this.config.get('email.templates.confirm'),
+        template: this.config.get('email.templates.confirmation'),
         email: patch.email,
         fullname: user.fullname,
         requester: requester.fullname,

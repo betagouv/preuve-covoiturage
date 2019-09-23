@@ -107,15 +107,15 @@ describe('Acquisition pipeline', () => {
       })
       .then(() => {
         setTimeout(async () => {
-          const trips = await kernel
-            .get(TripServiceProvider)
-            .get(MongoConnection)
-            .getClient()
-            .db(process.env.APP_MONGO_DB)
-            .collection('trips')
-            .find()
-            .toArray();
-          console.log({ trips });
+          // const trips = await kernel
+          //   .get(TripServiceProvider)
+          //   .get(MongoConnection)
+          //   .getClient()
+          //   .db(process.env.APP_MONGO_DB)
+          //   .collection('trips')
+          //   .find()
+          //   .toArray();
+          // console.log({ trips });
           done();
         }, 2000);
       }));

@@ -1,9 +1,10 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
 import { UserPatchParamsInterface } from '@pdc/provider-schema';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
@@ -41,7 +42,12 @@ export class PatchUserAction extends AbstractAction {
     ],
     ['content.whitelist', userWhiteListFilterOutput],
   ];
-  constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
+  constructor(
+    private userRepository: UserRepositoryProviderInterfaceResolver,
+    private cryptoProvider: CryptoProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
+  ) {
     super();
   }
 
@@ -56,6 +62,41 @@ export class PatchUserAction extends AbstractAction {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.patchUser(params._id, params.patch, contextParam);
+    const patch: any = { ...params.patch };
+
+    /**
+     * set the status to 'pending' when the user changes her email
+     * and send an email with a confirmation link
+     */
+    if (params.patch && params.patch.email) {
+      const user = await this.userRepository.find(params._id);
+      if (user.email !== params.patch.email) {
+        // generate a token and store in the user
+        const token = this.cryptoProvider.generateToken();
+        patch.forgotten_token = await this.cryptoProvider.cryptToken(token);
+        patch.forgotten_at = new Date();
+        patch.status = 'pending';
+        const link = `${this.config.get('url.appUrl')}/auth/reset-password/${patch.email}/${token}`;
+
+        await this.kernel.call(
+          'user:notify',
+          {
+            link,
+            template: this.config.get('email.templates.confirmation'),
+            email: user.email,
+            fullname: user.fullname,
+          },
+          {
+            call: context.call,
+            channel: {
+              ...context.channel,
+              service: 'user',
+            },
+          },
+        );
+      }
+    }
+
+    return this.userRepository.patchUser(params._id, patch, contextParam);
   }
 }

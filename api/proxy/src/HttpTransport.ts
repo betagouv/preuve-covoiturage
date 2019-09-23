@@ -171,6 +171,9 @@ export class HttpTransport implements TransportInterface {
   }
 
   private registerAuthRoutes() {
+    /**
+     * Log the user in based on email and password combination
+     */
     this.app.post(
       '/login',
       asyncHandler(async (req, res, next) => {
@@ -185,6 +188,10 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
+    /**
+     * Get the user profile (reads from the session rather than the database)
+     * @see user:me call for database read
+     */
     this.app.get('/profile', (req, res, next) => {
       if (!('user' in req.session)) {
         throw new UnauthorizedException();
@@ -193,6 +200,9 @@ export class HttpTransport implements TransportInterface {
       res.json(req.session.user);
     });
 
+    /**
+     * Kill the current sesssion
+     */
     this.app.post('/logout', (req, res, next) => {
       req.session.destroy((err) => {
         if (err) {
@@ -201,6 +211,70 @@ export class HttpTransport implements TransportInterface {
         res.status(204).end();
       });
     });
+
+    /**
+     * Let the user request a new password by supplying her email
+     */
+    this.app.post(
+      '/auth/reset-password',
+      asyncHandler(async (req, res, next) => {
+        const rpcResponse = await this.kernel.handle({
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'user:forgottenPassword',
+          params: { email: req.body.email },
+        });
+        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+      }),
+    );
+
+    /**
+     * Let the front-end check an email/password couple for password recovery
+     */
+    this.app.post(
+      '/auth/check-token',
+      asyncHandler(async (req, res, next) => {
+        const rpcResponse = await this.kernel.handle({
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'user:checkForgottenToken',
+          params: { email: req.body.email, forgotten_token: req.body.token },
+        });
+        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+      }),
+    );
+
+    /**
+     * Let the user change her password by supplying an email, a token and a new password
+     */
+    this.app.post(
+      '/auth/change-password',
+      asyncHandler(async (req, res, next) => {
+        const rpcResponse = await this.kernel.handle({
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'user:changePasswordWithToken',
+          params: { email: req.body.email, forgotten_token: req.body.token, password: req.body.password },
+        });
+        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+      }),
+    );
+
+    /**
+     * Let the front-end confirm a pending email with an email and a token
+     */
+    this.app.post(
+      '/auth/confirm-email',
+      asyncHandler(async (req, res, next) => {
+        const rpcResponse = await this.kernel.handle({
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'user:confirmEmail',
+          params: { email: req.body.email, forgotten_token: req.body.token },
+        });
+        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+      }),
+    );
   }
 
   private registerAfterAllHandlers() {

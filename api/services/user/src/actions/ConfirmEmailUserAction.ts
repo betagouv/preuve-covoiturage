@@ -1,8 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, ForbiddenException } from '@ilos/common';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { handler, ContextType, UnauthorizedException } from '@ilos/common';
 import { UserConfirmEmailParamsInterface } from '@pdc/provider-schema';
 
+import { ForgottenTokenValidatorProviderInterface } from '../interfaces/ForgottenTokenValidatorProviderInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
@@ -21,31 +21,22 @@ export class ConfirmEmailUserAction extends AbstractAction {
   ];
 
   constructor(
-    private config: ConfigInterfaceResolver,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
+    private tokenValidator: ForgottenTokenValidatorProviderInterface,
   ) {
     super();
   }
 
   public async handle(params: UserConfirmEmailParamsInterface, context: ContextType): Promise<User> {
-    const user = await this.userRepository.findUserByParams({ email_confirm: params.confirm });
-
-    if (!(await this.cryptoProvider.compareForgottenToken(params.token, user.email_token))) {
-      throw new ForbiddenException('Invalid token');
+    const user = await this.tokenValidator.checkToken(params.email, params.forgotten_token);
+    if (this.tokenValidator.isExpired('confirmation', user.forgotten_at)) {
+      throw new UnauthorizedException('Expired token');
     }
 
-    // Token expired after 1 day
-    if ((Date.now() - user.email_change_at.getTime()) / 1000 > this.config.get('user.tokenExpiration.email_confirm')) {
-      user.email_confirm = undefined;
-      user.email_token = undefined;
-      await this.userRepository.update(user);
-
-      throw new ForbiddenException('Expired token');
-    }
-
-    user.status = 'active';
-
-    return this.userRepository.update(user);
+    // user is confirmed, switch the status to active
+    return this.userRepository.update({
+      ...user,
+      status: 'active',
+    });
   }
 }

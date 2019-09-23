@@ -37,7 +37,6 @@ export class ResetPasswordUserAction extends AbstractAction {
 
     // Token expired after 1 day
     if ((Date.now() - user.forgotten_at.getTime()) / 1000 > this.config.get('user.tokenExpiration.passwordReset')) {
-      user.forgotten_reset = undefined;
       user.forgotten_token = undefined;
       await this.userRepository.update(user);
 
@@ -45,9 +44,6 @@ export class ResetPasswordUserAction extends AbstractAction {
     }
 
     user.password = await this.cryptoProvider.cryptPassword(params.password);
-
-    user.has_reset_password = true;
-
     user.status = 'active';
 
     return this.userRepository.update(user);
