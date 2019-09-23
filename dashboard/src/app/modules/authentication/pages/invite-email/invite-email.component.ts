@@ -57,7 +57,28 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
     return this.newPasswordForm.get('new_password');
   }
   get passwordVerification() {
-    return this.newPasswordForm.get('password_verification');
+    return this.newPasswordForm.get('passwordVerification');
+  }
+
+  confirmEmail(): void {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
+      this.confirm = params.get('confirm');
+      this.token = params.get('token');
+
+      this.authService
+        .confirmEmail(this.confirm, this.token)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          () => {
+            this.isSuccess = true;
+            this.toastr.success('Vous pouvez créer votre mot de passe', 'Email confirmé');
+          },
+          (error) => {
+            this.hasError = true;
+            this.toastr.error('Email non confirmé');
+          },
+        );
+    });
   }
 
   /**

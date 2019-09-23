@@ -5,10 +5,9 @@ import { REGEXP } from '~/core/const/validators.const';
 import { UserService } from '~/modules/user/services/user.service';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile-edition',
@@ -20,8 +19,7 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthenticationService,
-    private userService: UserService,
+    private _userService: UserService,
     private router: Router,
     private toastr: ToastrService,
   ) {
@@ -38,17 +36,20 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
   }
 
   public onUpdateProfile(): void {
-    const user = this.authService.user;
+    console.log('> onUpdateProfile this.profileForm.value : ', this.profileForm.value);
     const userData = {
-      _id: user._id,
+      _id: this._userService.user._id,
       ...this.profileForm.value,
       phone: this.profileForm.value.phone ? this.profileForm.value.phone : '',
     };
     if (!userData.phone) delete userData.phone;
 
-    this.authService.patch(userData).subscribe((updatedUser) => {
-      this.toastr.success('Votre profile as bien été mis à jour');
-    });
+    this._userService
+      .patchOne(userData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.toastr.success('Votre profile as bien été mis à jour');
+      });
   }
 
   private initProfilFormValue(): void {
