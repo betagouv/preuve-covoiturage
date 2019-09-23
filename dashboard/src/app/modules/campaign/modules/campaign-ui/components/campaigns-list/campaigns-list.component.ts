@@ -51,6 +51,30 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
       .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
   }
 
+  private launchCampaign(id: string) {
+    this.dialog
+      .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        if (result) {
+          this.campaignService
+            .launch(id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+              (data) => {
+                const campaignSaved = data[0];
+                // tslint:disable-next-line:max-line-length
+                this.toastr.success(`La campagne ${campaignSaved.name} a bien été lancé`);
+              },
+              (error) => {
+                console.error(error);
+                this.toastr.error('Une erreur est survenue lors du lancement de la campagne');
+              },
+            );
+        }
+      });
+  }
+
   deleteCampaign(campaign: CampaignUx) {
     this.dialog
       .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer')

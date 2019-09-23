@@ -100,42 +100,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     } else {
       this.createCampaign(campaign);
     }
-
-    // if (!saveAsDraft && campaign.status === CampaignStatusEnum.DRAFT) {
-    //   this.launchCampaign(campaign);
-    // } else {
-    //   this.createCampaign(campaign);
-    // }
   }
-
-  // todo : move this to campaign dashboard
-  /*private launchCampaign(campaign: Campaign) {
-    campaign.status = CampaignStatusEnum.PENDING;
-    this._dialog
-      .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((result) => {
-        if (result) {
-          this.campaignService
-            .launch(campaign)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-              (campaignSaved: Campaign) => {
-                this.requestLoading = false;
-                // tslint:disable-next-line:max-line-length
-                this.toastr.success(`La campagne ${campaignSaved.name} a bien été lancé`);
-                this.router.navigate(['/campaign']);
-              },
-              (error) => {
-                this.requestLoading = false;
-                console.error(error);
-                this.toastr.error('Une erreur est survenue lors du lancement de la campagne');
-              },
-            );
-        }
-      });
-  }
-*/
 
   private patchCampaign(campaign: Campaign) {
     this.campaignService
@@ -151,7 +116,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         (error) => {
           this.requestLoading = false;
           console.error(error);
-          this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
+          this.toastr.error('Une erreur est survenue lors de la mise à jour de la campagne');
         },
       );
   }
