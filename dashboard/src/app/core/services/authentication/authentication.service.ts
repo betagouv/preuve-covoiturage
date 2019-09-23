@@ -153,11 +153,11 @@ export class AuthenticationService {
   /**
    * Check validity of token & reset
    */
-  public checkPasswordToken(reset: string, token: string): Observable<any> {
+  public checkPasswordToken(email: string, token: string): Observable<JsonRPCResult> {
     const jsonRPCParam = new JsonRPCParam();
     jsonRPCParam.method = 'user:checkPasswordToken';
     jsonRPCParam.params = {
-      reset,
+      email,
       token,
     };
 
