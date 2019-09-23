@@ -48,7 +48,7 @@ export class ResetPasswordUserAction extends AbstractAction {
 
     user.has_reset_password = true;
 
-    user.status = this.config.get('user.status.active');
+    user.status = 'active';
 
     return this.userRepository.update(user);
   }

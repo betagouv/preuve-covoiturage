@@ -78,7 +78,7 @@ export class ChangeEmailUserAction extends AbstractAction {
       email_confirm: confirm,
       email_token: cryptedToken,
       email: params.email,
-      status: this.config.get('user.status.not_active'),
+      status: 'pending',
     };
 
     const patchedUser = this.userRepository.patchUser(params._id, patch, contextParam);

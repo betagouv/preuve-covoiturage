@@ -44,7 +44,7 @@ export class ConfirmEmailUserAction extends AbstractAction {
       throw new ForbiddenException('Expired token');
     }
 
-    user.status = this.config.get('user.status.active');
+    user.status = 'active';
 
     return this.userRepository.update(user);
   }

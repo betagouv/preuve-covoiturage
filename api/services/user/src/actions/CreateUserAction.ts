@@ -74,7 +74,7 @@ export class CreateUserAction extends AbstractAction {
     // create the new user
     const user = new User({
       ...request,
-      status: this.config.get('user.status.not_active'),
+      status: 'pending',
       password: Math.random()
         .toString(36)
         .substring(2, 15),

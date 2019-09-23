@@ -1,10 +1,10 @@
 export const userConfirmEmailSchema = {
   $id: 'user.confirmEmail',
   type: 'object',
-  required: ['confirm', 'token'],
+  required: ['email', 'token'],
   additionalProperties: false,
   properties: {
-    confirm: { macro: 'token' },
+    email: { macro: 'email' },
     token: { macro: 'token' },
   },
 };
