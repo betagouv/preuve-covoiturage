@@ -10,6 +10,7 @@ import { ChangeAuthLayoutComponent } from './layouts/change-auth-layout/change-a
 import { ForgottenPasswordComponent } from './pages/forgotten-password/forgotten-password.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ResetPasswordGuardService } from '~/core/guards/reset-password-guard.service';
+import { ConfirmEmailComponent } from '~/modules/authentication/pages/confirm-email/confirm-email.component';
 
 const routes: Routes = [
   {
