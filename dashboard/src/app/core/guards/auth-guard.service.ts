@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       tap((loggedIn) => {
         if (!loggedIn) {
           this.router.navigate(['/login']).then(() => {
-            this.toastr.error("Vous n'êtes pas authorisé à accéder à cette page.");
+            this.toastr.error("Vous n'êtes pas autorisé à accéder à cette page.");
           });
         } else if (state.url === '/') {
           this.router.navigate(['/trip/stats']);
@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       map((user) => {
         if (!user) {
           this.router.navigate(['/login']).then(() => {
-            this.toastr.error("Vous n'êtes pas authorisé à accéder à cette page.");
+            this.toastr.error("Vous n'êtes pas autorisé à accéder à cette page.");
           });
           return false;
         }
@@ -52,7 +52,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
 
         if (!isInGroups || !hasRole) {
           this.router.navigate(['/']).then(() => {
-            this.toastr.error("Vous n'êtes pas authorisé à accéder à cette page.");
+            this.toastr.error("Vous n'êtes pas autorisé à accéder à cette page.");
           });
           return false;
         }
@@ -63,7 +63,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
 
     // if (!isInGroups || !hasRole) {
     //   this.router.navigate(['/']).then(() => {
-    //     this.toastr.error('Vous n\'êtes pas authorisé à accéder à cette page.');
+    //     this.toastr.error('Vous n\'êtes pas autorisé à accéder à cette page.');
     //   });
     //   return false;
     // }
@@ -76,7 +76,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       tap((loggedIn) => {
         if (!loggedIn) {
           this.router.navigate(['/login']).then(() => {
-            this.toastr.error("Vous n'êtes pas authorisé à accéder à cette page.");
+            this.toastr.error("Vous n'êtes pas autorisé à accéder à cette page.");
           });
         }
       }),

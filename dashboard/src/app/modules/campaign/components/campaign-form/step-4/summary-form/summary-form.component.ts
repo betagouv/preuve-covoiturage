@@ -131,8 +131,8 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     this.toastr.success('Le récapitulatif a été copié !');
   }
 
-  saveCampaign(isDraft: boolean = false) {
-    this.onSaveCampaign.emit(isDraft);
+  saveCampaign() {
+    this.onSaveCampaign.emit();
   }
 
   saveAsTemplateChange($event) {

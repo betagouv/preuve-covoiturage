@@ -67,16 +67,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     return this.campaignFormGroup.controls.parent_id.value || this.campaignFormGroup.controls._id.value;
   }
 
-  saveOrLaunchCampaign(saveAsDraft) {
-    const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
-    const campaign: Campaign = this.campaignService.toCampaignFormat(campaignUx);
-    if (!saveAsDraft && campaign.status === CampaignStatusEnum.DRAFT) {
-      this.launchCampaign(campaign);
-    } else {
-      this.createCampaign(campaign);
-    }
-  }
-
   get canGoToThirdStep(): boolean {
     const filtersFormGroup = this.campaignFormGroup.get('filters');
     return (
@@ -102,7 +92,24 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     );
   }
 
-  private launchCampaign(campaign: Campaign) {
+  saveCampaign() {
+    const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
+    const campaign: Campaign = this.campaignService.toCampaignFormat(campaignUx);
+    if (campaign._id) {
+      this.patchCampaign(campaign);
+    } else {
+      this.createCampaign(campaign);
+    }
+
+    // if (!saveAsDraft && campaign.status === CampaignStatusEnum.DRAFT) {
+    //   this.launchCampaign(campaign);
+    // } else {
+    //   this.createCampaign(campaign);
+    // }
+  }
+
+  // todo : move this to campaign dashboard
+  /*private launchCampaign(campaign: Campaign) {
     campaign.status = CampaignStatusEnum.PENDING;
     this._dialog
       .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
@@ -128,13 +135,34 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         }
       });
   }
+*/
+
+  private patchCampaign(campaign: Campaign) {
+    this.campaignService
+      .patchList(campaign)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (data) => {
+          const campaignPatched = data[0];
+          this.requestLoading = false;
+          this.toastr.success(`La campagne ${campaignPatched.name} a bien été mise à jour`);
+          this.router.navigate(['/campaign']);
+        },
+        (error) => {
+          this.requestLoading = false;
+          console.error(error);
+          this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
+        },
+      );
+  }
 
   private createCampaign(campaign: Campaign) {
     this.campaignService
-      .create(campaign)
+      .createList(campaign)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (campaignSaved: Campaign) => {
+        (data) => {
+          const campaignSaved = data[0];
           this.requestLoading = false;
           this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
           this.router.navigate(['/campaign']);

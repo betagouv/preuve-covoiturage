@@ -17,7 +17,7 @@ context('TERRITORY', () => {
     cy.server();
     stubCampaignList();
     stubOperatorList();
-    stubCampaignTemplateList();
+    // stubCampaignTemplateList();
     stubTripList();
     stubStatList();
     stubUserMe(UserGroupEnum.TERRITORY);
@@ -32,7 +32,6 @@ context('TERRITORY', () => {
     cypress_stub_login(UserGroupEnum.TERRITORY);
     cypress_login('territory@example.com', 'admin1234');
   });
-  /*
 
   // TEST FILTERS
   describe('filter form', () => {
@@ -42,7 +41,6 @@ context('TERRITORY', () => {
     cypress_filterTrips();
   });
 
-*/
   // TEST CAMPAIGNS
   describe('Create new campaign', () => {
     it('clicks on campaign section', () => {

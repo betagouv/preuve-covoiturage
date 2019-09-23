@@ -42,7 +42,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
 
   public onSubmit(): void {
     if ('_id' in this.territoryForm.value) {
-      this._territoryService.patch(this.territoryForm.value);
+      this._territoryService.patchList(this.territoryForm.value).subscribe();
     }
   }
 
@@ -50,29 +50,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     this._territoryService
       .loadOne()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {},
-        (err) => {
-          // TODO TMP DELETE WHEN BACK IS LINKED
-          const territory = new Territory({
-            _id: '5c66d89760e6ee004a6cab1f',
-            name: 'AOM Name',
-            acronym: 'Aom acronym',
-            company: new Company({
-              siren: '123456789',
-              naf_entreprise: '1234A',
-            }),
-            address: new Address({
-              street: '5 rue de brest',
-              postcode: '69002',
-              city: 'Lyon',
-              country: 'France',
-            }),
-          });
-
-          this._territoryService._entity$.next(territory);
-        },
-      );
+      .subscribe();
     this._territoryService.territory$.pipe(takeUntil(this.destroy$)).subscribe((territory: Territory | null) => {
       if (territory) {
         const { name, acronym, address, company, contacts } = territory;

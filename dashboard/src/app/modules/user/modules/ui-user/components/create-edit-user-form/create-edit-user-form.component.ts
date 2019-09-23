@@ -81,28 +81,36 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       delete formVal.role;
     }
 
-    const jsonRPCRequest = this.isCreating
-      ? this._userService.create(formVal)
-      : this._userService.patch(formVal, this.user._id);
-
-    jsonRPCRequest.subscribe(
-      (user) => {
-        this.isCreatingUpdating = false;
-        if (this.isCreating) {
+    if (this.isCreating) {
+      this._userService.createList(formVal).subscribe(
+        (data) => {
+          const user = data[0];
+          this.isCreatingUpdating = false;
           this.toastr.success(
             `Un email a été envoyé à ${user.email}`,
             `L'utilisateur ${user.firstname} ${user.lastname} a été crée`,
           );
-        } else {
+          this.onCloseEditUser.emit(user);
+        },
+        (err) => {
+          this.isCreatingUpdating = false;
+          this.toastr.error(err.message);
+        },
+      );
+    } else {
+      this._userService.patchList(formVal).subscribe(
+        (data) => {
+          const user = data[0];
+          this.isCreatingUpdating = false;
           this.toastr.success(`Les informations de votre profil ont bien été modifiées`);
-        }
-        this.onCloseEditUser.emit(user);
-      },
-      (err) => {
-        this.isCreatingUpdating = false;
-        this.toastr.error(err.message);
-      },
-    );
+          this.onCloseEditUser.emit(user);
+        },
+        (err) => {
+          this.isCreatingUpdating = false;
+          this.toastr.error(err.message);
+        },
+      );
+    }
   }
 
   updateValidators(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable) {
