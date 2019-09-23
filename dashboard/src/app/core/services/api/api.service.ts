@@ -52,7 +52,7 @@ export class ApiService<T extends IModel> {
 
   // ==== CRUD ======
   public load(parameters: object = {}): Observable<T[]> {
-    this._listFilters = {};
+    this._listFilters = parameters;
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}:list`, parameters);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
@@ -108,18 +108,21 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public create(item: object): Observable<T> {
+  /**
+   * Create entity
+   * @returns new entity and list of entities
+   */
+  public createList(item: object): Observable<[T, T[]]> {
     if ('_id' in item) {
       delete item['_id'];
     }
     const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, item);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      tap((entity) => {
-        const auxArray = this._entities$.value;
-        auxArray.push(entity);
-        this._entities$.next(auxArray);
-        console.log(`created ${this._method} id=${entity._id}`);
+      mergeMap((newEntity: T) => {
+        console.log(`created ${this._method} id=${newEntity._id}`);
+        this._entity$.next(newEntity);
+        return this.load(this._listFilters).pipe(map((entities) => <[T, T[]]>[newEntity, entities]));
       }),
     );
   }
@@ -135,6 +138,10 @@ export class ApiService<T extends IModel> {
     );
   }
 
+  /**
+   * Patch entity
+   * @returns modified entity and list of entities
+   */
   public patchList(item: IModel): Observable<[T, T[]]> {
     const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patch`, item);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(

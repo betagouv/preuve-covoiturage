@@ -158,10 +158,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   private createCampaign(campaign: Campaign) {
     this.campaignService
-      .create(campaign)
+      .createList(campaign)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (campaignSaved: Campaign) => {
+        (data) => {
+          const campaignSaved = data[0];
           this.requestLoading = false;
           this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
           this.router.navigate(['/campaign']);

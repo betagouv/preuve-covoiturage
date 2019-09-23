@@ -82,8 +82,9 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     }
 
     if (this.isCreating) {
-      this._userService.create(formVal).subscribe(
-        (user) => {
+      this._userService.createList(formVal).subscribe(
+        (data) => {
+          const user = data[0];
           this.isCreatingUpdating = false;
           this.toastr.success(
             `Un email a été envoyé à ${user.email}`,
