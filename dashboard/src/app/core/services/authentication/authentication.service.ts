@@ -188,6 +188,14 @@ export class AuthenticationService {
     });
   }
 
+  public restorePassword(email: string, password: string, token: string): Observable<any> {
+    return this.call('auth/change-password', {
+      email,
+      password,
+      token,
+    });
+  }
+
   public sendForgottenPasswordEmail(email: string): Observable<any> {
     return this.call('auth/reset-password', {
       email,
