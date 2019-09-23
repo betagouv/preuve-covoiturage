@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -17,8 +17,9 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
 })
 export class NewPasswordComponent extends DestroyObservable implements OnInit {
   public newPasswordForm: FormGroup;
-  public reset: string;
+  // public reset: string;
   public token: string;
+  public email: string;
   public hasError = false;
 
   constructor(
@@ -29,10 +30,12 @@ export class NewPasswordComponent extends DestroyObservable implements OnInit {
     private router: Router,
   ) {
     super();
+    this.token = this.activatedRoute.params['token'];
+    this.email = this.activatedRoute.params['email'];
   }
 
   ngOnInit() {
-    this.checkToken();
+    // this.checkToken();
     this.newPasswordForm = this.fb.group(
       {
         password: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
@@ -48,35 +51,9 @@ export class NewPasswordComponent extends DestroyObservable implements OnInit {
   get password() {
     return this.newPasswordForm.get('password');
   }
+
   get passwordVerification() {
     return this.newPasswordForm.get('passwordVerification');
-  }
-
-  /**
-   * Get token and reset from url and verify that they are valid
-   */
-  private checkToken() {
-    this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
-      const token = params.get('token');
-      const reset = params.get('reset');
-      this.authService
-        .checkPasswordToken(reset, token)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          () => {
-            this.hasError = false;
-            this.token = token;
-            this.reset = reset;
-          },
-          () => {
-            this.hasError = true;
-            this.toastr.error(
-              'Une erreur est survenue lors de la réinitalisation de votre mot de passe, ' +
-                'vérifier que vous avez bien ouvert le dernier email intitulé "Nouveau mot de passe ". ',
-            );
-          },
-        );
-    });
   }
 
   /**
@@ -96,7 +73,7 @@ export class NewPasswordComponent extends DestroyObservable implements OnInit {
 
   public changePassword(): void {
     this.authService
-      .sendNewPassword(this.newPasswordForm.controls.password.value, this.reset, this.token)
+      .sendNewPassword(this.email, this.password.value, this.token)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {

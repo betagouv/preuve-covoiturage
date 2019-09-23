@@ -60,7 +60,7 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
       this.token = params.get('token');
 
       this.authService
-        .checkEmailToken(this.confirm, this.token)
+        .confirmEmail(this.confirm, this.token)
         .pipe(takeUntil(this.destroy$))
         .subscribe(
           () => {

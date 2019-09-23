@@ -167,23 +167,23 @@ export class AuthenticationService {
   /**
    * Check validity of token & reset
    */
-  public checkEmailToken(reset: string, token: string): Observable<any> {
+  public confirmEmail(email: string, token: string): Observable<any> {
     const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user:checkEmailToken';
+    jsonRPCParam.method = 'user:confirmEmail';
     jsonRPCParam.params = {
-      reset,
+      email,
       token,
     };
 
     return this._jsonRPC.callOne(jsonRPCParam);
   }
 
-  public sendNewPassword(password: string, reset: string, token: string): Observable<any> {
+  public sendNewPassword(email: string, password: string, token: string): Observable<any> {
     const jsonRPCParam = new JsonRPCParam();
     jsonRPCParam.method = 'user:resetPassword';
     jsonRPCParam.params = {
+      email,
       password,
-      reset,
       token,
     };
 

@@ -35,7 +35,7 @@ export class ConfirmEmailComponent extends DestroyObservable implements OnInit {
       const token = params.get('token');
 
       this.authService
-        .checkEmailToken(confirm, token)
+        .confirmEmail(confirm, token)
         .pipe(takeUntil(this.destroy$))
         .subscribe(
           () => {
