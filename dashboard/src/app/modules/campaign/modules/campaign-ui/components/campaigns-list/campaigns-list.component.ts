@@ -51,7 +51,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
       .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
   }
 
-  private launchCampaign(id: string) {
+  launchCampaign(id: string): void {
     this.dialog
       .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
       .pipe(takeUntil(this.destroy$))
@@ -75,7 +75,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
       });
   }
 
-  deleteCampaign(campaign: CampaignUx) {
+  deleteCampaign(campaign: CampaignUx): void {
     this.dialog
       .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer')
       .pipe(takeUntil(this.destroy$))

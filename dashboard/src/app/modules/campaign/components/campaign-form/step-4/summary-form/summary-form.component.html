@@ -34,7 +34,7 @@
         (click)="saveCampaign(false)"
         [disabled]="!campaignForm.valid"
       >
-        Enregistrer en brouillon
+        Enregistrer <span *ngIf="!campaignForm.controls._id.value">en brouillon</span>
       </button>
       <button
         [appShowSpinner]="loading"
