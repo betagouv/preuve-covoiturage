@@ -9,6 +9,7 @@ import { ResetForgottenPasswordComponent } from '~/modules/authentication/pages/
 import { ChangeAuthLayoutComponent } from './layouts/change-auth-layout/change-auth-layout.component';
 import { ForgottenPasswordComponent } from './pages/forgotten-password/forgotten-password.component';
 import { LoginComponent } from './pages/login/login.component';
+import { ResetPasswordGuardService } from '~/core/guards/reset-password-guard.service';
 
 const routes: Routes = [
   {
@@ -19,20 +20,11 @@ const routes: Routes = [
     path: '',
     component: ChangeAuthLayoutComponent,
     children: [
-      // Invitation confirm
       {
-        path: 'activate/:email/:token',
+        path: 'reset-password/:email/:token',
         canActivate: [ResetPasswordGuardService],
-        component: InviteEmailComponent,
+        component: NewPasswordComponent,
       },
-
-      {
-        path: 'confirm-email/:email/:token',
-        canActivate: [ResetPasswordGuardService],
-        component: ConfirmEmailComponent,
-      },
-
-      // forgot password
       { path: 'forgotten-password', component: ForgottenPasswordComponent },
       {
         path: 'reset-forgotten-password/:email/:token',

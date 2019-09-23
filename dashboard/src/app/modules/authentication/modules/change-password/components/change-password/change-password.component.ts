@@ -6,9 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { PASSWORD } from '~/core/const/validators.const';
 import { passwordMatchValidator } from '~/modules/authentication/validators/password-match.validator';
-import { takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-change-password',
