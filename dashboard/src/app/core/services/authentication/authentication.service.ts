@@ -86,11 +86,12 @@ export class AuthenticationService {
 
   public login(email: string, password: string) {
     return this.call('login', { email, password }).pipe(
-      catchError((response) => {
-        if (response.status === 401) {
+      catchError((error) => {
+        console.log('error : ', error);
+        if (error.error && error.error.message === 'Forbidden') {
           return of(null);
         }
-        return throwError(response);
+        return throwError(error);
       }),
       map((loginPayload) => {
         if (loginPayload && loginPayload.result && loginPayload.result.data) {
@@ -101,7 +102,6 @@ export class AuthenticationService {
       tap((user) => {
         if (user) {
           this.onLoggin(new User(user));
-          this.router.navigate(['/trip/stats']);
         } else {
           this.toastr.error('Mauvais Email ou mot de passe');
         }
@@ -109,7 +109,7 @@ export class AuthenticationService {
     );
   }
 
-  public logout(message = 'Vous avez bien été déconnecté') {
+  public logout() {
     this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
       this._user$.next(null);
       this.router.navigate(['/login']).then(() => {
@@ -118,7 +118,7 @@ export class AuthenticationService {
     });
   }
 
-  public changePassword(oldPassword: string, newPassword: string): Observable<JsonRPCResult> {
+  public changePassword(oldPassword: string, newPassword: string): Observable<any> {
     const jsonRPCParam = new JsonRPCParam('user:changePassword', {
       old_password: oldPassword,
       new_password: newPassword,
@@ -205,10 +205,16 @@ export class AuthenticationService {
     });
   }
 
+  public restorePassword(email: string, password: string, token: string): Observable<any> {
+    return this.call('auth/change-password', {
+      email,
+      password,
+      token,
+    });
+  }
+
   public sendForgottenPasswordEmail(email: string): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user:forgottenPassword';
-    jsonRPCParam.params = {
+    return this.call('auth/reset-password', {
       email,
     });
 
@@ -224,27 +230,23 @@ export class AuthenticationService {
   /**
    * Check validity of token & reset
    */
-  public checkPasswordToken(email: string, token: string): Observable<JsonRPCResult> {
-    const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user:checkPasswordToken';
-    jsonRPCParam.params = {
-      email,
-      token,
-    };
-
-    return this._jsonRPC.callOne(jsonRPCParam);
+  public checkPasswordToken(email: string, token: string): Observable<any> {
+    return this.call('auth/check-token', { email, token });
+    // const jsonRPCParam = new JsonRPCParam();
+    // jsonRPCParam.method = 'user:checkPasswordToken';
+    // jsonRPCParam.params = {
+    //   email,
+    //   token,
+    // };
+    //
+    // return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   /**
    * Check validity of token & reset
    */
   public confirmEmail(email: string, token: string): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user:confirmEmail';
-    jsonRPCParam.params = {
-      email,
-      token,
-    };
+    return this.call('auth/confirm-email', { email, token });
 
     // const jsonRPCParam = new JsonRPCParam();
     // jsonRPCParam.method = 'user:confirmEmail';
