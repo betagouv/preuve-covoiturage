@@ -6,16 +6,16 @@ import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/Campa
 
 @handler({
   service: 'campaign',
-  method: 'list',
+  method: 'listTemplate',
 })
-export class ListCampaignAction extends AbstractAction {
+export class ListCampaignTemplateAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [['can', ['incentive-campaign.list']]];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(_params, context): Promise<CampaignInterface[]> {
-    return this.campaignRepository.findWhereTerritory(context.call.user.territory);
+  public async handle(_params, _context): Promise<CampaignInterface[]> {
+    return this.campaignRepository.findTemplates();
   }
 }
