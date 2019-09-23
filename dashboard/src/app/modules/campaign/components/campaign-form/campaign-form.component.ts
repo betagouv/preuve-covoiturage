@@ -228,7 +228,8 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       for_driver: campaign.ui_status.for_driver,
       for_passenger: campaign.ui_status.for_passenger,
       for_trip: campaign.ui_status.for_trip,
-      staggered: campaign.ui_status.staggered,
+      // initialize staggered
+      staggered: campaign.ui_status.staggered !== null ? campaign.ui_status.staggered : false,
     });
 
     // patch form arrays
@@ -241,23 +242,43 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     // patch restriction
     const restrictionFormArray = <FormArray>this.campaignFormGroup.get('restrictions');
     restrictionFormArray.clear();
-    campaign.retributions.forEach((restriction) => {
+    campaign.restrictions.forEach((restriction) => {
       restrictionFormArray.push(this._formBuilder.group(restriction));
     });
 
     // patch retribution
     const retributionFormArray = <FormArray>this.campaignFormGroup.get('retributions');
     retributionFormArray.clear();
-    campaign.retributions.forEach((retribution) => {
+    if (campaign.retributions.length === 0) {
+      // initialize retribution
       retributionFormArray.push(
         this._formBuilder.group({
-          for_passenger: this._formBuilder.group(retribution.for_passenger),
-          for_driver: this._formBuilder.group(retribution.for_driver),
-          min: retribution.min,
-          max: retribution.max,
+          for_passenger: this._formBuilder.group({
+            free: false,
+            per_km: false,
+            amount: null,
+          }),
+          for_driver: this._formBuilder.group({
+            per_km: false,
+            per_passenger: false,
+            amount: null,
+          }),
+          min: null,
+          max: null,
         }),
       );
-    });
+    } else {
+      campaign.retributions.forEach((retribution) => {
+        retributionFormArray.push(
+          this._formBuilder.group({
+            for_passenger: this._formBuilder.group(retribution.for_passenger),
+            for_driver: this._formBuilder.group(retribution.for_driver),
+            min: retribution.min,
+            max: retribution.max,
+          }),
+        );
+      });
+    }
 
     // const formulaFormArray = <FormArray>this.campaignFormGroup.get('formulas');
     // formulaFormArray.clear();

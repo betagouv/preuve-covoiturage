@@ -10,8 +10,17 @@ import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
 
 export class CampaignsGenerator {
+  private static get status(): CampaignStatusEnum[] {
+    return [
+      CampaignStatusEnum.PENDING,
+      CampaignStatusEnum.VALIDATED,
+      CampaignStatusEnum.ARCHIVED,
+      CampaignStatusEnum.DRAFT,
+    ];
+  }
+
   private static randomStatus() {
-    return Math.floor(Math.random() * Object.keys(CampaignStatusEnum).length);
+    return Math.floor(Math.random() * CampaignsGenerator.status.length);
   }
 
   static get list(): Campaign[] {
@@ -19,7 +28,7 @@ export class CampaignsGenerator {
       (val, idx) =>
         <CampaignInterface>{
           _id: '5d6fa2995623dc991b288f11',
-          status: CampaignStatusEnum[Object.keys(CampaignStatusEnum)[CampaignsGenerator.randomStatus()]],
+          status: CampaignStatusEnum[CampaignsGenerator.status[CampaignsGenerator.randomStatus()]],
           name: `Name ${idx}`,
           description: `Description ${idx}`,
           start: moment()

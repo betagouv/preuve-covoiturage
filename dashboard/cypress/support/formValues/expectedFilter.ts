@@ -21,8 +21,8 @@ export const expectedFilter: FilterInterface = {
     end: filterEndMoment.toDate().toISOString(),
   },
   hour: {
-    start: '18',
-    end: '22',
+    start: 18,
+    end: 22,
   },
   days: [0, 1],
   towns: ['Lyon'],

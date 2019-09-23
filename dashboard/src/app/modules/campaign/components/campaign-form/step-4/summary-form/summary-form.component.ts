@@ -47,12 +47,12 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
   getSummaryText(): string {
     const campaign: CampaignUx = this.campaignForm.getRawValue();
 
-    const forTrip = this.campaignForm.get('ui_status').get('for_trip').value;
+    const uiStatus = this.campaignForm.get('ui_status').value;
 
     const retributionText = this.campaignService.getExplanationFromRetributions(
       campaign.retributions,
       this.campaignForm.controls.unit.value,
-      forTrip,
+      uiStatus,
     );
 
     let summaryText = `Campagne d’incitation au covoiturage du <b>`;
@@ -90,14 +90,14 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `${retributionText}`;
     summaryText += '<br/><br/>\r\n\r\n';
-    summaryText += `L’opération est limitée aux opérateurs proposant des registres de preuve`;
+    summaryText += `L’opération est limitée aux opérateurs proposant des preuves de classe`;
     summaryText += ` <b>${campaign.filters.rank ? campaign.filters.rank.join(' ou ') : ''}</b>.`;
     summaryText += '<br/><br/>\r\n\r\n';
     const nbOperators = campaign.filters.operator_ids ? campaign.filters.operator_ids.length : 0;
     if (nbOperators === this.operatorService.entities.length) {
       summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
     } else {
-      summaryText += `La campagne est limitée à ${nbOperators} opérateur(s) présents sur le registre.`;
+      summaryText += `La campagne est limitée à ${nbOperators} opérateur(s) présent(s) sur le registre.`;
     }
     // todo: fix this part
     // const restrictions = <FormArray>this.controls.restrictions;

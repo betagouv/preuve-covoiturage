@@ -25,6 +25,7 @@ import {
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { UserService } from '~/core/services/authentication/user.service';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 @Injectable({
   providedIn: 'root',
 })
@@ -161,10 +162,10 @@ export class CampaignService extends ApiService<Campaign> {
       campaignRetributionRules.push(new OnlyAdultRetributionRule());
     }
 
-    restrictions.forEach((restriction) => {
+    /*  restrictions.forEach((restriction) => {
       campaignRetributionRules.push(new RestrictionRetributionRule(restriction));
     });
-
+*/
     retributions.forEach((retribution) => {
       // set defaults, reset values according to uiStatus
       if (retribution.min === null) {
@@ -182,7 +183,6 @@ export class CampaignService extends ApiService<Campaign> {
       if (!campaignUx.ui_status.for_passenger) {
         retribution.for_passenger.free = false;
       }
-
       retribution.for_passenger.amount = retribution.for_passenger.amount * 100; // to cents
       retribution.for_driver.amount = retribution.for_driver.amount * 100; // to cents
       campaignRetributionRules.push(new Retribution(retribution));
@@ -250,7 +250,7 @@ export class CampaignService extends ApiService<Campaign> {
   public getExplanationFromRetributions(
     retributions: RetributionParametersInterface[],
     unit: IncentiveUnitEnum,
-    forTrip: boolean | null,
+    uiStatus: UiStatusInterface,
   ) {
     let text = '';
 
@@ -266,27 +266,29 @@ export class CampaignService extends ApiService<Campaign> {
       if (!valueForDriver && !valueForPassenger && !free) {
         continue;
       }
-      text += `\r\n- `;
+      text += `<br/>\r\n- `;
 
       // CONDUCTEUR
-      if (valueForDriver !== null) {
+      if (valueForDriver !== null && (uiStatus.for_trip || uiStatus.for_driver)) {
         // tslint:disable-next-line:max-line-length
         text += ` ${valueForDriver} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
         text += perKmForDriver ? ' par km' : '';
         text += perPassenger ? ' par passager' : '';
-        if (!forTrip) {
+        if (!uiStatus.for_trip) {
           text += ' pour le conducteur';
         }
       }
       text += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
 
       // PASSAGERS
-      if (free) {
-        text += ' gratuit pour le(s) passager(s)';
-      } else if (valueForPassenger !== null) {
-        text += ` ${valueForPassenger} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
-        text += perKmForPassenger ? ' par km' : '';
-        text += ` pour le(s) passager(s)`;
+      if (uiStatus.for_trip || uiStatus.for_passenger) {
+        if (free) {
+          text += ' gratuit pour le(s) passager(s)';
+        } else if (valueForPassenger !== null) {
+          text += ` ${valueForPassenger} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
+          text += perKmForPassenger ? ' par km' : '';
+          text += ` pour le(s) passager(s)`;
+        }
       }
       if (min || max) {
         if (!max) {
@@ -297,7 +299,7 @@ export class CampaignService extends ApiService<Campaign> {
       }
       text += `.`;
     }
-    text += `\r\n`;
+    text += `<br/>\r\n`;
     return text;
   }
 

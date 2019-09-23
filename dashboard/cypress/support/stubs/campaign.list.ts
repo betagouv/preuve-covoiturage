@@ -37,6 +37,7 @@ export const campaignStubs: Campaign[] = [
       for_driver: true,
       for_passenger: true,
       for_trip: false,
+      staggered: false,
     },
     trips_number: Math.floor(Math.random() * 10000),
     amount_spent: Math.floor(Math.random() * 20000),
@@ -70,6 +71,7 @@ export const campaignStubs: Campaign[] = [
       for_driver: true,
       for_passenger: true,
       for_trip: false,
+      staggered: false,
     },
     start: moment()
       .subtract('1', 'months')
@@ -111,6 +113,7 @@ export const campaignStubs: Campaign[] = [
       for_driver: true,
       for_passenger: true,
       for_trip: false,
+      staggered: false,
     },
     start: moment()
       .subtract('1', 'months')

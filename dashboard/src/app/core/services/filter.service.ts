@@ -6,7 +6,6 @@ import { BehaviorSubject } from 'rxjs';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { Filter } from '~/core/entities/filter/filter';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +22,7 @@ export class FilterService {
     if ('campaignIds' in filterUx) {
       filter = new Filter({
         date: filterUx.date,
-        hour: filterUx.hour,
+        hour: <any>filterUx.hour,
         days: filterUx.days,
         towns: filterUx.towns,
         distance: filterUx.distance,

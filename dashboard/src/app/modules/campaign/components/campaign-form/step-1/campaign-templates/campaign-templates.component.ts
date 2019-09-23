@@ -5,12 +5,9 @@ import { MatStepper } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-campaign-templates',
