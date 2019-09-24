@@ -43,11 +43,9 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
       .subscribe(
         (result) => {
           this.toastr.success('Votre mot de passe a été mis à jour');
-          this.changePasswordForm.setValue({
-            old_password: '',
-            new_password: '',
-            verif_password: '',
-          });
+          this.changePasswordForm.reset();
+          this.changePasswordForm.markAsPristine();
+          this.changePasswordForm.markAsUntouched();
         },
         (err) => {
           this.toastr.error(err.message);
