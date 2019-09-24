@@ -27,7 +27,16 @@ export class AuthenticationService {
     private router: Router,
     private toastr: ToastrService,
     private http: HttpClient,
-  ) {}
+  ) {
+    this.userService.user$.subscribe((user: User) => {
+      const loggedInUser = this.user;
+
+      // if userService is updated and match current user we update its state
+      if (user && loggedInUser && loggedInUser._id === user._id) {
+        this._user$.next(user);
+      }
+    });
+  }
 
   get user$(): Observable<User> {
     return this._user$;
