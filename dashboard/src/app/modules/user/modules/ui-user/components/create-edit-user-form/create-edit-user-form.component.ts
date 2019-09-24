@@ -99,7 +99,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         },
       );
     } else {
-      this._userService.patchList(formVal).subscribe(
+      this._userService.patchList({ ...formVal, _id: this.user._id }).subscribe(
         (data) => {
           const user = data[0];
           this.isCreatingUpdating = false;
