@@ -31,7 +31,7 @@ export class DeleteCampaignAction extends AbstractAction {
   }
 
   public async handle(params: { _id: string; territory_id: string }): Promise<boolean> {
-    await this.campaignRepository.deleteDraft(params._id, params.territory_id);
+    await this.campaignRepository.deleteDraftOrTemplate(params._id, params.territory_id);
     return true;
   }
 }

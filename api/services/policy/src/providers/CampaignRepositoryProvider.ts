@@ -83,10 +83,12 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
     return this.instanciateMany(results);
   }
 
-  async deleteDraft(id: string, territoryId: string): Promise<void> {
+  async deleteDraftOrTemplate(id: string, territoryId: string): Promise<void> {
     const collection = await this.getCollection();
     const results = await collection.deleteOne({
-      status: 'draft',
+      status: {
+        $in: ['draft', 'template'],
+      },
       _id: new ObjectId(id),
       territory_id: new ObjectId(territoryId),
     });
