@@ -101,7 +101,7 @@ export class CreateUserAction extends AbstractAction {
     await this.userRepository.update(user);
 
     const link = sprintf(
-      '%s/activate/%s/%s/',
+      '%s/login/activate/%s/%s/',
       this.config.get('url.appUrl'),
       encodeURIComponent(user.email),
       encodeURIComponent(token),
@@ -122,10 +122,10 @@ link:  ${link}
     await this.kernel.call(
       'user:notify',
       {
+        link,
         template: this.config.get('email.templates.invitation'),
         email: user.email,
         fullname: user.fullname,
-        link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
       },
       {
         call: context.call,
