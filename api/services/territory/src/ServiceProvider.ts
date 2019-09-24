@@ -9,6 +9,7 @@ import {
   territoryDeleteSchema,
   territoryFindByInseeSchema,
   territoryFindByPositionSchema,
+  territoryFindSchema,
 } from '@pdc/provider-schema';
 import { ContentWhitelistMiddleware, ContentBlacklistMiddleware } from '@pdc/provider-middleware';
 
@@ -20,11 +21,13 @@ import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
 import { SchemaTerritoryAction } from './actions/SchemaTerritoryAction';
 import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
 import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
+import { FindTerritoryAction } from './actions/FindTerritoryAction';
 
 @serviceProvider({
   config: __dirname,
   providers: [TerritoryRepositoryProvider],
   validator: [
+    ['territory.find', territoryFindSchema],
     ['territory.create', territoryCreateSchema],
     ['territory.patch', territoryPatchSchema],
     ['territory.delete', territoryDeleteSchema],
@@ -39,6 +42,7 @@ import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPosition
   ],
   connections: [[MongoConnection, 'mongo']],
   handlers: [
+    FindTerritoryAction,
     SchemaTerritoryAction,
     ListTerritoryAction,
     CreateTerritoryAction,
