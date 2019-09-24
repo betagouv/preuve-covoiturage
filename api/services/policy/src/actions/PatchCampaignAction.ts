@@ -12,7 +12,7 @@ export class PatchCampaignAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['can', ['incentive-campaign.update']],
     ['validate', 'campaign.patch'],
-    'validate.retribution',
+    'validate.rules',
   ];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
