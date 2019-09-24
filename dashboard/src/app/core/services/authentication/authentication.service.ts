@@ -172,6 +172,7 @@ export class AuthenticationService {
   }
 
   public restorePassword(email: string, password: string, token: string): Observable<any> {
+    console.log('restorePassword : ', email, password, token);
     return this.call('auth/change-password', {
       email,
       password,
