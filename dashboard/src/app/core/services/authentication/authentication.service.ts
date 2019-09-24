@@ -157,7 +157,6 @@ export class AuthenticationService {
     }
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
-
   /**
    * Check if connected user has role
    */
@@ -259,13 +258,7 @@ export class AuthenticationService {
   }
 
   public sendNewPassword(email: string, password: string, token: string): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user:resetPassword';
-    jsonRPCParam.params = {
-      email,
-      password,
-      token,
-    };
+    return this.call('auth/change-password', { email, password, token });
 
     // const jsonRPCParam = new JsonRPCParam();
     // jsonRPCParam.method = 'user:resetPassword';
