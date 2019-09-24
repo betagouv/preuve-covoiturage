@@ -1,5 +1,4 @@
-import { FiltersInterface } from './filters/FiltersInterface';
-import { RetributionRuleInterface } from './RetributionRuleInterface';
+import { RuleInterface } from './RuleInterface';
 
 export interface CampaignInterface {
   _id?: string;
@@ -12,6 +11,6 @@ export interface CampaignInterface {
   end: Date;
   unit: string;
   status: string;
-  filters: FiltersInterface;
-  retribution_rules: RetributionRuleInterface[];
+  global_rules: RuleInterface[];
+  rules: RuleInterface[];
 }

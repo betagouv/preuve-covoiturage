@@ -1,4 +1,4 @@
-export interface RetributionRuleInterface {
+export interface RuleInterface {
   slug: string;
   description?: string;
   parameters?: any;
