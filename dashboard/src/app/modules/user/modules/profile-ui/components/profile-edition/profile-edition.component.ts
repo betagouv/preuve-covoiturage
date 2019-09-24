@@ -5,9 +5,10 @@ import { REGEXP } from '~/core/const/validators.const';
 import { UserService } from '~/core/services/authentication/user.service';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile-edition',
@@ -19,7 +20,8 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
 
   constructor(
     private fb: FormBuilder,
-    private _userService: UserService,
+    private authService: AuthenticationService,
+    private userService: UserService,
     private router: Router,
     private toastr: ToastrService,
   ) {
@@ -36,25 +38,24 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
   }
 
   public onUpdateProfile(): void {
-    console.log('> onUpdateProfile this.profileForm.value : ', this.profileForm.value);
+    const user = this.authService.user;
     const userData = {
-      _id: this._userService.user._id,
+      _id: user._id,
       ...this.profileForm.value,
       phone: this.profileForm.value.phone ? this.profileForm.value.phone : '',
     };
     if (!userData.phone) delete userData.phone;
 
-    this._userService
-      .patch(userData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => {
-        this.toastr.success('Votre profile as bien été mis à jour');
-      });
+    this.authService.patch(userData).subscribe((updatedUser) => {
+      this.toastr.success('Votre profile as bien été mis à jour');
+    });
   }
 
   private initProfilFormValue(): void {
-    const { firstname, lastname, email, phone } = <ProfileInterface>this._userService.user;
-    this.profileForm.setValue({ firstname, lastname, email, phone });
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+      const { firstname, lastname, email, phone } = <ProfileInterface>this.authService.user;
+      this.profileForm.setValue({ firstname, lastname, email, phone });
+    });
   }
 
   private initProfilForm(): void {

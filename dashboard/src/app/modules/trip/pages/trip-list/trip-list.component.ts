@@ -10,6 +10,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserService } from '~/core/services/authentication/user.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-trip-list',
@@ -27,7 +28,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     public tripService: TripService,
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
-    private userService: UserService,
+    private authService: AuthenticationService,
   ) {
     super();
   }
@@ -70,11 +71,12 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {
+    const user = this.authService.user;
     if (this.tripService.loading) {
       return;
     }
-    if (this.userService.user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [this.userService.user.territory];
+    if (user.group === UserGroupEnum.TERRITORY) {
+      filter['territory_id'] = [user.territory];
     }
     // TODO: temp, remove when filter operator added
     if ('operator_id' in filter) {

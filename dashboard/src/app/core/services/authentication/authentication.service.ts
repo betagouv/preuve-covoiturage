@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, first, map, tap } from 'rxjs/operators';
 
 import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
@@ -19,13 +19,23 @@ import { JsonRPCService } from '../api/json-rpc.service';
 export class AuthenticationService {
   private _hasChecked: boolean;
 
+  private _user$ = new BehaviorSubject<User>(null);
+
   constructor(
-    private _userService: UserService,
-    private _jsonRPC: JsonRPCService,
+    private userService: UserService,
+    private jsonRPC: JsonRPCService,
     private router: Router,
     private toastr: ToastrService,
     private http: HttpClient,
   ) {}
+
+  get user$(): Observable<User> {
+    return this._user$;
+  }
+
+  get user(): User {
+    return this._user$.getValue();
+  }
 
   call(url: string, payload: any, withCredentials: boolean = true): Observable<any> {
     const headers = new HttpHeaders({
@@ -59,6 +69,7 @@ export class AuthenticationService {
       tap((user) => {
         if (user) {
           this.onLoggin(new User(user));
+          this.router.navigate(['/trip/stats']);
         } else {
           this.toastr.error('Mauvais Email ou mot de passe');
         }
@@ -68,7 +79,7 @@ export class AuthenticationService {
 
   public logout() {
     this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
-      this._userService.user = null;
+      this._user$.next(null);
       this.router.navigate(['/login']).then(() => {
         this.toastr.success('Vous avez bien été déconnecté');
       });
@@ -81,14 +92,14 @@ export class AuthenticationService {
       new_password: newPassword,
     });
 
-    return this._jsonRPC.callOne(jsonRPCParam).pipe(tap(console.log));
+    return this.jsonRPC.callOne(jsonRPCParam).pipe(tap(console.log));
   }
 
   /**
    * Check if connected user has any of list of permissions
    */
   public hasAnyPermission(permissions: PermissionType[]): boolean {
-    const user = this._userService.user;
+    const user = this.user;
     if (!permissions.length) {
       return true;
     }
@@ -105,15 +116,17 @@ export class AuthenticationService {
    * Check if connected user has any of list of groups
    */
   public hasAnyGroup(groups: string[] | null = null): boolean {
-    if (!groups) {
+    const user = this.user;
+    if (!groups && user) {
       return true;
     }
-    const user = this._userService.user;
+
     if (!user) {
       return false;
     }
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
+
   /**
    * Check if connected user has role
    */
@@ -122,7 +135,7 @@ export class AuthenticationService {
     if (!role) {
       return true;
     }
-    const user = this._userService.user;
+    const user = this.user;
     if (!user) {
       return false;
     }
@@ -130,7 +143,7 @@ export class AuthenticationService {
   }
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
-    return this._jsonRPC.callOne(new JsonRPCParam('user:sendInviteEmail', { _id: user._id }));
+    return this.jsonRPC.callOne(new JsonRPCParam('user:sendInviteEmail', { _id: user._id }));
   }
 
   public restorePassword(email: string, password: string, token: string): Observable<any> {
@@ -202,15 +215,14 @@ export class AuthenticationService {
   }
 
   check(): Observable<User> {
-    console.log('> check');
+    // console.log('> check');
     if (this._hasChecked) {
-      console.log('has checked', this._userService.user);
-      return of(this._userService.user);
+      // console.log('has checked', this._userService.user);
+      return of(this.user);
     }
 
-    return this._jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
+    return this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
       map((data) => {
-        console.log('data : ', data);
         // if forbidden return null
         if (data.data.error && data.data.error.code === -32503) {
           return null;
@@ -229,8 +241,15 @@ export class AuthenticationService {
     );
   }
 
-  private onLoggin(user) {
-    console.log('> onLoggin', user);
-    this._userService.user = user;
+  public patch(userData: any): Observable<User> {
+    return this.userService.patch(userData).pipe(
+      first(),
+      tap((user) => this._user$.next(user)),
+    );
+  }
+
+  private onLoggin(user: User) {
+    // const redirectToStats = !this.user && user;
+    this._user$.next(user);
   }
 }

@@ -14,6 +14,7 @@ import { StatInterface } from '~/core/interfaces/stat/statInterface';
 import { UserService } from '~/core/services/authentication/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 import { co2Factor, petrolFactor } from '../config/stat';
 
@@ -25,13 +26,19 @@ export class StatService extends ApiService<StatInterface> {
   public _loaded$ = new BehaviorSubject<boolean>(false);
   protected _loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService, private userService: UserService) {
+  constructor(
+    private _http: HttpClient,
+    private _jsonRPC: JsonRPCService,
+    private userService: UserService,
+    private authService: AuthenticationService,
+  ) {
     super(_http, _jsonRPC, 'stat');
   }
 
   public loadOne(filter: FilterInterface | {} = {}): Observable<Stat[]> {
-    if (this.userService.user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [this.userService.user.territory];
+    const user = this.authService.user;
+    if (user && user.group === UserGroupEnum.TERRITORY) {
+      filter['territory_id'] = [user.territory];
     }
     // TODO: temp, remove when filter operator added
     if ('operator_id' in filter) {
