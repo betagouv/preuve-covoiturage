@@ -28,8 +28,6 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
     private router: Router,
   ) {
     super();
-    this.token = this.activatedRoute.params['token'];
-    this.email = this.activatedRoute.params['email'];
   }
 
   ngOnInit() {
