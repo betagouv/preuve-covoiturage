@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
@@ -21,6 +21,7 @@ export class ConfirmEmailComponent extends DestroyObservable implements OnInit {
     private activatedRoute: ActivatedRoute,
     private authService: AuthenticationService,
     private toastr: ToastrService,
+    private router: Router,
   ) {
     super();
   }
@@ -31,7 +32,7 @@ export class ConfirmEmailComponent extends DestroyObservable implements OnInit {
 
   confirmEmail(): void {
     this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
-      const confirm = params.get('confirm');
+      const confirm = params.get('email');
       const token = params.get('token');
 
       this.authService
@@ -39,8 +40,12 @@ export class ConfirmEmailComponent extends DestroyObservable implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe(
           () => {
-            this.isSuccess = true;
-            this.toastr.success('Vous pouvez créer votre mot de passe', 'Email confirmé');
+            // this.isSuccess = true;
+            // setTimeout(() => ), 3000);
+
+            this.router.navigate(['/login']).then(() => {
+              this.toastr.success('Vous pouvez vous connecter à votre compte', 'Email confirmé');
+            });
           },
           (error) => {
             this.hasError = true;

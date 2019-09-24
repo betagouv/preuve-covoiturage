@@ -33,7 +33,14 @@ export class AuthenticationService {
 
       // if userService is updated and match current user we update its state
       if (user && loggedInUser && loggedInUser._id === user._id) {
-        this._user$.next(user);
+        if (user.email !== loggedInUser.email) {
+          this.logout(
+            'Vous avez changé votre Email, Vous allez recevoir une email' +
+              "d'actication pour vous réactiver et vous connecter a votre compte",
+          );
+        } else {
+          this._user$.next(user);
+        }
       }
     });
   }
@@ -86,11 +93,11 @@ export class AuthenticationService {
     );
   }
 
-  public logout() {
+  public logout(message = 'Vous avez bien été déconnecté') {
     this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
       this._user$.next(null);
       this.router.navigate(['/login']).then(() => {
-        this.toastr.success('Vous avez bien été déconnecté');
+        this.toastr.success(message);
       });
     });
   }
