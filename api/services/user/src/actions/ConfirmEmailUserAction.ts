@@ -37,6 +37,8 @@ export class ConfirmEmailUserAction extends AbstractAction {
     return this.userRepository.update({
       ...user,
       status: 'active',
+      forgotten_at: undefined,
+      forgotten_token: undefined,
     });
   }
 }
