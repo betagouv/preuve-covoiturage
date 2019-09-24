@@ -109,7 +109,7 @@ export class AuthenticationService {
     );
   }
 
-  public logout() {
+  public logout(message = 'Vous avez bien été déconnecté') {
     this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
       this._user$.next(null);
       this.router.navigate(['/login']).then(() => {
