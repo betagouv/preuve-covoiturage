@@ -1,3 +1,4 @@
+import { sprintf } from 'sprintf-js';
 import { Action as AbstractAction } from '@ilos/core';
 import { UserPatchParamsInterface } from '@pdc/provider-schema';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
@@ -76,7 +77,25 @@ export class PatchUserAction extends AbstractAction {
         patch.forgotten_token = await this.cryptoProvider.cryptToken(token);
         patch.forgotten_at = new Date();
         patch.status = 'pending';
-        const link = `${this.config.get('url.appUrl')}/auth/reset-password/${patch.email}/${token}`;
+
+        const link = sprintf(
+          '%s/login/confirm-email/%s/%s/',
+          this.config.get('url.appUrl'),
+          encodeURIComponent(patch.email),
+          encodeURIComponent(token),
+        );
+
+        // debug data for testing
+        // if (process.env.NODE_ENV === 'testing') {
+        console.log(`
+******************************************
+[test] Patch user
+email: ${patch.email}
+token: ${token}
+link:  ${link}
+******************************************
+                `);
+        // }
 
         await this.kernel.call(
           'user:notify',

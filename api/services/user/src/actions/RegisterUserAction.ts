@@ -50,8 +50,6 @@ export class RegisterUserAction extends AbstractAction {
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
     });
 
-    const userCreated = await this.userRepository.create(user);
-
-    return userCreated;
+    return this.userRepository.create(user);
   }
 }
