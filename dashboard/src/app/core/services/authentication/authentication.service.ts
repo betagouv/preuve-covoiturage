@@ -61,6 +61,14 @@ export class AuthenticationService {
     return this._user$.getValue();
   }
 
+  get user$(): Observable<User> {
+    return this._user$;
+  }
+
+  get user(): User {
+    return this._user$.getValue();
+  }
+
   call(url: string, payload: any, withCredentials: boolean = true): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -150,6 +158,7 @@ export class AuthenticationService {
     }
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
+
   /**
    * Check if connected user has role
    */
