@@ -35,7 +35,7 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     await this.userRepository.update(user);
 
     const link = sprintf(
-      '%s/login/reset-forgotten-password/%s/%s/',
+      '%s/reset-forgotten-password/%s/%s/',
       this.config.get('url.appUrl'),
       encodeURIComponent(user.email),
       encodeURIComponent(token),

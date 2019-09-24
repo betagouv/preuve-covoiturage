@@ -81,7 +81,7 @@ export class PatchUserAction extends AbstractAction {
         patch.status = 'pending';
 
         const link = sprintf(
-          '%s/login/confirm-email/%s/%s/',
+          '%s/confirm-email/%s/%s/',
           this.config.get('url.appUrl'),
           encodeURIComponent(patch.email),
           encodeURIComponent(token),

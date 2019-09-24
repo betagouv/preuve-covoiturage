@@ -101,7 +101,7 @@ export class CreateUserAction extends AbstractAction {
     await this.userRepository.update(user);
 
     const link = sprintf(
-      '%s/login/activate/%s/%s/',
+      '%s/activate/%s/%s/',
       this.config.get('url.appUrl'),
       encodeURIComponent(user.email),
       encodeURIComponent(token),
