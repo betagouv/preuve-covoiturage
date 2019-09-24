@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { ToastrService } from 'ngx-toastr';
 import { PASSWORD } from '~/core/const/validators.const';
@@ -37,8 +37,11 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
 
     this.newPasswordForm = this.fb.group(
       {
-        password: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
-        passwordVerification: [
+        new_password: [
+          '',
+          [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
+        ],
+        password_verification: [
           '',
           [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
         ],
@@ -48,11 +51,11 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
   }
 
   get password() {
-    return this.newPasswordForm.get('password');
+    return this.newPasswordForm.get('new_password');
   }
 
   get passwordVerification() {
-    return this.newPasswordForm.get('passwordVerification');
+    return this.newPasswordForm.get('password_verification');
   }
 
   /**
