@@ -1,4 +1,4 @@
-export const retributionRuleSchema = {
+export const ruleSchema = {
   type: 'object',
   additionalProperties: false,
   required: ['slug', 'parameters'],
@@ -6,6 +6,8 @@ export const retributionRuleSchema = {
     slug: {
       type: 'string',
     },
-    parameters: {},
+    parameters: {
+      default: null,
+    },
   },
 };

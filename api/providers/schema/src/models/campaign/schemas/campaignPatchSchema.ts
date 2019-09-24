@@ -1,10 +1,4 @@
-import { weekdayFilterSchema } from './filters/weekdayFilterSchema';
-import { timeFilterSchema } from './filters/timeFilterSchema';
-import { operatorFilterSchema } from './filters/operatorFilterSchema';
-import { distanceFilterSchema } from './filters/distanceFilterSchema';
-import { rankFilterSchema } from './filters/rankFilterSchema';
-import { inseeFilterSchema } from './filters/inseeFilterSchema';
-import { retributionRuleSchema } from './retributionRuleSchema';
+import { ruleSchema } from './ruleSchema';
 
 export const campaignPatchSchema = {
   type: 'object',
@@ -37,22 +31,15 @@ export const campaignPatchSchema = {
           type: 'string',
           enum: ['euro', 'point'],
         },
-        filters: {
-          type: 'object',
-          additionalProperties: false,
-          properties: {
-            weekday: weekdayFilterSchema,
-            time: timeFilterSchema,
-            operators_id: operatorFilterSchema,
-            distance_range: distanceFilterSchema,
-            rank: rankFilterSchema,
-            insee: inseeFilterSchema,
-          },
-        },
-        retribution_rules: {
+        global_rules: {
           type: 'array',
           minItems: 1,
-          items: retributionRuleSchema,
+          items: ruleSchema,
+        },
+        rules: {
+          type: 'array',
+          minItems: 1,
+          items: ruleSchema,
         },
       },
     },
