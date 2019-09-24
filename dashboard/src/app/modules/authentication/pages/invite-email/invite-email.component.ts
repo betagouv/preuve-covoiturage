@@ -16,8 +16,8 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
   styleUrls: ['./invite-email.component.scss'],
 })
 export class InviteEmailComponent extends DestroyObservable implements OnInit {
-  public confirm = '';
   public token = '';
+  public email = '';
   public newPasswordForm: FormGroup;
   public hasError = false;
   public isSuccess = false;
@@ -34,45 +34,30 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
-    this.confirmEmail();
+    // this.confirmEmail();
     this.newPasswordForm = this.fb.group(
       {
-        password: ['', [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)]],
-        passwordVerification: [
+        new_password: [
+          '',
+          [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
+        ],
+        password_verification: [
           '',
           [Validators.required, Validators.minLength(PASSWORD.min), Validators.maxLength(PASSWORD.max)],
         ],
       },
       { validator: passwordMatchValidator },
     );
+
+    this.token = this.activatedRoute.snapshot.params['token'];
+    this.email = this.activatedRoute.snapshot.params['email'];
   }
 
   get password() {
-    return this.newPasswordForm.get('password');
+    return this.newPasswordForm.get('new_password');
   }
   get passwordVerification() {
-    return this.newPasswordForm.get('passwordVerification');
-  }
-
-  confirmEmail(): void {
-    this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
-      this.confirm = params.get('confirm');
-      this.token = params.get('token');
-
-      this.authService
-        .confirmEmail(this.confirm, this.token)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(
-          () => {
-            this.isSuccess = true;
-            this.toastr.success('Vous pouvez créer votre mot de passe', 'Email confirmé');
-          },
-          (error) => {
-            this.hasError = true;
-            this.toastr.error('Email non confirmé');
-          },
-        );
-    });
+    return this.newPasswordForm.get('password_verification');
   }
 
   /**
@@ -92,7 +77,7 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
 
   public changePassword(): void {
     this.authService
-      .sendNewPassword(this.newPasswordForm.controls.password.value, this.confirm, this.token)
+      .sendNewPassword(this.email, this.password.value, this.token)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {

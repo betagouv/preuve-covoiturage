@@ -114,10 +114,10 @@ export class AuthenticationService {
     }
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
-
   /**
    * Check if connected user has role
    */
+
   public hasRole(role: string | null): boolean {
     if (!role) {
       return true;
@@ -188,15 +188,17 @@ export class AuthenticationService {
   }
 
   public sendNewPassword(email: string, password: string, token: string): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam();
-    jsonRPCParam.method = 'user:resetPassword';
-    jsonRPCParam.params = {
-      email,
-      password,
-      token,
-    };
+    return this.call('auth/change-password', { email, password, token });
 
-    return this._jsonRPC.callOne(jsonRPCParam);
+    // const jsonRPCParam = new JsonRPCParam();
+    // jsonRPCParam.method = 'user:resetPassword';
+    // jsonRPCParam.params = {
+    //   email,
+    //   password,
+    //   token,
+    // };
+    //
+    // return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   check(): Observable<User> {
