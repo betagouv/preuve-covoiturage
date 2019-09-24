@@ -1,5 +1,4 @@
 export * from './UserInterface';
-export * from './UserChangeEmailParamsInterface';
 export * from './UserChangePasswordParamsInterface';
 export * from './UserChangePasswordWithTokenParamsInterface';
 export * from './UserChangeRoleParamsInterface';

@@ -1,4 +1,3 @@
-export * from './userChangeEmailSchema';
 export * from './userChangePasswordSchema';
 export * from './userChangePasswordWithTokenSchema';
 export * from './userChangeRoleSchema';
