@@ -108,6 +108,29 @@ describe('Operator service', () => {
       });
   });
 
+  it('Find an operator', () => {
+    return request
+      .post('/')
+      .send(
+        callFactory(
+          'operator:find',
+          {
+            _id,
+          },
+          ['operator.read'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        console.log(response.body);
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id');
+        expect(response.body.result).to.have.property('nom_commercial', 'Toto');
+        expect(response.body.result).to.have.property('raison_sociale', 'Toto inc.');
+      });
+  });
   it('Updates the operator', () => {
     return request
       .post('/')
