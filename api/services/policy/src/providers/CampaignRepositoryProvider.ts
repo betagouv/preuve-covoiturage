@@ -68,13 +68,18 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
     return this.instanciateMany(results);
   }
 
-  async findTemplates(): Promise<any[]> {
+  async findTemplates(territoryId: string | null = null): Promise<any[]> {
     const collection = await this.getCollection();
-    const results = await collection
-      .find({
-        status: 'template',
-      })
-      .toArray();
+    const query = {
+      status: 'template',
+      territory_id: null,
+    };
+
+    if (territoryId) {
+      query.territory_id = new ObjectId(territoryId);
+    }
+
+    const results = await collection.find(query).toArray();
     return this.instanciateMany(results);
   }
 

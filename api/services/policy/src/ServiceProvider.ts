@@ -8,6 +8,7 @@ import {
   campaignPatchSchema,
   campaignLaunchSchema,
   campaignDeleteSchema,
+  campaignListTemplateSchema,
 } from '@pdc/provider-schema';
 import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
@@ -29,6 +30,7 @@ import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
     ['campaign.patch', campaignPatchSchema],
     ['campaign.launch', campaignLaunchSchema],
     ['campaign.delete', campaignDeleteSchema],
+    ['campaign.listTemplate', campaignListTemplateSchema],
   ],
   handlers: [
     CreateCampaignAction,

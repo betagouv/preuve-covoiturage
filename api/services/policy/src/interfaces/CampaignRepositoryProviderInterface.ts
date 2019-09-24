@@ -5,7 +5,7 @@ export interface CampaignRepositoryProviderInterface extends RepositoryInterface
 
   findOneWhereTerritory(id: string, territoryId: string): Promise<any>;
   findWhereTerritory(territoryId: string): Promise<any[]>;
-  findTemplates(): Promise<any[]>;
+  findTemplates(territoryId: string | null): Promise<any[]>;
   deleteDraft(id: string, territoryId: string): Promise<void>;
 }
 
@@ -21,7 +21,7 @@ export abstract class CampaignRepositoryProviderInterfaceResolver extends Reposi
     throw new Error();
   }
 
-  async findTemplates(): Promise<any[]> {
+  async findTemplates(territoryId: string | null): Promise<any[]> {
     throw new Error();
   }
 

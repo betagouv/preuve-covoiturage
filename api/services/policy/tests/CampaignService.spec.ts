@@ -7,6 +7,7 @@ import { MongoConnection } from '@ilos/connection-mongo';
 import { bootstrap } from '../src/bootstrap';
 import { ServiceProvider } from '../src/ServiceProvider';
 import { CampaignRepositoryProviderInterfaceResolver } from '../src/interfaces/CampaignRepositoryProviderInterface';
+import { CreateCampaignAction } from '../src/actions/CreateCampaignAction';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -322,6 +323,68 @@ describe('Campaign service', () => {
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
+      });
+  });
+
+  it('List campaign template', async () => {
+    const generalName = 'Campagne exemple';
+    const createCampaignAction = transport
+      .getKernel()
+      .get(ServiceProvider)
+      .get(CreateCampaignAction);
+
+    await createCampaignAction.handle({
+      ...fakeCampaign,
+      status: 'template',
+    });
+
+    await createCampaignAction.handle({
+      ...fakeCampaign,
+      territory_id: null,
+      status: 'template',
+      name: generalName,
+    });
+
+    await request
+      .post('/')
+      .send(
+        callFactory(
+          'campaign:listTemplate',
+          {
+            territory_id: null,
+          },
+          ['incentive-campaign.list'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.be.an('array');
+        expect(response.body.result.length).to.eq(1);
+        expect(response.body.result[0].name).to.eq(generalName);
+      });
+
+    await request
+      .post('/')
+      .send(
+        callFactory(
+          'campaign:listTemplate',
+          {
+            territory_id: territory,
+          },
+          ['incentive-campaign.list'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.be.an('array');
+        expect(response.body.result.length).to.eq(1);
+        expect(response.body.result[0].name).to.eq(fakeCampaign.name);
       });
   });
 });
