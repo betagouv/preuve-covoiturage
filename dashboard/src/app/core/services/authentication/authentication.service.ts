@@ -150,7 +150,6 @@ export class AuthenticationService {
     }
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
-
   /**
    * Check if connected user has role
    */
