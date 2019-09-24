@@ -101,6 +101,7 @@ export class AuthenticationService {
       tap((user) => {
         if (user) {
           this.onLoggin(new User(user));
+          this.router.navigate(['/trip/stats']);
         } else {
           this.toastr.error('Mauvais Email ou mot de passe');
         }
@@ -123,7 +124,7 @@ export class AuthenticationService {
       new_password: newPassword,
     });
 
-    return this._jsonRPC.callOne(jsonRPCParam).pipe(tap(console.log));
+    return this.jsonRPC.callOne(jsonRPCParam).pipe(tap(console.log));
   }
 
   /**
@@ -157,6 +158,7 @@ export class AuthenticationService {
     }
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
+
   /**
    * Check if connected user has role
    */
@@ -174,15 +176,6 @@ export class AuthenticationService {
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
     return this.jsonRPC.callOne(new JsonRPCParam('user:sendConfirmEmail', { _id: user._id }));
-  }
-
-  public restorePassword(email: string, password: string, token: string): Observable<any> {
-    console.log('restorePassword : ', email, password, token);
-    return this.call('auth/change-password', {
-      email,
-      password,
-      token,
-    });
   }
 
   public restorePassword(email: string, password: string, token: string): Observable<any> {
