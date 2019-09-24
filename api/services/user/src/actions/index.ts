@@ -1,4 +1,3 @@
-export * from './ChangeEmailUserAction';
 export * from './ChangePasswordUserAction';
 export * from './ChangePasswordWithTokenUserAction';
 export * from './ChangeRoleUserAction';

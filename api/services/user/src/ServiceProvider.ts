@@ -11,7 +11,6 @@ import {
   ContentWhitelistMiddleware,
 } from '@pdc/provider-middleware';
 import {
-  userChangeEmailSchema,
   userChangePasswordSchema,
   userChangePasswordWithTokenSchema,
   userChangeRoleSchema,
@@ -56,7 +55,6 @@ import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValid
   config: __dirname,
   providers: [UserRepositoryProvider, CryptoProvider, ForgottenTokenValidatorProvider],
   validator: [
-    ['user.changeEmail', userChangeEmailSchema],
     ['user.changePassword', userChangePasswordSchema],
     ['user.changePasswordWithToken', userChangePasswordWithTokenSchema],
     ['user.changeRole', userChangeRoleSchema],
@@ -82,7 +80,6 @@ import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValid
   ],
   connections: [[MongoConnection, 'mongo']],
   handlers: [
-    ChangeEmailUserAction,
     ChangePasswordUserAction,
     ChangePasswordWithTokenUserAction,
     ChangeRoleUserAction,
