@@ -44,12 +44,11 @@ export class AuthenticationService {
 
   public login(email: string, password: string) {
     return this.call('login', { email, password }).pipe(
-      catchError((error) => {
-        console.log('error : ', error);
-        if (error.error && error.error.message === 'Forbidden') {
+      catchError((response) => {
+        if (response.status === 401) {
           return of(null);
         }
-        return throwError(error);
+        return throwError(response);
       }),
       map((loginPayload) => {
         if (loginPayload && loginPayload.result && loginPayload.result.data) {
