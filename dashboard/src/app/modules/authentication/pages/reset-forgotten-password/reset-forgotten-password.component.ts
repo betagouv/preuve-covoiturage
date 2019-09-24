@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { ToastrService } from 'ngx-toastr';
 import { PASSWORD } from '~/core/const/validators.const';
@@ -30,12 +28,13 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
     private router: Router,
   ) {
     super();
-    this.token = this.activatedRoute.params['token'];
-    this.email = this.activatedRoute.params['email'];
   }
 
   ngOnInit() {
     // this.checkToken();
+    this.token = this.activatedRoute.snapshot.params['token'];
+    this.email = this.activatedRoute.snapshot.params['email'];
+
     this.newPasswordForm = this.fb.group(
       {
         new_password: [
@@ -76,7 +75,7 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
 
   public changePassword(): void {
     this.authService
-      .sendNewPassword(this.email, this.password.value, this.token)
+      .restorePassword(this.email, this.password.value, this.token)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
