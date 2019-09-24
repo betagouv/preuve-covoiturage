@@ -13,6 +13,7 @@ const context: ContextType = {
   },
   channel: {
     service: 'normalization',
+    transport: 'queue',
   },
 };
 
