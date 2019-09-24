@@ -147,6 +147,8 @@ describe('Operator service', () => {
         expect(response.body.result[0]).to.have.property('_id', _id);
         expect(response.body.result[0]).to.have.property('nom_commercial', 'Yop');
         expect(response.body.result[0]).to.have.property('raison_sociale', 'Toto inc.');
+        expect(response.body.result[0]).not.to.have.property('bank');
+        expect(response.body.result[0]).not.to.have.property('contacts');
       });
   });
 

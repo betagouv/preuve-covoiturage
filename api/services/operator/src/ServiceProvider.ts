@@ -4,6 +4,7 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { operatorCreateSchema, operatorPatchSchema, operatorDeleteSchema } from '@pdc/provider-schema';
+import { ContentBlacklistMiddleware } from '@pdc/provider-middleware';
 
 import { OperatorRepositoryProvider } from './providers/OperatorRepositoryProvider';
 import { ListOperatorAction } from './actions/ListOperatorAction';
@@ -22,7 +23,11 @@ import { SchemaOperatorAction } from './actions/SchemaOperatorAction';
   ],
   handlers: [SchemaOperatorAction, ListOperatorAction, CreateOperatorAction, PatchOperatorAction, DeleteOperatorAction],
   connections: [[MongoConnection, 'mongo']],
-  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
+  middlewares: [
+    ['can', PermissionMiddleware],
+    ['validate', ValidatorMiddleware],
+    ['content.blacklist', ContentBlacklistMiddleware],
+  ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
