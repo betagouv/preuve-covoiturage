@@ -21,10 +21,11 @@ import { LaunchCampaignAction } from './actions/LaunchCampaignAction';
 import { ListCampaignAction } from './actions/ListCampaignAction';
 import { ListCampaignTemplateAction } from './actions/ListCampaignTemplateAction';
 import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
+import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 
 @serviceProvider({
   config: __dirname,
-  providers: [CampaignRepositoryProvider, ['validate.retribution', ValidateRetributionInputMiddleware]],
+  providers: [CampaignRepositoryProvider, ['validate.rules', ValidateRuleParametersMiddleware]],
   validator: [
     ['campaign.create', campaignCreateSchema],
     ['campaign.patch', campaignPatchSchema],
