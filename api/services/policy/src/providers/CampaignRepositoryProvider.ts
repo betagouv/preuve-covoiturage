@@ -77,4 +77,19 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
       .toArray();
     return this.instanciateMany(results);
   }
+
+  async deleteDraft(id: string, territoryId: string): Promise<void> {
+    const collection = await this.getCollection();
+    const results = await collection.deleteOne({
+      status: 'draft',
+      _id: new ObjectId(id),
+      territory_id: new ObjectId(territoryId),
+    });
+
+    if (results.deletedCount !== 1) {
+      throw new NotFoundException();
+    }
+
+    return;
+  }
 }

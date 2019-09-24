@@ -3,7 +3,6 @@ import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { CampaignInterface } from '@pdc/provider-schema';
 
 import { bootstrap } from '../src/bootstrap';
 import { ServiceProvider } from '../src/ServiceProvider';
@@ -36,7 +35,7 @@ const fakeCampaign = {
   ],
 };
 
-let db;
+let db: MongoConnection;
 
 describe('Campaign service', () => {
   let transport;
@@ -75,12 +74,14 @@ describe('Campaign service', () => {
     db = transport
       .getKernel()
       .get(ServiceProvider)
-      .get(MongoConnection)
-      .getClient();
+      .get(MongoConnection);
   });
 
   after(async () => {
-    await db.db(process.env.APP_MONGO_DB).dropDatabase();
+    await db
+      .getClient()
+      .db(process.env.APP_MONGO_DB)
+      .dropDatabase();
 
     await transport.down();
   });
@@ -138,7 +139,7 @@ describe('Campaign service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(400);
         expect(response.body).to.have.property('error');
-        expect(response.body.error.data).to.eq('data.status should be equal to constant');
+        expect(response.body.error.data).to.eq('data.status should be equal to one of the allowed values');
       });
   });
 
@@ -240,6 +241,7 @@ describe('Campaign service', () => {
         expect(response.body.result.status).to.eq('active');
       });
   });
+
   it('Fail launching campaign if not draft', () => {
     return request
       .post('/')
@@ -259,6 +261,7 @@ describe('Campaign service', () => {
         expect(response.body).to.have.property('error');
       });
   });
+
   it('Listing campaign', () => {
     return request
       .post('/')
@@ -272,6 +275,53 @@ describe('Campaign service', () => {
         expect(response.body.result.length).to.be.eq(1);
         expect(response.body.result[0]).to.have.property('_id');
         expect(response.body.result[0]._id).to.eq(_id);
+      });
+  });
+
+  it('Fail delete campaign if not draft', () => {
+    return request
+      .post('/')
+      .send(
+        callFactory(
+          'campaign:delete',
+          {
+            _id: _id,
+            territory_id: territory,
+          },
+          ['incentive-campaign.delete'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body).to.have.property('error');
+      });
+  });
+
+  it('Delete draft campaign', async () => {
+    await transport
+      .getKernel()
+      .get(ServiceProvider)
+      .get(CampaignRepositoryProviderInterfaceResolver)
+      .patch(_id, { status: 'draft' });
+
+    return request
+      .post('/')
+      .send(
+        callFactory(
+          'campaign:delete',
+          {
+            _id: _id,
+            territory_id: territory,
+          },
+          ['incentive-campaign.delete'],
+        ),
+      )
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
       });
   });
 });

@@ -3,7 +3,12 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { campaignCreateSchema, campaignPatchSchema, campaignLaunchSchema } from '@pdc/provider-schema';
+import {
+  campaignCreateSchema,
+  campaignPatchSchema,
+  campaignLaunchSchema,
+  campaignDeleteSchema,
+} from '@pdc/provider-schema';
 import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
 import { CampaignRepositoryProvider } from './providers/CampaignRepositoryProvider';
@@ -14,6 +19,7 @@ import { PatchCampaignAction } from './actions/PatchCampaignAction';
 import { LaunchCampaignAction } from './actions/LaunchCampaignAction';
 import { ListCampaignAction } from './actions/ListCampaignAction';
 import { ListCampaignTemplateAction } from './actions/ListCampaignTemplateAction';
+import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
 
 @serviceProvider({
   config: __dirname,
@@ -22,11 +28,13 @@ import { ListCampaignTemplateAction } from './actions/ListCampaignTemplateAction
     ['campaign.create', campaignCreateSchema],
     ['campaign.patch', campaignPatchSchema],
     ['campaign.launch', campaignLaunchSchema],
+    ['campaign.delete', campaignDeleteSchema],
   ],
   handlers: [
     CreateCampaignAction,
     PatchCampaignAction,
     LaunchCampaignAction,
+    DeleteCampaignAction,
     ListCampaignAction,
     ListCampaignTemplateAction,
   ],
