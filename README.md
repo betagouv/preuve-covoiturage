@@ -43,7 +43,7 @@ You will need `docker` and `docker-compose`.
 ### Installation
 
 1. Clone the repository and `cd` to it
-2. `cp api/proxy/.env.example api/proxy/.env`
+2. `cp api/.env.example api/.env`
 3. Edit the `api/proxy/.env` file
 4. `docker-compose build`
 5. `docker-compose run api yarn`

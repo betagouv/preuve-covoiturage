@@ -13,7 +13,7 @@ import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateBy
   method: 'notify',
 })
 export class NotifyUserAction extends AbstractAction {
-  // TODO middlewares
+  // TODO middlewares (see below in handle())
 
   constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();
@@ -40,7 +40,7 @@ export class NotifyUserAction extends AbstractAction {
       sendTemplateByEmailParams.opts.link = params.link;
     }
 
-    this.notificationProvider.sendTemplateByEmail({
+    return this.notificationProvider.sendTemplateByEmail({
       template: params.template,
       email: params.email,
       fullname: params.fullname,
@@ -49,7 +49,5 @@ export class NotifyUserAction extends AbstractAction {
         link: params.link,
       },
     });
-
-    return;
   }
 }

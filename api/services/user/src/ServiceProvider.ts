@@ -97,7 +97,7 @@ import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValid
   ],
   template: null,
   notification: {
-    templatePath: path.resolve(__dirname, 'templates'),
+    template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
 })
