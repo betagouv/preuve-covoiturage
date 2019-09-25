@@ -56,8 +56,12 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     );
 
     let summaryText = `Campagne d’incitation au covoiturage du <b>`;
+
+    // DATE
     summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
     summaryText += ` ${moment(campaign.end).format('dddd DD MMMM YYYY')}</b>, limitée à`;
+
+    // MAXIMUM AMOUNT
     switch (this.campaignForm.controls.unit.value) {
       case IncentiveUnitEnum.EUR:
         summaryText += ` <b>${this.currencyPipe.transform(campaign.max_amount, 'EUR', 'symbol', '1.0-0')}</b>.`;
@@ -67,6 +71,8 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
         break;
     }
     summaryText += '<br/><br/>\r\n\r\n';
+
+    // TARGET
     summaryText += `Sont rémunérés les <b>`;
     summaryText += ` ${
       campaign.ui_status.for_driver && campaign.ui_status.for_passenger
@@ -75,7 +81,11 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
         ? 'conducteurs'
         : 'passagers'
     }`;
+
+    // ONLY ADULT
     summaryText += ` ${campaign.only_adult ? 'majeurs' : ''}</b>`;
+
+    // DISTANCE
     summaryText += ` effectuant un trajet`;
     if (campaign.filters.distance_range[1] > 99) {
       summaryText += ` d'au moins ${campaign.filters.distance_range[0]} km`;
@@ -86,13 +96,17 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     }
     summaryText += ` à raison de : `;
 
-    // todo : generate formula
+    // RETRIBUTION
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `${retributionText}`;
     summaryText += '<br/><br/>\r\n\r\n';
+
+    // RANKS
     summaryText += `L’opération est limitée aux opérateurs proposant des preuves de classe`;
     summaryText += ` <b>${campaign.filters.rank ? campaign.filters.rank.join(' ou ') : ''}</b>.`;
     summaryText += '<br/><br/>\r\n\r\n';
+
+    // OPERATORS
     const nbOperators = campaign.filters.operator_ids ? campaign.filters.operator_ids.length : 0;
     if (nbOperators === this.operatorService.entities.length) {
       summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
@@ -131,19 +145,10 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     this.toastr.success('Le récapitulatif a été copié !');
   }
 
-  saveCampaign() {
-    this.onSaveCampaign.emit();
-  }
-
-  saveAsTemplateChange($event) {
-    if ($event.checked) {
+  saveCampaign(isTemplate: boolean) {
+    if (isTemplate) {
       this.controls.status.setValue(CampaignStatusEnum.TEMPLATE);
-      this.controls.description.setValidators(Validators.required);
-    } else {
-      this.controls.status.setValue(CampaignStatusEnum.DRAFT);
-      this.controls.description.setValue(null);
-      this.controls.description.setValidators(null);
     }
-    this.controls.description.updateValueAndValidity();
+    this.onSaveCampaign.emit();
   }
 }

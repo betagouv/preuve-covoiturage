@@ -18,18 +18,7 @@
         Le nom de la campagne est obligatoire.
       </mat-error>
     </mat-form-field>
-    <div class="SummaryForm-template">
-      <mat-checkbox color="primary" (change)="saveAsTemplateChange($event)" #saveAsTemplate>
-        Enregistrer en tant que modèle
-      </mat-checkbox>
-      <mat-icon
-        [matTooltip]="'Enregistrer cette campagne en tant que modèle vous permettra de la réutiliser par la suite.'"
-        color="accent"
-      >
-        info
-      </mat-icon>
-    </div>
-    <mat-form-field appearance="outline" *ngIf="saveAsTemplate.checked">
+    <mat-form-field appearance="outline">
       <mat-label>Description de la campagne</mat-label>
       <textarea matInput formControlName="description" required></textarea>
       <mat-error *ngIf="controls.description.hasError('required')">
@@ -39,19 +28,19 @@
     <div class="SummaryForm-actions">
       <button
         [appShowSpinner]="loading"
-        mat-button
+        mat-flat-button
         class="large"
         color="primary"
-        (click)="saveCampaign()"
+        (click)="saveCampaign(false)"
         [disabled]="!campaignForm.valid"
       >
-        Enregistrer en brouillon
+        Enregistrer <span *ngIf="!campaignForm.controls._id.value">en brouillon</span>
       </button>
       <button
         [appShowSpinner]="loading"
         mat-flat-button
         class="large"
-        (click)="saveCampaign()"
+        (click)="saveCampaign(true)"
         [disabled]="!campaignForm.valid"
       >
         Créer un modèle

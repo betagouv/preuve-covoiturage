@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { finalize, map, take, tap } from 'rxjs/operators';
+import { finalize, map, mergeMap, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as moment from 'moment';
 
@@ -40,17 +40,13 @@ export class CampaignService extends ApiService<Campaign> {
     return this._loaded$.value;
   }
 
-  public launch(campaign: Campaign): Observable<Campaign> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:launch`, campaign);
-
+  public launch(id: string): Observable<[Campaign, Campaign[]]> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:launch`, { _id: id });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      tap((entity: Campaign) => {
-        console.log(`launch campaign with id=${entity._id}`);
-        this.load()
-          .pipe(take(1))
-          .subscribe();
-        this._entity$.next(entity);
+      mergeMap((launchedCampaign: Campaign) => {
+        console.log(`launch campaign with id=${launchedCampaign._id}`);
+        return this.load().pipe(map((campaigns) => <[Campaign, Campaign[]]>[launchedCampaign, campaigns]));
       }),
     );
   }

@@ -8,22 +8,32 @@
         {{ campaign.name }}
       </div>
       <div class="CampaignsList-item-amount">
-        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT">{{
+        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.amount_spent">{{
           campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0'
         }}</span>
         <span>Budget: {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}</span>
       </div>
       <div class="CampaignsList-item-trips">
-        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT">{{ campaign.trips_number }} trajets</span>
+        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.trips_number"
+          >{{ campaign.trips_number }} trajets</span
+        >
         <span>Plafond: {{ campaign.max_trips }} trajets</span>
       </div>
       <div class="CampaignsList-item-date">
         <span>Du {{ campaign.start.toDate() | date: 'dd MMMM' }} au {{ campaign.end.toDate() | date: 'dd MMMM' }}</span>
       </div>
       <div class="CampaignsList-item-actions" [ngSwitch]="campaign.status">
-        <a class="link" *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/{{ campaign._id }}">Modifier</a>
-        <a class="link" *ngSwitchDefault>Voir le détail</a>
-        <a class="link" (click)="deleteCampaign(campaign)" *ngSwitchCase="CampaignStatusEnum.DRAFT">Supprimer</a>
+        <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" (click)="launchCampaign(campaign._id)">
+          <mat-icon matTooltip="lancer" color="primary">play_arrow</mat-icon>
+        </button>
+        <!-- todo: this should be in campaign view -->
+        <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/{{ campaign._id }}">
+          <mat-icon matTooltip="modifier">edit</mat-icon>
+        </button>
+        <!--        <a class="link" *ngSwitchDefault>Voir le détail</a> todo: when view is ready-->
+        <button mat-button (click)="deleteCampaign(campaign)" *ngSwitchCase="CampaignStatusEnum.DRAFT">
+          <mat-icon matTooltip="supprimer" color="error">delete_outline</mat-icon>
+        </button>
       </div>
     </div>
   </app-list-item>
