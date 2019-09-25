@@ -11,15 +11,15 @@ const { isValidIBAN, isValidBIC } = require('ibantools');
  */
 module.exports = {
   iban: {
-    message: p => `${p.value} is not a valid IBAN`,
-    validator: v => isValidIBAN(v),
+    message: (p) => `${p.value} is not a valid IBAN`,
+    validator: (v) => isValidIBAN(v),
   },
   bic: {
-    message: p => `${p.value} is not a valid BIC`,
-    validator: v => isValidBIC(v),
+    message: (p) => `${p.value} is not a valid BIC`,
+    validator: (v) => isValidBIC(v),
   },
   lon: {
-    message: p => `${p.value} is not a valid longitude`,
+    message: (p) => `${p.value} is not a valid longitude`,
     validator: (v) => {
       const decimal = parseFloat(v);
       if (_.isNaN(decimal)) throw new Error('lon must be a decimal');
@@ -29,7 +29,7 @@ module.exports = {
     },
   },
   lat: {
-    message: p => `${p.value} is not a valid latitude`,
+    message: (p) => `${p.value} is not a valid latitude`,
     validator(v) {
       const decimal = parseFloat(v);
       if (_.isNaN(decimal)) throw new Error('lat must be a decimal');
@@ -42,7 +42,7 @@ module.exports = {
     validator(v) {
       const number = phoneUtil.parseAndKeepRawInput(v, v.substr(0, 1) === '+' ? null : 'FR');
 
-      if (!phoneUtil.isValidNumber(number)) {
+      if (!phoneUtil.isPossibleNumber(number)) {
         throw new Error('Invalid phone number');
       }
 
