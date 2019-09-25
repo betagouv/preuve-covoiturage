@@ -90,8 +90,6 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
       validation.passenger = false;
     }
 
-    console.log(validation);
-
     validation.driver
       ? this.forDriverFormGroup.get('amount').setValidators(validators)
       : this.forDriverFormGroup.get('amount').clearValidators();

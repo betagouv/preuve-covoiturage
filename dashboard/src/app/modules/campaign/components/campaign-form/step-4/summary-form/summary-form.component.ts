@@ -9,7 +9,7 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 
 @Component({

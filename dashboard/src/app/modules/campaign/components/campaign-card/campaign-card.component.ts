@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { Campaign } from '~/core/entities/campaign/campaign';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 

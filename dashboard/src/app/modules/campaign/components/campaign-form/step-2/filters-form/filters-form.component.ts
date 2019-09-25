@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { takeUntil } from 'rxjs/operators';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
-import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/incentive-filters';
+import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { CAMPAIGN_RULES_MAX_DISTANCE } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 

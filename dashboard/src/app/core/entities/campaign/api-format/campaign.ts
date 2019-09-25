@@ -1,45 +1,31 @@
-import { Moment } from 'moment';
-
 // tslint:disable:variable-name
-import {
-  CampaignUXInterface,
-  RestrictionParametersInterface,
-  RetributionParametersInterface,
-} from '~/core/interfaces/campaign/campaignInterface';
-import { IncentiveFiltersUxInterface } from '~/core/entities/campaign/incentive-filters';
+
+import { CampaignInterface } from '~/core/interfaces/campaign/api-format/campaignInterface';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
+import { RetributionRuleType } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+import { GlobalRetributionRuleType } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 
-export class CampaignUx {
+export class Campaign {
   public _id: string;
   public territory_id?: string;
   public name: string;
   public description: string;
-  public start: Moment;
-  public end: Moment;
+  public start: Date;
+  public end: Date;
   public status: CampaignStatusEnum;
   public parent_id: string;
   public unit: IncentiveUnitEnum;
-  public filters: IncentiveFiltersUxInterface;
-  public max_amount: number;
-  public max_trips: number;
-  public only_adult: boolean;
-  public restrictions: RestrictionParametersInterface[];
-  public retributions: RetributionParametersInterface[];
-
-  public ui_status: {
-    expert_mode?: boolean;
-    staggered: boolean;
-    for_driver: boolean;
-    for_passenger: boolean;
-    for_trip: boolean;
-  };
-
+  public ui_status: UiStatusInterface;
   public amount_spent?: number;
   public trips_number?: number;
 
+  public rules: RetributionRuleType[][];
+  public global_rules: GlobalRetributionRuleType[];
+
   constructor(
-    obj: CampaignUXInterface = {
+    obj: CampaignInterface = {
       _id: null,
       name: '',
       description: '',
@@ -48,18 +34,8 @@ export class CampaignUx {
       end: null,
       status: null,
       parent_id: null,
-      only_adult: null,
-      filters: {
-        weekday: [],
-        time: [],
-        distance_range: [0, 0],
-        rank: [],
-        operator_ids: [],
-      },
-      retributions: [],
-      restrictions: [],
-      max_amount: null,
-      max_trips: null,
+      rules: [],
+      global_rules: [],
       ui_status: {
         for_driver: null,
         for_passenger: null,
@@ -76,14 +52,9 @@ export class CampaignUx {
     this.status = obj.status;
     this.parent_id = obj.parent_id;
     this.unit = obj.unit;
-    this.filters = obj.filters;
-    this.restrictions = obj.restrictions;
-    this.retributions = obj.retributions;
-    this.only_adult = obj.only_adult;
+    this.rules = obj.rules;
+    this.global_rules = obj.global_rules;
     this.ui_status = obj.ui_status;
-
-    this.max_trips = obj.max_trips;
-    this.max_amount = obj.max_amount;
 
     if (obj.territory_id) {
       this.territory_id = obj.territory_id;

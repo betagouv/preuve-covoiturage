@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/incentive-filters';
+import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 @Component({
   providers: [

@@ -81,16 +81,17 @@ export function cypress_filterTrips() {
 
       expect(method).equal('trip:list');
 
+      const { skip, ...allParamsExceptSkip } = params;
+
       const filter = {
         ...expectedFilter,
-        skip: DEFAULT_TRIP_SKIP,
         limit: DEFAULT_TRIP_LIMIT,
       };
 
       // todo: tmp unit operators connected
       delete filter.operator_id;
 
-      expect(params).eql(filter);
+      expect(allParamsExceptSkip).eql(filter);
     });
   });
 }

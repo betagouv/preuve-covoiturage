@@ -92,13 +92,17 @@ export function cypress_campaignCreate() {
     // save screenshot to validate text
     cy.screenshot();
 
-    cy.get('.SummaryForm mat-form-field:first-child input').type("Nouvelle campagne d'incitation");
+    cy.get('.SummaryForm mat-form-field:first-child input').type(CypressExpectedCampaign.campaignName);
+  });
+
+  it('sets description of form', () => {
+    cy.get('.SummaryForm mat-form-field:nth-child(2) textarea').type(CypressExpectedCampaign.description);
   });
 
   it('clicks button to save campaign', () => {
     cy.server();
 
-    cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(2)').click();
+    cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(1)').click();
 
     cy.wait('@campaignCreate').then((xhr) => {
       const params = xhr.request.body[0].params;

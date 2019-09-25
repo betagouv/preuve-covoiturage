@@ -1,9 +1,23 @@
+import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
+import {
+  DistanceRangeGlobalRetributionRule,
+  MaxAmountRetributionRule,
+  MaxTripsRetributionRule,
+  OperatorIdsRetributionRule,
+  RankRetributionRule,
+  WeekdayRetributionRule,
+} from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import {
+  AmountRetributionRule,
+  ForDriverRetributionRule,
+  ForPassengerRetributionRule,
+  PerKmRetributionRule,
+} from '../../../src/app/core/interfaces/campaign/api-format/campaign-rules.interface';
+
 import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
-import { RetributionRulesSlugEnum } from '../../../src/app/core/interfaces/campaign/campaignInterface';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
 
 import { operatorStubs } from '../stubs/operator.list';
 import { cypress_logging_users } from '../stubs/login';
@@ -20,6 +34,10 @@ export class CypressExpectedCampaign {
   static maxTrips = 50000;
   static forDriverAmount = 10; // cents
   static forPassengerAmount = 0; // cents
+  static description = 'Description de la campagne';
+  static campaignName = "Nouvelle campagne d'incitation";
+
+  static afterEditionForPassengerAmount = 10; // cents
 
   static get(): Campaign {
     const campaign = new Campaign({
@@ -27,51 +45,26 @@ export class CypressExpectedCampaign {
       start: CypressExpectedCampaign.startMoment.toDate(),
       end: CypressExpectedCampaign.endMoment.toDate(),
       unit: IncentiveUnitEnum.EUR,
-      description: '',
-      name: "Nouvelle campagne d'incitation",
-      retribution_rules: [
-        {
-          slug: RetributionRulesSlugEnum.MAX_AMOUNT,
-          parameters: {
-            amount: CypressExpectedCampaign.maxAmount,
-            period: 'campaign',
-          },
-        },
-        {
-          slug: RetributionRulesSlugEnum.MAX_TRIPS,
-          parameters: {
-            amount: CypressExpectedCampaign.maxTrips,
-            period: 'campaign',
-          },
-        },
-        {
-          slug: RetributionRulesSlugEnum.RETRIBUTION,
-          parameters: {
-            max: -1,
-            min: -1,
-            for_driver: {
-              per_km: true,
-              per_passenger: false,
-              amount: CypressExpectedCampaign.forDriverAmount,
-            },
-            for_passenger: {
-              free: false,
-              per_km: false,
-              amount: CypressExpectedCampaign.forPassengerAmount,
-            },
-          },
-        },
-      ],
-      filters: {
-        weekday: [0],
-        time: [],
-        distance_range: {
+      description: CypressExpectedCampaign.description,
+      name: CypressExpectedCampaign.campaignName,
+      global_rules: [
+        new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+        new WeekdayRetributionRule([0]),
+        new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+        new DistanceRangeGlobalRetributionRule({
           min: 85,
           max: 150,
-        },
-        rank: [TripRankEnum.A, TripRankEnum.C],
-        operators_id: [operatorStubs[0]._id],
-      },
+        }),
+        new MaxAmountRetributionRule(CypressExpectedCampaign.maxAmount),
+        new MaxTripsRetributionRule(CypressExpectedCampaign.maxTrips),
+      ],
+      rules: [
+        [
+          new ForDriverRetributionRule(),
+          new AmountRetributionRule(CypressExpectedCampaign.forDriverAmount),
+          new PerKmRetributionRule(),
+        ],
+      ],
       ui_status: {
         for_driver: true,
         for_passenger: false,
@@ -87,5 +80,21 @@ export class CypressExpectedCampaign {
     campaign.end = <any>campaign.end.toISOString();
 
     return campaign;
+  }
+
+  static getAfterCreate(): Campaign {
+    const afterCreationCampaign = CypressExpectedCampaign.get();
+    afterCreationCampaign._id = '5d8a3f7c6caa8c7f95a364f7';
+    return afterCreationCampaign;
+  }
+
+  static getAfterEdition(): Campaign {
+    const afterEditionCampaign = CypressExpectedCampaign.getAfterCreate();
+    afterEditionCampaign.rules.unshift([
+      new ForPassengerRetributionRule(),
+      new AmountRetributionRule(CypressExpectedCampaign.afterEditionForPassengerAmount),
+    ]);
+    afterEditionCampaign.ui_status.for_passenger = true;
+    return afterEditionCampaign;
   }
 }

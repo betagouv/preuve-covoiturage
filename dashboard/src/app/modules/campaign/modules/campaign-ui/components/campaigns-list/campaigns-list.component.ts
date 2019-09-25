@@ -2,14 +2,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
-import { Campaign } from '~/core/entities/campaign/campaign';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { campaignMocks } from '~/modules/campaign/mocks/campaigns';
+import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -21,7 +21,12 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   campaigns: CampaignUx[] = [];
   CampaignStatusEnum = CampaignStatusEnum;
 
-  constructor(private dialog: DialogService, public campaignService: CampaignService, private toastr: ToastrService) {
+  constructor(
+    private dialog: DialogService,
+    public campaignService: CampaignService,
+    public campaignFormatService: CampaignFormatingService,
+    private toastr: ToastrService,
+  ) {
     super();
   }
 
@@ -47,7 +52,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
     const statusList = this.campaignStatusList;
     this.campaigns = campaigns
       .filter((c: Campaign) => statusList.length === 0 || statusList.indexOf(c.status) !== -1)
-      .map((campaign: Campaign) => this.campaignService.toCampaignUxFormat(campaign))
+      .map((campaign: Campaign) => this.campaignFormatService.toCampaignUxFormat(campaign))
       .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
   }
 
