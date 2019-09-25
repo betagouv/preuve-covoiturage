@@ -54,14 +54,14 @@ export class CreateJourneyAction extends AbstractAction {
     // store the journeys
     const result: Journey[] = await this.journeyRepository.createMany(journeys);
 
-    // dispatch only journey done 7 days from now
-    const sevendaysFromNow = moment()
-      .subtract(7, 'days')
+    // dispatch only journey done 5 days from now
+    const fiveDaysFromNow = moment()
+      .subtract(5, 'days')
       .toDate();
 
     const journeyToDispatch = result.filter((journey) => {
       const person = 'driver' in journey ? journey.driver : journey.passenger;
-      return person.start.datetime >= sevendaysFromNow;
+      return person.start.datetime >= fiveDaysFromNow;
     });
 
     // dispatch notifications for geo enrichment

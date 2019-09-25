@@ -6,17 +6,21 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import {
   campaignCreateSchema,
   campaignPatchSchema,
-  campaignListSchema,
   campaignLaunchSchema,
+  campaignDeleteSchema,
+  campaignListTemplateSchema,
 } from '@pdc/provider-schema';
 import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
 import { CampaignRepositoryProvider } from './providers/CampaignRepositoryProvider';
+import { ValidateRetributionInputMiddleware } from './middlewares/ValidateRetributionInputMiddleware';
+
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
 import { LaunchCampaignAction } from './actions/LaunchCampaignAction';
 import { ListCampaignAction } from './actions/ListCampaignAction';
-import { ValidateRetributionInputMiddleware } from './middlewares/ValidateRetributionInputMiddleware';
+import { ListCampaignTemplateAction } from './actions/ListCampaignTemplateAction';
+import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
 
 @serviceProvider({
   config: __dirname,
@@ -24,10 +28,18 @@ import { ValidateRetributionInputMiddleware } from './middlewares/ValidateRetrib
   validator: [
     ['campaign.create', campaignCreateSchema],
     ['campaign.patch', campaignPatchSchema],
-    ['campaign.list', campaignListSchema],
     ['campaign.launch', campaignLaunchSchema],
+    ['campaign.delete', campaignDeleteSchema],
+    ['campaign.listTemplate', campaignListTemplateSchema],
   ],
-  handlers: [CreateCampaignAction, PatchCampaignAction, LaunchCampaignAction, ListCampaignAction],
+  handlers: [
+    CreateCampaignAction,
+    PatchCampaignAction,
+    LaunchCampaignAction,
+    DeleteCampaignAction,
+    ListCampaignAction,
+    ListCampaignTemplateAction,
+  ],
   connections: [[MongoConnection, 'mongo']],
   middlewares: [
     ['can', PermissionMiddleware],

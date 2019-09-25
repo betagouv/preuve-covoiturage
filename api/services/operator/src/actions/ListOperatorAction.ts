@@ -8,7 +8,10 @@ import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/Opera
   method: 'list',
 })
 export class ListOperatorAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['can', ['operator.list']]];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['can', ['operator.list']],
+    ['content.blacklist', ['data.*.contacts', 'data.*.bank']],
+  ];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
