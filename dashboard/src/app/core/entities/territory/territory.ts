@@ -39,16 +39,25 @@ class Territory {
   }) {
     this._id = data._id;
     this.name = data.name;
-    this.shortname = data.shortname;
-    this.acronym = data.acronym;
-    this.insee = data.insee;
-    this.insee_main = data.insee_main;
-    this.network_id = data.network_id;
+    this.acronym = data.acronym || null;
     this.company = data.company || new Company({ siren: null });
     this.address = data.address || new Address({ street: null, postcode: null, city: null, country: null });
     this.contacts = data.contacts || new Contacts();
     this.cgu = data.cgu || new CGU();
     this.coordinates = data.coordinates || null;
+
+    if (this.shortname) {
+      this.shortname = data.shortname;
+    }
+    if (this.insee) {
+      this.insee = data.insee;
+    }
+    if (this.insee_main) {
+      this.insee_main = data.insee_main;
+    }
+    if (this.network_id) {
+      this.network_id = data.network_id;
+    }
   }
 }
 
