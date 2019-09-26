@@ -5,8 +5,9 @@ import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
+import { TokenProvider } from '@pdc/provider-token';
 import {
-  applicationAllSchema as applicationListSchema,
+  applicationListSchema,
   applicationFindSchema,
   applicationCreateSchema,
   applicationRevokeSchema,
@@ -24,7 +25,7 @@ import {
 
 @serviceProvider({
   config: __dirname,
-  providers: [ApplicationRepositoryProvider],
+  providers: [ApplicationRepositoryProvider, TokenProvider],
   validator: [
     ['application.list', applicationListSchema],
     ['application.find', applicationFindSchema],

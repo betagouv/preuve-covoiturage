@@ -1,9 +1,8 @@
 import express from 'express';
 import { get } from 'lodash';
 
-import { TokenProvider } from '@pdc/provider-token';
 import { KernelInterface, UnauthorizedException, ForbiddenException, RPCResponseType } from '@ilos/common';
-import { TokenPayloadInterface } from '@pdc/provider-token/dist/interfaces';
+import { TokenPayloadInterface, TokenProvider } from '@pdc/provider-token';
 
 interface Request extends express.Request {
   operator: string;
@@ -41,7 +40,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         return next();
       }
 
-      const payload = await tokenProvider.verify(token.toString().replace('Bearer ', ''));
+      const payload = await (<Promise<any>>tokenProvider.verify(token.toString().replace('Bearer ', '')));
 
       if (!payload.appId || !payload.operatorId) {
         throw new ForbiddenException();

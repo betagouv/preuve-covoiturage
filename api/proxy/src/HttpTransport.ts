@@ -84,11 +84,7 @@ export class HttpTransport implements TransportInterface {
   private async getProviders() {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
-
-    this.tokenProvider = new TokenProvider({
-      secret: this.config.get('jwt.secret'),
-      ttl: this.config.get('jwt.ttl'),
-    });
+    this.tokenProvider = new TokenProvider();
   }
 
   private registerBeforeAllHandlers() {

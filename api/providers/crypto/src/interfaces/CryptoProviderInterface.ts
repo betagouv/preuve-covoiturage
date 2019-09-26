@@ -26,7 +26,7 @@ export abstract class CryptoProviderInterfaceResolver implements CryptoProviderI
   async compareForgottenToken(oldToken: string, newToken: string): Promise<boolean> {
     throw new Error();
   }
-  generateToken(length: number = 12): string {
+  generateToken(length: number = 32): string {
     throw new Error();
   }
 }
