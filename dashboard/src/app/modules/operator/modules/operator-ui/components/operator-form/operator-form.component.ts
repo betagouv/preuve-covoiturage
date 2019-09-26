@@ -65,8 +65,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
       address: this.fb.group(new FormAddress(new Address({ street: null, city: null, country: null, postcode: null }))),
       company: this.fb.group(new FormCompany(new Company({ siren: null }))),
       contacts: this.fb.group({
-        rgpd_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        rgpd_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
       bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
