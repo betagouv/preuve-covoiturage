@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
@@ -11,6 +12,7 @@ import { Contact } from '~/core/entities/shared/contact';
 import { Contacts, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { Operator } from '~/core/entities/operator/operator';
 
 import { TerritoryService } from '../../../../services/territory.service';
 
@@ -31,6 +33,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     public authService: AuthenticationService,
     private fb: FormBuilder,
     private _territoryService: TerritoryService,
+    private toastr: ToastrService,
   ) {
     super();
   }
@@ -50,8 +53,17 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   }
 
   public onSubmit(): void {
-    if ('_id' in this.territoryForm.value) {
-      this._territoryService.patchList(this.territoryForm.value).subscribe();
+    const territory = new Territory(this.territoryForm.value);
+    if (territory._id) {
+      this._territoryService.patchList(this.territoryForm.value).subscribe(
+        (data) => {
+          const modifiedTerritory = data[0];
+          this.toastr.success(`${modifiedTerritory.name} a été mis à jour !`);
+        },
+        (err) => {
+          this.toastr.error(`Une erreur est survenue lors de la mis à jour du territoire`);
+        },
+      );
     }
   }
 
@@ -82,6 +94,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     });
   }
 
+  // todo: ugly ...
   private setTerritoryFormValue(territory: Territory) {
     // base values for form
     const territoryConstruct = new Territory({
@@ -123,8 +136,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
         },
       }),
     };
-
-    console.log({ formValues });
 
     this.territoryForm.setValue(formValues);
   }

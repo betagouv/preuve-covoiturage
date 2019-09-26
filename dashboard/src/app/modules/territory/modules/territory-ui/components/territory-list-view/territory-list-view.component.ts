@@ -20,7 +20,6 @@ export class TerritoryListViewComponent implements OnInit {
   }
 
   pipeEdit(territoryId: string) {
-    console.log({ territoryId });
     this._territoryService.territoryToEdit = territoryId;
     this.showForm = true;
   }

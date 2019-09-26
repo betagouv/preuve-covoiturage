@@ -51,11 +51,16 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit,
   }
 
   filter() {
-    console.log(this.filterLiteral);
     this.territoriesToShow = this.territories.filter((t) => t.name.toLowerCase().includes(this.filterLiteral));
   }
 
   onEdit(id: string) {
+    // todo: subscribe to loading of entity ?
+    setTimeout(() => {
+      document.getElementById('territoryForm-anchor').scrollIntoView({
+        behavior: 'smooth',
+      });
+    }, 200);
     this.edit.emit(id);
   }
 }

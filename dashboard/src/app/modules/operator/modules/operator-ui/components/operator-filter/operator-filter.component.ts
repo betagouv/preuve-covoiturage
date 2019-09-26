@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-territory-filter',
-  templateUrl: './territory-filter.component.html',
-  styleUrls: ['./territory-filter.component.scss'],
+  selector: 'app-operator-filter',
+  templateUrl: './operator-filter.component.html',
+  styleUrls: ['./operator-filter.component.scss'],
 })
-export class TerritoryFilterComponent implements OnInit {
+export class OperatorFilterComponent implements OnInit {
   public searchFilters: FormGroup;
 
   @Output() filterLiteralChange = new EventEmitter();
