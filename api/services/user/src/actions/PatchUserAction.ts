@@ -10,6 +10,8 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Update properties of user ( firstname, lastname, phone )
+ * The user is switched to 'pending' when the email is modified.
+ * A confirmation link is sent to the new email and a notification to the old one.
  */
 @handler({
   service: 'user',
@@ -97,11 +99,29 @@ link:  ${link}
                 `);
         // }
 
+        // Notify the new email with a confirmation link
         await this.kernel.call(
           'user:notify',
           {
             link,
             template: this.config.get('email.templates.confirmation'),
+            email: patch.email,
+            fullname: user.fullname,
+          },
+          {
+            call: context.call,
+            channel: {
+              ...context.channel,
+              service: 'user',
+            },
+          },
+        );
+
+        // Notify the previous email about the change
+        await this.kernel.call(
+          'user:notify',
+          {
+            template: this.config.get('email.templates.email_changed'),
             email: user.email,
             fullname: user.fullname,
           },

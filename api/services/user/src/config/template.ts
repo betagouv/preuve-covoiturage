@@ -9,3 +9,7 @@ export const forgotten_password = {
 export const confirmation = {
   subject: 'Confirmation de votre email',
 };
+
+export const email_changed = {
+  subject: "Changement d'adresse email",
+};

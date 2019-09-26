@@ -25,26 +25,28 @@ import {
   userPatchSchema,
   userRegisterSchema,
   userResetPasswordSchema,
+  userSendConfirmEmailSchema,
 } from '@pdc/provider-schema';
 
 import {
-  MeUserAction,
+  ChangePasswordUserAction,
+  ChangePasswordWithTokenUserAction,
+  ChangeRoleUserAction,
+  CheckForgottenTokenUserAction,
+  ConfirmEmailUserAction,
   CreateUserAction,
   DeleteUserAction,
   FindUserAction,
-  NotifyUserAction,
-  ListUserAction,
-  PatchUserAction,
-  ConfirmEmailUserAction,
   ForgottenPasswordUserAction,
-  ResetPasswordUserAction,
-  ChangePasswordUserAction,
+  ListUserAction,
   LoginUserAction,
-  ChangeRoleUserAction,
+  MeUserAction,
+  NotifyUserAction,
+  PatchUserAction,
   RegisterUserAction,
+  ResetPasswordUserAction,
   SchemaUserAction,
-  ChangePasswordWithTokenUserAction,
-  CheckForgottenTokenUserAction,
+  SendConfirmEmailUserAction,
 } from './actions';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
@@ -67,6 +69,7 @@ import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValid
     ['user.patch', userPatchSchema],
     ['user.register', userRegisterSchema],
     ['user.resetPassword', userResetPasswordSchema],
+    ['user.sendConfirmEmail', userSendConfirmEmailSchema],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -94,6 +97,7 @@ import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValid
     RegisterUserAction,
     ResetPasswordUserAction,
     SchemaUserAction,
+    SendConfirmEmailUserAction,
   ],
   template: null,
   notification: {

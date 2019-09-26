@@ -15,3 +15,4 @@ export * from './PatchUserAction';
 export * from './RegisterUserAction';
 export * from './ResetPasswordUserAction';
 export * from './SchemaUserAction';
+export * from './SendConfirmEmailUserAction';
