@@ -9,9 +9,9 @@ import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 
-import { UserService } from './user.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
+import { UserService } from '~/modules/user/services/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -277,7 +277,7 @@ export class AuthenticationService {
   public patch(userData: any): Observable<User> {
     return this.userService.patch(userData).pipe(
       first(),
-      tap((user) => this._user$.next(user)),
+      tap((user: User) => this._user$.next(user)),
     );
   }
 

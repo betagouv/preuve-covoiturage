@@ -11,7 +11,7 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { ApiService } from '~/core/services/api/api.service';
 import { StatInterface } from '~/core/interfaces/stat/statInterface';
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';

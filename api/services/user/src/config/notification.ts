@@ -1,7 +1,8 @@
 declare function env(key: string, fallback?: string): any;
 
 export const mail = {
-  debug: env('NODE_ENV', 'local') === 'local',
+  // debug: env('NODE_ENV', 'local') === 'local',
+  debug: false,
   driver: 'mailjet',
   driverOptions: {
     public: env('APP_MAILJET_PUBLIC_KEY', ''),

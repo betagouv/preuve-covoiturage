@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -50,6 +50,10 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
           group: this.user.group,
           territory: this.user.territory ? this.user.territory : null,
           operator: this.user.operator ? this.user.operator : null,
+        });
+
+        Object.keys(this.createEditUserForm.controls).forEach((key) => {
+          this.createEditUserForm.controls[key].setErrors(null);
         });
       }
     }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { REGEXP } from '~/core/const/validators.const';
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Router } from '@angular/router';
