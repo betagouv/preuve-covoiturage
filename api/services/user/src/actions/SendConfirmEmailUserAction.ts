@@ -15,7 +15,24 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 export class SendConfirmEmailUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', 'user.sendConfirmEmail'],
-    ['can', ['user.send-confirm-email']],
+    [
+      'scopeIt',
+      [
+        ['user.send-confirm-email'],
+        [
+          (_params, context) => {
+            if (context.call.user.territory) {
+              return 'territory.users.send-confirm-email';
+            }
+          },
+          (_params, context) => {
+            if (context.call.user.operator) {
+              return 'operator.users.send-confirm-email';
+            }
+          },
+        ],
+      ],
+    ],
   ];
 
   constructor(
@@ -28,15 +45,29 @@ export class SendConfirmEmailUserAction extends AbstractAction {
   }
 
   public async handle(params: { _id: string }, context: ContextType): Promise<void> {
-    const user = await this.userRepository.find(params._id);
+    const contextParam: { territory?: string; operator?: string } = {};
+
+    if (context.call.user.territory) {
+      contextParam.territory = context.call.user.territory;
+    }
+
+    if (context.call.user.operator) {
+      contextParam.operator = context.call.user.operator;
+    }
+
+    const user = await this.userRepository.findUser(params._id, contextParam);
 
     // generate a token and store in the user
     const token = this.cryptoProvider.generateToken();
-    await this.userRepository.patch(user._id, {
-      forgotten_token: await this.cryptoProvider.cryptToken(token),
-      forgotten_at: new Date(),
-      status: 'pending',
-    });
+    await this.userRepository.patchUser(
+      user._id,
+      {
+        forgotten_token: await this.cryptoProvider.cryptToken(token),
+        forgotten_at: new Date(),
+        status: 'pending',
+      },
+      contextParam,
+    );
 
     const link = sprintf(
       '%s/confirm-email/%s/%s/',

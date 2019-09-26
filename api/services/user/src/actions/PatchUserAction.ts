@@ -72,7 +72,7 @@ export class PatchUserAction extends AbstractAction {
      * and send an email with a confirmation link
      */
     if (params.patch && params.patch.email) {
-      const user = await this.userRepository.find(params._id);
+      const user = await this.userRepository.findUser(params._id, contextParam);
       if (user.email !== params.patch.email) {
         // generate a token and store in the user
         const token = this.cryptoProvider.generateToken();
