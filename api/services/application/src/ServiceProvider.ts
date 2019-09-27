@@ -16,6 +16,7 @@ import {
 import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
 import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
+import { MigrateCommand } from './commands/MigrateCommand';
 import {
   ListApplicationAction,
   FindApplicationAction,
@@ -35,14 +36,15 @@ import {
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scopeIt', ScopeToSelfMiddleware]],
   connections: [[MongoConnection, 'mongo']],
   handlers: [ListApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
+  commands: [MigrateCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [
-    ConfigExtension,
-    ConnectionManagerExtension,
+    // ConfigExtension,
+    // ConnectionManagerExtension,
     ValidatorExtension,
-    Extensions.Middlewares,
-    Extensions.Providers,
-    Extensions.Handlers,
+    // Extensions.Middlewares,
+    // Extensions.Providers,
+    // Extensions.Handlers,
   ];
 }

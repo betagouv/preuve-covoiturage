@@ -1,4 +1,5 @@
 import { JourneyInterface, TripSearchInterface } from '@pdc/provider-schema';
+
 import { LightTripInterface } from './LightTripInterface';
 
 export interface TripPgRepositoryInterface {
