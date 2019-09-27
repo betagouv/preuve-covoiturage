@@ -1,0 +1,17 @@
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { LOWEST } from '../helpers/priority';
+
+export const perKm: ApplicableRuleInterface = {
+  slug: 'per_km',
+  description: 'Le montant est multiplié par le nombre de km',
+  schema: {
+    type: 'boolean',
+    const: true,
+  },
+  index: LOWEST,
+  apply() {
+    return async (ctx) => {
+      ctx.result *= ctx.person.distance / 1000;
+    };
+  },
+};

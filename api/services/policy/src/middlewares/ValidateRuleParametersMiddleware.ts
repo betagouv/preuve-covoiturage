@@ -9,7 +9,7 @@ import {
 } from '@ilos/common';
 import { CampaignInterface } from '@pdc/provider-schema';
 
-import { policies } from '../data/policies';
+import { policies } from '../engine/rules';
 
 @middleware()
 export class ValidateRuleParametersMiddleware implements MiddlewareInterface, InitHookInterface {
