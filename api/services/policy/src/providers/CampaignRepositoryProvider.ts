@@ -1,6 +1,7 @@
 import { MongoConnection, MongoException, ObjectId } from '@ilos/connection-mongo';
 import { ConfigInterfaceResolver, provider, NotFoundException } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
+import { TripInterface } from '@pdc/provider-schema';
 
 import {
   CampaignRepositoryProviderInterface,
@@ -63,6 +64,25 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
     const results = await collection
       .find({
         territory_id: new ObjectId(territoryId),
+      })
+      .toArray();
+    return this.instanciateMany(results);
+  }
+
+  async findApplicableCampaigns(trip: TripInterface): Promise<any[]> {
+    const collection = await this.getCollection();
+    const results = await collection
+      .find({
+        territory_id: {
+          $in: trip.territories.map((id) => new ObjectId(id)),
+        },
+        status: 'active',
+        start: {
+          $gte: trip.start,
+        },
+        end: {
+          $lte: trip.start,
+        },
       })
       .toArray();
     return this.instanciateMany(results);
