@@ -15,7 +15,11 @@
           {{ getFrenchRole(user.role) }}
         </div>
         <div class="UsersList-list-item-actions">
-          <a class="link" *ngIf="authService.hasAnyPermission(['user.invite'])" (click)="onSendInvitation(user)">
+          <a
+            class="link"
+            *ngIf="authService.hasAnyPermission(['user.invite']) && user.status === 'pending'"
+            (click)="onSendInvitation(user)"
+          >
             Renvoyer l'invitation
           </a>
           <a class="link" *ngIf="canEditUser" (click)="onEdit(user)">
