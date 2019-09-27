@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 import { User } from '~/core/entities/authentication/user';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
@@ -15,7 +15,7 @@ export class HeaderComponent implements OnInit {
   constructor(private userService: UserService, public authService: AuthenticationService) {}
 
   ngOnInit() {
-    this.userService.user$.subscribe((user) => {
+    this.authService.user$.subscribe((user) => {
       this.user = user;
     });
   }

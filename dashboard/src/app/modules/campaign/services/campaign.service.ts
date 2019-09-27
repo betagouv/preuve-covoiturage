@@ -24,7 +24,7 @@ import {
 } from '~/core/interfaces/campaign/campaignInterface';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 @Injectable({
   providedIn: 'root',

@@ -1,5 +1,6 @@
 export const templates = {
-  invite: 'invite',
+  invitation: 'invite',
   forgotten: 'forgotten_password',
-  confirm: 'confirm_email',
+  confirmation: 'confirm_email',
+  email_changed: 'email_changed',
 };

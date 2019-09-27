@@ -28,7 +28,9 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       tap((loggedIn) => {
         if (!loggedIn) {
           this.router.navigate(['/login']).then(() => {
-            this.toastr.error("Vous n'êtes pas autorisé à accéder à cette page.");
+            if (state.url !== '/') {
+              this.toastr.error("Vous n'êtes pas autorisé à accéder à cette page.");
+            }
           });
         } else if (state.url === '/') {
           this.router.navigate(['/trip/stats']);

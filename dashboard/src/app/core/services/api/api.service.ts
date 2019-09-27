@@ -155,12 +155,11 @@ export class ApiService<T extends IModel> {
   }
 
   public patch(item: T): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:patch`, item);
+    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patch`, item);
 
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((entity: T) => {
-        console.log(`updated ${this._method} id=${entity._id}`);
         this._entity$.next(entity);
       }),
     );

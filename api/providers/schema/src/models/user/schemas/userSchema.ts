@@ -17,11 +17,6 @@ export const userSchema = {
       enum: ['pending', 'invited', 'active', 'blocked'],
       default: 'pending',
     },
-    has_reset_password: {
-      type: 'boolean',
-      default: false,
-    },
-    forgotten_reset: { macro: 'token' },
     forgotten_token: { macro: 'token', crypt: true },
     forgotten_at: { macro: 'timestamp' },
     last_connected_at: { macro: 'timestamp' },

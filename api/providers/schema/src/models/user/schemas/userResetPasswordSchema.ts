@@ -1,11 +1,11 @@
 export const userResetPasswordSchema = {
   $id: 'user.resetPassword',
   type: 'object',
-  required: ['token', 'reset', 'password'],
+  required: ['email', 'token', 'password'],
   additionalProperties: false,
   properties: {
-    password: { macro: 'password' },
+    email: { macro: 'email' },
     token: { macro: 'token' },
-    reset: { macro: 'token' },
+    password: { macro: 'password' },
   },
 };

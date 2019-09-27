@@ -65,7 +65,8 @@
     "@pdc/provider-crypto": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-schema": "~0",
-    "@pdc/provider-validator": "~0"
+    "@pdc/provider-validator": "~0",
+    "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

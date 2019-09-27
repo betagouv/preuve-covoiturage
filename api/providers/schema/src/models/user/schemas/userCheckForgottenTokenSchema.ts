@@ -1,5 +1,5 @@
-export const userConfirmEmailSchema = {
-  $id: 'user.confirmEmail',
+export const userCheckForgottenTokenSchema = {
+  $id: 'user.checkForgottenToken',
   type: 'object',
   required: ['email', 'forgotten_token'],
   additionalProperties: false,

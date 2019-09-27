@@ -1,3 +1,4 @@
+import { sprintf } from 'sprintf-js';
 import { Action as AbstractAction } from '@ilos/core';
 import {
   handler,
@@ -74,12 +75,11 @@ export class CreateUserAction extends AbstractAction {
     // create the new user
     const user = new User({
       ...request,
-      status: this.config.get('user.status.not_active'),
+      status: 'pending',
       password: Math.random()
         .toString(36)
         .substring(2, 15),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-      email_change_at: new Date(),
     });
 
     const userCreated = await this.userRepository.create(user);
@@ -93,24 +93,39 @@ export class CreateUserAction extends AbstractAction {
     // generate new token for a password reset on first access
     const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
+
     // set forgotten password properties to set first password
-    user.forgotten_reset = reset;
     user.forgotten_token = await this.cryptoProvider.cryptToken(token);
     user.forgotten_at = new Date();
 
     await this.userRepository.update(user);
 
-    const requester = new User(context.call.user);
+    const link = sprintf(
+      '%s/activate/%s/%s/',
+      this.config.get('url.appUrl'),
+      encodeURIComponent(user.email),
+      encodeURIComponent(token),
+    );
+
+    // debug data for testing
+    // if (process.env.NODE_ENV === 'testing') {
+    console.log(`
+******************************************
+[test] Create user
+email: ${user.email}
+token: ${token}
+link:  ${link}
+******************************************
+            `);
+    // }
 
     await this.kernel.call(
       'user:notify',
       {
-        template: this.config.get('email.templates.invite'),
+        link,
+        template: this.config.get('email.templates.invitation'),
         email: user.email,
         fullname: user.fullname,
-        requester: requester.fullname,
-        organization: 'TerritoryOrOperatorOrganisation',
-        link: `${this.config.get('url.appUrl')}/reset-password/${reset}/${token}`,
       },
       {
         call: context.call,

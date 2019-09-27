@@ -1,4 +1,4 @@
-<form [formGroup]="profileForm">
+<form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
   <mat-form-field appearance="outline">
     <mat-label>Prénom</mat-label>
     <input matInput formControlName="firstname" required />
@@ -16,7 +16,7 @@
     <mat-label>Numéro</mat-label>
     <input matInput formControlName="phone" />
   </mat-form-field>
-  <button type="submit" mat-flat-button (click)="onUpdateProfile()" [disabled]="!profileForm.valid" color="primary">
+  <button type="submit" mat-flat-button [disabled]="!profileForm.valid" color="primary">
     Mettre à jour
   </button>
 </form>

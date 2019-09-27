@@ -60,6 +60,7 @@ services:
     ports:
       - 8080:8080
       - 9229:9229
+    env_file: ./api/.env
     environment:
       NODE_ENV: local
       PORT: 8080

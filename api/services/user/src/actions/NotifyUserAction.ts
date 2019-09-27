@@ -1,5 +1,6 @@
+import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, NotificationInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, NotificationInterfaceResolver, ForbiddenException } from '@ilos/common';
 import { UserNotifyParamsInterface } from '@pdc/provider-schema';
 
 import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
@@ -12,13 +13,18 @@ import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateBy
   method: 'notify',
 })
 export class NotifyUserAction extends AbstractAction {
-  // TODO middlewares
+  // TODO middlewares (see below in handle())
 
   constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();
   }
 
   public async handle(params: UserNotifyParamsInterface, context: ContextType): Promise<void> {
+    // TODO replace this with a proper middleware
+    if (get(context, 'channel.service', '') !== 'user') {
+      throw new ForbiddenException();
+    }
+
     const sendTemplateByEmailParams: SendTemplateByEmailParamsInterface = {
       template: params.template,
       email: params.email,
@@ -34,7 +40,7 @@ export class NotifyUserAction extends AbstractAction {
       sendTemplateByEmailParams.opts.link = params.link;
     }
 
-    this.notificationProvider.sendTemplateByEmail({
+    return this.notificationProvider.sendTemplateByEmail({
       template: params.template,
       email: params.email,
       fullname: params.fullname,
@@ -43,7 +49,5 @@ export class NotifyUserAction extends AbstractAction {
         link: params.link,
       },
     });
-
-    return;
   }
 }

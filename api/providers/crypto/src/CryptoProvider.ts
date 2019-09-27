@@ -24,7 +24,7 @@ export class CryptoProvider implements ProviderInterface {
     return bcrypt.compare(plainToken, hashedToken);
   }
 
-  public generateToken(length: number = 12): string {
+  public generateToken(length: number = 32): string {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 

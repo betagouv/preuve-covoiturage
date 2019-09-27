@@ -1,27 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { ToastrService } from 'ngx-toastr';
+import { PASSWORD } from '~/core/const/validators.const';
+import { passwordMatchValidator } from '~/modules/authentication/validators/password-match.validator';
 import { takeUntil } from 'rxjs/operators';
 
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { URLS } from '~/core/const/main.const';
-import { PASSWORD } from '~/core/const/validators.const';
-import { DestroyObservable } from '~/core/components/destroy-observable';
-
-import { passwordMatchValidator } from '../../validators/password-match.validator';
-
 @Component({
-  templateUrl: './invite-email.component.html',
-  styleUrls: ['./invite-email.component.scss'],
+  selector: 'app-reset-forgotten-password',
+  templateUrl: './reset-forgotten-password.component.html',
+  styleUrls: ['./reset-forgotten-password.component.scss'],
 })
-export class InviteEmailComponent extends DestroyObservable implements OnInit {
-  public token = '';
-  public email = '';
+export class ResetForgottenPasswordComponent extends DestroyObservable implements OnInit {
   public newPasswordForm: FormGroup;
+  // public reset: string;
+  public token: string;
+  public email: string;
   public hasError = false;
-  public isSuccess = false;
-  public contactEmail = URLS.contactEmail;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -34,7 +31,10 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
-    // this.confirmEmail();
+    // this.checkToken();
+    this.token = this.activatedRoute.snapshot.params['token'];
+    this.email = this.activatedRoute.snapshot.params['email'];
+
     this.newPasswordForm = this.fb.group(
       {
         new_password: [
@@ -48,14 +48,12 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
       },
       { validator: passwordMatchValidator },
     );
-
-    this.token = this.activatedRoute.snapshot.params['token'];
-    this.email = this.activatedRoute.snapshot.params['email'];
   }
 
   get password() {
     return this.newPasswordForm.get('new_password');
   }
+
   get passwordVerification() {
     return this.newPasswordForm.get('password_verification');
   }
@@ -77,18 +75,21 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
 
   public changePassword(): void {
     this.authService
-      .sendNewPassword(this.email, this.password.value, this.token)
+      .restorePassword(this.email, this.password.value, this.token)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
           this.hasError = false;
           this.router.navigate(['/login']).then(() => {
-            this.toastr.success('Votre mot de passe a été créé');
+            this.toastr.success('Votre mot de passe a été modifié');
           });
         },
         (error) => {
           this.hasError = true;
-          this.toastr.error('Une erreur est survenue lors de la création de votre mot de passe.');
+          this.toastr.error(
+            'Une erreur est survenue lors de la réinitalisation de votre mot de passe, ' +
+              'vérifier que vous avez bien ouvert le dernier email intitulé "Nouveau mot de passe ". ',
+          );
         },
       );
   }
