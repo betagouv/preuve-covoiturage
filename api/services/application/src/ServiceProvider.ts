@@ -39,12 +39,5 @@ import {
   commands: [MigrateCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [
-    // ConfigExtension,
-    // ConnectionManagerExtension,
-    ValidatorExtension,
-    // Extensions.Middlewares,
-    // Extensions.Providers,
-    // Extensions.Handlers,
-  ];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
 }

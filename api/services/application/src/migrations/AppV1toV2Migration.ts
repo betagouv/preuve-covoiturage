@@ -17,7 +17,7 @@ export class AppV1toV2Migration extends ParentMigration {
     });
     await connection.up();
     const client = connection.getClient();
-    const dbOperators = client.db(process.env.APP_MONGO_DB).collection('ops');
+    const dbOperators = client.db(process.env.APP_MONGO_DB).collection('operators');
     const dbApplications = client.db(process.env.APP_MONGO_DB).collection('applications');
 
     let newApps = [];

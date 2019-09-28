@@ -21,15 +21,15 @@ async function checkApplication(kernel: KernelInterface, payload: TokenPayloadIn
     jsonrpc: '2.0',
     method: 'application:find',
     params: {
-      params: { _id: payload.appId, operator_id: payload.operatorId, deleted_at: null },
+      params: { _id: payload.a, operator_id: payload.o, deleted_at: null },
       _context: { call: { user: { permissions: ['application.find'] } } },
     },
   });
 
-  const appId = get(app, 'result._id', '').toString();
-  const opId = get(app, 'result.operator_id', null);
+  const application_id = get(app, 'result._id', '').toString();
+  const operator_id = get(app, 'result.operator_id', null);
 
-  return appId === payload.appId && opId === payload.operatorId;
+  return application_id === payload.a && operator_id === payload.o;
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProvider) {
@@ -42,7 +42,19 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
 
       const payload = await (<Promise<any>>tokenProvider.verify(token.toString().replace('Bearer ', '')));
 
-      if (!payload.appId || !payload.operatorId) {
+      /**
+       * Handle V1 token format conversion
+       */
+      if ('id' in payload && 'app' in payload) {
+        payload.v = 1;
+        payload.a = payload.app;
+        payload.o = payload.id;
+        delete payload.id;
+        delete payload.app;
+        delete payload.permissions;
+      }
+
+      if (!payload.a || !payload.o) {
         throw new ForbiddenException();
       }
 
@@ -51,17 +63,17 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
 
       // The only permissions now. Store in the token or retrieve
       // from the application service later if it gets more complex.
-      if (!payload.permissions) {
-        payload.permissions = ['journey.create'];
+      if (!payload.p) {
+        payload.p = ['journey.create'];
       }
 
-      // inject the operatorId and permissions in the request
+      // inject the operator ID and permissions in the request
       // @ts-ignore
       req.session = req.session || {};
       req.session.user = req.session.user || {};
-      req.session.user.application_id = payload.appId;
-      req.session.user.operator = payload.operatorId;
-      req.session.user.permissions = payload.permissions;
+      req.session.user.application_id = payload.a;
+      req.session.user.operator = payload.o;
+      req.session.user.permissions = payload.p;
 
       next();
     } catch (e) {

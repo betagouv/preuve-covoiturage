@@ -49,9 +49,10 @@ export class CreateApplicationAction extends AbstractAction {
     ));
 
     const token = await this.tokenProvider.sign({
-      appId: application._id.toString(),
-      operatorId: application.operator_id,
-      permissions: ['journey.create'],
+      a: application._id.toString(),
+      o: application.operator_id,
+      p: ['journey.create'],
+      v: 2,
     });
 
     return { token, application };
