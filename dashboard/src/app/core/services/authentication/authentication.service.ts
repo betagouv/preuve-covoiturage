@@ -61,6 +61,14 @@ export class AuthenticationService {
     return this._user$.getValue();
   }
 
+  get user$(): Observable<User> {
+    return this._user$;
+  }
+
+  get user(): User {
+    return this._user$.getValue();
+  }
+
   call(url: string, payload: any, withCredentials: boolean = true): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -168,6 +176,15 @@ export class AuthenticationService {
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
     return this.jsonRPC.callOne(new JsonRPCParam('user:sendConfirmEmail', { _id: user._id }));
+  }
+
+  public restorePassword(email: string, password: string, token: string): Observable<any> {
+    console.log('restorePassword : ', email, password, token);
+    return this.call('auth/change-password', {
+      email,
+      password,
+      token,
+    });
   }
 
   public restorePassword(email: string, password: string, token: string): Observable<any> {

@@ -1,5 +1,5 @@
-export const applicationAllSchema = {
-  $id: 'application.all',
+export const applicationListSchema = {
+  $id: 'application.list',
   type: 'object',
   required: ['operator_id'],
   additionalProperties: false,

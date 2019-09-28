@@ -1,6 +1,7 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { JourneyInterface, PersonInterface, TripSearchInterface } from '@pdc/provider-schema/dist';
+
 import {
   LightTripInterface,
   TripPgRepositoryInterface,

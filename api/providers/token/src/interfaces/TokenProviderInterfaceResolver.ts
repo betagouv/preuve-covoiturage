@@ -1,19 +1,18 @@
-import { TokenProviderInterface } from './TokenProviderInterface';
+import * as jwt from 'jsonwebtoken';
+import { ProviderInterface } from '@ilos/common';
+
 import { TokenPayloadInterface } from '.';
 
+export interface TokenProviderInterface extends ProviderInterface {
+  sign(payload: TokenPayloadInterface, options?: jwt.SignOptions): Promise<string>;
+  verify(token: string, options?: jwt.VerifyOptions): Promise<TokenPayloadInterface | string>;
+}
+
 export abstract class TokenProviderInterfaceResolver implements TokenProviderInterface {
-  async sign(
-    payload: TokenPayloadInterface,
-    secretOrPrivateKey: string | object | Buffer,
-    options?: object,
-  ): Promise<string> {
+  async sign(payload: TokenPayloadInterface, options?: object): Promise<string> {
     throw new Error('Method not implemented.');
   }
-  async verify(
-    token: string,
-    secretOrPrivateKey: string | object | Buffer,
-    options?: object,
-  ): Promise<TokenPayloadInterface> {
+  async verify(token: string, options?: object): Promise<TokenPayloadInterface> {
     throw new Error('Method not implemented.');
   }
 }

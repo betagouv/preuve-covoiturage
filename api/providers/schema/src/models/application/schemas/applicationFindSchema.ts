@@ -6,6 +6,6 @@ export const applicationFindSchema = {
   properties: {
     _id: { macro: 'objectid' },
     operator_id: { macro: 'objectid' },
-    deleted_at: { macro: 'timestamp' },
+    deleted_at: { anyOf: [{ macro: 'timestamp' }, { type: 'null' }] },
   },
 };

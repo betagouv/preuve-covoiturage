@@ -2,7 +2,6 @@ import * as jwt from 'jsonwebtoken';
 import { provider, ProviderInterface } from '@ilos/common';
 
 import { TokenProviderInterfaceResolver, TokenProviderInterface, TokenPayloadInterface } from './interfaces';
-import { TokenProviderConfig } from './interfaces/TokenProviderConfig';
 
 @provider({
   identifier: TokenProviderInterfaceResolver,
@@ -16,13 +15,17 @@ export class TokenProvider implements ProviderInterface, TokenProviderInterface 
     alg: 'HS256',
   };
 
-  constructor(config: TokenProviderConfig) {
-    if (!config.secret) {
-      throw new Error('JWT secret must be passed in the config');
-    }
+  constructor() {
+    // TODO use an external config here
+    const config = {
+      secret: process.env.APP_JWT_SECRET || 'not-secret',
+      ttl: parseInt(process.env.APP_JWT_TTL, 10) || 86400,
+      signOptions: {},
+      verifyOptions: {},
+    };
 
     this.secret = config.secret;
-    this.ttl = config.ttl || 86400;
+    this.ttl = config.ttl;
     this.signOptions = {
       algorithm: this.defaultHeaders.alg,
       encoding: 'utf8',

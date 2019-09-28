@@ -1,7 +1,9 @@
-import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
+import { Action as AbstractAction } from '@ilos/core';
+import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 import { ApplicationInterface, CreateApplicationParamsInterface } from '@pdc/provider-schema';
 
+import { Application } from '../entities/Application';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
 
 @handler({
@@ -32,11 +34,27 @@ export class CreateApplicationAction extends AbstractAction {
     ],
   ];
 
-  constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
+  constructor(
+    private applicationRepository: ApplicationRepositoryProviderInterfaceResolver,
+    private tokenProvider: TokenProviderInterfaceResolver,
+  ) {
     super();
   }
 
-  public async handle(params: CreateApplicationParamsInterface): Promise<ApplicationInterface> {
-    return this.applicationRepository.create(params);
+  public async handle(
+    params: CreateApplicationParamsInterface,
+  ): Promise<{ token: string; application: ApplicationInterface }> {
+    const application = await (<Promise<Application>>(
+      this.applicationRepository.create({ ...params, created_at: new Date() })
+    ));
+
+    const token = await this.tokenProvider.sign({
+      a: application._id.toString(),
+      o: application.operator_id,
+      p: ['journey.create'],
+      v: 2,
+    });
+
+    return { token, application };
   }
 }
