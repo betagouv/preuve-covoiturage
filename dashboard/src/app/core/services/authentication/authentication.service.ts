@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
+import { UserService } from '~/modules/user/services/user.service';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
-import { UserService } from '~/modules/user/services/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,22 +43,6 @@ export class AuthenticationService {
         }
       }
     });
-  }
-
-  get user$(): Observable<User> {
-    return this._user$;
-  }
-
-  get user(): User {
-    return this._user$.getValue();
-  }
-
-  get user$(): Observable<User> {
-    return this._user$;
-  }
-
-  get user(): User {
-    return this._user$.getValue();
   }
 
   get user$(): Observable<User> {
@@ -187,28 +171,8 @@ export class AuthenticationService {
     });
   }
 
-  public restorePassword(email: string, password: string, token: string): Observable<any> {
-    console.log('restorePassword : ', email, password, token);
-    return this.call('auth/change-password', {
-      email,
-      password,
-      token,
-    });
-  }
-
-  public restorePassword(email: string, password: string, token: string): Observable<any> {
-    console.log('restorePassword : ', email, password, token);
-    return this.call('auth/change-password', {
-      email,
-      password,
-      token,
-    });
-  }
-
   public sendForgottenPasswordEmail(email: string): Observable<any> {
-    return this.call('auth/reset-password', {
-      email,
-    });
+    return this.call('auth/reset-password', { email });
 
     // const jsonRPCParam = new JsonRPCParam();
     // jsonRPCParam.method = 'user:forgottenPassword';
@@ -224,6 +188,7 @@ export class AuthenticationService {
    */
   public checkPasswordToken(email: string, token: string): Observable<any> {
     return this.call('auth/check-token', { email, token });
+
     // const jsonRPCParam = new JsonRPCParam();
     // jsonRPCParam.method = 'user:checkPasswordToken';
     // jsonRPCParam.params = {
