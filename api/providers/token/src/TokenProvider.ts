@@ -1,7 +1,12 @@
 import * as jwt from 'jsonwebtoken';
 import { provider, ProviderInterface } from '@ilos/common';
 
-import { TokenProviderInterfaceResolver, TokenProviderInterface, TokenPayloadInterface } from './interfaces';
+import {
+  TokenProviderInterfaceResolver,
+  TokenProviderInterface,
+  TokenPayloadInterface,
+  TokenProviderConfig,
+} from './interfaces';
 
 @provider({
   identifier: TokenProviderInterfaceResolver,
@@ -16,8 +21,16 @@ export class TokenProvider implements ProviderInterface, TokenProviderInterface 
   };
 
   constructor() {
+    // initialize the provider with default values
+    // this can be overriden by the user when instanciating a new object
+    // const tkProvider = new TokenProvider().init({.....});
+    this.init();
+  }
+
+  init(cnf?: TokenProviderConfig): TokenProvider {
     // TODO use an external config here
     const config = {
+      ...cnf,
       secret: process.env.APP_JWT_SECRET || 'not-secret',
       ttl: parseInt(process.env.APP_JWT_TTL, 10) || 86400,
       signOptions: {},
@@ -32,6 +45,8 @@ export class TokenProvider implements ProviderInterface, TokenProviderInterface 
       ...config.signOptions,
     };
     this.verifyOptions = { ...config.verifyOptions };
+
+    return this;
   }
 
   async sign(payload: TokenPayloadInterface, options: jwt.SignOptions = {}): Promise<string> {

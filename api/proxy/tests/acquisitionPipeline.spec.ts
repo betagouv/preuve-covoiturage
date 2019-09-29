@@ -1,10 +1,10 @@
+// tslint:disable: no-unused-expression
 import path from 'path';
 import chai from 'chai';
 import supertest from 'supertest';
 import { describe } from 'mocha';
-import { TokenProvider } from '@pdc/provider-token';
 import { QueueTransport } from '@ilos/transport-redis';
-import { MongoConnection } from '@ilos/connection-mongo';
+import { TripInterface } from '@pdc/provider-schema';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
@@ -26,11 +26,6 @@ describe('Acquisition pipeline', () => {
   let token;
   let operator;
   let application;
-
-  const tokenProvider = new TokenProvider({
-    secret: process.env.APP_JWT_SECRET || 'notsosecret',
-    ttl: -1,
-  });
 
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-acquisition-${new Date().getTime()}`;
@@ -58,7 +53,7 @@ describe('Acquisition pipeline', () => {
       },
     );
 
-    application = await kernel.call(
+    const appCreateResponse = await kernel.call(
       'application:create',
       {
         name: 'Application',
@@ -76,11 +71,8 @@ describe('Acquisition pipeline', () => {
       },
     );
 
-    token = await tokenProvider.sign({
-      appId: application._id.toString(),
-      operatorId: application.operator_id,
-      permissions: application.permissions,
-    });
+    application = appCreateResponse.application;
+    token = appCreateResponse.token;
   });
 
   after(async () => {
@@ -88,7 +80,31 @@ describe('Acquisition pipeline', () => {
     await kernel.shutdown();
   });
 
-  it('goes to db', async (done) =>
+  it('goes to db', (done) => {
+    // step 2 - check trips existence in DB
+    const checkInDb = new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          const response: any = await kernel.handle({
+            id: 1,
+            jsonrpc: '2.0',
+            method: 'trip:list',
+            params: {
+              params: {},
+              _context: { call: { user: { permissions: ['trip.list'] } } },
+            },
+          });
+
+          expect(response).to.have.property('result');
+
+          resolve(response.result);
+        } catch (e) {
+          reject(e);
+        }
+      }, 1000);
+    });
+
+    // step 1 - create new journey
     request
       .post('/rpc')
       .send({
@@ -104,19 +120,18 @@ describe('Acquisition pipeline', () => {
       .set('Content-type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.eq(200);
+
+        // call step 2
+        checkInDb
+          .then((trips: TripInterface[]) => {
+            expect(Array.isArray(trips)).to.be.true;
+            expect(trips.length).to.eq(4);
+            console.log(trips);
+          })
+          .then(done)
+          .catch(done);
       })
-      .then(() => {
-        setTimeout(async () => {
-          // const trips = await kernel
-          //   .get(TripServiceProvider)
-          //   .get(MongoConnection)
-          //   .getClient()
-          //   .db(process.env.APP_MONGO_DB)
-          //   .collection('trips')
-          //   .find()
-          //   .toArray();
-          // console.log({ trips });
-          done();
-        }, 2000);
-      }));
+      .then(() => {}) // this makes the test run completely
+      .catch(done);
+  });
 });

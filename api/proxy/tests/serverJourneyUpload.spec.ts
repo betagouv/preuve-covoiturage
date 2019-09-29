@@ -19,10 +19,7 @@ describe('Send journey using application token', () => {
   let operator;
   let application;
 
-  const tokenProvider = new TokenProvider({
-    secret: process.env.APP_JWT_SECRET || 'notsosecret',
-    ttl: -1,
-  });
+  const tokenProvider = new TokenProvider().init({ ttl: -1 });
 
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-server-${new Date().getTime()}`;
@@ -68,9 +65,10 @@ describe('Send journey using application token', () => {
     );
 
     token = await tokenProvider.sign({
-      appId: application._id.toString(),
-      operatorId: application.operator_id,
-      permissions: application.permissions,
+      a: application._id.toString(),
+      o: application.operator_id,
+      p: application.permissions,
+      v: 2,
     });
   });
 
