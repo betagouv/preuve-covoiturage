@@ -35,8 +35,8 @@ export class AuthenticationService {
       if (user && loggedInUser && loggedInUser._id === user._id) {
         if (user.email !== loggedInUser.email) {
           this.logout(
-            'Vous avez changé votre email, Vous allez recevoir un email' +
-              "d'activation pour vous réactiver et vous connecter à votre compte",
+            `L'email de votre compte a été modifié. ` +
+              `Un lien de vérification vous a été envoyé à cette nouvelle adresse.`,
           );
         } else {
           this._user$.next(user);

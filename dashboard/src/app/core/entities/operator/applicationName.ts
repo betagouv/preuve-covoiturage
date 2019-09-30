@@ -1,4 +1,4 @@
-export class OperatorToken {
+export class ApplicationName {
   public name: string;
 
   constructor(obj: { name: string }) {

@@ -4,19 +4,19 @@ import { Observable } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 
 import { ApiService } from '~/core/services/api/api.service';
-import { OperatorToken } from '~/core/entities/operator/operatorToken';
+import { ApplicationName } from '~/core/entities/operator/applicationName';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import {
-  OperatorTokenCreationInterface,
-  OperatorTokenInterface,
-} from '~/core/interfaces/operator/operatorTokenInterface';
+  OperatorApplicationCreatedInterface,
+  ApplicationInterface,
+} from '~/core/interfaces/operator/applicationInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class OperatorTokenService extends ApiService<OperatorTokenInterface> {
+export class ApplicationService extends ApiService<ApplicationInterface> {
   constructor(
     private _http: HttpClient,
     private _jsonRPC: JsonRPCService,
@@ -29,35 +29,35 @@ export class OperatorTokenService extends ApiService<OperatorTokenInterface> {
     return this._loaded$.value;
   }
 
-  get operatorTokens$(): Observable<OperatorTokenInterface[]> {
+  get application$(): Observable<ApplicationInterface[]> {
     return this._entities$.pipe(
-      map((operatorTokens: OperatorTokenInterface[]) =>
-        operatorTokens.map((operatorToken) => {
-          operatorToken.created_at = new Date(operatorToken.created_at);
-          return operatorToken;
+      map((operatorApplications: ApplicationInterface[]) =>
+        operatorApplications.map((operatorApplication) => {
+          operatorApplication.created_at = new Date(operatorApplication.created_at);
+          return operatorApplication;
         }),
       ),
     );
   }
 
-  get operatorTokens(): OperatorTokenInterface[] {
+  get operatorApplications(): ApplicationInterface[] {
     return this._entities$.value;
   }
 
-  load(): Observable<OperatorTokenInterface[]> {
+  load(): Observable<ApplicationInterface[]> {
     if ('operator' in this._authService.user) {
       const operatorId = this._authService.user.operator;
       return super.load({
         operator_id: operatorId,
       });
     }
-    console.log('only operator users can create application tokens');
+    console.log('only operator users can create applications');
     throw Error();
   }
 
-  public createTokenAndList(
-    applicationName: OperatorToken,
-  ): Observable<[OperatorTokenCreationInterface, OperatorTokenInterface[]]> {
+  public createApplicationAndList(
+    applicationName: ApplicationName,
+  ): Observable<[OperatorApplicationCreatedInterface, ApplicationInterface[]]> {
     if ('operator' in this._authService.user) {
       const operatorId = this._authService.user.operator;
       const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, {
@@ -69,23 +69,23 @@ export class OperatorTokenService extends ApiService<OperatorTokenInterface> {
         map((data) => data.data),
         mergeMap((createdEntity: { token: string }) =>
           this.load().pipe(
-            map((entities) => <[OperatorTokenCreationInterface, OperatorTokenInterface[]]>[createdEntity, entities]),
+            map((entities) => <[OperatorApplicationCreatedInterface, ApplicationInterface[]]>[createdEntity, entities]),
           ),
         ),
       );
     }
-    console.log('only operator users can create application tokens');
+    console.log('only operator users can create applications');
     throw Error();
   }
 
-  public revokeAndList(id: string): Observable<[OperatorTokenInterface, OperatorTokenInterface[]]> {
+  public revokeAndList(id: string): Observable<[ApplicationInterface, ApplicationInterface[]]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:revoke`, { _id: id });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      mergeMap((deletedEntity: OperatorTokenInterface) => {
+      mergeMap((deletedEntity: ApplicationInterface) => {
         console.log(`deleted ${this._method} id=${deletedEntity._id}`);
         return this.load().pipe(
-          map((entities) => <[OperatorTokenInterface, OperatorTokenInterface[]]>[deletedEntity, entities]),
+          map((entities) => <[ApplicationInterface, ApplicationInterface[]]>[deletedEntity, entities]),
         );
       }),
     );

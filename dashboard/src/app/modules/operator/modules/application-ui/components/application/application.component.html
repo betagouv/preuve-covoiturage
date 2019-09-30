@@ -1,23 +1,23 @@
 <div class="operatorToken">
-  <div *ngIf="operatorTokenService.loading">
+  <div *ngIf="applicationService.loading">
     <mat-spinner></mat-spinner>
   </div>
-  <div class="operatorToken-list" *ngIf="!operatorTokenService.loading && operatorTokenService.operatorTokens">
-    <app-list-item *ngFor="let operatorToken of operatorTokens">
+  <div class="operatorToken-list" *ngIf="!applicationService.loading && applicationService.operatorApplications">
+    <app-list-item *ngFor="let application of applications">
       <div class="operatorToken-list-item">
         <div class="operatorToken-list-item-name">
-          {{ operatorToken.name }}
+          {{ application.name }}
         </div>
         <div class="operatorToken-list-item-createdDate">
           Créé le
-          {{ operatorToken.created_at.toLocaleDateString() }}
+          {{ application.created_at.toLocaleDateString() }}
         </div>
         <div class="operatorToken-list-item-actions">
           <a
             class="link"
             *ngIf="authenticationService.hasAnyPermission(['operator.application.revoke'])"
-            (click)="onDelete(operatorToken)"
-            >Supprimer le token</a
+            (click)="onDelete(application)"
+            >Désactiver l'accès</a
           >
         </div>
       </div>
@@ -27,18 +27,18 @@
     <button
       mat-flat-button
       class="large"
-      *ngIf="!showCreateTokenForm; else addUserBlock"
+      *ngIf="!showCreateApplicationForm; else addUserBlock"
       (click)="addToken()"
       color="primary"
     >
-      Créer un token
+      Créer une application
     </button>
     <ng-template #addUserBlock>
       <h2>
-        Créer un token
+        Créer une application
       </h2>
       <div class="Users-form">
-        <app-operator-token-form (onClose)="closeTokenForm()"></app-operator-token-form>
+        <app-application-form (onClose)="closeTokenForm()"></app-application-form>
       </div>
     </ng-template>
   </div>

@@ -1,4 +1,4 @@
-<form class="OperatorTokenForm" [formGroup]="operatorTokenForm">
+<form class="OperatorTokenForm" [formGroup]="applicationForm">
   <mat-form-field appearance="outline">
     <mat-label>Nom</mat-label>
     <input matInput formControlName="name" required />
@@ -10,7 +10,7 @@
       class="large"
       (click)="onCreateToken()"
       [appShowSpinner]="isCreating"
-      [disabled]="!operatorTokenForm.valid"
+      [disabled]="!applicationForm.valid"
       color="primary"
     >
       Créer
