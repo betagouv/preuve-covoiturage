@@ -22,10 +22,17 @@ import { ListCampaignAction } from './actions/ListCampaignAction';
 import { ListCampaignTemplateAction } from './actions/ListCampaignTemplateAction';
 import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
+import { PolicyEngine } from './engine/PolicyEngine';
+import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRepositoryProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [CampaignRepositoryProvider, ['validate.rules', ValidateRuleParametersMiddleware]],
+  providers: [
+    CampaignRepositoryProvider,
+    CampaignMetadataRepositoryProvider,
+    ['validate.rules', ValidateRuleParametersMiddleware],
+    PolicyEngine,
+  ],
   validator: [
     ['campaign.create', campaignCreateSchema],
     ['campaign.patch', campaignPatchSchema],
