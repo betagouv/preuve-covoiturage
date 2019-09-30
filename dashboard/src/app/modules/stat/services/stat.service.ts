@@ -35,7 +35,7 @@ export class StatService extends ApiService<StatInterface> {
     super(_http, _jsonRPC, 'stat');
   }
 
-  public loadOne(filter: FilterInterface | {} = {}): Observable<Stat[]> {
+  public loadOne(filter: FilterInterface | {} = {}): Observable<Stat> {
     const user = this.authService.user;
     if (user && user.group === UserGroupEnum.TERRITORY) {
       filter['territory_id'] = [user.territory];

@@ -74,7 +74,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
         .pipe(takeUntil(this.destroy$))
         .subscribe();
     }
-    this.operatorService._entities$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+    this.operatorService.entities$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators.map((operator) => ({
         _id: operator._id,
         nom_commercial: operator.nom_commercial,

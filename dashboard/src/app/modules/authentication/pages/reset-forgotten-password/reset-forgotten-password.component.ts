@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { ToastrService } from 'ngx-toastr';
+import { takeUntil } from 'rxjs/operators';
+
+import { DestroyObservable } from '~/core/components/destroy-observable';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { PASSWORD } from '~/core/const/validators.const';
 import { passwordMatchValidator } from '~/modules/authentication/validators/password-match.validator';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-reset-forgotten-password',
