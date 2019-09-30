@@ -313,7 +313,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       if (campaigns.length === 0) {
         return;
       }
-      console.log({ campaigns });
       const foundCampaign = campaigns.filter((campaign) => campaign._id === campaignId)[0];
       if (foundCampaign) {
         const campaignUx = this.campaignFormatService.toCampaignUxFormat(foundCampaign);

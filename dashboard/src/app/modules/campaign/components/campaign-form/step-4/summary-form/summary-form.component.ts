@@ -11,6 +11,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { CampaignSummaryService } from '~/modules/campaign/services/campaign-summary.service';
 
 @Component({
   selector: 'app-summary-form',
@@ -29,6 +30,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     private operatorService: OperatorService,
     private toastr: ToastrService,
     private campaignService: CampaignService,
+    private campaignSummaryService: CampaignSummaryService,
   ) {
     super();
   }
@@ -49,7 +51,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
 
     const uiStatus = this.campaignForm.get('ui_status').value;
 
-    const retributionText = this.campaignService.getExplanationFromRetributions(
+    const retributionText = this.campaignSummaryService.getExplanationFromRetributions(
       campaign.retributions,
       this.campaignForm.controls.unit.value,
       uiStatus,

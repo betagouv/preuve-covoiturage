@@ -87,7 +87,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
       .subscribe((result) => {
         if (result) {
           this.campaignService
-            .deleteList(campaign._id)
+            .deleteTemplateOrDraft(campaign._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {
