@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { ApiService } from '~/core/services/api/api.service';
 import { User } from '~/core/entities/authentication/user';

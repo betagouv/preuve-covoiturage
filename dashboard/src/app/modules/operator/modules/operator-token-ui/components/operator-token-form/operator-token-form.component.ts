@@ -52,25 +52,16 @@ export class OperatorTokenFormComponent extends DestroyObservable implements OnI
             name: operatorToken.name,
             token: response.token,
           });
+          this.toastr.success("Le token d'accès à l'API a bien été créé");
+          // todo: should be in service
           this.operatorTokenService
             .load()
             .pipe(takeUntil(this.destroy$))
             .subscribe();
-          this.toastr.success("Le token d'accès à l'API a bien été créé");
         },
         (err) => {
           this.onClose.emit();
-          this.toastr.error(err.message);
-
-          // TODO DELETE WHEN BACK IS OK
-          this.openModal({
-            name: operatorToken.name,
-            token: 'PKLE692MNNIJDSGMPTZJPKLE692MNNIJDSGMPTZJ.PKLE692MNNIJDSGMPTZJ',
-          });
-          // add token list
-          const auxArray = this.operatorTokenService._entities$.value;
-          auxArray.push(<OperatorTokenInterface>{ name: operatorToken.name, _id: 'fakeId', createdAt: new Date() });
-          this.operatorTokenService._entities$.next(auxArray);
+          // this.toastr.error(err.message);
         },
       );
   }

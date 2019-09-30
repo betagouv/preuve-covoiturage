@@ -1,6 +1,10 @@
 form {
   display: flex;
   flex-direction: column;
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
   mat-form-field {
     &.nom_commercial,
     &.raison_sociale {
@@ -12,6 +16,12 @@ form {
     flex-wrap: wrap;
   }
   button {
-    width: 269px;
+    &:first-child {
+      width: 269px;
+      margin-right: 10px;
+    }
+    &:nth-child(2) {
+      width: 150px;
+    }
   }
 }

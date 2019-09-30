@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
-import { ActivatedRoute, Router } from '@angular/router';
 
 interface RPCOptions {
   headers?:

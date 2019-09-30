@@ -7,8 +7,8 @@ import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { IModel } from '../../entities/IModel';
 
 export class ApiService<T extends IModel> {
-  _entities$ = new BehaviorSubject<T[]>([]);
-  _entity$ = new BehaviorSubject<T>(null);
+  protected _entities$ = new BehaviorSubject<T[]>([]);
+  protected _entity$ = new BehaviorSubject<T>(null);
 
   // todo: seperate multiple loaded & single loaded
   protected _loading$ = new BehaviorSubject<boolean>(false);
@@ -67,7 +67,7 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public loadOne(parameters: object = {}): Observable<T[]> {
+  public loadOne(parameters: object = {}): Observable<T> {
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}:find`, parameters);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(

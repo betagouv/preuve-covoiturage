@@ -33,28 +33,7 @@ export class OperatorTokenComponent extends DestroyObservable implements OnInit 
     this.operatorTokenService
       .load()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {},
-        (err) => {
-          // TODO TMP DELETE WHEN BACK IS LINKED
-          const token1 = {
-            _id: 'tokenId1',
-            name: 'Application 1',
-            createdAt: new Date('06/02/2018'),
-          };
-          const token2 = {
-            _id: 'tokenId2',
-            name: 'Application 2',
-            createdAt: new Date('06/15/2018'),
-          };
-          const token3 = {
-            _id: 'tokenId3',
-            name: 'Application 3',
-            createdAt: new Date('07/02/2018'),
-          };
-          this.operatorTokenService._entities$.next([token1, token2, token3]);
-        },
-      );
+      .subscribe();
     this.operatorTokenService.operatorTokens$.pipe(takeUntil(this.destroy$)).subscribe((operatorTokens) => {
       this.operatorTokens = operatorTokens;
     });

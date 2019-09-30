@@ -1,0 +1,21 @@
+<div class="Operators-loading" *ngIf="operatorsloading">
+  <mat-spinner></mat-spinner>
+</div>
+<div class="Operators-list" *ngIf="operatorsloaded">
+  <app-list-item *ngFor="let operator of operatorsToShow">
+    <div class="Operators-list-item">
+      <div class="Operators-list-item-name">
+        {{ operator.nom_commercial }}
+      </div>
+      <div class="Operators-list-item-actions">
+        <a
+          class="link"
+          *ngIf="authenticationService.hasAnyPermission([this.editPermission])"
+          (click)="onEdit(operator._id)"
+        >
+          Editer
+        </a>
+      </div>
+    </div>
+  </app-list-item>
+</div>
