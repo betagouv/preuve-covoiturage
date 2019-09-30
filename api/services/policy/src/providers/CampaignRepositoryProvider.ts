@@ -78,10 +78,10 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
         },
         status: 'active',
         start: {
-          $gte: trip.start,
+          $lte: trip.start,
         },
         end: {
-          $lte: trip.start,
+          $gte: trip.start,
         },
       })
       .toArray();
