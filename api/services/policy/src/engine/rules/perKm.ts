@@ -10,7 +10,8 @@ export const perKm: ApplicableRuleInterface = {
   },
   index: LOWEST,
   apply() {
-    return async (ctx) => {
+    return async (ctx, next) => {
+      await next();
       ctx.result *= ctx.person.distance / 1000;
     };
   },

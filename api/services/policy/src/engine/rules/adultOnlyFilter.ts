@@ -11,10 +11,11 @@ export const adultOnlyFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply() {
-    return async (ctx) => {
+    return async (ctx, next) => {
       if (!ctx.person.identity.over_18) {
         throw new NotApplicableTargetException(adultOnlyFilter);
       }
+      return next();
     };
   },
 };

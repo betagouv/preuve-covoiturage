@@ -16,10 +16,11 @@ export const rankWhitelistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: RankWhitelistParameters) {
-    return async (ctx) => {
+    return async (ctx, next) => {
       if (params.indexOf(ctx.person.operator_class) < 0) {
         throw new NotApplicableTargetException(rankWhitelistFilter);
       }
+      return next();
     };
   },
 };

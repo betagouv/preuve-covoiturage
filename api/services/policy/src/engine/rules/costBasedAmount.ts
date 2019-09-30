@@ -10,8 +10,9 @@ export const costBasedAmount: ApplicableRuleInterface = {
   },
   index: LOW,
   apply() {
-    return async (ctx) => {
+    return async (ctx, next) => {
       ctx.result = ctx.person.contribution;
+      return next();
     };
   },
 };
