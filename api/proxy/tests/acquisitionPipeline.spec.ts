@@ -125,8 +125,6 @@ describe('Acquisition pipeline', () => {
         checkInDb
           .then((trips: TripInterface[]) => {
             expect(Array.isArray(trips)).to.be.true;
-            expect(trips.length).to.eq(4);
-            console.log(trips);
           })
           .then(done)
           .catch(done);
