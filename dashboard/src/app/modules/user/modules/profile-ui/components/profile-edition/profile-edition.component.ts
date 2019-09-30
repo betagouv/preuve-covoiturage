@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { takeUntil } from 'rxjs/operators';
 
 import { REGEXP } from '~/core/const/validators.const';
 import { UserService } from '~/modules/user/services/user.service';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile-edition',

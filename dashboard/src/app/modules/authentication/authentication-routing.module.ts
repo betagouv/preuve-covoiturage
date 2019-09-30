@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { InviteEmailComponent } from '~/modules/authentication/pages/invite-email/invite-email.component';
 import { ResetPasswordGuardService } from '~/core/guards/reset-password-guard.service';
 import { ConfirmEmailComponent } from '~/modules/authentication/pages/confirm-email/confirm-email.component';
+// tslint:disable-next-line:max-line-length
 import { ResetForgottenPasswordComponent } from '~/modules/authentication/pages/reset-forgotten-password/reset-forgotten-password.component';
 
 import { ChangeAuthLayoutComponent } from './layouts/change-auth-layout/change-auth-layout.component';

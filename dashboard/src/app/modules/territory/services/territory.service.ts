@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { ApiService } from '~/core/services/api/api.service';
 import { Territory } from '~/core/entities/territory/territory';
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 
 @Injectable({
   providedIn: 'root',
