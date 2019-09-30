@@ -14,11 +14,11 @@ export function compose(
    * @api public
    */
 
-  return function(ctx: RuleHandlerContextInterface, next?: RuleHandlerInterface) {
+  return async function(ctx: RuleHandlerContextInterface, next?: RuleHandlerInterface) {
     // last called middleware #
     let index = -1;
     return dispatch(0);
-    function dispatch(i) {
+    async function dispatch(i) {
       if (i <= index) return Promise.reject(new Error('next() called multiple times'));
       index = i;
       let fn = middleware[i];

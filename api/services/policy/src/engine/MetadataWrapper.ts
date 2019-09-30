@@ -3,14 +3,10 @@ import { MetaInterface } from '../interfaces/RuleInterfaces';
 export class MetadataWrapper implements MetaInterface {
   protected data: Map<string, any>;
   constructor(public readonly id: string, data?: { [k: string]: any }) {
-    if (data) {
-      this.data = new Map(Object.entries(data));
-    } else {
-      this.data = new Map();
-    }
+    this.data = data ? new Map(Object.entries(data)) : new Map();
   }
 
-  get(key: string, fallback: any = undefined): any {
+  get(key: string, fallback?: any): any {
     if (this.data.has(key)) {
       return this.data.get(key);
     }
