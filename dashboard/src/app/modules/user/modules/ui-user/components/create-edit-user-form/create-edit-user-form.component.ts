@@ -141,6 +141,11 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     return USER_GROUPS_FR[group];
   }
 
+  onGroupChange(): void {
+    this.createEditUserForm.get('operator').setValue(null);
+    this.createEditUserForm.get('territory').setValue(null);
+  }
+
   private initForm(
     isCreating: boolean = this.isCreating,
     groupEditable: boolean = this.groupEditable,
