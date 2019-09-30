@@ -41,9 +41,8 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
             .deleteList(user._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
-              (data) => {
-                const deletedUser = data[0];
-                this.toastr.success(`L'utilisateur ${deletedUser.firstname} ${deletedUser.lastname} a été supprimé`);
+              () => {
+                this.toastr.success(`L'utilisateur ${user.firstname} ${user.lastname} a été supprimé`);
               },
               (err) => {
                 this.toastr.error(err.message);
@@ -51,6 +50,10 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
             );
         }
       });
+  }
+
+  public get loggedUser(): User {
+    return this.authService.user;
   }
 
   public getFrenchRole(role: UserRoleEnum): string {

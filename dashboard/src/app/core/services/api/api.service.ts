@@ -165,15 +165,11 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public deleteList(id: string): Observable<[T, T[]]> {
+  public deleteList(id: string): Observable<T[]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: id });
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      mergeMap((deletedEntity: T) => {
-        console.log(`deleted ${this._method} id=${deletedEntity._id}`);
-        this._entity$.next(deletedEntity);
-        return this.load(this._listFilters).pipe(map((entities) => <[T, T[]]>[deletedEntity, entities]));
-      }),
+      mergeMap(() => this.load(this._listFilters)),
     );
   }
 

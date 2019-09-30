@@ -31,12 +31,12 @@ export class OperatorTokenService extends ApiService<OperatorTokenInterface> {
 
   get operatorTokens$(): Observable<OperatorTokenInterface[]> {
     return this._entities$.pipe(
-      map((operatorTokens: OperatorTokenInterface[]) => {
-        return operatorTokens.map((operatorToken) => {
+      map((operatorTokens: OperatorTokenInterface[]) =>
+        operatorTokens.map((operatorToken) => {
           operatorToken.created_at = new Date(operatorToken.created_at);
           return operatorToken;
-        });
-      }),
+        }),
+      ),
     );
   }
 

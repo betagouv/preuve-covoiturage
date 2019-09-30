@@ -4,9 +4,7 @@
       <div class="UsersList-list-item">
         <div class="UsersList-list-item-name">
           {{ user.firstname }} {{ user.lastname }}
-          <span *ngIf="userService.user && user._id === userService.user._id" class="UsersList-list-item-name--itself"
-            >(Vous)</span
-          >
+          <span *ngIf="loggedUser && user._id === loggedUser._id" class="UsersList-list-item-name--itself">(Vous)</span>
         </div>
         <div class="UsersList-list-item-email">
           {{ user.email }}
