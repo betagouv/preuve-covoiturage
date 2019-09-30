@@ -15,10 +15,11 @@ export const operatorWhitelistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: OperatorWhitelistParameters) {
-    return async (ctx) => {
+    return async (ctx, next) => {
       if (params.indexOf(ctx.person.operator_id) < 0) {
         throw new NotApplicableTargetException(operatorWhitelistFilter);
       }
+      return next();
     };
   },
 };

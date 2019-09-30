@@ -53,7 +53,7 @@ export const inseeWhitelistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: InseeParamsInterface) {
-    return async (ctx) => {
+    return async (ctx, next) => {
       if (
         params.operator === 'and' &&
         (!inList(params.start, ctx.person.start.insee) || !inList(params.end, ctx.person.end.insee))
@@ -67,6 +67,7 @@ export const inseeWhitelistFilter: ApplicableRuleInterface = {
       ) {
         throw new NotApplicableTargetException(inseeWhitelistFilter);
       }
+      return next();
     };
   },
 };
@@ -79,7 +80,7 @@ export const inseeBlacklistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: InseeParamsInterface) {
-    return async (ctx) => {
+    return async (ctx, next) => {
       if (
         params.operator === 'and' &&
         (inList(params.start, ctx.person.start.insee) && inList(params.end, ctx.person.end.insee))
@@ -93,6 +94,7 @@ export const inseeBlacklistFilter: ApplicableRuleInterface = {
       ) {
         throw new NotApplicableTargetException(inseeBlacklistFilter);
       }
+      return next();
     };
   },
 };

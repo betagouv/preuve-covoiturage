@@ -23,10 +23,11 @@ export const distanceRangeFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: { min: number; max: number }) {
-    return async (ctx) => {
+    return async (ctx, next) => {
       if (ctx.person.distance >= params.max || ctx.person.distance <= params.min) {
         throw new NotApplicableTargetException(distanceRangeFilter);
       }
+      return next();
     };
   },
 };

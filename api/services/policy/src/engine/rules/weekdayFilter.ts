@@ -17,11 +17,11 @@ export const weekdayFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: WeekdayParameters) {
-    return async (ctx) => {
+    return async (ctx, next) => {
       const wk = ctx.person.start.datetime.getDay();
       for (const weekday of params) {
         if (wk === weekday) {
-          return;
+          return next();
         }
       }
       throw new NotApplicableTargetException(weekdayFilter);
