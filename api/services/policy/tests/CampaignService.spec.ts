@@ -30,7 +30,7 @@ const fakeCampaign = {
   global_rules: [],
   rules: [
     {
-      slug: 'adult_only',
+      slug: 'adult_only_filter',
       parameters: true,
     },
   ],
