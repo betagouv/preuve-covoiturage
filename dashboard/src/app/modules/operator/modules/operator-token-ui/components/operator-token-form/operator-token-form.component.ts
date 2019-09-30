@@ -43,14 +43,15 @@ export class OperatorTokenFormComponent extends DestroyObservable implements OnI
   public onCreateToken(): void {
     const operatorToken = new OperatorToken(this.operatorTokenForm.value);
     this.operatorTokenService
-      .createToken(operatorToken)
+      .createTokenAndList(operatorToken)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (response: { token: string }) => {
+        (data) => {
+          const token = data[0].token;
           this.onClose.emit();
           this.openModal({
+            token,
             name: operatorToken.name,
-            token: response.token,
           });
           this.toastr.success("Le token d'accès à l'API a bien été créé");
           // todo: should be in service

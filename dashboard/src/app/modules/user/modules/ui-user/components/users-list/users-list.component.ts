@@ -38,11 +38,12 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
       .subscribe((hasConfirmed) => {
         if (hasConfirmed) {
           this.userService
-            .delete(user._id)
+            .deleteList(user._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
-              () => {
-                this.toastr.success(`L'utilisateur ${user.firstname} ${user.lastname} a été supprimé`);
+              (data) => {
+                const deletedUser = data[0];
+                this.toastr.success(`L'utilisateur ${deletedUser.firstname} ${deletedUser.lastname} a été supprimé`);
               },
               (err) => {
                 this.toastr.error(err.message);

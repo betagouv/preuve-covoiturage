@@ -59,11 +59,12 @@ export class OperatorTokenComponent extends DestroyObservable implements OnInit 
       .subscribe((result) => {
         if (result) {
           this.operatorTokenService
-            .delete(operatorToken._id)
+            .revokeAndList(operatorToken._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
-              () => {
-                this._toastr.success(`Le token d'accès : "${operatorToken.name} a été supprimé`);
+              (data) => {
+                const deletedOperatorToken = data[0];
+                this._toastr.success(`Le token d'accès : "${deletedOperatorToken.name} a été supprimé`);
               },
               (err) => {
                 this._toastr.error(err.message);

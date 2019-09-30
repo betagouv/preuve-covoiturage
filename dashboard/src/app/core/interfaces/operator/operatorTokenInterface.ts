@@ -1,5 +1,10 @@
 export interface OperatorTokenInterface {
   _id: string;
   name: string;
-  createdAt: Date;
+  created_at: Date;
+}
+
+export interface OperatorTokenCreationInterface {
+  application: OperatorTokenInterface;
+  token: string;
 }
