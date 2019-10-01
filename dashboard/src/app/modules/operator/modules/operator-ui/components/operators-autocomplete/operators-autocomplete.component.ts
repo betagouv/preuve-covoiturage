@@ -2,13 +2,12 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import * as _ from 'lodash';
 
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Operator } from '~/core/entities/operator/operator';
 
 import { OperatorService } from '../../../../services/operator.service';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-operators-autocomplete',
@@ -27,7 +26,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
 
-  constructor(public operatorService: OperatorService) {
+  constructor(public operatorService: OperatorService, private commonDataService: CommonDataService) {
     super();
   }
 
@@ -68,13 +67,21 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   private loadOperators() {
-    if (!this.operatorService.operatorsLoaded) {
-      this.operatorService
-        .load()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe();
-    }
-    this.operatorService.entities$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+    // if (!this.operatorService.operatorsLoaded) {
+    //   this.operatorService
+    //     .load()
+    //     .pipe(takeUntil(this.destroy$))
+    //     .subscribe();
+    // }
+    // this.operatorService.entities$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+    //   this.operators = operators.map((operator) => ({
+    //     _id: operator._id,
+    //     nom_commercial: operator.nom_commercial,
+    //   }));
+    //   this.filterOperators();
+    // });
+
+    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators.map((operator) => ({
         _id: operator._id,
         nom_commercial: operator.nom_commercial,

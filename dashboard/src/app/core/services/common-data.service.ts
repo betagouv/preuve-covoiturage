@@ -6,7 +6,7 @@ import { TerritoryService } from '~/modules/territory/services/territory.service
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { mergeMap, tap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { User } from '~/core/entities/authentication/user';
 import { Territory } from '~/core/entities/territory/territory';
 import { Campaign } from '~/core/entities/campaign/campaign';
@@ -93,15 +93,26 @@ export class CommonDataService {
   }
 
   loadOperators(): Observable<Operator[]> {
-    return this.operatorService.load().pipe(tap((operators) => this._operators$.next(operators)));
+    return this.operatorService.load().pipe(
+      map((operators) =>
+        operators.sort((operatorA, operatorB) => (operatorA.nom_commercial > operatorB.nom_commercial ? 1 : -1)),
+      ),
+      tap((operators) => this._operators$.next(operators)),
+    );
   }
 
   loadTerritories(): Observable<Territory[]> {
-    return this.territoryService.load().pipe(tap((territories) => this._territories$.next(territories)));
+    return this.territoryService.load().pipe(
+      map((territories) => territories.sort((territoryA, territoryB) => (territoryA.name > territoryB.name ? 1 : -1))),
+      tap((territories) => this._territories$.next(territories)),
+    );
   }
 
   loadCampaigns(): Observable<Campaign[]> {
-    return this.campaignService.load().pipe(tap((campaigns) => this._campaigns$.next(campaigns)));
+    return this.campaignService.load().pipe(
+      map((campaigns) => campaigns.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1))),
+      tap((campaigns) => this._campaigns$.next(campaigns)),
+    );
   }
 
   public loadAll() {

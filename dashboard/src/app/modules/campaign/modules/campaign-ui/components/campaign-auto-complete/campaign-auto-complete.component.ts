@@ -2,15 +2,12 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { takeUntil, tap } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import * as moment from 'moment';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-campaign-auto-complete',
@@ -27,7 +24,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
 
   @ViewChild('campaignInput', { static: false }) campaignInput: ElementRef;
 
-  constructor(private campaignService: CampaignService) {
+  constructor(private campaignService: CampaignService, private commonDataService: CommonDataService) {
     super();
   }
 
@@ -68,16 +65,26 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   }
 
   private initCampaigns() {
-    if (!this.campaignService.campaignsLoaded) {
-      this.campaignService
-        .load()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe();
-    }
+    // if (!this.campaignService.campaignsLoaded) {
+    //   this.campaignService
+    //     .load()
+    //     .pipe(takeUntil(this.destroy$))
+    //     .subscribe();
+    // }
+    //
+    // this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
+    //   this.campaigns = campaigns.map((campaign: Campaign) => ({ _id: campaign._id, name: campaign.name }));
+    //   this.filterCampaigns();
+    // });
 
-    this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
-      this.campaigns = campaigns.map((campaign: Campaign) => ({ _id: campaign._id, name: campaign.name }));
-      this.filterCampaigns();
+    this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
+      this.campaigns = campaigns
+        ? campaigns.map((campaign: Campaign) => ({
+            _id: campaign._id,
+            name: campaign.name,
+          }))
+        : null;
+      if (campaigns) this.filterCampaigns();
     });
   }
 

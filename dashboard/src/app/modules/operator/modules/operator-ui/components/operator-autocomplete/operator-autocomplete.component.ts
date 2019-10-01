@@ -7,6 +7,7 @@ import { map, startWith, takeUntil } from 'rxjs/operators';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Operator } from '~/core/entities/operator/operator';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-operator-autocomplete',
@@ -28,7 +29,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   private _operatorForm: AbstractControl;
 
-  constructor(private operatorService: OperatorService) {
+  constructor(private operatorService: OperatorService, private commonDataService: CommonDataService) {
     super();
   }
 
@@ -55,12 +56,16 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     //   this.operators = operators;
     // });
 
-    this.operatorService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((operators) => {
-        this.operators = operators;
-      });
+    // this.operatorService
+    //   .load()
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((operators) => {
+    //     this.operators = operators;
+    //   });
+
+    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+      this.operators = operators;
+    });
 
     this.filteredOperators = this.operatorCtrl.valueChanges.pipe(
       startWith(''),

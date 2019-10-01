@@ -7,6 +7,7 @@ import { map, startWith, takeUntil } from 'rxjs/operators';
 import { Territory } from '~/core/entities/territory/territory';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-territory-autocomplete',
@@ -28,16 +29,18 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   private _territoryForm: AbstractControl;
 
-  constructor(private territoryService: TerritoryService) {
+  constructor(private territoryService: TerritoryService, private commonDataService: CommonDataService) {
     super();
   }
 
   updateTerritory(territoryId: string) {}
 
   private selectedTerritoryUpdated() {
-    console.log('> selectedTerritoryUpdated', this._territoryForm.value);
+    // console.log('> selectedTerritoryUpdated', this._territoryForm.value);
     this.selectedTerritoryId = this._territoryForm.value ? this._territoryForm.value.toString() : null;
-    this.selectedTerritory = this.territories.find((fterritory) => this.selectedTerritoryId === fterritory._id);
+    this.selectedTerritory = this.territories
+      ? this.territories.find((fterritory) => this.selectedTerritoryId === fterritory._id)
+      : null;
     this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '');
   }
 
@@ -48,13 +51,9 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   }
 
   ngOnInit() {
-    this.territoryService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((territories) => {
-        this.territories = territories;
-        console.log('this.territories : ', this.territories);
-      });
+    this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
+      this.territories = territories ? territories : null;
+    });
 
     this.filteredTerritories = this.territoryCtrl.valueChanges.pipe(
       startWith(''),
@@ -65,23 +64,6 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     this._territoryForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.selectedTerritoryUpdated());
 
     this.selectedTerritoryUpdated();
-
-    // this.selectedTerritoryId = this._territoryForm.value;
-    // this.selectedTerritory = this.territories.find((territory) => this.selectedTerritoryId === territory._id);
-    // this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.nom_commercial : '');
-    // this.filterTerritories();
-    // this._territoryForm = this.parentForm.get('territories');
-    // this._territoryForm.valueChanges
-    //   .pipe(tap((territories: TerritoryNameInterface[]) => this.filterTerritories(territories)))
-    //   .subscribe();
-
-    // setup service
-
-    // this.territoryService.territories$
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((territories) => this.filteredTerritories = territories);
-    //
-    // this.territoryService.load();
   }
 
   // private filterTerritories(territories: Opera[] = []) {
@@ -90,7 +72,9 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   private filter(value: string): Territory[] {
     this._searchUpdate = true;
     console.log('value : ', value);
-    return this.territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase()));
+    return this.territories
+      ? this.territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase()))
+      : null;
   }
 
   inputLostFocus() {
