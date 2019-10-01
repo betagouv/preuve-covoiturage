@@ -20,14 +20,14 @@ export type GlobalRetributionRuleType =
   | OperatorIdsRetributionRule;
 
 export enum GlobalRetributionRulesSlugEnum {
-  MAX_AMOUNT = 'max_amount',
-  MAX_TRIPS = 'max_trip',
-  ONLY_ADULT = 'adult_only',
-  WEEKDAY = 'weekday',
-  TIME = 'time',
-  DISTANCE_RANGE = 'distance_range',
-  RANK = 'rank',
-  OPERATOR_IDS = 'operators_id',
+  MAX_AMOUNT = 'max_amount_restriction',
+  MAX_TRIPS = 'max_trip_restriction',
+  ONLY_ADULT = 'adult_only_filter',
+  WEEKDAY = 'weekday_filter',
+  TIME = 'time_range_filter',
+  DISTANCE_RANGE = 'distance_range_filter',
+  RANK = 'rank_whitelist_filter',
+  OPERATOR_IDS = 'operator_whitelist_filter',
 }
 
 export interface GlobalRetributionRuleInterface extends BaseRetributionRuleInterface {
