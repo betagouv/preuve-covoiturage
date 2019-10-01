@@ -45,11 +45,12 @@
     }
 
     &-actions {
-      text-align: right;
-
-      & > a:last-child {
-        margin-left: 10px;
+      display: inline-flex;
+      justify-content: flex-end;
+      button.mat-button {
+        min-width: 50px;
       }
+      text-align: right;
     }
   }
 }

@@ -66,9 +66,35 @@ describe('Territory service', () => {
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('_id');
         expect(response.body.result).to.have.property('name', 'Toto');
-
         // store the _id
         _id = response.body.result._id;
+      }));
+
+  it('Find a territory', () =>
+    request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'territory:find',
+        params: {
+          params: { _id },
+          _context: {
+            call: {
+              user: {
+                permissions: ['territory.read'],
+              },
+            },
+          },
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id');
+        expect(response.body.result).to.have.property('name', 'Toto');
       }));
 
   it('Update a territory', () =>

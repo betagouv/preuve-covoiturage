@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
@@ -31,7 +32,7 @@ interface RPCOptions {
 export class JsonRPCService {
   private url: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router, private activedRoute: ActivatedRoute) {
     this.url = 'rpc';
   }
 
@@ -52,6 +53,13 @@ export class JsonRPCService {
       urlWithMethods += `${method.method}`;
     });
     return this.http.post(urlWithMethods, methods, options).pipe(
+      catchError((response) => {
+        if (response.status === 401) {
+          this.router.navigate(['/login']);
+        }
+
+        throw response;
+      }),
       map((response: JsonRPCResponse[]) => {
         const res: { id: number; data: any; meta: any }[] = [];
         // if (response.data) {

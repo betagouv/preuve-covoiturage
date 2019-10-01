@@ -39,7 +39,6 @@ const callFactory = (params: any = {}) => ({
 const passingJourney = {
   journey_id: '1234',
   operator_class: 'A',
-  operator_id: '5d13c703bb3ed9807cad2745',
   passenger: {
     identity: { phone: '+33612345678' },
     start: { datetime: new Date(new Date().getTime() - 1000), literal: 'Paris' },

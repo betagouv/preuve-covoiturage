@@ -29,20 +29,34 @@ export class LoginUserAction extends AbstractAction {
   }
 
   public async handle(params: UserLoginParamsInterface, context: ContextType): Promise<User> {
+    let user;
+
+    // cast any user error to 401 Unauthorized
+    // as the findUserByParams will leak existing / not found users with a 404
     try {
-      const user = await this.userRepository.findUserByParams({ email: params.email });
-
-      if (!(await this.cryptoProvider.comparePassword(params.password, user.password))) {
-        throw new UnauthorizedException();
-      }
-
-      if (user.status !== this.config.get('user.status.active')) {
-        throw new UnauthorizedException();
-      }
-
-      return this.userRepository.patch(user._id, { last_connected_at: new Date() });
+      user = await this.userRepository.findUserByParams({ email: params.email });
     } catch (e) {
       throw new UnauthorizedException();
     }
+
+    if (!(await this.cryptoProvider.comparePassword(params.password, user.password))) {
+      throw new UnauthorizedException();
+    }
+
+    switch (user.status) {
+      case 'pending':
+        throw new UnauthorizedException('Account is pending validation');
+      case 'invited':
+        throw new UnauthorizedException('Account must be confirmed');
+      case 'blocked':
+        throw new UnauthorizedException('Account is blocked');
+      default:
+    }
+
+    return this.userRepository.patch(user._id, {
+      forgotten_at: null,
+      forgotten_token: null,
+      last_connected_at: new Date(),
+    });
   }
 }

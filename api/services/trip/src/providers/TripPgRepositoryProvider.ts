@@ -1,12 +1,20 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { JourneyInterface, PersonInterface, TripSearchInterface } from '@pdc/provider-schema/dist';
+
+import {
+  LightTripInterface,
+  TripPgRepositoryInterface,
+  TripPgRepositoryProviderInterfaceResolver,
+} from '../interfaces';
 
 /*
  * Trip specific repository
  */
-@provider()
-export class TripPgRepositoryProvider {
+@provider({
+  identifier: TripPgRepositoryProviderInterfaceResolver,
+})
+export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
   constructor(public connection: PostgresConnection) {}
 
   protected async findTripIdByOperatorTripId(operatorTripId: string): Promise<{ _id: string }> {
@@ -72,10 +80,11 @@ export class TripPgRepositoryProvider {
     return result.rows[0];
   }
 
-  public async findOrCreateTripForJourney(journey: JourneyInterface): Promise<{ _id: string }> {
+  public async findOrCreateTripForJourney(journey: JourneyInterface): Promise<[boolean, { _id: string }]> {
     try {
       await this.connection.getClient().query('BEGIN');
       let trip;
+      let created = false;
 
       if (journey.operator_journey_id) {
         trip = await this.findTripIdByOperatorTripId(journey.operator_journey_id);
@@ -87,7 +96,9 @@ export class TripPgRepositoryProvider {
 
       if (!trip) {
         trip = await this.createNewTrip(journey.operator_journey_id);
+        created = true;
       }
+
       // add locked status check,
       await this.addParticipantToTrip(
         trip._id,
@@ -108,7 +119,7 @@ export class TripPgRepositoryProvider {
       });
 
       await this.connection.getClient().query('COMMIT');
-      return trip;
+      return [created, trip];
     } catch (e) {
       await this.connection.getClient().query('ROLLBACK');
       throw e;
@@ -404,20 +415,7 @@ export class TripPgRepositoryProvider {
     return result.rows;
   }
 
-  public async search(
-    params: TripSearchInterface,
-  ): Promise<
-    {
-      trip_id: string;
-      is_driver: boolean;
-      start_town: string;
-      end_town: string;
-      start_datetime: Date;
-      operator_id: string;
-      incentives: any;
-      operator_class: string;
-    }[]
-  > {
+  public async search(params: TripSearchInterface): Promise<LightTripInterface[]> {
     const { limit, skip } = params;
     const where = this.buildWhereClauses(params);
     const query = {

@@ -16,13 +16,16 @@ import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.
 import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campaign-create-edit.component';
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
-import { CampaignTemplatesComponent } from './components/campaign-form/campaign-templates/campaign-templates.component';
-import { FiltersFormComponent } from './components/campaign-form/filters-form/filters-form.component';
-import { ParametersFormComponent } from './components/campaign-form/parameters-form/parameters-form.component';
-import { SummaryFormComponent } from './components/campaign-form/summary-form/summary-form.component';
-import { RestrictionFormComponent } from './components/campaign-form/restriction-form/restriction-form.component';
-import { RetributionFormComponent } from './components/campaign-form/retribution-form/retribution-form.component';
-import { StaggeredFormComponent } from './components/campaign-form/staggered-form/staggered-form.component';
+// tslint:disable-next-line:max-line-length
+import { CampaignTemplatesComponent } from './components/campaign-form/step-1/campaign-templates/campaign-templates.component';
+import { FiltersFormComponent } from './components/campaign-form/step-2/filters-form/filters-form.component';
+import { ParametersFormComponent } from './components/campaign-form/step-3/step-3-form/parameters-form.component';
+import { SummaryFormComponent } from './components/campaign-form/step-4/summary-form/summary-form.component';
+// tslint:disable-next-line:max-line-length
+import { RestrictionFormComponent } from './components/campaign-form/step-3/restriction-form/restriction-form.component';
+// tslint:disable-next-line:max-line-length
+import { RetributionFormComponent } from './components/campaign-form/step-3/retribution-form/retribution-form.component';
+import { StaggeredFormComponent } from './components/campaign-form/step-3/staggered-form/staggered-form.component';
 import { CampaignDiscoverComponent } from './pages/campaign-discover/campaign-discover.component';
 import { CampaignCardComponent } from './components/campaign-card/campaign-card.component';
 import { CampaignMapComponent } from './components/campaign-map/campaign-map.component';

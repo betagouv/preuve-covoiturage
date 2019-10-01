@@ -11,7 +11,7 @@ export class ProfileService {
   constructor(private jsonRPC: JsonRPCService) {}
 
   patch(profile: ProfileInterface): void {
-    const jsonRPCParam = new JsonRPCParam('user.patch', profile);
+    const jsonRPCParam = new JsonRPCParam('user:patch', profile);
 
     this.jsonRPC.callOne(jsonRPCParam).subscribe(
       (data) => {

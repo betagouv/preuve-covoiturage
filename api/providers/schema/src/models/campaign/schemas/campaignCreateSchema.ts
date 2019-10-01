@@ -9,7 +9,7 @@ import { retributionRuleSchema } from './retributionRuleSchema';
 export const campaignCreateSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['territory_id', 'name', 'description', 'start', 'end', 'unit', 'status', 'retribution_rules'],
+  required: ['territory_id', 'name', 'start', 'end', 'unit', 'status', 'retribution_rules'],
   properties: {
     parent_id: {
       macro: 'objectid',
@@ -25,6 +25,7 @@ export const campaignCreateSchema = {
     },
     description: {
       type: 'string',
+      default: '',
     },
     start: {
       macro: 'timestamp',
@@ -38,7 +39,7 @@ export const campaignCreateSchema = {
     },
     status: {
       type: 'string',
-      const: 'draft',
+      enum: ['draft', 'template'],
     },
     filters: {
       type: 'object',

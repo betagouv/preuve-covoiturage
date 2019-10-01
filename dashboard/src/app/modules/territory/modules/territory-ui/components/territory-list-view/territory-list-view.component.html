@@ -1,0 +1,14 @@
+<div class="Territories-header">
+  <h2>
+    Territoires
+  </h2>
+  <app-territory-filter (filterLiteralChange)="pipeFilter($event)"></app-territory-filter>
+</div>
+<app-territory-list (edit)="pipeEdit($event)" [filterLiteral]="filterLiteral"></app-territory-list>
+<div class="Territories-edition">
+  <div id="territoryForm-anchor"></div>
+  <h3 *ngIf="showForm">
+    Edition du territoire
+  </h3>
+  <app-territory-form [showForm]="showForm" [closable]="true" (close)="close()"></app-territory-form>
+</div>

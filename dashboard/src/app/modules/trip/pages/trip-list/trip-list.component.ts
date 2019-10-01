@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import cloneDeep from 'lodash/cloneDeep';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
@@ -8,9 +7,10 @@ import { Trip } from '~/core/entities/trip/trip';
 import { FilterService } from '~/core/services/filter.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-trip-list',
@@ -20,15 +20,15 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 export class TripListComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
   trips: Trip[] = [];
-  skip = 0;
-  limit = 50;
+  skip = DEFAULT_TRIP_SKIP;
+  limit = DEFAULT_TRIP_LIMIT;
 
   constructor(
     public filterService: FilterService,
     public tripService: TripService,
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
-    private userService: UserService,
+    private authService: AuthenticationService,
   ) {
     super();
   }
@@ -45,7 +45,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   onScroll() {
     // TODO stop fetching trips when end (count 0) is reached
-    this.skip += 20;
+    this.skip += TRIP_SKIP_SCROLL;
     const filter = {
       ...this.filterService._filter$.value,
       skip: this.skip,
@@ -71,11 +71,12 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {
+    const user = this.authService.user;
     if (this.tripService.loading) {
       return;
     }
-    if (this.userService.user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [this.userService.user.territory];
+    if (user.group === UserGroupEnum.TERRITORY) {
+      filter['territory_id'] = [user.territory];
     }
     // TODO: temp, remove when filter operator added
     if ('operator_id' in filter) {
@@ -86,11 +87,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (trips) => {
-          if (loadMore) {
-            this.trips = this.trips.concat(trips);
-          } else {
-            this.trips = trips;
-          }
+          this.trips = loadMore ? this.trips.concat(trips) : trips;
         },
         (err) => {
           this.toastr.error(err.message);

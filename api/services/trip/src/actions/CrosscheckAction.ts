@@ -4,12 +4,9 @@ import moment from 'moment';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
-import { JourneyInterface, TripInterface, PersonInterface } from '@pdc/provider-schema';
+import { JourneyInterface } from '@pdc/provider-schema';
 
-import { TripRepositoryProviderInterfaceResolver } from '../interfaces/TripRepositoryProviderInterface';
-import { Trip } from '../entities/Trip';
-import { Person } from '../entities/Person';
-import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
+import { TripPgRepositoryProviderInterfaceResolver } from '../interfaces';
 
 /*
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
@@ -24,31 +21,40 @@ export class CrosscheckAction extends Action {
   constructor(
     private kernel: KernelInterfaceResolver,
     private config: ConfigInterfaceResolver,
-    private pg: TripPgRepositoryProvider,
+    private pg: TripPgRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
   public async handle(journey: JourneyInterface, context: ContextType): Promise<void> {
-    const trip = await this.pg.findOrCreateTripForJourney({
+    // TODO: add schema
+    const [created, trip] = await this.pg.findOrCreateTripForJourney({
       ...journey,
     });
 
-    await this.kernel.notify(
-      'trip:dispatch',
-      { _id: trip._id },
-      {
-        channel: {
-          service: 'trip',
-          metadata: {
-            delay: this.config.get('rules.maxAge'),
+    if (created) {
+      let delay = this.config.get('rules.maxAge');
+
+      if (journey.driver && journey.driver.start && journey.driver.start.datetime) {
+        delay -= new Date().valueOf() - journey.driver.start.datetime.valueOf();
+      }
+
+      await this.kernel.notify(
+        'trip:dispatch',
+        { _id: trip._id },
+        {
+          channel: {
+            service: 'trip',
+            metadata: {
+              delay,
+            },
+          },
+          call: {
+            user: {},
           },
         },
-        call: {
-          user: {},
-        },
-      },
-    );
+      );
+    }
 
     return;
   }

@@ -2,10 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
-import { Stat } from '~/core/entities/stat/stat';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
-import { mockStats } from '../../../../mocks/stats';
 import { StatService } from '../../../../services/stat.service';
 
 @Component({
@@ -31,13 +29,6 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
     this.statService
       .loadOne()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {},
-        (err) => {
-          // TODO TMP DELETE WHEN BACK IS LINKED
-          const stat = new Stat(mockStats);
-          this.statService.formatData(stat);
-        },
-      );
+      .subscribe();
   }
 }

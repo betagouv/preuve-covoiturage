@@ -1,0 +1,54 @@
+<div class="SummaryForm">
+  <h2>Récapitulatif</h2>
+  <div class="SummaryForm-summary">
+    <h3>RESOLUTION</h3>
+    <p class="SummaryForm-summary-text" [innerHTML]="getSummaryText()" #summaryText></p>
+    <div class="SummaryForm-summary-actions">
+      <button mat-stroked-button (click)="copySummary(summaryText.textContent)" color="primary">
+        Copier le texte
+      </button>
+      <span>Attention: Texte indicatif</span>
+    </div>
+  </div>
+  <form [formGroup]="campaignForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Donnez un nom à votre campagne</mat-label>
+      <input matInput formControlName="name" required />
+      <mat-error *ngIf="controls.name.hasError('required')">
+        Le nom de la campagne est obligatoire.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Description de la campagne</mat-label>
+      <textarea matInput formControlName="description" required></textarea>
+      <mat-error *ngIf="controls.description.hasError('required')">
+        La description de la campagne est obligatoire.
+      </mat-error>
+    </mat-form-field>
+    <div class="SummaryForm-actions">
+      <button
+        [appShowSpinner]="loading"
+        mat-flat-button
+        class="large"
+        color="primary"
+        (click)="saveCampaign(false)"
+        [disabled]="!campaignForm.valid"
+      >
+        Enregistrer <span *ngIf="!campaignForm.controls._id.value">en brouillon</span>
+      </button>
+      <button
+        [appShowSpinner]="loading"
+        mat-flat-button
+        class="large"
+        (click)="saveCampaign(true)"
+        [disabled]="!campaignForm.valid"
+      >
+        Créer un modèle
+      </button>
+    </div>
+  </form>
+  <div class="SummaryForm-simulation">
+    <br /><br />
+    <!--    <h3>Estimation de votre campagne</h3>-->
+  </div>
+</div>

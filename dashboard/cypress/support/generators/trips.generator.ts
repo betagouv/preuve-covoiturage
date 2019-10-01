@@ -1,3 +1,4 @@
+import { Person } from '../../../src/app/core/entities/trip/person';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { Trip } from '../../../src/app/core/entities/trip/trip';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
@@ -31,22 +32,21 @@ export class TripGenerator {
     return new Trip(tripToReturn);
   }
 
-  generatePeople(trip, i) {
-    trip.people.push({
-      class: TripRankEnum.A,
-      operator: {
-        _id: '1',
-        nom_commercial: 'Batcovoit 🦇',
-      },
-      is_driver: i === 0,
-      start: 'Metropolis',
-      end: 'Gotham city',
-      incentives: [
-        {
-          amount: Math.floor(Math.random() * 10),
-          amount_unit: [IncentiveUnitEnum.EUR, IncentiveUnitEnum.POINT][Math.floor(Math.random() * 2)],
-        },
-      ],
-    });
+  generatePeople(trip: Trip, i: number): void {
+    trip.people.push(
+      new Person({
+        rank: TripRankEnum.A,
+        operator_id: '',
+        is_driver: i === 0,
+        start_town: 'Metropolis',
+        end_town: 'Gotham city',
+        incentives: [
+          {
+            amount: Math.floor(Math.random() * 10),
+            amount_unit: [IncentiveUnitEnum.EUR, IncentiveUnitEnum.POINT][Math.floor(Math.random() * 2)],
+          },
+        ],
+      }),
+    );
   }
 }

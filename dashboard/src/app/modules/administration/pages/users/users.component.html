@@ -17,10 +17,7 @@
   <div class="Users-list">
     <app-users-list *ngIf="usersToShow" [users]="usersToShow"></app-users-list>
   </div>
-  <div
-    class="Users-add"
-    *ngIf="authenticationService.hasAnyPermission(['user.create', 'territory.users.add', 'operator.users.add'])"
-  >
+  <div class="Users-add" *ngIf="canToCreateUser">
     <button
       mat-flat-button
       class="large"
@@ -34,9 +31,12 @@
       <h2>
         Ajouter un utilisateur
       </h2>
-      <div class="Users-form">
-        <app-create-edit-user-form [isCreating]="true" (onCloseEditUser)="closeUserForm()"></app-create-edit-user-form>
-      </div>
+      <app-create-edit-user-form
+        [user]="newUser"
+        [groupEditable]="false"
+        [isCreating]="true"
+        (onCloseEditUser)="closeUserForm()"
+      ></app-create-edit-user-form>
     </ng-template>
   </div>
 </div>

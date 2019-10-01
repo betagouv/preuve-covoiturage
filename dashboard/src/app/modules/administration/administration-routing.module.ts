@@ -6,6 +6,8 @@ import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
+import { AllOperatorsComponent } from '~/modules/administration/pages/all-operators/all-operators.component';
 
 import { OperatorComponent } from './pages/operator/operator.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
@@ -45,6 +47,16 @@ const routes: Routes = [
         path: 'all-users',
         data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
         component: AllUsersComponent,
+      },
+      {
+        path: 'all-territories',
+        data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
+        component: AllTerritoriesComponent,
+      },
+      {
+        path: 'all-operators',
+        data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
+        component: AllOperatorsComponent,
       },
       {
         path: '',

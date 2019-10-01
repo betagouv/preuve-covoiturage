@@ -67,16 +67,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     return this.campaignFormGroup.controls.parent_id.value || this.campaignFormGroup.controls._id.value;
   }
 
-  saveOrLaunchCampaign(saveAsDraft) {
-    const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
-    const campaign: Campaign = this.campaignService.toCampaignFormat(campaignUx);
-    if (!saveAsDraft && campaign.status === CampaignStatusEnum.DRAFT) {
-      this.launchCampaign(campaign);
-    } else {
-      this.createCampaign(campaign);
-    }
-  }
-
   get canGoToThirdStep(): boolean {
     const filtersFormGroup = this.campaignFormGroup.get('filters');
     return (
@@ -102,39 +92,42 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     );
   }
 
-  private launchCampaign(campaign: Campaign) {
-    campaign.status = CampaignStatusEnum.PENDING;
-    this._dialog
-      .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
+  saveCampaign() {
+    const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
+    const campaign: Campaign = this.campaignService.toCampaignFormat(campaignUx);
+    if (campaign._id) {
+      this.patchCampaign(campaign);
+    } else {
+      this.createCampaign(campaign);
+    }
+  }
+
+  private patchCampaign(campaign: Campaign) {
+    this.campaignService
+      .patchList(campaign)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((result) => {
-        if (result) {
-          this.campaignService
-            .launch(campaign)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(
-              (campaignSaved: Campaign) => {
-                this.requestLoading = false;
-                // tslint:disable-next-line:max-line-length
-                this.toastr.success(`La campagne ${campaignSaved.name} a bien été lancé`);
-                this.router.navigate(['/campaign']);
-              },
-              (error) => {
-                this.requestLoading = false;
-                console.error(error);
-                this.toastr.error('Une erreur est survenue lors du lancement de la campagne');
-              },
-            );
-        }
-      });
+      .subscribe(
+        (data) => {
+          const campaignPatched = data[0];
+          this.requestLoading = false;
+          this.toastr.success(`La campagne ${campaignPatched.name} a bien été mise à jour`);
+          this.router.navigate(['/campaign']);
+        },
+        (error) => {
+          this.requestLoading = false;
+          console.error(error);
+          this.toastr.error('Une erreur est survenue lors de la mise à jour de la campagne');
+        },
+      );
   }
 
   private createCampaign(campaign: Campaign) {
     this.campaignService
-      .create(campaign)
+      .createList(campaign)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (campaignSaved: Campaign) => {
+        (data) => {
+          const campaignSaved = data[0];
           this.requestLoading = false;
           this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
           this.router.navigate(['/campaign']);
@@ -228,7 +221,8 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       for_driver: campaign.ui_status.for_driver,
       for_passenger: campaign.ui_status.for_passenger,
       for_trip: campaign.ui_status.for_trip,
-      staggered: campaign.ui_status.staggered,
+      // initialize staggered
+      staggered: campaign.ui_status.staggered !== null ? campaign.ui_status.staggered : false,
     });
 
     // patch form arrays
@@ -241,23 +235,43 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     // patch restriction
     const restrictionFormArray = <FormArray>this.campaignFormGroup.get('restrictions');
     restrictionFormArray.clear();
-    campaign.retributions.forEach((restriction) => {
+    campaign.restrictions.forEach((restriction) => {
       restrictionFormArray.push(this._formBuilder.group(restriction));
     });
 
     // patch retribution
     const retributionFormArray = <FormArray>this.campaignFormGroup.get('retributions');
     retributionFormArray.clear();
-    campaign.retributions.forEach((retribution) => {
+    if (campaign.retributions.length === 0) {
+      // initialize retribution
       retributionFormArray.push(
         this._formBuilder.group({
-          for_passenger: this._formBuilder.group(retribution.for_passenger),
-          for_driver: this._formBuilder.group(retribution.for_driver),
-          min: retribution.min,
-          max: retribution.max,
+          for_passenger: this._formBuilder.group({
+            free: false,
+            per_km: false,
+            amount: null,
+          }),
+          for_driver: this._formBuilder.group({
+            per_km: false,
+            per_passenger: false,
+            amount: null,
+          }),
+          min: null,
+          max: null,
         }),
       );
-    });
+    } else {
+      campaign.retributions.forEach((retribution) => {
+        retributionFormArray.push(
+          this._formBuilder.group({
+            for_passenger: this._formBuilder.group(retribution.for_passenger),
+            for_driver: this._formBuilder.group(retribution.for_driver),
+            min: retribution.min,
+            max: retribution.max,
+          }),
+        );
+      });
+    }
 
     // const formulaFormArray = <FormArray>this.campaignFormGroup.get('formulas');
     // formulaFormArray.clear();

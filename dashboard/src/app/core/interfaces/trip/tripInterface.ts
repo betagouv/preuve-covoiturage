@@ -1,3 +1,4 @@
+// tslint:disable:variable-name
 import { IncentiveInterface } from '../campaign/incentiveInterface';
 
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
@@ -13,15 +14,11 @@ export interface TripInterface {
 }
 
 export interface PersonInterface {
-  class: TripRankEnum;
-  operator: {
-    _id: string;
-    // tslint:disable-next-line:variable-name
-    nom_commercial: string;
-  };
+  rank: TripRankEnum;
+  operator_id: string;
   is_driver: boolean;
-  start: string;
-  end: string;
+  start_town: string;
+  end_town: string;
   incentives: IncentiveInterface[];
 }
 

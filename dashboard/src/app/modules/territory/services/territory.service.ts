@@ -1,16 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+import * as _ from 'lodash';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { ApiService } from '~/core/services/api/api.service';
 import { Territory } from '~/core/entities/territory/territory';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TerritoryService extends ApiService<Territory> {
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
+  constructor(
+    private _http: HttpClient,
+    private _jsonRPC: JsonRPCService,
+    private _authService: AuthenticationService,
+  ) {
     super(_http, _jsonRPC, 'territory');
   }
 
@@ -31,5 +38,57 @@ export class TerritoryService extends ApiService<Territory> {
 
   get territories(): Territory[] {
     return this._entities$.value;
+  }
+
+  patchList(territory: Territory): Observable<[Territory, Territory[]]> {
+    // remove null values & empty objects
+    const removeEmpty = (object) => {
+      if (!_.isObject(object)) {
+        return;
+      }
+
+      _.keys(object).forEach((key) => {
+        const element = object[key];
+
+        if (element === null) {
+          delete object[key];
+          return;
+        }
+
+        if (_.isObject(element)) {
+          if (_.isEmpty(element)) {
+            delete object[key];
+            return;
+          }
+
+          // Is object, recursive call
+          removeEmpty(element);
+
+          if (_.isEmpty(element)) {
+            delete object[key];
+            return;
+          }
+        }
+      });
+    };
+
+    removeEmpty(territory);
+
+    return super.patchList(territory);
+  }
+
+  loadConnectedTerritory(): Observable<Territory> {
+    if ('territory' in this._authService.user) {
+      return this.loadOne({ _id: this._authService.user.territory });
+    }
+    throw Error();
+  }
+
+  set territoryToEdit(_id: string) {
+    const territoryToEdit = this.territories.filter((territory) => territory._id === _id)[0];
+    if (!territoryToEdit) {
+      console.error('territory not found !');
+    }
+    this._entity$.next(territoryToEdit);
   }
 }

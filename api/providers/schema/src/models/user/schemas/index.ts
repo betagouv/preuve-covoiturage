@@ -1,6 +1,7 @@
-export * from './userChangeEmailSchema';
 export * from './userChangePasswordSchema';
+export * from './userChangePasswordWithTokenSchema';
 export * from './userChangeRoleSchema';
+export * from './userCheckForgottenTokenSchema';
 export * from './userConfirmEmailSchema';
 export * from './userCreateSchema';
 export * from './userDeleteSchema';
@@ -12,3 +13,4 @@ export * from './userPatchSchema';
 export * from './userRegisterSchema';
 export * from './userResetPasswordSchema';
 export * from './userSchema';
+export * from './userSendConfirmEmailSchema';

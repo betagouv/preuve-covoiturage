@@ -29,7 +29,7 @@ export class ApplicationRepositoryProvider extends ParentRepository implements A
 
   public async allByOperator({ operator_id }): Promise<Application[]> {
     const collection = await this.getCollection();
-    const results = await collection.find({ operator_id: new ObjectId(operator_id) }).toArray();
+    const results = await collection.find({ operator_id: new ObjectId(operator_id), deleted_at: null }).toArray();
 
     return this.instanciateMany(results);
   }

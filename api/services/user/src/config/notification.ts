@@ -1,22 +1,22 @@
-declare function env(key: string, fallback?: string): any;
+declare function env(key: string, fallback?: string | boolean): any;
 
 export const mail = {
-  debug: false,
+  debug: env('APP_MAILGET_DEBUG_MODE', false),
   driver: 'mailjet',
   driverOptions: {
-    public: env('MAILJET_PUBLIC_KEY', 'REMOVE ME'),
-    private: env('MAILJET_PRIVATE_KEY', 'REMOVE ME'),
+    public: env('APP_MAILJET_PUBLIC_KEY', ''),
+    private: env('APP_MAILJET_PRIVATE_KEY', ''),
   },
   sendOptions: {
-    template: 10,
+    template: env('APP_MAILJET_TEMPLATE', ''),
   },
   from: {
-    name: '',
-    email: '',
+    name: env('APP_MAILJET_FROM_NAME', ''),
+    email: env('APP_MAILJET_FROM_EMAIL', ''),
   },
-  defaultSubject: '',
+  defaultSubject: 'Registre de preuve de covoiturage',
   to: {
-    name: '',
-    email: '',
+    name: env('APP_MAILJET_DEBUG_NAME', ''),
+    email: env('APP_MAILJET_DEBUG_EMAIL', ''),
   },
 };

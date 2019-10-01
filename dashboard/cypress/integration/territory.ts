@@ -6,7 +6,7 @@ import { cypress_login, cypress_stub_login } from '../support/reusables/cypress_
 import { cypress_campaignCreate } from '../support/reusables/cypress_campaign_create';
 import { stubOperatorList } from '../support/stubs/operator.list';
 import { stubCampaignTemplateList } from '../support/stubs/campaign-template.list';
-import { Cypress_filterTrips } from '../support/reusables/filter-trips.spec';
+import { cypress_filterTrips } from '../support/reusables/cypress_filter-trips';
 import { stubTripList } from '../support/stubs/trip.list';
 import { stubStatList } from '../support/stubs/stat.list';
 import { stubUserMe } from '../support/stubs/user.me';
@@ -17,7 +17,7 @@ context('TERRITORY', () => {
     cy.server();
     stubCampaignList();
     stubOperatorList();
-    stubCampaignTemplateList();
+    // stubCampaignTemplateList();
     stubTripList();
     stubStatList();
     stubUserMe(UserGroupEnum.TERRITORY);
@@ -38,7 +38,7 @@ context('TERRITORY', () => {
     it('clicks list tab', () => {
       cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(2)').click();
     });
-    Cypress_filterTrips();
+    cypress_filterTrips();
   });
 
   // TEST CAMPAIGNS

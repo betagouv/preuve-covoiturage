@@ -29,7 +29,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     permissions: OPERATORS_PERMISSIONS.admin,
     operator: '5d828c701a563606614ee09a',
   },
-  registry: new User({
+  registry: {
     _id: '5d828c8f21577b76d5445e0c',
     firstname: 'Registre',
     lastname: 'admin',
@@ -38,7 +38,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     role: UserRoleEnum.ADMIN,
     group: UserGroupEnum.REGISTRY,
     permissions: REGISTRY_PERMISSIONS.admin,
-  }),
+  },
 };
 
 export function stubLogin(type: UserGroupEnum) {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { finalize, map, take, tap } from 'rxjs/operators';
+import { finalize, map, mergeMap, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as moment from 'moment';
 
@@ -16,22 +16,26 @@ import {
   MaxTripsRetributionRule,
   OnlyAdultRetributionRule,
   RestrictionParametersInterface,
-  RestrictionRetributionRule,
   Retribution,
   RetributionParametersInterface,
   RetributionRulesSlugEnum,
   RetributionRuleType,
 } from '~/core/interfaces/campaign/campaignInterface';
-import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { UserService } from '~/core/services/authentication/user.service';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+
 @Injectable({
   providedIn: 'root',
 })
 export class CampaignService extends ApiService<Campaign> {
   _templates$ = new BehaviorSubject<TemplateInterface[]>([]);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService, private _userService: UserService) {
+  constructor(
+    private _http: HttpClient,
+    private _jsonRPC: JsonRPCService,
+    private _authService: AuthenticationService,
+  ) {
     super(_http, _jsonRPC, 'campaign');
   }
 
@@ -39,17 +43,13 @@ export class CampaignService extends ApiService<Campaign> {
     return this._loaded$.value;
   }
 
-  public launch(campaign: Campaign): Observable<Campaign> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:launch`, campaign);
-
+  public launch(id: string): Observable<[Campaign, Campaign[]]> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:launch`, { _id: id });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      tap((entity: Campaign) => {
-        console.log(`launch campaign with id=${entity._id}`);
-        this.load()
-          .pipe(take(1))
-          .subscribe();
-        this._entity$.next(entity);
+      mergeMap((launchedCampaign: Campaign) => {
+        console.log(`launch campaign with id=${launchedCampaign._id}`);
+        return this.load().pipe(map((campaigns) => <[Campaign, Campaign[]]>[launchedCampaign, campaigns]));
       }),
     );
   }
@@ -161,10 +161,10 @@ export class CampaignService extends ApiService<Campaign> {
       campaignRetributionRules.push(new OnlyAdultRetributionRule());
     }
 
-    restrictions.forEach((restriction) => {
+    /*  restrictions.forEach((restriction) => {
       campaignRetributionRules.push(new RestrictionRetributionRule(restriction));
     });
-
+*/
     retributions.forEach((retribution) => {
       // set defaults, reset values according to uiStatus
       if (retribution.min === null) {
@@ -182,15 +182,14 @@ export class CampaignService extends ApiService<Campaign> {
       if (!campaignUx.ui_status.for_passenger) {
         retribution.for_passenger.free = false;
       }
-
       retribution.for_passenger.amount = retribution.for_passenger.amount * 100; // to cents
       retribution.for_driver.amount = retribution.for_driver.amount * 100; // to cents
       campaignRetributionRules.push(new Retribution(retribution));
     });
 
     // set territory of user
-    if (this._userService.user.territory) {
-      territory_id = this._userService.user.territory;
+    if (this._authService.user.territory) {
+      territory_id = this._authService.user.territory;
     }
 
     const campaign = new Campaign({
@@ -250,7 +249,7 @@ export class CampaignService extends ApiService<Campaign> {
   public getExplanationFromRetributions(
     retributions: RetributionParametersInterface[],
     unit: IncentiveUnitEnum,
-    forTrip: boolean | null,
+    uiStatus: UiStatusInterface,
   ) {
     let text = '';
 
@@ -266,27 +265,29 @@ export class CampaignService extends ApiService<Campaign> {
       if (!valueForDriver && !valueForPassenger && !free) {
         continue;
       }
-      text += `\r\n- `;
+      text += `<br/>\r\n- `;
 
       // CONDUCTEUR
-      if (valueForDriver !== null) {
+      if (valueForDriver !== null && (uiStatus.for_trip || uiStatus.for_driver)) {
         // tslint:disable-next-line:max-line-length
         text += ` ${valueForDriver} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
         text += perKmForDriver ? ' par km' : '';
         text += perPassenger ? ' par passager' : '';
-        if (!forTrip) {
+        if (!uiStatus.for_trip) {
           text += ' pour le conducteur';
         }
       }
       text += valueForDriver !== null && valueForPassenger !== null ? ', ' : '';
 
       // PASSAGERS
-      if (free) {
-        text += ' gratuit pour le(s) passager(s)';
-      } else if (valueForPassenger !== null) {
-        text += ` ${valueForPassenger} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
-        text += perKmForPassenger ? ' par km' : '';
-        text += ` pour le(s) passager(s)`;
+      if (uiStatus.for_trip || uiStatus.for_passenger) {
+        if (free) {
+          text += ' gratuit pour le(s) passager(s)';
+        } else if (valueForPassenger !== null) {
+          text += ` ${valueForPassenger} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
+          text += perKmForPassenger ? ' par km' : '';
+          text += ` pour le(s) passager(s)`;
+        }
       }
       if (min || max) {
         if (!max) {
@@ -297,7 +298,7 @@ export class CampaignService extends ApiService<Campaign> {
       }
       text += `.`;
     }
-    text += `\r\n`;
+    text += `<br/>\r\n`;
     return text;
   }
 

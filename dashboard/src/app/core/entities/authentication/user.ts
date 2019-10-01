@@ -10,6 +10,7 @@ export class User implements IModel {
   public lastname: string;
   public firstname: string;
   public phone: string;
+  public status?: string;
   public group: UserGroupEnum;
   public role: UserRoleEnum;
   public operator?: string;

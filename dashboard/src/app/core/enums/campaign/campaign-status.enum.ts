@@ -1,7 +1,7 @@
 export enum CampaignStatusEnum {
   DRAFT = 'draft',
   PENDING = 'pending',
-  VALIDATED = 'validated',
+  VALIDATED = 'active',
   ARCHIVED = 'archived',
   TEMPLATE = 'template',
 }

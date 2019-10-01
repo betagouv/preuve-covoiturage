@@ -46,7 +46,7 @@ describe('Application service', () => {
   // Database _id
   let application: Application;
 
-  it('Creates an application', () =>
+  it('#1 - Creates an application', () =>
     request
       .post('/')
       .send({
@@ -73,15 +73,17 @@ describe('Application service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('_id');
-        expect(response.body.result).to.have.property('name', 'Application');
-        expect(response.body.result).to.have.property('operator_id', operator_id);
+        expect(response.body.result).to.have.property('token');
+        expect(response.body.result).to.have.property('application');
+        expect(response.body.result.application).to.have.property('_id');
+        expect(response.body.result.application).to.have.property('name', 'Application');
+        expect(response.body.result.application).to.have.property('operator_id', operator_id);
 
         // store the application
-        application = response.body.result;
+        application = response.body.result.application;
       }));
 
-  it('Find the application by id', () =>
+  it('#2 - Find the application by id', () =>
     request
       .post('/')
       .send({
@@ -111,7 +113,7 @@ describe('Application service', () => {
         expect(response.body.result).to.have.property('operator_id', operator_id);
       }));
 
-  it('Revoke the application', () =>
+  it('#3 - Revoke the application', () =>
     request
       .post('/')
       .send({
@@ -143,8 +145,55 @@ describe('Application service', () => {
         expect(new Date(response.body.result.deletedAt)).to.be.an.instanceOf(Date);
       }));
 
-  it('List applications', () =>
-    request
+  it('#4 - List applications', async () => {
+    // insert 2 applications
+    // the one created by test #1 is soft deleted and should not appear in the results
+    await request
+      .post('/')
+      .send([
+        {
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'application:create',
+          params: {
+            params: {
+              operator_id,
+              name: 'Application A',
+              permissions: ['journey.create'],
+            },
+            _context: {
+              call: {
+                user: {
+                  permissions: ['application.create'],
+                },
+              },
+            },
+          },
+        },
+        {
+          id: 2,
+          jsonrpc: '2.0',
+          method: 'application:create',
+          params: {
+            params: {
+              operator_id,
+              name: 'Application B',
+              permissions: ['journey.create'],
+            },
+            _context: {
+              call: {
+                user: {
+                  permissions: ['application.create'],
+                },
+              },
+            },
+          },
+        },
+      ])
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
+
+    return request
       .post('/')
       .send({
         id: 1,
@@ -168,6 +217,12 @@ describe('Application service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result.length).to.eq(1);
-      }));
+        expect(response.body.result.length).to.eq(2);
+        expect(response.body.result[0]).to.have.property('_id');
+        expect(response.body.result[0]).to.have.property('name', 'Application A');
+        expect(response.body.result[0]).to.have.property('operator_id', operator_id);
+        expect(response.body.result[0]).to.have.property('permissions');
+        expect(response.body.result[0]).to.have.property('created_at');
+      });
+  });
 });

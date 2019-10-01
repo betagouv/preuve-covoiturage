@@ -7,15 +7,17 @@ import { ValidatorMiddleware } from '@pdc/provider-validator';
 import { tripCrosscheckSchema, tripSearchSchema } from '@pdc/provider-schema';
 import { ChannelTransportMiddleware, ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
+import { TripPgRepositoryProvider } from './providers/TripPgRepositoryProvider';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
+
 import { CrosscheckAction } from './actions/CrosscheckAction';
 import { DispatchAction } from './actions/DispatchAction';
-import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
 
 @serviceProvider({
   config: __dirname,
-  providers: [TripRepositoryProvider],
+  providers: [TripPgRepositoryProvider, TripRepositoryProvider],
   validator: [['trip.crosscheck', tripCrosscheckSchema], ['trip.search', tripSearchSchema]],
   middlewares: [
     ['validate', ValidatorMiddleware],

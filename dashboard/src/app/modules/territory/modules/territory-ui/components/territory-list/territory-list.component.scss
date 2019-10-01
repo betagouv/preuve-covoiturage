@@ -1,0 +1,15 @@
+.Territories-list {
+  height: 430px;
+  overflow-y: auto;
+  &-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  &-item-actions {
+    text-align: right;
+  }
+  ::ng-deep .ListItem {
+    width: calc(100% - 50px);
+  }
+}

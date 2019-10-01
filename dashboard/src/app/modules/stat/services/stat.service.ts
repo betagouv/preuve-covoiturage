@@ -11,9 +11,9 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { ApiService } from '~/core/services/api/api.service';
 import { StatInterface } from '~/core/interfaces/stat/statInterface';
-import { UserService } from '~/core/services/authentication/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 import { co2Factor, petrolFactor } from '../config/stat';
 
@@ -25,13 +25,18 @@ export class StatService extends ApiService<StatInterface> {
   public _loaded$ = new BehaviorSubject<boolean>(false);
   protected _loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService, private userService: UserService) {
+  constructor(
+    private _http: HttpClient,
+    private _jsonRPC: JsonRPCService,
+    private _authService: AuthenticationService,
+  ) {
     super(_http, _jsonRPC, 'stat');
   }
 
-  public loadOne(filter: FilterInterface | {} = {}): Observable<Stat[]> {
-    if (this.userService.user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [this.userService.user.territory];
+  public loadOne(filter: FilterInterface | {} = {}): Observable<Stat> {
+    const user = this._authService.user;
+    if (user && user.group === UserGroupEnum.TERRITORY) {
+      filter['territory_id'] = [user.territory];
     }
     // TODO: temp, remove when filter operator added
     if ('operator_id' in filter) {
@@ -44,7 +49,6 @@ export class StatService extends ApiService<StatInterface> {
       tap((data) => {
         this.formatData(data);
         this._loading$.next(false);
-        console.log('loading should be false', this._loading$.value);
       }),
     );
   }
@@ -257,7 +261,6 @@ export class StatService extends ApiService<StatInterface> {
       },
     };
 
-    console.log('formatedStat', formatedStat);
     this._formatedStat$.next(formatedStat);
     this._loaded$.next(true);
     this._loading$.next(false);

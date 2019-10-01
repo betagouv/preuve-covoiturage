@@ -59,11 +59,11 @@ export function cypress_campaignCreate() {
 
   it('sets retribution', () => {
     // open retribution extension
-    cy.get('.ParametersForm .mat-expansion-panel:nth-child(5)').click();
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(4)').click();
 
     // driver amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-form-field input').type(
-      CypressExpectedCampaign.forDriverAmount.toString(),
+      (CypressExpectedCampaign.forDriverAmount / 100).toString(),
     );
 
     // press 'par km'
@@ -73,7 +73,7 @@ export function cypress_campaignCreate() {
 
     // passenger amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input').type(
-      CypressExpectedCampaign.forPassengerAmount.toString(),
+      '0.2',
     );
   });
 
@@ -105,10 +105,12 @@ export function cypress_campaignCreate() {
       const method = xhr.request.body[0].method;
 
       expect(method).equal('campaign:create');
-      expect(params).eql({
-        ...CypressExpectedCampaign.get(),
-        status: CampaignStatusEnum.DRAFT,
-      });
+      const expectedCampaign = CypressExpectedCampaign.get();
+
+      delete expectedCampaign.parent_id;
+      delete expectedCampaign._id;
+
+      expect(params).eql(expectedCampaign);
     });
   });
 }

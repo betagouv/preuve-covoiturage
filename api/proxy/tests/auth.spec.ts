@@ -1,68 +1,47 @@
-// tslint:disable max-classes-per-file
-
 import path from 'path';
 import supertest from 'supertest';
 import chai from 'chai';
 import { describe } from 'mocha';
-import { HandlerInterface, handler, kernel, serviceProvider, ForbiddenException } from '@ilos/common';
-import { Action, ServiceProvider } from '@ilos/core';
+import { MongoConnection } from '@ilos/connection-mongo';
+import { CryptoProvider } from '@pdc/provider-crypto';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 
-@handler({
-  service: 'user',
-  method: 'login',
-})
-class UserLoginAction extends Action implements HandlerInterface {
-  users = [
-    {
-      login: 'test@test.com',
-      password: '12345',
-      extras: {
-        message: 'hello world',
-      },
-    },
-  ];
-
-  protected async handle(params): Promise<any> {
-    const { login, password } = params;
-
-    const user = this.users.find((u) => u.login === login);
-
-    if (!user || user.password !== password) {
-      throw new ForbiddenException();
-    }
-
-    return user.extras;
-  }
-}
-
-@serviceProvider({
-  handlers: [UserLoginAction],
-})
-class UserServiceProvider extends ServiceProvider {}
-
-@kernel({
-  children: [UserServiceProvider],
-})
-class ThinKernel extends Kernel {}
-
 const { expect } = chai;
-const customKernel = new ThinKernel();
-const app = new HttpTransport(customKernel);
-let request;
 
 describe('Proxy auth', async () => {
+  const krn = new Kernel();
+  const app = new HttpTransport(krn);
+  let request;
+  let db;
+  let collection;
+  let crypto;
+  let tokenPlain;
+  let tokenBcrypt;
+
   before(async () => {
+    process.env.APP_MONGO_DB = `pdc-local-auth-${new Date().getTime()}`;
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
-    await customKernel.bootstrap();
+    await krn.bootstrap();
     await app.up(['0']);
+
+    // Database connection
+    const connection = new MongoConnection({ connectionString: process.env.APP_MONGO_URL });
+    await connection.up();
+    db = connection.getClient().db(process.env.APP_MONGO_DB);
+    collection = db.collection('users');
+
+    // Crypto Provider
+    crypto = new CryptoProvider();
+    tokenPlain = crypto.generateToken();
+    tokenBcrypt = await crypto.cryptToken(tokenPlain);
   });
 
   after(async () => {
+    await db.dropDatabase();
     await app.down();
   });
 
@@ -70,104 +49,181 @@ describe('Proxy auth', async () => {
     request = supertest(app.app);
   });
 
-  it('should return error on profile if user not authenticated', async () => {
-    const r = await request.get('/profile');
-    expect(r.status).to.eq(401);
-
-    // cookie should not be sent
-    const cookie = undefined;
-    if ('set-cookie' in r.header) {
-      // tslint:disable-next-line: no-shadowed-variable
-      r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
-    }
-    expect(cookie).to.eq(undefined);
-  });
-
-  it('should return error on login failure', async () => {
-    const r = await request.post('/login').send({
-      login: 'test@test.com',
-      password: '123456',
-    });
-    expect(r.status).to.eq(401);
-
-    const cookie = undefined;
-    if ('set-cookie' in r.header) {
-      // tslint:disable-next-line: no-shadowed-variable
-      r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
-    }
-    expect(cookie).to.eq(undefined);
-  });
-
-  it('should return session cookie on login', async () => {
-    const r = await request.post('/login').send({
-      login: 'test@test.com',
-      password: '12345',
-    });
-    expect(r.status).to.eq(200);
-    expect(r.body).to.deep.include({
+  it('should call reset-password', async () => {
+    // register a new user
+    await krn.handle({
       id: 1,
       jsonrpc: '2.0',
-      result: {
-        meta: null,
-        data: {
-          message: 'hello world',
+      method: 'user:register',
+      params: {
+        params: {
+          email: 'reset@example.com',
+          password: 'admin1234',
+          firstname: 'admin',
+          lastname: 'example',
+          group: 'registry',
+          role: 'admin',
+        },
+        _context: {
+          call: { user: { permissions: ['user.register'] } },
         },
       },
     });
-    // tslint:disable-next-line: no-unused-expression
-    expect(r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie))).to.not.be.undefined;
+
+    // @TODO add expect()
+
+    return request
+      .post('/auth/reset-password')
+      .send({ email: 'reset@example.com' })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response) => {
+        console.log(response.body);
+        expect(response.status).to.eq(200);
+      });
   });
 
-  it('should read session on profile', async () => {
-    const res = await request.post('/login').send({
-      login: 'test@test.com',
-      password: '12345',
-    });
-    const re = new RegExp('; path=/; httponly', 'gi');
-
-    // Save the cookie to use it later to retrieve the session
-    const cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
-
-    const r = await request.get('/profile').set('Cookie', cookies);
-
-    expect(r.status).to.eq(200);
-    expect(r.body).to.deep.include({
+  it('should call check-token', async () => {
+    // register a new user
+    await krn.handle({
       id: 1,
       jsonrpc: '2.0',
-      result: {
-        data: {
-          message: 'hello world',
+      method: 'user:register',
+      params: {
+        params: {
+          email: 'check-token@example.com',
+          password: 'admin1234',
+          firstname: 'admin',
+          lastname: 'example',
+          group: 'registry',
+          role: 'admin',
         },
-        meta: null,
+        _context: {
+          call: { user: { permissions: ['user.register'] } },
+        },
       },
     });
+
+    // @TODO add expect()
+
+    // patch the token and tz
+    await collection.updateOne(
+      { email: 'check-token@example.com' },
+      {
+        $set: {
+          forgotten_token: tokenBcrypt,
+          forgotten_at: new Date(),
+        },
+      },
+    );
+
+    // check if email and token are valid
+    return request
+      .post('/auth/check-token')
+      .send({ email: 'check-token@example.com', token: tokenPlain })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response) => {
+        // @TODO add expect()
+        expect(response.status).to.eq(200);
+      });
   });
 
-  it('should delete session on logout', async () => {
-    const res = await request.post('/login').send({
-      login: 'test@test.com',
-      password: '12345',
+  it('should call change-password', async () => {
+    // register a new user
+    await krn.handle({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'user:register',
+      params: {
+        params: {
+          email: 'change-password@example.com',
+          password: 'admin1234',
+          firstname: 'admin',
+          lastname: 'example',
+          group: 'registry',
+          role: 'admin',
+        },
+        _context: {
+          call: { user: { permissions: ['user.register'] } },
+        },
+      },
     });
 
-    const re = new RegExp('; path=/; httponly', 'gi');
+    // @TODO add expect()
 
-    // Save the cookie to use it later to retrieve the session
-    const cookies = res.headers['set-cookie'].map((r) => r.replace(re, '')).join('; ');
+    // patch the token and tz
+    await collection.updateOne(
+      { email: 'change-password@example.com' },
+      {
+        $set: {
+          forgotten_token: tokenBcrypt,
+          forgotten_at: new Date(),
+        },
+      },
+    );
 
-    const r = await request.post('/logout').set('Cookie', cookies);
+    // check if email and token are valid
+    return request
+      .post('/auth/change-password')
+      .send({ email: 'change-password@example.com', token: tokenPlain, password: '4321admin' })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response) => {
+        // @TODO
+        // console.log(response.body);
+        expect(response.status).to.eq(200);
+      });
+  });
 
-    expect(r.status).to.eq(204);
+  it('should call confirm-email', async () => {
+    // register a new user
+    const usr: any = await krn.handle({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'user:register',
+      params: {
+        params: {
+          email: 'confirm-email@example.com',
+          password: 'admin1234',
+          firstname: 'admin',
+          lastname: 'example',
+          group: 'registry',
+          role: 'admin',
+        },
+        _context: {
+          call: { user: { permissions: ['user.register'] } },
+        },
+      },
+    });
 
-    // cookie should not be sent
-    const cookie = undefined;
-    if ('set-cookie' in r.header) {
-      // tslint:disable-next-line: no-shadowed-variable
-      r.header['set-cookie'].find((cookie: string) => /pdc-session/.test(cookie));
-    }
-    expect(cookie).to.eq(undefined);
+    // check creation status
+    expect(usr).to.have.property('result');
+    expect(usr.result).to.have.property('status', 'pending');
 
-    const rr = await request.get('/profile').set('Cookie', cookies);
+    // patch the token and tz
+    await collection.updateOne(
+      { email: 'confirm-email@example.com' },
+      {
+        $set: {
+          forgotten_token: tokenBcrypt,
+          forgotten_at: new Date(),
+        },
+      },
+    );
 
-    expect(rr.status).to.eq(401);
+    // check if email and token are valid
+    return request
+      .post('/auth/confirm-email')
+      .send({ email: 'confirm-email@example.com', token: tokenPlain })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response) => {
+        // check confirmation status
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('data');
+        expect(response.body.result.data).to.have.property('status', 'active');
+      });
   });
 });

@@ -1,4 +1,4 @@
 export interface UserConfirmEmailParamsInterface {
-  token: string;
-  confirm: string;
+  email: string;
+  forgotten_token: string;
 }

@@ -3,7 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { User } from '~/core/entities/authentication/user';
-import { UserService } from '~/core/services/authentication/user.service';
+import { UserService } from '~/modules/user/services/user.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -38,7 +38,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
       .subscribe((hasConfirmed) => {
         if (hasConfirmed) {
           this.userService
-            .delete(user._id)
+            .deleteList(user._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {
@@ -50,6 +50,10 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
             );
         }
       });
+  }
+
+  public get loggedUser(): User {
+    return this.authService.user;
   }
 
   public getFrenchRole(role: UserRoleEnum): string {
