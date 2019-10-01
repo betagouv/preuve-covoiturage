@@ -30,13 +30,13 @@ import {
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import { RetributionUxInterface } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
-import { UserService } from '~/core/services/authentication/user.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CampaignFormatingService {
-  constructor(private _userService: UserService) {}
+  constructor(private _authService: AuthenticationService) {}
 
   public toCampaignUxFormat(campaign: Campaign): CampaignUx {
     const { _id, name, description, territory_id, status, unit, parent_id, ui_status } = campaign;
@@ -328,8 +328,8 @@ export class CampaignFormatingService {
     });
 
     // set territory of user
-    if (this._userService.user.territory) {
-      territory_id = this._userService.user.territory;
+    if (this._authService.user.territory) {
+      territory_id = this._authService.user.territory;
     }
 
     const campaign = new Campaign({
