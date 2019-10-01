@@ -19,7 +19,6 @@ export class OperatorService extends ApiService<Operator> {
     private _authService: AuthenticationService,
   ) {
     super(_http, _jsonRPC, 'operator');
-    this.load().subscribe();
   }
 
   get operatorsLoaded() {
