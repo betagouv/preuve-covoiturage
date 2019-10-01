@@ -28,11 +28,12 @@ export class TripLayoutComponent implements OnInit {
       path: '/trip/list',
       label: 'Liste détaillée',
     },
-    {
-      path: '/trip/import',
-      groups: [UserGroupEnum.OPERATOR],
-      label: 'Import',
-    },
+    // todo: wait until import connected to back
+    // {
+    //   path: '/trip/import',
+    //   groups: [UserGroupEnum.OPERATOR],
+    //   label: 'Import',
+    // },
   ];
 
   constructor(public authenticationService: AuthenticationService, public router: Router) {}

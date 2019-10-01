@@ -11,7 +11,7 @@ import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/terr
 import { SharedModule } from '~/shared/shared.module';
 import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operator-ui.module';
 import { OperatorModule } from '~/modules/operator/operator.module';
-import { OperatorTokenUiModule } from '~/modules/operator/modules/operator-token-ui/operator-token-ui.module';
+import { ApplicationUiModule } from '~/modules/operator/modules/application-ui/application-ui.module';
 import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
 
 import { AdministrationRoutingModule } from './administration-routing.module';
@@ -50,7 +50,7 @@ import { AllOperatorsComponent } from './pages/all-operators/all-operators.compo
     SharedModule,
     OperatorUiModule,
     OperatorModule,
-    OperatorTokenUiModule,
+    ApplicationUiModule,
   ],
 })
 export class AdministrationModule {}

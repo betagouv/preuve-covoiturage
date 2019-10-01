@@ -38,7 +38,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
       .subscribe((hasConfirmed) => {
         if (hasConfirmed) {
           this.userService
-            .delete(user._id)
+            .deleteList(user._id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {
@@ -50,6 +50,10 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
             );
         }
       });
+  }
+
+  public get loggedUser(): User {
+    return this.authService.user;
   }
 
   public getFrenchRole(role: UserRoleEnum): string {
