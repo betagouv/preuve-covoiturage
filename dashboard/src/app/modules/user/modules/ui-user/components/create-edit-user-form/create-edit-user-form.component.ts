@@ -141,6 +141,11 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     return USER_GROUPS_FR[group];
   }
 
+  onGroupChange(): void {
+    this.createEditUserForm.get('operator').setValue(null);
+    this.createEditUserForm.get('territory').setValue(null);
+  }
+
   private initForm(
     isCreating: boolean = this.isCreating,
     groupEditable: boolean = this.groupEditable,
@@ -161,13 +166,14 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;
-        if (!territoryEditable) this.createEditUserForm.patchValue({ territory: '' });
+        // if (!territoryEditable) this.createEditUserForm.patchValue({ territory: '' });
       }
 
       const operatorEditable = formVal.group === UserGroupEnum.OPERATOR;
       if (operatorEditable !== this.operatorEditable) {
         this.operatorEditable = operatorEditable;
-        if (operatorEditable) this.createEditUserForm.patchValue({ operator: '' });
+        // todo: not sure this is valid, operator should not be reset during edition of form
+        // if (operatorEditable) this.createEditUserForm.patchValue({ operator: '' });
       }
     });
 
