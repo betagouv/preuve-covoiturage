@@ -28,7 +28,7 @@ describe('Normalization Route', () => {
     await transport.down();
   });
 
-  it('succeeds to get distance and duration', () =>
+  it('succeeds in Metropole', () =>
     request
       .post('/')
       .send({
@@ -67,5 +67,46 @@ describe('Normalization Route', () => {
         expect(response.body.result).to.have.property('driver');
         expect(response.body.result.driver).to.have.property('calc_distance', 135530.5);
         expect(response.body.result.driver).to.have.property('calc_duration', 5979.6);
+      }));
+
+  it('succeeds in La Réunion and La Martinique', () =>
+    request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'normalization:route',
+        params: {
+          params: {
+            passenger: {
+              start: { lon: 55.246518, lat: -21.042936 },
+              end: { lon: 55.415603, lat: -21.246847 },
+            },
+            driver: {
+              start: { lon: -61.066241, lat: 14.634548 },
+              end: { lon: -60.937572, lat: 14.56199 },
+            },
+          },
+          _context: {
+            channel: {
+              service: 'normalization',
+              transport: 'queue',
+            },
+          },
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-type', 'application/json')
+      .expect((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property('result');
+
+        expect(response.body.result).to.have.property('passenger');
+        expect(response.body.result.passenger).to.have.property('calc_distance', 43728.7);
+        expect(response.body.result.passenger).to.have.property('calc_duration', 2201);
+
+        expect(response.body.result).to.have.property('driver');
+        expect(response.body.result.driver).to.have.property('calc_distance', 21274.2);
+        expect(response.body.result.driver).to.have.property('calc_duration', 1776.1);
       }));
 });
