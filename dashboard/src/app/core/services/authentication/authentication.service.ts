@@ -1,6 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, tap } from 'rxjs/operators';
+import { catchError, first, map, shareReplay, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -20,6 +20,7 @@ export class AuthenticationService {
   private _hasChecked: boolean;
 
   private _user$ = new BehaviorSubject<User>(null);
+  private userMe$: Observable<User>;
 
   constructor(
     private userService: UserService,
@@ -43,6 +44,22 @@ export class AuthenticationService {
         }
       }
     });
+
+    this.userMe$ = this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
+      map((data) => {
+        // if forbidden return null
+        if (data.data.error && data.data.error.code === -32503) {
+          return null;
+        }
+        return new User(data.data);
+      }),
+      catchError((errorResponse) => {
+        if (errorResponse.status === 401) return of(null);
+
+        throw errorResponse;
+      }),
+      shareReplay(),
+    );
   }
 
   get user$(): Observable<User> {
@@ -230,28 +247,19 @@ export class AuthenticationService {
   }
 
   check(): Observable<User> {
+    console.log('> check');
     // console.log('> check');
+
     if (this._hasChecked) {
       // console.log('has checked', this._userService.user);
       return of(this.user);
     }
-
-    return this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
-      map((data) => {
-        // if forbidden return null
-        if (data.data.error && data.data.error.code === -32503) {
-          return null;
-        }
-        return new User(data.data);
-      }),
-      catchError((errorResponse) => {
-        if (errorResponse.status === 401) return of(null);
-
-        throw errorResponse;
-      }),
+    console.log('> this._hasChecked : ', this._hasChecked);
+    return this.userMe$.pipe(
       tap((user) => {
-        if (user) this.onLoggin(user);
         this._hasChecked = true;
+        console.log(' <<<');
+        if (user) this.onLoggin(user);
       }),
     );
   }
