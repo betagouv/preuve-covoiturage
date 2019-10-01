@@ -75,13 +75,6 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     if (this.tripService.loading) {
       return;
     }
-    if (user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [user.territory];
-    }
-    // TODO: temp, remove when filter operator added
-    if ('operator_id' in filter) {
-      delete filter.operator_id;
-    }
     this.tripService
       .load(filter)
       .pipe(takeUntil(this.destroy$))
