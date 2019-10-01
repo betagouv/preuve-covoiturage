@@ -39,7 +39,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     // console.log('> selectedTerritoryUpdated', this._territoryForm.value);
     this.selectedTerritoryId = this._territoryForm.value ? this._territoryForm.value.toString() : null;
     this.selectedTerritory = this.territories
-      ? this.territories.find((fterritory) => this.selectedTerritoryId === fterritory._id)
+      ? this.territories.find((territory) => this.selectedTerritoryId === territory._id)
       : null;
     this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '');
   }

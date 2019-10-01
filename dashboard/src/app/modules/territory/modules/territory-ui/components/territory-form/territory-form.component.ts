@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
+import { takeLast, takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
@@ -12,7 +12,7 @@ import { Contact } from '~/core/entities/shared/contact';
 import { Contacts, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Operator } from '~/core/entities/operator/operator';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 import { TerritoryService } from '../../../../services/territory.service';
 
@@ -26,6 +26,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
 
   @Input() showForm = true;
   @Input() closable = false;
+  @Input() useCurrent = false;
 
   @Output() close = new EventEmitter();
 
@@ -34,6 +35,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     private fb: FormBuilder,
     private _territoryService: TerritoryService,
     private toastr: ToastrService,
+    private commonDataService: CommonDataService,
   ) {
     super();
   }
@@ -72,7 +74,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   }
 
   private initTerritoryFormValue(): void {
-    this._territoryService.territory$.pipe(takeUntil(this.destroy$)).subscribe((territory: Territory | null) => {
+    const territory$ = this.useCurrent ? this.commonDataService.currentTerritory$ : this._territoryService.territory$;
+
+    territory$.pipe(takeUntil(this.destroy$)).subscribe((territory: Territory | null) => {
       if (territory) {
         this.setTerritoryFormValue(territory);
       }

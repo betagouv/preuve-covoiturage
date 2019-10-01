@@ -36,8 +36,11 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   updateOperator(operatorId: string) {}
 
   private selectedOperatorUpdated() {
-    this.selectedOperatorId = this._operatorForm.value ? this._operatorForm.value.toString() : null;
-    this.selectedOperator = this.operators.find((foperator) => this.selectedOperatorId === foperator._id);
+    this.selectedOperatorId =
+      this._operatorForm && this._operatorForm.value ? this._operatorForm.value.toString() : null;
+    this.selectedOperator = this.operators
+      ? this.operators.find((foperator) => this.selectedOperatorId === foperator._id)
+      : null;
     this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : '');
   }
 
@@ -65,6 +68,8 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators;
+      this.selectedOperatorUpdated();
+      console.log('this.operators : ', this.operators);
     });
 
     this.filteredOperators = this.operatorCtrl.valueChanges.pipe(
@@ -83,7 +88,9 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   // }
   private filter(value: string): Operator[] {
     this._searchUpdate = true;
-    return this.operators.filter((operator) => operator.nom_commercial.toLowerCase().includes(value.toLowerCase()));
+    return this.operators
+      ? this.operators.filter((operator) => operator.nom_commercial.toLowerCase().includes(value.toLowerCase()))
+      : null;
   }
 
   inputLostFocus() {
