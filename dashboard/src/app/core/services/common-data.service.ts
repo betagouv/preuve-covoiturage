@@ -6,7 +6,7 @@ import { TerritoryService } from '~/modules/territory/services/territory.service
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { User } from '~/core/entities/authentication/user';
 import { Territory } from '~/core/entities/territory/territory';
 import { Campaign } from '~/core/entities/campaign/campaign';
@@ -86,7 +86,7 @@ export class CommonDataService {
     return this.authenticationService.check().pipe(
       mergeMap((user: User) => {
         if (!user || !user.territory) return of<Territory>(null);
-        return this.territoryService.get(user.territory);
+        return this.territoryService.loadOne({ _id: user.territory });
       }),
       tap((territory) => this._currentTerritory$.next(territory)),
     );
@@ -116,20 +116,19 @@ export class CommonDataService {
   }
 
   public loadAll() {
-    return this.authenticationService
-      .check()
-      .pipe(
-        mergeMap((user) =>
-          user
-            ? forkJoin(
-                this.loadOperators(),
-                this.loadCampaigns(),
-                this.loadTerritories(),
-                this.loadCurrentOperator(),
-                this.loadCurrentTerritory(),
-              )
-            : of(null),
-        ),
-      );
+    console.log('> loadAll');
+    return this.authenticationService.check().pipe(
+      mergeMap((user) =>
+        user
+          ? forkJoin(
+              this.loadOperators(),
+              this.loadCampaigns(),
+              this.loadTerritories(),
+              // this.loadCurrentOperator(),
+              // this.loadCurrentTerritory(),
+            ).pipe(catchError((err) => of(true)))
+          : of(null),
+      ),
+    );
   }
 }
