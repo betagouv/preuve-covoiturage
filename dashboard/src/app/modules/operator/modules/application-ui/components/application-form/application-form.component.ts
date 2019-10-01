@@ -5,28 +5,27 @@ import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 
 import { User } from '~/core/entities/authentication/user';
-import { OperatorToken } from '~/core/entities/operator/operatorToken';
-import { OperatorTokenInterface } from '~/core/interfaces/operator/operatorTokenInterface';
+import { ApplicationName } from '~/core/entities/operator/applicationName';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
-import { OperatorTokenModalComponent } from '../operator-token-modal/operator-token-modal.component';
-import { OperatorTokenService } from '../../../../services/operator-token.service';
+import { ApplicationModalComponent } from '../application-modal/application-modal.component';
+import { ApplicationService } from '../../../../services/application.service';
 
 @Component({
-  selector: 'app-operator-token-form',
-  templateUrl: './operator-token-form.component.html',
-  styleUrls: ['./operator-token-form.component.scss'],
+  selector: 'app-application-form',
+  templateUrl: './application-form.component.html',
+  styleUrls: ['./application-form.component.scss'],
 })
-export class OperatorTokenFormComponent extends DestroyObservable implements OnInit {
+export class ApplicationFormComponent extends DestroyObservable implements OnInit {
   @Output() onClose: EventEmitter<User> = new EventEmitter<User>();
 
   public isCreating: boolean;
-  public operatorTokenForm: FormGroup;
+  public applicationForm: FormGroup;
 
   constructor(
     public dialog: MatDialog,
     private fb: FormBuilder,
-    private operatorTokenService: OperatorTokenService,
+    private operatorTokenService: ApplicationService,
     private toastr: ToastrService,
   ) {
     super();
@@ -37,20 +36,21 @@ export class OperatorTokenFormComponent extends DestroyObservable implements OnI
   }
 
   get controls() {
-    return this.operatorTokenForm.controls;
+    return this.applicationForm.controls;
   }
 
   public onCreateToken(): void {
-    const operatorToken = new OperatorToken(this.operatorTokenForm.value);
+    const applicationName = new ApplicationName(this.applicationForm.value);
     this.operatorTokenService
-      .createToken(operatorToken)
+      .createApplicationAndList(applicationName)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (response: { token: string }) => {
+        (data) => {
+          const token = data[0].token;
           this.onClose.emit();
           this.openModal({
-            name: operatorToken.name,
-            token: response.token,
+            token,
+            name: applicationName.name,
           });
           this.toastr.success("Le token d'accès à l'API a bien été créé");
           // todo: should be in service
@@ -67,14 +67,14 @@ export class OperatorTokenFormComponent extends DestroyObservable implements OnI
   }
 
   private openModal(token: { name: string; token: string }) {
-    const dialogRef = this.dialog.open(OperatorTokenModalComponent, {
+    const dialogRef = this.dialog.open(ApplicationModalComponent, {
       width: '600px',
       data: token,
     });
   }
 
   private initForm(): void {
-    this.operatorTokenForm = this.fb.group({
+    this.applicationForm = this.fb.group({
       name: [null, Validators.required],
     });
   }

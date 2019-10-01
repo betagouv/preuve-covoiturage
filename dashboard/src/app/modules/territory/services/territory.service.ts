@@ -7,13 +7,17 @@ import * as _ from 'lodash';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { ApiService } from '~/core/services/api/api.service';
 import { Territory } from '~/core/entities/territory/territory';
-import { UserService } from '~/modules/user/services/user.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TerritoryService extends ApiService<Territory> {
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService, private _userService: UserService) {
+  constructor(
+    private _http: HttpClient,
+    private _jsonRPC: JsonRPCService,
+    private _authService: AuthenticationService,
+  ) {
     super(_http, _jsonRPC, 'territory');
   }
 
@@ -74,8 +78,8 @@ export class TerritoryService extends ApiService<Territory> {
   }
 
   loadConnectedTerritory(): Observable<Territory> {
-    if ('territory' in this._userService.user) {
-      return this.loadOne({ _id: this._userService.user.territory });
+    if ('territory' in this._authService.user) {
+      return this.loadOne({ _id: this._authService.user.territory });
     }
     throw Error();
   }

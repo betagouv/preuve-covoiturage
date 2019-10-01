@@ -10,8 +10,6 @@ import { User } from '~/core/entities/authentication/user';
   providedIn: 'root',
 })
 export class UserService extends ApiService<User> {
-  // private _user$ = new BehaviorSubject<User>(null);
-
   constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService) {
     super(_http, _jsonRPC, 'user');
   }

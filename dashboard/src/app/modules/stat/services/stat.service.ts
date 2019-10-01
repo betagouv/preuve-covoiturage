@@ -11,7 +11,6 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { ApiService } from '~/core/services/api/api.service';
 import { StatInterface } from '~/core/interfaces/stat/statInterface';
-import { UserService } from '~/modules/user/services/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -29,14 +28,13 @@ export class StatService extends ApiService<StatInterface> {
   constructor(
     private _http: HttpClient,
     private _jsonRPC: JsonRPCService,
-    private userService: UserService,
-    private authService: AuthenticationService,
+    private _authService: AuthenticationService,
   ) {
     super(_http, _jsonRPC, 'stat');
   }
 
   public loadOne(filter: FilterInterface | {} = {}): Observable<Stat> {
-    const user = this.authService.user;
+    const user = this._authService.user;
     if (user && user.group === UserGroupEnum.TERRITORY) {
       filter['territory_id'] = [user.territory];
     }

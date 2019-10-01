@@ -165,25 +165,15 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public delete(id: string): Observable<T> {
+  public deleteList(id: string): Observable<T[]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: id });
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      tap(() => {
-        const auxArray = this._entities$.value;
-        const itemDeletedIdx = auxArray.findIndex((entity) => {
-          return entity._id === id;
-        });
-        if (itemDeletedIdx) {
-          auxArray.splice(itemDeletedIdx, 1);
-        }
-        this._entities$.next(auxArray);
-        console.log(`deleted ${this._method} id=${id}`);
-      }),
+      mergeMap(() => this.load(this._listFilters)),
     );
   }
 
-  public deleteOne(item: T): Observable<T> {
+  public delete(item: T): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, item);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),

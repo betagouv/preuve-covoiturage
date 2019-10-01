@@ -93,7 +93,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
           this.isCreatingUpdating = false;
           this.toastr.success(
             `Un email a été envoyé à ${user.email}`,
-            `L'utilisateur ${user.firstname} ${user.lastname} a été crée`,
+            `L'utilisateur ${user.firstname} ${user.lastname} a été créé`,
           );
           this.onCloseEditUser.emit(user);
         },

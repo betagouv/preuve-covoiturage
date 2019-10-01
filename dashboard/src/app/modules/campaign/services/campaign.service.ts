@@ -16,23 +16,26 @@ import {
   MaxTripsRetributionRule,
   OnlyAdultRetributionRule,
   RestrictionParametersInterface,
-  RestrictionRetributionRule,
   Retribution,
   RetributionParametersInterface,
   RetributionRulesSlugEnum,
   RetributionRuleType,
 } from '~/core/interfaces/campaign/campaignInterface';
-import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { UserService } from '~/modules/user/services/user.service';
 import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+
 @Injectable({
   providedIn: 'root',
 })
 export class CampaignService extends ApiService<Campaign> {
   _templates$ = new BehaviorSubject<TemplateInterface[]>([]);
 
-  constructor(private _http: HttpClient, private _jsonRPC: JsonRPCService, private _userService: UserService) {
+  constructor(
+    private _http: HttpClient,
+    private _jsonRPC: JsonRPCService,
+    private _authService: AuthenticationService,
+  ) {
     super(_http, _jsonRPC, 'campaign');
   }
 
@@ -185,8 +188,8 @@ export class CampaignService extends ApiService<Campaign> {
     });
 
     // set territory of user
-    if (this._userService.user.territory) {
-      territory_id = this._userService.user.territory;
+    if (this._authService.user.territory) {
+      territory_id = this._authService.user.territory;
     }
 
     const campaign = new Campaign({
