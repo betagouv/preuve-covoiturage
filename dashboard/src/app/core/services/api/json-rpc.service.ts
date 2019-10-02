@@ -70,7 +70,7 @@ export class JsonRPCService {
               ${data.error.message}
               ${data.error.data}`;
             console.error(errorMessage);
-            throw new Error(errorMessage);
+            // throw new Error(errorMessage);
           }
 
           // temporary compatibility solver (for result | result.data)
