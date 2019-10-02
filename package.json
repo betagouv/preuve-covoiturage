@@ -1,0 +1,35 @@
+{
+  "name": "preuve-covoiturage",
+  "version": "1.0.0",
+  "description": "Registre de preuve de covoiturage",
+  "main": "index.js",
+  "repository": "git@github.com:betagouv/preuve-covoiturage.git",
+  "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
+  "contributors": [
+    "Jonathan Fallon <jonathan.fallon@beta.gouv.fr>",
+    "Nicolas Mérigot <nicolas.merigot@beta.gouv.fr>",
+    "Samuel Eyre <samuel.eyre@beta.gouv.fr>",
+    "Vincent Lainé <vincent.laine@beta.gouv.fr>",
+    "Gilles Boisson <gilles.boisson@beta.gouv.fr>"
+  ],
+  "license": "Apache-2.0",
+  "private": true,
+  "workspaces": [
+    "api",
+    "dashboard"
+  ],
+  "scripts": {
+    "format:fix": "lerna run --parallel format:fix",
+    "lint": "lerna run --parallel lint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lerna run --parallel format:fix",
+      "pre-push": "lerna run --parallel lint"
+    }
+  },
+  "devDependencies": {
+    "husky": "^3.0.8",
+    "lerna": "^3.16.4"
+  }
+}
