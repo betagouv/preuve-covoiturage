@@ -1,3 +1,4 @@
+// tslint:disable:no-bitwise
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -68,20 +69,109 @@ export class StatService extends ApiService<StatInterface> {
     return this._formatedStat$;
   }
 
-  formatData(d: Stat | null) {
+  formatData(result: any | null) {
+    const fill = (acc, target, day, data = {}) => {
+      Object.keys(data).forEach((key) => {
+        acc[target][key] += data[key];
+      });
+      acc[target].days.push({
+        day,
+        ...data,
+      });
+    };
+    const fillMonth = (acc, target, day, data = {}) => {
+      const monthIndex = acc[target].months.findIndex((month) => month.date === day.getMonth());
+      if (monthIndex === -1) {
+        acc[target].months.push({
+          date: day.getMonth(),
+          ...data,
+        });
+      } else {
+        const month = acc[target].months[monthIndex];
+        Object.keys(data).forEach((key) => {
+          month[key] += data[key];
+        });
+        acc[target].months[monthIndex] = month;
+      }
+    };
+
+    const { carpoolers, carpoolers_per_vehicule, distance, trips } = result.reduce(
+      (acc, current) => {
+        // carpoolers
+        fill(acc, 'carpoolers', current.day, { total: current.carpoolers });
+        fillMonth(acc, 'carpoolers', current.day, { total: current.carpoolers });
+        fill(acc, 'distance', current.day, { total: current.distance });
+        fillMonth(acc, 'distance', current.day, { total: current.distance });
+        fill(acc, 'trips', current.day, {
+          total: current.trip,
+          total_subsidized: current.trip_subsidized,
+        });
+        fillMonth(acc, 'trips', current.day, {
+          total: current.trip,
+          total_subsidized: current.trip_subsidized,
+        });
+        fill(acc, 'carpoolers_per_vehicule', current.day, { total: current.carpoolers / current.trip });
+
+        return acc;
+      },
+      {
+        carpoolers: {
+          total: 0,
+          days: [],
+          months: [],
+        },
+        carpoolers_per_vehicule: {
+          total: 0,
+          days: [],
+          months: [],
+        },
+        distance: {
+          total: 0,
+          days: [],
+          months: [],
+        },
+        trips: {
+          total: 0,
+          total_subsidized: 0,
+          days: [],
+          months: [],
+        },
+      },
+    );
+
+    const cpvm = carpoolers_per_vehicule.days.reduce((acc, current) => {
+      const month = current.day.getMonth();
+      if (!(month in acc)) {
+        acc[month] = [];
+      }
+      acc[month].push(current.total);
+      return acc;
+    }, {});
+    const d = {
+      carpoolers,
+      distance,
+      trips,
+      carpoolers_per_vehicule: {
+        total:
+          carpoolers_per_vehicule.days.map((day) => day.total).reduce((acc, value) => acc + value, 0) /
+          carpoolers_per_vehicule.days.length,
+        months: Object.keys(cpvm).map((key) => ({
+          month: key,
+          total: cpvm[key].reduce((acc, curr) => acc + curr, 0) / cpvm[key].length,
+        })),
+        days: carpoolers_per_vehicule.days,
+      },
+    };
+
     if (!d || !d.trips || !d.distance || !d.carpoolers_per_vehicule || !d.carpoolers) return;
 
     const formatedStat = <FormatedStatInterface>{
       total: {
         trips: get(d, 'trips.total', 0),
-        // tslint:disable-next-line:no-bitwise
         distance: (get(d, 'distance.total', 0) / 1000) | 0,
         carpoolers: get(d, 'carpoolers.total', 0),
-        // tslint:disable-next-line:no-bitwise
         petrol: (get(d, 'distance.total', 0) * petrolFactor) | 0,
-        // tslint:disable-next-line:no-bitwise
         co2: (get(d, 'distance.total', 0) * co2Factor) | 0,
-        // tslint:disable-next-line:no-bitwise
         carpoolersPerVehicule: get(d, 'carpoolers_per_vehicule.total', 0)
           ? get(d, 'carpoolers_per_vehicule.total', 0).toFixed(2)
           : 0,
