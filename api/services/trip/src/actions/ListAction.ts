@@ -29,6 +29,15 @@ export class ListAction extends Action {
               return 'territory.trip.list';
             }
           },
+          (params, context) => {
+            if (
+              'operator_id' in params &&
+              params.operator_id.length === 1 &&
+              params.operator_id[0] === context.call.user.operator
+            ) {
+              return 'operator.trip.list';
+            }
+          },
         ],
       ],
     ],
