@@ -1,16 +1,17 @@
 // tslint:disable:prefer-conditional-expression
-
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs/operators';
+
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
-import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { User } from '~/core/entities/authentication/user';
 import { Territory } from '~/core/entities/territory/territory';
 import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
+import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 
 @Injectable({
   providedIn: 'root',
@@ -68,8 +69,9 @@ export class CommonDataService {
     private territoryService: TerritoryService,
     private campaignService: CampaignService,
     private authenticationService: AuthenticationService,
+    private jsonRPCService: JsonRPCService,
   ) {
-    this.authenticationService.user$.subscribe(() => this.loadAll());
+    this.authenticationService.user$.subscribe((user) => (user ? this.loadAll().subscribe() : this.resetAll()));
   }
 
   loadCurrentOperator(): Observable<Operator> {
@@ -118,17 +120,69 @@ export class CommonDataService {
   public loadAll() {
     console.log('> loadAll');
     return this.authenticationService.check().pipe(
-      mergeMap((user) =>
-        user
-          ? forkJoin(
-              this.loadOperators(),
-              this.loadCampaigns(),
-              this.loadTerritories(),
-              // this.loadCurrentOperator(),
-              // this.loadCurrentTerritory(),
-            ).pipe(catchError((err) => of(true)))
-          : of(null),
-      ),
+      mergeMap((user) => {
+        if (user) {
+          const params = [
+            this.operatorService.getListJSONParam(),
+            this.territoryService.getListJSONParam(),
+            this.campaignService.getListJSONParam(),
+          ];
+
+          if (user.territory) {
+            params.push(this.territoryService.getFindByIdJSONParam(user.territory ? user.territory : ''));
+          } else if (user.operator) {
+            params.push(this.territoryService.getFindByIdJSONParam(user.territory ? user.territory : ''));
+          }
+
+          return this.jsonRPCService.call(params);
+        }
+
+        return of(null);
+      }),
+      map((results: any[]) => {
+        const [operatorsR, territoriesR, campaignsR, currentContextData] = results;
+        if (currentContextData && currentContextData.data) {
+          if (this.authenticationService.user.operator) {
+            this._currentOperator$.next(currentContextData.data);
+          } else {
+            this._currentTerritory$.next(currentContextData.data);
+          }
+
+          if (!this.authenticationService.user.operator) this._currentOperator$.next(null);
+          if (!this.authenticationService.user.territory) this._currentTerritory$.next(null);
+        }
+
+        if (operatorsR.data) {
+          this._operators$.next(
+            operatorsR.data.sort((operatorA, operatorB) =>
+              operatorA.nom_commercial > operatorB.nom_commercial ? 1 : -1,
+            ),
+          );
+        }
+
+        if (territoriesR.data) {
+          this._territories$.next(
+            territoriesR.data.sort((territoryA, territoryB) => (territoryA.name > territoryB.name ? 1 : -1)),
+          );
+        }
+
+        if (campaignsR.data) {
+          this._campaigns$.next(
+            campaignsR.data.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1)),
+          );
+        }
+
+        console.log('results : ', results);
+        return true;
+      }),
     );
+  }
+
+  public resetAll() {
+    this._territories$.next(null);
+    this._campaigns$.next(null);
+    this._operators$.next(null);
+    this._currentOperator$.next(null);
+    this._currentTerritory$.next(null);
   }
 }

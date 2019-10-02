@@ -18,8 +18,5 @@ export class AppComponent extends DestroyObservable implements OnInit {
 
   ngOnInit(): void {
     this.iconService.init();
-    this.commonDataService.loadAll().subscribe((loaded) => {
-      console.log('loaded : ', loaded);
-    });
   }
 }

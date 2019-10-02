@@ -247,18 +247,12 @@ export class AuthenticationService {
   }
 
   check(): Observable<User> {
-    console.log('> check');
-    // console.log('> check');
-
     if (this._hasChecked) {
-      // console.log('has checked', this._userService.user);
       return of(this.user);
     }
-    console.log('> this._hasChecked : ', this._hasChecked);
     return this.userMe$.pipe(
       tap((user) => {
         this._hasChecked = true;
-        console.log(' <<<');
         if (user) this.onLoggin(user);
       }),
     );
