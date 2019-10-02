@@ -118,7 +118,6 @@ export class CommonDataService {
   }
 
   public loadAll() {
-    console.log('> loadAll');
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
@@ -172,7 +171,6 @@ export class CommonDataService {
           );
         }
 
-        console.log('results : ', results);
         return true;
       }),
     );
