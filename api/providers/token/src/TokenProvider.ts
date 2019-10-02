@@ -1,52 +1,28 @@
 import * as jwt from 'jsonwebtoken';
-import { provider, ProviderInterface } from '@ilos/common';
+import { provider, ProviderInterface, ConfigInterfaceResolver, InitHookInterface } from '@ilos/common';
 
-import {
-  TokenProviderInterfaceResolver,
-  TokenProviderInterface,
-  TokenPayloadInterface,
-  TokenProviderConfig,
-} from './interfaces';
+import { TokenProviderInterfaceResolver, TokenProviderInterface, TokenPayloadInterface } from './interfaces';
 
 @provider({
   identifier: TokenProviderInterfaceResolver,
 })
-export class TokenProvider implements ProviderInterface, TokenProviderInterface {
+export class TokenProvider implements ProviderInterface, TokenProviderInterface, InitHookInterface {
   private secret: string | Buffer;
   private ttl: number;
   private signOptions: jwt.SignOptions = {};
   private verifyOptions: jwt.VerifyOptions = {};
-  private defaultHeaders: jwt.JwtHeader = {
-    alg: 'HS256',
-  };
 
-  constructor() {
-    // initialize the provider with default values
-    // this can be overriden by the user when instanciating a new object
-    // const tkProvider = new TokenProvider().init({.....});
-    this.init();
-  }
+  constructor(private config: ConfigInterfaceResolver) {}
 
-  init(cnf?: TokenProviderConfig): TokenProvider {
-    // TODO use an external config here
-    const config = {
-      ...cnf,
-      secret: process.env.APP_JWT_SECRET || 'not-secret',
-      ttl: parseInt(process.env.APP_JWT_TTL, 10) || 86400,
-      signOptions: {},
-      verifyOptions: {},
-    };
-
-    this.secret = config.secret;
-    this.ttl = config.ttl;
+  async init(): Promise<void> {
+    this.secret = this.config.get('jwt.secret');
+    this.ttl = this.config.get('jwt.ttl');
     this.signOptions = {
-      algorithm: this.defaultHeaders.alg,
+      algorithm: this.config.get('jwt.alg'),
       encoding: 'utf8',
-      ...config.signOptions,
+      ...this.config.get('jwt.signOptions'),
     };
-    this.verifyOptions = { ...config.verifyOptions };
-
-    return this;
+    this.verifyOptions = { ...this.config.get('jwt.verifyOptions') };
   }
 
   async sign(payload: TokenPayloadInterface, options: jwt.SignOptions = {}): Promise<string> {
