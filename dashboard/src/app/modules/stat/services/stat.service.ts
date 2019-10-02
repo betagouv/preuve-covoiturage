@@ -37,10 +37,13 @@ export class StatService extends ApiService<StatInterface> {
     const user = this._authService.user;
     if (user && user.group === UserGroupEnum.TERRITORY) {
       filter['territory_id'] = [user.territory];
+      // TODO: temp, remove when filter operator added
+      if ('operator_id' in filter) {
+        delete filter.operator_id;
+      }
     }
-    // TODO: temp, remove when filter operator added
-    if ('operator_id' in filter) {
-      delete filter.operator_id;
+    if (user && user.group === UserGroupEnum.OPERATOR) {
+      filter['operator_id'] = [user.operator];
     }
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`trip:stats`, filter);
