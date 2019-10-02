@@ -5,12 +5,18 @@ jobs:
       - image: circleci/node:10
       - image: circleci/mongo:4.0
       - image: circleci/redis:4
+      - image: circleci/postgres:11.5-alpine-postgis-ram
+        environment:
+          POSTGRES_USER: 'postgres'
+          POSTGRES_PASSWORD: 'postgres'
+          POSTGRES_DB: 'pdc-local'
     working_directory: ~/repo/api
     parallelism: 1
     environment:
-      NODE_ENV: test
+      NODE_ENV: testing
       APP_MONGO_URL: mongodb://127.0.0.1:27017/pdc-test
       APP_REDIS_URL: redis://127.0.0.1:6379
+      APP_POSTGRES_URL: postgresql://postgres:postgres@127.0.0.1:5432/pdc-local
     steps:
       - checkout:
           path: ~/repo
@@ -47,7 +53,8 @@ jobs:
       #       cat coverage/**/lcov.info > coverage/lcov.info
       #       ./cc-test-reporter format-coverage -t lcov
       #       ./cc-test-reporter upload-coverage
-  front-angular:
+
+  front-qa:
     docker:
       - image: circleci/node:10
     working_directory: ~/repo/dashboard
@@ -63,13 +70,59 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn lint
-      - run: yarn build --configuration=production
+      # - run: yarn build --no-progress
+      # - run: yarn test
+
+  front-deploy:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo/dashboard
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn install --production=false
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Build
+          # command: yarn build -c $CIRCLE_BRANCH --no-progress
+          command: yarn build -c staging --no-progress
+      - add_ssh_keys:
+          fingerprints:
+            - 'c7:ba:98:8b:3d:b4:92:c7:b4:97:d5:9b:e8:c1:3d:ec'
+      - run:
+          name: Clean up existing deploy
+          command: |
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net rm -rf www/$CIRCLE_BRANCH
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net mkdir -p www/$CIRCLE_BRANCH
+      - run:
+          name: Deploy to Alwaysdata
+          command: |
+            mv dist/dashboard dist/$CIRCLE_BRANCH
+            scp -rpq -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec dist/$CIRCLE_BRANCH covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net:www/
 
 workflows:
   version: 2
-  backend-tests:
+  # backend-tests:
+  #   jobs:
+  #     - api-ts
+  # frontend-tests:
+  #   jobs:
+  #     - front-angular
+  frontend:
     jobs:
-      - api-ts
-  frontend-tests:
-    jobs:
-      - front-angular
+      # - front-qa
+      - front-deploy:
+          # requires:
+          #   - front-qa
+          filters:
+            branches:
+              only:
+                - fix-ci
+                # - dev
+                # - staging
