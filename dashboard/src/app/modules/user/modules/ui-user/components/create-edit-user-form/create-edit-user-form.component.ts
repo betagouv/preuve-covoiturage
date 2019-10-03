@@ -77,7 +77,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     const formVal = { ...this.createEditUserForm.value };
     if (!formVal.territory) delete formVal.territory;
     if (!formVal.operator) delete formVal.operator;
-    if (!formVal.phone) delete formVal.phone;
+    formVal.phone = formVal.phone ? formVal.phone : null;
 
     if (!this.isCreating) {
       delete formVal.territory;
@@ -99,7 +99,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         },
         (err) => {
           this.isCreatingUpdating = false;
-          this.toastr.error(err.message);
+          // this.toastr.error(err.message);
+          throw err;
         },
       );
     } else {
@@ -112,7 +113,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         },
         (err) => {
           this.isCreatingUpdating = false;
-          this.toastr.error(err.message);
+          // this.toastr.error(err.message);
+          throw err;
         },
       );
     }

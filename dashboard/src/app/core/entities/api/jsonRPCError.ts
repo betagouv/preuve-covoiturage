@@ -1,5 +1,9 @@
-export interface JsonRPCError {
+export class JsonRPCError extends Error {
   code: string;
-  message: string;
   data: any;
+
+  constructor(serverResponse?: any) {
+    super(serverResponse.message);
+    this.code = serverResponse.code;
+  }
 }

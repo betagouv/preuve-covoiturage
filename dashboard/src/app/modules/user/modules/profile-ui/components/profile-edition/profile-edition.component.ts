@@ -42,9 +42,8 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
     const userData = {
       _id: user._id,
       ...this.profileForm.value,
-      phone: this.profileForm.value.phone ? this.profileForm.value.phone : '',
+      phone: this.profileForm.value.phone ? this.profileForm.value.phone : null,
     };
-    if (!userData.phone) delete userData.phone;
 
     this.authService.patch(userData).subscribe((updatedUser) => {
       this.toastr.success('Votre profile as bien été mis à jour');

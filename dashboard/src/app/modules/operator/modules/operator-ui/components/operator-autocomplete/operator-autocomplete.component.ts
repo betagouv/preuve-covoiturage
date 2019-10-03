@@ -7,6 +7,7 @@ import { map, startWith, takeUntil } from 'rxjs/operators';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Operator } from '~/core/entities/operator/operator';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-operator-autocomplete',
@@ -28,15 +29,18 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   private _operatorForm: AbstractControl;
 
-  constructor(private operatorService: OperatorService) {
+  constructor(private operatorService: OperatorService, private commonDataService: CommonDataService) {
     super();
   }
 
   updateOperator(operatorId: string) {}
 
   private selectedOperatorUpdated() {
-    this.selectedOperatorId = this._operatorForm.value ? this._operatorForm.value.toString() : null;
-    this.selectedOperator = this.operators.find((foperator) => this.selectedOperatorId === foperator._id);
+    this.selectedOperatorId =
+      this._operatorForm && this._operatorForm.value ? this._operatorForm.value.toString() : null;
+    this.selectedOperator = this.operators
+      ? this.operators.find((foperator) => this.selectedOperatorId === foperator._id)
+      : null;
     this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : '');
   }
 
@@ -55,12 +59,18 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     //   this.operators = operators;
     // });
 
-    this.operatorService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((operators) => {
-        this.operators = operators;
-      });
+    // this.operatorService
+    //   .load()
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((operators) => {
+    //     this.operators = operators;
+    //   });
+
+    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+      this.operators = operators;
+      this.selectedOperatorUpdated();
+      console.log('this.operators : ', this.operators);
+    });
 
     this.filteredOperators = this.operatorCtrl.valueChanges.pipe(
       startWith(''),
@@ -78,7 +88,9 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   // }
   private filter(value: string): Operator[] {
     this._searchUpdate = true;
-    return this.operators.filter((operator) => operator.nom_commercial.toLowerCase().includes(value.toLowerCase()));
+    return this.operators
+      ? this.operators.filter((operator) => operator.nom_commercial.toLowerCase().includes(value.toLowerCase()))
+      : null;
   }
 
   inputLostFocus() {
