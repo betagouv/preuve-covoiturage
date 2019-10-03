@@ -13,7 +13,7 @@ export const userPatchSchema = {
         email: { macro: 'email' },
         lastname: { macro: 'varchar' },
         firstname: { macro: 'varchar' },
-        phone: { macro: 'phone' },
+        phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
       },
     },
   },
