@@ -36,20 +36,14 @@ export class JsonRPCService {
     this.url = 'rpc';
   }
 
-  public callOne(
-    method: JsonRPCParam,
-    options: RPCOptions = { withCredentials: true },
-    throwErrors = true,
-  ): Observable<JsonRPCResult> {
+  public callOne(method: JsonRPCParam, options?: RPCOptions, throwErrors = true): Observable<JsonRPCResult> {
     return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
   }
 
-  public call(
-    methods: JsonRPCParam[],
-    options: RPCOptions = { withCredentials: true },
-    throwErrors = true,
-  ): Observable<JsonRPCResult[]> {
-    options.withCredentials = true;
+  public call(methods: JsonRPCParam[], options?: RPCOptions, throwErrors = true): Observable<JsonRPCResult[]> {
+    // handle default withCredentials = true for empty object and undefined property
+    const finalOptions = options ? options : { withCredentials: true };
+    finalOptions.withCredentials = options.withCredentials !== undefined ? options.withCredentials : true;
 
     let urlWithMethods = this.url;
     methods.forEach((method, index) => {
@@ -60,7 +54,7 @@ export class JsonRPCService {
       }
       urlWithMethods += `${method.method}`;
     });
-    return this.http.post(urlWithMethods, methods, options).pipe(
+    return this.http.post(urlWithMethods, methods, finalOptions).pipe(
       catchError((response) => {
         if (response.status === 401) {
           this.router.navigate(['/login']);
