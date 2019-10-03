@@ -8,6 +8,7 @@ import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
+import { JSONRPCError } from '~/core/entities/api/jsonRPCError';
 
 interface RPCOptions {
   headers?:
@@ -43,7 +44,7 @@ export class JsonRPCService {
   public call(methods: JsonRPCParam[], options?: RPCOptions, throwErrors = true): Observable<JsonRPCResult[]> {
     // handle default withCredentials = true for empty object and undefined property
     const finalOptions = options ? options : { withCredentials: true };
-    finalOptions.withCredentials = options.withCredentials !== undefined ? options.withCredentials : true;
+    finalOptions.withCredentials = finalOptions.withCredentials !== undefined ? finalOptions.withCredentials : true;
 
     let urlWithMethods = this.url;
     methods.forEach((method, index) => {
@@ -67,12 +68,12 @@ export class JsonRPCService {
         // if (response.data) {
         response.forEach((data: JsonRPCResponse) => {
           if (data.error) {
-            const errorMessage = `JSON RCP Error
-              ${data.id} : ${data.error.code} ::
-              ${data.error.message}
-              ${data.error.data}`;
-            console.error(errorMessage);
-            if (throwErrors) throw new Error(errorMessage);
+            const error = new JSONRPCError(data.error);
+
+            if (throwErrors) {
+              throw error;
+            }
+            console.error('RPC error ', error);
           }
 
           // temporary compatibility solver (for result | result.data)

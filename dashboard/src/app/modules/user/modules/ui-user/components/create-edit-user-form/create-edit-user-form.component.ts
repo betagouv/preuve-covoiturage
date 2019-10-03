@@ -99,7 +99,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         },
         (err) => {
           this.isCreatingUpdating = false;
-          this.toastr.error(err.message);
+          // this.toastr.error(err.message);
+          throw err;
         },
       );
     } else {
@@ -112,7 +113,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         },
         (err) => {
           this.isCreatingUpdating = false;
-          this.toastr.error(err.message);
+          // this.toastr.error(err.message);
+          throw err;
         },
       );
     }

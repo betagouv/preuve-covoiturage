@@ -133,7 +133,7 @@ export class CommonDataService {
             params.push(this.territoryService.getFindByIdJSONParam(user.territory ? user.territory : ''));
           }
 
-          return this.jsonRPCService.call(params);
+          return this.jsonRPCService.call(params, {}, false);
         }
 
         return of(null);
