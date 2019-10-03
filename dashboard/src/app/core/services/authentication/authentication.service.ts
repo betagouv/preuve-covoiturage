@@ -48,10 +48,10 @@ export class AuthenticationService {
     this.userMe$ = this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
       map(({ data }) => {
         // if forbidden return null
-        if (data.error && data.data.error.code === -32503) {
+        if (data.error && data.error.code === -32503) {
           return null;
         }
-        return new User(data.data);
+        return new User(data);
       }),
       catchError((errorResponse) => {
         if (errorResponse.status === 401) return of(null);
