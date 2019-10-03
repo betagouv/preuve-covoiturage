@@ -1,4 +1,4 @@
-export class JSONRPCError extends Error {
+export class JsonRPCError extends Error {
   code: string;
   data: any;
   errorMessage: string;

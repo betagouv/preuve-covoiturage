@@ -6,9 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
-import { JSONRPCError } from '~/core/entities/api/jsonRPCError';
 
 interface RPCOptions {
   headers?:
@@ -68,7 +68,7 @@ export class JsonRPCService {
         // if (response.data) {
         response.forEach((data: JsonRPCResponse) => {
           if (data.error) {
-            const error = new JSONRPCError(data.error);
+            const error = new JsonRPCError(data.error);
 
             if (throwErrors) {
               throw error;
