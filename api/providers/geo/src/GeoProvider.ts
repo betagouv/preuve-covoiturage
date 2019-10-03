@@ -10,7 +10,10 @@ import { FrGouvDataApiAdresse } from './providers/fr.gouv.data.api-adresse';
 import { FrGouvApiGeo } from './providers/fr.gouv.api.geo';
 import { OrgOpenstreetmapNominatim } from './providers/org.openstreetmap.nominatim';
 import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
+import { FrGouvBetaCovoiturageOsrm, OrgProjectOsrm } from './providers';
+import { PointInterface } from './interfaces/PointInterface';
 
+// TODO refactor
 const validators: [string, any][] = [
   [
     'position',
@@ -45,6 +48,7 @@ export class GeoProvider implements ProviderInterface, InitHookInterface {
     });
   }
 
+  // TODO rename method and clean the fallback syntax
   public async getTown(position: GeoInterface): Promise<PositionInterface> {
     await this.validator.validate(position, 'position');
 
@@ -179,6 +183,16 @@ export class GeoProvider implements ProviderInterface, InitHookInterface {
     }
 
     throw new InvalidParamsException();
+  }
+
+  /**
+   * Retrieve the distance and duration from a list of OSRM providers
+   */
+  public async getRoute(start: PointInterface, end: PointInterface): Promise<{ distance: number; duration: number }> {
+    return [FrGouvBetaCovoiturageOsrm.route, OrgProjectOsrm.route].reduce(
+      (promiseAcc, func) => promiseAcc.then((res) => res).catch(() => func(start, end)),
+      Promise.reject(),
+    );
   }
 
   private cleanPostcodes(p) {
