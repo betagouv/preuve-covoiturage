@@ -1,11 +1,10 @@
-// tslint:disable:variable-name
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 import { TripSearchInterface } from '@pdc/provider-schema/dist';
 
 import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
 
-/*
+/**
  * List trips
  */
 @handler({
