@@ -13,10 +13,6 @@ import { MetadataWrapper } from './MetadataWrapper';
 export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepositoryProviderInterface {
   constructor(protected config: ConfigInterfaceResolver, protected connection: MongoConnection) {}
 
-  protected get client() {
-    return this.connection.getClient();
-  }
-
   protected getDbName(): string {
     return this.config.get('campaignMetadata.db');
   }
@@ -26,7 +22,10 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
   }
 
   protected async getCollection(): Promise<CollectionInterface> {
-    return this.client.db(this.getDbName()).collection(this.getCollectionName());
+    return this.connection
+      .getClient()
+      .db(this.getDbName())
+      .collection(this.getCollectionName());
   }
 
   async get(id: string): Promise<MetadataWrapper> {
