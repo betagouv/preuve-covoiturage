@@ -1,5 +1,10 @@
 .token {
-  padding: 10px;
+  padding: 10px 0;
   overflow-y: auto;
   text-align: center;
+  //display: flex;
+  //max-width: 100%;
+  h5 {
+    overflow-wrap: break-word;
+  }
 }
