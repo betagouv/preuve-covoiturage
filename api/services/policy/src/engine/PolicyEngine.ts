@@ -17,7 +17,7 @@ export class PolicyEngine {
   ) {}
 
   protected compose(campaign: CampaignInterface) {
-    const rules = this.getOrderedApplicableRules(campaign).map((ruleSet) => compose(ruleSet));
+    const rules = this.getOrderedApplicableRules(campaign).map(compose);
     return async (ctx) => {
       // for each rule set of rules
       for (const rule of rules) {
