@@ -1,6 +1,6 @@
 import { campaignThirdStepClickNextStep, campaignThirdStepClickPreviousStep } from './steps/campaign-create-third-step';
 import { campaignSecondStepClickNextStep, campaignSecondStepSelectTargets } from './steps/campaign-create-second-step';
-import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 
 export function cypress_campaignEdit() {
   it('clicks on edit button', () => {

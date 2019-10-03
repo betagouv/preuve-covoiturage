@@ -17,7 +17,7 @@ import {
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import { operatorStubs } from './operator.list';
-import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 
 export const campaignStubs: Campaign[] = [
   {

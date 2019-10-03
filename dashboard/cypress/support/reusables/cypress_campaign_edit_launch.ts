@@ -1,5 +1,5 @@
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 
 export function cypress_campaignEditAndLauch() {
   // change template

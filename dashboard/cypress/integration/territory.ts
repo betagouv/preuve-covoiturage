@@ -10,7 +10,10 @@ import { stubUserMe } from '../support/stubs/user.me';
 import { stubCampaignCreate } from '../support/stubs/campaign.create';
 import { stubCampaignPatch } from '../support/stubs/campaign.patch';
 import { TripGenerator } from '../support/generators/trips.generator';
-import { testTerritoryPath } from '../support/paths/territory.path';
+import { testTerritoryStory } from '../support/stories/territory.story';
+import { cypress_stub_login } from '../support/reusables/cypress_login';
+import { stubTerritoryList } from '../support/stubs/territory.list';
+import { stubCampaignTemplateList } from '../support/stubs/campaign-template.list';
 
 context('TERRITORY', () => {
   const tripGenerator = new TripGenerator();
@@ -23,13 +26,14 @@ context('TERRITORY', () => {
     stubCampaignList();
     stubOperatorList();
     stubTerritoryList();
-    // stubCampaignTemplateList();
+    stubCampaignTemplateList();
     stubStatList();
+    cypress_stub_login(UserGroupEnum.TERRITORY);
     stubUserMe(UserGroupEnum.TERRITORY);
     stubCampaignCreate(CampaignStatusEnum.DRAFT);
     stubCampaignPatch();
     stubTripList(trips);
   });
 
-  testTerritoryPath();
+  testTerritoryStory();
 });

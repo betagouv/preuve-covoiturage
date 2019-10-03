@@ -20,7 +20,7 @@ import {
   campaignThirdStepSetMaxTrips,
   campaignThirdStepSetUnit,
 } from '../../support/reusables/steps/campaign-create-third-step';
-import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 import { stubCampaignCreate } from '../stubs/campaign.create';
 
 export function cypress_campaignCreate() {

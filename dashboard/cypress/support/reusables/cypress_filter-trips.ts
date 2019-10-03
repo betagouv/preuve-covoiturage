@@ -1,7 +1,7 @@
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '../../../src/app/core/const/filter.const';
 
 /// <reference types="Cypress" />
-import { expectedFilter, filterEndMoment, filterStartMoment } from '../formValues/expectedFilter';
+import { expectedFilter, filterEndMoment, filterStartMoment } from '../apiValues/expectedFilter';
 
 export function cypress_filterTrips() {
   it('opens filter', () => {
