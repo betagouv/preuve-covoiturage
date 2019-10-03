@@ -29,10 +29,12 @@ const fakeCampaign = {
   status: 'draft',
   global_rules: [],
   rules: [
-    {
-      slug: 'adult_only_filter',
-      parameters: true,
-    },
+    [
+      {
+        slug: 'adult_only_filter',
+        parameters: true,
+      },
+    ],
   ],
 };
 

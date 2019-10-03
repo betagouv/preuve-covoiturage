@@ -24,34 +24,28 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
   }
 
   async process(params: CampaignInterface, context: ContextType, next?: Function, options?: any): Promise<ResultType> {
-    let rules = [];
+    const availablePolicies = policies.map((policy) => policy.slug);
+    const globalRules = params.global_rules && params.global_rules.length ? params.global_rules : [];
+    const ruleSets = params.rules && params.rules.length ? [globalRules, ...params.rules] : [globalRules];
 
-    if (params.global_rules) {
-      rules = [...rules, ...params.global_rules];
-    }
-
-    if (params.rules) {
-      rules = [...rules, ...params.rules];
-    }
-
-    if (rules.length > 0) {
-      const availablePolicies = policies.map((policy) => policy.slug);
-
-      const notApplicablePolicies = rules.filter((policy) => availablePolicies.indexOf(policy.slug) < 0);
-      if (notApplicablePolicies.length > 0) {
-        throw new InvalidParamsException(
-          `Unknown retribution rules: ${notApplicablePolicies.map((rule) => rule.slug).join(', ')}`,
-        );
-      }
-
-      for (const rule of rules) {
-        if (!('parameters' in rule)) {
-          throw new InvalidParamsException(`Unparametred rule ${rule.slug}`);
+    for (const ruleSet of ruleSets) {
+      if (ruleSet.length && ruleSet.length > 0) {
+        const notApplicablePolicies = ruleSet.filter((policy) => availablePolicies.indexOf(policy.slug) < 0);
+        if (notApplicablePolicies.length > 0) {
+          throw new InvalidParamsException(
+            `Unknown retribution rules: ${notApplicablePolicies.map((rule) => rule.slug).join(', ')}`,
+          );
         }
-        try {
-          await this.validator.validate(rule.parameters, `policies.${rule.slug}`);
-        } catch (e) {
-          throw new InvalidParamsException(e.message);
+
+        for (const rule of ruleSet) {
+          if (!('parameters' in rule)) {
+            throw new InvalidParamsException(`Unparametred rule ${rule.slug}`);
+          }
+          try {
+            await this.validator.validate(rule.parameters, `policies.${rule.slug}`);
+          } catch (e) {
+            throw new InvalidParamsException(e.message);
+          }
         }
       }
     }
