@@ -77,7 +77,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     const formVal = { ...this.createEditUserForm.value };
     if (!formVal.territory) delete formVal.territory;
     if (!formVal.operator) delete formVal.operator;
-    if (!formVal.phone) delete formVal.phone;
+    formVal.phone = formVal.phone ? formVal.phone : null;
 
     if (!this.isCreating) {
       delete formVal.territory;
