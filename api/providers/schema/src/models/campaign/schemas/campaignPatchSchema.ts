@@ -39,7 +39,11 @@ export const campaignPatchSchema = {
         rules: {
           type: 'array',
           minItems: 1,
-          items: ruleSchema,
+          items: {
+            type: 'array',
+            minItems: 1,
+            items: ruleSchema,
+          },
         },
       },
     },

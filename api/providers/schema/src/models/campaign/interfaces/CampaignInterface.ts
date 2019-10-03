@@ -12,5 +12,5 @@ export interface CampaignInterface {
   unit: string;
   status: string;
   global_rules: RuleInterface[];
-  rules: RuleInterface[];
+  rules: RuleInterface[][];
 }

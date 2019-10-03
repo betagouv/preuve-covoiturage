@@ -41,7 +41,12 @@ export const campaignCreateSchema = {
     },
     rules: {
       type: 'array',
-      items: ruleSchema,
+      minItems: 1,
+      items: {
+        type: 'array',
+        minItems: 1,
+        items: ruleSchema,
+      },
     },
   },
 };
