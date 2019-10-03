@@ -3,7 +3,7 @@ import { CampaignInterface, TripInterface } from '@pdc/provider-schema';
 
 import { CampaignMetadataRepositoryProviderInterfaceResolver } from '../interfaces/CampaignMetadataRepositoryProviderInterface';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
-import { ApplicableRuleInterface } from '../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface, RuleHandlerInterface } from '../interfaces/RuleInterfaces';
 
 import { policies } from './rules';
 import { compose } from './helpers/compose';
@@ -17,9 +17,24 @@ export class PolicyEngine {
   ) {}
 
   protected compose(campaign: CampaignInterface) {
-    const rules = this.getOrderedApplicableRules(campaign);
-
-    return compose(rules.map((rule) => rule.apply(rule.parameters)));
+    const rules = this.getOrderedApplicableRules(campaign).map((ruleSet) => compose(ruleSet));
+    return async (ctx) => {
+      // for each rule set of rules
+      for (const rule of rules) {
+        try {
+          await rule(ctx);
+          // if rule not throwing something, stop
+          return true;
+        } catch (e) {
+          // if rule is throwing a NotAplicableTargetException, process next
+          if (!(e instanceof NotApplicableTargetException)) {
+            throw e;
+          }
+        }
+      }
+      // no rule set is applicable here, do nothing
+      return false;
+    };
   }
 
   public async process(trip: TripInterface) {
@@ -33,20 +48,16 @@ export class PolicyEngine {
 
       for (const person of trip.people) {
         const ctx = { trip, person, meta, result: 1 };
-        try {
-          await apply(ctx, async () => {});
+        const result = await apply(ctx);
+        if (result) {
+          // do something with result :)
           results.push({
             campaign: campaign._id,
             trip: trip._id,
             person: person.identity.phone,
             amount: ctx.result,
           });
-        } catch (e) {
-          if (!(e instanceof NotApplicableTargetException)) {
-            throw e;
-          }
         }
-        // do something with result :)
       }
 
       // save metadata
@@ -55,14 +66,26 @@ export class PolicyEngine {
     return results;
   }
 
-  protected getOrderedApplicableRules(campaign: CampaignInterface): ApplicableRuleInterface[] {
-    const rules = [...campaign.global_rules, ...campaign.rules];
-    return rules
-      .map((rule) => ({
-        ...rule,
-        ...policies.find((p) => p.slug === rule.slug),
-      }))
-      .filter((rule) => rule !== undefined && 'apply' in rule)
-      .sort((rule1, rule2) => (rule1.index < rule2.index ? -1 : rule1.index < rule2.index ? 1 : 0));
+  protected getOrderedApplicableRules(campaign: CampaignInterface): RuleHandlerInterface[][] {
+    const results = [];
+    for (const ruleSet of campaign.rules) {
+      // merge current rule set with global rule set
+      const rules = [...campaign.global_rules, ...ruleSet];
+      results.push(
+        rules
+          // merge the configuration object with the applicable rule
+          .map((rule) => ({
+            ...rule,
+            ...policies.find((p) => p.slug === rule.slug),
+          }))
+          // filter if some rule not implement apply method
+          .filter((rule) => rule !== undefined && 'apply' in rule)
+          // sort it by index
+          .sort((rule1, rule2) => (rule1.index < rule2.index ? -1 : rule1.index < rule2.index ? 1 : 0))
+          // build the apply function by passing params
+          .map((rule) => rule.apply(rule.parameters)),
+      );
+    }
+    return results;
   }
 }

@@ -37,14 +37,16 @@ const fakeCampaign = {
     },
   ],
   rules: [
-    {
-      slug: 'per_km',
-      parameters: true,
-    },
-    {
-      slug: 'fixed_amount',
-      parameters: 10,
-    },
+    [
+      {
+        slug: 'per_km',
+        parameters: true,
+      },
+      {
+        slug: 'fixed_amount',
+        parameters: 10,
+      },
+    ],
   ],
 };
 
@@ -55,7 +57,6 @@ const kernel = new CustomKernel();
 
 let db;
 let engine;
-let campaignRepository;
 
 describe('Policy engine', () => {
   let id;
@@ -199,6 +200,6 @@ describe('Policy engine', () => {
     expect(result[0].campaign).to.eq(id);
     expect(result[0].trip).to.eq(trip._id);
     expect(result[0].person).to.eq(trip.people[1].identity.phone);
-    expect(result[0].amount).to.eq((trip.people[1].distance / 1000) * <number>fakeCampaign.rules[1].parameters);
+    expect(result[0].amount).to.eq((trip.people[1].distance / 1000) * <number>fakeCampaign.rules[0][1].parameters);
   });
 });
