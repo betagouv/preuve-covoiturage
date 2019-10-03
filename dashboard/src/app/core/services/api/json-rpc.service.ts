@@ -36,11 +36,19 @@ export class JsonRPCService {
     this.url = 'rpc';
   }
 
-  public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult> {
-    return this.call([method], options).pipe(map((datas) => datas[0]));
+  public callOne(
+    method: JsonRPCParam,
+    options: RPCOptions = { withCredentials: true },
+    throwErrors = true,
+  ): Observable<JsonRPCResult> {
+    return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
   }
 
-  public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult[]> {
+  public call(
+    methods: JsonRPCParam[],
+    options: RPCOptions = { withCredentials: true },
+    throwErrors = true,
+  ): Observable<JsonRPCResult[]> {
     options.withCredentials = true;
 
     let urlWithMethods = this.url;
@@ -70,7 +78,7 @@ export class JsonRPCService {
               ${data.error.message}
               ${data.error.data}`;
             console.error(errorMessage);
-            // throw new Error(errorMessage);
+            if (throwErrors) throw new Error(errorMessage);
           }
 
           // temporary compatibility solver (for result | result.data)
