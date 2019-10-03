@@ -2,18 +2,18 @@ export interface StatInterface {
   _id: string;
   carpoolers: {
     total: number;
-    days: StatDateTotalInterface[];
-    months: StatDayTotalInterface[];
+    days: StatDayTotalInterface[];
+    months: StatDateTotalInterface[];
   };
   carpoolers_per_vehicule: {
     total: number;
-    days: StatDateTotalInterface[];
-    months: StatDayTotalInterface[];
+    days: StatDayTotalInterface[];
+    months: StatMonthTotalInterface[];
   };
   distance: {
     total: number;
-    days: StatDateTotalInterface[];
-    months: StatDayTotalInterface[];
+    days: StatDayTotalInterface[];
+    months: StatDateTotalInterface[];
   };
   operators: {
     total: number;
@@ -23,12 +23,12 @@ export interface StatInterface {
     total: number;
     total_subsidized: number;
     days: {
-      date: string;
+      day: string;
       total: number;
       total_subsidized: number;
     }[];
     months: {
-      day: number;
+      date: number;
       total: number;
       total_subsidized: number;
     }[];
@@ -36,11 +36,16 @@ export interface StatInterface {
 }
 
 export interface StatDateTotalInterface {
-  date: string;
+  date: number;
+  total: number;
+}
+
+export interface StatMonthTotalInterface {
+  month: number;
   total: number;
 }
 
 export interface StatDayTotalInterface {
-  day: number;
+  day: string;
   total: number;
 }

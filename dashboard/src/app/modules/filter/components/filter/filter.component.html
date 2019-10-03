@@ -81,7 +81,7 @@
           <!--          TERRITORIES -->
           <div class="filter-territories">
             <app-territories-autocomplete
-              *ngIf="authService.hasAnyGroup(['operators', 'registry'])"
+              *ngIf="hasGroupsOperatorsAndTerritories"
               [parentForm]="filterForm"
             ></app-territories-autocomplete>
           </div>

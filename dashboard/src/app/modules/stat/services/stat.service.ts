@@ -7,7 +7,7 @@ import { map, tap } from 'rxjs/operators';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Stat } from '~/core/entities/stat/stat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
+import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { ApiService } from '~/core/services/api/api.service';
 import { StatInterface } from '~/core/interfaces/stat/statInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';

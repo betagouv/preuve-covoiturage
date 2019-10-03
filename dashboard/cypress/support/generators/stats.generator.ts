@@ -29,13 +29,13 @@ export class StatsGenerator {
         total: 5678,
         days: mockStatsData.carpoolers.days.map((val, idx) => {
           return {
-            date: mockDates.days[idx],
+            day: mockDates.days[idx],
             total: val,
           };
         }),
         months: mockStatsData.carpoolers.months.map((val, idx) => {
           return {
-            day: mockDates.months[idx],
+            date: mockDates.months[idx],
             total: val,
           };
         }),
@@ -44,13 +44,13 @@ export class StatsGenerator {
         total: 2.5,
         days: mockStatsData.carpoolers_per_vehicule.days.map((val, idx) => {
           return {
-            date: mockDates.days[idx],
+            day: mockDates.days[idx],
             total: val,
           };
         }),
         months: mockStatsData.carpoolers_per_vehicule.months.map((val, idx) => {
           return {
-            day: mockDates.months[idx],
+            month: mockDates.months[idx],
             total: val,
           };
         }),
@@ -59,13 +59,13 @@ export class StatsGenerator {
         total: 1000780000,
         days: mockStatsData.distance.days.map((val, idx) => {
           return {
-            date: mockDates.days[idx],
+            day: mockDates.days[idx],
             total: val,
           };
         }),
         months: mockStatsData.distance.months.map((val, idx) => {
           return {
-            day: mockDates.months[idx],
+            date: mockDates.months[idx],
             total: val,
           };
         }),
@@ -79,14 +79,14 @@ export class StatsGenerator {
         total_subsidized: 62000,
         days: mockStatsData.trips.days.map((val, idx) => {
           return {
-            date: mockDates.days[idx],
+            day: mockDates.days[idx],
             total: val,
             total_subsidized: val / 2,
           };
         }),
         months: mockStatsData.trips.months.map((val, idx) => {
           return {
-            day: mockDates.months[idx],
+            date: mockDates.months[idx],
             total: val,
             total_subsidized: val / 2,
           };

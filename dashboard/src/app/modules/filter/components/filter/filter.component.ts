@@ -12,6 +12,7 @@ import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
 import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-filter',
@@ -126,5 +127,9 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     return moment()
       .isoWeekday(day + 1)
       .format('dddd');
+  }
+
+  public hasGroupsOperatorsAndTerritories() {
+    return this.authService.hasAnyGroup([UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY]);
   }
 }

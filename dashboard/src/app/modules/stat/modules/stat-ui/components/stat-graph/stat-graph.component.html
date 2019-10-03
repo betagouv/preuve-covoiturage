@@ -15,26 +15,32 @@
       </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'">
+    Aucun trajet n'a été réalisé la semaine dernière.
+  </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.distance.monthly) && toggleChart.distance === 'monthly'">
+    Aucun trajet n'a été réalisé le mois dernier.
+  </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.distance.cumulated) && toggleChart.distance === 'cumulated'">
+    Aucun trajet n'a été réalisé les derniers mois.
+  </div>
   <ngx-chartjs
     [data]="data.distance.daily"
-    *ngIf="isEmptyDataset(data.trips.daily) && toggleChart.distance === 'daily'"
+    *ngIf="isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'"
     type="bar"
     [height]="70"
     [options]="options.distancePerDay"
   ></ngx-chartjs>
-  <div class="graph-message" *ngIf="!isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'">
-    Aucun trajet n'a été réalisé la semaine dernière.
-  </div>
   <ngx-chartjs
     [data]="data.distance.monthly"
-    *ngIf="toggleChart.distance === 'monthly'"
+    *ngIf="isEmptyDataset(data.distance.monthly) && toggleChart.distance === 'monthly'"
     type="bar"
     [height]="70"
     [options]="options.distancePerMonth"
   ></ngx-chartjs>
   <ngx-chartjs
     [data]="data.distance.cumulated"
-    *ngIf="toggleChart.distance === 'cumulated'"
+    *ngIf="isEmptyDataset(data.distance.cumulated) && toggleChart.distance === 'cumulated'"
     type="line"
     [height]="70"
     [options]="options.distancePerDayCumulated"
@@ -72,6 +78,15 @@
       </mat-button-toggle-group>
     </div>
   </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.trips.daily) && toggleChart.trips === 'daily'">
+    Aucun trajet n'a été réalisé la semaine dernière.
+  </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.trips.monthly) && toggleChart.trips === 'monthly'">
+    Aucun trajet n'a été réalisé le mois dernier.
+  </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.trips.cumulated) && toggleChart.trips === 'cumulated'">
+    Aucun trajet n'a été réalisé les derniers mois.
+  </div>
   <ngx-chartjs
     [data]="data.trips.daily"
     *ngIf="isEmptyDataset(data.trips.daily) && toggleChart.trips === 'daily'"
@@ -79,19 +94,16 @@
     [height]="70"
     [options]="options.tripsPerDay"
   ></ngx-chartjs>
-  <div class="graph-message" *ngIf="!isEmptyDataset(data.trips.daily) && toggleChart.trips === 'daily'">
-    Aucun trajet n'a été réalisé la semaine dernière.
-  </div>
   <ngx-chartjs
     [data]="data.trips.monthly"
-    *ngIf="toggleChart.trips === 'monthly'"
+    *ngIf="isEmptyDataset(data.trips.monthly) && toggleChart.trips === 'monthly'"
     type="bar"
     [height]="70"
     [options]="options.tripsPerMonth"
   ></ngx-chartjs>
   <ngx-chartjs
     [data]="data.trips.cumulated"
-    *ngIf="toggleChart.trips === 'cumulated'"
+    *ngIf="isEmptyDataset(data.trips.cumulated) && toggleChart.trips === 'cumulated'"
     type="line"
     [height]="70"
     [options]="options.tripsPerDayCumulated"
@@ -108,16 +120,25 @@
       Par mois
     </mat-button-toggle>
   </mat-button-toggle-group>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.carpoolers.monthly) && toggleChart.carpoolers === 'monthly'">
+    Aucun trajet n'a été réalisé le mois dernier.
+  </div>
+  <div
+    class="graph-message"
+    *ngIf="!isEmptyDataset(data.carpoolers.cumulated) && toggleChart.carpoolers === 'cumulated'"
+  >
+    Aucun trajet n'a été réalisé les derniers mois.
+  </div>
   <ngx-chartjs
     [data]="data.carpoolers.monthly"
-    *ngIf="toggleChart.carpoolers === 'monthly'"
+    *ngIf="isEmptyDataset(data.carpoolers.monthly) && toggleChart.carpoolers === 'monthly'"
     type="bar"
     [height]="70"
     [options]="options.carpoolersPerMonth"
   ></ngx-chartjs>
   <ngx-chartjs
     [data]="data.carpoolers.cumulated"
-    *ngIf="toggleChart.carpoolers === 'cumulated'"
+    *ngIf="isEmptyDataset(data.carpoolers.cumulated) && toggleChart.carpoolers === 'cumulated'"
     type="line"
     [height]="70"
     [options]="options.carpoolersPerDayCumulated"
@@ -134,16 +155,22 @@
       Par mois
     </mat-button-toggle>
   </mat-button-toggle-group>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.petrol.monthly) && toggleChart.petrol === 'monthly'">
+    Aucun trajet n'a été réalisé le mois dernier.
+  </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.petrol.cumulated) && toggleChart.petrol === 'cumulated'">
+    Aucun trajet n'a été réalisé les derniers mois.
+  </div>
   <ngx-chartjs
     [data]="data.petrol.monthly"
-    *ngIf="toggleChart.petrol === 'monthly'"
+    *ngIf="isEmptyDataset(data.petrol.monthly) && toggleChart.petrol === 'monthly'"
     type="bar"
     [height]="70"
     [options]="options.petrolPerMonth"
   ></ngx-chartjs>
   <ngx-chartjs
     [data]="data.petrol.cumulated"
-    *ngIf="toggleChart.petrol === 'cumulated'"
+    *ngIf="isEmptyDataset(data.petrol.cumulated) && toggleChart.petrol === 'cumulated'"
     type="line"
     [height]="70"
     [options]="options.petrolPerDayCumulated"
@@ -160,16 +187,22 @@
       Par mois
     </mat-button-toggle>
   </mat-button-toggle-group>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.co2.monthly) && toggleChart.co2 === 'monthly'">
+    Aucun trajet n'a été réalisé le mois dernier.
+  </div>
+  <div class="graph-message" *ngIf="!isEmptyDataset(data.co2.cumulated) && toggleChart.co2 === 'cumulated'">
+    Aucun trajet n'a été réalisé les derniers mois.
+  </div>
   <ngx-chartjs
     [data]="data.co2.monthly"
-    *ngIf="toggleChart.co2 === 'monthly'"
+    *ngIf="isEmptyDataset(data.co2.monthly) && toggleChart.co2 === 'monthly'"
     type="bar"
     [height]="70"
     [options]="options.co2PerMonth"
   ></ngx-chartjs>
   <ngx-chartjs
     [data]="data.co2.cumulated"
-    *ngIf="toggleChart.co2 === 'cumulated'"
+    *ngIf="isEmptyDataset(data.co2.cumulated) && toggleChart.co2 === 'cumulated'"
     type="line"
     [height]="70"
     [options]="options.co2PerDayCumulated"
@@ -190,13 +223,18 @@
       Par mois
     </mat-button-toggle>
   </mat-button-toggle-group>
-  <ngx-chartjs
-    *ngIf="toggleChart.carpoolersPerVehicule === 'monthly'"
-    [data]="data.carpoolersPerVehicule.monthly"
-    type="bar"
-    [height]="70"
-    [options]="options.carpoolersPerVehiculePerMonth"
-  ></ngx-chartjs>
+  <div
+    class="graph-message"
+    *ngIf="!isEmptyDataset(data.carpoolersPerVehicule.daily) && toggleChart.carpoolersPerVehicule === 'daily'"
+  >
+    Aucun trajet n'a été réalisé la semaine dernière.
+  </div>
+  <div
+    class="graph-message"
+    *ngIf="!isEmptyDataset(data.carpoolersPerVehicule.monthly) && toggleChart.carpoolersPerVehicule === 'monthly'"
+  >
+    Aucun trajet n'a été réalisé les derniers mois.
+  </div>
   <ngx-chartjs
     *ngIf="isEmptyDataset(data.carpoolersPerVehicule.daily) && toggleChart.carpoolersPerVehicule === 'daily'"
     [data]="data.carpoolersPerVehicule.daily"
@@ -204,10 +242,11 @@
     [height]="70"
     [options]="options.carpoolersPerVehiculePerDay"
   ></ngx-chartjs>
-  <div
-    class="graph-message"
-    *ngIf="!isEmptyDataset(data.carpoolersPerVehicule.daily) && toggleChart.carpoolersPerVehicule === 'daily'"
-  >
-    Aucun trajet n'a été réalisé la semaine dernière.
-  </div>
+  <ngx-chartjs
+    *ngIf="isEmptyDataset(data.carpoolersPerVehicule.monthly) && toggleChart.carpoolersPerVehicule === 'monthly'"
+    [data]="data.carpoolersPerVehicule.monthly"
+    type="bar"
+    [height]="70"
+    [options]="options.carpoolersPerVehiculePerMonth"
+  ></ngx-chartjs>
 </div>
