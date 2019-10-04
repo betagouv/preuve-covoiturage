@@ -48,6 +48,6 @@ export class StatsAction extends Action {
   }
 
   public async handle(params: TripSearchInterface, context: ContextType): Promise<any> {
-    const result = (await this.pg.stats(params)) || [];
+    return (await this.pg.stats(params)) || [];
   }
 }
