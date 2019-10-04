@@ -22,9 +22,11 @@ export function testTerritoryE2EStory() {
     cypress_campaignEdit(true);
   });
 
+  /*
   describe('Launch campaign', () => {
     cypress_campaignLaunch(true);
   });
+*/
 
   // TEST FILTERS
   describe('Filter trips', () => {

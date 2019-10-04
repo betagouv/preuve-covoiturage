@@ -3,8 +3,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { takeUntil } from 'rxjs/operators';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
-import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
-import { CAMPAIGN_RULES_MAX_DISTANCE } from '~/core/const/campaign/rules.const';
+import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
+import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
@@ -16,7 +16,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
 
   tripClassKeys = Object.keys(TripRankEnum);
-  maxDistance = CAMPAIGN_RULES_MAX_DISTANCE;
+  maxDistance = CAMPAIGN_RULES_MAX_DISTANCE_KM;
 
   constructor(private _formBuilder: FormBuilder) {
     super();
@@ -94,7 +94,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
       }
       label += ' De ';
       label += timeRanges
-        .map((timeRange: IncentiveTimeRuleInterface) => {
+        .map((timeRange: IncentiveTimeRuleUxInterface) => {
           if (!timeRange || !timeRange.start || !timeRange.end) {
             return '';
           }
@@ -110,7 +110,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
     if (range && (range.length < 2 || range === [0, 0])) {
       return '';
     }
-    if (range[1] >= CAMPAIGN_RULES_MAX_DISTANCE) {
+    if (range[1] >= CAMPAIGN_RULES_MAX_DISTANCE_KM) {
       return `A partir de ${range[0]} km`;
     }
     if (range[0] < 1) {

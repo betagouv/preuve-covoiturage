@@ -1,8 +1,7 @@
-import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-
 /// <reference types="Cypress" />
 import { campaignFirstStepCustom } from '../../support/reusables/steps/campaign-create-first-step';
 import {
+  campaignSecondStepAddSecondTimeRange,
   campaignSecondStepCheckDisabledNextStep,
   campaignSecondStepClickNextStep,
   campaignSecondStepSelectDays,
@@ -10,6 +9,7 @@ import {
   campaignSecondStepSelectRange,
   campaignSecondStepSelectRanks,
   campaignSecondStepSelectTargets,
+  campaignSecondStepSelectTimeRange,
 } from '../../support/reusables/steps/campaign-create-second-step';
 import {
   campaignThirdStepCheckDisabledNextStep,
@@ -21,7 +21,6 @@ import {
   campaignThirdStepSetUnit,
 } from '../../support/reusables/steps/campaign-create-third-step';
 import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
-import { stubCampaignCreate } from '../stubs/campaign.create';
 
 export function cypress_campaignCreate(e2e = false) {
   it('clicks on campaign section', () => {
@@ -37,6 +36,18 @@ export function cypress_campaignCreate(e2e = false) {
 
   // SECOND STEP
   campaignSecondStepSelectDays();
+
+  // add time
+  campaignSecondStepSelectTimeRange(
+    CypressExpectedCampaign.firstTimeStart.toString(),
+    CypressExpectedCampaign.firstTimeEnd.toString(),
+  );
+
+  // add second time
+  campaignSecondStepAddSecondTimeRange(
+    CypressExpectedCampaign.secondTimeStart.toString(),
+    CypressExpectedCampaign.secondTimeEnd.toString(),
+  );
 
   campaignSecondStepSelectRange();
 

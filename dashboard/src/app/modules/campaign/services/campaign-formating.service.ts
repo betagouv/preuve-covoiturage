@@ -31,6 +31,7 @@ import {
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import { RetributionUxInterface } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 
 @Injectable({
   providedIn: 'root',
@@ -66,6 +67,7 @@ export class CampaignFormatingService {
       end: moment(campaign.end),
     };
 
+    // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS) {
         const parameters = <MaxTripsRetributionRule['parameters']>retributionRule.parameters;
@@ -80,13 +82,20 @@ export class CampaignFormatingService {
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.DISTANCE_RANGE) {
         const parameters = <DistanceRangeGlobalRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.filters.distance_range = [parameters.min, parameters.max];
+        campaignUx.filters.distance_range = [
+          parameters.min !== -1 ? Number(parameters.min) / 1000 : null,
+          parameters.max !== -1 ? Number(parameters.max) / 1000 : null,
+        ];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY) {
         campaignUx.filters.weekday = <WeekdayRetributionRule['parameters']>retributionRule.parameters;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.TIME) {
-        campaignUx.filters.time = <TimeRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = <TimeRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.time = parameters.map((timeRange) => ({
+          start: timeRange.start > 9 ? `${timeRange.start}:00` : `0${timeRange.start}:00`,
+          end: timeRange.end > 9 ? `${timeRange.end}:00` : `0${timeRange.end}:00`,
+        }));
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS) {
         campaignUx.filters.operator_ids = <OperatorIdsRetributionRule['parameters']>retributionRule.parameters;
@@ -96,12 +105,13 @@ export class CampaignFormatingService {
       }
     });
 
+    // RETRIBUTION RULES
     const retributions: RetributionUxInterface[] = [];
     campaign.rules.forEach((retributionRuleArray: RetributionRuleInterface[]) => {
       if (retributionRuleArray) {
         const retribution: RetributionUxInterface = {
-          max: -1,
-          min: -1,
+          max: null,
+          min: null,
           for_driver: {
             per_km: false,
             per_passenger: false,
@@ -121,8 +131,8 @@ export class CampaignFormatingService {
         retributionRuleArray.forEach((retributionRule: RetributionRuleInterface) => {
           if (retributionRule.slug === RetributionRulesSlugEnum.DISTANCE_RANGE) {
             const parameters = <DistanceRangeGlobalRetributionRule['parameters']>retributionRule.parameters;
-            retribution.min = parameters.min;
-            retribution.max = parameters.max;
+            retribution.min = parameters.min !== 0 ? Number(parameters.min) / 1000 : null;
+            retribution.max = Number(parameters.max) / 1000;
           }
           if (slugs.indexOf(RetributionRulesSlugEnum.FOR_PASSENGER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
@@ -158,8 +168,8 @@ export class CampaignFormatingService {
       retributions.map((retribution: RetributionUxInterface) => ({ min: retribution.min, max: retribution.max })),
       _.isEqual,
     ).map((elt) => ({
-      max: elt.min,
-      min: elt.max,
+      min: elt.min,
+      max: elt.max,
       for_driver: {
         per_km: false,
         per_passenger: false,
@@ -216,18 +226,25 @@ export class CampaignFormatingService {
 
     let { territory_id } = campaignUx;
 
+    // GLOBAL RULES
     const campaignGlobalRetributionRules: GlobalRetributionRuleType[] = [];
-
     campaignGlobalRetributionRules.push(new RankRetributionRule(campaignUx.filters.rank));
     if (campaignUx.filters.time.length > 0) {
-      campaignGlobalRetributionRules.push(new TimeRetributionRule(campaignUx.filters.time));
+      campaignGlobalRetributionRules.push(
+        new TimeRetributionRule(
+          campaignUx.filters.time.map((timeRange) => ({
+            start: Number(timeRange.start.slice(0, 2)),
+            end: Number(timeRange.end.slice(0, 2)),
+          })),
+        ),
+      );
     }
     campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
     campaignGlobalRetributionRules.push(new OperatorIdsRetributionRule(campaignUx.filters.operator_ids));
     campaignGlobalRetributionRules.push(
       new DistanceRangeGlobalRetributionRule({
-        min: filters.distance_range[0],
-        max: filters.distance_range[1],
+        min: filters.distance_range[0] ? Number(filters.distance_range[0]) * 1000 : filters.distance_range[0],
+        max: filters.distance_range[1] ? Number(filters.distance_range[1]) * 1000 : filters.distance_range[1],
       }),
     );
 
@@ -248,15 +265,16 @@ export class CampaignFormatingService {
     });
 */
 
+    // RETRIBUTION RULES
     const campaignRetributionRules: RetributionRuleType[][] = [];
 
     retributions.forEach((retribution) => {
       // set defaults, reset values according to uiStatus
       if (retribution.min === null) {
-        retribution.min = -1;
+        retribution.min = 0;
       }
       if (retribution.max === null) {
-        retribution.max = -1;
+        retribution.max = CAMPAIGN_RULES_MAX_DISTANCE_KM;
       }
       if (retribution.for_driver.amount === null || !campaignUx.ui_status.for_driver) {
         retribution.for_driver.amount = 0;
@@ -271,13 +289,13 @@ export class CampaignFormatingService {
       retribution.for_driver.amount = retribution.for_driver.amount * 100; // to cents
 
       // construct rules for passenger
-      if (retribution.for_passenger.amount) {
+      if (retribution.for_passenger.amount || retribution.for_passenger.free) {
         const retributionRules = [];
-        if (retribution.min !== -1 || retribution.min !== -1) {
+        if (!(retribution.min === 0 && retribution.max === CAMPAIGN_RULES_MAX_DISTANCE_KM)) {
           retributionRules.push(
             new RangeRetributionRule({
-              min: retribution.min,
-              max: retribution.max,
+              min: Number(retribution.min) * 1000,
+              max: Number(retribution.max) * 1000,
             }),
           );
         }
@@ -297,11 +315,11 @@ export class CampaignFormatingService {
       // construct rules for driver
       if (retribution.for_driver.amount) {
         const retributionRules = [];
-        if (retribution.min !== -1 || retribution.min !== -1) {
+        if (!(retribution.min === 0 && retribution.max === CAMPAIGN_RULES_MAX_DISTANCE_KM)) {
           retributionRules.push(
             new RangeRetributionRule({
-              min: retribution.min,
-              max: retribution.max,
+              min: Number(retribution.min) * 1000,
+              max: Number(retribution.max) * 1000,
             }),
           );
         }

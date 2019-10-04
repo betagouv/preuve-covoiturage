@@ -1,5 +1,10 @@
 import { campaignThirdStepClickNextStep, campaignThirdStepClickPreviousStep } from './steps/campaign-create-third-step';
-import { campaignSecondStepClickNextStep, campaignSecondStepSelectTargets } from './steps/campaign-create-second-step';
+import {
+  campaignSecondStepAddSecondTimeRange,
+  campaignSecondStepClickNextStep,
+  campaignSecondStepSelectTargets,
+  campaignSecondStepSelectTimeRange,
+} from './steps/campaign-create-second-step';
 import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 
 export function cypress_campaignEdit(e2e = false) {
@@ -30,9 +35,38 @@ export function cypress_campaignEdit(e2e = false) {
       .type((CypressExpectedCampaign.afterEditionForPassengerAmount / 100).toString());
   });
 
-  // it('click toggle', () => {
-  //   cy.get('.ParametersForm-incentiveMode mat-slide-toggle input').click();
-  // });
+  it('click toggle', () => {
+    cy.get('.ParametersForm-incentiveMode mat-slide-toggle').click();
+  });
+
+  it('add staggered step', () => {
+    cy.get('.ParametersForm-incentiveMode-actions button').click();
+  });
+
+  // set staggered distance
+  it('set staggered distance', () => {
+    cy.get('.ParametersForm-incentiveMode-staggered:first-child app-staggered-form input').type(
+      (CypressExpectedCampaign.staggeredDistance / 1000).toString(),
+    );
+  });
+
+  // driver amount after 5 km
+  it('sets incitation for driver', () => {
+    cy.get(
+      '.ParametersForm-incentiveMode-value:nth-child(3) .ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(1) mat-form-field input',
+    )
+      .clear()
+      .type((CypressExpectedCampaign.afterEditionForDriverAmount5km / 100).toString());
+  });
+
+  // passenger amount after 5 km
+  it('sets incitation for passenger', () => {
+    cy.get(
+      '.ParametersForm-incentiveMode-value:nth-child(3) .ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input',
+    )
+      .clear()
+      .type((CypressExpectedCampaign.afterEditionForPassengerAmount5km / 100).toString());
+  });
 
   campaignThirdStepClickNextStep();
 

@@ -1,10 +1,10 @@
 // tslint:disable:variable-name
 import { TripRankEnum } from '../../../enums/trip/trip-rank.enum';
-import { RulesRangeInterface, RulesRangeUxType } from '../../../types/campaign/rulesRangeInterface';
+import { RulesRangeUxType } from '../../../types/campaign/rulesRangeInterface';
 
 export class IncentiveFiltersUx {
   weekday: number[];
-  time: IncentiveTimeRuleInterface[];
+  time: IncentiveTimeRuleUxInterface[];
   distance_range: RulesRangeUxType;
   rank: TripRankEnum[];
   operator_ids: string[];
@@ -19,13 +19,18 @@ export class IncentiveFiltersUx {
 
 export interface IncentiveFiltersUxInterface {
   weekday: number[];
-  time: IncentiveTimeRuleInterface[];
+  time: IncentiveTimeRuleUxInterface[];
   distance_range: RulesRangeUxType;
   rank: TripRankEnum[];
   operator_ids: string[];
 }
 
-export interface IncentiveTimeRuleInterface {
+export interface IncentiveTimeRuleUxInterface {
   start: string;
   end: string;
+}
+
+export interface IncentiveTimeRuleInterface {
+  start: number;
+  end: number;
 }

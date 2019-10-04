@@ -1,11 +1,27 @@
 <form [formGroup]="timeRangeForm" *ngIf="timeRangeForm" class="TimeRangeForm">
   <mat-form-field appearance="outline">
     <mat-label>Début</mat-label>
-    <input matInput type="time" required formControlName="start" [max]="controls.end.value" (blur)="onTouched()" />
+    <input
+      matInput
+      type="time"
+      step="3600"
+      required
+      formControlName="start"
+      [max]="controls.end.value"
+      (blur)="onTouched()"
+    />
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Fin</mat-label>
-    <input matInput type="time" required formControlName="end" [min]="controls.start.value" (blur)="onTouched()" />
+    <input
+      matInput
+      type="time"
+      step="3600"
+      required
+      formControlName="end"
+      [min]="controls.start.value"
+      (blur)="onTouched()"
+    />
   </mat-form-field>
   <div class="TimeRangeForm-errorWrapper">
     <mat-error *ngIf="controls.start.touched && controls.start.hasError('required')">

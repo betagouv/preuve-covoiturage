@@ -1,3 +1,5 @@
+import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '../../../src/app/core/const/campaign/rules.const';
+
 import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
 import {
   DistanceRangeGlobalRetributionRule,
@@ -5,6 +7,7 @@ import {
   MaxTripsRetributionRule,
   OperatorIdsRetributionRule,
   RankRetributionRule,
+  TimeRetributionRule,
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import {
@@ -14,12 +17,10 @@ import {
   PerKmRetributionRule,
   RangeRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-rules.interface';
-
 import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-
 import { operatorStubs } from '../stubs/operator.list';
 import { cypress_logging_users } from '../stubs/login';
 
@@ -34,11 +35,19 @@ export class CypressExpectedCampaign {
   static maxAmount = 10000;
   static maxTrips = 50000;
   static forDriverAmount = 10; // cents
-  static forPassengerAmount = 0; // cents
-  static description = 'Description de la campagne';
-  static campaignName = "Nouvelle campagne d'incitation";
+  static description = `Description de la campagne`;
+  static campaignName = `Nouvelle campagne d'incitation ${Math.floor(Math.random() * 100)}`;
 
   static afterEditionForPassengerAmount = 10; // cents
+  static afterEditionForDriverAmount5km = 20; // cents
+  static afterEditionForPassengerAmount5km = 20; // cents
+  static staggeredDistance = 5000; // meters
+
+  static firstTimeStart = 8;
+  static firstTimeEnd = 12;
+
+  static secondTimeStart = 18;
+  static secondTimeEnd = 22;
 
   static get(): Campaign {
     const campaign = new Campaign({
@@ -50,11 +59,21 @@ export class CypressExpectedCampaign {
       name: CypressExpectedCampaign.campaignName,
       global_rules: [
         new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+        new TimeRetributionRule([
+          {
+            start: CypressExpectedCampaign.firstTimeStart,
+            end: CypressExpectedCampaign.firstTimeEnd,
+          },
+          {
+            start: CypressExpectedCampaign.secondTimeStart,
+            end: CypressExpectedCampaign.secondTimeEnd,
+          },
+        ]),
         new WeekdayRetributionRule([0]),
         new OperatorIdsRetributionRule([operatorStubs[0]._id]),
         new DistanceRangeGlobalRetributionRule({
-          min: 85,
-          max: 150,
+          min: 85000,
+          max: 150000,
         }),
         new MaxAmountRetributionRule(CypressExpectedCampaign.maxAmount),
         new MaxTripsRetributionRule(CypressExpectedCampaign.maxTrips),
@@ -91,21 +110,38 @@ export class CypressExpectedCampaign {
 
   static getAfterEdition(): Campaign {
     const afterEditionCampaign = CypressExpectedCampaign.getAfterCreate();
-    // afterEditionCampaign.rules[0].push(
-    //   new RangeRetributionRule({
-    //     min: 0,
-    //     max: 5000,
-    //   }),
-    // );
-    // afterEditionCampaign.rules.unshift([
-    //   new ForPassengerRetributionRule(),
-    //   new AmountRetributionRule(CypressExpectedCampaign.afterEditionForPassengerAmount),
-    //   new RangeRetributionRule({
-    //     min: 5000,
-    //     max: 10000,
-    //   }),
-    // ]);
+    afterEditionCampaign.rules[0].unshift(
+      new RangeRetributionRule({
+        min: 0,
+        max: CypressExpectedCampaign.staggeredDistance,
+      }),
+    );
+    afterEditionCampaign.rules.unshift([
+      new RangeRetributionRule({
+        min: 0,
+        max: CypressExpectedCampaign.staggeredDistance,
+      }),
+      new ForPassengerRetributionRule(),
+      new AmountRetributionRule(CypressExpectedCampaign.afterEditionForPassengerAmount),
+    ]);
+    afterEditionCampaign.rules.push([
+      new RangeRetributionRule({
+        min: CypressExpectedCampaign.staggeredDistance,
+        max: CAMPAIGN_RULES_MAX_DISTANCE_KM * 1000,
+      }),
+      new ForPassengerRetributionRule(),
+      new AmountRetributionRule(CypressExpectedCampaign.afterEditionForPassengerAmount5km),
+    ]);
+    afterEditionCampaign.rules.push([
+      new RangeRetributionRule({
+        min: CypressExpectedCampaign.staggeredDistance,
+        max: CAMPAIGN_RULES_MAX_DISTANCE_KM * 1000,
+      }),
+      new ForDriverRetributionRule(),
+      new AmountRetributionRule(CypressExpectedCampaign.afterEditionForDriverAmount5km),
+    ]);
     afterEditionCampaign.ui_status.for_passenger = true;
+    afterEditionCampaign.ui_status.staggered = true;
     return afterEditionCampaign;
   }
 

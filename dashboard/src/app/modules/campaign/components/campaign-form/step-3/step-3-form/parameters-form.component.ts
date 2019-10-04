@@ -31,8 +31,6 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   ngOnInit() {
     this.initRetributionFormArray();
     this.initRestrictionFormArray();
-    // this.initFormArrayChangeDetection();
-    // this.initFormulasFormArray();
   }
 
   get controls() {
@@ -58,14 +56,6 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   get retributionsFormArray(): FormArray {
     return <FormArray>this.campaignForm.get('retributions');
   }
-
-  // get formulasFormArray(): FormArray {
-  //   return <FormArray>this.campaignForm.get('formulas');
-  // }
-
-  // get exportModeControl() {
-  //   return this.controls.expertMode;
-  // }
 
   showDateLabel(): string {
     const dateBegin = this.controls.start.value;
@@ -114,10 +104,11 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   }
 
   onStaggeredChange($event) {
-    this.retributionsFormArray.clear();
-    this.retributionsFormArray.push(this.generateRetributionFormGroup());
-    if ($event.source._selected) {
+    if (!$event.source._checked) {
+      // if staggered mode is unchecked
+      this.retributionsFormArray.clear();
       this.retributionsFormArray.push(this.generateRetributionFormGroup());
+      //  todo: if no distance is set, don't clear data
     }
   }
 
