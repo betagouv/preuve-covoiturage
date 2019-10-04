@@ -67,11 +67,11 @@ export class CampaignService extends ApiService<Campaign> {
     return template;
   }
 
-  public deleteTemplateOrDraft(id: string): Observable<Campaign> {
+  public deleteTemplateOrDraft(id: string): Observable<Campaign[]> {
     const params = {};
     if ('territory' in this._authService.user) {
       params['territory_id'] = this._authService.user.territory;
     }
-    return this.delete(id, params);
+    return this.deleteList(id, params);
   }
 }

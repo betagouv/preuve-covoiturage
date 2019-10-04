@@ -20,7 +20,7 @@ export function cypress_filterTrips(e2e = false) {
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
 
     if (!e2e) {
-      cy.get('app-campaign-auto-complete input').type('limiter');
+      cy.get('app-campaign-auto-complete input').type('limiter le trafic');
       cy.get('.mat-autocomplete-panel mat-option:first-child').click();
     }
   });
