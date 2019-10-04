@@ -138,6 +138,7 @@ $ docker-compose exec mongo mongorestore -u mongo -p mongo \
 - `yarn test` run the tests
 -->
 
+- `yarn fix-permissions` reset all users' permissions based on their group and role
 - `yarn workspace @pdc/... run test`
 - `yarn workspace @pdc/... run test:integration`
 
