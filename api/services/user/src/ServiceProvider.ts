@@ -50,6 +50,7 @@ import {
 } from './actions';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
+import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
 
 @serviceProvider({
   config: __dirname,
@@ -104,6 +105,7 @@ import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValid
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
+  commands: [FixPermissionsCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
