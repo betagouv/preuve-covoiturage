@@ -12,6 +12,7 @@ import {
   ForDriverRetributionRule,
   ForPassengerRetributionRule,
   PerKmRetributionRule,
+  RangeRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-rules.interface';
 
 import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
@@ -90,11 +91,27 @@ export class CypressExpectedCampaign {
 
   static getAfterEdition(): Campaign {
     const afterEditionCampaign = CypressExpectedCampaign.getAfterCreate();
-    afterEditionCampaign.rules.unshift([
-      new ForPassengerRetributionRule(),
-      new AmountRetributionRule(CypressExpectedCampaign.afterEditionForPassengerAmount),
-    ]);
+    // afterEditionCampaign.rules[0].push(
+    //   new RangeRetributionRule({
+    //     min: 0,
+    //     max: 5000,
+    //   }),
+    // );
+    // afterEditionCampaign.rules.unshift([
+    //   new ForPassengerRetributionRule(),
+    //   new AmountRetributionRule(CypressExpectedCampaign.afterEditionForPassengerAmount),
+    //   new RangeRetributionRule({
+    //     min: 5000,
+    //     max: 10000,
+    //   }),
+    // ]);
     afterEditionCampaign.ui_status.for_passenger = true;
     return afterEditionCampaign;
+  }
+
+  static getLaunched(): Campaign {
+    const launchedCampaign = CypressExpectedCampaign.getAfterEdition();
+    launchedCampaign.status = CampaignStatusEnum.PENDING;
+    return launchedCampaign;
   }
 }

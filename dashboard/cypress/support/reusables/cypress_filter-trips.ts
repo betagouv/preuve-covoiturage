@@ -3,7 +3,13 @@ import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '../../../src/app/core/con
 /// <reference types="Cypress" />
 import { expectedFilter, filterEndMoment, filterStartMoment } from '../apiValues/expectedFilter';
 
-export function cypress_filterTrips() {
+export function cypress_filterTrips(e2e = false) {
+  it('clicks on trip section', () => {
+    cy.get('.Header-menu .Header-menu-item:nth-child(2)').click();
+  });
+  it('clicks list tab', () => {
+    cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(2)').click();
+  });
   it('opens filter', () => {
     cy.get('.TripLayout-menu-filter-button').click();
   });
@@ -13,9 +19,10 @@ export function cypress_filterTrips() {
 
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
 
-    cy.get('app-campaign-auto-complete input').type('limiter');
-
-    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    if (!e2e) {
+      cy.get('app-campaign-auto-complete input').type('limiter');
+      cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    }
   });
 
   it('chooses dates', () => {
@@ -75,23 +82,25 @@ export function cypress_filterTrips() {
   it('click filter button', () => {
     cy.get('.filter-footer button:first-child').click();
 
-    cy.wait('@tripList').then((xhr) => {
-      const params = xhr.request.body[0].params;
-      const method = xhr.request.body[0].method;
+    if (!e2e) {
+      cy.wait('@tripList').then((xhr) => {
+        const params = xhr.request.body[0].params;
+        const method = xhr.request.body[0].method;
 
-      expect(method).equal('trip:list');
+        expect(method).equal('trip:list');
 
-      const { skip, ...allParamsExceptSkip } = params;
+        const { skip, ...allParamsExceptSkip } = params;
 
-      const filter = {
-        ...expectedFilter,
-        limit: DEFAULT_TRIP_LIMIT,
-      };
+        const filter = {
+          ...expectedFilter,
+          limit: DEFAULT_TRIP_LIMIT,
+        };
 
-      // todo: tmp unit operators connected
-      delete filter.operator_id;
+        // todo: tmp unit operators connected
+        delete filter.operator_id;
 
-      expect(allParamsExceptSkip).eql(filter);
-    });
+        expect(allParamsExceptSkip).eql(filter);
+      });
+    }
   });
 }

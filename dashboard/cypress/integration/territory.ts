@@ -14,6 +14,7 @@ import { testTerritoryStory } from '../support/stories/territory.story';
 import { cypress_stub_login } from '../support/reusables/cypress_login';
 import { stubTerritoryList } from '../support/stubs/territory.list';
 import { stubCampaignTemplateList } from '../support/stubs/campaign-template.list';
+import { stubCampaignLaunch } from '../support/stubs/campaign.launched';
 
 context('TERRITORY', () => {
   const tripGenerator = new TripGenerator();
@@ -32,6 +33,7 @@ context('TERRITORY', () => {
     stubUserMe(UserGroupEnum.TERRITORY);
     stubCampaignCreate(CampaignStatusEnum.DRAFT);
     stubCampaignPatch();
+    stubCampaignLaunch();
     stubTripList(trips);
   });
 

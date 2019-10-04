@@ -5,18 +5,18 @@ import { RulesRangeInterface } from '~/core/types/campaign/rulesRangeInterface';
 export interface BaseRetributionRuleInterface {
   slug: string;
   description?: string;
-  parameters?: { [k: string]: any };
+  parameters: any;
   schema?: object;
 }
 
 export enum RetributionRulesSlugEnum {
-  DISTANCE_RANGE = 'distance_range',
+  DISTANCE_RANGE = 'distance_range_filter',
   PER_KM = 'per_km',
-  FREE = 'free',
-  FOR_DRIVER = 'target_driver',
-  FOR_PASSENGER = 'target_passenger',
+  FREE = 'cost_based_amount',
+  FOR_DRIVER = 'driver_only_filter',
+  FOR_PASSENGER = 'passenger_only_filter',
   PER_PASSENGER = 'per_passenger',
-  AMOUNT = 'static_amount',
+  AMOUNT = 'fixed_amount',
 }
 
 export type RetributionRuleType =
@@ -35,75 +35,77 @@ export interface RetributionRuleInterface extends BaseRetributionRuleInterface {
 
 export class RangeRetributionRule implements RetributionRuleInterface {
   description?: string;
-  parameters: {
-    distance_range: RulesRangeInterface;
-  };
+  parameters: RulesRangeInterface;
   slug: RetributionRulesSlugEnum;
 
   constructor(distanceRange: RulesRangeInterface) {
     this.slug = RetributionRulesSlugEnum.DISTANCE_RANGE;
-    this.parameters = {
-      distance_range: distanceRange,
-    };
+    this.parameters = distanceRange;
   }
 }
 
 export class PerKmRetributionRule implements RetributionRuleInterface {
   description?: string;
   slug: RetributionRulesSlugEnum;
+  parameters: boolean;
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.PER_KM;
+    this.parameters = true;
   }
 }
 
 export class PerPassengerRetributionRule implements RetributionRuleInterface {
   description?: string;
   slug: RetributionRulesSlugEnum;
+  parameters: boolean;
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.PER_PASSENGER;
+    this.parameters = true;
   }
 }
 
 export class ForDriverRetributionRule implements RetributionRuleInterface {
   description?: string;
   slug: RetributionRulesSlugEnum;
+  parameters: boolean;
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FOR_DRIVER;
+    this.parameters = true;
   }
 }
 
 export class ForPassengerRetributionRule implements RetributionRuleInterface {
   description?: string;
   slug: RetributionRulesSlugEnum;
+  parameters: boolean;
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FOR_PASSENGER;
+    this.parameters = true;
   }
 }
 
 export class AmountRetributionRule implements RetributionRuleInterface {
   description?: string;
   slug: RetributionRulesSlugEnum;
-  parameters: {
-    amount: number;
-  };
+  parameters: number;
 
   constructor(amount: number) {
     this.slug = RetributionRulesSlugEnum.AMOUNT;
-    this.parameters = {
-      amount,
-    };
+    this.parameters = amount;
   }
 }
 
 export class FreeRetributionRule implements RetributionRuleInterface {
   description?: string;
   slug: RetributionRulesSlugEnum;
+  parameters: boolean;
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FREE;
+    this.parameters = true;
   }
 }

@@ -1,5 +1,5 @@
 import { environment } from '../../src/environments/environment';
-import { testTerritoryStory } from '../support/stories/territory.story';
+import { testTerritoryE2EStory } from '../support/stories/territory.e2e.story';
 
 context('TERRITORY E2E', () => {
   if (environment.name !== 'local') {
@@ -17,5 +17,5 @@ context('TERRITORY E2E', () => {
     }).as('campaignCreate');
   });
 
-  testTerritoryStory(true);
+  testTerritoryE2EStory();
 });

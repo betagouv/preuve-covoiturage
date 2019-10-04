@@ -80,23 +80,19 @@ export class CampaignFormatingService {
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.DISTANCE_RANGE) {
         const parameters = <DistanceRangeGlobalRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.filters.distance_range = [parameters.distance_range.min, parameters.distance_range.max];
+        campaignUx.filters.distance_range = [parameters.min, parameters.max];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY) {
-        const parameters = <WeekdayRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.filters.weekday = parameters.weekday;
+        campaignUx.filters.weekday = <WeekdayRetributionRule['parameters']>retributionRule.parameters;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.TIME) {
-        const parameters = <TimeRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.filters.time = parameters.time;
+        campaignUx.filters.time = <TimeRetributionRule['parameters']>retributionRule.parameters;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS) {
-        const parameters = <OperatorIdsRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.filters.operator_ids = parameters.operators_id;
+        campaignUx.filters.operator_ids = <OperatorIdsRetributionRule['parameters']>retributionRule.parameters;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
-        const parameters = <RankRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.filters.rank = parameters.rank;
+        campaignUx.filters.rank = <RankRetributionRule['parameters']>retributionRule.parameters;
       }
     });
 
@@ -125,13 +121,13 @@ export class CampaignFormatingService {
         retributionRuleArray.forEach((retributionRule: RetributionRuleInterface) => {
           if (retributionRule.slug === RetributionRulesSlugEnum.DISTANCE_RANGE) {
             const parameters = <DistanceRangeGlobalRetributionRule['parameters']>retributionRule.parameters;
-            retribution.min = parameters.distance_range.min;
-            retribution.max = parameters.distance_range.max;
+            retribution.min = parameters.min;
+            retribution.max = parameters.max;
           }
           if (slugs.indexOf(RetributionRulesSlugEnum.FOR_PASSENGER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
               const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
-              retribution.for_passenger.amount = Number(parameters.amount) / 100; // to euros
+              retribution.for_passenger.amount = Number(parameters) / 100; // to euros
             }
             if (retributionRule.slug === RetributionRulesSlugEnum.PER_KM) {
               retribution.for_passenger.per_km = true;
@@ -139,11 +135,10 @@ export class CampaignFormatingService {
             if (retributionRule.slug === RetributionRulesSlugEnum.FREE) {
               retribution.for_passenger.free = true;
             }
-          }
-          if (slugs.indexOf(RetributionRulesSlugEnum.FOR_DRIVER) !== -1) {
+          } else if (slugs.indexOf(RetributionRulesSlugEnum.FOR_DRIVER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
               const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
-              retribution.for_driver.amount = Number(parameters.amount) / 100; // to euros
+              retribution.for_driver.amount = Number(parameters) / 100; // to euros
             }
             if (retributionRule.slug === RetributionRulesSlugEnum.PER_KM) {
               retribution.for_driver.per_km = true;
@@ -186,8 +181,6 @@ export class CampaignFormatingService {
         combinedRetributions[index].for_passenger = retribution.for_passenger;
       } else if (retribution.for_driver.amount) {
         combinedRetributions[index].for_driver = retribution.for_driver;
-      } else {
-        console.error('Error in campaign retribution format');
       }
     });
 
@@ -201,7 +194,6 @@ export class CampaignFormatingService {
       campaignUx.trips_number = campaign.trips_number;
     }
 
-    console.log({ campaignUx });
     return new CampaignUx(campaignUx);
   }
 

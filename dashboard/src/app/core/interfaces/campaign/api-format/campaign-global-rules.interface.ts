@@ -37,9 +37,11 @@ export interface GlobalRetributionRuleInterface extends BaseRetributionRuleInter
 export class OnlyAdultRetributionRule implements GlobalRetributionRuleInterface {
   description?: string;
   slug: GlobalRetributionRulesSlugEnum;
+  parameters: boolean;
 
   constructor() {
     this.slug = GlobalRetributionRulesSlugEnum.ONLY_ADULT;
+    this.parameters = true;
   }
 }
 
@@ -78,69 +80,54 @@ export class MaxTripsRetributionRule implements GlobalRetributionRuleInterface {
 export class WeekdayRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: {
-    weekday: WeekDay[];
-  };
+  parameters: WeekDay[];
+
   constructor(weekday: WeekDay[]) {
     this.slug = GlobalRetributionRulesSlugEnum.WEEKDAY;
-    this.parameters = {
-      weekday,
-    };
+    this.parameters = weekday;
   }
 }
 
 export class TimeRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: {
-    time: IncentiveTimeRuleInterface[];
-  };
+  parameters: IncentiveTimeRuleInterface[];
+
   constructor(time: IncentiveTimeRuleInterface[]) {
     this.slug = GlobalRetributionRulesSlugEnum.TIME;
-    this.parameters = {
-      time,
-    };
+    this.parameters = time;
   }
 }
 
 export class DistanceRangeGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: {
-    distance_range: RulesRangeInterface;
-  };
+  parameters: RulesRangeInterface;
+
   constructor(distanceRange: RulesRangeInterface) {
     this.slug = GlobalRetributionRulesSlugEnum.DISTANCE_RANGE;
-    this.parameters = {
-      distance_range: distanceRange,
-    };
+    this.parameters = distanceRange;
   }
 }
 
 export class RankRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: {
-    rank: TripRankEnum[];
-  };
+  parameters: TripRankEnum[];
+
   constructor(rank: TripRankEnum[]) {
     this.slug = GlobalRetributionRulesSlugEnum.RANK;
-    this.parameters = {
-      rank,
-    };
+    this.parameters = rank;
   }
 }
 
 export class OperatorIdsRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: {
-    operators_id: string[];
-  };
+  parameters: string[];
+
   constructor(operatorIds: string[]) {
     this.slug = GlobalRetributionRulesSlugEnum.OPERATOR_IDS;
-    this.parameters = {
-      operators_id: operatorIds,
-    };
+    this.parameters = operatorIds;
   }
 }

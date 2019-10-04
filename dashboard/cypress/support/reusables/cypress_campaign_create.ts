@@ -23,7 +23,15 @@ import {
 import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 import { stubCampaignCreate } from '../stubs/campaign.create';
 
-export function cypress_campaignCreate() {
+export function cypress_campaignCreate(e2e = false) {
+  it('clicks on campaign section', () => {
+    cy.get('.Header-menu .Header-menu-item:first-child').click();
+  });
+
+  it('clicks button to create new campaign', () => {
+    cy.get('.CampaignDashboard-trips-header button').click();
+  });
+
   // FIRST STEP
   campaignFirstStepCustom();
 
@@ -104,17 +112,19 @@ export function cypress_campaignCreate() {
 
     cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(1)').click();
 
-    cy.wait('@campaignCreate').then((xhr) => {
-      const params = xhr.request.body[0].params;
-      const method = xhr.request.body[0].method;
+    if (!e2e) {
+      cy.wait('@campaignCreate').then((xhr) => {
+        const params = xhr.request.body[0].params;
+        const method = xhr.request.body[0].method;
 
-      expect(method).equal('campaign:create');
-      const expectedCampaign = CypressExpectedCampaign.get();
+        expect(method).equal('campaign:create');
+        const expectedCampaign = CypressExpectedCampaign.get();
 
-      delete expectedCampaign.parent_id;
-      delete expectedCampaign._id;
+        delete expectedCampaign.parent_id;
+        delete expectedCampaign._id;
 
-      expect(params).eql(expectedCampaign);
-    });
+        expect(params).eql(expectedCampaign);
+      });
+    }
   });
 }
