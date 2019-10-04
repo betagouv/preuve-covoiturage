@@ -15,9 +15,13 @@ import { costBasedAmount } from './costBasedAmount';
 import { fixedAmount } from './fixedAmount';
 import { perPassenger } from './perPassenger';
 import { perKm } from './perKm';
+import { passengerOnlyFilter } from './passengerOnlyFilter';
+import { driverOnlyFilter } from './driverOnlyFilter';
 
 export const policies: ApplicableRuleInterface[] = [
   adultOnlyFilter,
+  passengerOnlyFilter,
+  driverOnlyFilter,
   costBasedAmount,
   distanceRangeFilter,
   fixedAmount,
