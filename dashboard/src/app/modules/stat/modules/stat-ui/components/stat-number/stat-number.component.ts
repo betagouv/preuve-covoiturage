@@ -42,18 +42,15 @@ export class StatNumberComponent extends DestroyObservable implements OnInit {
   }
 
   private initStatNumber(statNumberName: string): void {
-    let title = _.get(this.statService.stat, statNumbers[statNumberName].path);
+    const title = _.get(this.statService.stat, statNumbers[statNumberName].path);
     const statCard = statNumbers[statNumberName];
-
-    if (statCard.unit) {
-      title += ` ${statCard.unit}`;
-    }
 
     this.statNumber = new StatNumber({
       title,
       hint: statCard.hint,
       svgIcon: statCard.svgIcon,
       link: statCard.link,
+      unit: statCard.unit,
     });
   }
 

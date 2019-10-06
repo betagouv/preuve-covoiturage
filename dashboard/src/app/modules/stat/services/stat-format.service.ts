@@ -7,14 +7,15 @@ import { get } from 'lodash';
 import * as moment from 'moment';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { Stat } from '~/core/entities/stat/stat';
+import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { ApiService } from '~/core/services/api/api.service';
-import { StatInterface } from '~/core/interfaces/stat/statInterface';
+import { CalculatedStatInterface } from '~/core/interfaces/stat/calculatedStatInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';
 
@@ -22,25 +23,40 @@ import { co2Factor, petrolFactor } from '../config/stat';
   providedIn: 'root',
 })
 export class StatFormatService {
-  formatData(result: any | null) {
-    const fill = (acc, target, day, data = {}) => {
+  formatData(data: StatInterface[]): FormatedStatInterface {
+    const calculatedStats = this.calculateStats(data);
+    const formatedStats = this.formatUxStats(calculatedStats);
+    return formatedStats;
+  }
+
+  private calculateStats(result: StatInterface[]): CalculatedStat {
+    const fillDays = (acc, target, date, data = {}) => {
       Object.keys(data).forEach((key) => {
         acc[target][key] += data[key];
       });
       acc[target].days.push({
-        day,
+        date,
         ...data,
       });
     };
     const fillMonth = (acc, target, day, data = {}) => {
-      const monthIndex = acc[target].months.findIndex((month) => month.date === new Date(day).getMonth());
+      const monthIndex = acc[target].months.findIndex(
+        (month) =>
+          month.date ===
+          moment(day)
+            .endOf('month')
+            .toISOString(),
+      );
       if (monthIndex === -1) {
         acc[target].months.push({
           // set last date of month
-          date: new Date(day).getMonth(),
+          date: moment(day)
+            .endOf('month')
+            .toISOString(),
           ...data,
         });
       } else {
+        // accumulate total sum
         const month = acc[target].months[monthIndex];
         Object.keys(data).forEach((key) => {
           month[key] += data[key];
@@ -51,12 +67,11 @@ export class StatFormatService {
 
     const { carpoolers, carpoolers_per_vehicule, distance, trips } = result.reduce(
       (acc, current) => {
-        // carpoolers
-        fill(acc, 'carpoolers', current.day, { total: current.carpoolers });
+        fillDays(acc, 'carpoolers', current.day, { total: current.carpoolers });
         fillMonth(acc, 'carpoolers', current.day, { total: current.carpoolers });
-        fill(acc, 'distance', current.day, { total: current.distance });
+        fillDays(acc, 'distance', current.day, { total: current.distance });
         fillMonth(acc, 'distance', current.day, { total: current.distance });
-        fill(acc, 'trips', current.day, {
+        fillDays(acc, 'trips', current.day, {
           total: current.trip,
           total_subsidized: current.trip_subsidized,
         });
@@ -64,7 +79,7 @@ export class StatFormatService {
           total: current.trip,
           total_subsidized: current.trip_subsidized,
         });
-        fill(acc, 'carpoolers_per_vehicule', current.day, { total: current.carpoolers / current.trip });
+        fillDays(acc, 'carpoolers_per_vehicule', current.day, { total: current.carpoolers / current.trip });
 
         return acc;
       },
@@ -94,14 +109,18 @@ export class StatFormatService {
     );
 
     const cpvm = carpoolers_per_vehicule.days.reduce((acc, current) => {
-      const month = new Date(current.day).getMonth();
+      const month = moment(current.date)
+        .endOf('month')
+        .toISOString();
       if (!(month in acc)) {
         acc[month] = [];
       }
       acc[month].push(current.total);
       return acc;
     }, {});
-    const d = {
+
+    // calculate stats
+    return {
       carpoolers,
       distance,
       trips,
@@ -110,15 +129,15 @@ export class StatFormatService {
           carpoolers_per_vehicule.days.map((day) => day.total).reduce((acc, value) => acc + value, 0) /
           carpoolers_per_vehicule.days.length,
         months: Object.keys(cpvm).map((key) => ({
-          month: key,
+          date: key,
           total: cpvm[key].reduce((acc, curr) => acc + curr, 0) / cpvm[key].length,
         })),
         days: carpoolers_per_vehicule.days,
       },
     };
+  }
 
-    if (!d || !d.trips || !d.distance || !d.carpoolers_per_vehicule || !d.carpoolers) return;
-
+  private formatUxStats(d: CalculatedStat): FormatedStatInterface {
     const formatedStat = <FormatedStatInterface>{
       total: {
         trips: get(d, 'trips.total', 0),
@@ -127,7 +146,7 @@ export class StatFormatService {
         petrol: (get(d, 'distance.total', 0) * petrolFactor) | 0,
         co2: (get(d, 'distance.total', 0) * co2Factor) | 0,
         carpoolersPerVehicule: get(d, 'carpoolers_per_vehicule.total', 0)
-          ? Number(get(d, 'carpoolers_per_vehicule.total', 0).toFixed(2)) + 1 // todo: this +1 should be done in back
+          ? (Number(get(d, 'carpoolers_per_vehicule.total', 0)) + 1).toFixed(2) // todo: this +1 should be done in back
           : 0,
         operators: get(d, 'operators.total', 0),
       },
@@ -143,7 +162,7 @@ export class StatFormatService {
         tripsPerDay: this.fixWeekDisplay({
           x: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total),
@@ -151,7 +170,7 @@ export class StatFormatService {
         tripsPerDayCumulated: {
           x: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, []),
@@ -167,7 +186,7 @@ export class StatFormatService {
         tripsSubsidizedPerDay: this.fixWeekDisplay({
           x: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'trips.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total_subsidized),
@@ -175,7 +194,7 @@ export class StatFormatService {
         tripsSubsidizedPerDayCumulated: {
           x: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'trips.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeSubsidizedData, []),
@@ -192,7 +211,7 @@ export class StatFormatService {
         distancePerDay: this.fixWeekDisplay({
           x: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
@@ -202,7 +221,7 @@ export class StatFormatService {
         distancePerDayCumulated: {
           x: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'distance.days', [])
             .reduce(this.reduceCumulativeData, [])
             // tslint:disable-next-line:no-bitwise
@@ -219,7 +238,7 @@ export class StatFormatService {
         carpoolersPerDay: this.fixWeekDisplay({
           x: get(d, 'carpoolers.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'carpoolers.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total),
@@ -227,7 +246,7 @@ export class StatFormatService {
         carpoolersPerDayCumulated: {
           x: get(d, 'carpoolers.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'carpoolers.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, []),
@@ -244,7 +263,7 @@ export class StatFormatService {
         petrolPerDay: this.fixWeekDisplay({
           x: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           // tslint:disable-next-line:no-bitwise
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
@@ -254,7 +273,7 @@ export class StatFormatService {
         petrolPerDayCumulated: {
           x: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, [])
@@ -273,7 +292,7 @@ export class StatFormatService {
         co2PerDay: this.fixWeekDisplay({
           x: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
             // tslint:disable-next-line:no-bitwise
@@ -282,7 +301,7 @@ export class StatFormatService {
         co2PerDayCumulated: {
           x: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'distance.days', [])
             .filter(this.filterOutFutur)
             .reduce(this.reduceCumulativeData, [])
@@ -292,22 +311,23 @@ export class StatFormatService {
         carpoolersPerVehiculePerDay: this.fixWeekDisplay({
           x: get(d, 'carpoolers_per_vehicule.days', [])
             .filter(this.filterLastWeek)
-            .map((val) => this.formatDate(val.day)),
+            .map((val) => this.formatDate(val.date)),
           y: get(d, 'carpoolers_per_vehicule.days', [])
             .filter(this.filterLastWeek)
             .map((val) => val.total.toFixed(2)),
         }),
         carpoolersPerVehiculePerMonth: this.fixMonthDisplay({
-          x: get(d, 'carpoolers_per_vehicule.months-temp', [])
+          x: get(d, 'carpoolers_per_vehicule.months', [])
             .filter(this.filterOutFutur)
             .map((val) => this.formatMonthDate(val.date)),
-          y: get(d, 'carpoolers_per_vehicule.months-temp', [])
+          y: get(d, 'carpoolers_per_vehicule.months', [])
             .filter(this.filterOutFutur)
             .map((val) => val.total.toFixed(2)),
         }),
       },
     };
 
+    console.log(formatedStat.total);
     return formatedStat;
   }
 
@@ -336,19 +356,7 @@ export class StatFormatService {
    * Before today
    */
   private filterOutFutur(val, idx, arr): boolean {
-    if ('day' in val) {
-      return moment().isAfter(val.day);
-    }
-    // todo: remove later
-    if ('date' in val) {
-      let month = val.date;
-      if (month.length < 2) {
-        month = `0${month}`;
-      }
-      // todo: fix this
-      return moment().isAfter(moment(`01/${month}/2019`, 'DD/MM/YYYY'));
-    }
-    return false;
+    return moment().isAfter(val.date);
   }
 
   // format ISO to chart js compatible
@@ -358,12 +366,9 @@ export class StatFormatService {
 
   // format ISO to chart js compatible
   private formatMonthDate(date: string): string {
-    let month = date;
-    if (month.length < 2) {
-      month = `0${month}`;
-    }
-    // todo: fix this
-    return moment(`01/${month}/2019`, 'DD/MM/YYYY').format('YYYY-MM-DD');
+    return moment(date)
+      .startOf('month')
+      .format('YYYY-MM-DD');
   }
 
   /**

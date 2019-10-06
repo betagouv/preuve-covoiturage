@@ -9,7 +9,7 @@
   </div>
   <div class="stat-number-content">
     <div class="stat-number-title">
-      {{ statNumber.title }}
+      <p>{{ statNumber.title | number }} {{ statNumber.unit }}</p>
     </div>
     <p class="stat-number-hint">
       {{ statNumber.hint }}

@@ -1,12 +1,10 @@
 import {
   StatDateTotalInterface,
   StatDayTotalInterface,
-  StatInterface,
-  StatMonthTotalInterface,
-} from '../../interfaces/stat/statInterface';
+  CalculatedStatInterface,
+} from '../../interfaces/stat/calculatedStatInterface';
 
-export class Stat {
-  public _id: string;
+export class CalculatedStat {
   public carpoolers: {
     total: number;
     days: StatDayTotalInterface[];
@@ -16,14 +14,14 @@ export class Stat {
   public carpoolers_per_vehicule: {
     total: number;
     days: StatDayTotalInterface[];
-    months: StatMonthTotalInterface[];
+    months: StatDateTotalInterface[];
   };
   public distance: {
     total: number;
     days: StatDayTotalInterface[];
     months: StatDateTotalInterface[];
   };
-  public operators: {
+  public operators?: {
     total: number;
     imgIds: [];
   };
@@ -41,12 +39,13 @@ export class Stat {
       total_subsidized: number;
     }[];
   };
-  constructor(obj: StatInterface) {
-    this._id = obj._id;
+  constructor(obj: CalculatedStatInterface) {
     this.carpoolers = obj.carpoolers;
     this.carpoolers_per_vehicule = obj.carpoolers_per_vehicule;
     this.distance = obj.distance;
-    this.operators = obj.operators;
     this.trips = obj.trips;
+    if (obj.operators) {
+      this.operators = obj.operators;
+    }
   }
 }

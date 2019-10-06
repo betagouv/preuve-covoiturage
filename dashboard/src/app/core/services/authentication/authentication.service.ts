@@ -159,6 +159,7 @@ export class AuthenticationService {
     if (!user) {
       return false;
     }
+    console.log({ groups }, user.group);
     return !groups.length || ('group' in user && groups.includes(user.group));
   }
 

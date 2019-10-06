@@ -11,6 +11,7 @@ import { StatGraphComponent } from './components/stat-graph/stat-graph.component
 import { StatTerritoryViewComponent } from './components/stat-territory-view/stat-territory-view.component';
 import { StatGraphViewComponent } from './components/stat-graph-view/stat-graph-view.component';
 import { StatOperatorViewComponent } from './components/stat-operator-view/stat-operator-view.component';
+import { StatChartContainerComponent } from './components/stat-graph/stat-chart-container/stat-chart-container.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { StatOperatorViewComponent } from './components/stat-operator-view/stat-
     StatTerritoryViewComponent,
     StatGraphViewComponent,
     StatOperatorViewComponent,
+    StatChartContainerComponent,
   ],
   imports: [CommonModule, ChartjsModule, FormsModule, MaterialModule, SharedModule],
   exports: [

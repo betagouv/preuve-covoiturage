@@ -11,4 +11,5 @@ export interface StatNumberInterface {
   svgIcon: string;
   title: string;
   link?: string;
+  unit?: string;
 }

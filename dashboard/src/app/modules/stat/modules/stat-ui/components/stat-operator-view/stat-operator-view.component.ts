@@ -78,7 +78,6 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
    * scroll to top of div.AuthenticatedLayout-body
    */
   public scrollToTop(): void {
-    const offsetTop = document.getElementById('graph').offsetTop;
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = offsetTop;
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
   }
 }

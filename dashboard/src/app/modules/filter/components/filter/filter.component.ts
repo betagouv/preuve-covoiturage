@@ -129,7 +129,12 @@ export class FilterComponent extends DestroyObservable implements OnInit {
       .format('dddd');
   }
 
-  public hasGroupsOperatorsAndTerritories() {
+  public get hasGroupOperatorOrRegistry(): boolean {
     return this.authService.hasAnyGroup([UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY]);
+  }
+
+  public get hasGroupRegistryOrTerritory(): boolean {
+    console.log('should be true', this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]));
+    return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]);
   }
 }

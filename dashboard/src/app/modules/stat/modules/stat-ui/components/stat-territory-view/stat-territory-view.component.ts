@@ -7,7 +7,7 @@ import { FilterService } from '~/core/services/filter.service';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { OPERATOR_STATS, TERRITORY_STATS } from '~/modules/stat/config/stat';
+import { TERRITORY_STATS } from '~/modules/stat/config/stat';
 
 import { StatService } from '../../../../services/stat.service';
 
@@ -45,6 +45,14 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     });
   }
 
+  get loading(): boolean {
+    return this.statService.loading;
+  }
+
+  get loaded(): boolean {
+    return this.statService.loaded;
+  }
+
   private loadStat(filter: FilterUxInterface | {} = {}): void {
     if (this.statService.loading) {
       return;
@@ -80,7 +88,6 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
    * scroll to top of div.AuthenticatedLayout-body
    */
   public scrollToTop(): void {
-    const offsetTop = document.getElementById('graph').offsetTop;
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = offsetTop;
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
   }
 }

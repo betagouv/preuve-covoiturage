@@ -1,6 +1,6 @@
 // tslint:disable
 import { mockDates } from './const/dates';
-import { Stat } from '../../../src/app/core/entities/stat/stat';
+import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
 
 export const mockStatsData = {
   distance: {
@@ -22,7 +22,7 @@ export const mockStatsData = {
 };
 
 export class StatsGenerator {
-  static get generateStats(): Stat {
+  static get generateStats(): CalculatedStat {
     return {
       _id: 'randomStatId',
       carpoolers: {
@@ -50,7 +50,7 @@ export class StatsGenerator {
         }),
         months: mockStatsData.carpoolers_per_vehicule.months.map((val, idx) => {
           return {
-            month: mockDates.months[idx],
+            date: mockDates.months[idx],
             total: val,
           };
         }),

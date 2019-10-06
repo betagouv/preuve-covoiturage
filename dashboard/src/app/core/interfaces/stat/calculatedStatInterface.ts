@@ -1,5 +1,4 @@
-export interface StatInterface {
-  _id: string;
+export interface CalculatedStatInterface {
   carpoolers: {
     total: number;
     days: StatDayTotalInterface[];
@@ -8,14 +7,14 @@ export interface StatInterface {
   carpoolers_per_vehicule: {
     total: number;
     days: StatDayTotalInterface[];
-    months: StatMonthTotalInterface[];
+    months: StatDateTotalInterface[];
   };
   distance: {
     total: number;
     days: StatDayTotalInterface[];
     months: StatDateTotalInterface[];
   };
-  operators: {
+  operators?: {
     total: number;
     imgIds: [];
   };
@@ -36,12 +35,7 @@ export interface StatInterface {
 }
 
 export interface StatDateTotalInterface {
-  date: number;
-  total: number;
-}
-
-export interface StatMonthTotalInterface {
-  month: number;
+  date: string;
   total: number;
 }
 
