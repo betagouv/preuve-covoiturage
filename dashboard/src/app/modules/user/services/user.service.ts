@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { ApiService } from '~/core/services/api/api.service';
 import { User } from '~/core/entities/authentication/user';
-import { catchError } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
 import { IModel } from '~/core/entities/IModel';
 
 @Injectable({
