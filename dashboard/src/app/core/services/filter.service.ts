@@ -1,7 +1,7 @@
 // tslint:disable:prefer-conditional-expression
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { objectKeys } from 'codelyzer/util/objectKeys';
+import * as _ from 'lodash';
 
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { Filter } from '~/core/entities/filter/filter';
@@ -15,7 +15,9 @@ export class FilterService {
 
   constructor() {}
 
-  public setFilter(filterUx: FilterUxInterface | {} = {}): void {
+  public setFilter(params: FilterUxInterface | {} = {}): void {
+    const filterUx = _.cloneDeep(params);
+
     // format filterUx to filter in api format
     let filter;
 

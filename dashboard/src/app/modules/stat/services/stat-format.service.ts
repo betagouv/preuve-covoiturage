@@ -327,7 +327,6 @@ export class StatFormatService {
       },
     };
 
-    console.log(formatedStat.total);
     return formatedStat;
   }
 

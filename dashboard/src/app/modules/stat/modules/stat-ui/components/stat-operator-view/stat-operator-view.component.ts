@@ -43,6 +43,14 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
     });
   }
 
+  get loading(): boolean {
+    return this.statService.loading;
+  }
+
+  get loaded(): boolean {
+    return this.statService.loaded;
+  }
+
   private loadStat(filter: FilterUxInterface | {} = {}): void {
     if (this.statService.loading) {
       return;

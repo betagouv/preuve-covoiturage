@@ -5,8 +5,6 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-
-import { OperatorService } from '../../../../services/operator.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
@@ -26,7 +24,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
 
-  constructor(public operatorService: OperatorService, private commonDataService: CommonDataService) {
+  constructor(private commonDataService: CommonDataService) {
     super();
   }
 
@@ -39,7 +37,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   get operatorIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get('operator_ids');
+    return <FormControl>this.parentForm.get('operatorIds');
   }
 
   /**
@@ -67,20 +65,6 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   private loadOperators() {
-    // if (!this.operatorService.operatorsLoaded) {
-    //   this.operatorService
-    //     .load()
-    //     .pipe(takeUntil(this.destroy$))
-    //     .subscribe();
-    // }
-    // this.operatorService.entities$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-    //   this.operators = operators.map((operator) => ({
-    //     _id: operator._id,
-    //     nom_commercial: operator.nom_commercial,
-    //   }));
-    //   this.filterOperators();
-    // });
-
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators.map((operator) => ({
         _id: operator._id,

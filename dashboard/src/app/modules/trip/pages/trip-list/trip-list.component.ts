@@ -43,11 +43,19 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     });
   }
 
+  get loading(): boolean {
+    return this.tripService.loading;
+  }
+
+  get loaded(): boolean {
+    return this.tripService.loading;
+  }
+
   /**
    * if no values in database when no filter is applied this should return true
    */
   get showMessage(): boolean {
-    return this.tripService.loaded && !this.hasFilter && this.trips.length === 0;
+    return !this.loading && this.loaded && !this.hasFilter && this.trips.length === 0;
   }
 
   get hasFilter(): boolean {

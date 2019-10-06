@@ -20,9 +20,9 @@ export class CommonDataService {
   private _currentOperator$ = new BehaviorSubject<Operator>(null);
   private _currentTerritory$ = new BehaviorSubject<Territory>(null);
 
-  private _territories$ = new BehaviorSubject<Territory[]>(null);
-  private _operators$ = new BehaviorSubject<Operator[]>(null);
-  private _campaigns$ = new BehaviorSubject<Campaign[]>(null);
+  private _territories$ = new BehaviorSubject<Territory[]>([]);
+  private _operators$ = new BehaviorSubject<Operator[]>([]);
+  private _campaigns$ = new BehaviorSubject<Campaign[]>([]);
 
   get currentOperator$(): Observable<Operator> {
     return this._currentOperator$;
@@ -130,7 +130,7 @@ export class CommonDataService {
           if (user.territory) {
             params.push(this.territoryService.getFindByIdJSONParam(user.territory ? user.territory : ''));
           } else if (user.operator) {
-            params.push(this.territoryService.getFindByIdJSONParam(user.territory ? user.territory : ''));
+            params.push(this.operatorService.getFindByIdJSONParam(user.operator ? user.operator : ''));
           }
 
           return this.jsonRPCService.call(params, {}, false);
