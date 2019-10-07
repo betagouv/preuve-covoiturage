@@ -2,7 +2,7 @@
   <mat-spinner></mat-spinner>
 </div>
 <form class="operatorForm" [formGroup]="operatorForm" *ngIf="showForm && !loading">
-  <div *ngIf="canSeeFullForm">
+  <div *ngIf="fullFormMode">
     <h2>Informations générales</h2>
 
     <mat-form-field class="nom_commercial" appearance="outline">

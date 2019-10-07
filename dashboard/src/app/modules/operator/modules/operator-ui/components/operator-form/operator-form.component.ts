@@ -29,7 +29,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
 
   @Output() close = new EventEmitter();
 
-  canSeeFullForm = false;
+  fullFormMode = false;
 
   constructor(
     public authService: AuthenticationService,
@@ -45,9 +45,10 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
     this.initOperatorFormValue();
     this.checkPermissions();
 
-    this.authService.user$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => (this.canSeeFullForm = user && user.group === UserGroupEnum.REGISTRY));
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+      this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+      this.updateValidation();
+    });
   }
 
   get controls() {
@@ -60,8 +61,20 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
 
   public onSubmit(): void {
     const operator = new Operator(this.operatorForm.value);
+
     if (operator._id) {
-      this._operatorService.patchList(this.operatorForm.value).subscribe(
+      // get only contacts when fullFormModel = false
+      const formData = this.fullFormMode
+        ? this.operatorForm.value
+        : {
+            _id: operator._id,
+            contacts: this.operatorForm.value.contacts,
+          };
+
+      const patch$ = this.fullFormMode
+        ? this._operatorService.patchList(formData)
+        : this._operatorService.patchContactList(formData);
+      patch$.subscribe(
         (data) => {
           const modifiedOperator = data[0];
           this.toastr.success(`${modifiedOperator.nom_commercial} a été mis à jour !`);
@@ -71,6 +84,10 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
         },
       );
     } else {
+      if (!this.fullFormMode) {
+        throw new Error("Can't create operator where fullFormMode is false (non register user)");
+      }
+
       this._operatorService.createList(this.operatorForm.value).subscribe(
         (data) => {
           const createdOperator = data[0];
@@ -111,9 +128,22 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
     operatorParams['contacts'] = new Contacts(contacts);
 
     // // get values in correct format with initialized values
-    let formValues: any = {
+    const formValues: Operator = {
       _id: operatorParams._id,
-
+      nom_commercial: operatorParams.nom_commercial,
+      raison_sociale: operatorParams.raison_sociale,
+      address: new Address({
+        ...operatorConstruct.address,
+        ...operatorParams.address,
+      }),
+      bank: new Bank({
+        ...operatorConstruct.bank,
+        ...operatorParams.bank,
+      }),
+      company: new Company({
+        ...operatorConstruct.company,
+        ...operatorParams.company,
+      }),
       contacts: new Contacts({
         gdpr_dpo: {
           ...operatorConstruct.contacts.gdpr_dpo,
@@ -129,36 +159,23 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
         },
       }),
     };
-    if (this.canSeeFullForm) {
-      formValues = {
-        ...formValues,
-        ...{
-          nom_commercial: operatorParams.nom_commercial,
-          raison_sociale: operatorParams.raison_sociale,
-          address: new Address({
-            ...operatorConstruct.address,
-            ...operatorParams.address,
-          }),
-          bank: new Bank({
-            ...operatorConstruct.bank,
-            ...operatorParams.bank,
-          }),
-          company: new Company({
-            ...operatorConstruct.company,
-            ...operatorParams.company,
-          }),
-        },
-      };
-    }
 
     this.operatorForm.setValue(formValues);
+  }
+
+  private updateValidation() {
+    console.log('updateValidation', this.fullFormMode);
+    if (this.operatorForm) {
+      this.operatorForm.controls['nom_commercial'].setValidators(this.fullFormMode ? Validators.required : null);
+      this.operatorForm.controls['raison_sociale'].setValidators(this.fullFormMode ? Validators.required : null);
+    }
   }
 
   private initOperatorForm(): void {
     this.operatorForm = this.fb.group({
       _id: [null],
-      nom_commercial: ['', Validators.required],
-      raison_sociale: ['', Validators.required],
+      nom_commercial: [''],
+      raison_sociale: [''],
       address: this.fb.group(new FormAddress(new Address({ street: null, city: null, country: null, postcode: null }))),
       company: this.fb.group(new FormCompany(new Company({ siren: null }))),
       contacts: this.fb.group({
@@ -168,6 +185,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
       }),
       bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
     });
+
+    this.updateValidation();
   }
 
   private checkPermissions(): void {

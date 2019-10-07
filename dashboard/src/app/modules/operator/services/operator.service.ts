@@ -8,6 +8,9 @@ import { ApiService } from '~/core/services/api/api.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { IModel } from '~/core/entities/IModel';
+import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { map, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -84,6 +87,18 @@ export class OperatorService extends ApiService<Operator> {
     removeEmpty(operator);
 
     return super.patchList(operator);
+  }
+
+  public patchContactList(item: IModel): Observable<[Operator, Operator[]]> {
+    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patchContact`, item);
+    return this._jsonRPCService.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
+      mergeMap((modifiedEntity: Operator) => {
+        console.log(`updated ${this._method} id=${modifiedEntity._id}`);
+        this._entity$.next(modifiedEntity);
+        return this.load(this._listFilters).pipe(map((entities) => <[Operator, Operator[]]>[modifiedEntity, entities]));
+      }),
+    );
   }
 
   getOperatorName(id: string) {

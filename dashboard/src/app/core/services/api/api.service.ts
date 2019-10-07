@@ -14,9 +14,9 @@ export class ApiService<T extends IModel> {
   protected _loading$ = new BehaviorSubject<boolean>(false);
   protected _loaded$ = new BehaviorSubject<boolean>(false);
 
-  private _listFilters = {};
+  protected _listFilters = {};
 
-  constructor(private _httpClient: HttpClient, private _jsonRPCService: JsonRPCService, protected _method: string) {}
+  constructor(private _httpClient: HttpClient, protected _jsonRPCService: JsonRPCService, protected _method: string) {}
 
   // ===== Get ======
   get entities$(): Observable<T[]> {
