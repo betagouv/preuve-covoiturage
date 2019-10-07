@@ -13,7 +13,7 @@ import { Contact } from '~/core/entities/shared/contact';
 import { FormBank } from '~/shared/modules/form/forms/form-bank';
 import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Territory } from '~/core/entities/territory/territory';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-operator-form',
@@ -29,6 +29,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
 
   @Output() close = new EventEmitter();
 
+  canSeeFullForm = false;
+
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
@@ -42,6 +44,10 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
     this.initOperatorForm();
     this.initOperatorFormValue();
     this.checkPermissions();
+
+    this.authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => (this.canSeeFullForm = user && user.group === UserGroupEnum.REGISTRY));
   }
 
   get controls() {
@@ -105,22 +111,9 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
     operatorParams['contacts'] = new Contacts(contacts);
 
     // // get values in correct format with initialized values
-    const formValues: Operator = {
+    let formValues: any = {
       _id: operatorParams._id,
-      nom_commercial: operatorParams.nom_commercial,
-      raison_sociale: operatorParams.raison_sociale,
-      address: new Address({
-        ...operatorConstruct.address,
-        ...operatorParams.address,
-      }),
-      bank: new Bank({
-        ...operatorConstruct.bank,
-        ...operatorParams.bank,
-      }),
-      company: new Company({
-        ...operatorConstruct.company,
-        ...operatorParams.company,
-      }),
+
       contacts: new Contacts({
         gdpr_dpo: {
           ...operatorConstruct.contacts.gdpr_dpo,
@@ -136,6 +129,27 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
         },
       }),
     };
+    if (this.canSeeFullForm) {
+      formValues = {
+        ...formValues,
+        ...{
+          nom_commercial: operatorParams.nom_commercial,
+          raison_sociale: operatorParams.raison_sociale,
+          address: new Address({
+            ...operatorConstruct.address,
+            ...operatorParams.address,
+          }),
+          bank: new Bank({
+            ...operatorConstruct.bank,
+            ...operatorParams.bank,
+          }),
+          company: new Company({
+            ...operatorConstruct.company,
+            ...operatorParams.company,
+          }),
+        },
+      };
+    }
 
     this.operatorForm.setValue(formValues);
   }
