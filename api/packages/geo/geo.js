@@ -76,6 +76,8 @@ const town = async ({ lon, lat, insee, literal }) => {
         country,
       };
     } catch (e) {
+      console.log(`API adresse failed: ${e.message}`);
+
       try {
         const { citycode, city, postcode, country } = await geoApi.reverse({ lon, lat });
         return {
@@ -87,6 +89,8 @@ const town = async ({ lon, lat, insee, literal }) => {
           country,
         };
       } catch (f) {
+        console.log(`API Géo failed: ${e.message}`);
+
         try {
           const { citycode, city, postcode, country } = await nominatimApi.reverse({ lon, lat });
           return {
@@ -98,6 +102,8 @@ const town = async ({ lon, lat, insee, literal }) => {
             country,
           };
         } catch (g) {
+          console.log(`Nominatim failed: ${e.message}`);
+
           return {
             lon,
             lat,
@@ -125,6 +131,8 @@ const town = async ({ lon, lat, insee, literal }) => {
         country,
       };
     } catch (e) {
+      console.log(`API Géo failed: ${e.message}`);
+
       try {
         const { city, citycode, postcode, country } = await addressApi.insee(insee);
         return {
@@ -136,6 +144,8 @@ const town = async ({ lon, lat, insee, literal }) => {
           country,
         };
       } catch (f) {
+        console.log(`API Adresse failed: ${e.message}`);
+
         return {
           lon: null,
           lat: null,
@@ -162,6 +172,8 @@ const town = async ({ lon, lat, insee, literal }) => {
         country: res.country,
       };
     } catch (e) {
+      console.log(`API Komoot failed: ${e.message}`);
+
       try {
         const { citycode, city, postcode, country } = await addressApi.search(literal);
         return {
@@ -173,6 +185,8 @@ const town = async ({ lon, lat, insee, literal }) => {
           country,
         };
       } catch (f) {
+        console.log(`API Adresse failed: ${e.message}`);
+
         return {
           lon,
           lat,
@@ -214,10 +228,11 @@ const postcodes = async ({ lon, lat, insee }) => {
   return _.get(await town({ lon, lat }), 'postcodes', []);
 };
 
-const route = async (start, end) => [osrmBetaRoute.route, osrmProject.route].reduce(
-  (promiseAcc, func) => promiseAcc.then((res) => res).catch(() => func(start, end)),
-  Promise.reject(),
-);
+const route = async (start, end) =>
+  [osrmBetaRoute.route, osrmProject.route].reduce(
+    (promiseAcc, func) => promiseAcc.then((res) => res).catch(() => func(start, end)),
+    Promise.reject(),
+  );
 
 module.exports = {
   aom,
