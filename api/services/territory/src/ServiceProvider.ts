@@ -10,6 +10,7 @@ import {
   territoryFindByInseeSchema,
   territoryFindByPositionSchema,
   territoryFindSchema,
+  territoryPatchContactsSchema,
 } from '@pdc/provider-schema';
 import { ContentWhitelistMiddleware, ContentBlacklistMiddleware } from '@pdc/provider-middleware';
 
@@ -22,6 +23,7 @@ import { SchemaTerritoryAction } from './actions/SchemaTerritoryAction';
 import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
 import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
+import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 
 @serviceProvider({
   config: __dirname,
@@ -33,6 +35,7 @@ import { FindTerritoryAction } from './actions/FindTerritoryAction';
     ['territory.delete', territoryDeleteSchema],
     ['territory.findByInsee', territoryFindByInseeSchema],
     ['territory.findByPosition', territoryFindByPositionSchema],
+    ['territory.patchContacts', territoryPatchContactsSchema],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -47,6 +50,7 @@ import { FindTerritoryAction } from './actions/FindTerritoryAction';
     ListTerritoryAction,
     CreateTerritoryAction,
     PatchTerritoryAction,
+    PatchContactsTerritoryAction,
     DeleteTerritoryAction,
     FindTerritoryByInseeAction,
     FindTerritoryByPositionAction,

@@ -8,6 +8,7 @@ import {
   operatorPatchSchema,
   operatorDeleteSchema,
   operatorFindSchema,
+  operatorPatchContactsSchema,
 } from '@pdc/provider-schema';
 import { ContentBlacklistMiddleware } from '@pdc/provider-middleware';
 
@@ -18,6 +19,7 @@ import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
 import { PatchOperatorAction } from './actions/PatchOperatorAction';
 import { SchemaOperatorAction } from './actions/SchemaOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
+import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
 
 @serviceProvider({
   config: __dirname,
@@ -27,6 +29,7 @@ import { FindOperatorAction } from './actions/FindOperatorAction';
     ['operator.patch', operatorPatchSchema],
     ['operator.delete', operatorDeleteSchema],
     ['operator.find', operatorFindSchema],
+    ['operator.patchContacts', operatorPatchContactsSchema],
   ],
   handlers: [
     SchemaOperatorAction,
@@ -35,6 +38,7 @@ import { FindOperatorAction } from './actions/FindOperatorAction';
     PatchOperatorAction,
     DeleteOperatorAction,
     FindOperatorAction,
+    PatchContactsOperatorAction,
   ],
   connections: [[MongoConnection, 'mongo']],
   middlewares: [

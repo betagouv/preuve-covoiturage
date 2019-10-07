@@ -1,7 +1,12 @@
+interface ContactType {
+  firstname: string;
+  lastname: string;
+  email: string;
+  phone: string;
+}
+
 export interface ContactsInterface {
-  phone?: string;
-  email?: string;
-  gdpr_dpo?: string;
-  gdpr_controller?: string;
-  technical?: string;
+  gdpr_dpo?: ContactType;
+  gdpr_controller?: ContactType;
+  technical?: ContactType;
 }
