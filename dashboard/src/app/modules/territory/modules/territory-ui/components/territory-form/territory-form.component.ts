@@ -13,9 +13,8 @@ import { Contacts, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
-
-import { TerritoryService } from '../../../../services/territory.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { TerritoryService } from '~/modules/territory/services/territory.service';
 
 @Component({
   selector: 'app-territory-form',
@@ -32,7 +31,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   @Output() close = new EventEmitter();
 
   fullFormMode = false;
-
 
   constructor(
     public authService: AuthenticationService,
@@ -69,9 +67,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
       const formData = this.fullFormMode
         ? this.territoryForm.value
         : {
-          _id: territory._id,
-          contacts: this.territoryForm.value.contacts,
-        };
+            _id: territory._id,
+            contacts: this.territoryForm.value.contacts,
+          };
 
       const patch$ = this.fullFormMode
         ? this._territoryService.patchList(formData)

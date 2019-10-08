@@ -7,7 +7,7 @@ import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { Campaign } from '~/core/entities/campaign/campaign';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
 
 @Component({

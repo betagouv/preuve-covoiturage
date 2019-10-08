@@ -9,9 +9,9 @@ import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
 import { Territory } from '~/core/entities/territory/territory';
-import { Campaign } from '~/core/entities/campaign/campaign';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 
 @Injectable({
   providedIn: 'root',

@@ -1,3 +1,5 @@
+import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+
 export function campaignSecondStepSelectDays() {
   it('selects days', () => {
     // click DATE select
@@ -8,6 +10,32 @@ export function campaignSecondStepSelectDays() {
 
     // focus out of material select
     cy.get('.cdk-overlay-backdrop').click({ force: true });
+  });
+}
+export function campaignSecondStepSelectTimeRange(min, max) {
+  it('add time range', () => {
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(1)').click();
+
+    cy.get('.RulesForm-date div:nth-child(2) app-range-time-picker mat-form-field:nth-child(1) input').type(
+      `0${min}:00`,
+    );
+    cy.get('.RulesForm-date div:nth-child(2) app-range-time-picker mat-form-field:nth-child(2) input').type(
+      `${max}:00`,
+    );
+  });
+}
+
+export function campaignSecondStepAddSecondTimeRange(min, max) {
+  it('add second time range', () => {
+    // click add time button
+    cy.get('.RulesForm-date div:nth-child(2) > button').click();
+
+    cy.get(
+      '.RulesForm-date div:nth-child(2) .RulesForm-date-time:nth-child(2) app-range-time-picker mat-form-field:nth-child(1) input',
+    ).type(`${min}:00`);
+    cy.get(
+      '.RulesForm-date div:nth-child(2) .RulesForm-date-time:nth-child(2) app-range-time-picker mat-form-field:nth-child(2) input',
+    ).type(`${max}:00`);
   });
 }
 

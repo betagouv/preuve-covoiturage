@@ -1,13 +1,8 @@
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
-import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
-
-export const campaignStub: Campaign = {
-  ...CypressExpectedCampaign.get(),
-  _id: '5d7ba379c2cd1e4b02f971f5',
-};
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 
 export function stubCampaignCreate(status: CampaignStatusEnum) {
   cy.route({
@@ -20,7 +15,7 @@ export function stubCampaignCreate(status: CampaignStatusEnum) {
           jsonrpc: '2.0',
           result: {
             data: {
-              ...campaignStub,
+              ...CypressExpectedCampaign.getAfterCreate(),
               status,
             },
           },

@@ -27,12 +27,14 @@ const fakeCampaign = {
   end: end.toISOString(),
   unit: 'euro',
   status: 'draft',
-  filters: {},
-  retribution_rules: [
-    {
-      slug: 'adult_only',
-      parameters: true,
-    },
+  global_rules: [],
+  rules: [
+    [
+      {
+        slug: 'adult_only_filter',
+        parameters: true,
+      },
+    ],
   ],
 };
 

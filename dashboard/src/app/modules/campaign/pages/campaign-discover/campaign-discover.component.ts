@@ -4,7 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 
 @Component({
   selector: 'app-campaign-discover',
@@ -15,7 +16,11 @@ export class CampaignDiscoverComponent implements OnInit {
   campaigns: CampaignUx[];
   campaignsToShow: CampaignUx[];
 
-  constructor(public campaignService: CampaignService, private toastr: ToastrService) {}
+  constructor(
+    public campaignService: CampaignService,
+    public campaignFormatService: CampaignFormatingService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit() {
     this.loadCampaigns();
@@ -48,7 +53,7 @@ export class CampaignDiscoverComponent implements OnInit {
   private loadCampaigns(): void {
     this.campaignService.load().subscribe(
       (campaigns) => {
-        this.campaigns = campaigns.map(this.campaignService.toCampaignUxFormat);
+        this.campaigns = campaigns.map(this.campaignFormatService.toCampaignUxFormat);
         this.campaignsToShow = this.campaigns;
       },
       (err) => {

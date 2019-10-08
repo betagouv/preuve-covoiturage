@@ -179,8 +179,8 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public deleteList(id: string): Observable<T[]> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: id });
+  public deleteList(id: string, params: { territory_id?: string; operator_id?: string } = {}): Observable<T[]> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: id, ...params });
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       mergeMap(() => this.load(this._listFilters)),

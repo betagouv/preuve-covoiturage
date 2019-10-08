@@ -24,7 +24,7 @@
           Nouvelle campagne
         </button>
       </div>
-      <div class="CampaignDashboard-content-list">
+      <div class="CampaignDashboard-content-list activeList">
         <app-campaigns-list
           [campaignStatusList]="[campaignStatus.VALIDATED, campaignStatus.PENDING]"
         ></app-campaigns-list>
@@ -35,13 +35,13 @@
           Nouveau brouillon
         </button>
       </div>
-      <div class="CampaignDashboard-content-list">
+      <div class="CampaignDashboard-content-list draftList">
         <app-campaigns-list [campaignStatusList]="[campaignStatus.DRAFT]"></app-campaigns-list>
       </div>
       <div class="CampaignDashboard-content-header">
         <h2>Vos campagnes terminées</h2>
       </div>
-      <div class="CampaignDashboard-content-list">
+      <div class="CampaignDashboard-content-list archivedList">
         <app-campaigns-list [campaignStatusList]="[campaignStatus.ARCHIVED]"></app-campaigns-list>
       </div>
     </div>

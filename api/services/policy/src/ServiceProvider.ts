@@ -12,9 +12,6 @@ import {
 } from '@pdc/provider-schema';
 import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
-import { CampaignRepositoryProvider } from './providers/CampaignRepositoryProvider';
-import { ValidateRetributionInputMiddleware } from './middlewares/ValidateRetributionInputMiddleware';
-
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
 import { LaunchCampaignAction } from './actions/LaunchCampaignAction';
@@ -22,9 +19,19 @@ import { ListCampaignAction } from './actions/ListCampaignAction';
 import { ListCampaignTemplateAction } from './actions/ListCampaignTemplateAction';
 import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
 
+import { CampaignRepositoryProvider } from './providers/CampaignRepositoryProvider';
+import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
+import { PolicyEngine } from './engine/PolicyEngine';
+import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRepositoryProvider';
+
 @serviceProvider({
   config: __dirname,
-  providers: [CampaignRepositoryProvider, ['validate.retribution', ValidateRetributionInputMiddleware]],
+  providers: [
+    CampaignRepositoryProvider,
+    CampaignMetadataRepositoryProvider,
+    ['validate.rules', ValidateRuleParametersMiddleware],
+    PolicyEngine,
+  ],
   validator: [
     ['campaign.create', campaignCreateSchema],
     ['campaign.patch', campaignPatchSchema],

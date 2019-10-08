@@ -5,7 +5,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { Campaign } from '~/core/entities/campaign/campaign';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 import { CommonDataService } from '~/core/services/common-data.service';
 

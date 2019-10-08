@@ -1,15 +1,9 @@
-import { weekdayFilterSchema } from './filters/weekdayFilterSchema';
-import { timeFilterSchema } from './filters/timeFilterSchema';
-import { operatorFilterSchema } from './filters/operatorFilterSchema';
-import { distanceFilterSchema } from './filters/distanceFilterSchema';
-import { rankFilterSchema } from './filters/rankFilterSchema';
-import { inseeFilterSchema } from './filters/inseeFilterSchema';
-import { retributionRuleSchema } from './retributionRuleSchema';
+import { ruleSchema } from './ruleSchema';
 
 export const campaignCreateSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['territory_id', 'name', 'start', 'end', 'unit', 'status', 'retribution_rules'],
+  required: ['territory_id', 'name', 'start', 'end', 'unit', 'status', 'rules', 'global_rules'],
   properties: {
     parent_id: {
       macro: 'objectid',
@@ -41,22 +35,18 @@ export const campaignCreateSchema = {
       type: 'string',
       enum: ['draft', 'template'],
     },
-    filters: {
-      type: 'object',
-      additionalProperties: false,
-      properties: {
-        weekday: weekdayFilterSchema,
-        time: timeFilterSchema,
-        operators_id: operatorFilterSchema,
-        distance_range: distanceFilterSchema,
-        rank: rankFilterSchema,
-        insee: inseeFilterSchema,
-      },
+    global_rules: {
+      type: 'array',
+      items: ruleSchema,
     },
-    retribution_rules: {
+    rules: {
       type: 'array',
       minItems: 1,
-      items: retributionRuleSchema,
+      items: {
+        type: 'array',
+        minItems: 1,
+        items: ruleSchema,
+      },
     },
   },
 };
