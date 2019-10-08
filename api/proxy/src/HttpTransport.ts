@@ -158,12 +158,21 @@ export class HttpTransport implements TransportInterface {
    * }
    */
   private registerLegacyServerRoute() {
+    // V1 payload
     this.app.post(
       '/journeys/push',
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        const response = await this.kernel.handle(makeCall('acquisition:create', req.body, { user }));
-        res.status(mapStatusCode(response)).json(response);
+        res.json(await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user })));
+      }),
+    );
+
+    // V2 payload
+    this.app.post(
+      '/v2/journeys',
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        res.json(await this.kernel.handle(makeCall('acquisition:create', req.body, { user })));
       }),
     );
   }
