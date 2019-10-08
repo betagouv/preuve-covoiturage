@@ -67,13 +67,13 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
       const formData = this.fullFormMode
         ? this.operatorForm.value
         : {
-            _id: operator._id,
-            contacts: this.operatorForm.value.contacts,
-          };
+          _id: operator._id,
+          contacts: this.operatorForm.value.contacts,
+        };
 
       const patch$ = this.fullFormMode
         ? this._operatorService.patchList(formData)
-        : this._operatorService.patchContactList(formData);
+        : this._operatorService.patchContactList({ ...formData.contacts, _id: formData._id });
       patch$.subscribe(
         (data) => {
           const modifiedOperator = data[0];
@@ -85,7 +85,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
       );
     } else {
       if (!this.fullFormMode) {
-        throw new Error("Can't create operator where fullFormMode is false (non register user)");
+        throw new Error('Can\'t create operator where fullFormMode is false (non register user)');
       }
 
       this._operatorService.createList(this.operatorForm.value).subscribe(

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeLast, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
@@ -15,6 +15,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 
 import { TerritoryService } from '../../../../services/territory.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-territory-form',
@@ -30,6 +31,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
 
   @Output() close = new EventEmitter();
 
+  fullFormMode = false;
+
+
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
@@ -44,6 +48,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     this.initTerritoryForm();
     this.initTerritoryFormValue();
     this.checkPermissions();
+
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+      this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+      this.updateValidation();
+    });
   }
 
   get controls() {
@@ -57,7 +66,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   public onSubmit(): void {
     const territory = new Territory(this.territoryForm.value);
     if (territory._id) {
-      this._territoryService.patchList(this.territoryForm.value).subscribe(
+      const formData = this.fullFormMode
+        ? this.territoryForm.value
+        : {
+          _id: territory._id,
+          contacts: this.territoryForm.value.contacts,
+        };
+
+      const patch$ = this.fullFormMode
+        ? this._territoryService.patchList(formData)
+        : this._territoryService.patchContactList({ ...formData.contacts, _id: formData._id });
+
+      patch$.subscribe(
         (data) => {
           const modifiedTerritory = data[0];
           this.toastr.success(`${modifiedTerritory.name} a été mis à jour !`);
@@ -86,8 +106,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   private initTerritoryForm(): void {
     this.territoryForm = this.fb.group({
       _id: [null],
-      name: ['', Validators.required],
-      acronym: ['', Validators.max(12)],
+      name: [''],
+      acronym: [''],
       address: this.fb.group(new FormAddress(new Address({ street: null, city: null, country: null, postcode: null }))),
       company: this.fb.group(new FormCompany(new Company({ siren: null }))),
       contacts: this.fb.group({
@@ -96,6 +116,16 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
         technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
     });
+
+    this.updateValidation();
+  }
+
+  private updateValidation() {
+    console.log('updateValidation', this.fullFormMode);
+    if (this.territoryForm) {
+      this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
+      this.territoryForm.controls['acronym'].setValidators(this.fullFormMode ? Validators.max(12) : null);
+    }
   }
 
   // todo: ugly ...

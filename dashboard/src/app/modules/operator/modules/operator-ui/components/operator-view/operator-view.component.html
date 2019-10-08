@@ -1,1 +1,3 @@
-<app-operator-form></app-operator-form>
+
+<app-operator-form *ngIf="readOnly$ === false | async"></app-operator-form>
+<app-operator-details *ngIf="readOnly$ | async"></app-operator-details>

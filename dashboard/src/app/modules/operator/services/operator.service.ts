@@ -52,45 +52,48 @@ export class OperatorService extends ApiService<Operator> {
     this._entity$.next(operatorToEdit);
   }
 
-  patchList(operator: Operator): Observable<[Operator, Operator[]]> {
-    // remove null values & empty objects
-    const removeEmpty = (object) => {
-      if (!_.isObject(object)) {
+  private removeEmpty(object) {
+    if (!_.isObject(object)) {
+      return;
+    }
+
+    _.keys(object).forEach((key) => {
+      const element = object[key];
+
+      if (element === null) {
+        delete object[key];
         return;
       }
 
-      _.keys(object).forEach((key) => {
-        const element = object[key];
-
-        if (element === null) {
+      if (_.isObject(element)) {
+        if (_.isEmpty(element)) {
           delete object[key];
           return;
         }
 
-        if (_.isObject(element)) {
-          if (_.isEmpty(element)) {
-            delete object[key];
-            return;
-          }
+        // Is object, recursive call
+        this.removeEmpty(element);
 
-          // Is object, recursive call
-          removeEmpty(element);
-
-          if (_.isEmpty(element)) {
-            delete object[key];
-            return;
-          }
+        if (_.isEmpty(element)) {
+          delete object[key];
+          return;
         }
-      });
-    };
+      }
+    });
+  }
 
-    removeEmpty(operator);
+  patchList(operator: Operator): Observable<[Operator, Operator[]]> {
+    // remove null values & empty objects
+
+    this.removeEmpty(operator);
 
     return super.patchList(operator);
   }
 
   public patchContactList(item: IModel): Observable<[Operator, Operator[]]> {
-    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patchContact`, item);
+    this.removeEmpty(item);
+
+    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patchContacts`, item);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       mergeMap((modifiedEntity: Operator) => {
