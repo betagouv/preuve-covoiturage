@@ -1,6 +1,0 @@
-{
-  "watch": ["proxy/dist", "services/**/dist", "providers/**/dist"],
-  "ext": "js",
-  "ignore": ["src/**/*.spec.js", "**/node_modules/**"],
-  "exec": "node --inspect=0.0.0.0:9229 -r ts-node/register ./serve-dev.ts"
-}
