@@ -39,6 +39,10 @@ export class ApiService<T extends IModel> {
     return this._loading$.value;
   }
 
+  get loaded(): boolean {
+    return this._loaded$.value;
+  }
+
   // ====== Update Observable ======
   updateEntityArray(newItem: T) {
     const auxArray = this._entities$.value;

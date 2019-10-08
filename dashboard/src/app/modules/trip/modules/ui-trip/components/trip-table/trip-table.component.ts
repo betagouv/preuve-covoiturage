@@ -101,7 +101,9 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     return amount ? amount : '-';
   }
 
-  getTotalIncentivesUnit(trip: Trip): string {
+  // FIXME
+  // getTotalIncentivesUnit(trip: Trip): string {
+  getTotalIncentivesUnit(trip: any): string {
     if (!trip.people) {
       return '';
     }
