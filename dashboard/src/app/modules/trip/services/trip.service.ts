@@ -44,6 +44,10 @@ export class TripService extends ApiService<Trip> {
       );
   }
 
+  public loaded(): boolean {
+    return super._loaded$.value;
+  }
+
   public load(filter: FilterInterface | {} = {}) {
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {

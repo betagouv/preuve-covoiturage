@@ -1,24 +1,27 @@
-import { StatDateTotalInterface, StatDayTotalInterface, StatInterface } from '../../interfaces/stat/statInterface';
+import {
+  StatDateTotalInterface,
+  StatDayTotalInterface,
+  CalculatedStatInterface,
+} from '../../interfaces/stat/calculatedStatInterface';
 
-export class Stat {
-  public _id: string;
+export class CalculatedStat {
   public carpoolers: {
     total: number;
-    days: StatDateTotalInterface[];
-    months: StatDayTotalInterface[];
+    days: StatDayTotalInterface[];
+    months: StatDateTotalInterface[];
   };
   // tslint:disable-next-line:variable-name
   public carpoolers_per_vehicule: {
     total: number;
-    days: StatDateTotalInterface[];
-    months: StatDayTotalInterface[];
+    days: StatDayTotalInterface[];
+    months: StatDateTotalInterface[];
   };
   public distance: {
     total: number;
-    days: StatDateTotalInterface[];
-    months: StatDayTotalInterface[];
+    days: StatDayTotalInterface[];
+    months: StatDateTotalInterface[];
   };
-  public operators: {
+  public operators?: {
     total: number;
     imgIds: [];
   };
@@ -26,22 +29,23 @@ export class Stat {
     total: number;
     total_subsidized: number;
     days: {
-      date: string;
+      day: string;
       total: number;
       total_subsidized: number;
     }[];
     months: {
-      day: number;
+      date: number;
       total: number;
       total_subsidized: number;
     }[];
   };
-  constructor(obj: StatInterface) {
-    this._id = obj._id;
+  constructor(obj: CalculatedStatInterface) {
     this.carpoolers = obj.carpoolers;
     this.carpoolers_per_vehicule = obj.carpoolers_per_vehicule;
     this.distance = obj.distance;
-    this.operators = obj.operators;
     this.trips = obj.trips;
+    if (obj.operators) {
+      this.operators = obj.operators;
+    }
   }
 }

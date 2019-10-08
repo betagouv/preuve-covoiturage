@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UserService } from '~/modules/user/services/user.service';
 import { User } from '~/core/entities/authentication/user';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +12,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class HeaderComponent implements OnInit {
   user: User;
 
-  constructor(private userService: UserService, public authService: AuthenticationService) {}
+  constructor(public authService: AuthenticationService) {}
 
   ngOnInit() {
     this.authService.user$.subscribe((user) => {
@@ -22,5 +22,9 @@ export class HeaderComponent implements OnInit {
 
   onLogout(): void {
     this.authService.logout();
+  }
+
+  get hasTerritoryGroup(): boolean {
+    return this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
   }
 }

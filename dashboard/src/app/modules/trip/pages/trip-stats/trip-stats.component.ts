@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-
-import { tripStats } from '../../config/tripStats';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-trip-stats',
@@ -11,10 +9,15 @@ import { tripStats } from '../../config/tripStats';
   styleUrls: ['./trip-stats.component.scss'],
 })
 export class TripStatsComponent implements OnInit {
-  public tripStats = tripStats;
-  public campaignStatusEnum = CampaignStatusEnum;
-
   constructor(public authenticationService: AuthenticationService) {}
 
   ngOnInit() {}
+
+  get isTerritoryOrRegistry(): boolean {
+    return this.authenticationService.hasAnyGroup([UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY]);
+  }
+
+  get isOperator(): boolean {
+    return this.authenticationService.hasAnyGroup([UserGroupEnum.OPERATOR]);
+  }
 }

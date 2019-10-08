@@ -5,12 +5,7 @@
     </a>
   </div>
   <div class="Header-menu" *ngIf="user">
-    <div
-      class="Header-menu-item"
-      *ngIf="authService.hasAnyGroup(['territories'])"
-      [routerLink]="'/campaign'"
-      routerLinkActive="active"
-    >
+    <div class="Header-menu-item" *ngIf="hasTerritoryGroup" [routerLink]="'/campaign'" routerLinkActive="active">
       Campagnes
     </div>
     <div class="Header-menu-item" [routerLink]="'/trip'" routerLinkActive="active">

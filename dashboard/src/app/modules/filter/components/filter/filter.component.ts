@@ -12,6 +12,9 @@ import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
 import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 
 @Component({
   selector: 'app-filter',
@@ -115,7 +118,19 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   public get countFilters(): number {
-    return Object.values(this.filterForm.value).filter((val) => !!val).length;
+    let count = 0;
+    const filter: FilterUxInterface = this.filterForm.value;
+    if (filter.operatorIds.length > 0) count += 1;
+    if (filter.territoryIds.length > 0) count += 1;
+    if (filter.campaignIds.length > 0) count += 1;
+    if (filter.days.length > 0) count += 1;
+    if (filter.ranks.length > 0) count += 1;
+    if (filter.towns.length > 0) count += 1;
+    if (filter.distance.min || filter.distance.min) count += 1;
+    if (filter.date.start || filter.date.end) count += 1;
+    if (filter.hour.start || filter.hour.end) count += 1;
+    if (filter.status) count += 1;
+    return count;
   }
 
   public getStatusFrench(status: TripStatusEnum) {
@@ -126,5 +141,13 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     return moment()
       .isoWeekday(day + 1)
       .format('dddd');
+  }
+
+  public get hasGroupOperatorOrRegistry(): boolean {
+    return this.authService.hasAnyGroup([UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY]);
+  }
+
+  public get hasGroupRegistryOrTerritory(): boolean {
+    return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]);
   }
 }

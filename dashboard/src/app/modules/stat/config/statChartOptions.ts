@@ -118,6 +118,10 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
       yAxes: [
         {
           ...commonOptions.scales.yAxes[0],
+          ticks: {
+            ...commonOptions.scales.yAxes[0].ticks,
+            min: 1,
+          },
         },
       ],
     },

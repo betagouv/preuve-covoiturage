@@ -11,12 +11,14 @@ import { stubTripList } from '../support/stubs/trip.list';
 import { stubStatList } from '../support/stubs/stat.list';
 import { stubUserMe } from '../support/stubs/user.me';
 import { stubCampaignCreate } from '../support/stubs/campaign.create';
+import { stubTerritoryList } from '../support/stubs/territory.list';
 
 context('TERRITORY', () => {
   beforeEach(() => {
     cy.server();
     stubCampaignList();
     stubOperatorList();
+    stubTerritoryList();
     // stubCampaignTemplateList();
     stubTripList();
     stubStatList();

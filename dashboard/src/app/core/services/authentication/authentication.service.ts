@@ -9,6 +9,8 @@ import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { UserService } from '~/modules/user/services/user.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
@@ -82,7 +84,7 @@ export class AuthenticationService {
   }
 
   public get isAdmin(): boolean {
-    return this.hasRole('admin');
+    return this.hasRole(UserRoleEnum.ADMIN);
   }
 
   public login(email: string, password: string) {
@@ -148,7 +150,7 @@ export class AuthenticationService {
   /**
    * Check if connected user has any of list of groups
    */
-  public hasAnyGroup(groups: string[] | null = null): boolean {
+  public hasAnyGroup(groups: UserGroupEnum[] | null = null): boolean {
     const user = this.user;
     if (!groups && user) {
       return true;
@@ -163,8 +165,7 @@ export class AuthenticationService {
   /**
    * Check if connected user has role
    */
-
-  public hasRole(role: string | null): boolean {
+  public hasRole(role: UserRoleEnum | null): boolean {
     if (!role) {
       return true;
     }

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
+import { CommonDataService } from '~/core/services/common-data.service';
+
 import { DestroyObservable } from './core/components/destroy-observable';
 import { IconService } from './core/services/icon.service';
-import { CommonDataService } from '~/core/services/common-data.service';
 
 @Component({
   selector: 'app-root',
