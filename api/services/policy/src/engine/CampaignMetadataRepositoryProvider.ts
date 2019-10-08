@@ -36,7 +36,7 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
 
   async set(metadata: MetadataWrapper): Promise<void> {
     const collection = await this.getCollection();
-    await collection.update(
+    await collection.updateOne(
       {
         _id: new ObjectId(metadata.id),
       },

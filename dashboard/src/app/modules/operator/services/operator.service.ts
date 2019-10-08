@@ -1,8 +1,8 @@
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-import * as _ from 'lodash';
 
 import { ApiService } from '~/core/services/api/api.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -10,7 +10,6 @@ import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { IModel } from '~/core/entities/IModel';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { map, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

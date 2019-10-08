@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { map, mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -10,7 +10,6 @@ import { Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { IModel } from '~/core/entities/IModel';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { map, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -89,8 +88,9 @@ export class TerritoryService extends ApiService<Territory> {
       mergeMap((modifiedEntity: Territory) => {
         console.log(`updated ${this._method} id=${modifiedEntity._id}`);
         this._entity$.next(modifiedEntity);
-        return this
-          .load(this._listFilters).pipe(map((entities) => <[Territory, Territory[]]>[modifiedEntity, entities]));
+        return this.load(this._listFilters).pipe(
+          map((entities) => <[Territory, Territory[]]>[modifiedEntity, entities]),
+        );
       }),
     );
   }
