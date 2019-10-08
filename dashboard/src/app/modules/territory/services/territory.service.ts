@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import * as _ from 'lodash';
 
@@ -8,6 +8,9 @@ import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { ApiService } from '~/core/services/api/api.service';
 import { Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { IModel } from '~/core/entities/IModel';
+import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { map, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +35,7 @@ export class TerritoryService extends ApiService<Territory> {
   get territory(): Territory {
     return this._entity$.value;
   }
+
   get territories$(): Observable<Territory[]> {
     return this._entities$;
   }
@@ -40,41 +44,55 @@ export class TerritoryService extends ApiService<Territory> {
     return this._entities$.value;
   }
 
-  patchList(territory: Territory): Observable<[Territory, Territory[]]> {
-    // remove null values & empty objects
-    const removeEmpty = (object) => {
-      if (!_.isObject(object)) {
+  private removeEmpty(object) {
+    if (!_.isObject(object)) {
+      return;
+    }
+
+    _.keys(object).forEach((key) => {
+      const element = object[key];
+
+      if (element === null) {
+        delete object[key];
         return;
       }
 
-      _.keys(object).forEach((key) => {
-        const element = object[key];
-
-        if (element === null) {
+      if (_.isObject(element)) {
+        if (_.isEmpty(element)) {
           delete object[key];
           return;
         }
 
-        if (_.isObject(element)) {
-          if (_.isEmpty(element)) {
-            delete object[key];
-            return;
-          }
+        // Is object, recursive call
+        this.removeEmpty(element);
 
-          // Is object, recursive call
-          removeEmpty(element);
-
-          if (_.isEmpty(element)) {
-            delete object[key];
-            return;
-          }
+        if (_.isEmpty(element)) {
+          delete object[key];
+          return;
         }
-      });
-    };
+      }
+    });
+  }
 
-    removeEmpty(territory);
+  patchList(territory: Territory): Observable<[Territory, Territory[]]> {
+    this.removeEmpty(territory);
 
     return super.patchList(territory);
+  }
+
+  public patchContactList(item: IModel): Observable<[Territory, Territory[]]> {
+    this.removeEmpty(item);
+
+    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patchContacts`, item);
+    return this._jsonRPCService.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
+      mergeMap((modifiedEntity: Territory) => {
+        console.log(`updated ${this._method} id=${modifiedEntity._id}`);
+        this._entity$.next(modifiedEntity);
+        return this
+          .load(this._listFilters).pipe(map((entities) => <[Territory, Territory[]]>[modifiedEntity, entities]));
+      }),
+    );
   }
 
   loadConnectedTerritory(): Observable<Territory> {
