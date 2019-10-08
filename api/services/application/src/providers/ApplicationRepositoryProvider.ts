@@ -34,7 +34,16 @@ export class ApplicationRepositoryProvider extends ParentRepository implements A
     return this.instanciateMany(results);
   }
 
-  public async softDelete(params: { _id: string; operator_id: string }): Promise<any> {
-    return this.patch(params._id, { deleted_at: new Date() });
+  public async softDelete(params: { _id: string; operator_id: string }): Promise<boolean> {
+    const driver = await this.getDriver();
+    const query: any = { _id: new ObjectId(params._id), deleted_at: null };
+
+    if ('operator_id' in params && params.operator_id) {
+      query.operator_id = new ObjectId(params.operator_id);
+    }
+
+    const res = await driver.updateOne(query, { $set: { deleted_at: new Date() } });
+
+    return res.result.nModified > 0;
   }
 }

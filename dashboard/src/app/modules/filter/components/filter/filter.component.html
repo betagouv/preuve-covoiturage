@@ -81,7 +81,7 @@
           <!--          TERRITORIES -->
           <div class="filter-territories">
             <app-territories-autocomplete
-              *ngIf="authService.hasAnyGroup(['operators', 'registry'])"
+              *ngIf="hasGroupOperatorOrRegistry"
               [parentForm]="filterForm"
             ></app-territories-autocomplete>
           </div>
@@ -99,7 +99,7 @@
               </mat-select>
             </mat-form-field>
             <!--            STATUS -->
-            <mat-form-field class="status" appearance="outline">
+            <mat-form-field class="filter-status" appearance="outline">
               <mat-label>Statut</mat-label>
               <mat-select formControlName="status">
                 <mat-option *ngFor="let status of tripStatusList" value="{{ status }}">{{
@@ -108,11 +108,11 @@
               </mat-select>
             </mat-form-field>
 
-            <!--            OPERATORS -->
-            <!--            <app-operators-autocomplete-->
-            <!--              *ngIf="authService.hasAnyGroup(['territories', 'registry'])"-->
-            <!--              [parentForm]="filterForm"-->
-            <!--            ></app-operators-autocomplete>-->
+            <!--            OPERATORS-->
+            <app-operators-autocomplete
+              *ngIf="hasGroupRegistryOrTerritory"
+              [parentForm]="filterForm"
+            ></app-operators-autocomplete>
           </div>
         </div>
       </div>

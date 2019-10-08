@@ -1,13 +1,12 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
-import { Company } from '~/core/entities/shared/company';
-import { Address } from '~/core/entities/shared/address';
+import { CommonDataService } from '~/core/services/common-data.service';
 import { Territory } from '~/core/entities/territory/territory';
 
 @Component({
@@ -26,7 +25,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
 
   @ViewChild('territoryInput', { static: false }) territoryInput: ElementRef;
 
-  constructor(private territoryService: TerritoryService) {
+  constructor(private territoryService: TerritoryService, private commonDataService: CommonDataService) {
     super();
   }
 
@@ -43,26 +42,36 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   }
 
   private initTerritories() {
-    if (!this.territoryService.territoriesLoaded) {
-      this.territoryService
-        .load()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe();
-    }
+    // if (!this.territoryService.territoriesLoaded) {
+    //   this.territoryService
+    //     .load()
+    //     .pipe(takeUntil(this.destroy$))
+    //     .subscribe();
+    // }
+    //
+    // this.territoryService.entities$
+    //   .pipe(
+    //     takeUntil(this.destroy$),
+    //     // sort by name A-Z
+    //     map((d) => d.sort((a, b) => (a.name > b.name ? 1 : -1))),
+    //   )
+    //   .subscribe((territories: Territory[]) => {
+    //     this.territories = territories.map((territory: Territory) => ({
+    //       _id: territory._id,
+    //       shortname: territory.shortname || territory.acronym || territory.name,
+    //     }));
+    //     this.filterTerritories();
+    //   });
 
-    this.territoryService.entities$
-      .pipe(
-        takeUntil(this.destroy$),
-        // sort by name A-Z
-        map((d) => d.sort((a, b) => (a.name > b.name ? 1 : -1))),
-      )
-      .subscribe((territories: Territory[]) => {
-        this.territories = territories.map((territory: Territory) => ({
-          _id: territory._id,
-          shortname: territory.shortname || territory.acronym || territory.name,
-        }));
-        this.filterTerritories();
-      });
+    this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories: Territory[]) => {
+      this.territories = territories
+        ? territories.map((territory: Territory) => ({
+            _id: territory._id,
+            shortname: territory.shortname || territory.acronym || territory.name,
+          }))
+        : null;
+      if (this.territories) this.filterTerritories();
+    });
   }
 
   public remove(territoryId: string): void {

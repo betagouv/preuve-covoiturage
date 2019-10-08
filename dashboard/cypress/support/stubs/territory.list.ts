@@ -39,7 +39,7 @@ export const territoryStubs: Territory[] = [
 export function stubTerritoryList() {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=territory.list',
+    url: '/rpc?methods=territory:list',
     response: (data) =>
       <JsonRPCResponse[]>[
         {

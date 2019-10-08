@@ -11,8 +11,9 @@ import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Campaign } from '~/core/entities/campaign/campaign';
-import { CampaignUx } from '~/core/entities/campaign/campaign-ux';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 
 @Component({
   selector: 'app-campaign-form',
@@ -40,6 +41,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     private _dialog: DialogService,
     private _formBuilder: FormBuilder,
     private campaignService: CampaignService,
+    private campaignFormatService: CampaignFormatingService,
     private toastr: ToastrService,
     private router: Router,
     private route: ActivatedRoute,
@@ -94,7 +96,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   saveCampaign() {
     const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
-    const campaign: Campaign = this.campaignService.toCampaignFormat(campaignUx);
+    const campaign: Campaign = this.campaignFormatService.toCampaignFormat(campaignUx);
     if (campaign._id) {
       this.patchCampaign(campaign);
     } else {
@@ -180,7 +182,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
     if (templateId) {
       // get template from service
-      campaign = this.campaignService.toCampaignUxFormat({
+      campaign = this.campaignFormatService.toCampaignUxFormat({
         ...this.campaignService.getLoadedTemplate(templateId),
         _id: null,
         parent_id: templateId,
@@ -313,7 +315,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       }
       const foundCampaign = campaigns.filter((campaign) => campaign._id === campaignId)[0];
       if (foundCampaign) {
-        const campaignUx = this.campaignService.toCampaignUxFormat(foundCampaign);
+        const campaignUx = this.campaignFormatService.toCampaignUxFormat(foundCampaign);
         this.setCampaignToForm(campaignUx, false);
       } else {
         this.toastr.error("Les données de la campagne n'ont pas pu être chargé");

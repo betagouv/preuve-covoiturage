@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 
@@ -36,12 +37,14 @@ export class JsonRPCService {
     this.url = 'rpc';
   }
 
-  public callOne(method: JsonRPCParam, options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult> {
-    return this.call([method], options).pipe(map((datas) => datas[0]));
+  public callOne(method: JsonRPCParam, options?: RPCOptions, throwErrors = true): Observable<JsonRPCResult> {
+    return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
   }
 
-  public call(methods: JsonRPCParam[], options: RPCOptions = { withCredentials: true }): Observable<JsonRPCResult[]> {
-    options.withCredentials = true;
+  public call(methods: JsonRPCParam[], options?: RPCOptions, throwErrors = true): Observable<JsonRPCResult[]> {
+    // handle default withCredentials = true for empty object and undefined property
+    const finalOptions = options ? options : { withCredentials: true };
+    finalOptions.withCredentials = finalOptions.withCredentials !== undefined ? finalOptions.withCredentials : true;
 
     let urlWithMethods = this.url;
     methods.forEach((method, index) => {
@@ -52,7 +55,7 @@ export class JsonRPCService {
       }
       urlWithMethods += `${method.method}`;
     });
-    return this.http.post(urlWithMethods, methods, options).pipe(
+    return this.http.post(urlWithMethods, methods, finalOptions).pipe(
       catchError((response) => {
         if (response.status === 401) {
           this.router.navigate(['/login']);
@@ -65,12 +68,12 @@ export class JsonRPCService {
         // if (response.data) {
         response.forEach((data: JsonRPCResponse) => {
           if (data.error) {
-            const errorMessage = `JSON RCP Error
-              ${data.id} : ${data.error.code} ::
-              ${data.error.message}
-              ${data.error.data}`;
-            console.error(errorMessage);
-            throw new Error(errorMessage);
+            const error = new JsonRPCError(data.error);
+
+            if (throwErrors) {
+              throw error;
+            }
+            console.error('RPC error ', error);
           }
 
           // temporary compatibility solver (for result | result.data)

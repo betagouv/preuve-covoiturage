@@ -45,7 +45,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
           firstname: this.user.firstname,
           lastname: this.user.lastname,
           email: this.user.email,
-          phone: this.user.phone,
+          phone: this.user.phone ? this.user.phone : '0000000000',
           role: this.user.role,
           group: this.user.group,
           territory: this.user.territory ? this.user.territory : null,
@@ -77,7 +77,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     const formVal = { ...this.createEditUserForm.value };
     if (!formVal.territory) delete formVal.territory;
     if (!formVal.operator) delete formVal.operator;
-    if (!formVal.phone) delete formVal.phone;
+    formVal.phone = formVal.phone ? formVal.phone : null;
 
     if (!this.isCreating) {
       delete formVal.territory;
@@ -99,7 +99,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         },
         (err) => {
           this.isCreatingUpdating = false;
-          this.toastr.error(err.message);
+          // this.toastr.error(err.message);
+          throw err;
         },
       );
     } else {
@@ -112,7 +113,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         },
         (err) => {
           this.isCreatingUpdating = false;
-          this.toastr.error(err.message);
+          // this.toastr.error(err.message);
+          throw err;
         },
       );
     }
@@ -155,7 +157,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       firstname: [user.firstname, Validators.required],
       lastname: [user.lastname, Validators.required],
       email: [user.email, [Validators.required, Validators.pattern(REGEXP.email)]],
-      phone: [user.phone, Validators.pattern(REGEXP.phone)],
+      // phone: [user.phone, Validators.pattern(REGEXP.phone)],
       role: [user.role],
       group: [user.group],
       territory: [user.territory],

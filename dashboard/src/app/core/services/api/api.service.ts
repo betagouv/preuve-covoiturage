@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { finalize, map, mergeMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
 
 import { JsonRPCService } from './json-rpc.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -14,9 +14,9 @@ export class ApiService<T extends IModel> {
   protected _loading$ = new BehaviorSubject<boolean>(false);
   protected _loaded$ = new BehaviorSubject<boolean>(false);
 
-  private _listFilters = {};
+  protected _listFilters = {};
 
-  constructor(private _httpClient: HttpClient, private _jsonRPCService: JsonRPCService, protected _method: string) {}
+  constructor(private _httpClient: HttpClient, protected _jsonRPCService: JsonRPCService, protected _method: string) {}
 
   // ===== Get ======
   get entities$(): Observable<T[]> {
@@ -39,6 +39,10 @@ export class ApiService<T extends IModel> {
     return this._loading$.value;
   }
 
+  get loaded(): boolean {
+    return this._loaded$.value;
+  }
+
   // ====== Update Observable ======
   updateEntityArray(newItem: T) {
     const auxArray = this._entities$.value;
@@ -50,12 +54,23 @@ export class ApiService<T extends IModel> {
     this._entities$.next(auxArray);
   }
 
+  public getListJSONParam(parameters: object = {}): JsonRPCParam {
+    return new JsonRPCParam(`${this._method}:list`, parameters);
+  }
+
+  public getFindJSONParam(parameters: object = {}): JsonRPCParam {
+    return new JsonRPCParam(`${this._method}:find`, parameters);
+  }
+
+  public getFindByIdJSONParam(_id: string): JsonRPCParam {
+    return new JsonRPCParam(`${this._method}:find`, { _id });
+  }
+
   // ==== CRUD ======
   public load(parameters: object = {}): Observable<T[]> {
     this._listFilters = parameters;
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:list`, parameters);
-    return this._jsonRPCService.callOne(jsonRPCParam).pipe(
+    return this._jsonRPCService.callOne(this.getListJSONParam(parameters)).pipe(
       map((data) => data.data),
       tap((data) => {
         this._entities$.next(data);
@@ -69,8 +84,7 @@ export class ApiService<T extends IModel> {
 
   public loadOne(parameters: object = {}): Observable<T> {
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:find`, parameters);
-    return this._jsonRPCService.callOne(jsonRPCParam).pipe(
+    return this._jsonRPCService.callOne(this.getFindJSONParam(parameters)).pipe(
       map((data) => data.data),
       tap((data) => {
         this._entity$.next(data);
@@ -83,7 +97,7 @@ export class ApiService<T extends IModel> {
   }
 
   public get(itemId: string): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:get`, itemId);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:find`, { _id: itemId });
     this._loading$.next(true);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
@@ -94,7 +108,7 @@ export class ApiService<T extends IModel> {
   }
 
   public getOne(itemId: string): Observable<T> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:get`, itemId);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:find`, { _id: itemId });
     this._loading$.next(true);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
@@ -165,8 +179,8 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public deleteList(id: string): Observable<T[]> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: id });
+  public deleteList(id: string, params: { territory_id?: string; operator_id?: string } = {}): Observable<T[]> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: id, ...params });
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       mergeMap(() => this.load(this._listFilters)),

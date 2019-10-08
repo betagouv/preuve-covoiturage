@@ -1,12 +1,23 @@
 import * as moment from 'moment';
 
-import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
 
 import { CampaignsGenerator } from '../generators/campaigns.generator';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
-import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
+import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
+import {
+  DistanceRangeGlobalRetributionRule,
+  MaxAmountRetributionRule,
+  MaxTripsRetributionRule,
+  OperatorIdsRetributionRule,
+  RankRetributionRule,
+  TimeRetributionRule,
+  WeekdayRetributionRule,
+} from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import { operatorStubs } from './operator.list';
+import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 
 export const campaignStubs: Campaign[] = [
   {
@@ -15,16 +26,6 @@ export const campaignStubs: Campaign[] = [
     status: CampaignStatusEnum.VALIDATED,
     name: 'Encourager le covoiturage',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
-    filters: {
-      weekday: [0, 1, 2, 3, 4, 5, 6],
-      time: [{ start: '08:00', end: '19:00' }],
-      distance_range: {
-        min: 0,
-        max: 100,
-      },
-      rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-      operators_id: [],
-    },
     start: moment()
       .subtract('1', 'months')
       .toDate(),
@@ -32,13 +33,30 @@ export const campaignStubs: Campaign[] = [
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
-    retribution_rules: [],
     ui_status: {
       for_driver: true,
       for_passenger: true,
       for_trip: false,
       staggered: false,
     },
+    global_rules: [
+      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
+      new DistanceRangeGlobalRetributionRule({
+        min: 0,
+        max: 15,
+      }),
+      new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new TimeRetributionRule([
+        {
+          start: 8,
+          end: 9,
+        },
+      ]),
+    ],
+    rules: [],
     trips_number: Math.floor(Math.random() * 10000),
     amount_spent: Math.floor(Math.random() * 20000),
   },
@@ -48,31 +66,30 @@ export const campaignStubs: Campaign[] = [
     status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter le trafic en semaine',
     description: 'Fusce vehicula dolor arcu, sit amet blandit dolor mollis.',
-    filters: {
-      weekday: [0, 1, 2, 3, 4],
-      time: [
-        {
-          start: '06:00',
-          end: '09:00',
-        },
-        {
-          start: '16:00',
-          end: '19:00',
-        },
-      ],
-      distance_range: {
-        min: 0,
-        max: 100,
-      },
-      rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-      operators_id: [],
-    },
     ui_status: {
       for_driver: true,
       for_passenger: true,
       for_trip: false,
       staggered: false,
     },
+    global_rules: [
+      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
+      new DistanceRangeGlobalRetributionRule({
+        min: 0,
+        max: 15,
+      }),
+      new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new TimeRetributionRule([
+        {
+          start: 8,
+          end: 9,
+        },
+      ]),
+    ],
+    rules: [],
     start: moment()
       .subtract('1', 'months')
       .toDate(),
@@ -80,7 +97,6 @@ export const campaignStubs: Campaign[] = [
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
-    retribution_rules: [],
     trips_number: Math.floor(Math.random() * 10000),
     amount_spent: Math.floor(Math.random() * 20000),
   },
@@ -90,25 +106,6 @@ export const campaignStubs: Campaign[] = [
     status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter la pollution',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
-    filters: {
-      weekday: [0, 1, 2, 3, 4],
-      time: [
-        {
-          start: '06:00',
-          end: '09:00',
-        },
-        {
-          start: '16:00',
-          end: '19:00',
-        },
-      ],
-      distance_range: {
-        min: 0,
-        max: 100,
-      },
-      rank: [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C],
-      operators_id: [],
-    },
     ui_status: {
       for_driver: true,
       for_passenger: true,
@@ -122,10 +119,28 @@ export const campaignStubs: Campaign[] = [
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
-    retribution_rules: [],
+    global_rules: [
+      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
+      new DistanceRangeGlobalRetributionRule({
+        min: 0,
+        max: 15,
+      }),
+      new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new TimeRetributionRule([
+        {
+          start: 8,
+          end: 9,
+        },
+      ]),
+    ],
+    rules: [],
     trips_number: Math.floor(Math.random() * 10000),
     amount_spent: Math.floor(Math.random() * 20000),
   },
+  CypressExpectedCampaign.getAfterCreate(),
 ];
 
 export function stubCampaignList() {

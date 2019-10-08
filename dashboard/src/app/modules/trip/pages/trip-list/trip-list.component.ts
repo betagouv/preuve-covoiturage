@@ -34,7 +34,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
-    this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
+    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
       this.loadTrips({
         ...filter,
         skip: this.skip,
@@ -43,11 +43,30 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     });
   }
 
+  get loading(): boolean {
+    return this.tripService.loading;
+  }
+
+  get loaded(): boolean {
+    return this.tripService.loading;
+  }
+
+  /**
+   * if no values in database when no filter is applied this should return true
+   */
+  get showMessage(): boolean {
+    return !this.loading && this.loaded && !this.hasFilter && this.trips.length === 0;
+  }
+
+  get hasFilter(): boolean {
+    return Object.keys(this.filterService.filter$.value).length > 0;
+  }
+
   onScroll() {
     // TODO stop fetching trips when end (count 0) is reached
     this.skip += TRIP_SKIP_SCROLL;
     const filter = {
-      ...this.filterService._filter$.value,
+      ...this.filterService.filter$.value,
       skip: this.skip,
       limit: this.limit,
     };
@@ -74,13 +93,6 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     const user = this.authService.user;
     if (this.tripService.loading) {
       return;
-    }
-    if (user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [user.territory];
-    }
-    // TODO: temp, remove when filter operator added
-    if ('operator_id' in filter) {
-      delete filter.operator_id;
     }
     this.tripService
       .load(filter)

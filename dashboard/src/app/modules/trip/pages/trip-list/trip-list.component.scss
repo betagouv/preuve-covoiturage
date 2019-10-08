@@ -6,6 +6,17 @@
     justify-content: space-around;
   }
 
+  &-message {
+    height: 249px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    p {
+      font-weight: bold;
+    }
+  }
+
   &-header {
     display: flex;
     justify-content: space-between;

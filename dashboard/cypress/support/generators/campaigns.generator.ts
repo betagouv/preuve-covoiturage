@@ -1,13 +1,21 @@
 import * as moment from 'moment';
 
-import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
+import { CampaignInterface } from '../../../src/app/core/interfaces/campaign/api-format/campaignInterface';
+import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
+
 import {
-  CampaignInterface,
+  DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-} from '../../../src/app/core/interfaces/campaign/campaignInterface';
+  OperatorIdsRetributionRule,
+  RankRetributionRule,
+  TimeRetributionRule,
+  WeekdayRetributionRule,
+} from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
-import { Campaign } from '../../../src/app/core/entities/campaign/campaign';
+
+import { operatorStubs } from '../stubs/operator.list';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {
@@ -38,24 +46,24 @@ export class CampaignsGenerator {
           end: moment()
             .add('2', 'months')
             .toDate(),
-          filters: {
-            weekday: [0, 1, 2, 3, 4, 5, 6],
-            time: [
+          global_rules: [
+            new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+            new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
+            new DistanceRangeGlobalRetributionRule({
+              min: 0,
+              max: 15,
+            }),
+            new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
+            new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+            new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+            new TimeRetributionRule([
               {
                 start: '08:00',
                 end: '19:00',
               },
-            ],
-            distance_range: {
-              min: 0,
-              max: 15,
-            },
-            rank: [TripRankEnum.A, TripRankEnum.B],
-          },
-          retribution_rules: [
-            new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
-            new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
+            ]),
           ],
+          rules: [],
           trips_number: Math.floor(Math.random() * 10000),
           amount_spent: Math.floor(Math.random() * 20000),
         },
