@@ -1,6 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, tap } from 'rxjs/operators';
+import { catchError, first, map, shareReplay, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -9,6 +9,8 @@ import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { UserService } from '~/modules/user/services/user.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
@@ -20,6 +22,7 @@ export class AuthenticationService {
   private _hasChecked: boolean;
 
   private _user$ = new BehaviorSubject<User>(null);
+  private userMe$: Observable<User>;
 
   constructor(
     private userService: UserService,
@@ -43,6 +46,22 @@ export class AuthenticationService {
         }
       }
     });
+
+    this.userMe$ = this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
+      map(({ data }) => {
+        // if forbidden return null
+        if (data.error && data.error.code === -32503) {
+          return null;
+        }
+        return new User(data);
+      }),
+      catchError((errorResponse) => {
+        if (errorResponse.status === 401) return of(null);
+
+        throw errorResponse;
+      }),
+      shareReplay(),
+    );
   }
 
   get user$(): Observable<User> {
@@ -65,7 +84,7 @@ export class AuthenticationService {
   }
 
   public get isAdmin(): boolean {
-    return this.hasRole('admin');
+    return this.hasRole(UserRoleEnum.ADMIN);
   }
 
   public login(email: string, password: string) {
@@ -131,7 +150,7 @@ export class AuthenticationService {
   /**
    * Check if connected user has any of list of groups
    */
-  public hasAnyGroup(groups: string[] | null = null): boolean {
+  public hasAnyGroup(groups: UserGroupEnum[] | null = null): boolean {
     const user = this.user;
     if (!groups && user) {
       return true;
@@ -146,8 +165,7 @@ export class AuthenticationService {
   /**
    * Check if connected user has role
    */
-
-  public hasRole(role: string | null): boolean {
+  public hasRole(role: UserRoleEnum | null): boolean {
     if (!role) {
       return true;
     }
@@ -230,28 +248,13 @@ export class AuthenticationService {
   }
 
   check(): Observable<User> {
-    // console.log('> check');
     if (this._hasChecked) {
-      // console.log('has checked', this._userService.user);
       return of(this.user);
     }
-
-    return this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
-      map((data) => {
-        // if forbidden return null
-        if (data.data.error && data.data.error.code === -32503) {
-          return null;
-        }
-        return new User(data.data);
-      }),
-      catchError((errorResponse) => {
-        if (errorResponse.status === 401) return of(null);
-
-        throw errorResponse;
-      }),
+    return this.userMe$.pipe(
       tap((user) => {
-        if (user) this.onLoggin(user);
         this._hasChecked = true;
+        if (user) this.onLoggin(user);
       }),
     );
   }

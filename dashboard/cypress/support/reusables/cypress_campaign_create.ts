@@ -1,8 +1,7 @@
-import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-
 /// <reference types="Cypress" />
 import { campaignFirstStepCustom } from '../../support/reusables/steps/campaign-create-first-step';
 import {
+  campaignSecondStepAddSecondTimeRange,
   campaignSecondStepCheckDisabledNextStep,
   campaignSecondStepClickNextStep,
   campaignSecondStepSelectDays,
@@ -10,6 +9,7 @@ import {
   campaignSecondStepSelectRange,
   campaignSecondStepSelectRanks,
   campaignSecondStepSelectTargets,
+  campaignSecondStepSelectTimeRange,
 } from '../../support/reusables/steps/campaign-create-second-step';
 import {
   campaignThirdStepCheckDisabledNextStep,
@@ -20,15 +20,34 @@ import {
   campaignThirdStepSetMaxTrips,
   campaignThirdStepSetUnit,
 } from '../../support/reusables/steps/campaign-create-third-step';
-import { CypressExpectedCampaign } from '../formValues/expectedCampaign';
-import { stubCampaignCreate } from '../stubs/campaign.create';
+import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
 
-export function cypress_campaignCreate() {
+export function cypress_campaignCreate(e2e = false) {
+  it('clicks on campaign section', () => {
+    cy.get('.Header-menu .Header-menu-item:first-child').click();
+  });
+
+  it('clicks button to create new campaign', () => {
+    cy.get('.CampaignDashboard-trips-header button').click();
+  });
+
   // FIRST STEP
   campaignFirstStepCustom();
 
   // SECOND STEP
   campaignSecondStepSelectDays();
+
+  // add time
+  campaignSecondStepSelectTimeRange(
+    CypressExpectedCampaign.firstTimeStart.toString(),
+    CypressExpectedCampaign.firstTimeEnd.toString(),
+  );
+
+  // add second time
+  campaignSecondStepAddSecondTimeRange(
+    CypressExpectedCampaign.secondTimeStart.toString(),
+    CypressExpectedCampaign.secondTimeEnd.toString(),
+  );
 
   campaignSecondStepSelectRange();
 
@@ -92,25 +111,31 @@ export function cypress_campaignCreate() {
     // save screenshot to validate text
     cy.screenshot();
 
-    cy.get('.SummaryForm mat-form-field:first-child input').type("Nouvelle campagne d'incitation");
+    cy.get('.SummaryForm mat-form-field:first-child input').type(CypressExpectedCampaign.campaignName);
+  });
+
+  it('sets description of form', () => {
+    cy.get('.SummaryForm mat-form-field:nth-child(2) textarea').type(CypressExpectedCampaign.description);
   });
 
   it('clicks button to save campaign', () => {
     cy.server();
 
-    cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(2)').click();
+    cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(1)').click();
 
-    cy.wait('@campaignCreate').then((xhr) => {
-      const params = xhr.request.body[0].params;
-      const method = xhr.request.body[0].method;
+    if (!e2e) {
+      cy.wait('@campaignCreate').then((xhr) => {
+        const params = xhr.request.body[0].params;
+        const method = xhr.request.body[0].method;
 
-      expect(method).equal('campaign:create');
-      const expectedCampaign = CypressExpectedCampaign.get();
+        expect(method).equal('campaign:create');
+        const expectedCampaign = CypressExpectedCampaign.get();
 
-      delete expectedCampaign.parent_id;
-      delete expectedCampaign._id;
+        delete expectedCampaign.parent_id;
+        delete expectedCampaign._id;
 
-      expect(params).eql(expectedCampaign);
-    });
+        expect(params).eql(expectedCampaign);
+      });
+    }
   });
 }

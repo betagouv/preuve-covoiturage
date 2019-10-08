@@ -39,7 +39,8 @@
     "lint": "lerna run --scope @pdc/* lint",
     "test": "run-p test:unit test:integration",
     "test:unit": "lerna run --scope @pdc/* test",
-    "test:integration": "lerna run --scope @pdc/* test:integration"
+    "test:integration": "lerna run --scope @pdc/* test:integration",
+    "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions"
   },
   "keywords": [
     "betagouv",
@@ -53,7 +54,6 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "devDependencies": {
-    "husky": "^3.0.0",
     "lerna": "^3.13.4",
     "nodemon": "^1.19.1",
     "npm-run-all": "^4.1.5",
@@ -62,11 +62,5 @@
     "ts-node": "^8.3.0",
     "tslint": "^5.17.0",
     "typescript": "^3.5.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn run format:fix",
-      "pre-push": "yarn run lint"
-    }
   }
 }

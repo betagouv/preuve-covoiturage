@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
 
 import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -14,10 +13,5 @@ export class TerritoryViewComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit() {
-    this._territoryService
-      .loadConnectedTerritory()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
-  }
+  ngOnInit() {}
 }

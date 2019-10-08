@@ -7,7 +7,7 @@ export const userCreateSchema = {
     email: { macro: 'email' },
     lastname: { macro: 'varchar' },
     firstname: { macro: 'varchar' },
-    phone: { macro: 'phone' },
+    phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
     group: { macro: 'group' },
     role: { macro: 'role' },
     operator: { macro: 'objectid' },

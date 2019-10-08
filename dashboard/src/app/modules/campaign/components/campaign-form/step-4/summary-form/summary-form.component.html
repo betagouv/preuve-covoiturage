@@ -27,6 +27,7 @@
     </mat-form-field>
     <div class="SummaryForm-actions">
       <button
+        *ngIf="campaignForm.controls._id.value"
         [appShowSpinner]="loading"
         mat-flat-button
         class="large"
@@ -34,9 +35,20 @@
         (click)="saveCampaign(false)"
         [disabled]="!campaignForm.valid"
       >
-        Enregistrer <span *ngIf="!campaignForm.controls._id.value">en brouillon</span>
+        Enregistrer
       </button>
       <button
+        *ngIf="!campaignForm.controls._id.value"
+        [appShowSpinner]="loading"
+        mat-flat-button
+        class="large"
+        color="primary"
+        (click)="saveCampaign(false)"
+        [disabled]="!campaignForm.valid"
+      >
+        Enregistrer en brouillon
+      </button>
+      <!--   <button
         [appShowSpinner]="loading"
         mat-flat-button
         class="large"
@@ -44,7 +56,7 @@
         [disabled]="!campaignForm.valid"
       >
         Créer un modèle
-      </button>
+      </button>-->
     </div>
   </form>
   <div class="SummaryForm-simulation">

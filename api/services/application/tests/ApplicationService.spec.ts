@@ -113,7 +113,38 @@ describe('Application service', () => {
         expect(response.body.result).to.have.property('operator_id', operator_id);
       }));
 
-  it('#3 - Revoke the application', () =>
+  it("#3.0 - Cannot revoke another op's app", () =>
+    request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'application:revoke',
+        params: {
+          params: {
+            _id: application._id,
+          },
+          _context: {
+            call: {
+              user: {
+                operator: String(operator_id)
+                  .split('')
+                  .reverse()
+                  .join(''),
+                permissions: ['operator.application.revoke'],
+              },
+            },
+          },
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body).to.have.property('error');
+      }));
+
+  it('#3.1 - Revoke the application OK', () =>
     request
       .post('/')
       .send({
@@ -138,11 +169,35 @@ describe('Application service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('_id', application._id);
-        expect(response.body.result).to.have.property('name', 'Application');
-        expect(response.body.result).to.have.property('operator_id', operator_id);
-        expect(response.body.result).to.have.property('deleted_at');
-        expect(new Date(response.body.result.deletedAt)).to.be.an.instanceOf(Date);
+        expect(response.body.result).to.eq(true);
+      }));
+
+  it('#3.2 - Cannot revoke twice the same app', () =>
+    request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'application:revoke',
+        params: {
+          params: {
+            _id: application._id,
+          },
+          _context: {
+            call: {
+              user: {
+                operator: operator_id,
+                permissions: ['operator.application.revoke'],
+              },
+            },
+          },
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body).to.have.property('error');
       }));
 
   it('#4 - List applications', async () => {

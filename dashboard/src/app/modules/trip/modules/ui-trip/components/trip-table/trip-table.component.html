@@ -2,21 +2,21 @@
   <ng-container matColumnDef="startCity">
     <th mat-header-cell *matHeaderCellDef>De</th>
     <td mat-cell *matCellDef="let row">
-      {{ getCity(row, true) }}
+      {{ row.start_town }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="endCity">
     <th mat-header-cell *matHeaderCellDef>A</th>
     <td mat-cell *matCellDef="let row">
-      {{ getCity(row, false) }}
+      {{ row.end_town }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="date">
     <th mat-header-cell *matHeaderCellDef>Date</th>
     <td mat-cell *matCellDef="let row">
-      {{ row.start | date: 'd MMMM yyyy' }}
+      {{ row.start_datetime | date: 'd MMMM yyyy' }}
     </td>
   </ng-container>
 
@@ -35,7 +35,7 @@
 
   <ng-container matColumnDef="incentives">
     <th mat-header-cell *matHeaderCellDef>Incitation</th>
-    <td mat-cell *matCellDef="let row" [matTooltip]="getIncetivesTooltip(row)">
+    <td mat-cell *matCellDef="let row" [matTooltip]="getIncentivesTooltip(row)">
       {{ getTotalIncentives(row) }} {{ getTotalIncentivesUnit(row) }}
     </td>
   </ng-container>

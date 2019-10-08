@@ -1,7 +1,5 @@
-import { Extensions, ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { ConfigExtension } from '@ilos/config';
-import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
@@ -26,7 +24,7 @@ import {
 
 @serviceProvider({
   config: __dirname,
-  providers: [ApplicationRepositoryProvider, TokenProvider],
+  providers: [ApplicationRepositoryProvider],
   validator: [
     ['application.list', applicationListSchema],
     ['application.find', applicationFindSchema],

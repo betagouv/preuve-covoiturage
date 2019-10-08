@@ -5,7 +5,8 @@ import { ListUserParamsInterface } from '@pdc/provider-schema';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
+
+const whiteList = ['_id', 'email', 'lastname', 'firstname', 'group', 'role', 'status', 'operator', 'territory'];
 
 /*
  * list users filtered by territory or operator and paginate with limit & skip
@@ -35,7 +36,7 @@ export class ListUserAction extends AbstractAction {
         ],
       ],
     ],
-    ['content.whitelist', [...userWhiteListFilterOutput.map((key: string) => `data.*.${key}`), 'meta.*']],
+    ['content.whitelist', [...whiteList.map((key: string) => `data.*.${key}`), 'meta.*']],
   ];
 
   constructor(

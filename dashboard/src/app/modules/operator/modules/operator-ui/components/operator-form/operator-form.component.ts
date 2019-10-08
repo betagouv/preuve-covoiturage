@@ -13,7 +13,7 @@ import { Contact } from '~/core/entities/shared/contact';
 import { FormBank } from '~/shared/modules/form/forms/form-bank';
 import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Territory } from '~/core/entities/territory/territory';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-operator-form',
@@ -29,6 +29,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
 
   @Output() close = new EventEmitter();
 
+  fullFormMode = false;
+
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
@@ -42,6 +44,11 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
     this.initOperatorForm();
     this.initOperatorFormValue();
     this.checkPermissions();
+
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+      this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+      this.updateValidation();
+    });
   }
 
   get controls() {
@@ -54,8 +61,20 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
 
   public onSubmit(): void {
     const operator = new Operator(this.operatorForm.value);
+
     if (operator._id) {
-      this._operatorService.patchList(this.operatorForm.value).subscribe(
+      // get only contacts when fullFormModel = false
+      const formData = this.fullFormMode
+        ? this.operatorForm.value
+        : {
+          _id: operator._id,
+          contacts: this.operatorForm.value.contacts,
+        };
+
+      const patch$ = this.fullFormMode
+        ? this._operatorService.patchList(formData)
+        : this._operatorService.patchContactList({ ...formData.contacts, _id: formData._id });
+      patch$.subscribe(
         (data) => {
           const modifiedOperator = data[0];
           this.toastr.success(`${modifiedOperator.nom_commercial} a été mis à jour !`);
@@ -65,6 +84,10 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
         },
       );
     } else {
+      if (!this.fullFormMode) {
+        throw new Error('Can\'t create operator where fullFormMode is false (non register user)');
+      }
+
       this._operatorService.createList(this.operatorForm.value).subscribe(
         (data) => {
           const createdOperator = data[0];
@@ -140,11 +163,19 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
     this.operatorForm.setValue(formValues);
   }
 
+  private updateValidation() {
+    console.log('updateValidation', this.fullFormMode);
+    if (this.operatorForm) {
+      this.operatorForm.controls['nom_commercial'].setValidators(this.fullFormMode ? Validators.required : null);
+      this.operatorForm.controls['raison_sociale'].setValidators(this.fullFormMode ? Validators.required : null);
+    }
+  }
+
   private initOperatorForm(): void {
     this.operatorForm = this.fb.group({
       _id: [null],
-      nom_commercial: ['', Validators.required],
-      raison_sociale: ['', Validators.required],
+      nom_commercial: [''],
+      raison_sociale: [''],
       address: this.fb.group(new FormAddress(new Address({ street: null, city: null, country: null, postcode: null }))),
       company: this.fb.group(new FormCompany(new Company({ siren: null }))),
       contacts: this.fb.group({
@@ -154,6 +185,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
       }),
       bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
     });
+
+    this.updateValidation();
   }
 
   private checkPermissions(): void {

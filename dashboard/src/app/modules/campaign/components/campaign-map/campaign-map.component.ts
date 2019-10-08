@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import * as L from 'leaflet';
 import * as M from 'leaflet.markercluster';
 
-import { Campaign } from '~/core/entities/campaign/campaign';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Territory } from '~/core/entities/territory/territory';
 import { GEOJSON_CITIES } from '~/core/const/cities.const';
 

@@ -1,4 +1,5 @@
 import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
+import { TripInterface } from '@pdc/provider-schema/dist';
 
 export interface CampaignRepositoryProviderInterface extends RepositoryInterface {
   patchWhereTerritory(id: string, territoryId: string, patch: any): Promise<any>;
@@ -7,6 +8,7 @@ export interface CampaignRepositoryProviderInterface extends RepositoryInterface
   findWhereTerritory(territoryId: string): Promise<any[]>;
   findTemplates(territoryId: string | null): Promise<any[]>;
   deleteDraftOrTemplate(id: string, territoryId: string): Promise<void>;
+  findApplicableCampaigns(trip: TripInterface): Promise<any[]>;
 }
 
 export abstract class CampaignRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
@@ -26,6 +28,10 @@ export abstract class CampaignRepositoryProviderInterfaceResolver extends Reposi
   }
 
   async deleteDraftOrTemplate(id: string, territoryId: string): Promise<void> {
+    throw new Error();
+  }
+
+  async findApplicableCampaigns(trip: TripInterface): Promise<any[]> {
     throw new Error();
   }
 }

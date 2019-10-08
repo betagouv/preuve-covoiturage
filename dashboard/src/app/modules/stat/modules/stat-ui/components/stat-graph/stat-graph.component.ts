@@ -11,6 +11,7 @@ import { statChartOptions } from '~/modules/stat/config/statChartOptions';
 import { chartNamesType } from '~/core/types/stat/chartNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { FilterService } from '~/core/services/filter.service';
 
 @Component({
   selector: 'app-stat-graph',
@@ -34,7 +35,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
   public data: GraphNamesInterface;
 
   // graph to be displayed
-  public _displayGraph: statDataNameType = 'trips';
+  public graphToBeDisplayed: statDataNameType = 'trips';
   public graphTitle = '';
 
   @Input() set graphName(name: statDataNameType) {
@@ -43,7 +44,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
 
   @Input() lightMode = false;
 
-  constructor(private statService: StatService) {
+  constructor(private statService: StatService, private filterService: FilterService) {
     super();
   }
 
@@ -64,15 +65,39 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     });
   }
 
+  get hasFilters(): boolean {
+    return Object.keys(this.filterService.filter$.value).length > 0;
+  }
+
+  get graphHasValues(): boolean {
+    return (
+      (this.isEmptyDataset(this.data.trips.daily) && this.toggleChart[this.graphToBeDisplayed] === 'daily') ||
+      (this.isEmptyDataset(this.data.trips.monthly) && this.toggleChart[this.graphToBeDisplayed] === 'monthly') ||
+      (this.isEmptyDataset(this.data.trips.cumulated) && this.toggleChart[this.graphToBeDisplayed] === 'cumulated')
+    );
+  }
+
+  get canShowDaily(): boolean {
+    return !this.isEmptyDataset(this.data.trips.daily) && this.toggleChart[this.graphToBeDisplayed] === 'daily';
+  }
+
+  get canShowMonthly(): boolean {
+    return !this.isEmptyDataset(this.data.trips.monthly) && this.toggleChart[this.graphToBeDisplayed] === 'monthly';
+  }
+
+  get canShowCumulated(): boolean {
+    return !this.isEmptyDataset(this.data.trips.cumulated) && this.toggleChart[this.graphToBeDisplayed] === 'cumulated';
+  }
+
   private displayGraph(name: statDataNameType): void {
-    this._displayGraph = name;
+    this.graphToBeDisplayed = name;
     if (this.data) {
       this.graphTitle = this.data[name][this.toggleChart[name]].graphTitle;
     }
   }
 
   public setGraphTitle(): void {
-    const graphName = this._displayGraph;
+    const graphName = this.graphToBeDisplayed;
     this.graphTitle = this.data[graphName][this.toggleChart[graphName]].graphTitle;
   }
 

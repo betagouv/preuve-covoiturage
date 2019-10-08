@@ -17,7 +17,7 @@ import {
 } from '@ilos/common';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
-import { TokenProvider } from '@pdc/provider-token';
+import { TokenProvider, TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
@@ -31,7 +31,7 @@ export class HttpTransport implements TransportInterface {
   env: EnvInterface;
   port: string;
   server: http.Server;
-  tokenProvider: TokenProvider;
+  tokenProvider;
 
   constructor(private kernel: KernelInterface) {}
 
@@ -84,7 +84,7 @@ export class HttpTransport implements TransportInterface {
   private async getProviders() {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
-    this.tokenProvider = new TokenProvider();
+    this.tokenProvider = this.kernel.getContainer().get(TokenProviderInterfaceResolver);
   }
 
   private registerBeforeAllHandlers() {

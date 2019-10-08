@@ -16,7 +16,7 @@ services:
       - ./db/postgres:/var/lib/postgresql/data/pgdata
 
   pgadmin:
-    image: dpage/pgadmin4
+    build: ./docker/pgadmin
     networks:
       - front
       - back
@@ -28,7 +28,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin1234
     volumes:
-      - ./db/pgadmin:/root/.pgadmin
+      - ./db/pgadmin:/pgadmin4/volume
   mongo:
     image: 'mongo:4.0'
     ports:

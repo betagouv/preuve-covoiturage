@@ -24,7 +24,7 @@ export class CreateCampaignAction extends AbstractAction {
       ],
     ],
     ['validate', 'campaign.create'],
-    'validate.retribution',
+    'validate.rules',
   ];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {

@@ -1,7 +1,7 @@
 // tslint:disable:prefer-conditional-expression
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import * as _ from 'lodash';
 
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { Filter } from '~/core/entities/filter/filter';
@@ -11,11 +11,13 @@ import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
   providedIn: 'root',
 })
 export class FilterService {
-  public _filter$ = new BehaviorSubject<FilterInterface | {}>({});
+  public filter$ = new BehaviorSubject<FilterInterface | {}>({});
 
   constructor() {}
 
-  public setFilter(filterUx: FilterUxInterface | {} = {}): void {
+  public setFilter(params: FilterUxInterface | {} = {}): void {
+    const filterUx = _.cloneDeep(params);
+
     // format filterUx to filter in api format
     let filter;
 
@@ -57,12 +59,21 @@ export class FilterService {
         }
       }
 
-      if (filter.distance.min === null && filter.distance.max === null) {
-        delete filter.distance;
+      // format distance to Number
+      if (filter.distance.min) {
+        filter.distance.min = Number(filter.distance.min);
       } else {
-        // format distance to Number
-        if (filter.distance.min) filter.distance.min = Number(filter.distance.min);
-        if (filter.distance.max) filter.distance.max = Number(filter.distance.max);
+        delete filter.distance.min;
+      }
+      if (filter.distance.max) {
+        filter.distance.max = Number(filter.distance.max);
+      } else {
+        delete filter.distance.max;
+      }
+
+      // delete distance key if object is empty
+      if (Object.keys(filter.distance).length === 0) {
+        delete filter.distance;
       }
 
       // remove empty arrays & null values
@@ -73,6 +84,6 @@ export class FilterService {
       });
     }
 
-    this._filter$.next(filter);
+    this.filter$.next(filter);
   }
 }

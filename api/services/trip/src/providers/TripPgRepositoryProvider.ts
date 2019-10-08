@@ -422,15 +422,14 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       text: `
         SELECT
           trip_id,
-          is_driver,
+          start_datetime,
           start_town,
           end_town,
-          start_datetime,
-          operator_id,
           incentives,
+          operator_id,
           operator_class
         FROM trip_participants
-        ${where ? where.text : ''}
+        ${where ? `${where.text} AND is_driver = false` : 'WHERE is_driver = false'}
         ORDER BY start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer

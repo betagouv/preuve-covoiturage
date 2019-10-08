@@ -7,6 +7,7 @@ import { FilterService } from '~/core/services/filter.service';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { TERRITORY_STATS } from '~/modules/stat/config/stat';
 
 import { StatService } from '../../../../services/stat.service';
 
@@ -29,7 +30,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     operators: true,
   };
 
-  @Input() statViewConfig: { names: statDataNameType[]; defaultGraphName: statDataNameType };
+  statViewConfig = TERRITORY_STATS;
 
   constructor(public statService: StatService, public filterService: FilterService) {
     super();
@@ -39,9 +40,17 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
-    this.filterService._filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
+    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
       this.loadStat(filter);
     });
+  }
+
+  get loading(): boolean {
+    return this.statService.loading;
+  }
+
+  get loaded(): boolean {
+    return this.statService.loaded;
   }
 
   private loadStat(filter: FilterUxInterface | {} = {}): void {
@@ -79,7 +88,6 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
    * scroll to top of div.AuthenticatedLayout-body
    */
   public scrollToTop(): void {
-    const offsetTop = document.getElementById('graph').offsetTop;
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = offsetTop;
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
   }
 }
