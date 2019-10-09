@@ -12,11 +12,11 @@
     <input matInput formControlName="email" required />
     <mat-error *ngIf="controls.email.hasError('pattern')"> L'email est invalide.</mat-error>
   </mat-form-field>
-<!--  <mat-form-field appearance="outline">-->
-<!--    <mat-label>Numéro de téléphone</mat-label>-->
-<!--    <input matInput formControlName="phone" />-->
-<!--    <mat-error *ngIf="controls.phone.hasError('pattern')"> Le numéro de téléphone est invalide.</mat-error>-->
-<!--  </mat-form-field>-->
+  <mat-form-field appearance="outline">
+    <mat-label>Numéro de téléphone</mat-label>
+    <input matInput formControlName="phone" />
+    <mat-error *ngIf="controls.phone.hasError('pattern')"> Le numéro de téléphone est invalide.</mat-error>
+  </mat-form-field>
   <mat-form-field appearance="outline" *ngIf="isCreating">
     <mat-label>Droit d'accès</mat-label>
     <mat-select required formControlName="role">

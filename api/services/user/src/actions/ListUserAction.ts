@@ -6,7 +6,18 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
 import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
-const whiteList = ['_id', 'email', 'lastname', 'firstname', 'group', 'role', 'status', 'operator', 'territory'];
+const whiteList = [
+  '_id',
+  'email',
+  'lastname',
+  'firstname',
+  'phone',
+  'group',
+  'role',
+  'status',
+  'operator',
+  'territory',
+];
 
 /*
  * list users filtered by territory or operator and paginate with limit & skip
