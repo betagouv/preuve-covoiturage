@@ -5,7 +5,7 @@
     </h2>
     <mat-button-toggle-group
       [(ngModel)]="userGroup"
-      (ngModelChange)="filterUsers()"
+      (ngModelChange)="closeUserForm(); filterUsers()"
       name="userGroup"
       aria-label="Groupes d'utilisateurs"
     >
