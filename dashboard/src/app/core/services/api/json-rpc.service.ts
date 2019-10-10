@@ -48,6 +48,8 @@ export class JsonRPCService {
 
     let urlWithMethods = this.url;
     methods.forEach((method, index) => {
+      // increment param id in order to avoid collisions
+      method.id += index;
       if (index === 0) {
         urlWithMethods += '?methods=';
       } else {
