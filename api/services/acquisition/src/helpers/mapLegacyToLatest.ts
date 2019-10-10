@@ -37,7 +37,14 @@ export function mapLegacyToLatest(operatorSiret: string | null) {
       jrn.passenger.end.datetime = jrn.passenger.end.datetime.toISOString();
     }
 
-    // Convert driver
+    /**
+     * Convert driver
+     *
+     * Version 1 {
+     *    cost: number
+     *    revenue: number
+     *  }
+     */
     if ('driver' in jrn) {
       jrn.driver.incentives = jrn.driver.incentive
         ? [{ siret: operatorSiret, amount: jrn.driver.incentive, index: 0 }]

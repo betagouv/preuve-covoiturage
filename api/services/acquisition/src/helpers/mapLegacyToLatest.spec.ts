@@ -74,4 +74,27 @@ describe('mapLegacyToLatest', () => {
     expect(latest.passenger.identity.travel_pass).to.have.property('name', 'mytccard');
     expect(latest.passenger.identity.travel_pass).to.have.property('user_id', '123456');
   });
+
+  it('do not mutate non-legacy payloads', () => {
+    const nonLegacy = {
+      passenger: {
+        contribution: 0,
+        incentives: [],
+        start: { datetime: new Date(new Date().getTime() - 1000) },
+        end: { datetime: new Date() },
+        identity: { over_18: true },
+      },
+      driver: {
+        revenue: 300,
+        incentives: [],
+        start: { datetime: new Date(new Date().getTime() - 1000) },
+        end: { datetime: new Date() },
+        identity: { over_18: true },
+      },
+    };
+
+    const latest: any = mapper(nonLegacy);
+
+    expect(latest).to.deep.eq(nonLegacy);
+  });
 });

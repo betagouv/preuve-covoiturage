@@ -163,7 +163,34 @@ export class HttpTransport implements TransportInterface {
       '/journeys/push',
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        res.json(await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user })));
+        const isLatest =
+          Array.isArray(get(req, 'body.passenger.incentives', null)) ||
+          Array.isArray(get(req, 'body.driver.incentives', null));
+
+        const data = isLatest
+          ? await this.kernel.handle(makeCall('acquisition:create', req.body, { user }))
+          : await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
+
+        // warn the user about this endpoint deprecation agenda
+        // https://github.com/betagouv/preuve-covoiturage/issues/383
+        let warning =
+          'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.';
+
+        // V1 users should migrate the schema and the endpoint
+        if (!isLatest) {
+          warning +=
+            ' Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
+        }
+
+        res.json({
+          meta: {
+            warning,
+            current_schema_version: isLatest ? 2 : 1,
+            supported_until: isLatest ? null : '2020-01-01T00:00:00Z',
+          },
+          // tslint:disable-next-line: object-shorthand-properties-first
+          data,
+        });
       }),
     );
 
