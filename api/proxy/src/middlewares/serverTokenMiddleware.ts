@@ -40,6 +40,15 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         return next();
       }
 
+      await kernel.notify(
+        'acquisition:log',
+        { req },
+        {
+          channel: { service: 'proxy', transport: 'http', metadata: { internal: true } },
+          call: { user: req.session.user },
+        },
+      );
+
       const payload = await (<Promise<any>>tokenProvider.verify(token.toString().replace('Bearer ', '')));
 
       /**
