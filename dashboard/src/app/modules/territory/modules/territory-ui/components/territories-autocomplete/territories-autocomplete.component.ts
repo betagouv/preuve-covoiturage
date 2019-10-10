@@ -69,8 +69,8 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
             _id: territory._id,
             shortname: territory.shortname || territory.acronym || territory.name,
           }))
-        : null;
-      if (this.territories) this.filterTerritories();
+        : [];
+      this.filterTerritories();
     });
   }
 
