@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -20,14 +20,16 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
   templateUrl: './operator-form.component.html',
   styleUrls: ['./operator-form.component.scss'],
 })
-export class OperatorFormComponent extends DestroyObservable implements OnInit {
+export class OperatorFormComponent extends DestroyObservable implements OnInit, OnChanges {
   public operatorForm: FormGroup;
 
-  @Input() showForm = true;
-  @Input() closable = false;
-  @Input() isCreating = false;
+  isCreating = false;
 
   @Output() close = new EventEmitter();
+
+  @Input() operator: Operator;
+  @Input() showForm = true;
+  @Input() closable = false;
 
   fullFormMode = false;
 
@@ -67,9 +69,9 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
       const formData = this.fullFormMode
         ? this.operatorForm.value
         : {
-          _id: operator._id,
-          contacts: this.operatorForm.value.contacts,
-        };
+            _id: operator._id,
+            contacts: this.operatorForm.value.contacts,
+          };
 
       const patch$ = this.fullFormMode
         ? this._operatorService.patchList(formData)
@@ -85,7 +87,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
       );
     } else {
       if (!this.fullFormMode) {
-        throw new Error('Can\'t create operator where fullFormMode is false (non register user)');
+        throw new Error("Can't create operator where fullFormMode is false (non register user)");
       }
 
       this._operatorService.createList(this.operatorForm.value).subscribe(
@@ -106,15 +108,18 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
   }
 
   private initOperatorFormValue(): void {
-    this._operatorService.operator$.pipe(takeUntil(this.destroy$)).subscribe((operator: Operator | null) => {
-      if (operator) {
-        this.setOperatorFormValue(operator);
-      }
-    });
+    // this._operatorService.operator$.pipe(takeUntil(this.destroy$)).subscribe((operator: Operator | null) => {
+    console.log('this.operator : ', this.operator);
+    if (this.operator) {
+      this.setOperatorFormValue(this.operator);
+    }
+    // });
   }
 
   // todo: ugly ...
   private setOperatorFormValue(operator: Operator) {
+    console.log('operator : ', operator);
+    this.isCreating = !operator;
     // base values for form
     const operatorConstruct = new Operator({
       _id: null,
@@ -192,6 +197,14 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit {
   private checkPermissions(): void {
     if (!this.authService.hasAnyPermission(['operator.update'])) {
       this.operatorForm.disable({ onlySelf: true });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['operator'] && this.operatorForm) {
+      console.log(changes['operator'].currentValue);
+
+      this.setOperatorFormValue(changes['operator'].currentValue);
     }
   }
 }

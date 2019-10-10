@@ -21,7 +21,7 @@
   <app-operator-form
     [showForm]="showForm"
     [closable]="true"
-    [isCreating]="isCreating"
+    [operator]="operator$ | async"
     (close)="close()"
   ></app-operator-form>
 </div>

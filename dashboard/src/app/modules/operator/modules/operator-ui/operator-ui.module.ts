@@ -36,6 +36,7 @@ import { OperatorDetailsComponent } from './components/operator-details/operator
     OperatorAutocompleteComponent,
     OperatorListViewComponent,
     OperatorViewComponent,
+    OperatorDetailsComponent,
   ],
   imports: [CommonModule, MaterialModule, ReactiveFormsModule, FormModule, SharedModule, DetailsModule],
 })

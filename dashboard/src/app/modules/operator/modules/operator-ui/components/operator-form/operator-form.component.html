@@ -1,7 +1,4 @@
-<div class="operatorForm--loading" *ngIf="showForm && loading">
-  <mat-spinner></mat-spinner>
-</div>
-<form class="operatorForm" [formGroup]="operatorForm" *ngIf="showForm && !loading">
+<form class="operatorForm" [formGroup]="operatorForm" *ngIf="showForm">
   <div *ngIf="fullFormMode">
     <h2>Informations générales</h2>
 
