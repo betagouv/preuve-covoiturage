@@ -3,7 +3,12 @@
     <div class="CampaignDashboard-trips">
       <div class="CampaignDashboard-trips-header">
         <h1>Toutes vos campagnes</h1>
-        <button mat-flat-button [routerLink]="'/campaign/create'" class="color-punch">
+        <button
+          mat-flat-button
+          [routerLink]="'/campaign/create'"
+          class="color-punch"
+          *ngIf="canCreateCampaign$ | async"
+        >
           Créer une nouvelle campagne
         </button>
       </div>
@@ -20,7 +25,7 @@
       <app-campaign-menu></app-campaign-menu>
       <div class="CampaignDashboard-content-header">
         <h2>Vos campagnes en cours</h2>
-        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
+        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary" *ngIf="canCreateCampaign$ | async">
           Nouvelle campagne
         </button>
       </div>
@@ -31,7 +36,7 @@
       </div>
       <div class="CampaignDashboard-content-header">
         <h2>Vos campagnes en brouillon</h2>
-        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary">
+        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary" *ngIf="canCreateCampaign$ | async">
           Nouveau brouillon
         </button>
       </div>
