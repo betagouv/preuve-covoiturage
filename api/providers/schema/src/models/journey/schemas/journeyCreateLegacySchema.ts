@@ -11,14 +11,14 @@ const amountSchema = {
 };
 
 // convert passenger Schema
-pSchema.required = ['identity', 'start', 'end', 'contribution', 'incentive'];
+pSchema.required = ['identity', 'start', 'end', 'cost', 'contribution'];
 pSchema.properties.cost = amountSchema;
 pSchema.properties.incentive = amountSchema;
 pSchema.properties.remaining_fee = amountSchema;
 delete pSchema.properties.incentives;
 
 // convert driver schema
-dSchema.required = ['identity', 'start', 'end', 'revenue', 'incentive'];
+dSchema.required = ['identity', 'start', 'end', 'cost', 'revenue'];
 dSchema.properties.incentive = amountSchema;
 dSchema.properties.cost = amountSchema;
 dSchema.properties.remaining_fee = amountSchema;
