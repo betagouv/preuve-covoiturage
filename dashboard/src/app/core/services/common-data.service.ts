@@ -121,11 +121,11 @@ export class CommonDataService {
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
-          const params = [
-            this.operatorService.getListJSONParam(),
-            this.territoryService.getListJSONParam(),
-            this.campaignService.getListJSONParam(),
-          ];
+          const params = [this.operatorService.getListJSONParam(), this.territoryService.getListJSONParam()];
+
+          if (this.authenticationService.hasAnyPermission(['incentive-campaign.list'])) {
+            params.push(this.campaignService.getListJSONParam());
+          }
 
           if (user.territory) {
             params.push(this.territoryService.getFindByIdJSONParam(user.territory ? user.territory : ''));
@@ -141,7 +141,15 @@ export class CommonDataService {
       map((results: any[]) => {
         if (!results) return false;
 
-        const [operatorsR, territoriesR, campaignsR, currentContextData] = results;
+        const operatorsR = results.shift();
+        const territoriesR = results.shift();
+
+        const campaignsR = this.authenticationService.hasAnyPermission(['incentive-campaign.list'])
+          ? results.shift()
+          : null;
+
+        const currentContextData = results.shift();
+
         if (currentContextData && currentContextData.data) {
           if (this.authenticationService.user.operator) {
             this._currentOperator$.next(currentContextData.data);
@@ -167,7 +175,7 @@ export class CommonDataService {
           );
         }
 
-        if (campaignsR.data) {
+        if (campaignsR && campaignsR.data) {
           this._campaigns$.next(
             campaignsR.data.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1)),
           );
