@@ -66,10 +66,12 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
 
   private loadOperators() {
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-      this.operators = operators.map((operator) => ({
-        _id: operator._id,
-        nom_commercial: operator.nom_commercial,
-      }));
+      this.operators = operators
+        ? operators.map((operator) => ({
+            _id: operator._id,
+            nom_commercial: operator.nom_commercial,
+          }))
+        : [];
       this.filterOperators();
     });
   }
