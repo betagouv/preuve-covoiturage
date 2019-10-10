@@ -139,6 +139,8 @@ export class CommonDataService {
         return of(null);
       }),
       map((results: any[]) => {
+        if (!results) return false;
+
         const [operatorsR, territoriesR, campaignsR, currentContextData] = results;
         if (currentContextData && currentContextData.data) {
           if (this.authenticationService.user.operator) {
