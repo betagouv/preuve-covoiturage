@@ -14,7 +14,6 @@ import { OperatorFormComponent } from './components/operator-form/operator-form.
 import { OperatorAutocompleteComponent } from './components/operator-autocomplete/operator-autocomplete.component';
 import { OperatorListViewComponent } from './components/operator-list-view/operator-list-view.component';
 import { OperatorListComponent } from './components/operator-list/operator-list.component';
-import { OperatorViewComponent } from './components/operator-view/operator-view.component';
 import { OperatorFilterComponent } from './components/operator-filter/operator-filter.component';
 import { OperatorDetailsComponent } from './components/operator-details/operator-details.component';
 import { MatGridListModule } from '@angular/material';
@@ -27,7 +26,6 @@ import { MatGridListModule } from '@angular/material';
     OperatorAutocompleteComponent,
     OperatorListViewComponent,
     OperatorListComponent,
-    OperatorViewComponent,
     OperatorFilterComponent,
     OperatorDetailsComponent,
   ],
@@ -36,7 +34,6 @@ import { MatGridListModule } from '@angular/material';
     OperatorFormComponent,
     OperatorAutocompleteComponent,
     OperatorListViewComponent,
-    OperatorViewComponent,
     OperatorDetailsComponent,
   ],
   imports: [

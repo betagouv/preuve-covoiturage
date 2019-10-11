@@ -1,10 +1,8 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { Address, Bank, Company, Contacts, Operator } from '~/core/entities/operator/operator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
