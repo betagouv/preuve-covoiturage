@@ -44,7 +44,7 @@ export class LogAction extends AbstractAction {
     try {
       token = await this.tokenProvider.verify(hd.authorization.replace('Bearer ', ''));
     } catch (e) {
-      token = `${e.message} ${hd.authorization}`;
+      token = e.message;
     }
 
     delete hd.authorization;

@@ -32,7 +32,10 @@ export class TokenProvider implements ProviderInterface, TokenProviderInterface,
   async verify(token: string, options: jwt.VerifyOptions = {}): Promise<TokenPayloadInterface> {
     const decoded = <TokenPayloadInterface>await jwt.verify(token, this.secret, { ...this.verifyOptions, ...options });
 
-    if (this.ttl > -1 && typeof decoded === 'object' && 'iat' in decoded) {
+    // override config TTL when ignoreExpiration option is passed
+    const ttl = 'ignoreExpiration' in options && options.ignoreExpiration ? -1 : this.ttl;
+
+    if (ttl > -1 && typeof decoded === 'object' && 'iat' in decoded) {
       // tslint:disable-next-line: no-bitwise
       const expired = ((new Date().getTime() / 1000) | 0) - parseInt((decoded as any).iat, 10) > this.ttl;
       if (expired) throw new jwt.JsonWebTokenError('Expired token');

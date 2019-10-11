@@ -49,7 +49,9 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         },
       );
 
-      const payload = await (<Promise<any>>tokenProvider.verify(token.toString().replace('Bearer ', '')));
+      const payload = await (<Promise<any>>(
+        tokenProvider.verify(token.toString().replace('Bearer ', ''), { ignoreExpiration: true })
+      ));
 
       /**
        * Handle V1 token format conversion
