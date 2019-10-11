@@ -131,7 +131,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     });
 
     // @ts-ignore
-    const { contacts, ...territoryParams } = new Territory({ ...territory });
+    const { contacts, ...territoryParams } = territory ? new Territory({ ...territory }) : new Territory();
     territoryParams.contacts = new Contacts(contacts);
 
     // // get values in correct format with initialized values
