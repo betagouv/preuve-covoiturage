@@ -32,9 +32,9 @@ export class OperatorComponent extends DestroyObservable implements OnInit {
     //   .subscribe();
 
     // readonly apply only for non admin user
-    this._authService.user$.pipe(
+    this.readOnly$ = this._authService.user$.pipe(
       takeUntil(this.destroy$),
-      map((user) => user && this._authService.hasAnyPermission(['operator.update'])),
+      map((user) => user && !this._authService.hasAnyPermission(['operator.update'])),
     );
 
     this._commonDataService.currentOperator$

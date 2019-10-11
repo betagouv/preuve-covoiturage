@@ -1,2 +1,3 @@
+-- {{ readOnly$ | async }} --
 <app-operator-form *ngIf="(readOnly$ | async) === false" [operator]="operator"></app-operator-form>
-<app-operator-details *ngIf="(readOnly$ | async) === true"></app-operator-details>
+<app-operator-details *ngIf="(readOnly$ | async) === true" [operator]="operator"></app-operator-details>

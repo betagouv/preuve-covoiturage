@@ -17,6 +17,7 @@ import { OperatorListComponent } from './components/operator-list/operator-list.
 import { OperatorViewComponent } from './components/operator-view/operator-view.component';
 import { OperatorFilterComponent } from './components/operator-filter/operator-filter.component';
 import { OperatorDetailsComponent } from './components/operator-details/operator-details.component';
+import { MatGridListModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,14 @@ import { OperatorDetailsComponent } from './components/operator-details/operator
     OperatorViewComponent,
     OperatorDetailsComponent,
   ],
-  imports: [CommonModule, MaterialModule, ReactiveFormsModule, FormModule, SharedModule, DetailsModule],
+  imports: [
+    CommonModule,
+    MaterialModule,
+    ReactiveFormsModule,
+    FormModule,
+    SharedModule,
+    DetailsModule,
+    MatGridListModule,
+  ],
 })
 export class OperatorUiModule {}

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil, tap } from 'rxjs/operators';
 
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -33,8 +33,11 @@ export class OperatorViewComponent extends DestroyObservable implements OnInit {
 
     // readonly apply only for non admin user
     this.readOnly$ = this._authService.user$.pipe(
-      map((user) => user && this._authService.hasAnyPermission(['operator.update'])),
+      map((user) => user && !this._authService.hasAnyPermission(['operator.update'])),
+      tap((ro) => console.log('ro : ', ro)),
     );
+
+    this.readOnly$.subscribe();
 
     this._commonDataService.currentOperator$
       .pipe(takeUntil(this.destroy$))
