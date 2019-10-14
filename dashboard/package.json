@@ -9,8 +9,8 @@
     "build": "ng build --configuration=$NODE_ENV",
     "lint": "ng lint",
     "format:fix": "pretty-quick --staged",
-    "test": "yarn run cypress run",
-    "open:cypress": "$(npm bin)/cypress open"
+    "test": "yarn run cypress run --env ENV_NAME=local",
+    "open:cypress": "$(npm bin)/cypress open --env ENV_NAME=local"
   },
   "private": true,
   "dependencies": {

@@ -151,7 +151,10 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="RulesForm-operators CampaignSubForm-inputs">
-          <app-operators-autocomplete [parentForm]="filtersForm"></app-operators-autocomplete>
+          <app-operators-autocomplete
+            [parentForm]="filtersForm"
+            [fieldName]="'operator_ids'"
+          ></app-operators-autocomplete>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
