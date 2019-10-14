@@ -60,8 +60,6 @@ export class ContactsSchemaMigration extends ParentMigration {
       });
 
     await Promise.all(updates);
-
-    throw new Error();
   }
 
   async down() {

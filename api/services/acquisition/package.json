@@ -4,7 +4,8 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "copy-static": "cp -R ./src/templates ./dist/",
+    "cli": "ilos",
+    "migrate": "echo 'no migrations'",
     "start": "yarn serve",
     "build": "tsc",
     "watch": "tsc -w",
@@ -13,7 +14,7 @@
     "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov mocha -exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha -exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "cli": "cli"
+    "copy-static": "cp -R ./src/templates ./dist/"
   },
   "main": "./dist/bootstrap.js",
   "config": {
@@ -51,6 +52,7 @@
     "instrument": true
   },
   "dependencies": {
+    "@ilos/cli": "~0",
     "@ilos/common": "~0",
     "@ilos/config": "~0",
     "@ilos/connection-manager": "~0",
