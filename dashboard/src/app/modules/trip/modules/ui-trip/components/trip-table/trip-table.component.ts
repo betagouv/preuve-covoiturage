@@ -2,8 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { Trip } from '~/core/entities/trip/trip';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
-import { Person } from '~/core/entities/trip/person';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { CommonDataService } from '~/core/services/common-data.service';
@@ -41,29 +40,31 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
 
   getIconStatus(status: TripStatusEnum) {
     switch (status) {
+      case TripStatusEnum.LOCKED:
+        return 'check_circle';
       case TripStatusEnum.ACTIVE:
         return 'check_circle';
       case TripStatusEnum.PENDING:
         return 'warning';
       case TripStatusEnum.ERROR:
         return 'error';
-      // TODO DELETE, just for demo
       default:
-        return 'check_circle';
+        return '';
     }
   }
 
   getIconClass(status: TripStatusEnum) {
     switch (status) {
+      case TripStatusEnum.LOCKED:
+        return 'success';
       case TripStatusEnum.ACTIVE:
         return 'success';
       case TripStatusEnum.PENDING:
         return 'warning';
       case TripStatusEnum.ERROR:
         return 'error';
-      // TODO DELETE, just for demo
       default:
-        return 'success';
+        return '';
     }
   }
 
@@ -79,51 +80,36 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     return names;
   }
 
-  getCity(trip: any, start: boolean): string {
-    const driver: Person = trip.people ? trip.people.find((p) => p.is_driver) : null;
-    if (!driver) {
-      return '';
-    }
-    return start ? trip.start_town : trip.end_town;
-  }
-
-  getOperator(trip: any): string {
+  getOperator(trip: Trip): string {
     const operator = this.operators.find((operatorF) => operatorF._id === trip.operator_id);
+    if (!operator) console.error('Operator not found !');
     return operator.nom_commercial;
   }
 
-  getTotalIncentives(trip: any): string {
-    if (!trip.people) {
-      return '-';
-    }
+  getTotalIncentives(trip: Trip): string {
     const incentives: any[] = trip.incentives;
     const amount = incentives.reduce((a, b) => a + (b.amount || 0), 0);
     return amount ? amount : '-';
   }
 
-  // FIXME
-  // getTotalIncentivesUnit(trip: Trip): string {
-  getTotalIncentivesUnit(trip: any): string {
-    if (!trip.people) {
-      return '';
-    }
+  getTotalIncentivesUnit(trip: Trip): string {
     const incentives: any[] = trip.incentives;
     const isEur = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.EUR);
     const isPoint = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.POINT);
     // TODO Utiliser IncentiveUnitFr quand il sera mergé
     if (isEur && isPoint) {
-      return '€ / points';
+      return `${INCENTIVE_UNITS_FR.euro} / ${INCENTIVE_UNITS_FR.point}`;
     }
     if (isEur) {
-      return '€';
+      return `${INCENTIVE_UNITS_FR.euro}`;
     }
     if (isPoint) {
-      return 'points';
+      return `${INCENTIVE_UNITS_FR.point}`;
     }
     return '';
   }
 
-  getIncentivesTooltip(trip: any): string {
+  getIncentivesTooltip(trip: Trip): string {
     let tooltip = '';
     const incentives = trip.incentives;
     tooltip += incentives && incentives.length > 0 ? `Conducteur: ${incentives.join(' ,')}` : '';
@@ -136,7 +122,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     return tooltip;
   }
 
-  getTripRank(trip: any): string {
+  getTripRank(trip: Trip): string {
     return trip.operator_class;
   }
 }

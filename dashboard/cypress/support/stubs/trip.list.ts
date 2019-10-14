@@ -1,7 +1,4 @@
 import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
-import { Trip } from '../../../src/app/core/entities/trip/trip';
-
-import { TripGenerator } from '../generators/trips.generator';
 
 export function stubTripList(trips) {
   cy.route({

@@ -17,6 +17,21 @@ export const operatorStubs: Operator[] = [
       country: 'France',
     },
   },
+  {
+    _id: '5c66d89760e6ee004a6cab4g',
+    nom_commercial: 'Opérateur 2',
+    raison_sociale: 'Opérateur 2 SAS',
+    company: {
+      siren: '123456789',
+      naf_entreprise: '1234A',
+    },
+    address: {
+      street: '2 rue de brest',
+      postcode: '69002',
+      city: 'Lyon',
+      country: 'France',
+    },
+  },
 ];
 
 export function stubOperatorList() {
