@@ -30,12 +30,7 @@ export class CreateJourneyLegacyAction extends AbstractAction {
     const journeys: Journey[] = (Array.isArray(params) ? [...params] : [params]).map(mapLegacyToLatest(operatorSiret));
 
     // send the converted journeys to new acquisition pipeline
-    const promises: Promise<Journey>[] = [];
-    for (const journey of journeys) {
-      promises.push(this.kernel.call('acquisition:create', journey, context));
-    }
-
-    return Promise.all(promises);
+    return this.kernel.call('acquisition:create', journeys, context);
   }
 
   /**
