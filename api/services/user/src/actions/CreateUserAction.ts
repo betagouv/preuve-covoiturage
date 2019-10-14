@@ -108,16 +108,16 @@ export class CreateUserAction extends AbstractAction {
     );
 
     // debug data for testing
-    // if (process.env.NODE_ENV === 'testing') {
-    console.log(`
+    if (process.env.NODE_ENV === 'testing') {
+      console.log(`
 ******************************************
 [test] Create user
 email: ${user.email}
 token: ${token}
 link:  ${link}
 ******************************************
-            `);
-    // }
+      `);
+    }
 
     await this.kernel.call(
       'user:notify',
