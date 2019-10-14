@@ -52,8 +52,6 @@ export class AppV1toV2Migration extends ParentMigration {
     // remove applications from the operators
     await dbOperators.updateMany({}, { $unset: { applications: 1 } });
     console.log('> deleted .applications from all operators');
-
-    throw new Error();
   }
 
   async down() {

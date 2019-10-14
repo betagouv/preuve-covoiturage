@@ -38,7 +38,8 @@
     "test": "run-p test:unit test:integration",
     "test:unit": "lerna run --scope @pdc/* test",
     "test:integration": "lerna run --scope @pdc/* test:integration",
-    "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions"
+    "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions",
+    "migrate": "lerna run --scope @pdc/service-* migrate"
   },
   "keywords": [
     "betagouv",

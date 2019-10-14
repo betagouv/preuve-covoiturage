@@ -2,12 +2,12 @@ import { command, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos
 import { ParentMigrateCommand } from '@ilos/repository';
 import { MongoConnection } from '@ilos/connection-mongo';
 
-import { AppV1toV2Migration } from '../migrations/AppV1toV2Migration';
+import { ContactsSchemaMigration } from '../migrations/ContactsSchemaMigration';
 
 @command()
 export class MigrateCommand extends ParentMigrateCommand {
-  entity = 'application';
-  migrations = [AppV1toV2Migration];
+  entity = 'territory';
+  migrations = [ContactsSchemaMigration];
 
   static get signature(): string {
     return 'migrate';
