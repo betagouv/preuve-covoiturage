@@ -1,6 +1,6 @@
-create type user_status_enum as enum('pending', 'done', 'error');
+CREATE TYPE auth.user_status_enum as enum('pending', 'done', 'error');
 
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS auth.users
 (
   _id serial primary key,
 
@@ -13,7 +13,7 @@ CREATE TABLE users
   phone varchar,
   
   password varchar NOT NULL,
-  status user_status_enum NOT NULL,
+  status auth.user_status_enum NOT NULL,
 
   forgotten_token varchar,
   forgotten_at timestamp,
@@ -27,4 +27,4 @@ CREATE TABLE users
   deleted_at timestamp
 );
 
-CREATE UNIQUE INDEX ON users(email);
+CREATE UNIQUE INDEX ON auth.users(email);
