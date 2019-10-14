@@ -185,20 +185,19 @@ export class HttpTransport implements TransportInterface {
           return;
         }
 
-        const data = await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
+        const response = await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
 
         // warn the user about this endpoint deprecation agenda
         // https://github.com/betagouv/preuve-covoiturage/issues/383
         const warning =
           'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
 
-        res.json({
+        res.status(mapStatusCode(response)).json({
           meta: {
             warning,
             supported_until: '2020-01-01T00:00:00Z',
           },
-          // tslint:disable-next-line: object-shorthand-properties-first
-          data,
+          data: response,
         });
       }),
     );
@@ -208,7 +207,8 @@ export class HttpTransport implements TransportInterface {
       '/v2/journeys',
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        res.json(await this.kernel.handle(makeCall('acquisition:create', req.body, { user })));
+        const response = await this.kernel.handle(makeCall('acquisition:create', req.body, { user }));
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
   }
@@ -261,13 +261,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/reset-password',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:forgottenPassword',
           params: { email: req.body.email },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
 
@@ -277,13 +277,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/check-token',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:checkForgottenToken',
           params: { email: req.body.email, forgotten_token: req.body.token },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
 
@@ -293,13 +293,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/change-password',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:changePasswordWithToken',
           params: { email: req.body.email, forgotten_token: req.body.token, password: req.body.password },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
 
@@ -309,13 +309,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/confirm-email',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:confirmEmail',
           params: { email: req.body.email, forgotten_token: req.body.token },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
   }
@@ -375,10 +375,10 @@ export class HttpTransport implements TransportInterface {
             : nestParams(req.body, user);
 
           // pass the request to the kernel
-          const rpcResponse = await this.kernel.handle(req.body);
+          const response = await this.kernel.handle(req.body);
 
           // send the response
-          res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+          res.status(mapStatusCode(response)).json(response);
         },
       ),
     );
