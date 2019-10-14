@@ -90,22 +90,24 @@
     </div>
   </div>
 
-  <h2 *ngIf="displayContacts">Contacts et responsables</h2>
+  <div *ngIf="displayContacts">
+    <h2>Contacts et responsables</h2>
 
-  <div class="operator-row">
-    <div>
-      <h3>Délégué à la protection des données</h3>
-      <app-details-contact [contact]="operator.contacts.gdpr_dpo"></app-details-contact>
-    </div>
+    <div class="operator-row">
+      <div>
+        <h3>Délégué à la protection des données</h3>
+        <app-details-contact [contact]="operator.contacts.gdpr_dpo"></app-details-contact>
+      </div>
 
-    <div>
-      <h3>Responsable du traitement</h3>
-      <app-details-contact [contact]="operator.contacts.gdpr_controller"></app-details-contact>
-    </div>
+      <div>
+        <h3>Responsable du traitement</h3>
+        <app-details-contact [contact]="operator.contacts.gdpr_controller"></app-details-contact>
+      </div>
 
-    <div>
-      <h3>Responsable technique</h3>
-      <app-details-contact [contact]="operator.contacts.technical"></app-details-contact>
+      <div>
+        <h3>Responsable technique</h3>
+        <app-details-contact [contact]="operator.contacts.technical"></app-details-contact>
+      </div>
     </div>
   </div>
 </div>
