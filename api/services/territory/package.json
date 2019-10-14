@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "cli": "ilos",
-    "migrate": "echo 'no migrations'",
+    "migrate": "ilos migrate",
     "start": "yarn serve",
     "build": "tsc",
     "watch": "tsc -w",
