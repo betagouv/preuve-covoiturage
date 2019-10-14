@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { Address, Bank, Company, Contacts, Operator } from '~/core/entities/operator/operator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
@@ -13,29 +11,27 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
   templateUrl: './operator-details.component.html',
   styleUrls: ['./operator-details.component.scss'],
 })
-export class OperatorDetailsComponent extends DestroyObservable implements OnInit {
-  public operator: Operator;
+export class OperatorDetailsComponent extends DestroyObservable implements OnInit, OnChanges {
+  @Input() public operator: Operator;
+  @Input() displayContacts = true;
 
-  constructor(
-    public authService: AuthenticationService,
-    private fb: FormBuilder,
-    private _operatorService: OperatorService,
-    private toastr: ToastrService,
-  ) {
+  constructor(public authService: AuthenticationService, private fb: FormBuilder, private toastr: ToastrService) {
     super();
   }
 
   ngOnInit() {
     console.log('ngOnInit');
-    this._operatorService.operator$.pipe(takeUntil(this.destroy$)).subscribe((operator: Operator) => {
-      console.log('operator : ', operator);
-      if (operator) {
-        this.setOperatorFormValue(operator);
-      }
-    });
   }
 
-  private setOperatorFormValue(operator: Operator) {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['operator']) {
+      console.log(changes['operator'].currentValue);
+
+      this.setOperatorDetails(changes['operator'].currentValue);
+    }
+  }
+
+  private setOperatorDetails(operator: Operator) {
     // base values for form
     const operatorConstruct = new Operator({
       _id: null,

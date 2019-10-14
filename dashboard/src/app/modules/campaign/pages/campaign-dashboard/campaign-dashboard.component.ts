@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-campaign-dashboard',
@@ -9,8 +12,13 @@ import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 })
 export class CampaignDashboardComponent implements OnInit {
   campaignStatus = CampaignStatusEnum;
+  private canCreateCampaign$: Observable<boolean>;
 
-  constructor() {}
+  constructor(private authentificationService: AuthenticationService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.canCreateCampaign$ = this.authentificationService.user$.pipe(
+      map((user) => user && this.authentificationService.hasAnyPermission(['incentive-campaign.create'])),
+    );
+  }
 }

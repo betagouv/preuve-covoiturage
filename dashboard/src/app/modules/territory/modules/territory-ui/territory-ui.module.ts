@@ -14,6 +14,8 @@ import { TerritoryListComponent } from './components/territory-list/territory-li
 import { TerritoryFilterComponent } from './components/territory-filter/territory-filter.component';
 import { TerritoryListViewComponent } from './components/territory-list-view/territory-list-view.component';
 import { TerritoryViewComponent } from './components/territory-view/territory-view.component';
+import { TerritoryDetailsComponent } from './components/territory-details/territory-details.component';
+import { DetailsModule } from '~/shared/modules/details/details.module';
 
 @NgModule({
   declarations: [
@@ -24,8 +26,9 @@ import { TerritoryViewComponent } from './components/territory-view/territory-vi
     TerritoryFilterComponent,
     TerritoryListViewComponent,
     TerritoryViewComponent,
+    TerritoryDetailsComponent,
   ],
-  imports: [CommonModule, FormsModule, MaterialModule, ReactiveFormsModule, FormModule, SharedModule],
+  imports: [CommonModule, FormsModule, MaterialModule, ReactiveFormsModule, FormModule, SharedModule, DetailsModule],
   exports: [
     TerritoryFormComponent,
     TerritoriesAutocompleteComponent,
@@ -33,6 +36,7 @@ import { TerritoryViewComponent } from './components/territory-view/territory-vi
     TerritoryListComponent,
     TerritoryListViewComponent,
     TerritoryViewComponent,
+    TerritoryDetailsComponent,
   ],
 })
 export class TerritoryUiModule {}

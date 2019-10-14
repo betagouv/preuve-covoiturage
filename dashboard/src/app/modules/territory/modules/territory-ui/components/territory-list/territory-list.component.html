@@ -11,7 +11,7 @@
         <a
           class="link"
           *ngIf="authenticationService.hasAnyPermission([this.editPermission])"
-          (click)="onEdit(territory._id)"
+          (click)="onEdit(territory)"
         >
           Editer
         </a>

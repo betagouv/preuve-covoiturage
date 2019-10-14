@@ -1,95 +1,100 @@
-<div class="operatorForm--loading" *ngIf="!operator">
-  <mat-spinner></mat-spinner>
-</div>
 <div *ngIf="operator">
-  <div>
-    <h2>Informations générales</h2>
+  <h2>Informations générales</h2>
 
-    <mat-form-field class="nom_commercial" appearance="outline">
-      <mat-label>Nom commercial</mat-label>
-      <p>{{ operator.nom_commercial }}</p>
-    </mat-form-field>
-    <mat-form-field class="raison_sociale" appearance="outline">
-      <mat-label>Raison sociale</mat-label>
-      <p>{{ operator.raison_sociale }}</p>
-    </mat-form-field>
+  <div class="operator-row">
+    <div class="full-col">
+      <p>
+        <strong>Nom commercial : </strong>
+        {{ operator.nom_commercial }}
+      </p>
+      <p>
+        <strong>Raison sociale : </strong>
+        {{ operator.raison_sociale }}
+      </p>
+    </div>
 
-    <h3>Structure</h3>
+    <div>
+      <h3>Structure</h3>
+      <p>
+        <strong>Nature juridique : </strong>
+        {{ operator.company.nature_juridique }}
+      </p>
+      <p>
+        <strong>SIREN : </strong>
+        {{ operator.company.siren }}
+      </p>
+      <p>
+        <strong>Naf entreprise : </strong>
+        {{ operator.company.naf_entreprise }}
+      </p>
+      <p>
+        <strong>Clé NIC : </strong>
+        {{ operator.company.cle_nic }}
+      </p>
+      <p>
+        <strong>RNA : </strong>
+        {{ operator.company.rna }}
+      </p>
+      <p>
+        <strong>Numéro de TVA intracommunautaire : </strong>
+        {{ operator.company.vat_intra }}
+      </p>
+    </div>
+    <div>
+      <h3>Adresse</h3>
 
-    <mat-form-field class="nature_juridique" appearance="outline">
-      <mat-label>Nature juridique</mat-label>
-      <p>{{ operator.company.nature_juridique }}</p>
-    </mat-form-field>
-    <mat-form-field class="siren" appearance="outline">
-      <mat-label>SIREN</mat-label>
-      <p>{{ operator.company.siren }}</p>
-    </mat-form-field>
-    <mat-form-field class="naf_entreprise" appearance="outline">
-      <mat-label>Naf entreprise</mat-label>
-      <p>{{ operator.company.naf_entreprise }}</p>
-    </mat-form-field>
-    <mat-form-field class="cle_nic" appearance="outline">
-      <mat-label>Clé NIC</mat-label>
-      <p>{{ operator.company.cle_nic }}</p>
-    </mat-form-field>
-    <mat-form-field class="rna" appearance="outline">
-      <mat-label>RNA</mat-label>
-      <p>{{ operator.company.rna }}</p>
-    </mat-form-field>
-    <mat-form-field class="vat_intra" appearance="outline">
-      <mat-label>Numéro de TVA intracommunautaire</mat-label>
-      <p>{{ operator.company.vat_intra }}</p>
-    </mat-form-field>
+      <p>
+        <strong>N° et rue : </strong>
+        {{ operator.address.street }}
+      </p>
+      <p>
+        <strong>Code postal : </strong>
+        {{ operator.address.postcode }}
+      </p>
+      <p>
+        <strong>Cedex : </strong>
+      </p>
 
-    <h3>Adresse</h3>
+      <p>
+        {{ operator.address.cedex }}
+        {{ operator.address.city }}
+      </p>
+      <p>
+        <strong>Ville : </strong>
+        {{ operator.address.city }}
+      </p>
+      <p>
+        <strong>Pays : </strong>
+        {{ operator.address.country }}
+      </p>
+    </div>
+    <div>
+      <h3>Banque</h3>
 
-    <mat-form-field class="street" appearance="outline">
-      <mat-label>N° et rue</mat-label>
-      <p>{{ operator.address.street }}</p>
-    </mat-form-field>
-    <mat-form-field class="postcode" appearance="outline">
-      <mat-label>Code postal</mat-label>
-      <p>{{ operator.address.postcode }}</p>
-    </mat-form-field>
-    <mat-form-field class="cedex" appearance="outline">
-      <mat-label>Cedex</mat-label>
-      <p>{{ operator.address.cedex }}</p>
-    </mat-form-field>
-    <mat-form-field class="city" appearance="outline">
-      <p>{{ operator.address.city }}</p>
-      <mat-label>Ville</mat-label>
-      <p>{{ operator.address.city }}</p>
-    </mat-form-field>
-    <mat-form-field class="country" appearance="outline">
-      <mat-label>Pays</mat-label>
-      <p>{{ operator.address.country }}</p>
-    </mat-form-field>
-
-    <h3>Banque</h3>
-
-    <mat-form-field class="bank_name" appearance="outline">
-      <mat-label>Nom de l'établissement</mat-label>
-      <p>{{ operator.bank.bank_name }}</p>
-    </mat-form-field>
-    <mat-form-field class="client_name" appearance="outline">
-      <mat-label>Nom du titulaire</mat-label>
-      <p>{{ operator.bank.client_name }}</p>
-    </mat-form-field>
-    <mat-form-field class="iban" appearance="outline">
-      <mat-label>IBAN</mat-label>
-      <p>{{ operator.bank.iban }}</p>
-    </mat-form-field>
-    <mat-form-field class="bic" appearance="outline">
-      <mat-label>BIC</mat-label>
-      <p>{{ operator.bank.bic }}</p>
-    </mat-form-field>
+      <p>
+        <strong>Nom de l'établissement : </strong>
+        {{ operator.bank.bank_name }}
+      </p>
+      <p>
+        <strong>Nom du titulaire : </strong>
+        {{ operator.bank.client_name }}
+      </p>
+      <p>
+        <strong>IBAN : </strong>
+        {{ operator.bank.iban }}
+      </p>
+      <p>
+        <strong>BIC : </strong>
+        {{ operator.bank.bic }}
+      </p>
+    </div>
   </div>
-  <h2>Contacts et responsables</h2>
 
-  <div class="contacts">
+  <h2 *ngIf="displayContacts">Contacts et responsables</h2>
+
+  <div class="operator-row">
     <div>
       <h3>Délégué à la protection des données</h3>
-
       <app-details-contact [contact]="operator.contacts.gdpr_dpo"></app-details-contact>
     </div>
 

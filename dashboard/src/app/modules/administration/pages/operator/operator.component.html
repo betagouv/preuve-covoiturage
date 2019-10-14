@@ -1,3 +1,5 @@
 <div class="operator">
-  <app-operator-view></app-operator-view>
+  <app-operator-details [displayContacts]="readOnly$ | async" [operator]="operator"></app-operator-details>
+
+  <app-operator-form *ngIf="!(readOnly$ | async)" [operator]="operator"></app-operator-form>
 </div>

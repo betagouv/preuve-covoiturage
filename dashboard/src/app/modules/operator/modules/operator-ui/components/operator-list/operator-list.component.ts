@@ -55,13 +55,13 @@ export class OperatorListComponent extends DestroyObservable implements OnInit, 
     this.operatorsToShow = this.operators.filter((t) => t.nom_commercial.toLowerCase().includes(this.filterLiteral));
   }
 
-  onEdit(id: string) {
+  onEdit(operator) {
     // todo: subscribe to loading of entity ?
     setTimeout(() => {
       document.getElementById('operatorForm-anchor').scrollIntoView({
         behavior: 'smooth',
       });
     }, 200);
-    this.edit.emit(id);
+    this.edit.emit(operator);
   }
 }
