@@ -162,7 +162,8 @@ export class HttpTransport implements TransportInterface {
       '/journeys/push',
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        res.json(await this.kernel.handle(makeCall('acquisition:create', req.body, { user })));
+        const response = await this.kernel.handle(makeCall('acquisition:create', req.body, { user }));
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
   }
