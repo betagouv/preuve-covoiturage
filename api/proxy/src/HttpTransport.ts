@@ -17,7 +17,7 @@ import {
 } from '@ilos/common';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
-import { TokenProvider, TokenProviderInterfaceResolver } from '@pdc/provider-token';
+import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
@@ -167,26 +167,35 @@ export class HttpTransport implements TransportInterface {
           Array.isArray(get(req, 'body.passenger.incentives', null)) ||
           Array.isArray(get(req, 'body.driver.incentives', null));
 
-        const data = isLatest
-          ? await this.kernel.handle(makeCall('acquisition:create', req.body, { user }))
-          : await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
+        /**
+         * Throw a Bad Request error and give information to the user
+         * about the version mismatch
+         */
+        if (isLatest) {
+          res.status(400).json({
+            id: req.body.id,
+            jsonrpc: '2.0',
+            error: {
+              code: -32600,
+              message: 'Invalid Request',
+              data: 'Please use /v2/journeys endpoint for Schema V2',
+            },
+          });
+
+          return;
+        }
+
+        const data = await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
 
         // warn the user about this endpoint deprecation agenda
         // https://github.com/betagouv/preuve-covoiturage/issues/383
-        let warning =
-          'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.';
-
-        // V1 users should migrate the schema and the endpoint
-        if (!isLatest) {
-          warning +=
-            ' Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
-        }
+        const warning =
+          'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
 
         res.json({
           meta: {
             warning,
-            current_schema_version: isLatest ? 2 : 1,
-            supported_until: isLatest ? null : '2020-01-01T00:00:00Z',
+            supported_until: '2020-01-01T00:00:00Z',
           },
           // tslint:disable-next-line: object-shorthand-properties-first
           data,
