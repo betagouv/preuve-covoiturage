@@ -1,4 +1,6 @@
-CREATE TYPE carpool_identity AS (
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+CREATE TYPE carpool.identity AS (
   phone varchar,
   firstname varchar,
   lastname varchar,
@@ -9,7 +11,7 @@ CREATE TYPE carpool_identity AS (
   over_18 boolean
 );
 
-CREATE TABLE carpools
+CREATE TABLE IF NOT EXISTS carpool.carpools
 (
   _id serial primary key,
 
@@ -17,7 +19,7 @@ CREATE TABLE carpools
   operator_id varchar NOT NULL,
   trip_id varchar,
 
-  identity carpool_identity,
+  identity carpool.identity,
   is_driver boolean NOT NULL,
   operator_class char NOT NULL,
 
@@ -34,15 +36,15 @@ CREATE TABLE carpools
   seats int NOT NULL default 1
 );
 
-CREATE INDEX ON carpools (acquisition_id);
-CREATE INDEX ON carpools (operator_id);
-CREATE INDEX ON carpools (trip_id);
+CREATE INDEX ON carpool.carpools (acquisition_id);
+CREATE INDEX ON carpool.carpools (operator_id);
+CREATE INDEX ON carpool.carpools (trip_id);
 
-CREATE INDEX ON carpools (((identity).phone));
-CREATE INDEX ON carpools (operator_class);
+CREATE INDEX ON carpool.carpools (((identity).phone));
+CREATE INDEX ON carpool.carpools (operator_class);
 
-CREATE INDEX ON carpools (datetime);
-CREATE INDEX ON carpools (start_insee);
-CREATE INDEX ON carpools (end_insee);
+CREATE INDEX ON carpool.carpools (datetime);
+CREATE INDEX ON carpool.carpools (start_insee);
+CREATE INDEX ON carpool.carpools (end_insee);
 
-CREATE INDEX ON carpools (distance);
+CREATE INDEX ON carpool.carpools (distance);

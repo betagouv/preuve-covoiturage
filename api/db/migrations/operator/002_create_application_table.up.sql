@@ -1,4 +1,4 @@
-CREATE TABLE applications
+CREATE TABLE IF NOT EXISTS operator.applications
 (
   _id serial primary key,
   operator_id varchar NOT NULL,
@@ -8,4 +8,4 @@ CREATE TABLE applications
   deleted_at timestamp
 );
 
-CREATE INDEX ON applications (operator_id);
+CREATE INDEX ON operator.applications (operator_id);

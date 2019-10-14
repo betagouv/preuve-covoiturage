@@ -1,16 +1,17 @@
-CREATE TABLE operators
+CREATE TABLE IF NOT EXISTS territory.territories
 (
   _id serial primary key,
-  
-  nom_commercial varchar NOT NULL,
-  raison_sociale varchar NOT NULL,
-  siret varchar NOT NULL,
+  parent_id integer REFERENCES territory.territories (_id),
 
+  siret varchar NOT NULL,
+  name varchar NOT NULL,
+  shortname varchar,
+  accronym varchar,
+  
   company json NOT NULL,
   address json NOT NULL,
-  bank json NOT NULL,
   contacts json NOT NULL,
-
+  
   cgu_accepted_at timestamp,
   cgu_accepted_by varchar,
 
@@ -19,4 +20,4 @@ CREATE TABLE operators
   deleted_at timestamp
 );
 
-CREATE UNIQUE INDEX ON operators (siret);
+CREATE UNIQUE INDEX ON territory.territories (siret);
