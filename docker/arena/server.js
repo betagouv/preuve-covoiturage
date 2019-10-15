@@ -11,7 +11,12 @@ const app = express();
 const arena = Arena({
   queues: [
     {
-      name: 'pdc-local-journeys',
+      name: 'trip',
+      hostId: 'redis',
+      url: process.env.APP_REDIS_URL,
+    },
+    {
+      name: 'normalization',
       hostId: 'redis',
       url: process.env.APP_REDIS_URL,
     },
