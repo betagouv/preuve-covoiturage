@@ -116,6 +116,8 @@ export const operators = {
       'profile.update',
       'profile.password',
       'profile.delete',
+      'operator.trip.list',
+      'operator.trip.stats',
     ],
   },
   user: {
