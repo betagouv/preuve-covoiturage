@@ -181,7 +181,6 @@ export class AuthenticationService {
   }
 
   public restorePassword(email: string, password: string, token: string): Observable<any> {
-    console.log('restorePassword : ', email, password, token);
     return this.call('auth/change-password', {
       email,
       password,
@@ -249,7 +248,7 @@ export class AuthenticationService {
 
   check(): Observable<User> {
     if (this._hasChecked) {
-      return of(this.user);
+      return of(this._user$.value);
     }
     return this.userMe$.pipe(
       tap((user) => {
@@ -268,6 +267,7 @@ export class AuthenticationService {
 
   private onLoggin(user: User) {
     // const redirectToStats = !this.user && user;
+    this._hasChecked = true;
     this._user$.next(user);
   }
 }

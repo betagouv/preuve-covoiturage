@@ -27,6 +27,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
   }
 
   public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
+    this.logger.debug(`Normalization:territory on ${journey._id}`);
     const normalizedJourney = { ...journey };
 
     const promises: Promise<void>[] = [];

@@ -24,6 +24,7 @@ import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction
 import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
+import { MigrateCommand } from './commands/MigrateCommand';
 
 @serviceProvider({
   config: __dirname,
@@ -55,6 +56,7 @@ import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAc
     FindTerritoryByInseeAction,
     FindTerritoryByPositionAction,
   ],
+  commands: [MigrateCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

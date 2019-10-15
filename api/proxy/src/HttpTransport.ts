@@ -17,7 +17,7 @@ import {
 } from '@ilos/common';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
-import { TokenProvider, TokenProviderInterfaceResolver } from '@pdc/provider-token';
+import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import { dataWrapMiddleware, signResponseMiddleware, errorHandlerMiddleware } from './middlewares';
 import { asyncHandler } from './helpers/asyncHandler';
@@ -158,11 +158,57 @@ export class HttpTransport implements TransportInterface {
    * }
    */
   private registerLegacyServerRoute() {
+    // V1 payload
     this.app.post(
       '/journeys/push',
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        res.json(await this.kernel.handle(makeCall('acquisition:create', req.body, { user })));
+        const isLatest =
+          Array.isArray(get(req, 'body.passenger.incentives', null)) ||
+          Array.isArray(get(req, 'body.driver.incentives', null));
+
+        /**
+         * Throw a Bad Request error and give information to the user
+         * about the version mismatch
+         */
+        if (isLatest) {
+          res.status(400).json({
+            id: req.body.id,
+            jsonrpc: '2.0',
+            error: {
+              code: -32600,
+              message: 'Invalid Request',
+              data: 'Please use /v2/journeys endpoint for Schema V2',
+            },
+          });
+
+          return;
+        }
+
+        const response = await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
+
+        // warn the user about this endpoint deprecation agenda
+        // https://github.com/betagouv/preuve-covoiturage/issues/383
+        const warning =
+          'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
+
+        res.status(mapStatusCode(response)).json({
+          meta: {
+            warning,
+            supported_until: '2020-01-01T00:00:00Z',
+          },
+          data: response,
+        });
+      }),
+    );
+
+    // V2 payload
+    this.app.post(
+      '/v2/journeys',
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        const response = await this.kernel.handle(makeCall('acquisition:create', req.body, { user }));
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
   }
@@ -215,13 +261,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/reset-password',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:forgottenPassword',
           params: { email: req.body.email },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
 
@@ -231,13 +277,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/check-token',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:checkForgottenToken',
           params: { email: req.body.email, forgotten_token: req.body.token },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
 
@@ -247,13 +293,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/change-password',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:changePasswordWithToken',
           params: { email: req.body.email, forgotten_token: req.body.token, password: req.body.password },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
 
@@ -263,13 +309,13 @@ export class HttpTransport implements TransportInterface {
     this.app.post(
       '/auth/confirm-email',
       asyncHandler(async (req, res, next) => {
-        const rpcResponse = await this.kernel.handle({
+        const response = await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'user:confirmEmail',
           params: { email: req.body.email, forgotten_token: req.body.token },
         });
-        res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+        res.status(mapStatusCode(response)).json(response);
       }),
     );
   }
@@ -329,10 +375,10 @@ export class HttpTransport implements TransportInterface {
             : nestParams(req.body, user);
 
           // pass the request to the kernel
-          const rpcResponse = await this.kernel.handle(req.body);
+          const response = await this.kernel.handle(req.body);
 
           // send the response
-          res.status(mapStatusCode(rpcResponse)).json(rpcResponse);
+          res.status(mapStatusCode(response)).json(response);
         },
       ),
     );

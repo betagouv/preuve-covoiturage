@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -21,12 +21,12 @@ import { TerritoryService } from '~/modules/territory/services/territory.service
   templateUrl: './territory-form.component.html',
   styleUrls: ['./territory-form.component.scss'],
 })
-export class TerritoryFormComponent extends DestroyObservable implements OnInit {
+export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
   public territoryForm: FormGroup;
 
   @Input() showForm = true;
   @Input() closable = false;
-  @Input() useCurrent = false;
+  @Input() territory: Territory = null;
 
   @Output() close = new EventEmitter();
 
@@ -92,13 +92,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   }
 
   private initTerritoryFormValue(): void {
-    const territory$ = this.useCurrent ? this.commonDataService.currentTerritory$ : this._territoryService.territory$;
-
-    territory$.pipe(takeUntil(this.destroy$)).subscribe((territory: Territory | null) => {
-      if (territory) {
-        this.setTerritoryFormValue(territory);
-      }
-    });
+    if (this.territory) this.setTerritoryFormValue(this.territory);
   }
 
   private initTerritoryForm(): void {
@@ -137,7 +131,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
     });
 
     // @ts-ignore
-    const { contacts, ...territoryParams } = new Territory({ ...territory });
+    const { contacts, ...territoryParams } = territory ? new Territory({ ...territory }) : new Territory();
     territoryParams.contacts = new Contacts(contacts);
 
     // // get values in correct format with initialized values
@@ -175,6 +169,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit 
   private checkPermissions(): void {
     if (!this.authService.hasAnyPermission(['territory.update'])) {
       this.territoryForm.disable({ onlySelf: true });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['territory'] && this.territoryForm) {
+      console.log(changes['territory'].currentValue);
+
+      this.setTerritoryFormValue(changes['territory'].currentValue);
     }
   }
 }

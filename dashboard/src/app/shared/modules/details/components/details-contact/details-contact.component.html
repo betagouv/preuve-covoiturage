@@ -1,18 +1,18 @@
 <div *ngIf="contact">
-  <mat-form-field appearance="outline">
-    <mat-label>Prénom</mat-label>
+  <p>
+    <strong>Prénom : </strong>
     {{ contact.firstname }}
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Nom</mat-label>
+  </p>
+  <p>
+    <strong>Nom : </strong>
     {{ contact.lastname }}
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Adresse email</mat-label>
+  </p>
+  <p>
+    <strong>Adresse email : </strong>
     {{ contact.email }}
-  </mat-form-field>
-  <mat-form-field appearance="outline" *ngIf="showPhoneNumber">
-    <mat-label>Numéro de téléphone</mat-label>
+  </p>
+  <p>
+    <strong>Numéro de téléphone : </strong>
     {{ contact.phone }}
-  </mat-form-field>
+  </p>
 </div>

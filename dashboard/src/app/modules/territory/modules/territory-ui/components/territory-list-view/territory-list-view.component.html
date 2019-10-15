@@ -10,5 +10,10 @@
   <h3 *ngIf="showForm">
     Edition du territoire
   </h3>
-  <app-territory-form [showForm]="showForm" [closable]="true" (close)="close()"></app-territory-form>
+  <app-territory-form
+    [showForm]="showForm"
+    [territory]="territoryToEdit"
+    [closable]="true"
+    (close)="close()"
+  ></app-territory-form>
 </div>

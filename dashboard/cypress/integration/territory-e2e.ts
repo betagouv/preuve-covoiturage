@@ -1,8 +1,7 @@
-import { environment } from '../../src/environments/environment';
 import { testTerritoryE2EStory } from '../support/stories/territory.e2e.story';
 
 context('TERRITORY E2E', () => {
-  if (environment.name !== 'local') {
+  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
     return;
   }
   Cypress.Cookies.defaults({

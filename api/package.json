@@ -23,9 +23,7 @@
     "scalingo-build": "run-s build:providers build:services build:proxy",
     "scalingo-postbuild": "/bin/sh ./scalingo/postbuild.sh",
     "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
-    "start:http:dev": "nodemon",
-    "start:queue": "APP_WORKER=true yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
-    "start:queue:dev": "echo 'Not implemented'; exit 0;",
+    "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
     "clean": "rm -rf ./**/dist",
     "watch": "lerna run --parallel watch",
     "ls": "lerna ls",
@@ -40,7 +38,8 @@
     "test": "run-p test:unit test:integration",
     "test:unit": "lerna run --scope @pdc/* test",
     "test:integration": "lerna run --scope @pdc/* test:integration",
-    "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions"
+    "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions",
+    "migrate": "lerna run --scope @pdc/service-* migrate"
   },
   "keywords": [
     "betagouv",
@@ -55,7 +54,6 @@
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "devDependencies": {
     "lerna": "^3.13.4",
-    "nodemon": "^1.19.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.17.1",
     "pretty-quick": "^1.11.0",

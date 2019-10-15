@@ -27,6 +27,8 @@ export class CrosscheckAction extends Action {
   }
 
   public async handle(journey: JourneyInterface, context: ContextType): Promise<void> {
+    this.logger.debug('trip:crosscheck', journey._id);
+
     // TODO: add schema
     const [created, trip] = await this.pg.findOrCreateTripForJourney({
       ...journey,

@@ -22,6 +22,9 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   // with operatorIds control
   @Input() parentForm: FormGroup;
 
+  // if different from default
+  @Input() fieldName = 'operatorIds';
+
   @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
 
   constructor(private commonDataService: CommonDataService) {
@@ -37,7 +40,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   get operatorIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get('operatorIds');
+    return <FormControl>this.parentForm.get(this.fieldName);
   }
 
   /**

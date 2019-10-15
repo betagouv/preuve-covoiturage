@@ -17,6 +17,8 @@ export class NormalizationCostAction extends AbstractAction {
   }
 
   public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
+    this.logger.debug(`Normalization:cost on ${journey._id}`);
+
     const normalizedJourney = { ...journey };
     // TODO: implementation cost enrichment
     // if expense, calculate contribution or revenue by adding incentive

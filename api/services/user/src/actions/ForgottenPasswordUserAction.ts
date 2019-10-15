@@ -42,8 +42,8 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     );
 
     // debug data for testing
-    // if (process.env.NODE_ENV === 'testing') {
-    console.log(`
+    if (process.env.NODE_ENV === 'testing') {
+      console.log(`
 ******************************************
 [test] Forgotten Password
 email: ${user.email}
@@ -51,7 +51,7 @@ token: ${token}
 link:  ${link}
 ******************************************
       `);
-    // }
+    }
 
     // TODO check this
     // generate a context if missing

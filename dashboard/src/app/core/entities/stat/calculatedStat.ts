@@ -1,24 +1,20 @@
-import {
-  StatDateTotalInterface,
-  StatDayTotalInterface,
-  CalculatedStatInterface,
-} from '../../interfaces/stat/calculatedStatInterface';
+import { StatDateTotalInterface, CalculatedStatInterface } from '../../interfaces/stat/calculatedStatInterface';
 
 export class CalculatedStat {
   public carpoolers: {
     total: number;
-    days: StatDayTotalInterface[];
+    days: StatDateTotalInterface[];
     months: StatDateTotalInterface[];
   };
   // tslint:disable-next-line:variable-name
   public carpoolers_per_vehicule: {
     total: number;
-    days: StatDayTotalInterface[];
+    days: StatDateTotalInterface[];
     months: StatDateTotalInterface[];
   };
   public distance: {
     total: number;
-    days: StatDayTotalInterface[];
+    days: StatDateTotalInterface[];
     months: StatDateTotalInterface[];
   };
   public operators?: {

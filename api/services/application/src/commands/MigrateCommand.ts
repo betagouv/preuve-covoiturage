@@ -10,7 +10,7 @@ export class MigrateCommand extends ParentMigrateCommand {
   migrations = [AppV1toV2Migration];
 
   static get signature(): string {
-    return 'migrate.application';
+    return 'migrate';
   }
 
   constructor(

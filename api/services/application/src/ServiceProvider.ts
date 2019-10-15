@@ -3,7 +3,6 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { TokenProvider } from '@pdc/provider-token';
 import {
   applicationListSchema,
   applicationFindSchema,
@@ -24,6 +23,13 @@ import {
 
 @serviceProvider({
   config: __dirname,
+  // FIXME: Migrations fail due to required TokenProvider but adding it here
+  //        makes the whole stack fail:
+  //        - if TokenProvider is loaded and config/jwt.ts exists, the `jwt` key is duplicated --> Error
+  //        - if TokenProvider is loaded without config/jwt.ts --> Error, jwt is needed
+  //        - No TokenProvider loaded --> OK running the App (it gets it from proxy Kernel), but migration fails
+  //          as the proxy Kernel doesn't exist.
+  // providers: [ApplicationRepositoryProvider, TokenProvider],
   providers: [ApplicationRepositoryProvider],
   validator: [
     ['application.list', applicationListSchema],

@@ -77,16 +77,16 @@ export class SendConfirmEmailUserAction extends AbstractAction {
     );
 
     // debug data for testing
-    // if (process.env.NODE_ENV === 'testing') {
-    console.log(`
+    if (process.env.NODE_ENV === 'testing') {
+      console.log(`
 ******************************************
 [test] Send confirm email to user (${user._id.toString()})
 email: ${user.email}
 token: ${token}
 link:  ${link}
 ******************************************
-                `);
-    // }
+      `);
+    }
 
     await this.kernel.call(
       'user:notify',
