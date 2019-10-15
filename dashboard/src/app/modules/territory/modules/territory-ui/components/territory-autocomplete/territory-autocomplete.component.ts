@@ -15,8 +15,6 @@ import { CommonDataService } from '~/core/services/common-data.service';
   styleUrls: ['./territory-autocomplete.component.scss'],
 })
 export class TerritoryAutocompleteComponent extends DestroyObservable implements OnInit {
-  private _searchUpdate: boolean;
-
   @Input() parentForm: FormGroup;
 
   territoryCtrl = new FormControl();
@@ -29,15 +27,16 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   private _territoryForm: AbstractControl;
 
+  private focusDebounceTimer;
+
   constructor(private territoryService: TerritoryService, private commonDataService: CommonDataService) {
     super();
   }
 
   updateTerritory(territoryId: string) {}
 
-  private selectedTerritoryUpdated() {
-    // console.log('> selectedTerritoryUpdated', this._territoryForm.value);
-    this.selectedTerritoryId = this._territoryForm.value ? this._territoryForm.value.toString() : null;
+  private selectedTerritoryUpdated(id = this._territoryForm.value ? this._territoryForm.value.toString() : null) {
+    this.selectedTerritoryId = id;
     this.selectedTerritory = this.territories
       ? this.territories.find((territory) => this.selectedTerritoryId === territory._id)
       : null;
@@ -45,9 +44,8 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   }
 
   onTerritorySelect(territory: MatAutocompleteSelectedEvent) {
-    console.log('territory : ', territory.option.value);
-    this._territoryForm.setValue(territory.option.value);
-    this._searchUpdate = false;
+    clearTimeout(this.focusDebounceTimer);
+    this.selectedTerritoryUpdated(territory.option.value);
   }
 
   ngOnInit() {
@@ -66,24 +64,16 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     this.selectedTerritoryUpdated();
   }
 
-  // private filterTerritories(territories: Opera[] = []) {
-  //   return this.filteredTerritories.filter((territory) => territory.)
-  // }
   private filter(value: string): Territory[] {
-    this._searchUpdate = true;
-    console.log('value : ', value);
     return this.territories
       ? this.territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase()))
       : null;
   }
 
   inputLostFocus() {
-    console.log('this._searchUpdate : ', this._searchUpdate);
-    // if search field has been not been updated and input lost focus it restore original value.
-    setTimeout(() => {
-      if (this._searchUpdate) {
-        this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '');
-      }
-    }, 100);
+    clearTimeout(this.focusDebounceTimer);
+    this.focusDebounceTimer = setTimeout(() => {
+      this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '');
+    }, 300);
   }
 }

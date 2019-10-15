@@ -13,7 +13,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
   styleUrls: ['./territory.component.scss'],
 })
 export class TerritoryComponent extends DestroyObservable implements OnInit {
-  private readOnly$: Observable<boolean>;
+  public readOnly$: Observable<boolean>;
   public territory: Territory;
 
   constructor(
