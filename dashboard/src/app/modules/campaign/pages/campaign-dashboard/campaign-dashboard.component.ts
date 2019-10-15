@@ -12,7 +12,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 })
 export class CampaignDashboardComponent implements OnInit {
   campaignStatus = CampaignStatusEnum;
-  private canCreateCampaign$: Observable<boolean>;
+  canCreateCampaign$: Observable<boolean>;
 
   constructor(private authentificationService: AuthenticationService) {}
 
