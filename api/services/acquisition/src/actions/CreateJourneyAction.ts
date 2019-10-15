@@ -46,8 +46,8 @@ export class CreateJourneyAction extends AbstractAction {
 
       // filter out journeys in the future
       .filter((journeyData) => {
-        const person = 'driver' in journeyData ? journeyData.driver : journeyData.passenger;
-        return person.start.datetime < person.end.datetime && person.end.datetime < now;
+        const person = 'passenger' in journeyData ? journeyData.passenger : journeyData.driver;
+        return person.end.datetime < now;
       });
 
     if (journeys.length === 0) return [];
