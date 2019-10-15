@@ -1,4 +1,4 @@
-import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 export function stubTripList(trips) {
   cy.route({

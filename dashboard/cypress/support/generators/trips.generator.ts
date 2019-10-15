@@ -3,7 +3,7 @@ import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '../../../src/app/core/enums/trip/trip-status.enum';
 import { TripInterface } from '../../../src/app/core/interfaces/trip/tripInterface';
 
-import { operatorStubs } from '../stubs/operator.list';
+import { operatorStubs } from '../stubs/operator/operator.list';
 
 export class TripGenerator {
   generateTrip(): Trip {

@@ -15,7 +15,7 @@ import {
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
-import { operatorStubs } from '../stubs/operator.list';
+import { operatorStubs } from '../stubs/operator/operator.list';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {

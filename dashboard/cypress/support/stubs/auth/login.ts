@@ -1,9 +1,11 @@
-import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
-import { User } from '../../../src/app/core/entities/authentication/user';
-import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
-import { UserRoleEnum } from '../../../src/app/core/enums/user/user-role.enum';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { User } from '~/core/entities/authentication/user';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
-import { OPERATORS_PERMISSIONS, REGISTRY_PERMISSIONS, TERRITORIES_PERMISSIONS } from './const/permissions.const';
+import { OPERATORS_PERMISSIONS, REGISTRY_PERMISSIONS, TERRITORIES_PERMISSIONS } from '../const/permissions.const';
+import { operatorStub } from '../operator/operator.find';
+import { territoryStub } from '../territory/territory.find';
 
 // tslint:disable-next-line:variable-name
 export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
@@ -16,7 +18,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     role: UserRoleEnum.ADMIN,
     group: UserGroupEnum.TERRITORY,
     permissions: TERRITORIES_PERMISSIONS.admin,
-    territory: '5d828c5c3f4f764e8fffcd80',
+    territory: territoryStub._id,
   },
   operators: {
     _id: '5d828c866707121bd1e23860',
@@ -27,7 +29,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     role: UserRoleEnum.ADMIN,
     group: UserGroupEnum.OPERATOR,
     permissions: OPERATORS_PERMISSIONS.admin,
-    operator: '5d828c701a563606614ee09a',
+    operator: operatorStub._id,
   },
   registry: {
     _id: '5d828c8f21577b76d5445e0c',

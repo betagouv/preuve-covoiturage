@@ -1,11 +1,12 @@
-import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '../../../src/app/core/const/filter.const';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
+import { DEFAULT_TRIP_LIMIT } from '../../../src/app/core/const/filter.const';
 /// <reference types="Cypress" />
 import { expectedFilter, filterEndMoment, filterStartMoment } from '../apiValues/expectedFilter';
 
-export function cypress_filterTrips(e2e = false) {
+export function cypress_filterTrips(e2e = false, group: UserGroupEnum) {
   it('clicks on trip section', () => {
-    cy.get('.Header-menu .Header-menu-item:nth-child(2)').click();
+    cy.get('.Header-menu .Header-menu-item.trip-menu-item').click();
   });
   it('clicks list tab', () => {
     cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(2)').click();
@@ -54,11 +55,12 @@ export function cypress_filterTrips(e2e = false) {
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
   });
 
-  // // todo: if connected as operator or registry
-  // it('chooses territories', () => {
-  //   cy.get('app-territories-autocomplete mat-form-field input').type('a');
-  //   cy.get('.mat-autocomplete-panel mat-option:first-child').click();
-  // });
+  if (group === UserGroupEnum.OPERATOR) {
+    it('chooses territories', () => {
+      cy.get('app-territories-autocomplete mat-form-field input').type('a');
+      cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    });
+  }
 
   it('chooses ranks: A, B', () => {
     cy.get('.filter-trip-types > mat-form-field:first-child').click();
@@ -73,16 +75,18 @@ export function cypress_filterTrips(e2e = false) {
     cy.get('.mat-select-panel mat-option:first-child').click();
   });
 
-  // todo: if connected as territory or registry
-  // it('chooses operators', () => {
-  //   cy.get('app-operators-autocomplete mat-form-field input').type('opé');
-  //   cy.get('.mat-autocomplete-panel mat-option:first-child').click();
-  // });
+  if (group === UserGroupEnum.TERRITORY) {
+    it('chooses operators', () => {
+      cy.get('app-operators-autocomplete mat-form-field input').type('opé');
+      cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    });
+  }
 
   it('click filter button', () => {
     cy.get('.filter-footer button:first-child').click();
 
     if (!e2e) {
+      cy.server();
       cy.wait('@tripList').then((xhr) => {
         const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
@@ -95,9 +99,6 @@ export function cypress_filterTrips(e2e = false) {
           ...expectedFilter,
           limit: DEFAULT_TRIP_LIMIT,
         };
-
-        // todo: tmp unit operators connected
-        delete filter.operator_id;
 
         expect(allParamsExceptSkip).eql(filter);
       });

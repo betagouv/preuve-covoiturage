@@ -1,12 +1,12 @@
 import * as moment from 'moment';
 
-import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { CampaignsGenerator } from '../generators/campaigns.generator';
-import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
-import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
-import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
+import { CampaignsGenerator } from '../../generators/campaigns.generator';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import {
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
@@ -15,9 +15,9 @@ import {
   RankRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
-} from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
-import { operatorStubs } from './operator.list';
-import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
+} from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import { operatorStubs } from '../operator/operator.list';
+import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
 
 export const campaignStubs: Campaign[] = [
   {

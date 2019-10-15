@@ -46,7 +46,7 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
     };
 
     this.authService.patch(userData).subscribe((updatedUser) => {
-      this.toastr.success('Votre profile as bien été mis à jour');
+      this.toastr.success('Votre profil a bien été mis à jour');
     });
   }
 

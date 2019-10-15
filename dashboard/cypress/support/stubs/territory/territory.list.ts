@@ -1,24 +1,10 @@
-import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { Address, Company, Territory } from '~/core/entities/territory/territory';
 
-import { Address, Company, Territory } from '../../../src/app/core/entities/territory/territory';
+import { territoryStub } from './territory.find';
 
 export const territoryStubs: Territory[] = [
-  {
-    _id: '5c66d89760e6ee004a6cab1f',
-    name: 'AOM 1',
-    acronym: 'Aom 1 acronym ',
-    shortname: 'AOM 1 shortname',
-    company: new Company({
-      siren: '123456789',
-      naf_entreprise: '1234A',
-    }),
-    address: new Address({
-      street: '5 rue de brest',
-      postcode: '69002',
-      city: 'Lyon',
-      country: 'France',
-    }),
-  },
+  territoryStub,
   {
     _id: '5d7775bf37043b8463b2a208',
     name: 'AOM 2',

@@ -1,9 +1,9 @@
-import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
+import { Address, Company, Territory } from '../../../../src/app/core/entities/territory/territory';
 
-import { Address, Company, Territory } from '../../../src/app/core/entities/territory/territory';
+import { JsonRPCResponse } from '../../../../src/app/core/entities/api/jsonRPCResponse';
 
 export const territoryStub: Territory = {
-  _id: '5c66d89760e6ee004a6cab1f',
+  _id: '5c66d89760e6ee004a6cab2f',
   name: 'AOM 1',
   acronym: 'Aom 1 acronym ',
   shortname: 'AOM 1 shortname',
@@ -17,6 +17,24 @@ export const territoryStub: Territory = {
     city: 'Lyon',
     country: 'France',
   }),
+  contacts: {
+    gdpr_controller: {
+      firstname: 'Raymond',
+      lastname: 'Breton',
+      email: 'raymond.breton@aom.com',
+    },
+    gdpr_dpo: {
+      firstname: 'Michelle',
+      lastname: 'Planche',
+      email: 'michelle.planche@aom.com',
+    },
+    technical: {
+      firstname: 'Albert',
+      lastname: 'Marcoeur',
+      email: 'albert.marcoeur@aom.com',
+      phone: '0673826458',
+    },
+  },
 };
 
 export function stubTerritoryFind() {

@@ -1,5 +1,5 @@
-import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
-import { StatsGenerator } from '../generators/stats.generator';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+import { StatsGenerator } from '../../generators/stats.generator';
 
 export function stubStatList() {
   cy.route({

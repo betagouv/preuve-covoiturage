@@ -1,13 +1,13 @@
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
 
-import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
-
-export function stubCampaignPatch() {
+export function stubCampaignCreate(status: CampaignStatusEnum) {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=campaign:patch',
+    url: '/rpc?methods=campaign:create',
     response: (data) =>
       <JsonRPCResponse[]>[
         {
@@ -15,10 +15,11 @@ export function stubCampaignPatch() {
           jsonrpc: '2.0',
           result: {
             data: {
-              ...CypressExpectedCampaign.getAfterEdition(),
+              ...CypressExpectedCampaign.getAfterCreate(),
+              status,
             },
           },
         },
       ],
-  }).as('campaignPatch');
+  }).as('campaignCreate');
 }

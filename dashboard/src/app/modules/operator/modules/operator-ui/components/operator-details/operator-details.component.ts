@@ -19,9 +19,7 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
     super();
   }
 
-  ngOnInit() {
-    console.log('ngOnInit');
-  }
+  ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['operator']) {

@@ -8,13 +8,13 @@ import {
   RankRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
-} from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
-import { TemplateInterface } from '../../../src/app/core/interfaces/campaign/templateInterface';
-import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
-import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
+} from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 
-import { operatorStubs } from './operator.list';
+import { operatorStubs } from '../operator/operator.list';
 
 export const campaignTemplateStubs: TemplateInterface[] = [
   {

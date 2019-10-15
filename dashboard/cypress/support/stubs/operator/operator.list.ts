@@ -1,22 +1,10 @@
-import { Operator } from '../../../src/app/core/entities/operator/operator';
-import { JsonRPCResponse } from '../../../src/app/core/entities/api/jsonRPCResponse';
+import { Operator } from '~/core/entities/operator/operator';
+import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
+
+import { operatorStub } from './operator.find';
 
 export const operatorStubs: Operator[] = [
-  {
-    _id: '5c66d89760e6ee004a6cab1f',
-    nom_commercial: 'Opérateur',
-    raison_sociale: 'Opérateur SAS',
-    company: {
-      siren: '123456789',
-      naf_entreprise: '1234A',
-    },
-    address: {
-      street: '5 rue de brest',
-      postcode: '69002',
-      city: 'Lyon',
-      country: 'France',
-    },
-  },
+  operatorStub,
   {
     _id: '5c66d89760e6ee004a6cab4g',
     nom_commercial: 'Opérateur 2',
