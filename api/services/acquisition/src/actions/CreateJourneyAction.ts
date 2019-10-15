@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
 import moment from 'moment';
 
@@ -26,8 +26,9 @@ export class CreateJourneyAction extends AbstractAction {
   ];
 
   constructor(
-    private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
+    private config: ConfigInterfaceResolver,
+    private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
@@ -39,7 +40,7 @@ export class CreateJourneyAction extends AbstractAction {
     const now = new Date();
     const hasMany = Array.isArray(params);
 
-    const journeys: Journey[] = (Array.isArray(params) ? [...params] : [params])
+    let journeys: Journey[] = (Array.isArray(params) ? [...params] : [params])
       // /!\ operator_id is stored in user.operator
       .map((journeyData) => this.cast(journeyData, context.call.user.operator))
 
@@ -54,19 +55,24 @@ export class CreateJourneyAction extends AbstractAction {
     // store the journeys
     const result: Journey[] = await this.journeyRepository.createMany(journeys);
 
-    // dispatch only journey done 5 days from now
-    const fiveDaysFromNow = moment()
-      .subtract(5, 'days')
-      .toDate();
+    // dispatch only journey done N days from now
+    const timeLimit = parseInt(this.config.get('acquisition.timeLimit'), 10);
+    if (timeLimit > 0) {
+      const nDaysFromNow = moment()
+        .subtract(timeLimit, 'days')
+        .toDate();
 
-    const journeyToDispatch = result.filter((journey) => {
-      const person = 'driver' in journey ? journey.driver : journey.passenger;
-      return person.start.datetime >= fiveDaysFromNow;
-    });
+      const journeyToDispatch = result.filter((journey) => {
+        const person = 'driver' in journey ? journey.driver : journey.passenger;
+        return person.start.datetime >= nDaysFromNow;
+      });
+
+      journeys = [...journeyToDispatch];
+    }
 
     // dispatch notifications for geo enrichment
     const promises: Promise<void>[] = [];
-    for (const journey of journeyToDispatch) {
+    for (const journey of journeys) {
       promises.push(this.kernel.notify('normalization:geo', journey, callContext));
     }
 
