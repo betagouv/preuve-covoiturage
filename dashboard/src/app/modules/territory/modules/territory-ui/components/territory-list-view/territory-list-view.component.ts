@@ -11,7 +11,7 @@ import { Territory } from '~/core/entities/territory/territory';
 export class TerritoryListViewComponent implements OnInit {
   filterLiteral = '';
   showForm = false;
-  private territoryToEdit: Territory = null;
+  territoryToEdit: Territory = null;
 
   constructor(private _territoryService: TerritoryService) {}
 
