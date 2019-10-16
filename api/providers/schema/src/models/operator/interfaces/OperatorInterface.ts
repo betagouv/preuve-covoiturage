@@ -10,6 +10,7 @@ export interface OperatorInterface {
   raison_sociale: string;
   company?: CompanyInterface;
   address?: AddressInterface;
+  siret?: string;
   bank?: BankInterface;
   contacts?: ContactsInterface;
   cgu?: CguInterface;
