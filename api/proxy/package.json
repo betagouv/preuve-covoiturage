@@ -74,7 +74,7 @@
     "@ilos/core": "~0",
     "@ilos/env": "~0",
     "@ilos/framework": "~0",
-    "@ilos/notification": "~0",
+    "@pdc/notification": "~0",
     "@ilos/transport-http": "~0",
     "@ilos/transport-redis": "~0",
     "@pdc/provider-schema": "~0",
