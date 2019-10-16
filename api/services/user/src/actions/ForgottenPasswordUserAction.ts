@@ -70,6 +70,7 @@ link:  ${link}
         template: this.config.get('email.templates.forgotten'),
         email: user.email,
         fullname: user.fullname,
+        templateId: this.config.get('notification.templateIds.forgotten'),
       },
       {
         call: ctx.call,

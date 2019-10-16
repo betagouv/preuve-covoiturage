@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, NotificationInterfaceResolver, ForbiddenException } from '@ilos/common';
+import { ContextType, ForbiddenException, handler, NotificationInterfaceResolver } from '@ilos/common';
 import { UserNotifyParamsInterface } from '@pdc/provider-schema';
 
 import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
@@ -40,14 +40,17 @@ export class NotifyUserAction extends AbstractAction {
       sendTemplateByEmailParams.opts.link = params.link;
     }
 
-    return this.notificationProvider.sendTemplateByEmail({
-      template: params.template,
-      email: params.email,
-      fullname: params.fullname,
-      opts: {
-        organization: params.organization,
-        link: params.link,
+    return this.notificationProvider.sendTemplateByEmail(
+      {
+        template: params.template,
+        email: params.email,
+        fullname: params.fullname,
+        opts: {
+          organization: params.organization,
+          link: params.link,
+        },
       },
-    });
+      params.templateId ? { template: params.templateId } : null,
+    );
   }
 }
