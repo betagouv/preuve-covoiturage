@@ -4,8 +4,9 @@ CREATE TABLE IF NOT EXISTS common.insee
 (
   _id varchar primary key,
   territory_id  varchar, -- integer REFERENCES territories (_id) NOT NULL,
-  regional_territory_id varchar, -- integer REFERENCES territories (_id) NOT NULL,
-  geo geography NOT NULL
+  parent_territory_id varchar, -- integer REFERENCES territories (_id) NOT NULL,
+  geo geography NOT NULL,
+  density integer
   -- postcode
   -- town
   -- country

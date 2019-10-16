@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS territory.territories
   siret varchar NOT NULL,
   name varchar NOT NULL,
   shortname varchar,
-  accronym varchar,
+  acronym varchar,
   
   company json NOT NULL,
   address json NOT NULL,
