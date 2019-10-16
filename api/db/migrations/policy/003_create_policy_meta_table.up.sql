@@ -5,3 +5,5 @@ CREATE TABLE IF NOT EXISTS policy.policy_metas
   key varchar,
   value json
 );
+
+CREATE INDEX ON policy.policy_metas (policy_id);
