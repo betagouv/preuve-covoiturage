@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+
 import { Territory } from '~/core/entities/territory/territory';
 
 @Component({

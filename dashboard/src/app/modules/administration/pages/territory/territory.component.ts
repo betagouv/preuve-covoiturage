@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { map, takeUntil, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { map, takeUntil, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 

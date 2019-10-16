@@ -1,6 +1,8 @@
 /// <reference types="Cypress" />
-import { User } from '../../../src/app/core/entities/authentication/user';
-import { expectedPatchedProfiles } from '../apiValues/expectedProfile';
+import { User } from '~/core/entities/authentication/user';
+
+import { expectedPatchedProfiles } from '../../apiValues/expectedProfile';
+import { testNotification } from '../notification.cypress';
 
 export function cypress_profile(currentProfile: User, e2e = false) {
   const patchedProfile = expectedPatchedProfiles[currentProfile.group];
@@ -46,4 +48,6 @@ export function cypress_profile(currentProfile: User, e2e = false) {
       });
     }
   });
+
+  testNotification();
 }

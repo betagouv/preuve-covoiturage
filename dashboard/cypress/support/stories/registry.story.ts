@@ -8,28 +8,23 @@ import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { cypress_operator } from '../reusables/operator/cypress_operator';
 import { operatorStub } from '../stubs/operator/operator.find';
 
-export function testOperatorStory() {
+export function testRegistryStory() {
   it('go to login page', () => {
     cy.visit('/login');
   });
 
   it('Logges in', () => {
-    cypress_login('operator@example.com', 'admin1234');
+    cypress_login('admin@example.com', 'admin1234');
   });
 
-  // TEST PROFILE UPDATE
+  // PROFILE UPDATE
   describe('Profile update', () => {
-    cypress_profile(cypress_logging_users.operators);
+    cypress_profile(cypress_logging_users.registry);
   });
 
-  // TEST OPERATOR UPDATE
-  describe('Operator update', () => {
-    cypress_operator(operatorStub);
-  });
-
-  // TEST FILTERS
+  // FILTERS
   describe('Filter trips', () => {
-    cypress_filter(false, UserGroupEnum.OPERATOR);
+    cypress_filter(false, UserGroupEnum.REGISTRY);
   });
 
   // LOGOUT

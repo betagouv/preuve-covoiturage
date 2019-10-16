@@ -1,4 +1,4 @@
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../../apiValues/expectedCampaign';
 
 export function campaignSecondStepSelectDays() {
   it('selects days', () => {

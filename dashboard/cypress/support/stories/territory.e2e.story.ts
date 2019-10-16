@@ -1,8 +1,8 @@
-import { cypress_login } from '../reusables/cypress_login';
-import { cypress_filterTrips } from '../reusables/cypress_filter-trips';
-import { cypress_campaignCreate } from '../reusables/cypress_campaign_create';
-import { cypress_campaignEdit } from '../reusables/cypress_campaign_edit';
-import { cypress_campaignLaunch } from '../reusables/cypress_campaign_launch';
+import { cypress_login } from '../reusables/auth/cypress_login';
+import { cypress_filter } from '../reusables/filter/cypress_filter';
+import { cypress_campaignCreate } from '../reusables/campaign/cypress_campaign_create';
+import { cypress_campaignEdit } from '../reusables/campaign/cypress_campaign_edit';
+import { cypress_campaignLaunch } from '../reusables/campaign/cypress_campaign_launch';
 
 export function testTerritoryE2EStory() {
   it('go to login page', () => {
@@ -30,6 +30,6 @@ export function testTerritoryE2EStory() {
 
   // TEST FILTERS
   describe('Filter trips', () => {
-    cypress_filterTrips(true);
+    cypress_filter(true);
   });
 }

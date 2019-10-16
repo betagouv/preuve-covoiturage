@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+import { Operator } from '~/core/entities/operator/operator';
 
 import { OperatorService } from '../../../../services/operator.service';
-import { Operator } from '~/core/entities/operator/operator';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-operator-list-view',

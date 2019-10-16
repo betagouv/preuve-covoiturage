@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-import { campaignFirstStepCustom } from '../../support/reusables/steps/campaign-create-first-step';
+import { campaignFirstStepCustom } from './steps/campaign-create-first-step';
 import {
   campaignSecondStepAddSecondTimeRange,
   campaignSecondStepCheckDisabledNextStep,
@@ -10,7 +10,7 @@ import {
   campaignSecondStepSelectRanks,
   campaignSecondStepSelectTargets,
   campaignSecondStepSelectTimeRange,
-} from '../../support/reusables/steps/campaign-create-second-step';
+} from './steps/campaign-create-second-step';
 import {
   campaignThirdStepCheckDisabledNextStep,
   campaignThirdStepClickNextStep,
@@ -19,8 +19,9 @@ import {
   campaignThirdStepSetMaxRetribution,
   campaignThirdStepSetMaxTrips,
   campaignThirdStepSetUnit,
-} from '../../support/reusables/steps/campaign-create-third-step';
-import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
+} from './steps/campaign-create-third-step';
+import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { testNotification } from '../notification.cypress';
 
 export function cypress_campaignCreate(e2e = false) {
   it('clicks on campaign section', () => {
@@ -138,4 +139,6 @@ export function cypress_campaignCreate(e2e = false) {
       });
     }
   });
+
+  testNotification();
 }

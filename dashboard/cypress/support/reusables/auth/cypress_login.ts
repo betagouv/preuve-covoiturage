@@ -1,5 +1,5 @@
-import { stubLogin } from '../stubs/auth/login';
-import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
+import { stubLogin } from '../../stubs/auth/login';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 export function cypress_stub_login(type: UserGroupEnum) {
   cy.server();

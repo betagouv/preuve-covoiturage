@@ -1,10 +1,10 @@
 import { Operator } from '~/core/entities/operator/operator';
 
-import { expectedPatchedOperator } from '../apiValues/expectedOperator';
+import { expectedPatchedOperator } from '../../apiValues/expectedOperator';
+import { testNotification } from '../notification.cypress';
 
 export function cypress_operator(oldValue: Operator, e2e = false) {
   it('navigate to operator', () => {
-    cy.wait(3000);
     cy.get('.Header-user').click();
     cy.get('.mat-menu-item:nth-child(1)').click();
     cy.get('.mat-tab-link:nth-child(2)').click();
@@ -45,4 +45,6 @@ export function cypress_operator(oldValue: Operator, e2e = false) {
       });
     }
   });
+
+  testNotification();
 }

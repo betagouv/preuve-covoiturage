@@ -29,7 +29,7 @@ export const expectedFilter: FilterInterface = {
   days: [0, 1],
   towns: ['Lyon'],
   distance: {
-    min: 4,
+    min: 80,
     max: 123,
   },
   ranks: [TripRankEnum.A, TripRankEnum.B],

@@ -15,5 +15,5 @@ export function stubStatList() {
           },
         },
       ],
-  });
+  }).as('tripStat');
 }

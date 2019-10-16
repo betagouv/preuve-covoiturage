@@ -1,10 +1,11 @@
 /// <reference types="Cypress" />
-import { Territory } from '../../../src/app/core/entities/territory/territory';
-import { expectedPatchedTerritory } from '../apiValues/expectedTerritory';
+import { Territory } from '~/core/entities/territory/territory';
+
+import { expectedPatchedTerritory } from '../../apiValues/expectedTerritory';
+import { testNotification } from '../notification.cypress';
 
 export function cypress_territory(oldValue: Territory, e2e = false) {
   it('navigate to territory', () => {
-    cy.wait(3000);
     cy.get('.Header-user').click();
     cy.get('.mat-menu-item:nth-child(1)').click();
     cy.get('.mat-tab-link:nth-child(2)').click();
@@ -42,4 +43,6 @@ export function cypress_territory(oldValue: Territory, e2e = false) {
       });
     }
   });
+
+  testNotification();
 }

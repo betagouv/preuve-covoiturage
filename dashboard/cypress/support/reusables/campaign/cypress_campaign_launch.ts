@@ -1,4 +1,5 @@
-import { CypressExpectedCampaign } from '../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { testNotification } from '../notification.cypress';
 
 export function cypress_campaignLaunch(e2e = false) {
   it('clicks on campaign section', () => {
@@ -27,4 +28,6 @@ export function cypress_campaignLaunch(e2e = false) {
       });
     }
   });
+
+  testNotification();
 }

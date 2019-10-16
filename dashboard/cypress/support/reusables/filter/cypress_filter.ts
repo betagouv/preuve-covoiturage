@@ -1,10 +1,14 @@
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { DEFAULT_TRIP_LIMIT } from '~/core/const/filter.const';
+import { Trip } from '~/core/entities/trip/trip';
 
-import { DEFAULT_TRIP_LIMIT } from '../../../src/app/core/const/filter.const';
-/// <reference types="Cypress" />
-import { expectedFilter, filterEndMoment, filterStartMoment } from '../apiValues/expectedFilter';
+import { expectedFilter, filterEndMoment, filterStartMoment } from '../../apiValues/expectedFilter';
+import { territoryStub } from '../../stubs/territory/territory.find';
+import { operatorStub } from '../../stubs/operator/operator.find';
+import { stubTripList } from '../../stubs/trip/trip.list';
+import { TripGenerator } from '../../generators/trips.generator';
 
-export function cypress_filterTrips(e2e = false, group: UserGroupEnum) {
+export function cypress_filter(e2e = false, group: UserGroupEnum) {
   it('clicks on trip section', () => {
     cy.get('.Header-menu .Header-menu-item.trip-menu-item').click();
   });
@@ -55,7 +59,7 @@ export function cypress_filterTrips(e2e = false, group: UserGroupEnum) {
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
   });
 
-  if (group === UserGroupEnum.OPERATOR) {
+  if (group === UserGroupEnum.OPERATOR || group === UserGroupEnum.REGISTRY) {
     it('chooses territories', () => {
       cy.get('app-territories-autocomplete mat-form-field input').type('a');
       cy.get('.mat-autocomplete-panel mat-option:first-child').click();
@@ -75,32 +79,80 @@ export function cypress_filterTrips(e2e = false, group: UserGroupEnum) {
     cy.get('.mat-select-panel mat-option:first-child').click();
   });
 
-  if (group === UserGroupEnum.TERRITORY) {
+  if (group === UserGroupEnum.TERRITORY || group === UserGroupEnum.REGISTRY) {
     it('chooses operators', () => {
       cy.get('app-operators-autocomplete mat-form-field input').type('opé');
       cy.get('.mat-autocomplete-panel mat-option:first-child').click();
     });
   }
 
+  // to avoid infinite scroll messing things up
+  it('scroll-bugfix', () => {
+    cy.get('.filter-footer button:first-child').scrollIntoView();
+    cy.wait(3000);
+  });
+
   it('click filter button', () => {
     cy.get('.filter-footer button:first-child').click();
-
     if (!e2e) {
-      cy.server();
       cy.wait('@tripList').then((xhr) => {
         const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
 
         expect(method).equal('trip:list');
 
-        const { skip, ...allParamsExceptSkip } = params;
-
         const filter = {
           ...expectedFilter,
+          skip: 0,
           limit: DEFAULT_TRIP_LIMIT,
         };
 
-        expect(allParamsExceptSkip).eql(filter);
+        expect(params).eql(filter);
+      });
+    }
+  });
+
+  // go to stat page
+  it('clicks stats tab', () => {
+    cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(1)').click();
+  });
+
+  if (e2e) {
+    // check that their is no trips
+    it('checks the data is null', () => {
+      cy.get('.stats-numbers app-stat-number:nth-child(1) .stat-number-title p').contains('0');
+    });
+  }
+
+  it('opens filter', () => {
+    cy.get('.TripLayout-menu-filter-button').click();
+  });
+
+  it('click on reinitialize', () => {
+    cy.get('.filter-footer button:nth-child(2)').click();
+  });
+
+  it('click filter button', () => {
+    cy.get('.filter-footer button:first-child').click();
+
+    if (!e2e) {
+      cy.wait('@tripStat').then((xhr) => {
+        const params = xhr.request.body[0].params;
+        const method = xhr.request.body[0].method;
+
+        expect(method).equal('trip:stats');
+
+        const filter = {};
+
+        if (group === UserGroupEnum.TERRITORY) {
+          filter['territory_id'] = [territoryStub._id];
+        }
+
+        if (group === UserGroupEnum.OPERATOR) {
+          filter['operator_id'] = [operatorStub._id];
+        }
+
+        expect(params).eql(filter);
       });
     }
   });

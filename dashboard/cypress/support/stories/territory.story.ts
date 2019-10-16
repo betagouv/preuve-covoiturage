@@ -1,15 +1,15 @@
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
-import { cypress_login } from '../reusables/cypress_login';
-import { cypress_filterTrips } from '../reusables/cypress_filter-trips';
-import { cypress_campaignCreate } from '../reusables/cypress_campaign_create';
-import { cypress_campaignEdit } from '../reusables/cypress_campaign_edit';
-import { cypress_campaignLaunch } from '../reusables/cypress_campaign_launch';
-import { cypress_territory } from '../reusables/cypress_territory';
+import { cypress_login } from '../reusables/auth/cypress_login';
+import { cypress_filter } from '../reusables/filter/cypress_filter';
+import { cypress_campaignCreate } from '../reusables/campaign/cypress_campaign_create';
+import { cypress_campaignEdit } from '../reusables/campaign/cypress_campaign_edit';
+import { cypress_campaignLaunch } from '../reusables/campaign/cypress_campaign_launch';
+import { cypress_territory } from '../reusables/territory/cypress_territory';
 import { territoryStub } from '../stubs/territory/territory.find';
-import { cypress_profile } from '../reusables/cypress_profile';
+import { cypress_profile } from '../reusables/profile/cypress_profile';
 import { cypress_logging_users } from '../stubs/auth/login';
-import { cypress_logout } from '../reusables/cypress_logout';
+import { cypress_logout } from '../reusables/auth/cypress_logout';
 
 export function testTerritoryStory() {
   it('go to login page', () => {
@@ -32,7 +32,7 @@ export function testTerritoryStory() {
 
   // TEST FILTERS
   describe('Filter trips', () => {
-    cypress_filterTrips(false, UserGroupEnum.TERRITORY);
+    cypress_filter(false, UserGroupEnum.TERRITORY);
   });
 
   // TEST CAMPAIGNS
