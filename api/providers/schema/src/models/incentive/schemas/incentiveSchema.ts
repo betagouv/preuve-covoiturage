@@ -5,13 +5,13 @@ export const incentiveSchema = {
   properties: {
     index: {
       type: 'integer',
-      minimum: 0,
+      enum: [0, 1, 2],
     },
     siret: { macro: 'siret' },
     amount: {
       type: 'number',
-      minimum: -200,
-      maximum: 200,
+      minimum: 0,
+      maximum: 100000,
     },
   },
 };

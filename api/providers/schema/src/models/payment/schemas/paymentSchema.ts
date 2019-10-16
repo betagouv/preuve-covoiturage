@@ -3,7 +3,7 @@ export const paymentSchema = {
   minProperties: 2,
   additionalProperties: false,
   properties: {
-    pass_type: { macro: 'varchar' },
+    pass_type: { macro: 'varchar', enum: ['cb', 'prepaid'] },
     amount: {
       type: 'integer',
       minimum: 0,

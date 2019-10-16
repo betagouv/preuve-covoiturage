@@ -61,8 +61,8 @@ export const tripSchema = {
   //         },
   //       },
   //       is_driver: { type: 'boolean' },
-  //       start: positionSchema,
-  //       end: positionSchema,
+  //       start: startSchema,
+  //       end: endSchema,
   //       seats: {
   //         type: 'integer',
   //         default: 1,
