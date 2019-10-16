@@ -43,7 +43,12 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
       ? this.operators.find((foperator) => this.selectedOperatorId === foperator._id)
       : null;
     this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : '');
-    this.parentForm.patchValue({ operator: this.selectedOperator ? this.selectedOperator._id : null });
+
+    const val = this.parentForm.getRawValue();
+    const newVal = this.selectedOperator ? this.selectedOperator._id : null;
+    if (!val || val.operator !== newVal) {
+      this.parentForm.patchValue({ operator: newVal });
+    }
   }
 
   onOperatorSelect(operator: MatAutocompleteSelectedEvent) {
