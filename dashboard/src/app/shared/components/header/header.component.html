@@ -5,10 +5,15 @@
     </a>
   </div>
   <div class="Header-menu" *ngIf="user">
-    <div class="Header-menu-item" *ngIf="hasTerritoryGroup" [routerLink]="'/campaign'" routerLinkActive="active">
+    <div
+      class="Header-menu-item campaign-menu-item"
+      *ngIf="hasTerritoryGroup"
+      [routerLink]="'/campaign'"
+      routerLinkActive="active"
+    >
       Campagnes
     </div>
-    <div class="Header-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
+    <div class="Header-menu-item trip-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
       Trajets
     </div>
   </div>

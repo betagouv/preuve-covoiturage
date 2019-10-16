@@ -70,27 +70,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
-    this.filterForm = this.fb.group({
-      campaignIds: [[]],
-      date: this.fb.group({
-        start: [null],
-        end: [null],
-      }),
-      hour: this.fb.group({
-        start: [null],
-        end: [null],
-      }),
-      days: [[]],
-      towns: [[]],
-      distance: this.fb.group({
-        min: [null],
-        max: [null],
-      }),
-      ranks: [[]],
-      status: [null],
-      operatorIds: [[]],
-      territoryIds: [[]],
-    });
+    this.initForm();
   }
 
   get controls() {
@@ -113,7 +93,10 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   public reinitializeClick(): void {
+    // all values to null and reset touch & validation
     this.filterForm.reset();
+    // set init values
+    this.initForm();
     this.filterNumber.emit(0);
   }
 
@@ -149,5 +132,29 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   public get hasGroupRegistryOrTerritory(): boolean {
     return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]);
+  }
+
+  private initForm() {
+    this.filterForm = this.fb.group({
+      campaignIds: [[]],
+      date: this.fb.group({
+        start: [null],
+        end: [null],
+      }),
+      hour: this.fb.group({
+        start: [null],
+        end: [null],
+      }),
+      days: [[]],
+      towns: [[]],
+      distance: this.fb.group({
+        min: [null],
+        max: [null],
+      }),
+      ranks: [[]],
+      status: [null],
+      operatorIds: [[]],
+      territoryIds: [[]],
+    });
   }
 }

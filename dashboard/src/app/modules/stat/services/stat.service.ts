@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
@@ -32,15 +33,18 @@ export class StatService {
   ) {}
 
   public loadOne(filter: FilterInterface | {} = {}): Observable<StatInterface[]> {
+    const params = _.cloneDeep(filter);
+
     const user = this._authService.user;
+
     if (user && user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [user.territory];
+      params['territory_id'] = [user.territory];
     }
     if (user && user.group === UserGroupEnum.OPERATOR) {
-      filter['operator_id'] = [user.operator];
+      params['operator_id'] = [user.operator];
     }
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`trip:stats`, filter);
+    const jsonRPCParam = new JsonRPCParam(`trip:stats`, params);
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((data: StatInterface[]) => {

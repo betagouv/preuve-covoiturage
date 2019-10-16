@@ -169,7 +169,6 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   }
 
   private updateValidation() {
-    console.log('updateValidation', this.fullFormMode);
     if (this.operatorForm) {
       this.operatorForm.controls['nom_commercial'].setValidators(this.fullFormMode ? Validators.required : null);
       this.operatorForm.controls['raison_sociale'].setValidators(this.fullFormMode ? Validators.required : null);
