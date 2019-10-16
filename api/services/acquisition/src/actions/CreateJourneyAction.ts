@@ -1,10 +1,14 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
 import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
-import moment from 'moment';
 
 import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
+
+interface WhiteListedJourney {
+  journey_id: string;
+  created_at: Date;
+}
 
 const callContext = {
   channel: {
@@ -27,58 +31,36 @@ export class CreateJourneyAction extends AbstractAction {
 
   constructor(
     private kernel: KernelInterfaceResolver,
-    private config: ConfigInterfaceResolver,
     private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
   protected async handle(
-    params: CreateJourneyParamsInterface | CreateJourneyParamsInterface[],
+    params: CreateJourneyParamsInterface,
     context: ContextType,
-  ): Promise<Journey | Journey[]> {
+  ): Promise<WhiteListedJourney | WhiteListedJourney[]> {
     const now = new Date();
-    const hasMany = Array.isArray(params);
 
-    let journeys: Journey[] = (Array.isArray(params) ? [...params] : [params])
-      // /!\ operator_id is stored in user.operator
-      .map((journeyData) => this.cast(journeyData, context.call.user.operator))
+    // assign the operator from context
+    const payload: Journey = this.cast(params, context.call.user.operator);
 
-      // filter out journeys in the future
-      .filter((journeyData) => {
-        const person = 'passenger' in journeyData ? journeyData.passenger : journeyData.driver;
-        return person.end.datetime < now;
-      });
-
-    if (journeys.length === 0) return [];
-
-    // store the journeys
-    const result: Journey[] = await this.journeyRepository.createMany(journeys);
-
-    // dispatch only journey done N days from now
-    const timeLimit = parseInt(this.config.get('acquisition.timeLimit'), 10);
-    if (timeLimit > 0) {
-      const nDaysFromNow = moment()
-        .subtract(timeLimit, 'days')
-        .toDate();
-
-      const journeyToDispatch = result.filter((journey) => {
-        const person = 'driver' in journey ? journey.driver : journey.passenger;
-        return person.start.datetime >= nDaysFromNow;
-      });
-
-      journeys = [...journeyToDispatch];
+    // reject if happening in the future
+    const person = 'passenger' in payload ? payload.passenger : payload.driver;
+    if (person.start.datetime > now || person.end.datetime > now) {
+      throw new ParseErrorException('Journeys cannot happen in the future');
     }
 
-    // dispatch notifications for geo enrichment
-    const promises: Promise<void>[] = [];
-    for (const journey of journeys) {
-      promises.push(this.kernel.notify('normalization:geo', journey, callContext));
-    }
+    // Store in database
+    const journey = await this.journeyRepository.create(payload);
 
-    await Promise.all(promises);
+    // Dispatch to the normalization pipeline
+    await this.kernel.notify('normalization:geo', journey, callContext);
 
-    return hasMany ? result : result.pop();
+    return {
+      journey_id: journey.journey_id,
+      created_at: journey.created_at,
+    };
   }
 
   protected cast(jrn: CreateJourneyParamsInterface, operatorId: string): Journey {
