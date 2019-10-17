@@ -58,8 +58,8 @@ export class CampaignsGenerator {
             new OperatorIdsRetributionRule([operatorStubs[0]._id]),
             new TimeRetributionRule([
               {
-                start: '08:00',
-                end: '19:00',
+                start: 8,
+                end: 9,
               },
             ]),
           ],

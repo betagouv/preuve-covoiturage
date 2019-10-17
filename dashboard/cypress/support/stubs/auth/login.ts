@@ -3,7 +3,7 @@ import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
-import { OPERATORS_PERMISSIONS, REGISTRY_PERMISSIONS, TERRITORIES_PERMISSIONS } from '../const/permissions.const';
+import { OPERATORS_PERMISSIONS, REGISTRY_PERMISSIONS, TERRITORIES_PERMISSIONS } from '../user/const/permissions.const';
 import { operatorStub } from '../operator/operator.find';
 import { territoryStub } from '../territory/territory.find';
 

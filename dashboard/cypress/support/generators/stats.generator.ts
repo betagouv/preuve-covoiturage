@@ -1,5 +1,5 @@
 // tslint:disable
-import { mockDates } from './const/dates';
+import { mockDates } from './const/dates.const';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 
 export class StatsGenerator {

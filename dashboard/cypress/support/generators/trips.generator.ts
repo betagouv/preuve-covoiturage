@@ -6,7 +6,9 @@ import { TripInterface } from '../../../src/app/core/interfaces/trip/tripInterfa
 import { operatorStubs } from '../stubs/operator/operator.list';
 
 export class TripGenerator {
-  generateTrip(): Trip {
+  static numberOfTrips = 20;
+
+  static generateTrip(): Trip {
     const randomClass = Math.floor(Math.random() * Object.keys(TripRankEnum).length);
     const randomStatus = Math.floor(Math.random() * Object.keys(TripStatusEnum).length);
 
@@ -23,5 +25,13 @@ export class TripGenerator {
     };
 
     return new Trip(tripToReturn);
+  }
+
+  static generateTrips(): Trip[] {
+    const trips: Trip[] = [];
+    for (let i = 0; i < TripGenerator.numberOfTrips; i = i + 1) {
+      trips.push(TripGenerator.generateTrip());
+    }
+    return trips;
   }
 }

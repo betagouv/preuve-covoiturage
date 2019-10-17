@@ -5,8 +5,9 @@ import {
   RegistryPermissionsUserType,
   TerritoriesPermissionsAdminType,
   TerritoriesPermissionsUserType,
-} from '../../../../src/app/core/types/permissionType';
-import { operators, registry, territories } from '../../../../../api/services/user/src/config/permissions';
+} from '~/core/types/permissionType';
+
+import { operators, registry, territories } from '../../../../../../api/services/user/src/config/permissions';
 
 export const TERRITORIES_PERMISSIONS = {
   admin: <TerritoriesPermissionsAdminType[]>territories.admin.permissions,

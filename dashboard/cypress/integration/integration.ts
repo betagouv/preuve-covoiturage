@@ -22,13 +22,11 @@ import { stubCampaignPatch } from '../support/stubs/campaign/campaign.patch';
 import { stubCampaignLaunch } from '../support/stubs/campaign/campaign.launched';
 import { stubTerritoryPatchContacts } from '../support/stubs/territory/territory.patchContacts';
 import { testTerritoryStory } from '../support/stories/territory.story';
+import { stubUserList } from '../support/stubs/user/user.list';
+import { UserGenerator } from '../support/generators/user.generator';
 
 context('OPERATOR', () => {
-  const tripGenerator = new TripGenerator();
-  const trips: Trip[] = [];
-  for (let i = 0; i < 5; i = i + 1) {
-    trips.push(tripGenerator.generateTrip());
-  }
+  const trips = TripGenerator.generateTrips();
 
   beforeEach(() => {
     cy.server();
@@ -49,11 +47,10 @@ context('OPERATOR', () => {
 });
 
 context('REGISTRY', () => {
-  const tripGenerator = new TripGenerator();
-  const trips: Trip[] = [];
-  for (let i = 0; i < 5; i = i + 1) {
-    trips.push(tripGenerator.generateTrip());
-  }
+  const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
+  const trips = TripGenerator.generateTrips();
+
+  console.log(users);
 
   beforeEach(() => {
     cy.server();
@@ -67,17 +64,15 @@ context('REGISTRY', () => {
     stubUserMe(UserGroupEnum.REGISTRY);
     stubUserPatch(UserGroupEnum.REGISTRY);
     stubLogout();
+    stubUserList(users);
   });
 
   testRegistryStory();
 });
 
 context('TERRITORY', () => {
-  const tripGenerator = new TripGenerator();
-  const trips: Trip[] = [];
-  for (let i = 0; i < 5; i = i + 1) {
-    trips.push(tripGenerator.generateTrip());
-  }
+  const trips = TripGenerator.generateTrips();
+
   beforeEach(() => {
     cy.server();
     stubCampaignList();

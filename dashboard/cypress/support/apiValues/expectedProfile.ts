@@ -3,7 +3,11 @@ import { UserRoleEnum } from '../../../src/app/core/enums/user/user-role.enum';
 import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
 import { cypress_logging_users } from '../stubs/auth/login';
 import { User } from '../../../src/app/core/entities/authentication/user';
-import { OPERATORS_PERMISSIONS, REGISTRY_PERMISSIONS, TERRITORIES_PERMISSIONS } from '../stubs/const/permissions.const';
+import {
+  OPERATORS_PERMISSIONS,
+  REGISTRY_PERMISSIONS,
+  TERRITORIES_PERMISSIONS,
+} from '../stubs/user/const/permissions.const';
 import { operatorStub } from '../stubs/operator/operator.find';
 import { territoryStub } from '../stubs/territory/territory.find';
 
