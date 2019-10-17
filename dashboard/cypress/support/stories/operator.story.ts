@@ -7,6 +7,7 @@ import { cypress_logging_users } from '../stubs/auth/login';
 import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { cypress_operator } from '../reusables/operator/cypress_operator';
 import { operatorStub } from '../stubs/operator/operator.find';
+import { cypress_applications } from '../reusables/operator/application.cypress';
 
 export function testOperatorStory() {
   it('go to login page', () => {
@@ -17,17 +18,22 @@ export function testOperatorStory() {
     cypress_login('operator@example.com', 'admin1234');
   });
 
-  // TEST PROFILE UPDATE
+  // PROFILE
   describe('Profile update', () => {
     cypress_profile(cypress_logging_users.operators);
   });
 
-  // TEST OPERATOR UPDATE
+  // OPERATOR
   describe('Operator update', () => {
     cypress_operator(operatorStub);
   });
 
-  // TEST FILTERS
+  // APPLICATIONS
+  describe('Applications', () => {
+    cypress_applications();
+  });
+
+  // FILTERS
   describe('Filter trips', () => {
     cypress_filter(false, UserGroupEnum.OPERATOR);
   });

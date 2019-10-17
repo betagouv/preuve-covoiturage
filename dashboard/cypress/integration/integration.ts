@@ -24,10 +24,14 @@ import { stubTerritoryPatchContacts } from '../support/stubs/territory/territory
 import { testTerritoryStory } from '../support/stories/territory.story';
 import { stubUserList } from '../support/stubs/user/user.list';
 import { UserGenerator } from '../support/generators/user.generator';
+import { stubApplications } from '../support/stubs/operator/application/application.list';
+import { ApplicationsGenerator } from '../support/generators/applications.generator';
+import { stubApplicationCreate } from '../support/stubs/operator/application/application.create';
+import { stubApplicationRevoke } from '../support/stubs/operator/application/application.revoke';
 
 context('OPERATOR', () => {
   const trips = TripGenerator.generateTrips();
-
+  const applications = ApplicationsGenerator.generateApplications();
   beforeEach(() => {
     cy.server();
     stubCampaignList();
@@ -37,10 +41,15 @@ context('OPERATOR', () => {
     stubStatList();
     stubOperatorPatchContacts();
     stubMainLists(UserGroupEnum.OPERATOR);
+
     stubLogin(UserGroupEnum.OPERATOR);
     stubUserMe(UserGroupEnum.OPERATOR);
     stubUserPatch(UserGroupEnum.OPERATOR);
     stubLogout();
+
+    stubApplications(applications);
+    stubApplicationCreate();
+    stubApplicationRevoke();
   });
 
   testOperatorStory();
