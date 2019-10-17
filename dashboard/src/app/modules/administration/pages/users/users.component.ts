@@ -8,6 +8,7 @@ import { UserService } from '~/modules/user/services/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-users',
@@ -20,6 +21,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   searchFilters: FormGroup;
   showCreateUserForm = false;
   newUser = new User();
+  canEditUser$: Observable<boolean>;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -32,6 +34,8 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   ngOnInit() {
     this.loadUsers();
     this.initSearchForm();
+
+    this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
   }
 
   addUser() {

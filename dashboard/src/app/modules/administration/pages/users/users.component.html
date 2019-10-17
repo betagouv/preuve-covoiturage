@@ -15,7 +15,7 @@
     <mat-spinner></mat-spinner>
   </div>
   <div class="Users-list">
-    <app-users-list *ngIf="usersToShow" [users]="usersToShow"></app-users-list>
+    <app-users-list *ngIf="usersToShow" [users]="usersToShow" [canEditUser]="canEditUser$ | async"></app-users-list>
   </div>
   <div class="Users-add" *ngIf="canToCreateUser">
     <button
