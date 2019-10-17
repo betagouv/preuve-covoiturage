@@ -19,9 +19,10 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   usersToShow: User[];
   users: User[];
   searchFilters: FormGroup;
-  showCreateUserForm = false;
-  newUser = new User();
+  editUserFormVisible = false;
+  editedUser = new User();
   canEditUser$: Observable<boolean>;
+  isCreatingUser: boolean;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -39,9 +40,11 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   }
 
   addUser() {
-    this.showCreateUserForm = true;
+    this.isCreatingUser = true;
+
+    this.editUserFormVisible = true;
     if (this.currentOperator) {
-      this.newUser = new User({
+      this.editedUser = new User({
         _id: null,
         email: null,
         firstname: null,
@@ -52,11 +55,11 @@ export class UsersComponent extends DestroyObservable implements OnInit {
         role: UserRoleEnum.USER,
         permissions: [],
       });
-      console.log(this.newUser);
+      console.log(this.editedUser);
     }
     if (this.currentTerritory) {
       console.log('territory', this.currentTerritory);
-      this.newUser = new User({
+      this.editedUser = new User({
         _id: null,
         email: null,
         firstname: null,
@@ -70,8 +73,16 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     }
   }
 
+  showEditForm(user: User = null) {
+    this.isCreatingUser = false;
+    this.editUserFormVisible = true;
+    this.editedUser = user;
+
+    // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
+  }
+
   closeUserForm() {
-    this.showCreateUserForm = false;
+    this.editUserFormVisible = false;
   }
 
   get canToCreateUser(): boolean {
