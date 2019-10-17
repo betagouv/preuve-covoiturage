@@ -33,23 +33,38 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     super();
   }
 
+  cleanUserForForm(user = this.user): User {
+    return {
+      firstname: '',
+      lastname: '',
+      email: '',
+      phone: '',
+      role: '',
+      permissions: [],
+
+      ...user,
+    };
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['isCreating'] || changes['groupEditable']) {
       this.updateValidators();
     }
 
     if (changes['user']) {
+      const user: User = this.cleanUserForForm();
+
       this.updateValidators();
       if (this.createEditUserForm) {
         this.createEditUserForm.setValue({
-          firstname: this.user.firstname,
-          lastname: this.user.lastname,
-          email: this.user.email,
-          phone: this.user.phone ? this.user.phone : null,
-          role: this.user.role,
-          group: this.user.group,
-          territory: this.user.territory ? this.user.territory : null,
-          operator: this.user.operator ? this.user.operator : null,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          phone: user.phone ? user.phone : null,
+          role: user.role,
+          group: user.group,
+          territory: user.territory ? user.territory : null,
+          operator: user.operator ? user.operator : null,
         });
 
         Object.keys(this.createEditUserForm.controls).forEach((key) => {
@@ -153,15 +168,16 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     groupEditable: boolean = this.groupEditable,
     user: User = this.user,
   ): void {
+    const cleanUser = this.cleanUserForForm(user);
     this.createEditUserForm = this.fb.group({
-      firstname: [user.firstname, Validators.required],
-      lastname: [user.lastname, Validators.required],
-      email: [user.email, [Validators.required, Validators.pattern(REGEXP.email)]],
-      phone: [user.phone, Validators.pattern(REGEXP.phone)],
-      role: [user.role],
-      group: [user.group],
-      territory: [user.territory],
-      operator: [user.operator],
+      firstname: [cleanUser.firstname, Validators.required],
+      lastname: [cleanUser.lastname, Validators.required],
+      email: [cleanUser.email, [Validators.required, Validators.pattern(REGEXP.email)]],
+      phone: [cleanUser.phone, Validators.pattern(REGEXP.phone)],
+      role: [cleanUser.role],
+      group: [cleanUser.group],
+      territory: [cleanUser.territory],
+      operator: [cleanUser.operator],
     });
 
     this.createEditUserForm.valueChanges.subscribe((formVal) => {

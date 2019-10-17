@@ -41,6 +41,13 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
       ? this.territories.find((territory) => this.selectedTerritoryId === territory._id)
       : null;
     this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '');
+
+    const val = this.parentForm.getRawValue();
+    const newVal = this.selectedTerritory ? this.selectedTerritory._id : null;
+    if (!val || val.territory !== newVal) {
+      this.parentForm.patchValue({ territory: newVal });
+    }
+    // this.parentForm.patchValue({ territory: this.selectedTerritory ? this.selectedTerritory._id : null });
   }
 
   onTerritorySelect(territory: MatAutocompleteSelectedEvent) {
