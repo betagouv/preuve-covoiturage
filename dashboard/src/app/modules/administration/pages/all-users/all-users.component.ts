@@ -28,7 +28,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
 
   @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
   public editedUser: User;
-  private canEditUser$: Observable<boolean>;
+  canEditUser$: Observable<boolean>;
 
   constructor(
     public authenticationService: AuthenticationService,
