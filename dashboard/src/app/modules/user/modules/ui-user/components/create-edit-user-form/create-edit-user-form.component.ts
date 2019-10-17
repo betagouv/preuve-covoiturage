@@ -35,14 +35,13 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
   cleanUserForForm(user = this.user): User {
     return {
-      ...{
-        firstname: '',
-        lastname: '',
-        email: '',
-        phone: '',
-        role: '',
-        permissions: [],
-      },
+      firstname: '',
+      lastname: '',
+      email: '',
+      phone: '',
+      role: '',
+      permissions: [],
+
       ...user,
     };
   }
