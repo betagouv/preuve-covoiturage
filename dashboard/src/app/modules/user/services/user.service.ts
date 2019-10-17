@@ -17,6 +17,8 @@ export class UserService extends ApiService<User> {
     super(_http, _jsonRPC, 'user');
   }
 
+  protected _defaultListParams = { limit: 10000 };
+
   get user() {
     return this._entity$.value;
   }
