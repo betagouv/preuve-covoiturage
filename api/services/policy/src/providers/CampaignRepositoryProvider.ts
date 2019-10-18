@@ -69,7 +69,7 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
     return this.instanciateMany(results);
   }
 
-  async findApplicableCampaigns(trip: TripInterface): Promise<any[]> {
+  async findApplicableCampaigns(trip: { territories: string[]; date: Date }): Promise<any[]> {
     const collection = await this.getCollection();
     const results = await collection
       .find({
@@ -78,10 +78,10 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
         },
         status: 'active',
         start: {
-          $lte: trip.start,
+          $lte: trip.date,
         },
         end: {
-          $gte: trip.start,
+          $gte: trip.date,
         },
       })
       .toArray();
