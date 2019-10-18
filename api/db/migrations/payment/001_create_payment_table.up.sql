@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS payment.payments
   type payment.payment_type_enum NOT NULL,
   amount int NOT NULL DEFAULT 0,
 
-  meta json,
-  status payment.payment_status_enum NOT NULL
+  status payment.payment_status_enum NOT NULL,
+  meta json
 );
 
 CREATE INDEX ON payment.payments (carpool_id);

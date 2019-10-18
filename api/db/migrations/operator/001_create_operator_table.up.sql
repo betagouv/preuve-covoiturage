@@ -2,8 +2,8 @@ CREATE TABLE IF NOT EXISTS operator.operators
 (
   _id serial primary key,
   
-  nom_commercial varchar NOT NULL,
-  raison_sociale varchar NOT NULL,
+  name varchar NOT NULL,
+  legal_name varchar NOT NULL,
   siret varchar NOT NULL,
 
   company json NOT NULL,
