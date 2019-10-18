@@ -69,19 +69,19 @@ export class CampaignRepositoryProvider extends ParentRepository implements Camp
     return this.instanciateMany(results);
   }
 
-  async findApplicableCampaigns(trip: { territories: string[]; date: Date }): Promise<any[]> {
+  async findApplicableCampaigns(territories: string[], date: Date): Promise<any[]> {
     const collection = await this.getCollection();
     const results = await collection
       .find({
         territory_id: {
-          $in: trip.territories.map((id) => new ObjectId(id)),
+          $in: territories.map((id) => new ObjectId(id)),
         },
         status: 'active',
         start: {
-          $lte: trip.date,
+          $lte: date,
         },
         end: {
-          $gte: trip.date,
+          $gte: date,
         },
       })
       .toArray();

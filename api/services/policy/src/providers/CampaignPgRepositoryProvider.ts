@@ -5,6 +5,7 @@ import {
   CampaignRepositoryProviderInterface,
   CampaignRepositoryProviderInterfaceResolver,
 } from '../interfaces/CampaignRepositoryProviderInterface';
+
 import { CampaignInterface } from '@pdc/provider-schema';
 
 @provider({
@@ -35,14 +36,14 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async create(data: any): Promise<any> {
+  async create(data: CampaignInterface): Promise<any> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
           parent_id,
           territory_id,
-          start,
-          end,
+          start_date,
+          end_date,
           name,
           description,
           unit,
@@ -68,18 +69,18 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       values: [
         'parent_id' in data ? data.parent_id : null,
         data.territory_id,
-        data.start,
-        data.end,
+        data.start_date,
+        data.end_date,
         data.name,
         'description' in data ? data.description : null,
         data.unit,
         data.status,
-        data.global_rules,
-        data.rules,
-        'ui_status' in data ? data.ui_status : {},
+        JSON.stringify(data.global_rules),
+        JSON.stringify(data.rules),
+        JSON.stringify('ui_status' in data ? data.ui_status : {}),
       ],
     };
-
+    console.log(query);
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
@@ -93,8 +94,8 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       'ui_status',
       'name',
       'description',
-      'start',
-      'end',
+      'start_date',
+      'end_date',
       'unit',
       'global_rules',
       'rules',
@@ -161,8 +162,8 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       'ui_status',
       'name',
       'description',
-      'start',
-      'end',
+      'start_date',
+      'end_date',
       'unit',
       'global_rules',
       'rules',
@@ -266,17 +267,17 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows;
   }
 
-  async findApplicableCampaigns(data: { territories: string[]; date: Date }): Promise<any[]> {
+  async findApplicableCampaigns(territories: string[], date: Date): Promise<any[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
         WHERE territory_id = ANY($1::text[])
-        AND start <= $2
-        AND end >= $3
+        AND start_date <= $2
+        AND end_date >= $3
         AND status = $4
         AND deleted_at IS NULL
       `,
-      values: [data.territories, data.date, data.date, 'active'],
+      values: [territories, date, date, 'active'],
     };
 
     const result = await this.connection.getClient().query(query);
