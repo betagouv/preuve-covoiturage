@@ -18,13 +18,13 @@ CREATE TABLE IF NOT EXISTS auth.users
   forgotten_token varchar,
   forgotten_at timestamp,
 
-  last_connected_at timestamp,
-
   roles varchar[],
 
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp
+  deleted_at timestamp,
+
+  ui_status json
 );
 
 CREATE UNIQUE INDEX ON auth.users(email);
