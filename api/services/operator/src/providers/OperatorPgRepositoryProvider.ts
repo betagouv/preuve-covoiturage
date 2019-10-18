@@ -52,8 +52,8 @@ export class OperatorPgRepositoryProvider {
     const query = {
       text: `
         INSERT INTO ${this.table} (
-          nom_commercial,
-          raison_sociale,
+          name,
+          legal_name,
           siret,
           company,
           address,
@@ -109,8 +109,8 @@ export class OperatorPgRepositoryProvider {
 
   async patch(id: string, patch: { [k: string]: any }): Promise<OperatorInterface> {
     const updatablefields = [
-      'nom_commercial',
-      'raison_sociale',
+      'name',
+      'legal_name',
       'siret',
       'company',
       'address',
