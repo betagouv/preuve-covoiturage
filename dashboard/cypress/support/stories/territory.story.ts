@@ -11,7 +11,14 @@ import { cypress_profile } from '../reusables/profile/cypress_profile';
 import { cypress_logging_users } from '../stubs/auth/login';
 import { cypress_logout } from '../reusables/auth/cypress_logout';
 
-export function testTerritoryStory() {
+export function testTerritoryStory(
+  profile = true,
+  territory = true,
+  filters = true,
+  newcampaign = true,
+  editcampaign = true,
+  launchcampaign = true,
+) {
   it('go to login page', () => {
     cy.visit('/login');
   });
@@ -21,32 +28,44 @@ export function testTerritoryStory() {
   });
 
   // TEST PROFILE UPDATE
-  describe('Profile update', () => {
-    cypress_profile(cypress_logging_users.territories);
-  });
+  if (profile) {
+    describe('Profile update', () => {
+      cypress_profile(cypress_logging_users.territories);
+    });
+  }
 
   // TEST TERRITORY UPDATE
-  describe('Territory update', () => {
-    cypress_territory(territoryStub);
-  });
+  if (territory) {
+    describe('Territory update', () => {
+      cypress_territory(territoryStub);
+    });
+  }
 
   // TEST FILTERS
-  describe('Filter trips', () => {
-    cypress_filter(false, UserGroupEnum.TERRITORY);
-  });
+  if (filters) {
+    describe('Filter trips', () => {
+      cypress_filter(false, UserGroupEnum.TERRITORY);
+    });
+  }
 
   // TEST CAMPAIGNS
-  describe('Create new campaign', () => {
-    cypress_campaignCreate();
-  });
+  if (newcampaign) {
+    describe('Create new campaign', () => {
+      cypress_campaignCreate();
+    });
+  }
 
-  describe('Edit campaign', () => {
-    cypress_campaignEdit();
-  });
+  if (editcampaign) {
+    describe('Edit campaign', () => {
+      cypress_campaignEdit();
+    });
+  }
 
-  describe('Launch campaign', () => {
-    cypress_campaignLaunch();
-  });
+  if (launchcampaign) {
+    describe('Launch campaign', () => {
+      cypress_campaignLaunch();
+    });
+  }
 
   // LOGOUT
   describe('Logout', () => {

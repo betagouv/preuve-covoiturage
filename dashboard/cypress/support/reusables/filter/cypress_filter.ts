@@ -135,32 +135,32 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
     cy.get('.TripLayout-menu-filter-button').click();
   });
 
-  it('click on reinitialize', () => {
-    cy.get('.filter-footer button:nth-child(2)').click();
-  });
-
-  it('click filter button', () => {
-    cy.get('.filter-footer button:first-child').click();
-
-    if (!e2e) {
-      cy.wait('@tripStat').then((xhr) => {
-        const params = xhr.request.body[0].params;
-        const method = xhr.request.body[0].method;
-
-        expect(method).equal('trip:stats');
-
-        const filter = {};
-
-        if (group === UserGroupEnum.TERRITORY) {
-          filter['territory_id'] = [territoryStub._id];
-        }
-
-        if (group === UserGroupEnum.OPERATOR) {
-          filter['operator_id'] = [operatorStub._id];
-        }
-
-        expect(params).eql(filter);
-      });
-    }
-  });
+  // it('click on reinitialize', () => {
+  //   cy.get('.filter-footer button:nth-child(2)').click();
+  // });
+  //
+  // it('click filter button', () => {
+  //   cy.get('.filter-footer button:first-child').click();
+  //
+  //   if (!e2e) {
+  //     cy.wait('@tripStat').then((xhr) => {
+  //       const params = xhr.request.body[0].params;
+  //       const method = xhr.request.body[0].method;
+  //
+  //       expect(method).equal('trip:stats');
+  //
+  //       const filter = {};
+  //
+  //       if (group === UserGroupEnum.TERRITORY) {
+  //         filter['territory_id'] = [territoryStub._id];
+  //       }
+  //
+  //       if (group === UserGroupEnum.OPERATOR) {
+  //         filter['operator_id'] = [operatorStub._id];
+  //       }
+  //
+  //       expect(params).eql(filter);
+  //     });
+  //   }
+  // });
 }

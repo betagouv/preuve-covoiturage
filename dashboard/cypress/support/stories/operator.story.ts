@@ -9,7 +9,7 @@ import { cypress_operator } from '../reusables/operator/cypress_operator';
 import { operatorStub } from '../stubs/operator/operator.find';
 import { cypress_applications } from '../reusables/operator/application.cypress';
 
-export function testOperatorStory() {
+export function testOperatorStory(profile = true, operator = true, applications = true, filters = true) {
   it('go to login page', () => {
     cy.visit('/login');
   });
@@ -19,24 +19,32 @@ export function testOperatorStory() {
   });
 
   // PROFILE
-  describe('Profile update', () => {
-    cypress_profile(cypress_logging_users.operators);
-  });
+  if (profile) {
+    describe('Profile update', () => {
+      cypress_profile(cypress_logging_users.operators);
+    });
+  }
 
   // OPERATOR
-  describe('Operator update', () => {
-    cypress_operator(operatorStub);
-  });
+  if (operator) {
+    describe('Operator update', () => {
+      cypress_operator(operatorStub);
+    });
+  }
 
   // APPLICATIONS
-  describe('Applications', () => {
-    cypress_applications();
-  });
+  if (applications) {
+    describe('Applications', () => {
+      cypress_applications();
+    });
+  }
 
   // FILTERS
-  describe('Filter trips', () => {
-    cypress_filter(false, UserGroupEnum.OPERATOR);
-  });
+  if (filters) {
+    describe('Filter trips', () => {
+      cypress_filter(false, UserGroupEnum.OPERATOR);
+    });
+  }
 
   // LOGOUT
   describe('Logout', () => {

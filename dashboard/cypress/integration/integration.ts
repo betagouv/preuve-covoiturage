@@ -52,7 +52,12 @@ context('OPERATOR', () => {
     stubApplicationRevoke();
   });
 
-  testOperatorStory();
+  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+    testOperatorStory();
+  } else {
+    // local testing
+    testOperatorStory(false, false, false, false);
+  }
 });
 
 context('REGISTRY', () => {
@@ -76,7 +81,12 @@ context('REGISTRY', () => {
     stubUserList(users);
   });
 
-  testRegistryStory();
+  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+    testRegistryStory();
+  } else {
+    // local testing
+    testRegistryStory(false, true, false);
+  }
 });
 
 context('TERRITORY', () => {
@@ -101,5 +111,10 @@ context('TERRITORY', () => {
     stubLogout();
   });
 
-  testTerritoryStory();
+  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+    testTerritoryStory();
+  } else {
+    // local testing
+    testTerritoryStory(false, false, true, false, false, false);
+  }
 });
