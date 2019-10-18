@@ -6,10 +6,10 @@ CREATE TABLE IF NOT EXISTS common.insee
   territory_id  varchar, -- integer REFERENCES territories (_id) NOT NULL,
   parent_territory_id varchar, -- integer REFERENCES territories (_id) NOT NULL,
   geo geography NOT NULL,
-  density integer
-  -- postcode
-  -- town
-  -- country
+  density integer,
+  postcodes varchar(10)[],
+  town varchar(64),
+  country varchar(32)
 );
 
 CREATE INDEX ON common.insee USING GIST (geo);
