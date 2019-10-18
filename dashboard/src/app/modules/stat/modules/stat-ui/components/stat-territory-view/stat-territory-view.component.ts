@@ -57,10 +57,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     if (this.statService.loading) {
       return;
     }
-    this.statService
-      .loadOne(filter)
-      .pipe(take(1))
-      .subscribe();
+    this.statService.loadOne(filter).subscribe();
   }
 
   /**

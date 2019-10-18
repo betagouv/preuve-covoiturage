@@ -34,9 +34,6 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
     if (this.statService.loading) {
       return;
     }
-    this.statService
-      .loadOne()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
+    this.statService.loadOne().subscribe();
   }
 }

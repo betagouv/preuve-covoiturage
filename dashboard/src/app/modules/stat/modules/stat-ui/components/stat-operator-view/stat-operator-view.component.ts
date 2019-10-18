@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { URLS } from '~/core/const/main.const';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
@@ -55,10 +55,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
     if (this.statService.loading) {
       return;
     }
-    this.statService
-      .loadOne(filter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
+    this.statService.loadOne(filter).subscribe();
   }
 
   /**

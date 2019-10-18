@@ -17,7 +17,7 @@ export class ApplicationsGenerator {
         _id: generateRandomMongoId(),
         name: `serveur ${i}`,
         created_at: moment()
-          .subtract(Math.floor(Math.random() * 50), 'days')
+          .subtract(Math.floor(Math.random() * 50) + 1, 'days')
           .toISOString(),
       };
       applications.push(application);

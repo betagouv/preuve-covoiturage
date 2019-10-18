@@ -34,9 +34,9 @@ export class CypressExpectedApplication {
   }
 
   static getAfterCreate(): ApplicationInterface {
-    const afterCreationCampaign = <ApplicationInterface>CypressExpectedApplication.get();
-    afterCreationCampaign._id = '5d8a3f7c6caa8c7f95a364f7';
-    afterCreationCampaign.created_at = new Date();
-    return afterCreationCampaign;
+    const afterCreationApplication = <ApplicationInterface>CypressExpectedApplication.get();
+    afterCreationApplication._id = '5d8a3f7c6caa8c7f95a364f7';
+    afterCreationApplication.created_at = new Date();
+    return afterCreationApplication;
   }
 }
