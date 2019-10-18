@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS policy.policies
   parent_id integer REFERENCES policy.policies (_id),
   territory_id varchar,
 
-  start timestamp,
-  end timestamp,
+  start_date timestamp,
+  end_date timestamp,
 
   name varchar NOT NULL,
   description varchar,

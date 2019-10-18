@@ -29,8 +29,8 @@ export class LaunchCampaignAction extends AbstractAction {
       throw new InvalidParamsException(`Campaign ${params._id} must be a draft to be launched.`);
     }
 
-    if (campaign.start < new Date()) {
-      patch['start'] = new Date();
+    if (campaign.start_date < new Date()) {
+      patch['start_date'] = new Date();
     }
 
     return this.campaignRepository.patch(params._id, patch);
