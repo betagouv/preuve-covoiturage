@@ -58,16 +58,18 @@ export function cypress_applications(e2e = false) {
   it('revoke application', () => {
     cy.get('app-list-item:first-child .operatorToken-list-item-actions a').click();
     cy.get('mat-dialog-actions button:nth-child(2)').click();
-    cy.wait('@applicationRevoke').then((xhr) => {
-      const params = xhr.request.body[0].params;
-      const method = xhr.request.body[0].method;
+    if (!e2e) {
+      cy.wait('@applicationRevoke').then((xhr) => {
+        const params = xhr.request.body[0].params;
+        const method = xhr.request.body[0].method;
 
-      expect(method).equal('application:revoke');
+        expect(method).equal('application:revoke');
 
-      expect(params).eql({
-        _id: CypressExpectedApplication.getAfterCreate()._id,
+        expect(params).eql({
+          _id: CypressExpectedApplication.getAfterCreate()._id,
+        });
       });
-    });
+    }
   });
 
   // close revoke confirm notification

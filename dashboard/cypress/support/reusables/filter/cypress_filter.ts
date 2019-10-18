@@ -81,7 +81,11 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
 
   if (group === UserGroupEnum.TERRITORY || group === UserGroupEnum.REGISTRY) {
     it('chooses operators', () => {
-      cy.get('app-operators-autocomplete mat-form-field input').type('opé');
+      if (e2e) {
+        cy.get('app-operators-autocomplete mat-form-field input').click();
+      } else {
+        cy.get('app-operators-autocomplete mat-form-field input').type('opé');
+      }
       cy.get('.mat-autocomplete-panel mat-option:first-child').click();
     });
   }
@@ -114,12 +118,15 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
 
   // go to stat page
   it('clicks stats tab', () => {
+    // need a delaye between 2 calls
     cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(1)').click();
+    cy.wait(1000);
   });
 
   if (e2e) {
     // check that their is no trips
     it('checks the data is null', () => {
+      cy.wait(1000);
       cy.get('.stats-numbers app-stat-number:nth-child(1) .stat-number-title p').contains('0');
     });
   }

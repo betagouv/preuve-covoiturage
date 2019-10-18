@@ -11,9 +11,12 @@ export function cypress_territory(oldValue: Territory, e2e = false) {
     cy.get('.mat-tab-link:nth-child(2)').click();
   });
 
-  it('check values : name', () => {
-    cy.get('.territory-name').contains(oldValue.name);
-  });
+  if (!e2e) {
+    it('check values : name', () => {
+      cy.get('.territory-name').contains(oldValue.name);
+    });
+  }
+
   it('change values of dpo : firstname & name', () => {
     cy.get('.contacts > div:nth-child(1) .formContact-firstname input')
       .clear()

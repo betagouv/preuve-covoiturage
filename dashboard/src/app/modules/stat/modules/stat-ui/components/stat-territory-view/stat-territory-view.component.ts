@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
@@ -59,7 +59,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     }
     this.statService
       .loadOne(filter)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(take(1))
       .subscribe();
   }
 

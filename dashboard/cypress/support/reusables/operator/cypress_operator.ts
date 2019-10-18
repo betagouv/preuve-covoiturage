@@ -10,9 +10,11 @@ export function cypress_operator(oldValue: Operator, e2e = false) {
     cy.get('.mat-tab-link:nth-child(2)').click();
   });
 
-  it('check values : commercial name', () => {
-    cy.get('p.nom-commercial').contains(oldValue.nom_commercial);
-  });
+  if (!e2e) {
+    it('check values : commercial name', () => {
+      cy.get('p.nom-commercial').contains(oldValue.nom_commercial);
+    });
+  }
 
   it('change values of dpo : firstname & name', () => {
     cy.get('.contacts > div:nth-child(1) .formContact-firstname input')

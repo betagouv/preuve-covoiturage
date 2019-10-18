@@ -6,11 +6,8 @@ import { map, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { ApiService } from '~/core/services/api/api.service';
-import { CalculatedStatInterface } from '~/core/interfaces/stat/calculatedStatInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';

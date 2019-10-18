@@ -7,18 +7,24 @@ import { testNotification } from '../notification.cypress';
 export function cypress_profile(currentProfile: User, e2e = false) {
   const patchedProfile = expectedPatchedProfiles[currentProfile.group];
 
-  it('navigate to profile', () => {
+  it('navigate to admin', () => {
     cy.get('.Header-user').click();
     cy.get('.mat-menu-item:nth-child(1)').click();
+    cy.wait(1000);
+  });
+
+  it('click on profile', () => {
     cy.get('.mat-tab-link:nth-child(1)').click();
   });
 
-  it('check values : firstname, lastname, email, phone', () => {
-    cy.get('input.profile-firstname ').should('have.value', currentProfile.firstname);
-    cy.get('input.profile-lastname ').should('have.value', currentProfile.lastname);
-    cy.get('input.profile-email ').should('have.value', currentProfile.email);
-    cy.get('input.profile-phone ').should('have.value', currentProfile.phone);
-  });
+  if (!e2e) {
+    it('check values : firstname, lastname, email, phone', () => {
+      cy.get('input.profile-firstname ').should('have.value', currentProfile.firstname);
+      cy.get('input.profile-lastname ').should('have.value', currentProfile.lastname);
+      cy.get('input.profile-email ').should('have.value', currentProfile.email);
+      cy.get('input.profile-phone ').should('have.value', currentProfile.phone);
+    });
+  }
 
   it('change values : firstname, lastname', () => {
     cy.get('input.profile-firstname ')
