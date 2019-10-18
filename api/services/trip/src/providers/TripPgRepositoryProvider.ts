@@ -319,18 +319,18 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           case 'distance':
             if (filter.value.min && filter.value.max) {
               return {
-                text: '($#::int >= distance AND distance >= $#::int)',
+                text: '($#::int <= distance AND distance <= $#::int)',
                 values: [filter.value.min, filter.value.max],
               };
             }
             if (filter.value.min) {
               return {
-                text: '$#::int >= distance',
+                text: '$#::int <= distance',
                 values: [filter.value.min],
               };
             }
             return {
-              text: 'distance >= $#::int',
+              text: 'distance <= $#::int',
               values: [filter.value.max],
             };
           case 'campaign_id':

@@ -38,7 +38,7 @@ export class PolicyEngine {
   }
 
   public async process(trip: TripInterface) {
-    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip);
+    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.start);
     const results = [];
     for (const campaign of campaigns) {
       // build function
