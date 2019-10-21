@@ -60,7 +60,6 @@
     "@ilos/core": "~0",
     "@ilos/env": "~0",
     "@ilos/framework": "~0",
-    "@ilos/notification": "~0",
     "@ilos/package-acl": "~0",
     "@ilos/repository": "~0",
     "@ilos/template": "~0",
@@ -68,6 +67,7 @@
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-schema": "~0",
     "@pdc/provider-validator": "~0",
+    "@pdc/provider-notification": "~0",
     "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
