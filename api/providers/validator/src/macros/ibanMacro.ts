@@ -2,7 +2,7 @@ export function ibanMacro(schema) {
   return {
     type: 'string',
     format: 'iban',
-    minLength: 18,
-    maxLength: 18,
+    minLength: 27,
+    maxLength: 34,
   };
 }
