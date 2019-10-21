@@ -147,6 +147,10 @@ export class AuthenticationService {
     return true;
   }
 
+  public hasAnyPermissionObs(permissions: PermissionType[]): Observable<boolean> {
+    return this.user$.pipe(map((user) => this.hasAnyPermission(permissions)));
+  }
+
   /**
    * Check if connected user has any of list of groups
    */
