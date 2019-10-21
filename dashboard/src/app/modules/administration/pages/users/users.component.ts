@@ -131,10 +131,10 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       });
   }
 
-  private filterUsers() {
-    const query = this.searchFilters.controls.query.value;
-    this.usersToShow = this.users.filter(
-      (u) => u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query),
+  public filterUsers() {
+    const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
+    this.usersToShow = this.users.filter((u) =>
+      `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query),
     );
   }
 }

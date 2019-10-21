@@ -105,7 +105,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   public filterUsers() {
     const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
     this.usersToShow = this.users.filter(
-      (u) => (u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query)) && this.userGroup === u.group,
+      (u) => `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query) && this.userGroup === u.group,
     );
   }
 }
