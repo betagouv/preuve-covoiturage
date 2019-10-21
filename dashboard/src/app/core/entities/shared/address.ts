@@ -8,7 +8,9 @@ export class Address {
   constructor(obj: { street: string; postcode: string; cedex?: string; city: string; country: string }) {
     this.street = obj.street;
     this.postcode = obj.postcode;
-    this.cedex = obj.cedex || null;
+
+    if (obj.cedex) this.cedex = obj.cedex;
+
     this.city = obj.city;
     this.country = obj.country;
   }
