@@ -1,17 +1,33 @@
-import { stubLogin } from '../../stubs/auth/login';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
-export function cypress_stub_login(type: UserGroupEnum) {
-  cy.server();
-  stubLogin(type);
-}
+import { stubLogin } from '../../stubs/auth/login';
+import { stubUserMe } from '../../stubs/user/user.me';
+import { stubMainLists } from '../../stubs/loadMainLists';
+import { stubStatList } from '../../stubs/stat/stat.list';
+import { stubCampaignList } from '../../stubs/campaign/campaign.list';
 
-export function cypress_login(email, password) {
-  cy.get('.Login mat-form-field:first-child input').type(email);
+export function cypress_login(loginData: { email: string; password: string; group: UserGroupEnum }) {
+  beforeEach(() => {
+    cy.server();
+    stubLogin(loginData.group);
+    stubMainLists(loginData.group);
+    stubStatList();
+    stubCampaignList();
+  });
 
-  cy.get('.Login mat-form-field:nth-child(2) input').type(password);
+  it('go to login page', () => {
+    cy.visit('/login');
+  });
 
-  cy.get('.Login form > button').click();
+  it('Logges in', () => {
+    cy.get('.Login mat-form-field:first-child input').type(loginData.email);
 
-  cy.wait(1000);
+    cy.get('.Login mat-form-field:nth-child(2) input').type(loginData.password);
+
+    stubUserMe(loginData.group);
+
+    cy.get('.Login form > button').click();
+
+    cy.wait(1000);
+  });
 }
