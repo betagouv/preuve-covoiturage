@@ -1,3 +1,5 @@
+// tslint:disable: no-unused-expression
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { NewableType } from '@ilos/common';
@@ -31,22 +33,11 @@ export function rnaFormatTest(getProvider, FakeObject: NewableType<any>) {
     });
 
     it('too short', async () => {
-      expect(provider.validate(new FakeObject({ rna: 'W12345' }))).to.be.rejected('Error');
-      // .catch((err: Error) => {
-      //   // console.log(err.message);
-      //   expect(err.message).to.equal('data.rna should NOT be shorter than 8 characters');
-      // })
-      // .finally(done);
+      expect(provider.validate(new FakeObject({ rna: 'W12345' }))).to.be.rejected;
     });
 
-    it('too long', (done) => {
-      provider
-        .validate(new FakeObject({ rna: 'W00331234567890' }))
-        .catch((err: Error) => {
-          // console.log(err.message);
-          expect(err.message).to.equal('data.rna should NOT be longer than 11 characters');
-        })
-        .finally(done);
+    it('too long', async () => {
+      expect(provider.validate(new FakeObject({ rna: 'W00331234567890' }))).to.be.rejected;
     });
   };
 }
