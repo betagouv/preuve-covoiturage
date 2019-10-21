@@ -17,7 +17,7 @@ import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 @Injectable({
   providedIn: 'root',
 })
-export class StatService {
+export class StatFilteredService {
   private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
   private _loaded$ = new BehaviorSubject<boolean>(false);
   private _loading$ = new BehaviorSubject<boolean>(false);
@@ -29,10 +29,11 @@ export class StatService {
     private _authService: AuthenticationService,
   ) {}
 
-  public loadOne(): Observable<StatInterface[]> {
+  public loadOne(filter: FilterInterface | {} = {}): Observable<StatInterface[]> {
+    const params = _.cloneDeep(filter);
+
     const user = this._authService.user;
 
-    const params = {};
     if (user && user.group === UserGroupEnum.TERRITORY) {
       params['territory_id'] = [user.territory];
     }

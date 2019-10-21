@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { Filter } from '~/core/entities/filter/filter';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
+import { FilterModule } from '~/modules/filter/filter.module';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,10 @@ import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 export class FilterService {
   public filter$ = new BehaviorSubject<FilterInterface | {}>({});
 
-  constructor() {}
+  constructor() {
+    console.log('ini filter service');
+    console.log(this.filter$.value);
+  }
 
   // format filterUx to filter in api format
   public setFilter(params: FilterUxInterface | {} = {}): void {

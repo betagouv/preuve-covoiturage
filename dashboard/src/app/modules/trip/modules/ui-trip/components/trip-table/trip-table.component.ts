@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
 import { Trip } from '~/core/entities/trip/trip';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
@@ -34,8 +35,8 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
-    this.commonData.operators$.subscribe((operators) => (this.operators = operators));
-    this.commonData.campaigns$.subscribe((campaigns) => (this.campaigns = campaigns));
+    this.commonData.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => (this.operators = operators));
+    this.commonData.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns) => (this.campaigns = campaigns));
   }
 
   getIconStatus(status: TripStatusEnum) {

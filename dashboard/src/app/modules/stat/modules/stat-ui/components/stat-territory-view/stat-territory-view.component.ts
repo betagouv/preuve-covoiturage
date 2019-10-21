@@ -1,15 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { take, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, take, takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
-import { FilterService } from '~/core/services/filter.service';
+import { FilterService } from '~/modules/filter/services/filter.service';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TERRITORY_STATS } from '~/modules/stat/config/stat';
+import { chartNameType } from '~/core/types/stat/chartNameType';
+import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
-import { StatService } from '../../../../services/stat.service';
+import { StatFilteredService } from '../../../../services/stat-filtered.service';
 
 @Component({
   selector: 'app-stat-territory-view',
@@ -29,10 +31,11 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     trips: false,
     operators: true,
   };
+  graphData: { [key in chartNameType]: Axes } = null;
 
   statViewConfig = TERRITORY_STATS;
 
-  constructor(public statService: StatService, public filterService: FilterService) {
+  constructor(public statService: StatFilteredService, public filterService: FilterService) {
     super();
   }
 
@@ -40,8 +43,17 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
+
+    // reset stats on load
+    this.statService.init();
+
     this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
       this.loadStat(filter);
+    });
+    this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
+      if (stats) {
+        this.graphData = stats.graph;
+      }
     });
   }
 

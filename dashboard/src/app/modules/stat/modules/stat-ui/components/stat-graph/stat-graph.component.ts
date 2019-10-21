@@ -1,17 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { get } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
 
 import { statGraphs } from '~/modules/stat/config/statGraphs';
-import { StatService } from '~/modules/stat/services/stat.service';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { statChartColors } from '~/modules/stat/config/statChartColors';
 import { chartsType, chartType } from '~/core/types/stat/chartType';
 import { statChartOptions } from '~/modules/stat/config/statChartOptions';
-import { chartNamesType } from '~/core/types/stat/chartNameType';
+import { chartNamesType, chartNameType } from '~/core/types/stat/chartNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { FilterService } from '~/core/services/filter.service';
+import { FilterService } from '~/modules/filter/services/filter.service';
+import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
 @Component({
   selector: 'app-stat-graph',
@@ -42,27 +41,16 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     this.displayGraph(name);
   }
 
+  @Input() graphData: { [key in chartNameType]: Axes };
+
   @Input() lightMode = false;
 
-  constructor(private statService: StatService, private filterService: FilterService) {
+  constructor(private filterService: FilterService) {
     super();
   }
 
   ngOnInit() {
     this.options = statChartOptions;
-
-    this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      const data: GraphNamesInterface = {
-        trips: this.loadGraph('trips'),
-        distance: this.loadGraph('distance'),
-        carpoolers: this.loadGraph('carpoolers'),
-        petrol: this.loadGraph('petrol'),
-        co2: this.loadGraph('co2'),
-        carpoolersPerVehicule: this.loadGraph('carpoolersPerVehicule'),
-      };
-      this.graphTitle = data.trips.monthly.graphTitle;
-      this.data = data;
-    });
   }
 
   get hasFilters(): boolean {
@@ -105,6 +93,21 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     return object.datasets[0].data.length > 0;
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['graphData']) {
+      const data: GraphNamesInterface = {
+        trips: this.loadGraph('trips'),
+        distance: this.loadGraph('distance'),
+        carpoolers: this.loadGraph('carpoolers'),
+        petrol: this.loadGraph('petrol'),
+        co2: this.loadGraph('co2'),
+        carpoolersPerVehicule: this.loadGraph('carpoolersPerVehicule'),
+      };
+      this.graphTitle = data[this.graphToBeDisplayed][this.toggleChart[this.graphToBeDisplayed]].graphTitle;
+      this.data = data;
+    }
+  }
+
   private loadGraph(name): chartsType {
     const ret: chartsType = {};
     if ('cumulated' in statGraphs[name]) {
@@ -124,12 +127,12 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     const graphs = statGraphs[name][type].graphs;
     const graphTitle = statGraphs[name][type].title;
 
-    const labels = get(this.statService.stat.graph, graphs[0]).x;
+    const labels = get(this.graphData, graphs[0]).x;
 
     // tslint:disable-next-line:ter-arrow-body-style
     const datasets = graphs.map((graphName) => {
       return {
-        data: get(this.statService.stat.graph, graphName).y,
+        data: get(this.graphData, graphName).y,
         ...statChartColors[graphName],
       };
     });

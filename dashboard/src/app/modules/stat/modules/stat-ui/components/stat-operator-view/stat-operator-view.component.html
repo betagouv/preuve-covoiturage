@@ -7,7 +7,7 @@
     <!--    <button mat-flat-button [routerLink]="'/trip/import'" class="color-punch">-->
     <!--      Ajoutez des nouveaux trajets-->
     <!--    </button>-->
-    <app-stat-graph [graphName]="graphName"></app-stat-graph>
+    <app-stat-graph [graphName]="graphName" [graphData]="graphData"></app-stat-graph>
   </div>
   <div *ngIf="statService.stat" class="stats-numbers">
     <app-stat-number

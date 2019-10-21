@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { TripService } from '~/modules/trip/services/trip.service';
 import { Trip } from '~/core/entities/trip/trip';
-import { FilterService } from '~/core/services/filter.service';
+import { FilterService } from '~/modules/filter/services/filter.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';

@@ -6,14 +6,13 @@ import { WeekDay } from '@angular/common';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
-import { FilterService } from '~/core/services/filter.service';
+import { FilterService } from '~/modules/filter/services/filter.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
 import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 
 @Component({
@@ -71,6 +70,9 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.initForm();
+
+    // reset filter on page trip page load
+    this.filterService.filter$.next({});
   }
 
   get controls() {
