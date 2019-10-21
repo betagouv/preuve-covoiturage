@@ -20,7 +20,7 @@ export const operatorPatchSchema = {
         company: companySchema,
         address: addressSchema,
         bank: bankSchema,
-        // contacts: contactsSchema,
+        contacts: contactsSchema,
       },
     },
   },

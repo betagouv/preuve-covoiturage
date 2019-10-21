@@ -29,7 +29,7 @@ export const territoryPatchSchema = {
         company: companySchema,
         address: addressSchema,
         bank: bankSchema,
-        // contacts: contactsSchema,
+        contacts: contactsSchema,
         cgu: cguSchema,
       },
     },
