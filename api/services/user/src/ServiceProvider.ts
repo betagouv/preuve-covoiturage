@@ -5,6 +5,8 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
+import { NotificationExtension } from '@pdc/provider-notification';
+
 import {
   ScopeToSelfMiddleware,
   ContentBlacklistMiddleware,
@@ -108,5 +110,5 @@ import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
   commands: [FixPermissionsCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, NotificationExtension];
 }

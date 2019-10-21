@@ -1,5 +1,5 @@
 {
-  "name": "@pdc/notification",
+  "name": "@pdc/provider-notification",
   "version": "0.3.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
