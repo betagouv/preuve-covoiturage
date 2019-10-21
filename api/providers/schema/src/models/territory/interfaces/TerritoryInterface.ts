@@ -12,6 +12,9 @@ export interface TerritoryInterface {
   insee_main?: string;
   network_id?: number;
 
+  siret?: string;
+  parent_id?: string;
+
   company?: CompanyInterface;
   address?: AddressInterface;
   contacts?: ContactsInterface;
