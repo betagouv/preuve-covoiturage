@@ -5,7 +5,8 @@ export const incentiveSchema = {
   properties: {
     index: {
       type: 'integer',
-      enum: [0, 1, 2],
+      minimum: 0,
+      maximum: 42,
     },
     siret: { macro: 'siret' },
     amount: {
