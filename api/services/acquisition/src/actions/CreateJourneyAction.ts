@@ -1,13 +1,11 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
-import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
+import { CreateJourneyParamsInterface, PersonInterface, JourneyInterface } from '@pdc/provider-schema';
 
-import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
-
-interface WhiteListedJourney {
-  journey_id: string;
-  created_at: Date;
-}
+import {
+  JourneyRepositoryProviderInterfaceResolver,
+  WhiteListedJourneyInterface,
+} from '../interfaces/JourneyRepositoryProviderInterface';
 
 const callContext = {
   channel: {
@@ -38,11 +36,11 @@ export class CreateJourneyAction extends AbstractAction {
   protected async handle(
     params: CreateJourneyParamsInterface,
     context: ContextType,
-  ): Promise<WhiteListedJourney | WhiteListedJourney[]> {
+  ): Promise<WhiteListedJourneyInterface> {
     const now = new Date();
 
     // assign the operator from context
-    const payload: Journey = this.cast(params, context.call.user.operator);
+    const payload: JourneyInterface = this.cast(params, context.call.user.operator);
 
     // reject if happening in the future
     const person = 'passenger' in payload ? payload.passenger : payload.driver;

@@ -4,6 +4,7 @@ import { JourneyInterface } from '@pdc/provider-schema';
 import {
   JourneyRepositoryProviderInterface,
   JourneyRepositoryProviderInterfaceResolver,
+  WhiteListedJourneyInterface,
 } from '../interfaces/JourneyRepositoryProviderInterface';
 
 @provider({
@@ -13,6 +14,34 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
   public readonly table = 'acquisition.acquisitions';
 
   constructor(protected connection: PostgresConnection) {}
+
+  async create(journey: JourneyInterface): Promise<WhiteListedJourneyInterface> {
+    const { operator_id, application_id } = journey;
+
+    const query = {
+      text: `
+        INSERT INTO ${this.table} (
+          operator_id,
+          application_id,
+          journey_id,
+          payload
+        ) VALUES (
+
+        )
+        RETURNING _id, journey_id, created_at
+      `,
+      values: [operator_id, application_id ? application_id : 'unkown', journey.journey_id, journey],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount !== 1) {
+      throw new Error();
+    }
+
+    return result.rows[0];
+  }
+
   async createMany(data: JourneyInterface[]): Promise<JourneyInterface[]> {
     const insertPayload = [];
 
@@ -20,7 +49,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
       const { operator_id, application_id } = journey;
       insertPayload.push({
         text: '($#, $#, $#)',
-        values: [operator_id, application_id ? application_id : 'unkown', journey],
+        values: [operator_id, application_id ? application_id : 'unkown', journey.journey_id, journey],
       });
     }
     const normalizedInsertPayload = insertPayload.reduce(
@@ -38,11 +67,12 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     const query = {
       text: `
         INSERT INTO ${this.table} (
-          application_id,
           operator_id,
+          application_id,
+          journey_id,
           payload
         ) VALUES ${normalizedInsertPayload.text.join(',')}
-        RETURNING _id
+        RETURNING _id, journey_id, created_at
       `,
       values: normalizedInsertPayload.values,
     };
