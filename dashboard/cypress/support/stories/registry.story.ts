@@ -10,14 +10,6 @@ import { operatorStub } from '../stubs/operator/operator.find';
 import { cypress_users } from '../reusables/user/users.cypress';
 
 export function testRegistryStory(profile = true, filters = true, users = true) {
-  it('go to login page', () => {
-    cy.visit('/login');
-  });
-
-  it('Logges in', () => {
-    cypress_login('admin@example.com', 'admin1234');
-  });
-
   // PROFILE UPDATE
   if (profile) {
     describe('Profile update', () => {

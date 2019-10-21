@@ -19,14 +19,6 @@ export function testTerritoryStory(
   editcampaign = true,
   launchcampaign = true,
 ) {
-  it('go to login page', () => {
-    cy.visit('/login');
-  });
-
-  it('Logges in', () => {
-    cypress_login('territory@example.com', 'admin1234');
-  });
-
   // TEST PROFILE UPDATE
   if (profile) {
     describe('Profile update', () => {
