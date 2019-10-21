@@ -108,17 +108,14 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   }
 
   private initOperatorFormValue(): void {
-    // this._operatorService.operator$.pipe(takeUntil(this.destroy$)).subscribe((operator: Operator | null) => {
-    console.log('this.operator : ', this.operator);
+    this.isCreating = !this.operator;
     if (this.operator) {
       this.setOperatorFormValue(this.operator);
     }
-    // });
   }
 
   // todo: ugly ...
   private setOperatorFormValue(operator: Operator) {
-    console.log('operator : ', operator);
     this.isCreating = !operator;
     // base values for form
     const operatorConstruct = new Operator({
@@ -201,8 +198,6 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['operator'] && this.operatorForm) {
-      console.log(changes['operator'].currentValue);
-
       this.setOperatorFormValue(changes['operator'].currentValue);
     }
   }
