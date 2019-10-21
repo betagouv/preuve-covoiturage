@@ -6,6 +6,7 @@ export interface JourneyInterface {
   operator_journey_id?: string;
   operator_class: string;
   operator_id: string;
+  application_id?: string;
   passenger?: PersonInterface;
   driver?: PersonInterface;
   created_at?: Date;

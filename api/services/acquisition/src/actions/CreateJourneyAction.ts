@@ -2,7 +2,6 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
 import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
 
-import { Journey } from '../entities/Journey';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 
 interface WhiteListedJourney {
@@ -63,12 +62,12 @@ export class CreateJourneyAction extends AbstractAction {
     };
   }
 
-  protected cast(jrn: CreateJourneyParamsInterface, operatorId: string): Journey {
-    const journey = new Journey({
+  protected cast(jrn: CreateJourneyParamsInterface, operatorId: string): JourneyInterface {
+    const journey = {
       ...jrn,
       operator_id: operatorId,
       created_at: new Date(),
-    });
+    };
 
     // driver AND/OR passenger
     if ('driver' in jrn) journey.driver = this.castPerson(jrn.driver, true);
