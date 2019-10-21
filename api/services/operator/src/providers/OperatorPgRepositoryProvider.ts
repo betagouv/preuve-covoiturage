@@ -1,4 +1,4 @@
-import { ConfigInterfaceResolver, provider, NotFoundException } from '@ilos/common';
+import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { OperatorInterface } from '@pdc/provider-schema';
 
@@ -10,8 +10,8 @@ import {
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
 })
-export class OperatorPgRepositoryProvider {
-  protected readonly table = 'operator.operators';
+export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderInterface {
+  public readonly table = 'operator.operators';
 
   constructor(protected connection: PostgresConnection) {}
 
