@@ -101,37 +101,30 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       delete formVal.role;
     }
 
+    const errM = (err) => {
+      if (err.status === 409) this.toastr.error('Cette adresse email est déjà utilisée');
+      this.isCreatingUpdating = false;
+      // this.toastr.error(err.message);
+      throw err;
+    };
+
     if (this.isCreating) {
-      this._userService.createList(formVal).subscribe(
-        (data) => {
-          const user = data[0];
-          this.isCreatingUpdating = false;
-          this.toastr.success(
-            `Un email a été envoyé à ${user.email}`,
-            `L'utilisateur ${user.firstname} ${user.lastname} a été créé`,
-          );
-          this.onCloseEditUser.emit(user);
-        },
-        (err) => {
-          this.isCreatingUpdating = false;
-          // this.toastr.error(err.message);
-          throw err;
-        },
-      );
+      this._userService.createList(formVal).subscribe((data) => {
+        const user = data[0];
+        this.isCreatingUpdating = false;
+        this.toastr.success(
+          `Un email a été envoyé à ${user.email}`,
+          `L'utilisateur ${user.firstname} ${user.lastname} a été créé`,
+        );
+        this.onCloseEditUser.emit(user);
+      }, errM);
     } else {
-      this._userService.patchList({ ...formVal, _id: this.user._id }).subscribe(
-        (data) => {
-          const user = data[0];
-          this.isCreatingUpdating = false;
-          this.toastr.success(`Les informations de votre profil ont bien été modifiées`);
-          this.onCloseEditUser.emit(user);
-        },
-        (err) => {
-          this.isCreatingUpdating = false;
-          // this.toastr.error(err.message);
-          throw err;
-        },
-      );
+      this._userService.patchList({ ...formVal, _id: this.user._id }).subscribe((data) => {
+        const user = data[0];
+        this.isCreatingUpdating = false;
+        this.toastr.success(`Les informations de votre profil ont bien été modifiées`);
+        this.onCloseEditUser.emit(user);
+      }, errM);
     }
   }
 
