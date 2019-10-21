@@ -10,6 +10,9 @@ export interface TerritoryInterface {
   acronym?: string;
   insee?: string[];
 
+  siret?: string;
+  parent_id?: string;
+
   company?: CompanyInterface;
   address?: AddressInterface;
   contacts?: ContactsInterface;
