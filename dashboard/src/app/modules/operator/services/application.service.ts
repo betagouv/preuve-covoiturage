@@ -32,10 +32,13 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
   get application$(): Observable<ApplicationInterface[]> {
     return this._entities$.pipe(
       map((operatorApplications: ApplicationInterface[]) =>
-        operatorApplications.map((operatorApplication) => {
-          operatorApplication.created_at = new Date(operatorApplication.created_at);
-          return operatorApplication;
-        }),
+        operatorApplications
+          .map((operatorApplication) => {
+            operatorApplication.created_at = new Date(operatorApplication.created_at);
+            return operatorApplication;
+          })
+          // @ts-ignore
+          .sort((a, b) => b.created_at - a.created_at),
       ),
     );
   }

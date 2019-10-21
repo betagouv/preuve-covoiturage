@@ -21,8 +21,8 @@ import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum'
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 import { IncentiveUnitEnum } from '../../../src/app/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
-import { operatorStubs } from '../stubs/operator.list';
-import { cypress_logging_users } from '../stubs/login';
+import { operatorStubs } from '../stubs/operator/operator.list';
+import { cypress_logging_users } from '../stubs/auth/login';
 
 export class CypressExpectedCampaign {
   static startMoment = Cypress.moment()

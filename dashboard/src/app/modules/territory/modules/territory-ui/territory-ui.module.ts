@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '~/shared/modules/material/material.module';
 import { FormModule } from '~/shared/modules/form/form.module';
 import { SharedModule } from '~/shared/shared.module';
+import { DetailsModule } from '~/shared/modules/details/details.module';
 
 import { TerritoryFormComponent } from './components/territory-form/territory-form.component';
 // tslint:disable-next-line:max-line-length
@@ -15,7 +16,6 @@ import { TerritoryFilterComponent } from './components/territory-filter/territor
 import { TerritoryListViewComponent } from './components/territory-list-view/territory-list-view.component';
 import { TerritoryViewComponent } from './components/territory-view/territory-view.component';
 import { TerritoryDetailsComponent } from './components/territory-details/territory-details.component';
-import { DetailsModule } from '~/shared/modules/details/details.module';
 
 @NgModule({
   declarations: [

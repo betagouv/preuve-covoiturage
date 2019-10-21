@@ -3,7 +3,7 @@
 
   <div class="territory-row">
     <div class="full-col">
-      <p>
+      <p class="territory-name">
         <strong>Nom : </strong>
         {{ territory.name }}
       </p>
@@ -58,7 +58,7 @@
   <div *ngIf="displayContacts">
     <h2>Contacts et responsables</h2>
 
-    <div class="operator-row">
+    <div class="territory-row">
       <div>
         <h3>Délégué à la protection des données</h3>
         <app-details-contact [contact]="territory.contacts.gdpr_dpo"></app-details-contact>

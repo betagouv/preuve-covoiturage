@@ -3,7 +3,7 @@
 </div>
 <div class="stats" *ngIf="loaded">
   <div class="stats-graph">
-    <app-stat-graph [graphName]="graphName"></app-stat-graph>
+    <app-stat-graph [graphName]="graphName" [graphData]="graphData"></app-stat-graph>
   </div>
   <div *ngIf="statService.stat" class="stats-numbers">
     <app-stat-number

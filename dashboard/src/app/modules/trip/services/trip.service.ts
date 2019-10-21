@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-
+import * as _ from 'lodash';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { finalize, tap } from 'rxjs/operators';
@@ -45,18 +45,15 @@ export class TripService extends ApiService<Trip> {
   }
 
   public load(filter: FilterInterface | {} = {}) {
+    const params = _.cloneDeep(filter);
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [loggedUser.territory];
-      // TODO: temp, remove when filter operator added
-      if ('operator_id' in filter) {
-        delete filter.operator_id;
-      }
+      params['territory_id'] = [loggedUser.territory];
     }
     if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
-      filter['operator_id'] = [loggedUser.operator];
+      params['operator_id'] = [loggedUser.operator];
     }
-    return super.load(filter);
+    return super.load(params);
   }
 
   // todo: uncomment when api route is made

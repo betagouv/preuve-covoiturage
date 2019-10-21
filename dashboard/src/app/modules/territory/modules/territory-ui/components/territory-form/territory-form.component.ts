@@ -113,7 +113,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private updateValidation() {
-    console.log('updateValidation', this.fullFormMode);
     if (this.territoryForm) {
       this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
       this.territoryForm.controls['acronym'].setValidators(this.fullFormMode ? Validators.max(12) : null);
