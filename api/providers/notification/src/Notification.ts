@@ -1,17 +1,14 @@
+import { ConfigInterfaceResolver, NewableType, provider, TemplateInterfaceResolver } from '@ilos/common';
+
+import { MailjetDriver } from './mail/MailjetDriver';
 import {
-  ConfigInterfaceResolver,
   MailDriverInterface,
   MailInterface,
-  NewableType,
   NotificationConfigurationType,
   NotificationInterface,
   NotificationInterfaceResolver,
-  provider,
-  TemplateInterfaceResolver,
   TemplateMailInterface,
-} from '@ilos/common';
-
-import { MailjetDriver } from './mail/MailjetDriver';
+} from './common';
 
 @provider({
   identifier: NotificationInterfaceResolver,
