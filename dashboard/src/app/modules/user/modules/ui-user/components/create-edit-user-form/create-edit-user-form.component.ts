@@ -41,9 +41,30 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       phone: '',
       role: '',
       permissions: [],
-
       ...user,
     };
+  }
+
+  updateFormValues() {
+    const user: User = this.cleanUserForForm();
+
+    this.updateValidators();
+    if (this.createEditUserForm) {
+      this.createEditUserForm.setValue({
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        phone: user.phone ? user.phone : null,
+        role: user.role,
+        group: user.group,
+        territory: user.territory ? user.territory : null,
+        operator: user.operator ? user.operator : null,
+      });
+
+      Object.keys(this.createEditUserForm.controls).forEach((key) => {
+        this.createEditUserForm.controls[key].setErrors(null);
+      });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -52,25 +73,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     }
 
     if (changes['user']) {
-      const user: User = this.cleanUserForForm();
-
-      this.updateValidators();
-      if (this.createEditUserForm) {
-        this.createEditUserForm.setValue({
-          firstname: user.firstname,
-          lastname: user.lastname,
-          email: user.email,
-          phone: user.phone ? user.phone : null,
-          role: user.role,
-          group: user.group,
-          territory: user.territory ? user.territory : null,
-          operator: user.operator ? user.operator : null,
-        });
-
-        Object.keys(this.createEditUserForm.controls).forEach((key) => {
-          this.createEditUserForm.controls[key].setErrors(null);
-        });
-      }
+      this.updateFormValues();
     }
   }
 
@@ -189,5 +192,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     });
 
     this.updateValidators(isCreating, groupEditable);
+
+    this.updateFormValues();
   }
 }
