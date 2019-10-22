@@ -43,9 +43,10 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
 
   private initTerritoryViews() {
     // todo: get territories
-    const territories: Territory[] = [
-      ...new Set(this.campaigns.map((c) => ({ _id: c.territory_id, name: 'territory_name' }))),
-    ];
+    const territories: Territory[] = this.campaigns.map(
+      (c) => new Territory({ _id: c.territory_id, name: 'territory_name' }),
+    );
+
     const uniqueTerritories = Array.from(new Set(territories.map((t) => t._id))).map((id) =>
       territories.find((t) => t._id === id),
     );

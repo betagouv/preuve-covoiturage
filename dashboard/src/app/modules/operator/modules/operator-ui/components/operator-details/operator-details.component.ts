@@ -32,6 +32,7 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
 
   private setOperatorDetails(operator: Operator) {
     this.operator = operator.toFormValues();
+
     // base values for form
     // const operatorConstruct = new Operator({
     //   _id: null,

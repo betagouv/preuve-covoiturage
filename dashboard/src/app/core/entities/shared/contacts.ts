@@ -8,9 +8,9 @@ export class Contacts {
   technical?: Contact;
 
   constructor(obj?: { gdpr_dpo?: Contact; gdpr_controller?: Contact; technical?: Contact }) {
-    if (obj && hasOneNotEmptyProperty(obj.gdpr_dpo)) this.gdpr_dpo = obj.gdpr_dpo;
-    if (obj && hasOneNotEmptyProperty(obj.gdpr_controller)) this.gdpr_controller = obj.gdpr_controller;
-    if (obj && hasOneNotEmptyProperty(obj.technical)) this.technical = obj.technical;
+    if (obj && hasOneNotEmptyProperty(obj.gdpr_dpo)) this.gdpr_dpo = new Contact(obj.gdpr_dpo);
+    if (obj && hasOneNotEmptyProperty(obj.gdpr_controller)) this.gdpr_controller = new Contact(obj.gdpr_controller);
+    if (obj && hasOneNotEmptyProperty(obj.technical)) this.technical = new Contact(obj.technical);
   }
 
   toFormValues() {

@@ -4,14 +4,23 @@ export class CGU {
   public acceptedBy?: string;
 
   constructor(
-    obj: {
+    data: {
       accepted?: boolean;
       acceptedAt?: string;
       acceptedBy?: string;
     } = {},
   ) {
-    this.accepted = 'accepted' in obj ? obj.accepted : null;
-    this.acceptedAt = obj.acceptedAt || null;
-    this.acceptedBy = obj.acceptedBy || null;
+    if (data && data.accepted) this.accepted = data.accepted;
+    if (data && data.acceptedAt) this.acceptedAt = data.acceptedAt;
+    if (data && data.acceptedBy) this.acceptedBy = data.acceptedBy;
+  }
+
+  toFormValues() {
+    return {
+      accepted: false,
+      acceptedAt: '',
+      acceptedBy: '',
+      ...this,
+    };
   }
 }

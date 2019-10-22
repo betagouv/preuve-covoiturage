@@ -20,6 +20,7 @@ export class FormCompany {
     this.nature_juridique.setValue(company.nature_juridique);
 
     this.rna.setValue(company.rna);
+    this.rna.setValidators([Validators.pattern(REGEXP.rna)]);
 
     this.vat_intra.setValue(company.vat_intra);
     this.vat_intra.setValidators([Validators.pattern(REGEXP.vatIntra)]);

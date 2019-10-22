@@ -15,7 +15,6 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
-import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
 @Component({
   selector: 'app-territory-form',
@@ -33,6 +32,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   fullFormMode = false;
 
+  private editedId: string;
+
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
@@ -44,12 +45,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   ngOnInit() {
-    this.initTerritoryForm();
-    this.initTerritoryFormValue();
-    this.checkPermissions();
-
     this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+      this.initTerritoryForm();
+      this.initTerritoryFormValue();
+      this.checkPermissions();
       this.updateValidation();
     });
   }
@@ -64,17 +64,17 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onSubmit(): void {
     const territory = new Territory(this.territoryForm.value);
-    if (territory._id) {
+    if (this.editedId) {
       const formData = this.fullFormMode
         ? this.territoryForm.value
         : {
             _id: territory._id,
-            contacts: this.territoryForm.value.contacts,
+            contacts: new Contacts(this.territoryForm.value.contacts),
           };
 
       const patch$ = this.fullFormMode
-        ? this._territoryService.patchList(hasOneNotEmptyProperty(formData))
-        : this._territoryService.patchContactList(hasOneNotEmptyProperty({ ...formData.contacts, _id: formData._id }));
+        ? this._territoryService.updateList(new Territory({ ...formData, _id: this.editedId }))
+        : this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
 
       patch$.subscribe(
         (data) => {
@@ -85,7 +85,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           this.toastr.error(`Une erreur est survenue lors de la mis à jour du territoire`);
         },
       );
-    }
+    } else throw new Error('Territory creation not supported');
   }
 
   public onClose(): void {
@@ -97,71 +97,63 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   private initTerritoryForm(): void {
-    this.territoryForm = this.fb.group({
-      _id: [null],
-      name: [''],
-      acronym: [''],
-      address: this.fb.group(new FormAddress(new Address({ street: null, city: null, country: null, postcode: null }))),
-      company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+    let formOptions: any = {
       contacts: this.fb.group({
         gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
-    });
+    };
+    if (this.fullFormMode) {
+      formOptions = {
+        ...formOptions,
+        name: [''],
+        shortname: [''],
+        address: this.fb.group(
+          new FormAddress(
+            new Address({
+              street: null,
+              city: null,
+              country: null,
+              postcode: null,
+            }),
+          ),
+        ),
+        company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+        contacts: this.fb.group({
+          gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+          gdpr_controller: this.fb.group(
+            new FormContact(
+              new Contact({
+                firstname: null,
+                lastname: null,
+                email: null,
+              }),
+            ),
+          ),
+          technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        }),
+      };
+    }
 
+    this.territoryForm = this.fb.group(formOptions);
     this.updateValidation();
   }
 
   private updateValidation() {
-    if (this.territoryForm) {
+    if (this.territoryForm && this.fullFormMode) {
       this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
-      this.territoryForm.controls['acronym'].setValidators(this.fullFormMode ? Validators.max(12) : null);
+      this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
     }
   }
 
   // todo: ugly ...
   private setTerritoryFormValue(territory: Territory) {
     // base values for form
-    const territoryConstruct = new Territory({
-      _id: null,
-      name: null,
-      acronym: null,
-      contacts: new Contacts(),
-    });
+    this.editedId = territory ? territory._id : null;
 
-    // @ts-ignore
-    const { contacts, ...territoryParams } = territory ? new Territory({ ...territory }) : new Territory();
-    territoryParams.contacts = new Contacts(contacts);
-
-    // // get values in correct format with initialized values
-    const formValues: Territory = {
-      _id: territoryParams._id,
-      name: territoryParams.name,
-      acronym: territoryParams.acronym,
-      address: new Address({
-        ...territoryConstruct.address,
-        ...territoryParams.address,
-      }),
-      company: new Company({
-        ...territoryConstruct.company,
-        ...territoryParams.company,
-      }),
-      contacts: new Contacts({
-        gdpr_dpo: {
-          ...territoryConstruct.contacts.gdpr_dpo,
-          ...territoryParams.contacts.gdpr_dpo,
-        },
-        gdpr_controller: {
-          ...territoryConstruct.contacts.gdpr_controller,
-          ...territoryParams.contacts.gdpr_controller,
-        },
-        technical: {
-          ...territoryConstruct.contacts.technical,
-          ...territoryParams.contacts.technical,
-        },
-      }),
-    };
+    const territoryEd = new Territory(territory);
+    const formValues = territoryEd.toFormValues(this.fullFormMode);
 
     this.territoryForm.setValue(formValues);
   }

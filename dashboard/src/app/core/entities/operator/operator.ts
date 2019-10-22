@@ -55,7 +55,7 @@ class Operator {
   }
 
   toFormValues(fullFormMode = true) {
-    const val = fullFormMode
+    const val: any = fullFormMode
       ? {
           ...this,
           company: new Company(this.company).toFormValues(),
