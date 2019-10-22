@@ -104,7 +104,11 @@ export class AuthenticationService {
       tap((user) => {
         if (user) {
           this.onLoggin(new User(user));
-          this.router.navigate(['/trip/stats']);
+          if (user.territory) {
+            this.router.navigate(['/campaign']);
+          } else {
+            this.router.navigate(['/trip/stats']);
+          }
         } else {
           this.toastr.error('Mauvais Email ou mot de passe');
         }
@@ -145,6 +149,10 @@ export class AuthenticationService {
       return user.permissions.filter((permission: PermissionType) => permissions.includes(permission)).length > 0;
     }
     return true;
+  }
+
+  public hasAnyPermissionObs(permissions: PermissionType[]): Observable<boolean> {
+    return this.user$.pipe(map((user) => this.hasAnyPermission(permissions)));
   }
 
   /**

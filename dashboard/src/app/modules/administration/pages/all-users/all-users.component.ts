@@ -10,6 +10,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 // tslint:disable-next-line: max-line-length
 import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-all-users',
@@ -27,6 +28,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
 
   @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
   public editedUser: User;
+  canEditUser$: Observable<boolean>;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -46,6 +48,8 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     // this.userGroupButtons.writeValue(this.userGroup);
     this.loadUsers();
     this.initSearchForm();
+
+    this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
   }
 
   showEditForm(user: User = null) {
@@ -101,7 +105,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   public filterUsers() {
     const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
     this.usersToShow = this.users.filter(
-      (u) => (u.email.includes(query) || `${u.firstname} ${u.lastname}`.includes(query)) && this.userGroup === u.group,
+      (u) => `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query) && this.userGroup === u.group,
     );
   }
 }

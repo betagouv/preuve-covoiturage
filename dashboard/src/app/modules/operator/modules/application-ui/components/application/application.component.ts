@@ -52,9 +52,9 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
   }
 
   public onDelete(application: ApplicationInterface) {
-    const message = `Etes-vous sûr de vouloir supprimer le token d'accès : ${application.name} ?`;
+    const message = `Etes-vous sûr de vouloir supprimer l'application : ${application.name} ?`;
     this._dialog
-      .confirm('Suppression du token', message, 'Confirmer')
+      .confirm("Suppression de l'application", message, 'Confirmer')
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
@@ -63,8 +63,7 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               (data) => {
-                const deletedApplication = data[0];
-                this._toastr.success(`Le token d'accès : "${deletedApplication.name} a été supprimé`);
+                this._toastr.success(`Le token d'accès : "${application.name} a été supprimé`);
               },
               (err) => {
                 this._toastr.error(err.message);

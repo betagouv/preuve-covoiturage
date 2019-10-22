@@ -116,6 +116,9 @@ export const operators = {
       'profile.update',
       'profile.password',
       'profile.delete',
+      'operator.trip.list',
+      'operator.trip.stats',
+      'incentive-campaign.list',
     ],
   },
   user: {
@@ -135,6 +138,7 @@ export const operators = {
       'profile.delete',
       'operator.trip.list',
       'operator.trip.stats',
+      'incentive-campaign.list',
     ],
   },
 };
@@ -166,6 +170,13 @@ export const registry = {
   user: {
     slug: 'user',
     name: 'User',
-    permissions: ['user.list', 'profile.read', 'profile.update', 'profile.password', 'profile.delete'],
+    permissions: [
+      'user.list',
+      'profile.read',
+      'profile.update',
+      'profile.password',
+      'profile.delete',
+      'incentive-campaign.list',
+    ],
   },
 };

@@ -17,6 +17,8 @@ export class UserService extends ApiService<User> {
     super(_http, _jsonRPC, 'user');
   }
 
+  protected _defaultListParams = { limit: 10000 };
+
   get user() {
     return this._entity$.value;
   }
@@ -31,25 +33,26 @@ export class UserService extends ApiService<User> {
     return this._entity$;
   }
 
-  catchPatchError<T>(patchObs: Observable<T>): Observable<T> {
-    return patchObs.pipe(
-      catchError((error) => {
-        if (error.code === -32000) {
-          console.log('error : ', error);
-          this.toastr.error('Cette adresse email est déjà utilisée');
-          // return of(null);
-        }
-
-        throw error;
-      }),
-    );
-  }
-
-  patchList(item: IModel): Observable<[User, User[]]> {
-    return this.catchPatchError<[User, User[]]>(super.patchList(item));
-  }
-
-  patch(item: User): Observable<User> {
-    return this.catchPatchError<User>(super.patch(item));
-  }
+  // catchPatchError<T>(patchObs: Observable<T>): Observable<T> {
+  //   return patchObs.pipe(
+  //     catchError((error) => {
+  //       debugger;
+  //       if (error.code === -32000) {
+  //         console.log('error : ', error);
+  //         this.toastr.error('Cette adresse email est déjà utilisée');
+  //         // return of(null);
+  //       }
+  //
+  //       throw error;
+  //     }),
+  //   );
+  // }
+  //
+  // patchList(item: IModel): Observable<[User, User[]]> {
+  //   return this.catchPatchError<[User, User[]]>(super.patchList(item));
+  // }
+  //
+  // patch(item: User): Observable<User> {
+  //   return this.catchPatchError<User>(super.patch(item));
+  // }
 }

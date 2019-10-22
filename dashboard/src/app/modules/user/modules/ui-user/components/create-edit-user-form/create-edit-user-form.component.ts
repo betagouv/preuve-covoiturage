@@ -33,29 +33,47 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     super();
   }
 
+  cleanUserForForm(user = this.user): User {
+    return {
+      firstname: '',
+      lastname: '',
+      email: '',
+      phone: '',
+      role: '',
+      permissions: [],
+      ...user,
+    };
+  }
+
+  updateFormValues() {
+    const user: User = this.cleanUserForForm();
+
+    this.updateValidators();
+    if (this.createEditUserForm) {
+      this.createEditUserForm.setValue({
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        phone: user.phone ? user.phone : null,
+        role: user.role,
+        group: user.group,
+        territory: user.territory ? user.territory : null,
+        operator: user.operator ? user.operator : null,
+      });
+
+      Object.keys(this.createEditUserForm.controls).forEach((key) => {
+        this.createEditUserForm.controls[key].setErrors(null);
+      });
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['isCreating'] || changes['groupEditable']) {
       this.updateValidators();
     }
 
     if (changes['user']) {
-      this.updateValidators();
-      if (this.createEditUserForm) {
-        this.createEditUserForm.setValue({
-          firstname: this.user.firstname,
-          lastname: this.user.lastname,
-          email: this.user.email,
-          phone: this.user.phone ? this.user.phone : null,
-          role: this.user.role,
-          group: this.user.group,
-          territory: this.user.territory ? this.user.territory : null,
-          operator: this.user.operator ? this.user.operator : null,
-        });
-
-        Object.keys(this.createEditUserForm.controls).forEach((key) => {
-          this.createEditUserForm.controls[key].setErrors(null);
-        });
-      }
+      this.updateFormValues();
     }
   }
 
@@ -86,37 +104,30 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       delete formVal.role;
     }
 
+    const errM = (err) => {
+      if (err.status === 409) this.toastr.error('Cette adresse email est déjà utilisée');
+      this.isCreatingUpdating = false;
+      // this.toastr.error(err.message);
+      throw err;
+    };
+
     if (this.isCreating) {
-      this._userService.createList(formVal).subscribe(
-        (data) => {
-          const user = data[0];
-          this.isCreatingUpdating = false;
-          this.toastr.success(
-            `Un email a été envoyé à ${user.email}`,
-            `L'utilisateur ${user.firstname} ${user.lastname} a été créé`,
-          );
-          this.onCloseEditUser.emit(user);
-        },
-        (err) => {
-          this.isCreatingUpdating = false;
-          // this.toastr.error(err.message);
-          throw err;
-        },
-      );
+      this._userService.createList(formVal).subscribe((data) => {
+        const user = data[0];
+        this.isCreatingUpdating = false;
+        this.toastr.success(
+          `Un email a été envoyé à ${user.email}`,
+          `L'utilisateur ${user.firstname} ${user.lastname} a été créé`,
+        );
+        this.onCloseEditUser.emit(user);
+      }, errM);
     } else {
-      this._userService.patchList({ ...formVal, _id: this.user._id }).subscribe(
-        (data) => {
-          const user = data[0];
-          this.isCreatingUpdating = false;
-          this.toastr.success(`Les informations de votre profil ont bien été modifiées`);
-          this.onCloseEditUser.emit(user);
-        },
-        (err) => {
-          this.isCreatingUpdating = false;
-          // this.toastr.error(err.message);
-          throw err;
-        },
-      );
+      this._userService.patchList({ ...formVal, _id: this.user._id }).subscribe((data) => {
+        const user = data[0];
+        this.isCreatingUpdating = false;
+        this.toastr.success(`Les informations de votre profil ont bien été modifiées`);
+        this.onCloseEditUser.emit(user);
+      }, errM);
     }
   }
 
@@ -153,15 +164,16 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     groupEditable: boolean = this.groupEditable,
     user: User = this.user,
   ): void {
+    const cleanUser = this.cleanUserForForm(user);
     this.createEditUserForm = this.fb.group({
-      firstname: [user.firstname, Validators.required],
-      lastname: [user.lastname, Validators.required],
-      email: [user.email, [Validators.required, Validators.pattern(REGEXP.email)]],
-      phone: [user.phone, Validators.pattern(REGEXP.phone)],
-      role: [user.role],
-      group: [user.group],
-      territory: [user.territory],
-      operator: [user.operator],
+      firstname: [cleanUser.firstname, Validators.required],
+      lastname: [cleanUser.lastname, Validators.required],
+      email: [cleanUser.email, [Validators.required, Validators.pattern(REGEXP.email)]],
+      phone: [cleanUser.phone, Validators.pattern(REGEXP.phone)],
+      role: [cleanUser.role],
+      group: [cleanUser.group],
+      territory: [cleanUser.territory],
+      operator: [cleanUser.operator],
     });
 
     this.createEditUserForm.valueChanges.subscribe((formVal) => {
@@ -180,5 +192,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     });
 
     this.updateValidators(isCreating, groupEditable);
+
+    this.updateFormValues();
   }
 }

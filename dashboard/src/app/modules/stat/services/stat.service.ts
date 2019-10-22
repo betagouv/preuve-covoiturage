@@ -2,14 +2,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { ApiService } from '~/core/services/api/api.service';
-import { CalculatedStatInterface } from '~/core/interfaces/stat/calculatedStatInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -31,16 +29,18 @@ export class StatService {
     private _authService: AuthenticationService,
   ) {}
 
-  public loadOne(filter: FilterInterface | {} = {}): Observable<StatInterface[]> {
+  public loadOne(): Observable<StatInterface[]> {
     const user = this._authService.user;
+
+    const params = {};
     if (user && user.group === UserGroupEnum.TERRITORY) {
-      filter['territory_id'] = [user.territory];
+      params['territory_id'] = [user.territory];
     }
     if (user && user.group === UserGroupEnum.OPERATOR) {
-      filter['operator_id'] = [user.operator];
+      params['operator_id'] = [user.operator];
     }
     this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`trip:stats`, filter);
+    const jsonRPCParam = new JsonRPCParam(`trip:stats`, params);
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((data: StatInterface[]) => {
@@ -66,5 +66,10 @@ export class StatService {
 
   get stat$(): Observable<FormatedStatInterface> {
     return this._formatedStat$;
+  }
+
+  init() {
+    this._formatedStat$.next(null);
+    this._loaded$.next(false);
   }
 }

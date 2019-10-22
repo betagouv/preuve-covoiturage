@@ -40,12 +40,12 @@
 
   <app-operator-autocomplete
     [parentForm]="createEditUserForm"
-    [hidden]="!groupEditable || !operatorEditable || !isCreating"
+    *ngIf="groupEditable && operatorEditable && isCreating"
   ></app-operator-autocomplete>
 
   <app-territory-autocomplete
     [parentForm]="createEditUserForm"
-    [hidden]="!groupEditable || !territoryEditable || !isCreating"
+    *ngIf="groupEditable && territoryEditable && isCreating"
   ></app-territory-autocomplete>
 
   <!--  <mat-form-field appearance="outline">-->

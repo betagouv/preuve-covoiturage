@@ -52,7 +52,9 @@ export class OperatorListComponent extends DestroyObservable implements OnInit, 
   }
 
   filter() {
-    this.operatorsToShow = this.operators.filter((t) => t.nom_commercial.toLowerCase().includes(this.filterLiteral));
+    this.operatorsToShow = this.operators.filter((t) =>
+      t.nom_commercial.toLowerCase().includes(this.filterLiteral.toLowerCase()),
+    );
   }
 
   onEdit(operator) {

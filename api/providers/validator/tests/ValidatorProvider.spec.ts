@@ -10,6 +10,7 @@ import { bicFormatTest } from './parts/bicFormatTest.spec';
 import { objectidFormatTest } from './parts/objectidFormatTest.spec';
 import { coordinatesKeywordTest } from './parts/coordinatesKeywordTest.spec';
 import { macroKeywordTest } from './parts/macroKeywordTest.spec';
+import { rnaFormatTest } from './parts/rnaFormatTest.spec';
 import { ValidatorExtension } from '../src/ValidatorExtension';
 import { ValidatorInterfaceResolver } from '../src';
 
@@ -22,11 +23,7 @@ const { expect, assert } = chai;
   validator: [],
 })
 class ServiceProvider extends BaseServiceProvider {
-  extensions = [
-    EnvExtension,
-    ConfigExtension,
-    ValidatorExtension,
-  ]
+  extensions = [EnvExtension, ConfigExtension, ValidatorExtension];
 }
 let provider;
 
@@ -154,6 +151,7 @@ describe('Json Schema provider', () => {
   describe('Phone custom format', phoneFormatTest(getProvider, FakeObject));
   describe('BIC custom format', bicFormatTest(getProvider, FakeObject));
   describe('ObjectId custom format', objectidFormatTest(getProvider, FakeObject));
+  describe('RNA custom format', rnaFormatTest(getProvider, FakeObject));
   // EU VAT
   // IBAN
   // INSEE

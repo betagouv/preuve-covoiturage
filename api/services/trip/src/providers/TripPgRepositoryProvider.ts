@@ -268,6 +268,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       'date',
       'ranks',
       'distance',
+      'towns',
       // 'campaign_id',
       'days',
       'hour',
@@ -296,18 +297,18 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           case 'date':
             if (filter.value.start && filter.value.end) {
               return {
-                text: '($#::timestamp > start_datetime AND start_datetime > $#::timestamp)',
+                text: '($#::timestamp < start_datetime AND start_datetime < $#::timestamp)',
                 values: [filter.value.start, filter.value.end],
               };
             }
             if (filter.value.start) {
               return {
-                text: '$#::timestamp > start_datetime',
+                text: '$#::timestamp < start_datetime',
                 values: [filter.value.start],
               };
             }
             return {
-              text: 'start_datetime > $#::timestamp',
+              text: 'start_datetime < $#::timestamp',
               values: [filter.value.end],
             };
           case 'ranks':
@@ -335,9 +336,10 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           case 'campaign_id':
             throw new Error('Unimplemented');
           case 'towns':
+            const towns = filter.value.map((v: string) => `%${v}%`);
             return {
               text: 'start_town LIKE ANY($#::text[]) OR end_town LIKE ANY ($#::text[])',
-              values: [filter.value.map((v: string) => `%${v}%`)],
+              values: [towns, towns],
             };
           case 'days':
             return {
@@ -346,7 +348,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
             };
           case 'hour': {
             return {
-              text: '($#::int >= extract(hour from start_datetime) AND extract(hour from start_datetime) >= $#::int)',
+              text: '($#::int <= extract(hour from start_datetime) AND extract(hour from start_datetime) <= $#::int)',
               values: [filter.value.start, filter.value.end],
             };
           }
@@ -422,14 +424,15 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       text: `
         SELECT
           trip_id,
-          start_datetime,
+          is_driver,
           start_town,
           end_town,
-          incentives,
+          start_datetime,
           operator_id,
+          incentives,
           operator_class
         FROM trip_participants
-        ${where ? `${where.text} AND is_driver = false` : 'WHERE is_driver = false'}
+        ${where ? where.text : ''}
         ORDER BY start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer

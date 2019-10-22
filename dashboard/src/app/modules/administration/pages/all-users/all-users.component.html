@@ -28,7 +28,7 @@
   <div class="Users-list">
     <app-users-list
       *ngIf="usersToShow"
-      [canEditUser]="true"
+      [canEditUser]="canEditUser$ | async"
       [users]="usersToShow"
       (editUser)="showEditForm($event)"
     ></app-users-list>

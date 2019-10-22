@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { finalize, map, mergeMap, tap } from 'rxjs/operators';
 
 import { JsonRPCService } from './json-rpc.service';
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -15,6 +15,8 @@ export class ApiService<T extends IModel> {
   protected _loaded$ = new BehaviorSubject<boolean>(false);
 
   protected _listFilters = {};
+
+  protected _defaultListParams = {};
 
   constructor(private _httpClient: HttpClient, protected _jsonRPCService: JsonRPCService, protected _method: string) {}
 
@@ -55,7 +57,7 @@ export class ApiService<T extends IModel> {
   }
 
   public getListJSONParam(parameters: object = {}): JsonRPCParam {
-    return new JsonRPCParam(`${this._method}:list`, parameters);
+    return new JsonRPCParam(`${this._method}:list`, { ...this._defaultListParams, ...parameters });
   }
 
   public getFindJSONParam(parameters: object = {}): JsonRPCParam {
@@ -148,6 +150,22 @@ export class ApiService<T extends IModel> {
       tap((entity: T) => {
         this._entity$.next(entity);
         console.log(`created ${this._method} id=${entity._id}`);
+      }),
+    );
+  }
+
+  /**
+   * Patch entity
+   * @returns modified entity and list of entities
+   */
+  public updateList(item: IModel): Observable<[T, T[]]> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:update`, item);
+    return this._jsonRPCService.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
+      mergeMap((modifiedEntity: T) => {
+        console.log(`updated ${this._method} id=${modifiedEntity._id}`);
+        this._entity$.next(modifiedEntity);
+        return this.load(this._listFilters).pipe(map((entities) => <[T, T[]]>[modifiedEntity, entities]));
       }),
     );
   }

@@ -15,7 +15,7 @@ import {
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
-import { operatorStubs } from '../stubs/operator.list';
+import { operatorStubs } from '../stubs/operator/operator.list';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {
@@ -58,8 +58,8 @@ export class CampaignsGenerator {
             new OperatorIdsRetributionRule([operatorStubs[0]._id]),
             new TimeRetributionRule([
               {
-                start: '08:00',
-                end: '19:00',
+                start: 8,
+                end: 9,
               },
             ]),
           ],

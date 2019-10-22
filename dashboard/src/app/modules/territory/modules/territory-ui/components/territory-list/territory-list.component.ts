@@ -51,7 +51,9 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit,
   }
 
   filter() {
-    this.territoriesToShow = this.territories.filter((t) => t.name.toLowerCase().includes(this.filterLiteral));
+    this.territoriesToShow = this.territories.filter((t) =>
+      t.name.toLowerCase().includes(this.filterLiteral.toLowerCase()),
+    );
   }
 
   onEdit(territory: Territory) {

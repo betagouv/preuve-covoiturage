@@ -5,17 +5,20 @@ export class Bank {
   public iban: string;
   public bic: string;
 
-  constructor(
-    obj: { bank_name: string; client_name: string; iban: string; bic: string } = {
-      bank_name: null,
-      client_name: null,
-      iban: null,
-      bic: null,
-    },
-  ) {
-    this.bank_name = obj.bank_name;
-    this.client_name = obj.client_name;
-    this.iban = obj.iban;
-    this.bic = obj.bic;
+  constructor(obj?: { bank_name: string; client_name: string; iban: string; bic: string }) {
+    if (obj && obj.bank_name) this.bank_name = obj.bank_name;
+    if (obj && obj.client_name) this.client_name = obj.client_name;
+    if (obj && obj.iban) this.iban = obj.iban;
+    if (obj && obj.bic) this.bic = obj.bic;
+  }
+
+  toFormValues() {
+    return {
+      bank_name: '',
+      client_name: '',
+      iban: '',
+      bic: '',
+      ...this,
+    };
   }
 }

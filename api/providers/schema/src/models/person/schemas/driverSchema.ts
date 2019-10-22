@@ -1,5 +1,5 @@
 import { incentiveSchema } from '../../incentive';
-import { positionSchema } from '../../position';
+import { startSchema, endSchema } from '../../position';
 import { identitySchema } from '../../identity';
 import { paymentSchema } from '../../payment';
 
@@ -9,8 +9,8 @@ export const driverSchema = {
   additionalProperties: false,
   properties: {
     identity: identitySchema,
-    start: positionSchema,
-    end: positionSchema,
+    start: startSchema,
+    end: endSchema,
     expense: {
       type: 'integer',
       minimum: 0,

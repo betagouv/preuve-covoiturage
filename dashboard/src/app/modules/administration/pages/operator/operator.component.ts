@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { map, takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { map, takeUntil } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { Operator } from '~/core/entities/operator/operator';
 
 @Component({
@@ -26,11 +26,6 @@ export class OperatorComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
-    // this._operatorService
-    //   .loadConnectedOperator()
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe();
-
     // readonly apply only for non admin user
     this.readOnly$ = this._authService.user$.pipe(
       takeUntil(this.destroy$),

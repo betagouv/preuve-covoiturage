@@ -3,7 +3,7 @@
 
   <div class="territory-row">
     <div class="full-col">
-      <p>
+      <p class="territory-name">
         <strong>Nom : </strong>
         {{ territory.name }}
       </p>
@@ -16,19 +16,15 @@
         {{ territory.company.nature_juridique }}
       </p>
 
-      <p *ngIf="territory.company.siren">
-        <strong>SIREN : </strong>
-        {{ territory.company.siren }}
+      <p *ngIf="territory.company.siret">
+        <strong>SIRET : </strong>
+        {{ territory.company.siret }}
       </p>
       <p *ngIf="territory.company.naf_entreprise">
         <strong>Naf entreprise : </strong>
         {{ territory.company.naf_entreprise }}
       </p>
 
-      <p *ngIf="territory.company.cle_nic">
-        <strong>Clé NIC : </strong>
-        {{ territory.company.cle_nic }}
-      </p>
       <p *ngIf="territory.company.rna">
         <strong>RNA : </strong>
         {{ territory.company.rna }}
@@ -58,7 +54,7 @@
   <div *ngIf="displayContacts">
     <h2>Contacts et responsables</h2>
 
-    <div class="operator-row">
+    <div class="territory-row">
       <div>
         <h3>Délégué à la protection des données</h3>
         <app-details-contact [contact]="territory.contacts.gdpr_dpo"></app-details-contact>

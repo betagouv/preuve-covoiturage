@@ -67,7 +67,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
       this.territories = territories
         ? territories.map((territory: Territory) => ({
             _id: territory._id,
-            shortname: territory.shortname || territory.acronym || territory.name,
+            shortname: territory.shortname || territory.name,
           }))
         : [];
       this.filterTerritories();

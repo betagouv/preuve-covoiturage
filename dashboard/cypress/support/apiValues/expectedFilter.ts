@@ -3,9 +3,11 @@ import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum'
 import { TripStatusEnum } from '../../../src/app/core/enums/trip/trip-status.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
-import { campaignStubs } from '../stubs/campaign.list';
-import { operatorStubs } from '../stubs/operator.list';
-import { cypress_logging_users } from '../stubs/login';
+import { campaignStubs } from '../stubs/campaign/campaign.list';
+import { operatorStubs } from '../stubs/operator/operator.list';
+import { cypress_logging_users } from '../stubs/auth/login';
+import { territoryStub } from '../stubs/territory/territory.find';
+import { operatorStub } from '../stubs/operator/operator.find';
 
 export const filterStartMoment = Cypress.moment()
   .add(1, 'days')
@@ -27,11 +29,11 @@ export const expectedFilter: FilterInterface = {
   days: [0, 1],
   towns: ['Lyon'],
   distance: {
-    min: 4,
+    min: 80,
     max: 123,
   },
   ranks: [TripRankEnum.A, TripRankEnum.B],
   status: TripStatusEnum.PENDING,
-  operator_id: [operatorStubs[0]._id],
-  territory_id: [cypress_logging_users[UserGroupEnum.TERRITORY].territory],
+  operator_id: [operatorStub._id],
+  territory_id: [territoryStub._id],
 };

@@ -9,6 +9,32 @@ import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
 import { ServiceProvider } from '../src/ServiceProvider';
+import { callFactory } from './helpers/callFactory';
+
+import { test2MissingUserAuth } from './mocks/test2MissingUserAuth';
+import { test3FailsOnWrongPermissions } from './mocks/test3FailsOnWrongPermissions';
+import { test4FailsOnMethodNotFound } from './mocks/test4FailsOnMethodNotFound';
+import { test5PassengerOnly } from './mocks/test5PassengerOnly';
+import { test6Nobody } from './mocks/test6Nobody';
+import { test7DriverOnly } from './mocks/test7DriverOnly';
+import { test8StartDateInTheFuture } from './mocks/test8StartDateInTheFuture';
+import { test9StartAfterEnd } from './mocks/test9StartAfterEnd';
+import { test10MissingStartDate } from './mocks/test10MissingStartDate';
+import { test11MissingEndDate } from './mocks/test11MissingEndDate';
+import { test12MissingJourneyId } from './mocks/test12MissingJourneyId';
+import { test13MissingOperatorJourneyId } from './mocks/test13MissingOperatorJourneyId';
+import { test14JourneyTooOld } from './mocks/test14JourneyTooOld';
+import { test15ContributionTooLow } from './mocks/test15ContributionTooLow';
+import { test16RevenueTooLow } from './mocks/test16RevenueTooLow.';
+import { test17SeatsTooLow } from './mocks/test17SeatsTooLow.';
+import { test18WrongOperatorClass } from './mocks/test18WrongOperatorClass';
+import { test19WrongEmailFormat } from './mocks/test19WrongEmailFormat';
+import { test20WrongIncentiveSiret } from './mocks/test20WrongIncentiveSiret';
+import { test22WrongIncentiveIndex } from './mocks/test22WrongIncentiveIndex';
+import { test23WrongIncentiveAmount } from './mocks/test23WrongIncentiveAmount';
+import { test24WrongPaymentAmount } from './mocks/test24WrongPaymentAmount';
+import { test25UnsupportedTravelPass } from './mocks/test25UnsupportedTravelPass';
+import { test26DuplicateJourneyId } from './mocks/test26DuplicateJourneyId';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -22,31 +48,7 @@ const user = {
   permissions: ['journey.create'],
 };
 
-const callFactory = (params: any = {}) => ({
-  id: 1,
-  jsonrpc: '2.0',
-  method: 'acquisition:create',
-  params: {
-    params,
-    _context: {
-      call: {
-        user,
-      },
-    },
-  },
-});
-
-const passingJourney = {
-  journey_id: '1234',
-  operator_class: 'A',
-  passenger: {
-    identity: { phone: '+33612345678' },
-    start: { datetime: new Date(new Date().getTime() - 1000), literal: 'Paris' },
-    end: { datetime: new Date(), literal: 'Evry' },
-    contribution: 0,
-    incentives: [],
-  },
-};
+const rpcCall = callFactory(user);
 
 describe('Acquisition service', async () => {
   before(async () => {
@@ -70,10 +72,10 @@ describe('Acquisition service', async () => {
     await transport.down();
   });
 
-  it('#1 - fails on empty payload', async () => {
+  it('#01 - fails on empty payload', async () => {
     return request
       .post('/')
-      .send(callFactory())
+      .send(rpcCall())
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
@@ -82,22 +84,10 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('#2 - fails on missing user authorization', async () => {
+  it('#02 - fails on missing user authorization', async () => {
     return request
       .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'acquisition:create',
-        params: {
-          params: passingJourney,
-          _context: {
-            call: {
-              user: {},
-            },
-          },
-        },
-      })
+      .send(test2MissingUserAuth)
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
@@ -106,24 +96,10 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('#3 - fails on wrong permissions', async () => {
+  it('#03 - fails on wrong permissions', async () => {
     return request
       .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'acquisition:create',
-        params: {
-          params: passingJourney,
-          _context: {
-            call: {
-              user: {
-                permissions: ['wrong:permission'],
-              },
-            },
-          },
-        },
-      })
+      .send(test3FailsOnWrongPermissions)
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
@@ -132,15 +108,10 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('#4 - fails on method not found', async () => {
+  it('#04 - fails on method not found', async () => {
     return request
       .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'acquisition:createUnknown',
-        params: {},
-      })
+      .send(test4FailsOnMethodNotFound)
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
@@ -149,16 +120,292 @@ describe('Acquisition service', async () => {
       });
   });
 
-  it('#5 - succeeds on create journey', async () => {
+  it('#05 - passenger only', async () => {
     return request
       .post('/')
-      .send(callFactory(passingJourney))
+      .send(rpcCall(test5PassengerOnly))
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('operator_id', user.operator);
+        expect(response.body.result).to.have.property('journey_id', test5PassengerOnly.journey_id);
       });
   });
+
+  it('#06 - fails on no passenger and no driver', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test6Nobody))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message', 'Invalid params');
+      });
+  });
+
+  it('#07 - succeeds on missing driver', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test7DriverOnly))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('journey_id', test7DriverOnly.journey_id);
+      });
+  });
+
+  it('#08 - start date in the future', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test8StartDateInTheFuture))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(422);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#09 - start date after end date', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test9StartAfterEnd))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#10 - missing start date', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test10MissingStartDate))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#11 - missing end date', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test11MissingEndDate))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#12 - missing journey_id', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test12MissingJourneyId))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#13 - missing operator_journey_id', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test13MissingOperatorJourneyId))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('journey_id', test13MissingOperatorJourneyId.journey_id);
+      });
+  });
+
+  it('#14 - start date is > 7 days in the past', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test14JourneyTooOld))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('journey_id', test13MissingOperatorJourneyId.journey_id);
+      });
+  });
+
+  it('#15 - passenger contribution < 0', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test15ContributionTooLow))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#16 - driver revenue < 0', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test16RevenueTooLow))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#17 - passenger seats < 1', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test17SeatsTooLow))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#18 - operator_class is different than A,B,C', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test18WrongOperatorClass))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#19 - wrong email format', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test19WrongEmailFormat))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#20 - incentive SIRET is more than 14 numbers', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test20WrongIncentiveSiret))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  // #21 TODO
+
+  it('#22 - Wrong incentive index', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test22WrongIncentiveIndex))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#23 - Wrong incentive amount', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test23WrongIncentiveAmount))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#24 - Wrong payment amount', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test24WrongPaymentAmount))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#25 - Unsupported travel pass', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test25UnsupportedTravelPass))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  // it('#26 - Duplicate journey_id', async () => {
+  //   // First Journey: OK
+  //   await request
+  //     .post('/')
+  //     .send(rpcCall(test26DuplicateJourneyId))
+  //     .set('Accept', 'application/json')
+  //     .set('Content-Type', 'application/json')
+  //     .expect((response: supertest.Response) => {
+  //       expect(response.status).to.equal(200);
+  //       expect(response.body).to.have.property('result');
+  //       expect(response.body.result).to.have.property('journey_id', test26DuplicateJourneyId.journey_id);
+  //     });
+
+  //   // Second Journey: Conflict
+  //   await request
+  //     .post('/')
+  //     .send(rpcCall(test26DuplicateJourneyId))
+  //     .set('Accept', 'application/json')
+  //     .set('Content-Type', 'application/json')
+  //     .expect((response: supertest.Response) => {
+  //       console.log(response.body);
+  //       expect(response.status).to.equal(409);
+  //       expect(response.body).to.have.property('error');
+  //       expect(response.body.error).to.have.property('message');
+  //     });
+  // });
 });

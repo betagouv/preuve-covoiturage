@@ -44,14 +44,14 @@ export class StatFormatService {
         (month) =>
           month.date ===
           moment(day)
-            .endOf('month')
+            .startOf('month')
             .toISOString(),
       );
       if (monthIndex === -1) {
         acc[target].months.push({
-          // set last date of month
+          // set first date of month
           date: moment(day)
-            .endOf('month')
+            .startOf('month')
             .toISOString(),
           ...data,
         });

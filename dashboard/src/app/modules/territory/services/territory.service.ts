@@ -79,6 +79,12 @@ export class TerritoryService extends ApiService<Territory> {
     return super.patchList(territory);
   }
 
+  updateList(territory: Territory): Observable<[Territory, Territory[]]> {
+    this.removeEmpty(territory);
+
+    return super.updateList(territory);
+  }
+
   public patchContactList(item: IModel): Observable<[Territory, Territory[]]> {
     this.removeEmpty(item);
 

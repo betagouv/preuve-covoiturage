@@ -3,11 +3,11 @@
     <mat-label>Nature juridique</mat-label>
     <input matInput formControlName="nature_juridique" />
   </mat-form-field>
-  <mat-form-field class="siren" appearance="outline">
-    <mat-label>SIREN</mat-label>
-    <input matInput formControlName="siren" required />
-    <mat-error *ngIf="parentForm.controls.siren.hasError('required')">Le SIREN est obligatoire.</mat-error>
-    <mat-error *ngIf="parentForm.controls.siren.hasError('pattern')">Le format du siren n'est pas valide.</mat-error>
+  <mat-form-field class="siret" appearance="outline">
+    <mat-label>SIRET</mat-label>
+    <input matInput formControlName="siret" required />
+    <mat-error *ngIf="parentForm.controls.siret.hasError('required')">Le SIRET est obligatoire.</mat-error>
+    <mat-error *ngIf="parentForm.controls.siret.hasError('pattern')">Le format du siret n'est pas valide.</mat-error>
   </mat-form-field>
   <mat-form-field class="naf_entreprise" appearance="outline">
     <mat-label>Naf entreprise</mat-label>
@@ -16,13 +16,7 @@
       >Le format du Naf n'est pas valide.</mat-error
     >
   </mat-form-field>
-  <mat-form-field class="cle_nic" appearance="outline">
-    <mat-label>Clé NIC</mat-label>
-    <input matInput formControlName="cle_nic" />
-    <mat-error *ngIf="parentForm.controls.cle_nic.hasError('pattern')"
-      >Le format de la clé NIC n'est pas valide.</mat-error
-    >
-  </mat-form-field>
+
   <mat-form-field class="rna" appearance="outline">
     <mat-label>RNA</mat-label>
     <input matInput formControlName="rna" />
