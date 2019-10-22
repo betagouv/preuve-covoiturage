@@ -40,7 +40,7 @@ class Territory {
     this._id = data._id;
     this.name = data.name;
     this.acronym = data.acronym || null;
-    this.company = data.company || new Company({ siren: null });
+    this.company = data.company || new Company({ siret: null });
     this.address = data.address || new Address({ street: null, postcode: null, city: null, country: null });
     this.contacts = data.contacts || new Contacts();
     this.cgu = data.cgu || new CGU();

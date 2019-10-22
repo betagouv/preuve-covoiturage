@@ -15,6 +15,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
+import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
 @Component({
   selector: 'app-territory-form',
@@ -72,8 +73,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           };
 
       const patch$ = this.fullFormMode
-        ? this._territoryService.patchList(formData)
-        : this._territoryService.patchContactList({ ...formData.contacts, _id: formData._id });
+        ? this._territoryService.patchList(hasOneNotEmptyProperty(formData))
+        : this._territoryService.patchContactList(hasOneNotEmptyProperty({ ...formData.contacts, _id: formData._id }));
 
       patch$.subscribe(
         (data) => {
@@ -101,7 +102,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       name: [''],
       acronym: [''],
       address: this.fb.group(new FormAddress(new Address({ street: null, city: null, country: null, postcode: null }))),
-      company: this.fb.group(new FormCompany(new Company({ siren: null }))),
+      company: this.fb.group(new FormCompany(new Company({ siret: null }))),
       contacts: this.fb.group({
         gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),

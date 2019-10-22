@@ -43,7 +43,7 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
     operatorParams['contacts'] = new Contacts(contacts);
 
     // // get values in correct format with initialized values
-    this.operator = {
+    this.operator = new Operator({
       _id: operatorParams._id,
       nom_commercial: operatorParams.nom_commercial,
       raison_sociale: operatorParams.raison_sociale,
@@ -73,7 +73,7 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
           ...operatorParams['contacts'].technical,
         },
       }),
-    };
+    });
 
     console.log('this.operator : ', this.operator);
   }

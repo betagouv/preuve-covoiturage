@@ -81,6 +81,12 @@ export class OperatorService extends ApiService<Operator> {
     });
   }
 
+  updateList(operator: Operator): Observable<[Operator, Operator[]]> {
+    this.removeEmpty(operator);
+
+    return super.updateList(operator);
+  }
+
   patchList(operator: Operator): Observable<[Operator, Operator[]]> {
     // remove null values & empty objects
 

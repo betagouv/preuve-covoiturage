@@ -158,6 +158,22 @@ export class ApiService<T extends IModel> {
    * Patch entity
    * @returns modified entity and list of entities
    */
+  public updateList(item: IModel): Observable<[T, T[]]> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:update`, item);
+    return this._jsonRPCService.callOne(jsonRPCParam).pipe(
+      map((data) => data.data),
+      mergeMap((modifiedEntity: T) => {
+        console.log(`updated ${this._method} id=${modifiedEntity._id}`);
+        this._entity$.next(modifiedEntity);
+        return this.load(this._listFilters).pipe(map((entities) => <[T, T[]]>[modifiedEntity, entities]));
+      }),
+    );
+  }
+
+  /**
+   * Patch entity
+   * @returns modified entity and list of entities
+   */
   public patchList(item: IModel): Observable<[T, T[]]> {
     const jsonRPCParam = JsonRPCParam.createPatchParam(`${this._method}:patch`, item);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
