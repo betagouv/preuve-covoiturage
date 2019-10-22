@@ -6,12 +6,11 @@ CREATE TABLE IF NOT EXISTS territory.territories
   siret varchar NOT NULL,
   name varchar NOT NULL,
   shortname varchar,
-  acronym varchar,
-  
+
   company json NOT NULL,
   address json NOT NULL,
   contacts json NOT NULL,
-  
+
   cgu_accepted_at timestamp,
   cgu_accepted_by varchar,
 
