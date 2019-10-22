@@ -44,12 +44,11 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   }
 
   ngOnInit() {
-    this.initOperatorForm();
-    this.initOperatorFormValue();
-    this.checkPermissions();
-
     this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
+      this.initOperatorForm();
+      this.initOperatorFormValue();
+      this.checkPermissions();
       this.updateValidation();
     });
   }
@@ -115,68 +114,48 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     this.editedOperatorId = operator ? operator._id : null;
 
     const operatorFt = new Operator(operator);
-    const operatorConstruct = operatorFt.toFormValues();
-
-    // // @ts-ignore
-    // const { contacts, ...operatorParams } = new Operator({ ...operator });
-    // operatorParams['contacts'] = new Contacts(contacts);
-    //
-    // // // get values in correct format with initialized values
-    // const formValues: Operator = {
-    //   _id: operatorParams._id,
-    //   nom_commercial: operatorParams.nom_commercial,
-    //   raison_sociale: operatorParams.raison_sociale,
-    //   address: new Address({
-    //     ...operatorConstruct.address,
-    //     ...operatorParams.address,
-    //   }),
-    //   bank: new Bank({
-    //     ...operatorConstruct.bank,
-    //     ...operatorParams.bank,
-    //   }),
-    //   company: new Company({
-    //     ...operatorConstruct.company,
-    //     ...operatorParams.company,
-    //   }),
-    //   contacts: new Contacts({
-    //     gdpr_dpo: {
-    //       ...operatorConstruct.contacts ? operatorConstruct.contacts.gdpr_dpo : {},
-    //       ...operatorParams['contacts'].gdpr_dpo,
-    //     },
-    //     gdpr_controller: {
-    //       ...operatorConstruct.contacts ? operatorConstruct.contacts.gdpr_controller : {},
-    //       ...operatorParams['contacts'].gdpr_controller,
-    //     },
-    //     technical: {
-    //       ...operatorConstruct.contacts ? operatorConstruct.contacts.technical : {},
-    //       ...operatorParams['contacts'].technical,
-    //     },
-    //   }),
-    // };
+    const operatorConstruct = operatorFt.toFormValues(this.fullFormMode);
 
     this.operatorForm.setValue(operatorConstruct);
   }
 
   private updateValidation() {
-    if (this.operatorForm) {
+    if (this.operatorForm && this.fullFormMode) {
       this.operatorForm.controls['nom_commercial'].setValidators(this.fullFormMode ? Validators.required : null);
       this.operatorForm.controls['raison_sociale'].setValidators(this.fullFormMode ? Validators.required : null);
     }
   }
 
   private initOperatorForm(): void {
-    this.operatorForm = this.fb.group({
-      nom_commercial: [''],
-      raison_sociale: [''],
-      address: this.fb.group(new FormAddress(new Address({ street: null, city: null, country: null, postcode: null }))),
-      company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+    let formOptions: any = {
       contacts: this.fb.group({
         gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
         technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
       }),
-      bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
-    });
+    };
+
+    if (this.fullFormMode) {
+      formOptions = {
+        ...formOptions,
+        nom_commercial: [''],
+        raison_sociale: [''],
+        address: this.fb.group(
+          new FormAddress(
+            new Address({
+              street: null,
+              city: null,
+              country: null,
+              postcode: null,
+            }),
+          ),
+        ),
+        company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+        bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
+      };
+    }
+
+    this.operatorForm = this.fb.group(formOptions);
 
     this.updateValidation();
   }

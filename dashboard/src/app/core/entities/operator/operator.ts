@@ -54,14 +54,18 @@ class Operator {
     }
   }
 
-  toFormValues() {
-    const val = {
-      ...this,
-      company: new Company(this.company).toFormValues(),
-      contacts: new Contacts(this.contacts).toFormValues(),
-      bank: new Bank(this.bank).toFormValues(),
-      address: new Address(this.address).toFormValues(),
-    };
+  toFormValues(fullFormMode = true) {
+    const val = fullFormMode
+      ? {
+          ...this,
+          company: new Company(this.company).toFormValues(),
+          contacts: new Contacts(this.contacts).toFormValues(),
+          bank: new Bank(this.bank).toFormValues(),
+          address: new Address(this.address).toFormValues(),
+        }
+      : {
+          contacts: new Contacts(this.contacts).toFormValues(),
+        };
 
     delete val._id;
 
