@@ -132,7 +132,8 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   }
 
   public filterUsers() {
-    const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
+    const query = this.searchFilters ? this.searchFilters.controls.query.value.toString().toLowerCase() : '';
+
     this.usersToShow = this.users.filter((u) =>
       `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query),
     );
