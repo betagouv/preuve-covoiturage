@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { forkJoin, merge, Observable, of } from 'rxjs';
+import { merge, Observable, of } from 'rxjs';
 import { MatButtonToggleGroup, MatPaginator } from '@angular/material';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';

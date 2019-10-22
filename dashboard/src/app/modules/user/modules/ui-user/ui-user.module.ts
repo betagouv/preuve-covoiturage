@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
+import { MatPaginatorModule } from '@angular/material';
 
 import { SharedModule } from '~/shared/shared.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
@@ -10,7 +11,6 @@ import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/terr
 
 import { UsersListComponent } from './components/users-list/users-list.component';
 import { CreateEditUserFormComponent } from './components/create-edit-user-form/create-edit-user-form.component';
-import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [UsersListComponent, CreateEditUserFormComponent],

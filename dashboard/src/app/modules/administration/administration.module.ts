@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material';
 
 import { ProfileUiModule } from '~/modules/user/modules/profile-ui/profile-ui.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
@@ -23,7 +24,6 @@ import { OperatorComponent } from './pages/operator/operator.component';
 import { ApiComponent } from './pages/api/api.component';
 import { AllTerritoriesComponent } from './pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from './pages/all-operators/all-operators.component';
-import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [
