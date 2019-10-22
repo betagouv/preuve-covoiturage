@@ -13,12 +13,12 @@ CREATE TABLE IF NOT EXISTS auth.users
   phone varchar,
   
   password varchar NOT NULL,
-  status auth.user_status_enum DEFAULT 'pending',
+  status auth.user_status_enum NOT NULL DEFAULT 'pending',
 
   forgotten_token varchar,
   forgotten_at timestamp,
 
-  roles varchar[],
+  roles varchar[] NOT NULL,
 
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW(),
