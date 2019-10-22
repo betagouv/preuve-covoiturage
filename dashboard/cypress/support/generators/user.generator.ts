@@ -1,14 +1,9 @@
 import { USER_GROUPS, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
-import { User } from '~/core/entities/authentication/user';
+import { BaseUser, User } from '~/core/entities/authentication/user';
 
 import { cypress_logging_users } from '../stubs/auth/login';
-import {
-  OPERATORS_PERMISSIONS,
-  REGISTRY_PERMISSIONS,
-  TERRITORIES_PERMISSIONS,
-} from '../stubs/user/const/permissions.const';
 import { territoryStub } from '../stubs/territory/territory.find';
 import { operatorStub } from '../stubs/operator/operator.find';
 import { FIRSTNAMES } from './const/firstnames.const';
@@ -16,38 +11,35 @@ import { LASTNAMES } from './const/lastnames.const';
 import { generateRandomMongoId } from './id.generator';
 
 export class UserGenerator {
-  static numberOfUsers = 20;
+  static numberOfUsers = 50;
 
-  static generateUser(profilData: ProfileInterface, group: UserGroupEnum) {
+  static generateUser(profilData: ProfileInterface, group: UserGroupEnum): BaseUser {
     const randomId = generateRandomMongoId();
 
     switch (group) {
       case UserGroupEnum.TERRITORY:
-        return new User({
+        return {
           _id: randomId,
           ...profilData,
           role: UserRoleEnum.ADMIN,
           group: UserGroupEnum.TERRITORY,
-          permissions: TERRITORIES_PERMISSIONS.admin,
           territory: territoryStub._id,
-        });
+        };
       case UserGroupEnum.OPERATOR:
-        return new User({
+        return {
           _id: randomId,
           ...profilData,
           role: UserRoleEnum.ADMIN,
           group: UserGroupEnum.OPERATOR,
-          permissions: OPERATORS_PERMISSIONS.admin,
           operator: operatorStub._id,
-        });
+        };
       case UserGroupEnum.REGISTRY:
-        return new User({
+        return {
           _id: randomId,
           ...profilData,
           role: UserRoleEnum.ADMIN,
           group: UserGroupEnum.REGISTRY,
-          permissions: REGISTRY_PERMISSIONS.admin,
-        });
+        };
     }
   }
 

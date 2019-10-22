@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSpinner } from '@angular/material';
+import { MatPaginatorIntl, MatSpinner } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { FrenchMatPaginatorIntl } from '~/shared/classes/french-paginator';
+
 import { MaterialModule } from './modules/material/material.module';
-
 import { ButtonSpinnerDirective } from './directives/button-spinner.directive';
-
 import { PageContentComponent } from './components/page-content/page-content.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -45,6 +45,7 @@ import { UploadComponent } from './components/upload/upload.component';
     PageHeaderComponent,
     UploadComponent,
   ],
+  providers: [{ provide: MatPaginatorIntl, useClass: FrenchMatPaginatorIntl }],
   entryComponents: [MatSpinner],
 })
 export class SharedModule {}

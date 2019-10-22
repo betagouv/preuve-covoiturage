@@ -10,6 +10,7 @@ import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/terr
 
 import { UsersListComponent } from './components/users-list/users-list.component';
 import { CreateEditUserFormComponent } from './components/create-edit-user-form/create-edit-user-form.component';
+import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [UsersListComponent, CreateEditUserFormComponent],
@@ -22,6 +23,7 @@ import { CreateEditUserFormComponent } from './components/create-edit-user-form/
     ToastrModule,
     OperatorUiModule,
     TerritoryUiModule,
+    MatPaginatorModule,
   ],
   exports: [UsersListComponent, CreateEditUserFormComponent],
 })

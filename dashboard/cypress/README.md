@@ -2,6 +2,7 @@
 
 ### Organisation
 
+- fixtures : remplace les générateurs pour données > 80kb
 - integration : tests cypress lancés par les commandes cypress
 - support/apiValues : valeurs remplis dans les formulaires
 - support/generators : generateur de valeurs pour les stubs

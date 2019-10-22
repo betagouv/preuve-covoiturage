@@ -23,6 +23,7 @@ import { OperatorComponent } from './pages/operator/operator.component';
 import { ApiComponent } from './pages/api/api.component';
 import { AllTerritoriesComponent } from './pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from './pages/all-operators/all-operators.component';
+import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { AllOperatorsComponent } from './pages/all-operators/all-operators.compo
     OperatorUiModule,
     OperatorModule,
     ApplicationUiModule,
+    MatPaginatorModule,
   ],
 })
 export class AdministrationModule {}

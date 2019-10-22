@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
+import { MatPaginator } from '@angular/material';
 
 import { User } from '~/core/entities/authentication/user';
 import { UserService } from '~/modules/user/services/user.service';
@@ -14,11 +15,13 @@ import { DialogService } from '~/core/services/dialog.service';
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss'],
 })
-export class UsersListComponent extends DestroyObservable implements OnInit {
-  @Input() users: User[];
+export class UsersListComponent extends DestroyObservable implements OnInit, AfterViewInit {
+  @Input() users: User[] = [];
   // TODO: implement permission user.edit
   @Input() canEditUser = false;
   @Output() editUser = new EventEmitter<User>();
+
+  displayedColumns: string[] = ['name', 'email', 'role', 'actions'];
 
   constructor(
     public authService: AuthenticationService,
@@ -30,6 +33,8 @@ export class UsersListComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {}
+
+  ngAfterViewInit() {}
 
   onDelete(user: User) {
     this.dialogService
