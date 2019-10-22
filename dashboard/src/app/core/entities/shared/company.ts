@@ -1,25 +1,35 @@
 /* tslint:disable:variable-name*/
 export class Company {
-  siren: string;
+  siret: string;
   naf_entreprise?: string;
   nature_juridique?: string;
-  cle_nic?: string;
   rna?: string;
   vat_intra?: string;
 
   constructor(obj: {
-    siren: string;
+    siret: string;
     naf_entreprise?: string;
     nature_juridique?: string;
-    cle_nic?: string;
     rna?: string;
     vat_intra?: string;
   }) {
-    this.siren = obj.siren;
-    this.naf_entreprise = obj.naf_entreprise || null;
-    this.nature_juridique = obj.nature_juridique || null;
-    this.cle_nic = obj.cle_nic || null;
-    this.rna = obj.rna || null;
-    this.vat_intra = obj.vat_intra || null;
+    if (obj && obj.siret) this.siret = obj.siret;
+    if (obj && obj.naf_entreprise) this.naf_entreprise = obj.naf_entreprise;
+    if (obj && obj.nature_juridique) this.nature_juridique = obj.nature_juridique;
+    if (obj && obj.rna) this.rna = obj.rna;
+    if (obj && obj.vat_intra) this.vat_intra = obj.vat_intra;
+  }
+
+  toFormValues() {
+    const formVal = {
+      naf_entreprise: '',
+      nature_juridique: '',
+      rna: '',
+      vat_intra: '',
+      siret: '',
+      ...this,
+    };
+
+    return formVal;
   }
 }

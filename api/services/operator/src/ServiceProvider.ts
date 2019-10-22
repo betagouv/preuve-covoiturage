@@ -5,7 +5,7 @@ import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import {
   operatorCreateSchema,
-  operatorPatchSchema,
+  operatorUpdateSchema,
   operatorDeleteSchema,
   operatorFindSchema,
   operatorPatchContactsSchema,
@@ -15,8 +15,8 @@ import { ContentBlacklistMiddleware } from '@pdc/provider-middleware';
 import { OperatorRepositoryProvider } from './providers/OperatorRepositoryProvider';
 import { ListOperatorAction } from './actions/ListOperatorAction';
 import { CreateOperatorAction } from './actions/CreateOperatorAction';
+import { UpdateOperatorAction } from './actions/UpdateOperatorAction';
 import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
-import { PatchOperatorAction } from './actions/PatchOperatorAction';
 import { SchemaOperatorAction } from './actions/SchemaOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
@@ -27,7 +27,7 @@ import { MigrateCommand } from './commands/MigrateCommand';
   providers: [OperatorRepositoryProvider],
   validator: [
     ['operator.create', operatorCreateSchema],
-    ['operator.patch', operatorPatchSchema],
+    ['operator.update', operatorUpdateSchema],
     ['operator.delete', operatorDeleteSchema],
     ['operator.find', operatorFindSchema],
     ['operator.patchContacts', operatorPatchContactsSchema],
@@ -36,7 +36,7 @@ import { MigrateCommand } from './commands/MigrateCommand';
     SchemaOperatorAction,
     ListOperatorAction,
     CreateOperatorAction,
-    PatchOperatorAction,
+    UpdateOperatorAction,
     DeleteOperatorAction,
     FindOperatorAction,
     PatchContactsOperatorAction,

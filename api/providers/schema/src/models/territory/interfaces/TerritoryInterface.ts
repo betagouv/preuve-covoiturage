@@ -9,18 +9,11 @@ export interface TerritoryInterface {
   shortname?: string;
   acronym?: string;
   insee?: string[];
-  insee_main?: string;
-  network_id?: number;
 
   company?: CompanyInterface;
   address?: AddressInterface;
   contacts?: ContactsInterface;
   cgu?: CguInterface;
-
-  geometry?: {
-    type: string;
-    coordinates: any[];
-  };
 
   created_at?: Date;
   updated_at?: Date;

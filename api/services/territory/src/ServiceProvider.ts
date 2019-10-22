@@ -5,7 +5,7 @@ import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import {
   territoryCreateSchema,
-  territoryPatchSchema,
+  territoryUpdateSchema,
   territoryDeleteSchema,
   territoryFindByInseeSchema,
   territoryFindByPositionSchema,
@@ -17,7 +17,7 @@ import { ContentWhitelistMiddleware, ContentBlacklistMiddleware } from '@pdc/pro
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
-import { PatchTerritoryAction } from './actions/PatchTerritoryAction';
+import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
 import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
 import { SchemaTerritoryAction } from './actions/SchemaTerritoryAction';
 import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
@@ -32,7 +32,7 @@ import { MigrateCommand } from './commands/MigrateCommand';
   validator: [
     ['territory.find', territoryFindSchema],
     ['territory.create', territoryCreateSchema],
-    ['territory.patch', territoryPatchSchema],
+    ['territory.update', territoryUpdateSchema],
     ['territory.delete', territoryDeleteSchema],
     ['territory.findByInsee', territoryFindByInseeSchema],
     ['territory.findByPosition', territoryFindByPositionSchema],
@@ -50,7 +50,7 @@ import { MigrateCommand } from './commands/MigrateCommand';
     SchemaTerritoryAction,
     ListTerritoryAction,
     CreateTerritoryAction,
-    PatchTerritoryAction,
+    UpdateTerritoryAction,
     PatchContactsTerritoryAction,
     DeleteTerritoryAction,
     FindTerritoryByInseeAction,

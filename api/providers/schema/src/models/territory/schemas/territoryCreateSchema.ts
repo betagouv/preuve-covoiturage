@@ -17,8 +17,6 @@ export const territoryCreateSchema = {
       type: 'array',
       items: { macro: 'insee' },
     },
-    insee_main: { macro: 'insee' },
-    network_id: { type: 'integer' },
     company: companySchema,
     address: addressSchema,
     bank: bankSchema,

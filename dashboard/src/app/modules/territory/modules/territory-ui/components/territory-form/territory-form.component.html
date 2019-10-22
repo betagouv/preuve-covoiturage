@@ -7,9 +7,9 @@
       <mat-error *ngIf="territoryForm.controls.name.hasError('required')">Le nom est obligatoire.</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="acronym" appearance="outline">
-      <mat-label>Acronyme</mat-label>
-      <input matInput formControlName="acronym" />
+    <mat-form-field class="shortname" appearance="outline">
+      <mat-label>Nom d'usage</mat-label>
+      <input matInput formControlName="shortname" />
     </mat-form-field>
 
     <h3>Structure</h3>

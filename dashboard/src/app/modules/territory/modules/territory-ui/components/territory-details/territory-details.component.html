@@ -16,19 +16,15 @@
         {{ territory.company.nature_juridique }}
       </p>
 
-      <p *ngIf="territory.company.siren">
-        <strong>SIREN : </strong>
-        {{ territory.company.siren }}
+      <p *ngIf="territory.company.siret">
+        <strong>SIRET : </strong>
+        {{ territory.company.siret }}
       </p>
       <p *ngIf="territory.company.naf_entreprise">
         <strong>Naf entreprise : </strong>
         {{ territory.company.naf_entreprise }}
       </p>
 
-      <p *ngIf="territory.company.cle_nic">
-        <strong>Clé NIC : </strong>
-        {{ territory.company.cle_nic }}
-      </p>
       <p *ngIf="territory.company.rna">
         <strong>RNA : </strong>
         {{ territory.company.rna }}
