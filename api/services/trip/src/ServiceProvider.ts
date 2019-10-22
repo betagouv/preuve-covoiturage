@@ -14,9 +14,12 @@ import { CrosscheckAction } from './actions/CrosscheckAction';
 import { DispatchAction } from './actions/DispatchAction';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
+import { MigrateDataCommand } from './commands/MigrateDataCommand';
+import { CommandExtension } from '@ilos/cli';
 
 @serviceProvider({
   config: __dirname,
+  commands: [MigrateDataCommand],
   providers: [TripPgRepositoryProvider, TripRepositoryProvider],
   validator: [['trip.crosscheck', tripCrosscheckSchema], ['trip.search', tripSearchSchema]],
   middlewares: [
@@ -32,4 +35,6 @@ import { StatsAction } from './actions/StatsAction';
   handlers: [CrosscheckAction, DispatchAction, ListAction, StatsAction],
   queues: ['trip'],
 })
-export class ServiceProvider extends AbstractServiceProvider {}
+export class ServiceProvider extends AbstractServiceProvider {
+  extensions = [CommandExtension];
+}
