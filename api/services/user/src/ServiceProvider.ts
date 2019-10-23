@@ -26,6 +26,7 @@ import {
   userRegisterSchema,
   userResetPasswordSchema,
   userSendConfirmEmailSchema,
+  userSendInvitationEmailSchema,
 } from '@pdc/provider-schema';
 
 import {
@@ -47,6 +48,7 @@ import {
   ResetPasswordUserAction,
   SchemaUserAction,
   SendConfirmEmailUserAction,
+  SendInvitationEmailUserAction,
 } from './actions';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
@@ -71,6 +73,7 @@ import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
     ['user.register', userRegisterSchema],
     ['user.resetPassword', userResetPasswordSchema],
     ['user.sendConfirmEmail', userSendConfirmEmailSchema],
+    ['user.sendInvitationEmail', userSendInvitationEmailSchema],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -99,6 +102,7 @@ import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
     ResetPasswordUserAction,
     SchemaUserAction,
     SendConfirmEmailUserAction,
+    SendInvitationEmailUserAction,
   ],
   template: null,
   notification: {
