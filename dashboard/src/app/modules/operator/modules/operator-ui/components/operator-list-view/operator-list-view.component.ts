@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject, merge, of } from 'rxjs';
+import { debounceTime, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { MatPaginator } from '@angular/material';
 
 import { Operator } from '~/core/entities/operator/operator';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { OperatorService } from '../../../../services/operator.service';
 
@@ -10,32 +13,71 @@ import { OperatorService } from '../../../../services/operator.service';
   templateUrl: './operator-list-view.component.html',
   styleUrls: ['./operator-list-view.component.scss'],
 })
-export class OperatorListViewComponent implements OnInit {
-  filterLiteral = '';
+export class OperatorListViewComponent extends DestroyObservable implements OnInit, AfterViewInit {
   showForm = false;
   isCreating = true;
+  public operators: Operator[];
+  public operatorsToShow: Operator[];
+  public operatorsFiltered: Operator[];
+
+  PAGE_SIZE = 10;
+
+  private _filterLiteral = new BehaviorSubject('');
 
   operator$: BehaviorSubject<Operator> = new BehaviorSubject<Operator>(null);
 
-  constructor(private _operatorService: OperatorService) {}
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+  constructor(private _operatorService: OperatorService) {
+    super();
+  }
 
   ngOnInit() {
-    this.showForm = false;
+    this.loadOperators();
+    this._operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+      this.operators = operators;
+    });
+  }
+
+  ngAfterViewInit() {
+    merge(
+      this._filterLiteral.pipe(
+        debounceTime(300),
+        tap(() => (this.paginator.pageIndex = 0)),
+      ),
+      this.paginator.page,
+    )
+      .pipe(
+        switchMap(() => {
+          const page = this.paginator.pageIndex;
+          const start = Number(page) * this.PAGE_SIZE;
+          const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
+          this.operatorsFiltered = this.operators.filter((t) =>
+            t.nom_commercial.toLowerCase().includes(this._filterLiteral.value),
+          );
+          return of(this.operatorsFiltered.slice(start, end));
+        }),
+      )
+      .subscribe((data) => {
+        this.operatorsToShow = data;
+      });
+  }
+
+  get countUsers(): number {
+    return this.operatorsFiltered && this.operatorsFiltered.length;
   }
 
   pipeFilter(literal: any) {
-    this.filterLiteral = literal;
+    this._filterLiteral.next(literal);
   }
 
   pipeEdit(operator: any) {
-    console.log('operator : ', operator);
     this.isCreating = false;
     this.operator$.next(operator);
     this.showForm = true;
   }
 
   close() {
-    console.log('> close');
     this.showForm = false;
   }
 
@@ -46,11 +88,9 @@ export class OperatorListViewComponent implements OnInit {
     this.showForm = true;
 
     this.operator$.next(null);
+  }
 
-    setTimeout(() => {
-      document.getElementById('operatorForm-anchor').scrollIntoView({
-        behavior: 'smooth',
-      });
-    }, 200);
+  private loadOperators() {
+    this._operatorService.load().subscribe();
   }
 }

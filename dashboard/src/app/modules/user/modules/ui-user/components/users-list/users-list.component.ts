@@ -17,7 +17,6 @@ import { DialogService } from '~/core/services/dialog.service';
 })
 export class UsersListComponent extends DestroyObservable implements OnInit, AfterViewInit {
   @Input() users: User[] = [];
-  // TODO: implement permission user.edit
   @Input() canEditUser = false;
   @Output() editUser = new EventEmitter<User>();
 

@@ -1,10 +1,18 @@
-<div class="Operators-header">
-  <h2>
-    Opérateurs
-  </h2>
-  <app-operator-filter (filterLiteralChange)="pipeFilter($event)"></app-operator-filter>
+<div class="Operators-list" [hidden]="showForm">
+  <div class="Operators-header">
+    <h2>
+      Opérateurs
+    </h2>
+    <app-operator-filter (filterLiteralChange)="pipeFilter($event)"></app-operator-filter>
+  </div>
+  <app-operator-list (edit)="pipeEdit($event)" [operators]="operatorsToShow"></app-operator-list>
+  <mat-paginator
+    [hidden]="!operatorsToShow && !operatorsFiltered"
+    [length]="countUsers"
+    [pageSize]="PAGE_SIZE"
+  ></mat-paginator>
 </div>
-<app-operator-list (edit)="pipeEdit($event)" [filterLiteral]="filterLiteral"></app-operator-list>
+
 <div class="Operators-edition">
   <div id="operatorForm-anchor"></div>
   <button mat-flat-button class="large" *ngIf="!showForm" (click)="showCreationForm()" color="primary">
