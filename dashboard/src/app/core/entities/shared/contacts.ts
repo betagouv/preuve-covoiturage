@@ -1,6 +1,7 @@
+import { hasOneNotEmptyProperty } from '~/core/entities/utils';
+
 /* tslint:disable:variable-name */
 import { Contact } from './contact';
-import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
 export class Contacts {
   gdpr_dpo?: Contact;

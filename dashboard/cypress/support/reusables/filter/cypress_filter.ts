@@ -1,12 +1,9 @@
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { DEFAULT_TRIP_LIMIT } from '~/core/const/filter.const';
-import { Trip } from '~/core/entities/trip/trip';
 
 import { expectedFilter, filterEndMoment, filterStartMoment } from '../../apiValues/expectedFilter';
 import { territoryStub } from '../../stubs/territory/territory.find';
 import { operatorStub } from '../../stubs/operator/operator.find';
-import { stubTripList } from '../../stubs/trip/trip.list';
-import { TripGenerator } from '../../generators/trips.generator';
 
 export function cypress_filter(e2e = false, group: UserGroupEnum) {
   it('clicks on trip section', () => {
@@ -61,7 +58,7 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
 
   if (group === UserGroupEnum.OPERATOR || group === UserGroupEnum.REGISTRY) {
     it('chooses territories', () => {
-      cy.get('app-territories-autocomplete mat-form-field input').type('a');
+      cy.get('app-territories-autocomplete mat-form-field input').type(e2e ? 'a' : territoryStub.name);
       cy.get('.mat-autocomplete-panel mat-option:first-child').click();
     });
   }
@@ -135,32 +132,32 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
     cy.get('.TripLayout-menu-filter-button').click();
   });
 
-  // it('click on reinitialize', () => {
-  //   cy.get('.filter-footer button:nth-child(2)').click();
-  // });
-  //
-  // it('click filter button', () => {
-  //   cy.get('.filter-footer button:first-child').click();
-  //
-  //   if (!e2e) {
-  //     cy.wait('@tripStat').then((xhr) => {
-  //       const params = xhr.request.body[0].params;
-  //       const method = xhr.request.body[0].method;
-  //
-  //       expect(method).equal('trip:stats');
-  //
-  //       const filter = {};
-  //
-  //       if (group === UserGroupEnum.TERRITORY) {
-  //         filter['territory_id'] = [territoryStub._id];
-  //       }
-  //
-  //       if (group === UserGroupEnum.OPERATOR) {
-  //         filter['operator_id'] = [operatorStub._id];
-  //       }
-  //
-  //       expect(params).eql(filter);
-  //     });
-  //   }
-  // });
+  it('click on reinitialize', () => {
+    cy.get('.filter-footer button:nth-child(2)').click();
+  });
+
+  it('click filter button', () => {
+    cy.get('.filter-footer button:first-child').click();
+
+    if (!e2e) {
+      cy.wait('@tripStat').then((xhr) => {
+        const params = xhr.request.body[0].params;
+        const method = xhr.request.body[0].method;
+
+        expect(method).equal('trip:stats');
+
+        const filter = {};
+
+        if (group === UserGroupEnum.TERRITORY) {
+          filter['territory_id'] = [territoryStub._id];
+        }
+
+        if (group === UserGroupEnum.OPERATOR) {
+          filter['operator_id'] = [operatorStub._id];
+        }
+
+        expect(params).eql(filter);
+      });
+    }
+  });
 }
