@@ -8,7 +8,7 @@
   <app-operator-list (edit)="pipeEdit($event)" [operators]="operatorsToShow"></app-operator-list>
   <mat-paginator
     [hidden]="!operatorsToShow && !operatorsFiltered"
-    [length]="countUsers"
+    [length]="countOperators"
     [pageSize]="PAGE_SIZE"
   ></mat-paginator>
 </div>

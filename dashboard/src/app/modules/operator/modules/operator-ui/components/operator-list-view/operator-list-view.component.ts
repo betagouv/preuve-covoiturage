@@ -41,6 +41,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   ngAfterViewInit() {
     merge(
+      this._operatorService.operators$,
       this._filterLiteral.pipe(
         debounceTime(300),
         tap(() => (this.paginator.pageIndex = 0)),
@@ -63,7 +64,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
       });
   }
 
-  get countUsers(): number {
+  get countOperators(): number {
     return this.operatorsFiltered && this.operatorsFiltered.length;
   }
 
@@ -78,6 +79,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
   }
 
   close() {
+    this.loadOperators();
     this.showForm = false;
   }
 
