@@ -4,7 +4,7 @@ import { ContextType, ForbiddenException, handler } from '@ilos/common';
 import { UserNotifyParamsInterface } from '@pdc/provider-schema';
 
 import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
-import { NotificationInterface, NotificationInterfaceResolver } from '@pdc/provider-notification';
+import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
 /*
  * Send email to user
