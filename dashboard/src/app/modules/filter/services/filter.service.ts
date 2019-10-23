@@ -14,10 +14,7 @@ import { FilterModule } from '~/modules/filter/filter.module';
 export class FilterService {
   public filter$ = new BehaviorSubject<FilterInterface | {}>({});
 
-  constructor() {
-    console.log('ini filter service');
-    console.log(this.filter$.value);
-  }
+  constructor() {}
 
   // format filterUx to filter in api format
   public setFilter(params: FilterUxInterface | {} = {}): void {
@@ -69,12 +66,14 @@ export class FilterService {
 
     // format distance to Number
     if (filter.distance.min) {
-      filter.distance.min = Number(filter.distance.min);
+      // to meters
+      filter.distance.min = Number(filter.distance.min) * 1000;
     } else {
       delete filter.distance.min;
     }
     if (filter.distance.max) {
-      filter.distance.max = Number(filter.distance.max);
+      // to meters
+      filter.distance.max = Number(filter.distance.max) * 1000;
     } else {
       delete filter.distance.max;
     }
