@@ -147,7 +147,7 @@ link:  ${link}
         template: this.config.get('email.templates.confirmation'),
         email: patch.email,
         fullname: currentUser.fullname,
-        templateId: this.config.get('notification.templateIds.invitation'),
+        templateId: this.config.get('notification.templateIds.emailChange'),
       },
       {
         call: context.call,
