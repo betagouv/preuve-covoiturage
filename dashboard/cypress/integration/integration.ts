@@ -104,7 +104,7 @@ context('REGISTRY', () => {
       testRegistryStory();
     } else {
       // local testing
-      testRegistryStory(false, false, false);
+      testRegistryStory(true, true, false);
     }
   });
 });

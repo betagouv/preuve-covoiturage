@@ -16,6 +16,7 @@ import { TerritoryFilterComponent } from './components/territory-filter/territor
 import { TerritoryListViewComponent } from './components/territory-list-view/territory-list-view.component';
 import { TerritoryViewComponent } from './components/territory-view/territory-view.component';
 import { TerritoryDetailsComponent } from './components/territory-details/territory-details.component';
+import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,16 @@ import { TerritoryDetailsComponent } from './components/territory-details/territ
     TerritoryViewComponent,
     TerritoryDetailsComponent,
   ],
-  imports: [CommonModule, FormsModule, MaterialModule, ReactiveFormsModule, FormModule, SharedModule, DetailsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MaterialModule,
+    ReactiveFormsModule,
+    FormModule,
+    SharedModule,
+    DetailsModule,
+    MatPaginatorModule,
+  ],
   exports: [
     TerritoryFormComponent,
     TerritoriesAutocompleteComponent,

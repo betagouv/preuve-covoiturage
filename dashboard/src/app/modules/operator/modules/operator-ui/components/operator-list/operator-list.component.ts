@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { OperatorsPermissionsAdminType } from '~/core/types/permissionType';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -12,36 +11,19 @@ import { Operator } from '~/core/entities/operator/operator';
   templateUrl: './operator-list.component.html',
   styleUrls: ['./operator-list.component.scss'],
 })
-export class OperatorListComponent extends DestroyObservable implements OnInit, OnChanges {
-  public operators: Operator[] = [];
-  public operatorsToShow: Operator[] = [];
+export class OperatorListComponent extends DestroyObservable implements OnInit {
   public editPermission: OperatorsPermissionsAdminType = 'operator.update';
 
-  @Input() filterLiteral = '';
+  displayedColumns: string[] = ['name', 'actions'];
+
   @Output() edit = new EventEmitter();
+  @Input() operators: Operator[];
 
   constructor(private _operatorService: OperatorService, public authenticationService: AuthenticationService) {
     super();
   }
 
-  ngOnInit() {
-    console.log('init');
-    this._operatorService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
-
-    this._operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-      this.operators = operators;
-      this.filter();
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if ('filterLiteral' in changes) {
-      this.filter();
-    }
-  }
+  ngOnInit() {}
 
   get operatorsloading(): boolean {
     return this._operatorService.loading;
@@ -51,19 +33,7 @@ export class OperatorListComponent extends DestroyObservable implements OnInit, 
     return this._operatorService.operatorsLoaded;
   }
 
-  filter() {
-    this.operatorsToShow = this.operators.filter((t) =>
-      t.nom_commercial.toLowerCase().includes(this.filterLiteral.toLowerCase()),
-    );
-  }
-
   onEdit(operator) {
-    // todo: subscribe to loading of entity ?
-    setTimeout(() => {
-      document.getElementById('operatorForm-anchor').scrollIntoView({
-        behavior: 'smooth',
-      });
-    }, 200);
     this.edit.emit(operator);
   }
 }

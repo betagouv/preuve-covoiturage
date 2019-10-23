@@ -1,10 +1,17 @@
-<div class="Territories-header">
-  <h2>
-    Territoires
-  </h2>
-  <app-territory-filter (filterLiteralChange)="pipeFilter($event)"></app-territory-filter>
+<div class="Territories-list" [hidden]="showForm">
+  <div class="Territories-header">
+    <h2>
+      Territoires
+    </h2>
+    <app-territory-filter (filterLiteralChange)="pipeFilter($event)"></app-territory-filter>
+  </div>
+  <app-territory-list (edit)="pipeEdit($event)" [territories]="territoriesToShow"></app-territory-list>
+  <mat-paginator
+    [hidden]="!territoriesToShow && !territoriesFiltered"
+    [length]="countTerritories"
+    [pageSize]="PAGE_SIZE"
+  ></mat-paginator>
 </div>
-<app-territory-list (edit)="pipeEdit($event)" [filterLiteral]="filterLiteral"></app-territory-list>
 <div class="Territories-edition">
   <div id="territoryForm-anchor"></div>
   <h3 *ngIf="showForm">

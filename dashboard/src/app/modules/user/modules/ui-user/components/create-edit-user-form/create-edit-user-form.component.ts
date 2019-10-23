@@ -125,7 +125,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       this._userService.patchList({ ...formVal, _id: this.user._id }).subscribe((data) => {
         const user = data[0];
         this.isCreatingUpdating = false;
-        this.toastr.success(`Les informations de votre profil ont bien été modifiées`);
+        this.toastr.success(`Les informations ont bien été modifiées`);
         this.onCloseEditUser.emit(user);
       }, errM);
     }

@@ -1,10 +1,6 @@
 @import '~src/styles/variables';
 
 .UsersList {
-  ::ng-deep.ListItem {
-    margin-bottom: 10px;
-  }
-
   &-list {
     &-item {
       display: flex;

@@ -1,11 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Browser } from 'leaflet';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { Operator } from '~/core/entities/operator/operator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { Browser } from 'leaflet';
 
 @Component({
   selector: 'app-operator-details',

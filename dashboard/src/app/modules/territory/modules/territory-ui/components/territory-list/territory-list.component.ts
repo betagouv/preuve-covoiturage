@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -12,35 +11,19 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
   templateUrl: './territory-list.component.html',
   styleUrls: ['./territory-list.component.scss'],
 })
-export class TerritoryListComponent extends DestroyObservable implements OnInit, OnChanges {
-  public territories: Territory[] = [];
-  public territoriesToShow: Territory[] = [];
+export class TerritoryListComponent extends DestroyObservable implements OnInit {
   public editPermission: TerritoriesPermissionsAdminType = 'territory.update';
 
-  @Input() filterLiteral = '';
+  displayedColumns: string[] = ['name', 'actions'];
+
+  @Input() territories: Territory[];
   @Output() edit = new EventEmitter();
 
   constructor(private _territoryService: TerritoryService, public authenticationService: AuthenticationService) {
     super();
   }
 
-  ngOnInit() {
-    this._territoryService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
-
-    this._territoryService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
-      this.territories = territories;
-      this.filter();
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if ('filterLiteral' in changes) {
-      this.filter();
-    }
-  }
+  ngOnInit() {}
 
   get territoriesloading(): boolean {
     return this._territoryService.loading;
@@ -50,19 +33,7 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit,
     return this._territoryService.territoriesLoaded;
   }
 
-  filter() {
-    this.territoriesToShow = this.territories.filter((t) =>
-      t.name.toLowerCase().includes(this.filterLiteral.toLowerCase()),
-    );
-  }
-
   onEdit(territory: Territory) {
-    // todo: subscribe to loading of entity ?
-    setTimeout(() => {
-      document.getElementById('territoryForm-anchor').scrollIntoView({
-        behavior: 'smooth',
-      });
-    }, 200);
     this.edit.emit(territory);
   }
 }

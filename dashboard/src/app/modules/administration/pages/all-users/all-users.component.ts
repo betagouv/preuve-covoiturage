@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { merge, Observable, of } from 'rxjs';
+import { MatButtonToggleGroup, MatPaginator } from '@angular/material';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
@@ -10,7 +11,6 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 // tslint:disable-next-line: max-line-length
 import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-all-users',
@@ -20,13 +20,19 @@ import { Observable } from 'rxjs';
 export class AllUsersComponent extends DestroyObservable implements OnInit {
   usersToShow: User[];
   users: User[];
+  usersFiltered: User[];
+
   searchFilters: FormGroup;
   editUserFormVisible = false;
   isCreatingUser = false;
   userGroup = UserGroupEnum.TERRITORY;
   availableUserGroups = USER_GROUPS;
+  PAGE_SIZE = 10;
 
   @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
+  @ViewChild(MatButtonToggleGroup, { static: false }) toggle: MatButtonToggleGroup;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
   public editedUser: User;
   canEditUser$: Observable<boolean>;
 
@@ -34,7 +40,6 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     public authenticationService: AuthenticationService,
     public userService: UserService,
     private fb: FormBuilder,
-    private toastr: ToastrService,
   ) {
     super();
   }
@@ -43,13 +48,47 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     // listen to user list
     this.userService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
       this.users = users;
-      this.filterUsers();
     });
-    // this.userGroupButtons.writeValue(this.userGroup);
     this.loadUsers();
     this.initSearchForm();
 
     this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
+  }
+
+  ngAfterViewInit() {
+    merge(
+      this.userService.entities$,
+      this.searchFilters.valueChanges.pipe(
+        debounceTime(300),
+        tap(() => (this.paginator.pageIndex = 0)),
+      ),
+      this.toggle.change.pipe(tap(() => (this.paginator.pageIndex = 0))),
+      this.paginator.page,
+    )
+      .pipe(
+        distinctUntilChanged(),
+        switchMap(() => {
+          this.closeUserForm();
+          const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
+          const page = this.paginator.pageIndex;
+          const start = Number(page) * this.PAGE_SIZE;
+          const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
+          this.usersFiltered = this.users.filter(
+            (u) =>
+              `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query.toLowerCase()) &&
+              this.userGroup === u.group &&
+              this.authenticationService.user._id !== u._id,
+          );
+          return of(this.usersFiltered.slice(start, end));
+        }),
+      )
+      .subscribe((filteredUsers) => {
+        this.usersToShow = filteredUsers;
+      });
+  }
+
+  get countUsers(): number {
+    return this.usersFiltered && this.usersFiltered.filter((user) => user.group === this.userGroup).length;
   }
 
   showEditForm(user: User = null) {
@@ -74,39 +113,13 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     return USER_GROUPS_FR[group];
   }
 
-  loadUsers() {
-    this.userService.load().subscribe(
-      (users) => {
-        this.users = users;
-        this.filterUsers();
-      },
-      (err) => {},
-    );
+  private loadUsers() {
+    this.userService.load().subscribe();
   }
 
   private initSearchForm() {
     this.searchFilters = this.fb.group({
       query: [''],
     });
-
-    this.searchFilters.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-      )
-      .subscribe((value) => {
-        if (!value) {
-          return (this.usersToShow = this.users);
-        }
-        this.filterUsers();
-      });
-  }
-
-  public filterUsers() {
-    const query = this.searchFilters ? this.searchFilters.controls.query.value.toString().toLowerCase() : '';
-
-    this.usersToShow = this.users.filter(
-      (u) => `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query) && this.userGroup === u.group,
-    );
   }
 }
