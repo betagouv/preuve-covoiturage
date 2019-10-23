@@ -67,7 +67,7 @@ context('OPERATOR', () => {
       testOperatorStory();
     } else {
       // local testing
-      testOperatorStory(false, false, false, false);
+      testOperatorStory(false, false, false, true);
     }
   });
 });

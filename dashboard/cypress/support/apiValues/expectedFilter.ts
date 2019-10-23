@@ -33,7 +33,7 @@ export const expectedFilter: FilterInterface = {
     max: 123,
   },
   ranks: [TripRankEnum.A, TripRankEnum.B],
-  status: TripStatusEnum.PENDING,
+  status: TripStatusEnum.LOCKED,
   operator_id: [operatorStub._id],
   territory_id: [territoryStub._id],
 };
