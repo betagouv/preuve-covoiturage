@@ -1,11 +1,12 @@
 import { InitHookInterface } from '@ilos/common';
+
 import { MailInterface, TemplateMailInterface } from './MailDriverInterface';
 
 interface ProviderInterface {}
 
 export interface NotificationInterface extends ProviderInterface, InitHookInterface {
-  sendByEmail(mail: MailInterface): Promise<void>;
-  sendTemplateByEmail(mail: TemplateMailInterface): Promise<void>;
+  sendByEmail(mail: MailInterface, sendOptions?: { [key: string]: any }): Promise<void>;
+  sendTemplateByEmail(mail: TemplateMailInterface, sendOptions?: { [key: string]: any }): Promise<void>;
 }
 
 export abstract class NotificationInterfaceResolver implements NotificationInterface {

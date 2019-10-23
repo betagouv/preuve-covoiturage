@@ -1,18 +1,16 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
-import { ApplicationInterface, CreateApplicationParamsInterface } from '@pdc/provider-schema';
 
-import { Application } from '../entities/Application';
-import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/create.contract';
+import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
+import { alias } from '../shared/application/create.schema';
+import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 
-@handler({
-  service: 'application',
-  method: 'create',
-})
+@handler(handlerConfig)
 export class CreateApplicationAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'application.create'],
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -41,10 +39,8 @@ export class CreateApplicationAction extends AbstractAction {
     super();
   }
 
-  public async handle(
-    params: CreateApplicationParamsInterface,
-  ): Promise<{ token: string; application: ApplicationInterface }> {
-    const application = await (<Promise<Application>>(
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const application = await (<Promise<ApplicationInterface>>(
       this.applicationRepository.create({ ...params, created_at: new Date() })
     ));
 

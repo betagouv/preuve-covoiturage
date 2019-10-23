@@ -2,8 +2,8 @@ import path from 'path';
 import chai from 'chai';
 import supertest from 'supertest';
 import { describe } from 'mocha';
-
 import { TokenProvider } from '@pdc/provider-token';
+import { ConfigInterface } from '@ilos/common';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
@@ -11,7 +11,26 @@ import { requestJourney } from './mocks/requestJourneyV2';
 
 const { expect } = chai;
 
-describe('Send journey using application token', () => {
+describe('Send journey using application token', async () => {
+  // fake Config provider
+  class Config implements ConfigInterface {
+    private config: Map<string, any> = new Map();
+    async init() {
+      this.config.set('jwt.secret', 'abcd1234');
+      this.config.set('jwt.ttl', -1);
+      this.config.set('jwt.alg', 'HS256');
+      this.config.set('jwt.signOptions', {});
+      this.config.set('jwt.verifyOptions', {});
+    }
+    loadConfigDirectory(workingPath: string, configDir?: string): void {}
+    get(key: string, fallback?: any): any {
+      return this.config.get(key);
+    }
+    set(key: string, value: any) {
+      throw new Error('Not implemented in tests');
+    }
+  }
+
   const kernel = new Kernel();
   const app = new HttpTransport(kernel);
   let request;
@@ -19,7 +38,8 @@ describe('Send journey using application token', () => {
   let operator;
   let application;
 
-  const tokenProvider = new TokenProvider().init({ ttl: -1 });
+  const tokenProvider = new TokenProvider(new Config());
+  await tokenProvider.init();
 
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-server-${new Date().getTime()}`;

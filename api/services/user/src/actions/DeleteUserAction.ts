@@ -1,19 +1,19 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/delete.contract';
+import { alias } from '../shared/user/delete.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
 /*
  *  Find user by id and delete user
  */
-@handler({
-  service: 'user',
-  method: 'delete',
-})
+@handler(configHandler)
 export class DeleteUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.delete'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -43,7 +43,7 @@ export class DeleteUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: { _id: string }, context: UserContextInterface): Promise<void> {
+  public async handle(request: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {
@@ -54,6 +54,6 @@ export class DeleteUserAction extends AbstractAction {
       contextParam.operator = context.call.user.operator;
     }
 
-    return this.userRepository.deleteUser(request._id, contextParam);
+    await this.userRepository.deleteUser(request._id, contextParam);
   }
 }

@@ -1,12 +1,11 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
+import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 import {
   CampaignRepositoryProviderInterface,
   CampaignRepositoryProviderInterfaceResolver,
 } from '../interfaces/CampaignRepositoryProviderInterface';
-
-import { CampaignInterface } from '@pdc/provider-schema';
 
 @provider({
   identifier: CampaignRepositoryProviderInterfaceResolver,
@@ -36,7 +35,8 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async create(data: CampaignInterface): Promise<any> {
+  // TODO interface
+  async create(data: CampaignInterface & { start_date: Date; end_date: Date }): Promise<any> {
     const query = {
       text: `
         INSERT INTO ${this.table} (

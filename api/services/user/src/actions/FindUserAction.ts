@@ -1,21 +1,20 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/find.contract';
+import { alias } from '../shared/user/find.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
-import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Find user by id
  */
-@handler({
-  service: 'user',
-  method: 'find',
-})
+@handler(configHandler)
 export class FindUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.find'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -45,7 +44,7 @@ export class FindUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: { _id: string }, context: UserContextInterface): Promise<User> {
+  public async handle(request: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {

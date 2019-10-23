@@ -130,7 +130,7 @@
     "no-return-await": true,
     "promise-function-async": true,
     "space-before-function-paren": false,
-    "no-implicit-dependencies": [true, "dev", ["~"]],
+    "no-implicit-dependencies": [true, "dev", ["~", "shared"]],
     "prefer-conditional-expression": true,
     "newline-per-chained-call": false,
     "import-group-ordering": {

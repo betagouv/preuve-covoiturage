@@ -3,23 +3,18 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  applicationListSchema,
-  applicationFindSchema,
-  applicationCreateSchema,
-  applicationRevokeSchema,
-} from '@pdc/provider-schema';
-
 import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
-import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
+import { binding as listBinding } from './shared/application/list.schema';
+import { binding as findBinding } from './shared/application/find.schema';
+import { binding as createBinding } from './shared/application/create.schema';
+import { binding as revokeBinding } from './shared/application/revoke.schema';
 import { MigrateCommand } from './commands/MigrateCommand';
-import {
-  ListApplicationAction,
-  FindApplicationAction,
-  CreateApplicationAction,
-  RevokeApplicationAction,
-} from './actions';
+import { ListApplicationAction } from './actions/ListApplicationAction';
+import { FindApplicationAction } from './actions/FindApplicationAction';
+import { CreateApplicationAction } from './actions/CreateApplicationAction';
+import { RevokeApplicationAction } from './actions/RevokeApplicationAction';
+import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
 
 @serviceProvider({
   config: __dirname,
@@ -31,12 +26,7 @@ import {
   //          as the proxy Kernel doesn't exist.
   // providers: [ApplicationRepositoryProvider, TokenProvider],
   providers: [ApplicationRepositoryProvider],
-  validator: [
-    ['application.list', applicationListSchema],
-    ['application.find', applicationFindSchema],
-    ['application.create', applicationCreateSchema],
-    ['application.revoke', applicationRevokeSchema],
-  ],
+  validator: [listBinding, findBinding, createBinding, revokeBinding],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scopeIt', ScopeToSelfMiddleware]],
   connections: [[MongoConnection, 'mongo']],
   handlers: [ListApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],

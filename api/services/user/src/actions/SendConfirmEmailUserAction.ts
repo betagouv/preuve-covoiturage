@@ -3,18 +3,18 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/sendConfirmEmail.contract';
+import { alias } from '../shared/user/sendConfirmEmail.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 /*
  * send the confirmation email to a user by _id
  */
-@handler({
-  service: 'user',
-  method: 'sendConfirmEmail',
-})
+@handler(configHandler)
 export class SendConfirmEmailUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.sendConfirmEmail'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -44,7 +44,7 @@ export class SendConfirmEmailUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: { _id: string }, context: ContextType): Promise<void> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {
@@ -94,8 +94,7 @@ link:  ${link}
         link,
         template: this.config.get('email.templates.confirmation'),
         email: user.email,
-        fullname: user.fullname,
-        templateId: this.config.get('notification.templateIds.invitation'),
+        fullname: `${user.firstname} ${user.lastname}`,
       },
       {
         call: context.call,

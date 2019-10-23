@@ -1,4 +1,6 @@
-import { RuleInterface, TripInterface, PersonInterface } from '@pdc/provider-schema';
+import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
+import { TripInterface } from '../shared/common/interfaces/TripInterface';
+import { RuleInterface } from '../shared/common/interfaces/RuleInterface';
 
 export interface MetaInterface {
   get(key: string, fallback?: any): any;

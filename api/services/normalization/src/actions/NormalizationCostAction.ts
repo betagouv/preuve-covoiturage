@@ -1,22 +1,20 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
-import { JourneyInterface } from '@pdc/provider-schema';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Enrich position data
-@handler({
-  service: 'normalization',
-  method: 'cost',
-})
+@handler(handlerConfig)
 export class NormalizationCostAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
 
   constructor(private wf: WorkflowProvider) {
     super();
   }
 
-  public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
+  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     this.logger.debug(`Normalization:cost on ${journey._id}`);
 
     const normalizedJourney = { ...journey };

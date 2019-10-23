@@ -1,7 +1,9 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { JourneyInterface, PersonInterface, TripSearchInterface } from '@pdc/provider-schema/dist';
 
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
+import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
+import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   LightTripInterface,
   TripPgRepositoryInterface,
@@ -57,7 +59,9 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     return result.rows[0]._id;
   }
 
-  public async findOrCreateTripForJourney(journey: JourneyInterface): Promise<[boolean, { _id: string }]> {
+  public async findOrCreateTripForJourney(
+    journey: JourneyInterface & { created_at: Date },
+  ): Promise<[boolean, { _id: string }]> {
     try {
       await this.connection.getClient().query('BEGIN');
       let tripId;

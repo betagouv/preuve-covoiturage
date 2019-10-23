@@ -1,15 +1,14 @@
-import { handler, InvalidParamsException } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { CampaignInterface } from '@pdc/provider-schema';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/delete.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/policy/create.schema';
 
-@handler({
-  service: 'campaign',
-  method: 'delete',
-})
+@handler(handlerConfig)
 export class DeleteCampaignAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+  public readonly middlewares: ActionMiddleware[] = [
     [
       'scope.it',
       [
@@ -23,14 +22,14 @@ export class DeleteCampaignAction extends AbstractAction {
         ],
       ],
     ],
-    ['validate', 'campaign.delete'],
+    ['validate', alias],
   ];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: { _id: string; territory_id: string }): Promise<boolean> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     await this.campaignRepository.deleteDraftOrTemplate(params._id, params.territory_id);
     return true;
   }

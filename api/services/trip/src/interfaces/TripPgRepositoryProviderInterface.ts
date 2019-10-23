@@ -1,4 +1,5 @@
-import { JourneyInterface, TripSearchInterface } from '@pdc/provider-schema';
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
+import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
 
 import { LightTripInterface } from './LightTripInterface';
 

@@ -242,16 +242,6 @@ export class AuthenticationService {
 
   public sendNewPassword(email: string, password: string, token: string): Observable<any> {
     return this.call('auth/change-password', { email, password, token });
-
-    // const jsonRPCParam = new JsonRPCParam();
-    // jsonRPCParam.method = 'user:resetPassword';
-    // jsonRPCParam.params = {
-    //   email,
-    //   password,
-    //   token,
-    // };
-    //
-    // return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   check(): Observable<User> {

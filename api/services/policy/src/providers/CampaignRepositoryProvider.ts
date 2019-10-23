@@ -1,7 +1,6 @@
 import { MongoConnection, MongoException, ObjectId } from '@ilos/connection-mongo';
 import { ConfigInterfaceResolver, provider, NotFoundException } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
-import { TripInterface } from '@pdc/provider-schema';
 
 import {
   CampaignRepositoryProviderInterface,

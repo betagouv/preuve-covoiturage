@@ -2,22 +2,19 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/delete.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/territory/delete.schema';
 
-@handler({
-  service: 'territory',
-  method: 'delete',
-})
+@handler(configHandler)
 export class DeleteTerritoryAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['territory.delete']],
-    ['validate', 'territory.delete'],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['territory.delete']], ['validate', alias]];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: { _id: string }): Promise<boolean> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     await this.territoryRepository.delete(params._id);
     return true;
   }

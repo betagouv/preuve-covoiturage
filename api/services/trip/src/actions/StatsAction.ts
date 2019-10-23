@@ -1,20 +1,16 @@
 // tslint:disable:variable-name
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
-import { TripSearchInterface } from '@pdc/provider-schema/dist';
+import { handler, ContextType } from '@ilos/common';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/stats.contract';
 import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/trip/stats.schema';
 
-/*
- * Stats trips
- */
-@handler({
-  service: 'trip',
-  method: 'stats',
-})
+@handler(handlerConfig)
 export class StatsAction extends Action {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'trip.search'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -47,7 +43,7 @@ export class StatsAction extends Action {
     super();
   }
 
-  public async handle(params: TripSearchInterface, context: ContextType): Promise<any> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     return (await this.pg.stats(params)) || [];
   }
 }

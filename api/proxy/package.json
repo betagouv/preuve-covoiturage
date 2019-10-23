@@ -76,7 +76,6 @@
     "@ilos/framework": "~0",
     "@ilos/transport-http": "~0",
     "@ilos/transport-redis": "~0",
-    "@pdc/provider-schema": "~0",
     "@pdc/provider-sentry": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/provider-notification": "~0",

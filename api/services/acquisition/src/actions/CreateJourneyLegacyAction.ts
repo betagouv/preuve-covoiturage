@@ -1,36 +1,25 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
-import { CreateJourneyParamsInterface } from '@pdc/provider-schema';
 
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/acquisition/createLegacy.contract';
+import { alias } from '../shared/acquisition/createLegacy.schema';
 import { mapLegacyToLatest } from '../helpers/mapLegacyToLatest';
-import { Journey } from '../entities/Journey';
 
-@handler({
-  service: 'acquisition',
-  method: 'createLegacy',
-})
+@handler(configHandler)
 export class CreateJourneyLegacyAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['journey.create']],
-    ['validate', 'journey.createLegacy'],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
 
   constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
-  protected async handle(
-    params: CreateJourneyParamsInterface | CreateJourneyParamsInterface[],
-    context: ContextType,
-  ): Promise<Journey | Journey[]> {
+  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // extract the SIRET to set a default sponsor in the incentives
     const operatorSiret = await this.getOperatorSiret(context.call.user.operator);
 
-    // convert journeys
-    const journeys: Journey[] = (Array.isArray(params) ? [...params] : [params]).map(mapLegacyToLatest(operatorSiret));
-
     // send the converted journeys to new acquisition pipeline
-    return this.kernel.call('acquisition:create', journeys, context);
+    return this.kernel.call('acquisition:create', mapLegacyToLatest(operatorSiret)(params), context);
   }
 
   /**

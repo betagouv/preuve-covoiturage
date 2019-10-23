@@ -1,25 +1,21 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { TerritoryInterface } from '@pdc/provider-schema';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/findByPosition.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/territory/findByPosition.schema';
 import { blacklist } from '../config/filterOutput';
 
-@handler({
-  service: 'territory',
-  method: 'findByPosition',
-})
+@handler(configHandler)
 export class FindTerritoryByPositionAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'territory.findByPosition'],
-    ['content.blacklist', blacklist],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['content.blacklist', blacklist]];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(data: { lat: Number; lon: Number }): Promise<TerritoryInterface> {
-    return this.territoryRepository.findByPosition(data.lon, data.lat);
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    return this.territoryRepository.findByPosition(params.lon, params.lat);
   }
 }
