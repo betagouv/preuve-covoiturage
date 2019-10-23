@@ -1,7 +1,6 @@
 import {
   ConfigInterfaceResolver,
   TemplateInterfaceResolver,
-  NotificationInterfaceResolver,
   RegisterHookInterface,
   InitHookInterface,
   ServiceContainerInterface,
@@ -11,11 +10,13 @@ import {
 import { ConfigExtension } from '@ilos/config';
 import { TemplateExtension } from '@ilos/template';
 
+import { NotificationInterfaceResolver } from './common';
 import { Notification } from './Notification';
 
 @extension({
   name: 'notification',
   require: [ConfigExtension, TemplateExtension],
+  override: true,
 })
 export class NotificationExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key: string = 'notification';
