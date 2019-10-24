@@ -1,5 +1,5 @@
 import { CypressExpectedApplication } from '../../apiValues/expectedApplication';
-import { testNotification } from '../notification.cypress';
+import { closeNotification } from '../notification.cypress';
 import { operatorStubs } from '../../stubs/operator/operator.list';
 import { operatorStub } from '../../stubs/operator/operator.find';
 
@@ -34,7 +34,7 @@ export function cypress_applications(e2e = false) {
   });
 
   // close creation success notif
-  testNotification();
+  closeNotification();
 
   it('copy token', () => {
     cy.get('.token button').click();
@@ -43,7 +43,7 @@ export function cypress_applications(e2e = false) {
   });
 
   // close copy success notif
-  testNotification();
+  closeNotification();
 
   it('closes window', () => {
     cy.get('.mat-dialog-actions button').click();
@@ -73,5 +73,5 @@ export function cypress_applications(e2e = false) {
   });
 
   // close revoke confirm notification
-  testNotification();
+  closeNotification();
 }

@@ -275,12 +275,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       });
     }
 
-    // const formulaFormArray = <FormArray>this.campaignFormGroup.get('formulas');
-    // formulaFormArray.clear();
-    // campaign.formulas.forEach((formula) => {
-    //   formulaFormArray.push(this._formBuilder.group(formula));
-    // });
-
     // set defaults
     const distanceRange = filtersForm.get('distance_range');
     if (
@@ -327,7 +321,9 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   private setLastAvailableStep(): void {
     setTimeout(() => {
       // tslint:disable-next-line:prefer-conditional-expression
-      if (this.canGoToThirdStep) {
+      if (this.canGoToLastStep) {
+        this.currentStep = 3;
+      } else if (this.canGoToThirdStep) {
         this.currentStep = 2;
       } else {
         this.currentStep = 1;

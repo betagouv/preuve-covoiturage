@@ -97,7 +97,6 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     const incentives: any[] = trip.incentives;
     const isEur = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.EUR);
     const isPoint = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.POINT);
-    // TODO Utiliser IncentiveUnitFr quand il sera mergé
     if (isEur && isPoint) {
       return `${INCENTIVE_UNITS_FR.euro} / ${INCENTIVE_UNITS_FR.point}`;
     }

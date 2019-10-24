@@ -30,7 +30,17 @@ import { stubApplicationCreate } from '../support/stubs/operator/application/app
 import { stubApplicationRevoke } from '../support/stubs/operator/application/application.revoke';
 import { cypress_login } from '../support/reusables/auth/cypress_login';
 
+const localTesting = {
+  operator: false,
+  territory: true,
+  registry: false,
+};
+
 context('OPERATOR', () => {
+  if (!localTesting.operator) {
+    return;
+  }
+
   const trips = TripGenerator.generateTrips();
   const applications = ApplicationsGenerator.generateApplications();
 
@@ -67,12 +77,15 @@ context('OPERATOR', () => {
       testOperatorStory();
     } else {
       // local testing
-      testOperatorStory(false, false, false, true);
+      testOperatorStory(false, false, false, false);
     }
   });
 });
 
 context('REGISTRY', () => {
+  if (!localTesting.registry) {
+    return;
+  }
   const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
   const trips = TripGenerator.generateTrips();
 
@@ -104,12 +117,16 @@ context('REGISTRY', () => {
       testRegistryStory();
     } else {
       // local testing
-      testRegistryStory(true, true, false);
+      testRegistryStory(true, false, false);
     }
   });
 });
 
 context('TERRITORY', () => {
+  if (!localTesting.territory) {
+    return;
+  }
+
   const trips = TripGenerator.generateTrips();
 
   describe('login', () => {
@@ -144,7 +161,7 @@ context('TERRITORY', () => {
       testTerritoryStory();
     } else {
       // local testing
-      testTerritoryStory(false, false, false, false, false, false);
+      testTerritoryStory(false, false, false, false, false, false, true);
     }
   });
 });
