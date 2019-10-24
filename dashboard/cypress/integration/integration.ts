@@ -1,6 +1,5 @@
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { Trip } from '~/core/entities/trip/trip';
 
 import { stubCampaignList } from '../support/stubs/campaign/campaign.list';
 import { stubStatList } from '../support/stubs/stat/stat.list';
@@ -30,14 +29,19 @@ import { stubApplicationCreate } from '../support/stubs/operator/application/app
 import { stubApplicationRevoke } from '../support/stubs/operator/application/application.revoke';
 import { cypress_login } from '../support/reusables/auth/cypress_login';
 
+/**
+ * parameters to decide with contexts to run when in local
+ */
 const localTesting = {
   operator: false,
   territory: true,
   registry: false,
 };
 
+const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
+
 context('OPERATOR', () => {
-  if (!localTesting.operator) {
+  if (isLocal && !localTesting.operator) {
     return;
   }
 
@@ -73,7 +77,8 @@ context('OPERATOR', () => {
       stubApplicationRevoke();
     });
 
-    if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+    if (!isLocal) {
+      // continuous integration testing
       testOperatorStory();
     } else {
       // local testing
@@ -83,7 +88,7 @@ context('OPERATOR', () => {
 });
 
 context('REGISTRY', () => {
-  if (!localTesting.registry) {
+  if (isLocal && !localTesting.registry) {
     return;
   }
   const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
@@ -113,7 +118,8 @@ context('REGISTRY', () => {
       stubUserList(users);
     });
 
-    if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+    if (!isLocal) {
+      // continuous integration testing
       testRegistryStory();
     } else {
       // local testing
@@ -123,7 +129,7 @@ context('REGISTRY', () => {
 });
 
 context('TERRITORY', () => {
-  if (!localTesting.territory) {
+  if (isLocal && !localTesting.territory) {
     return;
   }
 
@@ -157,11 +163,12 @@ context('TERRITORY', () => {
       stubLogout();
     });
 
-    if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+    if (!isLocal) {
+      // continuous integration testing
       testTerritoryStory();
     } else {
       // local testing
-      testTerritoryStory(false, false, false, false, false, false, true);
+      testTerritoryStory(false, false, false, false, true, false, false);
     }
   });
 });
