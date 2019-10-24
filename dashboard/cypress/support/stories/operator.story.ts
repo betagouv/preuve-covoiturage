@@ -10,14 +10,6 @@ import { operatorStub } from '../stubs/operator/operator.find';
 import { cypress_applications } from '../reusables/operator/application.cypress';
 
 export function testOperatorStory(profile = true, operator = true, applications = true, filters = true) {
-  it('go to login page', () => {
-    cy.visit('/login');
-  });
-
-  it('Logges in', () => {
-    cypress_login('operator@example.com', 'admin1234');
-  });
-
   // PROFILE
   if (profile) {
     describe('Profile update', () => {

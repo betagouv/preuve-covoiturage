@@ -5,9 +5,19 @@ export class Contact {
   phone?: string;
 
   constructor(obj: { firstname: string; lastname: string; email: string; phone?: string }) {
-    this.firstname = obj && obj.firstname;
-    this.lastname = obj && obj.lastname;
-    this.email = obj && obj.email;
-    this.phone = (obj && obj.phone) || null;
+    if (obj && obj.firstname) this.firstname = obj.firstname;
+    if (obj && obj.lastname) this.lastname = obj.lastname;
+    if (obj && obj.email) this.email = obj.email;
+    if (obj && obj.phone) this.phone = obj.phone;
+  }
+
+  toFormValues() {
+    return {
+      firstname: '',
+      lastname: '',
+      email: '',
+      phone: '',
+      ...this,
+    };
   }
 }

@@ -10,10 +10,12 @@ import { ResetForgottenPasswordComponent } from '~/modules/authentication/pages/
 import { ChangeAuthLayoutComponent } from './layouts/change-auth-layout/change-auth-layout.component';
 import { ForgottenPasswordComponent } from './pages/forgotten-password/forgotten-password.component';
 import { LoginComponent } from './pages/login/login.component';
+import { LoginGuardService } from '~/core/guards/login-guard.service';
 
 const routes: Routes = [
   {
     path: 'login',
+    canActivate: [LoginGuardService],
     component: LoginComponent,
   },
   {

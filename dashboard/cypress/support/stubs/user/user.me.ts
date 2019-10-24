@@ -19,3 +19,25 @@ export function stubUserMe(type: UserGroupEnum) {
       ],
   });
 }
+
+export function stubUserMePermissionError() {
+  cy.route({
+    method: 'POST',
+    url: '/rpc?methods=user:me',
+    status: 401,
+    response: (data) =>
+      <JsonRPCResponse[]>[
+        {
+          id: 1568215196898,
+          jsonrpc: '2.0',
+          result: {
+            data: {
+              id: 1,
+              jsonrpc: '2.0',
+              error: { code: 401, data: 'Error', message: 'Unauthorized Error' },
+            },
+          },
+        },
+      ],
+  });
+}

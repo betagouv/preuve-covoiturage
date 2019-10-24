@@ -28,93 +28,123 @@ import { stubApplications } from '../support/stubs/operator/application/applicat
 import { ApplicationsGenerator } from '../support/generators/applications.generator';
 import { stubApplicationCreate } from '../support/stubs/operator/application/application.create';
 import { stubApplicationRevoke } from '../support/stubs/operator/application/application.revoke';
+import { cypress_login } from '../support/reusables/auth/cypress_login';
 
 context('OPERATOR', () => {
   const trips = TripGenerator.generateTrips();
   const applications = ApplicationsGenerator.generateApplications();
-  beforeEach(() => {
-    cy.server();
-    stubCampaignList();
-    stubOperatorList();
-    stubTerritoryList();
-    stubTripList(trips);
-    stubStatList();
-    stubOperatorPatchContacts();
-    stubMainLists(UserGroupEnum.OPERATOR);
 
-    stubLogin(UserGroupEnum.OPERATOR);
-    stubUserMe(UserGroupEnum.OPERATOR);
-    stubUserPatch(UserGroupEnum.OPERATOR);
-    stubLogout();
-
-    stubApplications(applications);
-    stubApplicationCreate();
-    stubApplicationRevoke();
+  describe('login', () => {
+    cypress_login({
+      email: 'operator@example.com',
+      password: 'admin1234',
+      group: UserGroupEnum.OPERATOR,
+    });
   });
 
-  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
-    testOperatorStory();
-  } else {
-    // local testing
-    testOperatorStory(false, false, false, false);
-  }
+  describe('operator dashboard', () => {
+    beforeEach(() => {
+      cy.server();
+      stubCampaignList();
+      stubOperatorList();
+      stubTerritoryList();
+      stubTripList(trips);
+      stubStatList();
+      stubOperatorPatchContacts();
+      stubMainLists(UserGroupEnum.OPERATOR);
+
+      stubLogin(UserGroupEnum.OPERATOR);
+      stubUserMe(UserGroupEnum.OPERATOR);
+      stubUserPatch(UserGroupEnum.OPERATOR);
+      stubLogout();
+
+      stubApplications(applications);
+      stubApplicationCreate();
+      stubApplicationRevoke();
+    });
+
+    if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+      testOperatorStory();
+    } else {
+      // local testing
+      testOperatorStory(false, false, false, false);
+    }
+  });
 });
 
 context('REGISTRY', () => {
   const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
   const trips = TripGenerator.generateTrips();
 
-  console.log(users);
-
-  beforeEach(() => {
-    cy.server();
-    stubCampaignList();
-    stubOperatorList();
-    stubTerritoryList();
-    stubTripList(trips);
-    stubStatList();
-    stubMainLists(UserGroupEnum.REGISTRY);
-    stubLogin(UserGroupEnum.REGISTRY);
-    stubUserMe(UserGroupEnum.REGISTRY);
-    stubUserPatch(UserGroupEnum.REGISTRY);
-    stubLogout();
-    stubUserList(users);
+  describe('login', () => {
+    cypress_login({
+      email: 'territory@example.com',
+      password: 'admin1234',
+      group: UserGroupEnum.REGISTRY,
+    });
   });
 
-  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
-    testRegistryStory();
-  } else {
-    // local testing
-    testRegistryStory(false, true, false);
-  }
+  describe('registry dashboard', () => {
+    beforeEach(() => {
+      cy.server();
+      stubCampaignList();
+      stubOperatorList();
+      stubTerritoryList();
+      stubTripList(trips);
+      stubStatList();
+      stubMainLists(UserGroupEnum.REGISTRY);
+      stubLogin(UserGroupEnum.REGISTRY);
+      stubUserMe(UserGroupEnum.REGISTRY);
+      stubUserPatch(UserGroupEnum.REGISTRY);
+      stubLogout();
+      stubUserList(users);
+    });
+
+    if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+      testRegistryStory();
+    } else {
+      // local testing
+      testRegistryStory(false, false, false);
+    }
+  });
 });
 
 context('TERRITORY', () => {
   const trips = TripGenerator.generateTrips();
 
-  beforeEach(() => {
-    cy.server();
-    stubCampaignList();
-    stubOperatorList();
-    stubTerritoryList();
-    stubCampaignTemplateList();
-    stubStatList();
-    stubLogin(UserGroupEnum.TERRITORY);
-    stubUserMe(UserGroupEnum.TERRITORY);
-    stubUserPatch(UserGroupEnum.TERRITORY);
-    stubCampaignCreate(CampaignStatusEnum.DRAFT);
-    stubCampaignPatch();
-    stubCampaignLaunch();
-    stubTripList(trips);
-    stubMainLists(UserGroupEnum.TERRITORY);
-    stubTerritoryPatchContacts();
-    stubLogout();
+  describe('login', () => {
+    cypress_login({
+      email: 'admin@example.com',
+      password: 'admin1234',
+      group: UserGroupEnum.TERRITORY,
+    });
   });
 
-  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
-    testTerritoryStory();
-  } else {
-    // local testing
-    testTerritoryStory(false, false, true, false, false, false);
-  }
+  describe('territory dashboard', () => {
+    beforeEach(() => {
+      cy.server();
+      stubCampaignList();
+      stubOperatorList();
+      stubTerritoryList();
+      stubCampaignTemplateList();
+      stubStatList();
+      stubLogin(UserGroupEnum.TERRITORY);
+      stubUserMe(UserGroupEnum.TERRITORY);
+      stubUserPatch(UserGroupEnum.TERRITORY);
+      stubCampaignCreate(CampaignStatusEnum.DRAFT);
+      stubCampaignPatch();
+      stubCampaignLaunch();
+      stubTripList(trips);
+      stubMainLists(UserGroupEnum.TERRITORY);
+      stubTerritoryPatchContacts();
+      stubLogout();
+    });
+
+    if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
+      testTerritoryStory();
+    } else {
+      // local testing
+      testTerritoryStory(false, false, false, false, false, false);
+    }
+  });
 });
