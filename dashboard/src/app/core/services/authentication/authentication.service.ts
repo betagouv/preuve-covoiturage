@@ -185,7 +185,7 @@ export class AuthenticationService {
   }
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
-    return this.jsonRPC.callOne(new JsonRPCParam('user:sendConfirmEmail', { _id: user._id }));
+    return this.jsonRPC.callOne(new JsonRPCParam('user:sendInvitationEmail', { _id: user._id }));
   }
 
   public restorePassword(email: string, password: string, token: string): Observable<any> {
