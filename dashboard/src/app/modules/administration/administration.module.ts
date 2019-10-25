@@ -24,6 +24,8 @@ import { OperatorComponent } from './pages/operator/operator.component';
 import { ApiComponent } from './pages/api/api.component';
 import { AllTerritoriesComponent } from './pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from './pages/all-operators/all-operators.component';
+import { OperatorVisibilityComponent } from './pages/operator-visibility/operator-visibility.component';
+import { OperatorVisibilityModule } from '~/modules/operator/modules/operator-visibility/operator-visibility.module';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,7 @@ import { AllOperatorsComponent } from './pages/all-operators/all-operators.compo
     AllUsersComponent,
     AllTerritoriesComponent,
     AllOperatorsComponent,
+    OperatorVisibilityComponent,
   ],
   imports: [
     AdministrationRoutingModule,
@@ -53,6 +56,7 @@ import { AllOperatorsComponent } from './pages/all-operators/all-operators.compo
     OperatorModule,
     ApplicationUiModule,
     MatPaginatorModule,
+    OperatorVisibilityModule,
   ],
 })
 export class AdministrationModule {}

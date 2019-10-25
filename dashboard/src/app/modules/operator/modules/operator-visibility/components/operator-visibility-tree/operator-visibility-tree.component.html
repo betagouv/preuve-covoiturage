@@ -1,0 +1,22 @@
+<!-- SEARCH FILTER-->
+<form [formGroup]="searchFilter">
+  <mat-form-field appearance="outline">
+    <mat-label>Rechercher</mat-label>
+    <input matInput placeholder="Nom du territoire" formControlName="query" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</form>
+
+<div class="OperatorVisibilityTree">
+  <form [formGroup]="visibilityFormGroup" *ngIf="territoriesToShow">
+    <div formArrayName="territories">
+      <mat-checkbox
+        *ngFor="let territory of territoriesFormArray.controls; let i = index"
+        color="primary"
+        [formControlName]="i"
+      >
+        {{ territoriesToShow[i].name }}
+      </mat-checkbox>
+    </div>
+  </form>
+</div>
