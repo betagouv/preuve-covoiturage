@@ -1,25 +1,27 @@
-import { TerritoryInterface } from '@pdc/provider-schema';
+import { TerritoryInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
+import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
 
 export interface TerritoryRepositoryProviderInterface {
   find(id: string): Promise<TerritoryInterface>;
   all(): Promise<TerritoryInterface[]>;
   create(data: TerritoryInterface): Promise<TerritoryInterface>;
   delete(_id: string): Promise<void>;
+  update(data: PatchParamsInterface): Promise<TerritoryInterface>;
   patch(id: string, patch: { [k: string]: any }): Promise<TerritoryInterface>;
   findByInsee(insee: String): Promise<TerritoryInterface>;
   findByPosition(lon: Number, lat: Number): Promise<TerritoryInterface>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
-  async find(id: string): Promise<TerritoryInterface> {
+  async find(id: string): Promise<TerritoryInterface & { _id: string }> {
     throw new Error();
   }
 
-  async all(): Promise<TerritoryInterface[]> {
+  async all(): Promise<(TerritoryInterface & { _id: string })[]> {
     throw new Error();
   }
 
-  async create(data: TerritoryInterface): Promise<TerritoryInterface> {
+  async create(data: TerritoryInterface): Promise<TerritoryInterface & { _id: string }> {
     throw new Error();
   }
 
@@ -27,15 +29,19 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async patch(id: string, patch: { [k: string]: any }): Promise<TerritoryInterface> {
+  async update(data: PatchParamsInterface): Promise<TerritoryInterface & { _id: string }> {
+    throw new Error('Method not implemented.');
+  }
+
+  async patch(id: string, patch: { [k: string]: any }): Promise<TerritoryInterface & { _id: string }> {
     throw new Error();
   }
 
-  async findByInsee(insee: String): Promise<TerritoryInterface> {
+  async findByInsee(insee: String): Promise<TerritoryInterface & { _id: string }> {
     throw new Error();
   }
 
-  async findByPosition(lon: Number, lat: Number): Promise<TerritoryInterface> {
+  async findByPosition(lon: Number, lat: Number): Promise<TerritoryInterface & { _id: string }> {
     throw new Error();
   }
 }

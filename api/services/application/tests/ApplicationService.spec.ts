@@ -9,7 +9,6 @@ import { TransportInterface } from '@ilos/common';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
-import { Application } from '../src/entities/Application';
 import { ServiceProvider } from '../src/ServiceProvider';
 
 let transport: TransportInterface;
@@ -44,7 +43,7 @@ describe('Application service', () => {
   });
 
   // Database _id
-  let application: Application;
+  let application;
 
   it('#1 - Creates an application', () =>
     request

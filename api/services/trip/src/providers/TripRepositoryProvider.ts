@@ -1,9 +1,8 @@
 import { provider, ConfigInterfaceResolver, NotFoundException } from '@ilos/common';
 import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 import { ParentRepository } from '@ilos/repository';
-import { tripSchema } from '@pdc/provider-schema';
 
-import { Trip } from '../entities/Trip';
+import { TripInterface } from '../shared/common/interfaces/TripInterface';
 import {
   TripRepositoryProviderInterface,
   TripRepositoryProviderInterfaceResolver,
@@ -33,15 +32,7 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
     return this.config.get('trip.db');
   }
 
-  public getSchema(): object | null {
-    return tripSchema;
-  }
-
-  public getModel() {
-    return Trip;
-  }
-
-  async create(data: Trip): Promise<Trip> {
+  async create(data: TripInterface): Promise<TripInterface> {
     return super.create({ ...data, operator_id: [new ObjectId(data.operator_id[0])] });
   }
 
@@ -100,7 +91,7 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
   public async findByOperatorTripIdAndOperatorId(params: {
     operator_trip_id?: string;
     operator_id: string;
-  }): Promise<Trip> {
+  }): Promise<TripInterface> {
     const collection = await this.getCollection();
     const query = {
       operator_id: new ObjectId(params.operator_id),
@@ -116,7 +107,10 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
     return this.instanciate(result);
   }
 
-  public async findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<Trip> {
+  public async findByPhoneAndTimeRange(
+    phone: string,
+    startTimeRange: { min: Date; max: Date },
+  ): Promise<TripInterface> {
     const collection = await this.getCollection();
     const result = await collection.findOne({
       'people.identity.phone': phone,
@@ -140,7 +134,7 @@ export class TripRepositoryProvider extends ParentRepository implements TripRepo
     data: {
       [k: string]: any;
     },
-  ): Promise<Trip> {
+  ): Promise<TripInterface> {
     const collection = await this.getCollection();
     const { people, territory, operator_id, ...patch } = data;
     let request = {};

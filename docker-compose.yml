@@ -54,8 +54,8 @@ services:
   api:
     build: './docker/api'
     volumes:
-      - ./api:/code
-    working_dir: '/code'
+      - .:/code
+    working_dir: '/code/api'
     command: 'yarn start:http'
     ports:
       - 8080:8080

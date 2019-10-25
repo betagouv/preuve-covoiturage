@@ -3,17 +3,17 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/forgottenPassword.contract';
+import { alias } from '../shared/user/forgottenPassword.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 /*
  * find user by email and send email to set new password
  */
-@handler({
-  service: 'user',
-  method: 'forgottenPassword',
-})
+@handler(configHandler)
 export class ForgottenPasswordUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['validate', 'user.forgottenPassword']];
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
@@ -24,8 +24,8 @@ export class ForgottenPasswordUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: { email: string }, context: ContextType): Promise<void> {
-    const user = await this.userRepository.findUserByParams({ email: params.email });
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    const user = await this.userRepository.findTokensByEmail({ email: params.email });
 
     const token = this.cryptoProvider.generateToken();
     user.forgotten_token = await this.cryptoProvider.cryptToken(token);
@@ -69,8 +69,7 @@ link:  ${link}
         link,
         template: this.config.get('email.templates.forgotten'),
         email: user.email,
-        fullname: user.fullname,
-        templateId: this.config.get('notification.templateIds.forgotten'),
+        fullname: `${user.firstname} ${user.lastname}`,
       },
       {
         call: ctx.call,

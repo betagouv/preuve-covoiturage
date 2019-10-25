@@ -1,25 +1,21 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { TerritoryInterface } from '@pdc/provider-schema';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/findByInsee.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/territory/findByInsee.schema';
 import { blacklist } from '../config/filterOutput';
 
-@handler({
-  service: 'territory',
-  method: 'findByInsee',
-})
+@handler(configHandler)
 export class FindTerritoryByInseeAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'territory.findByInsee'],
-    ['content.blacklist', blacklist],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['content.blacklist', blacklist]];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(data: { insee: String }): Promise<TerritoryInterface> {
+  public async handle(data: ParamsInterface): Promise<ResultInterface> {
     return this.territoryRepository.findByInsee(data.insee);
   }
 }

@@ -4,8 +4,8 @@ import chai from 'chai';
 import supertest from 'supertest';
 import { describe } from 'mocha';
 import { QueueTransport } from '@ilos/transport-redis';
-import { TripInterface } from '@pdc/provider-schema';
 
+import { TripInterface } from '../src/shared/common/interfaces/TripInterface';
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
 import { requestJourney } from './mocks/requestJourneyV2';

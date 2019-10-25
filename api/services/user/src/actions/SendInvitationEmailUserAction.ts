@@ -3,18 +3,18 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/sendInvitationEmail.contract';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/user/sendInvitationEmail.schema';
 
 /*
  * send the confirmation email to a user by _id
  */
-@handler({
-  service: 'user',
-  method: 'sendInvitationEmail',
-})
+@handler(configHandler)
 export class SendInvitationEmailUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.sendInvitationEmail'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -44,7 +44,7 @@ export class SendInvitationEmailUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: { _id: string }, context: ContextType): Promise<void> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {
@@ -58,14 +58,17 @@ export class SendInvitationEmailUserAction extends AbstractAction {
     const user = await this.userRepository.findUser(params._id, contextParam);
 
     // generate new token for a password reset on first access
-    const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
     // set forgotten password properties to set first password
-    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
-    user.forgotten_at = new Date();
+    const forgotten_token = await this.cryptoProvider.cryptToken(token);
+    const forgotten_at = new Date();
 
-    await this.userRepository.update(user);
+    await this.userRepository.update({
+      ...user,
+      forgotten_token,
+      forgotten_at,
+    });
 
     const link = sprintf(
       '%s/activate/%s/%s/',
@@ -92,7 +95,7 @@ link:  ${link}
         link,
         template: this.config.get('email.templates.invitation'),
         email: user.email,
-        fullname: user.fullname,
+        fullname: `${user.firstname} ${user.lastname}`,
       },
       {
         call: context.call,

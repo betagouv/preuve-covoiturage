@@ -1,5 +1,4 @@
-import { RepositoryInterfaceResolver } from '@ilos/common';
-import { OperatorInterface } from '@pdc/provider-schema/dist';
+import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
 
 export interface OperatorRepositoryProviderInterface {
   find(id: string): Promise<OperatorInterface>;
@@ -7,6 +6,7 @@ export interface OperatorRepositoryProviderInterface {
   create(data: OperatorInterface): Promise<OperatorInterface>;
   delete(_id: string): Promise<void>;
   patch(id: string, patch: { [k: string]: any }): Promise<OperatorInterface>;
+  update(params: OperatorInterface): Promise<OperatorInterface>;
 }
 
 export abstract class OperatorRepositoryProviderInterfaceResolver implements OperatorRepositoryProviderInterface {
@@ -23,6 +23,9 @@ export abstract class OperatorRepositoryProviderInterfaceResolver implements Ope
     throw new Error();
   }
   async patch(id: string, patch: { [k: string]: any }): Promise<OperatorInterface> {
+    throw new Error();
+  }
+  async update(params: OperatorInterface): Promise<OperatorInterface> {
     throw new Error();
   }
 }

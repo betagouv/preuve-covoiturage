@@ -1,7 +1,7 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { OperatorInterface } from '@pdc/provider-schema';
 
+import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
@@ -48,7 +48,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows;
   }
 
-  async create(data: OperatorInterface): Promise<OperatorInterface> {
+  async create(data: OperatorInterface & { siret: string }): Promise<OperatorInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -105,6 +105,11 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     }
 
     return;
+  }
+
+  // TODO
+  async update(params: OperatorInterface): Promise<OperatorInterface> {
+    throw new Error('Not implemented');
   }
 
   async patch(id: string, patch: { [k: string]: any }): Promise<OperatorInterface> {

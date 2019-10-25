@@ -1,10 +1,10 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
 import { provider } from '@ilos/common';
-import { JourneyInterface } from '@pdc/provider-schema';
+import { PostgresConnection } from '@ilos/connection-postgres';
+
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 import {
   JourneyRepositoryProviderInterface,
   JourneyRepositoryProviderInterfaceResolver,
-  WhiteListedJourneyInterface,
 } from '../interfaces/JourneyRepositoryProviderInterface';
 
 @provider({
@@ -15,7 +15,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
 
   constructor(protected connection: PostgresConnection) {}
 
-  async create(journey: JourneyInterface): Promise<WhiteListedJourneyInterface> {
+  async create(journey: JourneyInterface & { application_id: string }): Promise<JourneyInterface> {
     const { operator_id, application_id } = journey;
 
     const query = {
@@ -26,7 +26,10 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
           journey_id,
           payload
         ) VALUES (
-
+          $1,
+          $2,
+          $3,
+          $4
         )
         RETURNING _id, journey_id, created_at
       `,
@@ -42,7 +45,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     return result.rows[0];
   }
 
-  async createMany(data: JourneyInterface[]): Promise<JourneyInterface[]> {
+  async createMany(data: (JourneyInterface & { application_id: string })[]): Promise<JourneyInterface[]> {
     const insertPayload = [];
 
     for (const journey of data) {

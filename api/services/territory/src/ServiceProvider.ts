@@ -3,23 +3,20 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  territoryCreateSchema,
-  territoryUpdateSchema,
-  territoryDeleteSchema,
-  territoryFindByInseeSchema,
-  territoryFindByPositionSchema,
-  territoryFindSchema,
-  territoryPatchContactsSchema,
-} from '@pdc/provider-schema';
 import { ContentWhitelistMiddleware, ContentBlacklistMiddleware } from '@pdc/provider-middleware';
 
+import { find } from './shared/territory/find.schema';
+import { create } from './shared/territory/create.schema';
+import { update } from './shared/territory/update.schema';
+import { deleteTerritory } from './shared/territory/delete.schema';
+import { findByInsee } from './shared/territory/findByInsee.schema';
+import { findByPosition } from './shared/territory/findByPosition.schema';
+import { patchContacts } from './shared/territory/patchContacts.schema';
 import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
 import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
-import { SchemaTerritoryAction } from './actions/SchemaTerritoryAction';
 import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
 import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
@@ -30,13 +27,13 @@ import { MigrateCommand } from './commands/MigrateCommand';
   config: __dirname,
   providers: [TerritoryRepositoryProvider],
   validator: [
-    ['territory.find', territoryFindSchema],
-    ['territory.create', territoryCreateSchema],
-    ['territory.update', territoryUpdateSchema],
-    ['territory.delete', territoryDeleteSchema],
-    ['territory.findByInsee', territoryFindByInseeSchema],
-    ['territory.findByPosition', territoryFindByPositionSchema],
-    ['territory.patchContacts', territoryPatchContactsSchema],
+    ['territory.find', find],
+    ['territory.create', create],
+    ['territory.update', update],
+    ['territory.delete', deleteTerritory],
+    ['territory.findByInsee', findByInsee],
+    ['territory.findByPosition', findByPosition],
+    ['territory.patchContacts', patchContacts],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -47,7 +44,6 @@ import { MigrateCommand } from './commands/MigrateCommand';
   connections: [[MongoConnection, 'mongo']],
   handlers: [
     FindTerritoryAction,
-    SchemaTerritoryAction,
     ListTerritoryAction,
     CreateTerritoryAction,
     UpdateTerritoryAction,

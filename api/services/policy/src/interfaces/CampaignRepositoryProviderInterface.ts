@@ -1,6 +1,3 @@
-import { RepositoryInterface, RepositoryInterfaceResolver, NewableType } from '@ilos/common';
-import { TripInterface } from '@pdc/provider-schema/dist';
-
 export interface CampaignRepositoryProviderInterface {
   find(id: string): Promise<any>;
   create(params: any): Promise<any>;

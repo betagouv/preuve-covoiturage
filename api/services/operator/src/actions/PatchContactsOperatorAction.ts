@@ -1,27 +1,20 @@
 import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { PatchOperatorParamsInterface, OperatorInterface } from '@pdc/provider-schema';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared//operator/patchContacts.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/operator/patchContacts.schema';
 
-@handler({
-  service: 'operator',
-  method: 'patchContacts',
-})
+@handler(handlerConfig)
 export class PatchContactsOperatorAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['operator.contacts.update']],
-    ['validate', 'operator.patchContacts'],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['operator.contacts.update']], ['validate', alias]];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(
-    params: { _id: string; patch: PatchOperatorParamsInterface },
-    context: ContextType,
-  ): Promise<OperatorInterface> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     if (context.call.user.operator) {
       params._id = context.call.user.operator;
     }

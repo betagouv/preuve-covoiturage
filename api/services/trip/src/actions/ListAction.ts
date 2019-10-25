@@ -1,19 +1,15 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
-import { TripSearchInterface } from '@pdc/provider-schema/dist';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
 import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/trip/list.schema';
 
-/**
- * List trips
- */
-@handler({
-  service: 'trip',
-  method: 'list',
-})
+@handler(handlerConfig)
 export class ListAction extends Action {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'trip.search'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -46,7 +42,7 @@ export class ListAction extends Action {
     super();
   }
 
-  public async handle(params: TripSearchInterface, context: ContextType): Promise<any> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const result = await this.pg.search(params);
     return result.map((r) => ({
       ...r,

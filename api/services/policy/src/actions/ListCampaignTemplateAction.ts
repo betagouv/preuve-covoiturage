@@ -1,15 +1,14 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { CampaignInterface } from '@pdc/provider-schema';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/listTemplate.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/policy/create.schema';
 
-@handler({
-  service: 'campaign',
-  method: 'listTemplate',
-})
+@handler(handlerConfig)
 export class ListCampaignTemplateAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+  public readonly middlewares: ActionMiddleware[] = [
     [
       'scope.it',
       [
@@ -26,14 +25,14 @@ export class ListCampaignTemplateAction extends AbstractAction {
         ],
       ],
     ],
-    ['validate', 'campaign.listTemplate'],
+    ['validate', alias],
   ];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: { territory_id: string | null }, _context): Promise<CampaignInterface[]> {
+  public async handle(params: ParamsInterface, _context): Promise<ResultInterface> {
     return this.campaignRepository.findTemplates(params.territory_id);
   }
 }

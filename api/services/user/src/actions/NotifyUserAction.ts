@@ -1,18 +1,15 @@
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { ContextType, ForbiddenException, handler } from '@ilos/common';
-import { UserNotifyParamsInterface } from '@pdc/provider-schema';
-
-import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
+import { handler, ContextType, ForbiddenException } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
+
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
+import { SendTemplateByEmailParamsInterface } from '../shared/user/common/interfaces/SendTemplateByEmailParamsInterface';
 
 /*
  * Send email to user
  */
-@handler({
-  service: 'user',
-  method: 'notify',
-})
+@handler(configHandler)
 export class NotifyUserAction extends AbstractAction {
   // TODO middlewares (see below in handle())
 
@@ -20,7 +17,7 @@ export class NotifyUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: UserNotifyParamsInterface, context: ContextType): Promise<void> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // TODO replace this with a proper middleware
     if (get(context, 'channel.service', '') !== 'user') {
       throw new ForbiddenException();
@@ -51,7 +48,7 @@ export class NotifyUserAction extends AbstractAction {
           link: params.link,
         },
       },
-      params.templateId ? { template: params.templateId } : null,
+      params.template ? { template: params.template } : null,
     );
   }
 }

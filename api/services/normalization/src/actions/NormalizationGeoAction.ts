@@ -2,23 +2,22 @@ import * as _ from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { JourneyInterface, PositionInterface } from '@pdc/provider-schema';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/geo.contract';
+import { PositionInterface } from '../shared/common/interfaces/PositionInterface';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Enrich position data
-@handler({
-  service: 'normalization',
-  method: 'geo',
-})
+@handler(handlerConfig)
 export class NormalizationGeoAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
 
   constructor(protected wf: WorkflowProvider, private geoProvider: GeoProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
+  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     let normalizedJourney = { ...journey };
     this.logger.debug(`Normalization:geo on ${journey._id}`);
 
@@ -51,11 +50,11 @@ export class NormalizationGeoAction extends AbstractAction {
    * Complete position with data relative to town
    */
   private processTownResponse(
-    journey: JourneyInterface,
+    journey: ParamsInterface,
     path: string,
     position: PositionInterface,
     determinedPosition: PositionInterface,
-  ): JourneyInterface {
+  ): ParamsInterface {
     if (determinedPosition.lon && !position.lon) {
       position.lon = determinedPosition.lon;
       _.set(journey, `${path}.lon`, determinedPosition.lon);

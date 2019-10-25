@@ -5,14 +5,13 @@ import { MongoConnection } from '@ilos/connection-mongo';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  campaignCreateSchema,
-  campaignPatchSchema,
-  campaignLaunchSchema,
-  campaignDeleteSchema,
-  campaignListTemplateSchema,
-} from '@pdc/provider-schema';
 import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
+
+import { binding as createSchemaBinding } from './shared/policy/create.schema';
+import { binding as patchSchemaBinding } from './shared/policy/patch.schema';
+import { binding as launchSchemaBinding } from './shared/policy/launch.schema';
+import { binding as deleteSchemaBinding } from './shared/policy/delete.schema';
+import { binding as listTemplateSchemaBinding } from './shared/policy/listTemplate.schema';
 
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
@@ -35,11 +34,11 @@ import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRep
     PolicyEngine,
   ],
   validator: [
-    ['campaign.create', campaignCreateSchema],
-    ['campaign.patch', campaignPatchSchema],
-    ['campaign.launch', campaignLaunchSchema],
-    ['campaign.delete', campaignDeleteSchema],
-    ['campaign.listTemplate', campaignListTemplateSchema],
+    createSchemaBinding,
+    patchSchemaBinding,
+    launchSchemaBinding,
+    deleteSchemaBinding,
+    listTemplateSchemaBinding,
   ],
   handlers: [
     CreateCampaignAction,

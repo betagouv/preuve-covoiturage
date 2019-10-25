@@ -1,10 +1,11 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ConfigInterfaceResolver } from '@ilos/common';
-import { ListUserParamsInterface } from '@pdc/provider-schema';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
+import { alias } from '../shared/user/list.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserListResponseInterface } from '../interfaces/UserListResponseInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
 const whiteList = [
   '_id',
@@ -22,13 +23,10 @@ const whiteList = [
 /*
  * list users filtered by territory or operator and paginate with limit & skip
  */
-@handler({
-  service: 'user',
-  method: 'list',
-})
+@handler(configHandler)
 export class ListUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.list'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -57,10 +55,7 @@ export class ListUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(
-    params: ListUserParamsInterface,
-    context: UserContextInterface,
-  ): Promise<UserListResponseInterface> {
+  public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {

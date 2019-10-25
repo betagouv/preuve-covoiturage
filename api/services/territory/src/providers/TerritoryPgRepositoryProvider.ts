@@ -1,7 +1,11 @@
 import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { TerritoryInterface } from '@pdc/provider-schema';
 
+import { TerritoryInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
+import {
+  ParamsInterface as UpdateParamsInterface,
+  ResultInterface as UpdateResultInterface,
+} from '../shared/territory/update.contract';
 import {
   TerritoryRepositoryProviderInterfaceResolver,
   TerritoryRepositoryProviderInterface,
@@ -48,7 +52,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows;
   }
 
-  async create(data: TerritoryInterface): Promise<TerritoryInterface> {
+  async create(data: TerritoryInterface & { siret: string; parent_id: string }): Promise<TerritoryInterface> {
     // CAUTION, API CHANGES
     // do not handle :
     // - insee
@@ -67,7 +71,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           company,
           address,
           contacts,
-          
+
           parent_id,
           cgu_accepted_at,
           cgu_accepted_by
@@ -123,6 +127,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     return;
+  }
+
+  async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
+    throw new Error();
   }
 
   async patch(id: string, patch: { [k: string]: any }): Promise<TerritoryInterface> {

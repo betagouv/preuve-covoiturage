@@ -1,11 +1,12 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
-import { CreateJourneyParamsInterface, PersonInterface, JourneyInterface } from '@pdc/provider-schema';
 
-import {
-  JourneyRepositoryProviderInterfaceResolver,
-  WhiteListedJourneyInterface,
-} from '../interfaces/JourneyRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
+import { alias } from '../shared/acquisition/create.schema';
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
+import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 
 const callContext = {
   channel: {
@@ -16,15 +17,9 @@ const callContext = {
   },
 };
 
-@handler({
-  service: 'acquisition',
-  method: 'create',
-})
+@handler(handlerConfig)
 export class CreateJourneyAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['journey.create']],
-    ['validate', 'journey.create'],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
 
   constructor(
     private kernel: KernelInterfaceResolver,
@@ -33,10 +28,7 @@ export class CreateJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(
-    params: CreateJourneyParamsInterface,
-    context: ContextType,
-  ): Promise<WhiteListedJourneyInterface> {
+  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const now = new Date();
 
     // assign the operator from context
@@ -49,7 +41,7 @@ export class CreateJourneyAction extends AbstractAction {
     }
 
     // Store in database
-    const journey = await this.journeyRepository.create(payload);
+    const journey = <JourneyInterface & { created_at: Date }>await this.journeyRepository.create(payload);
 
     // Dispatch to the normalization pipeline
     await this.kernel.notify('normalization:geo', journey, callContext);
@@ -60,7 +52,7 @@ export class CreateJourneyAction extends AbstractAction {
     };
   }
 
-  protected cast(jrn: CreateJourneyParamsInterface, operatorId: string): JourneyInterface {
+  protected cast(jrn: ParamsInterface, operatorId: string): JourneyInterface {
     const journey = {
       ...jrn,
       operator_id: operatorId,
