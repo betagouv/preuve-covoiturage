@@ -4,4 +4,5 @@ export interface UserNotifyParamsInterface {
   fullname: string;
   organization: string;
   link: string;
+  templateId?: string;
 }
