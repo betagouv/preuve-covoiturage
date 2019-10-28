@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 import { JourneyInterface, PersonInterface, TripSearchInterface } from '@pdc/provider-schema/dist';
 
 import {
@@ -54,7 +54,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     return result.rows[0];
   }
 
-  protected async createNewTrip(operatorTripId?: string): Promise<{ _id: string }> {
+  protected async createNewTrip(client: PoolClient, operatorTripId?: string): Promise<{ _id: string }> {
     let query = {
       text: 'INSERT INTO trips (status) values ($1) RETURNING _id',
       values: ['pending'],
@@ -71,7 +71,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       };
     }
 
-    const result = await this.connection.getClient().query(query);
+    const result = await client.query(query);
 
     if (result.rowCount === 0) {
       throw new Error('Oups');
@@ -81,8 +81,9 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
   }
 
   public async findOrCreateTripForJourney(journey: JourneyInterface): Promise<[boolean, { _id: string }]> {
+    const client = await this.connection.getClient().connect();
     try {
-      await this.connection.getClient().query('BEGIN');
+      await client.query('BEGIN');
       let trip;
       let created = false;
 
@@ -95,12 +96,13 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       }
 
       if (!trip) {
-        trip = await this.createNewTrip(journey.operator_journey_id);
+        trip = await this.createNewTrip(client, journey.operator_journey_id);
         created = true;
       }
 
       // add locked status check,
       await this.addParticipantToTrip(
+        client,
         trip._id,
         {
           ...journey.driver,
@@ -111,22 +113,41 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
         true,
       );
 
-      await this.addParticipantToTrip(trip._id, {
+      await this.addParticipantToTrip(client, trip._id, {
         ...journey.passenger,
         operator_class: journey.operator_class,
         journey_id: journey.journey_id,
         operator_id: journey.operator_id,
       });
 
-      await this.connection.getClient().query('COMMIT');
+      await client.query('COMMIT');
+      await client.release();
       return [created, trip];
     } catch (e) {
-      await this.connection.getClient().query('ROLLBACK');
+      await client.query('ROLLBACK');
+      await client.release();
       throw e;
     }
   }
 
-  protected async addParticipantToTrip(tripId, participant: PersonInterface, asDriver = false): Promise<void> {
+  protected async addParticipantToTrip(
+    client: PoolClient,
+    tripId,
+    participant: PersonInterface,
+    asDriver = false,
+  ): Promise<void> {
+    const identity = participant.identity;
+    const flatidentity = `(${[
+      'phone' in identity ? identity.phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
+      'firstname' in identity ? identity.firstname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
+      'lastname' in identity ? identity.lastname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
+      'email' in identity ? identity.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
+      'company' in identity ? identity.company.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
+      null, // participant.identity.travel_pass.name,
+      null, // participant.identity.travel_pass.user_id,
+      participant.identity.over_18,
+    ].join(',')})`;
+
     const query = {
       text: `
         INSERT INTO trip_participants (
@@ -204,16 +225,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
         participant.journey_id,
         participant.operator_class,
 
-        `(${[
-          participant.identity.phone,
-          participant.identity.firstname,
-          participant.identity.lastname,
-          participant.identity.email,
-          participant.identity.company,
-          null, // participant.identity.travel_pass.name,
-          null, // participant.identity.travel_pass.user_id,
-          participant.identity.over_18,
-        ].join(',')})`,
+        flatidentity,
 
         asDriver,
 
@@ -249,7 +261,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       ],
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await client.query(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to save journey ${participant.journey_id} on trip ${tripId}`);
     }
