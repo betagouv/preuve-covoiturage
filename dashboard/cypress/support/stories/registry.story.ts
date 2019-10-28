@@ -24,12 +24,12 @@ export function testRegistryStory(profile = true, filters = true, users = true) 
     });
   }
 
-  // USERS
-  if (users) {
-    describe('Manage users', () => {
-      cypress_users();
-    });
-  }
+  // // USERS
+  // if (users) {
+  //   describe('Manage users', () => {
+  //     cypress_users();
+  //   });
+  // }
 
   // LOGOUT
   describe('Logout', () => {
