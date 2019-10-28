@@ -9,6 +9,7 @@ import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 interface RPCOptions {
   headers?:
@@ -58,12 +59,9 @@ export class JsonRPCService {
       urlWithMethods += `${method.method}`;
     });
     return this.http.post(urlWithMethods, methods, finalOptions).pipe(
-      catchError((response) => {
-        if (response.status === 401) {
-          this.router.navigate(['/login']);
-        }
-
-        throw response;
+      catchHttpStatus(401, (err) => {
+        this.router.navigate(['/login']);
+        throw err;
       }),
       map((response: JsonRPCResponse[]) => {
         const res: { id: number; data: any; meta: any }[] = [];
