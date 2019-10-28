@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 
@@ -35,7 +35,10 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     this.loadOperators();
     this.operatorCtrl.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .pipe(tap((literal) => this.filterOperators(literal)))
+      .pipe(
+        filter((literal) => !!literal),
+        tap((literal: string) => this.filterOperators(literal)),
+      )
       .subscribe();
   }
 

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import { takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -33,7 +33,10 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     this.initTerritories();
     this.territoryCtrl.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .pipe(tap((literal) => this.filterTerritories(literal)))
+      .pipe(
+        filter((literal) => !!literal),
+        tap((literal: string) => this.filterTerritories(literal)),
+      )
       .subscribe();
   }
 
