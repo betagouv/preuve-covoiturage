@@ -93,6 +93,7 @@ link:  ${link}
         template: this.config.get('email.templates.invitation'),
         email: user.email,
         fullname: user.fullname,
+        templateId: this.config.get('notification.templateIds.invitation'),
       },
       {
         call: context.call,
