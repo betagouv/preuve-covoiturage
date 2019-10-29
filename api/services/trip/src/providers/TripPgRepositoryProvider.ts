@@ -121,14 +121,6 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
         true,
       );
 
-      await this.addParticipant(tripId, {
-        ...journey.passenger,
-        operator_class: journey.operator_class,
-        journey_id: journey.journey_id,
-        operator_id: journey.operator_id,
-        operator_trip_id: journey.operator_journey_id,
-        created_at: journey.created_at,
-      });
       await client.query('COMMIT');
       await client.release();
       return [false, { _id: tripId }];

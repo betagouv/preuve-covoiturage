@@ -2,7 +2,7 @@
   "name": "@pdc/api",
   "private": true,
   "engines": {
-    "node": ">=10"
+    "node": "12.x.x"
   },
   "workspaces": [
     "core",

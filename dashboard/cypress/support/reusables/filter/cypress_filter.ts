@@ -47,8 +47,8 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('chooses min & max distance', () => {
-    cy.get('.filter-distances mat-form-field:first-child input').type(expectedFilter.distance.min.toString());
-    cy.get('.filter-distances mat-form-field:nth-child(2) input').type(expectedFilter.distance.max.toString());
+    cy.get('.filter-distances mat-form-field:first-child input').type((expectedFilter.distance.min / 1000).toString());
+    cy.get('.filter-distances mat-form-field:nth-child(2) input').type((expectedFilter.distance.max / 1000).toString());
   });
 
   it('searchs & adds towns', () => {

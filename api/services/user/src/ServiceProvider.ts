@@ -27,26 +27,30 @@ import { login } from './shared/user/login.schema';
 import { patch } from './shared/user/patch.schema';
 import { register } from './shared/user/register.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
+
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
 import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
-import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
-import { ChangePasswordWithTokenUserAction } from './actions/ChangePasswordWithTokenUserAction';
-import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
-import { CheckForgottenTokenUserAction } from './actions/CheckForgottenTokenUserAction';
-import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
-import { CreateUserAction } from './actions/CreateUserAction';
-import { DeleteUserAction } from './actions/DeleteUserAction';
-import { FindUserAction } from './actions/FindUserAction';
-import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
-import { ListUserAction } from './actions/ListUserAction';
-import { LoginUserAction } from './actions/LoginUserAction';
-import { MeUserAction } from './actions/MeUserAction';
-import { NotifyUserAction } from './actions/NotifyUserAction';
-import { PatchUserAction } from './actions/PatchUserAction';
-import { RegisterUserAction } from './actions/RegisterUserAction';
-import { SendConfirmEmailUserAction } from './actions/SendConfirmEmailUserAction';
-import { SendInvitationEmailUserAction } from './actions/SendInvitationEmailUserAction';
+
+import {
+  ChangePasswordUserAction,
+  ChangePasswordWithTokenUserAction,
+  ChangeRoleUserAction,
+  CheckForgottenTokenUserAction,
+  ConfirmEmailUserAction,
+  CreateUserAction,
+  DeleteUserAction,
+  FindUserAction,
+  ForgottenPasswordUserAction,
+  ListUserAction,
+  LoginUserAction,
+  MeUserAction,
+  NotifyUserAction,
+  PatchUserAction,
+  RegisterUserAction,
+  SendConfirmEmailUserAction,
+  SendInvitationEmailUserAction,
+} from './actions';
 
 @serviceProvider({
   config: __dirname,

@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:12
 
 # required for cypress
 RUN apt-get update && \
