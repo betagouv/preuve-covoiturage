@@ -26,11 +26,11 @@ export class CreateJourneyLegacyAction extends AbstractAction {
     // extract the SIRET to set a default sponsor in the incentives
     const operatorSiret = await this.getOperatorSiret(context.call.user.operator);
 
-    // convert journeys
-    const journeys: Journey[] = (Array.isArray(params) ? [...params] : [params]).map(mapLegacyToLatest(operatorSiret));
+    // convert journey
+    const journey: Journey = mapLegacyToLatest(operatorSiret)(params);
 
     // send the converted journeys to new acquisition pipeline
-    return this.kernel.call('acquisition:create', journeys, context);
+    return this.kernel.call('acquisition:create', journey, context);
   }
 
   /**
