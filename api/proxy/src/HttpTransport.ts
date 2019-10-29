@@ -5,6 +5,10 @@ import helmet from 'helmet';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { get } from 'lodash';
+// tslint:disable-next-line: import-name
+import Redis from 'ioredis';
+// tslint:disable-next-line: import-name
+import createStore from 'connect-redis';
 import {
   TransportInterface,
   KernelInterface,
@@ -69,11 +73,7 @@ export class HttpTransport implements TransportInterface {
     this.registerGlobalMiddlewares();
     this.registerAuthRoutes();
     this.registerLegacyServerRoute();
-
-    if (this.config.get('proxy.rpc.open', false)) {
-      this.registerCallHandler();
-    }
-
+    this.registerCallHandler();
     this.registerAfterAllHandlers();
   }
 
@@ -104,6 +104,9 @@ export class HttpTransport implements TransportInterface {
 
     const sessionSecret = this.config.get('proxy.session.secret');
     const sessionName = this.config.get('proxy.session.name');
+    const redis = new Redis(this.config.get('redis.connectionString'), { keyPrefix: 'proxy:' });
+    const redisStore = createStore(expressSession);
+
     this.app.use(
       expressSession({
         cookie: {
@@ -117,7 +120,7 @@ export class HttpTransport implements TransportInterface {
         secret: sessionSecret,
         resave: false,
         saveUninitialized: false,
-        // store, TODO: use redis
+        store: new redisStore({ client: redis }),
       }),
     );
   }

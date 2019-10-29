@@ -17,7 +17,6 @@ export const session = {
 };
 
 export const rpc = {
-  open: env('APP_ENV', null) !== 'production',
   endpoint: env('APP_RPC_ENDPOINT', '/rpc'),
 };
 
