@@ -37,8 +37,8 @@ export class ForgottenPasswordComponent extends DestroyObservable implements OnI
       .pipe(
         takeUntil(this.destroy$),
         catchHttpStatus(404, (err) => {
-          this.toastr.error("Cette adresse mail n'est pas valide");
-          return null;
+          this.toastr.error("Cette adresse email n'est pas valide");
+          throw err;
         }),
       )
       .subscribe(
@@ -47,13 +47,7 @@ export class ForgottenPasswordComponent extends DestroyObservable implements OnI
             this.toastr.success('Un lien de changement de mot de passe vous a été envoyé');
           });
         },
-        (error) => {
-          if ('message' in error) {
-            this.toastr.error(error.message);
-          } else {
-            this.toastr.error('Une erreur est survenue');
-          }
-        },
+        (err) => console.error(err),
       );
   }
 }
