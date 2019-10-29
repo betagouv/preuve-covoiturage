@@ -1,0 +1,29 @@
+<div class="inseeFilterStartEnd-header">
+  <h4 *ngIf="filterType === 'blackList'">Exclure des trajets</h4>
+  <h4 *ngIf="filterType === 'whiteList'">Inclure des trajets</h4>
+  <p>
+    Précisez un ou plusieurs départements ou villes. <br />
+    <b>Recherchez par nom de commune ou code départemental.</b>
+  </p>
+</div>
+
+<div class="inseeFilterStartEnd" [formGroup]="startEndFormGroup">
+  <div>
+    <p class="label">
+      Au départ de
+    </p>
+    <app-territories-insee-autocomplete
+      [parentForm]="startEndFormGroup"
+      fieldName="start"
+    ></app-territories-insee-autocomplete>
+  </div>
+  <div>
+    <p class="label">
+      A destination de
+    </p>
+    <app-territories-insee-autocomplete
+      [parentForm]="startEndFormGroup"
+      fieldName="end"
+    ></app-territories-insee-autocomplete>
+  </div>
+</div>

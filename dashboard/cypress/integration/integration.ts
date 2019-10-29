@@ -48,13 +48,13 @@ context('OPERATOR', () => {
   const trips = TripGenerator.generateTrips();
   const applications = ApplicationsGenerator.generateApplications();
 
-  describe('login', () => {
-    cypress_login({
-      email: 'operator@example.com',
-      password: 'admin1234',
-      group: UserGroupEnum.OPERATOR,
-    });
-  });
+  // describe('login', () => {
+  //   cypress_login({
+  //     email: 'operator@example.com',
+  //     password: 'admin1234',
+  //     group: UserGroupEnum.OPERATOR,
+  //   });
+  // });
 
   describe('operator dashboard', () => {
     beforeEach(() => {
@@ -94,13 +94,13 @@ context('REGISTRY', () => {
   const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
   const trips = TripGenerator.generateTrips();
 
-  describe('login', () => {
-    cypress_login({
-      email: 'territory@example.com',
-      password: 'admin1234',
-      group: UserGroupEnum.REGISTRY,
-    });
-  });
+  // describe('login', () => {
+  //   cypress_login({
+  //     email: 'territory@example.com',
+  //     password: 'admin1234',
+  //     group: UserGroupEnum.REGISTRY,
+  //   });
+  // });
 
   describe('registry dashboard', () => {
     beforeEach(() => {

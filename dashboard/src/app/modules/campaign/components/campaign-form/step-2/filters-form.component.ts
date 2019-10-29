@@ -10,13 +10,14 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 @Component({
   selector: 'app-filters-form',
   templateUrl: './filters-form.component.html',
-  styleUrls: ['./filters-form.component.scss', '../../campaign-sub-form.scss'],
+  styleUrls: ['./filters-form.component.scss', '../campaign-sub-form.scss'],
 })
 export class FiltersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
 
   tripClassKeys = Object.keys(TripRankEnum);
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE_KM;
+  selectedInseeFilterTabIndex;
 
   constructor(private _formBuilder: FormBuilder) {
     super();
@@ -24,6 +25,13 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.initTargetChangeDetection();
+    if (this.hasInseeWhiteList) {
+      this.selectedInseeFilterTabIndex = 1;
+    } else if (this.hasInseeBlackList) {
+      this.selectedInseeFilterTabIndex = 0;
+    } else {
+      this.selectedInseeFilterTabIndex = 0;
+    }
   }
 
   get filtersForm(): FormGroup {
@@ -42,6 +50,10 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
     return <FormControl>this.campaignForm.get('ui_status').get('for_passenger');
   }
 
+  get InseeForm(): FormGroup {
+    return <FormGroup>this.filtersForm.get('insee');
+  }
+
   get forTripControl(): FormControl {
     return <FormControl>this.campaignForm.get('ui_status').get('for_trip');
   }
@@ -56,6 +68,18 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
 
   removeTimeFilter(idx) {
     this.timeCtrlArray.removeAt(idx);
+  }
+
+  get hasInseefilter() {
+    return this.hasInseeBlackList || this.hasInseeWhiteList;
+  }
+
+  get hasInseeBlackList() {
+    return this.InseeForm.get('blackList').value && this.InseeForm.get('blackList').value.length > 0;
+  }
+
+  get hasInseeWhiteList() {
+    return this.InseeForm.get('whiteList').value && this.InseeForm.get('whiteList').value.length > 0;
   }
 
   get showDateLabel() {

@@ -11,7 +11,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 @Component({
   selector: 'app-parameters-form',
   templateUrl: './parameters-form.component.html',
-  styleUrls: ['./parameters-form.component.scss', '../../campaign-sub-form.scss'],
+  styleUrls: ['./parameters-form.component.scss', '../campaign-sub-form.scss'],
   providers: [
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },

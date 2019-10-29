@@ -4,8 +4,8 @@ export interface UiStatusInterface {
   for_trip: boolean;
   staggered: boolean;
   insee_filter?: {
-    blackListFilter: UiStatusInseeFilterInterface[];
-    whiteListFilter: UiStatusInseeFilterInterface[];
+    blackList: UiStatusInseeFilterInterface[];
+    whiteList: UiStatusInseeFilterInterface[];
   };
 }
 
