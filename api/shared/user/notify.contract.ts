@@ -1,5 +1,6 @@
 export interface ParamsInterface {
   template: string;
+  templateId: string;
   email: string;
   fullname: string;
   organization: string;

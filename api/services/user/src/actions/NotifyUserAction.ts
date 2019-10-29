@@ -48,7 +48,7 @@ export class NotifyUserAction extends AbstractAction {
           link: params.link,
         },
       },
-      params.template ? { template: params.template } : null,
+      params.templateId ? { template: params.templateId } : null,
     );
   }
 }
