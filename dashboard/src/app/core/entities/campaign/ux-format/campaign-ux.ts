@@ -55,6 +55,10 @@ export class CampaignUx {
         distance_range: [0, 0],
         rank: [],
         operator_ids: [],
+        insee: {
+          blackList: [],
+          whiteList: [],
+        },
       },
       retributions: [],
       restrictions: [],

@@ -1,6 +1,7 @@
 /// <reference types="Cypress" />
 import { campaignFirstStepCustom } from './steps/campaign-create-first-step';
 import {
+  campaignSecondeStepAddInseeFilter,
   campaignSecondStepAddSecondTimeRange,
   campaignSecondStepCheckDisabledNextStep,
   campaignSecondStepClickNextStep,
@@ -54,6 +55,8 @@ export function cypress_campaignCreate(e2e = false) {
   campaignSecondStepSelectRange();
 
   campaignSecondStepSelectRanks();
+
+  campaignSecondeStepAddInseeFilter('blackList');
 
   campaignSecondStepSelectTargets(true, true);
 

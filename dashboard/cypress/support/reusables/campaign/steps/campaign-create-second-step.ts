@@ -57,7 +57,7 @@ export function campaignSecondStepSelectRange() {
 export function campaignSecondStepSelectRanks() {
   it('selects ranks', () => {
     // open RANKS extension
-    cy.get('.RulesForm .mat-expansion-panel:nth-child(3)').click();
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(4)').click();
 
     cy.get('.RulesForm-ranks mat-form-field').click();
 
@@ -72,7 +72,7 @@ export function campaignSecondStepSelectRanks() {
 export function campaignSecondStepSelectTargets(passenger, driver) {
   it('selects targets: passenger & driver', () => {
     // open TARGET extension
-    cy.get('.RulesForm .mat-expansion-panel:nth-child(4)').click();
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(5)').click();
 
     if (driver) {
       // click for driver checkbox
@@ -89,7 +89,7 @@ export function campaignSecondStepSelectTargets(passenger, driver) {
 export function campaignSecondStepSelectOperators() {
   it('selects operators', () => {
     // open OPERATORS extension
-    cy.get('.RulesForm .mat-expansion-panel:nth-child(5)').click();
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(6)').click();
 
     cy.get('.RulesForm-operators mat-form-field').click();
 
@@ -109,5 +109,32 @@ export function campaignSecondStepCheckDisabledNextStep() {
     cy.get('.mat-horizontal-stepper-content:nth-child(2)  .CampaignForm-content-actions button:nth-child(2)').should(
       'be.disabled',
     );
+  });
+}
+
+export function campaignSecondeStepAddInseeFilter(filterType: 'blackList' | 'whiteList') {
+  it(`selects insee filters extension: ${filterType}`, () => {
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(3)').click();
+
+    const child = filterType === 'blackList' ? 1 : 2;
+    cy.get(`.RulesForm-insee .mat-tab-label:nth-child(${child})`);
+
+    cy.get('button.inseeFilter-newElement').click();
+
+    // START
+    cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:first-child input').type('lyo');
+
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
+    // END
+    cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:nth-child(2) input').type('marseil');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
+    // END
+    cy.wait(300);
+    cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:nth-child(2) input').type('73');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
+    cy.get('button.inseeFilter-addElement').click();
   });
 }

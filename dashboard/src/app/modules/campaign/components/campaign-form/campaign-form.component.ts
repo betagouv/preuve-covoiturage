@@ -155,6 +155,10 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         distance_range: [this._defaultRange, Validators.required],
         rank: [null, Validators.required],
         operator_ids: [[], Validators.required],
+        insee: this._formBuilder.group({
+          whiteList: this._formBuilder.array([]),
+          blackList: this._formBuilder.array([]),
+        }),
       }),
       only_adult: [null],
       ui_status: this._formBuilder.group({
@@ -236,6 +240,19 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     timeFormArray.clear();
     campaign.filters.time.forEach((time) => {
       timeFormArray.push(this._formBuilder.control(time));
+    });
+
+    // patch insee filter
+    const blackListFormArray = <FormArray>filtersForm.get('insee').get('blackList');
+    blackListFormArray.clear();
+    campaign.filters.insee.blackList.forEach((insee) => {
+      blackListFormArray.push(this._formBuilder.control(insee));
+    });
+
+    const whiteListFormArray = <FormArray>filtersForm.get('insee').get('whiteList');
+    whiteListFormArray.clear();
+    campaign.filters.insee.whiteList.forEach((insee) => {
+      whiteListFormArray.push(this._formBuilder.control(insee));
     });
 
     // patch restriction
