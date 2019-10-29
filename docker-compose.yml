@@ -72,7 +72,6 @@ services:
       APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
     networks:
       - front
-      - api
       - back
     depends_on:
       - mongo
@@ -97,7 +96,6 @@ services:
       APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
     networks:
       - front
-      - api
       - back
     depends_on:
       - mongo
@@ -115,7 +113,7 @@ services:
       - 4200:4200
     networks:
       - front
-      - api
+      - back
     depends_on:
       - api
 
@@ -131,7 +129,12 @@ services:
     depends_on:
       - redis
 
+# create a permanent network first
+# > docker network create docker-network --subnet 172.24.24.0/24
 networks:
   front:
-  api:
+    external:
+      name: docker-network
   back:
+    external:
+      name: docker-network
