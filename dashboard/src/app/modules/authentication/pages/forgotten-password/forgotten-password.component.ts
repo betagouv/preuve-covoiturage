@@ -37,7 +37,7 @@ export class ForgottenPasswordComponent extends DestroyObservable implements OnI
       .pipe(
         takeUntil(this.destroy$),
         catchHttpStatus(404, (err) => {
-          this.toastr.error("Cette adresse email n'est pas valide");
+          this.toastr.error("Cette adresse Email n'est pas valide");
           throw err;
         }),
       )
