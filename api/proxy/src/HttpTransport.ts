@@ -5,8 +5,10 @@ import helmet from 'helmet';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { get } from 'lodash';
-import * as Redis from 'ioredis';
-import * as createStore from 'connect-redis';
+// tslint:disable-next-line: import-name
+import Redis from 'ioredis';
+// tslint:disable-next-line: import-name
+import createStore from 'connect-redis';
 import {
   TransportInterface,
   KernelInterface,
@@ -102,7 +104,6 @@ export class HttpTransport implements TransportInterface {
 
     const sessionSecret = this.config.get('proxy.session.secret');
     const sessionName = this.config.get('proxy.session.name');
-    // @ts-ignore - stupid import wrecks it all!
     const redis = new Redis(this.config.get('redis.connectionString'), { keyPrefix: 'proxy:' });
     const redisStore = createStore(expressSession);
 
