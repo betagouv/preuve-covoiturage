@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:12-alpine
 EXPOSE 4567
 
 RUN mkdir -p /opt/arena

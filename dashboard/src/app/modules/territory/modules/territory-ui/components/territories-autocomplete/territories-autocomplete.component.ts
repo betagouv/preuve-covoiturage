@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -31,6 +31,13 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
 
   ngOnInit() {
     this.initTerritories();
+    this.territoryCtrl.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        filter((literal) => !!literal),
+        tap((literal: string) => this.filterTerritories(literal)),
+      )
+      .subscribe();
   }
 
   get territoryIdsControl(): FormControl {
@@ -42,27 +49,6 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   }
 
   private initTerritories() {
-    // if (!this.territoryService.territoriesLoaded) {
-    //   this.territoryService
-    //     .load()
-    //     .pipe(takeUntil(this.destroy$))
-    //     .subscribe();
-    // }
-    //
-    // this.territoryService.entities$
-    //   .pipe(
-    //     takeUntil(this.destroy$),
-    //     // sort by name A-Z
-    //     map((d) => d.sort((a, b) => (a.name > b.name ? 1 : -1))),
-    //   )
-    //   .subscribe((territories: Territory[]) => {
-    //     this.territories = territories.map((territory: Territory) => ({
-    //       _id: territory._id,
-    //       shortname: territory.shortname || territory.acronym || territory.name,
-    //     }));
-    //     this.filterTerritories();
-    //   });
-
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories: Territory[]) => {
       this.territories = territories
         ? territories.map((territory: Territory) => ({
@@ -95,7 +81,8 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     const selectedTerritoryIds = this.territoryIdsControl.value || [];
     this.filteredTerritories = this.territories.filter(
       (territory) =>
-        selectedTerritoryIds.indexOf(territory._id) === -1 && territory.shortname.toLowerCase().includes(literal),
+        selectedTerritoryIds.indexOf(territory._id) === -1 &&
+        territory.shortname.toLowerCase().includes(literal.toLowerCase()),
     );
   }
 }

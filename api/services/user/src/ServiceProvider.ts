@@ -5,6 +5,8 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
+import { NotificationExtension } from '@pdc/provider-notification';
+
 import {
   ScopeToSelfMiddleware,
   ContentBlacklistMiddleware,
@@ -26,6 +28,7 @@ import {
   userRegisterSchema,
   userResetPasswordSchema,
   userSendConfirmEmailSchema,
+  userSendInvitationEmailSchema,
 } from '@pdc/provider-schema';
 
 import {
@@ -47,6 +50,7 @@ import {
   ResetPasswordUserAction,
   SchemaUserAction,
   SendConfirmEmailUserAction,
+  SendInvitationEmailUserAction,
 } from './actions';
 import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
 import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
@@ -71,6 +75,7 @@ import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
     ['user.register', userRegisterSchema],
     ['user.resetPassword', userResetPasswordSchema],
     ['user.sendConfirmEmail', userSendConfirmEmailSchema],
+    ['user.sendInvitationEmail', userSendInvitationEmailSchema],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -99,6 +104,7 @@ import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
     ResetPasswordUserAction,
     SchemaUserAction,
     SendConfirmEmailUserAction,
+    SendInvitationEmailUserAction,
   ],
   template: null,
   notification: {
@@ -108,5 +114,5 @@ import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
   commands: [FixPermissionsCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, NotificationExtension];
 }

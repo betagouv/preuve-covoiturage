@@ -10,11 +10,11 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
  */
 @handler({
   service: 'user',
-  method: 'sendConfirmEmail',
+  method: 'sendInvitationEmail',
 })
-export class SendConfirmEmailUserAction extends AbstractAction {
+export class SendInvitationEmailUserAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.sendConfirmEmail'],
+    ['validate', 'user.sendInvitationEmail'],
     [
       'scopeIt',
       [
@@ -57,20 +57,18 @@ export class SendConfirmEmailUserAction extends AbstractAction {
 
     const user = await this.userRepository.findUser(params._id, contextParam);
 
-    // generate a token and store in the user
+    // generate new token for a password reset on first access
+    const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
-    await this.userRepository.patchUser(
-      user._id,
-      {
-        forgotten_token: await this.cryptoProvider.cryptToken(token),
-        forgotten_at: new Date(),
-        status: 'pending',
-      },
-      contextParam,
-    );
+
+    // set forgotten password properties to set first password
+    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
+    user.forgotten_at = new Date();
+
+    await this.userRepository.update(user);
 
     const link = sprintf(
-      '%s/confirm-email/%s/%s/',
+      '%s/activate/%s/%s/',
       this.config.get('url.appUrl'),
       encodeURIComponent(user.email),
       encodeURIComponent(token),
@@ -80,7 +78,7 @@ export class SendConfirmEmailUserAction extends AbstractAction {
     if (process.env.NODE_ENV === 'testing') {
       console.log(`
 ******************************************
-[test] Send confirm email to user (${user._id.toString()})
+[test] Create user
 email: ${user.email}
 token: ${token}
 link:  ${link}
@@ -92,7 +90,7 @@ link:  ${link}
       'user:notify',
       {
         link,
-        template: this.config.get('email.templates.confirmation'),
+        template: this.config.get('email.templates.invitation'),
         email: user.email,
         fullname: user.fullname,
         templateId: this.config.get('notification.templateIds.invitation'),

@@ -17,14 +17,14 @@ export const statNumbers: GraphNamesInterface & { [key: string]: StatNumberConfi
   },
   co2: {
     svgIcon: 'co2',
-    hint: 'de CO2 économisé',
+    hint: 'de CO₂ économisés',
     path: 'total.co2',
     unit: 'kg',
     link: 'Voir en graphique',
   },
   distance: {
     svgIcon: 'distance',
-    hint: 'parcourue',
+    hint: 'parcourus',
     path: 'total.distance',
     unit: 'km',
     link: 'Voir en graphique',
@@ -36,7 +36,7 @@ export const statNumbers: GraphNamesInterface & { [key: string]: StatNumberConfi
   },
   petrol: {
     svgIcon: 'petrol',
-    hint: "d'essence économisée",
+    hint: "d'essence économisés",
     path: 'total.petrol',
     unit: 'l',
     link: 'Voir en graphique',

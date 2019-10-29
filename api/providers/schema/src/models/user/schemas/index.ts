@@ -14,3 +14,4 @@ export * from './userRegisterSchema';
 export * from './userResetPasswordSchema';
 export * from './userSchema';
 export * from './userSendConfirmEmailSchema';
+export * from './userSendInvitationEmailSchema';

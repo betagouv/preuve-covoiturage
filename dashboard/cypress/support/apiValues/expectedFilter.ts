@@ -29,11 +29,11 @@ export const expectedFilter: FilterInterface = {
   days: [0, 1],
   towns: ['Lyon'],
   distance: {
-    min: 80,
-    max: 123,
+    min: 80000,
+    max: 123000,
   },
   ranks: [TripRankEnum.A, TripRankEnum.B],
-  status: TripStatusEnum.PENDING,
+  status: TripStatusEnum.LOCKED,
   operator_id: [operatorStub._id],
   territory_id: [territoryStub._id],
 };

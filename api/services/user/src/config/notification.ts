@@ -20,3 +20,9 @@ export const mail = {
     email: env('APP_MAILJET_DEBUG_EMAIL', ''),
   },
 };
+
+export const templateIds = {
+  invitation: env('APP_MAILJET_TEMPLATE_INVITATION', ''),
+  forgotten: env('APP_MAILJET_TEMPLATE_FORGOTTEN_PASSWORD', ''),
+  emailChange: env('APP_MAILJET_TEMPLATE_EMAIL', ''),
+};
