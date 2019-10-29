@@ -15,7 +15,7 @@ pSchema.required = ['identity', 'start', 'end', 'cost', 'contribution'];
 pSchema.properties.cost = amountSchema;
 pSchema.properties.incentive = amountSchema;
 pSchema.properties.remaining_fee = amountSchema;
-pSchema.properties.travel_pass = pSchema.properties.identity.properties.travel_pass;
+pSchema.properties.travel_pass = { oneOf: [pSchema.properties.identity.properties.travel_pass, { type: 'null' }] };
 delete pSchema.properties.identity.properties.travel_pass;
 delete pSchema.properties.incentives;
 
