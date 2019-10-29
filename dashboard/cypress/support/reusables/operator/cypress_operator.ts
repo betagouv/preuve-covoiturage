@@ -48,5 +48,5 @@ export function cypress_operator(oldValue: Operator, e2e = false) {
     }
   });
 
-  closeNotification();
+  testNotification();
 }

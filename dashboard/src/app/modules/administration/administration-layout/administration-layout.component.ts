@@ -58,7 +58,7 @@ export class AdministrationLayoutComponent implements OnInit {
     },
     {
       path: '/admin/visibility',
-      role: 'admin',
+      role: UserManyRoleEnum.ADMIN,
       groups: [UserGroupEnum.OPERATOR],
       label: 'Visibilité',
     },

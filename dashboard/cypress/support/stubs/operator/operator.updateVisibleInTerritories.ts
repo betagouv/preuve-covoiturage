@@ -1,20 +1,20 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { expectedPatchedOperator } from '../../../expectedApiPayload/expectedOperator';
+import { ExpectedVisibility } from '../../expectedApiPayload/expectedVisibility';
 
-export function stubApplications(applications) {
+export function stubVisibilityUpdate() {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=application:list',
+    url: '/rpc?methods=operator:updateVisibleInTerritories',
     response: (data) =>
       <JsonRPCResponse[]>[
         {
           id: 1568215196898,
           jsonrpc: '2.0',
           result: {
-            data: applications,
+            data: ExpectedVisibility.get(),
           },
         },
       ],
-  }).as('applicationList');
+  }).as('updateVisibleInTerritories');
 }

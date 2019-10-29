@@ -1,7 +1,7 @@
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { DEFAULT_TRIP_LIMIT } from '~/core/const/filter.const';
 
-import { expectedFilter, filterEndMoment, filterStartMoment } from '../../apiValues/expectedFilter';
+import { expectedFilter, filterEndMoment, filterStartMoment } from '../../expectedApiPayload/expectedFilter';
 import { territoryStub } from '../../stubs/territory/territory.find';
 import { operatorStub } from '../../stubs/operator/operator.find';
 

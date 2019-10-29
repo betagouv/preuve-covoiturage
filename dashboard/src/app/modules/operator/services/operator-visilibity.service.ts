@@ -1,47 +1,51 @@
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { finalize, map, mergeMap, tap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
-import { ApiService } from '~/core/services/api/api.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { OperatorVisibilityInterface } from '~/core/interfaces/operator/operatorVisibilityInterface';
+import { OperatorVisibilityType } from '~/core/interfaces/operator/operatorVisibilityType';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 
 @Injectable({
   providedIn: 'root',
 })
-export class OperatorVisilibityService extends ApiService<OperatorVisibilityInterface> {
+export class OperatorVisilibityService {
+  private _entity$ = new BehaviorSubject<OperatorVisibilityType>(null);
+
+  private _loading$ = new BehaviorSubject<boolean>(false);
+  private _loaded$ = new BehaviorSubject<boolean>(false);
+
+  private _method = 'operator';
+
   constructor(
     private _http: HttpClient,
-    private _jsonRPC: JsonRPCService,
+    private _jsonRPCService: JsonRPCService,
     private _authService: AuthenticationService,
     private _toastr: ToastrService,
-  ) {
-    super(_http, _jsonRPC, 'operator');
-  }
+  ) {}
 
   get isLoaded() {
     return this._loaded$.value;
   }
 
-  get operatorVisibility$(): Observable<OperatorVisibilityInterface> {
+  get operatorVisibility$(): Observable<OperatorVisibilityType> {
     return this._entity$;
   }
 
-  get operatorVisibility(): OperatorVisibilityInterface {
+  get operatorVisibility(): OperatorVisibilityType {
     return this._entity$.value;
   }
 
-  public loadOne(parameters: object = {}): Observable<OperatorVisibilityInterface> {
+  public loadOne(): Observable<OperatorVisibilityType> {
     this._loading$.next(true);
     const user = this._authService.user;
     const params = {};
     if (user && user.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = [user.operator];
+      params['operator_id'] = [user.operator_id];
     } else {
       this._toastr.error('Vous devez être un opérateur pour avoir accès à cette page.');
     }
@@ -58,11 +62,11 @@ export class OperatorVisilibityService extends ApiService<OperatorVisibilityInte
     );
   }
 
-  public update(item: OperatorVisibilityInterface): Observable<OperatorVisibilityInterface> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:update`, item);
+  public update(territoryIds: number[]): Observable<OperatorVisibilityType> {
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:updateVisibleInTerritories`, territoryIds);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
-      tap((entity: OperatorVisibilityInterface) => {
+      tap((entity: OperatorVisibilityType) => {
         this._entity$.next(entity);
       }),
     );

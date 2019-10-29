@@ -1,5 +1,6 @@
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { Trip } from '~/core/entities/trip/trip';
 
 import { stubCampaignList } from '../support/stubs/campaign/campaign.list';
 import { stubStatList } from '../support/stubs/stat/stat.list';
@@ -28,6 +29,8 @@ import { ApplicationsGenerator } from '../support/generators/applications.genera
 import { stubApplicationCreate } from '../support/stubs/operator/application/application.create';
 import { stubApplicationRevoke } from '../support/stubs/operator/application/application.revoke';
 import { cypress_login } from '../support/reusables/auth/cypress_login';
+import { stubVisibilityList } from '../support/stubs/operator/operator.visibleInTerritories';
+import { stubVisibilityUpdate } from '../support/stubs/operator/operator.updateVisibleInTerritories';
 
 /**
  * parameters to decide with contexts to run when in local
@@ -64,7 +67,11 @@ context('OPERATOR', () => {
       stubTerritoryList();
       stubTripList(trips);
       stubStatList();
+
       stubOperatorPatchContacts();
+      stubVisibilityList();
+      stubVisibilityUpdate();
+
       stubMainLists(UserGroupEnum.OPERATOR);
 
       stubLogin(UserGroupEnum.OPERATOR);
@@ -82,7 +89,7 @@ context('OPERATOR', () => {
       testOperatorStory();
     } else {
       // local testing
-      testOperatorStory(false, false, false, false);
+      testOperatorStory(false, false, false, false, true);
     }
   });
 });
