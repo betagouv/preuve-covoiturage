@@ -39,16 +39,25 @@ export class ChangeRoleUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const contextParam: { territory?: string; operator?: string } = {};
-
     if (context.call.user.territory) {
-      contextParam.territory = context.call.user.territory;
+      // return this.userRepository.patchByTerritory(
+      //   params._id,
+      //   { role: params.role }, // FIXME role with an S
+      //   context.call.user.territory
+      // );
     }
 
     if (context.call.user.operator) {
-      contextParam.operator = context.call.user.operator;
+      // return this.userRepository.patchByOperator(
+      //   params._id,
+      //   { role: params.role }, // FIXME role with an S
+      //   context.call.user.operator
+      // );
     }
 
-    return this.userRepository.patchUser(params._id, { role: params.role }, contextParam);
+    return this.userRepository.patch(
+      params._id,
+      { role: params.role }, // FIXME role with an S
+    );
   }
 }

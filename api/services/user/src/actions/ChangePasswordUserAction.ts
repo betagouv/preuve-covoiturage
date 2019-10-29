@@ -34,7 +34,7 @@ export class ChangePasswordUserAction extends AbstractAction {
 
     // change the password
     const newHashPassword = await this.cryptoProvider.cryptPassword(params.new_password);
-
-    return this.userRepository.patch(user._id, { password: newHashPassword });
+    await this.userRepository.patch(user._id, { password: newHashPassword });
+    return true;
   }
 }

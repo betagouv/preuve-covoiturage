@@ -32,11 +32,13 @@ export class ChangePasswordWithTokenUserAction extends AbstractAction {
     // change the password
     const password = await this.cryptoProvider.cryptPassword(params.password);
 
-    return this.userRepository.patch(user._id, {
+    await this.userRepository.patch(user._id, {
       password,
       forgotten_token: undefined,
       forgotten_at: undefined,
       status: 'active',
     });
+
+    return true;
   }
 }
