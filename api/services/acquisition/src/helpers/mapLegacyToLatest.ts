@@ -29,7 +29,7 @@ export function mapLegacyToLatest(operatorSiret: string | null) {
 
       // move travel_pass to identity
       if ('travel_pass' in jrn.passenger) {
-        jrn.passenger.identity.travel_pass = jrn.passenger.travel_pass;
+        if (jrn.passenger.travel_pass) jrn.passenger.identity.travel_pass = jrn.passenger.travel_pass;
         delete jrn.passenger.travel_pass;
       }
 
