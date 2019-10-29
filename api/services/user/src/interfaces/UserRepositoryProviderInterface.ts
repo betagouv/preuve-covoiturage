@@ -1,57 +1,82 @@
-import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
-
-import { UserInterface } from '../shared/user/common/interfaces/UserInterface';
-import { UserIdInterface } from '../shared/user/common/interfaces/UserIdInterface';
-import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
-import { UserForgottenInterface } from '../shared/user/common/interfaces/UserForgottenInterface';
+import { UserDbInterface, UserPatchInterface, UserCreateInterface } from './UserInterface';
 import { PaginationSkipParamsInterface } from '../shared/common/interfaces/PaginationSkipParamsInterface';
-import { UserStatusInterface } from '../shared/user/common/interfaces/UserStatusInterface';
 
-export interface UserRepositoryProviderInterface extends RepositoryInterface {
+export interface UserRepositoryProviderInterface {
+  create(data: UserCreateInterface): Promise<UserDbInterface>;
+
   list(
     filters: { territory?: string; operator?: string },
     pagination: PaginationSkipParamsInterface,
-  ): Promise<{ users: UserStatusInterface[]; total: number }>;
-  deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void>;
-  findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<UserInterface>;
-  findUserByParams(params: { [prop: string]: string }): Promise<UserInterface>;
-  findTokensByEmail({ email }: { email: string }): Promise<UserForgottenInterface>;
-  patchUser(
-    _id: string,
-    patch: UserPatchInterface,
-    contextParam: { territory?: string; operator?: string },
-  ): Promise<UserIdInterface>;
+  ): Promise<{ users: UserDbInterface[]; total: number }>;
+
+  delete(_id: string): Promise<void>;
+  deleteByOperator(_id: string, operator_id: string): Promise<void>;
+  deleteByTerritory(_id: string, territory_id: string): Promise<void>;
+
+  find(_id: string): Promise<UserDbInterface>;
+  findByOperator(_id: string, operator_id: string): Promise<UserDbInterface>;
+  findByTerritory(_id: string, territory_id: string): Promise<UserDbInterface>;
+  findByEmail(email: string): Promise<UserDbInterface>;
+
+  update(data: UserDbInterface): Promise<UserDbInterface>;
+  updateByOperator(data: UserDbInterface, operator_id: string): Promise<UserDbInterface>;
+  updateByTerritory(data: UserDbInterface, territory_id: string): Promise<UserDbInterface>;
+  patch(_id: string, data: UserPatchInterface): Promise<UserDbInterface>;
 }
 
-export abstract class UserRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  public async list(
+export abstract class UserRepositoryProviderInterfaceResolver implements UserRepositoryProviderInterface {
+  async create(data: UserDbInterface): Promise<UserDbInterface> {
+    throw new Error();
+  }
+
+  async list(
     filters: { territory?: string; operator?: string },
     pagination: PaginationSkipParamsInterface,
-  ): Promise<{ users: UserStatusInterface[]; total: number }> {
+  ): Promise<{ users: UserDbInterface[]; total: number }> {
     throw new Error();
   }
 
-  public async deleteUser(id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
+  async delete(_id: string): Promise<void> {
     throw new Error();
   }
 
-  public async findUser(id: string, contextParam: { territory?: string; operator?: string }): Promise<UserInterface> {
+  async deleteByOperator(_id: string, operator_id: string): Promise<void> {
     throw new Error();
   }
 
-  public async findUserByParams(params: { [prop: string]: string }): Promise<UserInterface> {
+  async deleteByTerritory(_id: string, territory_id: string): Promise<void> {
     throw new Error();
   }
 
-  public async findTokensByEmail({ email }: { email: string }): Promise<UserForgottenInterface> {
+  async find(_id: string): Promise<UserDbInterface> {
     throw new Error();
   }
 
-  public async patchUser(
-    id: string,
-    patch: UserPatchInterface,
-    contextParam: { territory?: string; operator?: string },
-  ): Promise<UserIdInterface> {
+  async findByOperator(_id: string, operator_id: string): Promise<UserDbInterface> {
+    throw new Error();
+  }
+
+  async findByTerritory(_id: string, territory_id: string): Promise<UserDbInterface> {
+    throw new Error();
+  }
+
+  async findByEmail(email: string): Promise<UserDbInterface> {
+    throw new Error();
+  }
+
+  async update(data: UserDbInterface): Promise<UserDbInterface> {
+    throw new Error();
+  }
+
+  async updateByOperator(data: UserDbInterface, operator_id: string): Promise<UserDbInterface> {
+    throw new Error();
+  }
+
+  async updateByTerritory(data: UserDbInterface, territory_id: string): Promise<UserDbInterface> {
+    throw new Error();
+  }
+
+  async patch(_id: string, data: UserPatchInterface): Promise<UserDbInterface> {
     throw new Error();
   }
 }
