@@ -2,7 +2,7 @@ export const positionSchema = {
   type: 'object',
   required: ['datetime'],
   additionalProperties: false,
-  minProperties: 2,
+  minProperties: 1,
   dependencies: {
     lat: ['lon'],
     lon: ['lat'],
