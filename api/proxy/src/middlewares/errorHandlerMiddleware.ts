@@ -51,7 +51,13 @@ export function errorHandlerMiddleware(
     default:
       code = 500;
   }
-  console.error(err.name, err.message);
+
+  try {
+    const { id, method } = Array.isArray(_req.body) ? _req.body.pop() : _req.body;
+
+    console.error('[proxy]', err.name, code, err.message, { id, method });
+  } catch (e) {}
+
   res.status(code).json({
     id: 1,
     jsonrpc: '2.0',
