@@ -13,7 +13,5 @@ export * from './MeUserAction';
 export * from './NotifyUserAction';
 export * from './PatchUserAction';
 export * from './RegisterUserAction';
-export * from './ResetPasswordUserAction';
-export * from './SchemaUserAction';
 export * from './SendConfirmEmailUserAction';
 export * from './SendInvitationEmailUserAction';
