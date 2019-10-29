@@ -1,21 +1,19 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
-import { UserChangeRoleParamsInterface } from '@pdc/provider-schema';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/changeRole.contract';
+import { alias } from '../shared/user/changeRole.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Update role of user
  */
-@handler({
-  service: 'user',
-  method: 'changeRole',
-})
+@handler(configHandler)
 export class ChangeRoleUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.changeRole'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -40,7 +38,7 @@ export class ChangeRoleUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: UserChangeRoleParamsInterface, context: ContextType): Promise<User> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const contextParam: { territory?: string; operator?: string } = {};
 
     if (context.call.user.territory) {

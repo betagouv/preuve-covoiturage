@@ -1,13 +1,15 @@
-import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 
-import { Journey } from '../entities/Journey';
-
-export interface JourneyRepositoryProviderInterface extends RepositoryInterface {
-  createMany(journeys: Journey[]): Promise<Journey[]>;
+export interface JourneyRepositoryProviderInterface {
+  create(journey: JourneyInterface): Promise<JourneyInterface>;
+  createMany(journeys: JourneyInterface[]): Promise<JourneyInterface[]>;
 }
 
-export abstract class JourneyRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  async createMany(journeys: Journey[]): Promise<Journey[]> {
+export abstract class JourneyRepositoryProviderInterfaceResolver implements JourneyRepositoryProviderInterface {
+  async create(journey: JourneyInterface): Promise<JourneyInterface> {
+    throw new Error();
+  }
+  async createMany(journeys: JourneyInterface[]): Promise<JourneyInterface[]> {
     throw new Error();
   }
 }

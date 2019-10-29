@@ -63,7 +63,7 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               (data) => {
-                this._toastr.success(`Le token d'accès : "${application.name} a été supprimé`);
+                this._toastr.success(`Le token d'accès "${application.name}" a été supprimé`);
               },
               (err) => {
                 this._toastr.error(err.message);

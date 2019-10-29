@@ -1,34 +1,31 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
+import { handler, ContextType, UnauthorizedException } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { UserLoginParamsInterface } from '@pdc/provider-schema';
 
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/login.contract';
+import { alias } from '../shared/user/login.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Authenticate user by email & pwd - else throws forbidden error
  */
-@handler({
-  service: 'user',
-  method: 'login',
-})
+@handler(configHandler)
 export class LoginUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.login'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     ['content.whitelist', userWhiteListFilterOutput],
   ];
 
   constructor(
-    private config: ConfigInterfaceResolver,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(params: UserLoginParamsInterface, context: ContextType): Promise<User> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     let user;
 
     // cast any user error to 401 Unauthorized

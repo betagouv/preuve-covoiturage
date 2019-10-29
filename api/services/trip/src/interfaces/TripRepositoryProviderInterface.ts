@@ -1,27 +1,29 @@
 import { RepositoryInterfaceResolver, RepositoryInterface } from '@ilos/common';
-import { PersonInterface } from '@pdc/provider-schema';
 
-import { Trip } from '../entities/Trip';
+import { TripInterface } from '../shared/common/interfaces/TripInterface';
 
 export interface TripRepositoryProviderInterface extends RepositoryInterface {
-  findByOperatorTripIdAndOperatorId(params: { operator_trip_id?: string; operator_id: string }): Promise<Trip>;
-  findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<Trip>;
+  findByOperatorTripIdAndOperatorId(params: { operator_trip_id?: string; operator_id: string }): Promise<TripInterface>;
+  findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<TripInterface>;
   findByIdAndPatch(
     id: string,
     data: {
       [k: string]: any;
     },
-  ): Promise<Trip>;
+  ): Promise<TripInterface>;
 }
 
 export abstract class TripRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
   public async findByOperatorTripIdAndOperatorId(params: {
     operator_trip_id?: string;
     operator_id: string;
-  }): Promise<Trip> {
+  }): Promise<TripInterface> {
     throw new Error('Not implemented');
   }
-  public async findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<Trip> {
+  public async findByPhoneAndTimeRange(
+    phone: string,
+    startTimeRange: { min: Date; max: Date },
+  ): Promise<TripInterface> {
     throw new Error('Not implemented');
   }
   public async findByIdAndPatch(
@@ -29,7 +31,7 @@ export abstract class TripRepositoryProviderInterfaceResolver extends Repository
     data: {
       [k: string]: any;
     },
-  ): Promise<Trip> {
+  ): Promise<TripInterface> {
     throw new Error('Not implemented');
   }
 }

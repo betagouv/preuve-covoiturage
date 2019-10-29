@@ -2,22 +2,19 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/delete.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/operator/delete.schema';
 
-@handler({
-  service: 'operator',
-  method: 'delete',
-})
+@handler(handlerConfig)
 export class DeleteOperatorAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['operator.delete']],
-    ['validate', 'operator.delete'],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['operator.delete']], ['validate', alias]];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: { _id: string }): Promise<boolean> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     await this.operatorRepository.delete(params._id);
     return true;
   }

@@ -2,23 +2,21 @@ import * as _ from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { JourneyInterface } from '@pdc/provider-schema';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/route.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Enrich position data
-@handler({
-  service: 'normalization',
-  method: 'route',
-})
+@handler(handlerConfig)
 export class NormalizationRouteAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
 
   constructor(protected wf: WorkflowProvider, private geoProvider: GeoProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
+  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     this.logger.debug(`Normalization:route on ${journey._id}`);
 
     // calc distance and duration for passenger

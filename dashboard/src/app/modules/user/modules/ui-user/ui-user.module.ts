@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
+import { MatPaginatorModule } from '@angular/material';
 
 import { SharedModule } from '~/shared/shared.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
@@ -22,6 +23,7 @@ import { CreateEditUserFormComponent } from './components/create-edit-user-form/
     ToastrModule,
     OperatorUiModule,
     TerritoryUiModule,
+    MatPaginatorModule,
   ],
   exports: [UsersListComponent, CreateEditUserFormComponent],
 })

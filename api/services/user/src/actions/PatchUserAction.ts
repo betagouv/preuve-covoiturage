@@ -1,6 +1,5 @@
 import { sprintf } from 'sprintf-js';
 import { Action as AbstractAction } from '@ilos/core';
-import { UserPatchParamsInterface } from '@pdc/provider-schema';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import {
   handler,
@@ -10,7 +9,10 @@ import {
   ConflictException,
 } from '@ilos/common';
 
-import { User } from '../entities/User';
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/patch.contract';
+import { alias } from '../shared/user/patch.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserBaseInterface } from '../shared/user/common/interfaces/UserBaseInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
@@ -19,13 +21,10 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
  * The user is switched to 'pending' when the email is modified.
  * A confirmation link is sent to the new email and a notification to the old one.
  */
-@handler({
-  service: 'user',
-  method: 'patch',
-})
+@handler(configHandler)
 export class PatchUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.patch'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -60,14 +59,14 @@ export class PatchUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: UserPatchParamsInterface, context: ContextType): Promise<User> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
       const contextParam: { territory?: string; operator?: string } = {};
 
       // track user and email modification to trigger
       // the confirmation process with a new token
       let token: string;
-      let currentUser: User;
+      let currentUser: UserBaseInterface;
       let emailIsModified = false;
 
       if (context.call.user.territory) {
@@ -147,6 +146,7 @@ link:  ${link}
         template: this.config.get('email.templates.confirmation'),
         email: patch.email,
         fullname: currentUser.fullname,
+        templateId: this.config.get('notification.templateIds.emailChange'),
       },
       {
         call: context.call,
@@ -164,6 +164,7 @@ link:  ${link}
         template: this.config.get('email.templates.email_changed'),
         email: currentUser.email,
         fullname: currentUser.fullname,
+        templateId: this.config.get('notification.templateIds.emailChange'),
       },
       {
         call: context.call,

@@ -9,22 +9,21 @@ import {
   KernelInterfaceResolver,
 } from '@ilos/common';
 import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { UserCreateParamsInterface } from '@pdc/provider-schema';
 
-import { User } from '../entities/User';
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
+import { alias } from '../shared/user/create.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserBaseInterface } from '../shared/user/common/interfaces/UserBaseInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Create user and call forgotten password action
  */
-@handler({
-  service: 'user',
-  method: 'create',
-})
+@handler(configHandler)
 export class CreateUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.create'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -54,7 +53,7 @@ export class CreateUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: UserCreateParamsInterface, context: ContextType): Promise<User> {
+  public async handle(request: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     try {
       // check if the user exists already
       const foundUser = await this.userRepository.findUserByParams({ email: request.email });
@@ -73,14 +72,14 @@ export class CreateUserAction extends AbstractAction {
     }
 
     // create the new user
-    const user = new User({
+    const user = {
       ...request,
       status: 'pending',
       password: Math.random()
         .toString(36)
         .substring(2, 15),
       permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-    });
+    };
 
     const userCreated = await this.userRepository.create(user);
 
@@ -89,16 +88,19 @@ export class CreateUserAction extends AbstractAction {
     return userCreated;
   }
 
-  async createInvitation(user: User, context: ContextType) {
+  async createInvitation(user: UserBaseInterface, context: ContextType) {
     // generate new token for a password reset on first access
-    const reset = this.cryptoProvider.generateToken();
     const token = this.cryptoProvider.generateToken();
 
     // set forgotten password properties to set first password
-    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
-    user.forgotten_at = new Date();
+    const forgotten_token = await this.cryptoProvider.cryptToken(token);
+    const forgotten_at = new Date();
 
-    await this.userRepository.update(user);
+    await this.userRepository.update({
+      ...user,
+      forgotten_at,
+      forgotten_token,
+    });
 
     const link = sprintf(
       '%s/activate/%s/%s/',
@@ -125,7 +127,7 @@ link:  ${link}
         link,
         template: this.config.get('email.templates.invitation'),
         email: user.email,
-        fullname: user.fullname,
+        fullname: `${user.firstname} ${user.lastname}`,
       },
       {
         call: context.call,

@@ -1,17 +1,15 @@
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, NotificationInterfaceResolver, ForbiddenException } from '@ilos/common';
-import { UserNotifyParamsInterface } from '@pdc/provider-schema';
+import { handler, ContextType, ForbiddenException } from '@ilos/common';
+import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
-import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
+import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
+import { SendTemplateByEmailParamsInterface } from '../shared/user/common/interfaces/SendTemplateByEmailParamsInterface';
 
 /*
  * Send email to user
  */
-@handler({
-  service: 'user',
-  method: 'notify',
-})
+@handler(configHandler)
 export class NotifyUserAction extends AbstractAction {
   // TODO middlewares (see below in handle())
 
@@ -19,7 +17,7 @@ export class NotifyUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: UserNotifyParamsInterface, context: ContextType): Promise<void> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // TODO replace this with a proper middleware
     if (get(context, 'channel.service', '') !== 'user') {
       throw new ForbiddenException();
@@ -40,14 +38,17 @@ export class NotifyUserAction extends AbstractAction {
       sendTemplateByEmailParams.opts.link = params.link;
     }
 
-    return this.notificationProvider.sendTemplateByEmail({
-      template: params.template,
-      email: params.email,
-      fullname: params.fullname,
-      opts: {
-        organization: params.organization,
-        link: params.link,
+    return this.notificationProvider.sendTemplateByEmail(
+      {
+        template: params.template,
+        email: params.email,
+        fullname: params.fullname,
+        opts: {
+          organization: params.organization,
+          link: params.link,
+        },
       },
-    });
+      params.template ? { template: params.template } : null,
+    );
   }
 }

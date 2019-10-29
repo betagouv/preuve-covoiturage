@@ -1,10 +1,11 @@
+import { hasOneNotEmptyProperty } from '~/core/entities/utils';
+
 /* tslint:disable:variable-name*/
 import { Address } from '../shared/address';
 import { Bank } from '../shared/bank';
 import { CGU } from '../shared/cgu';
 import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
-import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
 class Territory {
   public _id: string;

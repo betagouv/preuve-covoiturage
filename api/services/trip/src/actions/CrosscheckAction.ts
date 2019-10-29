@@ -1,22 +1,17 @@
 // tslint:disable:variable-name
-import { get, uniq } from 'lodash';
-import moment from 'moment';
-
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
-import { JourneyInterface } from '@pdc/provider-schema';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/crosscheck.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { TripPgRepositoryProviderInterfaceResolver } from '../interfaces';
 
 /*
  * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
  */
-@handler({
-  service: 'trip',
-  method: 'crosscheck',
-})
+@handler(handlerConfig)
 export class CrosscheckAction extends Action {
-  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
 
   constructor(
     private kernel: KernelInterfaceResolver,
@@ -26,7 +21,7 @@ export class CrosscheckAction extends Action {
     super();
   }
 
-  public async handle(journey: JourneyInterface, context: ContextType): Promise<void> {
+  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     this.logger.debug('trip:crosscheck', journey._id);
 
     // TODO: add schema

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { merge, Observable, of } from 'rxjs';
+import { MatPaginator } from '@angular/material';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
@@ -8,7 +10,6 @@ import { UserService } from '~/modules/user/services/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-users',
@@ -18,11 +19,15 @@ import { Observable } from 'rxjs';
 export class UsersComponent extends DestroyObservable implements OnInit {
   usersToShow: User[];
   users: User[];
+  usersFiltered: User[];
   searchFilters: FormGroup;
   editUserFormVisible = false;
   editedUser = new User();
   canEditUser$: Observable<boolean>;
   isCreatingUser: boolean;
+  PAGE_SIZE = 10;
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -37,6 +42,40 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     this.initSearchForm();
 
     this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
+  }
+
+  ngAfterViewInit() {
+    merge(
+      this.userService.entities$,
+      this.searchFilters.valueChanges.pipe(
+        debounceTime(300),
+        tap(() => (this.paginator.pageIndex = 0)),
+      ),
+      this.paginator.page,
+    )
+      .pipe(
+        distinctUntilChanged(),
+        switchMap(() => {
+          this.closeUserForm();
+          const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
+          const page = this.paginator.pageIndex;
+          const start = Number(page) * this.PAGE_SIZE;
+          const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
+          this.usersFiltered = this.users.filter(
+            (u) =>
+              `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query.toLowerCase()) &&
+              this.authenticationService.user._id !== u._id,
+          );
+          return of(this.usersFiltered.slice(start, end));
+        }),
+      )
+      .subscribe((filteredUsers) => {
+        this.usersToShow = filteredUsers;
+      });
+  }
+
+  get countUsers(): number {
+    return this.usersFiltered && this.usersFiltered.length;
   }
 
   addUser() {

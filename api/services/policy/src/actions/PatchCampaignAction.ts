@@ -1,17 +1,16 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { CampaignInterface } from '@pdc/provider-schema';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/patch.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/policy/create.schema';
 
-@handler({
-  service: 'campaign',
-  method: 'patch',
-})
+@handler(handlerConfig)
 export class PatchCampaignAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+  public readonly middlewares: ActionMiddleware[] = [
     ['can', ['incentive-campaign.update']],
-    ['validate', 'campaign.patch'],
+    ['validate', alias],
     'validate.rules',
   ];
 
@@ -19,7 +18,7 @@ export class PatchCampaignAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: { _id: string; patch: CampaignInterface }, context): Promise<CampaignInterface> {
+  public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
     const { _id, patch } = params;
     const territoryId = context.call.user.territory;
 

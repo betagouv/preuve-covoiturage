@@ -4,7 +4,7 @@ import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profi
 
 import { IModel } from '../IModel';
 
-export class User implements IModel {
+export class BaseUser implements IModel {
   public _id: string;
   public email: string;
   public lastname: string;
@@ -15,6 +15,9 @@ export class User implements IModel {
   public role: UserRoleEnum;
   public operator?: string;
   public territory?: string;
+}
+
+export class User extends BaseUser {
   public permissions: UserPermissionsType;
 
   // todo: don't set default user
@@ -30,6 +33,7 @@ export class User implements IModel {
       permissions: [],
     },
   ) {
+    super();
     this._id = obj._id;
     this.email = obj.email;
     this.lastname = obj.lastname;

@@ -2,11 +2,15 @@ import { provider, ConfigInterfaceResolver, NotFoundException } from '@ilos/comm
 import { ParentRepository } from '@ilos/repository';
 import { MongoConnection } from '@ilos/connection-mongo';
 
-import { Territory } from '../entities/Territory';
+import { TerritoryInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
 import {
   TerritoryRepositoryProviderInterface,
   TerritoryRepositoryProviderInterfaceResolver,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
+
+interface Territory extends TerritoryInterface {
+  _id: string;
+}
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -22,10 +26,6 @@ export class TerritoryRepositoryProvider extends ParentRepository implements Ter
 
   public getDbName(): string {
     return this.config.get('territory.db');
-  }
-
-  public getModel() {
-    return Territory;
   }
 
   /**

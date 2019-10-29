@@ -26,8 +26,8 @@ const fakeCampaign = {
   territory_id: territory,
   name: 'Ma campagne',
   description: 'Incite les covoitureurs',
-  start: start,
-  end: end,
+  start_date: start,
+  end_date: end,
   unit: 'euro',
   status: 'active',
   global_rules: [
@@ -189,7 +189,7 @@ describe('Policy engine', () => {
     const applicableCampaigns = await kernel
       .get(ServiceProvider)
       .get(CampaignRepositoryProviderInterfaceResolver)
-      .findApplicableCampaigns(trip);
+      .findApplicableCampaigns(trip.territories, trip.start);
 
     expect(applicableCampaigns).to.be.an('array');
     expect(applicableCampaigns.length).to.be.eq(1);

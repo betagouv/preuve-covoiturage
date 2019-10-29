@@ -1,14 +1,12 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
-import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
 
-import { Journey } from '../entities/Journey';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
+import { alias } from '../shared/acquisition/create.schema';
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
-
-interface WhiteListedJourney {
-  journey_id: string;
-  created_at: Date;
-}
 
 const callContext = {
   channel: {
@@ -19,15 +17,9 @@ const callContext = {
   },
 };
 
-@handler({
-  service: 'acquisition',
-  method: 'create',
-})
+@handler(handlerConfig)
 export class CreateJourneyAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['journey.create']],
-    ['validate', 'journey.create'],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
 
   constructor(
     private kernel: KernelInterfaceResolver,
@@ -36,14 +28,11 @@ export class CreateJourneyAction extends AbstractAction {
     super();
   }
 
-  protected async handle(
-    params: CreateJourneyParamsInterface,
-    context: ContextType,
-  ): Promise<WhiteListedJourney | WhiteListedJourney[]> {
+  protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const now = new Date();
 
     // assign the operator from context
-    const payload: Journey = this.cast(params, context.call.user.operator);
+    const payload: JourneyInterface = this.cast(params, context.call.user.operator);
 
     // reject if happening in the future
     const person = 'passenger' in payload ? payload.passenger : payload.driver;
@@ -52,7 +41,7 @@ export class CreateJourneyAction extends AbstractAction {
     }
 
     // Store in database
-    const journey = await this.journeyRepository.create(payload);
+    const journey = <JourneyInterface & { created_at: Date }>await this.journeyRepository.create(payload);
 
     // Dispatch to the normalization pipeline
     await this.kernel.notify('normalization:geo', journey, callContext);
@@ -63,12 +52,12 @@ export class CreateJourneyAction extends AbstractAction {
     };
   }
 
-  protected cast(jrn: CreateJourneyParamsInterface, operatorId: string): Journey {
-    const journey = new Journey({
+  protected cast(jrn: ParamsInterface, operatorId: string): JourneyInterface {
+    const journey = {
       ...jrn,
       operator_id: operatorId,
       created_at: new Date(),
-    });
+    };
 
     // driver AND/OR passenger
     if ('driver' in jrn) journey.driver = this.castPerson(jrn.driver, true);

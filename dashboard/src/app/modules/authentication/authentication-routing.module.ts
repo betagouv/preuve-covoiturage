@@ -6,11 +6,11 @@ import { ResetPasswordGuardService } from '~/core/guards/reset-password-guard.se
 import { ConfirmEmailComponent } from '~/modules/authentication/pages/confirm-email/confirm-email.component';
 // tslint:disable-next-line:max-line-length
 import { ResetForgottenPasswordComponent } from '~/modules/authentication/pages/reset-forgotten-password/reset-forgotten-password.component';
+import { LoginGuardService } from '~/core/guards/login-guard.service';
 
 import { ChangeAuthLayoutComponent } from './layouts/change-auth-layout/change-auth-layout.component';
 import { ForgottenPasswordComponent } from './pages/forgotten-password/forgotten-password.component';
 import { LoginComponent } from './pages/login/login.component';
-import { LoginGuardService } from '~/core/guards/login-guard.service';
 
 const routes: Routes = [
   {

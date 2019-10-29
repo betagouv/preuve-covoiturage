@@ -1,21 +1,20 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { PatchOperatorParamsInterface, OperatorInterface } from '@pdc/provider-schema';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/find.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/operator/find.schema';
 
-@handler({
-  service: 'operator',
-  method: 'find',
-})
+@handler(handlerConfig)
 export class FindOperatorAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['can', ['operator.read']], ['validate', 'operator.find']];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['operator.read']], ['validate', alias]];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: { _id: string }): Promise<OperatorInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.operatorRepository.find(params._id);
   }
 }

@@ -1,3 +1,4 @@
+// TODO Adapt to interfaces !
 export const userWhiteListFilterOutput = [
   '_id',
   'email',

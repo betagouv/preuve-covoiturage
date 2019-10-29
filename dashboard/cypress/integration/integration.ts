@@ -67,7 +67,7 @@ context('OPERATOR', () => {
       testOperatorStory();
     } else {
       // local testing
-      testOperatorStory(false, false, false, false);
+      testOperatorStory(false, false, false, true);
     }
   });
 });
@@ -104,7 +104,7 @@ context('REGISTRY', () => {
       testRegistryStory();
     } else {
       // local testing
-      testRegistryStory(false, false, false);
+      testRegistryStory(true, true, false);
     }
   });
 });

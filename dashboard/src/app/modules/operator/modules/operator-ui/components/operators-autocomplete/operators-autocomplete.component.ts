@@ -44,7 +44,8 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   /**
-   * todo: refactor when search is made server side
+   * todo: r
+   * efactor when search is made server side
    */
   getOperatorLabel(operatorId: string): string {
     return this.operators.find((operator) => operator._id === operatorId).nom_commercial;
@@ -83,7 +84,8 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     const selectedOperatorIds = this.operatorIdsControl.value || [];
     this.filteredOperators = this.operators.filter(
       (operator) =>
-        selectedOperatorIds.indexOf(operator._id) === -1 && operator.nom_commercial.toLowerCase().includes(literal),
+        selectedOperatorIds.indexOf(operator._id) === -1 &&
+        operator.nom_commercial.toLowerCase().includes(literal.toLowerCase()),
     );
   }
 }

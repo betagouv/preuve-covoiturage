@@ -3,21 +3,19 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import {
-  operatorCreateSchema,
-  operatorUpdateSchema,
-  operatorDeleteSchema,
-  operatorFindSchema,
-  operatorPatchContactsSchema,
-} from '@pdc/provider-schema';
 import { ContentBlacklistMiddleware } from '@pdc/provider-middleware';
+
+import { binding as createBinding } from './shared/operator/create.schema';
+import { binding as updateBinding } from './shared/operator/update.schema';
+import { binding as deleteBinding } from './shared/operator/delete.schema';
+import { binding as findBinding } from './shared/operator/find.schema';
+import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
 
 import { OperatorRepositoryProvider } from './providers/OperatorRepositoryProvider';
 import { ListOperatorAction } from './actions/ListOperatorAction';
 import { CreateOperatorAction } from './actions/CreateOperatorAction';
 import { UpdateOperatorAction } from './actions/UpdateOperatorAction';
 import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
-import { SchemaOperatorAction } from './actions/SchemaOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
 import { MigrateCommand } from './commands/MigrateCommand';
@@ -25,15 +23,8 @@ import { MigrateCommand } from './commands/MigrateCommand';
 @serviceProvider({
   config: __dirname,
   providers: [OperatorRepositoryProvider],
-  validator: [
-    ['operator.create', operatorCreateSchema],
-    ['operator.update', operatorUpdateSchema],
-    ['operator.delete', operatorDeleteSchema],
-    ['operator.find', operatorFindSchema],
-    ['operator.patchContacts', operatorPatchContactsSchema],
-  ],
+  validator: [createBinding, updateBinding, deleteBinding, findBinding, patchContactsBinding],
   handlers: [
-    SchemaOperatorAction,
     ListOperatorAction,
     CreateOperatorAction,
     UpdateOperatorAction,

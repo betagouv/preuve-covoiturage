@@ -2,7 +2,6 @@ import { ConfigInterfaceResolver, provider } from '@ilos/common';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ParentRepository } from '@ilos/repository';
 
-import { Operator } from '../entities/Operator';
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
@@ -22,9 +21,5 @@ export class OperatorRepositoryProvider extends ParentRepository implements Oper
 
   public getDbName(): string {
     return this.config.get('operator.db');
-  }
-
-  public getModel() {
-    return Operator;
   }
 }

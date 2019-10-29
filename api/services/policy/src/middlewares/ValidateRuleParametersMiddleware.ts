@@ -7,8 +7,8 @@ import {
   InitHookInterface,
   middleware,
 } from '@ilos/common';
-import { CampaignInterface } from '@pdc/provider-schema';
 
+import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 import { policies } from '../engine/rules';
 
 @middleware()

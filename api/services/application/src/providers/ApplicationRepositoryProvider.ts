@@ -2,8 +2,11 @@ import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { ParentRepository } from '@ilos/repository';
 import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 
-import { Application } from '../entities/Application';
-import { ApplicationRepositoryProviderInterface, ApplicationRepositoryProviderInterfaceResolver } from '../interfaces';
+import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
+import {
+  ApplicationRepositoryProviderInterface,
+  ApplicationRepositoryProviderInterfaceResolver,
+} from '../interfaces/ApplicationRepositoryProviderInterface';
 
 @provider({
   identifier: ApplicationRepositoryProviderInterfaceResolver,
@@ -23,11 +26,7 @@ export class ApplicationRepositoryProvider extends ParentRepository implements A
     return this.config.get('application.db');
   }
 
-  public getModel() {
-    return Application;
-  }
-
-  public async allByOperator({ operator_id }): Promise<Application[]> {
+  public async allByOperator({ operator_id }): Promise<ApplicationInterface[]> {
     const collection = await this.getCollection();
     const results = await collection.find({ operator_id: new ObjectId(operator_id), deleted_at: null }).toArray();
 

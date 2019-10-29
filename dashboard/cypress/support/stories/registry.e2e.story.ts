@@ -1,12 +1,9 @@
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 import { cypress_login } from '../reusables/auth/cypress_login';
-import { cypress_filter } from '../reusables/filter/cypress_filter';
 import { cypress_profile } from '../reusables/profile/cypress_profile';
 import { cypress_logging_users } from '../stubs/auth/login';
 import { cypress_logout } from '../reusables/auth/cypress_logout';
-import { cypress_operator } from '../reusables/operator/cypress_operator';
-import { operatorStub } from '../stubs/operator/operator.find';
 import { cypress_users } from '../reusables/user/users.cypress';
 
 export function registryE2EStory() {
@@ -15,7 +12,11 @@ export function registryE2EStory() {
   });
 
   it('Logges in', () => {
-    cypress_login('admin@example.com', 'admin1234');
+    cypress_login({
+      email: 'admin@example.com',
+      password: 'admin1234',
+      group: UserGroupEnum.REGISTRY,
+    });
   });
 
   // PROFILE UPDATE
