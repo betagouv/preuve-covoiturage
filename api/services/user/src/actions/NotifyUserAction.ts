@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ForbiddenException } from '@ilos/common';
+import { ContextType, ForbiddenException, handler } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
