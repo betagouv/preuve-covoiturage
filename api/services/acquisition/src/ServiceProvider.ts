@@ -9,6 +9,7 @@ import { journeyCreateSchema, journeyCreateLegacySchema } from '@pdc/provider-sc
 import { JourneyRepositoryProvider } from './providers/JourneyRepositoryProvider';
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
+import { LogAction } from './actions/LogAction';
 
 @serviceProvider({
   config: __dirname,
@@ -17,7 +18,7 @@ import { CreateJourneyAction } from './actions/CreateJourneyAction';
   validator: [['journey.createLegacy', journeyCreateLegacySchema], ['journey.create', journeyCreateSchema]],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
   connections: [[MongoConnection, 'connections.mongo'], [RedisConnection, 'connections.redis']],
-  handlers: [CreateJourneyLegacyAction, CreateJourneyAction],
+  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
