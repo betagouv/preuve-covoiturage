@@ -51,6 +51,10 @@ const routes: Routes = [
         loadChildren: () =>
           import('./modules/authentication/authentication.module').then((mod) => mod.AuthenticationModule),
       },
+      {
+        path: '',
+        loadChildren: () => import('./modules/stat/stat.module').then((mod) => mod.StatModule),
+      },
     ],
   },
   {
