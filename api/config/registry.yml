@@ -12,7 +12,6 @@ roles:
       - aom.users.remove
       - aom.users.list
       - aom.list
-      - aom.dropdown
       - aom.read
       - aom.create
       - aom.update
@@ -22,7 +21,6 @@ roles:
       - operator.users.remove
       - operator.users.list
       - operator.list
-      - operator.dropdown
       - operator.read
       - operator.create
       - operator.update
@@ -44,5 +42,3 @@ roles:
       - profile.update
       - profile.password
       - profile.delete
-      - aom.dropdown
-      - operator.dropdown

@@ -1,0 +1,6 @@
+<div class="stat-graph-view">
+  <div class="stat-graph-view--loading" *ngIf="loading && !loaded">
+    <mat-spinner></mat-spinner>
+  </div>
+  <app-stat-graph *ngIf="loaded" [graphName]="graphName" [graphData]="graphData"></app-stat-graph>
+</div>

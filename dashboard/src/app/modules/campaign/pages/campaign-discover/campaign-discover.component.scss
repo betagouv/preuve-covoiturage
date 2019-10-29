@@ -1,0 +1,35 @@
+@import '~src/app/shared/components/page-header/page-header';
+@import '~src/styles/variables';
+
+.CampaignDiscover {
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  &-wrapper {
+    display: flex;
+    height: calc(100vh - var(--header-height) - var(--footer-height) - 85px);
+    overflow: hidden;
+
+    & > * {
+      flex: 1;
+    }
+  }
+
+  &-cards {
+    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+    app-campaign-card {
+      margin: 10px 0;
+    }
+  }
+
+  ::ng-deep.page-content {
+    margin: 0;
+    width: 100%;
+  }
+}

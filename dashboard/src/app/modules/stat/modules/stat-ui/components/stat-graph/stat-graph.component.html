@@ -1,0 +1,243 @@
+<h3 class="graphTitle" *ngIf="!lightMode">{{ graphTitle }}</h3>
+
+<!--Distance-->
+<div class="graph" *ngIf="graphToBeDisplayed === 'distance'">
+  <div class="graph-header" *ngIf="!lightMode">
+    <mat-button-toggle-group [(ngModel)]="toggleChart.distance" (ngModelChange)="setGraphTitle()">
+      <mat-button-toggle aria-label="cumulé" value="cumulated">
+        Cumulé
+      </mat-button-toggle>
+      <mat-button-toggle aria-label="par jour" value="daily">
+        Par jour
+      </mat-button-toggle>
+      <mat-button-toggle aria-label="par mois" value="monthly">
+        Par mois
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <app-stat-chart-container
+    [hasFilters]="hasFilters"
+    [showDaily]="canShowDaily"
+    [showMonthly]="canShowMonthly"
+    [showCumulated]="canShowCumulated"
+  >
+    <ngx-chartjs
+      [data]="data.distance.daily"
+      *ngIf="isEmptyDataset(data.distance.daily) && toggleChart.distance === 'daily'"
+      type="bar"
+      [height]="70"
+      [options]="options.distancePerDay"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.distance.monthly"
+      *ngIf="isEmptyDataset(data.distance.monthly) && toggleChart.distance === 'monthly'"
+      type="bar"
+      [height]="70"
+      [options]="options.distancePerMonth"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.distance.cumulated"
+      *ngIf="isEmptyDataset(data.distance.cumulated) && toggleChart.distance === 'cumulated'"
+      type="line"
+      [height]="70"
+      [options]="options.distancePerDayCumulated"
+    ></ngx-chartjs>
+  </app-stat-chart-container>
+</div>
+
+<!--Trips-->
+<div class="graph" *ngIf="graphToBeDisplayed === 'trips'">
+  <div class="graph-header graph-trips-header">
+    <div class="graph-trips-legend-wrapper">
+      <div class="graph-trips-legend">
+        <div class="legend-square legend-square-secondary-color"></div>
+        <div class="graph-trips-legend-label">
+          <span>Tous les trajets réalisés</span>
+        </div>
+      </div>
+      <div class="graph-trips-legend">
+        <div class="legend-square legend-square-primary-color"></div>
+        <div class="graph-trips-legend-label">
+          <span>Trajets subventionnés</span>
+        </div>
+      </div>
+    </div>
+    <div class="graph-trips-toggle-wrapper" *ngIf="!lightMode">
+      <mat-button-toggle-group [(ngModel)]="toggleChart.trips" (ngModelChange)="setGraphTitle()">
+        <mat-button-toggle aria-label="cumulé" value="cumulated">
+          Cumulé
+        </mat-button-toggle>
+        <mat-button-toggle aria-label="par jour" value="daily">
+          Par jour
+        </mat-button-toggle>
+        <mat-button-toggle aria-label="par mois" value="monthly">
+          Par mois
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+  <app-stat-chart-container
+    [hasFilters]="hasFilters"
+    [showDaily]="canShowDaily"
+    [showMonthly]="canShowMonthly"
+    [showCumulated]="canShowCumulated"
+  >
+    <ngx-chartjs
+      [data]="data.trips.daily"
+      *ngIf="isEmptyDataset(data.trips.daily) && toggleChart.trips === 'daily'"
+      type="bar"
+      [height]="70"
+      [options]="options.tripsPerDay"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.trips.monthly"
+      *ngIf="isEmptyDataset(data.trips.monthly) && toggleChart.trips === 'monthly'"
+      type="bar"
+      [height]="70"
+      [options]="options.tripsPerMonth"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.trips.cumulated"
+      *ngIf="isEmptyDataset(data.trips.cumulated) && toggleChart.trips === 'cumulated'"
+      type="line"
+      [height]="70"
+      [options]="options.tripsPerDayCumulated"
+    ></ngx-chartjs>
+  </app-stat-chart-container>
+</div>
+
+<!--Carpoolers-->
+<div class="graph" *ngIf="graphToBeDisplayed === 'carpoolers'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.carpoolers" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <app-stat-chart-container
+    [hasFilters]="hasFilters"
+    [showDaily]="canShowDaily"
+    [showMonthly]="canShowMonthly"
+    [showCumulated]="canShowCumulated"
+  >
+    <ngx-chartjs
+      [data]="data.carpoolers.monthly"
+      *ngIf="isEmptyDataset(data.carpoolers.monthly) && toggleChart.carpoolers === 'monthly'"
+      type="bar"
+      [height]="70"
+      [options]="options.carpoolersPerMonth"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.carpoolers.cumulated"
+      *ngIf="isEmptyDataset(data.carpoolers.cumulated) && toggleChart.carpoolers === 'cumulated'"
+      type="line"
+      [height]="70"
+      [options]="options.carpoolersPerDayCumulated"
+    ></ngx-chartjs>
+  </app-stat-chart-container>
+</div>
+
+<!--Petrol-->
+<div class="graph" *ngIf="graphToBeDisplayed === 'petrol'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.petrol" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <app-stat-chart-container
+    [hasFilters]="hasFilters"
+    [showDaily]="canShowDaily"
+    [showMonthly]="canShowMonthly"
+    [showCumulated]="canShowCumulated"
+  >
+    <ngx-chartjs
+      [data]="data.petrol.monthly"
+      *ngIf="isEmptyDataset(data.petrol.monthly) && toggleChart.petrol === 'monthly'"
+      type="bar"
+      [height]="70"
+      [options]="options.petrolPerMonth"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.petrol.cumulated"
+      *ngIf="isEmptyDataset(data.petrol.cumulated) && toggleChart.petrol === 'cumulated'"
+      type="line"
+      [height]="70"
+      [options]="options.petrolPerDayCumulated"
+    ></ngx-chartjs>
+  </app-stat-chart-container>
+</div>
+
+<!--CO2-->
+<div class="graph" *ngIf="graphToBeDisplayed === 'co2'">
+  <mat-button-toggle-group [(ngModel)]="toggleChart.co2" (ngModelChange)="setGraphTitle()" *ngIf="!lightMode">
+    <mat-button-toggle aria-label="cumulé" value="cumulated">
+      Cumulé
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <app-stat-chart-container
+    [hasFilters]="hasFilters"
+    [showDaily]="canShowDaily"
+    [showMonthly]="canShowMonthly"
+    [showCumulated]="canShowCumulated"
+  >
+    <ngx-chartjs
+      [data]="data.co2.monthly"
+      *ngIf="isEmptyDataset(data.co2.monthly) && toggleChart.co2 === 'monthly'"
+      type="bar"
+      [height]="70"
+      [options]="options.co2PerMonth"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      [data]="data.co2.cumulated"
+      *ngIf="isEmptyDataset(data.co2.cumulated) && toggleChart.co2 === 'cumulated'"
+      type="line"
+      [height]="70"
+      [options]="options.co2PerDayCumulated"
+    ></ngx-chartjs>
+  </app-stat-chart-container>
+</div>
+
+<!--Carpoolers per vehicule-->
+<div class="graph" *ngIf="graphToBeDisplayed === 'carpoolersPerVehicule'">
+  <mat-button-toggle-group
+    [(ngModel)]="toggleChart.carpoolersPerVehicule"
+    (ngModelChange)="setGraphTitle()"
+    *ngIf="!lightMode"
+  >
+    <mat-button-toggle aria-label="par jour" value="daily">
+      Par jour
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="par mois" value="monthly">
+      Par mois
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <app-stat-chart-container
+    [hasFilters]="hasFilters"
+    [showDaily]="canShowDaily"
+    [showMonthly]="canShowMonthly"
+    [showCumulated]="canShowCumulated"
+  >
+    <ngx-chartjs
+      *ngIf="isEmptyDataset(data.carpoolersPerVehicule.daily) && toggleChart.carpoolersPerVehicule === 'daily'"
+      [data]="data.carpoolersPerVehicule.daily"
+      type="bar"
+      [height]="70"
+      [options]="options.carpoolersPerVehiculePerDay"
+    ></ngx-chartjs>
+    <ngx-chartjs
+      *ngIf="isEmptyDataset(data.carpoolersPerVehicule.monthly) && toggleChart.carpoolersPerVehicule === 'monthly'"
+      [data]="data.carpoolersPerVehicule.monthly"
+      type="bar"
+      [height]="70"
+      [options]="options.carpoolersPerVehiculePerMonth"
+    ></ngx-chartjs>
+  </app-stat-chart-container>
+</div>

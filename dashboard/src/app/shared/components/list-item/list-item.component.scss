@@ -1,0 +1,18 @@
+@import '~src/styles/variables';
+
+.ListItem {
+  width: calc(100% - 40px);
+  background: $background-white;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  padding: 10px 20px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  transition: 0.3s all;
+  margin-bottom: 10px;
+
+  &:hover {
+    border: 1px solid $color-secondary;
+  }
+}

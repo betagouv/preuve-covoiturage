@@ -1,5 +1,34 @@
-version: '2.2'
+version: '3'
 services:
+  postgres:
+    build: './docker/postgres'
+    ports:
+      - 5432:5432
+    networks:
+      - front
+      - back
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'pdc-local'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    volumes:
+      - ./db/postgres:/var/lib/postgresql/data/pgdata
+
+  pgadmin:
+    build: ./docker/pgadmin
+    networks:
+      - front
+      - back
+    ports:
+      - 5050:80
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin1234
+    volumes:
+      - ./db/pgadmin:/pgadmin4/volume
   mongo:
     image: 'mongo:4.0'
     ports:
@@ -10,19 +39,16 @@ services:
       MONGO_INITDB_DATABASE: 'pdc-local'
     volumes:
       - ./db/mongo:/data/db
-    # cpus: 0.5
-    # mem_limit: 256m
-    # memswap_limit: 256m
     networks:
       - front
       - back
 
   redis:
-    image: 'redis:5'
-    cpu_count: 1
-    cpu_percent: 50
-    mem_limit: 256M
+    build: './docker/redis'
+    ports:
+      - 6379:6379
     networks:
+      - front
       - back
 
   api:
@@ -30,50 +56,51 @@ services:
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn dev'
+    command: 'yarn start:http'
     ports:
       - 8080:8080
       - 9229:9229
-    env_file: .env
+    env_file: ./api/.env
     environment:
-      CONFIG_DIR: '/code/config'
-      API_URL: 'http://localhost:8080'
-      APP_URL: 'http://localhost:4200'
+      NODE_ENV: local
+      PORT: 8080
       APP_SUPERUSER_EMAIL: admin@example.com
       APP_SUPERUSER_PASSWORD: admin1234
-    cpu_count: 1
-    cpu_percent: 50
-    mem_limit: 256M
+      APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
+      APP_MONGO_DB: pdc-local
+      APP_REDIS_URL: redis://redis:6379
+      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
     networks:
       - front
-      - api
       - back
     depends_on:
       - mongo
       - redis
+      - postgres
 
   worker:
     build: './docker/api'
     volumes:
       - ./api:/code
     working_dir: '/code'
-    command: 'yarn worker-dev'
+    command: 'yarn start:queue'
     ports:
       - 9230:9230
-    env_file: .env
+    env_file: ./api/.env
     environment:
-      CONFIG_DIR: '/code/config'
-      MQ_WORKER: 'true'
-    cpu_count: 1
-    cpu_percent: 50
-    mem_limit: 256M
+      NODE_ENV: local
+      APP_WORKER: 'true'
+      APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
+      APP_MONGO_DB: pdc-local
+      APP_REDIS_URL: redis://redis:6379
+      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
     networks:
       - front
-      - api
       - back
     depends_on:
       - mongo
       - redis
+      - postgres
 
   dashboard:
     build: './docker/dashboard'
@@ -86,16 +113,28 @@ services:
       - 4200:4200
     networks:
       - front
-      - api
+      - back
     depends_on:
       - api
 
-#  editor:
-#    image: "swaggerapi/swagger-editor"
-#    ports:
-#      - 8081:8080
+  arena:
+    build: ./docker/arena
+    environment:
+      APP_REDIS_URL: redis://redis:6379
+    ports:
+      - 4567:4567
+    networks:
+      - front
+      - back
+    depends_on:
+      - redis
 
+# create a permanent network first
+# > docker network create docker-network --subnet 172.24.24.0/24
 networks:
   front:
-  api:
+    external:
+      name: docker-network
   back:
+    external:
+      name: docker-network

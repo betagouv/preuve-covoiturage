@@ -1,16 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 
-import { AuthenticationService } from './applicativeService/authentication/auth.service';
+import { CommonDataService } from '~/core/services/common-data.service';
+
+import { DestroyObservable } from './core/components/destroy-observable';
+import { IconService } from './core/services/icon.service';
 
 @Component({
   selector: 'app-root',
-  template: '<router-outlet></router-outlet>',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  constructor(private authService: AuthenticationService) {}
+export class AppComponent extends DestroyObservable implements OnInit {
+  title = 'registre de preuve de covoiturage';
 
-  ngOnInit() {
-    // check the token with the backend
-    this.authService.checkToken();
+  constructor(private iconService: IconService, private commonDataService: CommonDataService) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.iconService.init();
   }
 }

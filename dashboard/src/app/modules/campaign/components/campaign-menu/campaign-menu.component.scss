@@ -1,0 +1,9 @@
+.CampaignMenu {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  & > *:not(:last-child) {
+    margin-right: 20px;
+  }
+}

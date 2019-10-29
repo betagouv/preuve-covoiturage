@@ -1,0 +1,56 @@
+@import '~src/styles/variables';
+
+.CampaignDashboard {
+  margin-bottom: 50px;
+
+  &-trips {
+    background: $background-white;
+    padding: 0 5% 50px 5%;
+    text-align: center;
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &-graph {
+      padding: 20px;
+      border-radius: 6px;
+      background: $background-light;
+    }
+
+    .link {
+      margin-top: 20px;
+    }
+
+    &--loading {
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+
+  &-content {
+    width: 90%;
+    margin: 20px auto 0 auto;
+
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: $color-primary;
+      margin: 50px 0 20px 0;
+    }
+  }
+
+  &-notfound {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+:host {
+  .graph {
+    background-color: grey;
+  }
+}

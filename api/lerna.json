@@ -1,0 +1,11 @@
+{
+  "packages": [
+    "core",
+    "proxy",
+    "providers/*",
+    "services/*"
+  ],
+  "version": "0.0.1",
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}

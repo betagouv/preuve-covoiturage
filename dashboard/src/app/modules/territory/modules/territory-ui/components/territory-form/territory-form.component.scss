@@ -1,0 +1,30 @@
+form {
+  display: flex;
+  flex-direction: column;
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
+  mat-form-field {
+    &.name {
+      width: 558px;
+    }
+    &.acronym {
+      width: 260px;
+    }
+  }
+  .contacts {
+    display: flex;
+    flex-wrap: wrap;
+    //justify-content: space-evenly;
+  }
+  button {
+    &:first-child {
+      width: 269px;
+      margin-right: 10px;
+    }
+    &:nth-child(2) {
+      width: 150px;
+    }
+  }
+}

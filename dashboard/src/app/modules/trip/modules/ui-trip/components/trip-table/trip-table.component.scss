@@ -1,0 +1,28 @@
+@import '../../../../../../../styles/variables';
+
+table.mat-table {
+  .mat-icon {
+    &.success {
+      color: $color-success;
+    }
+
+    &.warning {
+      color: $color-warning;
+    }
+
+    &.error {
+      color: $color-error;
+    }
+  }
+
+  .mat-cell {
+    & > span {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+::ng-deep .mat-tooltip {
+  white-space: pre-line;
+}

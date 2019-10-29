@@ -1,0 +1,20 @@
+@import '~src/styles/variables';
+
+.RetributionForm {
+  .shortFormField {
+    width: 100px;
+  }
+
+  &-free {
+    margin-left: 15px;
+  }
+
+  &-inputs {
+    &--hidden {
+      display: none;
+    }
+  }
+  mat-checkbox {
+    margin-left: 10px;
+  }
+}

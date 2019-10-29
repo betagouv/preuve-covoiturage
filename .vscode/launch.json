@@ -39,8 +39,10 @@
       "type": "node",
       "request": "attach",
       "port": 9229,
+      "outFiles": ["${workspaceRoot}/api/proxy/dist/**/*.js"],
       "localRoot": "${workspaceFolder}/api",
-      "remoteRoot": "/code"
+      "remoteRoot": "/code",
+      "sourceMaps": true
     },
     {
       "name": "debug Worker",
@@ -49,43 +51,6 @@
       "port": 9230,
       "localRoot": "${workspaceFolder}/api",
       "remoteRoot": "/code"
-    },
-    {
-      "name": "Launch Chrome",
-      "type": "chrome",
-      "request": "launch",
-      "runtimeExecutable": "/usr/bin/chromium",
-      "url": "http://localhost:4200/#",
-      "webRoot": "${workspaceFolder}/dashboard",
-      "runtimeArgs": [
-        "--new-window",
-        "-user-data-dir=\"/${workspaceFolder}/dashboard/DevProfile\"",
-        "--remote-debugging-port=9222",
-        "--disable-background-networking"
-      ]
-    },
-    {
-      "name": "Attach Chrome",
-      "type": "chrome",
-      "request": "attach",
-      "url": "http://localhost:4200/#",
-      "webRoot": "${workspaceFolder}/dashboard"
-    },
-    {
-      "name": "Launch Chrome (Test)",
-      "type": "chrome",
-      "request": "launch",
-      "runtimeExecutable": "/usr/bin/chromium",
-      "url": "http://localhost:9876/debug.html",
-      "webRoot": "${workspaceFolder}/dashboard"
-    },
-    {
-      "name": "Launch Chrome (E2E)",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/dashboard/node_modules/protractor/bin/protractor",
-      "protocol": "inspector",
-      "args": ["${workspaceFolder}/dashboard/protractor.conf.js"]
     }
   ]
 }

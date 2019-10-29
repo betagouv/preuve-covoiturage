@@ -2,26 +2,96 @@
   "name": "@pdc/service-acquisition",
   "version": "0.0.1",
   "private": true,
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "scripts": {
-    "process": "node cli/process-safe-journey.js",
-    "process-trip": "node cli/process-trip.js"
+    "cli": "ilos",
+    "migrate": "echo 'no migrations'",
+    "start": "yarn serve",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "NODE_ENV=testing mocha --exit src/*.spec.ts src/**/*.spec.ts",
+    "test:integration": "NODE_ENV=testing mocha --exit tests/**/*.spec.ts",
+    "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov mocha -exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha -exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "copy-static": "cp -R ./src/templates ./dist/"
+  },
+  "main": "./dist/bootstrap.js",
+  "config": {
+    "workingDir": "./dist",
+    "bootstrap": "./bootstrap.js",
+    "app": {}
+  },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
+      "src/interfaces/**",
+      "src/types/**",
+      "src/exceptions/**",
+      "src/config/**"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "dependencies": {
-    "@pdc/package-geo": "0.0.1",
-    "@pdc/package-importer": "0.0.1",
-    "@pdc/service-organization": "0.0.1",
-    "@pdc/service-trip": "0.0.1",
-    "@pdc/service-user": "0.0.1",
-    "@pdc/shared": "0.0.1",
-    "JSONStream": "^1.3.5",
-    "csv": "^5.1.1",
-    "express": "^4.16.4",
-    "flat": "^4.1.0",
+    "@ilos/cli": "~0",
+    "@ilos/common": "~0",
+    "@ilos/config": "~0",
+    "@ilos/connection-manager": "~0",
+    "@ilos/connection-mongo": "~0",
+    "@ilos/connection-redis": "~0",
+    "@ilos/core": "~0",
+    "@ilos/env": "~0",
+    "@ilos/framework": "~0",
+    "@ilos/package-acl": "~0",
+    "@ilos/queue": "~0",
+    "@ilos/repository": "~0",
+    "@pdc/provider-middleware": "~0",
+    "@pdc/provider-schema": "~0",
+    "@pdc/provider-validator": "~0",
+    "@pdc/provider-token": "~0",
     "lodash": "^4.17.11",
-    "moment": "^2.22.2",
-    "mongoose": "^5.4",
-    "multer": "^1.4.1",
-    "slugify": "^1.3.4"
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/json-schema": "^7.0.3",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^12.6.8",
+    "axios": "^0.19.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-nock": "^1.1.0",
+    "concurrently": "^4.1.0",
+    "json-schema": "^0.2.3",
+    "json-schema-faker": "^0.5.0-rc17",
+    "mocha": "^6.1.4",
+    "nock": "^11.3.4",
+    "nyc": "^14.1.1",
+    "supertest": "^4.0.2",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.15.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-import-group-ordering": "^2.1.1",
+    "typescript": "^3.5.3"
   }
 }

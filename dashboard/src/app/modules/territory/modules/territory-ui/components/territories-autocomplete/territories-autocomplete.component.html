@@ -1,0 +1,29 @@
+<mat-form-field [formGroup]="parentForm" class="territoriesAutocomplete" appearance="outline">
+  <mat-label>Territoires</mat-label>
+  <mat-chip-list #chipList>
+    <mat-chip
+      *ngFor="let territoryId of this.territoryIdsControl.value"
+      [selectable]="true"
+      [removable]="true"
+      (removed)="remove(territoryId)"
+    >
+      {{ getTerritoryLabel(territoryId) }}
+      <mat-icon matChipRemove>remove</mat-icon>
+    </mat-chip>
+    <input
+      matInput
+      placeholder="+ ajouter"
+      aria-label="Ajouter un territoire"
+      #territoryInput
+      [formControl]="territoryCtrl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputAddOnBlur]="false"
+    />
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritorySelect($event)">
+    <mat-option *ngFor="let territory of filteredTerritories" [value]="territory._id">
+      {{ territory.shortname }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

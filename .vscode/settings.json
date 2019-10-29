@@ -1,5 +1,10 @@
 {
-    "files.exclude": {
-        "**/*.postman_collection.json": true
-    }
+  "files.exclude": {
+    "**/*.postman_collection.json": true
+  },
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "editor.formatOnSave": true
 }

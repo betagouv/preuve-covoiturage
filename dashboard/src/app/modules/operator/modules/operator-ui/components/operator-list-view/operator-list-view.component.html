@@ -1,0 +1,27 @@
+<div class="Operators-header">
+  <h2>
+    Opérateurs
+  </h2>
+  <app-operator-filter (filterLiteralChange)="pipeFilter($event)"></app-operator-filter>
+</div>
+<app-operator-list (edit)="pipeEdit($event)" [filterLiteral]="filterLiteral"></app-operator-list>
+<div class="Operators-edition">
+  <div id="operatorForm-anchor"></div>
+  <button mat-flat-button class="large" *ngIf="!showForm" (click)="showCreationForm()" color="primary">
+    Ajouter un opérateur
+  </button>
+  <div *ngIf="showForm">
+    <h3 *ngIf="!isCreating">
+      Edition de l'opérateur
+    </h3>
+    <h3 *ngIf="isCreating">
+      Création d'un Opérateur
+    </h3>
+  </div>
+  <app-operator-form
+    [showForm]="showForm"
+    [closable]="true"
+    [operator]="operator$ | async"
+    (close)="close()"
+  ></app-operator-form>
+</div>

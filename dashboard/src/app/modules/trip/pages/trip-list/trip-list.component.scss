@@ -1,0 +1,30 @@
+.TripList {
+  margin-top: 50px;
+
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  &-message {
+    height: 249px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    p {
+      font-weight: bold;
+    }
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &-results {
+      font-weight: 600;
+      font-size: 18px;
+    }
+  }
+}

@@ -1,43 +1,151 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2
 jobs:
-  build:
+  api-ts:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
       - image: circleci/mongo:4.0
       - image: circleci/redis:4
-
+      - image: circleci/postgres:11.5-alpine-postgis-ram
+        environment:
+          POSTGRES_USER: 'postgres'
+          POSTGRES_PASSWORD: 'postgres'
+          POSTGRES_DB: 'pdc-local'
     working_directory: ~/repo/api
-
     parallelism: 1
-
     environment:
-      NODE_ENV: test
-      MONGO_URL: mongodb://127.0.0.1:27017/pdc-test
-      REDIS_URL: redis://127.0.0.1:6379
-
+      NODE_ENV: testing
+      APP_MONGO_URL: mongodb://127.0.0.1:27017/pdc-test
+      APP_REDIS_URL: redis://127.0.0.1:6379
+      APP_POSTGRES_URL: postgresql://postgres:postgres@127.0.0.1:5432/pdc-local
     steps:
       - checkout:
           path: ~/repo
-
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      - run: yarn install
-
+      # - run:
+      #     name: Setup Code Climate test-reporter
+      #     command: |
+      #       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      #       chmod +x ./cc-test-reporter
+      - run:
+          name: Clone and build @ilos packages
+          command: |
+            git clone https://github.com/betagouv/ilos
+            cd ilos
+            git checkout dev
+            yarn
+            yarn build
+            cd ~/repo
+      - run: yarn
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn run build
+      - run: yarn run lint
+      - run: yarn run test
+      # - run:
+      #     name: Run tests with coverage
+      #     command: |
+      #       ./cc-test-reporter before-build
+      #       yarn run coverage-ci
+      #       cat coverage/**/lcov.info > coverage/lcov.info
+      #       ./cc-test-reporter format-coverage -t lcov
+      #       ./cc-test-reporter upload-coverage
 
+  front-qa:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo/dashboard
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn lint
+      # - run: yarn build --no-progress
+      # - run: yarn test
 
-      - run: yarn seed
+  front-cypress:
+    docker:
+      - image: cypress/base:10
+        environment:
+          TERM: xterm
+    working_directory: ~/repo/dashboard
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run: yarn global add http-server
+      - run: yarn global add start-server-and-test
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile --production=false
+      - run: yarn build -c dev --no-progress
+      - save_cache:
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - ~/.cache
+      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --record --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev'
 
-      - run: yarn test
+  front-deploy:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo/dashboard
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run: yarn install --production=false
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Build
+          command: yarn build -c $CIRCLE_BRANCH --no-progress
+      - add_ssh_keys:
+          fingerprints:
+            - 'c7:ba:98:8b:3d:b4:92:c7:b4:97:d5:9b:e8:c1:3d:ec'
+      - run:
+          name: Clean up existing deploy
+          command: |
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net rm -rf www/$CIRCLE_BRANCH
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net mkdir -p www/$CIRCLE_BRANCH
+      - run:
+          name: Deploy to Alwaysdata
+          command: |
+            mv dist/dashboard dist/$CIRCLE_BRANCH
+            scp -rpq -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_c7ba988b3db492c7b497d59be8c13dec dist/$CIRCLE_BRANCH covoiturage-beta-gouv@ssh-covoiturage-beta-gouv.alwaysdata.net:www/
+
+workflows:
+  version: 2
+  # backend-tests:
+  #   jobs:
+  #     - api-ts
+  frontend:
+    jobs:
+      - front-qa
+      # - front-cypress
+      - front-deploy:
+          requires:
+            - front-qa
+            # - front-cypress
+          filters:
+            branches:
+              only:
+                - dev
+                - staging

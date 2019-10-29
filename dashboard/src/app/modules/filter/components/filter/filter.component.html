@@ -1,0 +1,129 @@
+<form [formGroup]="filterForm" [@collapse]="_showFilter ? 'open' : 'closed'">
+  <div class="filter-wrapper">
+    <div class="filter-wrapper-close">
+      <button mat-mini-fab color="primary" type="button" (click)="onCloseClick()">
+        <mat-icon>close_rounded</mat-icon>
+      </button>
+    </div>
+    <div class="filter">
+      <div class="filter-content">
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Campagne</p>
+          </div>
+          <app-campaign-auto-complete [parentForm]="filterForm"></app-campaign-auto-complete>
+        </div>
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Dates & horaires</p>
+          </div>
+          <div class="filter-dates" formGroupName="date">
+            <mat-form-field appearance="outline">
+              <mat-label>Début</mat-label>
+              <input
+                matInput
+                formControlName="start"
+                [matDatepicker]="startDatePicker"
+                placeholder="Choisir une date"
+              />
+              <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Fin</mat-label>
+              <input matInput formControlName="end" [matDatepicker]="endDatePicker" placeholder="Choisir une date" />
+              <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="filter-timeAndDays">
+            <ng-container formGroupName="hour">
+              <mat-form-field class="start-time" appearance="outline">
+                <mat-label>De</mat-label>
+                <input matInput formControlName="start" type="time" step="3600" />
+              </mat-form-field>
+              <mat-form-field class="end-time" appearance="outline">
+                <mat-label>A</mat-label>
+                <input matInput formControlName="end" type="time" step="3600" />
+              </mat-form-field>
+            </ng-container>
+            <mat-form-field class="days" appearance="outline">
+              <mat-label>Jours de la semaine</mat-label>
+              <mat-select formControlName="days" multiple>
+                <mat-option *ngFor="let day of days" [value]="day">{{ getDaysFrench(day) }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Géographie</p>
+          </div>
+
+          <!--          DISTANCE -->
+          <div class="filter-distances" formGroupName="distance">
+            <mat-form-field class="min-distance" appearance="outline">
+              <mat-label>Km min</mat-label>
+              <input matInput formControlName="min" type="number" step="1" min="0" />
+            </mat-form-field>
+            <mat-form-field class="max-distance" appearance="outline">
+              <mat-label>Km max</mat-label>
+              <input matInput formControlName="max" type="number" step="1" min="0" />
+            </mat-form-field>
+          </div>
+
+          <!--          TOWNS -->
+          <div class="filter-towns">
+            <app-towns-autocomplete [parentForm]="filterForm"></app-towns-autocomplete>
+          </div>
+
+          <!--          TERRITORIES -->
+          <div class="filter-territories">
+            <app-territories-autocomplete
+              *ngIf="hasGroupOperatorOrRegistry"
+              [parentForm]="filterForm"
+            ></app-territories-autocomplete>
+          </div>
+        </div>
+        <div class="filter-content-column">
+          <div class="filter-content-column-title">
+            <p>Types de trajets</p>
+          </div>
+          <div class="filter-trip-types">
+            <mat-form-field class="class" appearance="outline">
+              <!--              RANKS -->
+              <mat-label>Classe</mat-label>
+              <mat-select formControlName="ranks" multiple>
+                <mat-option *ngFor="let name of classes" value="{{ name }}">{{ name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!--            STATUS -->
+            <mat-form-field class="filter-status" appearance="outline">
+              <mat-label>Statut</mat-label>
+              <mat-select formControlName="status">
+                <!--                todo: when implemented in back-->
+                <!--                <mat-option *ngFor="let status of tripStatusList" value="{{ status }}">{{-->
+                <!--                  getStatusFrench(status)-->
+                <!--                }}</mat-option>-->
+                <mat-option value="{{ tripStatusList[2] }}">{{ getStatusFrench(tripStatusList[2]) }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!--            OPERATORS-->
+            <app-operators-autocomplete
+              *ngIf="hasGroupRegistryOrTerritory"
+              [parentForm]="filterForm"
+            ></app-operators-autocomplete>
+          </div>
+        </div>
+      </div>
+      <div class="filter-footer">
+        <button mat-flat-button type="button" color="primary" (click)="filterClick()">Affiner les résultats</button>
+        <button mat-button class="filter-footer-reinitialize" type="button" (click)="reinitializeClick()">
+          Réinitialiser les filtres
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

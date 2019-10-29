@@ -1,68 +1,69 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
 
-import { LayoutComponent } from '~/shared/layout/main/component';
+import { AuthGuard } from '~/core/guards/auth-guard.service';
 
-import { AuthGuard } from './guards/auth-guard.service';
+import { NotFoundComponent } from '~/core/components/not-found/not-found.component';
+
+// tslint:disable-next-line:max-line-length
+import { NotAuthenticatedLayoutComponent } from './core/components/not-authenticated-layout/not-authenticated-layout.component';
+import { AuthenticatedLayoutComponent } from './core/components/authenticated-layout/authenticated-layout.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard/home', pathMatch: 'full' },
   {
     path: '',
-    loadChildren: './modules/auth/auth.module#AuthModule',
-  },
-  {
-    path: 'dashboard/home',
-    component: LayoutComponent,
+    component: AuthenticatedLayoutComponent,
     canActivate: [AuthGuard],
-    loadChildren: './modules/home/home.module#HomeModule',
+    children: [
+      {
+        path: 'campaign',
+        loadChildren: () => import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
+        canLoad: [AuthGuard],
+      },
+      {
+        path: 'registry',
+        loadChildren: () => import('./modules/registry/registry.module').then((mod) => mod.RegistryModule),
+        canLoad: [AuthGuard],
+      },
+      {
+        path: 'trip',
+        loadChildren: () => import('./modules/trip/trip.module').then((mod) => mod.TripModule),
+        canLoad: [AuthGuard],
+      },
+      {
+        path: 'admin',
+        loadChildren: () =>
+          import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule),
+        canLoad: [AuthGuard],
+      },
+      {
+        path: 'ui-guide',
+        loadChildren: () => import('./modules/ui-guide/ui-guide.module').then((mod) => mod.UiGuideModule),
+      },
+    ],
   },
   {
-    path: 'dashboard/journeys',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    loadChildren: './modules/journeys/journey.module#JourneyModule',
-  },
-  // {
-  //   path: 'dashboard/incentives',
-  //   component: LayoutComponent,
-  //   data: { groups: ['aom', 'registry'] },
-  //   canActivate: [AuthGuard],
-  //   loadChildren: './modules/incentive/incentive.module#IncentiveModule',
-  // },
-  {
-    path: 'dashboard/operators',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    loadChildren: './modules/operator/operator.module#OperatorModule',
+    path: '',
+    component: NotAuthenticatedLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./modules/authentication/authentication.module').then((mod) => mod.AuthenticationModule),
+      },
+    ],
   },
   {
-    path: 'dashboard/aoms',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    loadChildren: './modules/aom/aom.module#AomModule',
+    path: '404',
+    component: NotAuthenticatedLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: NotFoundComponent,
+      },
+    ],
   },
-  {
-    path: 'dashboard/users',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    loadChildren: './modules/user/user.module#UserModule',
-  },
-  {
-    path: 'dashboard/registry',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    loadChildren: './modules/registry/registry.module#RegistryModule',
-  },
-  {
-    path: 'stats',
-    loadChildren: './modules/statistics/statistics.module#StatisticsModule',
-  },
-  {
-    // TODO remove in June 2019
-    path: 'statistics',
-    redirectTo: 'stats',
-  },
+  { path: '**', redirectTo: '/404' },
 ];
 
 @NgModule({

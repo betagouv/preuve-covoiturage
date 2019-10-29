@@ -1,0 +1,26 @@
+<form [formGroup]="restrictionformGroup" class="RestrictionForm">
+  <mat-form-field appearance="outline" class="RestrictionForm-howMuch">
+    <mat-label>Combien</mat-label>
+    <input matInput type="number" min="0" placeholder="1" required formControlName="quantity" />
+  </mat-form-field>
+  <span>trajets maximum par</span>
+  <mat-form-field appearance="outline" class="RestrictionForm-who">
+    <mat-label>Qui</mat-label>
+    <mat-select required formControlName="is_driver">
+      <mat-option [value]="true">conducteur</mat-option>
+      <mat-option [value]="false">passager</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <span>par</span>
+  <mat-form-field appearance="outline">
+    <mat-label>Quand</mat-label>
+    <mat-select required formControlName="period">
+      <!--      TODO: for loop from enum -->
+      <mat-option [value]="'day'">jour</mat-option>
+      <mat-option [value]="'week'">semaine</mat-option>
+      <mat-option [value]="'month'">mois</mat-option>
+      <mat-option [value]="'trimester'">trimestre</mat-option>
+      <mat-option [value]="'all'">durée de la campagne</mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>

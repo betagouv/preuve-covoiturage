@@ -1,0 +1,21 @@
+<div class="Territories-loading" *ngIf="territoriesloading">
+  <mat-spinner></mat-spinner>
+</div>
+<div class="Territories-list" *ngIf="territoriesloaded">
+  <app-list-item *ngFor="let territory of territoriesToShow">
+    <div class="Territories-list-item">
+      <div class="Territories-list-item-name">
+        {{ territory.name }}
+      </div>
+      <div class="Territories-list-item-actions">
+        <a
+          class="link"
+          *ngIf="authenticationService.hasAnyPermission([this.editPermission])"
+          (click)="onEdit(territory)"
+        >
+          Editer
+        </a>
+      </div>
+    </div>
+  </app-list-item>
+</div>

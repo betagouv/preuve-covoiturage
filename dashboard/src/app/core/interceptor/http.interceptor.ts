@@ -1,0 +1,32 @@
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+
+import { environment } from '../../../environments/environment';
+import { AuthenticationService } from '../services/authentication/authentication.service';
+
+@Injectable()
+export class HttpApiInterceptor implements HttpInterceptor {
+  private APIMETHODS = ['POST', 'GET', 'PATCH', 'PUT', 'DELETE'];
+  private api = environment.apiUrl;
+  private currentToken: string;
+
+  constructor(private authService: AuthenticationService) {}
+
+  public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (req.url.includes('assets/icons')) {
+      return next.handle(req);
+    }
+
+    // this.currentToken = this.authService.token;
+    const update: any = {};
+
+    if (this.APIMETHODS.indexOf(req.method) !== -1 && !req.url.startsWith('https://')) {
+      update.url = this.api + req.url;
+    }
+
+    const clonedRequest: HttpRequest<any> = req.clone(update);
+
+    return next.handle(clonedRequest);
+  }
+}

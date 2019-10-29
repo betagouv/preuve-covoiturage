@@ -1,0 +1,50 @@
+<div class="Users">
+  <div class="Users-header">
+    <h2>
+      Utilisateurs autorisés
+    </h2>
+    <form [formGroup]="searchFilters">
+      <mat-form-field appearance="outline">
+        <mat-label>Rechercher</mat-label>
+        <input matInput placeholder="Nom d'utilisateur, email" formControlName="query" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
+  <div class="Users-loading" *ngIf="userService.loading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="Users-list">
+    <app-users-list
+      *ngIf="usersToShow"
+      [users]="usersToShow"
+      [canEditUser]="canEditUser$ | async"
+      (editUser)="showEditForm($event)"
+    ></app-users-list>
+  </div>
+  <div
+    class="Users-add"
+    *ngIf="authenticationService.hasAnyPermission(['user.create', 'territory.users.add', 'operator.users.add'])"
+  >
+    <button
+      mat-flat-button
+      class="large"
+      *ngIf="!editUserFormVisible; else addUserBlock"
+      (click)="addUser()"
+      color="primary"
+    >
+      Ajouter un utilisateur
+    </button>
+    <ng-template #addUserBlock>
+      <h2>
+        Ajouter un utilisateur
+      </h2>
+      <app-create-edit-user-form
+        [user]="editedUser"
+        [groupEditable]="false"
+        [isCreating]="this.isCreatingUser"
+        (onCloseEditUser)="closeUserForm()"
+      ></app-create-edit-user-form>
+    </ng-template>
+  </div>
+</div>

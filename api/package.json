@@ -1,6 +1,16 @@
 {
   "name": "@pdc/api",
   "private": true,
+  "engines": {
+    "node": "12.x.x"
+  },
+  "workspaces": [
+    "core",
+    "proxy",
+    "providers/*",
+    "services/*",
+    "ilos/packages/*"
+  ],
   "repository": "git@github.com:betagouv/preuve-covoiturage.git",
   "author": "Beta Gouv <contact@covoiturage.beta.gouv.fr>",
   "contributors": [
@@ -8,81 +18,47 @@
     "Nicolas Mérigot <nicolas.merigot@beta.gouv.fr>",
     "Samuel Eyre <samuel.eyre@beta.gouv.fr>"
   ],
+  "scripts": {
+    "scalingo-prebuild": "/bin/sh ./scalingo/prebuild.sh",
+    "scalingo-build": "run-s build:providers build:services build:proxy",
+    "scalingo-postbuild": "/bin/sh ./scalingo/postbuild.sh",
+    "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
+    "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
+    "clean": "rm -rf ./**/dist",
+    "watch": "lerna run --parallel watch",
+    "ls": "lerna ls",
+    "build": "run-s clean build:providers build:services build:proxy",
+    "build:proxy": "lerna run --scope @pdc/proxy build",
+    "build:providers": "lerna run --scope @pdc/provider-* build",
+    "build:services": "lerna run --scope @pdc/service-* build",
+    "coverage-ci": "lerna run --scope @pdc/* coverage-ci",
+    "coverage": "lerna run --scope @pdc/* coverage",
+    "format:fix": "pretty-quick --staged",
+    "lint": "lerna run --scope @pdc/* lint",
+    "test": "run-p test:unit test:integration",
+    "test:unit": "lerna run --scope @pdc/* test",
+    "test:integration": "lerna run --scope @pdc/* test:integration",
+    "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions",
+    "migrate": "lerna run --scope @pdc/service-* migrate"
+  },
   "keywords": [
     "betagouv",
     "covoiturage",
     "api",
     "carpooling"
   ],
-  "workspaces": [
-    "proxy",
-    "shared",
-    "services/*",
-    "packages/*"
-  ],
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/betagouv/preuve-covoiturage/issues"
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
-  "scripts": {
-    "start": "yarn workspace @pdc/proxy start",
-    "dev": "nodemon --inspect=0.0.0.0:9229 ./proxy/app.js",
-    "worker": "yarn workspace @pdc/proxy worker",
-    "worker-dev": "nodemon --inspect=0.0.0.0:9230 ./proxy/worker.js",
-    "seed": "yarn workspace @pdc/proxy seed",
-    "migrate": "yarn workspace @pdc/proxy migrate",
-    "process": "yarn workspace @pdc/proxy process",
-    "process-trip": "yarn workspace @pdc/proxy process-trip",
-    "fix-permissions": "yarn workspace @pdc/proxy fix-permissions",
-    "test": "NODE_ENV=test mocha -t 5000",
-    "lint": "eslint --ignore-path .gitignore ."
-  },
-  "dependencies": {
-    "@pdc/package-geo": "0.0.1",
-    "@pdc/proxy": "0.0.1",
-    "@pdc/service-acquisition": "0.0.1",
-    "@pdc/service-trip": "0.0.1",
-    "@pdc/shared": "0.0.1",
-    "google-libphonenumber": "^3.2.2",
-    "jsonwebtoken": "^8.3.0",
-    "lodash": "^4.17.11",
-    "mongoose": "^5.4"
-  },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "eslint": "^5.9.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1",
-    "faker": "^4.1.0",
-    "husky": "^2.3.0",
-    "mocha": "^6.1.4",
-    "supertest": "^4.0"
-  },
-  "eslintConfig": {
-    "env": {
-      "node": true,
-      "mongo": true,
-      "mocha": true
-    },
-    "extends": "airbnb",
-    "rules": {
-      "no-underscore-dangle": "off",
-      "object-curly-newline": "off",
-      "arrow-parens": "off"
-    }
-  },
-  "nodemonConfig": {
-    "ignore": [
-      ".circleci/*",
-      "cli/*",
-      "config/*",
-      "documentation/*",
-      "node_modules/*",
-      "test/*"
-    ],
-    "delay": "200"
+    "lerna": "^3.13.4",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.17.1",
+    "pretty-quick": "^1.11.0",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.3"
   }
 }

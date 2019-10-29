@@ -6,5 +6,6 @@
   "semi": true,
   "bracketSpacing": true,
   "arrowParens": "always",
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "endOfLine": "lf"
 }

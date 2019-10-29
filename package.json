@@ -1,0 +1,23 @@
+{
+  "name": "preuve-covoiturage",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:betagouv/preuve-covoiturage.git",
+  "author": "Preuve de Covoiturage <contact@covoiturage.beta.gouv.fr>",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "format:fix": "lerna run --parallel format:fix",
+    "lint": "lerna run --parallel lint"
+  },
+  "devDependencies": {
+    "husky": "^3.0.9",
+    "lerna": "^3.15.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run format:fix",
+      "pre-push": "yarn run lint"
+    }
+  }
+}

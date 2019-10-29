@@ -1,0 +1,24 @@
+<div class="CampaignCard">
+  <div class="CampaignCard-name">
+    {{ campaign.name }}
+  </div>
+  <div class="CampaignCard-territory">
+    {{ getTerritoryLabel(campaign.territory_id) }}
+  </div>
+  <div class="CampaignCard-incentiveType" [ngSwitch]="campaign.unit">
+    <span *ngSwitchCase="incentiveUnit.EUR">
+      Incitation financière
+    </span>
+    <span *ngSwitchCase="incentiveUnit.POINT">
+      Incitation non-financière
+    </span>
+  </div>
+  <div class="CampaignCard-status" [ngClass]="getCampaignClass()">
+    {{ CAMPAIGN_STATUS_FR[campaign.status] }}
+  </div>
+  <div class="CampaignCard-actions">
+    <button mat-flat-button color="primary" [routerLink]="'/campaign/' + campaign._id">
+      Voir le détail
+    </button>
+  </div>
+</div>

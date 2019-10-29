@@ -1,0 +1,98 @@
+<div class="CampaignForm">
+  <div class="CampaignForm--loading" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <mat-horizontal-stepper #stepper [linear]="true" *ngIf="!loading" [selectedIndex]="currentStep">
+    <mat-step [completed]="matStepperCompleted">
+      <ng-template matStepLabel>Campagne</ng-template>
+      <app-page-content>
+        <div class="CampaignForm-content">
+          <div class="CampaignForm-content-wrapper">
+            <app-campaign-templates
+              (setTemplate)="setTemplate($event)"
+              [matStepper]="stepper"
+              [campaignForm]="campaignFormGroup"
+            ></app-campaign-templates>
+            <app-help-card
+              [svgIcon]="helpCard.svgIcon"
+              [title]="helpCard.title"
+              [hint]="helpCard.hint"
+              [link]="helpCard.link"
+            >
+            </app-help-card>
+          </div>
+          <div class="CampaignForm-content-actions">
+            <button mat-flat-button class="large" color="primary" matStepperNext *ngIf="showFirstPageNextStep">
+              Étape suivante
+            </button>
+          </div>
+        </div>
+      </app-page-content>
+    </mat-step>
+    <mat-step [completed]="canGoToThirdStep">
+      <ng-template matStepLabel>Éligibilité</ng-template>
+      <app-page-content>
+        <div class="CampaignForm-content">
+          <div class="CampaignForm-content-wrapper">
+            <app-filters-form [campaignForm]="campaignFormGroup"></app-filters-form>
+            <app-help-card
+              [svgIcon]="helpCard.svgIcon"
+              [title]="helpCard.title"
+              [hint]="helpCard.hint"
+              [link]="helpCard.link"
+            >
+            </app-help-card>
+          </div>
+          <div class="CampaignForm-content-actions">
+            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
+            <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!canGoToThirdStep">
+              Étape suivante
+            </button>
+          </div>
+        </div>
+      </app-page-content>
+    </mat-step>
+    <mat-step [completed]="canGoToLastStep">
+      <ng-template matStepLabel>Rétribution</ng-template>
+      <app-page-content>
+        <div class="CampaignForm-content">
+          <div class="CampaignForm-content-wrapper">
+            <app-parameters-form [campaignForm]="campaignFormGroup"></app-parameters-form>
+            <!--            *ngIf="!campaignFormGroup.controls.expertMode.value"-->
+            <app-help-card
+              [svgIcon]="helpCard.svgIcon"
+              [title]="helpCard.title"
+              [hint]="helpCard.hint"
+              [link]="helpCard.link"
+            >
+            </app-help-card>
+            <!--            <app-formula-guide *ngIf="campaignFormGroup.controls.expertMode.value"></app-formula-guide>-->
+          </div>
+          <div class="CampaignForm-content-actions">
+            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
+            <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!canGoToLastStep">
+              Voir le récapitulatif
+            </button>
+          </div>
+        </div>
+      </app-page-content>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Récapitulatif</ng-template>
+      <app-page-content>
+        <div class="CampaignForm-content">
+          <div class="CampaignForm-content-wrapper CampaignForm-content-wrapper--summary">
+            <app-summary-form
+              [campaignForm]="campaignFormGroup"
+              [loading]="requestLoading"
+              (onSaveCampaign)="saveCampaign()"
+            ></app-summary-form>
+          </div>
+          <div class="CampaignForm-content-actions">
+            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
+          </div>
+        </div>
+      </app-page-content>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>

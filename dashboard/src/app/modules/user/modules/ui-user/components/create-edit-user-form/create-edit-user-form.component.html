@@ -1,0 +1,93 @@
+<form class="CreateEditUserForm" [formGroup]="createEditUserForm">
+  <mat-form-field appearance="outline" required>
+    <mat-label>Prénom</mat-label>
+    <input matInput formControlName="firstname" required />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="lastname" required />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" required />
+    <mat-error *ngIf="controls.email.hasError('pattern')"> L'email est invalide.</mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Numéro de téléphone</mat-label>
+    <input matInput formControlName="phone" />
+    <mat-error *ngIf="controls.phone.hasError('pattern')"> Le numéro de téléphone est invalide.</mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline" *ngIf="isCreating">
+    <mat-label>Droit d'accès</mat-label>
+    <mat-select required formControlName="role">
+      <mat-option *ngFor="let role of roles" [value]="role">{{ getFrenchRole(role) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="groupEditable && isCreating">
+    <mat-label>Groupe</mat-label>
+    <mat-select required formControlName="group" (selectionChange)="onGroupChange()">
+      <mat-option *ngFor="let group of groups" [value]="group">{{ getFrenchGroup(group) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!--  <mat-form-field appearance="outline" *ngIf="groupEditable && territoryEditable">-->
+  <!--    <mat-label>Territoire</mat-label>-->
+  <!--    <mat-select required formControlName="territory">-->
+  <!--      <mat-option *ngFor="let territory of ['Test territoire']" [value]="territory">{{ territory }}</mat-option>-->
+  <!--    </mat-select>-->
+  <!--  </mat-form-field>-->
+
+  <app-operator-autocomplete
+    [parentForm]="createEditUserForm"
+    *ngIf="groupEditable && operatorEditable && isCreating"
+  ></app-operator-autocomplete>
+
+  <app-territory-autocomplete
+    [parentForm]="createEditUserForm"
+    *ngIf="groupEditable && territoryEditable && isCreating"
+  ></app-territory-autocomplete>
+
+  <!--  <mat-form-field appearance="outline">-->
+  <!--    <mat-label>Opérateur</mat-label>-->
+  <!--    <mat-select required formControlName="operator">-->
+  <!--      <mat-option *ngFor="let operator of ['Test opérateur']" [value]="operator">{{ operator }}</mat-option>-->
+  <!--    </mat-select>-->
+  <!--  </mat-form-field>-->
+
+  <div>
+    <button
+      *ngIf="isCreating"
+      type="submit"
+      mat-flat-button
+      class="large"
+      (click)="onUpdateUser()"
+      [appShowSpinner]="isCreatingUpdating"
+      [disabled]="!createEditUserForm.valid"
+      color="primary"
+    >
+      Créer
+    </button>
+    <button
+      *ngIf="!isCreating"
+      type="submit"
+      mat-flat-button
+      class="large"
+      (click)="onUpdateUser()"
+      [appShowSpinner]="isCreatingUpdating"
+      [disabled]="!createEditUserForm.valid"
+      color="primary"
+    >
+      Mettre à jour
+    </button>
+    <button
+      (click)="onCloseEditUser.emit()"
+      class="CreateEditUserForm-close"
+      type="button"
+      mat-icon-button
+      color="secondary"
+    >
+      Annuler
+    </button>
+  </div>
+</form>

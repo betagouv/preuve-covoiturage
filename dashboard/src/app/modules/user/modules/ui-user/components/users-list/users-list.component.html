@@ -1,0 +1,37 @@
+<div class="UsersList">
+  <div class="UsersList-list">
+    <app-list-item *ngFor="let user of users">
+      <div class="UsersList-list-item">
+        <div class="UsersList-list-item-name">
+          {{ user.firstname }} {{ user.lastname }}
+          <span *ngIf="loggedUser && user._id === loggedUser._id" class="UsersList-list-item-name--itself">(Vous)</span>
+        </div>
+        <div class="UsersList-list-item-email">
+          {{ user.email }}
+        </div>
+        <div class="UsersList-list-item-role">
+          {{ getFrenchRole(user.role) }}
+        </div>
+        <div class="UsersList-list-item-actions">
+          <a
+            class="link"
+            *ngIf="authService.hasAnyPermission(['user.invite']) && user.status === 'pending'"
+            (click)="onSendInvitation(user)"
+          >
+            Renvoyer l'invitation
+          </a>
+          <a class="link" *ngIf="canEditUser" (click)="onEdit(user)">
+            Editer
+          </a>
+          <a
+            class="link"
+            *ngIf="authService.hasAnyPermission(['user.delete', 'territory.users.remove', 'operator.users.remove'])"
+            (click)="onDelete(user)"
+          >
+            Supprimer l'accès
+          </a>
+        </div>
+      </div>
+    </app-list-item>
+  </div>
+</div>

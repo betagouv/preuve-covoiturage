@@ -1,0 +1,14 @@
+{
+  "name": "arena",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bull-arena": "^2.6.3",
+    "express": "^4.17.1"
+  }
+}
