@@ -55,6 +55,7 @@ export class CreateJourneyAction extends AbstractAction {
   protected cast(jrn: ParamsInterface, operatorId: string): JourneyInterface {
     const journey = {
       ...jrn,
+      journey_id: `${operatorId}:${jrn.journey_id}`,
       operator_id: operatorId,
       created_at: new Date(),
     };
