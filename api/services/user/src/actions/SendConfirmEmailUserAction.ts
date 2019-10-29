@@ -94,7 +94,8 @@ link:  ${link}
         link,
         template: this.config.get('email.templates.confirmation'),
         email: user.email,
-        fullname: `${user.firstname} ${user.lastname}`,
+        fullname: user.fullname,
+        templateId: this.config.get('notification.templateIds.invitation'),
       },
       {
         call: context.call,
