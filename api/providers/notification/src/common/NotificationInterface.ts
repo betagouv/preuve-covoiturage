@@ -1,4 +1,5 @@
 import { InitHookInterface } from '@ilos/common';
+
 import { MailInterface, TemplateMailInterface } from './MailDriverInterface';
 
 interface ProviderInterface {}

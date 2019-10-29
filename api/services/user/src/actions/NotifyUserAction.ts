@@ -2,9 +2,9 @@ import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { ContextType, ForbiddenException, handler } from '@ilos/common';
 import { UserNotifyParamsInterface } from '@pdc/provider-schema';
+import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
 import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
-import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
 /*
  * Send email to user
