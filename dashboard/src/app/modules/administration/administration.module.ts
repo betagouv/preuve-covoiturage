@@ -14,6 +14,7 @@ import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operato
 import { OperatorModule } from '~/modules/operator/operator.module';
 import { ApplicationUiModule } from '~/modules/operator/modules/application-ui/application-ui.module';
 import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
+import { OperatorVisibilityModule } from '~/modules/operator/modules/operator-visibility/operator-visibility.module';
 
 import { AdministrationRoutingModule } from './administration-routing.module';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
@@ -25,7 +26,6 @@ import { ApiComponent } from './pages/api/api.component';
 import { AllTerritoriesComponent } from './pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from './pages/all-operators/all-operators.component';
 import { OperatorVisibilityComponent } from './pages/operator-visibility/operator-visibility.component';
-import { OperatorVisibilityModule } from '~/modules/operator/modules/operator-visibility/operator-visibility.module';
 
 @NgModule({
   declarations: [
