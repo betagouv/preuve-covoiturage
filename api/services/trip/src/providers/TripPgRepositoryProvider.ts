@@ -265,18 +265,18 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           case 'date':
             if (filter.value.start && filter.value.end) {
               return {
-                text: '($#::timestamp < datetime AND datetime < $#::timestamp)',
+                text: '($#::timestamp <= datetime AND datetime <= $#::timestamp)',
                 values: [filter.value.start, filter.value.end],
               };
             }
             if (filter.value.start) {
               return {
-                text: '$#::timestamp < datetime',
+                text: '$#::timestamp <= datetime',
                 values: [filter.value.start],
               };
             }
             return {
-              text: 'datetime < $#::timestamp',
+              text: 'datetime <= $#::timestamp',
               values: [filter.value.end],
             };
           case 'ranks':
@@ -352,7 +352,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           SELECT
             min(datetime::date) as day,
             max(distance) as distance,
-            sum(seats) as carpoolers,
+            sum(seats+1) as carpoolers,
             '0'::int as carpoolers_subsidized
           FROM ${this.table}
           ${where ? where.text : ''}
