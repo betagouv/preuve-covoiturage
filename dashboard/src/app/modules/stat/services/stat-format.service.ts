@@ -146,7 +146,7 @@ export class StatFormatService {
         petrol: (get(d, 'distance.total', 0) * petrolFactor) | 0,
         co2: (get(d, 'distance.total', 0) * co2Factor) | 0,
         carpoolersPerVehicule: get(d, 'carpoolers_per_vehicule.total', 0)
-          ? (Number(get(d, 'carpoolers_per_vehicule.total', 0)) + 1).toFixed(2) // todo: this +1 should be done in back
+          ? Number(get(d, 'carpoolers_per_vehicule.total', 0)).toFixed(2)
           : 0,
         operators: get(d, 'operators.total', 0),
       },
