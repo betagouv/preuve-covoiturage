@@ -2,9 +2,6 @@
   <form [formGroup]="campaignForm">
     <div class="ParametersForm-title">
       <h2>Définissez des rétributions</h2>
-      <!--      <mat-slide-toggle color="accent" [checked]="exportModeControl.value" (change)="setExpertMode($event)">-->
-      <!--        Mode expert-->
-      <!--      </mat-slide-toggle>-->
     </div>
     <mat-accordion>
       <!-- MAX RETRIBUTION -->
@@ -130,39 +127,38 @@
         </div>
       </mat-expansion-panel>
 
-      <!-- RESTRICTIONS -->
-      <!--      <mat-expansion-panel-->
-      <!--        [ngClass]="{ 'mat-expansion-panel-error': !restrictionFormArray.valid && isRestrictionFormArrayTouched() }"-->
-      <!--      >-->
-      <!--        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">-->
-      <!--          <mat-panel-title>-->
-      <!--            Restrictions-->
-      <!--          </mat-panel-title>-->
-      <!--          <mat-panel-description>-->
-      <!--            {{ showRestrictionLabel() }}-->
-      <!--          </mat-panel-description>-->
-      <!--        </mat-expansion-panel-header>-->
-      <!--        <div class="CampaignSubForm-inputs">-->
-      <!--          <div-->
-      <!--            *ngFor="let restrictionFormGroup of restrictionFormArray.controls; let idx = index"-->
-      <!--            class="ParametersForm-restriction"-->
-      <!--          >-->
-      <!--            <app-restriction-form [restrictionformGroup]="restrictionFormGroup"></app-restriction-form>-->
-      <!--            <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>-->
-      <!--          </div>-->
-      <!--          <button-->
-      <!--            mat-stroked-button-->
-      <!--            color="primary"-->
-      <!--            (click)="addRestriction()"-->
-      <!--            [disabled]="!restrictionFormArray.valid"-->
-      <!--          >-->
-      <!--            Ajouter une restriction-->
-      <!--          </button>-->
-      <!--        </div>-->
-      <!--      </mat-expansion-panel>-->
+      <!--     RESTRICTIONS -->
+      <mat-expansion-panel
+        [ngClass]="{ 'mat-expansion-panel-error': !restrictionFormArray.valid && isRestrictionFormArrayTouched() }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Restrictions
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showRestrictionLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <div
+            *ngFor="let restrictionFormGroup of restrictionFormArray.controls; let idx = index"
+            class="ParametersForm-restriction"
+          >
+            <app-restriction-form [restrictionformGroup]="restrictionFormGroup"></app-restriction-form>
+            <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
+          </div>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="addRestriction()"
+            [disabled]="!restrictionFormArray.valid"
+          >
+            Ajouter une restriction
+          </button>
+        </div>
+      </mat-expansion-panel>
 
       <!-- RETRIBUTION -->
-      <!--      *ngIf="!exportModeControl.value"-->
       <mat-expansion-panel
         [disabled]="!campaignForm.controls.unit.value"
         [ngClass]="{ 'mat-expansion-panel-error': !retributionsFormArray.valid && retributionsFormArray.touched }"

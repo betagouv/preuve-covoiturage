@@ -15,12 +15,9 @@
   <mat-form-field appearance="outline">
     <mat-label>Quand</mat-label>
     <mat-select required formControlName="period">
-      <!--      TODO: for loop from enum -->
-      <mat-option [value]="'day'">jour</mat-option>
-      <mat-option [value]="'week'">semaine</mat-option>
-      <mat-option [value]="'month'">mois</mat-option>
-      <mat-option [value]="'trimester'">trimestre</mat-option>
-      <mat-option [value]="'all'">durée de la campagne</mat-option>
+      <mat-option *ngFor="let restrictionPeriod of restrictionPeriods" [value]="restrictionPeriod">{{
+        getFrenchLabel(restrictionPeriod)
+      }}</mat-option>
     </mat-select>
   </mat-form-field>
 </form>

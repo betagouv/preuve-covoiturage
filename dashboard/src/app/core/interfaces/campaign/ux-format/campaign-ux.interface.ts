@@ -2,7 +2,7 @@ import { Moment } from 'moment';
 
 import { IncentiveFiltersUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { BaseCampaignInterface } from '~/core/interfaces/campaign/api-format/campaignInterface';
-import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
+import { RestrictionPeriodsEnum } from '~/core/enums/campaign/restrictions.enum';
 
 export interface CampaignUXInterface extends BaseCampaignInterface {
   _id: string;
@@ -34,5 +34,5 @@ export interface RetributionUxInterface {
 export interface RestrictionUxInterface {
   quantity: number;
   is_driver: boolean;
-  period: restrictionEnum;
+  period: RestrictionPeriodsEnum;
 }
