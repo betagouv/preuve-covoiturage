@@ -6,7 +6,8 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/forgottenPassword.contract';
 import { alias } from '../shared/user/forgottenPassword.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider';
 
 /*
  * find user by email and send email to set new password
@@ -16,70 +17,15 @@ export class ForgottenPasswordUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 
   constructor(
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
-    private kernel: KernelInterfaceResolver,
+    private authRepository: AuthRepositoryProviderInterfaceResolver,
+    private notification: UserNotificationProvider,
   ) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const user = await this.userRepository.findTokensByEmail({ email: params.email });
-
-    const token = this.cryptoProvider.generateToken();
-    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
-    user.forgotten_at = new Date();
-    user.status = 'pending';
-
-    await this.userRepository.update(user);
-
-    const link = sprintf(
-      '%s/reset-forgotten-password/%s/%s/',
-      this.config.get('url.appUrl'),
-      encodeURIComponent(user.email),
-      encodeURIComponent(token),
-    );
-
-    // debug data for testing
-    if (process.env.NODE_ENV === 'testing') {
-      console.log(`
-******************************************
-[test] Forgotten Password
-email: ${user.email}
-token: ${token}
-link:  ${link}
-******************************************
-      `);
-    }
-
-    // TODO check this
-    // generate a context if missing
-    const ctx = context || {
-      call: { user },
-      channel: {
-        service: 'user',
-        transport: 'http',
-      },
-    };
-
-    await this.kernel.call(
-      'user:notify',
-      {
-        link,
-        template: this.config.get('email.templates.forgotten'),
-        email: user.email,
-        fullname: `${user.firstname} ${user.lastname}`,
-      },
-      {
-        call: ctx.call,
-        channel: {
-          ...ctx.channel,
-          service: 'user',
-        },
-      },
-    );
-
+    const token = await this.authRepository.createTokenByEmail(params.email, 'reset', 'pending');
+    await this.notification.passwordForgotten(params.email, token);
     return;
   }
 }

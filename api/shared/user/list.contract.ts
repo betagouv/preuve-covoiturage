@@ -1,8 +1,8 @@
 import { UserStatusInterface } from './common/interfaces/UserStatusInterface';
-import { PaginationPageParamsInterface } from '../common/interfaces/PaginationPageParamsInterface';
+import { PaginationParamsInterface } from '../common/interfaces/PaginationParamsInterface';
 import { PaginationResultInterface } from '../common/interfaces/PaginationResultInterface';
 
-export interface ParamsInterface extends PaginationPageParamsInterface {}
+export interface ParamsInterface extends PaginationParamsInterface {}
 
 export interface ResultInterface {
   data: UserStatusInterface[];

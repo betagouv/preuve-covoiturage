@@ -26,28 +26,20 @@ export class RegisterUserAction extends AbstractAction {
 
   public async handle(request: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // check for duplicates
-    // findUserByParams throws an Error when the user is not found
-    // (what we want here...), which is the reason for the try...catch
-    let found = false;
-    try {
-      await this.userRepository.findUserByParams({ email: request.email });
-      found = true;
-    } catch (e) {}
-
+    const found = await this.userRepository.findByEmail(request.email);
     if (found) {
       throw new ConflictException();
     }
+    // TODO: refactoring
 
     // create the new user
-    const newHashPassword = await this.cryptoProvider.cryptPassword(request.password);
+    // const newHashPassword = await this.cryptoProvider.cryptPassword(request.password);
 
-    const user = {
-      ...request,
-      status: 'pending',
-      password: newHashPassword,
-      permissions: await this.config.get(`permissions.${request.group}.${request.role}.permissions`),
-    };
+    // const user = await this.userRepository.create({
+    //   ...request,
+    //   password: newHashPassword,
+    // });
 
-    return this.userRepository.create(user);
+    return found;
   }
 }

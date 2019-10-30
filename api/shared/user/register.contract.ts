@@ -1,5 +1,6 @@
 import { UserBaseInterface } from './common/interfaces/UserBaseInterface';
 
+// TODO: To remove
 export interface ParamsInterface extends UserBaseInterface {
   password: string;
 }

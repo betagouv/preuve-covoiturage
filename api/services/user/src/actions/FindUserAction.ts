@@ -44,17 +44,22 @@ export class FindUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const contextParam: { territory?: string; operator?: string } = {};
-
-    if (context.call.user.territory) {
-      contextParam.territory = context.call.user.territory;
+  public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    switch (scope) {
+      case 'territory':
+        return this.userRepository.findByTerritory(params._id, context.call.user.territory_id);
+        break;
+      case 'operator':
+        return this.userRepository.findByOperator(params._id, context.call.user.operator_id);
+        break;
+      case 'registry':
+        return this.userRepository.find(params._id);
+        break;
     }
-
-    if (context.call.user.operator) {
-      contextParam.operator = context.call.user.operator;
-    }
-
-    return this.userRepository.findUser(request._id, contextParam);
   }
 }

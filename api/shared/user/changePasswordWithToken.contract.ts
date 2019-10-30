@@ -1,7 +1,7 @@
 export interface ParamsInterface {
   email: string;
   password: string;
-  forgotten_token: string;
+  token: string;
 }
 
 export type ResultInterface = boolean;

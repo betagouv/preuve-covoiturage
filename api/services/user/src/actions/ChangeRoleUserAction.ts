@@ -5,7 +5,6 @@ import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/
 import { alias } from '../shared/user/changeRole.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Update role of user
@@ -32,32 +31,29 @@ export class ChangeRoleUserAction extends AbstractAction {
         ],
       ],
     ],
-    ['content.whitelist', userWhiteListFilterOutput],
   ];
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (context.call.user.territory) {
-      // return this.userRepository.patchByTerritory(
-      //   params._id,
-      //   { role: params.role }, // FIXME role with an S
-      //   context.call.user.territory
-      // );
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    switch (scope) {
+      case 'territory':
+        await this.userRepository.patchByTerritory(params._id, { role: params.role }, context.call.user.territory_id);
+        break;
+      case 'operator':
+        await this.userRepository.patchByOperator(params._id, { role: params.role }, context.call.user.operator_id);
+        break;
+      case 'registry':
+        await this.userRepository.patch(params._id, { role: params.role });
+        break;
     }
 
-    if (context.call.user.operator) {
-      // return this.userRepository.patchByOperator(
-      //   params._id,
-      //   { role: params.role }, // FIXME role with an S
-      //   context.call.user.operator
-      // );
-    }
-
-    return this.userRepository.patch(
-      params._id,
-      { role: params.role }, // FIXME role with an S
-    );
+    return true;
   }
 }

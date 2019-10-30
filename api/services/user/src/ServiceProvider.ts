@@ -28,8 +28,7 @@ import { patch } from './shared/user/patch.schema';
 import { register } from './shared/user/register.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
 
-import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
-import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
+import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
 
 import {
@@ -54,7 +53,7 @@ import {
 
 @serviceProvider({
   config: __dirname,
-  providers: [UserRepositoryProvider, CryptoProvider, ForgottenTokenValidatorProvider],
+  providers: [UserPgRepositoryProvider, CryptoProvider],
   validator: [
     ['user.changePassword', changePassword],
     ['user.changePasswordWithToken', changePasswordWithToken],

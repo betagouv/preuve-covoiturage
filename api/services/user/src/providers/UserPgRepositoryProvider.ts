@@ -8,8 +8,15 @@ import {
   UserRepositoryProviderInterfaceResolver,
 } from '../interfaces/UserRepositoryProviderInterface';
 
-import { UserDbInterface, UserCreateInterface, UserPatchInterface } from '../interfaces/UserInterface';
-import { PaginationSkipParamsInterface } from '../shared/common/interfaces/PaginationSkipParamsInterface';
+import {
+  UserDbInterface,
+  UserBaseInterface,
+  UserListInterface,
+  UserFindInterface,
+  UserListFiltersInterface,
+  UserPatchInterface,
+} from '../interfaces/UserInterface';
+import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
@@ -19,15 +26,15 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   constructor(protected connection: PostgresConnection) {}
 
-  async create(data: UserCreateInterface): Promise<UserDbInterface> {
+  async create(data: UserBaseInterface): Promise<UserFindInterface> {
+    // status: 'pending',
     const query = {
       text: `
         INSERT INTO ${this.table} (
           email,
           firstname,
           lastname,
-          roles,
-          password,
+          role,
           phone,
           operator_id,
           territory_id
@@ -38,113 +45,102 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           $4,
           $5,
           $6,
-          $7,
-          $8
+          $7
         )
         RETURNING *
       `,
-      values: [
-        data.email,
-        data.firstname,
-        data.lastname,
-        data.roles,
-        data.password,
-        data.phone,
-        data.operator_id,
-        data.territory_id,
-      ],
+      values: [data.email, data.firstname, data.lastname, data.role, data.phone, data.operator_id, data.territory_id],
     };
 
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
-      const { password, ...exposableData } = data;
-      throw new Error(`Unable to create user (${JSON.stringify(exposableData)})`);
+      throw new Error(`Unable to create user (${JSON.stringify(data)})`);
     }
     return result.rows[0];
   }
 
-  protected async updateWhere(
-    data: UserDbInterface,
-    where?: { operator_id?: string; territory_id?: string },
-  ): Promise<UserDbInterface> {
-    const {
-      email,
-      firstname,
-      lastname,
-      roles,
-      password,
-      phone,
-      operator_id,
-      territory_id,
-      status,
-      forgotten_token,
-      forgotten_at,
-      ui_status,
-      _id,
-    } = data;
+  // protected async updateWhere(
+  //   data: UserDbInterface,
+  //   where?: { operator_id?: string; territory_id?: string },
+  // ): Promise<UserFindInterface> {
+  //   const {
+  //     email,
+  //     firstname,
+  //     lastname,
+  //     role,
+  //     password,
+  //     phone,
+  //     operator_id,
+  //     territory_id,
+  //     status,
+  //     forgotten_token,
+  //     forgotten_at,
+  //     ui_status,
+  //     _id,
+  //   } = data;
 
-    const query = {
-      text: `
-      UPDATE ${this.table}
-        SET updated_at = NOW()
-        email = $1,
-        firstname = $2,
-        lastname = $3,
-        roles = $4,
-        password = $5,
-        phone = $6,
-        operator_id = $7,
-        territory_id = $8,
-        status = $9,
-        forgotten_token = $10,
-        forgotten_at = $11,
-        ui_status = $12
-        WHERE _id = $13
-        AND deleted_at is NULL
-        ${where ? (where.operator_id ? 'AND operator_id = $14' : 'AND territory_id = $14') : ''}
-        RETURNING *
-      `,
-      values: [
-        email,
-        firstname,
-        lastname,
-        roles,
-        password,
-        phone,
-        operator_id,
-        territory_id,
-        status,
-        forgotten_token,
-        forgotten_at,
-        ui_status,
-        _id,
-      ],
-    };
+  //   const query = {
+  //     text: `
+  //     UPDATE ${this.table}
+  //       SET updated_at = NOW()
+  //       email = $1,
+  //       firstname = $2,
+  //       lastname = $3,
+  //       role = $4,
+  //       password = $5,
+  //       phone = $6,
+  //       operator_id = $7,
+  //       territory_id = $8,
+  //       status = $9,
+  //       forgotten_token = $10,
+  //       forgotten_at = $11,
+  //       ui_status = $12
+  //       WHERE _id = $13
+  //       AND deleted_at is NULL
+  //       ${where ? (where.operator_id ? 'AND operator_id = $14' : 'AND territory_id = $14') : ''}
+  //       RETURNING *
+  //     `,
+  //     values: [
+  //       email,
+  //       firstname,
+  //       lastname,
+  //       role,
+  //       password,
+  //       phone,
+  //       operator_id,
+  //       territory_id,
+  //       status,
+  //       forgotten_token,
+  //       forgotten_at,
+  //       ui_status,
+  //       _id,
+  //     ],
+  //   };
 
-    if (where) {
-      query.values.push(where.operator_id ? where.operator_id : where.territory_id);
-    }
+  //   if (where) {
+  //     query.values.push(where.operator_id ? where.operator_id : where.territory_id);
+  //   }
 
-    const result = await this.connection.getClient().query(query);
+  //   const result = await this.connection.getClient().query(query);
 
-    if (result.rowCount !== 1) {
-      throw new Error(`Unable to update user ${data._id}`);
-    }
+  //   if (result.rowCount !== 1) {
+  //     throw new Error(`Unable to update user ${data._id}`);
+  //   }
 
-    return result.rows[0];
-  }
+  //   return result.rows[0];
+  // }
 
-  async update(data: UserDbInterface): Promise<UserDbInterface> {
-    return this.updateWhere(data);
-  }
+  // async update(data: UserDbInterface): Promise<UserDbInterface> {
+  //   return this.updateWhere(data);
+  // }
 
-  async updateByOperator(data: UserDbInterface, operator_id: string): Promise<UserDbInterface> {
-    return this.updateWhere(data, { operator_id });
-  }
+  // async updateByOperator(data: UserDbInterface, operator_id: string): Promise<UserDbInterface> {
+  //   return this.updateWhere(data, { operator_id });
+  // }
 
-  async updateByTerritory(data: UserDbInterface, territory_id: string): Promise<UserDbInterface> {
-    return this.updateWhere(data, { territory_id });
-  }
+  // async updateByTerritory(data: UserDbInterface, territory_id: string): Promise<UserDbInterface> {
+  //   return this.updateWhere(data, { territory_id });
+  // }
 
   protected async deleteWhere(id: string, where?: { operator_id?: string; territory_id?: string }): Promise<void> {
     const query = {
@@ -184,9 +180,9 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   async list(
-    filters: { territory?: string; operator?: string },
-    pagination: PaginationSkipParamsInterface,
-  ): Promise<{ users: UserDbInterface[]; total: number }> {
+    filters: UserListFiltersInterface,
+    pagination: PaginationParamsInterface,
+  ): Promise<{ users: UserListInterface[]; total: number }> {
     throw new Error();
   }
 
@@ -236,7 +232,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     operator_id?: string;
     territory_id?: string;
     email?: string;
-  }): Promise<UserDbInterface> {
+  }): Promise<UserFindInterface> {
     const whereClauses = this.buildWhereClauses(where);
 
     const query = {
@@ -266,19 +262,19 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return result.rows[0];
   }
 
-  async find(_id: string): Promise<UserDbInterface> {
+  async find(_id: string): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id });
   }
 
-  async findByOperator(_id: string, operator_id: string): Promise<UserDbInterface> {
+  async findByOperator(_id: string, operator_id: string): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id, operator_id });
   }
 
-  async findByTerritory(_id: string, territory_id: string): Promise<UserDbInterface> {
+  async findByTerritory(_id: string, territory_id: string): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id, territory_id });
   }
 
-  async findByEmail(email: string): Promise<UserDbInterface> {
+  async findByEmail(email: string): Promise<UserFindInterface | undefined> {
     return this.findWhere({ email });
   }
 
@@ -307,7 +303,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       'email',
       'firstname',
       'lastname',
-      'roles',
+      'role',
       'password',
       'phone',
       'operator_id',
@@ -347,20 +343,23 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       values: finalSets.values,
     };
   }
-
-  async patch(_id: string, data: UserPatchInterface): Promise<UserDbInterface> {
+  protected async patchWhere(
+    data: UserPatchInterface,
+    where: { _id: string; operator_id?: string; territory_id?: string },
+  ): Promise<UserFindInterface> {
     const setClauses = this.buildSetClauses(data);
+    const whereClauses = this.buildWhereClauses(where);
 
     const query = {
       text: `
       UPDATE ${this.table}
         SET updated_at = NOW()
         ${setClauses.text}
-        WHERE _id = $#
+        WHERE ${whereClauses.text}
         AND deleted_at is NULL
         RETURNING *
       `,
-      values: [...setClauses.values, _id],
+      values: [...setClauses.values, ...whereClauses.values],
     };
 
     query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
@@ -373,9 +372,21 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
-      throw new Error(`Unable to patch user ${_id}`);
+      return undefined;
     }
 
     return result.rows[0];
+  }
+
+  async patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface> {
+    return this.patchWhere(data, { _id });
+  }
+
+  async patchByOperator(_id: string, data: UserPatchInterface, operator_id: string): Promise<UserFindInterface> {
+    return this.patchWhere(data, { _id, operator_id });
+  }
+
+  async patchByTerritory(_id: string, data: UserPatchInterface, territory_id: string): Promise<UserFindInterface> {
+    return this.patchWhere(data, { _id, territory_id });
   }
 }

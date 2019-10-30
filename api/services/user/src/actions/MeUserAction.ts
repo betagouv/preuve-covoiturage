@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, UnauthorizedException } from '@ilos/common';
 
@@ -18,13 +17,11 @@ export class MeUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: null, context: UserContextInterface): Promise<ResultInterface> {
-    const _id = get(context, 'call.user._id', null);
-
+  public async handle(_request: null, context: UserContextInterface): Promise<ResultInterface> {
+    const _id = context.call && context.call.user && context.call.user._id ? context.call.user._id : null;
     if (!_id) {
       throw new UnauthorizedException('No connected user');
     }
-
-    return this.userRepository.findUser(_id, {});
+    return this.userRepository.find(_id);
   }
 }

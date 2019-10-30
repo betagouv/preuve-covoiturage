@@ -12,11 +12,11 @@ CREATE TABLE IF NOT EXISTS auth.users
   lastname varchar NOT NULL,
   phone varchar,
   
-  password varchar NOT NULL,
+  password varchar,
   status auth.user_status_enum NOT NULL DEFAULT 'pending',
 
-  forgotten_token varchar,
-  forgotten_at timestamp,
+  token varchar,
+  token_expires_at timestamp,
 
   role varchar NOT NULL,
 

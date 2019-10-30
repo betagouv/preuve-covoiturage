@@ -2,28 +2,38 @@ export interface UserBaseInterface {
   email: string;
   firstname: string;
   lastname: string;
-  roles: string[];
+  role: string;
+  group: string; // computed prop
   phone?: string;
-}
-
-export interface UserCreateInterface extends UserBaseInterface {
   operator_id?: string;
   territory_id?: string;
-  password: string;
 }
 
-export interface UserFullInterface extends UserCreateInterface {
-  status: string;
-  forgotten_token?: string;
-  forgotten_at?: Date;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at?: Date;
+export interface UserFullInterface extends UserBaseInterface {
   ui_status?: { [k: string]: any };
 }
 
 export interface UserDbInterface extends UserFullInterface {
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UserFindInterface extends UserDbInterface {
   _id: string;
+  permissions: string[];
+  status: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UserListInterface extends UserDbInterface {
+  _id: string;
+  status: string;
 }
 
 export interface UserPatchInterface extends Partial<UserFullInterface> {}
+
+export interface UserListFiltersInterface {
+  territory_id?: string;
+  operator_id?: string;
+}

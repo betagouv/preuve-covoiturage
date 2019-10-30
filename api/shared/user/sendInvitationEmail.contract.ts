@@ -2,7 +2,7 @@ export interface ParamsInterface {
   _id: string;
 }
 
-export type ResultInterface = void;
+export type ResultInterface = boolean;
 
 export const configHandler = {
   service: 'user',

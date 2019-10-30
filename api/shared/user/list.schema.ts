@@ -1,16 +1,18 @@
 export const list = {
   $id: 'user.list',
   type: 'object',
-  required: [],
+  required: ['offset', 'limit'],
   additionalProperties: false,
   properties: {
-    page: {
+    offset: {
       type: 'integer',
-      maximum: 100,
+      maximum: 100000,
+      default: 0,
     },
     limit: {
       type: 'integer',
-      maximum: 10000,
+      maximum: 100,
+      default: 25,
     },
   },
 };
