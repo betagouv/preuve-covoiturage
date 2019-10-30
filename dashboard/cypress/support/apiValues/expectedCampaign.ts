@@ -1,5 +1,6 @@
-import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '../../../src/app/core/const/campaign/rules.const';
+import { RestrictionPeriodsEnum, RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
 
+import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '../../../src/app/core/const/campaign/rules.const';
 import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
 import {
   DistanceRangeGlobalRetributionRule,
@@ -7,6 +8,7 @@ import {
   MaxTripsRetributionRule,
   OperatorIdsRetributionRule,
   RankRetributionRule,
+  RestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -49,6 +51,10 @@ export class CypressExpectedCampaign {
   static secondTimeStart = 18;
   static secondTimeEnd = 22;
 
+  // restrictions
+  static firstRestrictionAmount = 5;
+  static secondRestrictionAmount = 6;
+
   static get(): Campaign {
     const campaign = new Campaign({
       _id: null,
@@ -77,6 +83,16 @@ export class CypressExpectedCampaign {
         }),
         new MaxAmountRetributionRule(CypressExpectedCampaign.maxAmount),
         new MaxTripsRetributionRule(CypressExpectedCampaign.maxTrips),
+        new RestrictionRetributionRule(
+          RestrictionTargetsEnum.PASSENGER,
+          CypressExpectedCampaign.firstRestrictionAmount,
+          RestrictionPeriodsEnum.ALL,
+        ),
+        new RestrictionRetributionRule(
+          RestrictionTargetsEnum.DRIVER,
+          CypressExpectedCampaign.secondRestrictionAmount,
+          RestrictionPeriodsEnum.DAY,
+        ),
       ],
       rules: [
         [

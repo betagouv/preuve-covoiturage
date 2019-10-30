@@ -12,7 +12,7 @@
     </mat-select>
   </mat-form-field>
   <span>par</span>
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" class="RestrictionForm-period">
     <mat-label>Quand</mat-label>
     <mat-select required formControlName="period">
       <mat-option *ngFor="let restrictionPeriod of restrictionPeriods" [value]="restrictionPeriod">{{

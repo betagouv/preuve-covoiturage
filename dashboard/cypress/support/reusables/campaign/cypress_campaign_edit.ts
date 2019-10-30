@@ -33,7 +33,7 @@ export function cypress_campaignEdit(e2e = false) {
   // passenger amount
   it('sets incitation for passenger', () => {
     // open retribution extension
-    cy.get('.ParametersForm .mat-expansion-panel:nth-child(4)').click();
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(5)').click();
 
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input')
       .clear()

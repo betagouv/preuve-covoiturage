@@ -1,3 +1,5 @@
+import { CypressExpectedCampaign } from '../../../apiValues/expectedCampaign';
+
 export function campaignThirdStepSetMaxRetribution(maxRetribution: string) {
   it('sets max retribution', () => {
     // open MAX RETRIBUTION extension
@@ -20,7 +22,7 @@ export function campaignThirdStepSetUnit() {
 export function campaignThirdStepSetDates(start: string, end: string) {
   it('sets start & end dates', () => {
     // open extension
-    cy.get('.ParametersForm .mat-expansion-panel:nth-child(2)').click();
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(2) mat-expansion-panel-header').click();
 
     // open START DATE
     cy.get('.ParametersForm .ParametersForm-date mat-form-field:first-child input').type(start);
@@ -33,7 +35,7 @@ export function campaignThirdStepSetDates(start: string, end: string) {
 export function campaignThirdStepSetMaxTrips(maxTrips) {
   it('sets max trips', () => {
     // open extension
-    cy.get('.ParametersForm .mat-expansion-panel:nth-child(3)').click();
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(3) mat-expansion-panel-header').click();
 
     cy.get('.ParametersForm .ParametersForm-maxTrips mat-form-field input').type(maxTrips);
   });
@@ -56,5 +58,31 @@ export function campaignThirdStepCheckDisabledNextStep() {
     cy.get('.mat-horizontal-stepper-content:nth-child(3)  .CampaignForm-content-actions button:nth-child(2)').should(
       'be.disabled',
     );
+  });
+}
+
+export function campaignThirdStepSetRestriction(
+  restrictionIndex: number,
+  amount: number,
+  targetIndex: number,
+  periodIndex: number,
+) {
+  it('set new restriction', () => {
+    // click add new
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(4) .CampaignSubForm-inputs > button').click();
+    cy.wait(500);
+
+    // set amount
+    cy.get(`.ParametersForm-restriction:nth-child(${restrictionIndex}) .RestrictionForm-howMuch input`).type(
+      amount.toString(),
+    );
+
+    // select passenger
+    cy.get(`.ParametersForm-restriction:nth-child(${restrictionIndex}) .RestrictionForm-who`).click();
+    cy.get(`.mat-select-panel mat-option:nth-child(${targetIndex})`).click();
+
+    // select period
+    cy.get(`.ParametersForm-restriction:nth-child(${restrictionIndex}) .RestrictionForm-period`).click();
+    cy.get(`.mat-select-panel mat-option:nth-child(${periodIndex})`).click();
   });
 }

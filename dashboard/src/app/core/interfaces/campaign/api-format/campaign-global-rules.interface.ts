@@ -1,13 +1,11 @@
 import { WeekDay } from '@angular/common';
 
 // tslint:disable:max-classes-per-file
-import {
-  BaseRetributionRuleInterface,
-  RetributionRuleInterface,
-} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+import { BaseRetributionRuleInterface } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { RulesRangeInterface } from '~/core/types/campaign/rulesRangeInterface';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
+import { RestrictionPeriodsEnum, RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
 
 export type GlobalRetributionRuleType =
   | MaxAmountRetributionRule
@@ -21,6 +19,7 @@ export type GlobalRetributionRuleType =
 
 export enum GlobalRetributionRulesSlugEnum {
   MAX_AMOUNT = 'max_amount_restriction',
+  RESTRICTION = 'max_amount_per_target_restriction',
   MAX_TRIPS = 'max_trip_restriction',
   ONLY_ADULT = 'adult_only_filter',
   WEEKDAY = 'weekday_filter',
@@ -129,5 +128,23 @@ export class OperatorIdsRetributionRule implements GlobalRetributionRuleInterfac
   constructor(operatorIds: string[]) {
     this.slug = GlobalRetributionRulesSlugEnum.OPERATOR_IDS;
     this.parameters = operatorIds;
+  }
+}
+
+export class RestrictionRetributionRule implements GlobalRetributionRuleInterface {
+  description?: string;
+  slug: GlobalRetributionRulesSlugEnum;
+  parameters: {
+    target: RestrictionTargetsEnum;
+    amount: number;
+    period: RestrictionPeriodsEnum;
+  };
+  constructor(target: RestrictionTargetsEnum, amount: number, period: RestrictionPeriodsEnum) {
+    this.slug = GlobalRetributionRulesSlugEnum.RESTRICTION;
+    this.parameters = {
+      target,
+      amount,
+      period,
+    };
   }
 }
