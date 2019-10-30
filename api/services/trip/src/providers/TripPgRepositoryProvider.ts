@@ -309,18 +309,18 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           case 'date':
             if (filter.value.start && filter.value.end) {
               return {
-                text: '($#::timestamp < start_datetime AND start_datetime < $#::timestamp)',
+                text: '($#::timestamp <= start_datetime AND start_datetime <= $#::timestamp)',
                 values: [filter.value.start, filter.value.end],
               };
             }
             if (filter.value.start) {
               return {
-                text: '$#::timestamp < start_datetime',
+                text: '$#::timestamp <= start_datetime',
                 values: [filter.value.start],
               };
             }
             return {
-              text: 'start_datetime < $#::timestamp',
+              text: 'start_datetime <= $#::timestamp',
               values: [filter.value.end],
             };
           case 'ranks':
@@ -396,7 +396,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           SELECT
             min(start_datetime::date) as day,
             max(distance) as distance,
-            sum(seats) as carpoolers,
+            sum(seats+1) as carpoolers,
             count(*) FILTER (WHERE array_length(incentives, 1) > 0)::int as carpoolers_subsidized
           FROM trip_participants
           ${where ? where.text : ''}
