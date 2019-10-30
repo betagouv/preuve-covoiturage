@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS auth.users
   forgotten_token varchar,
   forgotten_at timestamp,
 
-  roles varchar[] NOT NULL,
+  role varchar NOT NULL,
 
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW(),
