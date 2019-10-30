@@ -43,7 +43,8 @@ export class FixPermissionsCommand implements CommandInterface {
       Object.keys(perms).forEach((group: string) => {
         Object.values(perms[group]).forEach(({ slug: role, permissions }) => {
           console.log(`[fix-permissions] ${group}:${role}`);
-          updates.push(collection.updateMany({ group, role }, { $set: { permissions } }));
+          const unique = [...new Set(permissions)];
+          updates.push(collection.updateMany({ group, role }, { $set: { permissions: unique } }));
         });
       });
 
