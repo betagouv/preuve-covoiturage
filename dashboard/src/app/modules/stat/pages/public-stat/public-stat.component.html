@@ -23,7 +23,11 @@
     </div>
   </div>
 
-  <div class="stats-numbers">
+  <div class="stats--loading" *ngIf="loading && !loaded">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="stats-numbers" *ngIf="loaded">
     <div *ngFor="let statNumber of statNumbers" class="stats-number">
       <div class="stats-number-icon">
         <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>

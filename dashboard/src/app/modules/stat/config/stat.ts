@@ -14,6 +14,5 @@ export const OPERATOR_STATS = {
 };
 
 export const PUBLIC_STATS = {
-  names: <statDataNameType[]>['trips', 'distance', 'carpoolers', 'petrol', 'co2', 'carpoolersPerVehicule'],
-  defaultGraphName: <statDataNameType>'trips',
+  names: <statDataNameType[]>['co2', 'petrol', 'trips', 'distance', 'carpoolers', 'carpoolersPerVehicule'],
 };
