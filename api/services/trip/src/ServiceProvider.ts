@@ -14,6 +14,7 @@ import { CrosscheckAction } from './actions/CrosscheckAction';
 import { DispatchAction } from './actions/DispatchAction';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
+import { PublicStatsAction } from './actions/PublicStatsAction';
 
 @serviceProvider({
   config: __dirname,
@@ -29,7 +30,7 @@ import { StatsAction } from './actions/StatsAction';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CrosscheckAction, DispatchAction, ListAction, StatsAction],
+  handlers: [CrosscheckAction, DispatchAction, ListAction, PublicStatsAction, StatsAction],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {}
