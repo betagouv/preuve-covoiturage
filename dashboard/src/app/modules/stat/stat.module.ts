@@ -6,11 +6,11 @@ import { StatRoutingModule } from '~/modules/stat/stat-routing.module';
 import { StatFilteredService } from './services/stat-filtered.service';
 import { PublicStatComponent } from './pages/public-stat/public-stat.component';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
-import { MatIconModule } from '@angular/material';
+import { MatIconModule, MatProgressSpinnerModule } from '@angular/material';
 
 @NgModule({
   declarations: [PublicStatComponent],
-  imports: [CommonModule, StatRoutingModule, StatUIModule, MatIconModule],
+  imports: [CommonModule, StatRoutingModule, StatUIModule, MatIconModule, MatProgressSpinnerModule],
   providers: [StatFilteredService],
 })
 export class StatModule {}
