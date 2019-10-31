@@ -11,7 +11,8 @@ export function mapLegacyToLatest(operatorSiret: string | null) {
      *
      * Version 1 {
      *    cost: number
-     *    contribution: number
+     *    incentive?: number
+     *    contribution?: number
      *    travel_pass: {
      *      name: string
      *      user_id: string
@@ -19,9 +20,16 @@ export function mapLegacyToLatest(operatorSiret: string | null) {
      *  }
      */
     if ('passenger' in jrn) {
+      // set the operator as incentive
       jrn.passenger.incentives = jrn.passenger.incentive
         ? [{ siret: operatorSiret, amount: jrn.passenger.incentive, index: 0 }]
         : [];
+
+      // calc the contribution if missing
+      jrn.passenger.contribution =
+        'contribution' in jrn.passenger
+          ? jrn.passenger.contribution
+          : (jrn.passenger.cost || 0) - (jrn.passenger.incentive || 0);
 
       delete jrn.passenger.cost;
       delete jrn.passenger.incentive;
