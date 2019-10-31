@@ -15,18 +15,14 @@ export interface UserRepositoryProviderInterface {
     pagination: PaginationParamsInterface,
   ): Promise<{ users: UserListInterface[]; total: number }>;
 
-  delete(_id: string): Promise<void>;
-  deleteByOperator(_id: string, operator_id: string): Promise<void>;
-  deleteByTerritory(_id: string, territory_id: string): Promise<void>;
+  delete(_id: string): Promise<boolean>;
+  deleteByOperator(_id: string, operator_id: string): Promise<boolean>;
+  deleteByTerritory(_id: string, territory_id: string): Promise<boolean>;
 
   find(_id: string): Promise<UserFindInterface | undefined>;
   findByOperator(_id: string, operator_id: string): Promise<UserFindInterface | undefined>;
   findByTerritory(_id: string, territory_id: string): Promise<UserFindInterface | undefined>;
   findByEmail(email: string): Promise<UserFindInterface | undefined>;
-
-  // update(data: UserDbInterface): Promise<UserDbInterface>;
-  // updateByOperator(data: UserDbInterface, operator_id: string): Promise<UserDbInterface>;
-  // updateByTerritory(data: UserDbInterface, territory_id: string): Promise<UserDbInterface>;
 
   patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface>;
   patchByOperator(_id: string, data: UserPatchInterface, operator_id: string): Promise<UserFindInterface>;
@@ -45,15 +41,15 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
 
-  async delete(_id: string): Promise<void> {
+  async delete(_id: string): Promise<boolean> {
     throw new Error();
   }
 
-  async deleteByOperator(_id: string, operator_id: string): Promise<void> {
+  async deleteByOperator(_id: string, operator_id: string): Promise<boolean> {
     throw new Error();
   }
 
-  async deleteByTerritory(_id: string, territory_id: string): Promise<void> {
+  async deleteByTerritory(_id: string, territory_id: string): Promise<boolean> {
     throw new Error();
   }
 
@@ -72,18 +68,6 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
   async findByEmail(email: string): Promise<UserFindInterface | undefined> {
     throw new Error();
   }
-
-  // async update(data: UserDbInterface): Promise<UserDbInterface> {
-  //   throw new Error();
-  // }
-
-  // async updateByOperator(data: UserDbInterface, operator_id: string): Promise<UserDbInterface> {
-  //   throw new Error();
-  // }
-
-  // async updateByTerritory(data: UserDbInterface, territory_id: string): Promise<UserDbInterface> {
-  //   throw new Error();
-  // }
 
   async patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface> {
     throw new Error();

@@ -10,26 +10,18 @@ export interface UserBaseInterface {
 }
 
 export interface UserFullInterface extends UserBaseInterface {
+  _id: string;
+  status: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UserFindInterface extends UserFullInterface {
+  permissions: string[];
   ui_status?: { [k: string]: any };
 }
 
-export interface UserDbInterface extends UserFullInterface {
-  created_at: Date;
-  updated_at: Date;
-}
-
-export interface UserFindInterface extends UserDbInterface {
-  _id: string;
-  permissions: string[];
-  status: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
-export interface UserListInterface extends UserDbInterface {
-  _id: string;
-  status: string;
-}
+export interface UserListInterface extends UserFullInterface {}
 
 export interface UserPatchInterface extends Partial<UserFullInterface> {}
 
