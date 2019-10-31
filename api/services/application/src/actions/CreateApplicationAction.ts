@@ -2,14 +2,14 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/create.contract';
-import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
 import { alias } from '../shared/application/create.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/create.contract';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 
 @handler(handlerConfig)
 export class CreateApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+  public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],
     [
       'scopeIt',
@@ -40,13 +40,12 @@ export class CreateApplicationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const application = await (<Promise<ApplicationInterface>>(
-      this.applicationRepository.create({ ...params, created_at: new Date() })
-    ));
+    const application = await this.applicationRepository.createForOperator(params.name, params.operator_id);
 
     const token = await this.tokenProvider.sign({
       a: application._id.toString(),
-      o: application.operator_id,
+      o: application.owner_id,
+      s: application.owner_service,
       p: ['journey.create'],
       v: 2,
     });

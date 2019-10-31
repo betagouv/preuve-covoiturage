@@ -29,17 +29,20 @@ export class RevokeApplicationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    let owner_id: string;
+    let owner_service: string;
+
     // make sure operators can only delete their own applications
     if (context.call.user.operator) {
-      params.operator_id = context.call.user.operator;
+      owner_id = context.call.user.operator;
+      owner_service = 'operator';
     }
 
-    const deleted = await this.applicationRepository.softDelete(params);
-
-    if (!deleted) {
-      throw new NotFoundException();
+    if (context.call.user.territory) {
+      owner_id = context.call.user.territory;
+      owner_service = 'territory';
     }
 
-    return true;
+    await this.applicationRepository.delete(params._id, owner_id, owner_service);
   }
 }

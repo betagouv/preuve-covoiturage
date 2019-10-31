@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/find.contract';
 import { alias } from '../shared/application/find.schema';

@@ -1,11 +1,8 @@
-import { ApplicationInterface } from './common/interfaces/ApplicationInterface';
-
 export interface ParamsInterface {
   _id: string;
-  operator_id: string;
 }
 
-export type ResultInterface = boolean;
+export type ResultInterface = void;
 
 export const handlerConfig = {
   service: 'application',

@@ -35,6 +35,7 @@ export class ListApplicationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.applicationRepository.allByOperator({ operator_id: params.operator_id });
+    // TODO other use cases
+    return this.applicationRepository.allByOperator(params.operator_id);
   }
 }

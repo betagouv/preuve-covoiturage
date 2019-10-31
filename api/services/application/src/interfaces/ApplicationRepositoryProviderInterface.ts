@@ -1,17 +1,23 @@
-import { RepositoryInterfaceResolver, RepositoryInterface } from '@ilos/common';
+import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
 
-declare type Model = any;
-
-export interface ApplicationRepositoryProviderInterface extends RepositoryInterface {
-  allByOperator(params: { operator_id: string }): Promise<Model[]>;
-  softDelete(params: { _id: string; operator_id: string; deleted_at?: any }): Promise<boolean>;
+export interface ApplicationRepositoryProviderInterface {
+  find(_id: string, owner_id?: string, owner_service?: string): Promise<ApplicationInterface>;
+  delete(_id: string, owner_id?: string, owner_service?: string): Promise<void>;
+  createForOperator(name: string, operator_id: string): Promise<ApplicationInterface>;
+  allByOperator(operator_id: string): Promise<ApplicationInterface[]>;
 }
 
-export abstract class ApplicationRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  async allByOperator(params: { operator_id: string }): Promise<Model[]> {
-    throw new Error('Not implemented');
+export abstract class ApplicationRepositoryProviderInterfaceResolver implements ApplicationRepositoryProviderInterface {
+  async find(_id: string, owner_id?: string, owner_service?: string): Promise<ApplicationInterface> {
+    throw new Error('Method not implemented.');
   }
-  async softDelete(params: { _id: string; operator_id: string; deleted_at?: any }): Promise<Model> {
-    throw new Error('Not implemented');
+  async delete(_id: string, owner_id?: string, owner_service?: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  async createForOperator(name: string, operator_id: string): Promise<ApplicationInterface> {
+    throw new Error('Method not implemented.');
+  }
+  async allByOperator(operator_id: string): Promise<ApplicationInterface[]> {
+    throw new Error('Method not implemented.');
   }
 }
