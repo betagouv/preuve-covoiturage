@@ -20,6 +20,9 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
 
   statNumberNames = PUBLIC_STATS.names;
 
+  // todo: fix this when 100 000 missings trips found
+  hideStats = true;
+
   constructor(private publicStatService: StatPublicService) {
     super();
   }

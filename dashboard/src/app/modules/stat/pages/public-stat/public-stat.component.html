@@ -1,46 +1,52 @@
 <div class="stats">
-  <div class="stats-header">
-    <h1>Statistiques</h1>
-
-    <!-- Disclaimer -->
-    <div class="stats-disclaimer">
-      <p>
-        Ces données sont collectées à partir des informations communiquées par les
-        <a target="_blank" href="http://covoiturage.beta.gouv.fr/#operateurs">opérateurs partenaires</a>.<br />Il s'agit
-        d'une représentation de l'activité du registre de preuve de covoiturage. En outre il ne saurait s'agir&nbsp;:
-      </p>
-      <ul>
-        <li>d'une représentation exhaustive du covoiturage en France&nbsp;;</li>
-        <li>d'un outil permettant le calcul de part de marché d'un acteur du covoiturage.</li>
-      </ul>
-    </div>
-    <h4 class="subtitle has-text-centered">Calculs</h4>
-
-    <div class="has-text-centered padding-fat-bottom">
-      <a target="_blank" href="{{ gitbookLinkStats }}">
-        Informations sur les méthodes de calculs utilisées.
-      </a>
-    </div>
+  <div class="stats-header" *ngIf="hideStats">
+    Les statistiques ne sont pas disponibles actuellement.
   </div>
+  <ng-container *ngIf="!hideStats">
+    <div class="stats-header">
+      <h1>Statistiques</h1>
 
-  <div class="stats--loading" *ngIf="loading && !loaded">
-    <mat-spinner></mat-spinner>
-  </div>
-
-  <div class="stats-numbers" *ngIf="loaded">
-    <div *ngFor="let statNumber of statNumbers" class="stats-number">
-      <div class="stats-number-icon">
-        <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>
-      </div>
-      <div class="stats-number-content">
-        <div class="stats-number-title">
-          <p *ngIf="statNumber.svgIcon === 'carpooling'">{{ statNumber.title | number: '1.2' }}</p>
-          <p *ngIf="statNumber.svgIcon !== 'carpooling'">{{ statNumber.title | number }} {{ statNumber.unit }}</p>
-        </div>
-        <p class="stats-number-hint">
-          {{ statNumber.hint }}
+      <!-- Disclaimer -->
+      <div class="stats-disclaimer">
+        <p>
+          Ces données sont collectées à partir des informations communiquées par les
+          <a target="_blank" href="http://covoiturage.beta.gouv.fr/#operateurs">opérateurs partenaires</a>.<br />Il
+          s'agit d'une représentation de l'activité du registre de preuve de covoiturage. En outre il ne saurait
+          s'agir&nbsp;:
         </p>
+        <ul>
+          <li>d'une représentation exhaustive du covoiturage en France&nbsp;;</li>
+          <li>d'un outil permettant le calcul de part de marché d'un acteur du covoiturage.</li>
+        </ul>
+      </div>
+      <h4 class="subtitle has-text-centered">Calculs</h4>
+
+      <div class="has-text-centered padding-fat-bottom">
+        <a target="_blank" href="{{ gitbookLinkStats }}">
+          Informations sur les méthodes de calculs utilisées.
+        </a>
       </div>
     </div>
-  </div>
+
+    <div class="stats--loading" *ngIf="loading && !loaded">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div class="stats-numbers" *ngIf="loaded">
+      <div *ngFor="let statNumber of statNumbers" class="stats-number">
+        <div class="stats-number-icon">
+          <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>
+        </div>
+        <div class="stats-number-content">
+          <div class="stats-number-title">
+            <p *ngIf="statNumber.svgIcon === 'carpooling'">{{ statNumber.title | number: '1.2' }}</p>
+            <p *ngIf="statNumber.svgIcon !== 'carpooling'">{{ statNumber.title | number }} {{ statNumber.unit }}</p>
+          </div>
+          <p class="stats-number-hint">
+            {{ statNumber.hint }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </div>
