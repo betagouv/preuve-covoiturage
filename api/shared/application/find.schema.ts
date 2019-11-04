@@ -5,7 +5,7 @@ export const schema = {
   required: ['_id'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'objectid' },
+    _id: { macro: 'dbid' },
   },
 };
 export const binding = [alias, schema];

@@ -4,7 +4,7 @@ export const patch = {
   required: ['_id', 'patch'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'objectid' },
+    _id: { macro: 'dbid' },
     patch: {
       type: 'object',
       minProperties: 1,
