@@ -18,6 +18,7 @@ import {
   EnvInterfaceResolver,
   RPCSingleCallType,
   UnauthorizedException,
+  InvalidRequestException,
 } from '@ilos/common';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
@@ -72,6 +73,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSecurity();
     this.registerGlobalMiddlewares();
     this.registerAuthRoutes();
+    this.registerApplicationRoutes();
     this.registerLegacyServerRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
@@ -319,6 +321,54 @@ export class HttpTransport implements TransportInterface {
           params: { email: req.body.email, forgotten_token: req.body.token },
         });
         res.status(mapStatusCode(response)).json(response);
+      }),
+    );
+  }
+
+  private registerApplicationRoutes() {
+    /**
+     * Create an application
+     */
+    this.app.post(
+      '/applications',
+      asyncHandler(async (req, res, next) => {
+        if (Array.isArray(req.body)) {
+          throw new InvalidRequestException('Cannot create multiple applications at once');
+        }
+
+        const user = get(req, 'session.user', null);
+        if (!user) throw new UnauthorizedException();
+        if (!user.operator) throw new UnauthorizedException('Only operators can create applications');
+
+        const response = await this.kernel.handle({
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'application:create',
+          params: {
+            params: { name: req.body.name },
+            _context: { call: { user } },
+          },
+        });
+
+        if ('error' in (response as any)) {
+          return res.status(mapStatusCode(response)).json(response);
+        }
+
+        const application = (response as any).result;
+
+        const token = await this.tokenProvider.sign({
+          a: application._id.toString(),
+          o: application.owner_id,
+          s: application.owner_service,
+          p: application.permissions,
+          v: 2,
+        });
+
+        res.status(201).json({
+          id: req.body.id,
+          jsonrpc: '2.0',
+          result: { application, token },
+        });
       }),
     );
   }

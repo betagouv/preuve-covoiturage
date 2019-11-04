@@ -26,16 +26,5 @@ export class CreateApplicationAction extends AbstractAction {
     data.permissions = data.permissions || ['journey.create'];
 
     return this.applicationRepository.create(data);
-
-    // TODO move me to proxy
-    // const token = await this.tokenProvider.sign({
-    //   a: application._id.toString(),
-    //   o: application.owner_id,
-    //   s: application.owner_service,
-    //   p: ['journey.create'],
-    //   v: 2,
-    // });
-
-    // return { token, application };
   }
 }
