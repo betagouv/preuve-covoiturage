@@ -7,6 +7,7 @@ import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 
 /*
  * Create user and call forgotten password action
@@ -38,6 +39,7 @@ export class CreateUserAction extends AbstractAction {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private notification: UserNotificationProvider,
+    private authRepository: AuthRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
@@ -55,9 +57,13 @@ export class CreateUserAction extends AbstractAction {
     }
 
     const userCreated = await this.userRepository.create(request);
-    // TODO: here, generate token
-    // then send mail
-    const token = '';
+
+    const token = await this.authRepository.createTokenByEmail(
+      userCreated.email,
+      this.authRepository.INVITATION_TOKEN,
+      this.authRepository.INVITED_STATUS,
+    );
+
     await this.notification.userCreated(userCreated, token);
 
     return userCreated;

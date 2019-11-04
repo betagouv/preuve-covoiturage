@@ -67,7 +67,12 @@ export class SendConfirmEmailUserAction extends AbstractAction {
       throw new UnauthorizedException();
     }
 
-    const token = await this.authProvider.createTokenByEmail(user.email, 'confirmation');
+    const token = await this.authProvider.createTokenByEmail(
+      user.email,
+      this.authProvider.CONFIRMATION_TOKEN,
+      this.authProvider.UNCONFIRMED_STATUS,
+    );
+
     await this.notification.emailUpdated(token, user.email);
     return true;
   }

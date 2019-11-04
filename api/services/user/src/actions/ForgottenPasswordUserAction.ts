@@ -24,7 +24,12 @@ export class ForgottenPasswordUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const token = await this.authRepository.createTokenByEmail(params.email, 'reset', 'pending');
+    const token = await this.authRepository.createTokenByEmail(
+      params.email,
+      this.authRepository.RESET_TOKEN,
+      this.authRepository.UNCONFIRMED_STATUS,
+    );
+
     await this.notification.passwordForgotten(params.email, token);
     return;
   }

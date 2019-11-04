@@ -68,7 +68,12 @@ export class SendInvitationEmailUserAction extends AbstractAction {
       throw new UnauthorizedException();
     }
 
-    const token = await this.authProvider.createTokenByEmail(user.email, 'invitation');
+    const token = await this.authProvider.createTokenByEmail(
+      user.email,
+      this.authProvider.INVITATION_TOKEN,
+      this.authProvider.INVITED_STATUS,
+    );
+
     await this.notification.userCreated(token, user.email);
     return true;
   }

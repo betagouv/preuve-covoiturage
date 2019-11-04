@@ -22,7 +22,7 @@ export class ConfirmEmailUserAction extends AbstractAction {
       throw new UnauthorizedException('Wrong token');
     }
 
-    await this.authRepository.clearTokenByEmail(params.email, 'active');
+    await this.authRepository.clearTokenByEmail(params.email, this.authRepository.CONFIRMED_STATUS);
 
     return true;
   }
