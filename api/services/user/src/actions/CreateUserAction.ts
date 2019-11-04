@@ -64,7 +64,7 @@ export class CreateUserAction extends AbstractAction {
       this.authRepository.INVITED_STATUS,
     );
 
-    await this.notification.userCreated(userCreated.email, token);
+    await this.notification.userCreated(token, userCreated.email);
 
     return userCreated;
   }

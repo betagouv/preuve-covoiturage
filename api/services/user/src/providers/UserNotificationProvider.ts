@@ -10,11 +10,19 @@ export class UserNotificationProvider {
   public readonly FORGOTTEN: [string, string, string];
   public readonly CONFIRMATION: [string, string, string];
   public readonly EMAIL_CHANGED: [string, string, string];
+  public readonly defaultContext: ContextType = {
+    call: { user: {} },
+    channel: {
+      service: 'user',
+      transport: 'http',
+    },
+  };
 
   constructor(
     private config: ConfigInterfaceResolver,
     private kernel: KernelInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
+    private logger = console,
   ) {
     this.INVITATION = [
       'activate', // url
@@ -61,7 +69,7 @@ export class UserNotificationProvider {
    */
   protected log(message: string, email: string, token: string, link: string): void {
     if (process.env.NODE_ENV === 'testing') {
-      console.log(`
+      this.logger.log(`
 ******************************************
 [test] ${message}
 email: ${email}
@@ -78,23 +86,14 @@ link:  ${link}
    * @protected
    */
   protected async sendMail(data: SendMailParamsInterface): Promise<void> {
-    const ctx: ContextType = {
-      call: { user: {} },
-      channel: {
-        service: 'user',
-        transport: 'http',
-      },
-    };
-
-    await this.kernel.notify('user:notify', data, ctx);
-
+    await this.kernel.notify('user:notify', data, this.defaultContext);
     return;
   }
 
   /**
    * Generate token and send forgotten password email
    */
-  async passwordForgotten(email: string, token: string): Promise<void> {
+  async passwordForgotten(token: string, email: string): Promise<void> {
     const [url, template, templateId] = this.FORGOTTEN;
     const link = this.getUrl(url, email, token);
 
@@ -118,7 +117,7 @@ link:  ${link}
    */
   async emailUpdated(token: string, email: string, oldEmail?: string): Promise<void> {
     const [url, template, templateId] = this.CONFIRMATION;
-    const [_, emailChangedtemplate, emailChangedTemplateId] = this.EMAIL_CHANGED;
+    const [_, emailChangedTemplate, emailChangedTemplateId] = this.EMAIL_CHANGED;
 
     const link = this.getUrl(url, email, token);
 
@@ -138,7 +137,7 @@ link:  ${link}
     // Notify the previous email about the change
     if (oldEmail) {
       await this.sendMail({
-        template: emailChangedtemplate,
+        template: emailChangedTemplate,
         templateId: emailChangedTemplateId,
         email: oldEmail,
         fullname: `${user.firstname} ${user.lastname}`,
@@ -149,7 +148,7 @@ link:  ${link}
   /**
    * Generate confirmation token and send welcome mail
    */
-  async userCreated(email: string, token: string): Promise<void> {
+  async userCreated(token: string, email: string): Promise<void> {
     const [url, template, templateId] = this.CONFIRMATION;
 
     const user = await this.userRepository.findByEmail(email);

@@ -1,7 +1,5 @@
-import { sprintf } from 'sprintf-js';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { handler, ContextType } from '@ilos/common';
 
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/forgottenPassword.contract';
 import { alias } from '../shared/user/forgottenPassword.schema';
@@ -30,7 +28,7 @@ export class ForgottenPasswordUserAction extends AbstractAction {
       this.authRepository.UNCONFIRMED_STATUS,
     );
 
-    await this.notification.passwordForgotten(params.email, token);
+    await this.notification.passwordForgotten(token, params.email);
     return;
   }
 }
