@@ -1,24 +1,20 @@
 import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
-import { setOwner } from '../helpers/setOwner';
 import {
   handlerConfig,
   ParamsInterface,
   ResultInterface,
   RepositoryInterface,
 } from '../shared/application/create.contract';
-import { scopePermission } from '../helpers/scopePermission';
 import { alias } from '../shared/application/create.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
+import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class CreateApplicationAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
-    ['validate', alias],
-    ['scopeIt', [['application.create'], [scopePermission('operator', 'create')]]],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['application.create']]];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();

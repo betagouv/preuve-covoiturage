@@ -6,10 +6,8 @@ import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { ObjectId } from 'bson';
 import { TransportInterface } from '@ilos/common';
-import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
-import { ServiceProvider } from '../src/ServiceProvider';
 
 let transport: TransportInterface;
 let request;
@@ -22,7 +20,6 @@ const operator_id = new ObjectId().toString();
 
 describe('Application service', () => {
   before(async () => {
-    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
@@ -31,14 +28,6 @@ describe('Application service', () => {
   });
 
   after(async () => {
-    await (<MongoConnection>transport
-      .getKernel()
-      .get(ServiceProvider)
-      .get(MongoConnection))
-      .getClient()
-      .db(process.env.APP_MONGO_DB)
-      .dropDatabase();
-
     await transport.down();
   });
 
@@ -54,13 +43,12 @@ describe('Application service', () => {
         method: 'application:create',
         params: {
           params: {
-            operator_id,
             name: 'Application',
-            permissions: ['journey.create'],
           },
           _context: {
             call: {
               user: {
+                operator: operator_id,
                 permissions: ['application.create'],
               },
             },
@@ -72,17 +60,50 @@ describe('Application service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('token');
-        expect(response.body.result).to.have.property('application');
-        expect(response.body.result.application).to.have.property('_id');
-        expect(response.body.result.application).to.have.property('name', 'Application');
-        expect(response.body.result.application).to.have.property('operator_id', operator_id);
+        expect(response.body.result).to.have.property('_id');
+        expect(response.body.result).to.have.property('name', 'Application');
+        expect(response.body.result).to.have.property('owner_id', operator_id);
+        expect(response.body.result).to.have.property('owner_service', 'operator');
+        expect(new Date(response.body.result.created_at)).is.a('date');
+        expect(response.body.result.deleted_at).is.eq(null);
 
         // store the application
-        application = response.body.result.application;
+        application = response.body.result;
       }));
 
-  it('#2 - Find the application by id', () =>
+  it('#2.0 - Find the application by id', () =>
+    request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'application:find',
+        params: {
+          params: {
+            _id: application._id,
+          },
+          _context: {
+            call: {
+              user: {
+                operator: operator_id,
+                permissions: ['application.find'],
+              },
+            },
+          },
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('_id', application._id);
+        expect(response.body.result).to.have.property('name', 'Application');
+        expect(response.body.result).to.have.property('owner_id', operator_id);
+        expect(response.body.result).to.have.property('owner_service', 'operator');
+      }));
+
+  it('#2.1 - Fails if no owner set', () =>
     request
       .post('/')
       .send({
@@ -105,11 +126,11 @@ describe('Application service', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('_id', application._id);
-        expect(response.body.result).to.have.property('name', 'Application');
-        expect(response.body.result).to.have.property('operator_id', operator_id);
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('code', -32602);
+        expect(response.body.error).to.have.property('message', 'Invalid params');
+        expect(response.body.error).to.have.property('data', 'Application owner service must be set');
       }));
 
   it("#3.0 - Cannot revoke another op's app", () =>
@@ -126,11 +147,12 @@ describe('Application service', () => {
           _context: {
             call: {
               user: {
+                // generate false operator_id
                 operator: String(operator_id)
                   .split('')
                   .reverse()
                   .join(''),
-                permissions: ['operator.application.revoke'],
+                permissions: ['application.revoke'],
               },
             },
           },
@@ -157,6 +179,7 @@ describe('Application service', () => {
           _context: {
             call: {
               user: {
+                operator: operator_id,
                 permissions: ['application.revoke'],
               },
             },
@@ -167,8 +190,7 @@ describe('Application service', () => {
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result).to.eq(true);
+        expect(response.body).to.deep.eq({ id: 1, jsonrpc: '2.0' });
       }));
 
   it('#3.2 - Cannot revoke twice the same app', () =>
@@ -186,7 +208,7 @@ describe('Application service', () => {
             call: {
               user: {
                 operator: operator_id,
-                permissions: ['operator.application.revoke'],
+                permissions: ['application.revoke'],
               },
             },
           },
@@ -211,13 +233,12 @@ describe('Application service', () => {
           method: 'application:create',
           params: {
             params: {
-              operator_id,
               name: 'Application A',
-              permissions: ['journey.create'],
             },
             _context: {
               call: {
                 user: {
+                  operator: operator_id,
                   permissions: ['application.create'],
                 },
               },
@@ -230,13 +251,12 @@ describe('Application service', () => {
           method: 'application:create',
           params: {
             params: {
-              operator_id,
               name: 'Application B',
-              permissions: ['journey.create'],
             },
             _context: {
               call: {
                 user: {
+                  operator: operator_id,
                   permissions: ['application.create'],
                 },
               },
@@ -260,6 +280,7 @@ describe('Application service', () => {
           _context: {
             call: {
               user: {
+                operator: operator_id,
                 permissions: ['application.list'],
               },
             },
@@ -272,11 +293,10 @@ describe('Application service', () => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result.length).to.eq(2);
-        expect(response.body.result[0]).to.have.property('_id');
-        expect(response.body.result[0]).to.have.property('name', 'Application A');
-        expect(response.body.result[0]).to.have.property('operator_id', operator_id);
-        expect(response.body.result[0]).to.have.property('permissions');
-        expect(response.body.result[0]).to.have.property('created_at');
+        const results = response.body.result.sort((a, b) => (a > b ? 1 : -1));
+
+        expect(results[0]).to.have.property('name', 'Application A');
+        expect(results[1]).to.have.property('name', 'Application B');
       });
   });
 });

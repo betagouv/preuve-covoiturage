@@ -2,7 +2,7 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { ApplicationPgRepositoryProvider } from './ApplicationPgRepositoryProvider';
+import { ApplicationPgRepositoryProvider } from '../src/providers/ApplicationPgRepositoryProvider';
 
 describe('Application pg repository', () => {
   let repository;

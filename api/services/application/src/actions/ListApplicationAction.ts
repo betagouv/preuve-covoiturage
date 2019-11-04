@@ -9,15 +9,11 @@ import {
 } from '../shared/application/list.contract';
 import { alias } from '../shared/application/list.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
-import { scopePermission } from '../helpers/scopePermission';
 import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class ListApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', alias],
-    ['scopeIt', [['application.list'], [scopePermission('operator', 'list')]]],
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['validate', alias], ['can', ['application.list']]];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();

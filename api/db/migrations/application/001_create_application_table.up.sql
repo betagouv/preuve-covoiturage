@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS application.applications
 (
-  _id serial primary key,
+  _id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
 
   name varchar NOT NULL,
   owner_id varchar NOT NULL,

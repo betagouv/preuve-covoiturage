@@ -9,15 +9,11 @@ import {
 } from '../shared/application/find.contract';
 import { alias } from '../shared/application/find.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
-import { scopePermission } from '../helpers/scopePermission';
 import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class FindApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', alias],
-    ['scopeIt', [['application.find'], [scopePermission('operator', 'find')]]],
-  ];
+  public readonly middlewares: (string | [string, any])[] = [['validate', alias], ['can', ['application.find']]];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();

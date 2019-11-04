@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { RepositoryInterface as ListInterface } from '../shared/application/list.contract';
@@ -87,6 +87,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
         WHERE owner_service = $1
         AND owner_id = $2
         AND _id = $3
+        AND deleted_at IS NULL
       `,
       values: [owner_service, owner_id, _id],
     };
@@ -94,7 +95,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
-      throw new Error(`Deleting application failed (${_id})`);
+      throw new NotFoundException(`Revoking application failed (${_id})`);
     }
   }
 }
