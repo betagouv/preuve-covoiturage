@@ -14,99 +14,349 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto/dist';
 export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   public readonly table = 'auth.users';
 
+  public readonly CONFIRMATION_TOKEN = 'confirmation';
+  public readonly INVITATION_TOKEN = 'invitation';
+  public readonly RESET_TOKEN = 'reset';
+
+  public readonly CONFIRMED_STATUS = 'active';
+  public readonly UNCONFIRMED_STATUS = 'pending';
+  public readonly INVITED_STATUS = 'invited';
+
   constructor(
     protected connection: PostgresConnection,
     private cryptoProvider: CryptoProviderInterfaceResolver,
     private config: ConfigInterfaceResolver,
   ) {}
 
-  protected async getPasswordById(_id: string): Promise<string> {
-    return 'get_password_from_db_or_throw';
-  }
-
-  protected async getPasswordByEmail(email: string): Promise<string> {
-    return 'get_password_from_db_or_throw';
-  }
-
-  protected async getTokenByEmail(email: string): Promise<{ token: string; expires_at: Date }> {
-    return {
-      token: 'get_token_from_db_or_throw',
-      expires_at: new Date(),
-    };
-  }
-
-  async challengePasswordByEmail(email: string, password: string): Promise<boolean> {
-    // TODO: why clean up forgotten props ?
-    // return this.userRepository.patch(user._id, {
-    //   forgotten_at: null,
-    //   forgotten_token: null,
-    // });
-    return true;
-  }
-
-  async createTokenByEmail(email: string, type: string, status?: string): Promise<string> {
-    const token = await this.cryptoProvider.cryptToken(this.cryptoProvider.generateToken());
-
-    const patch: {
-      token: string;
-      token_expires_at: Date;
-      status?: string;
-    } = {
-      token,
-      token_expires_at: Date.now() + this.config.get('...'),
+  /**
+   * Get password from id or undefined if not found
+   *
+   * @protected
+   * @param {string} _id
+   * @returns {(Promise<string | undefined>)}
+   * @memberof AuthRepositoryProvider
+   */
+  protected async getPasswordById(_id: string): Promise<string | undefined> {
+    const query = {
+      text: `
+        SELECT 
+          password
+        FROM ${this.table}
+        WHERE _id = $1
+        LIMIT 1
+      `,
+      values: [_id],
     };
 
-    if (status) {
-      patch.status = status; // demander au front
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount === 0) {
+      return undefined;
     }
 
-    // TODO: patch
-    // await this.userRepository.patch(_id, patch);
+    return result.rows[0].password;
+  }
+
+  /**
+   * Get password from email or undefined if not found
+   *
+   * @protected
+   * @param {string} email
+   * @returns {Promise<string>}
+   * @memberof AuthRepositoryProvider
+   */
+  protected async getPasswordByEmail(email: string): Promise<string> {
+    const query = {
+      text: `
+        SELECT 
+          password
+        FROM ${this.table}
+        WHERE email = $1
+        LIMIT 1
+      `,
+      values: [email],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount === 0) {
+      return undefined;
+    }
+
+    return result.rows[0].password;
+  }
+
+  /**
+   * Get token and expires at by email or null if not found
+   *
+   * @protected
+   * @param {string} email
+   * @returns {(Promise<{ token: string | null; token_expires_at: Date | null }>)}
+   * @memberof AuthRepositoryProvider
+   */
+  protected async getTokenByEmail(email: string): Promise<{ token: string | null; token_expires_at: Date | null }> {
+    const query = {
+      text: `
+        SELECT 
+          token,
+          token_expires_at
+        FROM ${this.table}
+        WHERE email = $1
+        LIMIT 1
+      `,
+      values: [email],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount === 0) {
+      return {
+        token: null,
+        token_expires_at: null,
+      };
+    }
+
+    return result.rows[0];
+  }
+
+  /**
+   * Get expires at from token type, return current date if type not found
+   *
+   * @protected
+   * @param {string} type
+   * @returns {Date}
+   * @memberof AuthRepositoryProvider
+   */
+  protected getTokenExpiresAt(type: string): Date {
+    return new Date(new Date().getTime() + this.config.get(`user.tokenExpiration.${type}`, 0) * 1000);
+  }
+
+  /**
+   * Create a token by email, set status to unconfirmed by default, return the token
+   *
+   * @param {string} email
+   * @param {string} type
+   * @param {string} [status=this.UNCONFIRMED_STATUS]
+   * @returns {(Promise<string | undefined>)}
+   * @memberof AuthRepositoryProvider
+   */
+  async createTokenByEmail(
+    email: string,
+    type: string,
+    status: string = this.UNCONFIRMED_STATUS,
+  ): Promise<string | undefined> {
+    const token = await this.cryptoProvider.cryptToken(this.cryptoProvider.generateToken());
+    const token_expires_at = this.getTokenExpiresAt(type);
+
+    const query = {
+      text: `
+      UPDATE ${this.table}
+        SET token = $2, 
+        token_expires_at = $3::timestamp,
+        status = $4
+      WHERE email = $1
+      `,
+      values: [email, token, token_expires_at, status],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount === 0) {
+      return undefined;
+    }
 
     return token;
   }
 
+  /**
+   * Clear token by email, can update status if necessary
+   *
+   * @param {string} email
+   * @param {string} [status]
+   * @returns {Promise<boolean>}
+   * @memberof AuthRepositoryProvider
+   */
   async clearTokenByEmail(email: string, status?: string): Promise<boolean> {
-    // {
-    //   status: ,
-    //   forgotten_at: undefined,
-    //   forgotten_token: undefined,
-    // });
-    return true;
-  }
+    const query = {
+      text: `
+      UPDATE ${this.table}
+        SET token = null, token_expires_at = null
+        ${status ? ', status = $2' : ''}
+      WHERE email = $1
+      `,
+      values: [email],
+    };
 
-  async challengePasswordById(_id: string, password: string): Promise<boolean> {
-    const hashedPassword = await this.getPasswordById(_id);
-    return await this.cryptoProvider.comparePassword(password, hashedPassword);
-  }
+    if (status) {
+      query.values.push(status);
+    }
 
-  async updatePasswordById(_id: string, password: string): Promise<boolean> {
-    const newHashPassword = await this.cryptoProvider.cryptPassword(password);
-    // patch or fail
+    const result = await this.connection.getClient().query(query);
 
-    // {
-    //   password,
-    //   forgotten_token: undefined,
-    //   forgotten_at: undefined,
-    //   status: 'active',
-    // }
-    return true;
-  }
-  async updateEmailById(id: string, email: string): Promise<string> {
-    // create token
-    // update user
-    return '';
-  }
-
-  async challengeTokenByEmail(email: string, clearToken: string): Promise<boolean> {
-    const { token, expires_at } = await this.getTokenByEmail(email);
-    if (
-      Date.now() - expires_at.getTime() <= 0 ||
-      (await this.cryptoProvider.compareForgottenToken(clearToken, token))
-    ) {
-      // clear token
+    if (result.rowCount === 0) {
       return false;
     }
+
     return true;
+  }
+
+  /**
+   * Challenge password by email, return boolean
+   * If challenge pass, clear the token
+   *
+   * @param {string} email
+   * @param {string} password
+   * @returns {Promise<boolean>}
+   * @memberof AuthRepositoryProvider
+   */
+  async challengePasswordByEmail(email: string, password: string): Promise<boolean> {
+    const hashedPassword = await this.getPasswordByEmail(email);
+    if (!hashedPassword) {
+      return false;
+    }
+    const success = await this.cryptoProvider.comparePassword(password, hashedPassword);
+    if (success) {
+      await this.clearTokenByEmail(email);
+    }
+    return success;
+  }
+
+  /**
+   * Challenge password by id
+   *
+   * @param {string} _id
+   * @param {string} password
+   * @returns {Promise<boolean>}
+   * @memberof AuthRepositoryProvider
+   */
+  async challengePasswordById(_id: string, password: string): Promise<boolean> {
+    const hashedPassword = await this.getPasswordById(_id);
+    if (!hashedPassword) {
+      return false;
+    }
+
+    const result = await this.cryptoProvider.comparePassword(password, hashedPassword);
+
+    return result;
+  }
+
+  /**
+   * Challenge token by email, if challenge pass, clear the token and update status
+   *
+   * @param {string} email
+   * @param {string} clearToken
+   * @returns {Promise<boolean>}
+   * @memberof AuthRepositoryProvider
+   */
+  async challengeTokenByEmail(email: string, clearToken: string): Promise<boolean> {
+    const tokenData = await this.getTokenByEmail(email);
+    if (!tokenData) {
+      return false;
+    }
+    const { token, token_expires_at } = tokenData;
+
+    if (!token || (await this.cryptoProvider.compareForgottenToken(clearToken, token))) {
+      return false;
+    }
+
+    await this.clearTokenByEmail(email, this.CONFIRMED_STATUS);
+
+    if (!token_expires_at || token_expires_at.getTime() - Date.now() <= 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Update password by id
+   *
+   * @param {string} _id
+   * @param {string} password
+   * @returns {Promise<boolean>}
+   * @memberof AuthRepositoryProvider
+   */
+  async updatePasswordById(_id: string, password: string): Promise<boolean> {
+    const newHashPassword = await this.cryptoProvider.cryptPassword(password);
+
+    const query = {
+      text: `
+      UPDATE ${this.table}
+        SET token = null, token_expires_at = null, password = $2
+      WHERE _id = $1
+      `,
+      values: [_id, newHashPassword],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount === 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Update password by email
+   *
+   * @param {string} email
+   * @param {string} password
+   * @returns {Promise<boolean>}
+   * @memberof AuthRepositoryProvider
+   */
+  async updatePasswordByEmail(email: string, password: string): Promise<boolean> {
+    const newHashPassword = await this.cryptoProvider.cryptPassword(password);
+
+    const query = {
+      text: `
+      UPDATE ${this.table}
+        SET token = null, token_expires_at = null, password = $2
+      WHERE email = $1
+      `,
+      values: [email, newHashPassword],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount === 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Update email by id, update status
+   *
+   * @param {string} id
+   * @param {string} email
+   * @param {*} [status=this.UNCONFIRMED_STATUS]
+   * @returns {Promise<string>}
+   * @memberof AuthRepositoryProvider
+   */
+  async updateEmailById(id: string, email: string, status = this.UNCONFIRMED_STATUS): Promise<string> {
+    const token = await this.cryptoProvider.cryptToken(this.cryptoProvider.generateToken());
+    const token_expires_at = this.getTokenExpiresAt(this.CONFIRMATION_TOKEN);
+
+    const query = {
+      text: `
+      UPDATE ${this.table}
+        SET token = $2, 
+        token_expires_at = $3::timestamp,
+        email = $4,
+        status = $5
+      WHERE _id = $1
+      `,
+      values: [id, token, token_expires_at, email, status],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount === 0) {
+      return undefined;
+    }
+
+    return token;
   }
 }
