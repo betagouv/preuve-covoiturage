@@ -1,6 +1,6 @@
 import { sprintf } from 'sprintf-js';
-
 import { ConfigInterfaceResolver, KernelInterfaceResolver, ContextType, provider } from '@ilos/common';
+
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
 
@@ -51,7 +51,6 @@ export class UserNotificationProvider {
 
   /**
    * Generate url from email and token
-   * @protected
    */
   protected getUrl(path: string, email: string, token: string): string {
     return sprintf(
@@ -65,7 +64,6 @@ export class UserNotificationProvider {
 
   /**
    * Log in testing env
-   * @protected
    */
   protected log(message: string, email: string, token: string, link: string): void {
     if (process.env.NODE_ENV === 'testing') {
@@ -83,7 +81,6 @@ link:  ${link}
 
   /**
    * Send mail is a wrapper around user:notify
-   * @protected
    */
   protected async sendMail(data: SendMailParamsInterface): Promise<void> {
     await this.kernel.notify('user:notify', data, this.defaultContext);
@@ -104,8 +101,12 @@ link:  ${link}
     await this.sendMail({
       link,
       email,
+<<<<<<< HEAD
       template,
       templateId,
+=======
+      template: this.config.get('email.templates.forgotten'),
+>>>>>>> fix linting in user service
       fullname: `${user.firstname} ${user.lastname}`,
     });
 
