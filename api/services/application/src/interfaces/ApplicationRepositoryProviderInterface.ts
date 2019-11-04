@@ -1,23 +1,27 @@
 import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
+import { RepositoryInterface as ListInterface } from '../shared/application/list.contract';
+import { RepositoryInterface as FindInterface } from '../shared/application/find.contract';
+import { RepositoryInterface as CreateInterface } from '../shared/application/create.contract';
+import { RepositoryInterface as RevokeInterface } from '../shared/application/revoke.contract';
 
 export interface ApplicationRepositoryProviderInterface {
-  find(_id: string, owner_id?: string, owner_service?: string): Promise<ApplicationInterface>;
-  delete(_id: string, owner_id?: string, owner_service?: string): Promise<void>;
-  createForOperator(name: string, operator_id: string): Promise<ApplicationInterface>;
-  allByOperator(operator_id: string): Promise<ApplicationInterface[]>;
+  list(data: ListInterface): Promise<ApplicationInterface[]>;
+  find(data: FindInterface): Promise<ApplicationInterface>;
+  create(data: CreateInterface): Promise<ApplicationInterface>;
+  revoke(data: RevokeInterface): Promise<void>;
 }
 
 export abstract class ApplicationRepositoryProviderInterfaceResolver implements ApplicationRepositoryProviderInterface {
-  async find(_id: string, owner_id?: string, owner_service?: string): Promise<ApplicationInterface> {
+  async list(data: ListInterface): Promise<ApplicationInterface[]> {
     throw new Error('Method not implemented.');
   }
-  async delete(_id: string, owner_id?: string, owner_service?: string): Promise<void> {
+  async find(data: FindInterface): Promise<ApplicationInterface> {
     throw new Error('Method not implemented.');
   }
-  async createForOperator(name: string, operator_id: string): Promise<ApplicationInterface> {
+  async create(data: CreateInterface): Promise<ApplicationInterface> {
     throw new Error('Method not implemented.');
   }
-  async allByOperator(operator_id: string): Promise<ApplicationInterface[]> {
+  async revoke(data: RevokeInterface): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

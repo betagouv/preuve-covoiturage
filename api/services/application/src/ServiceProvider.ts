@@ -14,18 +14,11 @@ import { ListApplicationAction } from './actions/ListApplicationAction';
 import { FindApplicationAction } from './actions/FindApplicationAction';
 import { CreateApplicationAction } from './actions/CreateApplicationAction';
 import { RevokeApplicationAction } from './actions/RevokeApplicationAction';
-import { ApplicationRepositoryProvider } from './providers/ApplicationRepositoryProvider';
+import { ApplicationPgRepositoryProvider } from './providers/ApplicationPgRepositoryProvider';
 
 @serviceProvider({
   config: __dirname,
-  // FIXME: Migrations fail due to required TokenProvider but adding it here
-  //        makes the whole stack fail:
-  //        - if TokenProvider is loaded and config/jwt.ts exists, the `jwt` key is duplicated --> Error
-  //        - if TokenProvider is loaded without config/jwt.ts --> Error, jwt is needed
-  //        - No TokenProvider loaded --> OK running the App (it gets it from proxy Kernel), but migration fails
-  //          as the proxy Kernel doesn't exist.
-  // providers: [ApplicationRepositoryProvider, TokenProvider],
-  providers: [ApplicationRepositoryProvider],
+  providers: [ApplicationPgRepositoryProvider],
   validator: [listBinding, findBinding, createBinding, revokeBinding],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scopeIt', ScopeToSelfMiddleware]],
   connections: [[MongoConnection, 'mongo']],

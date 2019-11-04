@@ -9,6 +9,8 @@ describe('Application pg repository', () => {
   let connection;
   let id;
 
+  const sortDesc = (a: number, b: number) => (a > b ? -1 : 1);
+
   before(async () => {
     connection = new PostgresConnection({
       connectionString:
@@ -34,28 +36,46 @@ describe('Application pg repository', () => {
   });
 
   it('should create an application', async () => {
-    const result = await repository.createForOperator('Dummy Application', '12345');
+    const result = await repository.create({
+      name: 'Dummy Application',
+      owner_id: '12345',
+      owner_service: 'operator',
+      permissions: ['journey.create'],
+    });
+
     id = result._id;
-    expect(result.nom_commercial).to.eq('Dummy Application');
+    expect(result.name).to.eq('Dummy Application');
   });
 
-  it("should list operator's applications", async () => {
-    const result = await repository.allByOperator('12345');
+  it("should list owner's applications", async () => {
+    const result = await repository.list({
+      owner_id: '12345',
+      owner_service: 'operator',
+    });
+
     expect(result).to.be.an('array');
-    expect(result.length).to.eq(1);
-    expect(result[0]._id).to.eq(id);
+    expect(result.sort(sortDesc)[0]._id).to.eq(id);
   });
 
-  it('should delete application by id', async () => {
-    await repository.delete(id);
+  it('should find an application', async () => {
+    const result = await repository.find({
+      _id: id,
+      owner_id: '12345',
+      owner_service: 'operator',
+    });
+
+    expect(result._id).to.eq(id);
+  });
+
+  it('should revoke application by id', async () => {
+    await repository.revoke({ _id: id, owner_id: '12345', owner_service: 'operator' });
     const result = await connection.getClient().query({
       text: 'SELECT * FROM application.applications WHERE _id = $1 LIMIT 1',
       values: [id],
     });
-    expect(result.rows[0]._id).to.eq(id);
-    expect(result.rows[0].deleted_at).to.be.a('date');
 
-    const resultFromRepository = await repository.find(id);
-    expect(resultFromRepository).to.eq(undefined);
+    const rows = result.rows.sort(sortDesc);
+    expect(rows[0]._id).to.eq(id);
+    expect(rows[0].deleted_at).to.be.a('date');
   });
 });

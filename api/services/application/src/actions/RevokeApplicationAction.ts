@@ -1,27 +1,22 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, NotFoundException } from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/revoke.contract';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+  RepositoryInterface,
+} from '../shared/application/revoke.contract';
 import { alias } from '../shared/application/revoke.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
+import { scopePermission } from '../helpers/scopePermission';
+import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class RevokeApplicationAction extends AbstractAction {
   public readonly middlewares: (string | [string, any])[] = [
     ['validate', alias],
-    [
-      'scopeIt',
-      [
-        ['application.revoke'],
-        [
-          (params, context) => {
-            if (context.call.user.operator) {
-              return 'operator.application.revoke';
-            }
-          },
-        ],
-      ],
-    ],
+    ['scopeIt', [['application.revoke'], [scopePermission('operator', 'revoke')]]],
   ];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
@@ -29,20 +24,8 @@ export class RevokeApplicationAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    let owner_id: string;
-    let owner_service: string;
+    const data = setOwner<RepositoryInterface>('operator', params, context);
 
-    // make sure operators can only delete their own applications
-    if (context.call.user.operator) {
-      owner_id = context.call.user.operator;
-      owner_service = 'operator';
-    }
-
-    if (context.call.user.territory) {
-      owner_id = context.call.user.territory;
-      owner_service = 'territory';
-    }
-
-    await this.applicationRepository.delete(params._id, owner_id, owner_service);
+    await this.applicationRepository.revoke(data);
   }
 }

@@ -1,6 +1,10 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
+import { RepositoryInterface as ListInterface } from '../shared/application/list.contract';
+import { RepositoryInterface as FindInterface } from '../shared/application/find.contract';
+import { RepositoryInterface as CreateInterface } from '../shared/application/create.contract';
+import { RepositoryInterface as RevokeInterface } from '../shared/application/revoke.contract';
 import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
 import {
   ApplicationRepositoryProviderInterface,
@@ -11,18 +15,38 @@ import {
   identifier: ApplicationRepositoryProviderInterfaceResolver,
 })
 export class ApplicationPgRepositoryProvider implements ApplicationRepositoryProviderInterface {
-  public readonly table = 'operator.operators';
+  public readonly table = 'application.applications';
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(_id: string): Promise<ApplicationInterface> {
+  async list({ owner_id, owner_service }: ListInterface): Promise<ApplicationInterface[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
-        WHERE _id = $1
+        WHERE owner_service = $1
+        AND owner_id = $2
+        AND deleted_at IS NULL
+      `,
+      values: [owner_service, owner_id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (!result.rowCount) return [];
+
+    return result.rows;
+  }
+
+  async find({ _id, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
+    const query = {
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE owner_service = $1
+        AND owner_id = $2
+        AND _id = $3
         LIMIT 1
       `,
-      values: [_id],
+      values: [owner_service, owner_id, _id],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -34,24 +58,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     return result.rows[0];
   }
 
-  async delete(_id: string): Promise<void> {
-    const query = {
-      text: `
-        UPDATE ${this.table}
-        SET deleted_at = NOW()
-        WHERE _id = $1
-      `,
-      values: [_id],
-    };
-
-    const result = await this.connection.getClient().query(query);
-
-    if (result.rowCount !== 1) {
-      throw new Error(`Deleting application failed (${_id})`);
-    }
-  }
-
-  async createForOperator(name: string, operator_id: string): Promise<ApplicationInterface> {
+  async create({ name, owner_id, owner_service, permissions }: CreateInterface): Promise<ApplicationInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -60,7 +67,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
           $1, $2, $3, $4
         ) RETURNING *
       `,
-      values: [name, operator_id, 'operator', ['journey.create']],
+      values: [name, owner_id, owner_service, permissions],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -72,20 +79,22 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     return result.rows[0];
   }
 
-  async allByOperator(operator_id: string): Promise<ApplicationInterface[]> {
+  async revoke({ _id, owner_id, owner_service }: RevokeInterface): Promise<void> {
     const query = {
       text: `
-        SELECT * FROM ${this.table}
-        WHERE owner_id = $1 AND owner_service = $2
-        AND deleted_at IS NULL
+        UPDATE ${this.table}
+        SET deleted_at = NOW()
+        WHERE owner_service = $1
+        AND owner_id = $2
+        AND _id = $3
       `,
-      values: [operator_id, 'operator'],
+      values: [owner_service, owner_id, _id],
     };
 
     const result = await this.connection.getClient().query(query);
 
-    if (!result.rowCount) return [];
-
-    return result.rows;
+    if (result.rowCount !== 1) {
+      throw new Error(`Deleting application failed (${_id})`);
+    }
   }
 }

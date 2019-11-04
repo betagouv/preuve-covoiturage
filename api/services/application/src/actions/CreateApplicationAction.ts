@@ -1,55 +1,45 @@
-import { handler } from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
+import { setOwner } from '../helpers/setOwner';
+import {
+  handlerConfig,
+  ParamsInterface,
+  ResultInterface,
+  RepositoryInterface,
+} from '../shared/application/create.contract';
+import { scopePermission } from '../helpers/scopePermission';
 import { alias } from '../shared/application/create.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/application/create.contract';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 
 @handler(handlerConfig)
 export class CreateApplicationAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],
-    [
-      'scopeIt',
-      [
-        ['application.create'],
-        [
-          (params, context) => {
-            // make sure the operator_id in the params matches the one of the user
-            // if this is an operator to scope an operator to its own data
-            if (
-              context.call.user.operator &&
-              'operator_id' in params &&
-              params.operator_id === context.call.user.operator
-            ) {
-              return 'operator.application.create';
-            }
-          },
-        ],
-      ],
-    ],
+    ['scopeIt', [['application.create'], [scopePermission('operator', 'create')]]],
   ];
 
-  constructor(
-    private applicationRepository: ApplicationRepositoryProviderInterfaceResolver,
-    private tokenProvider: TokenProviderInterfaceResolver,
-  ) {
+  constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const application = await this.applicationRepository.createForOperator(params.name, params.operator_id);
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    const data = setOwner<RepositoryInterface>('operator', params, context);
 
-    const token = await this.tokenProvider.sign({
-      a: application._id.toString(),
-      o: application.owner_id,
-      s: application.owner_service,
-      p: ['journey.create'],
-      v: 2,
-    });
+    data.permissions = data.permissions || ['journey.create'];
 
-    return { token, application };
+    return this.applicationRepository.create(data);
+
+    // TODO move me to proxy
+    // const token = await this.tokenProvider.sign({
+    //   a: application._id.toString(),
+    //   o: application.owner_id,
+    //   s: application.owner_service,
+    //   p: ['journey.create'],
+    //   v: 2,
+    // });
+
+    // return { token, application };
   }
 }
