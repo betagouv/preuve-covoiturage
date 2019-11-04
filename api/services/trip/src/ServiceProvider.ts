@@ -10,7 +10,6 @@ import { ChannelTransportMiddleware, ScopeToSelfMiddleware } from '@pdc/provider
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { TripPgRepositoryProvider } from './providers/TripPgRepositoryProvider';
-import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { CrosscheckAction } from './actions/CrosscheckAction';
 import { DispatchAction } from './actions/DispatchAction';
 import { ListAction } from './actions/ListAction';
@@ -20,7 +19,7 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
 @serviceProvider({
   config: __dirname,
   commands: [MigrateDataCommand],
-  providers: [TripPgRepositoryProvider, TripRepositoryProvider],
+  providers: [TripPgRepositoryProvider],
   validator: [listBinding, statsBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
