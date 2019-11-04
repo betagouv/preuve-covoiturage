@@ -1,4 +1,3 @@
-import { sprintf } from 'sprintf-js';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, UnauthorizedException } from '@ilos/common';
 

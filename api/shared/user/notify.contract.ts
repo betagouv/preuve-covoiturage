@@ -2,8 +2,9 @@ export interface ParamsInterface {
   template: string;
   email: string;
   fullname: string;
-  organization: string;
-  link: string;
+  templateId?: string;
+  organization?: string;
+  link?: string;
 }
 
 export type ResultInterface = void;

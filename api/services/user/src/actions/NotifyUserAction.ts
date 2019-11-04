@@ -1,10 +1,9 @@
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { ContextType, ForbiddenException, handler } from '@ilos/common';
+import { ContextType, ForbiddenException, handler, TemplateMailInterface } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
-import { SendTemplateByEmailParamsInterface } from '../shared/user/common/interfaces/SendTemplateByEmailParamsInterface';
 
 /*
  * Send email to user
@@ -23,32 +22,16 @@ export class NotifyUserAction extends AbstractAction {
       throw new ForbiddenException();
     }
 
-    const sendTemplateByEmailParams: SendTemplateByEmailParamsInterface = {
-      template: params.template,
-      email: params.email,
-      fullname: params.fullname,
-      opts: {},
-    };
-
-    if ('organization' in params) {
-      sendTemplateByEmailParams.opts.organization = params.organization;
-    }
-
-    if ('link' in params) {
-      sendTemplateByEmailParams.opts.link = params.link;
-    }
+    const { templateId, template, email, fullname, ...opts } = params;
 
     return this.notificationProvider.sendTemplateByEmail(
       {
-        template: params.template,
-        email: params.email,
-        fullname: params.fullname,
-        opts: {
-          organization: params.organization,
-          link: params.link,
-        },
+        template,
+        email,
+        fullname,
+        opts,
       },
-      params.template ? { template: params.template } : null,
+      templateId ? { templateId } : null,
     );
   }
 }

@@ -1,4 +1,4 @@
-CREATE TYPE auth.user_status_enum as enum('pending', 'done', 'error');
+CREATE TYPE auth.user_status_enum as enum('pending', 'active', 'invited');
 
 CREATE TABLE IF NOT EXISTS auth.users
 (
