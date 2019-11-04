@@ -50,10 +50,13 @@ import {
   SendConfirmEmailUserAction,
   SendInvitationEmailUserAction,
 } from './actions';
+import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
+import { UserNotificationProvider } from './providers/UserNotificationProvider';
+import { PostgresConnection } from '../../../../../ilos/packages/connection-postgres/dist';
 
 @serviceProvider({
   config: __dirname,
-  providers: [UserPgRepositoryProvider, CryptoProvider],
+  providers: [UserPgRepositoryProvider, CryptoProvider, AuthRepositoryProvider, UserNotificationProvider],
   validator: [
     ['user.changePassword', changePassword],
     ['user.changePasswordWithToken', changePasswordWithToken],
@@ -77,7 +80,7 @@ import {
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
   ],
-  connections: [[MongoConnection, 'mongo']],
+  connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [
     ChangePasswordUserAction,
     ChangePasswordWithTokenUserAction,
