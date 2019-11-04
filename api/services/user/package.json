@@ -70,7 +70,7 @@
     "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.0",
     "@types/mocha": "^5.2.6",
     "@types/node": "^12.6.8",
     "@types/sinon": "^7.5.0",
