@@ -1,57 +1,83 @@
-import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
+import {
+  UserFindInterface,
+  UserPatchInterface,
+  UserBaseInterface,
+  UserListInterface,
+  UserListFiltersInterface,
+} from './UserInterface';
+import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
 
-import { UserInterface } from '../shared/user/common/interfaces/UserInterface';
-import { UserIdInterface } from '../shared/user/common/interfaces/UserIdInterface';
-import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
-import { UserForgottenInterface } from '../shared/user/common/interfaces/UserForgottenInterface';
-import { PaginationSkipParamsInterface } from '../shared/common/interfaces/PaginationSkipParamsInterface';
-import { UserStatusInterface } from '../shared/user/common/interfaces/UserStatusInterface';
+export interface UserRepositoryProviderInterface {
+  create(data: UserBaseInterface): Promise<UserFindInterface>;
 
-export interface UserRepositoryProviderInterface extends RepositoryInterface {
   list(
-    filters: { territory?: string; operator?: string },
-    pagination: PaginationSkipParamsInterface,
-  ): Promise<{ users: UserStatusInterface[]; total: number }>;
-  deleteUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<void>;
-  findUser(_id: string, contextParam: { territory?: string; operator?: string }): Promise<UserInterface>;
-  findUserByParams(params: { [prop: string]: string }): Promise<UserInterface>;
-  findTokensByEmail({ email }: { email: string }): Promise<UserForgottenInterface>;
-  patchUser(
-    _id: string,
-    patch: UserPatchInterface,
-    contextParam: { territory?: string; operator?: string },
-  ): Promise<UserIdInterface>;
+    filters: UserListFiltersInterface,
+    pagination: PaginationParamsInterface,
+  ): Promise<{ users: UserListInterface[]; total: number }>;
+
+  delete(_id: string): Promise<boolean>;
+  deleteByOperator(_id: string, operator_id: string): Promise<boolean>;
+  deleteByTerritory(_id: string, territory_id: string): Promise<boolean>;
+
+  find(_id: string): Promise<UserFindInterface | undefined>;
+  findByOperator(_id: string, operator_id: string): Promise<UserFindInterface | undefined>;
+  findByTerritory(_id: string, territory_id: string): Promise<UserFindInterface | undefined>;
+  findByEmail(email: string): Promise<UserFindInterface | undefined>;
+
+  patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface>;
+  patchByOperator(_id: string, data: UserPatchInterface, operator_id: string): Promise<UserFindInterface>;
+  patchByTerritory(_id: string, data: UserPatchInterface, territory_id: string): Promise<UserFindInterface>;
 }
 
-export abstract class UserRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  public async list(
-    filters: { territory?: string; operator?: string },
-    pagination: PaginationSkipParamsInterface,
-  ): Promise<{ users: UserStatusInterface[]; total: number }> {
+export abstract class UserRepositoryProviderInterfaceResolver implements UserRepositoryProviderInterface {
+  async create(data: UserBaseInterface): Promise<UserFindInterface> {
     throw new Error();
   }
 
-  public async deleteUser(id: string, contextParam: { territory?: string; operator?: string }): Promise<void> {
+  async list(
+    filters: UserListFiltersInterface,
+    pagination: PaginationParamsInterface,
+  ): Promise<{ users: UserListInterface[]; total: number }> {
     throw new Error();
   }
 
-  public async findUser(id: string, contextParam: { territory?: string; operator?: string }): Promise<UserInterface> {
+  async delete(_id: string): Promise<boolean> {
     throw new Error();
   }
 
-  public async findUserByParams(params: { [prop: string]: string }): Promise<UserInterface> {
+  async deleteByOperator(_id: string, operator_id: string): Promise<boolean> {
     throw new Error();
   }
 
-  public async findTokensByEmail({ email }: { email: string }): Promise<UserForgottenInterface> {
+  async deleteByTerritory(_id: string, territory_id: string): Promise<boolean> {
     throw new Error();
   }
 
-  public async patchUser(
-    id: string,
-    patch: UserPatchInterface,
-    contextParam: { territory?: string; operator?: string },
-  ): Promise<UserIdInterface> {
+  async find(_id: string): Promise<UserFindInterface | undefined> {
+    throw new Error();
+  }
+
+  async findByOperator(_id: string, operator_id: string): Promise<UserFindInterface | undefined> {
+    throw new Error();
+  }
+
+  async findByTerritory(_id: string, territory_id: string): Promise<UserFindInterface | undefined> {
+    throw new Error();
+  }
+
+  async findByEmail(email: string): Promise<UserFindInterface | undefined> {
+    throw new Error();
+  }
+
+  async patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface> {
+    throw new Error();
+  }
+
+  async patchByOperator(_id: string, data: UserPatchInterface, operator_id: string): Promise<UserFindInterface> {
+    throw new Error();
+  }
+
+  async patchByTerritory(_id: string, data: UserPatchInterface, territory_id: string): Promise<UserFindInterface> {
     throw new Error();
   }
 }

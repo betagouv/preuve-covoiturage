@@ -7,7 +7,7 @@ export const schema = {
   required: ['_id', 'patch'],
   properties: {
     _id: {
-      macro: 'objectid',
+      macro: 'dbid',
     },
     patch: {
       type: 'object',

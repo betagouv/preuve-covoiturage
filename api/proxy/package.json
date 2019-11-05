@@ -45,7 +45,7 @@
     "instrument": true
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.0",
     "@types/express": "^4.16.1",
     "@types/express-session": "^1.15.12",
     "@types/helmet": "^0.0.44",
@@ -71,6 +71,7 @@
     "@ilos/common": "~0",
     "@ilos/config": "~0",
     "@ilos/connection-mongo": "~0",
+    "@ilos/connection-postgres": "~0",
     "@ilos/core": "~0",
     "@ilos/env": "~0",
     "@ilos/framework": "~0",

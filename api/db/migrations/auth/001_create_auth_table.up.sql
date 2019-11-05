@@ -1,4 +1,4 @@
-CREATE TYPE auth.user_status_enum as enum('pending', 'done', 'error');
+CREATE TYPE auth.user_status_enum as enum('pending', 'active', 'invited');
 
 CREATE TABLE IF NOT EXISTS auth.users
 (
@@ -12,13 +12,13 @@ CREATE TABLE IF NOT EXISTS auth.users
   lastname varchar NOT NULL,
   phone varchar,
   
-  password varchar NOT NULL,
+  password varchar,
   status auth.user_status_enum NOT NULL DEFAULT 'pending',
 
-  forgotten_token varchar,
-  forgotten_at timestamp,
+  token varchar,
+  token_expires_at timestamp,
 
-  roles varchar[] NOT NULL,
+  role varchar NOT NULL,
 
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW(),

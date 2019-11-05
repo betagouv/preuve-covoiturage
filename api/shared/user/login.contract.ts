@@ -1,14 +1,11 @@
-import { UserBaseInterface } from './common/interfaces/UserBaseInterface';
+import { UserInterface } from './common/interfaces/UserInterface';
 
 export interface ParamsInterface {
   email: string;
   password: string;
 }
 
-export interface ResultInterface extends UserBaseInterface {
-  _id: string;
-  permissions: string[];
-}
+export interface ResultInterface extends UserInterface {}
 
 export const configHandler = {
   service: 'user',

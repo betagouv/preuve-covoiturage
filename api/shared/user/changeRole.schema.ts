@@ -4,7 +4,7 @@ export const changeRole = {
   required: ['_id', 'role'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'objectid' },
+    _id: { macro: 'dbid' },
     role: { macro: 'role' },
   },
 };

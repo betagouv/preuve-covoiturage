@@ -10,7 +10,7 @@ export const operatorWhitelistFilter: ApplicableRuleInterface = {
   schema: {
     type: 'array',
     items: {
-      macro: 'objectid',
+      macro: 'dbid',
     },
   },
   index: HIGH,

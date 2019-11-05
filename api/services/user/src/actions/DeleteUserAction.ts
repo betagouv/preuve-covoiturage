@@ -43,17 +43,24 @@ export class DeleteUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const contextParam: { territory?: string; operator?: string } = {};
-
-    if (context.call.user.territory) {
-      contextParam.territory = context.call.user.territory;
+  public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    switch (scope) {
+      case 'territory':
+        await this.userRepository.deleteByTerritory(params._id, context.call.user.territory_id);
+        break;
+      case 'operator':
+        await this.userRepository.deleteByOperator(params._id, context.call.user.operator_id);
+        break;
+      case 'registry':
+        await this.userRepository.delete(params._id);
+        break;
     }
 
-    if (context.call.user.operator) {
-      contextParam.operator = context.call.user.operator;
-    }
-
-    await this.userRepository.deleteUser(request._id, contextParam);
+    return true;
   }
 }

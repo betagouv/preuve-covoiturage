@@ -1,11 +1,11 @@
 export const checkForgottenToken = {
   $id: 'user.checkForgottenToken',
   type: 'object',
-  required: ['email', 'forgotten_token'],
+  required: ['email', 'token'],
   additionalProperties: false,
   properties: {
     email: { macro: 'email' },
-    forgotten_token: { macro: 'token' },
+    token: { macro: 'token' },
   },
 };
 

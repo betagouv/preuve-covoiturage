@@ -1,7 +1,7 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
-import { MongoConnection } from '@ilos/connection-mongo';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ContentWhitelistMiddleware, ContentBlacklistMiddleware } from '@pdc/provider-middleware';
 
@@ -12,7 +12,7 @@ import { deleteTerritory } from './shared/territory/delete.schema';
 import { findByInsee } from './shared/territory/findByInsee.schema';
 import { findByPosition } from './shared/territory/findByPosition.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
-import { TerritoryRepositoryProvider } from './providers/TerritoryRepositoryProvider';
+import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
@@ -25,7 +25,7 @@ import { MigrateCommand } from './commands/MigrateCommand';
 
 @serviceProvider({
   config: __dirname,
-  providers: [TerritoryRepositoryProvider],
+  providers: [TerritoryPgRepositoryProvider],
   validator: [
     ['territory.find', find],
     ['territory.create', create],
@@ -41,7 +41,7 @@ import { MigrateCommand } from './commands/MigrateCommand';
     ['content.whitelist', ContentWhitelistMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
   ],
-  connections: [[MongoConnection, 'mongo']],
+  connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,
