@@ -57,6 +57,7 @@
     "@ilos/config": "~0",
     "@ilos/connection-manager": "~0",
     "@ilos/connection-mongo": "~0",
+    "@ilos/connection-postgres": "~0",
     "@ilos/core": "~0",
     "@ilos/env": "~0",
     "@ilos/framework": "~0",

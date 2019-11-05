@@ -1,17 +1,27 @@
-import { RepositoryInterfaceResolver, RepositoryInterface } from '@ilos/common';
+import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
+import { RepositoryInterface as ListInterface } from '../shared/application/list.contract';
+import { RepositoryInterface as FindInterface } from '../shared/application/find.contract';
+import { RepositoryInterface as CreateInterface } from '../shared/application/create.contract';
+import { RepositoryInterface as RevokeInterface } from '../shared/application/revoke.contract';
 
-declare type Model = any;
-
-export interface ApplicationRepositoryProviderInterface extends RepositoryInterface {
-  allByOperator(params: { operator_id: string }): Promise<Model[]>;
-  softDelete(params: { _id: string; operator_id: string; deleted_at?: any }): Promise<boolean>;
+export interface ApplicationRepositoryProviderInterface {
+  list(data: ListInterface): Promise<ApplicationInterface[]>;
+  find(data: FindInterface): Promise<ApplicationInterface>;
+  create(data: CreateInterface): Promise<ApplicationInterface>;
+  revoke(data: RevokeInterface): Promise<void>;
 }
 
-export abstract class ApplicationRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  async allByOperator(params: { operator_id: string }): Promise<Model[]> {
-    throw new Error('Not implemented');
+export abstract class ApplicationRepositoryProviderInterfaceResolver implements ApplicationRepositoryProviderInterface {
+  async list(data: ListInterface): Promise<ApplicationInterface[]> {
+    throw new Error('Method not implemented.');
   }
-  async softDelete(params: { _id: string; operator_id: string; deleted_at?: any }): Promise<Model> {
-    throw new Error('Not implemented');
+  async find(data: FindInterface): Promise<ApplicationInterface> {
+    throw new Error('Method not implemented.');
+  }
+  async create(data: CreateInterface): Promise<ApplicationInterface> {
+    throw new Error('Method not implemented.');
+  }
+  async revoke(data: RevokeInterface): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

@@ -38,7 +38,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     // 'forgotten_at',
     'ui_status',
   ];
-  protected readonly groupCastStatement = `CASE 
+  protected readonly groupCastStatement = `CASE
       WHEN operator_id is not null THEN 'operators'
       WHEN territory_id is not null THEN 'territories'
       ELSE 'registry'
@@ -87,7 +87,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           operator_id,
           territory_id
         )
-      SELECT 
+      SELECT
         data.*,
         ${this.groupCastStatement},
         roles.permissions
@@ -176,7 +176,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
     const query = {
       text: `
-        SELECT 
+        SELECT
           _id,
           status,
           created_at,
@@ -227,7 +227,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     text: string;
     values: any[];
   } {
-    if (!filters || Object.keys(filters).length == 0) {
+    if (!filters || Object.keys(filters).length === 0) {
       return {
         text: '',
         values: [],
@@ -245,12 +245,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
     const orderedFilters = filtersToProcess
       .map((key) => ({ key, value: filters[key] }))
-      .map((filter) => {
-        return {
-          text: `${filter.key} = $#`,
-          values: [filter.value],
-        };
-      })
+      .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
       .reduce(
         (acc, current) => {
           acc.text.push(current.text);
@@ -355,12 +350,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
     const finalSets = setToProcess
       .map((key) => ({ key, value: sets[key] }))
-      .map((filter) => {
-        return {
-          text: `${filter.key} = $#`,
-          values: [filter.value],
-        };
-      })
+      .map((filter) => ({ text: `${filter.key} = $#`, values: [filter.value] }))
       .reduce(
         (acc, current) => {
           acc.text.push(current.text);
@@ -382,7 +372,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     data: UserPatchInterface,
     where: { _id: string; operator_id?: string; territory_id?: string },
   ): Promise<UserFindInterface> {
-    if (!data || !where || Object.keys(data).length == 0 || Object.keys(where).length == 0) {
+    if (!data || !where || Object.keys(data).length === 0 || Object.keys(where).length === 0) {
       return undefined;
     }
 
@@ -411,7 +401,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           operator_id,
           territory_id
         )
-      SELECT 
+      SELECT
         data.*,
         ${this.groupCastStatement},
         roles.permissions

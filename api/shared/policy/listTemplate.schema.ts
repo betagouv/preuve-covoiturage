@@ -6,7 +6,7 @@ export const schema = {
   properties: {
     territory_id: {
       anyOf: [
-        { macro: 'objectid' },
+        { macro: 'dbid' },
         {
           type: 'null',
         },

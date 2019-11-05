@@ -2,11 +2,10 @@ import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
-import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { NotificationExtension } from '@pdc/provider-notification';
-
+import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   ScopeToSelfMiddleware,
   ContentBlacklistMiddleware,
@@ -27,10 +26,8 @@ import { login } from './shared/user/login.schema';
 import { patch } from './shared/user/patch.schema';
 import { register } from './shared/user/register.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
-
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
-
 import {
   ChangePasswordUserAction,
   ChangePasswordWithTokenUserAction,
@@ -52,7 +49,6 @@ import {
 } from './actions';
 import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
 import { UserNotificationProvider } from './providers/UserNotificationProvider';
-import { PostgresConnection } from '../../../../../ilos/packages/connection-postgres/dist';
 
 @serviceProvider({
   config: __dirname,

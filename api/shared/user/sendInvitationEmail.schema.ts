@@ -4,7 +4,7 @@ export const sendInvitationEmail = {
   required: ['_id'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'objectid' },
+    _id: { macro: 'dbid' },
   },
 };
 

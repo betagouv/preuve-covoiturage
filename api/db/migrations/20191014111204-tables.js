@@ -4,6 +4,7 @@ var { createMigration } = require('../helpers/createMigration');
 var { setup, up, down } = createMigration(
   [
     'acquisition/001_create_acquisition_table',
+    'application/001_create_application_table',
     'auth/001_create_auth_table',
     'carpool/001_create_carpool_table',
     'common/001_create_insee_table',

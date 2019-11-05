@@ -6,7 +6,7 @@ import { ibanMacro } from '../macros/ibanMacro';
 import { inseeMacro } from '../macros/inseeMacro';
 import { nafMacro } from '../macros/nafMacro';
 import { nicMacro } from '../macros/nicMacro';
-import { objectidMacro } from '../macros/objectidMacro';
+import { dbidMacro } from '../macros/dbidMacro';
 import { phoneMacro } from '../macros/phoneMacro';
 import { postcodeMacro } from '../macros/postcodeMacro';
 import { sirenMacro } from '../macros/sirenMacro';
@@ -31,7 +31,7 @@ const macroStore = {
   lon: lonMacro,
   naf: nafMacro,
   nic: nicMacro,
-  objectid: objectidMacro,
+  dbid: dbidMacro,
   phone: phoneMacro,
   postcode: postcodeMacro,
   rna: rnaMacro,

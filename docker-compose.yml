@@ -128,13 +128,6 @@ services:
       - back
     depends_on:
       - redis
-
-# create a permanent network first
-# > docker network create docker-network --subnet 172.24.24.0/24
 networks:
   front:
-    external:
-      name: docker-network
   back:
-    external:
-      name: docker-network

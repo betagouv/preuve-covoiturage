@@ -1,12 +1,11 @@
-import { provider, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
+import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto/dist';
 
 import {
   AuthRepositoryProviderInterface,
   AuthRepositoryProviderInterfaceResolver,
 } from '../interfaces/AuthRepositoryProviderInterface';
-
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto/dist';
 
 @provider({
   identifier: AuthRepositoryProviderInterfaceResolver,
@@ -30,16 +29,11 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Get password from id or undefined if not found
-   *
-   * @protected
-   * @param {string} _id
-   * @returns {(Promise<string | undefined>)}
-   * @memberof AuthRepositoryProvider
    */
   protected async getPasswordById(_id: string): Promise<string | undefined> {
     const query = {
       text: `
-        SELECT 
+        SELECT
           password
         FROM ${this.table}
         WHERE _id = $1
@@ -59,16 +53,11 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Get password from email or undefined if not found
-   *
-   * @protected
-   * @param {string} email
-   * @returns {Promise<string>}
-   * @memberof AuthRepositoryProvider
    */
   protected async getPasswordByEmail(email: string): Promise<string> {
     const query = {
       text: `
-        SELECT 
+        SELECT
           password
         FROM ${this.table}
         WHERE email = $1
@@ -88,16 +77,11 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Get token and expires at by email or null if not found
-   *
-   * @protected
-   * @param {string} email
-   * @returns {(Promise<{ token: string | null; token_expires_at: Date | null }>)}
-   * @memberof AuthRepositoryProvider
    */
   protected async getTokenByEmail(email: string): Promise<{ token: string | null; token_expires_at: Date | null }> {
     const query = {
       text: `
-        SELECT 
+        SELECT
           token,
           token_expires_at
         FROM ${this.table}
@@ -121,11 +105,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Get expires at from token type, return current date if type not found
-   *
-   * @protected
-   * @param {string} type
-   * @returns {Date}
-   * @memberof AuthRepositoryProvider
    */
   protected getTokenExpiresAt(type: string): Date {
     return new Date(new Date().getTime() + this.config.get(`user.tokenExpiration.${type}`, 0) * 1000);
@@ -133,12 +112,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Create a token by email, set status to unconfirmed by default, return the token
-   *
-   * @param {string} email
-   * @param {string} type
-   * @param {string} [status=this.UNCONFIRMED_STATUS]
-   * @returns {(Promise<string | undefined>)}
-   * @memberof AuthRepositoryProvider
    */
   async createTokenByEmail(
     email: string,
@@ -151,7 +124,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     const query = {
       text: `
       UPDATE ${this.table}
-        SET token = $2, 
+        SET token = $2,
         token_expires_at = $3::timestamp,
         status = $4
       WHERE email = $1
@@ -170,11 +143,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Clear token by email, can update status if necessary
-   *
-   * @param {string} email
-   * @param {string} [status]
-   * @returns {Promise<boolean>}
-   * @memberof AuthRepositoryProvider
    */
   async clearTokenByEmail(email: string, status?: string): Promise<boolean> {
     const query = {
@@ -203,11 +171,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Challenge password by email, return boolean
    * If challenge pass, clear the token
-   *
-   * @param {string} email
-   * @param {string} password
-   * @returns {Promise<boolean>}
-   * @memberof AuthRepositoryProvider
    */
   async challengePasswordByEmail(email: string, password: string): Promise<boolean> {
     const hashedPassword = await this.getPasswordByEmail(email);
@@ -223,11 +186,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Challenge password by id
-   *
-   * @param {string} _id
-   * @param {string} password
-   * @returns {Promise<boolean>}
-   * @memberof AuthRepositoryProvider
    */
   async challengePasswordById(_id: string, password: string): Promise<boolean> {
     const hashedPassword = await this.getPasswordById(_id);
@@ -242,11 +200,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Challenge token by email, if challenge pass, clear the token and update status
-   *
-   * @param {string} email
-   * @param {string} clearToken
-   * @returns {Promise<boolean>}
-   * @memberof AuthRepositoryProvider
    */
   async challengeTokenByEmail(email: string, clearToken: string): Promise<boolean> {
     const tokenData = await this.getTokenByEmail(email);
@@ -270,11 +223,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Update password by id
-   *
-   * @param {string} _id
-   * @param {string} password
-   * @returns {Promise<boolean>}
-   * @memberof AuthRepositoryProvider
    */
   async updatePasswordById(_id: string, password: string): Promise<boolean> {
     const newHashPassword = await this.cryptoProvider.cryptPassword(password);
@@ -299,11 +247,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Update password by email
-   *
-   * @param {string} email
-   * @param {string} password
-   * @returns {Promise<boolean>}
-   * @memberof AuthRepositoryProvider
    */
   async updatePasswordByEmail(email: string, password: string): Promise<boolean> {
     const newHashPassword = await this.cryptoProvider.cryptPassword(password);
@@ -328,12 +271,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
   /**
    * Update email by id, update status
-   *
-   * @param {string} id
-   * @param {string} email
-   * @param {*} [status=this.UNCONFIRMED_STATUS]
-   * @returns {Promise<string>}
-   * @memberof AuthRepositoryProvider
    */
   async updateEmailById(id: string, email: string, status: string = this.UNCONFIRMED_STATUS): Promise<string> {
     const token = await this.cryptoProvider.cryptToken(this.cryptoProvider.generateToken());
@@ -342,7 +279,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     const query = {
       text: `
       UPDATE ${this.table}
-        SET token = $2, 
+        SET token = $2,
         token_expires_at = $3::timestamp,
         email = $4,
         status = $5

@@ -93,7 +93,6 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     try {
       await client.query('BEGIN');
       let tripId;
-      let created = false;
 
       if (journey.operator_journey_id) {
         tripId = await this.findTripIdByOperatorTripId(journey.operator_journey_id);

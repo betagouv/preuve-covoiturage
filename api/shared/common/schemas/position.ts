@@ -24,7 +24,7 @@ export const position = {
     territories: {
       type: 'array',
       minItems: 0,
-      items: { macro: 'objectid' },
+      items: { macro: 'dbid' },
     },
   },
 };
