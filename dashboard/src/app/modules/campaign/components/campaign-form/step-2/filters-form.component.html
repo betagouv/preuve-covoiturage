@@ -72,7 +72,7 @@
 
       <!--      INSEE -->
       <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.insee.touched && !controls.insee.valid }">
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>
             Trajets
           </mat-panel-title>
@@ -81,11 +81,12 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <mat-tab-group
+          #mtg
           mat-stretch-tabs
           animationDuration="0ms"
           disableRipple="true"
           dynamicHeight="true"
-          [(selectedIndex)]="selectedInseeFilterTabIndex"
+          (selectedIndexChange)="selectedInseeFilterTabIndexChange($event)"
           class="RulesForm-insee"
         >
           <mat-tab>
