@@ -246,13 +246,24 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     const blackListFormArray = <FormArray>filtersForm.get('insee').get('blackList');
     blackListFormArray.clear();
     campaign.filters.insee.blackList.forEach((insee) => {
-      blackListFormArray.push(this._formBuilder.control(insee));
+      console.log({ insee });
+      blackListFormArray.push(
+        this._formBuilder.group({
+          start: [insee.start],
+          end: [insee.end],
+        }),
+      );
     });
 
     const whiteListFormArray = <FormArray>filtersForm.get('insee').get('whiteList');
     whiteListFormArray.clear();
     campaign.filters.insee.whiteList.forEach((insee) => {
-      whiteListFormArray.push(this._formBuilder.control(insee));
+      whiteListFormArray.push(
+        this._formBuilder.group({
+          start: [insee.start],
+          end: [insee.end],
+        }),
+      );
     });
 
     // patch restriction

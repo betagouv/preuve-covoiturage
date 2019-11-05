@@ -30,8 +30,8 @@ export interface IncentiveFiltersUxInterface {
 }
 
 export interface IncentiveInseeFilterInterface {
-  start: InseeAndTerritoryInterface;
-  end: InseeAndTerritoryInterface;
+  start: InseeAndTerritoryInterface[];
+  end: InseeAndTerritoryInterface[];
 }
 
 export interface InseeAndTerritoryInterface {

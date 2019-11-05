@@ -13,9 +13,11 @@ export type GlobalRetributionRuleType =
   | WeekdayRetributionRule
   | TimeRetributionRule
   | DistanceRangeGlobalRetributionRule
-  | RankRetributionRule
+  | RankGlobalRetributionRule
   | OnlyAdultRetributionRule
-  | OperatorIdsRetributionRule;
+  | OperatorIdsGlobalRetributionRule
+  | WhiteListGlobalRetributionRule
+  | BlackListGlobalRetributionRule;
 
 export enum GlobalRetributionRulesSlugEnum {
   MAX_AMOUNT = 'max_amount_restriction',
@@ -27,6 +29,8 @@ export enum GlobalRetributionRulesSlugEnum {
   DISTANCE_RANGE = 'distance_range_filter',
   RANK = 'rank_whitelist_filter',
   OPERATOR_IDS = 'operator_whitelist_filter',
+  WHITELIST = 'insee_whitelist_filter',
+  BLACKLIST = 'insee_blacklist_filter',
 }
 
 export interface GlobalRetributionRuleInterface extends BaseRetributionRuleInterface {
@@ -109,7 +113,7 @@ export class DistanceRangeGlobalRetributionRule implements GlobalRetributionRule
   }
 }
 
-export class RankRetributionRule implements GlobalRetributionRuleInterface {
+export class RankGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
   parameters: TripRankEnum[];
@@ -120,7 +124,7 @@ export class RankRetributionRule implements GlobalRetributionRuleInterface {
   }
 }
 
-export class OperatorIdsRetributionRule implements GlobalRetributionRuleInterface {
+export class OperatorIdsGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
   parameters: string[];
@@ -139,12 +143,79 @@ export class RestrictionRetributionRule implements GlobalRetributionRuleInterfac
     amount: number;
     period: RestrictionPeriodsEnum;
   };
+
   constructor(target: RestrictionTargetsEnum, amount: number, period: RestrictionPeriodsEnum) {
     this.slug = GlobalRetributionRulesSlugEnum.RESTRICTION;
     this.parameters = {
       target,
       amount,
       period,
+    };
+  }
+}
+
+export class BlackListGlobalRetributionRule implements GlobalRetributionRuleInterface {
+  slug: GlobalRetributionRulesSlugEnum;
+  description?: string;
+  parameters: {
+    and: {
+      start: string[];
+      end: string[];
+      operator: 'and';
+    };
+    or: {
+      start: string[];
+      end: string[];
+      operator: 'or';
+    };
+  };
+
+  constructor(startInsees: string[], endInsees: string[]) {
+    this.slug = GlobalRetributionRulesSlugEnum.BLACKLIST;
+    this.parameters = {
+      and: {
+        start: startInsees,
+        end: endInsees,
+        operator: 'and',
+      },
+      or: {
+        start: [],
+        end: [],
+        operator: 'or',
+      },
+    };
+  }
+}
+
+export class WhiteListGlobalRetributionRule implements GlobalRetributionRuleInterface {
+  slug: GlobalRetributionRulesSlugEnum;
+  description?: string;
+  parameters: {
+    and: {
+      start: string[];
+      end: string[];
+      operator: 'and';
+    };
+    or: {
+      start: string[];
+      end: string[];
+      operator: 'or';
+    };
+  };
+
+  constructor(startInsees: string[], endInsees: string[]) {
+    this.slug = GlobalRetributionRulesSlugEnum.WHITELIST;
+    this.parameters = {
+      and: {
+        start: startInsees,
+        end: endInsees,
+        operator: 'and',
+      },
+      or: {
+        start: [],
+        end: [],
+        operator: 'or',
+      },
     };
   }
 }

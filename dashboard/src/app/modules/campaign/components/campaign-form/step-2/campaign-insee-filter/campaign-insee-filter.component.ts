@@ -16,7 +16,9 @@ export class CampaignInseeFilterComponent implements OnInit {
 
   constructor(private _formBuilder: FormBuilder) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.listFormArray);
+  }
 
   startTerritories(index: number): InseeAndTerritoryInterface[] {
     return this.listFormArray.controls[index].get('start').value;

@@ -1,8 +1,7 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import {
-  DistanceRangeGlobalRetributionRule,
-  RankRetributionRule,
   RestrictionRetributionRule,
+  DistanceRangeGlobalRetributionRule, RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -29,7 +28,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     name: 'Encourager financièrement le covoiturage',
     description: "Campagne d'incitation financière au covoiturage à destination des conducteurs et des passagers.",
     global_rules: [
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new DistanceRangeGlobalRetributionRule({
         min: 2000,
         max: 150000,
@@ -92,7 +91,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     description:
       "Campagne d'incitation basée sur un système de gratification par points donnant accès à un catalogue de récompenses (place de parking, place de piscine, composteur, etc.)",
     global_rules: [
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
       new DistanceRangeGlobalRetributionRule({
         min: 2000,
@@ -155,7 +154,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     description: "Campagne d'incitation pour limiter le trafic en semaine.",
     global_rules: [
       new WeekdayRetributionRule([0, 1, 2, 3, 4]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new TimeRetributionRule([
         {
           start: 6,
@@ -226,7 +225,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       "Campagne d'incitation financière activable en cas de pic de pollution pour encourager le covoiturage.",
     global_rules: [
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new DistanceRangeGlobalRetributionRule({
         min: 2000,
         max: 150000,
@@ -290,7 +289,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       "Campagne d'incitation financière pour limiter les embouteillages les week-end notamment en cas de chassé croisé. ",
     global_rules: [
       new WeekdayRetributionRule([4, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new DistanceRangeGlobalRetributionRule({
         min: 2000,
         max: 150000,
@@ -341,7 +340,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     description: "Campagne d'incitation financière au covoiturage pour un événement ponctuel.",
     global_rules: [
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new DistanceRangeGlobalRetributionRule({
         min: 2000,
         max: 150000,
@@ -403,7 +402,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     description:
       "Campagne d'incitation ou la participation financière du passager est pris en charge par la collectivité.",
     global_rules: [
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
       new DistanceRangeGlobalRetributionRule({
         min: 2000,

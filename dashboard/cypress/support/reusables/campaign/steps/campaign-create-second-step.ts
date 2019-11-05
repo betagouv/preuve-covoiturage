@@ -123,16 +123,22 @@ export function campaignSecondeStepAddInseeFilter(filterType: 'blackList' | 'whi
 
     // START
     cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:first-child input').type('lyo');
-
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
 
     // END
     cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:nth-child(2) input').type('marseil');
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
 
+    cy.get('button.inseeFilter-addElement').click();
+
+    cy.get('button.inseeFilter-newElement').click();
+
+    // START
+    cy.get('.inseeFilter-list:nth-child(2) .inseeFilterStartEnd > div:first-child input').type('paris');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
     // END
-    cy.wait(300);
-    cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:nth-child(2) input').type('73');
+    cy.get('.inseeFilter-list:nth-child(2) .inseeFilterStartEnd > div:nth-child(2) input').type('massy');
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
 
     cy.get('button.inseeFilter-addElement').click();

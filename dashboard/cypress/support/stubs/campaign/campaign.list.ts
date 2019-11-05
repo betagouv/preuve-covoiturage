@@ -9,8 +9,8 @@ import {
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -47,8 +47,8 @@ export const campaignStubs: Campaign[] = [
         max: 15,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -80,8 +80,8 @@ export const campaignStubs: Campaign[] = [
         max: 15,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -127,8 +127,8 @@ export const campaignStubs: Campaign[] = [
         max: 15,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,

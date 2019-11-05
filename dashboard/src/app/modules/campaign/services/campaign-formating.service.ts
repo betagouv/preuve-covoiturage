@@ -17,6 +17,7 @@ import {
   RetributionRuleType,
 } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import {
+  BlackListGlobalRetributionRule,
   DistanceRangeGlobalRetributionRule,
   GlobalRetributionRuleInterface,
   GlobalRetributionRulesSlugEnum,
@@ -24,11 +25,12 @@ import {
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
   OnlyAdultRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
   RestrictionRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
+  WhiteListGlobalRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import {
   RestrictionUxInterface,
@@ -38,6 +40,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { UiStatusInseeFilterInterface, UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -60,6 +63,10 @@ export class CampaignFormatingService {
       filters: {
         rank: [],
         time: [],
+        insee: {
+          whiteList: [],
+          blackList: [],
+        },
         weekday: [],
         operator_ids: [],
         distance_range: [0, 0],
@@ -104,10 +111,10 @@ export class CampaignFormatingService {
         }));
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS) {
-        campaignUx.filters.operator_ids = <OperatorIdsRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.operator_ids = <OperatorIdsGlobalRetributionRule['parameters']>retributionRule.parameters;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
-        campaignUx.filters.rank = <RankRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.rank = <RankGlobalRetributionRule['parameters']>retributionRule.parameters;
       }
 
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION) {
@@ -119,6 +126,17 @@ export class CampaignFormatingService {
         });
       }
     });
+
+    // INSEE FILTER
+    if (campaign.ui_status.insee_filter && campaign.ui_status.insee_filter.whiteList) {
+      campaignUx.filters.insee.whiteList = campaign.ui_status.insee_filter.whiteList;
+    }
+
+    if (campaign.ui_status.insee_filter && campaign.ui_status.insee_filter.blackList) {
+      campaignUx.filters.insee.blackList = campaign.ui_status.insee_filter.blackList;
+    }
+
+    // todo: verify values correspond to values to what is defind in global rules
 
     // RETRIBUTION RULES
     const retributions: RetributionUxInterface[] = [];
@@ -225,6 +243,8 @@ export class CampaignFormatingService {
   }
 
   public toCampaignFormat(campaignUx: CampaignUx): Campaign {
+    console.log({ campaignUx });
+
     const {
       _id,
       name,
@@ -245,7 +265,7 @@ export class CampaignFormatingService {
 
     // GLOBAL RULES
     const campaignGlobalRetributionRules: GlobalRetributionRuleType[] = [];
-    campaignGlobalRetributionRules.push(new RankRetributionRule(campaignUx.filters.rank));
+    campaignGlobalRetributionRules.push(new RankGlobalRetributionRule(campaignUx.filters.rank));
     if (campaignUx.filters.time.length > 0) {
       campaignGlobalRetributionRules.push(
         new TimeRetributionRule(
@@ -257,13 +277,37 @@ export class CampaignFormatingService {
       );
     }
     campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
-    campaignGlobalRetributionRules.push(new OperatorIdsRetributionRule(campaignUx.filters.operator_ids));
+    campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
     campaignGlobalRetributionRules.push(
       new DistanceRangeGlobalRetributionRule({
         min: filters.distance_range[0] ? Number(filters.distance_range[0]) * 1000 : filters.distance_range[0],
         max: filters.distance_range[1] ? Number(filters.distance_range[1]) * 1000 : filters.distance_range[1],
       }),
     );
+
+    // save ui status of territory names associated with insee
+    const uiStatus: UiStatusInterface = {
+      ...ui_status,
+      insee_filter: filters.insee,
+    };
+
+    // WHITELIST
+    if (filters.insee.whiteList.length > 0) {
+      filters.insee.whiteList.forEach((insees) => {
+        const startInsees = insees.start.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        const endInsees = insees.end.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        campaignGlobalRetributionRules.push(new WhiteListGlobalRetributionRule(startInsees, endInsees));
+      });
+    }
+
+    // BLACKLIST
+    if (filters.insee.blackList.length > 0) {
+      filters.insee.blackList.forEach((insees) => {
+        const startInsees = insees.start.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        const endInsees = insees.end.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        campaignGlobalRetributionRules.push(new BlackListGlobalRetributionRule(startInsees, endInsees));
+      });
+    }
 
     if (max_amount) {
       campaignGlobalRetributionRules.push(new MaxAmountRetributionRule(max_amount));
@@ -381,7 +425,7 @@ export class CampaignFormatingService {
       status,
       unit,
       parent_id,
-      ui_status,
+      ui_status: uiStatus,
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
       // format dates : moment --> Date
