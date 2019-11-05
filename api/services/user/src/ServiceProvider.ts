@@ -24,7 +24,7 @@ import { forgottenPassword } from './shared/user/forgottenPassword.schema';
 import { list } from './shared/user/list.schema';
 import { login } from './shared/user/login.schema';
 import { patch } from './shared/user/patch.schema';
-import { register } from './shared/user/register.schema';
+// import { register } from './shared/user/register.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
@@ -43,7 +43,7 @@ import {
   MeUserAction,
   NotifyUserAction,
   PatchUserAction,
-  RegisterUserAction,
+  // RegisterUserAction,
   SendConfirmEmailUserAction,
   SendInvitationEmailUserAction,
 } from './actions';
@@ -66,7 +66,7 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
     ['user.list', list],
     ['user.login', login],
     ['user.patch', patch],
-    ['user.register', register],
+    // ['user.register', register],
     ['user.sendConfirmEmail', sendConfirmEmail],
   ],
   middlewares: [
@@ -92,7 +92,7 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
     MeUserAction,
     NotifyUserAction,
     PatchUserAction,
-    RegisterUserAction,
+    // RegisterUserAction,
     SendConfirmEmailUserAction,
     SendInvitationEmailUserAction,
   ],

@@ -1,5 +1,5 @@
 import http from 'http';
-import express from 'express';
+import express, { Response } from 'express';
 import expressSession from 'express-session';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -18,6 +18,7 @@ import {
   EnvInterfaceResolver,
   RPCSingleCallType,
   UnauthorizedException,
+  RPCResponseType,
   InvalidRequestException,
 } from '@ilos/common';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
@@ -193,7 +194,7 @@ export class HttpTransport implements TransportInterface {
         const response = await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
 
         if (mapStatusCode(response) >= 400) {
-          console.log('[error - acq-v1]', (response as any).error);
+          console.log('[error - acq-v1]', this.parseErrorData(response));
         }
 
         // warn the user about this endpoint deprecation agenda
@@ -206,7 +207,7 @@ export class HttpTransport implements TransportInterface {
             warning,
             supported_until: '2020-01-01T00:00:00Z',
           },
-          data: response,
+          data: this.parseErrorData(response),
         });
       }),
     );
@@ -219,10 +220,10 @@ export class HttpTransport implements TransportInterface {
         const response = await this.kernel.handle(makeCall('acquisition:create', req.body, { user }));
 
         if (mapStatusCode(response) >= 400) {
-          console.log('[error - acq-v2]', (response as any).error);
+          console.log('[error - acq-v2]', this.parseErrorData(response));
         }
 
-        res.status(mapStatusCode(response)).json(response);
+        this.send(res, response);
       }),
     );
   }
@@ -237,10 +238,10 @@ export class HttpTransport implements TransportInterface {
         const response = await this.kernel.handle(makeCall('user:login', req.body));
 
         if (!response || Array.isArray(response) || 'error' in response) {
-          res.status(mapStatusCode(response)).json(response);
+          res.status(mapStatusCode(response)).json(this.parseErrorData(response));
         } else {
           req.session.user = Array.isArray(response) ? response[0].result : response.result;
-          res.status(mapStatusCode(response)).json(response);
+          this.send(res, response);
         }
       }),
     );
@@ -281,7 +282,8 @@ export class HttpTransport implements TransportInterface {
           method: 'user:forgottenPassword',
           params: { email: req.body.email },
         });
-        res.status(mapStatusCode(response)).json(response);
+
+        this.send(res, response);
       }),
     );
 
@@ -297,7 +299,8 @@ export class HttpTransport implements TransportInterface {
           method: 'user:checkForgottenToken',
           params: { email: req.body.email, forgotten_token: req.body.token },
         });
-        res.status(mapStatusCode(response)).json(response);
+
+        this.send(res, response);
       }),
     );
 
@@ -313,7 +316,8 @@ export class HttpTransport implements TransportInterface {
           method: 'user:changePasswordWithToken',
           params: { email: req.body.email, forgotten_token: req.body.token, password: req.body.password },
         });
-        res.status(mapStatusCode(response)).json(response);
+
+        this.send(res, response);
       }),
     );
 
@@ -329,7 +333,8 @@ export class HttpTransport implements TransportInterface {
           method: 'user:confirmEmail',
           params: { email: req.body.email, forgotten_token: req.body.token },
         });
-        res.status(mapStatusCode(response)).json(response);
+
+        this.send(res, response);
       }),
     );
   }
@@ -360,7 +365,7 @@ export class HttpTransport implements TransportInterface {
         });
 
         if ('error' in (response as any)) {
-          return res.status(mapStatusCode(response)).json(response);
+          return this.send(res, response);
         }
 
         const application = (response as any).result;
@@ -440,7 +445,7 @@ export class HttpTransport implements TransportInterface {
           const response = await this.kernel.handle(req.body);
 
           // send the response
-          res.status(mapStatusCode(response)).json(response);
+          this.send(res, response);
         },
       ),
     );
@@ -448,5 +453,35 @@ export class HttpTransport implements TransportInterface {
 
   private start(port: number = 8080) {
     this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
+  }
+
+  /**
+   * Send the response to the client
+   */
+  private send(res: Response, response: RPCResponseType): void {
+    res.status(mapStatusCode(response)).json(this.parseErrorData(response));
+  }
+
+  /**
+   * Parse JSON payloads passed to the error.data object
+   * clean up data key to avoid leaks and reduce size
+   */
+  private parseErrorData(response): RPCResponseType {
+    if (!('error' in response) || !('data' in response.error)) return response;
+    if (typeof response.error.data !== 'string') return response;
+
+    try {
+      const parsed = JSON.parse(response.error.data);
+      const cleaned = (Array.isArray(parsed) ? parsed : [parsed]).map((d) => {
+        delete d.data;
+        return d;
+      });
+
+      response.error.data = cleaned;
+    } catch (e) {
+      console.log('parseErrorData', e.message);
+    }
+
+    return response;
   }
 }
