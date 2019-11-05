@@ -286,11 +286,13 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       'hour',
     ].filter((key) => key in filters);
 
-    if (filtersToProcess.length === 0) {
-      return;
-    }
+    let orderedFilters = {
+      text: [],
+      values: [],
+    };
 
-    const orderedFilters = filtersToProcess
+    if (filtersToProcess.length > 0) {
+      orderedFilters = filtersToProcess
       .map((key) => ({ key, value: filters[key] }))
       .map((filter) => {
         switch (filter.key) {
@@ -377,8 +379,11 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           values: [],
         },
       );
+    }
 
-    const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
+    orderedFilters.text.push('is_driver = false');
+
+    const whereClauses = orderedFilters.text.length > 0 ? `WHERE ${orderedFilters.text.join(' AND ')}` : '';
     const whereClausesValues = orderedFilters.values;
 
     return {
