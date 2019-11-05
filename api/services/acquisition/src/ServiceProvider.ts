@@ -10,6 +10,7 @@ import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
+import { LogAction } from './actions/LogAction';
 
 @serviceProvider({
   config: __dirname,
@@ -18,7 +19,7 @@ import { CreateJourneyAction } from './actions/CreateJourneyAction';
   validator: [['journey.createLegacy', createLegacy], ['journey.create', create]],
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
-  handlers: [CreateJourneyLegacyAction, CreateJourneyAction],
+  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

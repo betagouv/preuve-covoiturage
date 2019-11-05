@@ -192,6 +192,10 @@ export class HttpTransport implements TransportInterface {
 
         const response = await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
 
+        if (mapStatusCode(response) >= 400) {
+          console.log('[error - acq-v1]', (response as any).error);
+        }
+
         // warn the user about this endpoint deprecation agenda
         // https://github.com/betagouv/preuve-covoiturage/issues/383
         const warning =
@@ -213,6 +217,11 @@ export class HttpTransport implements TransportInterface {
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
         const response = await this.kernel.handle(makeCall('acquisition:create', req.body, { user }));
+
+        if (mapStatusCode(response) >= 400) {
+          console.log('[error - acq-v2]', (response as any).error);
+        }
+
         res.status(mapStatusCode(response)).json(response);
       }),
     );
