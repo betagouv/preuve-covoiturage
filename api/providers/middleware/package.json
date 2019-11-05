@@ -19,7 +19,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.0",
     "@types/chai-as-promised": "^7.1.0",
     "@types/json-schema": "^7.0.3",
     "@types/mocha": "^5.2.6",

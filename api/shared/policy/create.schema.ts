@@ -8,13 +8,13 @@ export const schema = {
   required: ['territory_id', 'name', 'start', 'end', 'unit', 'status', 'rules', 'global_rules'],
   properties: {
     parent_id: {
-      macro: 'objectid',
+      macro: 'dbid',
     },
     ui_status: {
       type: 'object',
     },
     territory_id: {
-      macro: 'objectid',
+      macro: 'dbid',
     },
     name: {
       type: 'string',

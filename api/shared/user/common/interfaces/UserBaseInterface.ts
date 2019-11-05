@@ -3,8 +3,8 @@ export interface UserBaseInterface {
   firstname: string;
   lastname: string;
   phone?: string;
-  group: string;
+  group: string; // computed prop
   role: string;
-  operator?: string;
-  territory?: string;
+  operator_id?: string;
+  territory_id?: string;
 }

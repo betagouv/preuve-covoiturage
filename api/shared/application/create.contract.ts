@@ -1,15 +1,15 @@
 import { ApplicationInterface } from './common/interfaces/ApplicationInterface';
 
 export interface ParamsInterface {
-  operator_id: string;
   name: string;
-  permissions: string[];
+  owner_id?: string;
+  owner_service?: string;
+  permissions?: string[];
 }
 
-export interface ResultInterface {
-  token: string;
-  application: ApplicationInterface;
-}
+export interface ResultInterface extends ApplicationInterface {}
+
+export type RepositoryInterface = Required<ParamsInterface>;
 
 export const handlerConfig = {
   service: 'application',

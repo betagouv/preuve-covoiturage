@@ -7,7 +7,7 @@ export const patchContacts = {
   required: ['_id', 'patch'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'objectid' },
+    _id: { macro: 'dbid' },
     patch: contacts,
   },
 };

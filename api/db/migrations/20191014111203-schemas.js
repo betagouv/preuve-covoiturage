@@ -4,6 +4,7 @@ var { createMigration } = require('../helpers/createMigration');
 var { setup, up, down } = createMigration(
   [
     'acquisition/000_create_acquisition_schema',
+    'application/000_create_application_schema',
     'auth/000_create_auth_schema',
     'carpool/000_create_carpool_schema',
     'common/000_create_common_schema',

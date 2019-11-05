@@ -5,6 +5,6 @@ export const deleteTerritory = {
   required: ['_id'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'objectid' },
+    _id: { macro: 'dbid' },
   },
 };

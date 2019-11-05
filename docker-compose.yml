@@ -128,7 +128,6 @@ services:
       - back
     depends_on:
       - redis
-
 networks:
   front:
   back:

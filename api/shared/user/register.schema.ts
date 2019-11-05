@@ -10,8 +10,8 @@ export const register = {
     phone: { macro: 'phone' },
     group: { macro: 'group' },
     role: { macro: 'role' },
-    operator: { macro: 'objectid' },
-    territory: { macro: 'objectid' },
+    operator: { macro: 'dbid' },
+    territory: { macro: 'dbid' },
     password: { macro: 'password' },
   },
   allOf: [

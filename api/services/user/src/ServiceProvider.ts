@@ -2,11 +2,10 @@ import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
-import { MongoConnection } from '@ilos/connection-mongo';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { NotificationExtension } from '@pdc/provider-notification';
-
+import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   ScopeToSelfMiddleware,
   ContentBlacklistMiddleware,
@@ -27,11 +26,8 @@ import { login } from './shared/user/login.schema';
 import { patch } from './shared/user/patch.schema';
 // import { register } from './shared/user/register.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
-
-import { UserRepositoryProvider } from './providers/UserRepositoryProvider';
-import { ForgottenTokenValidatorProvider } from './providers/ForgottenTokenValidatorProvider';
+import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
-
 import {
   ChangePasswordUserAction,
   ChangePasswordWithTokenUserAction,
@@ -51,10 +47,12 @@ import {
   SendConfirmEmailUserAction,
   SendInvitationEmailUserAction,
 } from './actions';
+import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
+import { UserNotificationProvider } from './providers/UserNotificationProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [UserRepositoryProvider, CryptoProvider, ForgottenTokenValidatorProvider],
+  providers: [UserPgRepositoryProvider, CryptoProvider, AuthRepositoryProvider, UserNotificationProvider],
   validator: [
     ['user.changePassword', changePassword],
     ['user.changePasswordWithToken', changePasswordWithToken],
@@ -78,7 +76,7 @@ import {
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
   ],
-  connections: [[MongoConnection, 'mongo']],
+  connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [
     ChangePasswordUserAction,
     ChangePasswordWithTokenUserAction,

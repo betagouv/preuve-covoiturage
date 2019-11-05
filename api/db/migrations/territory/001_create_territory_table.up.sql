@@ -21,3 +21,10 @@ CREATE TABLE IF NOT EXISTS territory.territories
 );
 
 CREATE UNIQUE INDEX ON territory.territories (siret);
+
+CREATE TABLE IF NOT EXISTS territory.insee (
+  _id varchar primary key,
+  territory_id  integer REFERENCES territory.territories (_id) NOT NULL
+);
+
+CREATE INDEX ON territory.insee (territory_id);

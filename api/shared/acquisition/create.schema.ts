@@ -9,7 +9,7 @@ export const create = {
   additionalProperties: false,
   properties: {
     journey_id: { macro: 'varchar' },
-    operator_id: { macro: 'objectid' },
+    operator_id: { macro: 'dbid' },
     operator_journey_id: { macro: 'varchar' },
     operator_class: { enum: ['A', 'B', 'C'] },
     passenger: passengerSchema,

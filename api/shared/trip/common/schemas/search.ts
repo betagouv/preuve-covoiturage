@@ -87,14 +87,14 @@ export const search = {
       type: 'array',
       minItems: 1,
       items: {
-        macro: 'objectid',
+        macro: 'dbid',
       },
     },
     territory_id: {
       type: 'array',
       minItems: 1,
       items: {
-        macro: 'objectid',
+        macro: 'dbid',
       },
     },
     skip: {

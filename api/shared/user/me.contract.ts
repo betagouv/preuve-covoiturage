@@ -1,13 +1,8 @@
-import { UserBaseInterface } from './common/interfaces/UserBaseInterface';
-
-interface User extends UserBaseInterface {
-  _id: string;
-  permissions: string[];
-}
+import { UserInterface } from './common/interfaces/UserInterface';
 
 export type ParamsInterface = void;
 
-export interface ResultInterface extends User {}
+export interface ResultInterface extends UserInterface {}
 
 export const configHandler = {
   service: 'user',
