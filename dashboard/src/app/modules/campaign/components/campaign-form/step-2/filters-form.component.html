@@ -69,6 +69,8 @@
           ></nouislider>
         </div>
       </mat-expansion-panel>
+
+      <!--      INSEE -->
       <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.insee.touched && !controls.insee.valid }">
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -104,6 +106,8 @@
           </mat-tab>
         </mat-tab-group>
       </mat-expansion-panel>
+
+      <!--      RANKS -->
       <mat-expansion-panel [ngClass]="{ 'mat-expansion-panel-error': controls.rank.touched && !controls.rank.valid }">
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
           <mat-panel-title>

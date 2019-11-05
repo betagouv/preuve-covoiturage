@@ -27,6 +27,7 @@ export class CampaignUx {
   public restrictions: RestrictionUxInterface[];
   public retributions: RetributionUxInterface[];
 
+  // todo: don't use ui_status in campaignUx
   public ui_status: {
     expert_mode?: boolean;
     staggered: boolean;
