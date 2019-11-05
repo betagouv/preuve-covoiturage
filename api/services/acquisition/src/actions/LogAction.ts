@@ -8,15 +8,17 @@ import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
   method: 'log',
 })
 export class LogAction extends AbstractAction {
-  constructor(
-    private mongo: MongoConnection,
-    private config: ConfigInterfaceResolver,
-    private tokenProvider: TokenProviderInterfaceResolver,
-  ) {
+  private mongo: MongoConnection;
+
+  constructor(private config: ConfigInterfaceResolver, private tokenProvider: TokenProviderInterfaceResolver) {
     super();
   }
 
   protected async handle(params: { req: any }, context: ContextType): Promise<void> {
+    this.mongo = new MongoConnection({
+      connectionString: this.config.get('connections.mongo.connectionString'),
+    });
+
     if (
       !process.env.REQLOG ||
       !context.channel.metadata.internal ||
