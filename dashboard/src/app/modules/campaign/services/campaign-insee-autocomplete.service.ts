@@ -26,12 +26,13 @@ export class CampaignInseeAutocompleteService {
       map((response: any) =>
         response.features
           .filter((el) => _.get(el, 'properties.citycode', null))
-          .map((el) => {
-            return <InseeAndTerritoryInterface>{
-              territory_literal: _.get(el, 'properties.name'),
-              insees: [_.get(el, 'properties.citycode')],
-            };
-          }),
+          .map(
+            (el) =>
+              <InseeAndTerritoryInterface>{
+                territory_literal: _.get(el, 'properties.name'),
+                insees: [_.get(el, 'properties.citycode')],
+              },
+          ),
       ),
     );
   }

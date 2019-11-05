@@ -1,37 +1,39 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
+import { MatPaginator, MatTabChangeEvent, MatTabGroup, MatTabLabel } from '@angular/material';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { DialogService } from '~/core/services/dialog.service';
 
 @Component({
   selector: 'app-filters-form',
   templateUrl: './filters-form.component.html',
   styleUrls: ['./filters-form.component.scss', '../campaign-sub-form.scss'],
 })
-export class FiltersFormComponent extends DestroyObservable implements OnInit {
+export class FiltersFormComponent extends DestroyObservable implements OnInit, AfterViewInit {
   @Input() campaignForm: FormGroup;
 
   tripClassKeys = Object.keys(TripRankEnum);
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE_KM;
   selectedInseeFilterTabIndex;
 
-  constructor(private _formBuilder: FormBuilder) {
+  @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
+
+  constructor(private _formBuilder: FormBuilder, private _dialog: DialogService) {
     super();
   }
 
   ngOnInit() {
     this.initTargetChangeDetection();
-    if (this.hasInseeWhiteList) {
-      this.selectedInseeFilterTabIndex = 1;
-    } else if (this.hasInseeBlackList) {
-      this.selectedInseeFilterTabIndex = 0;
-    } else {
-      this.selectedInseeFilterTabIndex = 0;
-    }
+    // this.initInseeTabChangeDetection();
+  }
+
+  ngAfterViewInit() {
+    this.initSelectedInseeFilterTabIndex();
   }
 
   get filtersForm(): FormGroup {
@@ -68,6 +70,14 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
 
   removeTimeFilter(idx) {
     this.timeCtrlArray.removeAt(idx);
+  }
+
+  get whiteListFormArray(): FormArray {
+    return <FormArray>this.InseeForm.get('whiteList');
+  }
+
+  get blackListFormArray(): FormArray {
+    return <FormArray>this.InseeForm.get('blackList');
   }
 
   get hasInseefilter() {
@@ -222,5 +232,40 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit {
         this.forDriverControl.setValue(false);
       }
     });
+  }
+
+  private initSelectedInseeFilterTabIndex() {
+    if (this.hasInseeWhiteList) {
+      this.inseeFilterTabGroup.selectedIndex = 1;
+      this.selectedInseeFilterTabIndex = 1;
+    } else if (this.hasInseeBlackList) {
+      this.inseeFilterTabGroup.selectedIndex = 0;
+      this.selectedInseeFilterTabIndex = 0;
+    } else {
+      this.inseeFilterTabGroup.selectedIndex = 0;
+      this.selectedInseeFilterTabIndex = 0;
+    }
+  }
+
+  selectedInseeFilterTabIndexChange(nextIndex: 0 | 1) {
+    if (nextIndex === this.selectedInseeFilterTabIndex) return;
+    if ((nextIndex === 0 && this.hasInseeWhiteList) || (nextIndex === 1 && this.hasInseeBlackList)) {
+      this.inseeFilterTabGroup.selectedIndex = nextIndex === 1 ? 0 : 1;
+      const title = 'Changement de type de filtre';
+      const message = 'Attention, les données seront supprimées.';
+      this._dialog
+        .confirm(title, message, 'Confirmer')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((result) => {
+          if (result) {
+            this.whiteListFormArray.clear();
+            this.blackListFormArray.clear();
+            this.inseeFilterTabGroup.selectedIndex = nextIndex;
+            this.selectedInseeFilterTabIndex = nextIndex;
+          }
+        });
+    } else {
+      this.selectedInseeFilterTabIndex = nextIndex;
+    }
   }
 }

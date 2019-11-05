@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatPaginatorModule } from '@angular/material';
 
 import { MaterialModule } from '~/shared/modules/material/material.module';
 import { FormModule } from '~/shared/modules/form/form.module';
