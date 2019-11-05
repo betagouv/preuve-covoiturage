@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS operator.operators
 (
   _id serial primary key,
-  
+
   name varchar NOT NULL,
   legal_name varchar NOT NULL,
   siret varchar NOT NULL,
@@ -19,4 +19,4 @@ CREATE TABLE IF NOT EXISTS operator.operators
   deleted_at timestamp
 );
 
-CREATE UNIQUE INDEX ON operator.operators (siret);
+CREATE INDEX ON operator.operators (siret);
