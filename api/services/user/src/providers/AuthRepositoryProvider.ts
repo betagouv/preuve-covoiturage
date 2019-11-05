@@ -211,7 +211,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     if (!token || (await this.cryptoProvider.compareForgottenToken(clearToken, token))) {
       return false;
     }
-    
+
     if (!token_expires_at || token_expires_at.getTime() - Date.now() <= 0) {
       return false;
     }
