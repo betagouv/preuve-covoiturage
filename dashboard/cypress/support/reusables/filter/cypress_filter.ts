@@ -72,7 +72,7 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('chooses status: en cours', () => {
-    cy.wait(500); // searches is mat-select-panel from ranks
+    cy.wait(700); // searches is mat-select-panel from ranks
     cy.get('.filter-trip-types mat-form-field:nth-child(2)').click();
     cy.get('.mat-select-panel mat-option:first-child').click();
   });
