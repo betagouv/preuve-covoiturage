@@ -15,7 +15,6 @@ import {
 import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
 import { CypressExpectedTemplates } from '../../apiValues/expectedTemplates';
-import { stubCampaignTemplateList } from '../../stubs/campaign/campaign-template.list';
 
 export function cypress_campaignCreateFromTemplate(templateIndex: number, e2e = false) {
   it('clicks on campaign section', () => {
