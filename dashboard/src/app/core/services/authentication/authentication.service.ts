@@ -1,6 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, shareReplay, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { first, map, shareReplay, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -14,6 +14,7 @@ import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Injectable({
   providedIn: 'root',
@@ -55,11 +56,7 @@ export class AuthenticationService {
         }
         return new User(data);
       }),
-      catchError((errorResponse) => {
-        if (errorResponse.status === 401) return of(null);
-
-        throw errorResponse;
-      }),
+      catchHttpStatus(401, (err) => null),
       shareReplay(),
     );
   }
@@ -89,12 +86,7 @@ export class AuthenticationService {
 
   public login(email: string, password: string) {
     return this.call('login', { email, password }).pipe(
-      catchError((response) => {
-        if (response.status === 401) {
-          return of(null);
-        }
-        return throwError(response);
-      }),
+      catchHttpStatus(401, (err) => null),
       map((loginPayload) => {
         if (loginPayload && loginPayload.result && loginPayload.result.data) {
           return loginPayload.result.data;

@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-forgotten-password',
@@ -33,20 +34,20 @@ export class ForgottenPasswordComponent extends DestroyObservable implements OnI
   sendEmail() {
     this.authService
       .sendForgottenPasswordEmail(this.forgottenPasswordForm.controls.email.value)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchHttpStatus(404, (err) => {
+          this.toastr.error("Cette adresse Email n'est pas valide");
+          throw err;
+        }),
+      )
       .subscribe(
         (data) => {
           this.router.navigate(['/login']).then(() => {
             this.toastr.success('Un lien de changement de mot de passe vous a été envoyé');
           });
         },
-        (error) => {
-          if ('message' in error) {
-            this.toastr.error(error.message);
-          } else {
-            this.toastr.error('Une erreur est survenue');
-          }
-        },
+        (err) => console.error(err),
       );
   }
 }
