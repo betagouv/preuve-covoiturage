@@ -1,10 +1,6 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-
 import {
   DistanceRangeGlobalRetributionRule,
-  MaxAmountRetributionRule,
-  MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
   RankRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
@@ -13,34 +9,39 @@ import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface'
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
-
-import { operatorStubs } from '../operator/operator.list';
+import {
+  AmountRetributionRule,
+  ForDriverRetributionRule,
+  ForPassengerRetributionRule,
+  FreeRetributionRule,
+  PerKmRetributionRule,
+  PerPassengerRetributionRule,
+} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 
 export const campaignTemplateStubs: TemplateInterface[] = [
   {
     _id: '5d6930724f56e6e1d0654543',
-    parent_id: '5d6930724f56e6e1d0654542',
+    parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
-    name: 'Encourager le covoiturage',
-    description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
+    name: 'Encourager financièrement le covoiturage',
+    description: "Campagne d'incitation financière au covoiturage à destination des conducteurs et des passagers.",
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
-      new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new DistanceRangeGlobalRetributionRule({
-        min: 0,
-        max: 15,
+        min: 2000,
+        max: 150000,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
-      new TimeRetributionRule([
-        {
-          start: 8,
-          end: 19,
-        },
-      ]),
     ],
-    rules: [],
+    rules: [
+      [new ForPassengerRetributionRule(), new AmountRetributionRule(10), new PerKmRetributionRule()],
+      [
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerPassengerRetributionRule(),
+        new PerKmRetributionRule(),
+      ],
+    ],
     ui_status: {
       for_driver: true,
       for_passenger: true,
@@ -53,28 +54,67 @@ export const campaignTemplateStubs: TemplateInterface[] = [
   },
   {
     _id: '5d69319a9763dc801ea78de6',
-    parent_id: '5d69319a9763dc801ea78de7',
+    parent_id: null,
+    status: CampaignStatusEnum.TEMPLATE,
+    name: 'Récompenser le covoiturage',
+    description:
+      "Campagne d'incitation basée sur un système de gratification par points donnant accès à un catalogue de récompenses (place de parking, place de piscine, composteur, etc.)",
+    global_rules: [
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
+      new DistanceRangeGlobalRetributionRule({
+        min: 2000,
+        max: 150000,
+      }),
+    ],
+    rules: [
+      [new ForPassengerRetributionRule(), new AmountRetributionRule(100), new PerKmRetributionRule()],
+      [
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(100),
+        new PerPassengerRetributionRule(),
+        new PerKmRetributionRule(),
+      ],
+    ],
+    ui_status: {
+      for_driver: true,
+      for_passenger: true,
+      for_trip: false,
+      staggered: false,
+    },
+    start: null,
+    end: null,
+    unit: IncentiveUnitEnum.POINT,
+  },
+  {
+    _id: '5d69319a9763dc801ea78de4',
+    parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Limiter le trafic en semaine',
-    description: 'Fusce vehicula dolor arcu, sit amet blandit dolor mollis.',
+    description: "Campagne d'incitation pour limiter le trafic en semaine.",
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
-      new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
-      new DistanceRangeGlobalRetributionRule({
-        min: 0,
-        max: 15,
-      }),
-      new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new WeekdayRetributionRule([0, 1, 2, 3, 4]),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
       new TimeRetributionRule([
         {
-          start: 8,
-          end: 19,
+          start: 6,
+          end: 20,
         },
       ]),
+      new DistanceRangeGlobalRetributionRule({
+        min: 2000,
+        max: 150000,
+      }),
     ],
-    rules: [],
+    rules: [
+      [new ForPassengerRetributionRule(), new AmountRetributionRule(10), new PerKmRetributionRule()],
+      [
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerPassengerRetributionRule(),
+        new PerKmRetributionRule(),
+      ],
+    ],
     ui_status: {
       for_driver: true,
       for_passenger: true,
@@ -86,31 +126,129 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     unit: IncentiveUnitEnum.EUR,
   },
   {
-    _id: '5d69319a9763dc801ea78de4',
-    parent_id: '5d69319a9763dc801ea78d18',
+    _id: '5d69319a9763dc801ea78iou',
+    parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Limiter la pollution',
-    description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
+    description:
+      "Campagne d'incitation financière activable en cas de pic de pollution pour encourager le covoiturage.",
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
-      new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
-      new DistanceRangeGlobalRetributionRule({
-        min: 0,
-        max: 15,
-      }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new DistanceRangeGlobalRetributionRule({
+        min: 2000,
+        max: 150000,
+      }),
+    ],
+    rules: [
+      [new ForPassengerRetributionRule(), new FreeRetributionRule()],
+      [
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerPassengerRetributionRule(),
+        new PerKmRetributionRule(),
+      ],
+    ],
+    ui_status: {
+      for_driver: true,
+      for_passenger: true,
+      for_trip: false,
+      staggered: false,
+    },
+    start: null,
+    end: null,
+    unit: IncentiveUnitEnum.EUR,
+  },
+  {
+    _id: '5d69319a9763dc801ea78pl9',
+    parent_id: null,
+    status: CampaignStatusEnum.TEMPLATE,
+    name: 'Limiter les embouteillages du week-end',
+    description:
+      "Campagne d'incitation financière pour limiter les embouteillages les week-end notamment en cas de chassé croisé. ",
+    global_rules: [
+      new WeekdayRetributionRule([4, 6]),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new DistanceRangeGlobalRetributionRule({
+        min: 2000,
+        max: 150000,
+      }),
       new TimeRetributionRule([
         {
-          start: 8,
-          end: 9,
+          start: 12,
+          end: 23,
         },
       ]),
     ],
-    rules: [],
+    rules: [
+      [
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerPassengerRetributionRule(),
+        new PerKmRetributionRule(),
+      ],
+    ],
     ui_status: {
       for_driver: true,
+      for_passenger: false,
+      for_trip: false,
+      staggered: false,
+    },
+    start: null,
+    end: null,
+    unit: IncentiveUnitEnum.EUR,
+  },
+  {
+    _id: '5d69319a9763dc801ea78fr6',
+    parent_id: null,
+    status: CampaignStatusEnum.TEMPLATE,
+    name: "Limiter le trafic lors d'un évènement ponctuel",
+    description: "Campagne d'incitation financière au covoiturage pour un événement ponctuel.",
+    global_rules: [
+      new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new DistanceRangeGlobalRetributionRule({
+        min: 2000,
+        max: 150000,
+      }),
+    ],
+    rules: [
+      [new ForPassengerRetributionRule(), new AmountRetributionRule(10), new PerKmRetributionRule()],
+      [
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerPassengerRetributionRule(),
+        new PerKmRetributionRule(),
+      ],
+    ],
+    ui_status: {
+      for_driver: true,
+      for_passenger: true,
+      for_trip: false,
+      staggered: false,
+    },
+    start: null,
+    end: null,
+    unit: IncentiveUnitEnum.EUR,
+  },
+  {
+    _id: '5d69319a9763dc801ea78ty6',
+    parent_id: null,
+    status: CampaignStatusEnum.TEMPLATE,
+    name: 'Gratuité du covoiturage pour les passagers',
+    description:
+      "Campagne d'incitation ou la participation financière du passager est pris en charge par la collectivité.",
+    global_rules: [
+      new RankRetributionRule([TripRankEnum.A, TripRankEnum.B, TripRankEnum.C]),
+      new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
+      new DistanceRangeGlobalRetributionRule({
+        min: 2000,
+        max: 150000,
+      }),
+    ],
+    rules: [[new ForPassengerRetributionRule(), new FreeRetributionRule()]],
+    ui_status: {
+      for_driver: false,
       for_passenger: true,
       for_trip: false,
       staggered: false,

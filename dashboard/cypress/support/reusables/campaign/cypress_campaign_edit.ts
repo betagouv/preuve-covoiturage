@@ -6,7 +6,8 @@ import {
   campaignSecondStepSelectTimeRange,
 } from './steps/campaign-create-second-step';
 import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
-import { testNotification } from '../notification.cypress';
+import { closeNotification } from '../notification.cypress';
+import { campaignFourthStepClickPreviousStep } from './steps/campaign-create-fourth-step';
 
 export function cypress_campaignEdit(e2e = false) {
   it('clicks on campaign section', () => {
@@ -17,6 +18,9 @@ export function cypress_campaignEdit(e2e = false) {
       '.draftList app-list-item:first-child .ListItem:first-child .CampaignsList-item-actions button:nth-child(2)',
     ).click();
   });
+
+  // click previous step
+  campaignFourthStepClickPreviousStep();
 
   // click previous step
   campaignThirdStepClickPreviousStep();
@@ -96,5 +100,5 @@ export function cypress_campaignEdit(e2e = false) {
     }
   });
 
-  testNotification();
+  closeNotification();
 }

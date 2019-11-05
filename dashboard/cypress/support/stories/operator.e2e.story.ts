@@ -10,13 +10,14 @@ import { operatorStub } from '../stubs/operator/operator.find';
 import { cypress_applications } from '../reusables/operator/application.cypress';
 
 export function operatorE2EStory() {
-  it('go to login page', () => {
-    cy.visit('/login');
-  });
-
-  it('Logges in', () => {
-    cypress_login('operator@example.com', 'admin1234');
-  });
+  cypress_login(
+    {
+      email: 'operator@example.com',
+      password: 'admin1234',
+      group: UserGroupEnum.OPERATOR,
+    },
+    true,
+  );
 
   // PROFILE
   describe('Profile update', () => {

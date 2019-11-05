@@ -7,17 +7,14 @@ import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { cypress_users } from '../reusables/user/users.cypress';
 
 export function registryE2EStory() {
-  it('go to login page', () => {
-    cy.visit('/login');
-  });
-
-  it('Logges in', () => {
-    cypress_login({
+  cypress_login(
+    {
       email: 'admin@example.com',
       password: 'admin1234',
       group: UserGroupEnum.REGISTRY,
-    });
-  });
+    },
+    true,
+  );
 
   // PROFILE UPDATE
   describe('Profile update', () => {

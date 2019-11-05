@@ -1,6 +1,5 @@
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
-import { cypress_login } from '../reusables/auth/cypress_login';
 import { cypress_filter } from '../reusables/filter/cypress_filter';
 import { cypress_campaignCreate } from '../reusables/campaign/cypress_campaign_create';
 import { cypress_campaignEdit } from '../reusables/campaign/cypress_campaign_edit';
@@ -10,6 +9,8 @@ import { territoryStub } from '../stubs/territory/territory.find';
 import { cypress_profile } from '../reusables/profile/cypress_profile';
 import { cypress_logging_users } from '../stubs/auth/login';
 import { cypress_logout } from '../reusables/auth/cypress_logout';
+import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypress_campaign_create_from_template';
+import { campaignTemplateStubs } from '../stubs/campaign/campaign-template.list';
 
 export function testTerritoryStory(
   profile = true,
@@ -18,6 +19,7 @@ export function testTerritoryStory(
   newcampaign = true,
   editcampaign = true,
   launchcampaign = true,
+  newFromTemplate = false,
 ) {
   // TEST PROFILE UPDATE
   if (profile) {
@@ -48,7 +50,7 @@ export function testTerritoryStory(
   }
 
   if (editcampaign) {
-    describe('Edit campaign', () => {
+    describe('Edit latest campaign', () => {
       cypress_campaignEdit();
     });
   }
@@ -57,6 +59,19 @@ export function testTerritoryStory(
     describe('Launch campaign', () => {
       cypress_campaignLaunch();
     });
+  }
+
+  if (newFromTemplate) {
+    const length = <number>campaignTemplateStubs.length;
+    for (let i = 0; i < length; i += 1) {
+      describe(`Create from template ${i + 1}`, () => {
+        cypress_campaignCreateFromTemplate(i);
+      });
+    }
+
+    // describe('Edit latest campaign from template', () => {
+    //   cypress_campaignEditCreatedFromTemplate(0);
+    // });
   }
 
   // LOGOUT

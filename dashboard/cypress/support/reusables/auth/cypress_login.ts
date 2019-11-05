@@ -6,18 +6,21 @@ import { stubMainLists } from '../../stubs/loadMainLists';
 import { stubStatList } from '../../stubs/stat/stat.list';
 import { stubCampaignList } from '../../stubs/campaign/campaign.list';
 
-export function cypress_login(loginData: { email: string; password: string; group: UserGroupEnum }) {
-  beforeEach(() => {
-    cy.server();
-    stubLogin(loginData.group);
-    stubMainLists(loginData.group);
-    stubStatList();
-    stubCampaignList();
-  });
+export function cypress_login(loginData: { email: string; password: string; group: UserGroupEnum }, e2e = false) {
+  if (!e2e) {
+    beforeEach(() => {
+      cy.server();
+      stubLogin(loginData.group);
+      stubMainLists(loginData.group);
+      stubStatList();
+      stubCampaignList();
+    });
+  }
 
   it('go to login page', () => {
-    stubUserMePermissionError();
-
+    if (!e2e) {
+      stubUserMePermissionError();
+    }
     cy.visit('/login');
   });
 
@@ -26,7 +29,9 @@ export function cypress_login(loginData: { email: string; password: string; grou
 
     cy.get('.Login mat-form-field:nth-child(2) input').type(loginData.password);
 
-    stubUserMe(loginData.group);
+    if (!e2e) {
+      stubUserMe(loginData.group);
+    }
 
     cy.get('.Login form > button').click();
 
