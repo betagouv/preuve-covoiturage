@@ -258,12 +258,12 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     if (!token || (await this.cryptoProvider.compareForgottenToken(clearToken, token))) {
       return false;
     }
-
-    await this.clearTokenByEmail(email, this.CONFIRMED_STATUS);
-
+    
     if (!token_expires_at || token_expires_at.getTime() - Date.now() <= 0) {
       return false;
     }
+
+    await this.clearTokenByEmail(email, this.CONFIRMED_STATUS);
 
     return true;
   }
@@ -335,7 +335,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
    * @returns {Promise<string>}
    * @memberof AuthRepositoryProvider
    */
-  async updateEmailById(id: string, email: string, status = this.UNCONFIRMED_STATUS): Promise<string> {
+  async updateEmailById(id: string, email: string, status: string = this.UNCONFIRMED_STATUS): Promise<string> {
     const token = await this.cryptoProvider.cryptToken(this.cryptoProvider.generateToken());
     const token_expires_at = this.getTokenExpiresAt(this.CONFIRMATION_TOKEN);
 

@@ -53,13 +53,10 @@ export class FindUserAction extends AbstractAction {
     switch (scope) {
       case 'territory':
         return this.userRepository.findByTerritory(params._id, context.call.user.territory_id);
-        break;
       case 'operator':
         return this.userRepository.findByOperator(params._id, context.call.user.operator_id);
-        break;
       case 'registry':
         return this.userRepository.find(params._id);
-        break;
     }
   }
 }
