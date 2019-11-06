@@ -478,9 +478,7 @@ export class HttpTransport implements TransportInterface {
       });
 
       response.error.data = cleaned;
-    } catch (e) {
-      console.log('parseErrorData', e.message);
-    }
+    } catch (e) {}
 
     return response;
   }
