@@ -412,10 +412,11 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           sum(distance)::int as distance,
           sum(carpoolers)::int as carpoolers,
           count(*)::int as trip,
-          count(*) FILTER (WHERE carpoolers_subsidized > 0)::int as trip_subsidized
+          '0'::int as trip_subsidized
         FROM data
         GROUP BY day
         ORDER BY day ASC`,
+        // '0'::int >> count(*) FILTER (WHERE carpoolers_subsidized > 0)::int as trip_subsidized
       values: [
         // casting to int ?
         ...(where ? where.values : []),
