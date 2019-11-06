@@ -45,10 +45,10 @@ export class MapIdCommand implements CommandInterface {
       this.db = mongo.getClient().db(options.db);
       this.pg = postgres.getClient();
 
-      // await this.fixAcquisition();
-      // await this.fixApplications();
-      // await this.fixOperators();
-      // await this.fixTerritories();
+      await this.fixAcquisition();
+      await this.fixApplications();
+      await this.fixOperators();
+      await this.fixTerritories();
 
       return '\n~~~ All IDs patched! ~~~';
     } catch (e) {
@@ -60,26 +60,38 @@ export class MapIdCommand implements CommandInterface {
     console.log('\n[fix acquisition]');
     const cursor = this.db.collection('safejourneys').find({});
 
-    // while (true) {
-    //   if (!(await cursor.hasNext())) break;
+    while (true) {
+      if (!(await cursor.hasNext())) break;
 
-    //   // get the new ID
-    //   const old = await cursor.next();
-    //   const results = await this.pg.query({
-    //     text: 'SELECT * FROM application.applications WHERE owner_id=$1 AND created_at=$2',
-    //     values: [old.operator_id.toString(), old.created_at],
-    //   });
+      // get the new ID
+      const old = await cursor.next();
+      const results = await this.pg.query({
+        text: 'SELECT * FROM acquisition.acquisitions WHERE journey_id=$1',
+        values: [old.journey_id.toString()],
+      });
 
-    //   if (results.rowCount === 0) continue;
-    //   const { _id } = results.rows[0];
+      if (results.rowCount === 0) continue;
+      const { _id } = results.rows[0];
 
-    //   // replace
-    //   console.log('acquisitions.application_id:', old._id.toString(), '->', _id);
-    //   await this.pg.query({
-    //     text: 'UPDATE acquisition.acquisitions SET application_id=$1 WHERE application_id=$2',
-    //     values: [_id, old._id.toString()],
-    //   });
-    // }
+      // replace
+      console.log('carpools.acquisition_id:\t', old._id.toString(), '->', _id);
+      await this.pg.query({
+        text: 'UPDATE carpool.carpools SET acquisition_id=$1 WHERE acquisition_id=$2',
+        values: [_id, old._id.toString()],
+      });
+
+      console.log('fraudchecks.acquisition_id:\t', old._id.toString(), '->', _id);
+      await this.pg.query({
+        text: 'UPDATE fraudcheck.fraudchecks SET acquisition_id=$1 WHERE acquisition_id=$2',
+        values: [_id, old._id.toString()],
+      });
+
+      console.log('incentives.acquisition_id:\t', old._id.toString(), '->', _id);
+      await this.pg.query({
+        text: 'UPDATE policy.incentives SET acquisition_id=$1 WHERE acquisition_id=$2',
+        values: [_id, old._id.toString()],
+      });
+    }
   }
 
   private async fixApplications(): Promise<void> {
@@ -92,15 +104,15 @@ export class MapIdCommand implements CommandInterface {
       // get the new ID
       const old = await cursor.next();
       const results = await this.pg.query({
-        text: 'SELECT * FROM application.applications WHERE owner_id=$1 AND created_at=$2',
-        values: [old.operator_id.toString(), old.created_at],
+        text: 'SELECT * FROM application.applications WHERE name=$1 AND created_at=$2',
+        values: [old.name, old.created_at],
       });
 
       if (results.rowCount === 0) continue;
       const { _id } = results.rows[0];
 
       // replace
-      console.log('acquisitions.application_id:', old._id.toString(), '->', _id);
+      console.log('acquisitions.application_id:\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE acquisition.acquisitions SET application_id=$1 WHERE application_id=$2',
         values: [_id, old._id.toString()],
@@ -126,25 +138,25 @@ export class MapIdCommand implements CommandInterface {
       const { _id } = results.rows[0];
 
       // replace
-      console.log('acquisitions.operator_id:', old._id.toString(), '->', _id);
+      console.log('acquisitions.operator_id:\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE acquisition.acquisitions SET operator_id=$1 WHERE operator_id=$2',
         values: [_id, old._id.toString()],
       });
 
-      console.log('applications.owner_id:', old._id.toString(), '->', _id);
+      console.log('applications.owner_id:\t\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE application.applications SET owner_id=$1 WHERE owner_id=$2',
         values: [_id, old._id.toString()],
       });
 
-      console.log('users.operator_id:', old._id.toString(), '->', _id);
+      console.log('users.operator_id:\t\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE auth.users SET operator_id=$1 WHERE operator_id=$2',
         values: [_id, old._id.toString()],
       });
 
-      console.log('carpools.operator_id:', old._id.toString(), '->', _id);
+      console.log('carpools.operator_id:\t\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE carpool.carpools SET operator_id=$1 WHERE operator_id=$2',
         values: [_id, old._id.toString()],
@@ -170,25 +182,25 @@ export class MapIdCommand implements CommandInterface {
       const { _id } = results.rows[0];
 
       // replace
-      console.log('users.territory_id:', old._id.toString(), '->', _id);
+      console.log('users.territory_id:\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE auth.users SET territory_id=$1 WHERE territory_id=$2',
         values: [_id, old._id.toString()],
       });
 
-      console.log('policies.territory_id:', old._id.toString(), '->', _id);
+      console.log('policies.territory_id:\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE policy.policies SET territory_id=$1 WHERE territory_id=$2',
         values: [_id, old._id.toString()],
       });
 
-      console.log('territories.parent_id:', old._id.toString(), '->', _id);
+      console.log('territories.parent_id:\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE territory.territories SET parent_id=$1 WHERE parent_id=$2',
         values: [_id, old._id.toString()],
       });
 
-      console.log('insee.territory_id:', old._id.toString(), '->', _id);
+      console.log('insee.territory_id:\t', old._id.toString(), '->', _id);
       await this.pg.query({
         text: 'UPDATE territory.insee SET territory_id=$1 WHERE territory_id=$2',
         values: [_id, old._id.toString()],
