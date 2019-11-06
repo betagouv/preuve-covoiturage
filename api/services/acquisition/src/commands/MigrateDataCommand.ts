@@ -48,10 +48,13 @@ export class MigrateDataCommand implements CommandInterface {
         {},
         {
           projection: {
-            '__v': 0 , duplicatedAt: 0, updatedAt: 0
-          }
+            __v: 0,
+            duplicatedAt: 0,
+            updatedAt: 0,
+          },
         },
-    );
+      );
+    // tslint:disable-next-line: no-constant-condition
     while (true) {
       if (!(await cursor.hasNext())) {
         break;
@@ -73,7 +76,7 @@ export class MigrateDataCommand implements CommandInterface {
           ],
         });
         console.log('ok!');
-      } catch(e) {
+      } catch (e) {
         console.error('error');
         console.log(e);
       }
