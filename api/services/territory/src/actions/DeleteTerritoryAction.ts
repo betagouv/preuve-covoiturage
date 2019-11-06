@@ -16,6 +16,5 @@ export class DeleteTerritoryAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     await this.territoryRepository.delete(params._id);
-    return true;
   }
 }
