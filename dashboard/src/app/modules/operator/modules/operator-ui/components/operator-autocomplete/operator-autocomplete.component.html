@@ -6,7 +6,7 @@
   <!--  </mat-form-field>-->
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOperatorSelect($event)">
     <mat-option *ngFor="let operator of filteredOperators | async" [value]="operator._id">
-      {{ operator.nom_commercial }}
+      {{ operator.name }}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

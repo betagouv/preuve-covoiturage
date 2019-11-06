@@ -42,7 +42,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     this.selectedOperator = this.operators
       ? this.operators.find((foperator) => this.selectedOperatorId === foperator._id)
       : null;
-    this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : '');
+    this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.name : '');
 
     const val = this.parentForm.getRawValue();
     const newVal = this.selectedOperator ? this.selectedOperator._id : null;
@@ -76,14 +76,14 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   private filter(value: string): Operator[] {
     return this.operators
-      ? this.operators.filter((operator) => operator.nom_commercial.toLowerCase().includes(value.toLowerCase()))
+      ? this.operators.filter((operator) => operator.name.toLowerCase().includes(value.toLowerCase()))
       : null;
   }
 
   inputLostFocus() {
     clearTimeout(this.focusDebounceTimer);
     this.focusDebounceTimer = setTimeout(
-      () => this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : ''),
+      () => this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.name : ''),
       300,
     );
   }

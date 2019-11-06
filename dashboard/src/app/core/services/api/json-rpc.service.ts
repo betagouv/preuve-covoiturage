@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 interface RPCOptions {
   headers?:

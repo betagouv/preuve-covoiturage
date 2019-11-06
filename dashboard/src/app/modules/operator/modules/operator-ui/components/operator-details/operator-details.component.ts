@@ -36,8 +36,8 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
     // base values for form
     // const operatorConstruct = new Operator({
     //   _id: null,
-    //   nom_commercial: null,
-    //   raison_sociale: null,
+    //   name: null,
+    //   legal_name: null,
     //   contacts: new Contacts(),
     // });
     //
@@ -49,8 +49,8 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
     // // // get values in correct format with initialized values
     // this.operator = new Operator({
     //   _id: operatorParams._id,
-    //   nom_commercial: operatorParams.nom_commercial,
-    //   raison_sociale: operatorParams.raison_sociale,
+    //   name: operatorParams.name,
+    //   legal_name: operatorParams.legal_name,
     //   address: new Address({
     //     ...operatorConstruct.address,
     //     ...operatorParams.address,

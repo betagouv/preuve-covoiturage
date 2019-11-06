@@ -84,7 +84,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
   getOperator(trip: Trip): string {
     const operator = this.operators.find((operatorF) => operatorF._id === trip.operator_id);
     if (!operator) console.error('Operator not found !');
-    return operator.nom_commercial;
+    return operator.name;
   }
 
   getTotalIncentives(trip: Trip): string {

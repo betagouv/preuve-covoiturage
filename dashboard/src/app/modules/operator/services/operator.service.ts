@@ -111,7 +111,7 @@ export class OperatorService extends ApiService<Operator> {
 
   getOperatorName(id: string) {
     const operator = this.entities.find((e) => e._id === id);
-    return operator ? operator.nom_commercial : null;
+    return operator ? operator.name : null;
   }
 
   loadConnectedOperator(): Observable<Operator> {
@@ -125,8 +125,8 @@ export class OperatorService extends ApiService<Operator> {
     this._entity$.next(
       new Operator({
         _id: null,
-        nom_commercial: null,
-        raison_sociale: null,
+        name: null,
+        legal_name: null,
       }),
     );
   }

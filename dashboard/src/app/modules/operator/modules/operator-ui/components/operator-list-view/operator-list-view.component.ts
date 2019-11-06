@@ -54,7 +54,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
           const start = Number(page) * this.PAGE_SIZE;
           const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
           this.operatorsFiltered = this.operators.filter((t) =>
-            t.nom_commercial.toLowerCase().includes(this._filterLiteral.value),
+            t.name.toLowerCase().includes(this._filterLiteral.value),
           );
           return of(this.operatorsFiltered.slice(start, end));
         }),

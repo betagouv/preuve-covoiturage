@@ -72,7 +72,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
       patch$.subscribe(
         (data) => {
           const modifiedOperator = data[0];
-          this.toastr.success(`${modifiedOperator.nom_commercial} a été mis à jour !`);
+          this.toastr.success(`${modifiedOperator.name} a été mis à jour !`);
         },
         (err) => {
           this.toastr.error(`Une erreur est survenue lors de la mis à jour de l'opérateur`);
@@ -86,7 +86,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
       this._operatorService.createList(operator).subscribe(
         (data) => {
           const createdOperator = data[0];
-          this.toastr.success(`L'opérateur ${createdOperator.nom_commercial} a été créé !`);
+          this.toastr.success(`L'opérateur ${createdOperator.name} a été créé !`);
           this.close.emit();
         },
         (err) => {
@@ -121,8 +121,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
   private updateValidation() {
     if (this.operatorForm && this.fullFormMode) {
-      this.operatorForm.controls['nom_commercial'].setValidators(this.fullFormMode ? Validators.required : null);
-      this.operatorForm.controls['raison_sociale'].setValidators(this.fullFormMode ? Validators.required : null);
+      this.operatorForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
+      this.operatorForm.controls['legal_name'].setValidators(this.fullFormMode ? Validators.required : null);
     }
   }
 
@@ -138,8 +138,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     if (this.fullFormMode) {
       formOptions = {
         ...formOptions,
-        nom_commercial: [''],
-        raison_sociale: [''],
+        name: [''],
+        legal_name: [''],
         address: this.fb.group(
           new FormAddress(
             new Address({

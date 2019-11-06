@@ -11,10 +11,10 @@ import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { UserService } from '~/modules/user/services/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Injectable({
   providedIn: 'root',

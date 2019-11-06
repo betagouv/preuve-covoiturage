@@ -4,8 +4,8 @@ import { operatorStub } from '../stubs/operator/operator.find';
 
 export const expectedPatchedOperator: Operator = {
   _id: operatorStub._id,
-  nom_commercial: 'Opérateur',
-  raison_sociale: 'Opérateur SAS',
+  name: 'Opérateur',
+  legal_name: 'Opérateur SAS',
   company: {
     siren: '123456789',
     naf_entreprise: '1234A',

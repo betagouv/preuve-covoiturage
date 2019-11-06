@@ -12,7 +12,7 @@ export function cypress_operator(oldValue: Operator, e2e = false) {
 
   if (!e2e) {
     it('check values : commercial name', () => {
-      cy.get('p.nom-commercial').contains(oldValue.nom_commercial);
+      cy.get('p.nom-commercial').contains(oldValue.name);
     });
   }
 

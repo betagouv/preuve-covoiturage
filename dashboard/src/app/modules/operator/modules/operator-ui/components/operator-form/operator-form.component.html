@@ -2,15 +2,15 @@
   <div *ngIf="fullFormMode">
     <h2>Informations générales</h2>
 
-    <mat-form-field class="nom_commercial" appearance="outline">
+    <mat-form-field class="name" appearance="outline">
       <mat-label>Nom commercial</mat-label>
-      <input matInput formControlName="nom_commercial" required />
-      <mat-error *ngIf="operatorForm.controls.nom_commercial.hasError('required')">Le nom est obligatoire.</mat-error>
+      <input matInput formControlName="name" required />
+      <mat-error *ngIf="operatorForm.controls.name.hasError('required')">Le nom est obligatoire.</mat-error>
     </mat-form-field>
-    <mat-form-field class="raison_sociale" appearance="outline">
+    <mat-form-field class="legal_name" appearance="outline">
       <mat-label>Raison sociale</mat-label>
-      <input matInput formControlName="raison_sociale" required />
-      <mat-error *ngIf="operatorForm.controls.raison_sociale.hasError('required')"
+      <input matInput formControlName="legal_name" required />
+      <mat-error *ngIf="operatorForm.controls.legal_name.hasError('required')"
         >La raison sociale est obligatoire.
       </mat-error>
     </mat-form-field>

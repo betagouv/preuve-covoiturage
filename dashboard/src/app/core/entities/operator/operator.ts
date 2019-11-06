@@ -9,8 +9,8 @@ import { Contacts } from '../shared/contacts';
 
 class Operator {
   public _id: string;
-  public nom_commercial: string;
-  public raison_sociale: string;
+  public name: string;
+  public legal_name: string;
 
   public company?: Company;
 
@@ -22,8 +22,8 @@ class Operator {
 
   constructor(data: {
     _id: string;
-    nom_commercial: string;
-    raison_sociale: string;
+    name: string;
+    legal_name: string;
     company?: Company;
     address?: Address;
     contacts?: Contacts;
@@ -31,8 +31,8 @@ class Operator {
   }) {
     if (data) {
       this._id = data._id;
-      this.nom_commercial = data.nom_commercial;
-      this.raison_sociale = data.raison_sociale;
+      this.name = data.name;
+      this.legal_name = data.legal_name;
 
       if (hasOneNotEmptyProperty(data.company)) {
         this.company = new Company(data.company);
@@ -50,8 +50,8 @@ class Operator {
         this.bank = new Bank(data.bank);
       }
     } else {
-      this.nom_commercial = '';
-      this.raison_sociale = '';
+      this.name = '';
+      this.legal_name = '';
     }
   }
 

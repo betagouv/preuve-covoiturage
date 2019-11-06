@@ -96,9 +96,7 @@ export class CommonDataService {
 
   loadOperators(): Observable<Operator[]> {
     return this.operatorService.load().pipe(
-      map((operators) =>
-        operators.sort((operatorA, operatorB) => (operatorA.nom_commercial > operatorB.nom_commercial ? 1 : -1)),
-      ),
+      map((operators) => operators.sort((operatorA, operatorB) => (operatorA.name > operatorB.name ? 1 : -1))),
       tap((operators) => this._operators$.next(operators)),
     );
   }
@@ -163,9 +161,7 @@ export class CommonDataService {
 
         if (operatorsR.data) {
           this._operators$.next(
-            operatorsR.data.sort((operatorA, operatorB) =>
-              operatorA.nom_commercial > operatorB.nom_commercial ? 1 : -1,
-            ),
+            operatorsR.data.sort((operatorA, operatorB) => (operatorA.name > operatorB.name ? 1 : -1)),
           );
         }
 
