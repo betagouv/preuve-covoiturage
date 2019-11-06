@@ -63,7 +63,7 @@ export class MigrateDataCommand implements CommandInterface {
         ( name, owner_id, owner_service, permissions, created_at )
         VALUES ( $1, $2, $3, $4, $5 )
         `,
-          values: [doc.name, doc.operator_id, 'operator', ['journey.create'], doc.created_at],
+          values: [doc.name, doc.operator_id.toString(), 'operator', ['journey.create'], doc.created_at],
         });
       } catch (e) {
         console.log(e);

@@ -113,9 +113,9 @@ export class MigrateDataCommand implements CommandInterface {
             $20
           )`,
           values: [
-            line.acquisition_id,
-            line.operator_id,
-            line.trip_id,
+            line.acquisition_id.toString(),
+            line.operator_id.toString(),
+            line.trip_id.toString(),
             line.identity,
             line.is_driver,
             line.operator_class,
@@ -132,7 +132,7 @@ export class MigrateDataCommand implements CommandInterface {
             line.distance,
             line.seats,
             line.created_at,
-            line.operator_trip_id,
+            line.operator_trip_id.toString(),
           ],
         });
       }
