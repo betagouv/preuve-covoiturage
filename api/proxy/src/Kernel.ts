@@ -13,6 +13,7 @@ import { bootstrap as policyBootstrap } from '@pdc/service-policy';
 
 import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 import { MapIdCommand } from './commands/MapIdCommand';
+import { InseeSeedCommand } from './commands/InseeSeedCommand';
 
 @kernel({
   env: null,
@@ -28,6 +29,6 @@ import { MapIdCommand } from './commands/MapIdCommand';
     ...policyBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [UpgradeJourneyCommand, MapIdCommand],
+  commands: [UpgradeJourneyCommand, MapIdCommand, InseeSeedCommand],
 })
 export class Kernel extends BaseKernel {}

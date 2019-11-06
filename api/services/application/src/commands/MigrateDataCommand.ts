@@ -1,7 +1,6 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { promisify } from 'util';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 @command()
 export class MigrateDataCommand implements CommandInterface {

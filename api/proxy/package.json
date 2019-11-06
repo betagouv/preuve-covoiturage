@@ -51,6 +51,7 @@
     "@types/helmet": "^0.0.44",
     "@types/mocha": "^5.2.6",
     "@types/node": "^12.6.8",
+    "axios": "^0.19.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^4.1.0",
@@ -77,9 +78,9 @@
     "@ilos/framework": "~0",
     "@ilos/transport-http": "~0",
     "@ilos/transport-redis": "~0",
+    "@pdc/provider-notification": "~0",
     "@pdc/provider-sentry": "~0",
     "@pdc/provider-token": "~0",
-    "@pdc/provider-notification": "~0",
     "@pdc/service-acquisition": "~0",
     "@pdc/service-application": "~0",
     "@pdc/service-normalization": "~0",
@@ -89,12 +90,12 @@
     "@pdc/service-trip": "~0",
     "@pdc/service-user": "~0",
     "body-parser": "^1.19.0",
+    "connect-redis": "^4.0.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-mung": "^0.5.1",
     "express-session": "^1.16.2",
     "helmet": "^3.19.0",
-    "ioredis": "^4.14.1",
-    "connect-redis": "^4.0.3"
+    "ioredis": "^4.14.1"
   }
 }
