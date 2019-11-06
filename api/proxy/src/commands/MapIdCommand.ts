@@ -193,18 +193,6 @@ export class MapIdCommand implements CommandInterface {
         text: 'UPDATE policy.policies SET territory_id=$1 WHERE territory_id=$2',
         values: [_id, old._id.toString()],
       });
-
-      console.log('territories.parent_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
-        text: 'UPDATE territory.territories SET parent_id=$1 WHERE parent_id=$2',
-        values: [_id, old._id.toString()],
-      });
-
-      console.log('insee.territory_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
-        text: 'UPDATE territory.insee SET territory_id=$1 WHERE territory_id=$2',
-        values: [_id, old._id.toString()],
-      });
     }
   }
 }
