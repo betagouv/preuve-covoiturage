@@ -24,10 +24,9 @@ import { forgottenPassword } from './shared/user/forgottenPassword.schema';
 import { list } from './shared/user/list.schema';
 import { login } from './shared/user/login.schema';
 import { patch } from './shared/user/patch.schema';
-// import { register } from './shared/user/register.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
-import { FixPermissionsCommand } from './commands/FixPermissionsCommand';
+import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import {
   ChangePasswordUserAction,
   ChangePasswordWithTokenUserAction,
@@ -66,7 +65,6 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
     ['user.list', list],
     ['user.login', login],
     ['user.patch', patch],
-    // ['user.register', register],
     ['user.sendConfirmEmail', sendConfirmEmail],
   ],
   middlewares: [
@@ -92,7 +90,6 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
     MeUserAction,
     NotifyUserAction,
     PatchUserAction,
-    // RegisterUserAction,
     SendConfirmEmailUserAction,
     SendInvitationEmailUserAction,
   ],
@@ -101,7 +98,7 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
-  commands: [FixPermissionsCommand],
+  commands: [MigrateDataCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, NotificationExtension];
