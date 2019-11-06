@@ -81,6 +81,8 @@ export function campaignThirdStepSetRestriction(
     cy.get(`.ParametersForm-restriction:nth-child(${restrictionIndex}) .RestrictionForm-who`).click();
     cy.get(`.mat-select-panel mat-option:nth-child(${targetIndex})`).click();
 
+    cy.wait(300); // to avoid select multiple bug
+
     // select period
     cy.get(`.ParametersForm-restriction:nth-child(${restrictionIndex}) .RestrictionForm-period`).click();
     cy.get(`.mat-select-panel mat-option:nth-child(${periodIndex})`).click();
