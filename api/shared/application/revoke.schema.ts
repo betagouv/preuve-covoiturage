@@ -6,6 +6,8 @@ export const schema = {
   additionalProperties: false,
   properties: {
     _id: { macro: 'dbid' },
+    owner_id: { macro: 'dbid' },
+    owner_service: { enum: ['operator'] },
   },
 };
 export const binding = [alias, schema];

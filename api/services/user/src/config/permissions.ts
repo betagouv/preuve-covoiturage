@@ -1,4 +1,4 @@
-export const territories = {
+export const territory = {
   admin: {
     slug: 'admin',
     name: 'Admin',
@@ -83,7 +83,7 @@ export const territories = {
   },
 };
 
-export const operators = {
+export const operator = {
   admin: {
     slug: 'admin',
     name: 'Admin',
@@ -164,8 +164,8 @@ export const registry = {
         'operator.delete',
         'journey.import',
         'journey.process',
-        ...territories.admin.permissions,
-        ...operators.admin.permissions,
+        ...territory.admin.permissions,
+        ...operator.admin.permissions,
       ]),
     ],
   },

@@ -10,6 +10,7 @@ import { binding as findBinding } from './shared/application/find.schema';
 import { binding as createBinding } from './shared/application/create.schema';
 import { binding as revokeBinding } from './shared/application/revoke.schema';
 import { MigrateCommand } from './commands/MigrateCommand';
+import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { ListApplicationAction } from './actions/ListApplicationAction';
 import { FindApplicationAction } from './actions/FindApplicationAction';
 import { CreateApplicationAction } from './actions/CreateApplicationAction';
@@ -23,7 +24,7 @@ import { ApplicationPgRepositoryProvider } from './providers/ApplicationPgReposi
   middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scopeIt', ScopeToSelfMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [ListApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
-  commands: [MigrateCommand],
+  commands: [MigrateCommand, MigrateDataCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
