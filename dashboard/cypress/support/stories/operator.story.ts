@@ -24,12 +24,14 @@ export function testOperatorStory(profile = true, operator = true, applications 
     });
   }
 
-  // APPLICATIONS
-  if (applications) {
-    describe('Applications', () => {
-      cypress_applications();
-    });
-  }
+
+  // todo: update applications
+  // // APPLICATIONS
+  // if (applications) {
+  //   describe('Applications', () => {
+  //     cypress_applications();
+  //   });
+  // }
 
   // FILTERS
   if (filters) {
