@@ -48,8 +48,8 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
   }
 
   load(): Observable<ApplicationInterface[]> {
-    if ('operator' in this._authService.user) {
-      const operatorId = this._authService.user.operator;
+    if ('operator_id' in this._authService.user) {
+      const operatorId = this._authService.user.operator_id;
       return super.load({
         operator_id: operatorId,
       });
@@ -61,8 +61,8 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
   public createApplicationAndList(
     applicationName: ApplicationName,
   ): Observable<[OperatorApplicationCreatedInterface, ApplicationInterface[]]> {
-    if ('operator' in this._authService.user) {
-      const operatorId = this._authService.user.operator;
+    if ('operator_id' in this._authService.user) {
+      const operatorId = this._authService.user.operator_id;
       const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, {
         operator_id: operatorId,
         permissions: ['journey.create'],

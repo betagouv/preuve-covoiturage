@@ -93,7 +93,7 @@ export class CypressExpectedCampaign {
       },
       status: CampaignStatusEnum.DRAFT,
       parent_id: null,
-      territory_id: cypress_logging_users[UserGroupEnum.TERRITORY].territory,
+      territory_id: cypress_logging_users[UserGroupEnum.TERRITORY].territory_id,
     });
 
     campaign.start = <any>campaign.start.toISOString();

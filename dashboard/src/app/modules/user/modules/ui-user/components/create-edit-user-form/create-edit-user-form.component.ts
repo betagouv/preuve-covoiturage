@@ -57,8 +57,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         phone: user.phone ? user.phone : null,
         role: user.role,
         group: user.group,
-        territory: user.territory ? user.territory : null,
-        operator: user.operator ? user.operator : null,
+        territory_id: user.territory_id ? user.territory_id : null,
+        operator_id: user.operator_id ? user.operator_id : null,
       });
 
       Object.keys(this.createEditUserForm.controls).forEach((key) => {
@@ -93,13 +93,13 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
     // clean data (avoid API validation issue for non operator | territories
     const formVal = { ...this.createEditUserForm.value };
-    if (!formVal.territory) delete formVal.territory;
-    if (!formVal.operator) delete formVal.operator;
+    if (!formVal.territory_id) delete formVal.territory_id;
+    if (!formVal.operator_id) delete formVal.operator_id;
     formVal.phone = formVal.phone ? formVal.phone : null;
 
     if (!this.isCreating) {
-      delete formVal.territory;
-      delete formVal.operator;
+      delete formVal.territory_id;
+      delete formVal.operator_id;
       delete formVal.group;
       delete formVal.role;
     }
@@ -136,11 +136,11 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
 
-      this.createEditUserForm.controls['operator'].setValidators(
+      this.createEditUserForm.controls['operator_id'].setValidators(
         this.groupEditable && this.operatorEditable && this.isCreating ? Validators.required : null,
       );
 
-      this.createEditUserForm.controls['territory'].setValidators(
+      this.createEditUserForm.controls['territory_id'].setValidators(
         this.groupEditable && this.territoryEditable && this.isCreating ? Validators.required : null,
       );
     }
@@ -155,8 +155,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   }
 
   onGroupChange(): void {
-    this.createEditUserForm.get('operator').setValue(null);
-    this.createEditUserForm.get('territory').setValue(null);
+    this.createEditUserForm.get('operator_id').setValue(null);
+    this.createEditUserForm.get('territory_id').setValue(null);
   }
 
   private initForm(
@@ -172,8 +172,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       phone: [cleanUser.phone, Validators.pattern(REGEXP.phone)],
       role: [cleanUser.role],
       group: [cleanUser.group],
-      territory: [cleanUser.territory],
-      operator: [cleanUser.operator],
+      territory_id: [cleanUser.territory_id],
+      operator_id: [cleanUser.operator_id],
     });
 
     this.createEditUserForm.valueChanges.subscribe((formVal) => {

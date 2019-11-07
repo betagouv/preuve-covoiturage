@@ -24,8 +24,8 @@ export interface UserInterface {
   phone: string;
   group: UserGroupEnum;
   role: UserRoleEnum;
-  operator?: string;
-  territory?: string;
+  operator_id?: string;
+  territory_id?: string;
   permissions: UserPermissionsType;
 }
 

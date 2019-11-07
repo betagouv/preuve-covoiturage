@@ -102,8 +102,8 @@ export class TerritoryService extends ApiService<Territory> {
   }
 
   loadConnectedTerritory(): Observable<Territory> {
-    if ('territory' in this._authService.user) {
-      return this.loadOne({ _id: this._authService.user.territory });
+    if ('territory_id' in this._authService.user) {
+      return this.loadOne({ _id: this._authService.user.territory_id });
     }
     throw Error();
   }

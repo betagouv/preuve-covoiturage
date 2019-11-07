@@ -68,7 +68,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
       map((value) => this.filter(value)),
     );
 
-    this._operatorForm = this.parentForm.get('operator');
+    this._operatorForm = this.parentForm.get('operator_id');
     this._operatorForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.selectedOperatorUpdated());
 
     this.selectedOperatorUpdated();

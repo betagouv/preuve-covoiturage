@@ -21,7 +21,7 @@ export const expectedPatchedProfiles: { [key in UserGroupEnum]: User } = {
     role: UserRoleEnum.ADMIN,
     group: UserGroupEnum.TERRITORY,
     permissions: TERRITORIES_PERMISSIONS.admin,
-    territory: territoryStub._id,
+    territory_id: territoryStub._id,
   },
   operators: {
     _id: cypress_logging_users.operators._id,
@@ -32,7 +32,7 @@ export const expectedPatchedProfiles: { [key in UserGroupEnum]: User } = {
     role: UserRoleEnum.ADMIN,
     group: UserGroupEnum.OPERATOR,
     permissions: OPERATORS_PERMISSIONS.admin,
-    operator: operatorStub._id,
+    operator_id: operatorStub._id,
   },
   registry: {
     _id: cypress_logging_users.registry._id,

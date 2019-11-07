@@ -43,8 +43,8 @@ export class CampaignService extends ApiService<Campaign> {
     const params = {
       territory_id: null,
     };
-    if ('territory' in this._authService.user) {
-      params.territory_id = this._authService.user.territory;
+    if ('territory_id' in this._authService.user) {
+      params.territory_id = this._authService.user.territory_id;
     }
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}:listTemplate`, { territory_id: params.territory_id });
@@ -69,8 +69,8 @@ export class CampaignService extends ApiService<Campaign> {
 
   public deleteTemplateOrDraft(id: string): Observable<Campaign[]> {
     const params = {};
-    if ('territory' in this._authService.user) {
-      params['territory_id'] = this._authService.user.territory;
+    if ('territory_id' in this._authService.user) {
+      params['territory_id'] = this._authService.user.territory_id;
     }
     return this.deleteList(id, params);
   }
