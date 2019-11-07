@@ -9,7 +9,7 @@ import { User } from '~/core/entities/authentication/user';
 import { UserService } from '~/modules/user/services/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 @Component({
   selector: 'app-users',
@@ -91,7 +91,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
         phone: null,
         group: this.currentGroup,
         operator_id: this.currentOperator,
-        role: UserRoleEnum.USER,
+        role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
         permissions: [],
       });
       console.log(this.editedUser);
@@ -106,7 +106,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
         phone: null,
         group: this.currentGroup,
         territory_id: this.currentTerritory,
-        role: UserRoleEnum.USER,
+        role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
         permissions: [],
       });
     }

@@ -10,7 +10,7 @@ import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { UserService } from '~/modules/user/services/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
@@ -81,7 +81,7 @@ export class AuthenticationService {
   }
 
   public get isAdmin(): boolean {
-    return this.hasRole(UserRoleEnum.ADMIN);
+    return this.hasRole(UserManyRoleEnum.ADMIN);
   }
 
   public login(email: string, password: string) {
@@ -165,7 +165,7 @@ export class AuthenticationService {
   /**
    * Check if connected user has role
    */
-  public hasRole(role: UserRoleEnum | null): boolean {
+  public hasRole(role: UserRoleEnum | UserManyRoleEnum): boolean {
     if (!role) {
       return true;
     }
@@ -173,7 +173,7 @@ export class AuthenticationService {
     if (!user) {
       return false;
     }
-    return !role || ('role' in user && role === user.role);
+    return !role || ('role' in user && user.role.indexOf(role) !== -1);
   }
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
