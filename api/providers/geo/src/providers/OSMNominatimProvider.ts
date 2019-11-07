@@ -5,7 +5,7 @@ import { GeoCoderInterface, PointInterface } from '../interfaces';
 export class OSMNominatimProvider implements GeoCoderInterface {
   private domain = 'https://nominatim.openstreetmap.org/';
 
-  async toPosition(literal: string): Promise<PointInterface> {
+  async literalToPosition(literal: string): Promise<PointInterface> {
     let { data } = await axios.get(
       `${this.domain}/search.php?q=${encodeURIComponent(literal)}&format=json&accept-language=fr-fr&limit=1`,
     );

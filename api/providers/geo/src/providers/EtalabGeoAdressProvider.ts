@@ -7,7 +7,7 @@ import { GeoCoderInterface, PointInterface, InseeCoderInterface } from '../inter
 export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInterface {
   protected domain = 'https://api-adresse.data.gouv.fr';
 
-  async toPosition(literal: string): Promise<PointInterface> {
+  async literalToPosition(literal: string): Promise<PointInterface> {
     const res = await axios.get(`${this.domain}/search?q=${encodeURIComponent(literal)}&limit=1&autocomplete=0`);
 
     if (!get(res, 'data.features', []).length) {
@@ -25,7 +25,7 @@ export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInt
       lat,
     };
   }
-  async toInsee(geo: PointInterface): Promise<string> {
+  async positionToInsee(geo: PointInterface): Promise<string> {
     const { lat, lon } = geo;
     const res = await axios.get(`${this.domain}/reverse?lon=${lon}&lat=${lat}`);
 

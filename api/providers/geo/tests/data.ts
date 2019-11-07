@@ -25,6 +25,18 @@ export const geoError = {
   literal: 'ajkdjskldjslqkjdlsq',
 };
 
+export const inseeGeo = {
+  code: '91377',
+  position: {
+    lat: 48.7317,
+    lon: 2.268,
+  },
+};
+
+export const inseeGeoError = {
+  code: '91999',
+};
+
 export const route = {
   start: {
     lat: 48.851047,

@@ -1,5 +1,5 @@
 import { PointInterface } from './PointInterface';
 
 export interface InseeCoderInterface {
-  toInsee(geo: PointInterface): Promise<string>;
+  positionToInsee(geo: PointInterface): Promise<string>;
 }

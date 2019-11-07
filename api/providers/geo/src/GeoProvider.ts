@@ -10,6 +10,7 @@ import {
   PointInterface,
   RouteMeta,
   RouteMetaProviderInterface,
+  InseeReverseCoderInterface,
 } from './interfaces';
 
 import {
@@ -36,6 +37,10 @@ export class GeoProvider implements GeoProviderInterface {
     new EtalabGeoAdressProvider(),
   ];
 
+  protected inseeReverseCoderProviders: InseeReverseCoderInterface[] = [
+    new EtalabGeoAdministriveProvider(),
+  ];
+
   protected routeMetaProviders: RouteMetaProviderInterface[] = [
     new LocalOSRMProvider(),
     new OSRMProvider(),
@@ -43,11 +48,11 @@ export class GeoProvider implements GeoProviderInterface {
 
   constructor() {}
 
-  async toPosition(literal: string): Promise<PointInterface> {
+  async literalToPosition(literal: string): Promise<PointInterface> {
     const failure = [];
     for(const geocoder of this.geoCoderProviders) {
       try {
-        const result = await geocoder.toPosition(literal);
+        const result = await geocoder.literalToPosition(literal);
         return result;
       } catch(e) {
         //
@@ -57,11 +62,25 @@ export class GeoProvider implements GeoProviderInterface {
     throw new Error(failure.join(', '));
   }
 
-  async toInsee(geo: PointInterface): Promise<string> {
+  async inseeToPosition(insee: string): Promise<PointInterface> {
+    const failure = [];
+    for(const inseeReverseCoder of this.inseeReverseCoderProviders) {
+      try {
+        const result = await inseeReverseCoder.inseeToPosition(insee);
+        return result;
+      } catch(e) {
+        //
+        failure.push(e.message);
+      }
+    }
+    throw new Error(failure.join(', '));
+  }
+
+  async positionToInsee(geo: PointInterface): Promise<string> {
     const failure = [];
     for(const inseecoder of this.inseeCoderProviders) {
       try {
-        const result = await inseecoder.toInsee(geo);
+        const result = await inseecoder.positionToInsee(geo);
         return result;
       } catch(e) {
         //
@@ -88,15 +107,20 @@ export class GeoProvider implements GeoProviderInterface {
   async checkAndComplete(data: PartialGeoInterface):Promise<GeoInterface> {
     let { lat, lon, literal, insee } = data;
 
+    if ((!lat || !lon) && !literal && !insee) {
+      throw new Error('Missing point param (lat/lon or literal or insee)');
+    }
+
     if (!lat || ! lon) {
-      if(!literal) {
-        throw new Error('Missing point param (lat/lon or literal)');
+      if (literal) {
+        ({ lat, lon } = await this.literalToPosition(literal));
+      } else {
+        ({ lat, lon } = await this.inseeToPosition(insee));
       }
-      ({ lat, lon } = await this.toPosition(data.literal));
     }
 
     if (!insee) {
-      insee = await this.toInsee({ lat, lon });
+      insee = await this.positionToInsee({ lat, lon });
     }
 
     return {

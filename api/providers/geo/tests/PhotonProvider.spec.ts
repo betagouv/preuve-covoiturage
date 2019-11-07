@@ -11,13 +11,13 @@ const { expect } = chai;
 describe('PhotonProvider', () => {
   it('should work', async () => {
     const provider = new PhotonProvider();
-    const { lat, lon } = await provider.toPosition(geo.literal);
+    const { lat, lon } = await provider.literalToPosition(geo.literal);
     expect(lat).to.be.closeTo(geo.position.lat, 0.003);
     expect(lon).to.be.closeTo(geo.position.lon, 0.003);
   });
 
   it('should raise error if not found', async () => {
     const provider = new PhotonProvider();
-    await expect(provider.toPosition(geoError.literal)).to.rejectedWith(NotFoundException)
+    await expect(provider.literalToPosition(geoError.literal)).to.rejectedWith(NotFoundException)
   });
 });

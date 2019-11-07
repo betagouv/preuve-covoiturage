@@ -6,7 +6,7 @@ import { InseeCoderInterface, PointInterface } from '../interfaces';
 export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
   protected domain = 'https://geo.api.gouv.fr';
 
-  async toInsee(geo: PointInterface): Promise<string> {
+  async positionToInsee(geo: PointInterface): Promise<string> {
     const { lon, lat } = geo;
 
     let { data } = await axios.get(
@@ -27,5 +27,30 @@ export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
     }
 
     return inseeCode;
+  }
+
+  async inseeToPosition(insee: string): Promise<PointInterface> {
+    let { data } = await axios.get(
+      `${this.domain}/communes?code=${insee}&fields=centre&format=json`,
+    );
+
+    if (!data.length) {
+      throw new NotFoundException(`Not found on insee code (${insee})`);
+    }
+
+    if (Array.isArray(data)) {
+      data = data.shift();
+    }
+
+    const [lon, lat] = get(data, 'centre.coordinates', [null, null]);
+
+    if (!lon || !lat) {
+      throw new NotFoundException(`Not found on insee code (${insee})`);
+    }
+
+    return {
+      lon,
+      lat,
+    };
   }
 }

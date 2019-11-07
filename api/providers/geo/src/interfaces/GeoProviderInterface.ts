@@ -3,17 +3,22 @@ import { GeoCoderInterface } from './GeoCoderInterface';
 import { InseeCoderInterface } from './InseeCoderInterface';
 import { RouteMetaProviderInterface, RouteMeta } from './RouteMetaProviderInterface';
 import { PointInterface } from './PointInterface';
+import { InseeReverseCoderInterface } from './InseeReverseCoderInterface';
 
-export interface GeoProviderInterface extends GeoCoderInterface, InseeCoderInterface, RouteMetaProviderInterface {
+export interface GeoProviderInterface extends GeoCoderInterface, InseeCoderInterface, RouteMetaProviderInterface, InseeReverseCoderInterface {
   checkAndComplete(data: PartialGeoInterface):Promise<GeoInterface>;
 }
 
 export abstract class GeoProviderInterfaceResolver implements GeoProviderInterface {
-  toPosition(literal: string): Promise<PointInterface> {
+  inseeToPosition(insee: string): Promise<PointInterface> {
     throw new Error();
   }
 
-  toInsee(geo: PointInterface): Promise<string> {
+  literalToPosition(literal: string): Promise<PointInterface> {
+    throw new Error();
+  }
+
+  positionToInsee(geo: PointInterface): Promise<string> {
     throw new Error();
   }
 
