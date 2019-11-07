@@ -1,0 +1,37 @@
+<app-page-content>
+  <div class="campaignDraftView--loading" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="campaignDraftView" *ngIf="!isLoading">
+    <div class="campaignDraftView-header">
+      <h1>{{ campaignUx.name }}</h1>
+      <p>{{ territory.name }}</p>
+      <div class="campaignDraftView-header-message">
+        <div>
+          <mat-icon class="dot">fiber_manual_record</mat-icon>
+          <div>
+            <h4>Votre campagne est en attente et prête à être démarée</h4>
+            <p>Vous pouvez vérifier l'ensemble des informations saisies, puis la lancer</p>
+          </div>
+        </div>
+        <button mat-flat-button type="button" color="primary" (click)="launchCampaign(campaignUx._id)">
+          Lancer ma campagne
+        </button>
+      </div>
+    </div>
+
+    <div class="campaignDraftView-content">
+      <div>
+        <app-campaign-main-metrics [campaign]="campaignUx"></app-campaign-main-metrics>
+        <app-campaign-contacts [territory]="territory"></app-campaign-contacts>
+      </div>
+      <div>
+        <app-campaign-rules-view [campaign]="campaignUx"></app-campaign-rules-view>
+        <app-campaign-retribution-view [campaign]="campaignUx"></app-campaign-retribution-view>
+      </div>
+      <div>
+        <app-campaign-summary-text [campaign]="campaignUx"></app-campaign-summary-text>
+      </div>
+    </div>
+  </div>
+</app-page-content>

@@ -8,6 +8,7 @@ import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
+import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 
 @Component({
   selector: 'app-filters-form',
@@ -25,7 +26,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
   private initValue = 0;
 
-  constructor(private _formBuilder: FormBuilder, private _dialog: DialogService) {
+  constructor(private _formBuilder: FormBuilder, private _dialog: DialogService, private _campaignUiService: CampaignUiService) {
     super();
   }
 
@@ -94,107 +95,43 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     return this.InseeForm.get('whiteList').value && this.InseeForm.get('whiteList').value.length > 0;
   }
 
-  get showDateLabel() {
-    let label = '';
+  get showDateLabel(): string {
     const weekDays = this.filtersForm.get('weekday').value;
+    const timeRanges = this.timeCtrlArray.value;
     if (!weekDays) {
       return '';
     }
-    label += weekDays
-      .map((weekDay: number) => {
-        switch (weekDay) {
-          case 0:
-            return 'Lundi';
-          case 1:
-            return 'Mardi';
-          case 2:
-            return 'Mercredi';
-          case 3:
-            return 'Jeudi';
-          case 4:
-            return 'Vendredi';
-          case 5:
-            return 'Samedi';
-          case 6:
-            return 'Dimanche';
-          default:
-            return '';
-        }
-      })
-      .join(', ');
-
-    const timeRanges = this.timeCtrlArray.value;
-    if (timeRanges && timeRanges.length > 0) {
-      if (weekDays.length > 0) {
-        label += ' <br>';
-      }
-      label += ' De ';
-      label += timeRanges
-        .map((timeRange: IncentiveTimeRuleUxInterface) => {
-          if (!timeRange || !timeRange.start || !timeRange.end) {
-            return '';
-          }
-          return `${timeRange.start.replace(':', 'h')} à ${timeRange.end.replace(':', 'h')}`;
-        })
-        .join(', ');
-    }
-    return label;
+    return this._campaignUiService.daysAndTimes(weekDays, timeRanges);
   }
 
   get showDistanceLabel(): string {
     const range = this.filtersForm.get('distance_range').value;
-    if (range && (range.length < 2 || range === [0, 0])) {
+    if (!range) {
       return '';
     }
-    if (range[1] >= CAMPAIGN_RULES_MAX_DISTANCE_KM) {
-      return `A partir de ${range[0]} km`;
-    }
-    if (range[0] < 1) {
-      return `Jusqu'à ${range[1]} km`;
-    }
-    return `De ${range[0]} à ${range[1]} km`;
+    return this._campaignUiService.distance(range);
   }
 
-  showTripClassLabel(): string {
-    const tripClass = this.filtersForm.get('rank').value;
-    if (!tripClass) {
+  get showTripClassLabel(): string {
+    const rank = this.filtersForm.get('rank').value;
+    if (!rank) {
       return '';
     }
-    return tripClass.join(', ');
+    return this._campaignUiService.ranks(rank);
   }
 
-  showTargetLabel(): string {
-    let label = '';
+  get showTargetLabel(): string {
     const forDriver = this.forDriverControl.value;
     const forPassenger = this.forPassengerControl.value;
     const forTrip = this.forTripControl.value;
     const onlyAdult = this.campaignForm.get('only_adult').value;
 
-    if (!(forDriver || forPassenger || forTrip)) {
-      return '';
-    }
-
-    if (forDriver) {
-      label += 'Conducteurs';
-    }
-    if (forPassenger) {
-      label += forDriver ? ' et passagers' : 'Passagers';
-      if (onlyAdult) {
-        label += ', majeurs uniquement';
-      }
-    }
-    if (forTrip) {
-      label += 'Trajets';
-      if (onlyAdult) {
-        label += ', passagers majeurs uniquement';
-      }
-    }
-    return label;
+    return this._campaignUiService.targets(forDriver, forPassenger, forTrip, onlyAdult);
   }
 
   showOperatorsLabel(): string {
-    let label = '';
     const operators = this.filtersForm.get('operator_ids').value;
+    let label = '';
     if (operators) {
       const multipleOperators = operators.length > 1;
       label += `${operators.length} opérateur${multipleOperators ? 's' : ''}
