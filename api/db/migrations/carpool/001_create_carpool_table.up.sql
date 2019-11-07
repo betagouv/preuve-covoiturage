@@ -29,13 +29,13 @@ CREATE TABLE IF NOT EXISTS carpool.carpools
 
   start_position geography NOT NULL,
   start_insee varchar NOT NULL,
-  start_town varchar NOT NULL, -- TODO: try to drop this
-  start_territory varchar NOT NULL, -- TODO: drop this
+  start_town varchar, -- TODO: try to drop this
+  start_territory varchar, -- TODO: drop this
 
   end_position geography NOT NULL,
   end_insee varchar NOT NULL,
-  end_town varchar NOT NULL, -- TODO: try drop this
-  end_territory varchar NOT NULL, -- TODO: drop this
+  end_town varchar, -- TODO: try drop this
+  end_territory varchar, -- TODO: drop this
 
   distance int NOT NULL,
   seats int NOT NULL default 1,
