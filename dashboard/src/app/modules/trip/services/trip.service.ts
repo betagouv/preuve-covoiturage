@@ -48,10 +48,10 @@ export class TripService extends ApiService<Trip> {
     const params = _.cloneDeep(filter);
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
-      params['territory_id'] = [loggedUser.territory];
+      params['territory_id'] = [loggedUser.territory_id];
     }
     if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = [loggedUser.operator];
+      params['operator_id'] = [loggedUser.operator_id];
     }
     return super.load(params);
   }

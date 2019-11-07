@@ -18,7 +18,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     role: UserRoleEnum.ADMIN,
     group: UserGroupEnum.TERRITORY,
     permissions: TERRITORIES_PERMISSIONS.admin,
-    territory: territoryStub._id,
+    territory_id: territoryStub._id,
   },
   operators: {
     _id: '5d828c866707121bd1e23860',
@@ -29,7 +29,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     role: UserRoleEnum.ADMIN,
     group: UserGroupEnum.OPERATOR,
     permissions: OPERATORS_PERMISSIONS.admin,
-    operator: operatorStub._id,
+    operator_id: operatorStub._id,
   },
   registry: {
     _id: '5d828c8f21577b76d5445e0c',

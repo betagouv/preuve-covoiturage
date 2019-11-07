@@ -13,8 +13,11 @@ export class BaseUser implements IModel {
   public status?: string;
   public group: UserGroupEnum;
   public role: UserRoleEnum;
-  public operator?: string;
-  public territory?: string;
+
+  // tslint:disable-next-line:variable-name
+  public operator_id?: string;
+  // tslint:disable-next-line:variable-name
+  public territory_id?: string;
 }
 
 export class User extends BaseUser {
@@ -43,11 +46,11 @@ export class User extends BaseUser {
     this.role = obj.role;
     this.permissions = obj.permissions;
 
-    if (obj.operator) {
-      this.operator = obj.operator;
+    if (obj.operator_id) {
+      this.operator_id = obj.operator_id;
     }
-    if (obj.territory) {
-      this.territory = obj.territory;
+    if (obj.territory_id) {
+      this.territory_id = obj.territory_id;
     }
   }
 }

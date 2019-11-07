@@ -65,7 +65,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
       map((value) => this.filter(value)),
     );
 
-    this._territoryForm = this.parentForm.get('territory');
+    this._territoryForm = this.parentForm.get('territory_id');
     this._territoryForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.selectedTerritoryUpdated());
 
     this.selectedTerritoryUpdated();

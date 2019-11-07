@@ -10,6 +10,7 @@ import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { IModel } from '~/core/entities/IModel';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { User } from '~/core/entities/authentication/user';
 
 @Injectable({
   providedIn: 'root',
@@ -115,8 +116,8 @@ export class OperatorService extends ApiService<Operator> {
   }
 
   loadConnectedOperator(): Observable<Operator> {
-    if ('operator' in this._authService.user) {
-      return this.loadOne({ _id: this._authService.user.operator });
+    if ('operator_id' in this._authService.user) {
+      return this.loadOne({ _id: this._authService.user.operator_id });
     }
     throw Error();
   }

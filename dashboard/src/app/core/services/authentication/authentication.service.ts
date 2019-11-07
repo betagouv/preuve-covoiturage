@@ -22,7 +22,7 @@ import { JsonRPCService } from '../api/json-rpc.service';
 export class AuthenticationService {
   private _hasChecked: boolean;
 
-  private _user$ = new BehaviorSubject<User>(null);
+  private _user$ = new BehaviorSubject<User>(new User());
   private userMe$: Observable<User>;
 
   constructor(

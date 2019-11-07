@@ -338,8 +338,8 @@ export class CampaignFormatingService {
     });
 
     // set territory of user
-    if (this._authService.user.territory) {
-      territory_id = this._authService.user.territory;
+    if (this._authService.user.territory_id) {
+      territory_id = this._authService.user.territory_id;
     }
 
     const campaign = new Campaign({

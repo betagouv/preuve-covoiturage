@@ -77,8 +77,8 @@ export class CommonDataService {
   loadCurrentOperator(): Observable<Operator> {
     return this.authenticationService.check().pipe(
       mergeMap((user: User) => {
-        if (!user || !user.operator) return of<Operator>(null);
-        return this.operatorService.get(user.operator);
+        if (!user || !user.operator_id) return of<Operator>(null);
+        return this.operatorService.get(user.operator_id);
       }),
       tap((operator) => this._currentOperator$.next(operator)),
     );
@@ -87,8 +87,8 @@ export class CommonDataService {
   loadCurrentTerritory(): Observable<Territory> {
     return this.authenticationService.check().pipe(
       mergeMap((user: User) => {
-        if (!user || !user.territory) return of<Territory>(null);
-        return this.territoryService.loadOne({ _id: user.territory });
+        if (!user || !user.territory_id) return of<Territory>(null);
+        return this.territoryService.loadOne({ _id: user.territory_id });
       }),
       tap((territory) => this._currentTerritory$.next(territory)),
     );
@@ -125,10 +125,10 @@ export class CommonDataService {
             params.push(this.campaignService.getListJSONParam());
           }
 
-          if (user.territory) {
-            params.push(this.territoryService.getFindByIdJSONParam(user.territory ? user.territory : ''));
-          } else if (user.operator) {
-            params.push(this.operatorService.getFindByIdJSONParam(user.operator ? user.operator : ''));
+          if (user.territory_id) {
+            params.push(this.territoryService.getFindByIdJSONParam(user.territory_id ? user.territory_id : ''));
+          } else if (user.operator_id) {
+            params.push(this.operatorService.getFindByIdJSONParam(user.operator_id ? user.operator_id : ''));
           }
 
           return this.jsonRPCService.call(params, {}, false);
@@ -149,14 +149,14 @@ export class CommonDataService {
         const currentContextData = results.shift();
 
         if (currentContextData && currentContextData.data) {
-          if (this.authenticationService.user.operator) {
+          if (this.authenticationService.user.operator_id) {
             this._currentOperator$.next(currentContextData.data);
           } else {
             this._currentTerritory$.next(currentContextData.data);
           }
 
-          if (!this.authenticationService.user.operator) this._currentOperator$.next(null);
-          if (!this.authenticationService.user.territory) this._currentTerritory$.next(null);
+          if (!this.authenticationService.user.operator_id) this._currentOperator$.next(null);
+          if (!this.authenticationService.user.territory_id) this._currentTerritory$.next(null);
         }
 
         if (operatorsR.data) {

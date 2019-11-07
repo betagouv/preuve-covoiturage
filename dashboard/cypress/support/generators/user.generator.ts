@@ -23,7 +23,7 @@ export class UserGenerator {
           ...profilData,
           role: UserRoleEnum.ADMIN,
           group: UserGroupEnum.TERRITORY,
-          territory: territoryStub._id,
+          territory_id: territoryStub._id,
         };
       case UserGroupEnum.OPERATOR:
         return {
@@ -31,7 +31,7 @@ export class UserGenerator {
           ...profilData,
           role: UserRoleEnum.ADMIN,
           group: UserGroupEnum.OPERATOR,
-          operator: operatorStub._id,
+          operator_id: operatorStub._id,
         };
       case UserGroupEnum.REGISTRY:
         return {

@@ -90,7 +90,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
         lastname: null,
         phone: null,
         group: this.currentGroup,
-        operator: this.currentOperator,
+        operator_id: this.currentOperator,
         role: UserRoleEnum.USER,
         permissions: [],
       });
@@ -105,7 +105,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
         lastname: null,
         phone: null,
         group: this.currentGroup,
-        territory: this.currentTerritory,
+        territory_id: this.currentTerritory,
         role: UserRoleEnum.USER,
         permissions: [],
       });
@@ -133,11 +133,11 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   }
 
   get currentOperator(): string {
-    return this.authenticationService.user.operator;
+    return this.authenticationService.user.operator_id;
   }
 
   get currentTerritory(): string {
-    return this.authenticationService.user.territory;
+    return this.authenticationService.user.territory_id;
   }
 
   private loadUsers() {
