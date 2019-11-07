@@ -11,7 +11,7 @@ export const list = {
     },
     limit: {
       type: 'integer',
-      maximum: 100,
+      maximum: 10000,
       default: 25,
     },
   },
