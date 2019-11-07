@@ -6,7 +6,7 @@ import { UserService } from '~/modules/user/services/user.service';
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { USER_ROLES, USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { USER_ROLES, USER_ROLES_FR, userGroupRole, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
@@ -55,7 +55,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         lastname: user.lastname,
         email: user.email,
         phone: user.phone ? user.phone : null,
-        role: user.role,
+        role: user.role ? user.role.split('.').pop() : '', // take last part of the role
         group: user.group,
         territory_id: user.territory_id ? user.territory_id : null,
         operator_id: user.operator_id ? user.operator_id : null,
@@ -102,6 +102,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       delete formVal.operator_id;
       delete formVal.group;
       delete formVal.role;
+    } else {
+      formVal.role = `${userGroupRole[formVal.group]}.${formVal.role}`; // consolidate final role
     }
 
     const errM = (err) => {

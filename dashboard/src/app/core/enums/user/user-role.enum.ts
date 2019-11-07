@@ -1,11 +1,32 @@
-export enum UserRoleEnum {
+import { USER_GROUPS, UserGroupEnum } from '~/core/enums/user/user-group.enum';
+
+export enum UserManyRoleEnum {
   USER = 'user',
   ADMIN = 'admin',
+  TERRITORY = 'territory',
+  OPERATOR = 'operator',
+  REGISTRY = 'registry',
 }
 
-export const USER_ROLES: UserRoleEnum[] = Object.values(UserRoleEnum);
+export const userGroupRole = {
+  [UserGroupEnum.TERRITORY]: UserManyRoleEnum.TERRITORY,
+  [UserGroupEnum.REGISTRY]: UserManyRoleEnum.REGISTRY,
+  [UserGroupEnum.OPERATOR]: UserManyRoleEnum.OPERATOR,
+};
+
+export enum UserRoleEnum {
+  TERRITORY_USER = 'territory.user',
+  OPERATOR_USER = 'operator.user',
+  REGISTRY_USER = 'registry.user',
+  TERRITORY_ADMIN = 'territory.admin',
+  OPERATOR_ADMIN = 'operator.admin',
+  REGISTRY_ADMIN = 'registry.admin',
+}
+
+export const USER_ROLES: UserManyRoleEnum[] = [UserManyRoleEnum.USER, UserManyRoleEnum.ADMIN];
 
 export const USER_ROLES_FR = {
   user: 'consultation',
   admin: 'administrateur',
+  // admin: 'administrateur',
 };
