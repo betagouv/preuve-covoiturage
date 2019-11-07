@@ -23,14 +23,13 @@
         <span>Du {{ campaign.start.toDate() | date: 'dd MMMM' }} au {{ campaign.end.toDate() | date: 'dd MMMM' }}</span>
       </div>
       <div class="CampaignsList-item-actions" [ngSwitch]="campaign.status">
-        <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" (click)="launchCampaign(campaign._id)">
-          <mat-icon matTooltip="lancer" color="primary">play_arrow</mat-icon>
-        </button>
         <!-- todo: this should be in campaign view -->
-        <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/{{ campaign._id }}">
-          <mat-icon matTooltip="modifier">edit</mat-icon>
+        <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/draft/{{ campaign._id }}">
+          <mat-icon matTooltip="voir le détail">edit</mat-icon>
         </button>
-        <!--        <a class="link" *ngSwitchDefault>Voir le détail</a> todo: when view is ready-->
+        <button mat-button *ngSwitchCase="CampaignStatusEnum.VALIDATED" routerLink="/campaign/valid/{{ campaign._id }}">
+          <mat-icon matTooltip="voir le détail">remove_red_eye</mat-icon>
+        </button>
         <button mat-button (click)="deleteCampaign(campaign)" *ngSwitchCase="CampaignStatusEnum.DRAFT">
           <mat-icon matTooltip="supprimer" color="error">delete_outline</mat-icon>
         </button>

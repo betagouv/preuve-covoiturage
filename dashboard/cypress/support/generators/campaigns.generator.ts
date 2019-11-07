@@ -16,6 +16,7 @@ import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaig
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
 import { operatorStubs } from '../stubs/operator/operator.list';
+import { territoryStub } from '../stubs/territory/territory.find';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {
@@ -66,6 +67,7 @@ export class CampaignsGenerator {
           rules: [],
           trips_number: Math.floor(Math.random() * 10000),
           amount_spent: Math.floor(Math.random() * 20000),
+          territory_id: territoryStub._id,
         },
     );
 

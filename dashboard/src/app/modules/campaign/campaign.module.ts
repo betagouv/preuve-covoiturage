@@ -33,6 +33,9 @@ import { CampaignCardComponent } from './components/campaign-card/campaign-card.
 import { CampaignMapComponent } from './components/campaign-map/campaign-map.component';
 import { CampaignInseeFilterComponent } from './components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter.component';
 import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-view/campaign-insee-filter-start-end-view.component';
+import { CampaignDraftViewComponent } from './pages/campaign-draft-view/campaign-draft-view.component';
+import { CampaignActiveViewComponent } from './pages/campaign-active-view/campaign-active-view.component';
+import { CampaignUiModule } from '~/modules/campaign/modules/campaign-ui/campaign-ui.module';
 
 @NgModule({
   declarations: [
@@ -55,6 +58,8 @@ import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-
     CampaignInseeFilterStartEndFormComponent,
     TerritoriesInseeAutocompleteComponent,
     CampaignInseeFilterStartEndViewComponent,
+    CampaignDraftViewComponent,
+    CampaignActiveViewComponent,
   ],
   imports: [
     CampaignRoutingModule,
@@ -68,6 +73,7 @@ import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-
     NouisliderModule,
     TerritoryUiModule,
     OperatorUiModule,
+    CampaignUiModule,
   ],
   providers: [CurrencyPipe, DecimalPipe],
   exports: [CampaignsListComponent],

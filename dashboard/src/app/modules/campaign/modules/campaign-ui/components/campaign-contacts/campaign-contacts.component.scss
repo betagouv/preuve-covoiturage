@@ -1,0 +1,24 @@
+@import '~src/styles/variables';
+
+.campaignContactsView {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  .map {
+    height: 170px;
+    width: 170px;
+    border-radius: 50%;
+  }
+
+  height: 200px;
+  background-color: $background-dark-blue;
+  padding: 15px 20px;
+  &-contacts p {
+    margin-bottom: 1px;
+    margin-top: 1px;
+  }
+  &-description {
+    padding: 5px 20px;
+    max-width: 176px;
+  }
+}

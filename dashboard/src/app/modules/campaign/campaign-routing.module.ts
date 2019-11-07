@@ -8,6 +8,8 @@ import { CampaignDashboardComponent } from '~/modules/campaign/pages/campaign-da
 import { CampaignCreateEditComponent } from '~/modules/campaign/pages/campaign-create-edit/campaign-create-edit.component';
 import { CampaignDiscoverComponent } from '~/modules/campaign/pages/campaign-discover/campaign-discover.component';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { CampaignDraftViewComponent } from '~/modules/campaign/pages/campaign-draft-view/campaign-draft-view.component';
+import { CampaignActiveViewComponent } from '~/modules/campaign/pages/campaign-active-view/campaign-active-view.component';
 
 const routes: Routes = [
   {
@@ -31,6 +33,14 @@ const routes: Routes = [
       {
         path: ':campaignId',
         component: CampaignCreateEditComponent,
+      },
+      {
+        path: 'draft/:campaignId',
+        component: CampaignDraftViewComponent,
+      },
+      {
+        path: 'valid/:campaignId',
+        component: CampaignActiveViewComponent,
       },
     ],
   },

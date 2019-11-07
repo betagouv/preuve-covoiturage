@@ -1,0 +1,38 @@
+<div class="campaignRulesView">
+  <h4>Trajets elligibles</h4>
+  <div class="campaignRulesView-content">
+    <div class="campaignRulesView-content-row">
+      <p>Jours de la semaine</p>
+      <p>
+        <b><span [innerHTML]="daysAndTimes"></span></b>
+      </p>
+    </div>
+    <div class="campaignRulesView-content-row">
+      <p>Classe de preuve</p>
+      <p>
+        <b>{{ ranks }}</b>
+      </p>
+    </div>
+    <div class="campaignRulesView-content-row">
+      <p>Cibles</p>
+      <p>
+        <b>{{ targets }}</b>
+      </p>
+    </div>
+    <div class="campaignRulesView-content-row">
+      <p>Distance</p>
+      <p>
+        <b>{{ distance }}</b>
+      </p>
+    </div>
+    <div class="campaignRulesView-content-row">
+      <p>Trajet (INSEE)</p>
+      <p>
+        <b>{{ insee }}</b>
+      </p>
+    </div>
+    <div class="campaignRulesView-content-actions">
+      <button *ngIf="canEdit" mat-flat-button type="button" color="primary">Modifier</button>
+    </div>
+  </div>
+</div>
