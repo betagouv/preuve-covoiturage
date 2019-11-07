@@ -80,10 +80,12 @@ export class PatchUserAction extends AbstractAction {
 
     const updatedUser = await this.userRepository.patch(id, patch);
 
-    if (!email) {
+    // user didn't change her email
+    if (email === user.email) {
       return updatedUser;
     }
 
+    // user changed her email -> ask for email confirmation
     try {
       const token = await this.authRepository.updateEmailById(id, email);
       await this.notification.emailUpdated(token, email, user.email);

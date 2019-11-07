@@ -28,24 +28,24 @@ import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { SetPermissionsCommand } from './commands/SetPermissionsCommand';
-import {
-  ChangePasswordUserAction,
-  ChangePasswordWithTokenUserAction,
-  ChangeRoleUserAction,
-  CheckForgottenTokenUserAction,
-  ConfirmEmailUserAction,
-  CreateUserAction,
-  DeleteUserAction,
-  FindUserAction,
-  ForgottenPasswordUserAction,
-  ListUserAction,
-  LoginUserAction,
-  MeUserAction,
-  NotifyUserAction,
-  PatchUserAction,
-  SendConfirmEmailUserAction,
-  SendInvitationEmailUserAction,
-} from './actions';
+
+import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
+import { ChangePasswordWithTokenUserAction } from './actions/ChangePasswordWithTokenUserAction';
+import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
+import { CheckForgottenTokenUserAction } from './actions/CheckForgottenTokenUserAction';
+import { ConfirmEmailUserAction } from './actions/ConfirmEmailUserAction';
+import { CreateUserAction } from './actions/CreateUserAction';
+import { DeleteUserAction } from './actions/DeleteUserAction';
+import { FindUserAction } from './actions/FindUserAction';
+import { ForgottenPasswordUserAction } from './actions/ForgottenPasswordUserAction';
+import { ListUserAction } from './actions/ListUserAction';
+import { LoginUserAction } from './actions/LoginUserAction';
+import { MeUserAction } from './actions/MeUserAction';
+import { NotifyUserAction } from './actions/NotifyUserAction';
+import { PatchUserAction } from './actions/PatchUserAction';
+import { SendConfirmEmailUserAction } from './actions/SendConfirmEmailUserAction';
+import { SendInvitationEmailUserAction } from './actions/SendInvitationEmailUserAction';
+
 import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
 import { UserNotificationProvider } from './providers/UserNotificationProvider';
 
