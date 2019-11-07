@@ -1,201 +1,132 @@
-import * as _ from 'lodash';
-import { provider, ProviderInterface, InvalidParamsException, InitHookInterface } from '@ilos/common';
-import { ValidatorInterfaceResolver } from '@pdc/provider-validator';
+import { provider } from '@ilos/common';
 
-import { GeoInterface } from './interfaces/GeoInterface';
-import { PositionInterface } from './interfaces/PositionInterface';
+import {
+  GeoCoderInterface,
+  GeoInterface,
+  GeoProviderInterface,
+  GeoProviderInterfaceResolver,
+  InseeCoderInterface,
+  PartialGeoInterface,
+  PointInterface,
+  RouteMeta,
+  RouteMetaProviderInterface,
+  InseeReverseCoderInterface,
+} from './interfaces';
 
-import { DeKomootPhoton } from './providers/de.komoot.photon';
-import { FrGouvDataApiAdresse } from './providers/fr.gouv.data.api-adresse';
-import { FrGouvApiGeo } from './providers/fr.gouv.api.geo';
-import { OrgOpenstreetmapNominatim } from './providers/org.openstreetmap.nominatim';
-import { GeoProviderInterfaceResolver } from './interfaces/GeoProviderInterface';
-import { FrGouvBetaCovoiturageOsrm, OrgProjectOsrm } from './providers';
-import { PointInterface } from './interfaces/PointInterface';
-
-// TODO refactor
-const validators: [string, any][] = [
-  [
-    'position',
-    {
-      $id: 'position',
-      type: 'object',
-      additionalProperties: false,
-      minProperties: 1,
-      dependencies: {
-        lon: ['lat'],
-        lat: ['lon'],
-      },
-      properties: {
-        lat: { macro: 'lat' },
-        lon: { macro: 'lon' },
-        insee: { macro: 'insee' },
-        literal: { macro: 'longchar' },
-      },
-    },
-  ],
-];
+import {
+  EtalabGeoAdministriveProvider,
+  EtalabGeoAdressProvider,
+  LocalOSRMProvider,
+  OSMNominatimProvider,
+  OSRMProvider,
+  PhotonProvider,
+} from './providers';
 
 @provider({
   identifier: GeoProviderInterfaceResolver,
 })
-export class GeoProvider implements ProviderInterface, InitHookInterface {
-  constructor(protected validator: ValidatorInterfaceResolver) {}
+export class GeoProvider implements GeoProviderInterface {
+  protected geoCoderProviders: GeoCoderInterface[] = [
+    new EtalabGeoAdressProvider(),
+    new PhotonProvider(),
+    new OSMNominatimProvider(),
+  ];
 
-  async init() {
-    validators.forEach(([name, schema]) => {
-      this.validator.registerValidator(schema, name);
-    });
+  protected inseeCoderProviders: InseeCoderInterface[] = [
+    new EtalabGeoAdministriveProvider(),
+    new EtalabGeoAdressProvider(),
+  ];
+
+  protected inseeReverseCoderProviders: InseeReverseCoderInterface[] = [
+    new EtalabGeoAdministriveProvider(),
+  ];
+
+  protected routeMetaProviders: RouteMetaProviderInterface[] = [
+    new LocalOSRMProvider(),
+    new OSRMProvider(),
+  ];
+
+  constructor() {}
+
+  async literalToPosition(literal: string): Promise<PointInterface> {
+    const failure = [];
+    for(const geocoder of this.geoCoderProviders) {
+      try {
+        const result = await geocoder.literalToPosition(literal);
+        return result;
+      } catch(e) {
+        //
+        failure.push(e.message);
+      }
+    }
+    throw new Error(failure.join(', '));
   }
 
-  // TODO rename method and clean the fallback syntax
-  public async getTown(position: GeoInterface): Promise<PositionInterface> {
-    await this.validator.validate(position, 'position');
-
-    const { lon, lat, insee, literal } = position;
-
-    if (!_.isNil(lon) && !_.isNil(lat)) {
-      // beurk...
+  async inseeToPosition(insee: string): Promise<PointInterface> {
+    const failure = [];
+    for(const inseeReverseCoder of this.inseeReverseCoderProviders) {
       try {
-        const { citycode, city, postcode, country } = await FrGouvDataApiAdresse.reverse({
-          lon,
-          lat,
-        });
-        return {
-          lon,
-          lat,
-          country,
-          insee: citycode,
-          town: city,
-          postcodes: this.cleanPostcodes(postcode),
-        };
-      } catch (e) {
-        try {
-          const { citycode, city, postcode, country } = await FrGouvApiGeo.reverse({
-            lon,
-            lat,
-          });
-          return {
-            lon,
-            lat,
-            country,
-            insee: citycode,
-            town: city,
-            postcodes: this.cleanPostcodes(postcode),
-          };
-        } catch (f) {
-          try {
-            const { citycode, city, postcode, country } = await OrgOpenstreetmapNominatim.reverse({ lon, lat });
-            return {
-              lon,
-              lat,
-              country,
-              insee: citycode,
-              town: city,
-              postcodes: this.cleanPostcodes(postcode),
-            };
-          } catch (g) {
-            return {
-              lon,
-              lat,
-              insee: null,
-              town: null,
-              postcodes: [],
-              country: null,
-            };
-          }
-        }
+        const result = await inseeReverseCoder.inseeToPosition(insee);
+        return result;
+      } catch(e) {
+        //
+        failure.push(e.message);
+      }
+    }
+    throw new Error(failure.join(', '));
+  }
+
+  async positionToInsee(geo: PointInterface): Promise<string> {
+    const failure = [];
+    for(const inseecoder of this.inseeCoderProviders) {
+      try {
+        const result = await inseecoder.positionToInsee(geo);
+        return result;
+      } catch(e) {
+        //
+        failure.push(e.message);
+      }
+    }
+    throw new Error(failure.join(', '));
+  }
+
+  async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
+    const failure = [];
+    for(const routeMeta of this.routeMetaProviders) {
+      try {
+        const result = await routeMeta.getRouteMeta(start, end);
+        return result;
+      } catch(e) {
+        //
+        failure.push(e.message);
+      }
+    }
+    throw new Error(failure.join(', '));
+  }
+
+  async checkAndComplete(data: PartialGeoInterface):Promise<GeoInterface> {
+    let { lat, lon, literal, insee } = data;
+
+    if ((!lat || !lon) && !literal && !insee) {
+      throw new Error('Missing point param (lat/lon or literal or insee)');
+    }
+
+    if (!lat || ! lon) {
+      if (literal) {
+        ({ lat, lon } = await this.literalToPosition(literal));
+      } else {
+        ({ lat, lon } = await this.inseeToPosition(insee));
       }
     }
 
-    if (!_.isNil(insee)) {
-      // beurk...
-      try {
-        const { city, citycode, postcode, country } = await FrGouvApiGeo.insee(insee);
-
-        return {
-          country,
-          lon: null,
-          lat: null,
-          insee: citycode,
-          town: city,
-          postcodes: this.cleanPostcodes(postcode),
-        };
-      } catch (e) {
-        try {
-          const { city, citycode, postcode, country } = await FrGouvDataApiAdresse.insee(insee);
-          return {
-            country,
-            lon: null,
-            lat: null,
-            insee: citycode,
-            town: city,
-            postcodes: this.cleanPostcodes(postcode),
-          };
-        } catch (f) {
-          return {
-            lon: null,
-            lat: null,
-            insee: null,
-            town: null,
-            postcodes: [],
-            country: null,
-          };
-        }
-      }
+    if (!insee) {
+      insee = await this.positionToInsee({ lat, lon });
     }
 
-    if (!_.isNil(literal) && literal !== '') {
-      // beurk...
-      try {
-        // use international search first
-        const res = await DeKomootPhoton.search(literal);
-        return {
-          lon: res.lon,
-          lat: res.lat,
-          insee: null,
-          town: res.city,
-          postcodes: this.cleanPostcodes(res.postcode),
-          country: res.country,
-        };
-      } catch (e) {
-        try {
-          const { citycode, city, postcode, country } = await FrGouvDataApiAdresse.search(literal);
-          return {
-            lon,
-            lat,
-            country,
-            insee: citycode,
-            town: city,
-            postcodes: this.cleanPostcodes(postcode),
-          };
-        } catch (f) {
-          return {
-            lon,
-            lat,
-            insee,
-            town: null,
-            postcodes: [],
-            country: null,
-          };
-        }
-      }
-    }
-
-    throw new InvalidParamsException();
-  }
-
-  /**
-   * Retrieve the distance and duration from a list of OSRM providers
-   */
-  public async getRoute(start: PointInterface, end: PointInterface): Promise<{ distance: number; duration: number }> {
-    return [FrGouvBetaCovoiturageOsrm.route, OrgProjectOsrm.route].reduce(
-      (promiseAcc, func) => promiseAcc.then((res) => res).catch(() => func(start, end)),
-      Promise.reject(),
-    );
-  }
-
-  private cleanPostcodes(p) {
-    return (Array.isArray(p) ? p : [p].filter((i) => !!i)) || [];
+    return {
+      lat,
+      lon,
+      insee,
+    };
   }
 }

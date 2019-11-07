@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { set } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
@@ -20,7 +20,7 @@ export class NormalizationRouteAction extends AbstractAction {
     this.logger.debug(`Normalization:route on ${journey._id}`);
 
     // calc distance and duration for passenger
-    const passengerRoute = await this.geoProvider.getRoute(
+    const passengerRoute = await this.geoProvider.getRouteMeta(
       {
         lon: journey.passenger.start.lon,
         lat: journey.passenger.start.lat,
@@ -31,11 +31,11 @@ export class NormalizationRouteAction extends AbstractAction {
       },
     );
 
-    _.set(journey, 'passenger.calc_distance', passengerRoute.distance);
-    _.set(journey, 'passenger.calc_duration', passengerRoute.duration);
+    set(journey, 'passenger.calc_distance', passengerRoute.distance);
+    set(journey, 'passenger.calc_duration', passengerRoute.duration);
 
     // calc distance and duration for driver
-    const driverRoute = await this.geoProvider.getRoute(
+    const driverRoute = await this.geoProvider.getRouteMeta(
       {
         lon: journey.driver.start.lon,
         lat: journey.driver.start.lat,
@@ -46,8 +46,8 @@ export class NormalizationRouteAction extends AbstractAction {
       },
     );
 
-    _.set(journey, 'driver.calc_distance', driverRoute.distance);
-    _.set(journey, 'driver.calc_duration', driverRoute.duration);
+    set(journey, 'driver.calc_distance', driverRoute.distance);
+    set(journey, 'driver.calc_duration', driverRoute.duration);
 
     // Call the next step asynchronously
     await this.wf.next('normalization:route', journey);
