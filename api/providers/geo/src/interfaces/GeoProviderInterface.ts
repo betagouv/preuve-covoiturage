@@ -1,19 +1,27 @@
-import { ProviderInterface } from '@ilos/common';
-
-import { GeoInterface } from './GeoInterface';
-import { PositionInterface } from './PositionInterface';
+import { GeoInterface, PartialGeoInterface } from './GeoInterface';
+import { GeoCoderInterface } from './GeoCoderInterface';
+import { InseeCoderInterface } from './InseeCoderInterface';
+import { RouteMetaProviderInterface, RouteMeta } from './RouteMetaProviderInterface';
 import { PointInterface } from './PointInterface';
 
-export interface GeoProviderInterface extends ProviderInterface {
-  getTown({ lon, lat, insee, literal }: GeoInterface): Promise<PositionInterface>;
-  getRoute(start: PointInterface, end: PointInterface): Promise<{ distance: number; duration: number }>;
+export interface GeoProviderInterface extends GeoCoderInterface, InseeCoderInterface, RouteMetaProviderInterface {
+  checkAndComplete(data: PartialGeoInterface):Promise<GeoInterface>;
 }
 
 export abstract class GeoProviderInterfaceResolver implements GeoProviderInterface {
-  public async getTown({ lon, lat, insee, literal }: GeoInterface): Promise<PositionInterface> {
-    throw new Error('Not implemented');
+  toPosition(literal: string): Promise<PointInterface> {
+    throw new Error();
   }
-  public async getRoute(start: PointInterface, end: PointInterface): Promise<{ distance: number; duration: number }> {
-    throw new Error('Not implemented');
+
+  toInsee(geo: PointInterface): Promise<string> {
+    throw new Error();
+  }
+
+  getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
+    throw new Error();
+  }
+
+  checkAndComplete(data: PartialGeoInterface):Promise<GeoInterface> {
+    throw new Error();
   }
 }
