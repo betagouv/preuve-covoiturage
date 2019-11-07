@@ -70,7 +70,7 @@ export class MigrateDataCommand implements CommandInterface {
           values: [
             '', // application_id,
             operator._id.toString(),
-            journey_id,
+            journey_id.toString(),
             payload,
             createdAt,
           ],
