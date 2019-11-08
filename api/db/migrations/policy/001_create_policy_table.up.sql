@@ -4,6 +4,11 @@ CREATE TYPE policy.policy_unit_enum AS enum('euro', 'point');
 CREATE TABLE IF NOT EXISTS policy.policies
 (
   _id serial primary key,
+
+  created_at timestamp NOT NULL DEFAULT NOW(),
+  updated_at timestamp NOT NULL DEFAULT NOW(),
+  deleted_at timestamp,
+
   parent_id integer REFERENCES policy.policies (_id),
   territory_id varchar,
 
@@ -18,9 +23,7 @@ CREATE TABLE IF NOT EXISTS policy.policies
 
   global_rules json,
   rules json,
-  ui_status json,
-
-  created_at timestamp NOT NULL DEFAULT NOW(),
-  updated_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp
+  ui_status json
 );
+
+CREATE TRIGGER touch_policies_updated_at BEFORE UPDATE ON policy.policies FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();

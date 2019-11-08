@@ -2,21 +2,23 @@ CREATE TABLE IF NOT EXISTS operator.operators
 (
   _id serial primary key,
 
+  created_at timestamp NOT NULL DEFAULT NOW(),
+  updated_at timestamp NOT NULL DEFAULT NOW(),
+  deleted_at timestamp,
+
   name varchar NOT NULL,
   legal_name varchar NOT NULL,
   siret varchar NOT NULL,
 
-  company json NOT NULL,
-  address json NOT NULL,
-  bank json NOT NULL,
-  contacts json NOT NULL,
-
   cgu_accepted_at timestamp,
   cgu_accepted_by varchar,
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
-  updated_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp
+  company json NOT NULL,
+  address json NOT NULL,
+  bank json NOT NULL,
+  contacts json NOT NULL
 );
 
 CREATE INDEX ON operator.operators (siret);
+
+CREATE TRIGGER touch_operators_updated_at BEFORE UPDATE ON operator.operators FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
