@@ -13,7 +13,7 @@ import { bootstrap as policyBootstrap } from '@pdc/service-policy';
 
 import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 import { MapIdCommand } from './commands/MapIdCommand';
-import { MigrateInseeCommand } from './commands/InseeSeedCommand';
+import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
 
 @kernel({
   env: null,
