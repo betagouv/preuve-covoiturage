@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { NotFoundException } from '@ilos/common';
+
 import { GeoCoderInterface, PointInterface } from '../interfaces';
 
 export class OSMNominatimProvider implements GeoCoderInterface {

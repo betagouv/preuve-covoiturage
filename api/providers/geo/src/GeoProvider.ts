@@ -37,25 +37,18 @@ export class GeoProvider implements GeoProviderInterface {
     new EtalabGeoAdressProvider(),
   ];
 
-  protected inseeReverseCoderProviders: InseeReverseCoderInterface[] = [
-    new EtalabGeoAdministriveProvider(),
-  ];
+  protected inseeReverseCoderProviders: InseeReverseCoderInterface[] = [new EtalabGeoAdministriveProvider()];
 
-  protected routeMetaProviders: RouteMetaProviderInterface[] = [
-    new LocalOSRMProvider(),
-    new OSRMProvider(),
-  ];
+  protected routeMetaProviders: RouteMetaProviderInterface[] = [new LocalOSRMProvider(), new OSRMProvider()];
 
   constructor() {}
 
   async literalToPosition(literal: string): Promise<PointInterface> {
     const failure = [];
-    for(const geocoder of this.geoCoderProviders) {
+    for (const geocoder of this.geoCoderProviders) {
       try {
-        const result = await geocoder.literalToPosition(literal);
-        return result;
-      } catch(e) {
-        //
+        return geocoder.literalToPosition(literal);
+      } catch (e) {
         failure.push(e.message);
       }
     }
@@ -64,12 +57,10 @@ export class GeoProvider implements GeoProviderInterface {
 
   async inseeToPosition(insee: string): Promise<PointInterface> {
     const failure = [];
-    for(const inseeReverseCoder of this.inseeReverseCoderProviders) {
+    for (const inseeReverseCoder of this.inseeReverseCoderProviders) {
       try {
-        const result = await inseeReverseCoder.inseeToPosition(insee);
-        return result;
-      } catch(e) {
-        //
+        return inseeReverseCoder.inseeToPosition(insee);
+      } catch (e) {
         failure.push(e.message);
       }
     }
@@ -78,12 +69,10 @@ export class GeoProvider implements GeoProviderInterface {
 
   async positionToInsee(geo: PointInterface): Promise<string> {
     const failure = [];
-    for(const inseecoder of this.inseeCoderProviders) {
+    for (const inseecoder of this.inseeCoderProviders) {
       try {
-        const result = await inseecoder.positionToInsee(geo);
-        return result;
-      } catch(e) {
-        //
+        return inseecoder.positionToInsee(geo);
+      } catch (e) {
         failure.push(e.message);
       }
     }
@@ -92,26 +81,25 @@ export class GeoProvider implements GeoProviderInterface {
 
   async getRouteMeta(start: PointInterface, end: PointInterface): Promise<RouteMeta> {
     const failure = [];
-    for(const routeMeta of this.routeMetaProviders) {
+    for (const routeMeta of this.routeMetaProviders) {
       try {
-        const result = await routeMeta.getRouteMeta(start, end);
-        return result;
-      } catch(e) {
-        //
+        return routeMeta.getRouteMeta(start, end);
+      } catch (e) {
         failure.push(e.message);
       }
     }
     throw new Error(failure.join(', '));
   }
 
-  async checkAndComplete(data: PartialGeoInterface):Promise<GeoInterface> {
-    let { lat, lon, literal, insee } = data;
+  async checkAndComplete(data: PartialGeoInterface): Promise<GeoInterface> {
+    const { literal } = data;
+    let { lat, lon, insee } = data;
 
     if ((!lat || !lon) && !literal && !insee) {
       throw new Error('Missing point param (lat/lon or literal or insee)');
     }
 
-    if (!lat || ! lon) {
+    if (!lat || !lon) {
       if (literal) {
         ({ lat, lon } = await this.literalToPosition(literal));
       } else {

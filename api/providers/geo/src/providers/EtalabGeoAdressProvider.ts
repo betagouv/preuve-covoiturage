@@ -1,4 +1,4 @@
-import { get }from 'lodash';
+import { get } from 'lodash';
 import axios from 'axios';
 import { NotFoundException } from '@ilos/common';
 
