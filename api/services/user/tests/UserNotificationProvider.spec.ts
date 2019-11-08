@@ -1,3 +1,4 @@
+// tslint:disable: max-classes-per-file
 import { describe } from 'mocha';
 import chai from 'chai';
 import sinon from 'sinon';
@@ -54,7 +55,7 @@ class UserRepository extends UserRepositoryProviderInterfaceResolver {
   }
 }
 
-describe('User notification provider', () => {
+describe('User notification provider', async () => {
   let provider: UserNotificationProvider;
   let kernel: Kernel;
   let logger;

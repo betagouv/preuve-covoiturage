@@ -22,7 +22,7 @@ class Config extends ConfigInterfaceResolver {
   }
 }
 
-describe('Auth pg repository', () => {
+describe('Auth pg repository', async () => {
   let repository: AuthRepositoryProviderInterface;
   let connection;
   let id;
