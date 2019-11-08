@@ -297,7 +297,7 @@ export class HttpTransport implements TransportInterface {
           id: 1,
           jsonrpc: '2.0',
           method: 'user:checkForgottenToken',
-          params: { email: req.body.email, forgotten_token: req.body.token },
+          params: { email: req.body.email, token: req.body.token },
         });
 
         this.send(res, response);
@@ -314,7 +314,7 @@ export class HttpTransport implements TransportInterface {
           id: 1,
           jsonrpc: '2.0',
           method: 'user:changePasswordWithToken',
-          params: { email: req.body.email, forgotten_token: req.body.token, password: req.body.password },
+          params: { email: req.body.email, token: req.body.token, password: req.body.password },
         });
 
         this.send(res, response);
@@ -331,7 +331,7 @@ export class HttpTransport implements TransportInterface {
           id: 1,
           jsonrpc: '2.0',
           method: 'user:confirmEmail',
-          params: { email: req.body.email, forgotten_token: req.body.token },
+          params: { email: req.body.email, token: req.body.token },
         });
 
         this.send(res, response);

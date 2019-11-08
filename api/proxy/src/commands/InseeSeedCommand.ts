@@ -4,8 +4,8 @@ import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 @command()
-export class InseeSeedCommand implements CommandInterface {
-  static readonly signature: string = 'insee:seed';
+export class MigrateInseeCommand implements CommandInterface {
+  static readonly signature: string = 'migrate:insee';
   static readonly description: string = 'Seed INSEE data';
   static readonly options: CommandOptionType[] = [
     {

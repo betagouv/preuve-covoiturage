@@ -1,6 +1,6 @@
 import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto/dist';
+import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import {
   AuthRepositoryProviderInterface,
@@ -118,7 +118,8 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
     type: string,
     status: string = this.UNCONFIRMED_STATUS,
   ): Promise<string | undefined> {
-    const token = await this.cryptoProvider.cryptToken(this.cryptoProvider.generateToken());
+    const plainToken = this.cryptoProvider.generateToken();
+    const cryptedToken = await this.cryptoProvider.cryptToken(plainToken);
     const token_expires_at = this.getTokenExpiresAt(type);
 
     const query = {
@@ -129,7 +130,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
         status = $4
       WHERE email = $1
       `,
-      values: [email, token, token_expires_at, status],
+      values: [email, cryptedToken, token_expires_at, status],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -138,7 +139,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       return undefined;
     }
 
-    return token;
+    return plainToken;
   }
 
   /**
@@ -161,27 +162,19 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
     const result = await this.connection.getClient().query(query);
 
-    if (result.rowCount === 0) {
-      return false;
-    }
-
-    return true;
+    return result.rowCount > 0;
   }
 
   /**
-   * Challenge password by email, return boolean
-   * If challenge pass, clear the token
+   * Challenge password by email
    */
   async challengePasswordByEmail(email: string, password: string): Promise<boolean> {
     const hashedPassword = await this.getPasswordByEmail(email);
     if (!hashedPassword) {
       return false;
     }
-    const success = await this.cryptoProvider.comparePassword(password, hashedPassword);
-    if (success) {
-      await this.clearTokenByEmail(email);
-    }
-    return success;
+
+    return this.cryptoProvider.comparePassword(password, hashedPassword);
   }
 
   /**
@@ -193,30 +186,27 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       return false;
     }
 
-    const result = await this.cryptoProvider.comparePassword(password, hashedPassword);
-
-    return result;
+    return this.cryptoProvider.comparePassword(password, hashedPassword);
   }
 
   /**
-   * Challenge token by email, if challenge pass, clear the token and update status
+   * Challenge token by email
    */
   async challengeTokenByEmail(email: string, clearToken: string): Promise<boolean> {
     const tokenData = await this.getTokenByEmail(email);
     if (!tokenData) {
       return false;
     }
+
     const { token, token_expires_at } = tokenData;
 
-    if (!token || (await this.cryptoProvider.compareForgottenToken(clearToken, token))) {
+    if (!token || !(await this.cryptoProvider.compareForgottenToken(clearToken, token))) {
       return false;
     }
 
     if (!token_expires_at || token_expires_at.getTime() - Date.now() <= 0) {
       return false;
     }
-
-    await this.clearTokenByEmail(email, this.CONFIRMED_STATUS);
 
     return true;
   }
@@ -238,42 +228,42 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
     const result = await this.connection.getClient().query(query);
 
-    if (result.rowCount === 0) {
-      return false;
-    }
-
-    return true;
+    return result.rowCount > 0;
   }
 
   /**
    * Update password by email
    */
-  async updatePasswordByEmail(email: string, password: string): Promise<boolean> {
+  async updatePasswordByEmail(
+    email: string,
+    password: string,
+    status: string = this.UNCONFIRMED_STATUS,
+  ): Promise<boolean> {
     const newHashPassword = await this.cryptoProvider.cryptPassword(password);
 
     const query = {
       text: `
       UPDATE ${this.table}
-        SET token = null, token_expires_at = null, password = $2
+        SET token = null,
+        token_expires_at = null,
+        password = $2,
+        status = $3
       WHERE email = $1
       `,
-      values: [email, newHashPassword],
+      values: [email, newHashPassword, status],
     };
 
     const result = await this.connection.getClient().query(query);
 
-    if (result.rowCount === 0) {
-      return false;
-    }
-
-    return true;
+    return result.rowCount > 0;
   }
 
   /**
    * Update email by id, update status
    */
   async updateEmailById(id: string, email: string, status: string = this.UNCONFIRMED_STATUS): Promise<string> {
-    const token = await this.cryptoProvider.cryptToken(this.cryptoProvider.generateToken());
+    const clearToken = this.cryptoProvider.generateToken();
+    const cryptedToken = await this.cryptoProvider.cryptToken(clearToken);
     const token_expires_at = this.getTokenExpiresAt(this.CONFIRMATION_TOKEN);
 
     const query = {
@@ -285,7 +275,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
         status = $5
       WHERE _id = $1
       `,
-      values: [id, token, token_expires_at, email, status],
+      values: [id, cryptedToken, token_expires_at, email, status],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -294,6 +284,6 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
       return undefined;
     }
 
-    return token;
+    return clearToken;
   }
 }

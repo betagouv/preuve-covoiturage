@@ -22,7 +22,11 @@ export class ChangePasswordWithTokenUserAction extends AbstractAction {
       throw new UnauthorizedException('Wrong token');
     }
 
-    await this.authRepository.updatePasswordByEmail(params.email, params.password);
+    await this.authRepository.updatePasswordByEmail(
+      params.email,
+      params.password,
+      this.authRepository.CONFIRMED_STATUS,
+    );
 
     return true;
   }

@@ -51,9 +51,9 @@ export class CreateUserAction extends AbstractAction {
       throw new ConflictException('email conflict');
     }
 
-    if ('operator' in request && 'territory' in request) {
+    if ('operator_id' in request && 'territory_id' in request) {
       // todo: check this in jsonschema
-      throw new InvalidRequestException('Cannot assign operator and AOM at the same time');
+      throw new InvalidRequestException('Cannot assign operator and territory at the same time');
     }
 
     const userCreated = await this.userRepository.create(request);

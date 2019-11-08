@@ -1,6 +1,9 @@
 export interface GeoInterface {
-  lon?: number;
-  lat?: number;
-  insee?: string;
+  lat: number;
+  lon: number;
+  insee: string;
+}
+
+export interface PartialGeoInterface extends Partial<GeoInterface> {
   literal?: string;
 }

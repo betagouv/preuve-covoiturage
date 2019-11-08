@@ -26,25 +26,15 @@ const positionSchema = {
     lat: ['lon'],
     lon: ['lat'],
     country: ['literal'],
+    literal: ['country'],
   },
   properties: {
     datetime: { macro: 'timestamp' },
     lat: { macro: 'lat' },
     lon: { macro: 'lon' },
     insee: { macro: 'insee' },
-    postcodes: {
-      type: 'array',
-      items: { type: 'string' },
-      minItems: 0,
-    },
-    town: { macro: 'varchar' },
     country: { macro: 'varchar' },
     literal: { macro: 'longchar' },
-    territories: {
-      type: 'array',
-      minItems: 0,
-      items: { macro: 'dbid' },
-    },
   },
 };
 
