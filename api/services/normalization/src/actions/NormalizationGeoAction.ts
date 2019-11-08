@@ -17,7 +17,7 @@ export class NormalizationGeoAction extends AbstractAction {
   }
 
   public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    let normalizedJourney = { ...journey };
+    const normalizedJourney = { ...journey };
     this.logger.debug(`Normalization:geo on ${journey._id}`);
 
     for (const path of ['passenger.start', 'passenger.end', 'driver.start', 'driver.end']) {
