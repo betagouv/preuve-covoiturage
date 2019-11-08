@@ -48,6 +48,7 @@ import { SendInvitationEmailUserAction } from './actions/SendInvitationEmailUser
 
 import { AuthRepositoryProvider } from './providers/AuthRepositoryProvider';
 import { UserNotificationProvider } from './providers/UserNotificationProvider';
+import { SeedUsersCommand } from './commands/SeedUsersCommand';
 
 @serviceProvider({
   config: __dirname,
@@ -98,7 +99,7 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
-  commands: [MigrateDataCommand, SetPermissionsCommand],
+  commands: [MigrateDataCommand, SetPermissionsCommand, SeedUsersCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, NotificationExtension];
