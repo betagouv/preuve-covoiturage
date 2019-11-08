@@ -5,9 +5,9 @@ export interface ParamsInterface extends UserBaseInterface {}
 
 export type ResultInterface = UserInterface;
 
-export const configHandler = {
+export const handlerConfig = {
   service: 'user',
   method: 'create',
 };
 
-export const signature = `${configHandler.service}:${configHandler.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, UnauthorizedException } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/checkForgottenToken.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/checkForgottenToken.contract';
 import { alias } from '../shared/user/checkForgottenToken.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
@@ -9,7 +9,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 /*
  * check forgotten_token identifying the user by email
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class CheckForgottenTokenUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 

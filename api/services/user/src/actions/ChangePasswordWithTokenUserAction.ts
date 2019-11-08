@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, UnauthorizedException } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/changePasswordWithToken.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changePasswordWithToken.contract';
 import { alias } from '../shared/user/changePasswordWithToken.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
@@ -9,7 +9,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 /*
  * Change password using the email and forgotten_token for auth
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class ChangePasswordWithTokenUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 

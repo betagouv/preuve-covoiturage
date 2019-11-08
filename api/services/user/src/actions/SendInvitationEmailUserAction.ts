@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, UnauthorizedException } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/sendInvitationEmail.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/sendInvitationEmail.contract';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/user/sendInvitationEmail.schema';
@@ -11,7 +11,7 @@ import { UserNotificationProvider } from '../providers/UserNotificationProvider'
 /*
  * send the confirmation email to a user by _id
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class SendInvitationEmailUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],

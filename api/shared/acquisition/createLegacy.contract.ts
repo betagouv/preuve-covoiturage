@@ -62,8 +62,8 @@ export interface ParamsInterface {
 }
 
 export type ResultInterface = ResultV2Interface;
-export const configHandler = {
+export const handlerConfig = {
   service: 'acquisition',
   method: 'createLegacy',
 };
-export const signature = `${configHandler.service}:${configHandler.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

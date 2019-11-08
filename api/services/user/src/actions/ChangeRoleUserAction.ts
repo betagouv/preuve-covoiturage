@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/changeRole.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changeRole.contract';
 import { alias } from '../shared/user/changeRole.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -9,7 +9,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 /*
  * Update role of user
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class ChangeRoleUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],

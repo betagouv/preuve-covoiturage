@@ -2,11 +2,11 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
 
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/acquisition/createLegacy.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/createLegacy.contract';
 import { alias } from '../shared/acquisition/createLegacy.schema';
 import { mapLegacyToLatest } from '../helpers/mapLegacyToLatest';
 
-@handler(configHandler)
+@handler(handlerConfig)
 export class CreateJourneyLegacyAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
 

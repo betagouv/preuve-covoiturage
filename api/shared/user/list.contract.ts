@@ -9,9 +9,9 @@ export interface ResultInterface {
   meta: { pagination: PaginationResultInterface };
 }
 
-export const configHandler = {
+export const handlerConfig = {
   service: 'user',
   method: 'list',
 };
 
-export const signature = `${configHandler.service}:${configHandler.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

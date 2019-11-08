@@ -3,12 +3,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { ContextType, ForbiddenException, handler, TemplateMailInterface } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
 
 /*
  * Send email to user
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class NotifyUserAction extends AbstractAction {
   // TODO middlewares (see below in handle())
 

@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/delete.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/delete.contract';
 import { alias } from '../shared/user/delete.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
@@ -10,7 +10,7 @@ import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepos
 /*
  *  Find user by id and delete user
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class DeleteUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],
