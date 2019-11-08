@@ -2,12 +2,11 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-
 import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
-import { UserNotificationProvider } from './UserNotificationProvider';
-import { UserFindInterface } from '../interfaces/UserInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../src/interfaces/UserRepositoryProviderInterface';
+import { UserNotificationProvider } from '../src/providers/UserNotificationProvider';
+import { UserFindInterface } from '../src/interfaces/UserInterface';
 
 chai.use(sinonChai);
 const { expect } = chai;

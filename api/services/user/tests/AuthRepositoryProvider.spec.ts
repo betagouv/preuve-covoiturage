@@ -1,11 +1,11 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
-// import { describe } from 'mocha';
+import { describe } from 'mocha';
 import { expect } from 'chai';
 import { ConfigInterfaceResolver } from '@ilos/common';
-
-import { AuthRepositoryProvider } from './AuthRepositoryProvider';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { CryptoProvider, CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { AuthRepositoryProviderInterface } from '../interfaces/AuthRepositoryProviderInterface';
+
+import { AuthRepositoryProvider } from '../src/providers/AuthRepositoryProvider';
+import { AuthRepositoryProviderInterface } from '../src/interfaces/AuthRepositoryProviderInterface';
 
 class Config extends ConfigInterfaceResolver {
   config = {
@@ -15,9 +15,7 @@ class Config extends ConfigInterfaceResolver {
   };
   get(k: string, fb: string) {
     const key = k.split('.').pop();
-    console.log(key);
     if (key in this.config) {
-      console.log(this.config[key]);
       return this.config[key];
     }
     return fb;
@@ -71,12 +69,12 @@ describe('Auth pg repository', () => {
   });
 
   it('should create token by email', async () => {
-    const token = await repository.createTokenByEmail(email, 'confirmation');
+    await repository.createTokenByEmail(email, 'confirmation');
     const user = await getUser();
 
-    expect(user.token).to.eq(token);
+    expect(user.token).to.match(/^\$2a\$10\$/); // bcrypted token
     expect(user.status).to.eq('pending');
-    // expect(user.token_expires_at).to.eq(new Date()); // TODO ROUND :)
+    expect(user.token_expires_at).is.a('date');
   });
 
   it('should clear token by email', async () => {
@@ -93,14 +91,6 @@ describe('Auth pg repository', () => {
     const token = await repository.createTokenByEmail(email, 'confirmation');
     const success = await repository.challengeTokenByEmail(email, token);
     expect(success).to.eq(true);
-
-    const user = await getUser();
-    expect(user.token).to.eq(null);
-    expect(user.token_expires_at).to.eq(null);
-    // expect(user.status).to.eq('pending'); // TODO
-
-    const failure = await repository.challengeTokenByEmail(email, token);
-    expect(failure).to.eq(false);
   });
 
   it('should update password by id', async () => {
@@ -146,11 +136,11 @@ describe('Auth pg repository', () => {
   });
 
   it('should update email by id', async () => {
-    const email = 'tata@tata.com';
-    const token = await repository.updateEmailById(id, email);
+    const courriel = `toto-${Math.random() * 1000}@example.com`;
+    await repository.updateEmailById(id, courriel);
 
-    const user = await getUser(email);
-    expect(user.token).to.eq(token);
+    const user = await getUser(courriel);
+    expect(user.token).to.match(/\$2a\$10/);
     expect(user.status).to.eq('pending');
   });
 });

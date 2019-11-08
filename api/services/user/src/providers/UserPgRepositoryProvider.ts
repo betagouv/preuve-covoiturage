@@ -1,18 +1,15 @@
 import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
+import { UserBaseInterface } from '../shared/user/common/interfaces/UserBaseInterface';
+import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
+import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
+import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
+import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
 import {
   UserRepositoryProviderInterface,
   UserRepositoryProviderInterfaceResolver,
 } from '../interfaces/UserRepositoryProviderInterface';
-
-import {
-  UserBaseInterface,
-  UserListInterface,
-  UserFindInterface,
-  UserListFiltersInterface,
-  UserPatchInterface,
-} from '../interfaces/UserInterface';
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
 
 @provider({
