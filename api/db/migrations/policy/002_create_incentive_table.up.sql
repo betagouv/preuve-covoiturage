@@ -8,8 +8,9 @@ CREATE TABLE IF NOT EXISTS policy.incentives
   policy_id varchar NOT NULL,
   payment_id varchar,
 
-  meta json,
-  status policy.incentive_status_enum NOT NULL
+  status policy.incentive_status_enum NOT NULL,
+
+  meta json
 );
 
 CREATE INDEX ON policy.incentives (acquisition_id);

@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS carpool.carpools
 (
   _id serial primary key,
 
+  created_at timestamp NOT NULL DEFAULT NOW(),
+
   acquisition_id varchar NOT NULL,
   operator_id varchar NOT NULL,
   trip_id varchar NOT NULL,
@@ -38,8 +40,7 @@ CREATE TABLE IF NOT EXISTS carpool.carpools
   end_territory varchar, -- TODO: drop this
 
   distance int NOT NULL,
-  seats int NOT NULL default 1,
-  created_at timestamp NOT NULL DEFAULT NOW()
+  seats int NOT NULL default 1
 );
 
 CREATE INDEX ON carpool.carpools (acquisition_id);

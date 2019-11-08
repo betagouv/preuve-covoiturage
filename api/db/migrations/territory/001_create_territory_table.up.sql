@@ -3,20 +3,20 @@ CREATE TABLE IF NOT EXISTS territory.territories
   _id serial primary key,
   parent_id integer REFERENCES territory.territories (_id),
 
+  created_at timestamp NOT NULL DEFAULT NOW(),
+  updated_at timestamp NOT NULL DEFAULT NOW(),
+  deleted_at timestamp,
+
   siret varchar NOT NULL,
   name varchar NOT NULL,
   shortname varchar,
 
-  company json NOT NULL,
-  address json NOT NULL,
-  contacts json NOT NULL,
-
   cgu_accepted_at timestamp,
   cgu_accepted_by varchar,
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
-  updated_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp
+  company json NOT NULL,
+  address json NOT NULL,
+  contacts json NOT NULL
 );
 
 CREATE UNIQUE INDEX ON territory.territories (siret);
@@ -27,3 +27,5 @@ CREATE TABLE IF NOT EXISTS territory.insee (
 );
 
 CREATE INDEX ON territory.insee (territory_id);
+
+CREATE TRIGGER touch_territories_updated_at BEFORE UPDATE ON territory.territories FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
