@@ -9,6 +9,6 @@ export const userWhiteListFilterOutput = [
   'role',
   'phone',
   'status',
-  'operator',
-  'territory',
+  'operator_id',
+  'territory_id',
 ];

@@ -15,7 +15,7 @@
         <div class="operatorToken-list-item-actions">
           <a
             class="link"
-            *ngIf="authenticationService.hasAnyPermission(['operator.application.revoke'])"
+            *ngIf="authenticationService.hasAnyPermission(['application.revoke'])"
             (click)="onDelete(application)"
             >Désactiver l'accès</a
           >
@@ -23,7 +23,7 @@
       </div>
     </app-list-item>
   </div>
-  <div class="operatorToken-add" *ngIf="authenticationService.hasAnyPermission(['operator.application.create'])">
+  <div class="operatorToken-add" *ngIf="authenticationService.hasAnyPermission(['application.create'])">
     <button
       mat-flat-button
       class="large"
