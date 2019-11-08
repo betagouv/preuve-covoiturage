@@ -1,9 +1,9 @@
-import { PostgresConnection } from '@ilos/connection-postgres';
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import { ConfigInterfaceResolver } from '@ilos/common';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { UserPgRepositoryProvider } from './UserPgRepositoryProvider';
+import { UserPgRepositoryProvider } from '../src/providers/UserPgRepositoryProvider';
 
 class Config extends ConfigInterfaceResolver {
   get(_k: string, fb: string) {

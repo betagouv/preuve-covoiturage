@@ -1,11 +1,9 @@
-import {
-  UserFindInterface,
-  UserPatchInterface,
-  UserBaseInterface,
-  UserListInterface,
-  UserListFiltersInterface,
-} from './UserInterface';
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
+import { UserBaseInterface } from '../shared/user/common/interfaces/UserBaseInterface';
+import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
+import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
+import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
+import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 
 export interface UserRepositoryProviderInterface {
   create(data: UserBaseInterface): Promise<UserFindInterface>;

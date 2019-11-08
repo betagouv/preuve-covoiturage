@@ -200,11 +200,11 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
 
     const { token, token_expires_at } = tokenData;
 
-    if (!token || !(await this.cryptoProvider.compareForgottenToken(clearToken, token))) {
+    if (!token || !(await this.cryptoProvider.compareToken(clearToken, token))) {
       return false;
     }
 
-    if (!token_expires_at || token_expires_at.getTime() - Date.now() <= 0) {
+    if (!token_expires_at || token_expires_at.getTime() - Date.now() < 0) {
       return false;
     }
 

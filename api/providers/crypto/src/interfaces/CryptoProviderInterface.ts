@@ -4,8 +4,8 @@ export interface CryptoProviderInterface extends ProviderInterface {
   boot();
   cryptPassword(plainPassword): Promise<string>;
   cryptToken(plainToken): Promise<string>;
-  comparePassword(oldPwd: string, newPwd: string): Promise<boolean>;
-  compareForgottenToken(oldToken: string, newToken: string): Promise<boolean>;
+  comparePassword(plainPwd: string, hashedPwd: string): Promise<boolean>;
+  compareToken(plainToken: string, hashedToken: string): Promise<boolean>;
   generateToken(length: number): string;
 }
 
@@ -19,11 +19,11 @@ export abstract class CryptoProviderInterfaceResolver implements CryptoProviderI
   async cryptToken(plainToken: string): Promise<string> {
     throw new Error();
   }
-  async comparePassword(oldPwd: string, newPwd: string): Promise<boolean> {
+  async comparePassword(plainPwd: string, hashedPwd: string): Promise<boolean> {
     throw new Error();
   }
 
-  async compareForgottenToken(oldToken: string, newToken: string): Promise<boolean> {
+  async compareToken(plainToken: string, hashedToken: string): Promise<boolean> {
     throw new Error();
   }
   generateToken(length: number = 32): string {
