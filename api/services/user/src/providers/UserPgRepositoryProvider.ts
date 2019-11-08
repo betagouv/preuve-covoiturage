@@ -98,6 +98,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create user (${JSON.stringify(data)})`);
     }
+
     return result.rows[0];
   }
 
