@@ -1,11 +1,12 @@
 <h1 mat-dialog-title>Création d'un accès à l'API</h1>
 <div mat-dialog-content>
-  <p>
-    Notez bien ce token en sécurité, vous ne pourrez pas le récupérer, il faudra en créer un nouveau si vous le perdez.
-  </p>
-  <div class="token">
-    <h5 title="token">{{ data.token }}</h5>
-    <button mat-stroked-button (click)="copierToken(data.token)">Copier</button>
+  <div>
+    <mat-form-field appearance="outline" style="width: 100%;" (click)="copierToken(data.token)">
+      <mat-label>Token</mat-label>
+      <input matInput [value]="data.token" readonly style="width: 100%;" />
+      <mat-icon matSuffix>file_copy</mat-icon>
+      <mat-hint>Copiez bien ce token, il ne pourra être réaffiché&nbsp;!</mat-hint>
+    </mat-form-field>
   </div>
 </div>
 <div mat-dialog-actions>

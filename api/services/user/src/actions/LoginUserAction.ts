@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, UnauthorizedException } from '@ilos/common';
+import { handler, UnauthorizedException } from '@ilos/common';
 
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/login.contract';
 import { alias } from '../shared/user/login.schema';
@@ -26,7 +26,7 @@ export class LoginUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (!(await this.authRepository.challengePasswordByEmail(params.email, params.password))) {
       throw new UnauthorizedException();
     }

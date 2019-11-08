@@ -17,11 +17,12 @@ export class MeUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(_request: null, context: UserContextInterface): Promise<ResultInterface> {
+  public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
     const _id = context.call && context.call.user && context.call.user._id ? context.call.user._id : null;
     if (!_id) {
       throw new UnauthorizedException('No connected user');
     }
+
     return this.userRepository.find(_id);
   }
 }

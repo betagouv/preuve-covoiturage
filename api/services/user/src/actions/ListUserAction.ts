@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ConfigInterfaceResolver } from '@ilos/common';
+import { handler } from '@ilos/common';
 
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
 import { alias } from '../shared/user/list.schema';
@@ -17,8 +17,8 @@ const whiteList = [
   'group',
   'role',
   'status',
-  'operator',
-  'territory',
+  'operator_id',
+  'territory_id',
 ];
 
 /*
@@ -49,10 +49,7 @@ export class ListUserAction extends AbstractAction {
     ['content.whitelist', [...whiteList.map((key: string) => `data.*.${key}`), 'meta.*']],
   ];
 
-  constructor(
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
-  ) {
+  constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }
 

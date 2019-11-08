@@ -51,7 +51,7 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
     if ('operator_id' in this._authService.user) {
       const operatorId = this._authService.user.operator_id;
       return super.load({
-        operator_id: operatorId,
+        owner_id: operatorId,
       });
     }
     console.log('only operator users can create applications');
@@ -86,7 +86,7 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
         .post(
           'applications',
           {
-            operator_id: operatorId,
+            owner_id: operatorId,
             permissions: ['journey.create'],
             ...applicationName,
           },

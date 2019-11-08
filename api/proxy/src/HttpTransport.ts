@@ -352,7 +352,7 @@ export class HttpTransport implements TransportInterface {
 
         const user = get(req, 'session.user', null);
         if (!user) throw new UnauthorizedException();
-        if (!user.operator) throw new UnauthorizedException('Only operators can create applications');
+        if (!user.operator_id) throw new UnauthorizedException('Only operators can create applications');
 
         const response = await this.kernel.handle({
           id: 1,
@@ -378,11 +378,7 @@ export class HttpTransport implements TransportInterface {
           v: 2,
         });
 
-        res.status(201).json({
-          id: req.body.id,
-          jsonrpc: '2.0',
-          result: { application, token },
-        });
+        res.status(201).json({ application, token });
       }),
     );
   }
