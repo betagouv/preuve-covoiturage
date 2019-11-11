@@ -1,9 +1,9 @@
-export interface CertificateGeneratorProviderInterface {
+export interface CertificatePrinterProviderInterface {
   png(): Promise<void>;
   pdf(): Promise<void>;
 }
 
-export abstract class CertificateGeneratorProviderInterfaceResolver implements CertificateGeneratorProviderInterface {
+export abstract class CertificatePrinterProviderInterfaceResolver implements CertificatePrinterProviderInterface {
   async png(): Promise<void> {
     throw new Error('Method not implemented.');
   }

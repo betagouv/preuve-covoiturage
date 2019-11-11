@@ -1,10 +1,13 @@
 import { CertificateInterface } from './common/interfaces/CertificateInterface';
 
 export interface ParamsInterface {
-  user_id: string;
+  operator_user_id: string;
+  start_at?: Date;
+  end_at?: Date;
 }
 
-export interface ResultInterface extends CertificateInterface {}
+// export interface ResultInterface extends CertificateInterface {}
+export type ResultInterface = void;
 
 export type RepositoryInterface = Required<ParamsInterface>;
 

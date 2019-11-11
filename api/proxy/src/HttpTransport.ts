@@ -76,6 +76,7 @@ export class HttpTransport implements TransportInterface {
     this.registerStatsRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
+    this.registerCertificateRoutes();
     this.registerLegacyServerRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
@@ -415,6 +416,43 @@ export class HttpTransport implements TransportInterface {
         res.status(201).json({ application, token });
       }),
     );
+  }
+
+  // FIXME
+  private registerCertificateRoutes(): void {
+    this.app.get(
+      '/certificates/print',
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle({
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'certificate:print',
+          params: {
+            ...req.query,
+          },
+        });
+
+        return this.send(res, response);
+      }),
+    );
+
+    this.app.get(
+      '/certificates/generate',
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle({
+          id: 1,
+          jsonrpc: '2.0',
+          method: 'certificate:generate',
+          params: {
+            ...req.query,
+          },
+        });
+
+        return this.send(res, response);
+      }),
+    );
+
+    this.app.use('/certificates/template', express.static('../../services/certificate/src/template/'));
   }
 
   private registerAfterAllHandlers(): void {

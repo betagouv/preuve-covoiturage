@@ -1,17 +1,24 @@
-// import { Action as AbstractAction } from '@ilos/core';
-// import { handler } from '@ilos/common';
+import { Action as AbstractAction } from '@ilos/core';
+import { handler } from '@ilos/common';
 
-// import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/print.contract';
-// import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-// import { alias } from '../shared/certificate/print.schema';
+import { CertificatePrinterProviderInterfaceResolver } from '../interfaces/CertificatePrinterProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/print.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/certificate/print.schema';
 
-// @handler(handlerConfig)
-// export class PrintCertificateAction extends AbstractAction {
-//   public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.read']], ['validate', alias]];
+@handler(handlerConfig)
+export class PrintCertificateAction extends AbstractAction {
+  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.print']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 
-//   constructor() {
-//     super();
-//   }
+  constructor(private printer: CertificatePrinterProviderInterfaceResolver) {
+    super();
+  }
 
-//   public async handle(params: ParamsInterface): Promise<ResultInterface> {}
-// }
+  // FIXME return type in ResultInterface declaration
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    console.log('printer: start');
+    await this.printer.png();
+    console.log('printer: end');
+  }
+}

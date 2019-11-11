@@ -31,7 +31,7 @@ a:active {
 .b__document {
   width: calc(118px * 21);
   height: calc(118px * 29.7);
-  transform: scale(0.25);
+  /* transform: scale(0.25); */
   transform-origin: top left;
   background: white;
   overflow: hidden;
