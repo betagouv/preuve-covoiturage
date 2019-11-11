@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'WorkSans';
+  src: url('./fonts/WorkSans-Medium.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'WorkSans';
+  src: url('./fonts/WorkSans-Bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
 html,
 body {
   margin: 0;
@@ -5,8 +17,15 @@ body {
 
 body {
   font-size: 48px;
-  font-family: sans-serif;
+  font-family: WorkSans, sans-serif;
   background: lightslategray;
+}
+
+a,
+a:hover,
+a:visited,
+a:active {
+  color: #007ad9;
 }
 
 .b__document {
@@ -15,11 +34,12 @@ body {
   transform: scale(0.25);
   transform-origin: top left;
   background: white;
+  overflow: hidden;
 }
 
 .b__aside {
   position: relative;
-  height: calc(118px * 6);
+  height: calc(118px * 5);
   margin: calc(118px * 1);
 }
 
@@ -34,12 +54,19 @@ body {
 }
 
 .b__article {
+  position: relative;
+  height: calc(118px * 21.7);
   margin: calc(118px * 1);
   border: 2px solid rgb(156, 156, 156);
 }
 
 .b__header {
   overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(118px * 4.5);
 }
 
 .b__column {
@@ -52,12 +79,20 @@ body {
 }
 
 .b__main {
-  margin-top: calc(118px * 0.5);
+  position: absolute;
+  top: calc(118px * 4.5);
+  bottom: calc(118px * 5);
+  left: 0;
+  right: 0;
 }
 
 .b__footer {
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   padding: calc(118px * 0.5);
+  width: calc(118px * -1 + 100%);
 }
 
 .table--full-alternate {
@@ -97,7 +132,7 @@ body {
 }
 
 .h--subtitle {
-  margin: calc(118px * 1) 0 0.4em;
+  margin: calc(118px * 1) 0 0.1em;
   font-weight: normal;
 }
 
@@ -116,6 +151,20 @@ body {
 
 .text--italic {
   font-style: italic;
+}
+
+.list--uuid li {
+  margin-bottom: 0.2em;
+}
+
+.qr-code--label {
+  position: absolute;
+  bottom: calc(118px * -0.2);
+  right: calc(118px * -5.1);
+  font-size: 0.6em;
+  line-height: 1.4;
+  transform: rotateZ(-90deg);
+  transform-origin: top left;
 }
 
 .qr-code {

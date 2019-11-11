@@ -13,37 +13,53 @@ CREATE SCHEMA IF NOT EXISTS certificate;
 ```sql
 CREATE TABLE IF NOT EXISTS certificate.certificates
 (
-	_id serial primary key,
-	uuid uuid unique NOT NULL DEFAULT uuid_generate_v4 (),
+	_id uuid primary key NOT NULL DEFAULT uuid_generate_v4 (),
 	identity_id varchar NOT NULL,
 	operator_id varchar NOT NULL,
 	territory_id varchar NOT NULL,
 	start_at timestamp NOT NULL,
 	end_at timestamp NOT NULL,
 	created_at timestamp NOT NULL DEFAULT NOW(),
-	meta json NOT NULL,
-	accessed_at json,
-)
+  updated_at timestamp NOT NULL DEFAULT NOW(),
+	meta jsonb NOT NULL DEFAULT '{}'
+);
+
+CREATE TABLE IF NOT EXISTS certificate.access_log
+(
+  _id serial primary key,
+  certificate_id uuid references certificate.certificates (_id),
+  created_at timestamp NOT NULL DEFAULT NOW(),
+  ip varchar,
+  user_agent varchar,
+  user_id varchar,
+  content_type varchar
+);
+
+CREATE INDEX on certificate.access_log (certificate_id);
+
+-- TODO add TRIGGER
 ```
 
 https://www.postgresql.org/docs/11/datatype-uuid.html
 
 `meta` JSON object with key data for human verification
+
 ```json
 {
-	type: "object",
-	additionalProperties: false,
-	minProperties: 4,
-	properties: {
-		total_km: { type: "number" },
-		total_point: { type: "integer" },
-		total_cost: { type: "number" },
-		remaining: { type: "number" },
-	}
+  "type": "object",
+  "additionalProperties": false,
+  "minProperties": 4,
+  "properties": {
+    "total_km": { "type": "number" },
+    "total_point": { "type": "integer" },
+    "total_cost": { "type": "number" },
+    "remaining": { "type": "number" }
+  }
 }
 ```
 
 `accessed_at`: Array of JSON objects storing access data:
+
 ```json
 {
 	type: "object",
@@ -61,4 +77,3 @@ https://www.postgresql.org/docs/11/datatype-uuid.html
 	}
 }
 ```
-
