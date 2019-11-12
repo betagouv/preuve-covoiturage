@@ -17,14 +17,11 @@ export function cypress_applications(e2e = false) {
 
     if (!e2e) {
       cy.wait('@applicationCreate').then((xhr) => {
-        const params = xhr.request.body[0].params;
-        const method = xhr.request.body[0].method;
-
-        expect(method).equal('application:create');
+        const params = xhr.request.body;
 
         const expectedParams = {
           ...CypressExpectedApplication.get(),
-          operator_id: operatorStub._id,
+          owner_id: operatorStub._id,
           permissions: ['journey.create'],
         };
 
