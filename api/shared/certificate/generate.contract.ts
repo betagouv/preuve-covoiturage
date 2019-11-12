@@ -6,7 +6,7 @@ export interface ParamsInterface {
   end_at: Date;
 }
 
-export interface ResultInterface extends CertificateInterface {}
+export type ResultInterface = string;
 
 export type RepositoryInterface = Required<ParamsInterface>;
 

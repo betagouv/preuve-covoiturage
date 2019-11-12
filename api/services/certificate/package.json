@@ -14,7 +14,7 @@
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-user --temp-dir=../../.nyc_output --all --reporter=lcovonly mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "copy-static": "cp -R ./src/templates ./dist/"
+    "copy-static": "\\cp -R ./src/assets ./src/templates ./dist/"
   },
   "main": "./dist/bootstrap.js",
   "config": {

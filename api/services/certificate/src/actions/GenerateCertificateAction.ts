@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
@@ -73,6 +75,6 @@ export class GenerateCertificateAction extends AbstractAction {
     });
 
     // return HTML / JSON
-    return cert;
+    return fs.readFileSync(path.resolve(__dirname, '../templates/certificate.html'), { encoding: 'utf8' });
   }
 }

@@ -439,7 +439,7 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/certificates/generate',
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle({
+        const response = <any>await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'certificate:generate',
@@ -448,11 +448,15 @@ export class HttpTransport implements TransportInterface {
           },
         });
 
-        return this.send(res, response);
+        // console.log(response.result);
+        res.set('Content-type', 'text/html');
+        res.status(200);
+        res.send(response.result);
       }),
     );
 
-    this.app.use('/certificates/template', express.static('../../services/certificate/src/template/'));
+    // public assets routes
+    this.app.use('/certificates/assets', express.static('../../services/certificate/dist/assets'));
   }
 
   private registerAfterAllHandlers(): void {
