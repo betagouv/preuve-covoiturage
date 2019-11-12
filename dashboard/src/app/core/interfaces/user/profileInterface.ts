@@ -17,7 +17,7 @@ export interface ProfileInterface {
 }
 
 export interface UserInterface {
-  _id: string;
+  _id: number;
   email: string;
   lastname: string;
   firstname: string;

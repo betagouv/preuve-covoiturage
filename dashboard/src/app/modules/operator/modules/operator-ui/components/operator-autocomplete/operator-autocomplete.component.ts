@@ -33,15 +33,14 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     super();
   }
 
-  updateOperator(operatorId: string) {}
-
   private selectedOperatorUpdated(
-    id = this._operatorForm && this._operatorForm.value ? this._operatorForm.value.toString() : null,
+    id = this._operatorForm && this._operatorForm.value ? this._operatorForm.value : null,
   ) {
     this.selectedOperatorId = id;
     this.selectedOperator = this.operators
       ? this.operators.find((foperator) => this.selectedOperatorId === foperator._id)
       : null;
+
     this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.name : '');
 
     const val = this.parentForm.getRawValue();
@@ -52,6 +51,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   }
 
   onOperatorSelect(operator: MatAutocompleteSelectedEvent) {
+    console.log('onOperatorSelect : ', operator);
     clearTimeout(this.focusDebounceTimer);
     this.selectedOperatorUpdated(operator.option.value);
   }
@@ -75,7 +75,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   }
 
   private filter(value: string): Operator[] {
-    if (!value) return this.operators;
+    if (!value || typeof value !== 'string') return this.operators;
 
     return this.operators
       ? this.operators.filter((operator) => operator.name.toLowerCase().includes(value.toLowerCase()))

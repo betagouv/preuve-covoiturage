@@ -10,15 +10,15 @@ export interface TripInterface {
   start_town: string;
   start_datetime: string;
   operator_class: string;
-  operator_id: string;
+  operator_id: number;
   end_town: string;
   incentives: [];
-  campaigns_id: string[];
+  campaigns_id: number[];
 }
 
 // export interface PersonInterface {
 //   rank: TripRankEnum;
-//   operator_id: string;
+//   operator_id: number;
 //   is_driver: boolean;
 //   start_town: string;
 //   end_town: string;

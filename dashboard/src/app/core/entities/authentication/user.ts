@@ -5,7 +5,7 @@ import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profi
 import { IModel } from '../IModel';
 
 export class BaseUser implements IModel {
-  public _id: string;
+  public _id: number;
   public email: string;
   public lastname: string;
   public firstname: string;

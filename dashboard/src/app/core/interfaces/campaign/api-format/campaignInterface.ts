@@ -11,7 +11,7 @@ export interface BaseCampaignInterface {
   territory_id?: string;
   status: CampaignStatusEnum;
   unit: IncentiveUnitEnum;
-  parent_id: string;
+  parent_id: number;
   amount_spent?: number;
   trips_number?: number;
   ui_status: UiStatusInterface;
@@ -22,7 +22,7 @@ export interface CampaignInterface extends BaseCampaignInterface {
   end: Date;
   global_rules: GlobalRetributionRuleType[];
   rules: RetributionRuleType[][];
-  _id: string;
+  _id: number;
 }
 
 // export class RetributionRule {

@@ -5,7 +5,7 @@ import { BaseCampaignInterface } from '~/core/interfaces/campaign/api-format/cam
 import { restrictionEnum } from '~/core/enums/campaign/restrictions.enum';
 
 export interface CampaignUXInterface extends BaseCampaignInterface {
-  _id: string;
+  _id: number;
   start: Moment;
   end: Moment;
   filters: IncentiveFiltersUxInterface;
