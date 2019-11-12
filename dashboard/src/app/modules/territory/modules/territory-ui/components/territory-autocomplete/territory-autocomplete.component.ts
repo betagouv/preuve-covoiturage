@@ -33,9 +33,9 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     super();
   }
 
-  updateTerritory(territoryId: string) {}
+  updateTerritory(territoryId: number) {}
 
-  private selectedTerritoryUpdated(id = this._territoryForm.value ? this._territoryForm.value.toString() : null) {
+  private selectedTerritoryUpdated(id = this._territoryForm.value ? this._territoryForm.value : null) {
     this.selectedTerritoryId = id;
     this.selectedTerritory = this.territories
       ? this.territories.find((territory) => this.selectedTerritoryId === territory._id)
@@ -44,6 +44,8 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
     const val = this.parentForm.getRawValue();
     const newVal = this.selectedTerritory ? this.selectedTerritory._id : null;
+
+    console.log('val : ', val);
     if (!val || val.territory_id !== newVal) {
       this.parentForm.patchValue({ territory_id: newVal });
     }
@@ -72,7 +74,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
   }
 
   private filter(value: string): Territory[] {
-    if (!value) return this.territories;
+    if (!value || typeof value !== 'string') return this.territories;
 
     return this.territories
       ? this.territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase()))

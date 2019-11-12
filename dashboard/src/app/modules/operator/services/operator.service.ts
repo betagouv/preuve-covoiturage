@@ -44,7 +44,7 @@ export class OperatorService extends ApiService<Operator> {
     return this._entities$.value;
   }
 
-  set operatorToEdit(_id: string) {
+  set operatorToEdit(_id: number) {
     const operatorToEdit = this.operators.filter((operator) => operator._id === _id)[0];
     if (!operatorToEdit) {
       console.error('operator not found !');
