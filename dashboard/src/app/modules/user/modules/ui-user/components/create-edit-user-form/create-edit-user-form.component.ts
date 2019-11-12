@@ -207,6 +207,5 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     });
 
     this.updateValidators(isCreating, groupEditable);
-    c;
   }
 }
