@@ -10,8 +10,8 @@ export const create = {
     phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
     group: { macro: 'group' },
     role: { macro: 'role' },
-    operator_id: { macro: 'dbid' },
-    territory_id: { macro: 'dbid' },
+    operator_id: { macro: 'serial' },
+    territory_id: { macro: 'serial' },
   },
   allOf: [
     {

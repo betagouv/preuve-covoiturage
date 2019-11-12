@@ -2,7 +2,7 @@ import { UserPatchInterface } from './common/interfaces/UserPatchInterface';
 import { UserInterface } from './common/interfaces/UserInterface';
 
 export interface ParamsInterface {
-  _id: string;
+  _id: number;
   patch: UserPatchInterface;
 }
 // TODO : to migrate to update command

@@ -30,7 +30,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Get password from id or undefined if not found
    */
-  protected async getPasswordById(_id: string): Promise<string | undefined> {
+  protected async getPasswordById(_id: number): Promise<string | undefined> {
     const query = {
       text: `
         SELECT
@@ -180,7 +180,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Challenge password by id
    */
-  async challengePasswordById(_id: string, password: string): Promise<boolean> {
+  async challengePasswordById(_id: number, password: string): Promise<boolean> {
     const hashedPassword = await this.getPasswordById(_id);
     if (!hashedPassword) {
       return false;
@@ -214,7 +214,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Update password by id
    */
-  async updatePasswordById(_id: string, password: string): Promise<boolean> {
+  async updatePasswordById(_id: number, password: string): Promise<boolean> {
     const newHashPassword = await this.cryptoProvider.cryptPassword(password);
 
     const query = {
@@ -261,7 +261,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
   /**
    * Update email by id, update status
    */
-  async updateEmailById(id: string, email: string, status: string = this.UNCONFIRMED_STATUS): Promise<string> {
+  async updateEmailById(_id: number, email: string, status: string = this.UNCONFIRMED_STATUS): Promise<string> {
     const clearToken = this.cryptoProvider.generateToken();
     const cryptedToken = await this.cryptoProvider.cryptToken(clearToken);
     const token_expires_at = this.getTokenExpiresAt(this.CONFIRMATION_TOKEN);
@@ -275,7 +275,7 @@ export class AuthRepositoryProvider implements AuthRepositoryProviderInterface {
         status = $5
       WHERE _id = $1
       `,
-      values: [id, cryptedToken, token_expires_at, email, status],
+      values: [_id, cryptedToken, token_expires_at, email, status],
     };
 
     const result = await this.connection.getClient().query(query);

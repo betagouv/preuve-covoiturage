@@ -1,7 +1,7 @@
 import { UserBaseInterface } from './UserBaseInterface';
 
 export interface UserInterface extends UserBaseInterface {
-  _id: string;
+  _id: number;
   permissions: string[];
   status: string;
   created_at: Date;
