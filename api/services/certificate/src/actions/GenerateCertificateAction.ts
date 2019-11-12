@@ -75,6 +75,9 @@ export class GenerateCertificateAction extends AbstractAction {
     });
 
     // return HTML / JSON
-    return fs.readFileSync(path.resolve(__dirname, '../templates/certificate.html'), { encoding: 'utf8' });
+    return {
+      contentType: 'text/html',
+      data: fs.readFileSync(path.resolve(__dirname, '../templates/certificate.html'), { encoding: 'utf8' }),
+    };
   }
 }

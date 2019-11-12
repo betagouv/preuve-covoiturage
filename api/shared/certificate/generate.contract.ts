@@ -6,7 +6,10 @@ export interface ParamsInterface {
   end_at: Date;
 }
 
-export type ResultInterface = string;
+export interface ResultInterface {
+  contentType: 'text/html' | 'application/pdf' | 'image/png';
+  data: string | Buffer;
+}
 
 export type RepositoryInterface = Required<ParamsInterface>;
 
