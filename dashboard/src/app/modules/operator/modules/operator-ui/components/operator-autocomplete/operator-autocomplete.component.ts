@@ -46,8 +46,8 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
     const val = this.parentForm.getRawValue();
     const newVal = this.selectedOperator ? this.selectedOperator._id : null;
-    if (!val || val.operator !== newVal) {
-      this.parentForm.patchValue({ operator: newVal });
+    if (!val || val.operator_id !== newVal) {
+      this.parentForm.patchValue({ operator_id: newVal });
     }
   }
 
@@ -75,6 +75,8 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   }
 
   private filter(value: string): Operator[] {
+    if (!value) return this.operators;
+
     return this.operators
       ? this.operators.filter((operator) => operator.name.toLowerCase().includes(value.toLowerCase()))
       : null;

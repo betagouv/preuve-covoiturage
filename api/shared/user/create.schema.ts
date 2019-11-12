@@ -10,8 +10,8 @@ export const create = {
     phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
     group: { macro: 'group' },
     role: { macro: 'role' },
-    operator: { macro: 'dbid' },
-    territory: { macro: 'dbid' },
+    operator_id: { macro: 'dbid' },
+    territory_id: { macro: 'dbid' },
   },
   allOf: [
     {
@@ -19,7 +19,7 @@ export const create = {
         properties: { group: { const: 'territories' } },
       },
       then: {
-        required: ['email', 'lastname', 'firstname', 'group', 'territory'],
+        required: ['email', 'lastname', 'firstname', 'group', 'territory_id'],
       },
     },
     {
@@ -27,7 +27,7 @@ export const create = {
         properties: { group: { const: 'operators' } },
       },
       then: {
-        required: ['email', 'lastname', 'firstname', 'group', 'operator'],
+        required: ['email', 'lastname', 'firstname', 'group', 'operator_id'],
       },
     },
   ],
