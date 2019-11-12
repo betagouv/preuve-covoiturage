@@ -41,6 +41,8 @@ export function cypress_addUser(userData: User, e2e = false) {
 
   const index = userData.group === UserGroupEnum.REGISTRY ? 3 : userData.group === UserGroupEnum.OPERATOR ? 2 : 1;
 
+  cy.wait(500);
+
   // select group
   cy.get(`.mat-select-panel mat-option:nth-child(${index})`).click();
 
