@@ -15,32 +15,32 @@ CREATE TABLE IF NOT EXISTS carpool.carpools
 (
   _id serial primary key,
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
+  created_at timestamp DEFAULT NOW(), -- NOT NULL
 
-  acquisition_id varchar NOT NULL,
-  operator_id varchar NOT NULL,
-  trip_id varchar NOT NULL,
+  acquisition_id varchar, --  NOT NULL
+  operator_id varchar, --  NOT NULL
+  trip_id varchar, --  NOT NULL
   operator_trip_id varchar,
 
   identity carpool.identity,
-  is_driver boolean NOT NULL,
-  operator_class char NOT NULL,
+  is_driver boolean, --  NOT NULL
+  operator_class char, --  NOT NULL
 
-  datetime timestamp with time zone NOT NULL,
-  duration int NOT NULL,
+  datetime timestamp with time zone, -- NOT NULL
+  duration int, -- NOT NULL
 
-  start_position geography NOT NULL,
-  start_insee varchar NOT NULL,
+  start_position geography, -- NOT NULL
+  start_insee varchar, -- NOT NULL
   start_town varchar, -- TODO: try to drop this
   start_territory varchar, -- TODO: drop this
 
-  end_position geography NOT NULL,
-  end_insee varchar NOT NULL,
+  end_position geography, -- NOT NULL
+  end_insee varchar, --  NOT NULL
   end_town varchar, -- TODO: try drop this
   end_territory varchar, -- TODO: drop this
 
-  distance int NOT NULL,
-  seats int NOT NULL default 1
+  distance int, -- NOT NULL
+  seats int default 1 -- NOT NULL
 );
 
 CREATE INDEX ON carpool.carpools (acquisition_id);

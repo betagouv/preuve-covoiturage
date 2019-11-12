@@ -21,7 +21,7 @@ export class UserGenerator {
         return {
           _id: randomId,
           ...profilData,
-          role: UserRoleEnum.ADMIN,
+          role: UserRoleEnum.TERRITORY_ADMIN,
           group: UserGroupEnum.TERRITORY,
           territory_id: territoryStub._id,
         };
@@ -29,7 +29,7 @@ export class UserGenerator {
         return {
           _id: randomId,
           ...profilData,
-          role: UserRoleEnum.ADMIN,
+          role: UserRoleEnum.OPERATOR_ADMIN,
           group: UserGroupEnum.OPERATOR,
           operator_id: operatorStub._id,
         };
@@ -37,7 +37,7 @@ export class UserGenerator {
         return {
           _id: randomId,
           ...profilData,
-          role: UserRoleEnum.ADMIN,
+          role: UserRoleEnum.REGISTRY_ADMIN,
           group: UserGroupEnum.REGISTRY,
         };
     }
