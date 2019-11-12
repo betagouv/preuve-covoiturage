@@ -1,7 +1,7 @@
 // import { IncentiveFormulaParameterInterface } from '../../interfaces/campaign/campaignInterface';
 //
 // export class IncentiveFormulaParameter {
-//   _id: number = null; // needed for apiservice
+//   _id: string = null; // needed for apiservice
 //   varname: string;
 //   internal: boolean;
 //   helper: string;

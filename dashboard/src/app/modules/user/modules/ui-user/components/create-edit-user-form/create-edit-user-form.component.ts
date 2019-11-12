@@ -106,6 +106,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       formVal.role = `${userGroupRole[formVal.group]}.${formVal.role}`; // consolidate final role
     }
 
+    delete formVal.group;
+
     const errM = (err) => {
       if (err.status === 409) this.toastr.error('Cette adresse email est déjà utilisée');
       this.isCreatingUpdating = false;

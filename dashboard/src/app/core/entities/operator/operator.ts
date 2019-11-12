@@ -8,7 +8,7 @@ import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
 
 class Operator {
-  public _id: number;
+  public _id: string;
   public name: string;
   public legal_name: string;
 
@@ -21,7 +21,7 @@ class Operator {
   public bank?: Bank;
 
   constructor(data: {
-    _id: number;
+    _id: string;
     name: string;
     legal_name: string;
     company?: Company;

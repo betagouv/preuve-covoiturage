@@ -11,14 +11,14 @@ import {
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
 
 export class CampaignUx {
-  public _id: number;
+  public _id: string;
   public territory_id?: string;
   public name: string;
   public description: string;
   public start: Moment;
   public end: Moment;
   public status: CampaignStatusEnum;
-  public parent_id: number;
+  public parent_id: string;
   public unit: IncentiveUnitEnum;
   public filters: IncentiveFiltersUxInterface;
   public max_amount: number;

@@ -64,7 +64,7 @@ export class ApiService<T extends IModel> {
     return new JsonRPCParam(`${this._method}:find`, parameters);
   }
 
-  public getFindByIdJSONParam(_id: number): JsonRPCParam {
+  public getFindByIdJSONParam(_id: string): JsonRPCParam {
     return new JsonRPCParam(`${this._method}:find`, { _id });
   }
 

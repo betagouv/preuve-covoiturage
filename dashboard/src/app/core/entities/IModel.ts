@@ -1,3 +1,3 @@
 export interface IModel {
-  _id: number;
+  _id: string;
 }

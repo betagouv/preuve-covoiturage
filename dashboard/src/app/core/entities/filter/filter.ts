@@ -6,7 +6,7 @@ import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 export class Filter {
-  campaign_id: number[];
+  campaign_id: string[];
   date: {
     start: Date;
     end: Date;
@@ -23,8 +23,8 @@ export class Filter {
   };
   ranks: TripRankEnum[];
   status: TripStatusEnum;
-  operator_id: number[];
-  territory_id: number[];
+  operator_id: string[];
+  territory_id: string[];
   constructor(
     obj: FilterInterface = {
       campaign_id: [],

@@ -6,19 +6,19 @@ import { TripRankEnum } from '../../enums/trip/trip-rank.enum';
 
 export interface TripInterface {
   status: TripStatusEnum;
-  trip_id: number;
+  trip_id: string;
   start_town: string;
   start_datetime: string;
   operator_class: string;
-  operator_id: number;
+  operator_id: string;
   end_town: string;
   incentives: [];
-  campaigns_id: number[];
+  campaigns_id: string[];
 }
 
 // export interface PersonInterface {
 //   rank: TripRankEnum;
-//   operator_id: number;
+//   operator_id: string;
 //   is_driver: boolean;
 //   start_town: string;
 //   end_town: string;

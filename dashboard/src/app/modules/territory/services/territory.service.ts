@@ -108,7 +108,7 @@ export class TerritoryService extends ApiService<Territory> {
     throw Error();
   }
 
-  set territoryToEdit(_id: number) {
+  set territoryToEdit(_id: string) {
     const territoryToEdit = this.territories.filter((territory) => territory._id === _id)[0];
     if (!territoryToEdit) {
       console.error('territory not found !');
