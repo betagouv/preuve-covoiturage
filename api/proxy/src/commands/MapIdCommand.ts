@@ -1,6 +1,6 @@
 // tslint:disable: no-constant-condition
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 @command()
@@ -65,7 +65,9 @@ export class MapIdCommand implements CommandInterface {
 
       // get the new ID
       const old = await cursor.next();
-      const results = await this.pg.query({
+      const client: PoolClient = await this.pg.connect();
+
+      const results = await client.query({
         text: 'SELECT * FROM acquisition.acquisitions WHERE journey_id=$1',
         values: [old.journey_id.toString()],
       });
@@ -75,35 +77,38 @@ export class MapIdCommand implements CommandInterface {
 
       // replace
       console.log('carpools.acquisition_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE carpool.carpools SET acquisition_id=$1 WHERE acquisition_id=$2',
         values: [_id, old._id.toString()],
       });
 
       console.log('fraudchecks.acquisition_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE fraudcheck.fraudchecks SET acquisition_id=$1 WHERE acquisition_id=$2',
         values: [_id, old._id.toString()],
       });
 
       console.log('incentives.acquisition_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE policy.incentives SET acquisition_id=$1 WHERE acquisition_id=$2',
         values: [_id, old._id.toString()],
       });
+
+      await client.release();
     }
   }
 
   private async fixApplications(): Promise<void> {
     console.log('\n[fix applications]');
     const cursor = this.db.collection('applications').find({});
-
+    
     while (true) {
       if (!(await cursor.hasNext())) break;
-
+      
       // get the new ID
       const old = await cursor.next();
-      const results = await this.pg.query({
+      const client: PoolClient = await this.pg.connect();
+      const results = await client.query({
         text: 'SELECT * FROM application.applications WHERE name=$1 AND created_at=$2',
         values: [old.name, old.created_at],
       });
@@ -113,10 +118,11 @@ export class MapIdCommand implements CommandInterface {
 
       // replace
       console.log('acquisitions.application_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE acquisition.acquisitions SET application_id=$1 WHERE application_id=$2',
         values: [_id, old._id.toString()],
       });
+      await client.release();
     }
   }
 
@@ -129,7 +135,9 @@ export class MapIdCommand implements CommandInterface {
 
       // get the new ID
       const old = await cursor.next();
-      const results = await this.pg.query({
+      const client: PoolClient = await this.pg.connect();
+
+      const results = await client.query({
         text: 'SELECT * FROM operator.operators WHERE name=$1 AND siret=$2',
         values: [old.nom_commercial, old.company.siret],
       });
@@ -139,28 +147,30 @@ export class MapIdCommand implements CommandInterface {
 
       // replace
       console.log('acquisitions.operator_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE acquisition.acquisitions SET operator_id=$1 WHERE operator_id=$2',
         values: [_id, old._id.toString()],
       });
 
       console.log('applications.owner_id:\t\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE application.applications SET owner_id=$1 WHERE owner_id=$2',
         values: [_id, old._id.toString()],
       });
 
       console.log('users.operator_id:\t\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE auth.users SET operator_id=$1 WHERE operator_id=$2',
         values: [_id, old._id.toString()],
       });
 
       console.log('carpools.operator_id:\t\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE carpool.carpools SET operator_id=$1 WHERE operator_id=$2',
         values: [_id, old._id.toString()],
       });
+
+      await client.release();
     }
   }
 
@@ -173,7 +183,8 @@ export class MapIdCommand implements CommandInterface {
 
       // get the new ID
       const old = await cursor.next();
-      const results = await this.pg.query({
+      const client: PoolClient = await this.pg.connect();
+      const results = await client.query({
         text: 'SELECT * FROM territory.territories WHERE name=$1',
         values: [old.name],
       });
@@ -183,16 +194,18 @@ export class MapIdCommand implements CommandInterface {
 
       // replace
       console.log('users.territory_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE auth.users SET territory_id=$1 WHERE territory_id=$2',
         values: [_id, old._id.toString()],
       });
 
       console.log('policies.territory_id:\t', old._id.toString(), '->', _id);
-      await this.pg.query({
+      await client.query({
         text: 'UPDATE policy.policies SET territory_id=$1 WHERE territory_id=$2',
         values: [_id, old._id.toString()],
       });
+
+      await client.release();
     }
   }
 }
