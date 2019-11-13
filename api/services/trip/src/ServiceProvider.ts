@@ -1,7 +1,6 @@
 import { CommandExtension } from '@ilos/cli';
 import { serviceProvider } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
-import { MongoConnection } from '@ilos/connection-mongo';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
@@ -28,7 +27,6 @@ import { PublicStatsAction } from './actions/PublicStatsAction';
     ['scopeIt', ScopeToSelfMiddleware],
   ],
   connections: [
-    [MongoConnection, 'connections.mongo'],
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],

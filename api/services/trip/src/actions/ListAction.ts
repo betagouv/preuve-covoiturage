@@ -44,10 +44,13 @@ export class ListAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const result = await this.pg.search(params);
-    return result.map((r) => ({
-      ...r,
-      campaigns_id: [],
-      status: 'locked',
-    }));
+    return {
+      ...result,
+      data: result.data.map((r) => ({
+        ...r,
+        campaigns_id: [],
+        status: 'locked',
+      }))
+    };
   }
 }
