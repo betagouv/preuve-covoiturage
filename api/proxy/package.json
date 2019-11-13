@@ -96,6 +96,7 @@
     "express-mung": "^0.5.1",
     "express-session": "^1.16.2",
     "helmet": "^3.19.0",
-    "ioredis": "^4.14.1"
+    "ioredis": "^4.14.1",
+    "lodash": "^4.17.15"
   }
 }
