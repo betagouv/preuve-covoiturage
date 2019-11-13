@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
 import * as _ from 'lodash';
 import { takeUntil } from 'rxjs/operators';
@@ -22,16 +22,23 @@ import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
   styleUrls: ['./campaign-form.component.scss'],
 })
 export class CampaignFormComponent extends DestroyObservable implements OnInit {
+  @Input() campaignId: string;
+  @Input() parentId: string;
+  @Input() section: number;
+
   helpCard = {
     svgIcon: 'new_car',
     title: 'Vous êtes nouveau sur Preuve de covoiturage ?',
     hint: 'Découvrez comment développer une politique de covoiturage efficace dans votre collectivité',
     link: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/boite-a-outils/guide-des-incitations',
   };
+
+  git destroy$creationFromScratch = false;
+  creationFromParentId = false;
+
   campaignFormGroup: FormGroup;
   requestLoading = false;
   loading = true;
-  creation = false;
   currentStep = 0;
   matStepperCompleted = false;
 
@@ -45,21 +52,23 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     private campaignFormatService: CampaignFormatingService,
     private toastr: ToastrService,
     private router: Router,
-    private route: ActivatedRoute,
   ) {
     super();
   }
 
   ngOnInit() {
     this.initForms();
-    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
-      this.creation = !params.has('campaignId');
-      if (this.creation) {
-        this.loading = false;
-      } else {
-        this.loadCampaign(Number(params.get('campaignId')));
-      }
-    });
+
+    if (this.campaignId) {
+      this.loadCampaign(this.campaignId);
+    } else if (this.parentId) {
+      this.creationFromParentId = true;
+      this.loadCampaign(this.parentId);
+      this.loading = false;
+    } else {
+      this.creationFromScratch = true;
+      this.loading = false;
+    }
   }
 
   public get controls() {
@@ -317,12 +326,15 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       distanceRange.setValue(this._defaultRange);
     }
 
+    // manage stepper when all data is loaded
     this.matStepperCompleted = true;
-
     if (isTemplate) {
       setTimeout(() => {
         this._matStepper.next();
       }, 0);
+    } else if (this.section) {
+      this.currentStep = this.section;
+      this.loading = false;
     } else {
       this.setLastAvailableStep();
     }

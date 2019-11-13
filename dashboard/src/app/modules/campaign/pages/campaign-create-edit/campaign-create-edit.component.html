@@ -1,3 +1,3 @@
-<div class="CampaignCreateEdit">
-  <app-campaign-form></app-campaign-form>
+<div class="CampaignCreateEdit" *ngIf="!loading">
+  <app-campaign-form [campaignId]="campaignId" [parentId]="parentId" [section]="section"></app-campaign-form>
 </div>

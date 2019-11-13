@@ -3,7 +3,7 @@
   <form [formGroup]="filtersForm">
     <mat-accordion>
       <mat-expansion-panel
-        [expanded]="true"
+        [expanded]="isCreating"
         [ngClass]="{
           'mat-expansion-panel-error':
             (controls.weekday.touched && !controls.weekday.valid) || (!timeCtrlArray.valid && isTimeCtrlArrayTouched())

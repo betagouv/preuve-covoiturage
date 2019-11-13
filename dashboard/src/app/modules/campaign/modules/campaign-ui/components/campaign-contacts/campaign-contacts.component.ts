@@ -35,6 +35,9 @@ export class CampaignContactsComponent implements OnInit {
         map((coordinates: GeoDataInterface[]) => coordinates[0]),
       )
       .subscribe((coordinates: GeoDataInterface) => {
+        if (!coordinates) {
+          console.error('Coordonnées du territoire non trouvées !');
+        }
         this.initMap(coordinates);
       });
   }

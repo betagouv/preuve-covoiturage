@@ -61,11 +61,6 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
     this.showSummary = true;
   }
 
-  duplicateCampaign(id: string): void {
-    // create new with that is as base
-    // get id from URL and generate new campaign
-  }
-
   private loadCampaign(campaignId: string) {
     if (!this._campaignService.campaignsLoaded) {
       this._campaignService

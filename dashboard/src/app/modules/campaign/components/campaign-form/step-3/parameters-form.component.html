@@ -6,7 +6,7 @@
     <mat-accordion>
       <!-- MAX RETRIBUTION -->
       <mat-expansion-panel
-        [expanded]="true"
+        [expanded]="isCreating"
         [ngClass]="{
           'mat-expansion-panel-error':
             (controls.max_amount.touched && !controls.max_amount.valid) ||
