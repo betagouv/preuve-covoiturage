@@ -14,6 +14,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
+import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 
 @Component({
   selector: 'app-campaign-form',
@@ -187,6 +188,9 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         _id: null,
         parent_id: templateId,
       });
+    } else {
+      // new campagn from scratch with default values
+      campaign.filters.rank = [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C];
     }
 
     // load it
