@@ -6,10 +6,10 @@ export const schema = {
   required: ['_id', 'territory_id'],
   properties: {
     _id: {
-      macro: 'dbid',
+      macro: 'serial',
     },
     territory_id: {
-      macro: 'dbid',
+      macro: 'serial',
     },
   },
 };

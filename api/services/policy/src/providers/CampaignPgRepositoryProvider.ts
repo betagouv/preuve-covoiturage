@@ -15,7 +15,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(id: string): Promise<CampaignInterface> {
+  async find(id: number): Promise<CampaignInterface> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -89,7 +89,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async patch(id: string, patch: { [k: string]: any }): Promise<CampaignInterface> {
+  async patch(id: number, patch: { [k: string]: any }): Promise<CampaignInterface> {
     const updatablefields = [
       'ui_status',
       'name',
@@ -138,7 +138,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async deleteDraftOrTemplate(id: string): Promise<void> {
+  async deleteDraftOrTemplate(id: number): Promise<void> {
     const query = {
       text: `
       UPDATE ${this.table}
@@ -157,7 +157,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return;
   }
 
-  async patchWhereTerritory(id: string, territoryId: string, patch: any): Promise<CampaignInterface> {
+  async patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<CampaignInterface> {
     const updatablefields = [
       'ui_status',
       'name',
@@ -207,7 +207,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async findOneWhereTerritory(id: string, territoryId: string): Promise<CampaignInterface> {
+  async findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -228,7 +228,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows[0];
   }
 
-  async findWhereTerritory(territoryId: string): Promise<CampaignInterface[]> {
+  async findWhereTerritory(territoryId: number): Promise<CampaignInterface[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -247,7 +247,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows;
   }
 
-  async findTemplates(territoryId: string | null): Promise<any[]> {
+  async findTemplates(territoryId: number | null): Promise<any[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -267,7 +267,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows;
   }
 
-  async findApplicableCampaigns(territories: string[], date: Date): Promise<any[]> {
+  async findApplicableCampaigns(territories: number[], date: Date): Promise<any[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}

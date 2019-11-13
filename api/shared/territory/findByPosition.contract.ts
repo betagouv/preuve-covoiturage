@@ -6,7 +6,7 @@ export interface ParamsInterface {
 }
 
 export interface ResultInterface extends TerritoryInterface {
-  _id: string;
+  _id: number;
 }
 
 export const configHandler = {

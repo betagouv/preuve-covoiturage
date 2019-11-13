@@ -2,6 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS application.applications
 (
+  -- TODO rename to avoid confusion with _id serial in other tables
   _id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
 
   created_at timestamp NOT NULL DEFAULT NOW(),

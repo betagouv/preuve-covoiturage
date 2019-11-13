@@ -1,6 +1,6 @@
 import { CampaignInterface } from './common/interfaces/CampaignInterface';
 export interface ParamsInterface {
-  _id: string;
+  _id: number;
 }
 export interface ResultInterface extends CampaignInterface {}
 

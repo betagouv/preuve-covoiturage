@@ -8,7 +8,7 @@ export const territoryStubs: Territory[] = [
   {
     _id: '5d7775bf37043b8463b2a208',
     name: 'AOM 2',
-    shortname: 'Aom acronym 2',
+    shortname: 'Aom shortname 2',
     company: new Company({
       siret: '123456789',
       naf_entreprise: '1234A',

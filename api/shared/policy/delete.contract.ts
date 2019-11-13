@@ -1,6 +1,6 @@
 export interface ParamsInterface {
-  _id: string;
-  territory_id: string;
+  _id: number;
+  territory_id: number;
 }
 export type ResultInterface = boolean;
 

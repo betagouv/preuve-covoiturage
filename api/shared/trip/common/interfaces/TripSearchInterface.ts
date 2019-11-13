@@ -1,5 +1,5 @@
 export interface TripSearchInterface {
-  campaign_id?: string[];
+  campaign_id?: number[];
   date?: {
     start?: Date;
     end?: Date;
@@ -19,8 +19,8 @@ export interface TripSearchInterface {
   };
 
   ranks?: string[];
-  operator_id?: string[];
-  territory_id?: string[];
+  operator_id?: number[];
+  territory_id?: number[];
 
   skip: number;
   limit: number;
