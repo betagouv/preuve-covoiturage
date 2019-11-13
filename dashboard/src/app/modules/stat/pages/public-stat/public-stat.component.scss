@@ -1,0 +1,80 @@
+@import '~src/styles/variables';
+.stats {
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
+  padding: 0 17%;
+  margin: 0 auto 25px;
+  @media (max-width: 1400px) {
+    padding: 0 10px;
+  }
+
+  &-header {
+    text-align: center;
+    margin: 44px auto;
+    max-width: 810px;
+  }
+  h1,
+  h4 {
+    text-align: center;
+  }
+
+  &-disclaimer {
+    text-align: center;
+    padding: 20px;
+    background: $color-background-help;
+    border: 2px solid $color-border-help;
+    border-radius: 5px;
+    ul {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+  &-number {
+    pointer-events: none;
+    width: 360px;
+    height: 120px;
+    margin: 10px;
+    padding: 20px;
+    background: $background-white;
+    border: 2px solid $background-white;
+    border-radius: 5px;
+    display: flex;
+    transition: 0.3s all;
+
+    &-icon {
+      width: 80px;
+      margin-right: 40px;
+
+      .mat-icon {
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    &-hint {
+      margin-top: 3px;
+    }
+
+    &-content {
+      margin-right: 20px;
+    }
+
+    &-title > p {
+      font-weight: 600;
+      font-size: $font-size-title;
+      margin-bottom: 0;
+      margin-top: 9px;
+    }
+  }
+}

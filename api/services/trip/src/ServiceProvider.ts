@@ -15,6 +15,7 @@ import { DispatchAction } from './actions/DispatchAction';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
+import { PublicStatsAction } from './actions/PublicStatsAction';
 
 @serviceProvider({
   config: __dirname,
@@ -31,7 +32,7 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CrosscheckAction, DispatchAction, ListAction, StatsAction],
+  handlers: [CrosscheckAction, DispatchAction, ListAction, PublicStatsAction, StatsAction],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
