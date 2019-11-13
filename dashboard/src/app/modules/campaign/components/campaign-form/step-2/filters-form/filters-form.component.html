@@ -105,7 +105,7 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="RulesForm-target CampaignSubForm-inputs">
-          <mat-label>Que souhaitez vous subventionner ?</mat-label>
+          <mat-label>Que souhaitez-vous inciter ?</mat-label>
           <ng-container [formGroup]="campaignForm.get('ui_status')">
             <mat-checkbox class="RulesForm-target-forDriver" color="primary" formControlName="for_driver"
               >Conducteurs</mat-checkbox
@@ -134,7 +134,7 @@
               [disabled]="!forPassenger.checked && !forTrip.checked"
               color="primary"
               formControlName="only_adult"
-              >Personnes majeurs uniquement</mat-checkbox
+              >Personnes majeures uniquement</mat-checkbox
             >
           </ng-container>
         </div>
