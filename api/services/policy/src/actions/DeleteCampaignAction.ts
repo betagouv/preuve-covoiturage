@@ -15,7 +15,7 @@ export class DeleteCampaignAction extends AbstractAction {
         [],
         [
           (params, context) => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory) {
+            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
               return 'incentive-campaign.delete';
             }
           },

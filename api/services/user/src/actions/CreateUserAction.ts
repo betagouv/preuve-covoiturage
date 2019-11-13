@@ -22,12 +22,12 @@ export class CreateUserAction extends AbstractAction {
         ['user.create'],
         [
           (params, context) => {
-            if ('territory' in params && params.territory === context.call.user.territory) {
+            if ('territory' in params && params.territory === context.call.user.territory_id) {
               return 'territory.users.add';
             }
           },
           (params, context) => {
-            if ('operator' in params && params.operator === context.call.user.operator) {
+            if ('operator' in params && params.operator === context.call.user.operator_id) {
               return 'operator.users.add';
             }
           },

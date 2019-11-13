@@ -16,7 +16,7 @@ export class LaunchCampaignAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
-    const territoryId = context.call.user.territory;
+    const territoryId = context.call.user.territory_id;
     const campaign: CampaignInterface & { start_date: Date } = await this.campaignRepository.findOneWhereTerritory(
       params._id,
       territoryId,

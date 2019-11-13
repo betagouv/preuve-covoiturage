@@ -32,7 +32,7 @@ export class CreateJourneyAction extends AbstractAction {
     const now = new Date();
 
     // assign the operator from context
-    const payload: JourneyInterface = this.cast(params, context.call.user.operator);
+    const payload: JourneyInterface = this.cast(params, context.call.user.operator_id);
 
     // reject if happening in the future
     const person = 'passenger' in payload ? payload.passenger : payload.driver;

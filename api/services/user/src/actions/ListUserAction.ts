@@ -34,12 +34,12 @@ export class ListUserAction extends AbstractAction {
         ['user.list'],
         [
           (_params, context) => {
-            if (context.call.user.territory) {
+            if (context.call.user.territory_id) {
               return 'territory.users.list';
             }
           },
           (_params, context) => {
-            if (context.call.user.operator) {
+            if (context.call.user.operator_id) {
               return 'operator.users.list';
             }
           },

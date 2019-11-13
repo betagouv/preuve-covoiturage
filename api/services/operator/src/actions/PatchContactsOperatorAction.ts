@@ -15,8 +15,8 @@ export class PatchContactsOperatorAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (context.call.user.operator) {
-      params._id = context.call.user.operator;
+    if (context.call.user.operator_id) {
+      params._id = context.call.user.operator_id;
     }
 
     return this.operatorRepository.patch(params._id, {

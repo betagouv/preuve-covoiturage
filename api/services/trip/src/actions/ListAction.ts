@@ -19,7 +19,7 @@ export class ListAction extends Action {
             if (
               'territory_id' in params &&
               params.territory_id.length === 1 &&
-              params.territory_id[0] === context.call.user.territory
+              params.territory_id[0] === context.call.user.territory_id
             ) {
               return 'territory.trip.list';
             }
@@ -28,7 +28,7 @@ export class ListAction extends Action {
             if (
               'operator_id' in params &&
               params.operator_id.length === 1 &&
-              params.operator_id[0] === context.call.user.operator
+              params.operator_id[0] === context.call.user.operator_id
             ) {
               return 'operator.trip.list';
             }
