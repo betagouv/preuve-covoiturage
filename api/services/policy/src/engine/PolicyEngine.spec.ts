@@ -9,7 +9,6 @@ import { ServiceProvider } from '../ServiceProvider';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { PolicyEngine } from './PolicyEngine';
-import { TripInterface } from '@pdc/provider-schema/dist';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -20,7 +19,7 @@ start.setMonth(start.getMonth() + 1);
 const end = new Date();
 end.setMonth(start.getMonth() + 2);
 
-const territory = '5cef990d133992029c1abe44';
+const territory = 1;
 
 const fakeCampaign = {
   territory_id: territory,
@@ -92,10 +91,10 @@ describe('Policy engine', () => {
   afterEach(async () => {});
 
   it('works', async () => {
-    const trip: TripInterface = {
+    const trip = {
       start,
       _id: 'mytrip',
-      operator_id: ['operatorA'],
+      operator_id: [1],
       territories: [territory],
       status: '',
       people: [
@@ -106,7 +105,7 @@ describe('Policy engine', () => {
             over_18: false,
           },
           operator_class: 'A',
-          operator_id: 'operatorA',
+          operator_id: 1,
 
           start: {
             datetime: start,
@@ -148,7 +147,7 @@ describe('Policy engine', () => {
             over_18: true,
           },
           operator_class: 'B',
-          operator_id: 'operatorB',
+          operator_id: 2,
 
           start: {
             datetime: start,

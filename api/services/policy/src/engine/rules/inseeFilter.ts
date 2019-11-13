@@ -5,7 +5,7 @@ import { HIGH } from '../helpers/priority';
 const andOrSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['start', 'end', 'operator'],
+  required: ['start', 'end'],
   properties: {
     start: {
       type: 'array',
@@ -14,25 +14,18 @@ const andOrSchema = {
       },
     },
     end: {
-      type: 'array',
+      type: 'array',    
       items: {
         macro: 'insee',
       },
     },
-    operator: {
-      type: 'string',
-      enum: ['and', 'or'],
-    },
   },
 };
+
 const blacklistWhitelistSchema = {
-  type: 'object',
-  additionalProperties: false,
-  required: ['and', 'or'],
-  properties: {
-    and: andOrSchema,
-    or: andOrSchema,
-  },
+  type: 'array',
+  items: andOrSchema,
+  minItems: 1,
 };
 
 interface InseeParamsInterface {
@@ -40,6 +33,8 @@ interface InseeParamsInterface {
   end: string[];
   operator: 'and' | 'or';
 }
+
+type InseeParamsType = InseeParamsInterface[];
 
 function inList(list: string[], insee: string): boolean {
   return list.indexOf(insee) > -1;
@@ -52,21 +47,22 @@ export const inseeWhitelistFilter: ApplicableRuleInterface = {
     ...blacklistWhitelistSchema,
   },
   index: HIGH,
-  apply(params: InseeParamsInterface) {
+  apply(params: InseeParamsType) {
     return async (ctx, next) => {
-      if (
-        params.operator === 'and' &&
-        (!inList(params.start, ctx.person.start.insee) || !inList(params.end, ctx.person.end.insee))
-      ) {
+      let whitelisted = false;
+      for(const rule of params) {
+        if (
+          (!rule.start.length || inList(rule.start, ctx.person.start.insee)) &&
+          (!rule.end.length || inList(rule.end, ctx.person.end.insee))
+        ) {
+          whitelisted = true;
+        }
+      }
+
+      if (!whitelisted) {
         throw new NotApplicableTargetException(inseeWhitelistFilter);
       }
 
-      if (
-        params.operator === 'or' &&
-        (!inList(params.start, ctx.person.start.insee) && !inList(params.end, ctx.person.end.insee))
-      ) {
-        throw new NotApplicableTargetException(inseeWhitelistFilter);
-      }
       return next();
     };
   },
@@ -79,21 +75,22 @@ export const inseeBlacklistFilter: ApplicableRuleInterface = {
     ...blacklistWhitelistSchema,
   },
   index: HIGH,
-  apply(params: InseeParamsInterface) {
+  apply(params: InseeParamsType) {
     return async (ctx, next) => {
-      if (
-        params.operator === 'and' &&
-        (inList(params.start, ctx.person.start.insee) && inList(params.end, ctx.person.end.insee))
-      ) {
+      let blacklisted = false;
+      for(const rule of params) {
+        if (
+          (!rule.start.length || inList(rule.start, ctx.person.start.insee)) &&
+          (!rule.end.length || inList(rule.end, ctx.person.end.insee))
+        ) {
+          blacklisted = true;
+        }
+      }
+
+      if (blacklisted) {
         throw new NotApplicableTargetException(inseeBlacklistFilter);
       }
 
-      if (
-        params.operator === 'or' &&
-        (inList(params.start, ctx.person.start.insee) || inList(params.end, ctx.person.end.insee))
-      ) {
-        throw new NotApplicableTargetException(inseeBlacklistFilter);
-      }
       return next();
     };
   },
