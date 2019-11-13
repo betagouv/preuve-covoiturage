@@ -76,8 +76,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
           this.usersFiltered = this.users.filter(
             (u) =>
               `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query.toLowerCase()) &&
-              this.userGroup === u.group &&
-              this.authenticationService.user._id !== u._id,
+              this.userGroup === u.group,
           );
           return of(this.usersFiltered.slice(start, end));
         }),

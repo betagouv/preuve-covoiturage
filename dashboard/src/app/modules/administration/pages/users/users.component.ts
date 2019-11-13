@@ -61,10 +61,8 @@ export class UsersComponent extends DestroyObservable implements OnInit {
           const page = this.paginator.pageIndex;
           const start = Number(page) * this.PAGE_SIZE;
           const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
-          this.usersFiltered = this.users.filter(
-            (u) =>
-              `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query.toLowerCase()) &&
-              this.authenticationService.user._id !== u._id,
+          this.usersFiltered = this.users.filter((u) =>
+            `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query.toLowerCase()),
           );
           return of(this.usersFiltered.slice(start, end));
         }),
