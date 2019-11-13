@@ -263,6 +263,6 @@ export class AuthenticationService {
     if (typeof user.territory_id === 'string') user.territory_id = <string>(<unknown>parseInt(user.territory_id, 10));
     if (typeof user.operator_id === 'string') user.operator_id = <string>(<unknown>parseInt(user.operator_id, 10));
 
-    this._user$.next({ ...user });
+    this._user$.next(user);
   }
 }
