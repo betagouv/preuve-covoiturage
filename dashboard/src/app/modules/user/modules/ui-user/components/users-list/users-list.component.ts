@@ -61,7 +61,8 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
   }
 
   public getFrenchRole(role: UserRoleEnum): string {
-    return USER_ROLES_FR[role];
+    const translatableRole = role.split('.')[1];
+    return USER_ROLES_FR[translatableRole];
   }
 
   public onSendInvitation(user: User) {
