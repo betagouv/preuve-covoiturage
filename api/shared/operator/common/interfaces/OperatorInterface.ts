@@ -2,7 +2,6 @@ import { CompanyInterface } from '../../../common/interfaces/CompanyInterface';
 import { AddressInterface } from '../../../common/interfaces/AddressInterface';
 import { BankInterface } from '../../../common/interfaces/BankInterface';
 import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
-import { CguInterface } from '../../../common/interfaces/CguInterface';
 
 export interface OperatorInterface {
   name: string;
@@ -12,5 +11,6 @@ export interface OperatorInterface {
   address?: AddressInterface;
   bank?: BankInterface;
   contacts?: ContactsInterface;
-  cgu?: CguInterface;
+  cgu_accepted_at?: Date;
+  cgu_accepted_by?: number;
 }

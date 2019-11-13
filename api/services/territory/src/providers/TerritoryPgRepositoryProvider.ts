@@ -110,7 +110,17 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   // TODO
   async update(data: TerritoryDbInterface): Promise<TerritoryDbInterface> {
-    throw new Error('Not implemented');
+    const { _id, ...patch } = data;
+    return this.patch(_id, {
+      parent_id: null,
+      shortname: null,
+      company: '{}',
+      address: '{}',
+      contact: '{}',
+      cgu_accepted_at: null,
+      cgu_accepted_by: null,
+      ...patch,
+    });
   }
 
   async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbInterface> {

@@ -1,4 +1,4 @@
-// tslint:disable: max-classes-per-file
+// tslint:disable: no-unused-expression max-classes-per-file
 import { describe } from 'mocha';
 import chai from 'chai';
 import sinon from 'sinon';
@@ -7,7 +7,7 @@ import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../src/interfaces/UserRepositoryProviderInterface';
 import { UserNotificationProvider } from '../src/providers/UserNotificationProvider';
-import { UserFindInterface } from '../src/interfaces/UserInterface';
+import { UserFindInterface } from '../src/shared/user/common/interfaces/UserFindInterface';
 
 chai.use(sinonChai);
 const { expect } = chai;
@@ -44,9 +44,9 @@ class UserRepository extends UserRepositoryProviderInterfaceResolver {
       email,
       firstname,
       lastname,
-      role: 'admin',
+      _id: 1,
+      role: 'registry.admin',
       group: 'registry',
-      _id: '1',
       status: 'active',
       created_at: new Date(),
       updated_at: new Date(),
@@ -114,8 +114,8 @@ describe('User notification provider', async () => {
     expect(kernel.notify).to.have.been.calledWith(
       'user:notify',
       {
-        email: oldEmail,
         fullname,
+        email: oldEmail,
         template: emailChangedTemplate,
         templateId: emailChangedTemplateId,
       },

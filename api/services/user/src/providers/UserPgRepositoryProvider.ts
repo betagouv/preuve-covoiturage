@@ -11,6 +11,7 @@ import {
   UserRepositoryProviderInterfaceResolver,
 } from '../interfaces/UserRepositoryProviderInterface';
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
+import { UserFullInterface } from '../shared/user/common/interfaces/UserFullInterface';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
@@ -99,7 +100,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       throw new Error(`Unable to create user (${JSON.stringify(data)})`);
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   protected async deleteWhere(id: number, where?: { operator_id?: number; territory_id?: number }): Promise<boolean> {
@@ -215,7 +216,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
     return {
       total,
-      users: result.rows,
+      users: result.rows.map(this.castTypes),
     };
   }
 
@@ -315,7 +316,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       return undefined;
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   async find(_id: number): Promise<UserFindInterface | undefined> {
@@ -421,7 +422,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       return undefined;
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
@@ -434,5 +435,13 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id, territory_id });
+  }
+
+  private castTypes(row: any): any {
+    return {
+      ...row,
+      territory_id: typeof row.territory_id === 'string' ? parseInt(row.territory_id, 10) : row.territory_id,
+      operator_id: typeof row.operator_id === 'string' ? parseInt(row.operator_id, 10) : row.operator_id,
+    };
   }
 }

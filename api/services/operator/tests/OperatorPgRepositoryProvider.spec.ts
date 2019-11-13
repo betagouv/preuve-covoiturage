@@ -2,7 +2,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { describe } from 'mocha';
 import { expect } from 'chai';
 
-import { OperatorPgRepositoryProvider } from './OperatorPgRepositoryProvider';
+import { OperatorPgRepositoryProvider } from '../src/providers/OperatorPgRepositoryProvider';
 
 describe('Operator pg repository', () => {
   let repository;
@@ -62,8 +62,9 @@ describe('Operator pg repository', () => {
   it('should list operators', async () => {
     const result = await repository.all();
     expect(result).to.be.an('array');
-    expect(result.length).to.eq(1);
-    expect(result[0]._id).to.eq(id);
+    const results = [...result.filter((r) => r._id === id)];
+    expect(results.length).to.eq(1);
+    expect(results[0]._id).to.eq(id);
   });
 
   it('should find operator by id', async () => {

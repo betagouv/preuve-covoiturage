@@ -3,6 +3,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
 import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
+import { OperatorListInterface } from '../shared/operator/common/interfaces/OperatorListInterface';
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
@@ -36,10 +37,21 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows[0];
   }
 
-  async all(): Promise<OperatorDbInterface[]> {
+  async all(): Promise<OperatorListInterface[]> {
     const query = {
       text: `
-        SELECT * FROM ${this.table}
+        SELECT
+          _id,
+          name,
+          legal_name,
+          siret,
+          company,
+          address,
+          cgu_accepted_at,
+          cgu_accepted_by,
+          created_at,
+          updated_at
+        FROM ${this.table}
         WHERE deleted_at IS NULL
       `,
       values: [],
@@ -109,8 +121,16 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   // TODO
-  async update(params: OperatorInterface): Promise<OperatorDbInterface> {
-    throw new Error('Not implemented');
+  async update(data: OperatorDbInterface): Promise<OperatorDbInterface> {
+    const { _id, ...patch } = data;
+    return this.patch(_id, {
+      company: '{}',
+      address: '{}',
+      contact: '{}',
+      cgu_accepted_at: null,
+      cgu_accepted_by: null,
+      ...patch,
+    });
   }
 
   async patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface> {

@@ -46,10 +46,10 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
   handlers: [
     FindTerritoryAction,
     ListTerritoryAction,
-    // CreateTerritoryAction,
+    CreateTerritoryAction,
     UpdateTerritoryAction,
     PatchContactsTerritoryAction,
-    // DeleteTerritoryAction,
+    DeleteTerritoryAction,
     FindTerritoryByInseeAction,
     FindTerritoryByPositionAction,
   ],

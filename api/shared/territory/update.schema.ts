@@ -6,8 +6,9 @@ export const alias = 'territory.update';
 export const update = {
   $id: alias,
   type: 'object',
+  required: ['_id'],
   additionalProperties: false,
-  required: ['_id', 'name', 'siret'],
+  minProperties: 2,
   properties: {
     ...upd.properties,
     _id: { macro: 'serial' },
