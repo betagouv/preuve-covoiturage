@@ -368,26 +368,17 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     const where = this.buildWhereClauses(params);
     const query = {
       text: `
-        WITH data AS
-        (
-          SELECT
-            min(datetime::date) as day,
-            max(distance) as distance,
-            sum(seats+1) as carpoolers,
-            '0'::int as carpoolers_subsidized
-          FROM ${this.table}
-          ${where ? where.text : ''}
-          GROUP BY trip_id
-        )
-        SELECT
-          day,
-          sum(distance)::int as distance,
-          sum(carpoolers)::int as carpoolers,
-          count(*)::int as trip,
-          count(*) FILTER (WHERE carpoolers_subsidized > 0)::int as trip_subsidized
-        FROM data
-        GROUP BY day
-        ORDER BY day ASC`,
+      SELECT
+        datetime::date as day,
+        sum(distance*seats)::int as distance,
+        sum(seats+1)::int as carpoolers,
+        count(*)::int as trip,
+        '0'::int as trip_subsidized,
+        count(distinct operator_id)::int as operators
+      FROM ${this.table}
+      ${where ? where.text : ''}
+      GROUP BY day
+      ORDER BY day ASC`,
       values: [
         // casting to int ?
         ...(where ? where.values : []),
