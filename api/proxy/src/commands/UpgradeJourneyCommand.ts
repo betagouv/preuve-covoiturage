@@ -116,10 +116,10 @@ export class UpgradeJourneyCommand implements CommandInterface {
 
         // FIX ON LEGACY JOURNEY
         current['operator_id'] = get(current, 'operator._id');
-        current.driver.start.territory = get(current, 'driver.start.aom._id');
-        current.driver.end.territory = get(current, 'driver.end.aom._id');
-        current.passenger.start.territory = get(current, 'driver.start.aom._id');
-        current.passenger.end.territory = get(current, 'driver.end.aom._id');
+        current.driver.start.territory_id = get(current, 'driver.start.aom._id');
+        current.driver.end.territory_id = get(current, 'driver.end.aom._id');
+        current.passenger.start.territory_id = get(current, 'driver.start.aom._id');
+        current.passenger.end.territory_id = get(current, 'driver.end.aom._id');
         current.driver.seats = 0;
         current.driver.incentives = [];
         current.driver.payments = [];
