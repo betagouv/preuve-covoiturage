@@ -47,7 +47,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
   getSummaryText(): string {
     const campaign: CampaignUx = this.campaignForm.getRawValue();
 
-    let summaryText = this.campaignSummaryService.retributions(campaign);
+    let summaryText = this.campaignSummaryService.summary(campaign);
 
     // OPERATORS ( not public )
     const nbOperators = campaign.filters.operator_ids ? campaign.filters.operator_ids.length : 0;

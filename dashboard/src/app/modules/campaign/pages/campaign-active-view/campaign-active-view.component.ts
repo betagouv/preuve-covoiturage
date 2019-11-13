@@ -11,6 +11,8 @@ import { DialogService } from '~/core/services/dialog.service';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-campaign-active-view',
@@ -23,6 +25,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
   showSummary = false;
 
   constructor(
+    private _authService: AuthenticationService,
     private _commonDataService: CommonDataService,
     private _dialog: DialogService,
     private _router: Router,
@@ -48,6 +51,10 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
 
   get isLoading(): boolean {
     return !this.territory || !this.campaignUx;
+  }
+
+  get isLoggedAsTerritory(): boolean {
+    return this._authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
   }
 
   displaySummary(): void {
@@ -78,7 +85,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
           this.loadTerritory(foundCampaign.territory_id);
         } else {
           this._router.navigate(['/campaign']).then(() => {
-            this._toastr.error("Les données de la campagne n'ont pas pu être chargé");
+            this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });
         }
       });
@@ -90,7 +97,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
       this.territory = foundTerritory;
     } else {
       this._router.navigate(['/campaign']).then(() => {
-        this._toastr.error("Les données du territoire de la campagne n'ont pas pu être chargé");
+        this._toastr.error("Les données du territoire de la campagne n'ont pas pu être chargées");
       });
     }
   }

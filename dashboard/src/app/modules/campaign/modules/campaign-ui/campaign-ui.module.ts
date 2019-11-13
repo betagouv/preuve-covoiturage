@@ -13,6 +13,7 @@ import { CampaignMainStatsViewComponent } from './components/campaign-main-stats
 import { CampaignSummaryTextComponent } from './components/campaign-summary-text/campaign-summary-text.component';
 import { CampaignRulesViewComponent } from './components/campaign-rules-view/campaign-rules-view.component';
 import { CampaignMainMetricsComponent } from './components/campaign-main-metrics/campaign-main-metrics.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import { CampaignMainMetricsComponent } from './components/campaign-main-metrics
     CampaignRulesViewComponent,
     CampaignMainMetricsComponent,
   ],
-  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, ChartjsModule],
+  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, ChartjsModule, RouterModule],
   exports: [
     CampaignAutoCompleteComponent,
     CampaignContactsComponent,

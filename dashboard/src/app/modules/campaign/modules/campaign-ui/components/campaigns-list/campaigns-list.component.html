@@ -27,7 +27,7 @@
         <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/draft/{{ campaign._id }}">
           <mat-icon matTooltip="voir le détail">edit</mat-icon>
         </button>
-        <button mat-button *ngSwitchCase="CampaignStatusEnum.VALIDATED" routerLink="/campaign/valid/{{ campaign._id }}">
+        <button mat-button *ngSwitchCase="CampaignStatusEnum.VALIDATED" routerLink="/campaign/{{ campaign._id }}">
           <mat-icon matTooltip="voir le détail">remove_red_eye</mat-icon>
         </button>
         <button mat-button (click)="deleteCampaign(campaign)" *ngSwitchCase="CampaignStatusEnum.DRAFT">
