@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, ConflictException, UnauthorizedException } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/patch.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/patch.contract';
 import { alias } from '../shared/user/patch.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -14,7 +14,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
  * The user is switched to 'pending' when the email is modified.
  * A confirmation link is sent to the new email and a notification to the old one.
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class PatchUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],

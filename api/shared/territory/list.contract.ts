@@ -6,8 +6,8 @@ interface TerritoryIdInterface extends TerritoryInterface {
 
 export type ParamsInterface = void;
 export type ResultInterface = { data: TerritoryIdInterface[]; meta: any };
-export const configHandler = {
+export const handlerConfig = {
   service: 'territory',
   method: 'list',
 };
-export const signature = `${configHandler.service}:${configHandler.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType, InvalidRequestException, ConflictException } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
 import { alias } from '../shared/user/create.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -12,7 +12,7 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 /*
  * Create user and call forgotten password action
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class CreateUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],

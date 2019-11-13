@@ -6,8 +6,8 @@ export interface ParamsInterface {
 export interface ResultInterface extends TerritoryInterface {
   _id: number;
 }
-export const configHandler = {
+export const handlerConfig = {
   service: 'territory',
   method: 'find',
 };
-export const signature = `${configHandler.service}:${configHandler.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

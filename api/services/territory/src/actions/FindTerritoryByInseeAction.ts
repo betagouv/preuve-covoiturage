@@ -2,12 +2,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/findByInsee.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/findByInsee.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/territory/findByInsee.schema';
 import { blacklist } from '../config/filterOutput';
 
-@handler(configHandler)
+@handler(handlerConfig)
 export class FindTerritoryByInseeAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['content.blacklist', blacklist]];
 

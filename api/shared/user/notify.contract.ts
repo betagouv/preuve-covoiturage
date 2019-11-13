@@ -9,9 +9,9 @@ export interface ParamsInterface {
 
 export type ResultInterface = void;
 
-export const configHandler = {
+export const handlerConfig = {
   service: 'user',
   method: 'notify',
 };
 
-export const signature = `${configHandler.service}:${configHandler.method}`;
+export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

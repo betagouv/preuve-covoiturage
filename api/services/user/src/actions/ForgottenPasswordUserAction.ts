@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/forgottenPassword.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/forgottenPassword.contract';
 import { alias } from '../shared/user/forgottenPassword.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
@@ -10,7 +10,7 @@ import { UserNotificationProvider } from '../providers/UserNotificationProvider'
 /*
  * find user by email and send email to set new password
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class ForgottenPasswordUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 

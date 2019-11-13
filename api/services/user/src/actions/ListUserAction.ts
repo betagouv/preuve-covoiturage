@@ -1,7 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
-import { configHandler, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
 import { alias } from '../shared/user/list.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
@@ -24,7 +24,7 @@ const whiteList = [
 /*
  * list users filtered by territory or operator and paginate with limit & skip
  */
-@handler(configHandler)
+@handler(handlerConfig)
 export class ListUserAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],
