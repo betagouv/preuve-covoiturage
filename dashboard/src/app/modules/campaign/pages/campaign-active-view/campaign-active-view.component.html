@@ -9,7 +9,13 @@
         <p>{{ territory.name }}</p>
       </div>
       <div class="campaignDraftView-header-action">
-        <button mat-flat-button type="button" color="primary" (click)="duplicateCampaign(campaignUx._id)">
+        <button
+          *ngIf="isLoggedAsTerritory"
+          mat-flat-button
+          type="button"
+          color="primary"
+          (click)="duplicateCampaign(campaignUx._id)"
+        >
           Dupliquer la campagne
         </button>
       </div>

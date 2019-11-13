@@ -172,7 +172,7 @@ export class CampaignUiService {
     return '';
   }
 
-  public restrictions(restrictions: RestrictionUxInterface[]) {
+  public restrictions(restrictions: RestrictionUxInterface[] = []) {
     if (restrictions.length === 0) {
       return 'Aucune restriction.';
     }
@@ -257,16 +257,17 @@ export class CampaignUiService {
     // RETRIBUTIONS
     summaryText += '<br/><br/>\r\n\r\n';
     summaryText += `${this.retributions(campaign)}`;
-    summaryText += '<br/><br/>\r\n\r\n';
 
-    if (campaign.restrictions.length > 0) {
+    if (campaign.restrictions.length > 0 && campaign.restrictions[0].quantity) {
+      summaryText += '<br/><br/>\r\n\r\n';
       summaryText += 'Les restrictions suivantes seront appliquées :';
 
       // RESTRICTIONS
       summaryText += '<br/><br/>\r\n\r\n';
       summaryText += `${this.restrictions(campaign.restrictions)}`;
-      summaryText += '<br/><br/>\r\n\r\n';
     }
+
+    summaryText += '<br/><br/>\r\n\r\n';
 
     // RANKS
     summaryText += `L’opération est limitée aux opérateurs proposant des preuves de classe`;

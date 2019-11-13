@@ -16,7 +16,15 @@
       </div>
     </div>
     <div class="campaignRetributionView-content-actions">
-      <button *ngIf="canEdit" mat-flat-button type="button" color="primary">Modifier</button>
+      <button
+        *ngIf="canEdit"
+        mat-flat-button
+        type="button"
+        color="primary"
+        routerLink="/campaign/edit/{{ campaign._id }}"
+      >
+        Modifier
+      </button>
     </div>
   </div>
 </div>

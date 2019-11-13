@@ -344,7 +344,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         const campaignUx = this.campaignFormatService.toCampaignUxFormat(foundCampaign);
         this.setCampaignToForm(campaignUx, false);
       } else {
-        this.toastr.error("Les données de la campagne n'ont pas pu être chargé");
+        this.toastr.error("Les données de la campagne n'ont pas pu être chargées");
         this.router.navigate(['/campaign']);
       }
     });
