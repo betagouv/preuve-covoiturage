@@ -1,17 +1,16 @@
 import chai from 'chai';
 import chaiAsync from 'chai-as-promised';
 import { inseeBlacklistFilter, inseeWhitelistFilter } from './inseeFilter';
-import { TripInterface } from '@pdc/provider-schema';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { MetadataWrapper } from '../MetadataWrapper';
 
-const meta = new MetadataWrapper('test', {});
+const meta = new MetadataWrapper(1, {});
 
 chai.use(chaiAsync);
 const { expect } = chai;
 
-const trip: TripInterface = {
-  operator_id: ['operatorA'],
+const trip = {
+  operator_id: [1],
   status: '',
   start: new Date(),
   people: [
@@ -22,7 +21,7 @@ const trip: TripInterface = {
         over_18: false,
       },
       operator_class: 'A',
-      operator_id: 'operatorA',
+      operator_id: 1,
 
       start: {
         datetime: new Date(),
@@ -64,7 +63,7 @@ const trip: TripInterface = {
         over_18: true,
       },
       operator_class: 'A',
-      operator_id: 'operatorA',
+      operator_id: 1,
 
       start: {
         datetime: new Date(),
@@ -103,11 +102,12 @@ const trip: TripInterface = {
 };
 describe('Policy rule: insee white and black list', () => {
   it('should throw error if start and end is in blacklist with AND operator', () => {
-    const apply = inseeBlacklistFilter.apply({
-      start: 'A',
-      end: 'A',
-      operator: 'and',
-    });
+    const apply = inseeBlacklistFilter.apply([
+      {
+        start: ['A'],
+        end: ['A'],
+      }
+    ]);
 
     return expect(
       apply(
@@ -123,11 +123,12 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should do nothing if start and end is in blacklist with AND operator', () => {
-    const apply = inseeBlacklistFilter.apply({
-      start: 'A',
-      end: 'A',
-      operator: 'and',
-    });
+    const apply = inseeBlacklistFilter.apply([
+      {
+        start: ['A'],
+        end: ['A'],
+      }
+    ]);
 
     return expect(
       apply(
@@ -143,11 +144,10 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should throw error if start or end is in blacklist with OR operator', () => {
-    const apply = inseeBlacklistFilter.apply({
-      start: 'A',
-      end: 'A',
-      operator: 'or',
-    });
+    const apply = inseeBlacklistFilter.apply([
+      { start: ['A'], end: [] },
+      { start: [], end: ['A'] },
+    ]);
 
     return expect(
       apply(
@@ -163,11 +163,12 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should throw error if start and end is in whitelist with AND operator', () => {
-    const apply = inseeWhitelistFilter.apply({
-      start: 'A',
-      end: 'A',
-      operator: 'and',
-    });
+    const apply = inseeWhitelistFilter.apply([
+      {
+        start: ['A'],
+        end: ['A'],
+      }
+    ]);
 
     return expect(
       apply(
@@ -183,11 +184,12 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should do nothing if start and end is in whitelist with AND operator', () => {
-    const apply = inseeWhitelistFilter.apply({
-      start: 'A',
-      end: 'A',
-      operator: 'and',
-    });
+    const apply = inseeWhitelistFilter.apply([
+      {
+        start: ['A'],
+        end: ['A'],
+      }
+    ]);
 
     return expect(
       apply(
@@ -203,11 +205,10 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should do nothin if start or end is in whitelist with OR operator', () => {
-    const apply = inseeWhitelistFilter.apply({
-      start: 'A',
-      end: 'A',
-      operator: 'or',
-    });
+    const apply = inseeWhitelistFilter.apply([
+      { start: ['A'], end: [] },
+      { start: [], end: ['A'] },
+    ]);
 
     return expect(
       apply(
