@@ -16,7 +16,7 @@ export class TownService {
   constructor(public http: HttpClient) {}
 
   public findTowns(literal: string = ''): Observable<TownInterface[]> {
-    const params = `/communes?nom=${encodeURIComponent(literal)}&fields=nom`;
+    const params = `/communes?nom=${encodeURIComponent(literal)}&fields=nom&limit=15`;
     return this.http
       .get(`${this.addressApiDomain}${params}`)
       .pipe(

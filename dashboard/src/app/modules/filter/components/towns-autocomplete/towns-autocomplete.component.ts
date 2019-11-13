@@ -15,7 +15,6 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 })
 export class TownsAutocompleteComponent extends DestroyObservable implements OnInit {
   public townCtrl = new FormControl();
-  public townForm;
   public filteredTowns: TownInterface[] = [];
 
   @Input() parentForm: FormGroup;
@@ -27,22 +26,25 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
   }
 
   ngOnInit() {
-    this.townForm = this.parentForm.get('towns');
     this.townForm.valueChanges
-      .pipe(takeUntil(this.destroy$))
       .pipe(
         tap((towns: TownInterface[]) => {
           this.filteredTowns = _.differenceWith(this.filteredTowns, towns, (x, y) => x.name === y.name);
         }),
+        takeUntil(this.destroy$),
       )
       .subscribe();
     this.townCtrl.valueChanges
-      .pipe(takeUntil(this.destroy$))
       .pipe(
         debounceTime(1000),
         tap((literal: string) => this.findTowns(literal)),
       )
+      .pipe(takeUntil(this.destroy$))
       .subscribe();
+  }
+
+  get townForm(): FormControl {
+    return <FormControl>this.parentForm.get('towns');
   }
 
   public remove(town: TownInterface): void {
@@ -55,7 +57,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
   }
 
   public findTowns(literal: string = ''): void {
-    if (!literal) {
+    if (literal === undefined || literal === null) {
       return;
     }
     this.townService
@@ -71,7 +73,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     towns.push({ name: event.option.viewValue });
     this.townForm.setValue(towns);
     this.townInput.nativeElement.value = null;
-    this.townCtrl.setValue(null);
+    this.townCtrl.setValue('');
   }
 
   private filterTowns(): void {
