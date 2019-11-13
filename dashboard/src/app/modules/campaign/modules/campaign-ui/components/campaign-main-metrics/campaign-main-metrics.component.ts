@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import { ChartData, ChartOptions } from 'chart.js';
-import { Observable, of, Subject } from 'rxjs';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 
@@ -71,8 +70,6 @@ export class CampaignMainMetricsComponent implements OnInit {
       this.budgetRemaining = this.campaign.max_amount;
       return;
     }
-    console.log('spent', this.campaign.amount_spent);
-    console.log('max', this.campaign.max_amount);
     this.budgetRemaining = this.campaign.max_amount - this.campaign.amount_spent;
     this.budgetSpent = this.campaign.amount_spent;
   }

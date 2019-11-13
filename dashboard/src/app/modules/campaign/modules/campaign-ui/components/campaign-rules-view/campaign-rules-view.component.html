@@ -38,6 +38,7 @@
         type="button"
         color="primary"
         routerLink="/campaign/edit/{{ campaign._id }}"
+        [queryParams]="{ section: 1 }"
       >
         Modifier
       </button>

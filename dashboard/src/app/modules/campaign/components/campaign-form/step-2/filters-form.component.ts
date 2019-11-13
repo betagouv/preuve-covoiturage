@@ -17,6 +17,7 @@ import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.servi
 })
 export class FiltersFormComponent extends DestroyObservable implements OnInit, AfterViewInit {
   @Input() campaignForm: FormGroup;
+  @Input() isCreating = false;
 
   tripClassKeys = Object.keys(TripRankEnum);
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE_KM;

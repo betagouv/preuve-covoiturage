@@ -27,6 +27,11 @@ const routes: Routes = [
         component: CampaignCreateEditComponent,
       },
       {
+        path: 'create/:parentId',
+        data: { role: 'admin' },
+        component: CampaignCreateEditComponent,
+      },
+      {
         path: 'discover',
         component: CampaignDiscoverComponent,
       },
