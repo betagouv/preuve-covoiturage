@@ -8,7 +8,8 @@ import { ContentWhitelistMiddleware, ContentBlacklistMiddleware, ScopeToSelfMidd
 import { find } from './shared/territory/find.schema';
 import { create } from './shared/territory/create.schema';
 import { update } from './shared/territory/update.schema';
-import { binding } from './shared/territory/updateOperator.schema';
+import { binding as updateOperatorBinding } from './shared/territory/updateOperator.schema';
+import { binding as listOperatorBinding } from './shared/territory/listOperator.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
 import { findByInsee } from './shared/territory/findByInsee.schema';
 import { findByPosition } from './shared/territory/findByPosition.schema';
@@ -23,10 +24,12 @@ import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { MigrateCommand } from './commands/MigrateCommand';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
+import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorAction';
+import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [TerritoryPgRepositoryProvider],
+  providers: [TerritoryPgRepositoryProvider, TerritoryOperatorRepositoryProvider],
   validator: [
     ['territory.find', find],
     ['territory.create', create],
@@ -35,7 +38,8 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     ['territory.findByInsee', findByInsee],
     ['territory.findByPosition', findByPosition],
     ['territory.patchContacts', patchContacts],
-    binding,
+    updateOperatorBinding,
+    listOperatorBinding,
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -55,6 +59,7 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     FindTerritoryByInseeAction,
     FindTerritoryByPositionAction,
     UpdateTerritoryOperatorAction,
+    ListTerritoryOperatorAction,
   ],
   commands: [MigrateCommand, MigrateDataCommand],
 })
