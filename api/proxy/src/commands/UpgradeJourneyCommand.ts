@@ -6,6 +6,7 @@ import {
   KernelInterfaceResolver,
   ContextType,
 } from '@ilos/common';
+import { get } from 'lodash';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 @command()
@@ -114,11 +115,11 @@ export class UpgradeJourneyCommand implements CommandInterface {
         current = await cursor.next();
 
         // FIX ON LEGACY JOURNEY
-        current['operator_id'] = current.operator._id;
-        current.driver.start.territory = current.driver.start.aom._id;
-        current.driver.end.territory = current.driver.end.aom._id;
-        current.passenger.start.territory = current.driver.start.aom._id;
-        current.passenger.end.territory = current.driver.end.aom._id;
+        current['operator_id'] = get(current, 'operator._id');
+        current.driver.start.territory = get(current, 'driver.start.aom._id');
+        current.driver.end.territory = get(current, 'driver.end.aom._id');
+        current.passenger.start.territory = get(current, 'driver.start.aom._id');
+        current.passenger.end.territory = get(current, 'driver.end.aom._id');
         current.driver.seats = 0;
         current.driver.incentives = [];
         current.driver.payments = [];
