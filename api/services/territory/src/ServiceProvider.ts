@@ -3,20 +3,20 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@ilos/package-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ContentWhitelistMiddleware, ContentBlacklistMiddleware } from '@pdc/provider-middleware';
+import { ContentWhitelistMiddleware, ContentBlacklistMiddleware, ScopeToSelfMiddleware } from '@pdc/provider-middleware';
 
 import { find } from './shared/territory/find.schema';
 import { create } from './shared/territory/create.schema';
 import { update } from './shared/territory/update.schema';
+import { binding } from './shared/territory/updateOperator.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
 import { findByInsee } from './shared/territory/findByInsee.schema';
 import { findByPosition } from './shared/territory/findByPosition.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
 import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
-import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
-import { DeleteTerritoryAction } from './actions/DeleteTerritoryAction';
+import { UpdateTerritoryOperatorAction } from './actions/UpdateTerritoryOperatorAction';
 import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction';
 import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
@@ -35,9 +35,11 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     ['territory.findByInsee', findByInsee],
     ['territory.findByPosition', findByPosition],
     ['territory.patchContacts', patchContacts],
+    binding,
   ],
   middlewares: [
     ['can', PermissionMiddleware],
+    ['scopeIt', ScopeToSelfMiddleware],
     ['validate', ValidatorMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
@@ -52,6 +54,7 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     // DeleteTerritoryAction,
     FindTerritoryByInseeAction,
     FindTerritoryByPositionAction,
+    UpdateTerritoryOperatorAction,
   ],
   commands: [MigrateCommand, MigrateDataCommand],
 })
