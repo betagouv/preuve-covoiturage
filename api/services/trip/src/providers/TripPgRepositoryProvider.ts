@@ -83,7 +83,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       throw new Error('Oups');
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   public async findOrCreateTripForJourney(
@@ -389,7 +389,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     }, '');
 
     const result = await this.connection.getClient().query(query);
-    return result.rows;
+    return result.rows.map(this.castTypes);
   }
 
   public async search(params: TripSearchInterface): Promise<LightTripInterface[]> {
@@ -423,6 +423,16 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     }, '');
 
     const result = await this.connection.getClient().query(query);
-    return result.rows;
+    return result.rows.map(this.castTypes);
+  }
+
+  private castTypes(row: any): any {
+    return {
+      ...row,
+      operator_id: typeof row.operator_id === 'string' ? parseInt(row.operator_id, 10) : row.operator_id,
+      start_territory:
+        typeof row.start_territory === 'string' ? parseInt(row.start_territory, 10) : row.start_territory,
+      end_territory: typeof row.end_territory === 'string' ? parseInt(row.end_territory, 10) : row.end_territory,
+    };
   }
 }

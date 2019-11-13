@@ -2,10 +2,9 @@ import supertest from 'supertest';
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { MongoConnection } from '@ilos/connection-mongo/';
+import { describe } from 'mocha';
 
 import { bootstrap } from '../src/bootstrap';
-import { ServiceProvider } from '../src/ServiceProvider';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -35,8 +34,6 @@ describe('Operator service', () => {
   });
 
   before(async () => {
-    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
-
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
@@ -45,14 +42,6 @@ describe('Operator service', () => {
   });
 
   after(async () => {
-    await (<MongoConnection>transport
-      .getKernel()
-      .get(ServiceProvider)
-      .get(MongoConnection))
-      .getClient()
-      .db(process.env.APP_MONGO_DB)
-      .dropDatabase();
-
     await transport.down();
   });
 
@@ -63,8 +52,8 @@ describe('Operator service', () => {
         callFactory(
           'operator:create',
           {
-            nom_commercial: 'Toto',
-            raison_sociale: 'Toto inc.',
+            name: 'Toto',
+            legal_name: 'Toto inc.',
           },
           ['wrong.permission'],
         ),
@@ -79,17 +68,18 @@ describe('Operator service', () => {
   });
 
   // id returned by database
-  let _id: string;
+  let _id: number;
 
-  it('Creates an operator', () => {
+  it('Create an operator', () => {
     return request
       .post('/')
       .send(
         callFactory(
           'operator:create',
           {
-            nom_commercial: 'Toto',
-            raison_sociale: 'Toto inc.',
+            name: 'Toto',
+            legal_name: 'Toto inc.',
+            siret: `${String(Math.random() * Math.pow(10, 16)).substr(0, 14)}`,
           },
           ['operator.create'],
         ),
@@ -100,8 +90,8 @@ describe('Operator service', () => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('_id');
-        expect(response.body.result).to.have.property('nom_commercial', 'Toto');
-        expect(response.body.result).to.have.property('raison_sociale', 'Toto inc.');
+        expect(response.body.result).to.have.property('name', 'Toto');
+        expect(response.body.result).to.have.property('legal_name', 'Toto inc.');
 
         // store the _id
         _id = response.body.result._id;
@@ -123,25 +113,22 @@ describe('Operator service', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        console.log(response.body);
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('_id');
-        expect(response.body.result).to.have.property('nom_commercial', 'Toto');
-        expect(response.body.result).to.have.property('raison_sociale', 'Toto inc.');
+        expect(response.body.result).to.have.property('name', 'Toto');
+        expect(response.body.result).to.have.property('legal_name', 'Toto inc.');
       });
   });
-  it('Updates the operator', () => {
+  it('Update the operator', () => {
     return request
       .post('/')
       .send(
         callFactory(
-          'operator:patch',
+          'operator:update',
           {
             _id,
-            patch: {
-              nom_commercial: 'Yop',
-            },
+            name: 'Yop',
           },
           ['operator.update'],
         ),
@@ -152,12 +139,12 @@ describe('Operator service', () => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('_id', _id);
-        expect(response.body.result).to.have.property('nom_commercial', 'Yop');
-        expect(response.body.result).to.have.property('raison_sociale', 'Toto inc.');
+        expect(response.body.result).to.have.property('name', 'Yop');
+        expect(response.body.result).to.have.property('legal_name', 'Toto inc.');
       });
   });
 
-  it('Lists all operators', () => {
+  it('List all operators', () => {
     return request
       .post('/')
       .send(callFactory('operator:list', {}, ['operator.list']))
@@ -166,16 +153,18 @@ describe('Operator service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result.length).to.eq(1);
-        expect(response.body.result[0]).to.have.property('_id', _id);
-        expect(response.body.result[0]).to.have.property('nom_commercial', 'Yop');
-        expect(response.body.result[0]).to.have.property('raison_sociale', 'Toto inc.');
-        expect(response.body.result[0]).not.to.have.property('bank');
-        expect(response.body.result[0]).not.to.have.property('contacts');
+
+        const results = [...response.body.result.filter((r) => r._id === _id)];
+        expect(results.length).to.eq(1);
+        expect(results[0]).to.have.property('_id', _id);
+        expect(results[0]).to.have.property('name', 'Yop');
+        expect(results[0]).to.have.property('legal_name', 'Toto inc.');
+        expect(results[0]).not.to.have.property('bank');
+        expect(results[0]).not.to.have.property('contacts');
       });
   });
 
-  it('Deletes the operator', () => {
+  it('Delete the operator', () => {
     return request
       .post('/')
       .send(callFactory('operator:delete', { _id }, ['operator.delete']))
@@ -183,7 +172,6 @@ describe('Operator service', () => {
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result', true);
       });
   });
 });

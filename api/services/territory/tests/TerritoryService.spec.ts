@@ -4,10 +4,8 @@ import chai from 'chai';
 import chaiNock from 'chai-nock';
 import { describe } from 'mocha';
 import { TransportInterface } from '@ilos/common';
-import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
-import { ServiceProvider } from '../src/ServiceProvider';
 
 chai.use(chaiNock);
 
@@ -18,7 +16,6 @@ describe('Territory service', () => {
   let request;
 
   before(async () => {
-    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
@@ -27,21 +24,13 @@ describe('Territory service', () => {
   });
 
   after(async () => {
-    await (<MongoConnection>transport
-      .getKernel()
-      .get(ServiceProvider)
-      .get(MongoConnection))
-      .getClient()
-      .db(process.env.APP_MONGO_DB)
-      .dropDatabase();
-
     await transport.down();
   });
 
   // Database _id
   let _id: string;
 
-  it('Creates a territory', () =>
+  it('Create a territory', () =>
     request
       .post('/')
       .send({
@@ -49,7 +38,10 @@ describe('Territory service', () => {
         jsonrpc: '2.0',
         method: 'territory:create',
         params: {
-          params: { name: 'Toto' },
+          params: {
+            name: 'Toto',
+            siret: `${String(Math.random() * Math.pow(10, 16)).substr(0, 14)}`,
+          },
           _context: {
             call: {
               user: {
@@ -66,6 +58,7 @@ describe('Territory service', () => {
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('_id');
         expect(response.body.result).to.have.property('name', 'Toto');
+
         // store the _id
         _id = response.body.result._id;
       }));
@@ -103,11 +96,11 @@ describe('Territory service', () => {
       .send({
         id: 1,
         jsonrpc: '2.0',
-        method: 'territory:patch',
+        method: 'territory:update',
         params: {
           params: {
             _id,
-            patch: { name: 'Yop' },
+            name: 'Yop',
           },
           _context: {
             call: {
@@ -125,9 +118,6 @@ describe('Territory service', () => {
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('_id', _id);
         expect(response.body.result).to.have.property('name', 'Yop');
-
-        // store the _id
-        _id = response.body.result._id;
       }));
 
   it('Lists all territories', () =>
@@ -154,9 +144,11 @@ describe('Territory service', () => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.have.property('data');
-        expect(response.body.result.data.length).to.eq(1);
-        expect(response.body.result.data[0]).to.have.property('_id', _id);
-        expect(response.body.result.data[0]).to.have.property('name', 'Yop');
+
+        const results = response.body.result.data.filter((r) => r._id === _id);
+        expect(results.length).to.eq(1);
+        expect(results[0]).to.have.property('_id', _id);
+        expect(results[0]).to.have.property('name', 'Yop');
       }));
 
   it('Deletes the territory', () =>
@@ -181,6 +173,5 @@ describe('Territory service', () => {
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result', true);
       }));
 });

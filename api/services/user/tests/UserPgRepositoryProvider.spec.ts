@@ -35,8 +35,8 @@ const territoryInput: UserBaseInterface = {
   lastname: 'tata',
   role: 'territory.admin',
   phone: '0102030405',
-  // operator_id: '1',
-  territory_id: '1',
+  // operator_id: 1,
+  territory_id: 1,
 };
 
 const operatorInput: UserBaseInterface = {
@@ -45,8 +45,8 @@ const operatorInput: UserBaseInterface = {
   lastname: 'tata',
   role: 'operator.admin',
   phone: '0102030405',
-  operator_id: '1',
-  // territory_id: '1',
+  operator_id: 1,
+  // territory_id: 1,
 };
 
 const registryInput: UserBaseInterface = {
@@ -55,8 +55,8 @@ const registryInput: UserBaseInterface = {
   lastname: 'tata',
   role: 'registry.admin',
   phone: '0102030405',
-  // operator_id: '1',
-  // territory_id: '1',
+  // operator_id: 1,
+  // territory_id: 1,
 };
 
 describe('User pg repository', async () => {

@@ -6,8 +6,9 @@ export const alias = 'operator.update';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['_id', 'name', 'legal_name'],
+  required: ['_id'],
   additionalProperties: false,
+  minProperties: 2,
   properties: {
     ...update.properties,
     _id: { macro: 'serial' },

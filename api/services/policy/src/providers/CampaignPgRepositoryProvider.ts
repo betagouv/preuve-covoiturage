@@ -32,7 +32,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return undefined;
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   // TODO interface
@@ -86,7 +86,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   async patch(id: number, patch: { [k: string]: any }): Promise<CampaignInterface> {
@@ -135,7 +135,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new NotFoundException(`campaign not found (${id})`);
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   async deleteDraftOrTemplate(id: number): Promise<void> {
@@ -204,7 +204,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new NotFoundException(`campaign not found (${id})`);
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   async findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface> {
@@ -225,7 +225,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return undefined;
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   async findWhereTerritory(territoryId: number): Promise<CampaignInterface[]> {
@@ -244,7 +244,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return [];
     }
 
-    return result.rows;
+    return result.rows.map(this.castTypes);
   }
 
   async findTemplates(territoryId: number | null): Promise<any[]> {
@@ -264,7 +264,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return [];
     }
 
-    return result.rows;
+    return result.rows.map(this.castTypes);
   }
 
   async findApplicableCampaigns(territories: number[], date: Date): Promise<any[]> {
@@ -286,6 +286,13 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return [];
     }
 
-    return result.rows;
+    return result.rows.map(this.castTypes);
+  }
+
+  private castTypes(row: any): any {
+    return {
+      ...row,
+      territory_id: typeof row.territory_id === 'string' ? parseInt(row.territory_id, 10) : row.territory_id,
+    };
   }
 }

@@ -33,7 +33,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
         )
         RETURNING _id, journey_id, created_at
       `,
-      values: [operator_id, application_id ? application_id : 'unkown', journey.journey_id, journey],
+      values: [operator_id, application_id ? application_id : 'unknown', journey.journey_id, journey],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -42,7 +42,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
       throw new Error();
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
   async createMany(data: (JourneyInterface & { application_id: string })[]): Promise<JourneyInterface[]> {
@@ -90,6 +90,13 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
 
     const result = await this.connection.getClient().query(query);
 
-    return result.rows;
+    return result.rows.map(this.castTypes);
+  }
+
+  private castTypes(row: any): any {
+    return {
+      ...row,
+      operator_id: typeof row.operator_id === 'string' ? parseInt(row.operator_id, 10) : row.operator_id,
+    };
   }
 }
