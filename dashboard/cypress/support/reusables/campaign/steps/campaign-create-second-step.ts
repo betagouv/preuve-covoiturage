@@ -61,11 +61,8 @@ export function campaignSecondStepSelectRanks() {
 
     cy.get('.RulesForm-ranks mat-form-field').click();
 
-    // select rank A
-    cy.get('.mat-select-panel mat-option:first-child').click();
-
-    // select rank C
-    cy.get('.mat-select-panel mat-option:nth-child(3)').click();
+    // unselect rank B
+    cy.get('.mat-select-panel mat-option:nth-child(2)').click();
 
     // focus out of material select
     cy.get('.cdk-overlay-backdrop').click({ force: true });

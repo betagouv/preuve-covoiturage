@@ -1,7 +1,7 @@
 import { OperatorInterface } from './common/interfaces/OperatorInterface';
 
 export interface ParamsInterface {
-  _id: string;
+  _id: number;
   patch: OperatorInterface;
 }
 

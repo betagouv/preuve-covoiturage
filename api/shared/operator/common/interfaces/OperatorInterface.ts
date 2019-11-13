@@ -5,15 +5,12 @@ import { ContactsInterface } from '../../../common/interfaces/ContactsInterface'
 import { CguInterface } from '../../../common/interfaces/CguInterface';
 
 export interface OperatorInterface {
-  _id?: string;
-  nom_commercial: string;
-  raison_sociale: string;
+  name: string;
+  legal_name: string;
+  siret: string;
   company?: CompanyInterface;
   address?: AddressInterface;
   bank?: BankInterface;
   contacts?: ContactsInterface;
   cgu?: CguInterface;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
 }

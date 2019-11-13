@@ -1,31 +1,32 @@
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
+import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
 
 export interface OperatorRepositoryProviderInterface {
-  find(id: string): Promise<OperatorInterface>;
-  all(): Promise<OperatorInterface[]>;
-  create(data: OperatorInterface): Promise<OperatorInterface>;
-  delete(_id: string): Promise<void>;
-  patch(id: string, patch: { [k: string]: any }): Promise<OperatorInterface>;
-  update(params: OperatorInterface): Promise<OperatorInterface>;
+  find(id: number): Promise<OperatorDbInterface>;
+  all(): Promise<OperatorDbInterface[]>;
+  create(data: OperatorInterface): Promise<OperatorDbInterface>;
+  delete(_id: number): Promise<void>;
+  patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface>;
+  update(params: OperatorInterface): Promise<OperatorDbInterface>;
 }
 
 export abstract class OperatorRepositoryProviderInterfaceResolver implements OperatorRepositoryProviderInterface {
-  async find(id: string): Promise<OperatorInterface> {
+  async find(id: number): Promise<OperatorDbInterface> {
     throw new Error();
   }
-  async all(): Promise<OperatorInterface[]> {
+  async all(): Promise<OperatorDbInterface[]> {
     throw new Error();
   }
-  async create(data: OperatorInterface): Promise<OperatorInterface> {
+  async create(data: OperatorInterface): Promise<OperatorDbInterface> {
     throw new Error();
   }
-  async delete(_id: string): Promise<void> {
+  async delete(_id: number): Promise<void> {
     throw new Error();
   }
-  async patch(id: string, patch: { [k: string]: any }): Promise<OperatorInterface> {
+  async patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface> {
     throw new Error();
   }
-  async update(params: OperatorInterface): Promise<OperatorInterface> {
+  async update(params: OperatorInterface): Promise<OperatorDbInterface> {
     throw new Error();
   }
 }

@@ -18,6 +18,7 @@ import {
   campaignThirdStepSetDates,
   campaignThirdStepSetMaxRetribution,
   campaignThirdStepSetMaxTrips,
+  campaignThirdStepSetRestriction,
   campaignThirdStepSetUnit,
 } from './steps/campaign-create-third-step';
 import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
@@ -77,9 +78,16 @@ export function cypress_campaignCreate(e2e = false) {
 
   campaignThirdStepCheckDisabledNextStep();
 
+  it('open panel', () => {
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(4) mat-expansion-panel-header').click();
+  });
+
+  campaignThirdStepSetRestriction(1, CypressExpectedCampaign.firstRestrictionAmount, 2, 4);
+  campaignThirdStepSetRestriction(2, CypressExpectedCampaign.secondRestrictionAmount, 1, 1);
+
   it('sets retribution', () => {
     // open retribution extension
-    cy.get('.ParametersForm .mat-expansion-panel:nth-child(4)').click();
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(5)').click();
 
     // driver amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-form-field input').type(

@@ -1,10 +1,10 @@
 import { PersonInterface } from './PersonInterface';
 
 export interface TripInterface {
-  _id?: string;
-  operator_trip_id?: string;
-  operator_id: string[];
-  territories?: string[];
+  _id?: number;
+  operator_trip_id?: number;
+  operator_id: number[];
+  territories?: number[];
   status: string;
   start: Date;
   people: PersonInterface[];

@@ -3,7 +3,7 @@
     <mat-label>Nom</mat-label>
     <input matInput formControlName="name" required />
   </mat-form-field>
-  <div>
+  <div class="OperatorTokenForm-actions">
     <button
       type="submit"
       mat-flat-button
@@ -16,7 +16,7 @@
       Créer
     </button>
     <button (click)="onClose.emit()" class="OperatorTokenForm-close" type="button" mat-icon-button color="secondary">
-      <mat-icon color="error">delete_outline</mat-icon>
+      Annuler
     </button>
   </div>
 </form>

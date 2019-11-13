@@ -1,5 +1,5 @@
 export interface ParamsInterface {
-  _id: string;
+  _id: number;
   role: string;
 }
 

@@ -1,46 +1,46 @@
 export interface CampaignRepositoryProviderInterface {
-  find(id: string): Promise<any>;
+  find(id: number): Promise<any>;
   create(params: any): Promise<any>;
-  patch(id: string, patch: any): Promise<any>;
-  patchWhereTerritory(id: string, territoryId: string, patch: any): Promise<any>;
+  patch(id: number, patch: any): Promise<any>;
+  patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<any>;
 
-  findOneWhereTerritory(id: string, territoryId: string): Promise<any>;
-  findWhereTerritory(territoryId: string): Promise<any[]>;
-  findTemplates(territoryId: string | null): Promise<any[]>;
-  deleteDraftOrTemplate(id: string, territoryId: string): Promise<void>;
-  findApplicableCampaigns(territories: string[], date: Date): Promise<any[]>;
+  findOneWhereTerritory(id: number, territoryId: number): Promise<any>;
+  findWhereTerritory(territoryId: number): Promise<any[]>;
+  findTemplates(territoryId: number | null): Promise<any[]>;
+  deleteDraftOrTemplate(id: number, territoryId: number): Promise<void>;
+  findApplicableCampaigns(territories: number[], date: Date): Promise<any[]>;
 }
 
 export abstract class CampaignRepositoryProviderInterfaceResolver implements CampaignRepositoryProviderInterface {
-  async find(id: string): Promise<any> {
+  async find(id: number): Promise<any> {
     throw new Error();
   }
   async create(params: any): Promise<any> {
     throw new Error();
   }
-  async patch(id: string, patch: any): Promise<any> {
+  async patch(id: number, patch: any): Promise<any> {
     throw new Error();
   }
-  async patchWhereTerritory(id: string, territoryId: string, patch: any): Promise<any> {
+  async patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<any> {
     throw new Error();
   }
-  async findOneWhereTerritory(id: string, territoryId: string): Promise<any> {
-    throw new Error();
-  }
-
-  async findWhereTerritory(territoryId: string): Promise<any[]> {
+  async findOneWhereTerritory(id: number, territoryId: number): Promise<any> {
     throw new Error();
   }
 
-  async findTemplates(territoryId: string | null): Promise<any[]> {
+  async findWhereTerritory(territoryId: number): Promise<any[]> {
     throw new Error();
   }
 
-  async deleteDraftOrTemplate(id: string, territoryId: string): Promise<void> {
+  async findTemplates(territoryId: number | null): Promise<any[]> {
     throw new Error();
   }
 
-  async findApplicableCampaigns(territories: string[], d: Date): Promise<any[]> {
+  async deleteDraftOrTemplate(id: number, territoryId: number): Promise<void> {
+    throw new Error();
+  }
+
+  async findApplicableCampaigns(territories: number[], d: Date): Promise<any[]> {
     throw new Error();
   }
 }

@@ -2,7 +2,7 @@ import { JourneyInterface } from '../common/interfaces/JourneyInterface';
 
 export type ResultInterface = JourneyInterface | JourneyInterface[];
 export interface ParamsInterface extends JourneyInterface {
-  _id: string;
+  _id: number;
 }
 export const handlerConfig = {
   service: 'normalization',

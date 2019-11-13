@@ -2,7 +2,7 @@ import { MetaInterface } from '../interfaces/RuleInterfaces';
 
 export class MetadataWrapper implements MetaInterface {
   protected data: Map<string, any>;
-  constructor(public readonly id: string, data?: { [k: string]: any }) {
+  constructor(public readonly id: number, data?: { [k: string]: any }) {
     this.data = data ? new Map(Object.entries(data)) : new Map();
   }
 

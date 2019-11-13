@@ -56,8 +56,8 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
       });
   }
 
-  public get loggedUser(): User {
-    return this.authService.user;
+  public isCurrentUser(id: string): boolean {
+    return this.authService.user._id === id;
   }
 
   public getFrenchRole(role: UserRoleEnum): string {

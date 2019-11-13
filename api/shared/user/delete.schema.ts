@@ -4,7 +4,7 @@ export const deleteUser = {
   required: ['_id'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'dbid' },
+    _id: { macro: 'serial' },
   },
 };
 

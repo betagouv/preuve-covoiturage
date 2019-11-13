@@ -29,31 +29,16 @@ delete dSchema.properties.incentives;
 export const alias = 'journey.createLegacy';
 export const createLegacy = {
   $id: alias,
-  definitions: {
-    journey: {
-      type: 'object',
-      required: ['journey_id', 'operator_class'],
-      anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
-      additionalProperties: false,
-      properties: {
-        journey_id: { macro: 'varchar' },
-        operator_id: { macro: 'dbid' },
-        operator_journey_id: { macro: 'varchar' },
-        operator_class: { enum: ['A', 'B', 'C'] },
-        passenger: pSchema,
-        driver: dSchema,
-      },
-    },
+  type: 'object',
+  required: ['journey_id', 'operator_class'],
+  anyOf: [{ required: ['passenger'] }, { required: ['driver'] }],
+  additionalProperties: false,
+  properties: {
+    journey_id: { macro: 'varchar' },
+    operator_id: { macro: 'serial' },
+    operator_journey_id: { macro: 'varchar' },
+    operator_class: { enum: ['A', 'B', 'C'] },
+    passenger: pSchema,
+    driver: dSchema,
   },
-  oneOf: [
-    {
-      $ref: '#/definitions/journey',
-    },
-    {
-      type: 'array',
-      items: {
-        $ref: '#/definitions/journey',
-      },
-    },
-  ],
 };

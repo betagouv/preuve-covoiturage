@@ -7,9 +7,9 @@ export const update = {
   $id: alias,
   type: 'object',
   additionalProperties: false,
-  required: ['_id', 'name'],
+  required: ['_id', 'name', 'siret'],
   properties: {
     ...upd.properties,
-    _id: { macro: 'varchar' },
+    _id: { macro: 'serial' },
   },
 };

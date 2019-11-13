@@ -7,6 +7,6 @@ export const cgu = {
       default: false,
     },
     accepted_at: { macro: 'timestamp' },
-    accepted_by: { macro: 'dbid' },
+    accepted_by: { macro: 'serial' },
   },
 };

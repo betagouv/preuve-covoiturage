@@ -1,7 +1,7 @@
 export const create = {
   $id: 'user.create',
   type: 'object',
-  required: ['email', 'lastname', 'firstname', 'group'],
+  required: ['email', 'lastname', 'firstname', 'role'],
   additionalProperties: false,
   properties: {
     email: { macro: 'email' },
@@ -10,24 +10,24 @@ export const create = {
     phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
     group: { macro: 'group' },
     role: { macro: 'role' },
-    operator: { macro: 'dbid' },
-    territory: { macro: 'dbid' },
+    operator_id: { macro: 'serial' },
+    territory_id: { macro: 'serial' },
   },
   allOf: [
     {
       if: {
-        properties: { group: { const: 'territories' } },
+        properties: { role: { enum: ['territory.admin', 'territory.user'] } },
       },
       then: {
-        required: ['email', 'lastname', 'firstname', 'group', 'territory'],
+        required: ['email', 'lastname', 'firstname', 'role', 'territory_id'],
       },
     },
     {
       if: {
-        properties: { group: { const: 'operators' } },
+        properties: { role: { enum: ['operator.admin', 'operator.user'] } },
       },
       then: {
-        required: ['email', 'lastname', 'firstname', 'group', 'operator'],
+        required: ['email', 'lastname', 'firstname', 'role', 'operator_id'],
       },
     },
   ],

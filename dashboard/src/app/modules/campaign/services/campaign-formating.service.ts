@@ -26,12 +26,17 @@ import {
   OnlyAdultRetributionRule,
   OperatorIdsRetributionRule,
   RankRetributionRule,
+  RestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
-import { RetributionUxInterface } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
+import {
+  RestrictionUxInterface,
+  RetributionUxInterface,
+} from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
+import { RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -102,6 +107,15 @@ export class CampaignFormatingService {
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
         campaignUx.filters.rank = <RankRetributionRule['parameters']>retributionRule.parameters;
+      }
+
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION) {
+        const parameters = <RestrictionRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.restrictions.push(<RestrictionUxInterface>{
+          is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
+          quantity: parameters.amount,
+          period: parameters.period,
+        });
       }
     });
 
@@ -260,10 +274,15 @@ export class CampaignFormatingService {
       campaignGlobalRetributionRules.push(new OnlyAdultRetributionRule());
     }
 
-    /*  restrictions.forEach((restriction) => {
-      campaignRetributionRules.push(new RestrictionRetributionRule(restriction));
+    restrictions.forEach((restriction) => {
+      campaignGlobalRetributionRules.push(
+        new RestrictionRetributionRule(
+          restriction.is_driver ? RestrictionTargetsEnum.DRIVER : RestrictionTargetsEnum.PASSENGER,
+          restriction.quantity,
+          restriction.period,
+        ),
+      );
     });
-*/
 
     // RETRIBUTION RULES
     const campaignRetributionRules: RetributionRuleType[][] = [];
@@ -366,10 +385,3 @@ export class CampaignFormatingService {
     return campaign;
   }
 }
-
-/*
-if (retributionRule.slug === RetributionRulesSlugEnum.RESTRICTION) {
-  const parameters = <RestrictionParametersInterface>retributionRule.parameters;
-  campaignUx.restrictions.push(parameters);
-}
-*/

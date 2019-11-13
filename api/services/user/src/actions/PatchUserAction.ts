@@ -57,20 +57,20 @@ export class PatchUserAction extends AbstractAction {
       : context.call.user.operator_id
       ? 'operator'
       : 'registry';
-    const id = params._id;
+    const _id = params._id;
     const { email, ...patch } = params.patch;
 
     let user;
 
     switch (scope) {
       case 'territory':
-        user = await this.userRepository.findByTerritory(id, context.call.user.territory_id);
+        user = await this.userRepository.findByTerritory(_id, context.call.user.territory_id);
         break;
       case 'operator':
-        user = await this.userRepository.findByOperator(id, context.call.user.operator_id);
+        user = await this.userRepository.findByOperator(_id, context.call.user.operator_id);
         break;
       case 'registry':
-        user = await this.userRepository.find(id);
+        user = await this.userRepository.find(_id);
         break;
     }
 
@@ -78,16 +78,16 @@ export class PatchUserAction extends AbstractAction {
       throw new UnauthorizedException();
     }
 
-    const updatedUser = await this.userRepository.patch(id, patch);
+    const updatedUser = await this.userRepository.patch(_id, patch);
 
     // user didn't change her email
-    if (email === user.email) {
+    if (!email || email === user.email) {
       return updatedUser;
     }
 
     // user changed her email -> ask for email confirmation
     try {
-      const token = await this.authRepository.updateEmailById(id, email);
+      const token = await this.authRepository.updateEmailById(_id, email);
       await this.notification.emailUpdated(token, email, user.email);
       return {
         ...updatedUser,

@@ -1,5 +1,5 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
-// import { describe } from 'mocha';
+import { describe } from 'mocha';
 import { expect } from 'chai';
 
 import { OperatorPgRepositoryProvider } from './OperatorPgRepositoryProvider';
@@ -35,8 +35,8 @@ describe('Operator pg repository', () => {
 
   it('should create an operator', async () => {
     const data = {
-      nom_commercial: 'Toto',
-      raison_sociale: 'Toto inc.',
+      name: 'Toto',
+      legal_name: 'Toto inc.',
       siret: '1234567890123',
       company: {},
       address: {},
@@ -46,17 +46,17 @@ describe('Operator pg repository', () => {
 
     const result = await repository.create(data);
     id = result._id;
-    expect(result.nom_commercial).to.eq(data.nom_commercial);
+    expect(result.name).to.eq(data.name);
   });
 
   it('should update an operator', async () => {
     const data = {
-      nom_commercial: 'Tata',
+      name: 'Tata',
     };
 
     const result = await repository.patch(id, data);
     id = result._id;
-    expect(result.nom_commercial).to.eq(data.nom_commercial);
+    expect(result.name).to.eq(data.name);
   });
 
   it('should list operators', async () => {

@@ -1,7 +1,7 @@
 import { TerritoryInterface } from './common/interfaces/TerritoryInterface';
 
 interface Territory extends TerritoryInterface {
-  _id: string;
+  _id: number;
 }
 
 export interface ParamsInterface extends Territory {}

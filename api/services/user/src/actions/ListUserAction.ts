@@ -6,7 +6,7 @@ import { alias } from '../shared/user/list.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserListFiltersInterface } from '../interfaces/UserInterface';
+import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 
 const whiteList = [
   '_id',

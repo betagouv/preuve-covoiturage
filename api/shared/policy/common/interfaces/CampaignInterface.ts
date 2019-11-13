@@ -9,10 +9,10 @@ interface RuleInterface {
 }
 
 export interface CampaignInterface {
-  _id?: string;
-  parent_id?: string;
+  _id?: number;
+  parent_id?: number;
   ui_status?: any;
-  territory_id: string;
+  territory_id: number;
   name: string;
   description: string;
   start: Date;

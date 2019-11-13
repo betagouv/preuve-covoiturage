@@ -34,8 +34,8 @@ import { cypress_login } from '../support/reusables/auth/cypress_login';
  */
 const localTesting = {
   operator: false,
-  territory: true,
-  registry: false,
+  territory: false,
+  registry: true,
 };
 
 const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
@@ -123,7 +123,7 @@ context('REGISTRY', () => {
       testRegistryStory();
     } else {
       // local testing
-      testRegistryStory(true, false, false);
+      testRegistryStory(false, false, true);
     }
   });
 });

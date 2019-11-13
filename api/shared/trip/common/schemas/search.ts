@@ -5,9 +5,7 @@ export const search = {
   properties: {
     campaign_id: {
       type: 'array',
-      items: {
-        type: 'string',
-      },
+      items: { macro: 'serial' },
       minItems: 1,
     },
     date: {
@@ -86,16 +84,12 @@ export const search = {
     operator_id: {
       type: 'array',
       minItems: 1,
-      items: {
-        macro: 'dbid',
-      },
+      items: { macro: 'serial' },
     },
     territory_id: {
       type: 'array',
       minItems: 1,
-      items: {
-        macro: 'dbid',
-      },
+      items: { macro: 'serial' },
     },
     skip: {
       type: 'integer',

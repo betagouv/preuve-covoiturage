@@ -13,11 +13,13 @@ import { sirenMacro } from '../macros/sirenMacro';
 import { siretMacro } from '../macros/siretMacro';
 import { timestampMacro } from '../macros/timestampMacro';
 import { varcharMacro } from '../macros/varcharMacro';
-import { rnaMacro } from '../macros/rnaMacro';
 import { emailMacro } from '../macros/emailMacro';
 import { passwordMacro } from '../macros/passwordMacro';
+import { rnaMacro } from '../macros/rnaMacro';
 import { roleMacro } from '../macros/roleMacro';
+import { serialMacro } from '../macros/serialMacro';
 import { tokenMacro } from '../macros/tokenMacro';
+import { uuidMacro } from '../macros/uuidMacro';
 import { groupMacro } from '../macros/groupMacro';
 import { longcharMacro } from '../macros/longcharMacro';
 import { permissionsMacro } from '../macros/permissionsMacro';
@@ -46,6 +48,8 @@ const macroStore = {
   email: emailMacro,
   password: passwordMacro,
   role: roleMacro,
+  serial: serialMacro,
+  uuid: uuidMacro,
   group: groupMacro,
   token: tokenMacro,
   permissions: permissionsMacro,

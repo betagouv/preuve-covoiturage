@@ -102,7 +102,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return result.rows[0];
   }
 
-  protected async deleteWhere(id: string, where?: { operator_id?: string; territory_id?: string }): Promise<boolean> {
+  protected async deleteWhere(id: number, where?: { operator_id?: number; territory_id?: number }): Promise<boolean> {
     const query = {
       text: `
       UPDATE ${this.table}
@@ -127,15 +127,15 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return true;
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: number): Promise<boolean> {
     return this.deleteWhere(id);
   }
 
-  async deleteByOperator(id: string, operator_id: string): Promise<boolean> {
+  async deleteByOperator(id: number, operator_id: number): Promise<boolean> {
     return this.deleteWhere(id, { operator_id });
   }
 
-  async deleteByTerritory(id: string, territory_id: string): Promise<boolean> {
+  async deleteByTerritory(id: number, territory_id: number): Promise<boolean> {
     return this.deleteWhere(id, { territory_id });
   }
 
@@ -266,9 +266,9 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   protected async findWhere(where: {
-    _id?: string;
-    operator_id?: string;
-    territory_id?: string;
+    _id?: number;
+    operator_id?: number;
+    territory_id?: number;
     email?: string;
   }): Promise<UserFindInterface> {
     if (!where || Object.keys(where).length === 0) {
@@ -318,15 +318,15 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return result.rows[0];
   }
 
-  async find(_id: string): Promise<UserFindInterface | undefined> {
+  async find(_id: number): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id });
   }
 
-  async findByOperator(_id: string, operator_id: string): Promise<UserFindInterface | undefined> {
+  async findByOperator(_id: number, operator_id: number): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id, operator_id });
   }
 
-  async findByTerritory(_id: string, territory_id: string): Promise<UserFindInterface | undefined> {
+  async findByTerritory(_id: number, territory_id: number): Promise<UserFindInterface | undefined> {
     return this.findWhere({ _id, territory_id });
   }
 
@@ -368,7 +368,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
   protected async patchWhere(
     data: UserPatchInterface,
-    where: { _id: string; operator_id?: string; territory_id?: string },
+    where: { _id: number; operator_id?: number; territory_id?: number },
   ): Promise<UserFindInterface> {
     if (!data || !where || Object.keys(data).length === 0 || Object.keys(where).length === 0) {
       return undefined;
@@ -381,8 +381,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       text: `
         WITH data as(
         UPDATE ${this.table}
-          SET updated_at = NOW(),
-          ${setClauses.text}
+          SET ${setClauses.text}
           ${whereClauses.text}
           ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at is NULL
         RETURNING
@@ -417,6 +416,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     }, '');
 
     const result = await this.connection.getClient().query(query);
+
     if (result.rowCount !== 1) {
       return undefined;
     }
@@ -424,15 +424,15 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     return result.rows[0];
   }
 
-  async patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface> {
+  async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id });
   }
 
-  async patchByOperator(_id: string, data: UserPatchInterface, operator_id: string): Promise<UserFindInterface> {
+  async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id, operator_id });
   }
 
-  async patchByTerritory(_id: string, data: UserPatchInterface, territory_id: string): Promise<UserFindInterface> {
+  async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id, territory_id });
   }
 }
