@@ -11,6 +11,8 @@ import {
   TripPgRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+
 /*
  * Trip specific repository
  */
@@ -256,7 +258,6 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       'hour',
     ].filter((key) => key in filters);
 
-
     let orderedFilters = {
       text: [],
       values: [],
@@ -406,12 +407,13 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     return result.rows.map(this.castTypes);
   }
 
-  public async search(params: TripSearchInterface): Promise<LightTripInterface[]> {
+  public async search(params: TripSearchInterface): Promise<ResultWithPagination<LightTripInterface>> {
     const { limit, skip } = params;
     const where = this.buildWhereClauses(params);
     const query = {
       text: `
         SELECT
+          count(*) over() as total_count,
           trip_id,
           is_driver,
           start_town,
@@ -427,6 +429,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       `,
       values: [...(where ? where.values : []), limit, skip],
     };
+
     // incentives
     query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
       if (idx === origin.length - 1) {
@@ -437,7 +440,30 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     }, '');
 
     const result = await this.connection.getClient().query(query);
-    return result.rows.map(this.castTypes);
+
+    const pagination = {
+      limit,
+      total: 0,
+      offset: skip,
+    };
+
+    if (result.rows.length === 0) {
+      return {
+        data: [],
+        meta: {
+          pagination,
+        },
+      };
+    }
+
+    pagination.total = result.rows[0].total_count;
+
+    return {
+      data: result.rows.map(({ total_count, ...data }) => data).map(this.castTypes),
+      meta: {
+        pagination,
+      },
+    };
   }
 
   private castTypes(row: any): any {
