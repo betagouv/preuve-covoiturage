@@ -1,7 +1,7 @@
 import { JourneyInterface } from '../common/interfaces/JourneyInterface';
 
 export interface ParamsInterface extends JourneyInterface {
-  _id: string;
+  _id: number;
 }
 export type ResultInterface = void;
 

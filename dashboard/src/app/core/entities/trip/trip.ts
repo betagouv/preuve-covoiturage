@@ -5,7 +5,7 @@ import { TripInterface } from '../../interfaces/trip/tripInterface';
 export class Trip {
   public _id: string; // todo: delete this eventualy
   public status: TripStatusEnum;
-  public trip_id: number;
+  public trip_id: string;
   public start_town: string;
   public start_datetime: string;
   public operator_class: string;

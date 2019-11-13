@@ -1,4 +1,4 @@
 export interface UserListFiltersInterface {
-  territory_id?: string;
-  operator_id?: string;
+  territory_id?: number;
+  operator_id?: number;
 }

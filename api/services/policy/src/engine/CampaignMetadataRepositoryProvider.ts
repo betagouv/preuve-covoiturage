@@ -28,7 +28,7 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
       .collection(this.getCollectionName());
   }
 
-  async get(id: string): Promise<MetadataWrapper> {
+  async get(id: number): Promise<MetadataWrapper> {
     const collection = await this.getCollection();
     const result = await collection.findOne({ _id: new ObjectId(id) });
     return new MetadataWrapper(id, result);

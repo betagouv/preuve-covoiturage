@@ -2,6 +2,7 @@ import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
+import { OperatorDbInterface } from '../shared/operator/common/interfaces/OperatorDbInterface';
 import {
   OperatorRepositoryProviderInterface,
   OperatorRepositoryProviderInterfaceResolver,
@@ -15,7 +16,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(id: string): Promise<OperatorInterface> {
+  async find(id: number): Promise<OperatorDbInterface> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -35,7 +36,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows[0];
   }
 
-  async all(): Promise<OperatorInterface[]> {
+  async all(): Promise<OperatorDbInterface[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -48,7 +49,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows;
   }
 
-  async create(data: OperatorInterface & { siret: string }): Promise<OperatorInterface> {
+  async create(data: OperatorInterface): Promise<OperatorDbInterface> {
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -71,13 +72,13 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
         RETURNING *
       `,
       values: [
-        data.nom_commercial,
-        data.raison_sociale,
+        data.name,
+        data.legal_name,
         data.siret,
-        data.company,
-        data.address,
-        data.bank,
-        data.contacts,
+        data.company || '{}',
+        data.address || '{}',
+        data.bank || '{}',
+        data.contacts || '{}',
       ],
     };
 
@@ -88,7 +89,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows[0];
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     const query = {
       text: `
       UPDATE ${this.table}
@@ -108,11 +109,11 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   // TODO
-  async update(params: OperatorInterface): Promise<OperatorInterface> {
+  async update(params: OperatorInterface): Promise<OperatorDbInterface> {
     throw new Error('Not implemented');
   }
 
-  async patch(id: string, patch: { [k: string]: any }): Promise<OperatorInterface> {
+  async patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface> {
     const updatablefields = [
       'name',
       'legal_name',

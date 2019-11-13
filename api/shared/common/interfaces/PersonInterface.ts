@@ -16,7 +16,7 @@ export interface PersonInterface {
   };
   operator_class?: string;
   journey_id?: string;
-  operator_id?: string;
+  operator_id?: number;
 
   start: PositionInterface;
   end: PositionInterface;

@@ -8,7 +8,7 @@ export const alias = 'territory.create';
 export const create = {
   $id: alias,
   type: 'object',
-  required: ['name'],
+  required: ['name', 'siret'],
   additionalProperties: false,
   properties: {
     company,
@@ -18,7 +18,7 @@ export const create = {
     cgu,
     name: { macro: 'varchar' },
     shortname: { macro: 'varchar' },
-    acronym: { macro: 'varchar' },
+    siret: { macro: 'siret' },
     insee: {
       type: 'array',
       items: { macro: 'insee' },

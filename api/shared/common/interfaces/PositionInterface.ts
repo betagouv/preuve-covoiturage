@@ -7,5 +7,5 @@ export interface PositionInterface {
   literal?: string;
   postcodes?: string[];
   town?: string;
-  territory?: string;
+  territory_id?: number;
 }

@@ -61,9 +61,9 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         operator_id: user.operator_id ? user.operator_id : null,
       });
 
-      Object.keys(this.createEditUserForm.controls).forEach((key) => {
-        this.createEditUserForm.controls[key].setErrors(null);
-      });
+      // Object.keys(this.createEditUserForm.controls).forEach((key) => {
+      //   this.createEditUserForm.controls[key].setErrors(null);
+      // });
     }
   }
 
@@ -106,6 +106,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       formVal.role = `${userGroupRole[formVal.group]}.${formVal.role}`; // consolidate final role
     }
 
+    delete formVal.group;
+
     const errM = (err) => {
       if (err.status === 409) this.toastr.error('Cette adresse email est déjà utilisée');
       this.isCreatingUpdating = false;
@@ -135,9 +137,15 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
   updateValidators(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable) {
     if (this.createEditUserForm) {
+      /*
+      Object.keys(this.createEditUserForm.controls).forEach((key) => {
+        this.createEditUserForm.controls[key].setErrors(null);
+      });
+       */
+
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
-
+      console.log('operatorEditable', this.operatorEditable, 'territoryEditable', this.territoryEditable);
       this.createEditUserForm.controls['operator_id'].setValidators(
         this.groupEditable && this.operatorEditable && this.isCreating ? Validators.required : null,
       );
@@ -145,6 +153,8 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       this.createEditUserForm.controls['territory_id'].setValidators(
         this.groupEditable && this.territoryEditable && this.isCreating ? Validators.required : null,
       );
+
+      this.createEditUserForm.updateValueAndValidity();
     }
   }
 
@@ -159,6 +169,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   onGroupChange(): void {
     this.createEditUserForm.get('operator_id').setValue(null);
     this.createEditUserForm.get('territory_id').setValue(null);
+    this.updateValidators();
   }
 
   private initForm(
@@ -178,11 +189,14 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       operator_id: [cleanUser.operator_id],
     });
 
+    this.updateFormValues();
+
     this.createEditUserForm.valueChanges.subscribe((formVal) => {
       const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;
         // if (!territoryEditable) this.createEditUserForm.patchValue({ territory: '' });
+        this.updateValidators();
       }
 
       const operatorEditable = formVal.group === UserGroupEnum.OPERATOR;
@@ -190,11 +204,10 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         this.operatorEditable = operatorEditable;
         // todo: not sure this is valid, operator should not be reset during edition of form
         // if (operatorEditable) this.createEditUserForm.patchValue({ operator: '' });
+        this.updateValidators();
       }
     });
 
     this.updateValidators(isCreating, groupEditable);
-
-    this.updateFormValues();
   }
 }

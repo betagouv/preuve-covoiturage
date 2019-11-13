@@ -26,7 +26,7 @@ interface PersonLegacyInterface {
   };
   operator_class?: string;
   journey_id?: string;
-  operator_id?: string;
+  operator_id?: number;
 
   start: PositionLegacyInterface;
   end: PositionLegacyInterface;
@@ -56,7 +56,7 @@ export interface ParamsInterface {
   journey_id: string;
   operator_journey_id: string;
   operator_class: string;
-  operator_id: string;
+  operator_id: number;
   passenger?: PersonLegacyInterface;
   driver?: PersonLegacyInterface;
 }

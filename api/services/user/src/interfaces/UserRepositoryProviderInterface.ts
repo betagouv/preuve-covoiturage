@@ -13,18 +13,18 @@ export interface UserRepositoryProviderInterface {
     pagination: PaginationParamsInterface,
   ): Promise<{ users: UserListInterface[]; total: number }>;
 
-  delete(_id: string): Promise<boolean>;
-  deleteByOperator(_id: string, operator_id: string): Promise<boolean>;
-  deleteByTerritory(_id: string, territory_id: string): Promise<boolean>;
+  delete(_id: number): Promise<boolean>;
+  deleteByOperator(_id: number, operator_id: number): Promise<boolean>;
+  deleteByTerritory(_id: number, territory_id: number): Promise<boolean>;
 
-  find(_id: string): Promise<UserFindInterface | undefined>;
-  findByOperator(_id: string, operator_id: string): Promise<UserFindInterface | undefined>;
-  findByTerritory(_id: string, territory_id: string): Promise<UserFindInterface | undefined>;
+  find(_id: number): Promise<UserFindInterface | undefined>;
+  findByOperator(_id: number, operator_id: number): Promise<UserFindInterface | undefined>;
+  findByTerritory(_id: number, territory_id: number): Promise<UserFindInterface | undefined>;
   findByEmail(email: string): Promise<UserFindInterface | undefined>;
 
-  patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface>;
-  patchByOperator(_id: string, data: UserPatchInterface, operator_id: string): Promise<UserFindInterface>;
-  patchByTerritory(_id: string, data: UserPatchInterface, territory_id: string): Promise<UserFindInterface>;
+  patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface>;
+  patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface>;
+  patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface>;
 }
 
 export abstract class UserRepositoryProviderInterfaceResolver implements UserRepositoryProviderInterface {
@@ -39,27 +39,27 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
 
-  async delete(_id: string): Promise<boolean> {
+  async delete(_id: number): Promise<boolean> {
     throw new Error();
   }
 
-  async deleteByOperator(_id: string, operator_id: string): Promise<boolean> {
+  async deleteByOperator(_id: number, operator_id: number): Promise<boolean> {
     throw new Error();
   }
 
-  async deleteByTerritory(_id: string, territory_id: string): Promise<boolean> {
+  async deleteByTerritory(_id: number, territory_id: number): Promise<boolean> {
     throw new Error();
   }
 
-  async find(_id: string): Promise<UserFindInterface | undefined> {
+  async find(_id: number): Promise<UserFindInterface | undefined> {
     throw new Error();
   }
 
-  async findByOperator(_id: string, operator_id: string): Promise<UserFindInterface | undefined> {
+  async findByOperator(_id: number, operator_id: number): Promise<UserFindInterface | undefined> {
     throw new Error();
   }
 
-  async findByTerritory(_id: string, territory_id: string): Promise<UserFindInterface | undefined> {
+  async findByTerritory(_id: number, territory_id: number): Promise<UserFindInterface | undefined> {
     throw new Error();
   }
 
@@ -67,15 +67,15 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
 
-  async patch(_id: string, data: UserPatchInterface): Promise<UserFindInterface> {
+  async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
     throw new Error();
   }
 
-  async patchByOperator(_id: string, data: UserPatchInterface, operator_id: string): Promise<UserFindInterface> {
+  async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface> {
     throw new Error();
   }
 
-  async patchByTerritory(_id: string, data: UserPatchInterface, territory_id: string): Promise<UserFindInterface> {
+  async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface> {
     throw new Error();
   }
 }

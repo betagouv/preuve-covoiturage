@@ -8,7 +8,7 @@ export const alias = 'operator.create';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['nom_commercial', 'raison_sociale'],
+  required: ['name', 'legal_name', 'siret'],
   additionalProperties: false,
   properties: {
     company,
@@ -16,8 +16,9 @@ export const schema = {
     bank,
     contacts,
     cgu,
-    nom_commercial: { macro: 'varchar' },
-    raison_sociale: { macro: 'varchar' },
+    name: { macro: 'varchar' },
+    legal_name: { macro: 'varchar' },
+    siret: { macro: 'siret' },
   },
 };
 export const binding = [alias, schema];

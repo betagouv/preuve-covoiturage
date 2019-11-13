@@ -2,10 +2,7 @@ import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { TerritoryInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
-import {
-  ParamsInterface as UpdateParamsInterface,
-  ResultInterface as UpdateResultInterface,
-} from '../shared/territory/update.contract';
+import { TerritoryDbInterface } from '../shared/territory/common/interfaces/TerritoryDbInterface';
 import {
   TerritoryRepositoryProviderInterfaceResolver,
   TerritoryRepositoryProviderInterface,
@@ -19,7 +16,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(id: string): Promise<TerritoryInterface> {
+  async find(id: number): Promise<TerritoryDbInterface> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -39,7 +36,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows[0];
   }
 
-  async all(): Promise<TerritoryInterface[]> {
+  async all(): Promise<TerritoryDbInterface[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -52,21 +49,14 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows;
   }
 
-  async create(data: TerritoryInterface & { siret: string; parent_id: string }): Promise<TerritoryInterface> {
-    // CAUTION, API CHANGES
-    // do not handle :
-    // - insee
-    // - insee_main
-    // - network_id
-    // - geometry
-    // see normalization service and clean up TerritoryInterface
+  async create(data: TerritoryInterface): Promise<TerritoryDbInterface> {
     const query = {
       text: `
-        INSERT INTO ${this.table} (
+        INSERT INTO ${this.table}
+        (
           siret,
           name,
           shortname,
-          acronym,
 
           company,
           address,
@@ -75,31 +65,20 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           parent_id,
           cgu_accepted_at,
           cgu_accepted_by
-        ) VALUES (
-          $1,
-          $2,
-          $3,
-          $4,
-          $5,
-          $6,
-          $7,
-          $8,
-          $9,
-          $10
         )
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
         RETURNING *
       `,
       values: [
         data.siret,
         data.name,
-        data.shortname,
-        data.acronym,
-        data.company,
-        data.address,
-        data.contacts,
+        data.shortname || '',
+        data.company || '{}',
+        data.address || '{}',
+        data.contacts || '{}',
         data.parent_id,
-        data.cgu.accepted_at,
-        data.cgu.accepted_by,
+        data.cgu_accepted_at,
+        data.cgu_accepted_by,
       ],
     };
 
@@ -110,7 +89,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows[0];
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     const query = {
       text: `
       UPDATE ${this.table}
@@ -129,16 +108,16 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return;
   }
 
-  async update(data: UpdateParamsInterface): Promise<UpdateResultInterface> {
-    throw new Error();
+  // TODO
+  async update(data: TerritoryDbInterface): Promise<TerritoryDbInterface> {
+    throw new Error('Not implemented');
   }
 
-  async patch(id: string, patch: { [k: string]: any }): Promise<TerritoryInterface> {
+  async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbInterface> {
     const updatablefields = [
       'siret',
       'name',
       'shortname',
-      'acronym',
       'company',
       'address',
       'contacts',
@@ -184,11 +163,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows[0];
   }
 
-  async findByInsee(insee: String): Promise<TerritoryInterface> {
+  async findByInsee(insee: String): Promise<TerritoryDbInterface> {
     throw new Error('This is not implemented here'); // move to normalization service
   }
 
-  async findByPosition(lon: Number, lat: Number): Promise<TerritoryInterface> {
+  async findByPosition(lon: Number, lat: Number): Promise<TerritoryDbInterface> {
     throw new Error('This is not implemented here'); // move to normalization servie
   }
 }

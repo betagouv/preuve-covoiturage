@@ -1,7 +1,7 @@
 import { UserInterface } from './common/interfaces/UserInterface';
 
 export interface ParamsInterface {
-  _id: string;
+  _id: number;
 }
 
 export interface ResultInterface extends UserInterface {}

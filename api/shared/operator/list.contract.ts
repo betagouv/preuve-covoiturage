@@ -1,8 +1,8 @@
-import { OperatorInterface } from './common/interfaces/OperatorInterface';
+import { OperatorDbInterface } from './common/interfaces/OperatorDbInterface';
 
 export type ParamsInterface = void;
 
-export type ResultInterface = OperatorInterface[];
+export type ResultInterface = OperatorDbInterface[];
 
 export const handlerConfig = {
   service: 'operator',

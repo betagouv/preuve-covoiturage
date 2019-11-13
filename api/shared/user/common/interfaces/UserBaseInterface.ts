@@ -5,6 +5,6 @@ export interface UserBaseInterface {
   phone?: string;
   group?: string; // computed prop
   role: string;
-  operator_id?: string;
-  territory_id?: string;
+  operator_id?: number;
+  territory_id?: number;
 }

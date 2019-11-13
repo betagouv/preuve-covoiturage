@@ -6,11 +6,11 @@ export const alias = 'operator.update';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['_id', 'nom_commercial', 'raison_sociale'],
+  required: ['_id', 'name', 'legal_name'],
   additionalProperties: false,
   properties: {
     ...update.properties,
-    _id: { macro: 'varchar' },
+    _id: { macro: 'serial' },
   },
 };
 export const binding = [alias, schema];

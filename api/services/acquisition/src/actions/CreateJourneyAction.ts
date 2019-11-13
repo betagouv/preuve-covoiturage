@@ -52,7 +52,7 @@ export class CreateJourneyAction extends AbstractAction {
     };
   }
 
-  protected cast(jrn: ParamsInterface, operatorId: string): JourneyInterface {
+  protected cast(jrn: ParamsInterface, operatorId: number): JourneyInterface {
     const journey = {
       ...jrn,
       journey_id: `${operatorId}:${jrn.journey_id}`,
