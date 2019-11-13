@@ -242,97 +242,103 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       'hour',
     ].filter((key) => key in filters);
 
-    if (filtersToProcess.length === 0) {
-      return;
-    }
 
-    const orderedFilters = filtersToProcess
-      .map((key) => ({ key, value: filters[key] }))
-      .map((filter) => {
-        switch (filter.key) {
-          case 'territory_id':
-            return {
-              text: '(start_territory = ANY ($#::text[]) OR end_territory = ANY ($#::text[]))',
-              values: [filter.value, filter.value],
-            };
-          case 'operator_id':
-            return {
-              text: 'operator_id = ANY ($#::text[])',
-              values: [filter.value],
-            };
-          case 'status':
-            throw new Error('Unimplemented');
-          case 'date':
-            if (filter.value.start && filter.value.end) {
+    let orderedFilters = {
+      text: [],
+      values: [],
+    };
+
+    if (filtersToProcess.length > 0) {
+      orderedFilters = filtersToProcess
+        .map((key) => ({ key, value: filters[key] }))
+        .map((filter) => {
+          switch (filter.key) {
+            case 'territory_id':
               return {
-                text: '($#::timestamp < datetime AND datetime < $#::timestamp)',
+                text: '(start_territory = ANY ($#::text[]) OR end_territory = ANY ($#::text[]))',
+                values: [filter.value, filter.value],
+              };
+            case 'operator_id':
+              return {
+                text: 'operator_id = ANY ($#::text[])',
+                values: [filter.value],
+              };
+            case 'status':
+              throw new Error('Unimplemented');
+            case 'date':
+              if (filter.value.start && filter.value.end) {
+                return {
+                  text: '($#::timestamp <= datetime AND datetime <= $#::timestamp)',
+                  values: [filter.value.start, filter.value.end],
+                };
+              }
+              if (filter.value.start) {
+                return {
+                  text: '$#::timestamp <= datetime',
+                  values: [filter.value.start],
+                };
+              }
+              return {
+                text: 'datetime <= $#::timestamp',
+                values: [filter.value.end],
+              };
+            case 'ranks':
+              return {
+                text: 'operator_class = ANY ($#::text[])',
+                values: [filter.value],
+              };
+            case 'distance':
+              if (filter.value.min && filter.value.max) {
+                return {
+                  text: '($#::int <= distance AND distance <= $#::int)',
+                  values: [filter.value.min, filter.value.max],
+                };
+              }
+              if (filter.value.min) {
+                return {
+                  text: '$#::int <= distance',
+                  values: [filter.value.min],
+                };
+              }
+              return {
+                text: 'distance <= $#::int',
+                values: [filter.value.max],
+              };
+            case 'campaign_id':
+              throw new Error('Unimplemented');
+            case 'towns':
+              const towns = filter.value.map((v: string) => `%${v}%`);
+              return {
+                text: 'start_town LIKE ANY($#::text[]) OR end_town LIKE ANY ($#::text[])',
+                values: [towns, towns],
+              };
+            case 'days':
+              return {
+                text: 'extract(isodow from datetime) = ANY ($#::int[])',
+                values: [filter.value],
+              };
+            case 'hour': {
+              return {
+                text: '($#::int <= extract(hour from datetime) AND extract(hour from datetime) <= $#::int)',
                 values: [filter.value.start, filter.value.end],
               };
             }
-            if (filter.value.start) {
-              return {
-                text: '$#::timestamp < datetime',
-                values: [filter.value.start],
-              };
-            }
-            return {
-              text: 'datetime < $#::timestamp',
-              values: [filter.value.end],
-            };
-          case 'ranks':
-            return {
-              text: 'operator_class = ANY ($#::text[])',
-              values: [filter.value],
-            };
-          case 'distance':
-            if (filter.value.min && filter.value.max) {
-              return {
-                text: '($#::int <= distance AND distance <= $#::int)',
-                values: [filter.value.min, filter.value.max],
-              };
-            }
-            if (filter.value.min) {
-              return {
-                text: '$#::int <= distance',
-                values: [filter.value.min],
-              };
-            }
-            return {
-              text: 'distance <= $#::int',
-              values: [filter.value.max],
-            };
-          case 'campaign_id':
-            throw new Error('Unimplemented');
-          case 'towns':
-            const towns = filter.value.map((v: string) => `%${v}%`);
-            return {
-              text: 'start_town LIKE ANY($#::text[]) OR end_town LIKE ANY ($#::text[])',
-              values: [towns, towns],
-            };
-          case 'days':
-            return {
-              text: 'extract(isodow from datetime) = ANY ($#::int[])',
-              values: [filter.value],
-            };
-          case 'hour': {
-            return {
-              text: '($#::int <= extract(hour from datetime) AND extract(hour from datetime) <= $#::int)',
-              values: [filter.value.start, filter.value.end],
-            };
           }
-        }
-      })
-      .reduce(
-        (acc, current) => {
-          acc.text.push(current.text);
-          acc.values.push(...current.values);
-          return acc;
-        },
-        {
-          text: [],
-          values: [],
-        },
-      );
+        })
+        .reduce(
+          (acc, current) => {
+            acc.text.push(current.text);
+            acc.values.push(...current.values);
+            return acc;
+          },
+          {
+            text: [],
+            values: [],
+          },
+        );
+    }
+
+    orderedFilters.text.push('is_driver = false');
 
     const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
     const whereClausesValues = orderedFilters.values;
@@ -352,7 +358,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           SELECT
             min(datetime::date) as day,
             max(distance) as distance,
-            sum(seats) as carpoolers,
+            sum(seats+1) as carpoolers,
             '0'::int as carpoolers_subsidized
           FROM ${this.table}
           ${where ? where.text : ''}
