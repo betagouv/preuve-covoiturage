@@ -3,6 +3,8 @@ export const territory = {
     slug: 'admin',
     name: 'Admin',
     permissions: [
+      'company.fetch',
+      'company.find',
       'user.list',
       'user.invite',
       'user.create',
@@ -56,6 +58,8 @@ export const territory = {
     slug: 'user',
     name: 'User',
     permissions: [
+      'company.fetch',
+      'company.find',
       'user.list',
       'territory.stats',
       'territory.list',
@@ -87,6 +91,8 @@ export const operator = {
     slug: 'admin',
     name: 'Admin',
     permissions: [
+      'company.fetch',
+      'company.find',
       'user.list',
       'user.invite',
       'user.create',
@@ -124,6 +130,8 @@ export const operator = {
     slug: 'user',
     name: 'User',
     permissions: [
+      'company.fetch',
+      'company.find',
       'territory.list',
       'territory.read',
       'operator.list',
@@ -148,6 +156,8 @@ export const registry = {
     name: 'Admin',
     permissions: [
       ...new Set([
+        'company.fetch',
+        'company.find',
         'user.list',
         'user.invite',
         'user.create',
@@ -170,6 +180,8 @@ export const registry = {
     slug: 'user',
     name: 'User',
     permissions: [
+      'company.fetch',
+      'company.find',
       'user.list',
       'profile.read',
       'profile.update',

@@ -4,15 +4,15 @@ import { handler } from '@ilos/common';
 import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/CompanyDataSourceProviderInterface';
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/company/fetch.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/company/find.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { alias } from '../shared/company/fetch.schema';
+import { alias } from '../shared/company/find.schema';
 
 @handler(handlerConfig)
-export class FetchAction extends AbstractAction {
+export class FindAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],
-    ['can', ['company.fetch']]
+    ['can', ['company.find']]
   ];
 
   constructor(
@@ -22,8 +22,13 @@ export class FetchAction extends AbstractAction {
     super();
   }
 
-  public async handle(siret: ParamsInterface): Promise<ResultInterface> {
-    const data = await this.ds.find(siret);
-    await this.repository.updateOrCreate(data);
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const { siret, source } = params;
+
+    if (source && source === 'remote') {
+      return await this.ds.find(siret);
+    }
+
+    return await this.repository.find(siret);
   }
 }
