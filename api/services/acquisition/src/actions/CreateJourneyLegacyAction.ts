@@ -16,7 +16,7 @@ export class CreateJourneyLegacyAction extends AbstractAction {
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // extract the SIRET to set a default sponsor in the incentives
-    const operatorSiret = await this.getOperatorSiret(context.call.user.operator);
+    const operatorSiret = await this.getOperatorSiret(context.call.user.operator_id);
 
     // send the converted journeys to new acquisition pipeline
     return this.kernel.call('acquisition:create', mapLegacyToLatest(operatorSiret)(params), context);

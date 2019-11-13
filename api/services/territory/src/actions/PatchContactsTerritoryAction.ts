@@ -15,8 +15,8 @@ export class PatchContactsTerritoryAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    if (context.call.user.territory) {
-      params._id = context.call.user.territory;
+    if (context.call.user.territory_id) {
+      params._id = context.call.user.territory_id;
     }
 
     return this.territoryRepository.patch(params._id, {

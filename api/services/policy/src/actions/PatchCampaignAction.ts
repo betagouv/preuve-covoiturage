@@ -20,7 +20,7 @@ export class PatchCampaignAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
     const { _id, patch } = params;
-    const territoryId = context.call.user.territory;
+    const territoryId = context.call.user.territory_id;
 
     return this.campaignRepository.patchWhereTerritory(_id, territoryId, patch);
   }

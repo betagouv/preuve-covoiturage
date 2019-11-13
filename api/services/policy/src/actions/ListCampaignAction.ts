@@ -14,6 +14,6 @@ export class ListCampaignAction extends AbstractAction {
   }
 
   public async handle(_params: ParamsInterface, context): Promise<ResultInterface> {
-    return this.campaignRepository.findWhereTerritory(context.call.user.territory);
+    return this.campaignRepository.findWhereTerritory(context.call.user.territory_id);
   }
 }

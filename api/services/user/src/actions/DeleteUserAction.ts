@@ -25,12 +25,12 @@ export class DeleteUserAction extends AbstractAction {
             }
           },
           (_params, context) => {
-            if (context.call.user.territory) {
+            if (context.call.user.territory_id) {
               return 'territory.users.remove';
             }
           },
           (_params, context) => {
-            if (context.call.user.operator) {
+            if (context.call.user.operator_id) {
               return 'operator.users.remove';
             }
           },
