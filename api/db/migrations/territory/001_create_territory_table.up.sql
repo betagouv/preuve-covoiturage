@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS territory.territories
   contacts json NOT NULL
 );
 
-CREATE UNIQUE INDEX ON territory.territories (siret);
+CREATE INDEX ON territory.territories (siret);
+-- CREATE UNIQUE INDEX ON territory.territories (siret);
 
 CREATE TABLE IF NOT EXISTS territory.insee (
   _id varchar primary key,
