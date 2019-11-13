@@ -150,7 +150,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
             }),
           ),
         ),
-        company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
       };
     }

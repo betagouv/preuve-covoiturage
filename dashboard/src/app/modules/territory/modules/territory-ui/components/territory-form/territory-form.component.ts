@@ -2,19 +2,17 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
-import { Company } from '~/core/entities/shared/company';
 import { Contact } from '~/core/entities/shared/contact';
-import { Contacts, Territory } from '~/core/entities/territory/territory';
+import { Company, Contacts, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
+import { FormCompany } from '~/shared/modules/form/forms/form-company';
 
 @Component({
   selector: 'app-territory-form',
@@ -71,10 +69,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             _id: territory._id,
             contacts: new Contacts(this.territoryForm.value.contacts),
           };
-
-      const patch$ = this.fullFormMode
-        ? this._territoryService.updateList(new Territory({ ...formData, _id: this.editedId }))
-        : this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
+      let patch$;
+      if (this.fullFormMode) {
+        const updatedTerritory = new Territory({
+          ...formData,
+          siret: formData.company.siret,
+          _id: this.editedId,
+        });
+        delete updatedTerritory.company;
+        patch$ = this._territoryService.updateList(updatedTerritory);
+      } else {
+        patch$ = this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
+      }
 
       patch$.subscribe(
         (data) => {
@@ -119,7 +125,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             }),
           ),
         ),
-        company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+
+        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         contacts: this.fb.group({
           gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
           gdpr_controller: this.fb.group(

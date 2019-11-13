@@ -1,5 +1,4 @@
 import { hasOneNotEmptyProperty } from '~/core/entities/utils';
-
 /* tslint:disable:variable-name*/
 import { Address } from '../shared/address';
 import { Bank } from '../shared/bank';
@@ -10,6 +9,7 @@ import { Contacts } from '../shared/contacts';
 class Territory {
   public _id: string;
   public name: string;
+  public siret: string;
   public shortname?: string;
   // public acronym?: string;
   public insee?: string[];
@@ -26,6 +26,7 @@ class Territory {
   constructor(data: {
     _id: string;
     name: string;
+    siret: string;
     shortname?: string;
     acronym?: string;
     insee?: string[];
@@ -41,6 +42,7 @@ class Territory {
     if (data && data._id) this._id = data._id;
 
     if (data && data.name) this.name = data.name;
+    if (data && data.siret) this.siret = data.siret;
 
     // if (data && data.acronym) this.acronym = data.acronym;
 
@@ -72,7 +74,7 @@ class Territory {
           // insee: '',
           // acronym: '',
           ...this,
-          company: new Company(this.company).toFormValues(),
+          company: { ...new Company(this.company).toFormValues(), siret: this.siret },
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
           // cgu: formVal,
@@ -82,6 +84,7 @@ class Territory {
         };
 
     delete val._id;
+    delete val.siret;
 
     return val;
   }
