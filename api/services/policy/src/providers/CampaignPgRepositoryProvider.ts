@@ -99,6 +99,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       'unit',
       'global_rules',
       'rules',
+      'status',
     ].filter((k) => Object.keys(patch).indexOf(k) >= 0);
 
     const sets = {
@@ -145,7 +146,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       text: `
       UPDATE ${this.table}
         SET deleted_at = NOW()
-        WHERE _id = $1 AND status = ANY ($2::text[]) AND deleted_at IS NULL
+        WHERE _id = $1 AND status::text = ANY ($2::text[]) AND deleted_at IS NULL
       `,
       values: [id, ['draft', 'template']],
     };
