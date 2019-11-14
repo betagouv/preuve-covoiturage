@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { OperatorService } from '~/modules/operator/services/operator.service';
@@ -14,6 +15,8 @@ import { FormBank } from '~/shared/modules/form/forms/form-bank';
 import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { CompanyService } from '~/modules/company/services/company.service';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-operator-form',
@@ -39,6 +42,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     private fb: FormBuilder,
     private _operatorService: OperatorService,
     private toastr: ToastrService,
+    private companyService: CompanyService,
   ) {
     super();
   }
@@ -117,6 +121,51 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     const operatorConstruct = operatorFt.toFormValues(this.fullFormMode);
 
     this.operatorForm.setValue(operatorConstruct);
+
+    const stopFindCompany = new Subject();
+
+    const companyFormGroup: FormGroup = <FormGroup>this.operatorForm.controls.company;
+    companyFormGroup.controls.siret.valueChanges
+      .pipe(
+        throttleTime(300),
+        tap(() => {
+          stopFindCompany.next();
+          companyFormGroup.patchValue({
+            naf_entreprise: '',
+            nature_juridique: '',
+            rna: '',
+            vat_intra: '',
+          });
+        }),
+        filter((value: string) => {
+          console.log(value.length, value.match(/[0-9]{14}/g), value.length === 14 && value.match(/[0-9]{14}/));
+          return value.length === 14 && value.match(/[0-9]{14}/) !== null;
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((value) => {
+        this.companyService
+          .findCompany(value, 'remote')
+          .pipe(
+            catchHttpStatus(404, (err) => {
+              this.toastr.error('Entreprise non trouvée');
+              throw err;
+            }),
+            takeUntil(stopFindCompany),
+          )
+
+          .subscribe((company) => {
+            if (company.data) {
+              companyFormGroup.patchValue({
+                naf_entreprise: company.data.company_naf_code ? company.data.company_naf_code : '',
+                nature_juridique: company.data.legal_nature_label ? company.data.legal_nature_label : '',
+                rna: company.data.nonprofit_code ? company.data.nonprofit_code : '',
+                vat_intra: company.data.intra_vat ? company.data.intra_vat : '',
+              });
+            }
+          });
+        console.log('values : ', value);
+      });
   }
 
   private updateValidation() {
@@ -150,7 +199,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
             }),
           ),
         ),
-        company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
       };
     }

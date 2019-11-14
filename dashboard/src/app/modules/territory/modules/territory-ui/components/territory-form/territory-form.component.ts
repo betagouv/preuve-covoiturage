@@ -1,20 +1,22 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
-import { Company } from '~/core/entities/shared/company';
 import { Contact } from '~/core/entities/shared/contact';
-import { Contacts, Territory } from '~/core/entities/territory/territory';
+import { Company, Contacts, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
+import { FormCompany } from '~/shared/modules/form/forms/form-company';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { Subject } from 'rxjs';
+import { CompanyService } from '~/modules/company/services/company.service';
 
 @Component({
   selector: 'app-territory-form',
@@ -40,8 +42,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     private _territoryService: TerritoryService,
     private toastr: ToastrService,
     private commonDataService: CommonDataService,
+    private companyService: CompanyService,
   ) {
     super();
+    console.log('companyService : ', companyService);
   }
 
   ngOnInit() {
@@ -71,10 +75,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             _id: territory._id,
             contacts: new Contacts(this.territoryForm.value.contacts),
           };
-
-      const patch$ = this.fullFormMode
-        ? this._territoryService.updateList(new Territory({ ...formData, _id: this.editedId }))
-        : this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
+      let patch$;
+      if (this.fullFormMode) {
+        const updatedTerritory = new Territory({
+          ...formData,
+          siret: formData.company.siret,
+          _id: this.editedId,
+        });
+        delete updatedTerritory.company;
+        patch$ = this._territoryService.updateList(updatedTerritory);
+      } else {
+        patch$ = this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
+      }
 
       patch$.subscribe(
         (data) => {
@@ -119,7 +131,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             }),
           ),
         ),
-        company: this.fb.group(new FormCompany(new Company({ siret: null }))),
+
+        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         contacts: this.fb.group({
           gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
           gdpr_controller: this.fb.group(
@@ -137,6 +150,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
 
     this.territoryForm = this.fb.group(formOptions);
+
     this.updateValidation();
   }
 
@@ -156,6 +170,51 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
     this.territoryForm.setValue(formValues);
+
+    const stopFindCompany = new Subject();
+
+    const companyFormGroup: FormGroup = <FormGroup>this.territoryForm.controls.company;
+    companyFormGroup.controls.siret.valueChanges
+      .pipe(
+        throttleTime(300),
+        tap(() => {
+          stopFindCompany.next();
+          companyFormGroup.patchValue({
+            naf_entreprise: '',
+            nature_juridique: '',
+            rna: '',
+            vat_intra: '',
+          });
+        }),
+        filter((value: string) => {
+          console.log(value.length, value.match(/[0-9]{14}/g), value.length === 14 && value.match(/[0-9]{14}/));
+          return value.length === 14 && value.match(/[0-9]{14}/) !== null;
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((value) => {
+        this.companyService
+          .findCompany(value, 'remote')
+          .pipe(
+            catchHttpStatus(404, (err) => {
+              this.toastr.error('Entreprise non trouvée');
+              throw err;
+            }),
+            takeUntil(stopFindCompany),
+          )
+
+          .subscribe((company) => {
+            if (company.data) {
+              companyFormGroup.patchValue({
+                naf_entreprise: company.data.company_naf_code ? company.data.company_naf_code : '',
+                nature_juridique: company.data.legal_nature_label ? company.data.legal_nature_label : '',
+                rna: company.data.nonprofit_code ? company.data.nonprofit_code : '',
+                vat_intra: company.data.intra_vat ? company.data.intra_vat : '',
+              });
+            }
+          });
+        console.log('values : ', value);
+      });
   }
 
   private checkPermissions(): void {

@@ -1,14 +1,16 @@
 <form [formGroup]="parentForm">
-  <mat-form-field class="nature_juridique" appearance="outline">
-    <mat-label>Nature juridique</mat-label>
-    <input matInput formControlName="nature_juridique" />
-  </mat-form-field>
   <mat-form-field class="siret" appearance="outline">
     <mat-label>SIRET</mat-label>
     <input matInput formControlName="siret" required />
     <mat-error *ngIf="parentForm.controls.siret.hasError('required')">Le SIRET est obligatoire.</mat-error>
     <mat-error *ngIf="parentForm.controls.siret.hasError('pattern')">Le format du siret n'est pas valide.</mat-error>
   </mat-form-field>
+
+  <mat-form-field class="nature_juridique" appearance="outline">
+    <mat-label>Nature juridique</mat-label>
+    <input matInput formControlName="nature_juridique" />
+  </mat-form-field>
+
   <mat-form-field class="naf_entreprise" appearance="outline">
     <mat-label>Naf entreprise</mat-label>
     <input matInput formControlName="naf_entreprise" />
