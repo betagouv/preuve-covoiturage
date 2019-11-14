@@ -10,7 +10,7 @@ import { territoryStub } from '../territory/territory.find';
 // tslint:disable-next-line:variable-name
 export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
   territories: {
-    _id: '5d828c7c8b59373497d5a27f',
+    _id: 1,
     firstname: 'AOM',
     lastname: 'Decovoit',
     phone: '0612345678',
@@ -21,7 +21,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     territory_id: territoryStub._id,
   },
   operators: {
-    _id: '5d828c866707121bd1e23860',
+    _id: 2,
     firstname: 'Opérateur',
     lastname: 'Decovoit',
     phone: '0612345678',
@@ -32,7 +32,7 @@ export const cypress_logging_users: { [key in UserGroupEnum]: User } = {
     operator_id: operatorStub._id,
   },
   registry: {
-    _id: '5d828c8f21577b76d5445e0c',
+    _id: 3,
     firstname: 'Registre',
     lastname: 'admin',
     phone: '0612345678',

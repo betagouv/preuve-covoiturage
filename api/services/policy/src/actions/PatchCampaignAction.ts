@@ -4,7 +4,7 @@ import { Action as AbstractAction } from '@ilos/core';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/patch.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { alias } from '../shared/policy/create.schema';
+import { alias } from '../shared/policy/patch.schema';
 
 @handler(handlerConfig)
 export class PatchCampaignAction extends AbstractAction {

@@ -58,8 +58,8 @@ export class CypressExpectedCampaign {
   static get(): Campaign {
     const campaign = new Campaign({
       _id: null,
-      start: CypressExpectedCampaign.startMoment.toDate(),
-      end: CypressExpectedCampaign.endMoment.toDate(),
+      start_date: CypressExpectedCampaign.startMoment.toDate(),
+      end_date: CypressExpectedCampaign.endMoment.toDate(),
       unit: IncentiveUnitEnum.EUR,
       description: CypressExpectedCampaign.description,
       name: CypressExpectedCampaign.campaignName,
@@ -112,15 +112,15 @@ export class CypressExpectedCampaign {
       territory_id: cypress_logging_users[UserGroupEnum.TERRITORY].territory_id,
     });
 
-    campaign.start = <any>campaign.start.toISOString();
-    campaign.end = <any>campaign.end.toISOString();
+    campaign.start_date = <any>campaign.start_date.toISOString();
+    campaign.end_date = <any>campaign.end_date.toISOString();
 
     return campaign;
   }
 
   static getAfterCreate(): Campaign {
     const afterCreationCampaign = CypressExpectedCampaign.get();
-    afterCreationCampaign._id = '5d8a3f7c6caa8c7f95a364f7';
+    afterCreationCampaign._id = 1;
     return afterCreationCampaign;
   }
 

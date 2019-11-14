@@ -74,4 +74,10 @@ export class CampaignService extends ApiService<Campaign> {
     }
     return this.deleteList(id, params);
   }
+
+  public patchList(campaign: Campaign): Observable<[Campaign, Campaign[]]> {
+    delete campaign.status;
+    delete campaign.territory_id;
+    return super.patchList(campaign);
+  }
 }

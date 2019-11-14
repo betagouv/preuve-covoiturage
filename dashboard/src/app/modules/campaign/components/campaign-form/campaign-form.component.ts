@@ -57,7 +57,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       if (this.creation) {
         this.loading = false;
       } else {
-        this.loadCampaign(params.get('campaignId'));
+        this.loadCampaign(Number(params.get('campaignId')));
       }
     });
   }
@@ -300,7 +300,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private loadCampaign(campaignId: string) {
+  private loadCampaign(campaignId: number) {
     if (!this.campaignService.campaignsLoaded) {
       this.campaignService
         .load()
@@ -311,7 +311,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       if (campaigns.length === 0) {
         return;
       }
-      const foundCampaign = campaigns.filter((campaign) => campaign._id === campaignId)[0];
+      const foundCampaign = campaigns.filter((campaign) => Number(campaign._id) === campaignId)[0];
       if (foundCampaign) {
         const campaignUx = this.campaignFormatService.toCampaignUxFormat(foundCampaign);
         this.setCampaignToForm(campaignUx, false);

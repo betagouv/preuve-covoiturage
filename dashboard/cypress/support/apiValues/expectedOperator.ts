@@ -6,8 +6,8 @@ export const expectedPatchedOperator: Operator = {
   _id: operatorStub._id,
   name: 'Opérateur',
   legal_name: 'Opérateur SAS',
+  siren: '123456789',
   company: {
-    siren: '123456789',
     naf_entreprise: '1234A',
   },
   address: {

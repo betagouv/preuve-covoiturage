@@ -10,6 +10,7 @@ import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
 import { bootstrap as normalizationBootstrap } from '@pdc/service-normalization';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as policyBootstrap } from '@pdc/service-policy';
+import { bootstrap as companyBootstrap } from '@pdc/service-company';
 
 import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 import { MapIdCommand } from './commands/MapIdCommand';
@@ -27,6 +28,7 @@ import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
     ...normalizationBootstrap.serviceProviders,
     ...tripcheckBootstrap.serviceProviders,
     ...policyBootstrap.serviceProviders,
+    ...companyBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [UpgradeJourneyCommand, MapIdCommand, MigrateInseeCommand],

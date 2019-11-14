@@ -17,7 +17,7 @@
         <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.trips_number"
           >{{ campaign.trips_number }} trajets</span
         >
-        <span>Plafond: {{ campaign.max_trips }} trajets</span>
+        <span *ngIf="campaign.max_trips">Plafond: {{ campaign.max_trips }} trajets</span>
       </div>
       <div class="CampaignsList-item-date">
         <span>Du {{ campaign.start.toDate() | date: 'dd MMMM' }} au {{ campaign.end.toDate() | date: 'dd MMMM' }}</span>

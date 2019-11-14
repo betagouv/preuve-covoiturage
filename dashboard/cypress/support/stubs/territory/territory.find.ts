@@ -4,7 +4,7 @@ import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { Address, Company, Contacts, Territory } from '../../../../src/app/core/entities/territory/territory';
 
 export const territoryStub: Territory = new Territory({
-  _id: '5c66d89760e6ee004a6cab2f',
+  _id: 1,
   name: 'AOM 1',
   shortname: 'AOM 1 shortname',
   company: new Company({

@@ -7,12 +7,13 @@ import fr from '@angular/common/locales/fr';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
+import { CompanyModule } from '~/modules/company/company.module';
 
 registerLocaleData(fr);
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [CoreModule, AppRoutingModule],
+  imports: [CoreModule, AppRoutingModule, CompanyModule],
   providers: [
     {
       provide: LOCALE_ID,

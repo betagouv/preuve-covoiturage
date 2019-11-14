@@ -18,8 +18,8 @@ export interface BaseCampaignInterface {
 }
 
 export interface CampaignInterface extends BaseCampaignInterface {
-  start: Date;
-  end: Date;
+  start_date: Date;
+  end_date: Date;
   global_rules: GlobalRetributionRuleType[];
   rules: RetributionRuleType[][];
   _id: string;

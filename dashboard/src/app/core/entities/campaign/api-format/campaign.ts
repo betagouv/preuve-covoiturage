@@ -12,8 +12,8 @@ export class Campaign {
   public territory_id?: string;
   public name: string;
   public description: string;
-  public start: Date;
-  public end: Date;
+  public start_date: Date;
+  public end_date: Date;
   public status: CampaignStatusEnum;
   public parent_id: string;
   public unit: IncentiveUnitEnum;
@@ -30,8 +30,8 @@ export class Campaign {
       name: '',
       description: '',
       unit: null,
-      start: null,
-      end: null,
+      start_date: null,
+      end_date: null,
       status: null,
       parent_id: null,
       rules: [],
@@ -47,8 +47,8 @@ export class Campaign {
     this._id = obj._id;
     this.name = obj.name;
     this.description = obj.description;
-    this.start = obj.start;
-    this.end = obj.end;
+    this.start_date = obj.start_date;
+    this.end_date = obj.end_date;
     this.status = obj.status;
     this.parent_id = obj.parent_id;
     this.unit = obj.unit;
