@@ -15,8 +15,8 @@ export interface CampaignInterface {
   territory_id: number;
   name: string;
   description: string;
-  start: Date;
-  end: Date;
+  start_date: Date;
+  end_date: Date;
   unit: string;
   status: string;
   global_rules: RuleInterface[];

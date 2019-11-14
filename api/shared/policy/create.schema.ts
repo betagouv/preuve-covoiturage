@@ -5,7 +5,7 @@ export const alias = 'campaign.create';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['territory_id', 'name', 'start', 'end', 'unit', 'status', 'rules', 'global_rules'],
+  required: ['territory_id', 'name', 'start_date', 'end_date', 'unit', 'status', 'rules', 'global_rules'],
   properties: {
     parent_id: {
       macro: 'serial',
@@ -23,10 +23,10 @@ export const schema = {
       type: 'string',
       default: '',
     },
-    start: {
+    start_date: {
       macro: 'timestamp',
     },
-    end: {
+    end_date: {
       macro: 'timestamp',
     },
     unit: {

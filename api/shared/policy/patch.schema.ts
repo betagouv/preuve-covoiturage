@@ -22,10 +22,10 @@ export const schema = {
         description: {
           type: 'string',
         },
-        start: {
+        start_date: {
           macro: 'timestamp',
         },
-        end: {
+        end_date: {
           macro: 'timestamp',
         },
         unit: {
