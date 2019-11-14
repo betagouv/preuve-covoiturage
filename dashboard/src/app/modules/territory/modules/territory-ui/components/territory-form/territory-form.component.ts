@@ -92,6 +92,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         (data) => {
           const modifiedTerritory = data[0];
           this.toastr.success(`${modifiedTerritory.name} a été mis à jour !`);
+          this.close.emit();
         },
         (err) => {
           this.toastr.error(`Une erreur est survenue lors de la mis à jour du territoire`);
@@ -187,7 +188,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           });
         }),
         filter((value: string) => {
-          console.log(value.length, value.match(/[0-9]{14}/g), value.length === 14 && value.match(/[0-9]{14}/));
           return value.length === 14 && value.match(/[0-9]{14}/) !== null;
         }),
         takeUntil(this.destroy$),
@@ -213,7 +213,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
               });
             }
           });
-        console.log('values : ', value);
       });
   }
 
