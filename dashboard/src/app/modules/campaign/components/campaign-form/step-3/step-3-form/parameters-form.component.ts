@@ -19,6 +19,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 })
 export class ParametersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
+  @Input() isCreating = false;
 
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnitEnum);
@@ -152,7 +153,7 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   }
 
   private initRestrictionFormArray() {
-    if (this.restrictionFormArray.controls.length === 0) {
+    if (this.restrictionFormArray.controls.length === 0 && this.isCreating) {
       this.restrictionFormArray.push(this.generateRestrictionFormGroup());
     }
   }

@@ -68,8 +68,8 @@ export class CampaignFormatingService {
       max_amount: null,
       only_adult: null,
       restrictions: [],
-      start: moment(campaign.start),
-      end: moment(campaign.end),
+      start: moment(campaign.start_date),
+      end: moment(campaign.end_date),
     };
 
     // GLOBAL RULES
@@ -361,6 +361,11 @@ export class CampaignFormatingService {
       territory_id = this._authService.user.territory_id;
     }
 
+    // UI_STATUS
+    ui_status.for_passenger = !!ui_status.for_passenger;
+    ui_status.for_driver = !!ui_status.for_driver;
+    ui_status.for_trip = !!ui_status.for_trip;
+
     const campaign = new Campaign({
       _id,
       name,
@@ -373,8 +378,8 @@ export class CampaignFormatingService {
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
       // format dates : moment --> Date
-      start: campaignUx.start.toDate(),
-      end: campaignUx.end.toDate(),
+      start_date: campaignUx.start.toDate(),
+      end_date: campaignUx.end.toDate(),
     });
 
     //  remove empty or null values

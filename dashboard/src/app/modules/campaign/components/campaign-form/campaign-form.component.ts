@@ -57,8 +57,12 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       if (this.creation) {
         this.loading = false;
       } else {
-        this.loadCampaign(params.get('campaignId'));
+        this.loadCampaign(Number(params.get('campaignId')));
       }
+    });
+    this.campaignFormGroup.valueChanges.subscribe(() => {
+      console.log(this.campaignFormGroup);
+      console.log(this.campaignFormGroup.value);
     });
   }
 
@@ -242,6 +246,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     const restrictionFormArray = <FormArray>this.campaignFormGroup.get('restrictions');
     restrictionFormArray.clear();
     campaign.restrictions.forEach((restriction) => {
+      console.log({ restriction });
       restrictionFormArray.push(this._formBuilder.group(restriction));
     });
 
@@ -300,7 +305,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private loadCampaign(campaignId: string) {
+  private loadCampaign(campaignId: number) {
     if (!this.campaignService.campaignsLoaded) {
       this.campaignService
         .load()
@@ -311,9 +316,10 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       if (campaigns.length === 0) {
         return;
       }
-      const foundCampaign = campaigns.filter((campaign) => campaign._id === campaignId)[0];
+      const foundCampaign = campaigns.filter((campaign) => Number(campaign._id) === campaignId)[0];
       if (foundCampaign) {
         const campaignUx = this.campaignFormatService.toCampaignUxFormat(foundCampaign);
+        console.log({ campaignUx });
         this.setCampaignToForm(campaignUx, false);
       } else {
         this.toastr.error("Les données de la campagne n'ont pas pu être chargé");
