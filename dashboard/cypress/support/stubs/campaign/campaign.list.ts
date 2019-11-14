@@ -1,8 +1,6 @@
 import * as moment from 'moment';
 
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-
-import { CampaignsGenerator } from '../../generators/campaigns.generator';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
@@ -16,6 +14,8 @@ import {
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+
+import { CampaignsGenerator } from '../../generators/campaigns.generator';
 import { operatorStubs } from '../operator/operator.list';
 import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
 
@@ -26,10 +26,10 @@ export const campaignStubs: Campaign[] = [
     status: CampaignStatusEnum.VALIDATED,
     name: 'Encourager le covoiturage',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
-    start: moment()
+    start_date: moment()
       .subtract('1', 'months')
       .toDate(),
-    end: moment()
+    end_date: moment()
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
@@ -90,10 +90,10 @@ export const campaignStubs: Campaign[] = [
       ]),
     ],
     rules: [],
-    start: moment()
+    start_date: moment()
       .subtract('1', 'months')
       .toDate(),
-    end: moment()
+    end_date: moment()
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
@@ -112,10 +112,10 @@ export const campaignStubs: Campaign[] = [
       for_trip: false,
       staggered: false,
     },
-    start: moment()
+    start_date: moment()
       .subtract('1', 'months')
       .toDate(),
-    end: moment()
+    end_date: moment()
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,

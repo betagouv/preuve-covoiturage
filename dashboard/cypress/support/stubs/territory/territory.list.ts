@@ -6,7 +6,7 @@ import { territoryStub } from './territory.find';
 export const territoryStubs: Territory[] = [
   territoryStub,
   {
-    _id: '5d7775bf37043b8463b2a208',
+    _id: 2,
     name: 'AOM 2',
     shortname: 'Aom shortname 2',
     company: new Company({
