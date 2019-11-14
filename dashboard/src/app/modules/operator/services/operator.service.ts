@@ -125,6 +125,7 @@ export class OperatorService extends ApiService<Operator> {
   setNewOperatorForCreation(): void {
     this._entity$.next(
       new Operator({
+        siret: null,
         _id: null,
         name: null,
         legal_name: null,

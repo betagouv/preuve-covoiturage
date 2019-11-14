@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
@@ -144,6 +145,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
 
     this.territoryForm = this.fb.group(formOptions);
+
     this.updateValidation();
   }
 
