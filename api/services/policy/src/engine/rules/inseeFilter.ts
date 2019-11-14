@@ -14,7 +14,7 @@ const andOrSchema = {
       },
     },
     end: {
-      type: 'array',    
+      type: 'array',
       items: {
         macro: 'insee',
       },
@@ -50,7 +50,7 @@ export const inseeWhitelistFilter: ApplicableRuleInterface = {
   apply(params: InseeParamsType) {
     return async (ctx, next) => {
       let whitelisted = false;
-      for(const rule of params) {
+      for (const rule of params) {
         if (
           (!rule.start.length || inList(rule.start, ctx.person.start.insee)) &&
           (!rule.end.length || inList(rule.end, ctx.person.end.insee))
@@ -78,7 +78,7 @@ export const inseeBlacklistFilter: ApplicableRuleInterface = {
   apply(params: InseeParamsType) {
     return async (ctx, next) => {
       let blacklisted = false;
-      for(const rule of params) {
+      for (const rule of params) {
         if (
           (!rule.start.length || inList(rule.start, ctx.person.start.insee)) &&
           (!rule.end.length || inList(rule.end, ctx.person.end.insee))

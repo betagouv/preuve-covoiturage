@@ -11,6 +11,8 @@ import {
   TripPgRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+
 /*
  * Trip specific repository
  */
@@ -256,7 +258,6 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       'hour',
     ].filter((key) => key in filters);
 
-
     let orderedFilters = {
       text: [],
       values: [],
@@ -367,26 +368,17 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     const where = this.buildWhereClauses(params);
     const query = {
       text: `
-        WITH data AS
-        (
-          SELECT
-            min(datetime::date) as day,
-            max(distance) as distance,
-            sum(seats+1) as carpoolers,
-            '0'::int as carpoolers_subsidized
-          FROM ${this.table}
-          ${where ? where.text : ''}
-          GROUP BY trip_id
-        )
-        SELECT
-          day,
-          sum(distance)::int as distance,
-          sum(carpoolers)::int as carpoolers,
-          count(*)::int as trip,
-          count(*) FILTER (WHERE carpoolers_subsidized > 0)::int as trip_subsidized
-        FROM data
-        GROUP BY day
-        ORDER BY day ASC`,
+      SELECT
+        datetime::date as day,
+        sum(distance*seats)::int as distance,
+        sum(seats+1)::int as carpoolers,
+        count(*)::int as trip,
+        '0'::int as trip_subsidized,
+        count(distinct operator_id)::int as operators
+      FROM ${this.table}
+      ${where ? where.text : ''}
+      GROUP BY day
+      ORDER BY day ASC`,
       values: [
         // casting to int ?
         ...(where ? where.values : []),
@@ -406,12 +398,13 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     return result.rows.map(this.castTypes);
   }
 
-  public async search(params: TripSearchInterface): Promise<LightTripInterface[]> {
+  public async search(params: TripSearchInterface): Promise<ResultWithPagination<LightTripInterface>> {
     const { limit, skip } = params;
     const where = this.buildWhereClauses(params);
     const query = {
       text: `
         SELECT
+          count(*) over() as total_count,
           trip_id,
           is_driver,
           start_town,
@@ -427,6 +420,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       `,
       values: [...(where ? where.values : []), limit, skip],
     };
+
     // incentives
     query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
       if (idx === origin.length - 1) {
@@ -437,7 +431,30 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     }, '');
 
     const result = await this.connection.getClient().query(query);
-    return result.rows.map(this.castTypes);
+
+    const pagination = {
+      limit,
+      total: 0,
+      offset: skip,
+    };
+
+    if (result.rows.length === 0) {
+      return {
+        data: [],
+        meta: {
+          pagination,
+        },
+      };
+    }
+
+    pagination.total = result.rows[0].total_count;
+
+    return {
+      data: result.rows.map(({ total_count, ...data }) => data).map(this.castTypes),
+      meta: {
+        pagination,
+      },
+    };
   }
 
   private castTypes(row: any): any {

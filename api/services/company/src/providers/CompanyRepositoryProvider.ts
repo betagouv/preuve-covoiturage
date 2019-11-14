@@ -1,4 +1,4 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
@@ -83,7 +83,7 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           $14
         )
         ON CONFLICT (siret)
-        DO UPDATE SET 
+        DO UPDATE SET
           siren = $2,
           nic = $3,
           legal_name = $4,
@@ -97,7 +97,6 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
           nonprofit_code = $12,
           address = $13,
           geo = $14
-          
       `,
       values: [
         data.siret,
