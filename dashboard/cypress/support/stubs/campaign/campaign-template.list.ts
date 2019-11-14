@@ -16,6 +16,7 @@ import {
   FreeRetributionRule,
   PerKmRetributionRule,
   PerPassengerRetributionRule,
+  RangeRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 
 export const campaignTemplateStubs: TemplateInterface[] = [
@@ -34,12 +35,41 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
     ],
     rules: [
-      [new ForPassengerRetributionRule(), new AmountRetributionRule(10), new PerKmRetributionRule()],
       [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
         new ForDriverRetributionRule(),
         new AmountRetributionRule(10),
         new PerPassengerRetributionRule(),
         new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(500),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerPassengerRetributionRule(),
       ],
     ],
     ui_status: {
@@ -68,12 +98,41 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       }),
     ],
     rules: [
-      [new ForPassengerRetributionRule(), new AmountRetributionRule(100), new PerKmRetributionRule()],
       [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(1),
+        new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
         new ForDriverRetributionRule(),
-        new AmountRetributionRule(100),
+        new AmountRetributionRule(1),
         new PerPassengerRetributionRule(),
         new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(50),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(50),
+        new PerPassengerRetributionRule(),
       ],
     ],
     ui_status: {
