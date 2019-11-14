@@ -45,7 +45,7 @@ export class MapIdCommand implements CommandInterface {
       this.db = mongo.getClient().db(options.db);
       this.pg = postgres.getClient();
 
-      await this.fixAcquisition();
+      // await this.fixAcquisition();
       await this.fixApplications();
       await this.fixOperators();
       await this.fixTerritories();
