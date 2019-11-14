@@ -35,15 +35,15 @@ export class CampaignsGenerator {
     const campaignMocks = [...Array(20)].map(
       (val, idx) =>
         <CampaignInterface>{
-          _id: '5d6fa2995623dc991b288f11',
+          _id: 1,
           status: CampaignStatusEnum[CampaignsGenerator.status[CampaignsGenerator.randomStatus()]],
           name: `Name ${idx}`,
           description: `Description ${idx}`,
-          start: moment()
+          start_date: moment()
             .subtract(Math.floor(Math.random() * 10), 'days')
             .subtract('1', 'months')
             .toDate(),
-          end: moment()
+          end_date: moment()
             .add('2', 'months')
             .toDate(),
           global_rules: [

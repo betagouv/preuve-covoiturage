@@ -6,7 +6,7 @@ import { operatorStub } from './operator.find';
 export const operatorStubs: Operator[] = [
   operatorStub,
   {
-    _id: '5c66d89760e6ee004a6cab4g',
+    _id: 2,
     name: 'Opérateur 2',
     legal_name: 'Opérateur 2 SAS',
     company: {

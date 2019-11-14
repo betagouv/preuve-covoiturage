@@ -8,18 +8,15 @@ import { territoryStub } from '../stubs/territory/territory.find';
 import { operatorStub } from '../stubs/operator/operator.find';
 import { FIRSTNAMES } from './const/firstnames.const';
 import { LASTNAMES } from './const/lastnames.const';
-import { generateRandomMongoId } from './id.generator';
 
 export class UserGenerator {
   static numberOfUsers = 50;
 
-  static generateUser(profilData: ProfileInterface, group: UserGroupEnum): BaseUser {
-    const randomId = generateRandomMongoId();
-
+  static generateUser(profilData: ProfileInterface, group: UserGroupEnum, id: number): BaseUser {
     switch (group) {
       case UserGroupEnum.TERRITORY:
         return {
-          _id: randomId,
+          _id: id,
           ...profilData,
           role: UserRoleEnum.TERRITORY_ADMIN,
           group: UserGroupEnum.TERRITORY,
@@ -27,7 +24,7 @@ export class UserGenerator {
         };
       case UserGroupEnum.OPERATOR:
         return {
-          _id: randomId,
+          _id: id,
           ...profilData,
           role: UserRoleEnum.OPERATOR_ADMIN,
           group: UserGroupEnum.OPERATOR,
@@ -35,7 +32,7 @@ export class UserGenerator {
         };
       case UserGroupEnum.REGISTRY:
         return {
-          _id: randomId,
+          _id: id,
           ...profilData,
           role: UserRoleEnum.REGISTRY_ADMIN,
           group: UserGroupEnum.REGISTRY,
@@ -58,7 +55,7 @@ export class UserGenerator {
         phone: `07${Math.floor(Math.random() * 10000000)}`,
       };
       const grp = USER_GROUPS[Math.floor(Math.random() * 3)];
-      list.push(UserGenerator.generateUser(profilData, grp));
+      list.push(UserGenerator.generateUser(profilData, grp, i + 10));
     }
 
     return list;

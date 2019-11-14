@@ -89,6 +89,8 @@ export function cypress_campaignEdit(e2e = false) {
         const expectedCampaign = CypressExpectedCampaign.getAfterEdition();
 
         delete expectedCampaign.parent_id;
+        delete expectedCampaign.status;
+        delete expectedCampaign.territory_id;
 
         const { _id, ...campaignProperties } = expectedCampaign;
 
