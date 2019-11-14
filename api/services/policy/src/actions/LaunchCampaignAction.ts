@@ -5,7 +5,7 @@ import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/Campa
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/launch.contract';
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { alias } from '../shared/policy/create.schema';
+import { alias } from '../shared/policy/launch.schema';
 
 @handler(handlerConfig)
 export class LaunchCampaignAction extends AbstractAction {

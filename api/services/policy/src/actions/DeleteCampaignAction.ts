@@ -4,7 +4,7 @@ import { Action as AbstractAction } from '@ilos/core';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/delete.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { alias } from '../shared/policy/create.schema';
+import { alias } from '../shared/policy/delete.schema';
 
 @handler(handlerConfig)
 export class DeleteCampaignAction extends AbstractAction {
