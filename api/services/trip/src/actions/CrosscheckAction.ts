@@ -29,6 +29,8 @@ export class CrosscheckAction extends Action {
       ...journey,
     });
 
+    // save payment & declared incentives
+
     if (created) {
       let delay = this.config.get('rules.maxAge');
 

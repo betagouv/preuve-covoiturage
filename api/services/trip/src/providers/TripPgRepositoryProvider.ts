@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-
+import * as uuidv4 from 'uuid/v4';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 
 import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
@@ -103,7 +103,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       }
 
       if (!tripId) {
-        tripId = 1; // TODO: generate random uuid here
+        tripId = uuidv4();
       }
 
       await this.addParticipant(
@@ -118,6 +118,20 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           created_at: journey.created_at,
         },
         true,
+      );
+
+      await this.addParticipant(
+        client,
+        tripId,
+        {
+          ...journey.passenger,
+          operator_class: journey.operator_class,
+          journey_id: journey.journey_id,
+          operator_id: journey.operator_id,
+          operator_trip_id: journey.operator_journey_id,
+          created_at: journey.created_at,
+        },
+        false,
       );
 
       await client.query('COMMIT');
