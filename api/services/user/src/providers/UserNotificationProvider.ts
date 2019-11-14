@@ -148,7 +148,7 @@ link:  ${link}
    * Generate confirmation token and send welcome mail
    */
   async userCreated(token: string, email: string): Promise<void> {
-    const [url, template, templateId] = this.CONFIRMATION;
+    const [url, template, templateId] = this.INVITATION;
 
     const user = await this.userRepository.findByEmail(email);
 
