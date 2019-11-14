@@ -13,7 +13,6 @@ export const expectedNewUsers: { [key in UserGroupEnum]: UserInterface } = {
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
     role: UserRoleEnum.TERRITORY_ADMIN,
-    group: UserGroupEnum.TERRITORY,
     territory_id: territoryStub._id,
   },
   operators: <UserInterface>{
@@ -22,7 +21,6 @@ export const expectedNewUsers: { [key in UserGroupEnum]: UserInterface } = {
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
     role: UserRoleEnum.OPERATOR_ADMIN,
-    group: UserGroupEnum.OPERATOR,
     operator_id: operatorStub._id,
   },
   registry: <UserInterface>{
@@ -31,7 +29,6 @@ export const expectedNewUsers: { [key in UserGroupEnum]: UserInterface } = {
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
     role: UserRoleEnum.REGISTRY_ADMIN,
-    group: UserGroupEnum.REGISTRY,
   },
 };
 

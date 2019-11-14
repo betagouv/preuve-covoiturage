@@ -13,17 +13,17 @@ export function cypress_users(e2e = false) {
   });
 
   it('add a registry admin user', () => {
-    cypress_addUser(expectedNewUsers[UserGroupEnum.REGISTRY]);
+    cypress_addUser(UserGroupEnum.REGISTRY);
   });
   closeNotification();
 
   it('add a territory admin user', () => {
-    cypress_addUser(expectedNewUsers[UserGroupEnum.TERRITORY]);
+    cypress_addUser(UserGroupEnum.TERRITORY);
   });
   closeNotification();
 
   it('add a operator admin user', () => {
-    cypress_addUser(expectedNewUsers[UserGroupEnum.OPERATOR]);
+    cypress_addUser(UserGroupEnum.OPERATOR);
   });
   closeNotification();
 

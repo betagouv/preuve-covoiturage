@@ -1,12 +1,13 @@
-import { User } from '~/core/entities/authentication/user';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 import { stubUserCreate } from '../../stubs/user/user.create';
-import { closeNotification } from '../notification.cypress';
 import { territoryStub } from '../../stubs/territory/territory.find';
+import { expectedNewUsers } from '../../apiValues/expectedUser';
 
-export function cypress_addUser(userData: User, e2e = false) {
+export function cypress_addUser(group: UserGroupEnum, e2e = false) {
+  const userData = expectedNewUsers[group];
+
   cy.get('.Users-add > button').click();
 
   // firstname
@@ -39,7 +40,7 @@ export function cypress_addUser(userData: User, e2e = false) {
   // click group
   cy.get('mat-form-field:nth-child(6)').click();
 
-  const index = userData.group === UserGroupEnum.REGISTRY ? 3 : userData.group === UserGroupEnum.OPERATOR ? 2 : 1;
+  const index = userData.role.split('.')[0] === 'registry' ? 3 : userData.role.split('.')[0] === 'operator' ? 2 : 1;
 
   cy.wait(500);
 
@@ -47,7 +48,7 @@ export function cypress_addUser(userData: User, e2e = false) {
   cy.get(`.mat-select-panel mat-option:nth-child(${index})`).click();
 
   // select operator
-  if (userData.group === UserGroupEnum.OPERATOR) {
+  if (userData.role.split('.')[0] === 'operator') {
     if (e2e) {
       cy.get('app-operator-autocomplete mat-form-field input').click();
     } else {
@@ -56,14 +57,14 @@ export function cypress_addUser(userData: User, e2e = false) {
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
   }
 
-  if (userData.group === UserGroupEnum.TERRITORY) {
+  if (userData.role.split('.')[0] === 'territory') {
     // select territory
     cy.get('app-territory-autocomplete mat-form-field input').type(e2e ? 'a' : territoryStub.name);
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
   }
 
   if (!e2e) {
-    stubUserCreate(userData.group);
+    stubUserCreate(group);
   }
 
   cy.get('.CreateEditUserForm-actions > button:first-child').click();
