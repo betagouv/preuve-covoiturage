@@ -108,7 +108,9 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
     for (const fieldName of updatablefields) {
       sets.text.push(`${fieldName} = $#`);
-      sets.values.push(patch[fieldName]);
+      sets.values.push(
+        ['global_rules', 'rules'].indexOf(fieldName) >= 0 ? JSON.stringify(patch[fieldName]) : patch[fieldName],
+      );
     }
 
     const query = {
@@ -176,7 +178,9 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
     for (const fieldName of updatablefields) {
       sets.text.push(`${fieldName} = $#`);
-      sets.values.push(patch[fieldName]);
+      sets.values.push(
+        ['global_rules', 'rules'].indexOf(fieldName) >= 0 ? JSON.stringify(patch[fieldName]) : patch[fieldName],
+      );
     }
 
     const query = {
