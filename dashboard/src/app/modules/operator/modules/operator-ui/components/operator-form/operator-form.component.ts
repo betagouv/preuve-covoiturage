@@ -124,7 +124,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
     const stopFindCompany = new Subject();
 
-    const companyFormGroup: FormGroup = this.operatorForm.controls.company;
+    const companyFormGroup: FormGroup = <FormGroup>this.operatorForm.controls.company;
     companyFormGroup.controls.siret.valueChanges
       .pipe(
         throttleTime(300),
