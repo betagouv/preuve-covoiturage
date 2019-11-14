@@ -50,7 +50,7 @@ export class ListAction extends Action {
         ...r,
         campaigns_id: [],
         status: 'locked',
-      }))
+      })),
     };
   }
 }

@@ -10,10 +10,7 @@ import { alias } from '../shared/company/find.schema';
 
 @handler(handlerConfig)
 export class FindAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
-    ['validate', alias],
-    ['can', ['company.find']]
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['company.find']]];
 
   constructor(
     private ds: CompanyDataSourceProviderInterfaceResolver,
@@ -26,9 +23,9 @@ export class FindAction extends AbstractAction {
     const { siret, source } = params;
 
     if (source && source === 'remote') {
-      return await this.ds.find(siret);
+      return this.ds.find(siret);
     }
 
-    return await this.repository.find(siret);
+    return this.repository.find(siret);
   }
 }

@@ -101,10 +101,10 @@ export class MapIdCommand implements CommandInterface {
   private async fixApplications(): Promise<void> {
     console.log('\n[fix applications]');
     const cursor = this.db.collection('applications').find({});
-    
+
     while (true) {
       if (!(await cursor.hasNext())) break;
-      
+
       // get the new ID
       const old = await cursor.next();
       const client: PoolClient = await this.pg.connect();

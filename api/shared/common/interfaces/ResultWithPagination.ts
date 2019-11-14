@@ -2,5 +2,5 @@ import { PaginationResultInterface } from './PaginationResultInterface';
 
 export interface ResultWithPagination<T> {
   data: T[];
-  meta: { pagination: PaginationResultInterface };  
+  meta: { pagination: PaginationResultInterface };
 }
