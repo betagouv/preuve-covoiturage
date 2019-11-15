@@ -59,10 +59,17 @@ export class MigrateDataCommand implements CommandInterface {
         await writeClient.query({
           text: `
         INSERT INTO application.applications
-        ( name, owner_id, owner_service, permissions, created_at )
-        VALUES ( $1, $2, $3, $4, $5 )
+        ( uuid, name, owner_id, owner_service, permissions, created_at )
+        VALUES ( $1, $2, $3, $4, $5, $6 )
         `,
-          values: [doc.name, doc.operator_id.toString(), 'operator', ['journey.create'], doc.created_at],
+          values: [
+            doc._id.toString(),
+            doc.name,
+            doc.operator_id.toString(),
+            'operator',
+            ['journey.create'],
+            doc.created_at,
+          ],
         });
       } catch (e) {
         console.log(e);

@@ -26,10 +26,10 @@ export class CreateJourneyLegacyAction extends AbstractAction {
    * Extract the operator's SIRET number by operator ID
    * Calls the operator service
    */
-  protected async getOperatorSiret(operatorId: string): Promise<string | null> {
+  protected async getOperatorSiret(operator_id: string): Promise<string | null> {
     const operator = await this.kernel.call(
       'operator:find',
-      { _id: operatorId },
+      { _id: operator_id },
       { channel: { service: 'acquisition' }, call: { user: { permissions: ['operator.read'] } } },
     );
 

@@ -7,6 +7,7 @@ import { RepositoryInterface as RevokeInterface } from '../shared/application/re
 export interface ApplicationRepositoryProviderInterface {
   list(data: ListInterface): Promise<ApplicationInterface[]>;
   find(data: FindInterface): Promise<ApplicationInterface>;
+  findByUuid(data: { uuid: string }): Promise<ApplicationInterface>;
   create(data: CreateInterface): Promise<ApplicationInterface>;
   revoke(data: RevokeInterface): Promise<void>;
 }
@@ -16,6 +17,9 @@ export abstract class ApplicationRepositoryProviderInterfaceResolver implements 
     throw new Error('Method not implemented.');
   }
   async find(data: FindInterface): Promise<ApplicationInterface> {
+    throw new Error('Method not implemented.');
+  }
+  async findByUuid(data: { uuid: string }): Promise<ApplicationInterface> {
     throw new Error('Method not implemented.');
   }
   async create(data: CreateInterface): Promise<ApplicationInterface> {

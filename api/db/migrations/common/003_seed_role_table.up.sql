@@ -7,4 +7,6 @@ INSERT INTO common.roles (slug, description, permissions) VALUES
 ('territory.admin', 'Administrateur du territoire', '{}'),
 ('territory.user', 'Utilisateur du territoire', '{}'),
 ('operator.admin', 'Administrateur de l''opérateur', '{}'),
-('operator.user', 'Utilisateur de l''opérateur', '{}');
+('operator.user', 'Utilisateur de l''opérateur', '{}')
+ON CONFLICT (slug)
+DO NOTHING;

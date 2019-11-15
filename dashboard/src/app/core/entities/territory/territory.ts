@@ -1,5 +1,6 @@
-import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 /* tslint:disable:variable-name*/
+import { hasOneNotEmptyProperty } from '~/core/entities/utils';
+
 import { Address } from '../shared/address';
 import { Bank } from '../shared/bank';
 import { CGU } from '../shared/cgu';
@@ -11,7 +12,6 @@ class Territory {
   public name: string;
   public siret: string;
   public shortname?: string;
-  // public acronym?: string;
   public insee?: string[];
 
   public company?: Company;
