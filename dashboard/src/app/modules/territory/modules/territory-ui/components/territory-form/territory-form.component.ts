@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
 
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
@@ -15,7 +16,6 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { Subject } from 'rxjs';
 import { CompanyService } from '~/modules/company/services/company.service';
 
 @Component({
@@ -187,9 +187,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             vat_intra: '',
           });
         }),
-        filter((value: string) => {
-          return value.length === 14 && value.match(/[0-9]{14}/) !== null;
-        }),
+        filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
         takeUntil(this.destroy$),
       )
       .subscribe((value) => {

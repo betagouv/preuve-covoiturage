@@ -138,9 +138,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
             vat_intra: '',
           });
         }),
-        filter((value: string) => {
-          return value.length === 14 && value.match(/[0-9]{14}/) !== null;
-        }),
+        filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
         takeUntil(this.destroy$),
       )
       .subscribe((value) => {
