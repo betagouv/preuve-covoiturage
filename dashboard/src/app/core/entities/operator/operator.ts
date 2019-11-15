@@ -1,5 +1,6 @@
-import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 /* tslint:disable:variable-name*/
+import { hasOneNotEmptyProperty } from '~/core/entities/utils';
+
 import { Address } from '../shared/address';
 import { Bank } from '../shared/bank';
 import { CGU } from '../shared/cgu';

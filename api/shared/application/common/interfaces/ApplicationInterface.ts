@@ -1,5 +1,6 @@
 export interface ApplicationInterface {
-  _id?: string; // TODO rename to avoid confusion with _id: number
+  _id?: number;
+  uuid: string;
   owner_id: string; // TODO fix to convert to number
   owner_service: string;
   name: string;

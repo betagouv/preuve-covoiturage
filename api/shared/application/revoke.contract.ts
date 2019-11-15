@@ -1,5 +1,5 @@
 export interface ParamsInterface {
-  _id: string;
+  uuid: string;
   owner_id?: string;
   owner_service?: string;
 }

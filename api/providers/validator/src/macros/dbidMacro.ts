@@ -1,6 +1,6 @@
 export function dbidMacro(schema) {
   return {
-    oneOf: [
+    anyOf: [
       // MongoDB ObjectID
       {
         type: 'string',
@@ -14,6 +14,13 @@ export function dbidMacro(schema) {
         type: 'string',
         minLength: 1,
         maxLength: 64,
+      },
+
+      // UUID
+      {
+        type: 'string',
+        format: 'uuid',
+        maxLength: 38,
       },
     ],
   };
