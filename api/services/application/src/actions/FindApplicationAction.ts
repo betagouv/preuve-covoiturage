@@ -22,6 +22,10 @@ export class FindApplicationAction extends AbstractAction {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const data = setOwner<RepositoryInterface>('operator', params, context);
 
-    return this.applicationRepository.find(data);
+    // when the owner_id / operator_id is a string (old payloads)
+    // we search by UUID only as the owner_id is now an integer
+    return typeof params.owner_id === 'string'
+      ? this.applicationRepository.findByUuid({ uuid: params.uuid })
+      : this.applicationRepository.find(data);
   }
 }

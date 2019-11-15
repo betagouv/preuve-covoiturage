@@ -34,28 +34,47 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
 
     if (!result.rowCount) return [];
 
-    return result.rows;
+    return result.rows.map(this.castTypes);
   }
 
-  async find({ _id, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
+  async find({ uuid, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
         WHERE owner_service = $1
         AND owner_id = $2
-        AND _id = $3
+        AND uuid = $3
         LIMIT 1
       `,
-      values: [owner_service, owner_id, _id],
+      values: [owner_service, owner_id, uuid],
     };
 
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
-      throw new Error(`Application not found (${_id})`);
+      throw new Error(`Application not found (${uuid})`);
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
+  }
+
+  async findByUuid({ uuid }: { uuid: string }): Promise<ApplicationInterface> {
+    const query = {
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE uuid = $1
+        LIMIT 1
+      `,
+      values: [uuid],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount !== 1) {
+      throw new Error(`Application not found (${uuid})`);
+    }
+
+    return this.castTypes(result.rows[0]);
   }
 
   async create({ name, owner_id, owner_service, permissions }: CreateInterface): Promise<ApplicationInterface> {
@@ -76,26 +95,33 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       throw new Error(`Unable to create application (${name})`);
     }
 
-    return result.rows[0];
+    return this.castTypes(result.rows[0]);
   }
 
-  async revoke({ _id, owner_id, owner_service }: RevokeInterface): Promise<void> {
+  async revoke({ uuid, owner_id, owner_service }: RevokeInterface): Promise<void> {
     const query = {
       text: `
         UPDATE ${this.table}
         SET deleted_at = NOW()
         WHERE owner_service = $1
         AND owner_id = $2
-        AND _id = $3
+        AND uuid = $3
         AND deleted_at IS NULL
       `,
-      values: [owner_service, owner_id, _id],
+      values: [owner_service, owner_id, uuid],
     };
 
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
-      throw new NotFoundException(`Revoking application failed (${_id})`);
+      throw new NotFoundException(`Revoking application failed (${uuid})`);
     }
+  }
+
+  private castTypes(row: any): any {
+    return {
+      ...row,
+      owner_id: typeof row.owner_id === 'string' ? parseInt(row.owner_id, 10) : row.owner_id,
+    };
   }
 }
