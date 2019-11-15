@@ -202,12 +202,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           )
 
           .subscribe((company) => {
-            if (company.data) {
+            if (company) {
               companyFormGroup.patchValue({
-                naf_entreprise: company.data.company_naf_code ? company.data.company_naf_code : '',
-                nature_juridique: company.data.legal_nature_label ? company.data.legal_nature_label : '',
-                rna: company.data.nonprofit_code ? company.data.nonprofit_code : '',
-                vat_intra: company.data.intra_vat ? company.data.intra_vat : '',
+                naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
+                nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
+                rna: company.nonprofit_code ? company.nonprofit_code : '',
+                vat_intra: company.intra_vat ? company.intra_vat : '',
               });
             }
           });
