@@ -1,12 +1,12 @@
-import { FraudCheck } from './FraudCheck';
+import { FraudCheck, FraudCheckResult } from './FraudCheck';
 
 export interface FraudCheckRepositoryProviderInterface {
-  findOrCreateFraudCheck(acquisitionId: string, method: string): Promise<FraudCheck>;
+  findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck<T>>;
   updateFraudCheck(fraud: FraudCheck): Promise<void>;
 }
 
 export abstract class FraudCheckRepositoryProviderInterfaceResolver implements FraudCheckRepositoryProviderInterface {
-  public async findOrCreateFraudCheck(acquisitionId: string, method: string): Promise<FraudCheck> {
+  public async findOrCreateFraudCheck<T= any>(acquisitionId: number, method: string): Promise<FraudCheck<T>> {
     throw new Error();
   }
 

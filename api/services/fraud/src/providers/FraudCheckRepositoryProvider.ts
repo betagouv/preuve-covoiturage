@@ -18,7 +18,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
 
   constructor(public connection: PostgresConnection) {}
 
-  public async findOrCreateFraudCheck<T = any>(acquisitionId: string, method: string): Promise<FraudCheck<T>> {
+  public async findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck<T>> {
     const query = {
       text: `
       WITH ins AS (
@@ -26,7 +26,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
           acquisition_id,
           method,
           meta
-        ) VALUES ($1, $2, '{}'::json)
+        ) VALUES ($1::varchar, $2, '{}'::json)
         ON CONFLICT DO NOTHING
         RETURNING _id, status, meta::text, karma
       )
@@ -39,7 +39,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
         meta::text,
         karma
       FROM ${this.table}
-      WHERE acquisition_id = $1
+      WHERE acquisition_id = $1::varchar
       AND method = $2)) AS foo`,
       values: [acquisitionId, method],
     };
