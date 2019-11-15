@@ -1,5 +1,5 @@
 export interface OperatorNameInterface {
-  _id: string;
+  _id: number;
   // tslint:disable-next-line:variable-name
   name: string;
 }

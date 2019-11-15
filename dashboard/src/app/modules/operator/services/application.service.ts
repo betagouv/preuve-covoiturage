@@ -106,7 +106,7 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
     throw Error();
   }
 
-  public revokeAndList(id: string): Observable<[ApplicationInterface, ApplicationInterface[]]> {
+  public revokeAndList(id: number): Observable<[ApplicationInterface, ApplicationInterface[]]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:revoke`, { _id: id });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),

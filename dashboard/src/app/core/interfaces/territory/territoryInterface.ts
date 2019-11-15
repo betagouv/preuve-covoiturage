@@ -1,5 +1,5 @@
 export interface TerritoryNameInterface {
-  _id: string;
+  _id: number;
   // tslint:disable-next-line:variable-name
   shortname: string;
 }

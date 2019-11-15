@@ -59,7 +59,7 @@ export class CampaignService extends ApiService<Campaign> {
     );
   }
 
-  public getLoadedTemplate(templateId: string): TemplateInterface {
+  public getLoadedTemplate(templateId: number): TemplateInterface {
     const template = this._templates$.value.filter((tmp) => tmp._id === templateId)[0];
     if (!template) {
       console.log('template not found !');
@@ -67,7 +67,7 @@ export class CampaignService extends ApiService<Campaign> {
     return template;
   }
 
-  public deleteTemplateOrDraft(id: string): Observable<Campaign[]> {
+  public deleteTemplateOrDraft(id: number): Observable<Campaign[]> {
     const params = {};
     if ('territory_id' in this._authService.user) {
       params['territory_id'] = this._authService.user.territory_id;

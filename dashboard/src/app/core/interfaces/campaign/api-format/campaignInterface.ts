@@ -8,10 +8,10 @@ import { GlobalRetributionRuleType } from '~/core/interfaces/campaign/api-format
 export interface BaseCampaignInterface {
   name: string;
   description: string;
-  territory_id?: string;
+  territory_id?: number;
   status: CampaignStatusEnum;
   unit: IncentiveUnitEnum;
-  parent_id: string;
+  parent_id: number;
   amount_spent?: number;
   trips_number?: number;
   ui_status: UiStatusInterface;
@@ -22,7 +22,7 @@ export interface CampaignInterface extends BaseCampaignInterface {
   end_date: Date;
   global_rules: GlobalRetributionRuleType[];
   rules: RetributionRuleType[][];
-  _id: string;
+  _id: number;
 }
 
 // export class RetributionRule {
