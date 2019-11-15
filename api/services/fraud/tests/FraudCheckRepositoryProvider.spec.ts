@@ -19,7 +19,7 @@ describe('Fraudcheck repository', async () => {
   let repository: FraudCheckRepositoryProvider;
   let connection: PostgresConnection;
 
-  let acquisitionId = '0';
+  let acquisitionId = 1;
   let id: number;
   before(async () => {
     connection = new PostgresConnection({
@@ -37,7 +37,7 @@ describe('Fraudcheck repository', async () => {
   after(async () => {
     if (acquisitionId) {
       await connection.getClient().query({
-        text: `DELETE FROM ${repository.table} WHERE acquisition_id = $1`,
+        text: `DELETE FROM ${repository.table} WHERE acquisition_id = $1::varchar`,
         values: [acquisitionId],
       });
     }
