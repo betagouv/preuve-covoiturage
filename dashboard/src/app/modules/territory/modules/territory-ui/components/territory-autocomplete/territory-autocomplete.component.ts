@@ -19,7 +19,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   territoryCtrl = new FormControl();
   selectedTerritory: Territory;
-  selectedTerritoryId: string;
+  selectedTerritoryId: number;
 
   public territories: Territory[] = [];
 

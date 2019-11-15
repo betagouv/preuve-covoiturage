@@ -1,5 +1,5 @@
 export interface ApplicationInterface {
-  _id: string;
+  _id: number;
   name: string;
   created_at: Date;
 }

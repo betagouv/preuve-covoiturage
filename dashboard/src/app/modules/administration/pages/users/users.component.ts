@@ -130,11 +130,11 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     return this.authenticationService.user.group;
   }
 
-  get currentOperator(): string {
+  get currentOperator(): number {
     return this.authenticationService.user.operator_id;
   }
 
-  get currentTerritory(): string {
+  get currentTerritory(): number {
     return this.authenticationService.user.territory_id;
   }
 

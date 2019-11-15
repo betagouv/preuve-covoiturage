@@ -34,7 +34,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   fullFormMode = false;
 
-  private editedId: string;
+  private editedId: number;
 
   constructor(
     public authService: AuthenticationService,

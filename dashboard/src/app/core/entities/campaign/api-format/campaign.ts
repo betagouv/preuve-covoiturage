@@ -8,14 +8,14 @@ import { RetributionRuleType } from '~/core/interfaces/campaign/api-format/campa
 import { GlobalRetributionRuleType } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 
 export class Campaign {
-  public _id: string;
-  public territory_id?: string;
+  public _id: number;
+  public territory_id?: number;
   public name: string;
   public description: string;
   public start_date: Date;
   public end_date: Date;
   public status: CampaignStatusEnum;
-  public parent_id: string;
+  public parent_id: number;
   public unit: IncentiveUnitEnum;
   public ui_status: UiStatusInterface;
   public amount_spent?: number;

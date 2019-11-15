@@ -4,7 +4,7 @@
 // import { PersonInterface } from '~/core/interfaces/trip/tripInterface';
 
 // export class Person {
-//   operator_id: string;
+//   operator_id: number;
 //   is_driver: boolean;
 //   start_town: string;
 //   end_town: string;

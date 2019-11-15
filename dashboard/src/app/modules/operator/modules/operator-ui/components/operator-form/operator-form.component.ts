@@ -35,7 +35,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   @Input() closable = false;
 
   fullFormMode = false;
-  private editedOperatorId: string;
+  private editedOperatorId: number;
 
   constructor(
     public authService: AuthenticationService,

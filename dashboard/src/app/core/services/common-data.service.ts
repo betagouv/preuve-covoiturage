@@ -76,7 +76,7 @@ export class CommonDataService {
 
   loadCurrentOperator(): Observable<Operator> {
     return this.authenticationService.check().pipe(
-      mergeMap((user: User) => {
+      mergeMap<User, Observable<Operator>>((user: User) => {
         if (!user || !user.operator_id) return of<Operator>(null);
         return this.operatorService.get(user.operator_id);
       }),
@@ -126,9 +126,9 @@ export class CommonDataService {
           }
 
           if (user.territory_id) {
-            params.push(this.territoryService.getFindByIdJSONParam(user.territory_id ? user.territory_id : ''));
+            params.push(this.territoryService.getFindByIdJSONParam(user.territory_id ? user.territory_id : null));
           } else if (user.operator_id) {
-            params.push(this.operatorService.getFindByIdJSONParam(user.operator_id ? user.operator_id : ''));
+            params.push(this.operatorService.getFindByIdJSONParam(user.operator_id ? user.operator_id : null));
           }
 
           return this.jsonRPCService.call(params, {}, false);

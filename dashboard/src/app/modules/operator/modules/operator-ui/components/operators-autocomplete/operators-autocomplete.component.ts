@@ -49,7 +49,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   /**
    * todo: refactor when search is made server side
    */
-  getOperatorLabel(operatorId: string): string {
+  getOperatorLabel(operatorId: number): string {
     return this.operators.find((operator) => operator._id === operatorId).name;
   }
 

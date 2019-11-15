@@ -17,15 +17,15 @@ export interface ProfileInterface {
 }
 
 export interface UserInterface {
-  _id: string;
+  _id: number;
   email: string;
   lastname: string;
   firstname: string;
   phone: string;
   group: UserGroupEnum;
   role: UserRoleEnum;
-  operator_id?: string;
-  territory_id?: string;
+  operator_id?: number;
+  territory_id?: number;
   permissions: UserPermissionsType;
 }
 

@@ -1,4 +1,4 @@
 export interface CampaignNameInterface {
-  _id: string;
+  _id: number;
   name: string;
 }

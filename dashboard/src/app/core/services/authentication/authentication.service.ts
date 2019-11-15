@@ -259,9 +259,8 @@ export class AuthenticationService {
     // const redirectToStats = !this.user && user;
     this._hasChecked = true;
 
-    // TODO: remove dirty casting when ids > number
-    if (typeof user.territory_id === 'string') user.territory_id = <string>(<unknown>parseInt(user.territory_id, 10));
-    if (typeof user.operator_id === 'string') user.operator_id = <string>(<unknown>parseInt(user.operator_id, 10));
+    if (typeof user.territory_id === 'string') user.territory_id = parseInt(user.territory_id, 10);
+    if (typeof user.operator_id === 'string') user.operator_id = parseInt(user.operator_id, 10);
 
     this._user$.next(user);
   }

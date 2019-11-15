@@ -5,7 +5,7 @@ import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profi
 import { IModel } from '../IModel';
 
 export class BaseUser implements IModel {
-  public _id: string;
+  public _id: number;
   public email: string;
   public lastname: string;
   public firstname: string;
@@ -15,9 +15,9 @@ export class BaseUser implements IModel {
   public role: UserRoleEnum;
 
   // tslint:disable-next-line:variable-name
-  public operator_id?: string;
+  public operator_id?: number;
   // tslint:disable-next-line:variable-name
-  public territory_id?: string;
+  public territory_id?: number;
 }
 
 export class User extends BaseUser {

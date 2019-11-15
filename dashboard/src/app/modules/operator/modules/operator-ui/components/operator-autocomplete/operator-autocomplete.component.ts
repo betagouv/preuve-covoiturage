@@ -19,7 +19,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   operatorCtrl = new FormControl();
   selectedOperator: Operator;
-  selectedOperatorId: string;
+  selectedOperatorId: number;
 
   private focusDebounceTimer;
 

@@ -7,7 +7,7 @@ import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
 
 class Territory {
-  public _id: string;
+  public _id: number;
   public name: string;
   public siret: string;
   public shortname?: string;
@@ -24,7 +24,7 @@ class Territory {
   public coordinates?: any[];
 
   constructor(data: {
-    _id: string;
+    _id: number;
     name: string;
     siret: string;
     shortname?: string;

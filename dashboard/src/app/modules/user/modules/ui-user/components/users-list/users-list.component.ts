@@ -56,7 +56,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
       });
   }
 
-  public isCurrentUser(id: string): boolean {
+  public isCurrentUser(id: number): boolean {
     return this.authService.user._id === id;
   }
 

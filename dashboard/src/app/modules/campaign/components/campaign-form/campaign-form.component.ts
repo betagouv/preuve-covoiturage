@@ -178,7 +178,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     this.campaignFormGroup.setValue(new CampaignUx());
   }
 
-  public setTemplate(templateId: string | null = null) {
+  public setTemplate(templateId: number | null = null) {
     let campaign = new CampaignUx();
 
     if (templateId) {
