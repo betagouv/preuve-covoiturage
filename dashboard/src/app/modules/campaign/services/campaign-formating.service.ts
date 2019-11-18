@@ -18,6 +18,7 @@ import {
 } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import {
   BlackListGlobalRetributionRule,
+  BlackListWhiteListGlobalRetributionRuleType,
   DistanceRangeGlobalRetributionRule,
   GlobalRetributionRuleInterface,
   GlobalRetributionRulesSlugEnum,
@@ -25,9 +26,9 @@ import {
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
   OnlyAdultRetributionRule,
-  RestrictionRetributionRule,
   OperatorIdsGlobalRetributionRule,
   RankGlobalRetributionRule,
+  RestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
   WhiteListGlobalRetributionRule,
@@ -40,7 +41,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
-import { UiStatusInseeFilterInterface, UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -125,6 +126,54 @@ export class CampaignFormatingService {
           period: parameters.period,
         });
       }
+
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.BLACKLIST) {
+        const parameters = <BlackListGlobalRetributionRule['parameters']>retributionRule.parameters;
+        const uiStatusStarts = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
+          startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        const uiStatusEnds = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
+          startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        parameters.forEach((inseeStartEnd, index) => {
+          uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
+            const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
+            if (startIsEqual) {
+              const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
+              if (!endIsEqual) {
+                console.error(`${uiStatusEnds[uiStatusIndex]} not equal to ${inseeStartEnd.end}`);
+              }
+            } else {
+              console.error(`${uiStatusStart} not equal to ${inseeStartEnd.start}`);
+            }
+          });
+        });
+      }
+
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WHITELIST) {
+        const parameters = <WhiteListGlobalRetributionRule['parameters']>retributionRule.parameters;
+        const uiStatusStarts = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
+          startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        const uiStatusEnds = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
+          startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        parameters.forEach((inseeStartEnd, index) => {
+          uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
+            console.log(uiStatusStart.sort(), inseeStartEnd.start.sort());
+            const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
+            if (startIsEqual) {
+              console.log(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
+              const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
+              if (!endIsEqual) {
+                console.error(`${uiStatusEnds[uiStatusIndex]} not equal to ${inseeStartEnd.end}`);
+              }
+            } else {
+              console.error(`${uiStatusStart} not equal to ${inseeStartEnd.start}`);
+            }
+          });
+        });
+      }
     });
 
     // INSEE FILTER
@@ -135,8 +184,6 @@ export class CampaignFormatingService {
     if (campaign.ui_status.insee_filter && campaign.ui_status.insee_filter.blackList) {
       campaignUx.filters.insee.blackList = campaign.ui_status.insee_filter.blackList;
     }
-
-    // todo: verify values correspond to values to what is defind in global rules
 
     // RETRIBUTION RULES
     const retributions: RetributionUxInterface[] = [];
@@ -243,8 +290,6 @@ export class CampaignFormatingService {
   }
 
   public toCampaignFormat(campaignUx: CampaignUx): Campaign {
-    console.log({ campaignUx });
-
     const {
       _id,
       name,
@@ -293,20 +338,24 @@ export class CampaignFormatingService {
 
     // WHITELIST
     if (filters.insee.whiteList.length > 0) {
+      const params: BlackListWhiteListGlobalRetributionRuleType = [];
       filters.insee.whiteList.forEach((insees) => {
         const startInsees = insees.start.reduce((acc: string[], val) => [...val.insees, ...acc], []);
         const endInsees = insees.end.reduce((acc: string[], val) => [...val.insees, ...acc], []);
-        campaignGlobalRetributionRules.push(new WhiteListGlobalRetributionRule(startInsees, endInsees));
+        params.push({ start: startInsees, end: endInsees });
       });
+      campaignGlobalRetributionRules.push(new WhiteListGlobalRetributionRule(params));
     }
 
     // BLACKLIST
     if (filters.insee.blackList.length > 0) {
+      const params: BlackListWhiteListGlobalRetributionRuleType = [];
       filters.insee.blackList.forEach((insees) => {
         const startInsees = insees.start.reduce((acc: string[], val) => [...val.insees, ...acc], []);
         const endInsees = insees.end.reduce((acc: string[], val) => [...val.insees, ...acc], []);
-        campaignGlobalRetributionRules.push(new BlackListGlobalRetributionRule(startInsees, endInsees));
+        params.push({ start: startInsees, end: endInsees });
       });
+      campaignGlobalRetributionRules.push(new BlackListGlobalRetributionRule(params));
     }
 
     if (max_amount) {

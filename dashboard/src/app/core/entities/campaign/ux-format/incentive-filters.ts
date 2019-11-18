@@ -39,6 +39,10 @@ export interface InseeAndTerritoryInterface {
   insees: string[];
 }
 
+export interface InseeAndTerritoryAutocompleteInterface extends InseeAndTerritoryInterface {
+  context: string;
+}
+
 export interface IncentiveTimeRuleUxInterface {
   start: string;
   end: string;

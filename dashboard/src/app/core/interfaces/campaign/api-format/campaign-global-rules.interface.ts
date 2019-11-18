@@ -154,68 +154,28 @@ export class RestrictionRetributionRule implements GlobalRetributionRuleInterfac
   }
 }
 
+export type BlackListWhiteListGlobalRetributionRuleType = {
+  start: string[];
+  end: string[];
+}[];
+
 export class BlackListGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: {
-    and: {
-      start: string[];
-      end: string[];
-      operator: 'and';
-    };
-    or: {
-      start: string[];
-      end: string[];
-      operator: 'or';
-    };
-  };
-
-  constructor(startInsees: string[], endInsees: string[]) {
+  parameters: BlackListWhiteListGlobalRetributionRuleType;
+  constructor(params: BlackListWhiteListGlobalRetributionRuleType) {
     this.slug = GlobalRetributionRulesSlugEnum.BLACKLIST;
-    this.parameters = {
-      and: {
-        start: startInsees,
-        end: endInsees,
-        operator: 'and',
-      },
-      or: {
-        start: [],
-        end: [],
-        operator: 'or',
-      },
-    };
+    this.parameters = params;
   }
 }
 
 export class WhiteListGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: {
-    and: {
-      start: string[];
-      end: string[];
-      operator: 'and';
-    };
-    or: {
-      start: string[];
-      end: string[];
-      operator: 'or';
-    };
-  };
+  parameters: BlackListWhiteListGlobalRetributionRuleType;
 
-  constructor(startInsees: string[], endInsees: string[]) {
+  constructor(params: BlackListWhiteListGlobalRetributionRuleType) {
     this.slug = GlobalRetributionRulesSlugEnum.WHITELIST;
-    this.parameters = {
-      and: {
-        start: startInsees,
-        end: endInsees,
-        operator: 'and',
-      },
-      or: {
-        start: [],
-        end: [],
-        operator: 'or',
-      },
-    };
+    this.parameters = params;
   }
 }
