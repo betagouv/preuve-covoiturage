@@ -5,10 +5,7 @@ import * as _ from 'lodash';
 import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import {
-  InseeAndTerritoryAutocompleteInterface,
-  InseeAndTerritoryInterface,
-} from '~/core/entities/campaign/ux-format/incentive-filters';
+import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { CampaignInseeAutocompleteService } from '~/modules/campaign/services/campaign-insee-autocomplete.service';
 
 @Component({
@@ -19,7 +16,7 @@ import { CampaignInseeAutocompleteService } from '~/modules/campaign/services/ca
 export class TerritoriesInseeAutocompleteComponent extends DestroyObservable implements OnInit {
   public territoryInseeInputCtrl = new FormControl();
 
-  public searchedTerritoryInsees: InseeAndTerritoryAutocompleteInterface[] = [];
+  public searchedTerritoryInsees: InseeAndTerritoryInterface[] = [];
 
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;

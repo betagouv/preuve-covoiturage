@@ -136,17 +136,19 @@ export class CampaignFormatingService {
           startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
         );
         parameters.forEach((inseeStartEnd, index) => {
+          let dataError = false;
           uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
             const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
             if (startIsEqual) {
               const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
-              if (!endIsEqual) {
-                console.error(`${uiStatusEnds[uiStatusIndex]} not equal to ${inseeStartEnd.end}`);
+              if (endIsEqual) {
+                dataError = true;
               }
-            } else {
-              console.error(`${uiStatusStart} not equal to ${inseeStartEnd.start}`);
             }
           });
+          if (dataError) {
+            console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
+          }
         });
       }
 
@@ -159,19 +161,19 @@ export class CampaignFormatingService {
           startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
         );
         parameters.forEach((inseeStartEnd, index) => {
+          let dataError = false;
           uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
-            console.log(uiStatusStart.sort(), inseeStartEnd.start.sort());
             const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
             if (startIsEqual) {
-              console.log(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
               const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
-              if (!endIsEqual) {
-                console.error(`${uiStatusEnds[uiStatusIndex]} not equal to ${inseeStartEnd.end}`);
+              if (endIsEqual) {
+                dataError = true;
               }
-            } else {
-              console.error(`${uiStatusStart} not equal to ${inseeStartEnd.start}`);
             }
           });
+          if (dataError) {
+            console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
+          }
         });
       }
     });
