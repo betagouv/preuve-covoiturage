@@ -1,5 +1,5 @@
 <mat-form-field [formGroup]="parentForm" class="inseeAutocomplete" appearance="outline">
-  <mat-label>Communes ou département</mat-label>
+  <mat-label>Communes</mat-label>
   <mat-chip-list #chipList>
     <mat-chip
       *ngFor="let territory of this.territoryInseesControl.value; let i = index"
@@ -23,7 +23,10 @@
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritoryInseeSelect($event)">
     <mat-option *ngFor="let territory of searchedTerritoryInsees" [value]="territory">
-      {{ territory.territory_literal }}
+      <span title="{{ territory.territory_literal }} ( {{ territory.context }} )"
+        >{{ territory.territory_literal
+        }}<span class="inseeAutocomplete-result-details">( {{ territory.context }} )</span></span
+      >
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

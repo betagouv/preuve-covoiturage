@@ -20,8 +20,10 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   tripClassKeys = Object.keys(TripRankEnum);
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE_KM;
   selectedInseeFilterTabIndex;
+  loading = true;
 
   @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
+  private initValue = 0;
 
   constructor(private _formBuilder: FormBuilder, private _dialog: DialogService) {
     super();
@@ -236,8 +238,11 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
 
   private initSelectedInseeFilterTabIndex() {
     if (this.hasInseeWhiteList) {
-      this.inseeFilterTabGroup.selectedIndex = 1;
-      this.selectedInseeFilterTabIndex = 1;
+      // prevent loading bug of mat tab group
+      setTimeout(() => {
+        this.inseeFilterTabGroup.selectedIndex = 1;
+        this.selectedInseeFilterTabIndex = 1;
+      }, 1000);
     } else if (this.hasInseeBlackList) {
       this.inseeFilterTabGroup.selectedIndex = 0;
       this.selectedInseeFilterTabIndex = 0;
