@@ -27,8 +27,8 @@ export class CypressExpectedTemplates {
       (template) =>
         new Campaign({
           ...template,
-          start: <any>CypressExpectedTemplates.startMoment.toDate().toISOString(),
-          end: <any>CypressExpectedTemplates.endMoment.toDate().toISOString(),
+          start_date: <any>CypressExpectedTemplates.startMoment.toDate().toISOString(),
+          end_date: <any>CypressExpectedTemplates.endMoment.toDate().toISOString(),
           global_rules: [
             ...template.global_rules,
             new MaxAmountRetributionRule(CypressExpectedTemplates.maxAmount),
