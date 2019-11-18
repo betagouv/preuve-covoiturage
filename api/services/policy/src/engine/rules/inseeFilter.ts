@@ -28,43 +28,6 @@ const blacklistWhitelistSchema = {
   minItems: 1,
 };
 
-// todo replace with this And adapt front
-
-// const andOrSchema = {
-//   type: 'object',
-//   additionalProperties: false,
-//   required: ['start', 'end'],
-//   properties: {
-//     start: {
-//       type: 'array',
-//       items: {
-//         macro: 'insee',
-//       },
-//     },
-//     end: {
-//       type: 'array',
-//       items: {
-//         macro: 'insee',
-//       },
-//     },
-//   },
-// };
-// const blacklistWhitelistSchema = {
-//   type: 'array',
-//   items: {
-//     type: 'object',
-//     additionalProperties: false,
-//     required: ['values', 'operator'],
-//     properties: {
-//       values: andOrSchema,
-//       operator: {
-//         type: 'string',
-//         enum: ['and', 'or'],
-//       },
-//     },
-//   },
-// };
-
 interface InseeParamsInterface {
   start: string[];
   end: string[];
