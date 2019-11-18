@@ -8,7 +8,8 @@ import {
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
   OperatorIdsGlobalRetributionRule,
-  RankGlobalRetributionRule, RestrictionRetributionRule,
+  RankGlobalRetributionRule,
+  RestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -81,8 +82,16 @@ export class CypressExpectedCampaign {
           min: 85000,
           max: 150000,
         }),
-        new BlackListGlobalRetributionRule(['69123'], ['13055']),
-        new BlackListGlobalRetributionRule(['75056'], ['91377']),
+        new BlackListGlobalRetributionRule([
+          {
+            start: ['69123'],
+            end: ['13055'],
+          },
+          {
+            start: ['75056'],
+            end: ['91377'],
+          },
+        ]),
         new MaxAmountRetributionRule(CypressExpectedCampaign.maxAmount),
         new MaxTripsRetributionRule(CypressExpectedCampaign.maxTrips),
         new RestrictionRetributionRule(
@@ -115,12 +124,14 @@ export class CypressExpectedCampaign {
                 {
                   territory_literal: 'Lyon',
                   insees: ['69123'],
+                  context: '69, Rh\u00f4ne, Auvergne-Rh\u00f4ne-Alpes',
                 },
               ],
               end: [
                 {
                   territory_literal: 'Marseille',
                   insees: ['13055'],
+                  context: "13, Bouches-du-Rh\u00f4ne, Provence-Alpes-C\u00f4te d'Azur",
                 },
               ],
             },
@@ -129,12 +140,14 @@ export class CypressExpectedCampaign {
                 {
                   territory_literal: 'Paris',
                   insees: ['75056'],
+                  context: '75, Paris, \u00cele-de-France',
                 },
               ],
               end: [
                 {
                   territory_literal: 'Massy',
                   insees: ['91377'],
+                  context: '91, Essonne, \u00cele-de-France',
                 },
               ],
             },
