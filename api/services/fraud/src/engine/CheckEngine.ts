@@ -34,6 +34,21 @@ export class CheckEngine {
 
 
   /**
+   *  List all available fraud check methods
+   */
+  listAvailableMethods(): string[] {
+    return this.checks.map(c => c.key);
+  }
+
+  /**
+   *  List all unprocessed methods for an acquisition id
+   */
+  async listUnprocessedMethods(acquisitionId: number): Promise<string[]> {
+    const processedMethods = (await this.repository.getAllCheckByAcquisition(acquisitionId)).map(m => m.method);
+    return this.listAvailableMethods().filter(method => processedMethods.indexOf(method) < 0);
+  }
+
+  /**
    *  Apply a method on an acquisition_id
    *  - get the check processor
    *  - get the check meta
