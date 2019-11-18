@@ -15,10 +15,17 @@ const find = [
   'karma',
 ];
 
+const list = [
+  ...find,
+  'acquisition_id',
+  'method',
+];
+
 describe('Fraudcheck repository', async () => {
   let repository: FraudCheckRepositoryProvider;
   let connection: PostgresConnection;
 
+  const fakeMethod = 'mymethod';
   let acquisitionId = 1;
   let id: number;
   before(async () => {
@@ -46,7 +53,7 @@ describe('Fraudcheck repository', async () => {
   });
 
   it('should create a fraudcheck entry', async () => {
-    const data = await repository.findOrCreateFraudCheck(acquisitionId, 'mymethod');
+    const data = await repository.findOrCreateFraudCheck(acquisitionId, fakeMethod);
     id = data._id;
     expect(data).to.have.all.keys(find);
     expect(data.status).to.eq('pending');
@@ -55,7 +62,7 @@ describe('Fraudcheck repository', async () => {
   });
 
   it('should not create a fraudcheck entry if exists', async () => {
-    const data = await repository.findOrCreateFraudCheck(acquisitionId, 'mymethod');
+    const data = await repository.findOrCreateFraudCheck(acquisitionId, fakeMethod);
     expect(data).to.have.all.keys(find);
     expect(data._id).to.eq(id);
     expect(data.status).to.eq('pending');
@@ -64,7 +71,7 @@ describe('Fraudcheck repository', async () => {
   });
 
   it('should update a fraudcheck entry if exists', async () => {
-    const actualData = await repository.findOrCreateFraudCheck(acquisitionId, 'mymethod');
+    const actualData = await repository.findOrCreateFraudCheck(acquisitionId, fakeMethod);
     actualData.status = 'done'
     actualData.karma = 100;
     actualData.meta = {
@@ -73,7 +80,7 @@ describe('Fraudcheck repository', async () => {
 
     await repository.updateFraudCheck(actualData);
 
-    const updatedData = await repository.findOrCreateFraudCheck(acquisitionId, 'mymethod');
+    const updatedData = await repository.findOrCreateFraudCheck(acquisitionId, fakeMethod);
     expect(updatedData).to.have.all.keys(find);
     expect(updatedData).to.deep.eq(actualData);
   });
@@ -87,5 +94,37 @@ describe('Fraudcheck repository', async () => {
         status: 'done',
       })
     ).to.eventually.rejectedWith();
+  });
+
+  it('should list by acquisition with a complete object', async () => {
+    const data = await repository.getAllCheckByAcquisition(acquisitionId, ['done', 'pending', 'error'], false);
+    expect(data).to.be.an('array');
+    for (const r of data) {
+      expect(r).to.have.all.keys(list);
+    }
+  });
+
+  it('should list by acquisition with method', async () => {
+    const data = await repository.getAllCheckByAcquisition(acquisitionId, ['done', 'pending', 'error'], true);
+    expect(data).to.be.an('array');
+    expect(data.length).to.eq(1);
+    expect(data[0].method).to.be.a('string');
+    expect(data[0].method).to.eq(fakeMethod);
+  });
+
+  it('should list by method with a complete object', async () => {
+    const data = await repository.getAllCheckByMethod(fakeMethod, ['done', 'pending', 'error'], false);
+    expect(data).to.be.an('array');
+    for (const r of data) {
+      expect(r).to.have.all.keys(list);
+    }
+  });
+
+  it('should list by method with acqusition', async () => {
+    const data = await repository.getAllCheckByMethod(fakeMethod, ['done', 'pending', 'error'], true);
+    expect(data).to.be.an('array');
+    expect(data.length).to.eq(1);
+    expect(data[0].acquisition_id).to.be.a('number');
+    expect(data[0].acquisition_id).to.eq(acquisitionId);
   });
 });

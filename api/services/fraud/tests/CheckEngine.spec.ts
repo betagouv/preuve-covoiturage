@@ -26,7 +26,7 @@ describe('Check engine', async () => {
   @provider({
     identifier: FraudCheckRepositoryProviderInterfaceResolver
   })
-  class FakeFraudCheckRepository implements FraudCheckRepositoryProviderInterface {
+  class FakeFraudCheckRepository extends FraudCheckRepositoryProviderInterfaceResolver implements FraudCheckRepositoryProviderInterface {
     public async findOrCreateFraudCheck(acquisitionId: number, method: string): Promise<FraudCheck> {
       return meta;
     }

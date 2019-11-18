@@ -5,6 +5,7 @@ import {
   FraudCheckRepositoryProviderInterface,
   FraudCheckRepositoryProviderInterfaceResolver,
   FraudCheck,
+  FraudCheckComplete,
 } from '../interfaces';
 
 /*
@@ -18,6 +19,11 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
 
   constructor(public connection: PostgresConnection) {}
 
+
+  /**
+   * Find or insert a fraud check entry from acquisition_id and method name
+   * It return the fraud check entry or undefined
+   */
   public async findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck<T>> {
     const query = {
       text: `
@@ -49,10 +55,14 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
     if (result.rowCount !== 1) {
       return undefined;
     }
-    return result.rows[0];
 
+    return result.rows[0];
   }
 
+
+  /**
+   *  Update a fraud check entry
+   */
   public async updateFraudCheck(fraud: FraudCheck): Promise<void> {
     const query = {
       text: `
@@ -78,5 +88,66 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
     }
 
     return;
+  }
+
+
+  /**
+   *  Return all fraud check entry for an acquistion
+   *  By default, filtering by status with 'done'
+   *  and return only the method
+   */
+  public async getAllCheckByAcquisition(acquisitionId: number, status: string[] = ['done'], onlyMethod = true): Promise<(FraudCheckComplete|{ method: string })[]> {
+    const fields = onlyMethod ? 'method' : `
+      _id,
+      method,
+      acquisition_id::integer,
+      status,
+      meta,
+      karma`;
+
+    const query = {
+      text: `
+      SELECT 
+        ${fields}
+      FROM ${this.table}
+      WHERE
+        acquisition_id = $1::varchar
+        AND status::varchar = ANY($2::varchar[])
+      `,
+      values: [acquisitionId, status],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    return result.rows;
+  }
+
+  /**
+   *  Return all fraud check entry for a method name
+   *  By default, filtering by status with 'done'
+   *  and return only the acquition id
+   */
+  public async getAllCheckByMethod(method: string, status: string[] = ['done'], onlyAcquisition = true): Promise<(FraudCheckComplete|{ acquisition_id: number })[]> {
+    const fields = onlyAcquisition ? 'acquisition_id::integer' : `
+      _id,
+      method,
+      acquisition_id::integer,
+      status,
+      meta,
+      karma`;
+
+    const query = {
+      text: `
+      SELECT 
+        ${fields}
+      FROM ${this.table}
+      WHERE
+        method = $1
+        AND status::varchar = ANY($2::varchar[])
+      `,
+      values: [method, status],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    return result.rows;
   }
 }

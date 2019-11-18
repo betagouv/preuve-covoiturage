@@ -10,3 +10,8 @@ export interface FraudCheck<T = any> extends FraudCheckResult<T> {
   _id: number;
   status: string;
 }
+
+export interface FraudCheckComplete extends FraudCheck {
+  method: string;
+  acquisition_id: number;
+}
