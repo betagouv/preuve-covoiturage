@@ -38,9 +38,10 @@ export class ListTerritoryOperatorAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (params.territory_id) {
-      return await this.territoryRepository.findByTerritory(params.territory_id);
-    } else if (params.operator_id) {
-      return await this.territoryRepository.findByOperator(params.operator_id);
+      return this.territoryRepository.findByTerritory(params.territory_id);
+    }
+    if (params.operator_id) {
+      return this.territoryRepository.findByOperator(params.operator_id);
     }
     return [];
   }

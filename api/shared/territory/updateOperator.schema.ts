@@ -18,4 +18,4 @@ export const schema = {
   },
 };
 
-export const binding = [ alias, schema ];
+export const binding = [alias, schema];

@@ -9,7 +9,8 @@ import { alias } from '../shared/territory/updateOperator.schema';
 @handler(configHandler)
 export class UpdateTerritoryOperatorAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
-    ['scopeIt',
+    [
+      'scopeIt',
       [
         ['this.is.not.a.valid.permission'],
         [
@@ -18,7 +19,7 @@ export class UpdateTerritoryOperatorAction extends AbstractAction {
               return 'operator.update';
             }
           },
-        ]
+        ],
       ],
     ],
     ['validate', alias],

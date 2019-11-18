@@ -26,7 +26,7 @@ export class TerritoryOperatorRepositoryProvider implements TerritoryOperatorRep
       return [];
     }
 
-    return result.rows.map(item => item.territory_id);
+    return result.rows.map((item) => item.territory_id);
   }
 
   async findByTerritory(id: number): Promise<number[]> {
@@ -41,7 +41,7 @@ export class TerritoryOperatorRepositoryProvider implements TerritoryOperatorRep
       return [];
     }
 
-    return result.rows.map(item => item.operator_id);
+    return result.rows.map((item) => item.operator_id);
   }
 
   async updateByOperator(id: number, list: number[]): Promise<void> {
@@ -52,23 +52,22 @@ export class TerritoryOperatorRepositoryProvider implements TerritoryOperatorRep
         text: `DELETE FROM ${this.table} WHERE operator_id = $1::int AND NOT (territory_id = ANY($2::int[])) RETURNING territory_id`,
         values: [id, list],
       };
-  
+
       await client.query(deleteQuery);
-  
       const insertQuery = {
         text: `
           INSERT INTO ${this.table}
           (operator_id, territory_id)
-          SELECT $1::int as operator_id, territory_id 
+          SELECT $1::int as operator_id, territory_id
           FROM UNNEST ($2::int[]) as territory_id
           ON CONFLICT DO NOTHING`,
         values: [id, list], // Array(list.length).fill(id)
       };
-      
+
       await client.query(insertQuery);
-  
+
       await client.query('COMMIT');
-    } catch(e) {
+    } catch (e) {
       await client.query('ROLLBACK');
       await client.release();
       throw e;

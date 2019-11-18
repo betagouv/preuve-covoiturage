@@ -449,20 +449,19 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
 
     pagination.total = result.rows[0].total_count;
 
-    let data = result.rows.map(({ total_count, ...data }) => data).map(this.castTypes);
+    let finalDatas = result.rows.map(({ total_count, ...data }) => data).map(this.castTypes);
 
     // operator is not exposed if not defined in visible_operator_ids or if visible_operator_ids is not defined
     if (params.visible_operator_ids) {
-      data = data.map((row) => {
-        return {
-          ...row,
-          operator_id: params.visible_operator_ids.indexOf(row.operator_id) === -1 ? null : row.operator_id,
-        };
-      });
+      // tslint:disable-arrow-body-style
+      finalDatas = finalDatas.map((row) => ({
+        ...row,
+        operator_id: params.visible_operator_ids.indexOf(row.operator_id) === -1 ? null : row.operator_id,
+      }));
     }
 
     return {
-      data,
+      data: finalDatas,
       meta: {
         pagination,
       },
