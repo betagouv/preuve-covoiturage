@@ -1,6 +1,6 @@
 import { provider, ServiceContainerInterfaceResolver } from '@ilos/common';
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
-import { TheoricalDistanceAndDurationCheck } from './checks/TheoricalDistanceAndDurationCheckAction';
+import { TheoricalDistanceAndDurationCheck } from './checks/TheoricalDistanceAndDurationCheck';
 import { StaticCheckInterface, CheckInterface } from '../interfaces/CheckInterface';
 
 @provider()
