@@ -7,6 +7,7 @@
 export interface TokenPayloadInterface {
   a: string;
   o: string;
+  s: string;
   p?: string[];
   v?: number;
   iat?: number;
