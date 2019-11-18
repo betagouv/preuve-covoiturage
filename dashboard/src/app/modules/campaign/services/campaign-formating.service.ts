@@ -127,6 +127,7 @@ export class CampaignFormatingService {
         });
       }
 
+      // INSEE BLACKLIST : Verify data in ui-status is correct
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.BLACKLIST) {
         const parameters = <BlackListGlobalRetributionRule['parameters']>retributionRule.parameters;
         const uiStatusStarts = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
@@ -152,6 +153,7 @@ export class CampaignFormatingService {
         });
       }
 
+      // INSEE WHITELIST : Verify data in ui-status is correct
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WHITELIST) {
         const parameters = <WhiteListGlobalRetributionRule['parameters']>retributionRule.parameters;
         const uiStatusStarts = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
