@@ -37,6 +37,7 @@ import {
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -151,7 +152,8 @@ export class CampaignFormatingService {
           if (slugs.indexOf(RetributionRulesSlugEnum.FOR_PASSENGER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
               const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
-              retribution.for_passenger.amount = Number(parameters) / 100; // to euros
+              retribution.for_passenger.amount =
+                campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters) : Number(parameters) / 100; // to euros
             }
             if (retributionRule.slug === RetributionRulesSlugEnum.PER_KM) {
               retribution.for_passenger.per_km = true;
@@ -162,7 +164,8 @@ export class CampaignFormatingService {
           } else if (slugs.indexOf(RetributionRulesSlugEnum.FOR_DRIVER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
               const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
-              retribution.for_driver.amount = Number(parameters) / 100; // to euros
+              retribution.for_driver.amount =
+                campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters) : Number(parameters) / 100; // to euros
             }
             if (retributionRule.slug === RetributionRulesSlugEnum.PER_KM) {
               retribution.for_driver.per_km = true;
@@ -304,8 +307,11 @@ export class CampaignFormatingService {
       if (!campaignUx.ui_status.for_passenger) {
         retribution.for_passenger.free = false;
       }
-      retribution.for_passenger.amount = retribution.for_passenger.amount * 100; // to cents
-      retribution.for_driver.amount = retribution.for_driver.amount * 100; // to cents
+      retribution.for_passenger.amount =
+        unit === IncentiveUnitEnum.POINT ? retribution.for_passenger.amount : retribution.for_passenger.amount * 100; // to cents
+
+      retribution.for_driver.amount =
+        unit === IncentiveUnitEnum.POINT ? retribution.for_driver.amount : retribution.for_driver.amount * 100; // to cents
 
       // construct rules for passenger
       if (retribution.for_passenger.amount || retribution.for_passenger.free) {
