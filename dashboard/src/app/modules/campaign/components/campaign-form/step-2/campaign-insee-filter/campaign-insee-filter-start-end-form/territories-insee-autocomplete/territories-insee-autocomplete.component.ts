@@ -58,10 +58,10 @@ export class TerritoriesInseeAutocompleteComponent extends DestroyObservable imp
   }
 
   private filterTerritoryInsees(literal: string = ''): void {
-    let apiMethod = 'findMainInsee';
-    if (!isNaN(Number(literal)) && literal.length === 2) {
-      apiMethod = 'findDepartementByCode';
-    }
+    const apiMethod = 'findMainInsee';
+    // if (!isNaN(Number(literal)) && literal.length === 2) {
+    //   apiMethod = 'findDepartementByCode';
+    // }
     const selectedTerritoryInsees = this.territoryInseesControl.value || [];
     this.inseeAutocompleteService[apiMethod](literal).subscribe(
       (foundTerritories) =>

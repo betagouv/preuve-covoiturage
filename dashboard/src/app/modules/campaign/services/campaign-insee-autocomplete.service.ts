@@ -56,19 +56,19 @@ export class CampaignInseeAutocompleteService {
   //     );
   // }
 
-  /**
-   * find a departement by code with GEO api
-   */
-  public findDepartementByCode(code: string = ''): Observable<InseeAndTerritoryInterface[]> {
-    const params = `/departements/${encodeURIComponent(code)}?fields=code,nom`;
-    return this.http.get(`${this.geoApiDomain}${params}`).pipe(
-      filter((response) => _.get(response, 'code', null)),
-      map((response: object) => [
-        <InseeAndTerritoryInterface>{
-          territory_literal: _.get(response, 'nom'),
-          insees: [_.get(response, 'code')],
-        },
-      ]),
-    );
-  }
+  // /**
+  //  * find a departement by code with GEO api
+  //  */
+  // public findDepartementByCode(code: string = ''): Observable<InseeAndTerritoryInterface[]> {
+  //   const params = `/departements/${encodeURIComponent(code)}?fields=code,nom`;
+  //   return this.http.get(`${this.geoApiDomain}${params}`).pipe(
+  //     filter((response) => _.get(response, 'code', null)),
+  //     map((response: object) => [
+  //       <InseeAndTerritoryInterface>{
+  //         territory_literal: _.get(response, 'nom'),
+  //         insees: [_.get(response, 'code')],
+  //       },
+  //     ]),
+  //   );
+  // }
 }
