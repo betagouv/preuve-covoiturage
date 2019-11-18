@@ -2,6 +2,7 @@ import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import {
   DistanceRangeGlobalRetributionRule,
   RankRetributionRule,
+  RestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -18,6 +19,7 @@ import {
   PerPassengerRetributionRule,
   RangeRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+import { RestrictionPeriodsEnum, RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
 
 export const campaignTemplateStubs: TemplateInterface[] = [
   {
@@ -68,7 +70,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
           max: 150000,
         }),
         new ForDriverRetributionRule(),
-        new AmountRetributionRule(10),
+        new AmountRetributionRule(500),
         new PerPassengerRetributionRule(),
       ],
     ],
@@ -164,14 +166,45 @@ export const campaignTemplateStubs: TemplateInterface[] = [
         min: 2000,
         max: 150000,
       }),
+      new RestrictionRetributionRule(RestrictionTargetsEnum.DRIVER, 8, RestrictionPeriodsEnum.DAY),
+      new RestrictionRetributionRule(RestrictionTargetsEnum.PASSENGER, 2, RestrictionPeriodsEnum.DAY),
     ],
     rules: [
-      [new ForPassengerRetributionRule(), new AmountRetributionRule(10), new PerKmRetributionRule()],
       [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
         new ForDriverRetributionRule(),
         new AmountRetributionRule(10),
         new PerPassengerRetributionRule(),
         new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(500),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(500),
+        new PerPassengerRetributionRule(),
       ],
     ],
     ui_status: {
@@ -198,14 +231,44 @@ export const campaignTemplateStubs: TemplateInterface[] = [
         min: 2000,
         max: 150000,
       }),
+      new RestrictionRetributionRule(RestrictionTargetsEnum.DRIVER, 8, RestrictionPeriodsEnum.DAY),
+      new RestrictionRetributionRule(RestrictionTargetsEnum.PASSENGER, 2, RestrictionPeriodsEnum.DAY),
     ],
     rules: [
-      [new ForPassengerRetributionRule(), new FreeRetributionRule()],
       [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
+        new ForPassengerRetributionRule(),
+        new FreeRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
         new ForDriverRetributionRule(),
         new AmountRetributionRule(10),
         new PerPassengerRetributionRule(),
         new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(500),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(500),
+        new PerPassengerRetributionRule(),
       ],
     ],
     ui_status: {
@@ -241,10 +304,23 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     ],
     rules: [
       [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
         new ForDriverRetributionRule(),
         new AmountRetributionRule(10),
         new PerPassengerRetributionRule(),
         new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(500),
+        new PerPassengerRetributionRule(),
       ],
     ],
     ui_status: {
@@ -272,12 +348,41 @@ export const campaignTemplateStubs: TemplateInterface[] = [
       }),
     ],
     rules: [
-      [new ForPassengerRetributionRule(), new AmountRetributionRule(10), new PerKmRetributionRule()],
       [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(10),
+        new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 0,
+          max: 50000,
+        }),
         new ForDriverRetributionRule(),
         new AmountRetributionRule(10),
         new PerPassengerRetributionRule(),
         new PerKmRetributionRule(),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForPassengerRetributionRule(),
+        new AmountRetributionRule(500),
+      ],
+      [
+        new RangeRetributionRule({
+          min: 50000,
+          max: 150000,
+        }),
+        new ForDriverRetributionRule(),
+        new AmountRetributionRule(500),
+        new PerPassengerRetributionRule(),
       ],
     ],
     ui_status: {

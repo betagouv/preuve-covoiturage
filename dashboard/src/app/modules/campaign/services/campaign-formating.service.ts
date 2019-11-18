@@ -307,11 +307,12 @@ export class CampaignFormatingService {
       if (!campaignUx.ui_status.for_passenger) {
         retribution.for_passenger.free = false;
       }
+
       retribution.for_passenger.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_passenger.amount : retribution.for_passenger.amount * 100; // to cents
+        unit === IncentiveUnitEnum.POINT ? retribution.for_passenger.amount : retribution.for_passenger.amount * 100;
 
       retribution.for_driver.amount =
-        unit === IncentiveUnitEnum.POINT ? retribution.for_driver.amount : retribution.for_driver.amount * 100; // to cents
+        unit === IncentiveUnitEnum.POINT ? retribution.for_driver.amount : retribution.for_driver.amount * 100;
 
       // construct rules for passenger
       if (retribution.for_passenger.amount || retribution.for_passenger.free) {

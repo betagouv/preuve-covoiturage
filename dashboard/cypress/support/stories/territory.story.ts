@@ -63,11 +63,11 @@ export function testTerritoryStory(
 
   if (newFromTemplate) {
     const length = <number>campaignTemplateStubs.length;
-    for (let i = 0; i < length; i += 1) {
-      describe(`Create from template ${i + 1}`, () => {
-        cypress_campaignCreateFromTemplate(i);
-      });
-    }
+    // for (let i = 0; i < length; i += 1) {
+    //   describe(`Create from template ${i + 1}`, () => {
+    cypress_campaignCreateFromTemplate(6);
+    // });
+    // }
 
     // describe('Edit latest campaign from template', () => {
     //   cypress_campaignEditCreatedFromTemplate(0);
