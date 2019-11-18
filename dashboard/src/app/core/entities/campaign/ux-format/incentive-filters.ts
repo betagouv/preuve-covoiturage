@@ -37,9 +37,6 @@ export interface IncentiveInseeFilterInterface {
 export interface InseeAndTerritoryInterface {
   territory_literal: string;
   insees: string[];
-}
-
-export interface InseeAndTerritoryAutocompleteInterface extends InseeAndTerritoryInterface {
   context: string;
 }
 

@@ -5,10 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 
-import {
-  InseeAndTerritoryAutocompleteInterface,
-  InseeAndTerritoryInterface,
-} from '~/core/entities/campaign/ux-format/incentive-filters';
+import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +19,7 @@ export class CampaignInseeAutocompleteService {
   /**
    * search a town by name with adresse api
    */
-  public findMainInsee(literal: string = ''): Observable<InseeAndTerritoryAutocompleteInterface[]> {
+  public findMainInsee(literal: string = ''): Observable<InseeAndTerritoryInterface[]> {
     const params = `/?q=${encodeURIComponent(literal)}&type=municipality&limit=15`;
     return this.http.get(`${this.addressApiDomain}${params}`).pipe(
       filter((response) => response && response['features']),
@@ -31,7 +28,7 @@ export class CampaignInseeAutocompleteService {
           .filter((el) => _.get(el, 'properties.citycode', null))
           .map(
             (el) =>
-              <InseeAndTerritoryAutocompleteInterface>{
+              <InseeAndTerritoryInterface>{
                 territory_literal: _.get(el, 'properties.name'),
                 insees: [_.get(el, 'properties.citycode')],
                 context: _.get(el, 'properties.context'),
