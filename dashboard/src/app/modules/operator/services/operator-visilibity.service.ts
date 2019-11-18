@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { finalize, map, mergeMap, tap } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
@@ -19,7 +19,7 @@ export class OperatorVisilibityService {
   private _loading$ = new BehaviorSubject<boolean>(false);
   private _loaded$ = new BehaviorSubject<boolean>(false);
 
-  private _method = 'operator';
+  private _method = 'territory';
 
   constructor(
     private _http: HttpClient,
@@ -45,11 +45,11 @@ export class OperatorVisilibityService {
     const user = this._authService.user;
     const params = {};
     if (user && user.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = [user.operator_id];
+      params['operator_id'] = user.operator_id;
     } else {
       this._toastr.error('Vous devez être un opérateur pour avoir accès à cette page.');
     }
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:visibleInTerritories`, params);
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:listOperator`, params);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
       tap((data) => {
@@ -63,12 +63,16 @@ export class OperatorVisilibityService {
   }
 
   public update(territoryIds: number[]): Observable<OperatorVisibilityType> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:updateVisibleInTerritories`, territoryIds);
-    return this._jsonRPCService.callOne(jsonRPCParam).pipe(
-      map((data) => data.data),
-      tap((entity: OperatorVisibilityType) => {
-        this._entity$.next(entity);
-      }),
-    );
+    const user = this._authService.user;
+    const params: any = {};
+    if (user && user.group === UserGroupEnum.OPERATOR) {
+      params['operator_id'] = user.operator_id;
+    } else {
+      this._toastr.error('Vous devez être un opérateur pour avoir accès à cette page.');
+    }
+    params.territory_id = territoryIds;
+
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:updateOperator`, params);
+    return this._jsonRPCService.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 }

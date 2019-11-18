@@ -9,7 +9,9 @@ import { alias } from '../shared/territory/listOperator.schema';
 @handler(configHandler)
 export class ListTerritoryOperatorAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
-    ['scopeIt',
+    ['validate', alias],
+    [
+      'scopeIt',
       [
         ['this.is.not.a.valid.permission'],
         [
@@ -25,10 +27,9 @@ export class ListTerritoryOperatorAction extends AbstractAction {
               return 'territory.read';
             }
           },
-        ]
+        ],
       ],
     ],
-    ['validate', alias],
   ];
 
   constructor(private territoryRepository: TerritoryOperatorRepositoryProviderInterfaceResolver) {

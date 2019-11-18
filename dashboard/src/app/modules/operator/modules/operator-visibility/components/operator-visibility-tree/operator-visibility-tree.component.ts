@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { Form, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, of } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -38,6 +38,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     this.initSearchForm();
     this.initVisibilityForm();
 
+    /*
     this._commonDataService.territories$
       .pipe(
         filter((territories) => !!territories),
@@ -46,7 +47,9 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       .subscribe((territories) => {
         this.territories = territories;
       });
+    */
 
+    /*
     this._operatorVisilibityService.operatorVisibility$
       .pipe(
         filter((territories) => !!territories),
@@ -55,12 +58,21 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       .subscribe((territoryIds: number[]) => {
         this.checkedTerritoryIds = territoryIds;
         this.updateCheckAllCheckbox();
-      });
+      });*/
 
     merge(
-      this._commonDataService.territories$,
+      this._commonDataService.territories$.pipe(
+        filter((territories) => !!territories),
+        tap((territories) => {
+          this.territories = territories;
+        }),
+      ),
       this.searchFilter.valueChanges.pipe(debounceTime(300)),
-      this._operatorVisilibityService.operatorVisibility$,
+      this._operatorVisilibityService.operatorVisibility$.pipe(
+        filter((territories) => !!territories),
+        tap((territories) => {}),
+        tap((territoryIds) => (this.checkedTerritoryIds = territoryIds)),
+      ),
     )
       .pipe(
         distinctUntilChanged(),
@@ -72,6 +84,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       .pipe(takeUntil(this.destroy$))
       .subscribe((filteredTerritories) => {
         this.territoryIdsToShow = filteredTerritories.map((territory) => territory._id);
+        // console.log('this.territoryIdsToShow : ', this.territoryIdsToShow);
         this.updateVisibilityForm();
       });
   }
@@ -93,7 +106,16 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   public save(): void {
-    this._operatorVisilibityService.update(this.checkedTerritoryIds).subscribe(
+    const territoriesIds = (this.checkedTerritoryIds = this.territoriesFormArray.value.reduce(
+      (checkedTerritories: number[], checked: boolean, index: number) => {
+        if (checked) {
+          checkedTerritories.push(this.territories[index]._id);
+        }
+        return checkedTerritories;
+      },
+      [],
+    ));
+    this._operatorVisilibityService.update(territoriesIds).subscribe(
       () => {
         this._toastr.success('Modifications prises en compte.');
       },
@@ -124,6 +146,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   private updateVisibilityForm(): void {
+    console.log('>> updateVisibilityForm');
     const territories = this.territories;
     const formGroups = [];
     const territoryIds = this.checkedTerritoryIds;
@@ -134,6 +157,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       territories: this._fb.array(formGroups),
     });
 
+    /*
     this.visibilityFormGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
       this.checkedTerritoryIds = this.territoriesFormArray.value.reduce(
         (checkedTerritories: number[], checked: boolean, index: number) => {
@@ -145,6 +169,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
         [],
       );
     });
+     */
   }
 
   private initSearchForm(): void {
