@@ -28,11 +28,11 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
     this.loadCampaignTemplates();
   }
 
-  public get parentId(): string | null {
+  public get parentId(): number | null {
     return this.campaignForm.controls.parent_id.value;
   }
 
-  public onTemplateCardClick(templateId: string | null) {
+  public onTemplateCardClick(templateId: number | null) {
     // if campaign form has template_id or _id
     if (this.campaignForm.controls._id.value || this.campaignForm.controls.parent_id.value) {
       const title = templateId ? "Chargement d'un modèle" : 'Réinitialisation';
