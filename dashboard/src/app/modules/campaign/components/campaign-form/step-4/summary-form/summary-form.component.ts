@@ -47,16 +47,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
   getSummaryText(): string {
     const campaign: CampaignUx = this.campaignForm.getRawValue();
 
-    let summaryText = this.campaignSummaryService.summary(campaign);
-
-    // OPERATORS ( not public )
-    const nbOperators = campaign.filters.operator_ids ? campaign.filters.operator_ids.length : 0;
-    if (nbOperators === this.operatorService.entities.length) {
-      summaryText += `La campagne est accessible à tous les opérateurs présents sur le registre (${nbOperators}).`;
-    } else {
-      summaryText += `La campagne est limitée à ${nbOperators} opérateur(s) présent(s) sur le registre.`;
-    }
-    return summaryText;
+    return this.campaignSummaryService.summary(campaign);
   }
 
   copySummary(summary: string): void {

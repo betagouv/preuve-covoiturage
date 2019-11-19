@@ -4,7 +4,6 @@ import { takeUntil } from 'rxjs/operators';
 import { MatPaginator, MatTabChangeEvent, MatTabGroup, MatTabLabel } from '@angular/material';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
-import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';

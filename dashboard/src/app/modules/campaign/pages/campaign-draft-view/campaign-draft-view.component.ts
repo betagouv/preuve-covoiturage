@@ -41,7 +41,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
       if (notFound) {
         this._router.navigate(['/404']);
       } else {
-        this.loadCampaign(params.get('campaignId'));
+        this.loadCampaign(Number(params.get('campaignId')));
       }
     });
     this.loadTerritory();
@@ -51,7 +51,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
     return !this.territory || !this.campaignUx;
   }
 
-  private loadCampaign(campaignId: string) {
+  private loadCampaign(campaignId: number) {
     if (!this._campaignService.campaignsLoaded) {
       this._campaignService
         .load()

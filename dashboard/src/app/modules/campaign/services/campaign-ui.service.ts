@@ -61,7 +61,7 @@ export class CampaignUiService {
       if (!valueForDriver && !valueForPassenger && !free) {
         continue;
       }
-      text += `<br/>\r\n&nbsp&nbsp&nbsp&nbsp `;
+      text += `<li><b>`;
 
       // CONDUCTEUR
       if (valueForDriver && (uiStatus.for_trip || uiStatus.for_driver)) {
@@ -73,7 +73,7 @@ export class CampaignUiService {
           text += ' pour le conducteur';
         }
       }
-      text += valueForDriver && valueForPassenger ? ', ' : '';
+      text += valueForDriver && (valueForPassenger || free) ? ', ' : '';
 
       // PASSAGERS
       if (uiStatus.for_trip || uiStatus.for_passenger) {
@@ -86,15 +86,14 @@ export class CampaignUiService {
         }
       }
       if (min || max) {
-        if (!max) {
+        if (!max || max >= CAMPAIGN_RULES_MAX_DISTANCE_KM) {
           text += ` à partir de ${min} km`;
         } else {
           text += ` de ${min} à ${max} km`;
         }
       }
-      text += `.`;
+      text += `.</li></b>`;
     }
-    text += `<br/>\r\n`;
     return text;
   }
 
@@ -177,9 +176,10 @@ export class CampaignUiService {
       return 'Aucune restriction.';
     }
     let text = '';
-    restrictions.forEach((restriction: RestrictionUxInterface) => {
-      text += `<br/>\r\n&nbsp&nbsp&nbsp&nbsp `;
-      text += `${restriction.quantity} trajets maximum pour le ${restriction.is_driver ? 'conducteur' : 'passager'} `;
+    restrictions.forEach((restriction: RestrictionUxInterface, index) => {
+      text += `<li><b>${restriction.quantity} trajets maximum pour le ${
+        restriction.is_driver ? 'conducteur' : 'passager'
+      } `;
 
       switch (restriction.period) {
         // @ts-ignore
@@ -200,7 +200,7 @@ export class CampaignUiService {
           break;
       }
 
-      text += ',';
+      text += '</b></li>';
     });
     return text;
   }
@@ -208,7 +208,7 @@ export class CampaignUiService {
   public summary(campaign: CampaignUx): string {
     const unit = campaign.unit;
 
-    let summaryText = `Campagne d’incitation au covoiturage du <b>`;
+    let summaryText = `<p>Campagne d’incitation au covoiturage du <b>`;
 
     // DATE
     summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
@@ -225,13 +225,17 @@ export class CampaignUiService {
         )}</b>.`;
         break;
       case IncentiveUnitEnum.POINT:
-        summaryText += ` <b>${new DecimalPipe(this.locale).transform(campaign.max_amount, '1.0-0', 'FR')} points</b>.`;
+        // tslint:disable-next-line:max-line-length
+        summaryText += ` <b>${new DecimalPipe(this.locale).transform(
+          campaign.max_amount,
+          '1.0-0',
+          'FR',
+        )} points</b>.</p>`;
         break;
     }
-    summaryText += '<br/><br/>\r\n\r\n';
 
     // TARGET
-    summaryText += `Sont rémunérés les <b>`;
+    summaryText += `<p>Les <b>`;
     summaryText += ` ${
       campaign.ui_status.for_driver && campaign.ui_status.for_passenger
         ? 'conducteurs et passagers'
@@ -252,27 +256,33 @@ export class CampaignUiService {
     } else {
       summaryText += ` compris entre ${campaign.filters.distance_range[0]} à ${campaign.filters.distance_range[1]} km`;
     }
-    summaryText += ` à raison de : `;
+    summaryText += ` sont incités selon les règles suivantes : </p>`;
 
     // RETRIBUTIONS
-    summaryText += '<br/><br/>\r\n\r\n';
-    summaryText += `${this.retributions(campaign)}`;
+    summaryText += `<ul>${this.retributions(campaign)}</ul>`;
 
     if (campaign.restrictions.length > 0 && campaign.restrictions[0].quantity) {
-      summaryText += '<br/><br/>\r\n\r\n';
-      summaryText += 'Les restrictions suivantes seront appliquées :';
+      summaryText += '<p>Les restrictions suivantes seront appliquées :</p>';
 
       // RESTRICTIONS
-      summaryText += '<br/><br/>\r\n\r\n';
-      summaryText += `${this.restrictions(campaign.restrictions)}`;
+      summaryText += `<ul>${this.restrictions(campaign.restrictions)}</ul>`;
     }
 
-    summaryText += '<br/><br/>\r\n\r\n';
+    // OPERATORS & RANKS
+    summaryText += '<p>La campagne est limitée';
+
+    // OPERATORS
+    if (campaign.filters.operator_ids) {
+      const nbOperators = campaign.filters.operator_ids.length;
+      const s = nbOperators > 1 ? 's' : '';
+      summaryText += ` à ${nbOperators} opérateur${s} présent${s} sur le territoire, `;
+    } else {
+      summaryText += ' aux opérateurs ';
+    }
 
     // RANKS
-    summaryText += `L’opération est limitée aux opérateurs proposant des preuves de classe`;
-    summaryText += ` <b>${campaign.filters.rank ? campaign.filters.rank.join(' ou ') : ''}</b>.`;
-    summaryText += '<br/><br/>\r\n\r\n';
+    summaryText += `proposant des preuves de classe`;
+    summaryText += ` <b>${campaign.filters.rank ? campaign.filters.rank.join(' ou ') : ''}</b>.</p>`;
 
     return summaryText;
   }

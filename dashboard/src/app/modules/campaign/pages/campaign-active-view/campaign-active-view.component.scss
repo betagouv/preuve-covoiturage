@@ -31,6 +31,9 @@ app-page-content {
     &-summaryAction > div {
       width: 100%;
       text-align: center;
+      a {
+        text-decoration: underline;
+      }
     }
     app-campaign-rules-view {
       margin-right: 15px;

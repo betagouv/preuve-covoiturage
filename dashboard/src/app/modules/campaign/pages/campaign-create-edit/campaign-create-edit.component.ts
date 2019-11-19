@@ -11,8 +11,8 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
   styleUrls: ['./campaign-create-edit.component.scss'],
 })
 export class CampaignCreateEditComponent extends DestroyObservable implements OnInit {
-  public campaignId = null;
-  public parentId = null;
+  public campaignId: number = null;
+  public parentId: number = null;
   public loading = true;
   public section = null;
 
@@ -25,10 +25,10 @@ export class CampaignCreateEditComponent extends DestroyObservable implements On
       .pipe(takeUntil(this.destroy$))
       .subscribe((params: ParamMap) => {
         if (params.has('campaignId')) {
-          this.campaignId = params.get('campaignId');
+          this.campaignId = Number(params.get('campaignId'));
         }
         if (params.has('parentId')) {
-          this.parentId = params.get('parentId');
+          this.parentId = Number(params.get('parentId'));
         }
         if (params.has('section')) {
           this.section = params.get('section');

@@ -15,6 +15,7 @@ import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
+import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 
 @Component({
   selector: 'app-campaign-form',
@@ -22,8 +23,8 @@ import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
   styleUrls: ['./campaign-form.component.scss'],
 })
 export class CampaignFormComponent extends DestroyObservable implements OnInit {
-  @Input() campaignId: string;
-  @Input() parentId: string;
+  @Input() campaignId: number;
+  @Input() parentId: number;
   @Input() section: number;
 
   helpCard = {
@@ -33,7 +34,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     link: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/boite-a-outils/guide-des-incitations',
   };
 
-  git destroy$creationFromScratch = false;
+  creationFromScratch = false;
   creationFromParentId = false;
 
   campaignFormGroup: FormGroup;
@@ -42,16 +43,16 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   currentStep = 0;
   matStepperCompleted = false;
 
-  private _defaultRange: RulesRangeUxType = [0, 150];
+  private _defaultRange: RulesRangeUxType = [0, CAMPAIGN_RULES_MAX_DISTANCE_KM];
   @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
 
   constructor(
     private _dialog: DialogService,
     private _formBuilder: FormBuilder,
-    private campaignService: CampaignService,
-    private campaignFormatService: CampaignFormatingService,
-    private toastr: ToastrService,
-    private router: Router,
+    private _campaignService: CampaignService,
+    private _campaignFormatService: CampaignFormatingService,
+    private _toastr: ToastrService,
+    private _router: Router,
   ) {
     super();
   }
@@ -63,8 +64,9 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       this.loadCampaign(this.campaignId);
     } else if (this.parentId) {
       this.creationFromParentId = true;
-      this.loadCampaign(this.parentId);
-      this.loading = false;
+      // todo: get date range
+      // todo: reproduce same date range in duplicate
+      this.loadCampaign(this.parentId, true);
     } else {
       this.creationFromScratch = true;
       this.loading = false;
@@ -106,7 +108,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   saveCampaign() {
     const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
-    const campaign: Campaign = this.campaignFormatService.toCampaignFormat(campaignUx);
+    const campaign: Campaign = this._campaignFormatService.toCampaignFormat(campaignUx);
     if (campaign._id) {
       this.patchCampaign(campaign);
     } else {
@@ -115,39 +117,40 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   private patchCampaign(campaign: Campaign) {
-    this.campaignService
+    this._campaignService
       .patchList(campaign)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
           const campaignPatched = data[0];
           this.requestLoading = false;
-          this.toastr.success(`La campagne ${campaignPatched.name} a bien été mise à jour`);
-          this.router.navigate(['/campaign']);
+          this._router.navigate([`/campaign/draft/${campaign._id}`]).then(() => {
+            this._toastr.success(`La campagne ${campaignPatched.name} a bien été mise à jour`);
+          });
         },
         (error) => {
           this.requestLoading = false;
           console.error(error);
-          this.toastr.error('Une erreur est survenue lors de la mise à jour de la campagne');
+          this._toastr.error('Une erreur est survenue lors de la mise à jour de la campagne');
         },
       );
   }
 
   private createCampaign(campaign: Campaign) {
-    this.campaignService
+    this._campaignService
       .createList(campaign)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
           const campaignSaved = data[0];
           this.requestLoading = false;
-          this.toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
-          this.router.navigate(['/campaign']);
+          this._toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
+          this._router.navigate(['/campaign']);
         },
         (error) => {
           this.requestLoading = false;
           console.error(error);
-          this.toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
+          this._toastr.error("Une erreur est survenue lors de l'enregistrement de la campagne");
         },
       );
   }
@@ -196,8 +199,8 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
     if (templateId) {
       // get template from service
-      campaign = this.campaignFormatService.toCampaignUxFormat({
-        ...this.campaignService.getLoadedTemplate(templateId),
+      campaign = this._campaignFormatService.toCampaignUxFormat({
+        ...this._campaignService.getLoadedTemplate(templateId),
         _id: null,
         parent_id: templateId,
       });
@@ -213,13 +216,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   private setCampaignToForm(campaign: CampaignUx, isTemplate = false) {
     // patch main
     this.campaignFormGroup.patchValue({
-      _id: campaign._id,
+      _id: isTemplate ? null : campaign._id,
       parent_id: campaign.parent_id,
       status: isTemplate ? CampaignStatusEnum.DRAFT : campaign.status,
       name: campaign.name,
       description: campaign.description,
       start: campaign.start,
-      end: campaign.end,
+      // todo: (temp ) start: isTemplate ? null : campaign.start,
+      end: isTemplate ? null : campaign.end,
       max_trips: campaign.max_trips,
       max_amount: campaign.max_amount,
       unit: campaign.unit,
@@ -329,6 +333,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     // manage stepper when all data is loaded
     this.matStepperCompleted = true;
     if (isTemplate) {
+      this.loading = false;
       setTimeout(() => {
         this._matStepper.next();
       }, 0);
@@ -340,24 +345,24 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private loadCampaign(campaignId: number) {
-    if (!this.campaignService.campaignsLoaded) {
-      this.campaignService
+  private loadCampaign(campaignId: number, isDuplicate = false) {
+    if (!this._campaignService.campaignsLoaded) {
+      this._campaignService
         .load()
         .pipe(takeUntil(this.destroy$))
         .subscribe();
     }
-    this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
+    this._campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       if (campaigns.length === 0) {
         return;
       }
       const foundCampaign = campaigns.filter((campaign) => Number(campaign._id) === campaignId)[0];
       if (foundCampaign) {
-        const campaignUx = this.campaignFormatService.toCampaignUxFormat(foundCampaign);
-        this.setCampaignToForm(campaignUx, false);
+        const campaignUx = this._campaignFormatService.toCampaignUxFormat(foundCampaign);
+        this.setCampaignToForm(campaignUx, isDuplicate);
       } else {
-        this.toastr.error("Les données de la campagne n'ont pas pu être chargées");
-        this.router.navigate(['/campaign']);
+        this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
+        this._router.navigate(['/campaign']);
       }
     });
   }

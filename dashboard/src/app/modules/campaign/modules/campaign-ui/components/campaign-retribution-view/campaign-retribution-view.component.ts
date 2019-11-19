@@ -18,7 +18,10 @@ export class CampaignRetributionViewComponent implements OnInit {
   ngOnInit() {}
 
   get canEdit() {
-    return this._authenticationService.hasRole(UserRoleEnum.ADMIN) && this.campaign.status === CampaignStatusEnum.DRAFT;
+    return (
+      this._authenticationService.hasRole(UserRoleEnum.TERRITORY_ADMIN) &&
+      this.campaign.status === CampaignStatusEnum.DRAFT
+    );
   }
 
   get retributionRule(): string {
