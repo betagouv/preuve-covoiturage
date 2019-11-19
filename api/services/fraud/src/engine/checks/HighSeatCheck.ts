@@ -11,6 +11,7 @@ interface Params {
 
 interface Meta {
   error?: string;
+  seats?: number;
 }
 
 /*
@@ -45,7 +46,9 @@ export class HighSeatCheck extends AbstractQueryCheck<Params,Meta> {
     const result = (seats - this.minSeats) * (100 / (this.maxSeats - this.minSeats));
 
     return {
-      meta: {},
+      meta: {
+        seats,
+      },
       karma: Math.min(100, Math.max(0, result)),
     };
   }

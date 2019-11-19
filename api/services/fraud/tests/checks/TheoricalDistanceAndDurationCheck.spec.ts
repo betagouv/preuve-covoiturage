@@ -6,11 +6,14 @@ import { TheoricalDistanceAndDurationCheck as Check } from '../../src/engine/che
 import { faker } from './faker';
 
 describe(`Check: ${Check.key}`, async () => {
-  beforeEach(async () => {
+  before(async () => {
     await faker.up();
   });
 
-  afterEach(async () => {
+    beforeEach(async () => {
+    await faker.clean();
+  });
+  after(async () => {
     await faker.down();
   });
 

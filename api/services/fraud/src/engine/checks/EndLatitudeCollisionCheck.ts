@@ -54,11 +54,7 @@ export class EndLatitudeCollisionCheck extends AbstractQueryCheck<Params,Meta> {
 
     const delta = Math.abs((passenger_end_lat - driver_end_lat));
     const result = (delta - this.minLat) * (100 / (this.maxLat - this.minLat));
-    console.log({
-      delta,
-      driver: driver_end_lat,
-      passenger: passenger_end_lat,
-    })
+
     return {
       meta: {
         delta,

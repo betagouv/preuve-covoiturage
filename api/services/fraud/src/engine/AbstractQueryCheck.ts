@@ -32,24 +32,13 @@ export abstract class AbstractQueryCheck<P = any, R extends DefaultMetaInterface
       const { karma, meta } = await this.cursor(row, initialMeta);
       result.karma += karma;
 
-      if (!result.meta) {
+      if (result.meta === null) {
         result.meta = meta;
       } else {
         if (!Array.isArray(result.meta)) {
           result.meta = [result.meta];
         }
         result.meta.push(meta);
-      }
-      
-      for(const k of Object.keys(meta)) {
-        if(k in result.meta) {
-          if (!Array.isArray(result.meta[k])) {
-            result.meta[k] = [result.meta[k]];
-          }
-          result.meta[k].push(meta[k]);
-        } else {
-          result.meta[k] = meta[k];
-        }
       }
     }
 

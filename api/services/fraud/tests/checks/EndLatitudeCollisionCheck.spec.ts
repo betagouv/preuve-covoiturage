@@ -5,22 +5,27 @@ import { EndLatitudeCollisionCheck as Check } from '../../src/engine/checks/EndL
 import { faker } from './faker';
 
 describe(`Check: ${Check.key}`, async () => {
-  beforeEach(async () => {
+  before(async () => {
     await faker.up();
   });
 
-  afterEach(async () => {
+  beforeEach(async () => {
+    await faker.clean();
+  });
+
+  after(async () => {
     await faker.down();
   });
 
   it('works with max', async () => {
     const check = faker.get(Check);
+    const delta = 1;
     const fakeData = await faker.setData(check);
     await faker.setData(check, {
       acquisition_id: fakeData.acquisition_id,
       is_driver: true,
       end_position: {
-        lat: fakeData.end_position.lat + 1,
+        lat: fakeData.end_position.lat + delta,
         lon: fakeData.end_position.lon,
       }
     });
@@ -29,6 +34,7 @@ describe(`Check: ${Check.key}`, async () => {
 
     expect(res).to.have.all.keys(['meta', 'karma']);
     expect(res.karma).to.be.eq(100);
+    expect(res.meta).to.deep.eq({ delta });
   });
 
   it('works with min', async () => {
@@ -48,9 +54,11 @@ describe(`Check: ${Check.key}`, async () => {
 
     expect(res).to.have.all.keys(['meta', 'karma']);
     expect(res.karma).to.be.eq(0);
+    expect(res.meta).to.deep.eq({ delta: 0 });
   });
 
   it('works between', async () => {
+    const delta = 0.5;
     const check = faker.get(Check);
     const fakeData = await faker.setData(check);
 
@@ -58,7 +66,7 @@ describe(`Check: ${Check.key}`, async () => {
       acquisition_id: fakeData.acquisition_id,
       is_driver: true,
       end_position: {
-        lat: fakeData.end_position.lat + 0.5,
+        lat: fakeData.end_position.lat + delta,
         lon: fakeData.end_position.lon,
       }
     });
@@ -68,5 +76,6 @@ describe(`Check: ${Check.key}`, async () => {
     expect(res).to.have.all.keys(['meta', 'karma']);
     expect(res.karma).to.be.gt(0);
     expect(res.karma).to.be.lt(100);
+    expect(res.meta).to.deep.eq({ delta });
   });
 });

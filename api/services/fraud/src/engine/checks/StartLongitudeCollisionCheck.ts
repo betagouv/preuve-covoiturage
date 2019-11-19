@@ -54,11 +54,7 @@ export class StartLongitudeCollisionCheck extends AbstractQueryCheck<Params,Meta
 
     const delta = Math.abs((passenger_start_lon - driver_start_lon));
     const result = (delta - this.minLon) * (100 / (this.maxLon - this.minLon));
-    console.log({
-      delta,
-      driver: driver_start_lon,
-      passenger: passenger_start_lon,
-    })
+
     return {
       meta: {
         delta,

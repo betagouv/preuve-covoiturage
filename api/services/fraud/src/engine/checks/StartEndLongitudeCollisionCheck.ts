@@ -6,14 +6,13 @@ import { FraudCheckResult } from '../../interfaces';
 
 interface Params {
   acquisition_id: string;
-  driver_start_lon: number;
-  driver_end_lon: number;
-  passenger_start_lon: number;
-  passenger_end_lon: number;
+  start_lon: number;
+  end_lon: number;
 }
 
 interface Meta {
   error?: string;
+  delta: number;
 }
 
 /*
@@ -35,34 +34,27 @@ export class StartEndLongitudeCollisionCheck extends AbstractQueryCheck<Params,M
   public get query(): string {
     return `
     SELECT
-      driver.acquisition_id as acquisition_id,
-      ST_X(driver.start_position::geometry) as driver_start_lon,
-      ST_X(driver.end_position::geometry) as driver_end_lon,
-      ST_X(passenger.start_position::geometry) as passenger_start_lon,
-      ST_X(passenger.end_position::geometry) as passenger_end_lon
-    FROM ${this.carpoolView} as driver
-    LEFT JOIN ${this.carpoolView} as passenger
-      ON driver.acquisition_id = passenger.acquisition_id
-      AND passenger.is_driver = false
-    WHERE
-      driver.is_driver = true
+      acquisition_id,
+      ST_X(start_position::geometry) as start_lon,
+      ST_X(end_position::geometry) as end_lon
+    FROM ${this.carpoolView}
     `;
   }
 
   async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
     const {
-      driver_start_lon,
-      driver_end_lon,
-      passenger_start_lon,
-      passenger_end_lon,
+      start_lon,
+      end_lon,
     } = params;
 
-    const driverResult = (100 - (100 / this.maxLon * (driver_start_lon - driver_end_lon)));
-    const passengerResult = (100 - (100 / this.maxLon * (passenger_start_lon - passenger_end_lon)));
+    const delta = Math.abs((start_lon - end_lon));
+    const result = (100 - (100 / this.maxLon * delta));
 
     return {
-      meta: {},
-      karma: Math.min(100, Math.max(0, Math.round((driverResult + passengerResult) / 2 ))),
+      meta: {
+        delta,
+      },
+      karma: Math.min(100, Math.max(0, result)),
     };
   }
 }

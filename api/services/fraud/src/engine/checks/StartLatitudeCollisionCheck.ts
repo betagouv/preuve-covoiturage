@@ -54,11 +54,6 @@ export class StartLatitudeCollisionCheck extends AbstractQueryCheck<Params,Meta>
 
     const delta = Math.abs((passenger_start_lat - driver_start_lat));
     const result = (delta - this.minLat) * (100 / (this.maxLat - this.minLat));
-    console.log({
-      delta,
-      driver: driver_start_lat,
-      passenger: passenger_start_lat,
-    })
     return {
       meta: {
         delta,

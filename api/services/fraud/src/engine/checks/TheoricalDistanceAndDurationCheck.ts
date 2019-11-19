@@ -46,8 +46,6 @@ export class TheoricalDistanceAndDurationCheck extends AbstractQueryCheck<Params
         ST_Y(end_position::geometry) as end_position_lat,
         distance
       FROM ${this.carpoolView}
-      WHERE
-        is_driver = false
     `;
   }
 
@@ -68,21 +66,16 @@ export class TheoricalDistanceAndDurationCheck extends AbstractQueryCheck<Params
         duration,
       },
       karma: Math.round(
-        (
-          Math.round(
-            Math.abs(1 - (distance / params.distance))
-            *
-            100
-          )
-          +
-          Math.round(
-            Math.abs(1 - (duration / params.duration))
-            *
-            100
-          )
-        )
-        / 2
+        (this.calc(distance, params.distance) + this.calc(duration, params.duration)) / 2
       ),
     };
+  }
+
+  protected calc(theorical: number, announced: number): number {
+    return (
+      Math.abs(1 - (theorical / announced))
+      *
+      100
+    );
   }
 }

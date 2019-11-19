@@ -105,6 +105,13 @@ export const faker = {
       )
     `);
   },
+  async clean() {
+    if (this.connection) {
+      await this.connection.query(`
+      DELETE FROM fraud_test_table
+      `);
+    }
+  },
   async down() {
     if (this.connection) {
       await this.connection.query(`

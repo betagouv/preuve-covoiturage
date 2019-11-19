@@ -6,12 +6,12 @@ import { FraudCheckResult } from '../../interfaces';
 
 interface Params {
   acquisition_id: string;
-  driver_duration: number;
-  passenger_duration: number;
+  duration: number;
 }
 
 interface Meta {
   error?: string;
+  duration?: number;
 }
 
 /*
@@ -33,25 +33,19 @@ export class LowDurationCheck extends AbstractQueryCheck<Params,Meta> {
   public get query(): string {
     return `
       SELECT
-        driver.acquisition_id as acquisition_id,
-        driver.duration as driver_duration,
-        passenger.duration as passenger_duration
-      FROM ${this.carpoolView} as driver
-      LEFT JOIN ${this.carpoolView} as passenger
-        ON driver.acquisition_id = passenger.acquisition_id
-        AND passenger.is_driver = false
-      WHERE
-        driver.is_driver = true
+        acquisition_id,
+        duration
+      FROM ${this.carpoolView}
     `;
   }
 
   async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
-    const { driver_duration, passenger_duration } = params;
+    const { duration } = params;
     return {
-      meta: {},
-      karma: Math.round(
-        (this.calc(driver_duration) + this.calc(passenger_duration)) / 2
-      ),
+      meta: {
+        duration
+      },
+      karma: this.calc(duration),
     };
   }
 
