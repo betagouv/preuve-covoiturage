@@ -1,7 +1,7 @@
 
 import { describe } from 'mocha';
 import { expect } from 'chai';
-import { TheoricalDistanceAndDurationCheck as Check } from '../../src/engine/checks/TheoricalDistanceAndDurationCheckAction';
+import { TheoricalDistanceAndDurationCheck as Check } from '../../src/engine/checks/TheoricalDistanceAndDurationCheck';
 
 import { faker } from './faker';
 
@@ -16,7 +16,7 @@ describe(`Check: ${Check.key}`, async () => {
 
   it('works', async () => {
     const check = faker.get(Check);
-    const fakeData = faker.setData(check, { distance: 500, duration: 50 });
+    const fakeData = await faker.setData(check, { distance: 500, duration: 50 });
 
     const res = await check.handle(fakeData.acquisition_id);
 

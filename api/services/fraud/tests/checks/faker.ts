@@ -6,6 +6,7 @@ import { kernel } from '@ilos/common';
 import { ServiceProvider } from '../../src/ServiceProvider';
 import { AbstractQueryCheck } from '../../src/engine/AbstractQueryCheck';
 import { StaticCheckInterface, CheckInterface } from '../../src/interfaces/CheckInterface';
+import { PostgresConnection } from '@ilos/connection-postgres/dist';
 
 const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
 process.env.APP_CONFIG_DIR = path.join( '..', 'dist', configDir);
@@ -74,11 +75,42 @@ class Kernel extends ParentKernel {}
 
 export const faker = {
   kernel: null,
+  connection: null,
   async up() {
     this.kernel = new Kernel();
     await this.kernel.bootstrap();
+    this.connection = this.kernel.get(ServiceProvider).get(PostgresConnection).getClient();
+    await this.connection.query(`
+      CREATE TABLE IF NOT EXISTS fraud_test_table (
+        _id serial primary key,
+        created_at timestamp DEFAULT NOW(),
+        acquisition_id varchar,
+        operator_id varchar,
+        trip_id varchar,
+        operator_trip_id varchar,
+        is_driver boolean,
+        operator_class char,
+        datetime timestamp with time zone,
+        duration int,
+        start_position geography,
+        start_insee varchar,
+        start_town varchar,
+        start_territory varchar,
+        end_position geography,
+        end_insee varchar,
+        end_town varchar,
+        end_territory varchar,
+        distance int,
+        seats int default 1
+      )
+    `);
   },
   async down() {
+    if (this.connection) {
+      await this.connection.query(`
+      DROP TABLE fraud_test_table
+      `);
+    }
     if (this.kernel) {
       await this.kernel.shutdown();
     }
@@ -86,34 +118,79 @@ export const faker = {
   get(checkctor: StaticCheckInterface): AbstractQueryCheck {
     return this.kernel.get(ServiceProvider).get(checkctor);
   },
-  setData(check: AbstractQueryCheck, customData: Partial<FakeDataInterface> = {}): FakeDataInterface {
+  async setData(check: AbstractQueryCheck, customData: Partial<FakeDataInterface> = {}): Promise<FakeDataInterface> {
     const data: FakeDataInterface = {
       ...defaultData,
       ...customData,
     };
+    await this.connection.query({
+      text: `
+        INSERT INTO fraud_test_table (
+          created_at,
+          acquisition_id,
+          operator_id,
+          trip_id,
+          operator_trip_id,
+          is_driver,
+          operator_class,
+          datetime,
+          duration,
+          start_position,
+          start_insee,
+          start_town,
+          start_territory,
+          end_position,
+          end_insee,
+          end_town,
+          end_territory,
+          distance,
+          seats
+        ) VALUES (
+          $1::timestamp,
+          $2::varchar,
+          $3::varchar,
+          $4::varchar,
+          $5::varchar,
+          $6::boolean,
+          $7::char,
+          $8::timestamp,
+          $9::int,
+          $10::geography,
+          $11::varchar,
+          $12::varchar,
+          $13::varchar,
+          $14::geography,
+          $15::varchar,
+          $16::varchar,
+          $17::varchar,
+          $18::int,
+          $19::int
+        )
+      `,
+      values: [
+        data.created_at.toISOString(),
+        data.acquisition_id,
+        data.operator_id,
+        data.trip_id,
+        data.operator_trip_id,
+        data.is_driver,
+        data.operator_class,
+        data.datetime.toISOString(),
+        data.duration,
+        `POINT(${data.start_position.lon} ${data.start_position.lat})`,
+        data.start_insee,
+        data.start_town,
+        data.start_territory,
+        `POINT(${data.end_position.lon} ${data.end_position.lat})`,
+        data.end_insee,
+        data.end_town,
+        data.end_territory,
+        data.distance,
+        data.seats,
+      ],
+    });
 
-    check.carpoolView = `(
-      SELECT
-      '${data.created_at.toISOString()}'::timestamp as created_at,
-      '${data.acquisition_id}'::varchar as acquisition_id,
-      '${data.operator_id}'::varchar as operator_id,
-      '${data.trip_id}'::varchar as trip_id,
-      '${data.operator_trip_id}'::varchar as operator_trip_id,
-      '${data.is_driver}'::boolean as is_driver,
-      '${data.operator_class}'::char as operator_class,
-      '${data.datetime.toISOString()}'::timestamp as datetime,
-      '${data.duration}'::int as duration,
-      'POINT(${data.start_position.lon} ${data.start_position.lat})'::geography as start_position,
-      '${data.start_insee}'::varchar as start_insee,
-      '${data.start_town}'::varchar as start_town,
-      '${data.start_territory}'::varchar as start_territory,
-      'POINT(${data.end_position.lon} ${data.end_position.lat})'::geography as end_position,
-      '${data.end_insee}'::varchar as end_insee,
-      '${data.end_town}'::varchar as end_town,
-      '${data.end_territory}'::varchar as end_territory,
-      '${data.distance}'::int as distance,
-      '${data.seats}'::int as seats
-    ) as fake`;
+    check.carpoolView = 'fraud_test_table';
 
     return data;
   },
