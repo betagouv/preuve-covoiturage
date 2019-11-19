@@ -137,17 +137,18 @@ export class CampaignFormatingService {
           startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
         );
         parameters.forEach((inseeStartEnd, index) => {
-          let dataError = false;
+          let dataError = true;
           uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
             const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
             if (startIsEqual) {
               const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
               if (endIsEqual) {
-                dataError = true;
+                dataError = false;
               }
             }
           });
           if (dataError) {
+            // todo: send to sentry
             console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
           }
         });
@@ -163,17 +164,18 @@ export class CampaignFormatingService {
           startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
         );
         parameters.forEach((inseeStartEnd, index) => {
-          let dataError = false;
+          let dataError = true;
           uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
             const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
             if (startIsEqual) {
               const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
               if (endIsEqual) {
-                dataError = true;
+                dataError = false;
               }
             }
           });
           if (dataError) {
+            // todo: send to sentry
             console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
           }
         });
