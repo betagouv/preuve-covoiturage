@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartjsModule } from '@ctrl/ngx-chartjs';
+import { RouterModule } from '@angular/router';
 
 import { MaterialModule } from '~/shared/modules/material/material.module';
 
@@ -13,7 +14,6 @@ import { CampaignMainStatsViewComponent } from './components/campaign-main-stats
 import { CampaignSummaryTextComponent } from './components/campaign-summary-text/campaign-summary-text.component';
 import { CampaignRulesViewComponent } from './components/campaign-rules-view/campaign-rules-view.component';
 import { CampaignMainMetricsComponent } from './components/campaign-main-metrics/campaign-main-metrics.component';
-import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [

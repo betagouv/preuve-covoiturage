@@ -26,7 +26,11 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
   private initValue = 0;
 
-  constructor(private _formBuilder: FormBuilder, private _dialog: DialogService, private _campaignUiService: CampaignUiService) {
+  constructor(
+    private _formBuilder: FormBuilder,
+    private _dialog: DialogService,
+    private _campaignUiService: CampaignUiService,
+  ) {
     super();
   }
 
