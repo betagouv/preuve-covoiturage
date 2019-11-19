@@ -1,7 +1,7 @@
-import { FraudCheck, FraudCheckResult, FraudCheckComplete } from './FraudCheck';
+import { FraudCheck, FraudCheckResult, FraudCheckComplete, DefaultMetaInterface } from './FraudCheck';
 
 export interface FraudCheckRepositoryProviderInterface {
-  findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck<T>>;
+  findOrCreateFraudCheck<T = DefaultMetaInterface>(acquisitionId: number, method: string): Promise<FraudCheck<T>>;
   updateFraudCheck(fraud: FraudCheck): Promise<void>;
   getAllCheckByAcquisition(acquisitionId: number, status?: string[], onlyMethod?: boolean): Promise<(FraudCheckComplete|{ method: string })[]>;
   getAllCheckByMethod(method: string, status?: string[], onlyAcquisition?: boolean): Promise<(FraudCheckComplete|{ acquisition_id: number })[]>;

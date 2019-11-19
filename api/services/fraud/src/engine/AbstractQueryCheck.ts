@@ -1,8 +1,9 @@
-import { FraudCheckResult } from '../interfaces/FraudCheck';
+import { FraudCheckResult, DefaultMetaInterface } from '../interfaces/FraudCheck';
 import { AbstractCheck } from './AbstractCheck';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-export abstract class AbstractQueryCheck<P = any, R = any> extends AbstractCheck {
+
+export abstract class AbstractQueryCheck<P = any, R extends DefaultMetaInterface = DefaultMetaInterface> extends AbstractCheck<R> {
   public static readonly key: string;
   public carpoolView = 'common.carpools';
 
@@ -14,7 +15,7 @@ export abstract class AbstractQueryCheck<P = any, R = any> extends AbstractCheck
     super();
   }
   
-  async handle(acquisitionId: number, meta?: R): Promise<FraudCheckResult<R>> {
+  async handle(acquisitionId: number, initialMeta?: R | R[]): Promise<FraudCheckResult<R | R[]>> {
     const query = {
       text: `WITH data as (${this.query}) SELECT * from data WHERE acquisition_id = $1 LIMIT 1`,
       values: [acquisitionId],
@@ -29,5 +30,5 @@ export abstract class AbstractQueryCheck<P = any, R = any> extends AbstractCheck
     return result;
   }
 
-  abstract async cursor(params: P, meta?: R): Promise<FraudCheckResult<R>>;
+  abstract async cursor(params: P, meta?: R|R[]): Promise<FraudCheckResult<R>>;
 }

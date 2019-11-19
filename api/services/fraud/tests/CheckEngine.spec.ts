@@ -69,7 +69,9 @@ describe('Check engine', async () => {
       public static readonly key = 'test';
       async handle(_acquisitionId: number): Promise<FraudCheckResult> {
         return {
-          meta: 'toto',
+          meta: {
+            test:'toto'
+          },
           karma: 1,
         };
       }
