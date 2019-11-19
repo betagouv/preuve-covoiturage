@@ -60,7 +60,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
   }
 
   copySummary(summary: string): void {
-    this.utils.copyToClipboard(summary);
+    this.utils.copySelectionToClipboarcById('summary');
     this.toastr.success('Le récapitulatif a été copié !');
   }
 
