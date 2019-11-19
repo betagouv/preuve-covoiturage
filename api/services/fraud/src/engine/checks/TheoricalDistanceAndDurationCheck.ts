@@ -57,16 +57,23 @@ export class TheoricalDistanceAndDurationCheck extends AbstractQueryCheck<Params
         lat: params.end_position_lat,
       },
     );
+
+    const distanceResult = this.calc(distance, params.distance);
+    const durationResult = this.calc(duration, params.duration);
+
     return {
       meta: {
         distance,
         duration,
       },
-      karma: Math.round((this.calc(distance, params.distance) + this.calc(duration, params.duration)) / 2),
+      karma: Math.round((distanceResult + durationResult) / 2),
     };
   }
 
   protected calc(theorical: number, announced: number): number {
+    if (announced === 0) {
+      return 100;
+    }
     return Math.abs(1 - theorical / announced) * 100;
   }
 }

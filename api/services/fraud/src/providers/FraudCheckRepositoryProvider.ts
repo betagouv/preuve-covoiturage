@@ -71,7 +71,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
       WHERE
         _id = $1
       `,
-      values: [fraud._id, fraud.status, fraud.karma, fraud.meta],
+      values: [fraud._id, fraud.status, fraud.karma, JSON.stringify(fraud.meta)],
     };
 
     const result = await this.connection.getClient().query(query);

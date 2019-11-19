@@ -1,12 +1,12 @@
 import { provider, ServiceContainerInterfaceResolver } from '@ilos/common';
 
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
-import { TheoricalDistanceAndDurationCheck } from './checks/TheoricalDistanceAndDurationCheck';
+import { checkList } from './checks';
 import { StaticCheckInterface, CheckInterface } from '../interfaces/CheckInterface';
 
 @provider()
 export class CheckEngine {
-  public readonly checks: StaticCheckInterface[] = [TheoricalDistanceAndDurationCheck];
+  public readonly checks: StaticCheckInterface[] = [...checkList];
 
   constructor(
     private repository: FraudCheckRepositoryProviderInterfaceResolver,
@@ -53,11 +53,11 @@ export class CheckEngine {
    *  - if status != done, proccess it
    *  - save result metadata
    */
-  async apply(acquisitionId: number, method: string): Promise<void> {
+  async apply(acquisitionId: number, method: string, force = false): Promise<void> {
     const processor = await this.getCheckProcessor(method);
     const checkMeta = await this.repository.findOrCreateFraudCheck(acquisitionId, method);
 
-    if (checkMeta.status === 'done') {
+    if (checkMeta.status === 'done' && !force) {
       return;
     }
 

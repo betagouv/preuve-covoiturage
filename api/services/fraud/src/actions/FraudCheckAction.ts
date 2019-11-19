@@ -11,7 +11,7 @@ import { CheckEngine } from '../engine/CheckEngine';
   method: 'check',
 })
 export class FraudCheckAction extends Action {
-  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: (string | [string, any])[] = [['channel.service.except', ['proxy']]];
 
   constructor(private engine: CheckEngine) {
     super();
