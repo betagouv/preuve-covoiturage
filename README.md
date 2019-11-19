@@ -144,8 +144,8 @@ $ docker-compose exec mongo mongorestore -u mongo -p mongo \
 
 ###### outside the `dashboard` container
 
-- `yarn open:cypress` opens cypress GUI
-- `yarn test` runs integration tests with cypress
+- `yarn cypress open` opens cypress GUI
+- `yarn cypress run` runs integration tests with cypress ( requires installation of cypress locally )
 
 ### API documentation
 
