@@ -7,7 +7,7 @@ export interface IncentiveFiltersUxInterface {
   time: IncentiveTimeRuleUxInterface[];
   distance_range: RulesRangeUxType;
   rank: TripRankEnum[];
-  operator_ids: string[];
+  operator_ids: number[];
   insee: {
     blackList: IncentiveInseeFilterInterface[];
     whiteList: IncentiveInseeFilterInterface[];
