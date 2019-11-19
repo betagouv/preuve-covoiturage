@@ -4,7 +4,7 @@ import { Territory } from '~/core/entities/territory/territory';
 import { territoryStubs } from '../territory/territory.list';
 
 export const visibilityList = territoryStubs.reduce(
-  (visibleTerritoryIds: string[], current: Territory, index: number) => {
+  (visibleTerritoryIds: number[], current: Territory, index: number) => {
     if (index % 2 === 0) {
       visibleTerritoryIds.push(current._id);
     }
@@ -16,7 +16,7 @@ export const visibilityList = territoryStubs.reduce(
 export function stubVisibilityList() {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=operator:visibleInTerritories',
+    url: '/rpc?methods=territory:listOperator',
     response: (data) =>
       <JsonRPCResponse[]>[
         {

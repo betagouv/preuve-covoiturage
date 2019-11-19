@@ -5,12 +5,12 @@ import { territoryStub } from './territory.find';
 
 export const territoryStubs: Territory[] = [
   territoryStub,
-  {
+  new Territory({
     _id: 2,
     name: 'AOM 2',
+    siret: '123456789',
     shortname: 'Aom shortname 2',
     company: new Company({
-      siret: '123456789',
       naf_entreprise: '1234A',
     }),
     address: new Address({
@@ -19,13 +19,14 @@ export const territoryStubs: Territory[] = [
       city: 'Lyon',
       country: 'France',
     }),
-  },
+  }),
   new Territory({
-    _id: '5d7775bf37043b8463b2a210',
+    _id: 3,
     name: 'AOM 3',
     shortname: 'Aom acronym 3',
+    siret: '123456789',
+
     company: new Company({
-      siret: '123456789',
       naf_entreprise: '1234A',
     }),
     address: new Address({
@@ -36,11 +37,12 @@ export const territoryStubs: Territory[] = [
     }),
   }),
   new Territory({
-    _id: '5d7775bf37043b8463b2a314',
+    _id: 4,
     name: 'AOM 4',
     shortname: 'Aom acronym 4',
+    siret: '123456789',
+
     company: new Company({
-      siret: '123456789',
       naf_entreprise: '1234A',
     }),
     address: new Address({
@@ -51,11 +53,12 @@ export const territoryStubs: Territory[] = [
     }),
   }),
   new Territory({
-    _id: '5d7775bf37043b8463b2a568',
+    _id: 5,
     name: 'AOM 5',
     shortname: 'Aom acronym 5',
+    siret: '123456789',
+
     company: new Company({
-      siret: '123456789',
       naf_entreprise: '1234A',
     }),
     address: new Address({

@@ -5,7 +5,7 @@ import { ExpectedVisibility } from '../../expectedApiPayload/expectedVisibility'
 export function stubVisibilityUpdate() {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=operator:updateVisibleInTerritories',
+    url: '/rpc?methods=territory:updateOperator',
     response: (data) =>
       <JsonRPCResponse[]>[
         {

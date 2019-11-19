@@ -37,8 +37,7 @@ export function cypress_visibility(e2e = false) {
         const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
 
-        expect(method).equal('operator:updateVisibleInTerritories');
-        expect(params).eql(ExpectedVisibility.get());
+        expect(method).equal('territory:updateOperator');
       });
     }
   });
@@ -57,8 +56,8 @@ export function cypress_visibility(e2e = false) {
         const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
 
-        expect(method).equal('operator:updateVisibleInTerritories');
-        expect(params).eql([]);
+        expect(method).equal('territory:updateOperator');
+        expect(params.territory_id).eql([]);
       });
     }
   });
