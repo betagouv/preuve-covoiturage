@@ -47,7 +47,7 @@ export function campaignSecondStepSelectRange() {
     // select min range
     cy.get('.RulesForm .noUi-origin:nth-child(2) .noUi-touch-area')
       .trigger('mousedown', { which: 1, clientX: 100, clientY: 600 })
-      .trigger('mousemove', { which: 1, clientX: 500, clientY: 600 })
+      .trigger('mousemove', { which: 1, clientX: 110, clientY: 600 })
       .trigger('mouseup');
 
     // value should by 85

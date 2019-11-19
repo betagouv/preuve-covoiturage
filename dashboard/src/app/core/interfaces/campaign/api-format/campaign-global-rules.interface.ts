@@ -127,9 +127,9 @@ export class RankGlobalRetributionRule implements GlobalRetributionRuleInterface
 export class OperatorIdsGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: string[];
+  parameters: number[];
 
-  constructor(operatorIds: string[]) {
+  constructor(operatorIds: number[]) {
     this.slug = GlobalRetributionRulesSlugEnum.OPERATOR_IDS;
     this.parameters = operatorIds;
   }

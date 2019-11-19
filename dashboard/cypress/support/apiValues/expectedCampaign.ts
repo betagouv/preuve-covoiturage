@@ -79,7 +79,7 @@ export class CypressExpectedCampaign {
         new WeekdayRetributionRule([0]),
         new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
         new DistanceRangeGlobalRetributionRule({
-          min: 85000,
+          min: 2000,
           max: 150000,
         }),
         new BlackListGlobalRetributionRule([
@@ -176,13 +176,13 @@ export class CypressExpectedCampaign {
     const afterEditionCampaign = CypressExpectedCampaign.getAfterCreate();
     afterEditionCampaign.rules[0].unshift(
       new RangeRetributionRule({
-        min: 0,
+        min: 2000,
         max: CypressExpectedCampaign.staggeredDistance,
       }),
     );
     afterEditionCampaign.rules.unshift([
       new RangeRetributionRule({
-        min: 0,
+        min: 2000,
         max: CypressExpectedCampaign.staggeredDistance,
       }),
       new ForPassengerRetributionRule(),
