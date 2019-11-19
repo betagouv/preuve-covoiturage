@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { CypressExpectedApplication } from '../apiValues/expectedApplication';
+import { CypressExpectedApplication } from '../expectedApiPayload/expectedApplication';
 
 export class ApplicationsGenerator {
   static numberOfApplications = 20;

@@ -1,6 +1,6 @@
 import { territoryStubs } from '../../stubs/territory/territory.list';
 import { ExpectedVisibility } from '../../expectedApiPayload/expectedVisibility';
-import { testNotification } from '../notification.cypress';
+import { closeNotification } from '../notification.cypress';
 
 export function cypress_visibility(e2e = false) {
   it('navigates to visibility', () => {
@@ -43,7 +43,7 @@ export function cypress_visibility(e2e = false) {
     }
   });
 
-  testNotification();
+  closeNotification();
 
   // select all select none
   it('check & uncheck', () => {
@@ -63,5 +63,5 @@ export function cypress_visibility(e2e = false) {
     }
   });
 
-  testNotification();
+  closeNotification();
 }

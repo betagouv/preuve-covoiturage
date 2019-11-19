@@ -38,28 +38,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     this.initSearchForm();
     this.initVisibilityForm();
 
-    /*
-    this._commonDataService.territories$
-      .pipe(
-        filter((territories) => !!territories),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((territories) => {
-        this.territories = territories;
-      });
-    */
-
-    /*
-    this._operatorVisilibityService.operatorVisibility$
-      .pipe(
-        filter((territories) => !!territories),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((territoryIds: number[]) => {
-        this.checkedTerritoryIds = territoryIds;
-        this.updateCheckAllCheckbox();
-      });*/
-
     merge(
       this._commonDataService.territories$.pipe(
         filter((territories) => !!territories),
@@ -70,7 +48,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       this.searchFilter.valueChanges.pipe(debounceTime(300)),
       this._operatorVisilibityService.operatorVisibility$.pipe(
         filter((territories) => !!territories),
-        tap((territories) => {}),
         tap((territoryIds) => (this.checkedTerritoryIds = territoryIds)),
       ),
     )
@@ -146,7 +123,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   private updateVisibilityForm(): void {
-    console.log('>> updateVisibilityForm');
     const territories = this.territories;
     const formGroups = [];
     const territoryIds = this.checkedTerritoryIds;

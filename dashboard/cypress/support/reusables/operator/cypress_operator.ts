@@ -1,7 +1,7 @@
 import { Operator } from '~/core/entities/operator/operator';
 
-import { expectedPatchedOperator } from '../../apiValues/expectedOperator';
 import { closeNotification } from '../notification.cypress';
+import { expectedPatchedOperator } from '../../expectedApiPayload/expectedOperator';
 
 export function cypress_operator(oldValue: Operator, e2e = false) {
   it('navigate to operator', () => {
@@ -48,5 +48,5 @@ export function cypress_operator(oldValue: Operator, e2e = false) {
     }
   });
 
-  testNotification();
+  closeNotification();
 }

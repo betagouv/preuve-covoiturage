@@ -12,9 +12,9 @@ import {
   campaignThirdStepSetMaxRetribution,
   campaignThirdStepSetMaxTrips,
 } from './steps/campaign-create-third-step';
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
-import { CypressExpectedTemplates } from '../../apiValues/expectedTemplates';
+import { CypressExpectedTemplates } from '../../expectedApiPayload/expectedTemplates';
 import { stubCampaignTemplateList } from '../../stubs/campaign/campaign-template.list';
 
 export function cypress_campaignCreateFromTemplate(templateIndex: number, e2e = false) {

@@ -36,9 +36,9 @@ import { stubVisibilityUpdate } from '../support/stubs/operator/operator.updateV
  * parameters to decide with contexts to run when in local
  */
 const localTesting = {
-  operator: false,
+  operator: true,
   territory: false,
-  registry: true,
+  registry: false,
 };
 
 const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
