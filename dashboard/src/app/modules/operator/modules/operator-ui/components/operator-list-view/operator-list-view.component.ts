@@ -74,8 +74,10 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   pipeEdit(operator: any) {
     this.isCreating = false;
-    this.operator$.next(operator);
-    this.showForm = true;
+    this._operatorService.get(operator._id).subscribe((newOperator) => {
+      this.operator$.next(newOperator);
+      this.showForm = true;
+    });
   }
 
   close() {

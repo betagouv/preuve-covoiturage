@@ -67,6 +67,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
   public onSubmit(): void {
     const operator = new Operator(this.operatorForm.value);
+    operator.siret = this.operatorForm.value.company.siret;
     if (this.editedOperatorId) {
       const patch$ = this.fullFormMode
         ? this._operatorService.updateList(new Operator({ ...operator, _id: this.editedOperatorId }))
