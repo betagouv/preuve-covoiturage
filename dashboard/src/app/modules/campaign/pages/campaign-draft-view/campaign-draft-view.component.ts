@@ -75,7 +75,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
       });
   }
 
-  launchCampaign(id: string): void {
+  launchCampaign(id: number): void {
     this._dialog
       .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
       .pipe(takeUntil(this.destroy$))
