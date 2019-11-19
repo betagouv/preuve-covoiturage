@@ -14,6 +14,7 @@ import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operato
 import { TerritoriesInseeAutocompleteComponent } from '~/modules/campaign/components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-form/territories-insee-autocomplete/territories-insee-autocomplete.component';
 import { CampaignInseeFilterStartEndFormComponent } from '~/modules/campaign/components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-form/campaign-insee-filter-start-end-form.component';
 import { ParametersFormComponent } from '~/modules/campaign/components/campaign-form/step-3/parameters-form.component';
+import { CampaignUiModule } from '~/modules/campaign/modules/campaign-ui/campaign-ui.module';
 
 import { CampaignDashboardComponent } from './pages/campaign-dashboard/campaign-dashboard.component';
 import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.component';
@@ -35,7 +36,6 @@ import { CampaignInseeFilterComponent } from './components/campaign-form/step-2/
 import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-view/campaign-insee-filter-start-end-view.component';
 import { CampaignDraftViewComponent } from './pages/campaign-draft-view/campaign-draft-view.component';
 import { CampaignActiveViewComponent } from './pages/campaign-active-view/campaign-active-view.component';
-import { CampaignUiModule } from '~/modules/campaign/modules/campaign-ui/campaign-ui.module';
 
 @NgModule({
   declarations: [
