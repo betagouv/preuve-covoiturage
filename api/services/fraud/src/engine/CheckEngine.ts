@@ -1,13 +1,12 @@
 import { provider, ServiceContainerInterfaceResolver } from '@ilos/common';
+
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
 import { TheoricalDistanceAndDurationCheck } from './checks/TheoricalDistanceAndDurationCheck';
 import { StaticCheckInterface, CheckInterface } from '../interfaces/CheckInterface';
 
 @provider()
 export class CheckEngine {
-  public readonly checks: StaticCheckInterface[] = [
-    TheoricalDistanceAndDurationCheck,
-  ];
+  public readonly checks: StaticCheckInterface[] = [TheoricalDistanceAndDurationCheck];
 
   constructor(
     private repository: FraudCheckRepositoryProviderInterfaceResolver,
@@ -19,7 +18,7 @@ export class CheckEngine {
    *  cast from IOC and initialize if needed
    */
   protected async getCheckProcessor(method: string): Promise<CheckInterface> {
-    const processorCtor = this.checks.find(c => c.key === method);
+    const processorCtor = this.checks.find((c) => c.key === method);
     if (!processorCtor) {
       throw new Error(`Unknown check ${method}`);
     }
@@ -32,20 +31,19 @@ export class CheckEngine {
     return processor;
   }
 
-
   /**
    *  List all available fraud check methods
    */
   listAvailableMethods(): string[] {
-    return this.checks.map(c => c.key);
+    return this.checks.map((c) => c.key);
   }
 
   /**
    *  List all unprocessed methods for an acquisition id
    */
   async listUnprocessedMethods(acquisitionId: number): Promise<string[]> {
-    const processedMethods = (await this.repository.getAllCheckByAcquisition(acquisitionId)).map(m => m.method);
-    return this.listAvailableMethods().filter(method => processedMethods.indexOf(method) < 0);
+    const processedMethods = (await this.repository.getAllCheckByAcquisition(acquisitionId)).map((m) => m.method);
+    return this.listAvailableMethods().filter((method) => processedMethods.indexOf(method) < 0);
   }
 
   /**
@@ -71,7 +69,7 @@ export class CheckEngine {
         karma,
         status: 'done',
       });
-    } catch(e) {
+    } catch (e) {
       await this.repository.updateFraudCheck({
         ...checkMeta,
         status: 'error',

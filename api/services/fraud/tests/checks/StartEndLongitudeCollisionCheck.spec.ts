@@ -9,7 +9,7 @@ describe(`Check: ${Check.key}`, async () => {
     await faker.up();
   });
 
-    beforeEach(async () => {
+  beforeEach(async () => {
     await faker.clean();
   });
   after(async () => {
@@ -29,7 +29,7 @@ describe(`Check: ${Check.key}`, async () => {
         ...position,
         lon: position.lon + delta,
       },
-      end_position: position
+      end_position: position,
     });
     await faker.setData(check, {
       acquisition_id: fakeData.acquisition_id,
@@ -38,7 +38,7 @@ describe(`Check: ${Check.key}`, async () => {
         ...position,
         lon: position.lon + delta,
       },
-      end_position: position
+      end_position: position,
     });
 
     const res = await check.handle(fakeData.acquisition_id);
@@ -65,7 +65,7 @@ describe(`Check: ${Check.key}`, async () => {
         ...position,
         lon: position.lon + delta,
       },
-      end_position: position
+      end_position: position,
     });
 
     await faker.setData(check, {
@@ -75,7 +75,7 @@ describe(`Check: ${Check.key}`, async () => {
         ...position,
         lon: position.lon + delta,
       },
-      end_position: position
+      end_position: position,
     });
 
     const res = await check.handle(fakeData.acquisition_id);
@@ -102,7 +102,7 @@ describe(`Check: ${Check.key}`, async () => {
         ...position,
         lon: position.lon + delta,
       },
-      end_position: position
+      end_position: position,
     });
 
     await faker.setData(check, {
@@ -112,7 +112,7 @@ describe(`Check: ${Check.key}`, async () => {
         ...position,
         lon: position.lon + delta,
       },
-      end_position: position
+      end_position: position,
     });
 
     const res = await check.handle(fakeData.acquisition_id);

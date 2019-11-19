@@ -19,15 +19,13 @@ interface Meta {
  * Check start and end longitude collision
  */
 @provider()
-export class StartEndLongitudeCollisionCheck extends AbstractQueryCheck<Params,Meta> {
+export class StartEndLongitudeCollisionCheck extends AbstractQueryCheck<Params, Meta> {
   public static readonly key: string = 'startEndLongitudeCollisionCheck';
 
   protected readonly maxLon: number = 0.001; // above = 0
   protected readonly minLon: number = 0; // below = 100
 
-  constructor(
-    connection: PostgresConnection,
-  ) {
+  constructor(connection: PostgresConnection) {
     super(connection);
   }
 
@@ -42,13 +40,10 @@ export class StartEndLongitudeCollisionCheck extends AbstractQueryCheck<Params,M
   }
 
   async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
-    const {
-      start_lon,
-      end_lon,
-    } = params;
+    const { start_lon, end_lon } = params;
 
-    const delta = Math.abs((start_lon - end_lon));
-    const result = (100 - (100 / this.maxLon * delta));
+    const delta = Math.abs(start_lon - end_lon);
+    const result = 100 - (100 / this.maxLon) * delta;
 
     return {
       meta: {

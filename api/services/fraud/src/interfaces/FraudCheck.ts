@@ -1,4 +1,4 @@
-export type DefaultMetaInterface = { [k:string]: any };
+export type DefaultMetaInterface = { [k: string]: any };
 
 export interface FraudCheckMeta<T extends DefaultMetaInterface = DefaultMetaInterface> {
   meta: T;

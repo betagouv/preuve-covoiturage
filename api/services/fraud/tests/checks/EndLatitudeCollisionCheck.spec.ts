@@ -27,7 +27,7 @@ describe(`Check: ${Check.key}`, async () => {
       end_position: {
         lat: fakeData.end_position.lat + delta,
         lon: fakeData.end_position.lon,
-      }
+      },
     });
 
     const res = await check.handle(fakeData.acquisition_id);
@@ -47,7 +47,7 @@ describe(`Check: ${Check.key}`, async () => {
       end_position: {
         lat: fakeData.end_position.lat,
         lon: fakeData.end_position.lon,
-      }
+      },
     });
 
     const res = await check.handle(fakeData.acquisition_id);
@@ -68,7 +68,7 @@ describe(`Check: ${Check.key}`, async () => {
       end_position: {
         lat: fakeData.end_position.lat + delta,
         lon: fakeData.end_position.lon,
-      }
+      },
     });
 
     const res = await check.handle(fakeData.acquisition_id);

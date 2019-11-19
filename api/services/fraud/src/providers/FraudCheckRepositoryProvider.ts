@@ -19,7 +19,6 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
 
   constructor(public connection: PostgresConnection) {}
 
-
   /**
    * Find or insert a fraud check entry from acquisition_id and method name
    * It return the fraud check entry or undefined
@@ -39,7 +38,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
       SELECT _id, status, meta::json, karma FROM (
       (SELECT * FROM ins)
       UNION
-      (SELECT 
+      (SELECT
         _id,
         status,
         meta::text,
@@ -59,7 +58,6 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
     return result.rows[0];
   }
 
-
   /**
    *  Update a fraud check entry
    */
@@ -73,12 +71,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
       WHERE
         _id = $1
       `,
-      values: [
-        fraud._id,
-        fraud.status,
-        fraud.karma,
-        fraud.meta,
-      ]
+      values: [fraud._id, fraud.status, fraud.karma, fraud.meta],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -90,14 +83,19 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
     return;
   }
 
-
   /**
    *  Return all fraud check entry for an acquistion
    *  By default, filtering by status with 'done'
    *  and return only the method
    */
-  public async getAllCheckByAcquisition(acquisitionId: number, status: string[] = ['done'], onlyMethod = true): Promise<(FraudCheckComplete|{ method: string })[]> {
-    const fields = onlyMethod ? 'method' : `
+  public async getAllCheckByAcquisition(
+    acquisitionId: number,
+    status: string[] = ['done'],
+    onlyMethod = true,
+  ): Promise<(FraudCheckComplete | { method: string })[]> {
+    const fields = onlyMethod
+      ? 'method'
+      : `
       _id,
       method,
       acquisition_id::integer,
@@ -107,7 +105,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
 
     const query = {
       text: `
-      SELECT 
+      SELECT
         ${fields}
       FROM ${this.table}
       WHERE
@@ -126,8 +124,14 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
    *  By default, filtering by status with 'done'
    *  and return only the acquition id
    */
-  public async getAllCheckByMethod(method: string, status: string[] = ['done'], onlyAcquisition = true): Promise<(FraudCheckComplete|{ acquisition_id: number })[]> {
-    const fields = onlyAcquisition ? 'acquisition_id::integer' : `
+  public async getAllCheckByMethod(
+    method: string,
+    status: string[] = ['done'],
+    onlyAcquisition = true,
+  ): Promise<(FraudCheckComplete | { acquisition_id: number })[]> {
+    const fields = onlyAcquisition
+      ? 'acquisition_id::integer'
+      : `
       _id,
       method,
       acquisition_id::integer,
@@ -137,7 +141,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
 
     const query = {
       text: `
-      SELECT 
+      SELECT
         ${fields}
       FROM ${this.table}
       WHERE

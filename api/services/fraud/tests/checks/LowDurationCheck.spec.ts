@@ -1,4 +1,3 @@
-
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import { LowDurationCheck as Check } from '../../src/engine/checks/LowDurationCheck';
@@ -10,7 +9,7 @@ describe(`Check: ${Check.key}`, async () => {
     await faker.up();
   });
 
-    beforeEach(async () => {
+  beforeEach(async () => {
     await faker.clean();
   });
   after(async () => {

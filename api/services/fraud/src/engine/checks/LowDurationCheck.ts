@@ -18,15 +18,13 @@ interface Meta {
  * Check duration
  */
 @provider()
-export class LowDurationCheck extends AbstractQueryCheck<Params,Meta> {
+export class LowDurationCheck extends AbstractQueryCheck<Params, Meta> {
   public static readonly key: string = 'lowDurationCheck';
 
   protected readonly maxDuration: number = 300; // above = 0
   protected readonly minDuration: number = 0; // below = 100
 
-  constructor(
-    connection: PostgresConnection,
-  ) {
+  constructor(connection: PostgresConnection) {
     super(connection);
   }
 
@@ -43,7 +41,7 @@ export class LowDurationCheck extends AbstractQueryCheck<Params,Meta> {
     const { duration } = params;
     return {
       meta: {
-        duration
+        duration,
       },
       karma: this.calc(duration),
     };

@@ -25,19 +25,16 @@ interface Meta {
  * Check theorical distance and duration
  */
 @provider()
-export class TheoricalDistanceAndDurationCheck extends AbstractQueryCheck<Params,Meta> {
+export class TheoricalDistanceAndDurationCheck extends AbstractQueryCheck<Params, Meta> {
   public static readonly key: string = 'theoricalDistanceAndDurationCheck';
 
-  constructor(
-    private geoProvider: GeoProviderInterfaceResolver,
-    connection: PostgresConnection,
-  ) {
+  constructor(private geoProvider: GeoProviderInterfaceResolver, connection: PostgresConnection) {
     super(connection);
   }
 
   public get query(): string {
     return `
-      SELECT 
+      SELECT
         acquisition_id,
         duration,
         ST_X(start_position::geometry) as start_position_lon,
@@ -65,17 +62,11 @@ export class TheoricalDistanceAndDurationCheck extends AbstractQueryCheck<Params
         distance,
         duration,
       },
-      karma: Math.round(
-        (this.calc(distance, params.distance) + this.calc(duration, params.duration)) / 2
-      ),
+      karma: Math.round((this.calc(distance, params.distance) + this.calc(duration, params.duration)) / 2),
     };
   }
 
   protected calc(theorical: number, announced: number): number {
-    return (
-      Math.abs(1 - (theorical / announced))
-      *
-      100
-    );
+    return Math.abs(1 - theorical / announced) * 100;
   }
 }

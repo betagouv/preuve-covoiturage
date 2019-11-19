@@ -9,7 +9,7 @@ describe(`Check: ${Check.key}`, async () => {
     await faker.up();
   });
 
-    beforeEach(async () => {
+  beforeEach(async () => {
     await faker.clean();
   });
   after(async () => {
@@ -26,7 +26,7 @@ describe(`Check: ${Check.key}`, async () => {
       start_position: {
         lat: fakeData.start_position.lat,
         lon: fakeData.start_position.lon + delta,
-      }
+      },
     });
 
     const res = await check.handle(fakeData.acquisition_id);
@@ -47,7 +47,7 @@ describe(`Check: ${Check.key}`, async () => {
       start_position: {
         lat: fakeData.start_position.lat + delta,
         lon: fakeData.start_position.lon,
-      }
+      },
     });
 
     const res = await check.handle(fakeData.acquisition_id);
@@ -68,7 +68,7 @@ describe(`Check: ${Check.key}`, async () => {
       start_position: {
         lat: fakeData.start_position.lat,
         lon: fakeData.start_position.lon + delta,
-      }
+      },
     });
 
     const res = await check.handle(fakeData.acquisition_id);

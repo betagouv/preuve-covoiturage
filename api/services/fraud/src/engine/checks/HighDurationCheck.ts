@@ -18,15 +18,13 @@ interface Meta {
  * Check duration
  */
 @provider()
-export class HighDurationCheck extends AbstractQueryCheck<Params,Meta> {
+export class HighDurationCheck extends AbstractQueryCheck<Params, Meta> {
   public static readonly key: string = 'highDurationCheck';
 
   protected readonly maxDuration: number = 43200; // above = 100
   protected readonly minDuration: number = 7200; // below = 0
 
-  constructor(
-    connection: PostgresConnection,
-  ) {
+  constructor(connection: PostgresConnection) {
     super(connection);
   }
 

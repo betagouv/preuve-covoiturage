@@ -9,7 +9,7 @@ import { StaticCheckInterface, CheckInterface } from '../../src/interfaces/Check
 import { PostgresConnection } from '@ilos/connection-postgres/dist';
 
 const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
-process.env.APP_CONFIG_DIR = path.join( '..', 'dist', configDir);
+process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 process.env.APP_ENV = 'testing';
 
 interface FakeDataInterface {
@@ -36,9 +36,9 @@ interface FakeDataInterface {
   end_insee: string;
   end_town: string;
   end_territory: string;
-  distance:number;
+  distance: number;
   seats: number;
-};
+}
 
 const defaultData: FakeDataInterface = {
   created_at: new Date(),
@@ -79,7 +79,10 @@ export const faker = {
   async up() {
     this.kernel = new Kernel();
     await this.kernel.bootstrap();
-    this.connection = this.kernel.get(ServiceProvider).get(PostgresConnection).getClient();
+    this.connection = this.kernel
+      .get(ServiceProvider)
+      .get(PostgresConnection)
+      .getClient();
     await this.connection.query(`
       CREATE TABLE IF NOT EXISTS fraud_test_table (
         _id serial primary key,
@@ -201,4 +204,4 @@ export const faker = {
 
     return data;
   },
-}
+};

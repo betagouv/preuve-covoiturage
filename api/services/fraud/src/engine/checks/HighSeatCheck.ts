@@ -18,21 +18,19 @@ interface Meta {
  * Check number of reserved seats
  */
 @provider()
-export class HighSeatCheck extends AbstractQueryCheck<Params,Meta> {
+export class HighSeatCheck extends AbstractQueryCheck<Params, Meta> {
   public static readonly key: string = 'highSeatCheck';
 
   protected readonly maxSeats: number = 8; // above = 100
   protected readonly minSeats: number = 5; // below = 0
 
-  constructor(
-    connection: PostgresConnection,
-  ) {
+  constructor(connection: PostgresConnection) {
     super(connection);
   }
 
   public get query(): string {
     return `
-      SELECT 
+      SELECT
         acquisition_id,
         seats
       FROM ${this.carpoolView}

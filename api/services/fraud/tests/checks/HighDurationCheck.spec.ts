@@ -1,4 +1,3 @@
-
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import { HighDurationCheck as Check } from '../../src/engine/checks/HighDurationCheck';
@@ -11,7 +10,7 @@ describe(`Check: ${Check.key}`, async () => {
     await faker.up();
   });
 
-    beforeEach(async () => {
+  beforeEach(async () => {
     await faker.clean();
   });
   after(async () => {

@@ -9,7 +9,12 @@ import chaiAsPromised from 'chai-as-promised';
 
 import { CheckEngine } from '../src/engine/CheckEngine';
 import { StaticCheckInterface, CheckInterface } from '../src/interfaces/CheckInterface';
-import { FraudCheckRepositoryProviderInterfaceResolver, FraudCheckRepositoryProviderInterface, FraudCheck, FraudCheckResult } from '../src/interfaces';
+import {
+  FraudCheckRepositoryProviderInterfaceResolver,
+  FraudCheckRepositoryProviderInterface,
+  FraudCheck,
+  FraudCheckResult,
+} from '../src/interfaces';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
@@ -24,9 +29,10 @@ describe('Check engine', async () => {
   };
 
   @provider({
-    identifier: FraudCheckRepositoryProviderInterfaceResolver
+    identifier: FraudCheckRepositoryProviderInterfaceResolver,
   })
-  class FakeFraudCheckRepository extends FraudCheckRepositoryProviderInterfaceResolver implements FraudCheckRepositoryProviderInterface {
+  class FakeFraudCheckRepository extends FraudCheckRepositoryProviderInterfaceResolver
+    implements FraudCheckRepositoryProviderInterface {
     public async findOrCreateFraudCheck(acquisitionId: number, method: string): Promise<FraudCheck> {
       return meta;
     }
@@ -58,9 +64,7 @@ describe('Check engine', async () => {
     sp.bind(SimpleCheckEngine);
     const engine = sp.get(SimpleCheckEngine);
 
-    await expect(
-      engine.apply(0, 'mymethod')
-    ).to.eventually.rejectedWith('Unknown check mymethod');
+    await expect(engine.apply(0, 'mymethod')).to.eventually.rejectedWith('Unknown check mymethod');
   });
 
   it('should not process if status is done', async () => {
@@ -70,7 +74,7 @@ describe('Check engine', async () => {
       async handle(_acquisitionId: number): Promise<FraudCheckResult> {
         return {
           meta: {
-            test:'toto'
+            test: 'toto',
           },
           karma: 1,
         };
@@ -79,9 +83,7 @@ describe('Check engine', async () => {
 
     @provider()
     class SimpleCheckEngine extends CheckEngine {
-      public readonly checks: StaticCheckInterface[] = [
-        TestCheck
-      ];
+      public readonly checks: StaticCheckInterface[] = [TestCheck];
       constructor(
         repository: FraudCheckRepositoryProviderInterfaceResolver,
         service: ServiceContainerInterfaceResolver,
@@ -92,9 +94,9 @@ describe('Check engine', async () => {
     sp.bind(SimpleCheckEngine);
     const engine = sp.get(SimpleCheckEngine);
     const repository = sp.get(FraudCheckRepositoryProviderInterfaceResolver);
-    
+
     sinon.spy(repository, 'updateFraudCheck');
-    
+
     meta.status = 'done';
     await engine.apply(0, 'test');
     expect(repository.updateFraudCheck).to.have.callCount(0);
@@ -112,9 +114,7 @@ describe('Check engine', async () => {
 
     @provider()
     class SimpleCheckEngine extends CheckEngine {
-      public readonly checks: StaticCheckInterface[] = [
-        TestCheck
-      ];
+      public readonly checks: StaticCheckInterface[] = [TestCheck];
       constructor(
         repository: FraudCheckRepositoryProviderInterfaceResolver,
         service: ServiceContainerInterfaceResolver,
@@ -125,13 +125,11 @@ describe('Check engine', async () => {
     sp.bind(SimpleCheckEngine);
     const engine = sp.get(SimpleCheckEngine);
     const repository = sp.get(FraudCheckRepositoryProviderInterfaceResolver);
-    
+
     sinon.spy(repository, 'updateFraudCheck');
-    
+
     meta.status = 'pending';
-    await expect(
-      engine.apply(0, 'test')
-    ).to.eventually.rejectedWith(errorMessage);
+    await expect(engine.apply(0, 'test')).to.eventually.rejectedWith(errorMessage);
     expect(repository.updateFraudCheck).to.have.calledWith({
       ...meta,
       status: 'error',
@@ -159,9 +157,7 @@ describe('Check engine', async () => {
 
     @provider()
     class SimpleCheckEngine extends CheckEngine {
-      public readonly checks: StaticCheckInterface[] = [
-        TestCheck
-      ];
+      public readonly checks: StaticCheckInterface[] = [TestCheck];
       constructor(
         repository: FraudCheckRepositoryProviderInterfaceResolver,
         service: ServiceContainerInterfaceResolver,
@@ -172,9 +168,9 @@ describe('Check engine', async () => {
     sp.bind(SimpleCheckEngine);
     const engine = sp.get(SimpleCheckEngine);
     const repository = sp.get(FraudCheckRepositoryProviderInterfaceResolver);
-    
+
     sinon.spy(repository, 'updateFraudCheck');
-    
+
     meta.status = 'pending';
     await engine.apply(0, 'test');
     expect(repository.updateFraudCheck).to.have.calledWith({

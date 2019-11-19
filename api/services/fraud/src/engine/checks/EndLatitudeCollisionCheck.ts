@@ -19,15 +19,13 @@ interface Meta {
  * Check end latitude collision
  */
 @provider()
-export class EndLatitudeCollisionCheck extends AbstractQueryCheck<Params,Meta> {
+export class EndLatitudeCollisionCheck extends AbstractQueryCheck<Params, Meta> {
   public static readonly key: string = 'endLatitudeCollisionCheck';
 
   protected readonly maxLat: number = 1; // above = 100
   protected readonly minLat: number = 0.001; // below = 0
 
-  constructor(
-    connection: PostgresConnection,
-  ) {
+  constructor(connection: PostgresConnection) {
     super(connection);
   }
 
@@ -47,12 +45,9 @@ export class EndLatitudeCollisionCheck extends AbstractQueryCheck<Params,Meta> {
   }
 
   async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
-    const {
-      driver_end_lat,
-      passenger_end_lat,
-    } = params;
+    const { driver_end_lat, passenger_end_lat } = params;
 
-    const delta = Math.abs((passenger_end_lat - driver_end_lat));
+    const delta = Math.abs(passenger_end_lat - driver_end_lat);
     const result = (delta - this.minLat) * (100 / (this.maxLat - this.minLat));
 
     return {

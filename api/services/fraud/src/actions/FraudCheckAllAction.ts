@@ -13,10 +13,7 @@ import { CheckEngine } from '../engine/CheckEngine';
 export class FraudCheckAllAction extends Action {
   public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
 
-  constructor(
-    private engine: CheckEngine,
-    private kernel: KernelInterfaceResolver,
-  ) {
+  constructor(private engine: CheckEngine, private kernel: KernelInterfaceResolver) {
     super();
   }
 
@@ -32,12 +29,12 @@ export class FraudCheckAllAction extends Action {
         },
         {
           call: {
-            user: {}
+            user: {},
           },
           channel: {
             service: 'fraud',
-          }
-        }
+          },
+        },
       );
     }
     return;

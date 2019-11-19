@@ -8,18 +8,9 @@ import { FraudCheckRepositoryProvider } from '../src/providers/FraudCheckReposit
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-const find = [
-  '_id',
-  'status',
-  'meta',
-  'karma',
-];
+const find = ['_id', 'status', 'meta', 'karma'];
 
-const list = [
-  ...find,
-  'acquisition_id',
-  'method',
-];
+const list = [...find, 'acquisition_id', 'method'];
 
 describe('Fraudcheck repository', async () => {
   let repository: FraudCheckRepositoryProvider;
@@ -72,7 +63,7 @@ describe('Fraudcheck repository', async () => {
 
   it('should update a fraudcheck entry if exists', async () => {
     const actualData = await repository.findOrCreateFraudCheck(acquisitionId, fakeMethod);
-    actualData.status = 'done'
+    actualData.status = 'done';
     actualData.karma = 100;
     actualData.meta = {
       it: 'works',
@@ -92,7 +83,7 @@ describe('Fraudcheck repository', async () => {
         karma: 0,
         meta: {},
         status: 'done',
-      })
+      }),
     ).to.eventually.rejectedWith();
   });
 
