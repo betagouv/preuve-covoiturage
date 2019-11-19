@@ -24,7 +24,7 @@ export class CampaignSummaryTextComponent {
   }
 
   copySummary(summary: string): void {
-    this._utils.copyToClipboard(summary);
+    this._utils.copySelectionToClipboarcById('summary');
     this._toastr.success('Le récapitulatif a été copié !');
   }
 }
