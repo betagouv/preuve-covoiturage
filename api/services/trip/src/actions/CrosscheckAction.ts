@@ -25,17 +25,15 @@ export class CrosscheckAction extends Action {
     this.logger.debug('trip:crosscheck', journey._id);
 
     // TODO: add schema
-    const [created, trip] = await this.pg.findOrCreateTripForJourney({
-      ...journey,
-    });
+    const [created, trip] = await this.pg.findOrCreateTripForJourney({ ...journey.payload });
 
     // save payment & declared incentives
 
     if (created) {
       let delay = this.config.get('rules.maxAge');
 
-      if (journey.driver && journey.driver.start && journey.driver.start.datetime) {
-        delay -= new Date().valueOf() - journey.driver.start.datetime.valueOf();
+      if (journey.payload.driver && journey.payload.driver.start && journey.payload.driver.start.datetime) {
+        delay -= new Date().valueOf() - journey.payload.driver.start.datetime.valueOf();
       }
 
       await this.kernel.notify(

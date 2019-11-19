@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
@@ -14,7 +14,7 @@ export class NormalizationCostAction extends AbstractAction {
     super();
   }
 
-  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     this.logger.debug(`Normalization:cost on ${journey._id}`);
 
     const normalizedJourney = { ...journey };

@@ -1,31 +1,26 @@
-import * as _ from 'lodash';
+import { get, set } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
+import { handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/territory.contract';
 import { PositionInterface } from '../shared/common/interfaces/PositionInterface';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
-
-// Find the territories where the driver and passenger started and ended their journey
-const callContext: ContextType = {
-  call: {
-    user: {},
-  },
-  channel: {
-    service: 'normalization',
-  },
-};
+import { TerritoryProvider } from '../providers/TerritoryProvider';
 
 @handler(handlerConfig)
 export class NormalizationTerritoryAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
 
-  constructor(protected kernel: KernelInterfaceResolver, protected wf: WorkflowProvider) {
+  constructor(
+    protected kernel: KernelInterfaceResolver,
+    protected territory: TerritoryProvider,
+    protected wf: WorkflowProvider,
+  ) {
     super();
   }
 
-  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     this.logger.debug(`Normalization:territory on ${journey._id}`);
     const normalizedJourney = { ...journey };
 
@@ -42,20 +37,11 @@ export class NormalizationTerritoryAction extends AbstractAction {
   }
 
   private async fillTerritories(journey: ParamsInterface, dataPath: string): Promise<void> {
-    const position: PositionInterface = _.get(journey, dataPath);
+    const position: PositionInterface = get(journey, `payload.${dataPath}`);
     if ('insee' in position) {
-      const data = await this.kernel.call('territory:findByInsee', { insee: position.insee }, callContext);
-      _.set(journey, `${dataPath}.territory`, data._id);
+      set(journey, `${dataPath}.territory`, await this.territory.findByInsee(position.insee));
     } else if ('lat' in position && 'lon' in position) {
-      const data = await this.kernel.call(
-        'territory:findByPosition',
-        {
-          lat: position.lat,
-          lon: position.lon,
-        },
-        callContext,
-      );
-      _.set(journey, `${dataPath}.territory`, data);
+      set(journey, `${dataPath}.territory`, await this.territory.findByPoint({ lon: position.lon, lat: position.lat }));
     } else {
       throw new InvalidParamsException('Missing INSEE code or lat & lon');
     }

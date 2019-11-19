@@ -1,9 +1,7 @@
-import { JourneyInterface } from '../common/interfaces/JourneyInterface';
+import { AcquisitionInterface } from '../acquisition/common/interfaces/AcquisitionInterface';
 
-export type ResultInterface = JourneyInterface | JourneyInterface[];
-export interface ParamsInterface extends JourneyInterface {
-  _id: number;
-}
+export type ResultInterface = AcquisitionInterface | AcquisitionInterface[];
+export interface ParamsInterface extends AcquisitionInterface {}
 export const handlerConfig = {
   service: 'normalization',
   method: 'territory',

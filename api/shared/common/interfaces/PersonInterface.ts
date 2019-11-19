@@ -1,19 +1,9 @@
 import { PositionInterface } from './PositionInterface';
+import { IdentityInterface } from './IdentityInterface';
 
 export interface PersonInterface {
   is_driver?: boolean;
-  identity: {
-    phone: string;
-    firstname?: string;
-    lastname?: string;
-    email?: string;
-    company?: string;
-    travel_pass?: {
-      name: string;
-      user_id: string;
-    };
-    over_18?: boolean | null;
-  };
+  identity: IdentityInterface;
   operator_class?: string;
   journey_id?: string;
   operator_id?: number;

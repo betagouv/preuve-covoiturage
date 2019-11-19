@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/geo.contract';
@@ -16,16 +16,16 @@ export class NormalizationGeoAction extends AbstractAction {
     super();
   }
 
-  public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     const normalizedJourney = { ...journey };
     this.logger.debug(`Normalization:geo on ${journey._id}`);
 
     for (const path of ['passenger.start', 'passenger.end', 'driver.start', 'driver.end']) {
-      const { lat, lon, insee, literal } = get(journey, path);
+      const { lat, lon, insee, literal } = get(journey, `payload.${path}`);
       const result = await this.geoProvider.checkAndComplete({ lat, lon, insee, literal });
-      set(normalizedJourney, `${path}.lat`, result.lat);
-      set(normalizedJourney, `${path}.lon`, result.lon);
-      set(normalizedJourney, `${path}.insee`, result.insee);
+      set(normalizedJourney, `payload.${path}.lat`, result.lat);
+      set(normalizedJourney, `payload.${path}.lon`, result.lon);
+      set(normalizedJourney, `payload.${path}.insee`, result.insee);
     }
 
     // Call the next step asynchronously
