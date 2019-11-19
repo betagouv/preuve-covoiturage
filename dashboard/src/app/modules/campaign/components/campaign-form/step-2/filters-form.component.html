@@ -39,7 +39,13 @@
               <app-range-time-picker [formControl]="timeCtrl" [timeRange]="timeCtrl.value"></app-range-time-picker>
               <mat-icon color="error" (click)="removeTimeFilter(idx)">delete_outline</mat-icon>
             </div>
-            <button mat-stroked-button color="primary" (click)="addTimeFilter()" [disabled]="!timeCtrlArray.valid">
+            <button
+              class="RulesForm-date-button"
+              mat-stroked-button
+              color="primary"
+              (click)="addTimeFilter()"
+              [disabled]="!timeCtrlArray.valid"
+            >
               Ajouter un filtre horaire
             </button>
           </div>

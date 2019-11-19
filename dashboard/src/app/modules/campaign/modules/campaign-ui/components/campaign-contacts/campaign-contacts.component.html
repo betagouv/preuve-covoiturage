@@ -4,7 +4,7 @@
   <div class="campaignContactsView-description">
     <h3>{{ territory.name }}</h3>
 
-    <div class="campaignContactsView-contacts">
+    <div class="campaignContactsView-contacts" *ngIf="territory.contacts && territory.contacts.technical">
       <p>{{ territory.contacts.technical.firstname }} {{ territory.contacts.technical.lastname }}</p>
       <p>{{ territory.contacts.technical.email }}</p>
       <p>{{ territory.contacts.technical.phone }}</p>

@@ -186,6 +186,7 @@
             >
               <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.checked">
                 <app-staggered-form
+                  [campaignForm]="campaignForm"
                   [formGroup]="retributionFormGroup"
                   [previousFormGroup]="retributionsFormArray.at(idx - 1)"
                   [isFirst]="idx === 0"

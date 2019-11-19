@@ -36,6 +36,7 @@ export class CampaignMenuComponent implements OnInit {
   }
 
   discoverCampaign(router: Router) {
-    router.navigate(['/campaign/discover']);
+    // todo: reconnect when discover is fixed
+    // router.navigate(['/campaign/discover']);
   }
 }

@@ -32,6 +32,16 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   ngOnInit() {
     this.initRetributionFormArray();
     this.initRestrictionFormArray();
+    // check that the start date is correct
+    if (
+      this.campaignForm.get('start').value &&
+      moment()
+        .add(1, 'days')
+        .isAfter(this.campaignForm.get('start').value)
+    ) {
+      this.campaignForm.controls.start.markAsTouched();
+      this.campaignForm.controls.start.updateValueAndValidity();
+    }
   }
 
   get controls() {

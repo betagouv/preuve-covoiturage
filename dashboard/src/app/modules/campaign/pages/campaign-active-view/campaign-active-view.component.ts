@@ -44,7 +44,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
       if (notFound) {
         this._router.navigate(['/404']);
       } else {
-        this.loadCampaign(params.get('campaignId'));
+        this.loadCampaign(Number(params.get('campaignId')));
       }
     });
   }
@@ -61,7 +61,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
     this.showSummary = true;
   }
 
-  private loadCampaign(campaignId: string) {
+  private loadCampaign(campaignId: number) {
     if (!this._campaignService.campaignsLoaded) {
       this._campaignService
         .load()
@@ -86,7 +86,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
       });
   }
 
-  private loadTerritory(id: string) {
+  private loadTerritory(id: number) {
     const foundTerritory = this._commonDataService.territories.filter((territory) => territory._id === id)[0];
     if (foundTerritory) {
       this.territory = foundTerritory;

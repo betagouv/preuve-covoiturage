@@ -3,6 +3,9 @@
 .RulesForm {
   &-date {
     display: flex;
+    &-button {
+      margin-top: 0.5em;
+    }
 
     & > div {
       margin-left: 20px;
