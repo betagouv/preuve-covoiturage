@@ -150,31 +150,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       };
     }
 
-    this.territoryForm = this.fb.group(formOptions);
-
-    this.updateValidation();
-  }
-
-  private updateValidation() {
-    if (this.territoryForm && this.fullFormMode) {
-      this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
-      this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
-    }
-  }
-
-  // todo: ugly ...
-  private setTerritoryFormValue(territory: Territory) {
-    // base values for form
-    this.editedId = territory ? territory._id : null;
-
-    const territoryEd = new Territory(territory);
-    const formValues = territoryEd.toFormValues(this.fullFormMode);
-
-    this.territoryForm.setValue(formValues);
-
     const stopFindCompany = new Subject();
 
     const companyFormGroup: FormGroup = <FormGroup>this.territoryForm.controls.company;
+
+    this.territoryForm = this.fb.group(formOptions);
     companyFormGroup.controls.siret.valueChanges
       .pipe(
         throttleTime(300),
@@ -212,6 +192,26 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             }
           });
       });
+
+    this.updateValidation();
+  }
+
+  private updateValidation() {
+    if (this.territoryForm && this.fullFormMode) {
+      this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
+      this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
+    }
+  }
+
+  // todo: ugly ...
+  private setTerritoryFormValue(territory: Territory) {
+    // base values for form
+    this.editedId = territory ? territory._id : null;
+
+    const territoryEd = new Territory(territory);
+    const formValues = territoryEd.toFormValues(this.fullFormMode);
+
+    this.territoryForm.setValue(formValues);
   }
 
   private checkPermissions(): void {
