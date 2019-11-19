@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { TripService } from '~/modules/trip/services/trip.service';
 import { Trip } from '~/core/entities/trip/trip';
@@ -60,6 +61,10 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   get hasFilter(): boolean {
     return Object.keys(this.filterService.filter$.value).length > 0;
+  }
+
+  get total(): number {
+    return this.tripService.total;
   }
 
   onScroll() {

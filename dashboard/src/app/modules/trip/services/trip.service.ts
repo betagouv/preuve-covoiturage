@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { finalize, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { finalize, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { ApiService } from '~/core/services/api/api.service';
@@ -17,12 +17,23 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
   providedIn: 'root',
 })
 export class TripService extends ApiService<Trip> {
+  protected _total$ = new BehaviorSubject<number>(null);
+
   constructor(
     private _http: HttpClient,
     private _jsonRPC: JsonRPCService,
     private _authService: AuthenticationService,
   ) {
     super(_http, _jsonRPC, 'trip');
+  }
+
+  // total
+  get total$(): Observable<number> {
+    return this._total$;
+  }
+
+  get total(): number {
+    return this._total$.value;
   }
 
   public exportTrips(): Observable<any> {
@@ -53,7 +64,19 @@ export class TripService extends ApiService<Trip> {
     if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
       params['operator_id'] = [loggedUser.operator_id];
     }
-    return super.load(params);
+    this._listFilters = params;
+    this._loading$.next(true);
+    return this._jsonRPC.callOne(this.getListJSONParam(params)).pipe(
+      tap((data) => {
+        this._entities$.next(data.data);
+        this._total$.next(data.meta['pagination']['total']);
+        this._loaded$.next(true);
+      }),
+      map((data) => data.data),
+      finalize(() => {
+        this._loading$.next(false);
+      }),
+    );
   }
 
   // todo: uncomment when api route is made

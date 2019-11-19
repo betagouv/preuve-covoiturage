@@ -1,8 +1,7 @@
-// tslint:disable:variable-name
-import { IncentiveInterface } from '../campaign/incentiveInterface';
+import { Trip } from '~/core/entities/trip/trip';
 
+// tslint:disable:variable-name
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
-import { TripRankEnum } from '../../enums/trip/trip-rank.enum';
 
 export interface TripInterface {
   status: TripStatusEnum;
@@ -15,16 +14,3 @@ export interface TripInterface {
   incentives: [];
   campaigns_id: number[];
 }
-
-// export interface PersonInterface {
-//   rank: TripRankEnum;
-//   operator_id: number;
-//   is_driver: boolean;
-//   start_town: string;
-//   end_town: string;
-//   incentives: IncentiveInterface[];
-// }
-
-// export interface CampaignShortInterface {
-//   name: string;
-// }
