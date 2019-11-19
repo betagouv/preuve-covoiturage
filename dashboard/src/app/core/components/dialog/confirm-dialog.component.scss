@@ -1,5 +1,16 @@
 ::ng-deep .mat-dialog-container {
   .mat-dialog-actions {
     justify-content: space-between;
+    margin-top: 5px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    min-height: auto;
+
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+
+  .mat-dialog-actions > * {
+    margin: 0 10px;
   }
 }
