@@ -21,11 +21,7 @@ export class FindAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { siret, source } = params;
-
-    if (source && source === 'remote') {
-      return this.ds.find(siret);
-    }
-
-    return this.repository.find(siret);
+    const res = source && source === 'remote' ? await this.ds.find(siret) : await this.repository.find(siret);
+    return res;
   }
 }

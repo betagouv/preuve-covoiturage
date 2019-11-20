@@ -22,7 +22,7 @@ process.env.APP_MONGO_DB = '';
 })
 class Kernel extends ParentKernel {}
 
-describe('Trip service provider', () => {
+describe('Fraud service provider', () => {
   it('boots', async () => {
     const sp = new Kernel();
     await expect(sp.register()).to.become(undefined);
