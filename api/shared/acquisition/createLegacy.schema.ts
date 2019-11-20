@@ -18,6 +18,7 @@ pSchema.properties.remaining_fee = amountSchema;
 pSchema.properties.travel_pass = { oneOf: [pSchema.properties.identity.properties.travel_pass, { type: 'null' }] };
 delete pSchema.properties.identity.properties.travel_pass;
 delete pSchema.properties.incentives;
+delete pSchema.properties.payments;
 
 // convert driver schema
 dSchema.required = ['identity', 'start', 'end', 'cost', 'revenue'];
@@ -25,6 +26,7 @@ dSchema.properties.incentive = amountSchema;
 dSchema.properties.cost = amountSchema;
 dSchema.properties.remaining_fee = amountSchema;
 delete dSchema.properties.incentives;
+delete dSchema.properties.payments;
 
 export const alias = 'journey.createLegacy';
 export const createLegacy = {
