@@ -29,6 +29,8 @@ export class ProcessJourneyCommand implements CommandInterface {
     {
       signature: '-i, --id <carpoolid>',
       description: 'Select one carpool by carpool_id',
+      // tslint:disable-next-line: no-unnecessary-callback-wrapper
+      coerce: (s: string) => Number(s),
     },
     {
       signature: '-s, --startdate <startdate>',
@@ -76,20 +78,44 @@ export class ProcessJourneyCommand implements CommandInterface {
     `);
 
     // select acquisition missing a carpool
-    const query = {
-      text: `
-        SELECT ${options.table}._id
+    let query;
+    if (options.id) {
+      query = {
+        text: `
+          SELECT
+            ${options.table}._id, 
+            ${options.table}.journey_id, 
+            ${options.table}.operator_id, 
+            ${options.table}.application_id, 
+            ${options.table}.payload, 
+            ${options.table}.created_at
+          FROM ${options.table}
+          WHERE _id = $1
+        `,
+        values: [options.id],
+      };
+    } else {
+      query = {
+        text: `
+        SELECT
+          ${options.table}._id, 
+          ${options.table}.journey_id, 
+          ${options.table}.operator_id, 
+          ${options.table}.application_id, 
+          ${options.table}.payload, 
+          ${options.table}.created_at
         FROM ${options.table}
         LEFT JOIN carpool.carpools
         ON ${options.table}._id = carpool.carpools.acquisition_id::integer
-        JOIN ${options.metatable}
+        LEFT JOIN ${options.metatable}
         ON ${options.table}._id = ${options.metatable}.acquisition_id 
         WHERE carpool.carpools.acquisition_id IS NULL
-        AND meta <> $1
+        AND (meta IS NULL OR meta <> $1)
         LIMIT $2
       `,
-      values: [options.tag, options.limit],
-    };
+        values: [options.tag, options.limit],
+      };
+    }
 
     const cursorCb = readClient.query(new Cursor(query.text, query.values));
     const cursor = promisify(cursorCb.read.bind(cursorCb));
@@ -107,34 +133,33 @@ export class ProcessJourneyCommand implements CommandInterface {
     };
 
     do {
-      console.log('loop');
-      try {
-        const result = await cursor(ROW_COUNT);
-        count = result.length;
-        console.log(result);
+      const result = await cursor(ROW_COUNT);
+      count = result.length;
 
-        await writeClient.query('BEGIN');
-
-        for (const line of result) {
+      for (const line of result) {
+        try {
           await (<any>handler).handle(line, context);
-          if (options.tag) {
-            await writeClient.query({
-              text: `
+          await writeClient.query({
+            text: `
                 INSERT INTO ${options.metatable}
                 (acquisition_id, meta) VALUES ($1, $2)
               `,
-              values: [line._id, options.tag],
-            });
-          }
+            values: [line._id, options.tag],
+          });
           // tslint:disable-next-line: no-console
-          console.info(`Operation done for ${line._id}`);
-        }
-      } catch (e) {
-        console.log(e.stack);
-        await writeClient.query('REVOKE');
-      }
+          console.info(`> Operation done for ${line._id}`);
+        } catch (e) {
+          console.log('> FAILED', line._id, e.stack);
 
-      await writeClient.query('COMMIT');
+          await writeClient.query({
+            text: `
+                INSERT INTO ${options.metatable}
+                (acquisition_id, meta) VALUES ($1, $2)
+              `,
+            values: [line._id, JSON.stringify(e.stack)],
+          });
+        }
+      }
     } while (count !== 0);
 
     return 'Done!';

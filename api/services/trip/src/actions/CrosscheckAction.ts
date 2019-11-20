@@ -25,7 +25,7 @@ export class CrosscheckAction extends Action {
     this.logger.debug('trip:crosscheck', journey._id);
 
     // TODO: add schema
-    const [created, trip] = await this.pg.findOrCreateTripForJourney({ ...journey.payload });
+    const [created, trip] = await this.pg.findOrCreateTripForJourney({ ...journey });
 
     // save payment & declared incentives
 
