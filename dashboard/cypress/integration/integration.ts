@@ -34,9 +34,9 @@ import { stubApiAdress } from '../support/stubs/external/api-adresse';
  * parameters to decide with contexts to run when in local
  */
 const localTesting = {
-  operator: false,
+  operator: true,
   territory: true,
-  registry: false,
+  registry: true,
 };
 
 const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
@@ -83,7 +83,7 @@ context('OPERATOR', () => {
       testOperatorStory();
     } else {
       // local testing
-      testOperatorStory(false, false, false, false);
+      testOperatorStory(true, true, true, true);
     }
   });
 });
@@ -124,7 +124,7 @@ context('REGISTRY', () => {
       testRegistryStory();
     } else {
       // local testing
-      testRegistryStory(false, false, true);
+      testRegistryStory(true, true, true);
     }
   });
 });
@@ -173,7 +173,7 @@ context('TERRITORY', () => {
       testTerritoryStory();
     } else {
       // local testing
-      testTerritoryStory(false, false, false, true, false, false, false);
+      testTerritoryStory(true, true, true, true, true, true, true);
     }
   });
 });
