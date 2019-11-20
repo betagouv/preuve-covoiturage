@@ -50,7 +50,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     for (const journey of data) {
       const { operator_id, application_id } = context;
       insertPayload.push({
-        text: '($#, $#, $#)',
+        text: '($#, $#, $#, $#)',
         values: [operator_id, application_id || 'unkown', journey.journey_id, journey],
       });
     }
