@@ -1,6 +1,6 @@
-import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
+import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearchInterface';
 
-export interface ParamsInterface extends TripSearchInterface {}
+export interface ParamsInterface extends TripSearchInterfaceWithPagination {}
 export type ResultInterface = any;
 
 export const handlerConfig = {

@@ -4,7 +4,7 @@ export interface ParamsInterface extends AcquisitionInterface {}
 export type ResultInterface = void;
 
 export const handlerConfig = {
-  service: 'trip',
+  service: 'carpool',
   method: 'crosscheck',
 };
 

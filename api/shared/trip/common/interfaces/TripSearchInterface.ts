@@ -22,6 +22,9 @@ export interface TripSearchInterface {
   operator_id?: number[];
   territory_id?: number[];
   visible_operator_ids?: number[];
+}
+
+export interface TripSearchInterfaceWithPagination extends TripSearchInterface {
   skip: number;
   limit: number;
 }

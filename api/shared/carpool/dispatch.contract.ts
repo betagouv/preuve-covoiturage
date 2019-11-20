@@ -4,7 +4,7 @@ export interface ParamsInterface {
 export type ResultInterface = void;
 
 export const handlerConfig = {
-  service: 'trip',
+  service: 'carpool',
   method: 'dispatch',
 };
 
