@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
@@ -67,8 +67,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
   public onSubmit(): void {
     const operator = new Operator(this.operatorForm.value);
-
-    console.log('operator : ', operator);
+    operator.siret = this.operatorForm.value.company.siret;
     if (this.editedOperatorId) {
       const patch$ = this.fullFormMode
         ? this._operatorService.updateList(new Operator({ ...operator, _id: this.editedOperatorId }))
@@ -122,6 +121,45 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     const operatorConstruct = operatorFt.toFormValues(this.fullFormMode);
 
     this.operatorForm.setValue(operatorConstruct);
+  }
+
+  private updateValidation() {
+    if (this.operatorForm && this.fullFormMode) {
+      this.operatorForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
+      this.operatorForm.controls['legal_name'].setValidators(this.fullFormMode ? Validators.required : null);
+    }
+  }
+
+  private initOperatorForm(): void {
+    let formOptions: any = {
+      contacts: this.fb.group({
+        gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+        technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
+      }),
+    };
+
+    if (this.fullFormMode) {
+      formOptions = {
+        ...formOptions,
+        name: [''],
+        legal_name: [''],
+        address: this.fb.group(
+          new FormAddress(
+            new Address({
+              street: null,
+              city: null,
+              country: null,
+              postcode: null,
+            }),
+          ),
+        ),
+        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
+        bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
+      };
+    }
+
+    this.operatorForm = this.fb.group(formOptions);
 
     const stopFindCompany = new Subject();
 
@@ -163,45 +201,6 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
             }
           });
       });
-  }
-
-  private updateValidation() {
-    if (this.operatorForm && this.fullFormMode) {
-      this.operatorForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
-      this.operatorForm.controls['legal_name'].setValidators(this.fullFormMode ? Validators.required : null);
-    }
-  }
-
-  private initOperatorForm(): void {
-    let formOptions: any = {
-      contacts: this.fb.group({
-        gdpr_dpo: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        gdpr_controller: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-        technical: this.fb.group(new FormContact(new Contact({ firstname: null, lastname: null, email: null }))),
-      }),
-    };
-
-    if (this.fullFormMode) {
-      formOptions = {
-        ...formOptions,
-        name: [''],
-        legal_name: [''],
-        address: this.fb.group(
-          new FormAddress(
-            new Address({
-              street: null,
-              city: null,
-              country: null,
-              postcode: null,
-            }),
-          ),
-        ),
-        company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
-        bank: this.fb.group(new FormBank(new Bank()), { validators: bankValidator }),
-      };
-    }
-
-    this.operatorForm = this.fb.group(formOptions);
 
     this.updateValidation();
   }
