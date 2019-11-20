@@ -1,71 +1,85 @@
-// import { describe } from 'mocha';
+import { describe } from 'mocha';
 import { expect } from 'chai';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { CreateJourneyParamsInterface } from '@pdc/provider-schema';
 
-import { Journey } from '../entities/Journey';
 import { JourneyPgRepositoryProvider } from './JourneyPgRepositoryProvider';
+import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
-const journey1: CreateJourneyParamsInterface = {
-  journey_id: '1',
-  operator_journey_id: '1',
-  operator_class: 'A',
-  operator_id: '5d10c5ec63214bba0f9fa2d4',
-  passenger: {
-    identity: { phone: '+33612345678' },
-    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
-    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
-    seats: 1,
-    expense: 1,
-    contribution: 1,
-    incentives: [],
-    distance: 10,
-    duration: 10,
-  },
-  driver: {
-    identity: { phone: '+33687654321' },
-    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
-    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
-    expense: 1,
-    revenue: 1,
-    incentives: [],
-    distance: 10,
-    duration: 10,
+const journey1: AcquisitionInterface = {
+  _id: 1,
+  operator_id: 1,
+  journey_id: '2acb88e4-3fe2-4b6b-80b9-5b20526179f1',
+  application_id: '9e84bb6f-ac90-48e2-8da0-e23c5ed828b3',
+  created_at: new Date(),
+  payload: {
+    journey_id: '2acb88e4-3fe2-4b6b-80b9-5b20526179f1',
+    operator_journey_id: '438068ff-5661-4ff3-b40a-91816326c4ff',
+    operator_class: 'A',
+    operator_id: 1,
+    passenger: {
+      identity: { phone: '+33612345678' },
+      start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+      end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
+      seats: 1,
+      expense: 1,
+      contribution: 1,
+      incentives: [],
+      distance: 10,
+      duration: 10,
+    },
+    driver: {
+      identity: { phone: '+33687654321' },
+      start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+      end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
+      expense: 1,
+      revenue: 1,
+      incentives: [],
+      distance: 10,
+      duration: 10,
+    },
   },
 };
 
-const journey2: CreateJourneyParamsInterface = {
-  journey_id: '2',
-  operator_journey_id: '2',
-  operator_class: 'B',
-  operator_id: '5d10c5ec63214bba0f9fa2d4',
-  passenger: {
-    identity: { phone: '+33687652134' },
-    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
-    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
-    seats: 1,
-    expense: 1,
-    contribution: 1,
-    incentives: [],
-    distance: 10,
-    duration: 10,
-  },
-  driver: {
-    identity: { phone: '+33687654321' },
-    start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
-    end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
-    expense: 1,
-    revenue: 1,
-    incentives: [],
-    distance: 10,
-    duration: 10,
+const journey2: AcquisitionInterface = {
+  _id: 2,
+  operator_id: 1,
+  journey_id: '2260624c-f3f5-4d28-8c50-97c672eec1ae',
+  application_id: 'c24d6d69-b82f-4373-a161-b49512cd94bd',
+  created_at: new Date(),
+  payload: {
+    journey_id: '2260624c-f3f5-4d28-8c50-97c672eec1ae',
+    operator_journey_id: 'cc7c351a-4ebe-49a2-93a1-66cde30245ae',
+    operator_class: 'B',
+    operator_id: 1,
+    passenger: {
+      identity: { phone: '+33687652134' },
+      start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+      end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
+      seats: 1,
+      expense: 1,
+      contribution: 1,
+      incentives: [],
+      distance: 10,
+      duration: 10,
+    },
+    driver: {
+      identity: { phone: '+33687654321' },
+      start: { datetime: new Date('2019-05-01T10:00:00Z'), literal: 'Paris' },
+      end: { datetime: new Date('2019-05-01T11:00:00Z'), literal: 'Evry' },
+      expense: 1,
+      revenue: 1,
+      incentives: [],
+      distance: 10,
+      duration: 10,
+    },
   },
 };
 
-let pgClient;
-let repository;
-const ids = [];
 describe('Journey pg repository', () => {
+  let pgClient;
+  let repository;
+  const ids = [];
+
   before(async () => {
     pgClient = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
     await pgClient.up();
@@ -81,17 +95,24 @@ describe('Journey pg repository', () => {
   });
 
   it('works', async () => {
-    const result = await repository.createMany([new Journey(journey1), new Journey(journey2)]);
+    // insert 2 journeys at once
+    const result = await repository.createMany([journey1.payload, journey2.payload], {
+      operator_id: journey1.operator_id,
+      application_id: journey1.application_id,
+    });
     expect(result).to.be.a('array');
     expect(result.length).to.eq(2);
-    result.map((r) => {
-      const { _id } = r;
-      ids.push(_id);
+
+    // store for after()
+    result.map((r: AcquisitionInterface) => {
+      ids.push(r._id);
     });
+
     const { rows } = await pgClient.getClient().query({
       text: `SELECT payload FROM ${repository.table} WHERE _id = ANY($1)`,
       values: [ids],
     });
+
     expect(
       rows.map((r) => {
         const ret = r.payload;
@@ -121,6 +142,6 @@ describe('Journey pg repository', () => {
           },
         };
       }),
-    ).to.deep.members([journey1, journey2]);
+    ).to.deep.members([journey1.payload, journey2.payload]);
   });
 });

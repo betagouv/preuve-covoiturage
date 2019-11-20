@@ -4,7 +4,7 @@ export interface JourneyInterface {
   journey_id: string;
   operator_journey_id: string;
   operator_class: string;
-  operator_id: number;
+  operator_id: number; // useful ?
   passenger?: PersonInterface;
   driver?: PersonInterface;
 }

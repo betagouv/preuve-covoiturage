@@ -1,12 +1,9 @@
 import { JourneyInterface } from '../common/interfaces/JourneyInterface';
 
-interface JourneyResult {
-  journey_id: string;
-  created_at: Date;
-}
+declare type ResultType = { journey_id: string; created_at: Date };
 
 export interface ParamsInterface extends JourneyInterface {}
-export type ResultInterface = JourneyResult | JourneyResult[];
+export type ResultInterface = ResultType | ResultType[];
 export const handlerConfig = {
   service: 'acquisition',
   method: 'create',

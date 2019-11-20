@@ -1,8 +1,8 @@
 import { provider } from '@ilos/common';
-import * as uuidv4 from 'uuid/v4';
+import v4 from 'uuid/v4';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 
-import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
+import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
@@ -21,6 +21,7 @@ import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagi
 })
 export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
   public readonly table = 'carpool.carpools';
+  public readonly identityTable = 'carpool.identities';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -41,26 +42,26 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     return result.rows[0]._id;
   }
 
-  protected async findTripIdByIdentityAndDate(phone: string, start: Date | string): Promise<string | null> {
-    const startDate = typeof start === 'string' ? new Date(start).toISOString() : start.toISOString();
+  // protected async findTripIdByIdentityAndDate(phone: string, start: Date | string): Promise<string | null> {
+  //   const startDate = typeof start === 'string' ? new Date(start).toISOString() : start.toISOString();
 
-    const query = {
-      text: `
-        SELECT trip_id as _id FROM ${this.table}
-          WHERE ((identity).phone) = $1
-          AND datetime >= timestamptz '${startDate}'::timestamptz - interval '2 hour'
-          AND datetime <= timestamptz '${startDate}'::timestamptz + interval '2 hour'
-          LIMIT 1
-      `,
-      values: [phone],
-    };
+  //   const query = {
+  //     text: `
+  //       SELECT trip_id as _id FROM ${this.table}
+  //         WHERE ((identity).phone) = $1
+  //         AND datetime >= timestamptz '${startDate}'::timestamptz - interval '2 hour'
+  //         AND datetime <= timestamptz '${startDate}'::timestamptz + interval '2 hour'
+  //         LIMIT 1
+  //     `,
+  //     values: [phone],
+  //   };
 
-    const result = await this.connection.getClient().query(query);
-    if (result.rowCount === 0) {
-      return null;
-    }
-    return result.rows[0]._id;
-  }
+  //   const result = await this.connection.getClient().query(query);
+  //   if (result.rowCount === 0) {
+  //     return null;
+  //   }
+  //   return result.rows[0]._id;
+  // }
 
   protected async createNewTrip(client: PoolClient, operatorTripId?: string): Promise<{ _id: string }> {
     let query = {
@@ -88,53 +89,54 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     return this.castTypes(result.rows[0]);
   }
 
-  public async findOrCreateTripForJourney(
-    journey: JourneyInterface & { created_at: Date },
-  ): Promise<[boolean, { _id: string }]> {
+  public async findOrCreateTripForJourney(journey: AcquisitionInterface): Promise<[boolean, { _id: string }]> {
     const client = await this.connection.getClient().connect();
+
     try {
       await client.query('BEGIN');
       let tripId;
 
-      if (journey.operator_journey_id) {
-        tripId = await this.findTripIdByOperatorTripId(journey.operator_journey_id);
+      if (journey.payload.operator_journey_id) {
+        tripId = await this.findTripIdByOperatorTripId(journey.payload.operator_journey_id);
       }
 
-      if (!tripId && journey.driver.identity.phone && journey.driver.start.datetime) {
-        tripId = await this.findTripIdByIdentityAndDate(journey.driver.identity.phone, journey.driver.start.datetime);
+      // if (!tripId && journey.driver.identity.phone && journey.driver.start.datetime) {
+      //   tripId = await this.findTripIdByIdentityAndDate(journey.driver.identity.phone, journey.driver.start.datetime);
+      // }
+
+      if (journey.payload.driver) {
+        await this.addParticipant(
+          client,
+          tripId,
+          {
+            ...journey.payload.driver,
+            operator_class: journey.payload.operator_class,
+            journey_id: journey.journey_id,
+            operator_id: journey.operator_id,
+            acquisition_id: journey._id,
+            operator_trip_id: journey.payload.operator_journey_id,
+            created_at: journey.created_at,
+          },
+          true,
+        );
       }
 
-      if (!tripId) {
-        tripId = uuidv4();
+      if (journey.payload.passenger) {
+        await this.addParticipant(
+          client,
+          tripId,
+          {
+            ...journey.payload.passenger,
+            operator_class: journey.payload.operator_class,
+            journey_id: journey.journey_id,
+            operator_id: journey.operator_id,
+            acquisition_id: journey._id,
+            operator_trip_id: journey.payload.operator_journey_id,
+            created_at: journey.created_at,
+          },
+          false,
+        );
       }
-
-      await this.addParticipant(
-        client,
-        tripId,
-        {
-          ...journey.driver,
-          operator_class: journey.operator_class,
-          journey_id: journey.journey_id,
-          operator_id: journey.operator_id,
-          operator_trip_id: journey.operator_journey_id,
-          created_at: journey.created_at,
-        },
-        true,
-      );
-
-      await this.addParticipant(
-        client,
-        tripId,
-        {
-          ...journey.passenger,
-          operator_class: journey.operator_class,
-          journey_id: journey.journey_id,
-          operator_id: journey.operator_id,
-          operator_trip_id: journey.operator_journey_id,
-          created_at: journey.created_at,
-        },
-        false,
-      );
 
       await client.query('COMMIT');
       await client.release();
@@ -149,20 +151,42 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
   protected async addParticipant(
     client: PoolClient,
     tripId: string,
-    participant: PersonInterface & { operator_trip_id: string; created_at: Date },
+    participant: PersonInterface & { acquisition_id: number; operator_trip_id: string; created_at: Date },
     asDriver = false,
   ): Promise<void> {
-    const identity = participant.identity;
-    const flatidentity = `(${[
-      'phone' in identity ? identity.phone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
-      'firstname' in identity ? identity.firstname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
-      'lastname' in identity ? identity.lastname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
-      'email' in identity ? identity.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
-      'company' in identity ? identity.company.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null,
-      null, // participant.identity.travel_pass.name,
-      null, // participant.identity.travel_pass.user_id,
-      participant.identity.over_18,
-    ].join(',')})`;
+    const idResult = await this.connection.getClient().query({
+      text: `
+        INSERT INTO ${this.identityTable}
+        (
+          phone,
+          phone_trunc,
+          operator_user_id,
+          firstname,
+          lastname,
+          email,
+          company,
+          travel_pass_name,
+          travel_pass_user_id,
+          over_18
+        ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )
+        RETURNING _id
+      `,
+      values: [
+        participant.identity.phone,
+        participant.identity.phone_trunc,
+        participant.identity.operator_user_id,
+        participant.identity.firstname,
+        participant.identity.lastname,
+        participant.identity.email,
+        participant.identity.company,
+        participant.identity.travel_pass_name,
+        participant.identity.travel_pass_user_id,
+        participant.identity.over_18,
+      ],
+    });
+
+    if (!idResult.rowCount) throw new Error('Failed to insert identity');
+    const identity = idResult.rows[0];
 
     const query = {
       text: `
@@ -170,7 +194,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           acquisition_id,
           operator_id,
           trip_id,
-          identity,
+          identity_id,
           is_driver,
           operator_class,
           datetime,
@@ -187,33 +211,13 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           seats,
           created_at,
           operator_trip_id
-        ) VALUES (
-          $1,
-          $2,
-          $3,
-          $4,
-          $5,
-          $6,
-          $7,
-          $8,
-          $9,
-          $10,
-          $11,
-          $12,
-          $13,
-          $14,
-          $15,
-          $16,
-          $17,
-          $18,
-          $19,
-          $20
-        )`,
+        )
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20 )`,
       values: [
-        participant.journey_id,
+        participant.acquisition_id,
         participant.operator_id,
-        tripId,
-        flatidentity,
+        tripId || v4(),
+        identity._id,
         asDriver,
         participant.operator_class,
         participant.start.datetime,

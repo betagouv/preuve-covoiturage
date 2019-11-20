@@ -51,7 +51,7 @@
     "@angular/compiler-cli": "~8.1.1",
     "@angular/language-service": "~8.1.1",
     "@cypress/webpack-preprocessor": "^4.1.0",
-    "@types/node": "~8.9.4",
+    "@types/node": "12.12.11",
     "codelyzer": "^5.0.0",
     "cypress": "^3.4.1",
     "husky": "^3.0.9",

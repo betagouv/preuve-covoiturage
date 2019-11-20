@@ -1,11 +1,12 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 import {
   JourneyRepositoryProviderInterface,
   JourneyRepositoryProviderInterfaceResolver,
 } from '../interfaces/JourneyRepositoryProviderInterface';
+import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 
 @provider({
   identifier: JourneyRepositoryProviderInterfaceResolver,
@@ -15,44 +16,42 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
 
   constructor(protected connection: PostgresConnection) {}
 
-  async create(journey: JourneyInterface & { application_id: string }): Promise<JourneyInterface> {
-    const { operator_id, application_id } = journey;
+  async create(
+    journey: JourneyInterface,
+    context: { operator_id: number; application_id: string },
+  ): Promise<AcquisitionInterface> {
+    const { operator_id, application_id } = context;
 
     const query = {
       text: `
-        INSERT INTO ${this.table} (
-          operator_id,
-          application_id,
-          journey_id,
-          payload
-        ) VALUES (
-          $1,
-          $2,
-          $3,
-          $4
-        )
-        RETURNING _id, journey_id, created_at
+        INSERT INTO ${this.table}
+        ( operator_id, application_id, journey_id, payload )
+        VALUES ( $1, $2, $3, $4 )
+        RETURNING *
       `,
-      values: [operator_id, application_id ? application_id : 'unknown', journey.journey_id, journey],
+      values: [operator_id, application_id || 'unknown', journey.journey_id, journey],
     };
 
     const result = await this.connection.getClient().query(query);
 
     if (result.rowCount !== 1) {
-      throw new Error();
+      throw new Error(`Failed to create journey (${journey.journey_id})`);
     }
 
     return this.castTypes(result.rows[0]);
   }
 
-  async createMany(data: (JourneyInterface & { application_id: string })[]): Promise<JourneyInterface[]> {
+  async createMany(
+    data: JourneyInterface[],
+    context: { operator_id: number; application_id: string },
+  ): Promise<AcquisitionInterface[]> {
     const insertPayload = [];
 
     for (const journey of data) {
-      const { operator_id, application_id } = journey;
+      const { operator_id, application_id } = context;
       insertPayload.push({
-        text: '($#, $#, $#)',
-        values: [operator_id, application_id ? application_id : 'unkown', journey.journey_id, journey],
+        text: '($#, $#, $#, $#)',
+        values: [operator_id, application_id || 'unkown', journey.journey_id, journey],
       });
     }
     const normalizedInsertPayload = insertPayload.reduce(
@@ -75,7 +74,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
           journey_id,
           payload
         ) VALUES ${normalizedInsertPayload.text.join(',')}
-        RETURNING _id, journey_id, created_at
+        RETURNING *
       `,
       values: normalizedInsertPayload.values,
     };

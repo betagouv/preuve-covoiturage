@@ -15,6 +15,7 @@ import { bootstrap as companyBootstrap } from '@pdc/service-company';
 import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 import { MapIdCommand } from './commands/MapIdCommand';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
+import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 
 @kernel({
   env: null,
@@ -31,6 +32,6 @@ import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
     ...companyBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [UpgradeJourneyCommand, MapIdCommand, MigrateInseeCommand],
+  commands: [UpgradeJourneyCommand, ProcessJourneyCommand, MapIdCommand, MigrateInseeCommand],
 })
 export class Kernel extends BaseKernel {}
