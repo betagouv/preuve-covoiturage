@@ -6,26 +6,45 @@ import { finalize, map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { ApiService } from '~/core/services/api/api.service';
-import { Trip } from '~/core/entities/trip/trip';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CoupleInterface, LightTripInterface } from '~/core/interfaces/trip/tripInterface';
+import { TripFormatService } from '~/modules/trip/services/trip-format.service';
+import { LightTrip } from '~/core/entities/trip/trip';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TripService extends ApiService<Trip> {
+export class TripService {
   protected _total$ = new BehaviorSubject<number>(null);
+  private _method = 'trip';
+  protected _listFilters = {};
+
+  protected _loading$ = new BehaviorSubject<boolean>(false);
+  protected _loaded$ = new BehaviorSubject<boolean>(false);
+
+  protected _entities$ = new BehaviorSubject<LightTripInterface[]>([]);
+
+  get loading(): boolean {
+    return this._loading$.value;
+  }
+
+  get loaded(): boolean {
+    return this._loaded$.value;
+  }
+
+  public getListJSONParam(parameters: object = {}): JsonRPCParam {
+    return new JsonRPCParam(`${this._method}:list`, parameters);
+  }
 
   constructor(
     private _http: HttpClient,
     private _jsonRPC: JsonRPCService,
     private _authService: AuthenticationService,
-  ) {
-    super(_http, _jsonRPC, 'trip');
-  }
+    private _tripFormatService: TripFormatService,
+  ) {}
 
   // total
   get total$(): Observable<number> {
@@ -55,7 +74,7 @@ export class TripService extends ApiService<Trip> {
       );
   }
 
-  public load(filter: FilterInterface | {} = {}) {
+  public load(filter: FilterInterface | {} = {}): Observable<CoupleInterface[]> {
     const params = _.cloneDeep(filter);
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
@@ -68,11 +87,11 @@ export class TripService extends ApiService<Trip> {
     this._loading$.next(true);
     return this._jsonRPC.callOne(this.getListJSONParam(params)).pipe(
       tap((data) => {
-        this._entities$.next(data.data);
         this._total$.next(data.meta['pagination']['total']);
         this._loaded$.next(true);
       }),
-      map((data) => data.data),
+      map((data) => data.data.map((trip) => new LightTrip(trip))),
+      map((data) => this._tripFormatService.toCouple(data)),
       finalize(() => {
         this._loading$.next(false);
       }),
