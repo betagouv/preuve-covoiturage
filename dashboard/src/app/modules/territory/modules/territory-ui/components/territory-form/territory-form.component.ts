@@ -8,7 +8,7 @@ import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
 import { Contact } from '~/core/entities/shared/contact';
-import { Company, Contacts, Territory } from '~/core/entities/territory/territory';
+import { Company, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
@@ -17,6 +17,7 @@ import { TerritoryService } from '~/modules/territory/services/territory.service
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { CompanyService } from '~/modules/company/services/company.service';
+import { TerritoryStoreService } from '~/modules/territory/services/territoryStoreService';
 
 @Component({
   selector: 'app-territory-form',
@@ -43,9 +44,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     private toastr: ToastrService,
     private commonDataService: CommonDataService,
     private companyService: CompanyService,
+    private territoryStore: TerritoryStoreService,
   ) {
     super();
-    console.log('companyService : ', companyService);
   }
 
   ngOnInit() {
@@ -67,30 +68,32 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   public onSubmit(): void {
-    const territory = new Territory(this.territoryForm.value);
-
-    if (this.territoryForm.value.company) {
-      territory.siret = this.territoryForm.value.company.siret;
-    }
+    const territory = new Territory();
+    territory.updateFromFormValues(this.territoryForm.value);
 
     if (this.editedId) {
-      const formData = this.fullFormMode
-        ? this.territoryForm.value
-        : {
-            _id: territory._id,
-            contacts: new Contacts(this.territoryForm.value.contacts),
-          };
-      let patch$;
-      if (this.fullFormMode) {
-        const updatedTerritory = new Territory({
-          ...formData,
-          _id: this.editedId,
-        });
-        delete updatedTerritory.company;
-        patch$ = this._territoryService.updateList(updatedTerritory);
-      } else {
-        patch$ = this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
-      }
+      // const formData = this.fullFormMode
+      //   ? this.territoryForm.value
+      //   : {
+      //       _id: territory._id,
+      //       contacts: new Contacts(this.territoryForm.value.contacts),
+      //     };
+      // let patch$;
+      // if (this.fullFormMode) {
+      //   const updatedTerritory = new Territory({
+      //     ...formData,
+      //     siret: formData.company.siret,
+      //     _id: this.editedId,
+      //   });
+      //   delete updatedTerritory.company;
+      //   patch$ = this._territoryService.updateList(updatedTerritory);
+      // } else {
+      //   patch$ = this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
+      // }
+
+      const patch$ = this.fullFormMode
+        ? this.territoryStore.updateSelected(territory)
+        : this.territoryStore.patchContact({ contacts: this.territoryForm.value.contacts, _id: this.editedId });
 
       patch$.subscribe(
         (data) => {

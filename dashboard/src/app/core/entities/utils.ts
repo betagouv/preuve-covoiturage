@@ -22,6 +22,38 @@ export function hasOneNotEmptyProperty(object: any, maxRec = 3) {
   return hasNonEmpty;
 }
 
+const defaultCopy = (source: any, propertyName: string) => source[propertyName];
+
+export function assignOrDeleteProperty<PropT>(
+  source: any,
+  dest: any,
+  propertyName: string,
+  copyFunc: (source: any, propertyName: string) => PropT = defaultCopy,
+) {
+  if (source && hasOneNotEmptyProperty(source[propertyName])) {
+    dest[propertyName] = copyFunc(source, propertyName);
+  } else {
+    delete dest[propertyName];
+  }
+}
+
+export function assignOrDeleteProperties<PropT>(
+  source: any,
+  dest: any,
+  propertyNames: string[],
+  copyFunc: (source: any, propertyName: string) => PropT = defaultCopy,
+) {
+  for (const propName of propertyNames) assignOrDeleteProperty(source, dest, propName);
+}
+
+export function copyOnlyDefineSourceProperties<DestT>(source: any, destination: DestT): DestT {
+  Object.keys(destination).forEach((propName) => {
+    if (source[propName]) destination[propName] = source[propName];
+  });
+
+  return destination;
+}
+
 // return invalid controls names
 export function findInvalidControlsRecursive(formToInvestigate: FormGroup | FormArray): string[] {
   const invalidControls: string[] = [];
