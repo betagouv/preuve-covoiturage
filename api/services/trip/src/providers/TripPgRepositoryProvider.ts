@@ -1,5 +1,5 @@
 import { provider } from '@ilos/common';
-import uuidv4 from 'uuid/v4';
+import v4 from 'uuid/v4';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
@@ -216,7 +216,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
       values: [
         participant.acquisition_id,
         participant.operator_id,
-        tripId || uuidv4(),
+        tripId || v4(),
         identity._id,
         asDriver,
         participant.operator_class,

@@ -83,11 +83,11 @@ export class ProcessJourneyCommand implements CommandInterface {
       query = {
         text: `
           SELECT
-            ${options.table}._id, 
-            ${options.table}.journey_id, 
-            ${options.table}.operator_id, 
-            ${options.table}.application_id, 
-            ${options.table}.payload, 
+            ${options.table}._id,
+            ${options.table}.journey_id,
+            ${options.table}.operator_id,
+            ${options.table}.application_id,
+            ${options.table}.payload,
             ${options.table}.created_at
           FROM ${options.table}
           WHERE _id = $1
@@ -98,17 +98,17 @@ export class ProcessJourneyCommand implements CommandInterface {
       query = {
         text: `
         SELECT
-          ${options.table}._id, 
-          ${options.table}.journey_id, 
-          ${options.table}.operator_id, 
-          ${options.table}.application_id, 
-          ${options.table}.payload, 
+          ${options.table}._id,
+          ${options.table}.journey_id,
+          ${options.table}.operator_id,
+          ${options.table}.application_id,
+          ${options.table}.payload,
           ${options.table}.created_at
         FROM ${options.table}
         LEFT JOIN carpool.carpools
         ON ${options.table}._id = carpool.carpools.acquisition_id::integer
         LEFT JOIN ${options.metatable}
-        ON ${options.table}._id = ${options.metatable}.acquisition_id 
+        ON ${options.table}._id = ${options.metatable}.acquisition_id
         WHERE carpool.carpools.acquisition_id IS NULL
         AND (meta IS NULL OR meta <> $1)
         LIMIT $2
