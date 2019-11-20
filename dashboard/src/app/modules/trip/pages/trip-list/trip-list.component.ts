@@ -1,15 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 import { TripService } from '~/modules/trip/services/trip.service';
-import { Trip } from '~/core/entities/trip/trip';
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CoupleInterface } from '~/core/interfaces/trip/tripInterface';
 
 @Component({
   selector: 'app-trip-list',
@@ -18,7 +17,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 })
 export class TripListComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
-  trips: Trip[] = [];
+  trips: CoupleInterface[] = [];
   skip = DEFAULT_TRIP_SKIP;
   limit = DEFAULT_TRIP_LIMIT;
 
