@@ -30,8 +30,8 @@ export class CrosscheckAction extends Action {
     // save payment & declared incentives
     let delay = this.config.get('rules.maxAge');
 
-    if (journey.driver && journey.driver.start && journey.driver.start.datetime) {
-      delay -= new Date().valueOf() - journey.driver.start.datetime.valueOf();
+    if (journey.payload.driver && journey.payload.driver.start && journey.payload.driver.start.datetime) {
+      delay -= new Date().valueOf() - journey.payload.driver.start.datetime.valueOf();
     }
 
     await this.kernel.notify(
