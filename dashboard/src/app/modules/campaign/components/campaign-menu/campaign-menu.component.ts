@@ -25,7 +25,7 @@ export class CampaignMenuComponent implements OnInit {
     },
   ];
 
-  constructor(public router: Router, private _toastr: ToastrService) {}
+  constructor(public router: Router, public toastr: ToastrService) {}
 
   ngOnInit() {
     this.menus[0].callback = this.createCampaign;
@@ -36,9 +36,9 @@ export class CampaignMenuComponent implements OnInit {
     router.navigate(['/campaign/create']);
   }
 
-  discoverCampaign(router: Router, _toastr: ToastrService) {
+  discoverCampaign(router: Router, toastr: ToastrService) {
     // todo: reconnect when discover is fixed
     // router.navigate(['/campaign/discover']);
-    _toastr.success('Cette section sera bientôt disponible !');
+    toastr.success('Cette section sera bientôt disponible !');
   }
 }
