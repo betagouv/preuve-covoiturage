@@ -37,9 +37,7 @@
 
   <ng-container matColumnDef="incentives">
     <th mat-header-cell *matHeaderCellDef>Incitation</th>
-    <td mat-cell *matCellDef="let row" [matTooltip]="getIncentivesTooltip(row)">
-      {{ getTotalIncentives(row) }} {{ getTotalIncentivesUnit(row) }}
-    </td>
+    <td mat-cell *matCellDef="let row">{{ getTotalIncentives(row) }} {{ getTotalIncentivesUnit(row) }}</td>
   </ng-container>
 
   <ng-container matColumnDef="operator">

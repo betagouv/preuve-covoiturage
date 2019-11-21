@@ -1,22 +1,5 @@
-import { Moment } from 'moment';
-
 // tslint:disable:variable-name
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
-
-export interface CoupleInterface {
-  status: TripStatusEnum;
-  trip_id: number;
-  start_town: string;
-  start_datetime: Moment;
-  operator_class: string;
-  operator_id: number;
-  end_town: string;
-  incentives: {
-    driver?: LightTripIncentives[];
-    passenger?: LightTripIncentives[];
-  };
-  campaigns_id: number[];
-}
 
 export interface LightTripInterface {
   trip_id: number;
