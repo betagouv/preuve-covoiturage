@@ -83,12 +83,19 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   get canGoToThirdStep(): boolean {
     const filtersFormGroup = this.campaignFormGroup.get('filters');
+
+    const targetValid =
+      this.campaignFormGroup.get('ui_status').get('for_trip').value ||
+      this.campaignFormGroup.get('ui_status').get('for_passenger').value ||
+      this.campaignFormGroup.get('ui_status').get('for_driver').value;
+
     return (
+      targetValid &&
       filtersFormGroup.get('weekday').valid &&
       filtersFormGroup.get('distance_range').valid &&
       filtersFormGroup.get('rank').valid &&
+      filtersFormGroup.get('insee').valid &&
       filtersFormGroup.get('operator_ids').valid &&
-      this.campaignFormGroup.get('ui_status').valid &&
       this.campaignFormGroup.get('only_adult').valid
     );
   }
@@ -144,7 +151,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         (data) => {
           const campaignSaved = data[0];
           this.requestLoading = false;
-          this._toastr.success(`La campagne ${campaignSaved.name} a bien été enregistré`);
+          this._toastr.success(`La campagne ${campaignSaved.name} a bien été enregistrée`);
           this._router.navigate(['/campaign']);
         },
         (error) => {
