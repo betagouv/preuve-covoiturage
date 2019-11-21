@@ -1,5 +1,11 @@
 import { sprintf } from 'sprintf-js';
-import { ConfigInterfaceResolver, KernelInterfaceResolver, ContextType, provider } from '@ilos/common';
+import {
+  ConfigInterfaceResolver,
+  KernelInterfaceResolver,
+  ContextType,
+  provider,
+  NotFoundException,
+} from '@ilos/common';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { ParamsInterface as SendMailParamsInterface } from '../shared/user/notify.contract';
@@ -99,6 +105,8 @@ link:  ${link}
     this.log('Forgotten Password', email, token, link);
 
     const user = await this.userRepository.findByEmail(email);
+
+    if (!user) throw new NotFoundException('User not found');
 
     await this.sendMail({
       link,
