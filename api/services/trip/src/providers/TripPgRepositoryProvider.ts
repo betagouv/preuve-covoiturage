@@ -413,7 +413,8 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
           is_driver,
           start_town,
           end_town,
-          datetime,
+          datetime as start_datetime,
+          '0'::int as incentives,
           operator_id,
           operator_class
         FROM ${this.table}
