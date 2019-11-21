@@ -1,54 +1,58 @@
 // tslint:disable:variable-name
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
+import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/crosscheck.contract';
+import { alias } from '../shared/carpool/crosscheck.schema';
+
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
+import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
 
 /*
  * Import journey in carpool database
  */
 @handler(handlerConfig)
 export class CrosscheckAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]],
+    ['validate', alias],
+  ];
 
   constructor(
-    private kernel: KernelInterfaceResolver,
-    private config: ConfigInterfaceResolver,
-    private pg: CarpoolRepositoryProviderInterfaceResolver,
+    private carpool: CarpoolRepositoryProviderInterfaceResolver,
+    private crosscheck: CrosscheckRepositoryProviderInterfaceResolver,
+    private identity: IdentityRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
   public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    this.logger.debug(`${handlerConfig.service}:${handlerConfig.method}`, journey._id);
+    this.logger.debug(`${handlerConfig.service}:${handlerConfig.method}`, journey.acquisition_id);
+    const toProcess = [];
+    const { people, ...sharedData } = journey;
 
-    // TODO: add schema
-    await this.pg.importJourney(journey);
+    const driver = people.filter((people) => people.is_driver).pop();
+    const passengers = people.filter((people) => !people.is_driver);
 
-    // save payment & declared incentives
-    let delay = this.config.get('rules.maxAge');
+    const driverIdentity = await this.identity.create(driver.identity);
+    toProcess.push({ ...driver, identity_id: driverIdentity._id });
 
-    if (journey.payload.driver && journey.payload.driver.start && journey.payload.driver.start.datetime) {
-      delay -= new Date().valueOf() - journey.payload.driver.start.datetime.valueOf();
+    const tripId = await this.crosscheck.getTripId({
+      operatorTripId: driver.operator_trip_id,
+      datetime: driver.datetime,
+      start: driver.start,
+      end: driver.end,
+      identityUuid: driverIdentity.uuid,
+    });
+
+    for (const passenger of passengers) {
+      const { _id: identity_id } = await this.identity.create(passenger.identity);
+      toProcess.push({...passenger, identity_id });
     }
 
-    await this.kernel.notify(
-      'carpool:dispatch',
-      { acquisition_id: journey.journey_id },
-      {
-        channel: {
-          service: handlerConfig.service,
-          metadata: {
-            delay,
-          },
-        },
-        call: {
-          user: {},
-        },
-      },
-    );
+    await this.carpool.importFromAcquisition({ ...sharedData, trip_id: tripId }, toProcess);
 
     return;
   }
