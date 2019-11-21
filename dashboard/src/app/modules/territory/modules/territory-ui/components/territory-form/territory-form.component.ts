@@ -68,6 +68,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onSubmit(): void {
     const territory = new Territory(this.territoryForm.value);
+
+    if (this.territoryForm.value.company) {
+      territory.siret = this.territoryForm.value.company.siret;
+    }
+
     if (this.editedId) {
       const formData = this.fullFormMode
         ? this.territoryForm.value
@@ -79,7 +84,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       if (this.fullFormMode) {
         const updatedTerritory = new Territory({
           ...formData,
-          siret: formData.company.siret,
           _id: this.editedId,
         });
         delete updatedTerritory.company;
@@ -152,46 +156,48 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     const stopFindCompany = new Subject();
 
+    this.territoryForm = this.fb.group(formOptions);
     const companyFormGroup: FormGroup = <FormGroup>this.territoryForm.controls.company;
 
-    this.territoryForm = this.fb.group(formOptions);
-    companyFormGroup.controls.siret.valueChanges
-      .pipe(
-        throttleTime(300),
-        tap(() => {
-          stopFindCompany.next();
-          companyFormGroup.patchValue({
-            naf_entreprise: '',
-            nature_juridique: '',
-            rna: '',
-            vat_intra: '',
-          });
-        }),
-        filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((value) => {
-        this.companyService
-          .findCompany(value, 'remote')
-          .pipe(
-            catchHttpStatus(404, (err) => {
-              this.toastr.error('Entreprise non trouvée');
-              throw err;
-            }),
-            takeUntil(stopFindCompany),
-          )
+    if (companyFormGroup) {
+      companyFormGroup.controls.siret.valueChanges
+        .pipe(
+          throttleTime(300),
+          tap(() => {
+            stopFindCompany.next();
+            companyFormGroup.patchValue({
+              naf_entreprise: '',
+              nature_juridique: '',
+              rna: '',
+              vat_intra: '',
+            });
+          }),
+          filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
+          takeUntil(this.destroy$),
+        )
+        .subscribe((value) => {
+          this.companyService
+            .findCompany(value, 'remote')
+            .pipe(
+              catchHttpStatus(404, (err) => {
+                this.toastr.error('Entreprise non trouvée');
+                throw err;
+              }),
+              takeUntil(stopFindCompany),
+            )
 
-          .subscribe((company) => {
-            if (company) {
-              companyFormGroup.patchValue({
-                naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-                nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-                rna: company.nonprofit_code ? company.nonprofit_code : '',
-                vat_intra: company.intra_vat ? company.intra_vat : '',
-              });
-            }
-          });
-      });
+            .subscribe((company) => {
+              if (company) {
+                companyFormGroup.patchValue({
+                  naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
+                  nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
+                  rna: company.nonprofit_code ? company.nonprofit_code : '',
+                  vat_intra: company.intra_vat ? company.intra_vat : '',
+                });
+              }
+            });
+        });
+    }
 
     this.updateValidation();
   }
