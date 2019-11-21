@@ -8,7 +8,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CoupleInterface } from '~/core/interfaces/trip/tripInterface';
+import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 
 @Component({
   selector: 'app-trip-list',
@@ -17,7 +17,7 @@ import { CoupleInterface } from '~/core/interfaces/trip/tripInterface';
 })
 export class TripListComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
-  trips: CoupleInterface[] = [];
+  trips: LightTripInterface[] = [];
   skip = DEFAULT_TRIP_SKIP;
   limit = DEFAULT_TRIP_LIMIT;
 
