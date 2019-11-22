@@ -3,6 +3,11 @@
   <div class="CampaignTemplates--loading" *ngIf="campaignService.loading && !templates">
     <mat-spinner></mat-spinner>
   </div>
+  <div class="CampaignTemplates-missingMessage" *ngIf="templates && templates.length === 0">
+    <p>
+      Aucun template disponible actuellement.
+    </p>
+  </div>
   <div *ngIf="templates" class="CampaignTemplates-wrapper">
     <div
       *ngFor="let template of templates"

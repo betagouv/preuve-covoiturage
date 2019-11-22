@@ -18,6 +18,13 @@
     flex-wrap: wrap;
   }
 
+  &-missingMessage {
+    display: flex;
+    justify-content: space-around;
+    height: 200px;
+    align-items: center;
+  }
+
   &-templateCard {
     max-width: 235px;
     height: 125px;

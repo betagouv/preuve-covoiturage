@@ -11,6 +11,11 @@ export function stubTripList(trips) {
           jsonrpc: '2.0',
           result: {
             data: trips,
+            meta: {
+              pagination: {
+                total: trips.length,
+              },
+            },
           },
         },
       ],

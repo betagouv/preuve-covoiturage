@@ -1,0 +1,26 @@
+<div class="inseeFilterStartEnd">
+  <div class="inseeFilterStartEnd-filterType">
+    <p *ngIf="filterType === 'blackList'">Exclure</p>
+    <p *ngIf="filterType === 'whiteList'">Inclure</p>
+  </div>
+  <div>
+    <p class="label">
+      Au départ de
+    </p>
+    <ng-template *ngTemplateOutlet="territoriesDisplay; context: { $implicit: startTerritories }"></ng-template>
+  </div>
+  <div>
+    <p class="label">
+      A destination de
+    </p>
+    <ng-template *ngTemplateOutlet="territoriesDisplay; context: { $implicit: endTerritories }"></ng-template>
+  </div>
+</div>
+
+<ng-template #territoriesDisplay let-territories>
+  <div class="inseeFilterStartEnd-list">
+    <p *ngFor="let inseeTerritory of territories; let idx = index">
+      {{ inseeTerritory.territory_literal }}<span *ngIf="idx !== territories.length - 1">,&nbsp;</span>
+    </p>
+  </div>
+</ng-template>

@@ -56,6 +56,14 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
       });
   }
 
+  public canReInvite(user: User): boolean {
+    return (
+      (user.status === 'invited' || user.status === 'pending') &&
+      this.authService.hasAnyPermission(['user.invite']) &&
+      !this.isCurrentUser(user._id)
+    );
+  }
+
   public isCurrentUser(id: number): boolean {
     return this.authService.user._id === id;
   }

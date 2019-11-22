@@ -7,8 +7,8 @@ import {
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -16,6 +16,7 @@ import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaig
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
 import { operatorStubs } from '../stubs/operator/operator.list';
+import { territoryStub } from '../stubs/territory/territory.find';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {
@@ -54,8 +55,8 @@ export class CampaignsGenerator {
               max: 15,
             }),
             new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-            new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-            new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+            new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+            new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
             new TimeRetributionRule([
               {
                 start: 8,
@@ -66,6 +67,7 @@ export class CampaignsGenerator {
           rules: [],
           trips_number: Math.floor(Math.random() * 10000),
           amount_spent: Math.floor(Math.random() * 20000),
+          territory_id: territoryStub._id,
         },
     );
 

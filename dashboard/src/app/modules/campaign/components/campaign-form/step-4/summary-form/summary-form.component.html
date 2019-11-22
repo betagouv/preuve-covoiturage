@@ -2,12 +2,12 @@
   <h2>Récapitulatif</h2>
   <div class="SummaryForm-summary">
     <h3>RESOLUTION</h3>
-    <p class="SummaryForm-summary-text" [innerHTML]="getSummaryText()" #summaryText></p>
+    <p class="SummaryForm-summary-text" id="summary" [innerHTML]="getSummaryText()" #summaryText></p>
     <div class="SummaryForm-summary-actions">
       <button mat-stroked-button (click)="copySummary(summaryText.textContent)" color="primary">
         Copier le texte
       </button>
-      <span>Attention: Texte indicatif</span>
+      <span>Attention : Texte indicatif</span>
     </div>
   </div>
   <form [formGroup]="campaignForm">

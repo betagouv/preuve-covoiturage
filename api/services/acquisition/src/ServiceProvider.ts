@@ -10,7 +10,7 @@ import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
-import { LogAction } from './actions/LogAction';
+// import { LogAction } from './actions/LogAction';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
 
 @serviceProvider({
@@ -24,7 +24,7 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
   handlers: [
     CreateJourneyLegacyAction,
     CreateJourneyAction,
-    LogAction,
+    // LogAction,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {

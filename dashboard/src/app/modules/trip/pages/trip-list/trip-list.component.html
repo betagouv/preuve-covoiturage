@@ -16,7 +16,7 @@
     </p>
   </div>
   <div class="TripList-header" *ngIf="trips && !showMessage">
-    <span class="TripList-header-results"> {{ trips.length }} résultats </span>
+    <span class="TripList-header-results" *ngIf="total !== null"> {{ total }} résultats </span>
     <!--    <div>-->
     <!--      <button mat-flat-button [appShowSpinner]="isExporting" (click)="exportTrips()" color="primary">-->
     <!--        <mat-icon>get_app</mat-icon>-->

@@ -15,12 +15,13 @@ export function cypress_campaignEdit(e2e = false) {
   });
   it('clicks on edit button', () => {
     cy.get(
-      '.draftList app-list-item:first-child .ListItem:first-child .CampaignsList-item-actions button:nth-child(2)',
+      '.draftList app-list-item:first-child .ListItem:first-child .CampaignsList-item-actions button:nth-child(1)',
     ).click();
   });
 
-  // click previous step
-  campaignFourthStepClickPreviousStep();
+  it('clicks on edit retribution', () => {
+    cy.get('.campaignRetributionView button').click();
+  });
 
   // click previous step
   campaignThirdStepClickPreviousStep();

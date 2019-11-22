@@ -20,6 +20,17 @@ export class UtilsService {
     document.body.removeChild(selBox);
   }
 
+  copySelectionToClipboarcById(id: string) {
+    const text = document.getElementById(id);
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+  }
+
   hasOneNotEmptyProperty(object: any, maxRec = 3) {
     let hasNonEmpty = false;
     const values = Object.values(object);

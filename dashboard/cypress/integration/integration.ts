@@ -28,13 +28,14 @@ import { ApplicationsGenerator } from '../support/generators/applications.genera
 import { stubApplicationCreate } from '../support/stubs/operator/application/application.create';
 import { stubApplicationRevoke } from '../support/stubs/operator/application/application.revoke';
 import { cypress_login } from '../support/reusables/auth/cypress_login';
+import { stubApiAdress } from '../support/stubs/external/api-adresse';
 
 /**
  * parameters to decide with contexts to run when in local
  */
 const localTesting = {
-  operator: false,
-  territory: false,
+  operator: true,
+  territory: true,
   registry: true,
 };
 
@@ -82,7 +83,7 @@ context('OPERATOR', () => {
       testOperatorStory();
     } else {
       // local testing
-      testOperatorStory(false, false, false, false);
+      testOperatorStory(true, true, true, true);
     }
   });
 });
@@ -123,7 +124,7 @@ context('REGISTRY', () => {
       testRegistryStory();
     } else {
       // local testing
-      testRegistryStory(false, false, true);
+      testRegistryStory(true, true, true);
     }
   });
 });
@@ -160,6 +161,10 @@ context('TERRITORY', () => {
       stubTripList(trips);
       stubMainLists(UserGroupEnum.TERRITORY);
       stubTerritoryPatchContacts();
+      stubApiAdress('lyo');
+      stubApiAdress('paris');
+      stubApiAdress('marseil');
+      stubApiAdress('massy');
       stubLogout();
     });
 
@@ -168,7 +173,7 @@ context('TERRITORY', () => {
       testTerritoryStory();
     } else {
       // local testing
-      testTerritoryStory(false, false, false, false, true, false, false);
+      testTerritoryStory(true, true, true, true, true, true, true);
     }
   });
 });

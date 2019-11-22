@@ -68,7 +68,10 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   public onSubmit(): void {
     const operator = new Operator(this.operatorForm.value);
 
-    console.log('operator : ', operator);
+    if (this.operatorForm.value.company) {
+      operator.siret = this.operatorForm.value.company.siret;
+    }
+
     if (this.editedOperatorId) {
       const patch$ = this.fullFormMode
         ? this._operatorService.updateList(new Operator({ ...operator, _id: this.editedOperatorId }))
@@ -122,47 +125,6 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     const operatorConstruct = operatorFt.toFormValues(this.fullFormMode);
 
     this.operatorForm.setValue(operatorConstruct);
-
-    const stopFindCompany = new Subject();
-
-    const companyFormGroup: FormGroup = <FormGroup>this.operatorForm.controls.company;
-    companyFormGroup.controls.siret.valueChanges
-      .pipe(
-        throttleTime(300),
-        tap(() => {
-          stopFindCompany.next();
-          companyFormGroup.patchValue({
-            naf_entreprise: '',
-            nature_juridique: '',
-            rna: '',
-            vat_intra: '',
-          });
-        }),
-        filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((value) => {
-        this.companyService
-          .findCompany(value, 'remote')
-          .pipe(
-            catchHttpStatus(404, (err) => {
-              this.toastr.error('Entreprise non trouvée');
-              throw err;
-            }),
-            takeUntil(stopFindCompany),
-          )
-
-          .subscribe((company) => {
-            if (company) {
-              companyFormGroup.patchValue({
-                naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-                nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-                rna: company.nonprofit_code ? company.nonprofit_code : '',
-                vat_intra: company.intra_vat ? company.intra_vat : '',
-              });
-            }
-          });
-      });
   }
 
   private updateValidation() {
@@ -202,6 +164,49 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     }
 
     this.operatorForm = this.fb.group(formOptions);
+
+    const stopFindCompany = new Subject();
+
+    const companyFormGroup: FormGroup = <FormGroup>this.operatorForm.controls.company;
+    if (companyFormGroup) {
+      companyFormGroup.controls.siret.valueChanges
+        .pipe(
+          throttleTime(300),
+          tap(() => {
+            stopFindCompany.next();
+            companyFormGroup.patchValue({
+              naf_entreprise: '',
+              nature_juridique: '',
+              rna: '',
+              vat_intra: '',
+            });
+          }),
+          filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
+          takeUntil(this.destroy$),
+        )
+        .subscribe((value) => {
+          this.companyService
+            .findCompany(value, 'remote')
+            .pipe(
+              catchHttpStatus(404, (err) => {
+                this.toastr.error('Entreprise non trouvée');
+                throw err;
+              }),
+              takeUntil(stopFindCompany),
+            )
+
+            .subscribe((company) => {
+              if (company) {
+                companyFormGroup.patchValue({
+                  naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
+                  nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
+                  rna: company.nonprofit_code ? company.nonprofit_code : '',
+                  vat_intra: company.intra_vat ? company.intra_vat : '',
+                });
+              }
+            });
+        });
+    }
 
     this.updateValidation();
   }

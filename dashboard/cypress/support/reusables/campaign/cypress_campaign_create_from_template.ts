@@ -15,7 +15,6 @@ import {
 import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
 import { CypressExpectedTemplates } from '../../apiValues/expectedTemplates';
-import { stubCampaignTemplateList } from '../../stubs/campaign/campaign-template.list';
 
 export function cypress_campaignCreateFromTemplate(templateIndex: number, e2e = false) {
   it('clicks on campaign section', () => {
@@ -53,6 +52,8 @@ export function cypress_campaignCreateFromTemplate(templateIndex: number, e2e = 
   campaignThirdStepClickNextStep();
 
   it('clicks button to save campaign', () => {
+    cy.pause();
+
     cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(1)').click();
 
     if (!e2e) {

@@ -41,23 +41,25 @@ export class CreateJourneyAction extends AbstractAction {
     }
 
     // Store in database
-    const journey = <JourneyInterface & { created_at: Date }>await this.journeyRepository.create(payload);
+    const acquisition = await this.journeyRepository.create(payload, {
+      operator_id: context.call.user.operator_id,
+      application_id: context.call.user.application_id,
+    });
 
     // Dispatch to the normalization pipeline
-    await this.kernel.notify('normalization:geo', journey, callContext);
+    await this.kernel.notify('normalization:geo', acquisition, callContext);
 
     return {
-      journey_id: journey.journey_id,
-      created_at: journey.created_at,
+      journey_id: acquisition.journey_id,
+      created_at: acquisition.created_at,
     };
   }
 
-  protected cast(jrn: ParamsInterface, operatorId: number): JourneyInterface {
+  protected cast(jrn: ParamsInterface, operator_id: number): JourneyInterface {
     const journey = {
       ...jrn,
-      journey_id: `${operatorId}:${jrn.journey_id}`,
-      operator_id: operatorId,
-      created_at: new Date(),
+      operator_id,
+      journey_id: `${operator_id}:${jrn.journey_id}`,
     };
 
     // driver AND/OR passenger

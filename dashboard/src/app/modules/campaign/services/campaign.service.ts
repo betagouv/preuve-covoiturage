@@ -28,7 +28,7 @@ export class CampaignService extends ApiService<Campaign> {
     return this._loaded$.value;
   }
 
-  public launch(id: string): Observable<[Campaign, Campaign[]]> {
+  public launch(id: number): Observable<[Campaign, Campaign[]]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:launch`, { _id: id });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),

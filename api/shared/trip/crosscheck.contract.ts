@@ -1,8 +1,6 @@
-import { JourneyInterface } from '../common/interfaces/JourneyInterface';
+import { AcquisitionInterface } from '../acquisition/common/interfaces/AcquisitionInterface';
 
-export interface ParamsInterface extends JourneyInterface {
-  _id: number;
-}
+export interface ParamsInterface extends AcquisitionInterface {}
 export type ResultInterface = void;
 
 export const handlerConfig = {

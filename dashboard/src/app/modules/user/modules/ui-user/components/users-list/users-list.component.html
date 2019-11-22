@@ -24,11 +24,7 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let user" class="UsersList-list-item-actions">
-      <a
-        class="link"
-        *ngIf="authService.hasAnyPermission(['user.invite']) && user.status === 'pending' && !isCurrentUser(user._id)"
-        (click)="onSendInvitation(user)"
-      >
+      <a class="link" *ngIf="canReInvite(user)" (click)="onSendInvitation(user)">
         Renvoyer l'invitation
       </a>
       <a class="link" *ngIf="canEditUser && !isCurrentUser(user._id)" (click)="onEdit(user)">

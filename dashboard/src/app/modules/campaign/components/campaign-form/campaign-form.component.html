@@ -34,7 +34,7 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-filters-form [campaignForm]="campaignFormGroup"></app-filters-form>
+            <app-filters-form [campaignForm]="campaignFormGroup" [isCreating]="creationFromScratch"></app-filters-form>
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
@@ -57,7 +57,10 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-parameters-form [campaignForm]="campaignFormGroup" [isCreating]="creation"></app-parameters-form>
+            <app-parameters-form
+              [campaignForm]="campaignFormGroup"
+              [isCreating]="creationFromScratch"
+            ></app-parameters-form>
             <!--            *ngIf="!campaignFormGroup.controls.expertMode.value"-->
             <app-help-card
               [svgIcon]="helpCard.svgIcon"

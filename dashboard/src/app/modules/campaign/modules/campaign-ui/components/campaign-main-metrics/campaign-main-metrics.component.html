@@ -1,0 +1,20 @@
+<div class="campaignMainMetrics">
+  <div>
+    <ngx-chartjs [data]="periodChartData" type="doughnut" [height]="60" [width]="60" [options]="options"></ngx-chartjs>
+    <p>
+      du <b>{{ campaign.start.toDate() | date: 'd MMMM yyyy' }}</b
+      ><br />
+      au <b>{{ campaign.end.toDate() | date: 'd MMMM yyyy' }}</b>
+    </p>
+  </div>
+  <div>
+    <ngx-chartjs [data]="budgetChartData" type="doughnut" [height]="60" [width]="60" [options]="options"></ngx-chartjs>
+    <p>
+      Rétribution totale :<br />
+      <span class="campaignMainMetrics-budgetSpend"
+        ><b>{{ budgetSpent | currency: 'EUR':'symbol':'1.0-2' }}</b></span
+      >
+      sur <b>{{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-2' }}</b>
+    </p>
+  </div>
+</div>

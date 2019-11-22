@@ -3,11 +3,12 @@ import { RestrictionPeriodsEnum, RestrictionTargetsEnum } from '~/core/enums/cam
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '../../../src/app/core/const/campaign/rules.const';
 import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
 import {
+  BlackListGlobalRetributionRule,
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   RestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
@@ -64,7 +65,7 @@ export class CypressExpectedCampaign {
       description: CypressExpectedCampaign.description,
       name: CypressExpectedCampaign.campaignName,
       global_rules: [
-        new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+        new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
         new TimeRetributionRule([
           {
             start: CypressExpectedCampaign.firstTimeStart,
@@ -76,11 +77,21 @@ export class CypressExpectedCampaign {
           },
         ]),
         new WeekdayRetributionRule([0]),
-        new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+        new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
         new DistanceRangeGlobalRetributionRule({
-          min: 85000,
+          min: 2000,
           max: 150000,
         }),
+        new BlackListGlobalRetributionRule([
+          {
+            start: ['69123'],
+            end: ['13055'],
+          },
+          {
+            start: ['75056'],
+            end: ['91377'],
+          },
+        ]),
         new MaxAmountRetributionRule(CypressExpectedCampaign.maxAmount),
         new MaxTripsRetributionRule(CypressExpectedCampaign.maxTrips),
         new RestrictionRetributionRule(
@@ -106,6 +117,43 @@ export class CypressExpectedCampaign {
         for_passenger: false,
         for_trip: false,
         staggered: false,
+        insee_filter: {
+          blackList: [
+            {
+              start: [
+                {
+                  territory_literal: 'Lyon',
+                  insees: ['69123'],
+                  context: '69, Rh\u00f4ne, Auvergne-Rh\u00f4ne-Alpes',
+                },
+              ],
+              end: [
+                {
+                  territory_literal: 'Marseille',
+                  insees: ['13055'],
+                  context: "13, Bouches-du-Rh\u00f4ne, Provence-Alpes-C\u00f4te d'Azur",
+                },
+              ],
+            },
+            {
+              start: [
+                {
+                  territory_literal: 'Paris',
+                  insees: ['75056'],
+                  context: '75, Paris, \u00cele-de-France',
+                },
+              ],
+              end: [
+                {
+                  territory_literal: 'Massy',
+                  insees: ['91377'],
+                  context: '91, Essonne, \u00cele-de-France',
+                },
+              ],
+            },
+          ],
+          whiteList: [],
+        },
       },
       status: CampaignStatusEnum.DRAFT,
       parent_id: null,
@@ -128,13 +176,13 @@ export class CypressExpectedCampaign {
     const afterEditionCampaign = CypressExpectedCampaign.getAfterCreate();
     afterEditionCampaign.rules[0].unshift(
       new RangeRetributionRule({
-        min: 0,
+        min: 2000,
         max: CypressExpectedCampaign.staggeredDistance,
       }),
     );
     afterEditionCampaign.rules.unshift([
       new RangeRetributionRule({
-        min: 0,
+        min: 2000,
         max: CypressExpectedCampaign.staggeredDistance,
       }),
       new ForPassengerRetributionRule(),

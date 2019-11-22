@@ -7,8 +7,8 @@ import {
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';

@@ -9,15 +9,20 @@ import {
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import {
+  AmountRetributionRule,
+  ForPassengerRetributionRule,
+} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 
 import { CampaignsGenerator } from '../../generators/campaigns.generator';
 import { operatorStubs } from '../operator/operator.list';
 import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { territoryStub } from '../territory/territory.find';
 
 export const campaignStubs: Campaign[] = [
   {
@@ -40,15 +45,15 @@ export const campaignStubs: Campaign[] = [
       staggered: false,
     },
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxAmountRetributionRule(10000),
       new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
       new DistanceRangeGlobalRetributionRule({
         min: 0,
-        max: 15,
+        max: 15000,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -56,9 +61,10 @@ export const campaignStubs: Campaign[] = [
         },
       ]),
     ],
-    rules: [],
+    rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
     trips_number: Math.floor(Math.random() * 10000),
-    amount_spent: Math.floor(Math.random() * 20000),
+    amount_spent: 5000,
+    territory_id: territoryStub._id,
   },
   {
     _id: '5d777822ff790e51107c6c4f',
@@ -73,15 +79,15 @@ export const campaignStubs: Campaign[] = [
       staggered: false,
     },
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxAmountRetributionRule(10000),
       new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
       new DistanceRangeGlobalRetributionRule({
         min: 0,
-        max: 15,
+        max: 15000,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -89,7 +95,7 @@ export const campaignStubs: Campaign[] = [
         },
       ]),
     ],
-    rules: [],
+    rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
     start_date: moment()
       .subtract('1', 'months')
       .toDate(),
@@ -98,7 +104,8 @@ export const campaignStubs: Campaign[] = [
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
     trips_number: Math.floor(Math.random() * 10000),
-    amount_spent: Math.floor(Math.random() * 20000),
+    amount_spent: 5000,
+    territory_id: territoryStub._id,
   },
   {
     _id: '5d77782eecbdea02802a81eb',
@@ -120,15 +127,15 @@ export const campaignStubs: Campaign[] = [
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxAmountRetributionRule(10000),
       new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
       new DistanceRangeGlobalRetributionRule({
         min: 0,
-        max: 15,
+        max: 15000,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -136,9 +143,10 @@ export const campaignStubs: Campaign[] = [
         },
       ]),
     ],
-    rules: [],
+    rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
     trips_number: Math.floor(Math.random() * 10000),
-    amount_spent: Math.floor(Math.random() * 20000),
+    amount_spent: 5000,
+    territory_id: territoryStub._id,
   },
   CypressExpectedCampaign.getAfterCreate(),
 ];

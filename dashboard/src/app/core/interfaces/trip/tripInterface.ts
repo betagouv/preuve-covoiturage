@@ -1,30 +1,20 @@
 // tslint:disable:variable-name
-import { IncentiveInterface } from '../campaign/incentiveInterface';
-
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
-import { TripRankEnum } from '../../enums/trip/trip-rank.enum';
 
-export interface TripInterface {
-  status: TripStatusEnum;
+export interface LightTripInterface {
   trip_id: number;
-  start_town: string;
-  start_datetime: string;
-  operator_class: string;
+  is_driver: boolean;
+  start_town?: string;
+  end_town?: string;
+  start_datetime: Date;
   operator_id: number;
-  end_town: string;
-  incentives: [];
+  incentives: LightTripIncentives[];
+  operator_class: string;
   campaigns_id: number[];
+  status: TripStatusEnum;
 }
 
-// export interface PersonInterface {
-//   rank: TripRankEnum;
-//   operator_id: number;
-//   is_driver: boolean;
-//   start_town: string;
-//   end_town: string;
-//   incentives: IncentiveInterface[];
-// }
-
-// export interface CampaignShortInterface {
-//   name: string;
-// }
+export interface LightTripIncentives {
+  amount: number;
+  siret: string;
+}

@@ -1,14 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 
-import { Trip } from '~/core/entities/trip/trip';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
-import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { OperatorService } from '~/modules/operator/services/operator.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
+import { LightTripInterface, LightTripIncentives } from '~/core/interfaces/trip/tripInterface';
 
 @Component({
   selector: 'app-trip-table',
@@ -26,7 +25,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     'class',
     'status',
   ];
-  @Input() data: Trip[];
+  @Input() data: LightTripInterface[];
   private operators: Operator[];
   private campaigns: Campaign[];
 
@@ -69,60 +68,69 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  getCampaignsName(campaigns: any[]): string {
-    if (!campaigns) {
+  getCampaignsName(campaignIds: number[] = []): string {
+    if (campaignIds.length === 0) {
       return '';
     }
     let names = '';
-    campaigns.forEach((campaign, idx) => {
-      const campaignFound = this.campaigns.find((cp) => cp._id === campaign);
-      names += campaignFound ? campaignFound.name : campaign;
+    campaignIds.forEach((id, idx) => {
+      const campaignFound = this.campaigns.find((cp) => cp._id === id);
+      if (campaignFound) {
+        if (idx > 0) {
+          names += ', ';
+        }
+        names += campaignFound.name;
+      }
     });
     return names;
   }
 
-  getOperator(trip: Trip): string {
+  getOperator(trip: LightTripInterface): string {
     const operator = this.operators.find((operatorF) => operatorF._id === trip.operator_id);
     if (!operator) console.error('Operator not found !');
     return operator.name;
   }
 
-  getTotalIncentives(trip: Trip): string {
-    const incentives: any[] = trip.incentives;
-    const amount = incentives.reduce((a, b) => a + (b.amount || 0), 0);
-    return amount ? amount : '-';
+  getTotalIncentives(trip: LightTripInterface): number | string {
+    // todo: fix this when incentives are ready
+    return '-';
   }
 
-  getTotalIncentivesUnit(trip: Trip): string {
-    const incentives: any[] = trip.incentives;
-    const isEur = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.EUR);
-    const isPoint = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.POINT);
-    if (isEur && isPoint) {
-      return `${INCENTIVE_UNITS_FR.euro} / ${INCENTIVE_UNITS_FR.point}`;
-    }
-    if (isEur) {
-      return `${INCENTIVE_UNITS_FR.euro}`;
-    }
-    if (isPoint) {
-      return `${INCENTIVE_UNITS_FR.point}`;
-    }
+  getTotalIncentivesUnit(trip: LightTripInterface): string {
+    // todo: fix this when incentives are ready
+    // const isEur = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.EUR);
+    // const isPoint = !!incentives.find((i) => i.amount_unit === IncentiveUnitEnum.POINT);
+    // if (isEur && isPoint) {
+    //   return `${INCENTIVE_UNITS_FR.euro} / ${INCENTIVE_UNITS_FR.point}`;
+    // }
+    // if (isEur) {
+    //   return `${INCENTIVE_UNITS_FR.euro}`;
+    // }
+    // if (isPoint) {
+    //   return `${INCENTIVE_UNITS_FR.point}`;
+    // }
     return '';
   }
 
-  getIncentivesTooltip(trip: Trip): string {
-    let tooltip = '';
-    const incentives = trip.incentives;
-    tooltip += incentives && incentives.length > 0 ? `Conducteur: ${incentives.join(' ,')}` : '';
+  // getIncentivesTooltip(trip: LightTripInterface): string {
+  //   let tooltip = '';
+  //   const dIncentives = trip.incentives.driver;
+  //   if (dIncentives && dIncentives.length > 0) {
+  //     // todo: separate by amount unit
+  //     tooltip += `Conducteur: ${dIncentives.map((inc) => inc.amount).join(' ,')}`;
+  //   }
+  //   const pIncentives = trip.incentives.passenger;
+  //   if (pIncentives && pIncentives.length > 0) {
+  //     if (dIncentives && dIncentives.length > 0) {
+  //       tooltip += ', ';
+  //     }
+  //     // todo: separate by amount unit
+  //     tooltip += `Passager: ${pIncentives.map((inc) => inc.amount).join(' ,')}`;
+  //   }
+  //   return tooltip;
+  // }
 
-    // passengers.forEach((p, idx) => {
-    //   const incentives = p.incentives.map((i) => `${i.amount} ${i.amount_unit}`);
-    //   tooltip += incentives && incentives.length > 0 ? `\nPassager n°${idx + 1}: ${incentives.join(' ,')}` : '';
-    // });
-
-    return tooltip;
-  }
-
-  getTripRank(trip: Trip): string {
+  getTripRank(trip: LightTripInterface): string {
     return trip.operator_class;
   }
 }

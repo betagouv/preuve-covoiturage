@@ -5,10 +5,15 @@ export function cypress_campaignLaunch(e2e = false) {
   it('clicks on campaign section', () => {
     cy.get('.Header-menu .Header-menu-item:first-child').click();
   });
+
   it('clicks on launch button', () => {
     cy.get(
       '.draftList app-list-item:first-child .ListItem:first-child .CampaignsList-item-actions button:nth-child(1)',
     ).click();
+  });
+
+  it('clicks on launch', () => {
+    cy.get('.campaignDraftView-header-message button').click();
   });
 
   it('confirm', () => {

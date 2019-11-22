@@ -2,7 +2,7 @@ import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import {
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
+  OperatorIdsGlobalRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
@@ -27,13 +27,13 @@ export class CypressExpectedTemplates {
       (template) =>
         new Campaign({
           ...template,
-          start: <any>CypressExpectedTemplates.startMoment.toDate().toISOString(),
-          end: <any>CypressExpectedTemplates.endMoment.toDate().toISOString(),
+          start_date: <any>CypressExpectedTemplates.startMoment.toDate().toISOString(),
+          end_date: <any>CypressExpectedTemplates.endMoment.toDate().toISOString(),
           global_rules: [
             ...template.global_rules,
             new MaxAmountRetributionRule(CypressExpectedTemplates.maxAmount),
             new MaxTripsRetributionRule(CypressExpectedTemplates.maxTrips),
-            new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+            new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
           ],
           status: CampaignStatusEnum.DRAFT,
           parent_id: template._id,

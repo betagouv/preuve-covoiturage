@@ -17,6 +17,8 @@ import {
   RetributionRuleType,
 } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import {
+  BlackListGlobalRetributionRule,
+  BlackListWhiteListGlobalRetributionRuleType,
   DistanceRangeGlobalRetributionRule,
   GlobalRetributionRuleInterface,
   GlobalRetributionRulesSlugEnum,
@@ -24,11 +26,12 @@ import {
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
   OnlyAdultRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   RestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
+  WhiteListGlobalRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import {
   RestrictionUxInterface,
@@ -37,6 +40,8 @@ import {
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +64,10 @@ export class CampaignFormatingService {
       filters: {
         rank: [],
         time: [],
+        insee: {
+          whiteList: [],
+          blackList: [],
+        },
         weekday: [],
         operator_ids: [],
         distance_range: [0, 0],
@@ -103,10 +112,10 @@ export class CampaignFormatingService {
         }));
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS) {
-        campaignUx.filters.operator_ids = <OperatorIdsRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.operator_ids = <OperatorIdsGlobalRetributionRule['parameters']>retributionRule.parameters;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
-        campaignUx.filters.rank = <RankRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.rank = <RankGlobalRetributionRule['parameters']>retributionRule.parameters;
       }
 
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION) {
@@ -117,7 +126,70 @@ export class CampaignFormatingService {
           period: parameters.period,
         });
       }
+
+      // INSEE BLACKLIST : Verify data in ui-status is correct
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.BLACKLIST) {
+        const parameters = <BlackListGlobalRetributionRule['parameters']>retributionRule.parameters;
+        const uiStatusStarts = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
+          startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        const uiStatusEnds = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
+          startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        parameters.forEach((inseeStartEnd, index) => {
+          let dataError = true;
+          uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
+            const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
+            if (startIsEqual) {
+              const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
+              if (endIsEqual) {
+                dataError = false;
+              }
+            }
+          });
+          if (dataError) {
+            // todo: send to sentry
+            console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
+          }
+        });
+      }
+
+      // INSEE WHITELIST : Verify data in ui-status is correct
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WHITELIST) {
+        const parameters = <WhiteListGlobalRetributionRule['parameters']>retributionRule.parameters;
+        const uiStatusStarts = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
+          startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        const uiStatusEnds = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
+          startEnd.end.reduce((acc: string[], val) => [...val.insees, ...acc], []),
+        );
+        parameters.forEach((inseeStartEnd, index) => {
+          let dataError = true;
+          uiStatusStarts.forEach((uiStatusStart, uiStatusIndex) => {
+            const startIsEqual = _.isEqual(uiStatusStart.sort(), inseeStartEnd.start.sort());
+            if (startIsEqual) {
+              const endIsEqual = _.isEqual(uiStatusEnds[uiStatusIndex].sort(), inseeStartEnd.end.sort());
+              if (endIsEqual) {
+                dataError = false;
+              }
+            }
+          });
+          if (dataError) {
+            // todo: send to sentry
+            console.error(`Insee filter data error ! No corresponding match for :`, inseeStartEnd);
+          }
+        });
+      }
     });
+
+    // INSEE FILTER
+    if (campaign.ui_status.insee_filter && campaign.ui_status.insee_filter.whiteList) {
+      campaignUx.filters.insee.whiteList = campaign.ui_status.insee_filter.whiteList;
+    }
+
+    if (campaign.ui_status.insee_filter && campaign.ui_status.insee_filter.blackList) {
+      campaignUx.filters.insee.blackList = campaign.ui_status.insee_filter.blackList;
+    }
 
     // RETRIBUTION RULES
     const retributions: RetributionUxInterface[] = [];
@@ -151,7 +223,8 @@ export class CampaignFormatingService {
           if (slugs.indexOf(RetributionRulesSlugEnum.FOR_PASSENGER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
               const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
-              retribution.for_passenger.amount = Number(parameters) / 100; // to euros
+              retribution.for_passenger.amount =
+                campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters) : Number(parameters) / 100; // to euros
             }
             if (retributionRule.slug === RetributionRulesSlugEnum.PER_KM) {
               retribution.for_passenger.per_km = true;
@@ -162,7 +235,8 @@ export class CampaignFormatingService {
           } else if (slugs.indexOf(RetributionRulesSlugEnum.FOR_DRIVER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
               const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
-              retribution.for_driver.amount = Number(parameters) / 100; // to euros
+              retribution.for_driver.amount =
+                campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters) : Number(parameters) / 100; // to euros
             }
             if (retributionRule.slug === RetributionRulesSlugEnum.PER_KM) {
               retribution.for_driver.per_km = true;
@@ -242,7 +316,7 @@ export class CampaignFormatingService {
 
     // GLOBAL RULES
     const campaignGlobalRetributionRules: GlobalRetributionRuleType[] = [];
-    campaignGlobalRetributionRules.push(new RankRetributionRule(campaignUx.filters.rank));
+    campaignGlobalRetributionRules.push(new RankGlobalRetributionRule(campaignUx.filters.rank));
     if (campaignUx.filters.time.length > 0) {
       campaignGlobalRetributionRules.push(
         new TimeRetributionRule(
@@ -254,13 +328,41 @@ export class CampaignFormatingService {
       );
     }
     campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
-    campaignGlobalRetributionRules.push(new OperatorIdsRetributionRule(campaignUx.filters.operator_ids));
+    campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
     campaignGlobalRetributionRules.push(
       new DistanceRangeGlobalRetributionRule({
         min: filters.distance_range[0] ? Number(filters.distance_range[0]) * 1000 : filters.distance_range[0],
         max: filters.distance_range[1] ? Number(filters.distance_range[1]) * 1000 : filters.distance_range[1],
       }),
     );
+
+    // save ui status of territory names associated with insee
+    const uiStatus: UiStatusInterface = {
+      ...ui_status,
+      insee_filter: filters.insee,
+    };
+
+    // WHITELIST
+    if (filters.insee.whiteList.length > 0) {
+      const params: BlackListWhiteListGlobalRetributionRuleType = [];
+      filters.insee.whiteList.forEach((insees) => {
+        const startInsees = insees.start.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        const endInsees = insees.end.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        params.push({ start: startInsees, end: endInsees });
+      });
+      campaignGlobalRetributionRules.push(new WhiteListGlobalRetributionRule(params));
+    }
+
+    // BLACKLIST
+    if (filters.insee.blackList.length > 0) {
+      const params: BlackListWhiteListGlobalRetributionRuleType = [];
+      filters.insee.blackList.forEach((insees) => {
+        const startInsees = insees.start.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        const endInsees = insees.end.reduce((acc: string[], val) => [...val.insees, ...acc], []);
+        params.push({ start: startInsees, end: endInsees });
+      });
+      campaignGlobalRetributionRules.push(new BlackListGlobalRetributionRule(params));
+    }
 
     if (max_amount) {
       campaignGlobalRetributionRules.push(new MaxAmountRetributionRule(max_amount));
@@ -304,8 +406,12 @@ export class CampaignFormatingService {
       if (!campaignUx.ui_status.for_passenger) {
         retribution.for_passenger.free = false;
       }
-      retribution.for_passenger.amount = retribution.for_passenger.amount * 100; // to cents
-      retribution.for_driver.amount = retribution.for_driver.amount * 100; // to cents
+
+      retribution.for_passenger.amount =
+        unit === IncentiveUnitEnum.POINT ? retribution.for_passenger.amount : retribution.for_passenger.amount * 100;
+
+      retribution.for_driver.amount =
+        unit === IncentiveUnitEnum.POINT ? retribution.for_driver.amount : retribution.for_driver.amount * 100;
 
       // construct rules for passenger
       if (retribution.for_passenger.amount || retribution.for_passenger.free) {
@@ -374,7 +480,7 @@ export class CampaignFormatingService {
       status,
       unit,
       parent_id,
-      ui_status,
+      ui_status: uiStatus,
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
       // format dates : moment --> Date

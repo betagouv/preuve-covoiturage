@@ -71,8 +71,6 @@ class Territory {
     const val: any = fullformMode
       ? {
           shortname: '',
-          // insee: '',
-          // acronym: '',
           ...this,
           company: { ...new Company(this.company).toFormValues(), siret: this.siret },
           contacts: new Contacts(this.contacts).toFormValues(),

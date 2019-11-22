@@ -1,5 +1,4 @@
 CREATE TYPE fraudcheck.status_enum as enum('pending', 'done', 'error');
-CREATE TYPE fraudcheck.method_enum as enum('example');
 
 CREATE TABLE IF NOT EXISTS fraudcheck.fraudchecks
 (
@@ -10,9 +9,9 @@ CREATE TABLE IF NOT EXISTS fraudcheck.fraudchecks
   deleted_at timestamp,
 
   acquisition_id varchar NOT NULL,
-  method fraudcheck.method_enum NOT NULL,
+  method varchar(128) NOT NULL,
 
-  status fraudcheck.status_enum NOT NULL,
+  status fraudcheck.status_enum NOT NULL DEFAULT 'pending',
 
   karma int DEFAULT 0,
   meta json

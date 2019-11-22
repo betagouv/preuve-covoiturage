@@ -1,0 +1,31 @@
+<div class="campaignRetributionView">
+  <h4>Rétribution</h4>
+  <div class="campaignRetributionView-content">
+    <div>
+      <div class="campaignRetributionView-content-row">
+        <p>Restrictions</p>
+        <p>
+          <b><span [innerHTML]="restrictions"></span></b>
+        </p>
+      </div>
+      <div class="campaignRetributionView-content-row">
+        <p>Calcul de la rétribution :</p>
+        <p>
+          <b><span [innerHTML]="retributionRule"></span></b>
+        </p>
+      </div>
+    </div>
+    <div class="campaignRetributionView-content-actions">
+      <button
+        *ngIf="canEdit"
+        mat-flat-button
+        type="button"
+        color="primary"
+        routerLink="/campaign/edit/{{ campaign._id }}"
+        [queryParams]="{ section: 2 }"
+      >
+        Modifier
+      </button>
+    </div>
+  </div>
+</div>

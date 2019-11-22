@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-campaign-menu',
@@ -10,21 +11,21 @@ export class CampaignMenuComponent implements OnInit {
   menus = [
     {
       title: 'Simulez votre campagne',
-      hint: 'Simulez et configurez en quelques clics votre campagne incitative au covoiturage',
+      hint: 'Simulez et configurez en quelques clics votre campagne incitative au covoiturage.',
       button: 'Découvrir',
       svgIcon: 'test',
       callback: null,
     },
     {
       title: "Cherchez l'inspiration",
-      hint: 'Retrouvez des exemples de campagnes incitiatives et inspirez-vous en',
+      hint: 'Retrouvez des exemples de campagnes incitiatives et inspirez-vous en.',
       button: 'Découvrir',
       svgIcon: 'recherche',
       callback: null,
     },
   ];
 
-  constructor(public router: Router) {}
+  constructor(public router: Router, public toastr: ToastrService) {}
 
   ngOnInit() {
     this.menus[0].callback = this.createCampaign;
@@ -35,7 +36,9 @@ export class CampaignMenuComponent implements OnInit {
     router.navigate(['/campaign/create']);
   }
 
-  discoverCampaign(router: Router) {
-    router.navigate(['/campaign/discover']);
+  discoverCampaign(router: Router, toastr: ToastrService) {
+    // todo: reconnect when discover is fixed
+    // router.navigate(['/campaign/discover']);
+    toastr.success('Cette section sera bientôt disponible !');
   }
 }
