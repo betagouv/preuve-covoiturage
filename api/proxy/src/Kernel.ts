@@ -16,6 +16,7 @@ import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 import { MapIdCommand } from './commands/MapIdCommand';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
+import { GeoFetchCommand } from './commands/GeoFetchCommand';
 
 @kernel({
   env: null,
@@ -32,6 +33,6 @@ import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
     ...companyBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [UpgradeJourneyCommand, ProcessJourneyCommand, MapIdCommand, MigrateInseeCommand],
+  commands: [UpgradeJourneyCommand, ProcessJourneyCommand, MapIdCommand, MigrateInseeCommand, GeoFetchCommand],
 })
 export class Kernel extends BaseKernel {}
