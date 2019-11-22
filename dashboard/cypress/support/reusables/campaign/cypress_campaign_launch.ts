@@ -1,4 +1,4 @@
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
 
 export function cypress_campaignLaunch(e2e = false) {

@@ -43,6 +43,11 @@ export class ListAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    // get visible operators from user context
+    if (context.call && context.call.user && context.call.user.authorizedOperators) {
+      params.visible_operator_ids = context.call.user.authorizedOperators;
+    }
+
     const result = await this.pg.search(params);
     return {
       ...result,

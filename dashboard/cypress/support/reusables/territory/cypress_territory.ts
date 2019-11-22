@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 import { Territory } from '~/core/entities/territory/territory';
 
-import { expectedPatchedTerritory } from '../../apiValues/expectedTerritory';
+import { expectedPatchedTerritory } from '../../expectedApiPayload/expectedTerritory';
 import { closeNotification } from '../notification.cypress';
 
 export function cypress_territory(oldValue: Territory, e2e = false) {

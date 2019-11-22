@@ -56,6 +56,12 @@ export class AdministrationLayoutComponent implements OnInit {
       groups: [UserGroupEnum.OPERATOR],
       label: 'API',
     },
+    {
+      path: '/admin/visibility',
+      role: UserManyRoleEnum.ADMIN,
+      groups: [UserGroupEnum.OPERATOR],
+      label: 'Visibilité',
+    },
   ];
 
   constructor(public authenticationService: AuthenticationService) {}

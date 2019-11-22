@@ -22,7 +22,7 @@ import {
   campaignThirdStepSetRestriction,
   campaignThirdStepSetUnit,
 } from './steps/campaign-create-third-step';
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
 
 export function cypress_campaignCreate(e2e = false) {

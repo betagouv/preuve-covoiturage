@@ -1,7 +1,7 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
-import { expectedPatchedProfiles } from '../../apiValues/expectedProfile';
+import { expectedPatchedProfiles } from '../../expectedApiPayload/expectedProfile';
 
 export function stubUserPatch(group: UserGroupEnum) {
   cy.route({

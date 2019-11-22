@@ -3,7 +3,7 @@ import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 import { stubUserCreate } from '../../stubs/user/user.create';
 import { territoryStub } from '../../stubs/territory/territory.find';
-import { expectedNewUsers } from '../../apiValues/expectedUser';
+import { expectedNewUsers } from '../../expectedApiPayload/expectedUser';
 
 export function cypress_addUser(group: UserGroupEnum, e2e = false) {
   const userData = expectedNewUsers[group];

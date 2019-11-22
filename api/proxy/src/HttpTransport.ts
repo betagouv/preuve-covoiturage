@@ -241,6 +241,14 @@ export class HttpTransport implements TransportInterface {
           res.status(mapStatusCode(response)).json(this.parseErrorData(response));
         } else {
           req.session.user = Array.isArray(response) ? response[0].result : response.result;
+
+          if (req.session.user.territory_id) {
+            const list = await this.kernel.handle(
+              makeCall('territory.listOperator', { territory_id: req.session.user.territory_id }),
+            );
+            req.session.user.authorizedOperators = get(list, 'result', []);
+          }
+
           this.send(res, response);
         }
       }),

@@ -21,8 +21,8 @@ import {
 
 import { CampaignsGenerator } from '../../generators/campaigns.generator';
 import { operatorStubs } from '../operator/operator.list';
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
 import { territoryStub } from '../territory/territory.find';
+import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 
 export const campaignStubs: Campaign[] = [
   {

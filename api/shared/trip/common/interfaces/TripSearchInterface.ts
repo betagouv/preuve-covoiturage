@@ -21,7 +21,7 @@ export interface TripSearchInterface {
   ranks?: string[];
   operator_id?: number[];
   territory_id?: number[];
-
+  visible_operator_ids?: number[];
   skip: number;
   limit: number;
 }

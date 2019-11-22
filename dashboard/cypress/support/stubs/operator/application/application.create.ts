@@ -1,6 +1,6 @@
 import { OperatorApplicationCreatedInterface } from '~/core/interfaces/operator/applicationInterface';
 
-import { CypressExpectedApplication } from '../../../apiValues/expectedApplication';
+import { CypressExpectedApplication } from '../../../expectedApiPayload/expectedApplication';
 import { operatorStub } from '../operator.find';
 
 export function stubApplicationCreate() {
