@@ -39,6 +39,7 @@ export class CrosscheckAction extends Action {
     const driverIdentity = await this.identity.create(driver.identity);
     toProcess.push({ ...driver, identity_id: driverIdentity._id });
 
+    // Get a trip id
     const tripId = await this.crosscheck.getTripId({
       operatorTripId: driver.operator_trip_id,
       datetime: driver.datetime,
@@ -47,11 +48,13 @@ export class CrosscheckAction extends Action {
       identityUuid: driverIdentity.uuid,
     });
 
+    // Build identity for every participant
     for (const passenger of passengers) {
       const { _id: identity_id } = await this.identity.create(passenger.identity);
       toProcess.push({...passenger, identity_id });
     }
 
+    // Save carpool into database
     await this.carpool.importFromAcquisition({ ...sharedData, trip_id: tripId }, toProcess);
 
     return;

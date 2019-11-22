@@ -57,7 +57,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
       throw new Error('Failed to insert identity');
     }
 
-    return results[0];
+    return results.rows[0];
   }
 
   public async delete(_id: number): Promise<void> {

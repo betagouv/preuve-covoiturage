@@ -17,6 +17,7 @@ import { PositionInterface } from '../interfaces/Carpool';
 })
 export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProviderInterface {
   public readonly table = 'carpool.carpools';
+  public readonly identityTable = 'carpool.identities';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -62,10 +63,12 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
 
     const query = {
       text: `
-        SELECT trip_id as _id FROM ${this.table}
-          WHERE identity_uuid = $1
-          AND datetime >= timestamptz '${startDateString}'::timestamptz - interval '2 hour'
-          AND datetime <= timestamptz '${startDateString}'::timestamptz + interval '2 hour'
+        SELECT carpool.trip_id as _id FROM ${this.table} as carpool
+          JOIN ${this.identityTable} as identity
+          ON carpool.identity_id = identity._id
+          WHERE identity.uuid = $1
+          AND carpool.datetime >= timestamptz '${startDateString}'::timestamptz - interval '2 hour'
+          AND carpool.datetime <= timestamptz '${startDateString}'::timestamptz + interval '2 hour'
           LIMIT 1
       `,
       values: [identityUuid],
