@@ -1,4 +1,4 @@
-import { CypressExpectedCampaign } from '../../../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../../expectedApiPayload/expectedCampaign';
 
 export function campaignThirdStepSetMaxRetribution(maxRetribution: string) {
   it('sets max retribution', () => {

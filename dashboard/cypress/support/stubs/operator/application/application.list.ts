@@ -1,6 +1,6 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { expectedPatchedOperator } from '../../../apiValues/expectedOperator';
+import { expectedPatchedOperator } from '../../../expectedApiPayload/expectedOperator';
 
 export function stubApplications(applications) {
   cy.route({

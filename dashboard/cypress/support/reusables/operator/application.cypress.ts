@@ -1,7 +1,7 @@
-import { CypressExpectedApplication } from '../../apiValues/expectedApplication';
 import { closeNotification } from '../notification.cypress';
 import { operatorStubs } from '../../stubs/operator/operator.list';
 import { operatorStub } from '../../stubs/operator/operator.find';
+import { CypressExpectedApplication } from '../../expectedApiPayload/expectedApplication';
 
 export function cypress_applications(e2e = false) {
   it('navigates to application', () => {

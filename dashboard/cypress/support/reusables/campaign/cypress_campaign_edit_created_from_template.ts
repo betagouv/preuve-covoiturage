@@ -1,5 +1,5 @@
 import { closeNotification } from '../notification.cypress';
-import { CypressExpectedTemplates } from '../../apiValues/expectedTemplates';
+import { CypressExpectedTemplates } from '../../expectedApiPayload/expectedTemplates';
 
 export function cypress_campaignEditCreatedFromTemplate() {
   it('clicks on campaign section', () => {
