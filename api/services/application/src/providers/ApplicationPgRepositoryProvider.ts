@@ -24,7 +24,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       text: `
         SELECT * FROM ${this.table}
         WHERE owner_service = $1
-        AND owner_id = $2
+        AND owner_id = $2::varchar
         AND deleted_at IS NULL
       `,
       values: [owner_service, owner_id],
@@ -42,7 +42,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       text: `
         SELECT * FROM ${this.table}
         WHERE owner_service = $1
-        AND owner_id = $2
+        AND owner_id = $2::varchar
         AND uuid = $3
         LIMIT 1
       `,
@@ -83,7 +83,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
         INSERT INTO ${this.table} (
           name, owner_id, owner_service, permissions
         ) VALUES (
-          $1, $2, $3, $4
+          $1, $2::varchar, $3, $4
         ) RETURNING *
       `,
       values: [name, owner_id, owner_service, permissions],
@@ -104,7 +104,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
         UPDATE ${this.table}
         SET deleted_at = NOW()
         WHERE owner_service = $1
-        AND owner_id = $2
+        AND owner_id = $2::varchar
         AND uuid = $3
         AND deleted_at IS NULL
       `,
