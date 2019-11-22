@@ -5,5 +5,4 @@ export const steps = [
   'normalization:route',
   'normalization:territory',
   'normalization:cost',
-  'trip:crosscheck',
 ];

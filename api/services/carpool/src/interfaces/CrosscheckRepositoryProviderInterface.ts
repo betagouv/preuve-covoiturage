@@ -2,7 +2,7 @@ import { PositionInterface } from './Carpool';
 
 export interface CrosscheckRepositoryProviderInterface {
   getTripId(data: {
-    operatorTripId: number;
+    operatorTripId: string;
     datetime: Date;
     start: PositionInterface;
     end: PositionInterface;
@@ -11,7 +11,7 @@ export interface CrosscheckRepositoryProviderInterface {
 }
 export abstract class CrosscheckRepositoryProviderInterfaceResolver implements CrosscheckRepositoryProviderInterface {
   public async getTripId(data: {
-    operatorTripId: number;
+    operatorTripId: string;
     datetime: Date;
     start: PositionInterface;
     end: PositionInterface;

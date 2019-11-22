@@ -13,7 +13,6 @@ export interface PositionInterface extends GeoPositionInterface {
 }
 
 export interface PeopleInterface {
-  operator_trip_id: number;
   is_driver: boolean;
   datetime: Date;
   start: PositionInterface;

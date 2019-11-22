@@ -1,16 +1,24 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler } from '@ilos/common';
+import { handler, KernelInterfaceResolver } from '@ilos/common';
+
+import {
+  signature as operatorFindSignature,
+  ParamsInterface as OperatorFindParamsInterface,
+  ResultInterface as OperatorFindResultInterface,
+} from '../shared/operator/find.contract';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
+import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
+import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 
 // Enrich position data
 @handler(handlerConfig)
 export class NormalizationCostAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
 
-  constructor(private wf: WorkflowProvider) {
+  constructor(private wf: WorkflowProvider, private kernel: KernelInterfaceResolver) {
     super();
   }
 
@@ -18,15 +26,77 @@ export class NormalizationCostAction extends AbstractAction {
     this.logger.debug(`Normalization:cost on ${journey._id}`);
 
     const normalizedJourney = { ...journey };
-    // TODO: implementation cost enrichment
-    // if expense, calculate contribution or revenue by adding incentive
-    // if contribution, calculate expense by adding incentive
-    // if revenue, calculate expense by removing incentive
+    const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
+      operatorFindSignature,
+      {
+        _id: journey.operator_id,
+      },
+      {
+        call: {
+          user: {
+            permissions: ['operator:read']
+          }
+        },
+        channel: {
+          service: 'normalization'
+        }
+      },
+    );
 
-    // need to add duration and distance enrichment
+    if (journey.payload.passenger) {
+      const [cost, payments] = this.normalizeCost(siret, journey.payload.passenger, false);
+      journey.payload.passenger['cost'] = cost;
+      journey.payload.passenger.payments = payments;
+    }
+
+    if (journey.payload.driver) {
+      const [cost, payments] = this.normalizeCost(siret, journey.payload.driver, true);
+      journey.payload.passenger['cost'] = cost;
+      journey.payload.passenger.payments = payments;
+    }
 
     await this.wf.next('normalization:cost', normalizedJourney);
 
     return normalizedJourney;
+  }
+
+  protected normalizeCost(siret: string, data: PersonInterface, isDriver?: boolean): [number, PaymentInterface[]] {
+    const incentiveAmount = data.incentives.reduce((total, current) => total + current.amount, 0);
+    const cost = isDriver ? -data.revenue - incentiveAmount : data.contribution + incentiveAmount;
+
+    const isIncentive = (data) => data.type === 'incentive';
+
+    const payments = [
+      ...data.incentives.map(p => ({ ...p, type: 'incentive' })),
+      ...data.payments.map(p => ({ ...p, type: 'payment', index: -1 })),
+      ]
+      .sort((a, b) => {
+        if (!isIncentive(a) && !isIncentive(b)) {
+          return 0;
+        }
+        if (isIncentive(a) && !isIncentive(b)) {
+          return -1;
+        }
+        if (!isIncentive(a) && isIncentive(b)) {
+          return 1;
+        }
+        if (a.index > b.index) {
+          return 1;
+        }
+        if (a.index < b.index) {
+          return -1;
+        }
+        return 0;
+      })
+      .map((p, i) => ({ ...p, index: i }));
+    
+    payments.push({
+      siret,
+      index: payments.length,
+      type: 'payment',
+      amount: Math.abs(cost) - payments.reduce((sum, item) => sum + item.amount, 0),
+    });
+
+    return [cost, payments];
   }
 }

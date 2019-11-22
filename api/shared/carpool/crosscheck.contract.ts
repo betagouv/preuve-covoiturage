@@ -13,20 +13,20 @@ interface Position extends GeoPositionInterface {
 }
 
 interface PersonInterface {
-  operator_trip_id: number,
-  is_driver: boolean,
-  datetime: Date,
-  start: Position,
-  end: Position,
-  seats: number,
-  duration: number,
-  distance?: number, // TODO: fix this as nullable :)
+  is_driver: boolean;
+  datetime: Date;
+  start: Position;
+  end: Position;
+  seats: number;
+  duration: number;
+  distance?: number; // TODO: fix this as nullable :)
   identity: IdentityInterface;
-  cost: number,     // TODO: add this ! 
-  meta: PersonMetaInterface, // TODO: add this !
+  cost: number;     // TODO: add this ! 
+  meta: PersonMetaInterface; // TODO: add this !
 }
 
 export interface ParamsInterface {
+  operator_trip_id: string;
   acquisition_id: number; // _id
   operator_id: number;
   operator_journey_id: string; // journey_id  // TODO: add this !

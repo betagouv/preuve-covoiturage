@@ -41,7 +41,7 @@ export class CrosscheckAction extends Action {
 
     // Get a trip id
     const tripId = await this.crosscheck.getTripId({
-      operatorTripId: driver.operator_trip_id,
+      operatorTripId: journey.operator_trip_id,
       datetime: driver.datetime,
       start: driver.start,
       end: driver.end,

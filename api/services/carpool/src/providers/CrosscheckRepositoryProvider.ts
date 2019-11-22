@@ -22,7 +22,7 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
   constructor(public connection: PostgresConnection) {}
 
   public async getTripId(data: {
-    operatorTripId: number;
+    operatorTripId: string;
     datetime: Date;
     start: PositionInterface;
     end: PositionInterface;
@@ -41,7 +41,7 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
     return tripId || v4();
   }
 
-  protected async findTripIdByOperatorTripId(operatorTripId: number): Promise<string | null> {
+  protected async findTripIdByOperatorTripId(operatorTripId: string): Promise<string | null> {
     const query = {
       text: `
         SELECT trip_id as _id FROM ${this.table}
