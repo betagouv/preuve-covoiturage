@@ -80,9 +80,12 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
           distance,
           seats,
           created_at,
-          operator_trip_id
+          operator_trip_id,
+          cost,
+          operator_journey_id,
+          meta
         )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16 )`,
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`,
       values: [
         shared.acquisition_id,
         shared.operator_id,
@@ -100,6 +103,9 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
         person.seats,
         shared.created_at,
         person.operator_trip_id,
+        person.cost,
+        shared.operator_journey_id,
+        JSON.stringify(person.meta),
       ],
     };
 
