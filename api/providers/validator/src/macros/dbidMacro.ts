@@ -22,6 +22,12 @@ export function dbidMacro(schema) {
         format: 'uuid',
         maxLength: 38,
       },
+
+      // serial
+      {
+        type: 'integer',
+        minimum: 1,
+      },
     ],
   };
 }

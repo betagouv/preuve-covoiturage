@@ -285,21 +285,12 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
             case 'status':
               throw new Error('Unimplemented');
             case 'date':
-              if (filter.value.start && filter.value.end) {
-                return {
-                  text: '($#::timestamp <= datetime AND datetime <= $#::timestamp)',
-                  values: [filter.value.start, filter.value.end],
-                };
-              }
-              if (filter.value.start) {
-                return {
-                  text: '$#::timestamp <= datetime',
-                  values: [filter.value.start],
-                };
-              }
               return {
-                text: 'datetime <= $#::timestamp',
-                values: [filter.value.end],
+                text: '(datetime BETWEEN $#::timestamp AND $#::timestamp)',
+                values: [
+                  filter.value.start || new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+                  filter.value.end || new Date(),
+                ],
               };
             case 'ranks':
               return {
@@ -369,7 +360,8 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
   }
 
   public async stats(params: TripSearchInterface): Promise<any> {
-    const where = this.buildWhereClauses(params);
+    // on missing date key, the start will be set to 1 year before now
+    const where = this.buildWhereClauses({ date: { start: null }, ...params });
     const query = {
       text: `
       SELECT
