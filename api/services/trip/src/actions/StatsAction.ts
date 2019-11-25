@@ -44,6 +44,17 @@ export class StatsAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    return (await this.pg.stats(params)) || [];
+    return (await this.pg.stats(this.applyDefaults(params))) || [];
+  }
+
+  protected applyDefaults(params: ParamsInterface): ParamsInterface {
+    const finalParams = { ...params };
+
+    finalParams.date = {
+      start: finalParams.date.start || new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+      end: finalParams.date.end || new Date(),
+    };
+
+    return finalParams;
   }
 }

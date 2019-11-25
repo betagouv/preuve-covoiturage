@@ -291,8 +291,8 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
               return {
                 text: '(datetime BETWEEN $#::timestamp AND $#::timestamp)',
                 values: [
-                  filter.value.start || new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
-                  filter.value.end || new Date(),
+                  filter.value.start,
+                  filter.value.end,
                 ],
               };
             case 'ranks':
@@ -363,8 +363,7 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
   }
 
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<any> {
-    // on missing date key, the start will be set to 1 year before now
-    const where = this.buildWhereClauses({ date: { start: null }, ...params });
+    const where = this.buildWhereClauses(params);
 
     const query = {
       text: `
