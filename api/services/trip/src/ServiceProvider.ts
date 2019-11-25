@@ -11,12 +11,10 @@ import { binding as statsBinding } from './shared/trip/stats.schema';
 import { TripPgRepositoryProvider } from './providers/TripPgRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
-import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { PublicStatsAction } from './actions/PublicStatsAction';
 
 @serviceProvider({
   config: __dirname,
-  commands: [MigrateDataCommand],
   providers: [TripPgRepositoryProvider],
   validator: [listBinding, statsBinding],
   middlewares: [
