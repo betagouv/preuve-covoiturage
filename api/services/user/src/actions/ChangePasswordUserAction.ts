@@ -12,7 +12,10 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
  */
 @handler(handlerConfig)
 export class ChangePasswordUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['profile.update']]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
+    ['can', ['profile.update']],
+  ];
 
   constructor(private authRepository: AuthRepositoryProviderInterfaceResolver) {
     super();

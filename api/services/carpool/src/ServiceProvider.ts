@@ -15,11 +15,7 @@ import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvid
 
 @serviceProvider({
   config: __dirname,
-  providers: [
-    CarpoolRepositoryProvider,
-    CrosscheckRepositoryProvider,
-    IdentityRepositoryProvider,
-  ],
+  providers: [CarpoolRepositoryProvider, CrosscheckRepositoryProvider, IdentityRepositoryProvider],
   validator: [binding],
   middlewares: [
     ['validate', ValidatorMiddleware],

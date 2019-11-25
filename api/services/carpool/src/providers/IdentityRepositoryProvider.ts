@@ -1,7 +1,7 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
 
+import { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
 import {
   IdentityRepositoryProviderInterface,
   IdentityRepositoryProviderInterfaceResolver,
@@ -21,7 +21,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
   /**
    *  Save an identity on table and return _id and uuid
    */
-  public async create(identity: IdentityInterface): Promise<{ _id: number, uuid: string }> {
+  public async create(identity: IdentityInterface): Promise<{ _id: number; uuid: string }> {
     const results = await this.connection.getClient().query({
       text: `
         INSERT INTO ${this.table}
@@ -63,9 +63,7 @@ export class IdentityRepositoryProvider implements IdentityRepositoryProviderInt
   public async delete(_id: number): Promise<void> {
     const results = await this.connection.getClient().query({
       text: `DELETE FROM ${this.table} WHERE _id = $1`,
-      values: [
-        _id,
-      ],
+      values: [_id],
     });
 
     if (!results.rowCount) {

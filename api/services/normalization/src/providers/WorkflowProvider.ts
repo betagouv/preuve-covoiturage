@@ -123,13 +123,13 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
     });
 
     const normalizedData: FinalParamsInterface = {
+      people,
       operator_trip_id: data.payload.operator_journey_id,
       created_at: data.created_at,
       operator_id: data.operator_id,
       operator_class: data.payload.operator_class,
       acquisition_id: data._id,
       operator_journey_id: data.journey_id,
-      people,
     };
 
     return this.kernel.notify<FinalParamsInterface>(this.finalStep, normalizedData, context);

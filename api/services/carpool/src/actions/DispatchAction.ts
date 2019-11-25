@@ -10,7 +10,9 @@ import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
  */
 @handler(handlerConfig)
 export class DispatchAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]],
+  ];
 
   constructor(
     private tripRepository: CarpoolRepositoryProviderInterfaceResolver,

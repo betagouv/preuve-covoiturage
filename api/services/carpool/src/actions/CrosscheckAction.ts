@@ -33,8 +33,8 @@ export class CrosscheckAction extends Action {
     const toProcess = [];
     const { people, ...sharedData } = journey;
 
-    const driver = people.filter((people) => people.is_driver).pop();
-    const passengers = people.filter((people) => !people.is_driver);
+    const driver = people.filter((p) => p.is_driver).pop();
+    const passengers = people.filter((p) => !p.is_driver);
 
     const driverIdentity = await this.identity.create(driver.identity);
     toProcess.push({ ...driver, identity_id: driverIdentity._id });
@@ -51,7 +51,7 @@ export class CrosscheckAction extends Action {
     // Build identity for every participant
     for (const passenger of passengers) {
       const { _id: identity_id } = await this.identity.create(passenger.identity);
-      toProcess.push({...passenger, identity_id });
+      toProcess.push({ ...passenger, identity_id });
     }
 
     // Save carpool into database

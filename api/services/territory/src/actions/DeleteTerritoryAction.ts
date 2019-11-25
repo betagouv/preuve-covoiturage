@@ -8,7 +8,10 @@ import { alias } from '../shared/territory/delete.schema';
 
 @handler(handlerConfig)
 export class DeleteTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['territory.delete']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['territory.delete']],
+    ['validate', alias],
+  ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();

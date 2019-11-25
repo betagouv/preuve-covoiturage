@@ -16,7 +16,7 @@ export const schema = {
   required: ['acquisition_id', 'operator_id', 'operator_journey_id', 'created_at', 'operator_class', 'people'],
   additionalProperties: false,
   properties: {
-    operator_trip_id: { macro: 'varchar'},
+    operator_trip_id: { macro: 'varchar' },
     acquisition_id: { macro: 'serial' },
     operator_id: { macro: 'serial' },
     operator_journey_id: { macro: 'varchar' },
@@ -26,17 +26,7 @@ export const schema = {
       type: 'array',
       items: {
         type: 'object',
-        required: [
-          'is_driver',
-          'datetime',
-          'start',
-          'end',
-          'seats',
-          'duration',
-          'identity',
-          'cost',
-          'meta',
-        ],
+        required: ['is_driver', 'datetime', 'start', 'end', 'seats', 'duration', 'identity', 'cost', 'meta'],
         additionalProperties: false,
         properties: {
           is_driver: { type: 'boolean' },

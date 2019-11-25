@@ -21,7 +21,7 @@ interface PersonInterface {
   duration: number;
   distance?: number; // TODO: fix this as nullable :)
   identity: IdentityInterface;
-  cost: number;     // TODO: add this ! 
+  cost: number; // TODO: add this !
   meta: PersonMetaInterface; // TODO: add this !
 }
 
@@ -32,7 +32,7 @@ export interface ParamsInterface {
   operator_journey_id: string; // journey_id  // TODO: add this !
   created_at: Date;
   operator_class: string;
-  people: PersonInterface[]
+  people: PersonInterface[];
 }
 
 export type ResultInterface = void;

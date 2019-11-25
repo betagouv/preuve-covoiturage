@@ -34,12 +34,12 @@ export class NormalizationCostAction extends AbstractAction {
       {
         call: {
           user: {
-            permissions: ['operator.read']
-          }
+            permissions: ['operator.read'],
+          },
         },
         channel: {
-          service: 'normalization'
-        }
+          service: 'normalization',
+        },
       },
     );
 
@@ -66,12 +66,12 @@ export class NormalizationCostAction extends AbstractAction {
     const incentiveAmount = incentives.reduce((total, current) => total + current.amount, 0);
     const cost = isDriver ? -data.revenue - incentiveAmount : data.contribution + incentiveAmount;
 
-    const isIncentive = (data) => data.type === 'incentive';
+    const isIncentive = (d) => d.type === 'incentive';
 
     const payments = [
-      ...incentives.map(p => ({ ...p, type: 'incentive' })),
-      ...inputPayments.map(p => ({ ...p, type: 'payment', index: -1 })),
-      ]
+      ...incentives.map((p) => ({ ...p, type: 'incentive' })),
+      ...inputPayments.map((p) => ({ ...p, type: 'payment', index: -1 })),
+    ]
       .sort((a, b) => {
         if (!isIncentive(a) && !isIncentive(b)) {
           return 0;
@@ -91,7 +91,7 @@ export class NormalizationCostAction extends AbstractAction {
         return 0;
       })
       .map((p, i) => ({ ...p, index: i }));
-    
+
     payments.push({
       siret,
       index: payments.length,

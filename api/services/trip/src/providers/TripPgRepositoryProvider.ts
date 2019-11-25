@@ -4,7 +4,10 @@ import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
-import { TripSearchInterfaceWithPagination, TripSearchInterface } from '../shared/trip/common/interfaces/TripSearchInterface';
+import {
+  TripSearchInterfaceWithPagination,
+  TripSearchInterface,
+} from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   LightTripInterface,
   TripPgRepositoryInterface,
@@ -395,7 +398,9 @@ export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
     return result.rows.map(this.castTypes);
   }
 
-  public async search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>> {
+  public async search(
+    params: Partial<TripSearchInterfaceWithPagination>,
+  ): Promise<ResultWithPagination<LightTripInterface>> {
     const { limit, skip } = params;
     const where = this.buildWhereClauses(params);
     const query = {

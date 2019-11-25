@@ -17,7 +17,9 @@ export abstract class TripPgRepositoryProviderInterfaceResolver implements TripP
     throw new Error();
   }
 
-  public async search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>> {
+  public async search(
+    params: Partial<TripSearchInterfaceWithPagination>,
+  ): Promise<ResultWithPagination<LightTripInterface>> {
     throw new Error();
   }
 }

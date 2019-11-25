@@ -19,26 +19,24 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
 
   constructor(protected connection: PostgresConnection) {}
 
-  public async importFromAcquisition(shared: {
-    acquisition_id: number; // _id
-    operator_id: number;
-    operator_journey_id: string; // journey_id  // TODO: add this !
-    created_at: Date;
-    operator_class: string;
-    operator_trip_id: string;
-    trip_id: string;
-  }, people: PeopleWithIdInterface[]
+  public async importFromAcquisition(
+    shared: {
+      acquisition_id: number; // _id
+      operator_id: number;
+      operator_journey_id: string; // journey_id  // TODO: add this !
+      created_at: Date;
+      operator_class: string;
+      operator_trip_id: string;
+      trip_id: string;
+    },
+    people: PeopleWithIdInterface[],
   ): Promise<void> {
     const client = await this.connection.getClient().connect();
     try {
       await client.query('BEGIN');
 
       for (const person of people) {
-        await this.addParticipant(
-          client,
-          shared,
-          person,
-        );
+        await this.addParticipant(client, shared, person);
       }
 
       await client.query('COMMIT');

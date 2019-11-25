@@ -10,7 +10,10 @@ import { alias } from '../shared/company/find.schema';
 
 @handler(handlerConfig)
 export class FindAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['company.find']]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
+    ['can', ['company.find']],
+  ];
 
   constructor(
     private ds: CompanyDataSourceProviderInterfaceResolver,

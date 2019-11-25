@@ -17,7 +17,10 @@ import { NormalizationRouteAction } from './actions/NormalizationRouteAction';
   providers: [GeoProvider, TerritoryProvider, WorkflowProvider],
   handlers: [NormalizationGeoAction, NormalizationRouteAction, NormalizationTerritoryAction, NormalizationCostAction],
   middlewares: [['channel.service.only', ChannelServiceWhitelistMiddleware]],
-  connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
+  connections: [
+    [RedisConnection, 'connections.redis'],
+    [PostgresConnection, 'connections.postgres'],
+  ],
   queues: ['normalization'],
   validator: [],
 })
