@@ -14,8 +14,14 @@ export class BaseModel implements IModel, IMapModel<BaseModel> {
   protected updated_at: Date;
 
   map(data: any): BaseModel {
+    return this;
+  }
+
+  /*
+  map(data: any): BaseModel {
     if (data.created_at) this.created_at = new Date(data.created_at);
     if (data.updated_at) this.updated_at = new Date(data.updated_at);
     return this;
   }
+   */
 }
