@@ -1,2 +1,2 @@
 export * from './LightTripInterface';
-export * from './TripPgRepositoryProviderInterface';
+export * from './TripRepositoryProviderInterface';

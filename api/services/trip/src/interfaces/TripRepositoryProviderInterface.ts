@@ -2,11 +2,11 @@ import { TripSearchInterfaceWithPagination } from '../shared/trip/common/interfa
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { LightTripInterface } from './LightTripInterface';
 
-export interface TripPgRepositoryInterface {
+export interface TripRepositoryInterface {
   stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<any>;
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
 }
-export abstract class TripPgRepositoryProviderInterfaceResolver implements TripPgRepositoryInterface {
+export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<any> {
     throw new Error();
   }

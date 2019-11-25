@@ -8,14 +8,14 @@ import { ChannelTransportMiddleware, ScopeToSelfMiddleware } from '@pdc/provider
 
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
-import { TripPgRepositoryProvider } from './providers/TripPgRepositoryProvider';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
 import { PublicStatsAction } from './actions/PublicStatsAction';
 
 @serviceProvider({
   config: __dirname,
-  providers: [TripPgRepositoryProvider],
+  providers: [TripRepositoryProvider],
   validator: [listBinding, statsBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],

@@ -2,7 +2,7 @@ import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
-import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/list.schema';
 
@@ -38,7 +38,7 @@ export class ListAction extends Action {
     ],
   ];
 
-  constructor(private pg: TripPgRepositoryProvider) {
+  constructor(private pg: TripRepositoryProvider) {
     super();
   }
 

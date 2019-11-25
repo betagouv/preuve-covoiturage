@@ -1,17 +1,14 @@
 import { provider } from '@ilos/common';
-import v4 from 'uuid/v4';
-import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
-import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
 import {
   LightTripInterface,
-  TripPgRepositoryInterface,
-  TripPgRepositoryProviderInterfaceResolver,
+  TripRepositoryInterface,
+  TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
@@ -20,9 +17,9 @@ import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagi
  * Trip specific repository
  */
 @provider({
-  identifier: TripPgRepositoryProviderInterfaceResolver,
+  identifier: TripRepositoryProviderInterfaceResolver,
 })
-export class TripPgRepositoryProvider implements TripPgRepositoryInterface {
+export class TripRepositoryProvider implements TripRepositoryInterface {
   public readonly table = 'carpool.carpools';
   public readonly identityTable = 'carpool.identities';
 

@@ -3,7 +3,7 @@ import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/stats.contract';
-import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/stats.schema';
 
@@ -39,7 +39,7 @@ export class StatsAction extends Action {
     ],
   ];
 
-  constructor(private pg: TripPgRepositoryProvider) {
+  constructor(private pg: TripRepositoryProvider) {
     super();
   }
 

@@ -3,14 +3,14 @@ import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/publicStats.contract';
-import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
 @handler(handlerConfig)
 export class PublicStatsAction extends Action {
   public readonly middlewares: ActionMiddleware[] = [];
 
-  constructor(private pg: TripPgRepositoryProvider) {
+  constructor(private pg: TripRepositoryProvider) {
     super();
   }
 
