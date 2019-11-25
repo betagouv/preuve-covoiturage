@@ -8,7 +8,10 @@ import { alias } from '../shared/territory/create.schema';
 
 @handler(handlerConfig)
 export class CreateTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['territory.create']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['territory.create']],
+    ['validate', alias],
+  ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();

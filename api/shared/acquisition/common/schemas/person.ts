@@ -84,7 +84,7 @@ const paymentSchema = {
   minProperties: 2,
   additionalProperties: false,
   properties: {
-    pass_type: { macro: 'varchar' },
+    siret: { macro: 'siret' },
     amount: {
       type: 'integer',
       minimum: 0,

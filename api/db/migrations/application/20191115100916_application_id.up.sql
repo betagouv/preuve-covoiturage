@@ -3,8 +3,8 @@
 --     Column     |            Type             | Collation | Nullable |           Default
 -- ---------------+-----------------------------+-----------+----------+------------------------------
 --  _id           | uuid                        |           | not null | uuid_generate_v4()
---  created_at    | timestamp without time zone |           | not null | now()
---  deleted_at    | timestamp without time zone |           |          |
+--  created_at    | timestamp with time zone |           | not null | now()
+--  deleted_at    | timestamp with time zone |           |          |
 --  name          | character varying           |           | not null |
 --  owner_id      | character varying           |           | not null |
 --  owner_service | character varying           |           | not null |
@@ -19,8 +19,8 @@
 -- ---------------+-----------------------------+-----------+----------+------------------------------
 --  _id           | integer                     |           | not null | nextval('application.applications__id_seq'::regclass)
 --  uuid          | character varying           |           | not null | uuid_generate_v4()
---  created_at    | timestamp without time zone |           | not null | now()
---  deleted_at    | timestamp without time zone |           |          |
+--  created_at    | timestamp with time zone |           | not null | now()
+--  deleted_at    | timestamp with time zone |           |          |
 --  name          | character varying           |           | not null |
 --  owner_id      | character varying           |           | not null |
 --  owner_service | character varying           |           | not null |
@@ -36,8 +36,8 @@ CREATE TABLE application.applications_new
   _id serial primary key,
   uuid varchar default uuid_generate_v4 (),
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp,
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  deleted_at timestamp with time zone,
 
   name varchar NOT NULL,
   owner_id varchar NOT NULL,

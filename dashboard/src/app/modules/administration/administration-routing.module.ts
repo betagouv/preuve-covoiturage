@@ -8,6 +8,8 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from '~/modules/administration/pages/all-operators/all-operators.component';
+// tslint:disable-next-line:max-line-length
+import { OperatorVisibilityComponent } from '~/modules/administration/pages/operator-visibility/operator-visibility.component';
 
 import { OperatorComponent } from './pages/operator/operator.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
@@ -62,6 +64,10 @@ const routes: Routes = [
         path: '',
         redirectTo: 'profile',
         pathMatch: 'full',
+      },
+      {
+        path: 'visibility',
+        component: OperatorVisibilityComponent,
       },
     ],
   },

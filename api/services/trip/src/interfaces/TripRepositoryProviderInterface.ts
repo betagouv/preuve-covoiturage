@@ -1,37 +1,20 @@
-import { RepositoryInterfaceResolver, RepositoryInterface } from '@ilos/common';
+import { TripSearchInterfaceWithPagination } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { LightTripInterface } from './LightTripInterface';
+import { StatInterface } from './StatInterface';
 
-import { TripInterface } from '../shared/common/interfaces/TripInterface';
-
-export interface TripRepositoryProviderInterface extends RepositoryInterface {
-  findByOperatorTripIdAndOperatorId(params: { operator_trip_id?: string; operator_id: string }): Promise<TripInterface>;
-  findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<TripInterface>;
-  findByIdAndPatch(
-    id: string,
-    data: {
-      [k: string]: any;
-    },
-  ): Promise<TripInterface>;
+export interface TripRepositoryInterface {
+  stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
+  search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
 }
+export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
+  public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
+    throw new Error();
+  }
 
-export abstract class TripRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  public async findByOperatorTripIdAndOperatorId(params: {
-    operator_trip_id?: string;
-    operator_id: string;
-  }): Promise<TripInterface> {
-    throw new Error('Not implemented');
-  }
-  public async findByPhoneAndTimeRange(
-    phone: string,
-    startTimeRange: { min: Date; max: Date },
-  ): Promise<TripInterface> {
-    throw new Error('Not implemented');
-  }
-  public async findByIdAndPatch(
-    id: string,
-    data: {
-      [k: string]: any;
-    },
-  ): Promise<TripInterface> {
-    throw new Error('Not implemented');
+  public async search(
+    params: Partial<TripSearchInterfaceWithPagination>,
+  ): Promise<ResultWithPagination<LightTripInterface>> {
+    throw new Error();
   }
 }

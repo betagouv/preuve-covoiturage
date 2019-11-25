@@ -7,7 +7,7 @@ import { OperatorService } from '~/modules/operator/services/operator.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
-import { LightTripInterface, LightTripIncentives } from '~/core/interfaces/trip/tripInterface';
+import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 
 @Component({
   selector: 'app-trip-table',
@@ -86,8 +86,10 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
   }
 
   getOperator(trip: LightTripInterface): string {
+    if (trip.operator_id === null) return 'Non visible';
+
     const operator = this.operators.find((operatorF) => operatorF._id === trip.operator_id);
-    if (!operator) console.error('Operator not found !');
+    if (!operator) throw new Error('Operator not found !');
     return operator.name;
   }
 

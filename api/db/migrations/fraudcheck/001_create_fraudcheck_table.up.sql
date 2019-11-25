@@ -4,9 +4,9 @@ CREATE TABLE IF NOT EXISTS fraudcheck.fraudchecks
 (
   _id serial primary key,
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
-  updated_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp,
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  deleted_at timestamp with time zone,
 
   acquisition_id varchar NOT NULL,
   method varchar(128) NOT NULL,

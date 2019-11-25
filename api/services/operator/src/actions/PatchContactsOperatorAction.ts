@@ -8,7 +8,10 @@ import { alias } from '../shared/operator/patchContacts.schema';
 
 @handler(handlerConfig)
 export class PatchContactsOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['operator.contacts.update']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['operator.contacts.update']],
+    ['validate', alias],
+  ];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();

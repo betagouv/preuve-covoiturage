@@ -9,7 +9,10 @@ import { blacklist } from '../config/filterOutput';
 
 @handler(handlerConfig)
 export class FindTerritoryByInseeAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['content.blacklist', blacklist]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
+    ['content.blacklist', blacklist],
+  ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
