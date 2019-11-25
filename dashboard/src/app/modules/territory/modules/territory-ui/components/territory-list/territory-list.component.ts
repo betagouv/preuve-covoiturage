@@ -23,7 +23,7 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
   constructor(
     private _territoryService: TerritoryService,
     public authenticationService: AuthenticationService,
-    private territoryStore: TerritoryStoreService,
+    public territoryStore: TerritoryStoreService,
   ) {
     super();
   }

@@ -69,35 +69,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public onSubmit(): void {
     const territory = new Territory();
-    territory.updateFromFormValues(this.territoryForm.value);
 
     if (this.editedId) {
-      // const formData = this.fullFormMode
-      //   ? this.territoryForm.value
-      //   : {
-      //       _id: territory._id,
-      //       contacts: new Contacts(this.territoryForm.value.contacts),
-      //     };
-      // let patch$;
-      // if (this.fullFormMode) {
-      //   const updatedTerritory = new Territory({
-      //     ...formData,
-      //     siret: formData.company.siret,
-      //     _id: this.editedId,
-      //   });
-      //   delete updatedTerritory.company;
-      //   patch$ = this._territoryService.updateList(updatedTerritory);
-      // } else {
-      //   patch$ = this._territoryService.patchContactList({ ...new Contacts(formData.contacts), _id: this.editedId });
-      // }
-
       const patch$ = this.fullFormMode
-        ? this.territoryStore.updateSelected(territory)
+        ? this.territoryStore.updateSelected(this.territoryForm.value)
         : this.territoryStore.patchContact({ contacts: this.territoryForm.value.contacts, _id: this.editedId });
 
       patch$.subscribe(
-        (data) => {
-          const modifiedTerritory = data[0];
+        (modifiedTerritory) => {
           this.toastr.success(`${modifiedTerritory.name} a été mis à jour !`);
           this.close.emit();
         },
