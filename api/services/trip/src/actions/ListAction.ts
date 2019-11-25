@@ -44,15 +44,18 @@ export class ListAction extends Action {
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // get visible operators from user context
+    const result = await this.pg.search(params);
+
+    let authorizedOperators = null
     if (context.call && context.call.user && context.call.user.authorizedOperators) {
-      params.visible_operator_ids = context.call.user.authorizedOperators;
+      authorizedOperators = context.call.user.authorizedOperators;
     }
 
-    const result = await this.pg.search(params);
     return {
       ...result,
       data: result.data.map((r) => ({
         ...r,
+        operator_id: (authorizedOperators === null) ? r.operator_id : authorizedOperators.indexOf(r.operator_id) === -1 ? null : r.operator_id,
         campaigns_id: [],
         status: 'locked',
       })),
