@@ -186,7 +186,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         SELECT
           count(*) over() as total_count,
           trip_id,
-          is_driver,
           start_town,
           end_town,
           datetime as start_datetime,
