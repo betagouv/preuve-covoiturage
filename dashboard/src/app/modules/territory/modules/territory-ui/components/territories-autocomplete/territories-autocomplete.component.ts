@@ -5,9 +5,9 @@ import { filter, takeUntil, tap } from 'rxjs/operators';
 
 import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Territory } from '~/core/entities/territory/territory';
+import { TerritoryApiService } from '~/modules/territory/services/territoryApiService';
 
 @Component({
   selector: 'app-territories-autocomplete',
@@ -25,7 +25,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
 
   @ViewChild('territoryInput', { static: false }) territoryInput: ElementRef;
 
-  constructor(private territoryService: TerritoryService, private commonDataService: CommonDataService) {
+  constructor(private territoryApiService: TerritoryApiService, private commonDataService: CommonDataService) {
     super();
   }
 
