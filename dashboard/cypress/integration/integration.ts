@@ -29,6 +29,8 @@ import { stubApplicationCreate } from '../support/stubs/operator/application/app
 import { stubApplicationRevoke } from '../support/stubs/operator/application/application.revoke';
 import { cypress_login } from '../support/reusables/auth/cypress_login';
 import { stubApiAdress } from '../support/stubs/external/api-adresse';
+import { stubVisibilityList } from '../support/stubs/territory/territory.listOperator';
+import { stubVisibilityUpdate } from '../support/stubs/territory/territory.updateOperator';
 
 /**
  * parameters to decide with contexts to run when in local
@@ -41,139 +43,153 @@ const localTesting = {
 
 const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
 
-context('OPERATOR', () => {
-  if (isLocal && !localTesting.operator) {
-    return;
-  }
-
-  const trips = TripGenerator.generateTrips();
-  const applications = ApplicationsGenerator.generateApplications();
-
-  describe('login', () => {
-    cypress_login({
-      email: 'operator@example.com',
-      password: 'admin1234',
-      group: UserGroupEnum.OPERATOR,
-    });
-  });
-
-  describe('operator dashboard', () => {
-    beforeEach(() => {
-      cy.server();
-      stubCampaignList();
-      stubOperatorList();
-      stubTerritoryList();
-      stubTripList(trips);
-      stubStatList();
-      stubOperatorPatchContacts();
-      stubMainLists(UserGroupEnum.OPERATOR);
-
-      stubLogin(UserGroupEnum.OPERATOR);
-      stubUserMe(UserGroupEnum.OPERATOR);
-      stubUserPatch(UserGroupEnum.OPERATOR);
-      stubLogout();
-
-      stubApplications(applications);
-      stubApplicationCreate();
-      stubApplicationRevoke();
-    });
-
-    if (!isLocal) {
-      // continuous integration testing
-      testOperatorStory();
-    } else {
-      // local testing
-      testOperatorStory(true, true, true, true);
+function cypress_context_operator() {
+  context('OPERATOR', () => {
+    if (isLocal && !localTesting.operator) {
+      return;
     }
-  });
-});
 
-context('REGISTRY', () => {
-  if (isLocal && !localTesting.registry) {
-    return;
-  }
-  const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
-  const trips = TripGenerator.generateTrips();
+    const trips = TripGenerator.generateTrips();
+    const applications = ApplicationsGenerator.generateApplications();
 
-  describe('login', () => {
-    cypress_login({
-      email: 'territory@example.com',
-      password: 'admin1234',
-      group: UserGroupEnum.REGISTRY,
-    });
-  });
-
-  describe('registry dashboard', () => {
-    beforeEach(() => {
-      cy.server();
-      stubCampaignList();
-      stubOperatorList();
-      stubTerritoryList();
-      stubTripList(trips);
-      stubStatList();
-      stubMainLists(UserGroupEnum.REGISTRY);
-      stubLogin(UserGroupEnum.REGISTRY);
-      stubUserMe(UserGroupEnum.REGISTRY);
-      stubUserPatch(UserGroupEnum.REGISTRY);
-      stubLogout();
-      stubUserList(users);
+    describe('login', () => {
+      cypress_login({
+        email: 'operator@example.com',
+        password: 'admin1234',
+        group: UserGroupEnum.OPERATOR,
+      });
     });
 
-    if (!isLocal) {
-      // continuous integration testing
-      testRegistryStory();
-    } else {
-      // local testing
-      testRegistryStory(true, true, true);
+    describe('operator dashboard', () => {
+      beforeEach(() => {
+        cy.server();
+        stubCampaignList();
+        stubOperatorList();
+        stubTerritoryList();
+        stubTripList(trips);
+        stubStatList();
+        stubOperatorPatchContacts();
+        stubMainLists(UserGroupEnum.OPERATOR);
+
+        stubLogin(UserGroupEnum.OPERATOR);
+        stubUserMe(UserGroupEnum.OPERATOR);
+        stubUserPatch(UserGroupEnum.OPERATOR);
+        stubLogout();
+
+        stubApplications(applications);
+        stubApplicationCreate();
+        stubApplicationRevoke();
+
+        stubVisibilityList();
+        stubVisibilityUpdate();
+      });
+
+      if (!isLocal) {
+        // continuous integration testing
+        testOperatorStory();
+      } else {
+        // local testing
+        testOperatorStory(true, true, true, true);
+      }
+    });
+  });
+}
+
+function cypress_context_registry() {
+  context('REGISTRY', () => {
+    if (isLocal && !localTesting.registry) {
+      return;
     }
-  });
-});
+    const users = UserGenerator.generateList(UserGroupEnum.REGISTRY);
+    const trips = TripGenerator.generateTrips();
 
-context('TERRITORY', () => {
-  if (isLocal && !localTesting.territory) {
-    return;
-  }
-
-  const trips = TripGenerator.generateTrips();
-
-  describe('login', () => {
-    cypress_login({
-      email: 'admin@example.com',
-      password: 'admin1234',
-      group: UserGroupEnum.TERRITORY,
-    });
-  });
-
-  describe('territory dashboard', () => {
-    beforeEach(() => {
-      cy.server();
-      stubCampaignList();
-      stubOperatorList();
-      stubTerritoryList();
-      stubCampaignTemplateList();
-      stubStatList();
-      stubLogin(UserGroupEnum.TERRITORY);
-      stubUserMe(UserGroupEnum.TERRITORY);
-      stubUserPatch(UserGroupEnum.TERRITORY);
-      stubCampaignCreate(CampaignStatusEnum.DRAFT);
-      stubCampaignPatch();
-      stubCampaignLaunch();
-      stubTripList(trips);
-      stubMainLists(UserGroupEnum.TERRITORY);
-      stubTerritoryPatchContacts();
-      stubApiAdress('lyo');
-      stubApiAdress('paris');
-      stubApiAdress('marseil');
-      stubApiAdress('massy');
-      stubLogout();
+    describe('login', () => {
+      cypress_login({
+        email: 'territory@example.com',
+        password: 'admin1234',
+        group: UserGroupEnum.REGISTRY,
+      });
     });
 
-    if (!isLocal) {
-      // continuous integration testing
-      testTerritoryStory();
-    } else {
-      // local testing
-      testTerritoryStory(true, true, true, true, true, true, true);
+    describe('registry dashboard', () => {
+      beforeEach(() => {
+        cy.server();
+        stubCampaignList();
+        stubOperatorList();
+        stubTerritoryList();
+        stubTripList(trips);
+        stubStatList();
+        stubMainLists(UserGroupEnum.REGISTRY);
+        stubLogin(UserGroupEnum.REGISTRY);
+        stubUserMe(UserGroupEnum.REGISTRY);
+        stubUserPatch(UserGroupEnum.REGISTRY);
+        stubLogout();
+        stubUserList(users);
+      });
+
+      if (!isLocal) {
+        // continuous integration testing
+        testRegistryStory();
+      } else {
+        // local testing
+        testRegistryStory(true, true, true);
+      }
+    });
+  });
+}
+
+function cypress_context_territory() {
+  context('TERRITORY', () => {
+    if (isLocal && !localTesting.territory) {
+      return;
     }
+
+    const trips = TripGenerator.generateTrips();
+
+    describe('login', () => {
+      cypress_login({
+        email: 'admin@example.com',
+        password: 'admin1234',
+        group: UserGroupEnum.TERRITORY,
+      });
+    });
+
+    describe('territory dashboard', () => {
+      beforeEach(() => {
+        cy.server();
+        stubCampaignList();
+        stubOperatorList();
+        stubTerritoryList();
+        stubCampaignTemplateList();
+        stubStatList();
+        stubLogin(UserGroupEnum.TERRITORY);
+        stubUserMe(UserGroupEnum.TERRITORY);
+        stubUserPatch(UserGroupEnum.TERRITORY);
+        stubCampaignCreate(CampaignStatusEnum.DRAFT);
+        stubCampaignPatch();
+        stubCampaignLaunch();
+        stubTripList(trips);
+        stubMainLists(UserGroupEnum.TERRITORY);
+        stubTerritoryPatchContacts();
+        stubApiAdress('lyo');
+        stubApiAdress('paris');
+        stubApiAdress('marseil');
+        stubApiAdress('massy');
+        stubLogout();
+      });
+
+      if (!isLocal) {
+        // continuous integration testing
+        testTerritoryStory();
+      } else {
+        // local testing
+        testTerritoryStory(true, true, true, true, true, true, true);
+      }
+    });
   });
-});
+}
+
+// run contexts
+cypress_context_operator();
+cypress_context_registry();
+cypress_context_territory();

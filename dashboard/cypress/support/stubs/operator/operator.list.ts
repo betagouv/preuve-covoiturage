@@ -9,8 +9,8 @@ export const operatorStubs: Operator[] = [
     _id: 2,
     name: 'Opérateur 2',
     legal_name: 'Opérateur 2 SAS',
+    siret: '123456789',
     company: {
-      siren: '123456789',
       naf_entreprise: '1234A',
     },
     address: {

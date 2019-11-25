@@ -1,5 +1,27 @@
 ## Tests d'intégration et end2end pour le front du Registre de Preuve de Covoiturage
 
+### Run tests
+
+#### As run in circle-ci
+
+run tests in terminal
+
+- yarn cypress run
+
+run tests in GUI ( requires installed cypress locally )
+
+- yarn cypress open
+
+#### To debug locally
+
+In GUI
+
+- yarn cypress open --env ENV_NAME=local
+
+In terminal
+
+- yarn cypress run --env ENV_NAME=local --spec cypress/integration/integration.ts
+
 ### Organisation
 
 - fixtures : remplace les générateurs pour données > 80kb
