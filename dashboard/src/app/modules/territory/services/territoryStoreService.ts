@@ -1,5 +1,5 @@
 import { CrudStore } from '~/core/services/store/crud-store';
-import { Territory } from '~/core/entities/territory/territory';
+import { Contacts, Territory } from '~/core/entities/territory/territory';
 import { Injectable } from '@angular/core';
 import { TerritoryApiService } from '~/modules/territory/services/territoryApiService';
 import { tap } from 'rxjs/operators';
@@ -13,8 +13,8 @@ export class TerritoryStoreService extends CrudStore<Territory, Territory, Terri
     super(territoryApi, Territory);
   }
 
-  patchContact(formData: any): Observable<Territory> {
-    return this.rpcCrud.patchContact(formData).pipe(
+  patchContact(contactFormData: any, id: number): Observable<Territory> {
+    return this.rpcCrud.patchContact({ patch: new Contacts(contactFormData), _id: id }).pipe(
       tap((territory) => {
         this.entitySubject.next(territory);
         this.loadList();

@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,8 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
     super(http, router, activatedRoute, 'territory');
   }
 
-  patchContact(item: any): Observable<Territory> {
-    const jsonRPCParam = JsonRPCParam.createPatchParam(`${this.method}:patchContacts`, item);
+  patchContact(item: ParamsInterface): Observable<Territory> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:patchContacts`, item);
 
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
