@@ -110,7 +110,7 @@ export class ProcessJourneyCommand implements CommandInterface {
         LEFT JOIN ${options.metatable}
         ON ${options.table}._id = ${options.metatable}.acquisition_id
         WHERE carpool.carpools.acquisition_id IS NULL
-        AND (meta IS NULL OR meta <> $1)
+        AND (${options.metatable}.meta IS NULL OR ${options.metatable}.meta <> $1)
         LIMIT $2
       `,
         values: [options.tag, options.limit],
@@ -128,7 +128,7 @@ export class ProcessJourneyCommand implements CommandInterface {
       },
       channel: {
         transport: 'cli',
-        service: 'proxy',
+        service: 'acquisition', // this is necessary to have right permission on normalization service
       },
     };
 
