@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material';
 
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TerritoryStoreService } from '~/modules/territory/services/territoryStore.service';
+import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 
 @Component({
   selector: 'app-territory-list-view',

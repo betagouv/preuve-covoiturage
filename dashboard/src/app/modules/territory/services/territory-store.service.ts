@@ -1,7 +1,7 @@
 import { CrudStore } from '~/core/services/store/crud-store';
 import { Contacts, Territory } from '~/core/entities/territory/territory';
 import { Injectable } from '@angular/core';
-import { TerritoryApiService } from '~/modules/territory/services/territoryApi.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
