@@ -17,6 +17,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 
 @Component({
   selector: 'app-operator-form',
@@ -40,7 +41,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
-    private _operatorService: OperatorService,
+    private _operatorStoreService: OperatorStoreService,
     private toastr: ToastrService,
     private companyService: CompanyService,
   ) {
@@ -61,10 +62,6 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     return this.operatorForm.controls;
   }
 
-  get loading(): boolean {
-    return this._operatorService.loading;
-  }
-
   public onSubmit(): void {
     const operator = new Operator(this.operatorForm.value);
 
@@ -74,11 +71,10 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
     if (this.editedOperatorId) {
       const patch$ = this.fullFormMode
-        ? this._operatorService.updateList(new Operator({ ...operator, _id: this.editedOperatorId }))
-        : this._operatorService.patchContactList({ ...new Contacts(operator.contacts), _id: this.editedOperatorId });
+        ? this._operatorStoreService.updateSelected(this.operatorForm.value)
+        : this._operatorStoreService.patchContact(this.operatorForm.value.contacts, this.editedOperatorId);
       patch$.subscribe(
-        (data) => {
-          const modifiedOperator = data[0];
+        (modifiedOperator) => {
           this.toastr.success(`${modifiedOperator.name} a été mis à jour !`);
           this.close.emit();
         },
@@ -91,9 +87,8 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
         throw new Error("Can't create operator where fullFormMode is false (non register user)");
       }
 
-      this._operatorService.createList(operator).subscribe(
-        (data) => {
-          const createdOperator = data[0];
+      this._operatorStoreService.create(this.operatorForm.value).subscribe(
+        (createdOperator) => {
           this.toastr.success(`L'opérateur ${createdOperator.name} a été créé !`);
           this.close.emit();
         },

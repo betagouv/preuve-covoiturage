@@ -1,8 +1,9 @@
 import { OperatorInterface } from './common/interfaces/OperatorInterface';
+import { ContactsInterface } from '../common/interfaces/ContactsInterface';
 
 export interface ParamsInterface {
   _id: number;
-  patch: OperatorInterface;
+  patch: Partial<ContactsInterface>;
 }
 
 export interface ResultInterface extends OperatorInterface {}
