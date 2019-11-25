@@ -1,7 +1,7 @@
-<div class="Operators-loading" *ngIf="operatorsloading">
+<div class="Operators-loading" *ngIf="!operatorStoreService.isLoading">
   <mat-spinner></mat-spinner>
 </div>
-<table mat-table *ngIf="operatorsloaded" [dataSource]="operators">
+<table mat-table *ngIf="operatorStoreService.isLoading" [dataSource]="operators">
   <!-- NAME -->
   <ng-container matColumnDef="name">
     <td mat-cell *matCellDef="let operator" class="Operators-list-item-name">
