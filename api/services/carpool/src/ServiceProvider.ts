@@ -10,10 +10,16 @@ import { binding } from './shared/carpool/crosscheck.schema';
 import { CarpoolRepositoryProvider } from './providers/CarpoolRepositoryProvider';
 import { CrosscheckAction } from './actions/CrosscheckAction';
 import { DispatchAction } from './actions/DispatchAction';
+import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
+import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [CarpoolRepositoryProvider],
+  providers: [
+    CarpoolRepositoryProvider,
+    CrosscheckRepositoryProvider,
+    IdentityRepositoryProvider,
+  ],
   validator: [binding],
   middlewares: [
     ['validate', ValidatorMiddleware],
