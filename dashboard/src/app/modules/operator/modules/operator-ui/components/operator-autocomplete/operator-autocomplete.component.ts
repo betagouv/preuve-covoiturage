@@ -4,7 +4,6 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Operator } from '~/core/entities/operator/operator';
 import { CommonDataService } from '~/core/services/common-data.service';
@@ -29,7 +28,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   private _operatorForm: AbstractControl;
 
-  constructor(private operatorService: OperatorService, private commonDataService: CommonDataService) {
+  constructor(private commonDataService: CommonDataService) {
     super();
   }
 

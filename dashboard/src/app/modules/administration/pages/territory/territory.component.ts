@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Territory } from '~/core/entities/territory/territory';
@@ -17,11 +16,7 @@ export class TerritoryComponent extends DestroyObservable implements OnInit {
   public readOnly$: Observable<boolean>;
   public territory: Territory;
 
-  constructor(
-    private _operatorService: OperatorService,
-    private _authService: AuthenticationService,
-    private _commonDataService: CommonDataService,
-  ) {
+  constructor(private _authService: AuthenticationService, private _commonDataService: CommonDataService) {
     super();
   }
 
