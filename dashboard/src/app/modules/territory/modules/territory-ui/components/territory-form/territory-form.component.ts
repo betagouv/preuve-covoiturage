@@ -73,7 +73,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     if (this.editedId) {
       const patch$ = this.fullFormMode
         ? this.territoryStore.updateSelected(this.territoryForm.value)
-        : this.territoryStore.patchContact({ contacts: this.territoryForm.value.contacts, _id: this.editedId });
+        : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
 
       patch$.subscribe(
         (modifiedTerritory) => {
