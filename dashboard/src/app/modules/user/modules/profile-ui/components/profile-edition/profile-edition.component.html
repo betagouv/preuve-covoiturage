@@ -13,7 +13,7 @@
     <mat-error *ngIf="controls.email.hasError('email')"> L'email est invalide.</mat-error>
   </mat-form-field>
   <mat-form-field appearance="outline">
-    <mat-label>Numéro</mat-label>
+    <mat-label>Numéro de téléphone</mat-label>
     <input class="profile-phone" matInput formControlName="phone" />
   </mat-form-field>
   <button type="submit" mat-flat-button [disabled]="!profileForm.valid" color="primary">
