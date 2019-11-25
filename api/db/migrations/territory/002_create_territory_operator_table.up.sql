@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS territory.territory_operators
 (
-  territory_id integer NOT NULL REFERENCES territory.territories (_id),
+  territory_id integer NOT NULL, -- REFERENCES territory.territories (_id),
   operator_id integer NOT NULL
 );
 

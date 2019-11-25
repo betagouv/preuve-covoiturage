@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS policy.policies
   updated_at timestamp with time zone NOT NULL DEFAULT NOW(),
   deleted_at timestamp with time zone,
 
-  parent_id integer REFERENCES policy.policies (_id),
+  parent_id integer, -- REFERENCES policy.policies (_id),
   territory_id varchar,
 
   start_date timestamp with time zone,

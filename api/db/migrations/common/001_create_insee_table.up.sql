@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS common.insee
   _id varchar primary key,
 
   town varchar(64),
-  country varchar(32),
+  country varchar,
 
   density integer,
 
