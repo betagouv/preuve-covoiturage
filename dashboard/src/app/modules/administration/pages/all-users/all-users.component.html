@@ -18,7 +18,7 @@
         </mat-form-field>
       </form>
     </div>
-    <div class="Users-list--loading" *ngIf="userService.loading">
+    <div class="Users-list--loading" *ngIf="userStoreService.isLoading">
       <mat-spinner></mat-spinner>
     </div>
     <div class="Users-list-table">
@@ -54,7 +54,6 @@
       <div class="Users-form">
         <app-create-edit-user-form
           [isCreating]="isCreatingUser"
-          [user]="editedUser"
           [groupEditable]="true"
           (onCloseEditUser)="closeUserForm()"
         ></app-create-edit-user-form>
