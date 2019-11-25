@@ -25,6 +25,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
     operator_journey_id: string; // journey_id  // TODO: add this !
     created_at: Date;
     operator_class: string;
+    operator_trip_id: string;
     trip_id: string;
   }, people: PeopleWithIdInterface[]
   ): Promise<void> {
@@ -59,6 +60,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       created_at: Date;
       operator_class: string;
       trip_id: string;
+      operator_trip_id: string;
     },
     person: PeopleWithIdInterface,
   ): Promise<void> {
@@ -102,7 +104,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
         person.distance,
         person.seats,
         shared.created_at,
-        person.operator_trip_id,
+        shared.operator_trip_id,
         person.cost,
         shared.operator_journey_id,
         JSON.stringify(person.meta),

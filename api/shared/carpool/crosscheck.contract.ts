@@ -26,7 +26,7 @@ interface PersonInterface {
 }
 
 export interface ParamsInterface {
-  operator_trip_id: string;
+  operator_trip_id?: string;
   acquisition_id: number; // _id
   operator_id: number;
   operator_journey_id: string; // journey_id  // TODO: add this !
