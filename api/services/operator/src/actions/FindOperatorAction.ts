@@ -8,7 +8,10 @@ import { alias } from '../shared/operator/find.schema';
 
 @handler(handlerConfig)
 export class FindOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['operator.read']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['operator.read']],
+    ['validate', alias],
+  ];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();

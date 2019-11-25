@@ -8,7 +8,10 @@ import { alias } from '../shared/territory/patchContacts.schema';
 
 @handler(handlerConfig)
 export class PatchContactsTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['territory.contacts.update']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['territory.contacts.update']],
+    ['validate', alias],
+  ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();

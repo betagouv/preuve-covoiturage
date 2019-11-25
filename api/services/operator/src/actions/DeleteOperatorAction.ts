@@ -8,7 +8,10 @@ import { alias } from '../shared/operator/delete.schema';
 
 @handler(handlerConfig)
 export class DeleteOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['operator.delete']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['operator.delete']],
+    ['validate', alias],
+  ];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();

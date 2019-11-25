@@ -8,18 +8,14 @@ import { ChannelTransportMiddleware, ScopeToSelfMiddleware } from '@pdc/provider
 
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
-import { TripPgRepositoryProvider } from './providers/TripPgRepositoryProvider';
-import { CrosscheckAction } from './actions/CrosscheckAction';
-import { DispatchAction } from './actions/DispatchAction';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
-import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { PublicStatsAction } from './actions/PublicStatsAction';
 
 @serviceProvider({
   config: __dirname,
-  commands: [MigrateDataCommand],
-  providers: [TripPgRepositoryProvider],
+  providers: [TripRepositoryProvider],
   validator: [listBinding, statsBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
@@ -30,7 +26,7 @@ import { PublicStatsAction } from './actions/PublicStatsAction';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CrosscheckAction, DispatchAction, ListAction, PublicStatsAction, StatsAction],
+  handlers: [ListAction, PublicStatsAction, StatsAction],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

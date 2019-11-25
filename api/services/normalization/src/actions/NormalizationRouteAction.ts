@@ -10,7 +10,7 @@ import { WorkflowProvider } from '../providers/WorkflowProvider';
 // Enrich position data
 @handler(handlerConfig)
 export class NormalizationRouteAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
   constructor(protected wf: WorkflowProvider, private geoProvider: GeoProviderInterfaceResolver) {
     super();
@@ -31,8 +31,8 @@ export class NormalizationRouteAction extends AbstractAction {
       },
     );
 
-    set(journey, 'payload.passenger.calc_distance', passengerRoute.distance);
-    set(journey, 'payload.passenger.calc_duration', passengerRoute.duration);
+    set(journey, 'payload.passenger.calc_distance', Math.floor(passengerRoute.distance));
+    set(journey, 'payload.passenger.calc_duration', Math.floor(passengerRoute.duration));
 
     // calc distance and duration for driver
     const driverRoute = await this.geoProvider.getRouteMeta(
@@ -46,8 +46,8 @@ export class NormalizationRouteAction extends AbstractAction {
       },
     );
 
-    set(journey, 'payload.driver.calc_distance', driverRoute.distance);
-    set(journey, 'payload.driver.calc_duration', driverRoute.duration);
+    set(journey, 'payload.driver.calc_distance', Math.floor(driverRoute.distance));
+    set(journey, 'payload.driver.calc_duration', Math.floor(driverRoute.duration));
 
     // Call the next step asynchronously
     await this.wf.next('normalization:route', journey);

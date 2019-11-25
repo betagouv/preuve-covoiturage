@@ -8,7 +8,10 @@ import { mapLegacyToLatest } from '../helpers/mapLegacyToLatest';
 
 @handler(handlerConfig)
 export class CreateJourneyLegacyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['journey.create']],
+    ['validate', alias],
+  ];
 
   constructor(private kernel: KernelInterfaceResolver) {
     super();

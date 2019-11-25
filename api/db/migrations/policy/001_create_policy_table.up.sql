@@ -5,15 +5,15 @@ CREATE TABLE IF NOT EXISTS policy.policies
 (
   _id serial primary key,
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
-  updated_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp,
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  deleted_at timestamp with time zone,
 
   parent_id integer, -- REFERENCES policy.policies (_id),
   territory_id varchar,
 
-  start_date timestamp,
-  end_date timestamp,
+  start_date timestamp with time zone,
+  end_date timestamp with time zone,
 
   name varchar NOT NULL,
   description varchar,

@@ -17,9 +17,18 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
   config: __dirname,
   queues: ['normalization'],
   providers: [JourneyPgRepositoryProvider],
-  validator: [['journey.createLegacy', createLegacy], ['journey.create', create]],
-  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
-  connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
+  validator: [
+    ['journey.createLegacy', createLegacy],
+    ['journey.create', create],
+  ],
+  middlewares: [
+    ['can', PermissionMiddleware],
+    ['validate', ValidatorMiddleware],
+  ],
+  connections: [
+    [PostgresConnection, 'connections.postgres'],
+    [RedisConnection, 'connections.redis'],
+  ],
   commands: [MigrateDataCommand],
   handlers: [
     CreateJourneyLegacyAction,

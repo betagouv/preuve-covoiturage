@@ -24,7 +24,7 @@ export interface PersonInterface {
   }[];
 
   payments?: {
-    pass_type: string;
+    siret: string;
     amount: number;
   }[];
 

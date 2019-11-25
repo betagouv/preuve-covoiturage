@@ -13,7 +13,10 @@ import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class RevokeApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['validate', alias], ['can', ['application.revoke']]];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', alias],
+    ['can', ['application.revoke']],
+  ];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();

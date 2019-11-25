@@ -19,7 +19,10 @@ const callContext = {
 
 @handler(handlerConfig)
 export class CreateJourneyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['journey.create']],
+    ['validate', alias],
+  ];
 
   constructor(
     private kernel: KernelInterfaceResolver,

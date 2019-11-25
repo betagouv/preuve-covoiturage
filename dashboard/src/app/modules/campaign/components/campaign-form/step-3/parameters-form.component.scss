@@ -13,6 +13,13 @@
     }
   }
 
+  &-restrictionExpansion {
+    mat-panel-title {
+      display: flex;
+      align-items: center;
+    }
+  }
+
   &-restriction {
     display: flex;
     align-items: center;

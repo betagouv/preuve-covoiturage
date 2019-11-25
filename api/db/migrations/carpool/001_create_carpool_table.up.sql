@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS carpool.carpools
 (
   _id serial primary key,
 
-  created_at timestamp DEFAULT NOW(), -- NOT NULL
+  created_at timestamp with time zone DEFAULT NOW(), -- NOT NULL
 
   acquisition_id varchar, --  NOT NULL
   operator_id varchar, --  NOT NULL
