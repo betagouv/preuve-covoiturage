@@ -7,7 +7,7 @@ import { TerritoryNameInterface } from '~/core/interfaces/territory/territoryInt
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Territory } from '~/core/entities/territory/territory';
-import { TerritoryApiService } from '~/modules/territory/services/territoryApi.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territories-autocomplete',
