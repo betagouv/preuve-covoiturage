@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
@@ -12,6 +11,7 @@ import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -65,7 +65,7 @@ export class CommonDataService {
   }
 
   constructor(
-    private operatorService: OperatorService,
+    private operatorApiService: OperatorApiService,
     private territoryApiService: TerritoryApiService,
     private campaignService: CampaignService,
     private authenticationService: AuthenticationService,
@@ -78,7 +78,7 @@ export class CommonDataService {
     return this.authenticationService.check().pipe(
       mergeMap<User, Observable<Operator>>((user: User) => {
         if (!user || !user.operator_id) return of<Operator>(null);
-        return this.operatorService.get(user.operator_id);
+        return this.operatorApiService.getById(user.operator_id);
       }),
       tap((operator) => this._currentOperator$.next(operator)),
     );
@@ -95,7 +95,7 @@ export class CommonDataService {
   }
 
   loadOperators(): Observable<Operator[]> {
-    return this.operatorService.load().pipe(
+    return this.operatorApiService.getList().pipe(
       map((operators) => operators.sort((operatorA, operatorB) => (operatorA.name > operatorB.name ? 1 : -1))),
       tap((operators) => this._operators$.next(operators)),
     );
@@ -119,7 +119,7 @@ export class CommonDataService {
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
-          const params = [this.operatorService.getListJSONParam(), this.territoryApiService.paramGetList()];
+          const params = [this.operatorApiService.paramGetList(), this.territoryApiService.paramGetList()];
 
           if (this.authenticationService.hasAnyPermission(['incentive-campaign.list'])) {
             params.push(this.campaignService.getListJSONParam());
@@ -128,7 +128,7 @@ export class CommonDataService {
           if (user.territory_id) {
             params.push(this.territoryApiService.paramGetById(user.territory_id ? user.territory_id : null));
           } else if (user.operator_id) {
-            params.push(this.operatorService.getFindByIdJSONParam(user.operator_id ? user.operator_id : null));
+            params.push(this.operatorApiService.paramGetById(user.operator_id ? user.operator_id : null));
           }
 
           return this.jsonRPCService.call(params, {}, false);

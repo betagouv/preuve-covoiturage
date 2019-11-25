@@ -6,8 +6,6 @@ import { MatPaginator } from '@angular/material';
 import { Operator } from '~/core/entities/operator/operator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
-import { OperatorService } from '../../../../services/operator.service';
-import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 
 @Component({

@@ -6,7 +6,6 @@ import { ToastrService } from 'ngx-toastr';
 
 import { UtilsService } from '~/core/services/utils.service';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
@@ -25,7 +24,6 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
 
   constructor(
     public utils: UtilsService,
-    private operatorService: OperatorService,
     private toastr: ToastrService,
     private campaignService: CampaignService,
     private campaignSummaryService: CampaignUiService,
