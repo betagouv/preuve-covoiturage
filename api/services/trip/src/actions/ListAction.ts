@@ -2,7 +2,7 @@ import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
-import { TripPgRepositoryProvider } from '../providers/TripPgRepositoryProvider';
+import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/list.schema';
 
@@ -38,21 +38,24 @@ export class ListAction extends Action {
     ],
   ];
 
-  constructor(private pg: TripPgRepositoryProvider) {
+  constructor(private pg: TripRepositoryProvider) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // get visible operators from user context
+    const result = await this.pg.search(params);
+
+    let authorizedOperators = null
     if (context.call && context.call.user && context.call.user.authorizedOperators) {
-      params.visible_operator_ids = context.call.user.authorizedOperators;
+      authorizedOperators = context.call.user.authorizedOperators;
     }
 
-    const result = await this.pg.search(params);
     return {
       ...result,
       data: result.data.map((r) => ({
         ...r,
+        operator_id: (authorizedOperators === null) ? r.operator_id : authorizedOperators.indexOf(r.operator_id) === -1 ? null : r.operator_id,
         campaigns_id: [],
         status: 'locked',
       })),

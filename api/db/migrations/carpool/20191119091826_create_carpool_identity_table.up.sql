@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS carpool.identities
   _id serial primary key,
   uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
 
-  created_at timestamp DEFAULT NOW(),
-  updated_at timestamp DEFAULT NOW(),
+  created_at timestamp with time zone DEFAULT NOW(),
+  updated_at timestamp with time zone DEFAULT NOW(),
 
   phone varchar,
   phone_trunc varchar,

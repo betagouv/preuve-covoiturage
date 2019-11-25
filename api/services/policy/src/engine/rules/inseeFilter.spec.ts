@@ -106,7 +106,7 @@ describe('Policy rule: insee white and black list', () => {
       {
         start: ['A'],
         end: ['A'],
-      }
+      },
     ]);
 
     return expect(
@@ -127,7 +127,7 @@ describe('Policy rule: insee white and black list', () => {
       {
         start: ['A'],
         end: ['A'],
-      }
+      },
     ]);
 
     return expect(
@@ -167,7 +167,7 @@ describe('Policy rule: insee white and black list', () => {
       {
         start: ['A'],
         end: ['A'],
-      }
+      },
     ]);
 
     return expect(
@@ -188,7 +188,7 @@ describe('Policy rule: insee white and black list', () => {
       {
         start: ['A'],
         end: ['A'],
-      }
+      },
     ]);
 
     return expect(

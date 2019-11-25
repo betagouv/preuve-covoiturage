@@ -10,7 +10,10 @@ import { alias } from '../shared/company/fetch.schema';
 
 @handler(handlerConfig)
 export class FetchAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['company.fetch']]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
+    ['can', ['company.fetch']],
+  ];
 
   constructor(
     private ds: CompanyDataSourceProviderInterfaceResolver,

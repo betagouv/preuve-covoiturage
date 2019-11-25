@@ -8,7 +8,10 @@ import { alias } from '../shared/territory/find.schema';
 
 @handler(handlerConfig)
 export class FindTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['territory.read']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['territory.read']],
+    ['validate', alias],
+  ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();

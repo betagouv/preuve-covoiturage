@@ -14,19 +14,13 @@ import { FindAction } from './actions/FindAction';
 @serviceProvider({
   config: __dirname,
   providers: [CompanyRepositoryProvider, CompanyDataSourceProvider],
-  validator: [
-    fetchBinding,
-    findBinding,
-  ],
+  validator: [fetchBinding, findBinding],
   middlewares: [
     ['can', PermissionMiddleware],
     ['validate', ValidatorMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
-  handlers: [
-    FetchAction,
-    FindAction,
-  ],
+  handlers: [FetchAction, FindAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

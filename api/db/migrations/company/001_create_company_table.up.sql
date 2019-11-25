@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS company.companies
   address varchar,
   headquarter boolean NOT NULL,
 
-  updated_at timestamp NOT NULL DEFAULT NOW()
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX ON company.companies (siren);

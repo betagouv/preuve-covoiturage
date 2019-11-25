@@ -1,19 +1,21 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 
-import { TripPgRepositoryProviderInterfaceResolver } from '../interfaces/TripPgRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/dispatch.contract';
+import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/dispatch.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
 /*
- * Build trip by connecting journeys by operator_id & operator_journey_id | driver phone & start time
+ * Dispatch carpool to other service when ready
  */
 @handler(handlerConfig)
 export class DispatchAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]],
+  ];
 
   constructor(
-    private tripRepository: TripPgRepositoryProviderInterfaceResolver,
+    private tripRepository: CarpoolRepositoryProviderInterfaceResolver,
     private kernel: KernelInterfaceResolver,
     private config: ConfigInterfaceResolver,
   ) {

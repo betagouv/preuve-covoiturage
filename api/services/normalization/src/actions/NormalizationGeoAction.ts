@@ -10,7 +10,7 @@ import { WorkflowProvider } from '../providers/WorkflowProvider';
 // Enrich position data
 @handler(handlerConfig)
 export class NormalizationGeoAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
   constructor(protected wf: WorkflowProvider, private geoProvider: GeoProviderInterfaceResolver) {
     super();
