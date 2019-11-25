@@ -1,0 +1,74 @@
+{
+  "name": "@pdc/service-mongostats",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "cli": "ilos",
+    "migrate": "echo 'no migrations'",
+    "start": "yarn serve",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo 'no tests'; exit 0",
+    "test:integration": "echo 'no tests'; exit 0",
+    "coverage-ci": "export NODE_ENV=testing; nyc --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "coverage": "export NODE_ENV=testing; nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json"
+  },
+  "main": "./dist/bootstrap.js",
+  "config": {
+    "workingDir": "./dist",
+    "bootstrap": "./bootstrap.js",
+    "app": {}
+  },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
+      "src/interfaces/**",
+      "src/types/**",
+      "src/exceptions/**",
+      "src/config/**"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "dependencies": {
+    "@ilos/cli": "~0",
+    "@ilos/common": "~0",
+    "@ilos/config": "~0",
+    "@ilos/connection-manager": "~0",
+    "@ilos/connection-mongo": "~0",
+    "@ilos/core": "~0",
+    "@ilos/env": "~0",
+    "@ilos/framework": "~0",
+    "@ilos/repository": "~0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "ts-node": "^8.1.0",
+    "tslint": "^5.15.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-import-group-ordering": "^2.1.1",
+    "typescript": "^3.5.3"
+  }
+}
