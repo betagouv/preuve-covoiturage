@@ -13,11 +13,11 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territoryStoreService';
+import { TerritoryApiService } from '~/modules/territory/services/territoryApiService';
 
 @Component({
   selector: 'app-territory-form',
@@ -40,7 +40,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
-    private _territoryService: TerritoryService,
     private toastr: ToastrService,
     private commonDataService: CommonDataService,
     private companyService: CompanyService,
@@ -61,10 +60,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   get controls() {
     return this.territoryForm.controls;
-  }
-
-  get loading(): boolean {
-    return this._territoryService.loading;
   }
 
   public onSubmit(): void {
