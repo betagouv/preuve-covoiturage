@@ -10,7 +10,7 @@ import { TerritoryProvider } from '../providers/TerritoryProvider';
 
 @handler(handlerConfig)
 export class NormalizationTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
   constructor(
     protected kernel: KernelInterfaceResolver,
@@ -26,7 +26,12 @@ export class NormalizationTerritoryAction extends AbstractAction {
 
     const promises: Promise<void>[] = [];
 
-    for (const dataPath of ['passenger.start', 'passenger.end', 'driver.start', 'driver.end']) {
+    for (const dataPath of [
+      'payload.passenger.start',
+      'payload.passenger.end',
+      'payload.driver.start',
+      'payload.driver.end',
+    ]) {
       promises.push(this.fillTerritories(normalizedJourney, dataPath));
     }
     await Promise.all(promises);
@@ -37,7 +42,7 @@ export class NormalizationTerritoryAction extends AbstractAction {
   }
 
   private async fillTerritories(journey: ParamsInterface, dataPath: string): Promise<void> {
-    const position: PositionInterface = get(journey, `payload.${dataPath}`);
+    const position: PositionInterface = get(journey, dataPath);
     if ('insee' in position) {
       set(journey, `${dataPath}.territory`, await this.territory.findByInsee(position.insee));
     } else if ('lat' in position && 'lon' in position) {

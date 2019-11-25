@@ -7,7 +7,10 @@ import {
   HasLogger,
 } from '@ilos/common';
 
-import { signature as finalStepSignature, ParamsInterface as FinalParamsInterface } from '../shared/carpool/crosscheck.contract';
+import {
+  signature as finalStepSignature,
+  ParamsInterface as FinalParamsInterface,
+} from '../shared/carpool/crosscheck.contract';
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
 const context: ContextType = {
@@ -56,6 +59,13 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
 
   protected async end(data: any): Promise<void> {
     const people = [];
+
+    const driverStart = data.payload.driver.start.datetime;
+    const driverEnd = data.payload.driver.end.datetime;
+    const driverDuration =
+      (driverEnd.getTime ? driverEnd.getTime() : new Date(driverEnd).getTime()) -
+      (driverStart.getTime ? driverStart.getTime() : new Date(driverStart).getTime());
+
     people.push({
       is_driver: true,
       datetime: data.payload.driver.start.datetime,
@@ -69,17 +79,48 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
         lat: data.payload.driver.end.lat,
         insee: data.payload.driver.end.insee,
       },
-      seats: data.payload.driver.seats, // or 0
-      duration: data.payload.driver.end.datetime.getTime() - data.payload.driver.start.datetime.getTime(),
-      distance: data.payload.driver.distance, // or null (dont touch)
-      identity: data.payload.driver.identity, // this is good
+      seats: data.payload.driver.seats || 0, // or 0
+      duration: driverDuration,
+      distance: data.payload.driver.distance,
+      identity: data.payload.driver.identity,
       cost: data.payload.driver.cost,
       meta: {
         payments: [...data.payload.driver.payments],
         calc_distance: data.payload.driver.calc_distance,
         calc_duration: data.payload.driver.calc_duration,
       },
-    })
+    });
+
+    const passengerStart = data.payload.driver.start.datetime;
+    const passengerEnd = data.payload.driver.end.datetime;
+    const passengerDuration =
+      (passengerEnd.getTime ? passengerEnd.getTime() : new Date(passengerEnd).getTime()) -
+      (passengerStart.getTime ? passengerStart.getTime() : new Date(passengerStart).getTime());
+
+    people.push({
+      is_driver: false,
+      datetime: data.payload.passenger.start.datetime,
+      start: {
+        lon: data.payload.passenger.start.lon,
+        lat: data.payload.passenger.start.lat,
+        insee: data.payload.passenger.start.insee,
+      },
+      end: {
+        lon: data.payload.passenger.end.lon,
+        lat: data.payload.passenger.end.lat,
+        insee: data.payload.passenger.end.insee,
+      },
+      seats: data.payload.passenger.seats || 1,
+      duration: passengerDuration,
+      distance: data.payload.passenger.distance,
+      identity: data.payload.passenger.identity,
+      cost: data.payload.passenger.cost,
+      meta: {
+        payments: [...data.payload.passenger.payments],
+        calc_distance: data.payload.passenger.calc_distance,
+        calc_duration: data.payload.passenger.calc_duration,
+      },
+    });
 
     const normalizedData: FinalParamsInterface = {
       operator_trip_id: data.payload.operator_journey_id,
@@ -91,6 +132,6 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
       people,
     };
 
-    return this.kernel.notify<FinalParamsInterface>(this.finalStep, normalizedData, context); 
+    return this.kernel.notify<FinalParamsInterface>(this.finalStep, normalizedData, context);
   }
 }

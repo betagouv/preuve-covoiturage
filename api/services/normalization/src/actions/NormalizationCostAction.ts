@@ -16,7 +16,7 @@ import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 // Enrich position data
 @handler(handlerConfig)
 export class NormalizationCostAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
   constructor(private wf: WorkflowProvider, private kernel: KernelInterfaceResolver) {
     super();
@@ -29,12 +29,12 @@ export class NormalizationCostAction extends AbstractAction {
     const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
       operatorFindSignature,
       {
-        _id: journey.operator_id,
+        _id: Number(journey.operator_id),
       },
       {
         call: {
           user: {
-            permissions: ['operator:read']
+            permissions: ['operator.read']
           }
         },
         channel: {
@@ -51,8 +51,8 @@ export class NormalizationCostAction extends AbstractAction {
 
     if (journey.payload.driver) {
       const [cost, payments] = this.normalizeCost(siret, journey.payload.driver, true);
-      journey.payload.passenger['cost'] = cost;
-      journey.payload.passenger.payments = payments;
+      journey.payload.driver['cost'] = cost;
+      journey.payload.driver.payments = payments;
     }
 
     await this.wf.next('normalization:cost', normalizedJourney);
@@ -61,14 +61,16 @@ export class NormalizationCostAction extends AbstractAction {
   }
 
   protected normalizeCost(siret: string, data: PersonInterface, isDriver?: boolean): [number, PaymentInterface[]] {
-    const incentiveAmount = data.incentives.reduce((total, current) => total + current.amount, 0);
+    const incentives = data.incentives && data.incentives.length ? data.incentives : [];
+    const inputPayments = data.payments && data.payments.length ? data.payments : [];
+    const incentiveAmount = incentives.reduce((total, current) => total + current.amount, 0);
     const cost = isDriver ? -data.revenue - incentiveAmount : data.contribution + incentiveAmount;
 
     const isIncentive = (data) => data.type === 'incentive';
 
     const payments = [
-      ...data.incentives.map(p => ({ ...p, type: 'incentive' })),
-      ...data.payments.map(p => ({ ...p, type: 'payment', index: -1 })),
+      ...incentives.map(p => ({ ...p, type: 'incentive' })),
+      ...inputPayments.map(p => ({ ...p, type: 'payment', index: -1 })),
       ]
       .sort((a, b) => {
         if (!isIncentive(a) && !isIncentive(b)) {
