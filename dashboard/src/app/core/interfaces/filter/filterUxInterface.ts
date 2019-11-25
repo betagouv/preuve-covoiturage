@@ -2,6 +2,7 @@ import { WeekDay } from '@angular/common';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 export interface FilterUxInterface {
   campaignIds: string[];
@@ -14,7 +15,7 @@ export interface FilterUxInterface {
     end: string;
   };
   days: WeekDay[];
-  towns: string[];
+  insees: InseeAndTerritoryInterface[];
   distance: {
     min: number;
     max: number;

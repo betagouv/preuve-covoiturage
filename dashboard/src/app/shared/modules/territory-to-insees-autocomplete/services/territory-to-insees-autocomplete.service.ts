@@ -10,7 +10,7 @@ import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/i
 @Injectable({
   providedIn: 'root',
 })
-export class CampaignInseeAutocompleteService {
+export class TerritoryToInseesAutocompleteService {
   private addressApiDomain = 'https://api-adresse.data.gouv.fr/search';
   private geoApiDomain = 'https://geo.api.gouv.fr';
 

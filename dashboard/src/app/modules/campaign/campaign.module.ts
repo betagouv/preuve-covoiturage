@@ -11,7 +11,7 @@ import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 import { TerritoryUiModule } from '~/modules/territory/modules/territory-ui/territory-ui.module';
 import { OperatorUiModule } from '~/modules/operator/modules/operator-ui/operator-ui.module';
-import { TerritoriesInseeAutocompleteComponent } from '~/modules/campaign/components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-form/territories-insee-autocomplete/territories-insee-autocomplete.component';
+import { TerritoriesToInseesAutocompleteComponent } from '~/shared/modules/territory-to-insees-autocomplete/components/territories-to-insees-autocomplete/territories-to-insees-autocomplete.component';
 import { CampaignInseeFilterStartEndFormComponent } from '~/modules/campaign/components/campaign-form/step-2/campaign-insee-filter/campaign-insee-filter-start-end-form/campaign-insee-filter-start-end-form.component';
 import { ParametersFormComponent } from '~/modules/campaign/components/campaign-form/step-3/parameters-form.component';
 import { CampaignUiModule } from '~/modules/campaign/modules/campaign-ui/campaign-ui.module';
@@ -56,7 +56,7 @@ import { CampaignActiveViewComponent } from './pages/campaign-active-view/campai
     CampaignMapComponent,
     CampaignInseeFilterComponent,
     CampaignInseeFilterStartEndFormComponent,
-    TerritoriesInseeAutocompleteComponent,
+    TerritoriesToInseesAutocompleteComponent,
     CampaignInseeFilterStartEndViewComponent,
     CampaignDraftViewComponent,
     CampaignActiveViewComponent,
@@ -76,6 +76,6 @@ import { CampaignActiveViewComponent } from './pages/campaign-active-view/campai
     CampaignUiModule,
   ],
   providers: [CurrencyPipe, DecimalPipe],
-  exports: [CampaignsListComponent],
+  exports: [CampaignsListComponent, TerritoriesToInseesAutocompleteComponent],
 })
 export class CampaignModule {}
