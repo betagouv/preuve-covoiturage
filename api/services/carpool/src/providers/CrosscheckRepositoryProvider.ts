@@ -22,33 +22,33 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
   constructor(public connection: PostgresConnection) {}
 
   public async getTripId(data: {
-    operatorTripId?: string;
+    operator_trip_id?: string;
     datetime: Date;
     start: PositionInterface;
     end: PositionInterface;
-    identityUuid: string;
+    identity_uuid: string;
   }): Promise<string> {
     let tripId: string;
 
-    if (data.operatorTripId) {
-      tripId = await this.findTripIdByOperatorTripId(data.operatorTripId);
+    if (data.operator_trip_id) {
+      tripId = await this.findTripIdByOperatorTripId(data.operator_trip_id);
     }
 
-    if (!tripId && data.identityUuid && data.datetime) {
-      tripId = await this.findTripIdByIdentityAndDate(data.identityUuid, data.datetime);
+    if (!tripId && data.identity_uuid && data.datetime) {
+      tripId = await this.findTripIdByIdentityAndDate(data.identity_uuid, data.datetime);
     }
 
     return tripId || v4();
   }
 
-  protected async findTripIdByOperatorTripId(operatorTripId: string): Promise<string | null> {
+  protected async findTripIdByOperatorTripId(operator_trip_id: string): Promise<string | null> {
     const query = {
       text: `
         SELECT trip_id as _id FROM ${this.table}
         WHERE operator_trip_id = $1::varchar
         LIMIT 1
       `,
-      values: [operatorTripId],
+      values: [operator_trip_id],
     };
     const result = await this.connection.getClient().query(query);
 
@@ -58,7 +58,7 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
     return result.rows[0]._id;
   }
 
-  protected async findTripIdByIdentityAndDate(identityUuid: string, start: Date): Promise<string | null> {
+  protected async findTripIdByIdentityAndDate(identity_uuid: string, start: Date): Promise<string | null> {
     const startDateString = start.toISOString ? start.toISOString() : new Date(start).toISOString();
 
     const query = {
@@ -71,7 +71,7 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
           AND carpool.datetime <= timestamptz '${startDateString}'::timestamptz + interval '2 hour'
           LIMIT 1
       `,
-      values: [identityUuid],
+      values: [identity_uuid],
     };
 
     const result = await this.connection.getClient().query(query);
