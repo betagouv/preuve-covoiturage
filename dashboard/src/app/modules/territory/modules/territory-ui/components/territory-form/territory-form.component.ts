@@ -205,8 +205,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['territory'] && this.territoryForm) {
-      console.log(changes['territory'].currentValue);
-
       this.setTerritoryFormValue(changes['territory'].currentValue);
     }
   }
