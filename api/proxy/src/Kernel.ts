@@ -10,6 +10,7 @@ import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
 import { bootstrap as normalizationBootstrap } from '@pdc/service-normalization';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as policyBootstrap } from '@pdc/service-policy';
+import { bootstrap as mongostatsBootstrap } from '@pdc/service-mongostats';
 
 import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 
@@ -25,6 +26,7 @@ import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
     ...normalizationBootstrap.serviceProviders,
     ...tripcheckBootstrap.serviceProviders,
     ...policyBootstrap.serviceProviders,
+    ...mongostatsBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [UpgradeJourneyCommand],

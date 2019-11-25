@@ -73,6 +73,7 @@ export class HttpTransport implements TransportInterface {
     this.registerGlobalMiddlewares();
     this.registerAuthRoutes();
     this.registerLegacyServerRoute();
+    this.registerStatsRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
   }
@@ -226,6 +227,19 @@ export class HttpTransport implements TransportInterface {
           console.log('[error - acq-v2]', (response as any).error);
         }
 
+        res.status(mapStatusCode(response)).json(response);
+      }),
+    );
+  }
+
+  /**
+   * Mongo Stats route
+   */
+  private registerStatsRoute() {
+    this.app.get(
+      '/stats',
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(makeCall('mongostats:list', req.body));
         res.status(mapStatusCode(response)).json(response);
       }),
     );
