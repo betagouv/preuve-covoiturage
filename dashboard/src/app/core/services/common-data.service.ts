@@ -4,7 +4,6 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 
 import { OperatorService } from '~/modules/operator/services/operator.service';
-import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
@@ -12,6 +11,7 @@ import { Territory } from '~/core/entities/territory/territory';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
+import { TerritoryApiService } from '~/modules/territory/services/territoryApiService';
 
 @Injectable({
   providedIn: 'root',
@@ -66,7 +66,7 @@ export class CommonDataService {
 
   constructor(
     private operatorService: OperatorService,
-    private territoryService: TerritoryService,
+    private territoryApiService: TerritoryApiService,
     private campaignService: CampaignService,
     private authenticationService: AuthenticationService,
     private jsonRPCService: JsonRPCService,
@@ -88,7 +88,7 @@ export class CommonDataService {
     return this.authenticationService.check().pipe(
       mergeMap((user: User) => {
         if (!user || !user.territory_id) return of<Territory>(null);
-        return this.territoryService.loadOne({ _id: user.territory_id });
+        return this.territoryApiService.getById(user.territory_id);
       }),
       tap((territory) => this._currentTerritory$.next(territory)),
     );
@@ -102,7 +102,7 @@ export class CommonDataService {
   }
 
   loadTerritories(): Observable<Territory[]> {
-    return this.territoryService.load().pipe(
+    return this.territoryApiService.getList().pipe(
       map((territories) => territories.sort((territoryA, territoryB) => (territoryA.name > territoryB.name ? 1 : -1))),
       tap((territories) => this._territories$.next(territories)),
     );
@@ -119,14 +119,14 @@ export class CommonDataService {
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
-          const params = [this.operatorService.getListJSONParam(), this.territoryService.getListJSONParam()];
+          const params = [this.operatorService.getListJSONParam(), this.territoryApiService.paramGetList()];
 
           if (this.authenticationService.hasAnyPermission(['incentive-campaign.list'])) {
             params.push(this.campaignService.getListJSONParam());
           }
 
           if (user.territory_id) {
-            params.push(this.territoryService.getFindByIdJSONParam(user.territory_id ? user.territory_id : null));
+            params.push(this.territoryApiService.paramGetById(user.territory_id ? user.territory_id : null));
           } else if (user.operator_id) {
             params.push(this.operatorService.getFindByIdJSONParam(user.operator_id ? user.operator_id : null));
           }
