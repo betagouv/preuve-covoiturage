@@ -2,7 +2,7 @@ import { IModel } from '~/core/entities/IModel';
 
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { finalize, takeUntil, tap } from 'rxjs/operators';
+import { finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IClone } from '~/core/entities/IClone';
 import { Type } from '@angular/core';
@@ -159,8 +159,8 @@ export abstract class CrudStore<
       finalize(() => {
         if (this._loadCount > 0) this._loadCount -= 1;
       }),
-      tap((entity) => {
-        this.entitySubject.next(new this.modelType().map(entity));
+      map((entity) => new this.modelType().map(entity)),
+      tap((territory) => {
         this.loadList();
       }),
     );
