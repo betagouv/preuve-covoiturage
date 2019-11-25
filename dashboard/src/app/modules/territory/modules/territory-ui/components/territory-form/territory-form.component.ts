@@ -16,8 +16,8 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { CompanyService } from '~/modules/company/services/company.service';
-import { TerritoryStoreService } from '~/modules/territory/services/territoryStoreService';
-import { TerritoryApiService } from '~/modules/territory/services/territoryApiService';
+import { TerritoryStoreService } from '~/modules/territory/services/territoryStore.service';
+import { TerritoryApiService } from '~/modules/territory/services/territoryApi.service';
 
 @Component({
   selector: 'app-territory-form',
