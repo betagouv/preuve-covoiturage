@@ -5,6 +5,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Territory } from '~/core/entities/territory/territory';
 import { TerritoriesPermissionsAdminType } from '~/core/types/permissionType';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { TerritoryStoreService } from '~/modules/territory/services/territoryStoreService';
 
 @Component({
   selector: 'app-territory-list',
@@ -19,7 +20,11 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
   @Input() territories: Territory[];
   @Output() edit = new EventEmitter();
 
-  constructor(private _territoryService: TerritoryService, public authenticationService: AuthenticationService) {
+  constructor(
+    private _territoryService: TerritoryService,
+    public authenticationService: AuthenticationService,
+    private territoryStore: TerritoryStoreService,
+  ) {
     super();
   }
 

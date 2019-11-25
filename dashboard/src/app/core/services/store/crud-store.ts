@@ -40,6 +40,10 @@ export abstract class CrudStore<
     return this._loadCount;
   }
 
+  get isLoading() {
+    return this._loadCount > 0;
+  }
+
   get entity$() {
     return this._entity$;
   }
