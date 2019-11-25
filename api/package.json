@@ -39,7 +39,8 @@
     "test:unit": "lerna run --scope @pdc/* test",
     "test:integration": "lerna run --scope @pdc/* test:integration",
     "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions",
-    "migrate": "lerna run --scope @pdc/service-* migrate"
+    "migrate": "lerna run --scope @pdc/service-* migrate",
+    "stats:refresh": "node scalingo/stats-refresh.js"
   },
   "keywords": [
     "betagouv",
@@ -60,5 +61,8 @@
     "ts-node": "^8.3.0",
     "tslint": "^5.17.0",
     "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "mongodb": "^3.3.4"
   }
 }
