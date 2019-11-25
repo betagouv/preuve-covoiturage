@@ -11,7 +11,6 @@ import {
   signature as finalStepSignature,
   ParamsInterface as FinalParamsInterface,
 } from '../shared/carpool/crosscheck.contract';
-import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
 const context: ContextType = {
   call: {
@@ -62,9 +61,11 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
 
     const driverStart = data.payload.driver.start.datetime;
     const driverEnd = data.payload.driver.end.datetime;
-    const driverDuration =
-      (driverEnd.getTime ? driverEnd.getTime() : new Date(driverEnd).getTime()) -
-      (driverStart.getTime ? driverStart.getTime() : new Date(driverStart).getTime());
+    const driverDuration = Math.floor(
+      ((driverEnd.getTime ? driverEnd.getTime() : new Date(driverEnd).getTime()) -
+        (driverStart.getTime ? driverStart.getTime() : new Date(driverStart).getTime())) /
+        1000,
+    );
 
     people.push({
       is_driver: true,
@@ -93,9 +94,11 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
 
     const passengerStart = data.payload.driver.start.datetime;
     const passengerEnd = data.payload.driver.end.datetime;
-    const passengerDuration =
-      (passengerEnd.getTime ? passengerEnd.getTime() : new Date(passengerEnd).getTime()) -
-      (passengerStart.getTime ? passengerStart.getTime() : new Date(passengerStart).getTime());
+    const passengerDuration = Math.floor(
+      ((passengerEnd.getTime ? passengerEnd.getTime() : new Date(passengerEnd).getTime()) -
+        (passengerStart.getTime ? passengerStart.getTime() : new Date(passengerStart).getTime())) /
+        1000,
+    );
 
     people.push({
       is_driver: false,

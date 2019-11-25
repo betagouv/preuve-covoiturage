@@ -64,7 +64,10 @@ export class NormalizationCostAction extends AbstractAction {
     const incentives = data.incentives && data.incentives.length ? data.incentives : [];
     const inputPayments = data.payments && data.payments.length ? data.payments : [];
     const incentiveAmount = incentives.reduce((total, current) => total + current.amount, 0);
-    const cost = isDriver ? -data.revenue - incentiveAmount : data.contribution + incentiveAmount;
+    const revenue = data.revenue || 0;
+    const contribution = data.contribution || 0;
+  
+    const cost = isDriver ? - revenue - incentiveAmount : contribution + incentiveAmount;
 
     const isIncentive = (d) => d.type === 'incentive';
 
