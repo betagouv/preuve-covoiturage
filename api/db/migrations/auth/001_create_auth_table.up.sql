@@ -4,9 +4,9 @@ CREATE TABLE IF NOT EXISTS auth.users
 (
   _id serial primary key,
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
-  updated_at timestamp NOT NULL DEFAULT NOW(),
-  deleted_at timestamp,
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  updated_at timestamp with time zone NOT NULL DEFAULT NOW(),
+  deleted_at timestamp with time zone,
 
   operator_id varchar,
   territory_id varchar,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS auth.users
   status auth.user_status_enum NOT NULL DEFAULT 'pending',
 
   token varchar,
-  token_expires_at timestamp,
+  token_expires_at timestamp with time zone,
 
   role varchar NOT NULL,
 

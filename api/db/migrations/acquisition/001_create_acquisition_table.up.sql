@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS acquisition.acquisitions
 (
   _id serial primary key,
 
-  created_at timestamp NOT NULL DEFAULT NOW(),
+  created_at timestamp with time zone NOT NULL DEFAULT NOW(),
 
   application_id varchar NOT NULL,
   operator_id varchar NOT NULL,
