@@ -12,6 +12,7 @@ import {
 } from '../interfaces';
 
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { StatInterface } from '../interfaces/StatInterface';
 
 /*
  * Trip specific repository
@@ -141,7 +142,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
   }
 
-  public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<any> {
+  public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
     const where = this.buildWhereClauses(params);
 
     const query = {
