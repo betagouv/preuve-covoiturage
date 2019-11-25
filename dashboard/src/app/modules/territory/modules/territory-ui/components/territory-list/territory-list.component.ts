@@ -4,7 +4,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Territory } from '~/core/entities/territory/territory';
 import { TerritoriesPermissionsAdminType } from '~/core/types/permissionType';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { TerritoryStoreService } from '~/modules/territory/services/territoryStoreService';
+import { TerritoryStoreService } from '~/modules/territory/services/territoryStore.service';
 
 @Component({
   selector: 'app-territory-list',
