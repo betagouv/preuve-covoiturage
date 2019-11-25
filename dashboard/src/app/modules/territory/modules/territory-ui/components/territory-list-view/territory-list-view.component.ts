@@ -74,6 +74,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
       )
       .subscribe((data) => {
         this.territoriesToShow = data;
+        console.log('this.territoriesToShow : ', this.territoriesToShow);
       });
   }
 
