@@ -7,7 +7,7 @@ import { map, startWith, takeUntil } from 'rxjs/operators';
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
-import { TerritoryApiService } from '~/modules/territory/services/territoryApi.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territory-autocomplete',

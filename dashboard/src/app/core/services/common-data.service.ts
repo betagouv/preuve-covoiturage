@@ -11,7 +11,7 @@ import { Territory } from '~/core/entities/territory/territory';
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { TerritoryApiService } from '~/modules/territory/services/territoryApi.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Injectable({
   providedIn: 'root',
