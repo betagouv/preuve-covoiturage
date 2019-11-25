@@ -18,7 +18,7 @@ export function testTerritoryStory(
   filters = true,
   newcampaign = true,
   editcampaign = true,
-  launchcampaign = true,
+  launchcampaign = false,
   newFromTemplate = false,
 ) {
   // TEST PROFILE UPDATE
