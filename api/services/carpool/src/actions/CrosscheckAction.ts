@@ -41,11 +41,11 @@ export class CrosscheckAction extends Action {
 
     // Get a trip id
     const tripId = await this.crosscheck.getTripId({
-      operatorTripId: journey.operator_trip_id,
+      operator_trip_id: journey.operator_trip_id,
       datetime: driver.datetime,
       start: driver.start,
       end: driver.end,
-      identityUuid: driverIdentity.uuid,
+      identity_uuid: driverIdentity.uuid,
     });
 
     // Build identity for every participant

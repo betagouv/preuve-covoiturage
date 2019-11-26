@@ -1,12 +1,13 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import { PostgresConnection } from '@ilos/connection-postgres';
+
 import { CrosscheckRepositoryProvider } from '../src/providers/CrosscheckRepositoryProvider';
 
 describe('CrosscheckRepositoryProvider', () => {
   let connection: PostgresConnection;
   let repository: CrosscheckRepositoryProvider;
-  let id: number;
+
   before(async () => {
     connection = new PostgresConnection({
       connectionString: process.env.APP_POSTGRES_URL,
@@ -21,7 +22,7 @@ describe('CrosscheckRepositoryProvider', () => {
 
   it('should get a new uuid', async () => {
     const data = {
-      operatorTripId: 0,
+      operator_trip_id: '0',
       datetime: new Date(),
       start: {
         lat: 0,
@@ -33,7 +34,7 @@ describe('CrosscheckRepositoryProvider', () => {
         lon: 0,
         insee: 'myinsee',
       },
-      identityUuid: '973b462f-6521-4b57-85c8-970c2d34fb10',
+      identity_uuid: '973b462f-6521-4b57-85c8-970c2d34fb10',
     };
     const uuid = await repository.getTripId(data);
     expect(uuid).to.be.a('string');

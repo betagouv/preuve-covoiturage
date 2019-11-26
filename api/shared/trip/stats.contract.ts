@@ -9,7 +9,7 @@ interface SingleResultInterface {
   trip: number;
   trip_susidized: number;
   operators: number;
-};
+}
 
 export type ResultInterface = SingleResultInterface[];
 

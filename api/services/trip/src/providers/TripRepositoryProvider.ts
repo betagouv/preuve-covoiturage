@@ -5,11 +5,7 @@ import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
-import {
-  LightTripInterface,
-  TripRepositoryInterface,
-  TripRepositoryProviderInterfaceResolver,
-} from '../interfaces';
+import { LightTripInterface, TripRepositoryInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
 
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { StatInterface } from '../interfaces/StatInterface';
@@ -70,10 +66,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             case 'date':
               return {
                 text: '(datetime BETWEEN $#::timestamp AND $#::timestamp)',
-                values: [
-                  filter.value.start,
-                  filter.value.end,
-                ],
+                values: [filter.value.start, filter.value.end],
               };
             case 'ranks':
               return {
@@ -230,10 +223,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     pagination.total = result.rows[0].total_count;
 
-    let finalDatas = result.rows.map(({ total_count, ...data }) => data).map(this.castTypes);
+    const final_data = result.rows.map(({ total_count, ...data }) => data).map(this.castTypes);
 
     return {
-      data: finalDatas,
+      data: final_data,
       meta: {
         pagination,
       },

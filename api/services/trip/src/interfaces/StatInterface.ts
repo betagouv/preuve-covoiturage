@@ -5,4 +5,4 @@ export interface StatInterface {
   trip: number;
   trip_susidized: number;
   operators: number;
-};
+}
