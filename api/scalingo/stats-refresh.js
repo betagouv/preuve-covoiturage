@@ -12,7 +12,7 @@ const { MongoClient } = require('mongodb');
 
   try {
     // find most recent record from prepared
-    const latest = await prepared.findOne({}, { sort: { datetime: -1 } });
+    const latest = ((await prepared.find({}, { sort: { datetime: -1 }, limit: 1 }).toArray()) || []).pop();
     const matchQuery = latest && 'datetime' in latest ? { $gt: latest.datetime, $lt: new Date() } : { $lt: new Date() };
 
     // update prepared with missing journeys
