@@ -1,5 +1,5 @@
 -- DROP old view
-DROP view common.carpools CASCADE;
+DROP VIEW IF EXISTS common.carpools CASCADE;
 
 ALTER TABLE carpool.carpools
   DROP column start_town,
