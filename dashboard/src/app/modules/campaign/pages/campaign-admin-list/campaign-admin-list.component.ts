@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, Observable } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -15,6 +16,7 @@ import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/ca
 export class CampaignAdminListComponent extends DestroyObservable implements OnInit {
   filteredCampaigns: CampaignUx[];
   campaigns: CampaignUx[];
+  searchFilters: FormGroup;
   selectedStatus = CampaignStatusEnum.VALIDATED;
   allStatus = [
     CampaignStatusEnum.VALIDATED,
@@ -23,11 +25,15 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     CampaignStatusEnum.PENDING,
   ];
 
-  constructor(private _campaignService: CampaignService) {
+  constructor(private _campaignService: CampaignService, private fb: FormBuilder) {
     super();
   }
 
   ngOnInit() {
+    this.initSearchForm();
+  }
+
+  ngAfterViewInit() {
     this.loadCampaigns();
   }
 
@@ -37,8 +43,15 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
         tap((campaigns: CampaignUx[]) => (this.campaigns = campaigns)),
         takeUntil(this.destroy$),
       ),
+      this.searchFilters.valueChanges.pipe(debounceTime(300)),
     )
-      .pipe(map(() => this.campaigns))
+      .pipe(
+        distinctUntilChanged(),
+        map(() => {
+          const query = this.searchFilters.controls.query.value ? this.searchFilters.controls.query.value : '';
+          return this.campaigns.filter((c) => `${c.description} ${c.name}`.toLowerCase().includes(query.toLowerCase()));
+        }),
+      )
       .subscribe((campaigns) => {
         this.filteredCampaigns = campaigns;
       });
@@ -61,5 +74,17 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
   getFrenchStatus(status: CampaignStatusEnum): string {
     return CAMPAIGN_STATUS_FR[status];
+  }
+
+  get noCampaignMessage() {
+    return this.searchFilters && this.searchFilters.controls.query.value
+      ? 'Pas de résultats avec vos critères de recherche'
+      : `Aucune campagne ${this.getFrenchStatus(this.selectedStatus).toLowerCase()}.`;
+  }
+
+  private initSearchForm() {
+    this.searchFilters = this.fb.group({
+      query: [''],
+    });
   }
 }

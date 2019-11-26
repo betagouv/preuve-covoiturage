@@ -6,7 +6,7 @@
     <app-list-item *ngFor="let campaign of filteredCampaigns">
       <div class="CampaignsList-item">
         <div class="CampaignsList-item-name">
-          {{ campaign.name }}
+          <p>{{ campaign.name }}</p>
         </div>
         <div class="CampaignsList-item-amount">
           <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.amount_spent">{{
@@ -40,6 +40,6 @@
     </app-list-item>
   </ng-container>
   <div *ngIf="loaded && filteredCampaigns && filteredCampaigns.length === 0" class="CampaignsList-notfound">
-    <p>Vous n'avez pas de campagnes.</p>
+    <p>{{ noCampaignMessage }}</p>
   </div>
 </div>

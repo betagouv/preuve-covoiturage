@@ -11,13 +11,22 @@
           getFrenchStatus(status)
         }}</mat-button-toggle>
       </mat-button-toggle-group>
+
+      <form [formGroup]="searchFilters">
+        <mat-form-field appearance="outline">
+          <mat-label>Rechercher</mat-label>
+          <input matInput placeholder="Nom, description" formControlName="query" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </form>
     </div>
 
     <app-campaigns-list
-      [campaigns]="campaigns"
+      [campaigns]="filteredCampaigns"
       [campaignStatusList]="[selectedStatus]"
       [loading]="loading"
       [loaded]="loaded"
+      [noCampaignMessage]="noCampaignMessage"
     ></app-campaigns-list>
   </app-page-content>
 </div>

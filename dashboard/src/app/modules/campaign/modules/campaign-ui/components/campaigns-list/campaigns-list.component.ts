@@ -20,6 +20,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   @Input() campaigns: CampaignUx[];
   @Input() loading = false;
   @Input() loaded = false;
+  @Input() noCampaignMessage = `Vous n'avez pas de campagnes.`;
 
   CampaignStatusEnum = CampaignStatusEnum;
 

@@ -2,6 +2,9 @@
   .CampaignsList {
     max-height: 430px;
     overflow-y: auto;
+    &-notfound {
+      text-align: center;
+    }
   }
 }
 
