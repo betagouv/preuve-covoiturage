@@ -1,0 +1,15 @@
+::ng-deep {
+  .CampaignsList {
+    max-height: 430px;
+    overflow-y: auto;
+  }
+}
+
+.CampaignAdminList {
+  &-header {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

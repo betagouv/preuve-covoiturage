@@ -132,7 +132,7 @@ function cypress_context_registry() {
         testRegistryStory();
       } else {
         // local testing
-        testRegistryStory(true, true, true);
+        testRegistryStory(false, false, false, true);
       }
     });
   });

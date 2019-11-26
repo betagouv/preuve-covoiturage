@@ -36,8 +36,8 @@ export class CampaignsGenerator {
     const campaignMocks = [...Array(20)].map(
       (val, idx) =>
         <CampaignInterface>{
-          _id: 1,
-          status: CampaignStatusEnum[CampaignsGenerator.status[CampaignsGenerator.randomStatus()]],
+          _id: 100,
+          status: CampaignsGenerator.status[CampaignsGenerator.randomStatus()],
           name: `Name ${idx}`,
           description: `Description ${idx}`,
           start_date: moment()
@@ -68,6 +68,12 @@ export class CampaignsGenerator {
           trips_number: Math.floor(Math.random() * 10000),
           amount_spent: Math.floor(Math.random() * 20000),
           territory_id: territoryStub._id,
+          ui_status: {
+            for_driver: true,
+            for_passenger: true,
+            for_trip: false,
+            staggered: false,
+          },
         },
     );
 

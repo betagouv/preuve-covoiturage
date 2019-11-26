@@ -1,0 +1,23 @@
+<div class="CampaignAdminList">
+  <app-page-header>
+    <h1>Liste des campagnes sur tous les territoires</h1>
+  </app-page-header>
+  <app-page-content>
+    <div class="CampaignAdminList-header">
+      <h2>Les campagnes {{ getFrenchStatus(selectedStatus) | lowercase }}</h2>
+
+      <mat-button-toggle-group [(ngModel)]="selectedStatus" name="userGroup" aria-label="Groupes d'utilisateurs">
+        <mat-button-toggle *ngFor="let status of allStatus" [value]="status">{{
+          getFrenchStatus(status)
+        }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <app-campaigns-list
+      [campaigns]="campaigns"
+      [campaignStatusList]="[selectedStatus]"
+      [loading]="loading"
+      [loaded]="loaded"
+    ></app-campaigns-list>
+  </app-page-content>
+</div>

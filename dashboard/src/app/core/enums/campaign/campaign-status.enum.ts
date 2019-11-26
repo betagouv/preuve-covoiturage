@@ -9,9 +9,9 @@ export enum CampaignStatusEnum {
 export const CAMPAIGN_STATUS: CampaignStatusEnum[] = Object.values(CampaignStatusEnum);
 
 export const CAMPAIGN_STATUS_FR = {
-  draft: 'Brouillon',
-  pending: "En cours d'activation",
-  validated: 'En cours',
-  archived: 'Archivée',
-  template: 'Terminée',
+  [CampaignStatusEnum.DRAFT]: 'Brouillon',
+  [CampaignStatusEnum.PENDING]: "En cours d'activation",
+  [CampaignStatusEnum.VALIDATED]: 'En cours',
+  [CampaignStatusEnum.ARCHIVED]: 'Archivée',
+  [CampaignStatusEnum.TEMPLATE]: 'Terminée',
 };

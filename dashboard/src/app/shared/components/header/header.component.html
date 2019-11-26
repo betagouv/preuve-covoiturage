@@ -13,6 +13,15 @@
     >
       Campagnes
     </div>
+    <div
+      class="Header-menu-item campaign-menu-item"
+      *ngIf="hasRegistryGroup"
+      [routerLink]="'/campaign/list'"
+      routerLinkActive="active"
+    >
+      Campagnes
+    </div>
+
     <div class="Header-menu-item trip-menu-item" [routerLink]="'/trip'" routerLinkActive="active">
       Trajets
     </div>
