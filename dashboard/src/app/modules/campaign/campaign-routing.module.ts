@@ -15,40 +15,41 @@ import { CampaignAdminListComponent } from '~/modules/campaign/pages/campaign-ad
 const routes: Routes = [
   {
     path: '',
-    data: { groups: [UserGroupEnum.TERRITORY] },
     canActivateChild: [AuthGuard],
     children: [
       {
         path: '',
+        data: { groups: [UserGroupEnum.TERRITORY] },
         component: CampaignDashboardComponent,
       },
       {
         path: 'create',
-        data: { role: 'admin' },
+        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
         path: 'list',
-        data: { role: 'admin', groups: [UserGroupEnum.REGISTRY] },
+        data: { groups: [UserGroupEnum.REGISTRY] },
         component: CampaignAdminListComponent,
       },
       {
         path: 'create/:parentId',
-        data: { role: 'admin' },
+        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
         path: 'discover',
+        data: { groups: [UserGroupEnum.TERRITORY] },
         component: CampaignDiscoverComponent,
       },
       {
         path: 'edit/:campaignId',
-        data: { role: 'admin' },
+        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
         path: 'draft/:campaignId',
-        data: { role: 'admin' },
+        data: { groups: [UserGroupEnum.TERRITORY] },
         component: CampaignDraftViewComponent,
       },
       {

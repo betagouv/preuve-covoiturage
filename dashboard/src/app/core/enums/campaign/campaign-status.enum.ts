@@ -12,6 +12,6 @@ export const CAMPAIGN_STATUS_FR = {
   [CampaignStatusEnum.DRAFT]: 'Brouillon',
   [CampaignStatusEnum.PENDING]: "En cours d'activation",
   [CampaignStatusEnum.VALIDATED]: 'En cours',
-  [CampaignStatusEnum.ARCHIVED]: 'Archivée',
-  [CampaignStatusEnum.TEMPLATE]: 'Terminée',
+  [CampaignStatusEnum.ARCHIVED]: 'Terminée',
+  [CampaignStatusEnum.TEMPLATE]: 'Modèle',
 };

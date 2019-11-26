@@ -17,6 +17,11 @@ import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
 import { operatorStubs } from '../stubs/operator/operator.list';
 import { territoryStub } from '../stubs/territory/territory.find';
+import {
+  AmountRetributionRule,
+  ForPassengerRetributionRule,
+} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {
@@ -64,9 +69,10 @@ export class CampaignsGenerator {
               },
             ]),
           ],
-          rules: [],
+          rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
           trips_number: Math.floor(Math.random() * 10000),
           amount_spent: Math.floor(Math.random() * 20000),
+          unit: IncentiveUnitEnum.EUR,
           territory_id: territoryStub._id,
           ui_status: {
             for_driver: true,

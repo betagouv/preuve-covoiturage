@@ -47,6 +47,10 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
     this.authService.logout();
   }
 
+  get routerLink(): string {
+    return this.hasTerritoryGroup ? '/campaign' : '/campaign/list';
+  }
+
   get hasTerritoryGroup(): boolean {
     return this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
   }

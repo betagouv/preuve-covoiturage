@@ -47,11 +47,11 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
       .subscribe();
   }
 
-  private get loading(): boolean {
+  get loading(): boolean {
     return this._campaignService.loading;
   }
 
-  private get loaded(): boolean {
+  get loaded(): boolean {
     return this._campaignService.campaignsLoaded;
   }
 }
