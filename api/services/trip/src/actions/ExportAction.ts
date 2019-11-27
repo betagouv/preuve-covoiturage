@@ -1,13 +1,18 @@
+import path from 'path';
+import os from 'os';
+import fs from 'fs';
+import v4 from 'uuid/v4';
+import stringify from 'csv-stringify';
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/list.schema';
 
 @handler(handlerConfig)
-export class ListAction extends Action {
+export class ExportAction extends Action {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],
     [
@@ -43,14 +48,84 @@ export class ListAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const result = await this.pg.search(params);
-    return {
-      ...result,
-      data: result.data.map((r) => ({
-        ...r,
-        campaigns_id: [],
-        status: 'locked',
-      })),
-    };
+    const start =
+      (params && params.date && params.date.start) || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+    const end = (params && params.date && params.date.end) || new Date();
+
+    const cursor = await this.pg.searchWithCursor({
+      date: {
+        start,
+        end,
+      },
+    });
+
+    let count = 0;
+    const name = v4();
+    const stringifier = await this.getStringifier(name);
+
+    do {
+      const results = await cursor(10);
+      count = results.length;
+      for (const line of results) {
+        stringifier.write(line);
+      }
+    } while (count !== 0);
+
+    stringifier.end();
+
+    return name;
+  }
+
+  protected async getStringifier(name: string) {
+    const filename = path.join(os.tmpdir(), name);
+    const fd = await fs.promises.open(filename, 'a');
+    const stringifier = stringify({
+      delimiter: ';',
+      header: true,
+      columns: [
+        'journey_id',
+        'trip_id',
+        'journey_start_datetime',
+        'journey_start_lat',
+        'journey_start_lon',
+        'journey_start_insee',
+        'journey_start_postalcode',
+        'journey_start_town',
+        'journey_start_EPCI',
+        'journey_start_country',
+        'journey_end_datetime',
+        'journey_end_lat',
+        'journey_end_lon',
+        'journey_end_insee',
+        'journey_end_postalcode',
+        'journey_end_town',
+        'journey_end_EPCI',
+        'journey_end_country',
+        'journey_distance',
+        'journey_duration',
+        'driver_card',
+        'passenger_card',
+        'operator_class',
+        'passenger_over_18',
+        'passenger_seats',
+      ],
+    });
+
+    stringifier.on('readable', async () => {
+      let row;
+      while ((row = stringifier.read())) {
+        await fd.appendFile(row);
+      }
+    });
+
+    stringifier.on('error', (err) => {
+      console.error(err.message);
+    });
+
+    stringifier.on('finish', async () => {
+      await fd.close();
+    });
+
+    return stringifier;
   }
 }

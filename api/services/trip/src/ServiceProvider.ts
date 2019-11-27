@@ -13,6 +13,7 @@ import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
 import { PublicStatsAction } from './actions/PublicStatsAction';
 import { RefreshAction } from './actions/RefreshAction';
+import { ExportAction } from './actions/ExportAction';
 
 @serviceProvider({
   config: __dirname,
@@ -33,6 +34,7 @@ import { RefreshAction } from './actions/RefreshAction';
     PublicStatsAction,
     StatsAction,
     RefreshAction,
+    ExportAction,
   ],
   queues: ['trip'],
 })

@@ -1,5 +1,6 @@
 import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
+import { promisify } from 'util';
 
 import {
   TripSearchInterfaceWithPagination,
@@ -167,6 +168,23 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const result = await this.connection.getClient().query(query);
     return result.rows.map(this.castTypes);
+  }
+
+  public async searchWithCursor(params: {
+    date: { start: Date; end: Date };
+  }): Promise<(count: number) => Promise<LightTripInterface[]>> {
+    const query = {
+      text: `
+        SELECT * FROM trip.opendata_list
+        WHERE journey_start_datetime BETWEEN $1::timestamp AND $2::timestamp
+      `,
+      values: [params.date.start, params.date.end],
+    };
+
+    const db = await this.connection.getClient().connect();
+    const cursorCb = db.query(new Cursor(query.text, query.values));
+
+    return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<LightTripInterface[]>;
   }
 
   public async search(
