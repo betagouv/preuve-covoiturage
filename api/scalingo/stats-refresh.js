@@ -11,32 +11,31 @@ const { MongoClient } = require('mongodb');
   const cache = client.db(db).collection('statistics');
 
   try {
+    const agg = [
+      {
+        $sort: { created_at: 1 },
+      },
+      {
+        $project: {
+          created_at: '$created_at',
+          datetime: '$passenger.start.datetime',
+          year: { $year: '$passenger.start.datetime' },
+          month: { $month: '$passenger.start.datetime' },
+          day: { $dayOfMonth: '$passenger.start.datetime' },
+          duration: { $max: ['$passenger.duration', '$passenger.calc_duration'] },
+          distance: { $max: ['$passenger.distance', '$passenger.calc_distance'] },
+        },
+      },
+    ];
+
     // find most recent record from prepared
-    const latest = ((await prepared.find({}, { sort: { datetime: -1 }, limit: 1 }).toArray()) || []).pop();
-    const matchQuery = latest && 'datetime' in latest ? { $gt: latest.datetime, $lt: new Date() } : { $lt: new Date() };
+    const latest = ((await prepared.find({}, { sort: { created_at: -1 }, limit: 1 }).toArray()) || []).pop();
+    if (latest && 'created_at' in latest) {
+      agg.unshift({ $match: { created_at: { $gt: latest.created_at } } });
+    }
 
     // update prepared with missing journeys
-    const cursor = journeys.aggregate(
-      [
-        {
-          $match: { 'passenger.start.datetime': matchQuery },
-        },
-        {
-          $sort: { 'passenger.start.datetime': 1 },
-        },
-        {
-          $project: {
-            datetime: '$passenger.start.datetime',
-            year: { $year: '$passenger.start.datetime' },
-            month: { $month: '$passenger.start.datetime' },
-            weekday: { $isoDayOfWeek: '$passenger.start.datetime' },
-            duration: { $max: ['$passenger.duration', '$passenger.calc_duration'] },
-            distance: { $max: ['$passenger.distance', '$passenger.calc_distance'] },
-          },
-        },
-      ],
-      { allowDiskUse: true },
-    );
+    const cursor = journeys.aggregate(agg, { allowDiskUse: true });
 
     console.log('Insert missing journeys (can take a while, grab a ☕)');
     let st = new Date();
@@ -47,6 +46,9 @@ const { MongoClient } = require('mongodb');
       count++;
     }
     console.log(`> Inserted ${count} results in ${(new Date().getTime() - st.getTime()) / 1000}s`);
+
+    // remove stats in the future
+    await journeys.deleteMany({ datetime: { $gt: new Date() } });
 
     console.log('\nCalculate all statistics');
 
@@ -97,7 +99,7 @@ const { MongoClient } = require('mongodb');
     st = new Date();
     result = await prepared
       .aggregate([
-        { $group: { _id: { y: '$year', m: '$month', d: '$weekday' }, total: { $sum: 1 } } },
+        { $group: { _id: { y: '$year', m: '$month', d: '$day' }, total: { $sum: 1 } } },
         { $sort: { '_id.y': 1, '_id.m': 1, '_id.d': 1 } },
       ])
       .toArray();
@@ -139,52 +141,52 @@ const { MongoClient } = require('mongodb');
     }
 
     // distancePerMonth
-    st = new Date();
-    result = await prepared
-      .aggregate([
-        { $group: { _id: { y: '$year', m: '$month' }, total: { $sum: '$distance' } } },
-        { $sort: { '_id.y': 1, '_id.m': 1 } },
-      ])
-      .toArray();
-    if (result) {
-      await cache.updateOne(
-        { key: 'distancePerMonth' },
-        {
-          $set: {
-            coll: 'journeys',
-            key: 'distancePerMonth',
-            updatedAt: new Date(),
-            value: JSON.stringify(result),
-          },
-        },
-        { upsert: true },
-      );
-      console.log(`> distancePerMonth\tupdated in ${(new Date().getTime() - st.getTime()) / 1000}s`);
-    }
+    // st = new Date();
+    // result = await prepared
+    //   .aggregate([
+    //     { $group: { _id: { y: '$year', m: '$month' }, total: { $sum: '$distance' } } },
+    //     { $sort: { '_id.y': 1, '_id.m': 1 } },
+    //   ])
+    //   .toArray();
+    // if (result) {
+    //   await cache.updateOne(
+    //     { key: 'distancePerMonth' },
+    //     {
+    //       $set: {
+    //         coll: 'journeys',
+    //         key: 'distancePerMonth',
+    //         updatedAt: new Date(),
+    //         value: JSON.stringify(result),
+    //       },
+    //     },
+    //     { upsert: true },
+    //   );
+    //   console.log(`> distancePerMonth\tupdated in ${(new Date().getTime() - st.getTime()) / 1000}s`);
+    // }
 
     // distancePerDay
-    st = new Date();
-    result = await prepared
-      .aggregate([
-        { $group: { _id: { y: '$year', m: '$month', d: '$weekday' }, total: { $sum: '$distance' } } },
-        { $sort: { '_id.y': 1, '_id.m': 1, '_id.d': 1 } },
-      ])
-      .toArray();
-    if (result) {
-      await cache.updateOne(
-        { key: 'distancePerDay' },
-        {
-          $set: {
-            coll: 'journeys',
-            key: 'distancePerDay',
-            updatedAt: new Date(),
-            value: JSON.stringify(result),
-          },
-        },
-        { upsert: true },
-      );
-      console.log(`> distancePerDay\tupdated in ${(new Date().getTime() - st.getTime()) / 1000}s`);
-    }
+    // st = new Date();
+    // result = await prepared
+    //   .aggregate([
+    //     { $group: { _id: { y: '$year', m: '$month', d: '$day' }, total: { $sum: '$distance' } } },
+    //     { $sort: { '_id.y': 1, '_id.m': 1, '_id.d': 1 } },
+    //   ])
+    //   .toArray();
+    // if (result) {
+    //   await cache.updateOne(
+    //     { key: 'distancePerDay' },
+    //     {
+    //       $set: {
+    //         coll: 'journeys',
+    //         key: 'distancePerDay',
+    //         updatedAt: new Date(),
+    //         value: JSON.stringify(result),
+    //       },
+    //     },
+    //     { upsert: true },
+    //   );
+    //   console.log(`> distancePerDay\tupdated in ${(new Date().getTime() - st.getTime()) / 1000}s`);
+    // }
 
     // durationAllTimes
     st = new Date();
