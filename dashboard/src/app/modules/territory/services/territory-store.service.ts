@@ -4,11 +4,12 @@ import { Injectable } from '@angular/core';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { Operator } from '~/core/entities/operator/operator';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TerritoryStoreService extends CrudStore<Territory, Territory, TerritoryApiService> {
+export class TerritoryStoreService extends CrudStore<Territory, Territory, any, TerritoryApiService> {
   constructor(protected territoryApi: TerritoryApiService) {
     super(territoryApi, Territory);
   }

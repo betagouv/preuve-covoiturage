@@ -8,10 +8,20 @@ import { IClone } from '~/core/entities/IClone';
 import { Type } from '@angular/core';
 import { IMapModel } from '~/core/entities/IMapModel';
 
+export type PatchParams<IPatchParamT> = {
+  _id: number;
+  patch: IPatchParamT;
+};
+
 export abstract class CrudStore<
   EntityT extends IModel & IFormModel<FormModelT> & IClone<EntityT> & IMapModel<EntityT>,
   EntityListT extends IModel = EntityT,
-  JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT> = JsonRpcCrud<EntityT, EntityListT>,
+  IPatchT = any,
+  JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT, PatchParams<IPatchT>> = JsonRpcCrud<
+    EntityT,
+    EntityListT,
+    PatchParams<IPatchT>
+  >,
   FormModelT = any
 > {
   protected entitiesSubject = new BehaviorSubject<EntityListT[]>([]);
@@ -46,6 +56,10 @@ export abstract class CrudStore<
 
   get entity$() {
     return this._entity$;
+  }
+
+  get entity() {
+    return this.entitySubject.value;
   }
 
   get entities$() {
@@ -161,6 +175,22 @@ export abstract class CrudStore<
       }),
       map((entity) => new this.modelType().map(entity)),
       tap((territory) => {
+        this.loadList();
+      }),
+    );
+  }
+
+  patchSelected(patchValues: IPatchT): Observable<EntityT> {
+    if (!this.entitySubject.value) throw new Error('try to patch a non selected entity');
+
+    return this.rpcCrud.patch({ _id: this.entitySubject.value._id, patch: patchValues }).pipe(
+      takeUntil(this.dismissUpdateCreateSubject),
+      finalize(() => {
+        if (this._loadCount > 0) this._loadCount -= 1;
+      }),
+      map((entity) => new this.modelType().map(entity)),
+      tap((model) => {
+        this.entitySubject.next(model);
         this.loadList();
       }),
     );

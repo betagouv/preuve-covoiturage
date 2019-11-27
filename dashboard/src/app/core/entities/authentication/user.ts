@@ -6,6 +6,7 @@ import { IModel } from '../IModel';
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { IClone } from '~/core/entities/IClone';
+import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 
 export class BaseUser implements IModel {
   public _id: number;
@@ -23,8 +24,18 @@ export class BaseUser implements IModel {
   public territory_id?: number;
 }
 
-export class User extends BaseUser implements IFormModel<any>, IMapModel<User, UserInterface>, IClone<User> {
+export class User extends BaseUser
+  implements IFormModel<any>, IMapModel<User, UserInterface>, IClone<User>, UserPatchInterface {
   public permissions: UserPermissionsType;
+
+  static formValueToUserPatch(formValues): UserPatchInterface {
+    const userPatch: UserPatchInterface = {};
+    if (formValues.email) userPatch.email = formValues.email;
+    if (formValues.firstname) userPatch.firstname = formValues.firstname;
+    if (formValues.lastname) userPatch.lastname = formValues.lastname;
+    if (formValues.phone) userPatch.phone = formValues.phone;
+    return userPatch;
+  }
 
   // todo: don't set default user
   constructor(obj?: UserInterface) {
@@ -43,14 +54,14 @@ export class User extends BaseUser implements IFormModel<any>, IMapModel<User, U
   }
 
   map(obj: UserInterface): User {
-    this._id = obj._id;
-    this.email = obj.email;
-    this.lastname = obj.lastname;
-    this.firstname = obj.firstname;
-    this.phone = obj.phone;
-    this.group = obj.group;
-    this.role = obj.role;
-    this.permissions = obj.permissions;
+    if (obj._id) this._id = obj._id;
+    if (obj.email) this.email = obj.email;
+    if (obj.lastname) this.lastname = obj.lastname;
+    if (obj.firstname) this.firstname = obj.firstname;
+    if (obj.phone) this.phone = obj.phone;
+    if (obj.group) this.group = obj.group;
+    if (obj.role) this.role = obj.role;
+    if (obj.permissions) this.permissions = obj.permissions;
 
     if (obj.operator_id) {
       this.operator_id = obj.operator_id;
@@ -89,6 +100,7 @@ export class User extends BaseUser implements IFormModel<any>, IMapModel<User, U
       delete this.operator_id;
       delete this.group;
       delete this.role;
+      delete this.permissions;
     } else {
       if (formVal.territory_id) this.email = formVal.email;
       else delete this.territory_id;
