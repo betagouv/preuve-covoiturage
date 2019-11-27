@@ -12,7 +12,7 @@ import { IMapModel } from '~/core/entities/IMapModel';
 import { BaseModel } from '~/core/entities/BaseModel';
 import { IClone } from '~/core/entities/IClone';
 
-class Operator extends BaseModel implements IFormModel<any>, IModel, IMapModel<Operator>, IClone<Operator> {
+class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operator>, IClone<Operator> {
   public _id: number;
   public name: string;
   public legal_name: string;
