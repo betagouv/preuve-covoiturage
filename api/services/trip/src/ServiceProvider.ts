@@ -4,7 +4,7 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
-import { ChannelTransportMiddleware, ScopeToSelfMiddleware } from '@pdc/provider-middleware';
+import { ChannelTransportMiddleware, ScopeToSelfMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
@@ -12,6 +12,7 @@ import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
 import { PublicStatsAction } from './actions/PublicStatsAction';
+import { RefreshAction } from './actions/RefreshAction';
 
 @serviceProvider({
   config: __dirname,
@@ -19,6 +20,7 @@ import { PublicStatsAction } from './actions/PublicStatsAction';
   validator: [listBinding, statsBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
     ['channel.transport', ChannelTransportMiddleware],
     ['scopeIt', ScopeToSelfMiddleware],
   ],
@@ -26,7 +28,12 @@ import { PublicStatsAction } from './actions/PublicStatsAction';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [ListAction, PublicStatsAction, StatsAction],
+  handlers: [
+    ListAction,
+    PublicStatsAction,
+    StatsAction,
+    RefreshAction,
+  ],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
