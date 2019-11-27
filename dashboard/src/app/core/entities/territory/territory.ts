@@ -12,7 +12,7 @@ import { IFormModel } from '~/core/entities/IFormModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { IClone } from '~/core/entities/IClone';
 
-class Territory extends BaseModel implements IModel, IFormModel<any>, IMapModel<Territory>, IClone<Territory> {
+class Territory extends BaseModel implements IModel, IFormModel, IMapModel<Territory>, IClone<Territory> {
   public _id: number;
   public name: string;
   public siret: string;
