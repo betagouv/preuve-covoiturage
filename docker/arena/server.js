@@ -11,7 +11,7 @@ const app = express();
 const arena = Arena({
   queues: [
     {
-      name: 'trip',
+      name: 'carpool',
       hostId: 'redis',
       url: process.env.APP_REDIS_URL,
     },

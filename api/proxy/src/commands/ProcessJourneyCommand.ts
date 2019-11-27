@@ -27,10 +27,8 @@ export class ProcessJourneyCommand implements CommandInterface {
       default: 'acquisition.acquisitions',
     },
     {
-      signature: '-i, --id <carpoolid>',
-      description: 'Select one carpool by carpool_id',
-      // tslint:disable-next-line: no-unnecessary-callback-wrapper
-      coerce: (s: string) => Number(s),
+      signature: '-i, --id <journey_id>',
+      description: 'Select one acquisition entry by journey_id',
     },
     {
       signature: '-s, --startdate <startdate>',
@@ -90,7 +88,7 @@ export class ProcessJourneyCommand implements CommandInterface {
             ${options.table}.payload,
             ${options.table}.created_at
           FROM ${options.table}
-          WHERE _id = $1
+          WHERE journey_id = $1
         `,
         values: [options.id],
       };

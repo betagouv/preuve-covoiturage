@@ -67,7 +67,8 @@ export class NormalizationCostAction extends AbstractAction {
     const revenue = data.revenue || 0;
     const contribution = data.contribution || 0;
 
-    const cost = isDriver ? -revenue - incentiveAmount : contribution + incentiveAmount;
+    // tslint:disable-next-line: no-bitwise
+    const cost = (isDriver ? -revenue - incentiveAmount : contribution + incentiveAmount) | 0;
 
     const isIncentive = (d) => d.type === 'incentive';
 
@@ -99,7 +100,8 @@ export class NormalizationCostAction extends AbstractAction {
       siret,
       index: payments.length,
       type: 'payment',
-      amount: Math.abs(cost) - payments.reduce((sum, item) => sum + item.amount, 0),
+      // tslint:disable-next-line: no-bitwise
+      amount: (Math.abs(cost) - payments.reduce((sum, item) => sum + item.amount, 0)) | 0,
     });
 
     return [cost, payments];

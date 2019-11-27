@@ -68,7 +68,7 @@ export const schema = {
           },
           cost: {
             type: 'integer',
-            minimum: 0,
+            minimum: -1000000,
             maximum: 1000000,
           },
           meta: {
@@ -111,4 +111,5 @@ export const schema = {
     },
   },
 };
+
 export const binding = [alias, schema];
