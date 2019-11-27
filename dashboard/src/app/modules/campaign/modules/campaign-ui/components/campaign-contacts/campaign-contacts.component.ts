@@ -3,7 +3,8 @@ import * as L from 'leaflet';
 import { map } from 'rxjs/operators';
 
 import { Territory } from '~/core/entities/territory/territory';
-import { CampaignGeoService, GeoDataInterface } from '~/modules/campaign/services/campaign-geo.service';
+import { CampaignGeoService } from '~/modules/campaign/services/campaign-geo.service';
+import { GeoDataInterface } from '~/core/interfaces/geography/geoDataInterface';
 
 @Component({
   selector: 'app-campaign-contacts',
@@ -37,7 +38,7 @@ export class CampaignContactsComponent implements OnInit {
       return;
     }
     this._geoService
-      .findGeoData(address)
+      .findGeoDataByPostCode(address)
       .pipe(
         // get first result
         map((coordinates: GeoDataInterface[]) => coordinates[0]),
