@@ -21,35 +21,43 @@ export enum CrudActions {
   DELETE = 'delete',
 }
 
-export class JsonRpcCrud<EntityT extends IModel, ListEntityT extends IModel = EntityT> extends JsonRPC {
-  constructor(http: HttpClient, router: Router, activedRoute: ActivatedRoute, protected method: string) {
-    super(http, router, activedRoute);
+export class JsonRpcCrud<
+  EntityT extends IModel,
+  ListEntityT extends IModel = EntityT,
+  IPatchT = any,
+  IGetT = any,
+  IGetListT = any,
+  ICreateT = any,
+  IUpdateT = any
+> extends JsonRPC {
+  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected method: string) {
+    super(http, router, activatedRoute);
   }
 
   protected defaultListParam: any = {};
 
-  paramGetList(params?: any) {
+  paramGetList(params?: IGetListT) {
     return new JsonRPCParam(`${this.method}:${CrudActions.LIST}`, { ...this.defaultListParam, ...params });
   }
 
-  paramGet(params: any) {
+  paramGet(params: IGetT) {
     return new JsonRPCParam(`${this.method}:${CrudActions.FIND}`, params);
   }
 
-  paramGetById(id: any) {
-    return this.paramGet({ _id: id });
+  paramGetById(id: number) {
+    return this.paramGet(<any>{ _id: id });
   }
 
-  get(params: any): Observable<EntityT> {
+  get(params: IGetT): Observable<EntityT> {
     return this.callOne(this.paramGet(params)).pipe(map((data) => data.data));
   }
 
-  getList(params: any = {}): Observable<ListEntityT[]> {
+  getList(params?: IGetListT): Observable<ListEntityT[]> {
     return this.callOne(this.paramGetList(params)).pipe(map((data) => data.data));
   }
 
   getById(id: number): Observable<EntityT> {
-    return this.get({ _id: id });
+    return this.get(<any>{ _id: id });
   }
 
   create(item: EntityT): Observable<EntityT> {
@@ -62,7 +70,7 @@ export class JsonRpcCrud<EntityT extends IModel, ListEntityT extends IModel = En
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  patch(params: any) {
+  patch(params: IPatchT) {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.PATCH}`, params);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }

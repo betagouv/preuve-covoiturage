@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class OperatorStoreService extends CrudStore<Operator, Operator, OperatorApiService> {
+export class OperatorStoreService extends CrudStore<Operator, Operator, any, OperatorApiService> {
   constructor(protected operatorApi: OperatorApiService) {
     super(operatorApi, Operator);
   }
