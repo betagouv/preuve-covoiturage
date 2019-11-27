@@ -1,0 +1,1 @@
+DROP MATERIALIZED VIEW IF EXISTS trip.opendata_list;

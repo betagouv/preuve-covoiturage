@@ -1,0 +1,15 @@
+'use strict';
+
+var { createMigration } = require('../helpers/createMigration');
+var { setup, up, down } = createMigration(
+  [
+    'trip/20191125100001_create_trip_schema',
+    'trip/20191125100001_create_trip_view',
+    'trip/20191125100001_create_opendata_trip_view',
+  ],
+  __dirname,
+);
+
+exports.setup = setup;
+exports.up = up;
+exports.down = down;

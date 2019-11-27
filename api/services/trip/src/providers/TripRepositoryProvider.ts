@@ -17,8 +17,7 @@ import { StatInterface } from '../interfaces/StatInterface';
   identifier: TripRepositoryProviderInterfaceResolver,
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
-  public readonly table = 'carpool.carpools';
-  public readonly identityTable = 'carpool.identities';
+  public readonly table = 'trip.list';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -53,7 +52,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: '(start_territory = ANY ($#::text[]) OR end_territory = ANY ($#::text[]))',
+                text: '(start_territory_id = ANY ($#::text[]) OR end_territory_id = ANY ($#::text[]))',
                 values: [filter.value, filter.value],
               };
             case 'operator_id':
@@ -100,12 +99,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
             case 'days':
               return {
-                text: 'extract(isodow from datetime) = ANY ($#::int[])',
+                text: 'weekday = ANY ($#::int[])',
                 values: [filter.value],
               };
             case 'hour': {
               return {
-                text: '($#::int <= extract(hour from datetime) AND extract(hour from datetime) <= $#::int)',
+                text: '($#::int <= dayhour AND dayhour <= $#::int)',
                 values: [filter.value.start, filter.value.end],
               };
             }
@@ -124,7 +123,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         );
     }
 
-    orderedFilters.text.push('is_driver = false');
+    // orderedFilters.text.push('is_driver = false');
 
     const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
     const whereClausesValues = orderedFilters.values;
