@@ -5,6 +5,7 @@ import v4 from 'uuid/v4';
 import stringify from 'csv-stringify';
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { FileStorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -43,7 +44,7 @@ export class ExportAction extends Action {
     ],
   ];
 
-  constructor(private pg: TripRepositoryProvider) {
+  constructor(private pg: TripRepositoryProvider, private file: FileStorageProvider) {
     super();
   }
 
@@ -60,8 +61,10 @@ export class ExportAction extends Action {
     });
 
     let count = 0;
-    const name = v4();
-    const stringifier = await this.getStringifier(name);
+
+    const filename = path.join(os.tmpdir(), v4());
+    const fd = await fs.promises.open(filename, 'a');
+    const stringifier = await this.getStringifier(fd);
 
     do {
       const results = await cursor(10);
@@ -72,13 +75,13 @@ export class ExportAction extends Action {
     } while (count !== 0);
 
     stringifier.end();
+    await fd.close();
 
-    return name;
+    const { url, password } = await this.file.copy(filename);
+    return { url, password };
   }
 
-  protected async getStringifier(name: string) {
-    const filename = path.join(os.tmpdir(), name);
-    const fd = await fs.promises.open(filename, 'a');
+  protected async getStringifier(fd: fs.promises.FileHandle) {
     const stringifier = stringify({
       delimiter: ';',
       header: true,
@@ -122,9 +125,9 @@ export class ExportAction extends Action {
       console.error(err.message);
     });
 
-    stringifier.on('finish', async () => {
-      await fd.close();
-    });
+    // stringifier.on('finish', async () => {
+    //
+    // });
 
     return stringifier;
   }
