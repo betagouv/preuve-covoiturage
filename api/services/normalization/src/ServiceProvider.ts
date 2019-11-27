@@ -11,16 +11,20 @@ import { NormalizationGeoAction } from './actions/NormalizationGeoAction';
 import { NormalizationTerritoryAction } from './actions/NormalizationTerritoryAction';
 import { NormalizationCostAction } from './actions/NormalizationCostAction';
 import { NormalizationRouteAction } from './actions/NormalizationRouteAction';
+import { NormalizationIdentityAction } from './actions/NormalizationIdentityAction';
 
 @serviceProvider({
   config: __dirname,
   providers: [GeoProvider, TerritoryProvider, WorkflowProvider],
-  handlers: [NormalizationGeoAction, NormalizationRouteAction, NormalizationTerritoryAction, NormalizationCostAction],
-  middlewares: [['channel.service.only', ChannelServiceWhitelistMiddleware]],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
+  handlers: [
+    NormalizationGeoAction,
+    NormalizationRouteAction,
+    NormalizationTerritoryAction,
+    NormalizationCostAction,
+    NormalizationIdentityAction,
   ],
+  middlewares: [['channel.service.only', ChannelServiceWhitelistMiddleware]],
+  connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
   queues: ['normalization'],
   validator: [],
 })
