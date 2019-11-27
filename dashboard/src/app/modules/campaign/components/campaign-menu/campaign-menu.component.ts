@@ -32,8 +32,10 @@ export class CampaignMenuComponent implements OnInit {
     this.menus[1].callback = this.discoverCampaign;
   }
 
-  createCampaign(router: Router) {
-    router.navigate(['/campaign/create']);
+  createCampaign(router: Router, toastr: ToastrService) {
+    // todo: reconnect when simulation is operational is fixed
+    // router.navigate(['/campaign/create']);
+    toastr.success('Cette section sera bientôt disponible !');
   }
 
   discoverCampaign(router: Router, toastr: ToastrService) {
