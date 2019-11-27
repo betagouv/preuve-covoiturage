@@ -1,7 +1,10 @@
 <div class="campaignContactsView">
-  <div id="map" class="map"></div>
+  <div class="campaignContactsView--loading" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div [hidden]="loading || !showMap" id="map" class="map"></div>
 
-  <div class="campaignContactsView-description">
+  <div *ngIf="!loading" class="campaignContactsView-description">
     <h3>{{ territory.name }}</h3>
 
     <div class="campaignContactsView-contacts" *ngIf="territory.contacts && territory.contacts.technical">

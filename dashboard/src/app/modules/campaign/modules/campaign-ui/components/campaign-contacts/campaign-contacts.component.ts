@@ -13,6 +13,8 @@ import { CampaignGeoService, GeoDataInterface } from '~/modules/campaign/service
 export class CampaignContactsComponent implements OnInit {
   @Input() territory: Territory;
   private map: L.Map;
+  loading = true;
+  showMap = false;
 
   constructor(private _geoService: CampaignGeoService) {
     L.Icon.Default.mergeOptions({
@@ -28,16 +30,25 @@ export class CampaignContactsComponent implements OnInit {
   //  }
 
   ngOnInit() {
+    const address = this.territory.address && this.territory.address.postcode;
+    if (!address) {
+      this.loading = false;
+      console.error("Le code postal du territoire n'est pas définit !");
+      return;
+    }
     this._geoService
-      .findGeoData(this.territory.name)
+      .findGeoData(address)
       .pipe(
         // get first result
         map((coordinates: GeoDataInterface[]) => coordinates[0]),
       )
       .subscribe((coordinates: GeoDataInterface) => {
+        this.loading = false;
         if (!coordinates) {
           console.error('Coordonnées du territoire non trouvées !');
+          return;
         }
+        this.showMap = true;
         this.initMap(coordinates);
       });
   }
