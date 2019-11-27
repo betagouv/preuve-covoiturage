@@ -31,6 +31,9 @@
               "src/styles.scss",
               "src/styles/theme.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            },
             "scripts": ["./node_modules/moment/min/moment.min.js", "./node_modules/moment/locale/fr.js"]
           },
           "configurations": {

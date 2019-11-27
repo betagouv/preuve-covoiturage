@@ -1,9 +1,13 @@
-@import '~src/styles/variables';
+@import 'variables';
 
 .campaignContactsView {
   display: flex;
   align-items: center;
   justify-content: space-around;
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
   .map {
     height: 170px;
     width: 170px;
