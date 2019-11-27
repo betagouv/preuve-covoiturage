@@ -1,7 +1,7 @@
 import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
 
 export interface ParamsInterface extends TripSearchInterface {}
-export type ResultInterface = any;
+export type ResultInterface = string;
 
 export const handlerConfig = {
   service: 'trip',
