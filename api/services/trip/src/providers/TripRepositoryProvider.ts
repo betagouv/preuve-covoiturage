@@ -193,8 +193,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     }
 
     const query = {
+      values,
       text: `
-        SELECT 
+        SELECT
         journey_id,
         trip_id,
         journey_start_datetime,
@@ -224,7 +225,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         WHERE journey_start_datetime BETWEEN $1::timestamp AND $2::timestamp
         ${where}
       `,
-      values,
     };
 
     const db = await this.connection.getClient().connect();
