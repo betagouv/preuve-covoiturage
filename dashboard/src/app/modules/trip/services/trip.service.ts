@@ -12,6 +12,8 @@ import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 import { LightTrip } from '~/core/entities/trip/trip';
+import { ExportFilterInterface, ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
+import moment = require('moment');
 
 @Injectable({
   providedIn: 'root',
@@ -53,23 +55,16 @@ export class TripService {
     return this._total$.value;
   }
 
-  public exportTrips(): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam(`${this._method}.export`);
-    return this._jsonRPC
-      .callOne(jsonRPCParam, {
-        headers: new HttpHeaders({
-          Accept: 'text/csv',
-        }),
-        // responseType: 'blob',
-      })
-      .pipe(
-        tap((data) => {
-          // TODO
-        }),
-        finalize(() => {
-          // TODO
-        }),
-      );
+  public exportTrips(filter: ExportFilterUxInterface): Observable<any> {
+    // map moment to date
+    const params = {
+      date: {
+        start: moment(filter.date.start).toDate(),
+        end: moment(filter.date.end).toDate(),
+      },
+    };
+    const jsonRPCParam = new JsonRPCParam(`${this._method}:export`, params);
+    return this._jsonRPC.callOne(jsonRPCParam);
   }
 
   public load(filter: FilterInterface | {} = {}): Observable<LightTripInterface[]> {

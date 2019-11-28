@@ -14,6 +14,7 @@
             #rla="routerLinkActive"
             [active]="rla.isActive"
           >
+            <mat-icon *ngIf="link.label === 'Export'">get_app</mat-icon>
             {{ link.label }}
           </a>
         </ng-container>

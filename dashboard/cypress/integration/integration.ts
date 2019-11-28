@@ -31,6 +31,7 @@ import { cypress_login } from '../support/reusables/auth/cypress_login';
 import { stubApiAdress } from '../support/stubs/external/api-adresse';
 import { stubVisibilityList } from '../support/stubs/territory/territory.listOperator';
 import { stubVisibilityUpdate } from '../support/stubs/territory/territory.updateOperator';
+import { stubTripExport } from '../support/stubs/trip/trip.export';
 
 /**
  * parameters to decide with contexts to run when in local
@@ -171,6 +172,7 @@ function cypress_context_territory() {
         stubTripList(trips);
         stubMainLists(UserGroupEnum.TERRITORY);
         stubTerritoryPatchContacts();
+        stubTripExport();
         stubApiAdress('lyo');
         stubApiAdress('paris');
         stubApiAdress('marseil');
@@ -183,7 +185,7 @@ function cypress_context_territory() {
         testTerritoryStory();
       } else {
         // local testing
-        testTerritoryStory(false, false, true, false, false, false, false);
+        testTerritoryStory(false, false, false, false, false, false, false, true);
       }
     });
   });

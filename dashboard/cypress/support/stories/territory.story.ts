@@ -11,6 +11,7 @@ import { cypress_logging_users } from '../stubs/auth/login';
 import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypress_campaign_create_from_template';
 import { campaignTemplateStubs } from '../stubs/campaign/campaign-template.list';
+import { cypress_export } from '../reusables/trip/cypress_trip';
 
 export function testTerritoryStory(
   profile = true,
@@ -20,6 +21,7 @@ export function testTerritoryStory(
   editcampaign = true,
   launchcampaign = false,
   newFromTemplate = false,
+  exportTrips = false,
 ) {
   // TEST PROFILE UPDATE
   if (profile) {
@@ -39,6 +41,13 @@ export function testTerritoryStory(
   if (filters) {
     describe('Filter trips', () => {
       cypress_filter(false, UserGroupEnum.TERRITORY);
+    });
+  }
+
+  // TEST EXPORT
+  if (exportTrips) {
+    describe('Export trips', () => {
+      cypress_export(false);
     });
   }
 
