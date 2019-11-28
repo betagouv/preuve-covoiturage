@@ -48,7 +48,7 @@ const { MongoClient } = require('mongodb');
     console.log(`> Inserted ${count} results in ${(new Date().getTime() - st.getTime()) / 1000}s`);
 
     // remove stats in the future
-    await journeys.deleteMany({ datetime: { $gt: new Date() } });
+    await prepared.deleteMany({ datetime: { $gt: new Date() } });
 
     console.log('\nCalculate all statistics');
 
