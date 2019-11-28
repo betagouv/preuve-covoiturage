@@ -9,7 +9,7 @@ import { OperatorListInterface } from '~/core/entities/api/shared/operator/commo
 @Injectable({
   providedIn: 'root',
 })
-export class OperatorStoreService extends CrudStore<Operator, OperatorListInterface, any, OperatorApiService> {
+export class OperatorStoreService extends CrudStore<Operator, Operator, any, OperatorApiService> {
   constructor(protected operatorApi: OperatorApiService) {
     super(operatorApi, Operator);
   }

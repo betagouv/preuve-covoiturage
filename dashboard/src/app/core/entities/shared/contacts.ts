@@ -4,7 +4,7 @@ import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 import { Contact } from './contact';
 import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 
-export class Contacts implements ContactsInterface {
+export class Contacts {
   gdpr_dpo?: Contact;
   gdpr_controller?: Contact;
   technical?: Contact;
