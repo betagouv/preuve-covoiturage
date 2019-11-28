@@ -7,9 +7,7 @@ import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
 @handler(handlerConfig)
 export class RefreshAction extends Action implements InitHookInterface {
-  public readonly middlewares: ActionMiddleware[] = [
-    ['channel.service.only', [handlerConfig.service]],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', [handlerConfig.service]]];
 
   constructor(private pg: PostgresConnection, private kernel: KernelInterfaceResolver) {
     super();

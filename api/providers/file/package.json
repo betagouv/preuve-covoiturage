@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@ilos/common": "~0",
-    "@ilos/config": "~0"
+    "@ilos/config": "~0",
+    "@pdc/provider-crypto": "~0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

@@ -6,7 +6,9 @@ import { StatInterface } from './StatInterface';
 export interface TripRepositoryInterface {
   stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
-  searchWithCursor(params: { date: { start: Date, end: Date } }): Promise<(count: number) => Promise<LightTripInterface[]>>;
+  searchWithCursor(params: {
+    date: { start: Date; end: Date };
+  }): Promise<(count: number) => Promise<LightTripInterface[]>>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
   public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
@@ -19,7 +21,9 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
     throw new Error();
   }
 
-  public async searchWithCursor(params: { date: { start: Date, end: Date } }): Promise<(count: number) => Promise<LightTripInterface[]>> {
+  public async searchWithCursor(params: {
+    date: { start: Date; end: Date };
+  }): Promise<(count: number) => Promise<LightTripInterface[]>> {
     throw new Error();
   }
 }
