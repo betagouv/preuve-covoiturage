@@ -12,6 +12,8 @@ import {
 
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
+import { binding as exportBinding } from './shared/trip/export.schema';
+
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
@@ -22,7 +24,7 @@ import { ExportAction } from './actions/ExportAction';
 @serviceProvider({
   config: __dirname,
   providers: [TripRepositoryProvider],
-  validator: [listBinding, statsBinding],
+  validator: [listBinding, statsBinding, exportBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],

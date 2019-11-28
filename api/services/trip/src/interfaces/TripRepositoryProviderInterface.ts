@@ -8,6 +8,8 @@ export interface TripRepositoryInterface {
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
   searchWithCursor(params: {
     date: { start: Date; end: Date };
+    operator_id?: number[];
+    territory_id?: number[];
   }): Promise<(count: number) => Promise<LightTripInterface[]>>;
 }
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
@@ -23,6 +25,8 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
 
   public async searchWithCursor(params: {
     date: { start: Date; end: Date };
+    operator_id?: number[];
+    territory_id?: number[];
   }): Promise<(count: number) => Promise<LightTripInterface[]>> {
     throw new Error();
   }

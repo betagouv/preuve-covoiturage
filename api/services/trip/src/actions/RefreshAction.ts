@@ -51,7 +51,7 @@ export class RefreshAction extends Action implements InitHookInterface {
         await this.pg.getClient().query(`REFRESH VIEW trip.list`);
         return;
       case 'export':
-        await this.pg.getClient().query(`REFRESH VIEW trip.opendata_list`);
+        await this.pg.getClient().query(`REFRESH VIEW trip.export`);
         return;
     }
   }

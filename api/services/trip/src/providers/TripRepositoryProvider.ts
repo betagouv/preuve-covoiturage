@@ -172,13 +172,59 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async searchWithCursor(params: {
     date: { start: Date; end: Date };
+    operator_id?: number[];
+    territory_id?: number[];
   }): Promise<(count: number) => Promise<LightTripInterface[]>> {
+    let where = '';
+    const values: any[] = [params.date.start, params.date.end];
+
+    const territoryWhere = '(start_territory_id = ANY ($3::int[]) OR end_territory_id = ANY ($4::int[]))';
+    const operatorWhere = (i: number) => `operator_id = ANY ($${i}::text[])`;
+
+    if (params.operator_id && params.territory_id) {
+      where = `AND ${operatorWhere(5)} AND ${territoryWhere}`;
+      values.push(params.territory_id, params.territory_id, params.operator_id);
+    } else if (params.operator_id) {
+      where = `AND ${operatorWhere(3)}`;
+      values.push(params.operator_id);
+    } else if (params.territory_id) {
+      where = `AND ${territoryWhere}`;
+      values.push(params.territory_id, params.territory_id);
+    }
+
     const query = {
       text: `
-        SELECT * FROM trip.opendata_list
+        SELECT 
+        journey_id,
+        trip_id,
+        journey_start_datetime,
+        journey_start_lat,
+        journey_start_lon,
+        journey_start_insee,
+        journey_start_postalcode,
+        journey_start_town,
+        journey_start_EPCI,
+        journey_start_country,
+        journey_end_datetime,
+        journey_end_lat,
+        journey_end_lon,
+        journey_end_insee,
+        journey_end_postalcode,
+        journey_end_town,
+        journey_end_EPCI,
+        journey_end_country,
+        journey_distance,
+        journey_duration,
+        driver_card,
+        passenger_card,
+        operator_class,
+        passenger_over_18,
+        passenger_seats
+        FROM trip.export
         WHERE journey_start_datetime BETWEEN $1::timestamp AND $2::timestamp
+        ${where}
       `,
-      values: [params.date.start, params.date.end],
+      values,
     };
 
     const db = await this.connection.getClient().connect();
