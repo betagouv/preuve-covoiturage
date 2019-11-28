@@ -42,7 +42,8 @@
     "migrate": "yarn migrate:up",
     "migrate:up": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations",
     "migrate:down": "DATABASE_URL=$APP_POSTGRES_URL db-migrate down --migrations-dir=db/migrations",
-    "migrate:check": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations --check"
+    "migrate:check": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations --check",
+    "sync:mongo": "yarn workspace @pdc/proxy ilos sync:mongo"
   },
   "keywords": [
     "betagouv",
