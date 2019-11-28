@@ -10,12 +10,11 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 import { UserInterface } from '~/core/entities/api/shared/user/common/interfaces/UserInterface';
 import { UserBaseInterface } from '~/core/entities/api/shared/user/common/interfaces/UserBaseInterface';
-import { UserCreateParamsInterface } from '../../../../../../api/providers/schema/dist/models/user/interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserApiService extends JsonRpcCrud<User, User, UserPatchInterface, any, UserCreateParamsInterface> {
+export class UserApiService extends JsonRpcCrud<User, User, UserPatchInterface> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
     super(http, router, activatedRoute, 'user');
   }
