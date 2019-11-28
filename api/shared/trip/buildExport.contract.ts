@@ -1,11 +1,24 @@
 import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
 
-export interface ParamsInterface extends TripSearchInterface {}
+export interface ParamsInterface {
+  query: {
+    date: {
+      start: Date;
+      end: Date;
+    };
+    operator_id?: number[];
+    territory_id?: number[];
+  };
+  from: {
+    email: string;
+    fullname: string;
+  };
+}
 export type ResultInterface = void;
 
 export const handlerConfig = {
   service: 'trip',
-  method: 'export',
+  method: 'buildExport',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

@@ -10,6 +10,7 @@ import {
   ScopeToSelfMiddleware,
   ContentBlacklistMiddleware,
   ContentWhitelistMiddleware,
+  ChannelServiceBlacklistMiddleware,
 } from '@pdc/provider-middleware';
 
 import { changePassword } from './shared/user/changePassword.schema';
@@ -74,6 +75,7 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     ['scopeIt', ScopeToSelfMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
     ['content.whitelist', ContentWhitelistMiddleware],
+    ['channel.service.except', ChannelServiceBlacklistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [

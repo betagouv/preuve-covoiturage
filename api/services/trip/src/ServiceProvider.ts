@@ -20,6 +20,7 @@ import { StatsAction } from './actions/StatsAction';
 import { PublicStatsAction } from './actions/PublicStatsAction';
 import { RefreshAction } from './actions/RefreshAction';
 import { ExportAction } from './actions/ExportAction';
+import { BuildExportAction } from './actions/BuildExportAction';
 
 @serviceProvider({
   config: __dirname,
@@ -32,7 +33,7 @@ import { ExportAction } from './actions/ExportAction';
     ['scopeIt', ScopeToSelfMiddleware],
   ],
   connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
-  handlers: [ListAction, PublicStatsAction, StatsAction, RefreshAction, ExportAction],
+  handlers: [ListAction, PublicStatsAction, StatsAction, RefreshAction, ExportAction, BuildExportAction],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
