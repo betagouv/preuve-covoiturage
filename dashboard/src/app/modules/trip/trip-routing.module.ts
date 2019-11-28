@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { TripExportComponent } from '~/modules/trip/modules/ui-trip/components/trip-export/trip-export.component';
+
 import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
 import { TripMapsComponent } from './pages/trip-maps/trip-maps.component';
 import { TripListComponent } from './pages/trip-list/trip-list.component';
 import { TripImportComponent } from './pages/trip-import/trip-import.component';
-
 import { TripLayoutComponent } from './trip-layout/trip-layout.component';
 
 const routes: Routes = [
@@ -28,6 +29,10 @@ const routes: Routes = [
       {
         path: 'import',
         component: TripImportComponent,
+      },
+      {
+        path: 'export',
+        component: TripExportComponent,
       },
       {
         path: '',

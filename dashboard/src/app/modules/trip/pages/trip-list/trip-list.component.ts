@@ -1,8 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import * as moment from 'moment';
 
 import { TripService } from '~/modules/trip/services/trip.service';
 import { FilterService } from '~/modules/filter/services/filter.service';
@@ -18,14 +16,9 @@ import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
   styleUrls: ['./trip-list.component.scss'],
 })
 export class TripListComponent extends DestroyObservable implements OnInit {
-  isExporting: boolean;
-  exported = false;
-  showExport = false;
-
   trips: LightTripInterface[] = [];
   skip = DEFAULT_TRIP_SKIP;
   limit = DEFAULT_TRIP_LIMIT;
-  private filterForm: FormGroup;
 
   constructor(
     public filterService: FilterService,
@@ -33,7 +26,6 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
     private authService: AuthenticationService,
-    private _fb: FormBuilder,
   ) {
     super();
   }
@@ -84,25 +76,6 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     this.loadTrips(filter, true);
   }
 
-  openExport() {
-    this.showExport = true;
-  }
-
-  exportTrips() {
-    this.isExporting = true;
-    this.tripService.exportTrips().subscribe(
-      () => {
-        this.isExporting = false;
-        this.showExport = false;
-        this.exported = true;
-      },
-      (err) => {
-        this.isExporting = false;
-        this.toastr.error(err.message);
-      },
-    );
-  }
-
   private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {
     const user = this.authService.user;
     if (this.tripService.loading) {
@@ -119,16 +92,5 @@ export class TripListComponent extends DestroyObservable implements OnInit {
           this.toastr.error(err.message);
         },
       );
-  }
-
-  private initForm() {
-    const start = moment().subtract('1', 'month');
-    const end = new Date();
-    this.filterForm = this._fb.group({
-      date: this._fb.group({
-        start: [start],
-        end: [end],
-      }),
-    });
   }
 }
