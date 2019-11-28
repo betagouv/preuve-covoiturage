@@ -58,17 +58,8 @@ export class SyncMongoCommand implements CommandInterface {
     const mongoClient = mongoConnection.getClient();
     const pgClient = await pgConnection.getClient().connect();
 
-    const selector = {};
-
-    if (options.tag && !options.clean) {
-      selector['_sync_metadata'] = {
-        $not: {
-          $eq: options.tag,
-        },
-      };
-    }
     const collection = mongoClient.db(options.mongoDb).collection(options.collection);
-    let cursor = collection.find({ _sync_metadata: { $not: { $eq: options.tag } } }, { sort: { created_at: 1 } });
+    let cursor = collection.find({ _sync_metadata: { $nin: ['done', 'duplicate'] } }, { sort: { created_at: 1 } });
     let _id: string = null;
     let _oid: ObjectId = null;
     let count = 0;
@@ -77,8 +68,25 @@ export class SyncMongoCommand implements CommandInterface {
       cursor = cursor.limit(options.limit);
     }
 
-    console.log('Journeys to import:', await cursor.count());
-    if (options.limit) console.log('Importing:', options.limit);
+    // load mapping table
+    let mapResults;
+    try {
+      mapResults = await pgClient.query('SELECT * FROM public.mapids');
+    } catch (e) {
+      console.log('ERROR', e.message);
+      console.error(`
+      You must import operators, territories, applications and users with:
+      'yarn workspace @pdc/proxy ilos mapid'
+      command before running sync:mongo.`);
+
+      pgClient.release();
+      await mongoConnection.down();
+      await pgConnection.down();
+      return '';
+    }
+
+    // load journeys
+    const found = await cursor.count();
 
     // tslint:disable-next-line: no-constant-condition
     while (true) {
@@ -94,7 +102,11 @@ export class SyncMongoCommand implements CommandInterface {
         const created_at = doc.created_at;
 
         // FIX ON LEGACY JOURNEY
-        doc['operator_id'] = get(doc, 'operator._id', doc.operator_id);
+        doc.operator_id = get(doc, 'operator._id', doc.operator_id).toString();
+
+        const op_map = mapResults.rows.find((r) => r.key === 'operator_id' && r.object_id === doc.operator_id);
+        if (op_map) doc.operator_id = op_map.pg_id;
+
         doc.driver.incentives = [];
         doc.passenger.incentives = [];
 
@@ -161,12 +173,13 @@ export class SyncMongoCommand implements CommandInterface {
 
         // save in acquisition
         await pgClient.query('BEGIN');
-        await pgClient.query({
+        const insert = await pgClient.query({
           text: `
             INSERT INTO acquisition.acquisitions
             ( created_at, application_id, operator_id, journey_id, payload )
             VALUES ( $1, $2, $3, $4, $5 )
             ON CONFLICT DO NOTHING
+            RETURNING _id
           `,
           values: [
             created_at,
@@ -177,10 +190,19 @@ export class SyncMongoCommand implements CommandInterface {
           ],
         });
 
+        if (!insert.rowCount) {
+          console.info(`🔁 Journey ${_id} skipped`);
+          await pgClient.query('ROLLBACK');
+          await collection.updateOne({ _id: _oid }, { $set: { _sync_metadata: 'duplicate' } });
+          continue;
+        }
+
+        const pg_id = insert.rows[0]._id;
+
         // flag the imported journey as 'done' in _sync_metadata
-        await collection.updateOne({ _id: _oid }, { $set: { _sync_metadata: options.tag } });
+        await collection.updateOne({ _id: _oid }, { $set: { _sync_metadata: 'done' } });
         await pgClient.query('COMMIT');
-        console.info(`🔁 Journey ${_id} synced`);
+        console.info(`🔁 Journey ${_id} --> ${pg_id} synced`);
 
         // tslint:disable-next-line: no-increment-decrement
         count++;
@@ -195,7 +217,7 @@ export class SyncMongoCommand implements CommandInterface {
     await mongoConnection.down();
     await pgConnection.down();
 
-    console.log('Synched', count, 'journeys!');
+    console.log('Synched', count, 'of', options.limit || found, 'in a total of', found);
     return '';
   }
 }
