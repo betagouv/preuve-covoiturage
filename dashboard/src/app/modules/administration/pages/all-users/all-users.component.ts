@@ -111,10 +111,6 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     }
 
     this.isCreatingUser = !user;
-
-    //this.editUserFormVisible = true;
-
-    // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
   }
 
   closeUserForm() {

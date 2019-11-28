@@ -28,7 +28,7 @@ export class BaseUser implements IModel {
 
 export class User extends BaseUser
   implements
-    IFormModel<any>,
+    IFormModel,
     IMapModel<User, UserInterface>,
     IClone<User>,
     UserPatchInterface,
