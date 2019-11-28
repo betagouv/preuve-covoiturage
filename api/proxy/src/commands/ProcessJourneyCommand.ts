@@ -37,7 +37,7 @@ export class ProcessJourneyCommand implements CommandInterface {
     {
       signature: '-m, --metatable <metatable>',
       description: 'Meta data to store states',
-      default: 'acquisition.acquisition_metas',
+      default: 'public.acquisition_meta',
     },
     {
       signature: '--tag <tag>',
