@@ -8,13 +8,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { UserService } from '~/modules/user/services/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
+import { UserApiService } from '~/modules/user/services/user-api.service';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,13 +27,14 @@ export class AuthenticationService {
   private userMe$: Observable<User>;
 
   constructor(
-    private userService: UserService,
+    private userApiService: UserApiService,
+    private userStoreService: UserStoreService,
     private jsonRPC: JsonRPCService,
     private router: Router,
     private toastr: ToastrService,
     private http: HttpClient,
   ) {
-    this.userService.user$.subscribe((user: User) => {
+    this.userStoreService.entity$.subscribe((user: User) => {
       const loggedInUser = this.user;
 
       // if userService is updated and match current user we update its state
@@ -48,17 +50,7 @@ export class AuthenticationService {
       }
     });
 
-    this.userMe$ = this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
-      map(({ data }) => {
-        // if forbidden return null
-        if (data.error && data.error.code === -32503) {
-          return null;
-        }
-        return new User(data);
-      }),
-      catchHttpStatus(401, (err) => null),
-      shareReplay(),
-    );
+    this.userMe$ = this.userApiService.me();
   }
 
   get user$(): Observable<User> {
@@ -245,13 +237,6 @@ export class AuthenticationService {
         this._hasChecked = true;
         if (user) this.onLoggin(user);
       }),
-    );
-  }
-
-  public patch(userData: any): Observable<User> {
-    return this.userService.patch(userData).pipe(
-      first(),
-      tap((user: User) => this._user$.next(user)),
     );
   }
 
