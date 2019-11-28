@@ -58,7 +58,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
 
   deleteCampaign(campaign: CampaignUx): void {
     this.dialog
-      .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer')
+      .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer', 'warn')
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {

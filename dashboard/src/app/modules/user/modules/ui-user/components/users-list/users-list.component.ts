@@ -67,7 +67,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
 
   onDelete(user: User) {
     this.dialogService
-      .confirm('Utilisateurs', 'Voulez-vous supprimer cet utilisateur ?')
+      .confirm('Utilisateurs', 'Voulez-vous supprimer cet utilisateur ?', 'oui', 'warn')
       .pipe(takeUntil(this.destroy$))
       .subscribe((hasConfirmed) => {
         if (hasConfirmed) {
