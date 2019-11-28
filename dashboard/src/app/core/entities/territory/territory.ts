@@ -11,6 +11,7 @@ import { IModel } from '~/core/entities/IModel';
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { IClone } from '~/core/entities/IClone';
+import { TerritoryInterface } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
 
 class Territory extends BaseModel implements IModel, IFormModel, IMapModel<Territory>, IClone<Territory> {
   public _id: number;

@@ -2,8 +2,9 @@ import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
 /* tslint:disable:variable-name */
 import { Contact } from './contact';
+import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 
-export class Contacts {
+export class Contacts implements ContactsInterface {
   gdpr_dpo?: Contact;
   gdpr_controller?: Contact;
   technical?: Contact;

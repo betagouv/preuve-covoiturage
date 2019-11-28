@@ -28,8 +28,8 @@ export class JsonRpcCrud<
   IPatchT = any,
   IGetT = any,
   IGetListT = any,
-  ICreateT = any,
-  IUpdateT = any
+  ICreateT = EntityT,
+  IUpdateT = EntityT
 > extends JsonRPC {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected method: string) {
     super(http, router, activatedRoute);

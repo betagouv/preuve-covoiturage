@@ -4,11 +4,12 @@ import { Injectable } from '@angular/core';
 import { OperatorApiService } from './operator-api.service';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { OperatorListInterface } from '~/core/entities/api/shared/operator/common/interfaces/OperatorListInterface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class OperatorStoreService extends CrudStore<Operator, Operator, any, OperatorApiService> {
+export class OperatorStoreService extends CrudStore<Operator, OperatorListInterface, any, OperatorApiService> {
   constructor(protected operatorApi: OperatorApiService) {
     super(operatorApi, Operator);
   }
