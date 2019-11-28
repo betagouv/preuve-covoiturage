@@ -1,5 +1,10 @@
 import { CampaignInterface } from './common/interfaces/CampaignInterface';
-export type ParamsInterface = void;
+
+export interface ParamsInterface {
+  territory_id?: number | null;
+  status?: string;
+}
+
 export type ResultInterface = CampaignInterface[];
 
 export const handlerConfig = {
