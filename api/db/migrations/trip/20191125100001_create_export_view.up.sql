@@ -1,5 +1,8 @@
-CREATE MATERIALIZED VIEW trip.opendata_list AS (
+CREATE MATERIALIZED VIEW trip.export AS (
   SELECT
+    cpp.operator_id as operator_id,
+    tis.territory_id as start_territory_id,
+    tie.territory_id as end_territory_id,
     cpp.acquisition_id::varchar as journey_id,
     cpp.trip_id as trip_id,
     cpp.datetime as journey_start_datetime,
@@ -26,6 +29,8 @@ CREATE MATERIALIZED VIEW trip.opendata_list AS (
     cip.over_18 as passenger_over_18,
     cpp.seats as passenger_seats
   FROM carpool.carpools as cpp
+  JOIN territory.insee AS tis ON tis._id = cpp.start_insee
+  JOIN territory.insee AS tie ON tie._id = cpp.end_insee
   JOIN common.insee AS cis ON cis._id = cpp.start_insee
   JOIN common.insee AS cie ON cie._id = cpp.end_insee
   JOIN carpool.carpools AS cpd ON cpd.acquisition_id = cpp.acquisition_id AND cpd.is_driver = true
@@ -33,3 +38,8 @@ CREATE MATERIALIZED VIEW trip.opendata_list AS (
   JOIN carpool.identities AS cid ON cid._id = cpd.identity_id
   WHERE cpp.is_driver = false
 );
+
+CREATE INDEX ON trip.export(operator_id);
+CREATE INDEX ON trip.export(start_territory_id);
+CREATE INDEX ON trip.export(end_territory_id);
+CREATE INDEX ON trip.export(journey_start_datetime);
