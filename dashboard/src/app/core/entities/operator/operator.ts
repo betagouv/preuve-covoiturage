@@ -11,6 +11,8 @@ import { IModel } from '~/core/entities/IModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { BaseModel } from '~/core/entities/BaseModel';
 import { IClone } from '~/core/entities/IClone';
+import { OperatorListInterface } from '~/core/entities/api/shared/operator/common/interfaces/OperatorListInterface';
+import { OperatorInterface } from '~/core/entities/api/shared/operator/common/interfaces/OperatorInterface';
 
 class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operator>, IClone<Operator> {
   public _id: number;
@@ -25,6 +27,9 @@ class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operat
   public contacts?: Contacts;
 
   public bank?: Bank;
+
+  cgu_accepted_at?: Date;
+  cgu_accepted_by?: number;
 
   constructor(data?: {
     _id: number;

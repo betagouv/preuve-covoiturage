@@ -7,6 +7,7 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
+import { TerritoryInterface } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
   providedIn: 'root',

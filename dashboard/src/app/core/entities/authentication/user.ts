@@ -7,6 +7,8 @@ import { IFormModel } from '~/core/entities/IFormModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { IClone } from '~/core/entities/IClone';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
+import { UserBaseInterface } from '~/core/entities/api/shared/user/common/interfaces/UserBaseInterface';
+import { UserFullInterface } from '~/core/entities/api/shared/user/common/interfaces/UserFullInterface';
 
 export class BaseUser implements IModel {
   public _id: number;
@@ -25,7 +27,13 @@ export class BaseUser implements IModel {
 }
 
 export class User extends BaseUser
-  implements IFormModel<any>, IMapModel<User, UserInterface>, IClone<User>, UserPatchInterface {
+  implements
+    IFormModel<any>,
+    IMapModel<User, UserInterface>,
+    IClone<User>,
+    UserPatchInterface,
+    UserBaseInterface,
+    UserInterface {
   public permissions: UserPermissionsType;
 
   static formValueToUserPatch(formValues): UserPatchInterface {
