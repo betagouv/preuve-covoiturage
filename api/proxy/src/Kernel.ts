@@ -19,6 +19,7 @@ import { MapIdCommand } from './commands/MapIdCommand';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 import { GeoFetchCommand } from './commands/GeoFetchCommand';
+import { SyncMongoCommand } from './commands/SyncMongoCommand';
 
 @kernel({
   env: null,
@@ -37,6 +38,13 @@ import { GeoFetchCommand } from './commands/GeoFetchCommand';
     ...userBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [UpgradeJourneyCommand, ProcessJourneyCommand, MapIdCommand, MigrateInseeCommand, GeoFetchCommand],
+  commands: [
+    UpgradeJourneyCommand,
+    ProcessJourneyCommand,
+    MapIdCommand,
+    MigrateInseeCommand,
+    GeoFetchCommand,
+    SyncMongoCommand,
+  ],
 })
 export class Kernel extends BaseKernel {}
