@@ -2,7 +2,8 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs';
 import v4 from 'uuid/v4';
-import stringify from 'csv-stringify';
+import csvStringify from 'csv-stringify';
+
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { FileStorageProvider } from '@pdc/provider-file';
@@ -82,7 +83,7 @@ export class ExportAction extends Action {
   }
 
   protected async getStringifier(fd: fs.promises.FileHandle) {
-    const stringifier = stringify({
+    const stringifier = csvStringify({
       delimiter: ';',
       header: true,
       columns: [
@@ -116,7 +117,8 @@ export class ExportAction extends Action {
 
     stringifier.on('readable', async () => {
       let row;
-      while ((row = stringifier.read())) {
+      // tslint:disable-next-line: no-conditional-assignment
+      while (null !== (row = stringifier.read())) {
         await fd.appendFile(row);
       }
     });

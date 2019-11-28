@@ -4,7 +4,11 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
-import { ChannelTransportMiddleware, ScopeToSelfMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
+import {
+  ChannelTransportMiddleware,
+  ScopeToSelfMiddleware,
+  ChannelServiceWhitelistMiddleware,
+} from '@pdc/provider-middleware';
 
 import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
@@ -25,17 +29,8 @@ import { ExportAction } from './actions/ExportAction';
     ['channel.transport', ChannelTransportMiddleware],
     ['scopeIt', ScopeToSelfMiddleware],
   ],
-  connections: [
-    [RedisConnection, 'connections.redis'],
-    [PostgresConnection, 'connections.postgres'],
-  ],
-  handlers: [
-    ListAction,
-    PublicStatsAction,
-    StatsAction,
-    RefreshAction,
-    ExportAction,
-  ],
+  connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
+  handlers: [ListAction, PublicStatsAction, StatsAction, RefreshAction, ExportAction],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {

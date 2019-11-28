@@ -69,7 +69,7 @@ describe('Company repository provider', () => {
     expect(res.rows[0].updated_at).to.be.greaterThan(data.updated_at);
   });
 
-  it('should return a company on known siret', async() => {
+  it('should return a company on known siret', async () => {
     const res = await provider.find('12000101100010');
     expect(res).to.have.all.keys([
       'siret',
@@ -89,20 +89,44 @@ describe('Company repository provider', () => {
       'updated_at',
     ]);
 
-    expect(res.siret).to.be.a('string').that.eq(data.siret);
-    expect(res.siren).to.be.a('string').that.eq(data.siren);
-    expect(res.nic).to.be.a('string').that.eq(data.nic);
-    expect(res.legal_name).to.be.a('string').that.eq(data.legal_name);
-    expect(res.company_naf_code).to.be.a('string').that.eq(data.company_naf_code);
-    expect(res.establishment_naf_code).to.be.a('string').that.eq(data.establishment_naf_code);
-    expect(res.legal_nature_code).to.be.a('string').that.eq(data.legal_nature_code);
-    expect(res.legal_nature_label).to.be.a('string').that.eq(data.legal_nature_label);
+    expect(res.siret)
+      .to.be.a('string')
+      .that.eq(data.siret);
+    expect(res.siren)
+      .to.be.a('string')
+      .that.eq(data.siren);
+    expect(res.nic)
+      .to.be.a('string')
+      .that.eq(data.nic);
+    expect(res.legal_name)
+      .to.be.a('string')
+      .that.eq(data.legal_name);
+    expect(res.company_naf_code)
+      .to.be.a('string')
+      .that.eq(data.company_naf_code);
+    expect(res.establishment_naf_code)
+      .to.be.a('string')
+      .that.eq(data.establishment_naf_code);
+    expect(res.legal_nature_code)
+      .to.be.a('string')
+      .that.eq(data.legal_nature_code);
+    expect(res.legal_nature_label)
+      .to.be.a('string')
+      .that.eq(data.legal_nature_label);
     expect(res.nonprofit_code).to.be.null;
     expect(res.intra_vat).to.be.null; // FIXME
-    expect(res.address).to.be.a('string').that.eq(data.address);
-    expect(res.lon).to.be.a('number').that.eq(data.lon);
-    expect(res.lat).to.be.a('number').that.eq(data.lat);
-    expect(res.headquarter).to.be.a('boolean').that.eq(!true);
+    expect(res.address)
+      .to.be.a('string')
+      .that.eq(data.address);
+    expect(res.lon)
+      .to.be.a('number')
+      .that.eq(data.lon);
+    expect(res.lat)
+      .to.be.a('number')
+      .that.eq(data.lat);
+    expect(res.headquarter)
+      .to.be.a('boolean')
+      .that.eq(!true);
     expect(res.updated_at).to.be.a('date');
   });
 });
