@@ -11,7 +11,7 @@ import { FileStorageProvider } from '@pdc/provider-file';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { alias } from '../shared/trip/list.schema';
+import { alias } from '../shared/trip/export.schema';
 
 @handler(handlerConfig)
 export class ExportAction extends Action {
@@ -55,6 +55,7 @@ export class ExportAction extends Action {
     const end = (params && params.date && params.date.end) || new Date();
 
     const cursor = await this.pg.searchWithCursor({
+      ...params,
       date: {
         start,
         end,
@@ -78,7 +79,8 @@ export class ExportAction extends Action {
     stringifier.end();
     await fd.close();
 
-    const { url, password } = await this.file.copy(filename);
+    const [url, password] = ['', ''];
+    // const { url, password } = await this.file.copy(filename);
     return { url, password };
   }
 
@@ -119,6 +121,7 @@ export class ExportAction extends Action {
       let row;
       // tslint:disable-next-line: no-conditional-assignment
       while (null !== (row = stringifier.read())) {
+        console.log(row);
         await fd.appendFile(row);
       }
     });
