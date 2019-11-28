@@ -17,11 +17,7 @@ export abstract class CrudStore<
   EntityT extends IModel & IFormModel<FormModelT> & IClone<EntityT> & IMapModel<EntityT>,
   EntityListT extends IModel = EntityT,
   IPatchT = any,
-  JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT, PatchParams<IPatchT>> = JsonRpcCrud<
-    EntityT,
-    EntityListT,
-    PatchParams<IPatchT>
-  >,
+  JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT, IPatchT> = JsonRpcCrud<EntityT, EntityListT, IPatchT>,
   FormModelT = any
 > {
   protected entitiesSubject = new BehaviorSubject<EntityListT[]>([]);
@@ -127,27 +123,24 @@ export abstract class CrudStore<
       .subscribe((entity) => this.entitySubject.next(new this.modelType().map(entity)));
   }
 
-  deleteSelected() {
+  deleteSelected(): Observable<boolean> {
     if (this.entitySubject.value && this.entitySubject.value._id) {
-      this.deleteById(this.entitySubject.value._id);
+      return this.deleteById(this.entitySubject.value._id);
     }
   }
 
-  delete(entity: EntityT) {
-    this.deleteById(entity._id);
+  delete(entity: EntityT): Observable<boolean> {
+    return this.deleteById(entity._id);
   }
 
-  protected deleteById(id: number) {
+  protected deleteById(id: number): Observable<boolean> {
     this._loadCount += 1;
-    this.rpcCrud
-      .delete(id)
-      .pipe(
-        takeUntil(this.dismissDeleteSubject),
-        finalize(() => {
-          if (this._loadCount > 0) this._loadCount -= 1;
-        }),
-      )
-      .subscribe((item) => {
+    return this.rpcCrud.delete(id).pipe(
+      takeUntil(this.dismissDeleteSubject),
+      finalize(() => {
+        if (this._loadCount > 0) this._loadCount -= 1;
+      }),
+      tap((item) => {
         if (item.success) {
           const list = [...this.entitiesSubject.value];
           const ind = list.findIndex((ent) => ent._id === item._id);
@@ -159,7 +152,9 @@ export abstract class CrudStore<
             this.entitySubject.next(null);
           }
         }
-      });
+      }),
+      map(() => true),
+    );
   }
 
   updateSelected(formValues: FormModelT): Observable<EntityT> {
@@ -183,7 +178,7 @@ export abstract class CrudStore<
   patchSelected(patchValues: IPatchT): Observable<EntityT> {
     if (!this.entitySubject.value) throw new Error('try to patch a non selected entity');
 
-    return this.rpcCrud.patch({ _id: this.entitySubject.value._id, patch: patchValues }).pipe(
+    return this.rpcCrud.patch(this.entitySubject.value._id, patchValues).pipe(
       takeUntil(this.dismissUpdateCreateSubject),
       finalize(() => {
         if (this._loadCount > 0) this._loadCount -= 1;

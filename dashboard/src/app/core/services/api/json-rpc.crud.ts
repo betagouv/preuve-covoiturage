@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { JsonRPC, JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { IModel } from '~/core/entities/IModel';
+import { PatchParams } from '~/core/services/store/crud-store';
 
 export interface DeleteResponse {
   _id: number;
@@ -70,8 +71,13 @@ export class JsonRpcCrud<
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  patch(params: IPatchT) {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.PATCH}`, params);
+  patch(id: number, patch: IPatchT) {
+    const patchParams: PatchParams<IPatchT> = {
+      patch,
+      _id: id,
+    };
+
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:${CrudActions.PATCH}`, patchParams);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 

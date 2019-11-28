@@ -6,10 +6,11 @@ import { MatPaginator } from '@angular/material';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
-import { UserService } from '~/modules/user/services/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { UserApiService } from '~/modules/user/services/user-api.service';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 @Component({
   selector: 'app-users',
@@ -31,13 +32,18 @@ export class UsersComponent extends DestroyObservable implements OnInit {
 
   constructor(
     public authenticationService: AuthenticationService,
-    public userService: UserService,
+    public userStoreService: UserStoreService,
     private fb: FormBuilder,
   ) {
     super();
   }
 
   ngOnInit() {
+    this.userStoreService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
+      this.users = users;
+      this.usersToShow = users;
+    });
+
     this.loadUsers();
     this.initSearchForm();
 
@@ -46,7 +52,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
 
   ngAfterViewInit() {
     merge(
-      this.userService.entities$,
+      this.userStoreService.entities$,
       this.searchFilters.valueChanges.pipe(
         debounceTime(300),
         tap(() => (this.paginator.pageIndex = 0)),
@@ -139,14 +145,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   }
 
   private loadUsers() {
-    this.userService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
-    this.userService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
-      this.users = users;
-      this.usersToShow = users;
-    });
+    this.userStoreService.loadList();
   }
 
   private initSearchForm() {
