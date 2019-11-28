@@ -5,6 +5,7 @@ export interface ParamsInterface {
   templateId?: string;
   organization?: string;
   link?: string;
+  [k: string]: any;
 }
 
 export type ResultInterface = void;
