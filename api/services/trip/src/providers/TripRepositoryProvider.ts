@@ -63,11 +63,25 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
             case 'status':
               throw new Error('Unimplemented');
+
             case 'date':
+              if (filter.value.start && filter.value.end) {
+                return {
+                  text: '($#::timestamp <= datetime AND datetime <= $#::timestamp)',
+                  values: [filter.value.start, filter.value.end],
+                };
+              }
+              if (filter.value.start) {
+                return {
+                  text: '$#::timestamp <= datetime',
+                  values: [filter.value.start],
+                };
+              }
               return {
-                text: '(datetime BETWEEN $#::timestamp AND $#::timestamp)',
-                values: [filter.value.start, filter.value.end],
+                text: 'datetime <= $#::timestamp',
+                values: [filter.value.end],
               };
+
             case 'ranks':
               return {
                 text: 'operator_class = ANY ($#::text[])',

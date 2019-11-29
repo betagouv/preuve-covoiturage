@@ -43,8 +43,10 @@ export class FilterService {
     if (filter.date.start === null && filter.date.end === null) {
       delete filter.date;
     } else {
-      if (filter.date.start) filter.date.start = filter.date.start.toDate();
-      if (filter.date.end) filter.date.end = filter.date.end.toDate();
+      // set start at the beginning of the day and end at the end.
+      // DO NOT convert to UTC to avoid days overlapping!
+      if (filter.date.start) filter.date.start = `${filter.date.start.toISOString(true).substr(0, 10)}T00:00:00Z`;
+      if (filter.date.end) filter.date.end = `${filter.date.end.toISOString(true).substr(0, 10)}T23:59:59Z`;
     }
 
     if (filter.hour.start === null && filter.hour.end === null) {
