@@ -27,7 +27,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): {
     text: string;
     values: any[];
-  } {
+  } | null {
     const filtersToProcess = [
       'territory_id',
       'operator_id',
@@ -53,12 +53,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: '(start_territory_id = ANY ($#::text[]) OR end_territory_id = ANY ($#::text[]))',
+                text: '(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))',
                 values: [filter.value, filter.value],
               };
             case 'operator_id':
               return {
-                text: 'operator_id = ANY ($#::text[])',
+                text: 'operator_id = ANY ($#::int[])',
                 values: [filter.value],
               };
             case 'status':
@@ -92,6 +92,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
             case 'campaign_id':
               throw new Error('Unimplemented');
+            // TODO use INSEE codes here (coming from the frontend)
             case 'towns':
               const towns = filter.value.map((v: string) => `%${v}%`);
               return {
@@ -124,7 +125,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         );
     }
 
-    // orderedFilters.text.push('is_driver = false');
+    if (!orderedFilters.text.length) return null;
 
     const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
     const whereClausesValues = orderedFilters.values;
@@ -158,13 +159,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       // count(*) FILTER (WHERE array_length(incentives, 1) > 0)
     };
 
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
-      if (idx === origin.length - 1) {
-        return `${acc}${current}`;
-      }
-
-      return `${acc}${current}$${idx + 1}`;
-    }, '');
+    query.text = this.numberPlaceholders(query.text);
 
     const result = await this.connection.getClient().query(query);
     return result.rows.map(this.castTypes);
@@ -238,6 +233,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
   ): Promise<ResultWithPagination<LightTripInterface>> {
     const { limit, skip } = params;
     const where = this.buildWhereClauses(params);
+
     const query = {
       text: `
         SELECT
@@ -247,11 +243,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           end_town,
           datetime as start_datetime,
           '0'::int as incentives,
-          operator_id,
+          operator_id::int,
           operator_class
         FROM ${this.table}
         ${where ? where.text : ''}
-        ORDER BY datetime DESC
+        ORDER BY start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer
       `,
@@ -259,13 +255,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
 
     // incentives
-    query.text = query.text.split('$#').reduce((acc, current, idx, origin) => {
-      if (idx === origin.length - 1) {
-        return `${acc}${current}`;
-      }
-
-      return `${acc}${current}$${idx + 1}`;
-    }, '');
+    query.text = this.numberPlaceholders(query.text);
 
     const result = await this.connection.getClient().query(query);
 
@@ -294,6 +284,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         pagination,
       },
     };
+  }
+
+  // replace $# in query by $1, $2, ...
+  private numberPlaceholders(str: string): string {
+    return str
+      .split('$#')
+      .reduce(
+        (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
+        '',
+      );
   }
 
   private castTypes(row: any): any {

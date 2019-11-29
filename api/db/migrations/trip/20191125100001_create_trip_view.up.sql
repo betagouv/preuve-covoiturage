@@ -3,7 +3,7 @@ CREATE MATERIALIZED VIEW trip.list AS (
     cp.trip_id as trip_id,
     cp.start_insee as start_insee,
     cp.end_insee as end_insee,
-    cp.operator_id as operator_id,
+    cp.operator_id::int as operator_id,
     cp.operator_class as operator_class,
 
     cp.datetime as datetime,
@@ -11,9 +11,9 @@ CREATE MATERIALIZED VIEW trip.list AS (
     extract(hour from cp.datetime) as dayhour,
 
     cis.town as start_town,
-    tis.territory_id as start_territory_id,
+    tis.territory_id::int as start_territory_id,
     cie.town as end_town,
-    tie.territory_id as end_territory_id,
+    tie.territory_id::int as end_territory_id,
     (CASE WHEN cp.distance <> null THEN cp.distance ELSE (cp.meta::json->>'calc_distance')::int END) as distance,
     cp.seats as seats
   FROM carpool.carpools as cp

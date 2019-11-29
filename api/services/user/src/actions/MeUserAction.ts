@@ -1,5 +1,6 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, UnauthorizedException } from '@ilos/common';
+import { get } from 'lodash';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/me.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
@@ -18,7 +19,7 @@ export class MeUserAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
-    const _id = context.call && context.call.user && context.call.user._id ? context.call.user._id : null;
+    const _id = get(context, 'call.user._id', null);
     if (!_id) {
       throw new UnauthorizedException('No connected user');
     }
