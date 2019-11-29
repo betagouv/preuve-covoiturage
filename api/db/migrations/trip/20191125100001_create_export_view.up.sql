@@ -21,8 +21,8 @@ CREATE MATERIALIZED VIEW trip.export AS (
     cie.town as journey_end_town,
     null as journey_end_epci,  -- TODO
     cie.country as journey_end_country,
-    (CASE WHEN cpp.distance <> null THEN cpp.distance ELSE (cpp.meta::json->'calc_distance')::text::int END) as journey_distance,
-    (CASE WHEN cpp.duration <> null THEN cpp.duration ELSE (cpp.meta::json->'calc_duration')::text::int END) as journey_duration,
+    (CASE WHEN cpp.distance <> null THEN cpp.distance ELSE (cpp.meta::json->>'calc_distance')::int END) as journey_distance,
+    (CASE WHEN cpp.duration <> null THEN cpp.duration ELSE (cpp.meta::json->>'calc_duration')::int END) as journey_duration,
     (CASE WHEN cid.travel_pass_name <> null THEN '1' ELSE '0' END)::boolean as driver_card,
     (CASE WHEN cip.travel_pass_name <> null THEN '1' ELSE '0' END)::boolean as passenger_card,
     cpp.operator_class as operator_class, 
