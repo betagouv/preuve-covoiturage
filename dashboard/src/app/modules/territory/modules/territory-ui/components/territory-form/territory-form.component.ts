@@ -18,6 +18,7 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 
 @Component({
   selector: 'app-territory-form',
@@ -36,6 +37,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   fullFormMode = false;
 
   private editedId: number;
+  private companyDetails: CompanyInterface;
 
   constructor(
     public authService: AuthenticationService,
@@ -66,8 +68,15 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const territory = new Territory();
 
     if (this.editedId) {
+      const formValues = {
+        ...this.territoryForm.value,
+        company: {
+          ...this.companyDetails,
+          siret: this.territoryForm.value.company.siret,
+        },
+      };
       const patch$ = this.fullFormMode
-        ? this.territoryStore.updateSelected(this.territoryForm.value)
+        ? this.territoryStore.updateSelected(formValues)
         : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
 
       patch$.subscribe(
@@ -142,6 +151,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           throttleTime(300),
           tap(() => {
             stopFindCompany.next();
+            this.companyDetails = {
+              naf_entreprise: '',
+              nature_juridique: '',
+              rna: '',
+              vat_intra: '',
+            };
+
             companyFormGroup.patchValue({
               naf_entreprise: '',
               nature_juridique: '',
@@ -165,12 +181,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
             .subscribe((company) => {
               if (company) {
-                companyFormGroup.patchValue({
+                this.companyDetails = {
                   naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
                   nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
                   rna: company.nonprofit_code ? company.nonprofit_code : '',
                   vat_intra: company.intra_vat ? company.intra_vat : '',
-                });
+                };
+                companyFormGroup.patchValue(this.companyDetails);
               }
             });
         });

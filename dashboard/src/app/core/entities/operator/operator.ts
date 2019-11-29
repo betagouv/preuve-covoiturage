@@ -1,5 +1,5 @@
 /* tslint:disable:variable-name*/
-import { hasOneNotEmptyProperty } from '~/core/entities/utils';
+import { assignOrDeleteProperties, assignOrDeleteProperty, hasOneNotEmptyProperty } from '~/core/entities/utils';
 
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IModel } from '~/core/entities/IModel';
@@ -52,9 +52,10 @@ class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operat
     super.map(data);
     this.name = data.name;
     this.legal_name = data.legal_name;
-    this.siret = data.siret;
     this.updateFromFormValues(data);
     this._id = data._id;
+    this.siret = data.siret;
+
     return this;
   }
 
@@ -78,26 +79,14 @@ class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operat
   }
 
   updateFromFormValues(formValues: any): void {
-    this._id = formValues._id;
-    this.name = formValues.name;
-    this.legal_name = formValues.legal_name;
-    this.siret = formValues.siret;
+    assignOrDeleteProperties(formValues, this, ['name', 'legal_name']);
 
-    if (hasOneNotEmptyProperty(formValues.company)) {
-      this.company = new Company(formValues.company);
-    }
+    this.siret = formValues.company && formValues.company.siret ? formValues.company.siret : '';
 
-    if (hasOneNotEmptyProperty(formValues.address)) {
-      this.address = new Address(formValues.address);
-    }
-
-    if (hasOneNotEmptyProperty(formValues.contacts)) {
-      this.contacts = new Contacts(formValues.contacts);
-    }
-
-    if (hasOneNotEmptyProperty(formValues.bank)) {
-      this.bank = new Bank(formValues.bank);
-    }
+    assignOrDeleteProperty(formValues, this, 'company', (data) => new Company(data.company));
+    assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
+    assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
+    assignOrDeleteProperty(formValues, this, 'bank', (data) => new Bank(data.cgu));
   }
 
   clone(): Operator {

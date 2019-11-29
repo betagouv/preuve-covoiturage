@@ -17,6 +17,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
+import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 
 @Component({
   selector: 'app-operator-form',
@@ -36,6 +37,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
   fullFormMode = false;
   private editedOperatorId: number;
+  private companyDetails: CompanyInterface;
 
   constructor(
     public authService: AuthenticationService,
@@ -70,7 +72,13 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
     if (this.editedOperatorId) {
       const patch$ = this.fullFormMode
-        ? this._operatorStoreService.updateSelected(this.operatorForm.value)
+        ? this._operatorStoreService.updateSelected({
+            ...this.operatorForm.value,
+            company: {
+              ...this.companyDetails,
+              siret: this.operatorForm.value.company.siret,
+            },
+          })
         : this._operatorStoreService.patchContact(this.operatorForm.value.contacts, this.editedOperatorId);
       patch$.subscribe(
         (modifiedOperator) => {
@@ -168,12 +176,13 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
           throttleTime(300),
           tap(() => {
             stopFindCompany.next();
-            companyFormGroup.patchValue({
+            this.companyDetails = {
               naf_entreprise: '',
               nature_juridique: '',
               rna: '',
               vat_intra: '',
-            });
+            };
+            companyFormGroup.patchValue(this.companyDetails);
           }),
           filter((value: string) => value.length === 14 && value.match(/[0-9]{14}/) !== null),
           takeUntil(this.destroy$),
@@ -191,12 +200,13 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
             .subscribe((company) => {
               if (company) {
-                companyFormGroup.patchValue({
+                this.companyDetails = {
                   naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
                   nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
                   rna: company.nonprofit_code ? company.nonprofit_code : '',
                   vat_intra: company.intra_vat ? company.intra_vat : '',
-                });
+                };
+                companyFormGroup.patchValue(this.companyDetails);
               }
             });
         });
