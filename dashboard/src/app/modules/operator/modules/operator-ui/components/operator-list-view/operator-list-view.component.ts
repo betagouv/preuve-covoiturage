@@ -30,18 +30,18 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  constructor(private _operatorStoreService: OperatorStoreService) {
+  constructor(public operatorStoreService: OperatorStoreService) {
     super();
   }
 
   ngOnInit() {
     this.loadOperators();
-    this.operators$ = this._operatorStoreService.entities$.pipe(
+    this.operators$ = this.operatorStoreService.entities$.pipe(
       filter((data) => !!data),
       tap((operators) => (this.operators = operators)),
     );
 
-    this._operatorStoreService.entity$.subscribe((entity) => {
+    this.operatorStoreService.entity$.subscribe((entity) => {
       this.showForm = !!entity;
     });
 
@@ -85,7 +85,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   pipeEdit(operator: any) {
     this.isCreating = false;
-    this._operatorStoreService.select(operator);
+    this.operatorStoreService.select(operator);
   }
 
   close() {
@@ -95,10 +95,10 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   showCreationForm(): void {
     // set new entity for form
-    this._operatorStoreService.selectNew();
+    this.operatorStoreService.selectNew();
   }
 
   private loadOperators() {
-    this._operatorStoreService.loadList();
+    this.operatorStoreService.loadList();
   }
 }
