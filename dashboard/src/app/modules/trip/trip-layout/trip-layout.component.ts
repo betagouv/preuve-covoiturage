@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { filter, takeUntil } from 'rxjs/operators';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
