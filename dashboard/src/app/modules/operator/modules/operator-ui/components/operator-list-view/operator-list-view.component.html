@@ -29,7 +29,7 @@
   <app-operator-form
     [showForm]="showForm"
     [closable]="true"
-    [operator]="operator$ | async"
+    [operator]="_operatorStoreService.entity$ | async"
     (close)="close()"
   ></app-operator-form>
 </div>

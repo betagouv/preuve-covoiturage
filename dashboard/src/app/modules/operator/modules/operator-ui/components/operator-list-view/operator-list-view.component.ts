@@ -40,6 +40,11 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
       filter((data) => !!data),
       tap((operators) => (this.operators = operators)),
     );
+
+    this._operatorStoreService.entity$.subscribe((entity) => {
+      this.showForm = !!entity;
+    });
+
     // this._operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
     //   this.operators = operators;
     // });
