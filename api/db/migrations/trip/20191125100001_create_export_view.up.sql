@@ -9,7 +9,7 @@ CREATE MATERIALIZED VIEW trip.export AS (
     trunc(ST_X(cpp.start_position::geometry)::numeric, cis.density::int - 1) as journey_start_lat,
     trunc(ST_Y(cpp.start_position::geometry)::numeric, cis.density::int - 1) as journey_start_lon,
     cpp.start_insee as journey_start_insee,
-    array_agg(cis.postcodes) as journey_start_postcodes,
+    cis.postcodes[0] as journey_start_postcode,
     cis.town as journey_start_town,
     null as journey_start_epci, -- TODO
     cis.country as journey_start_country,
@@ -17,7 +17,7 @@ CREATE MATERIALIZED VIEW trip.export AS (
     trunc(ST_X(cpp.end_position::geometry)::numeric, cie.density::int - 1) as journey_end_lat,
     trunc(ST_Y(cpp.end_position::geometry)::numeric, cie.density::int - 1) as journey_end_lon,
     cpp.end_insee as journey_end_insee,
-    array_agg(cie.postcodes) journey_end_postcodes,
+    cie.postcodes[0] as journey_end_postcode,
     cie.town as journey_end_town,
     null as journey_end_epci,  -- TODO
     cie.country as journey_end_country,
