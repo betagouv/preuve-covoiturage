@@ -1,13 +1,13 @@
-import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { Territory } from '~/core/entities/territory/territory';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs/operators';
+
+import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
+import { Territory } from '~/core/entities/territory/territory';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
-import { TerritoryInterface } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryInterface';
 
 @Injectable({
   providedIn: 'root',

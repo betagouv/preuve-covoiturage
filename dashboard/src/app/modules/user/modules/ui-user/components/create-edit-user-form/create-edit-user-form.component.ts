@@ -1,14 +1,14 @@
+import { filter, takeUntil } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { USER_ROLES, USER_ROLES_FR, userGroupRole, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { USER_ROLES, USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
-import { filter, takeUntil } from 'rxjs/operators';
-import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 
 @Component({
   selector: 'app-create-edit-user-form',

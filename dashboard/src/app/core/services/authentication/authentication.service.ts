@@ -1,6 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { first, map, shareReplay, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -11,11 +11,11 @@ import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { UserApiService } from '~/modules/user/services/user-api.service';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
 import { JsonRPCService } from '../api/json-rpc.service';
-import { UserApiService } from '~/modules/user/services/user-api.service';
-import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 @Injectable({
   providedIn: 'root',

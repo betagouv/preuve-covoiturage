@@ -2,7 +2,6 @@ import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
 /* tslint:disable:variable-name */
 import { Contact } from './contact';
-import { ContactsInterface } from '~/core/entities/api/shared/common/interfaces/ContactsInterface';
 
 export class Contacts {
   gdpr_dpo?: Contact;

@@ -1,10 +1,11 @@
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+
 import { CrudStore } from '~/core/services/store/crud-store';
 import { Contacts, Operator } from '~/core/entities/operator/operator';
-import { Injectable } from '@angular/core';
+
 import { OperatorApiService } from './operator-api.service';
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { OperatorListInterface } from '~/core/entities/api/shared/operator/common/interfaces/OperatorListInterface';
 
 @Injectable({
   providedIn: 'root',

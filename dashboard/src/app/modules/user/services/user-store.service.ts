@@ -1,9 +1,8 @@
-import { CrudStore } from '~/core/services/store/crud-store';
 import { Injectable } from '@angular/core';
+
+import { CrudStore } from '~/core/services/store/crud-store';
 import { UserApiService } from '~/modules/user/services/user-api.service';
 import { User } from '~/core/entities/authentication/user';
-import { Operator } from '~/core/entities/operator/operator';
-import { ParamsInterface } from '~/core/entities/api/shared/user/patch.contract';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 
 @Injectable({

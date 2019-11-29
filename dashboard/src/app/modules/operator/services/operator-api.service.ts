@@ -1,13 +1,13 @@
-import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { Operator } from '~/core/entities/operator/operator';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs/operators';
+
+import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
+import { Operator } from '~/core/entities/operator/operator';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
 import { ParamsInterface } from '~/core/entities/api/shared/operator/patchContacts.contract';
-import { OperatorListInterface } from '~/core/entities/api/shared/operator/common/interfaces/OperatorListInterface';
 
 @Injectable({
   providedIn: 'root',

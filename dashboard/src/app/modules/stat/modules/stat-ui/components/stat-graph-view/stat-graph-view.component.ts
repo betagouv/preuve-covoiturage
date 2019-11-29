@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { DestroyObservable } from '~/core/components/destroy-observable';

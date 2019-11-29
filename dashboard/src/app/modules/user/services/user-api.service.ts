@@ -1,15 +1,14 @@
-import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Injectable } from '@angular/core';
-import { User } from '~/core/entities/authentication/user';
 import { Observable } from 'rxjs';
-import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { map, shareReplay } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
+import { User } from '~/core/entities/authentication/user';
+import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
-import { UserInterface } from '~/core/entities/api/shared/user/common/interfaces/UserInterface';
-import { UserBaseInterface } from '~/core/entities/api/shared/user/common/interfaces/UserBaseInterface';
 
 @Injectable({
   providedIn: 'root',

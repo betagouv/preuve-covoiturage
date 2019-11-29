@@ -2,13 +2,13 @@ import { userGroupRole, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profileInterface';
 
-import { IModel } from '../IModel';
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { IClone } from '~/core/entities/IClone';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 import { UserBaseInterface } from '~/core/entities/api/shared/user/common/interfaces/UserBaseInterface';
-import { UserFullInterface } from '~/core/entities/api/shared/user/common/interfaces/UserFullInterface';
+
+import { IModel } from '../IModel';
 
 export class BaseUser implements IModel {
   public _id: number;

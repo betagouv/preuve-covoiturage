@@ -1,18 +1,17 @@
 /* tslint:disable:variable-name*/
 import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
-import { Address } from '../shared/address';
-import { Bank } from '../shared/bank';
-import { CGU } from '../shared/cgu';
-import { Company } from '../shared/company';
-import { Contacts } from '../shared/contacts';
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IModel } from '~/core/entities/IModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { BaseModel } from '~/core/entities/BaseModel';
 import { IClone } from '~/core/entities/IClone';
-import { OperatorListInterface } from '~/core/entities/api/shared/operator/common/interfaces/OperatorListInterface';
-import { OperatorInterface } from '~/core/entities/api/shared/operator/common/interfaces/OperatorInterface';
+
+import { Address } from '../shared/address';
+import { Bank } from '../shared/bank';
+import { CGU } from '../shared/cgu';
+import { Company } from '../shared/company';
+import { Contacts } from '../shared/contacts';
 
 class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operator>, IClone<Operator> {
   public _id: number;
