@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { finalize, map, tap } from 'rxjs/operators';
@@ -13,7 +14,6 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 import { LightTrip } from '~/core/entities/trip/trip';
 import { ExportFilterInterface, ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
-import moment = require('moment');
 
 @Injectable({
   providedIn: 'root',
