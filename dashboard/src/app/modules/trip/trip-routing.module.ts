@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { TripExportComponent } from '~/modules/trip/modules/ui-trip/components/trip-export/trip-export.component';
+import { TripExportComponent } from '~/modules/trip/pages/trip-export/trip-export.component';
 
 import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
 import { TripMapsComponent } from './pages/trip-maps/trip-maps.component';

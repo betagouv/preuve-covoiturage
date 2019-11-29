@@ -63,6 +63,13 @@ export class TripService {
         end: moment(filter.date.end).toDate(),
       },
     };
+    const loggedUser = this._authService.user;
+    if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
+      params['territory_id'] = [loggedUser.territory_id];
+    }
+    if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
+      params['operator_id'] = [loggedUser.operator_id];
+    }
     const jsonRPCParam = new JsonRPCParam(`${this._method}:export`, params);
     return this._jsonRPC.callOne(jsonRPCParam);
   }
