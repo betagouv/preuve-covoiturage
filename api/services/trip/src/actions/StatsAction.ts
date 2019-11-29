@@ -1,6 +1,7 @@
 // tslint:disable:variable-name
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
+import { get } from 'lodash';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/stats.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
@@ -51,8 +52,8 @@ export class StatsAction extends Action {
     const finalParams = { ...params };
 
     finalParams.date = {
-      start: finalParams.date.start || new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
-      end: finalParams.date.end || new Date(),
+      start: get(finalParams, 'date.start', new Date(new Date().setFullYear(new Date().getFullYear() - 1))),
+      end: get(finalParams, 'date.end', new Date()),
     };
 
     return finalParams;

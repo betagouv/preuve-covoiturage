@@ -3,6 +3,6 @@ export interface StatInterface {
   distance: number;
   carpooles: number;
   trip: number;
-  trip_susidized: number;
+  trip_subsidized: number;
   operators: number;
 }
