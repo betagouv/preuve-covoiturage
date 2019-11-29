@@ -1,8 +1,14 @@
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { userGroupRole, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profileInterface';
 
 import { IModel } from '../IModel';
+import { IFormModel } from '~/core/entities/IFormModel';
+import { IMapModel } from '~/core/entities/IMapModel';
+import { IClone } from '~/core/entities/IClone';
+import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
+import { UserBaseInterface } from '~/core/entities/api/shared/user/common/interfaces/UserBaseInterface';
+import { UserFullInterface } from '~/core/entities/api/shared/user/common/interfaces/UserFullInterface';
 
 export class BaseUser implements IModel {
   public _id: number;
@@ -20,12 +26,29 @@ export class BaseUser implements IModel {
   public territory_id?: number;
 }
 
-export class User extends BaseUser {
+export class User extends BaseUser
+  implements
+    IFormModel,
+    IMapModel<User, UserInterface>,
+    IClone<User>,
+    UserPatchInterface,
+    UserBaseInterface,
+    UserInterface {
   public permissions: UserPermissionsType;
 
+  static formValueToUserPatch(formValues): UserPatchInterface {
+    const userPatch: UserPatchInterface = {};
+    if (formValues.email) userPatch.email = formValues.email;
+    if (formValues.firstname) userPatch.firstname = formValues.firstname;
+    if (formValues.lastname) userPatch.lastname = formValues.lastname;
+    if (formValues.phone) userPatch.phone = formValues.phone;
+    return userPatch;
+  }
+
   // todo: don't set default user
-  constructor(
-    obj: UserInterface = {
+  constructor(obj?: UserInterface) {
+    super();
+    this.map({
       _id: null,
       email: null,
       lastname: null,
@@ -34,17 +57,19 @@ export class User extends BaseUser {
       group: null,
       role: null,
       permissions: [],
-    },
-  ) {
-    super();
-    this._id = obj._id;
-    this.email = obj.email;
-    this.lastname = obj.lastname;
-    this.firstname = obj.firstname;
-    this.phone = obj.phone;
-    this.group = obj.group;
-    this.role = obj.role;
-    this.permissions = obj.permissions;
+      ...obj,
+    });
+  }
+
+  map(obj: UserInterface): User {
+    if (obj._id) this._id = obj._id;
+    if (obj.email) this.email = obj.email;
+    if (obj.lastname) this.lastname = obj.lastname;
+    if (obj.firstname) this.firstname = obj.firstname;
+    if (obj.phone) this.phone = obj.phone;
+    if (obj.group) this.group = obj.group;
+    if (obj.role) this.role = obj.role;
+    if (obj.permissions) this.permissions = obj.permissions;
 
     if (obj.operator_id) {
       this.operator_id = obj.operator_id;
@@ -52,5 +77,51 @@ export class User extends BaseUser {
     if (obj.territory_id) {
       this.territory_id = obj.territory_id;
     }
+
+    return this;
+  }
+
+  toFormValues(): any {
+    return {
+      firstname: this.firstname ? this.firstname : '',
+      lastname: this.lastname ? this.lastname : '',
+      email: this.email ? this.email : '',
+      phone: this.phone ? this.phone : '',
+      role: this.role ? this.role.split('.').pop() : '',
+      group: this.group,
+      territory_id: this.territory_id ? this.territory_id : null,
+      operator_id: this.operator_id ? this.operator_id : null,
+    };
+  }
+
+  updateFromFormValues(formVal: any): void {
+    this.map(formVal);
+
+    this.email = formVal.email;
+    this.lastname = formVal.lastname;
+    this.firstname = formVal.firstname;
+
+    formVal.phone = formVal.phone ? formVal.phone : null;
+
+    if (this._id) {
+      delete this.territory_id;
+      delete this.operator_id;
+      delete this.group;
+      delete this.role;
+      delete this.permissions;
+    } else {
+      if (formVal.territory_id) this.email = formVal.email;
+      else delete this.territory_id;
+      if (formVal.operator_id) this.operator_id = formVal.operator_id;
+      else delete this.operator_id;
+
+      this.role = <UserRoleEnum>`${userGroupRole[formVal.group]}.${formVal.role}`; // consolidate final role
+    }
+
+    delete formVal.group;
+  }
+
+  clone(): User {
+    return new User(this);
   }
 }

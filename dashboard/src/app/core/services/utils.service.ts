@@ -51,10 +51,11 @@ export class UtilsService {
     return hasNonEmpty;
   }
 
-  deleteEmptyProperties(object: any, maxRec = 3) {
+  deleteEmptyProperties<T>(object: T, maxRec = 3): T {
     const keys = Object.keys(object);
     for (const key of keys) {
       if (!object[key]) delete object[key];
     }
+    return object;
   }
 }

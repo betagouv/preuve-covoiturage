@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-
-import { UserService } from '~/modules/user/services/user.service';
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { USER_ROLES, USER_ROLES_FR, userGroupRole, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
+import { filter, takeUntil } from 'rxjs/operators';
+import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 
 @Component({
   selector: 'app-create-edit-user-form',
@@ -15,7 +16,6 @@ import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/us
   styleUrls: ['./create-edit-user-form.component.scss'],
 })
 export class CreateEditUserFormComponent extends DestroyObservable implements OnInit, OnChanges {
-  @Input() user: User;
   @Input() isCreating: boolean;
   @Input() groupEditable: boolean;
 
@@ -29,41 +29,14 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   public roles = USER_ROLES;
   public groups = USER_GROUPS;
 
-  constructor(private fb: FormBuilder, private _userService: UserService, private toastr: ToastrService) {
+  constructor(private fb: FormBuilder, private _userStoreService: UserStoreService, private toastr: ToastrService) {
     super();
   }
 
-  cleanUserForForm(user = this.user): User {
-    return {
-      firstname: '',
-      lastname: '',
-      email: '',
-      phone: '',
-      role: '',
-      permissions: [],
-      ...user,
-    };
-  }
-
-  updateFormValues() {
-    const user: User = this.cleanUserForForm();
-
+  updateFormValues(user: User) {
     this.updateValidators();
     if (this.createEditUserForm) {
-      this.createEditUserForm.setValue({
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        phone: user.phone ? user.phone : null,
-        role: user.role ? user.role.split('.').pop() : '', // take last part of the role
-        group: user.group,
-        territory_id: user.territory_id ? user.territory_id : null,
-        operator_id: user.operator_id ? user.operator_id : null,
-      });
-
-      // Object.keys(this.createEditUserForm.controls).forEach((key) => {
-      //   this.createEditUserForm.controls[key].setErrors(null);
-      // });
+      this.createEditUserForm.setValue(user.toFormValues());
     }
   }
 
@@ -71,16 +44,9 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     if (changes['isCreating'] || changes['groupEditable']) {
       this.updateValidators();
     }
-
-    if (changes['user']) {
-      this.updateFormValues();
-    }
   }
 
   ngOnInit() {
-    if (!this.user) {
-      this.user = new User();
-    }
     this.initForm();
   }
 
@@ -91,23 +57,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   public onUpdateUser(): void {
     this.isCreatingUpdating = true;
 
-    // clean data (avoid API validation issue for non operator | territories
-    const formVal = { ...this.createEditUserForm.value };
-    if (!formVal.territory_id) delete formVal.territory_id;
-    if (!formVal.operator_id) delete formVal.operator_id;
-    formVal.phone = formVal.phone ? formVal.phone : null;
-
-    if (!this.isCreating) {
-      delete formVal.territory_id;
-      delete formVal.operator_id;
-      delete formVal.group;
-      delete formVal.role;
-    } else {
-      formVal.role = `${userGroupRole[formVal.group]}.${formVal.role}`; // consolidate final role
-    }
-
-    delete formVal.group;
-
     const errM = (err) => {
       if (err.status === 409) this.toastr.error('Cette adresse email est déjà utilisée');
       this.isCreatingUpdating = false;
@@ -116,7 +65,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     };
 
     if (this.isCreating) {
-      this._userService.createList(formVal).subscribe((data) => {
+      this._userStoreService.create(this.createEditUserForm.value).subscribe((data) => {
         const user = data[0];
         this.isCreatingUpdating = false;
         this.toastr.success(
@@ -126,12 +75,17 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         this.onCloseEditUser.emit(user);
       }, errM);
     } else {
-      this._userService.patchList({ ...formVal, _id: this.user._id }).subscribe((data) => {
-        const user = data[0];
-        this.isCreatingUpdating = false;
-        this.toastr.success(`Les informations ont bien été modifiées`);
-        this.onCloseEditUser.emit(user);
-      }, errM);
+      const model = new User();
+      model._id = this._userStoreService.entity._id;
+
+      this._userStoreService
+        .patchSelected(User.formValueToUserPatch(this.createEditUserForm.value))
+        .subscribe((data) => {
+          const user = data[0];
+          this.isCreatingUpdating = false;
+          this.toastr.success(`Les informations ont bien été modifiées`);
+          this.onCloseEditUser.emit(user);
+        }, errM);
     }
   }
 
@@ -166,24 +120,26 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     this.updateValidators();
   }
 
-  private initForm(
-    isCreating: boolean = this.isCreating,
-    groupEditable: boolean = this.groupEditable,
-    user: User = this.user,
-  ): void {
-    const cleanUser = this.cleanUserForForm(user);
+  private initForm(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable): void {
+    // const cleanUser = user.toFormValues();
+
     this.createEditUserForm = this.fb.group({
-      firstname: [cleanUser.firstname, Validators.required],
-      lastname: [cleanUser.lastname, Validators.required],
-      email: [cleanUser.email, [Validators.required, Validators.pattern(REGEXP.email)]],
-      phone: [cleanUser.phone, Validators.pattern(REGEXP.phone)],
-      role: [cleanUser.role],
-      group: [cleanUser.group],
-      territory_id: [cleanUser.territory_id],
-      operator_id: [cleanUser.operator_id],
+      firstname: [null, Validators.required],
+      lastname: [null, Validators.required],
+      email: [null, [Validators.required, Validators.pattern(REGEXP.email)]],
+      phone: [null, Validators.pattern(REGEXP.phone)],
+      role: [null],
+      group: [null],
+      territory_id: [null],
+      operator_id: [null],
     });
 
-    this.updateFormValues();
+    this._userStoreService.entity$
+      .pipe(
+        filter((user) => !!user),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((currentUser) => this.updateFormValues(currentUser));
 
     this.createEditUserForm.valueChanges.subscribe((formVal) => {
       const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;

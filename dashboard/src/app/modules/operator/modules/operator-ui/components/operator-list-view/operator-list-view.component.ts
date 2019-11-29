@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, merge, of } from 'rxjs';
-import { debounceTime, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
+import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material';
 
 import { Operator } from '~/core/entities/operator/operator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
-import { OperatorService } from '../../../../services/operator.service';
+import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 
 @Component({
   selector: 'app-operator-list-view',
@@ -26,22 +26,28 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   operator$: BehaviorSubject<Operator> = new BehaviorSubject<Operator>(null);
 
+  operators$: Observable<Operator[]>;
+
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  constructor(private _operatorService: OperatorService) {
+  constructor(private _operatorStoreService: OperatorStoreService) {
     super();
   }
 
   ngOnInit() {
     this.loadOperators();
-    this._operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-      this.operators = operators;
-    });
+    this.operators$ = this._operatorStoreService.entities$.pipe(
+      filter((data) => !!data),
+      tap((operators) => (this.operators = operators)),
+    );
+    // this._operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+    //   this.operators = operators;
+    // });
   }
 
   ngAfterViewInit() {
     merge(
-      this._operatorService.operators$,
+      this.operators$,
       this._filterLiteral.pipe(
         debounceTime(300),
         tap(() => (this.paginator.pageIndex = 0)),
@@ -74,10 +80,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   pipeEdit(operator: any) {
     this.isCreating = false;
-    this._operatorService.get(operator._id).subscribe((newOperator) => {
-      this.operator$.next(newOperator);
-      this.showForm = true;
-    });
+    this._operatorStoreService.select(operator);
   }
 
   close() {
@@ -87,14 +90,10 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
 
   showCreationForm(): void {
     // set new entity for form
-    this._operatorService.setNewOperatorForCreation();
-    // this.isCreating = true;
-    this.showForm = true;
-
-    this.operator$.next(null);
+    this._operatorStoreService.selectNew();
   }
 
   private loadOperators() {
-    this._operatorService.load().subscribe();
+    this._operatorStoreService.loadList();
   }
 }

@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, Observable, of } from 'rxjs';
 import { MatButtonToggleGroup, MatPaginator } from '@angular/material';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
-import { UserService } from '~/modules/user/services/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 // tslint:disable-next-line: max-line-length
 import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 @Component({
   selector: 'app-all-users',
@@ -28,27 +28,37 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   userGroup = UserGroupEnum.TERRITORY;
   availableUserGroups = USER_GROUPS;
   PAGE_SIZE = 10;
-
   @ViewChild(CreateEditUserFormComponent, { static: false }) editForm: CreateEditUserFormComponent;
   @ViewChild(MatButtonToggleGroup, { static: false }) toggle: MatButtonToggleGroup;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+  users$: Observable<User[]>;
 
   public editedUser: User;
   canEditUser$: Observable<boolean>;
 
   constructor(
     public authenticationService: AuthenticationService,
-    public userService: UserService,
+    public userStoreService: UserStoreService,
     private fb: FormBuilder,
   ) {
     super();
   }
 
   ngOnInit() {
+    this.userStoreService.reset();
+    this.userStoreService.filterSubject.next({ limit: 1000 });
+
     // listen to user list
-    this.userService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
-      this.users = users;
-    });
+    this.users$ = this.userStoreService.entities$.pipe(tap((users) => (this.users = users)));
+
+    this.userStoreService.entity$
+      .pipe(
+        map((user) => !!user),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((editUserFormVisible) => (this.editUserFormVisible = editUserFormVisible));
+
     this.loadUsers();
     this.initSearchForm();
 
@@ -57,7 +67,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
 
   ngAfterViewInit() {
     merge(
-      this.userService.entities$,
+      this.users$,
       this.searchFilters.valueChanges.pipe(
         debounceTime(300),
         tap(() => (this.paginator.pageIndex = 0)),
@@ -80,6 +90,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
           );
           return of(this.usersFiltered.slice(start, end));
         }),
+        takeUntil(this.destroy$),
       )
       .subscribe((filteredUsers) => {
         this.usersToShow = filteredUsers;
@@ -90,18 +101,16 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     return this.usersFiltered && this.usersFiltered.filter((user) => user.group === this.userGroup).length;
   }
 
-  showEditForm(user: User = null) {
-    const emptyUserWithGroup = new User();
-    emptyUserWithGroup.group = this.userGroup;
-    this.editedUser =
-      user === null
-        ? emptyUserWithGroup // create a default user based on selected user group (top filter)
-        : new User(user);
+  showEditForm(user?: User) {
+    if (user) {
+      this.userStoreService.select(user);
+    } else {
+      const newUser = new User();
+      newUser.group = this.userGroup;
+      this.userStoreService.selectNew(newUser);
+    }
 
-    this.isCreatingUser = !this.editedUser._id;
-    this.editUserFormVisible = true;
-
-    // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
+    this.isCreatingUser = !user;
   }
 
   closeUserForm() {
@@ -113,7 +122,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   }
 
   private loadUsers() {
-    this.userService.load().subscribe();
+    this.userStoreService.loadList();
   }
 
   private initSearchForm() {

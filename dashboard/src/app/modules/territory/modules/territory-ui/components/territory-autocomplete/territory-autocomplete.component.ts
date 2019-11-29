@@ -5,9 +5,9 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 
 import { Territory } from '~/core/entities/territory/territory';
-import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territory-autocomplete',
@@ -29,7 +29,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   private focusDebounceTimer;
 
-  constructor(private territoryService: TerritoryService, private commonDataService: CommonDataService) {
+  constructor(private territoryApiService: TerritoryApiService, private commonDataService: CommonDataService) {
     super();
   }
 

@@ -3,7 +3,6 @@ import { takeUntil } from 'rxjs/operators';
 
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Operator } from '~/core/entities/operator/operator';
@@ -29,7 +28,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
   private operators: Operator[];
   private campaigns: Campaign[];
 
-  constructor(private operatorService: OperatorService, private commonData: CommonDataService) {
+  constructor(private commonData: CommonDataService) {
     super();
   }
 

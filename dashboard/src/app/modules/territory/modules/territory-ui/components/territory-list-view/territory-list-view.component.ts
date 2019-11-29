@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, merge, of } from 'rxjs';
-import { debounceTime, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of } from 'rxjs';
+import { debounceTime, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material';
 
-import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 
 @Component({
   selector: 'app-territory-list-view',
@@ -25,20 +25,34 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  constructor(private _territoryService: TerritoryService) {
+  constructor(private _territoryStoreService: TerritoryStoreService) {
     super();
   }
 
+  protected territories$: Observable<Territory[]>;
+
   ngOnInit() {
+    this.territories$ = this._territoryStoreService.entities$.pipe(
+      filter((data) => !!data),
+      tap((territories) => (this.territories = territories)),
+    );
+
+    this._territoryStoreService.entity$
+      .pipe(
+        filter((data) => !!data),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((territory) => {
+        this.territoryToEdit = territory;
+        this.showForm = true;
+      });
+
     this.loadTerritories();
-    this._territoryService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
-      this.territories = territories;
-    });
   }
 
   ngAfterViewInit(): void {
     merge(
-      this._territoryService.territories$,
+      this.territories$,
       this._filterLiteral.pipe(
         debounceTime(300),
         tap(() => (this.paginator.pageIndex = 0)),
@@ -55,9 +69,11 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
           );
           return of(this.territoriesFiltered.slice(start, end));
         }),
+        takeUntil(this.destroy$),
       )
       .subscribe((data) => {
         this.territoriesToShow = data;
+        console.log('this.territoriesToShow : ', this.territoriesToShow);
       });
   }
 
@@ -70,16 +86,14 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   }
 
   pipeEdit(territory: any) {
-    this.territoryToEdit = territory;
-    this.showForm = true;
+    this._territoryStoreService.select(territory);
   }
 
   close() {
-    this.loadTerritories();
     this.showForm = false;
   }
 
   loadTerritories() {
-    this._territoryService.load().subscribe();
+    this._territoryStoreService.loadList();
   }
 }

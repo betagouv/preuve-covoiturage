@@ -4,6 +4,7 @@ import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchIn
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
+import { UserPatchInterfaceBy } from '../shared/user/common/interfaces/UserPatchInterfaceBy';
 
 export interface UserRepositoryProviderInterface {
   create(data: UserBaseInterface): Promise<UserFindInterface>;
@@ -67,15 +68,15 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
 
-  async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
+  async patch(_id: number, data: UserPatchInterfaceBy): Promise<UserFindInterface> {
     throw new Error();
   }
 
-  async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface> {
+  async patchByOperator(_id: number, data: UserPatchInterfaceBy, operator_id: number): Promise<UserFindInterface> {
     throw new Error();
   }
 
-  async patchByTerritory(_id: number, data: UserPatchInterface, territory_id: number): Promise<UserFindInterface> {
+  async patchByTerritory(_id: number, data: UserPatchInterfaceBy, territory_id: number): Promise<UserFindInterface> {
     throw new Error();
   }
 }

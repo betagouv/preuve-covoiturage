@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Territory } from '~/core/entities/territory/territory';
 import { TerritoriesPermissionsAdminType } from '~/core/types/permissionType';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 
 @Component({
   selector: 'app-territory-list',
@@ -19,19 +19,11 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
   @Input() territories: Territory[];
   @Output() edit = new EventEmitter();
 
-  constructor(private _territoryService: TerritoryService, public authenticationService: AuthenticationService) {
+  constructor(public authenticationService: AuthenticationService, public territoryStore: TerritoryStoreService) {
     super();
   }
 
   ngOnInit() {}
-
-  get territoriesloading(): boolean {
-    return this._territoryService.loading;
-  }
-
-  get territoriesloaded(): boolean {
-    return this._territoryService.territoriesLoaded;
-  }
 
   onEdit(territory: Territory) {
     this.edit.emit(territory);

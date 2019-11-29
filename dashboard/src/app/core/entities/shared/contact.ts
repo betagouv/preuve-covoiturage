@@ -1,3 +1,5 @@
+import { ContactInterface } from '~/core/entities/api/shared/common/interfaces/ContactInterface';
+
 export class Contact {
   firstname: string;
   lastname: string;

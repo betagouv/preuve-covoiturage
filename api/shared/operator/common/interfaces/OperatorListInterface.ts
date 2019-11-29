@@ -6,8 +6,8 @@ export interface OperatorListInterface {
   name: string;
   legal_name: string;
   siret: string;
-  company: CompanyInterface;
-  address: AddressInterface;
+  company?: CompanyInterface;
+  address?: AddressInterface;
   cgu_accepted_at: Date;
   cgu_accepted_by: number;
   created_at: Date;

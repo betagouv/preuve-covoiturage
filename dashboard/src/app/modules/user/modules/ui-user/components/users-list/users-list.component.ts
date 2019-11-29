@@ -4,11 +4,12 @@ import { takeUntil } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material';
 
 import { User } from '~/core/entities/authentication/user';
-import { UserService } from '~/modules/user/services/user.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
+import { UserApiService } from '~/modules/user/services/user-api.service';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 @Component({
   selector: 'app-users-list',
@@ -23,8 +24,8 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
   displayedColumns: string[] = ['name', 'email', 'role', 'actions'];
 
   constructor(
+    public userStoreService: UserStoreService,
     public authService: AuthenticationService,
-    public userService: UserService,
     private toastr: ToastrService,
     private dialogService: DialogService,
   ) {
@@ -41,8 +42,8 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
       .pipe(takeUntil(this.destroy$))
       .subscribe((hasConfirmed) => {
         if (hasConfirmed) {
-          this.userService
-            .deleteList(user._id)
+          this.userStoreService
+            .delete(user)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {
