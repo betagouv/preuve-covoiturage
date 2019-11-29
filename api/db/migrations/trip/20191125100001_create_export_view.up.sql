@@ -6,20 +6,20 @@ CREATE MATERIALIZED VIEW trip.export AS (
     cpp.acquisition_id::varchar as journey_id,
     cpp.trip_id as trip_id,
     cpp.datetime as journey_start_datetime,
-    trunc(ST_X(cpp.start_position::geometry)::numeric, cis.density::int) as journey_start_lat,
-    trunc(ST_Y(cpp.start_position::geometry)::numeric, cis.density::int) as journey_start_lon,
+    trunc(ST_X(cpp.start_position::geometry)::numeric, cis.density::int - 1) as journey_start_lat,
+    trunc(ST_Y(cpp.start_position::geometry)::numeric, cis.density::int - 1) as journey_start_lon,
     cpp.start_insee as journey_start_insee,
-    cis.postcodes[0] as journey_start_postalcode,
+    array_agg(cis.postcodes) as journey_start_postcodes,
     cis.town as journey_start_town,
-    null as journey_start_EPCI, -- TODO
+    null as journey_start_epci, -- TODO
     cis.country as journey_start_country,
     (cpp.datetime + (cpp.duration || ' seconds')::interval) as journey_end_datetime,
-    trunc(ST_X(cpp.end_position::geometry)::numeric, cie.density::int) as journey_end_lat,
-    trunc(ST_Y(cpp.end_position::geometry)::numeric, cie.density::int) as journey_end_lon,
+    trunc(ST_X(cpp.end_position::geometry)::numeric, cie.density::int - 1) as journey_end_lat,
+    trunc(ST_Y(cpp.end_position::geometry)::numeric, cie.density::int - 1) as journey_end_lon,
     cpp.end_insee as journey_end_insee,
-    cie.postcodes[0] journey_end_postalcode,
+    array_agg(cie.postcodes) journey_end_postcodes,
     cie.town as journey_end_town,
-    null as journey_end_EPCI,  -- TODO
+    null as journey_end_epci,  -- TODO
     cie.country as journey_end_country,
     (CASE WHEN cpp.distance <> null THEN cpp.distance ELSE (cpp.meta::json->'calc_distance')::text::int END) as journey_distance,
     (CASE WHEN cpp.duration <> null THEN cpp.duration ELSE (cpp.meta::json->'calc_duration')::text::int END) as journey_duration,
