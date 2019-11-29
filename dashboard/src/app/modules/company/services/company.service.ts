@@ -25,8 +25,12 @@ export class CompanyService extends ApiService<Territory> {
     return this._jsonRPC.callOne(new JsonRPCParam(this._method + ':find', { siret, source })).pipe(
       map((company) => {
         const siren = parseInt(siret.substr(0, 9), 10);
+        let tvaPrefix = ((12 + 3 * (siren % 97)) % 97).toString();
+        for (let i = 0; i < 2 - tvaPrefix.length; i += 1) {
+          tvaPrefix = `0${tvaPrefix}`;
+        }
         // tslint:disable-next-line:variable-name
-        const intra_vat = `FR${(12 + 3 * (siren % 97)) % 97}${siren}`;
+        const intra_vat = `FR${tvaPrefix}${siren}`;
         return {
           ...company.data,
           intra_vat,
