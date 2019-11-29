@@ -1,5 +1,6 @@
 import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
+import { promisify } from 'util';
 
 import {
   TripSearchInterfaceWithPagination,
@@ -17,8 +18,7 @@ import { StatInterface } from '../interfaces/StatInterface';
   identifier: TripRepositoryProviderInterfaceResolver,
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
-  public readonly table = 'carpool.carpools';
-  public readonly identityTable = 'carpool.identities';
+  public readonly table = 'trip.list';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -53,7 +53,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: '(start_territory = ANY ($#::text[]) OR end_territory = ANY ($#::text[]))',
+                text: '(start_territory_id = ANY ($#::text[]) OR end_territory_id = ANY ($#::text[]))',
                 values: [filter.value, filter.value],
               };
             case 'operator_id':
@@ -100,12 +100,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
             case 'days':
               return {
-                text: 'extract(isodow from datetime) = ANY ($#::int[])',
+                text: 'weekday = ANY ($#::int[])',
                 values: [filter.value],
               };
             case 'hour': {
               return {
-                text: '($#::int <= extract(hour from datetime) AND extract(hour from datetime) <= $#::int)',
+                text: '($#::int <= dayhour AND dayhour <= $#::int)',
                 values: [filter.value.start, filter.value.end],
               };
             }
@@ -124,7 +124,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         );
     }
 
-    orderedFilters.text.push('is_driver = false');
+    // orderedFilters.text.push('is_driver = false');
 
     const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
     const whereClausesValues = orderedFilters.values;
@@ -168,6 +168,69 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     const result = await this.connection.getClient().query(query);
     return result.rows.map(this.castTypes);
+  }
+
+  public async searchWithCursor(params: {
+    date: { start: Date; end: Date };
+    operator_id?: number[];
+    territory_id?: number[];
+  }): Promise<(count: number) => Promise<LightTripInterface[]>> {
+    let where = '';
+    const values: any[] = [params.date.start, params.date.end];
+
+    const territoryWhere = '(start_territory_id = ANY ($3::int[]) OR end_territory_id = ANY ($4::int[]))';
+    const operatorWhere = (i: number) => `operator_id = ANY ($${i}::text[])`;
+
+    if (params.operator_id && params.territory_id) {
+      where = `AND ${operatorWhere(5)} AND ${territoryWhere}`;
+      values.push(params.territory_id, params.territory_id, params.operator_id);
+    } else if (params.operator_id) {
+      where = `AND ${operatorWhere(3)}`;
+      values.push(params.operator_id);
+    } else if (params.territory_id) {
+      where = `AND ${territoryWhere}`;
+      values.push(params.territory_id, params.territory_id);
+    }
+
+    const query = {
+      values,
+      text: `
+        SELECT
+        journey_id,
+        trip_id,
+        journey_start_datetime,
+        journey_start_lat,
+        journey_start_lon,
+        journey_start_insee,
+        journey_start_postcodes,
+        journey_start_town,
+        journey_start_epci,
+        journey_start_country,
+        journey_end_datetime,
+        journey_end_lat,
+        journey_end_lon,
+        journey_end_insee,
+        journey_end_postcodes,
+        journey_end_town,
+        journey_end_epci,
+        journey_end_country,
+        journey_distance,
+        journey_duration,
+        driver_card,
+        passenger_card,
+        operator_class,
+        passenger_over_18,
+        passenger_seats
+        FROM trip.export
+        WHERE journey_start_datetime BETWEEN $1::timestamp AND $2::timestamp
+        ${where}
+      `,
+    };
+
+    const db = await this.connection.getClient().connect();
+    const cursorCb = db.query(new Cursor(query.text, query.values));
+
+    return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<LightTripInterface[]>;
   }
 
   public async search(

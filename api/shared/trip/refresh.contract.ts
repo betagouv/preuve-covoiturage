@@ -1,11 +1,9 @@
-import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
-
-export interface ParamsInterface extends TripSearchInterface {}
+export type ParamsInterface = 'export' | 'list';
 export type ResultInterface = void;
 
 export const handlerConfig = {
   service: 'trip',
-  method: 'export',
+  method: 'refresh',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

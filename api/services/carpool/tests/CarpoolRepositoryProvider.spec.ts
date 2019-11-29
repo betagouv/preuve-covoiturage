@@ -53,12 +53,12 @@ describe('CarpoolRepositoryProvider', () => {
         start: {
           lat: 0,
           lon: 0,
-          insee: ''
+          insee: '',
         },
         end: {
           lat: 0,
           lon: 0,
-          insee: ''
+          insee: '',
         },
         seats: 0,
         duration: 0,
@@ -78,12 +78,12 @@ describe('CarpoolRepositoryProvider', () => {
         start: {
           lat: 0,
           lon: 0,
-          insee: ''
+          insee: '',
         },
         end: {
           lat: 0,
           lon: 0,
-          insee: ''
+          insee: '',
         },
         seats: 0,
         duration: 0,

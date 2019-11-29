@@ -1,13 +1,18 @@
-import { Action } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { get } from 'lodash';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
-import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
+import { Action } from '@ilos/core';
+import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
+
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { alias } from '../shared/trip/list.schema';
+import { alias } from '../shared/trip/export.schema';
+import {
+  signature as buildSignature,
+  ParamsInterface as BuildParamsInterface,
+} from '../shared/trip/buildExport.contract';
 
 @handler(handlerConfig)
-export class ListAction extends Action {
+export class ExportAction extends Action {
   public readonly middlewares: ActionMiddleware[] = [
     ['validate', alias],
     [
@@ -38,19 +43,45 @@ export class ListAction extends Action {
     ],
   ];
 
-  constructor(private pg: TripRepositoryProvider) {
+  constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const result = await this.pg.search(params);
-    return {
-      ...result,
-      data: result.data.map((r) => ({
-        ...r,
-        campaigns_id: [],
-        status: 'locked',
-      })),
-    };
+    const start =
+      (params && params.date && params.date.start) || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+    const end = (params && params.date && params.date.end) || new Date();
+
+    const email = get(context, 'call.user.email');
+    const fullname = `${get(context, 'call.user.firstname', '')} ${get(context, 'call.user.lastname', '')}`;
+
+    if (!email) {
+      throw new InvalidParamsException();
+    }
+
+    await this.kernel.notify<BuildParamsInterface>(
+      buildSignature,
+      {
+        from: {
+          fullname,
+          email,
+        },
+        query: {
+          ...params,
+          date: {
+            start,
+            end,
+          },
+        },
+      },
+      {
+        channel: {
+          service: 'trip',
+        },
+        call: {
+          user: {},
+        },
+      },
+    );
   }
 }
