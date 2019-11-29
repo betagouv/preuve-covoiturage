@@ -31,30 +31,13 @@ export class LogAction extends AbstractAction {
     const collection = client.db(this.config.get('acquisition.db')).collection('reqlog');
 
     const bd = JSON.parse(JSON.stringify(params.req.body));
-    delete bd.passenger.identity.phone;
-    delete bd.passenger.start;
-    delete bd.passenger.end;
-    delete bd.driver.identity.phone;
-    delete bd.driver.start;
-    delete bd.driver.end;
-
     const hd = JSON.parse(JSON.stringify(params.req.headers));
-
-    let token;
-    try {
-      token = await this.tokenProvider.verify(hd.authorization.replace('Bearer ', ''));
-    } catch (e) {
-      token = e.message;
-    }
-
-    delete hd.authorization;
 
     await collection.insertOne({
       bd,
       hd,
       u: `${params.req.method} ${params.req.url}`,
       c: context.call,
-      t: token,
       tz: new Date(),
     });
   }
