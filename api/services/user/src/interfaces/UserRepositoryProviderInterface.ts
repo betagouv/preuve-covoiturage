@@ -4,7 +4,7 @@ import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchIn
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
-import { UserPatchInterfaceBy } from '@pdc/proxy/src/shared/user/common/interfaces/UserPatchInterfaceBy';
+import { UserPatchInterfaceBy } from '../shared/user/common/interfaces/UserPatchInterfaceBy';
 
 export interface UserRepositoryProviderInterface {
   create(data: UserBaseInterface): Promise<UserFindInterface>;
