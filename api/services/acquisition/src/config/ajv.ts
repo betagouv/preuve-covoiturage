@@ -1,5 +1,5 @@
 export const config = {
   nullable: true,
   allErrors: true,
-  verbose: true,
+  verbose: false, // too much output on acquisition
 };
