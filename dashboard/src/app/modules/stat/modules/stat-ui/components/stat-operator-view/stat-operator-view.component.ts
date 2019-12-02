@@ -11,6 +11,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { OPERATOR_STATS, TERRITORY_STATS } from '~/modules/stat/config/stat';
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 @Component({
   selector: 'app-stat-operator-view',
@@ -45,7 +46,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
     // reset stats on load
     this.statService.init();
 
-    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
+    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
       this.loadStat(filter);
     });
     this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
@@ -63,7 +64,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
     return this.statService.loaded;
   }
 
-  private loadStat(filter: FilterUxInterface | {} = {}): void {
+  private loadStat(filter: FilterInterface | {} = {}): void {
     if (this.statService.loading) {
       return;
     }

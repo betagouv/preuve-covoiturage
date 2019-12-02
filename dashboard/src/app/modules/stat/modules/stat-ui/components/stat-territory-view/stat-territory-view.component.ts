@@ -12,6 +12,7 @@ import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
 import { StatFilteredService } from '../../../../services/stat-filtered.service';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 @Component({
   selector: 'app-stat-territory-view',
@@ -47,7 +48,8 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     // reset stats on load
     this.statService.init();
 
-    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterUxInterface) => {
+    this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
+      console.log({ filter });
       this.loadStat(filter);
     });
     this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe((stats) => {
@@ -65,7 +67,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     return this.statService.loaded;
   }
 
-  private loadStat(filter: FilterUxInterface | {} = {}): void {
+  private loadStat(filter: FilterInterface): void {
     if (this.statService.loading) {
       return;
     }

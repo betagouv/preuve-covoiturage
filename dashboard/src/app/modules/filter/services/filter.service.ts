@@ -1,23 +1,35 @@
 // tslint:disable:prefer-conditional-expression
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { Filter } from '~/core/entities/filter/filter';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { FilterModule } from '~/modules/filter/filter.module';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FilterService {
-  public filter$ = new BehaviorSubject<FilterInterface | {}>({});
+  public filter$: BehaviorSubject<FilterInterface>;
+  public dateFilterInit = {
+    start: moment()
+      .subtract(1, 'year')
+      .toDate(),
+    end: moment()
+      .subtract(1, 'day')
+      .toDate(),
+  };
 
-  constructor() {}
+  constructor() {
+    this.filter$ = new BehaviorSubject({
+      date: this.dateFilterInit,
+    });
+  }
 
   // format filterUx to filter in api format
-  public setFilter(params: FilterUxInterface | {} = {}): void {
+  public setFilter(params: FilterUxInterface): void {
     const filterUx = _.cloneDeep(params);
 
     let filter;
@@ -40,12 +52,19 @@ export class FilterService {
       campaign_id: filterUx.campaignIds,
     });
 
-    if (filter.date.start === null && filter.date.end === null) {
-      delete filter.date;
+    if (!filter.date.start) {
+      filter.date.start = this.dateFilterInit.start;
     } else {
-      if (filter.date.start) filter.date.start = filter.date.start.toDate();
-      if (filter.date.end) filter.date.end = filter.date.end.toDate();
+      filter.date.start = filter.date.start.toDate();
     }
+
+    if (!filter.date.end) {
+      filter.date.end = this.dateFilterInit.end;
+    } else {
+      filter.date.end = filter.date.end.toDate();
+    }
+
+    console.log({ filter });
 
     if (filter.hour.start === null && filter.hour.end === null) {
       delete filter.hour;

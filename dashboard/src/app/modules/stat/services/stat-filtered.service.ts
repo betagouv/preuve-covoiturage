@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, take, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
@@ -29,8 +30,21 @@ export class StatFilteredService {
     private _authService: AuthenticationService,
   ) {}
 
-  public loadOne(filter: FilterInterface | {} = {}): Observable<StatInterface[]> {
-    const params = _.cloneDeep(filter);
+  public loadOne(filter: FilterInterface = {}): Observable<StatInterface[]> {
+    let params: FilterInterface = {};
+
+    if (Object.values(filter).length === 0) {
+      params = {
+        date: {
+          start: moment()
+            .subtract(1, 'year')
+            .toDate(),
+          end: new Date(),
+        },
+      };
+    } else {
+      params = _.cloneDeep(filter);
+    }
 
     const user = this._authService.user;
 

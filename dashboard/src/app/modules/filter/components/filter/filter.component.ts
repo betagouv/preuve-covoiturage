@@ -112,8 +112,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     if (filter.ranks.length > 0) count += 1;
     if (filter.towns.length > 0) count += 1;
     if (filter.distance.min || filter.distance.min) count += 1;
-    if (filter.date.start || filter.date.end) count += 1;
-    if (filter.hour.start || filter.hour.end) count += 1;
+    // if (filter.date.start || filter.date.end) count += 1;
+    // if (filter.hour.start || filter.hour.end) count += 1;
     if (filter.status) count += 1;
     return count;
   }
@@ -137,11 +137,16 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   private initForm() {
+    const startDate = moment()
+      .subtract(1, 'year')
+      .toDate();
+    const endDate = new Date();
+
     this.filterForm = this.fb.group({
       campaignIds: [[]],
       date: this.fb.group({
-        start: [null],
-        end: [null],
+        start: [startDate],
+        end: [endDate],
       }),
       hour: this.fb.group({
         start: [null],
