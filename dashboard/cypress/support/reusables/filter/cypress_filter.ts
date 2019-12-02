@@ -28,8 +28,12 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('chooses dates', () => {
-    cy.get('.filter-dates mat-form-field:first-child input').type(filterStartMoment.format('DD/MM/YYYY'));
-    cy.get('.filter-dates mat-form-field:nth-child(2) input').type(filterEndMoment.format('DD/MM/YYYY'));
+    cy.get('.filter-dates mat-form-field:first-child input')
+      .clear()
+      .type(filterStartMoment.format('DD/MM/YYYY'));
+    cy.get('.filter-dates mat-form-field:nth-child(2) input')
+      .clear()
+      .type(filterEndMoment.format('DD/MM/YYYY'));
   });
 
   it('chooses hours', () => {
@@ -136,6 +140,15 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
     cy.get('.filter-footer button:nth-child(2)').click();
   });
 
+  it('chooses dates', () => {
+    cy.get('.filter-dates mat-form-field:first-child input')
+      .clear()
+      .type(filterStartMoment.format('DD/MM/YYYY'));
+    cy.get('.filter-dates mat-form-field:nth-child(2) input')
+      .clear()
+      .type(filterEndMoment.format('DD/MM/YYYY'));
+  });
+
   it('click filter button', () => {
     cy.get('.filter-footer button:first-child').click();
 
@@ -146,17 +159,19 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
 
         expect(method).equal('trip:stats');
 
-        const filter = {};
+        const expectedParams = {};
 
         if (group === UserGroupEnum.TERRITORY) {
-          filter['territory_id'] = [territoryStub._id];
+          expectedParams['territory_id'] = [territoryStub._id];
         }
 
         if (group === UserGroupEnum.OPERATOR) {
-          filter['operator_id'] = [operatorStub._id];
+          expectedParams['operator_id'] = [operatorStub._id];
         }
 
-        expect(params).eql(filter);
+        expectedParams['date'] = expectedFilter.date;
+
+        expect(params).eql(expectedParams);
       });
     }
   });

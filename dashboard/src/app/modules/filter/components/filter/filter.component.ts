@@ -84,7 +84,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   public filterClick(): void {
-    const filterObj = this.filterForm.value;
+    const filterObj = this.filterForm.getRawValue();
 
     // format for API
     filterObj.towns = this.filterForm.value.towns.map((town: TownInterface) => town.name);
@@ -137,10 +137,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   private initForm() {
-    const startDate = moment()
-      .subtract(1, 'year')
-      .toDate();
-    const endDate = new Date();
+    const startDate = moment().subtract(1, 'year');
+    const endDate = moment();
 
     this.filterForm = this.fb.group({
       campaignIds: [[]],
