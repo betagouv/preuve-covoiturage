@@ -21,6 +21,7 @@
             <mat-form-field appearance="outline">
               <mat-label>Début</mat-label>
               <input
+                [min]="minDate"
                 matInput
                 formControlName="start"
                 [matDatepicker]="startDatePicker"

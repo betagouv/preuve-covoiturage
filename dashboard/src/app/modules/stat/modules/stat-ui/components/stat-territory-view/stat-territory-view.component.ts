@@ -10,9 +10,9 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TERRITORY_STATS } from '~/modules/stat/config/stat';
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
+import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 import { StatFilteredService } from '../../../../services/stat-filtered.service';
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 @Component({
   selector: 'app-stat-territory-view',

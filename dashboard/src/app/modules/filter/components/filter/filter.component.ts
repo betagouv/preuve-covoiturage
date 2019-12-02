@@ -48,6 +48,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public _showFilter = false;
   public classes = TRIP_RANKS;
   public tripStatusList = TRIP_STATUS;
+  minDate = moment().subtract(1, 'year');
 
   public days: WeekDay[] = [0, 1, 2, 3, 4, 5, 6];
 
