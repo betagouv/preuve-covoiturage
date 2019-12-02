@@ -55,13 +55,17 @@ export class FilterService {
     if (!filter.date.start) {
       filter.date.start = this.dateFilterInit.start;
     } else {
-      filter.date.start = filter.date.start.toDate();
+      // set start at the beginning of the day and end at the end.
+      // DO NOT convert to UTC to avoid days overlapping!
+      filter.date.start = `${filter.date.start.toISOString(true).substr(0, 10)}T00:00:00Z`;
     }
 
     if (!filter.date.end) {
       filter.date.end = this.dateFilterInit.end;
     } else {
-      filter.date.end = filter.date.end.toDate();
+      // set start at the beginning of the day and end at the end.
+      // DO NOT convert to UTC to avoid days overlapping!
+      filter.date.end = `${filter.date.end.toISOString(true).substr(0, 10)}T23:59:59Z`;
     }
 
     console.log({ filter });

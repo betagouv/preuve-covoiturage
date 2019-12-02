@@ -19,8 +19,8 @@ export const filterEndMoment = Cypress.moment()
 export const expectedFilter: FilterInterface = {
   campaign_id: [campaignStubs[0]._id, campaignStubs[1]._id],
   date: <any>{
-    start: filterStartMoment.toDate().toISOString(),
-    end: filterEndMoment.toDate().toISOString(),
+    start: `${filterStartMoment.toISOString(true).substr(0, 10)}T00:00:00Z`,
+    end: `${filterEndMoment.toISOString(true).substr(0, 10)}T23:59:59Z`,
   },
   hour: {
     start: 18,
