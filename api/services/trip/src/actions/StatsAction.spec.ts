@@ -43,8 +43,8 @@ describe('Stats action', () => {
           max: 1000,
         },
         ranks: ['a'],
-        operator_id: ['operator'],
-        territory_id: ['territory'],
+        operator_id: [5],
+        territory_id: [239],
       },
       {
         call: {

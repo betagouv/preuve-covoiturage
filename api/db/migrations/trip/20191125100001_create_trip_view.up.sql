@@ -5,11 +5,11 @@ CREATE MATERIALIZED VIEW trip.list AS (
     cp.end_insee as end_insee,
     cp.operator_id as operator_id,
     cp.operator_class as operator_class,
-
     cp.datetime as datetime,
     extract(isodow from cp.datetime) as weekday,
     extract(hour from cp.datetime) as dayhour,
-
+    cp.seats as seats,
+    cp.is_driver as is_driver,
     cis.town as start_town,
     tis.territory_id as start_territory_id,
     cie.town as end_town,
