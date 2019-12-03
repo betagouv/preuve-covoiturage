@@ -53,12 +53,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: '(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))',
+                text: '(start_territory_id = ANY ($#::text[]) OR end_territory_id = ANY ($#::text[]))',
                 values: [filter.value, filter.value],
               };
             case 'operator_id':
               return {
-                text: 'operator_id = ANY ($#::int[])',
+                text: 'operator_id = ANY ($#::text[])',
                 values: [filter.value],
               };
             case 'status':
@@ -140,6 +140,9 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     }
 
     if (!orderedFilters.text.length) return null;
+
+    // remove duplicates
+    orderedFilters.text.push('is_driver = false');
 
     const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
     const whereClausesValues = orderedFilters.values;
