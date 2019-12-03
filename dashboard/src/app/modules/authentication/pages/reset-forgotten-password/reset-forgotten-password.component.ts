@@ -76,7 +76,7 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
 
   public changePassword(): void {
     this.authService
-      .restorePassword(this.email, this.password.value, this.token)
+      .sendNewPassword(this.email, this.password.value, this.token)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
