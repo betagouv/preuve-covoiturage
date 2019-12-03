@@ -103,12 +103,13 @@ export class User extends BaseUser
 
     formVal.phone = formVal.phone ? formVal.phone : null;
 
+    delete this.permissions;
+
     if (this._id) {
       delete this.territory_id;
       delete this.operator_id;
       delete this.group;
       delete this.role;
-      delete this.permissions;
     } else {
       if (formVal.territory_id) this.email = formVal.email;
       else delete this.territory_id;
