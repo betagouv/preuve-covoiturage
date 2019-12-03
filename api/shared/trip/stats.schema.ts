@@ -1,5 +1,5 @@
-import { search } from './common/schemas/search';
+import { stats } from './common/schemas/search';
 
 export const alias = 'trip.stats';
-export const schema = search;
+export const schema = stats;
 export const binding = [alias, schema];
