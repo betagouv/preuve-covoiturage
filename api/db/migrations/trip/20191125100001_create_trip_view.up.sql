@@ -3,7 +3,7 @@ CREATE MATERIALIZED VIEW trip.list AS (
     cp.trip_id as trip_id,
     cp.start_insee as start_insee,
     cp.end_insee as end_insee,
-    cp.operator_id::int as operator_id,
+    cp.operator_id as operator_id,
     cp.operator_class as operator_class,
 
     cp.datetime as datetime,
