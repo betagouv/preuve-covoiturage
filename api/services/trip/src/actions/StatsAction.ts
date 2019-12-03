@@ -49,11 +49,11 @@ export class StatsAction extends Action {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     switch (this.isCachable(params)) {
       case 'global':
-        return await this.cache.getGeneralOrBuild(async () => this.pg.stats(params));
+        return (await this.cache.getGeneralOrBuild(async () => this.pg.stats(params))) || [];
       case 'operator':
-        return await this.cache.getOperatorOrBuild(params.operator_id[0], async () => this.pg.stats(params));
+        return (await this.cache.getOperatorOrBuild(params.operator_id[0], async () => this.pg.stats(params))) || [];
       case 'territory':
-        return await this.cache.getTerritoryOrBuild(params.territory_id[0], async () => this.pg.stats(params));
+        return (await this.cache.getTerritoryOrBuild(params.territory_id[0], async () => this.pg.stats(params))) || [];
       default:
         return (await this.pg.stats(this.applyDefaults(params))) || [];
     }
@@ -64,7 +64,9 @@ export class StatsAction extends Action {
 
     if (keys.length > 1) {
       return;
-    } else if (keys.length === 0) {
+    }
+
+    if (keys.length === 0) {
       return 'global';
     }
 

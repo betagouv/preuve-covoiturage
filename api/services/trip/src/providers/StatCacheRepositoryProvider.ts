@@ -19,7 +19,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
 
   public async getGeneralOrBuild(fn: Function): Promise<StatInterface[]> {
     const result = await this.connection.getClient().query(`
-        SELECT 
+        SELECT
           data
         FROM ${this.table}
         WHERE is_public = true AND operator_id IS NULL AND territory_id IS NULL
@@ -37,8 +37,8 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
   public async getTerritoryOrBuild(territory_id: number, fn: Function): Promise<StatInterface[]> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT 
-          data 
+        SELECT
+          data
         FROM ${this.table}
         WHERE territory_id = $1::int
         AND extract(hour from age(now(), updated_at)) < 24
@@ -57,8 +57,8 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
   public async getOperatorOrBuild(operator_id: number, fn: Function): Promise<StatInterface[]> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT 
-          data 
+        SELECT
+          data
         FROM ${this.table}
         WHERE operator_id = $1::int
         AND extract(hour from age(now(), updated_at)) < 24
