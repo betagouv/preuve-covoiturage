@@ -21,10 +21,11 @@ import { PublicStatsAction } from './actions/PublicStatsAction';
 import { RefreshAction } from './actions/RefreshAction';
 import { ExportAction } from './actions/ExportAction';
 import { BuildExportAction } from './actions/BuildExportAction';
+import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [TripRepositoryProvider],
+  providers: [TripRepositoryProvider, StatCacheRepositoryProvider],
   validator: [listBinding, statsBinding, exportBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],

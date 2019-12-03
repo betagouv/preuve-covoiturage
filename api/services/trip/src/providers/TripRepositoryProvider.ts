@@ -53,7 +53,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           switch (filter.key) {
             case 'territory_id':
               return {
-                text: '(start_territory_id = ANY ($#::text[]) OR end_territory_id = ANY ($#::text[]))',
+                text: '(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))',
                 values: [filter.value, filter.value],
               };
             case 'operator_id':
@@ -139,8 +139,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         );
     }
 
-    if (!orderedFilters.text.length) return null;
-
     // remove duplicates
     orderedFilters.text.push('is_driver = false');
 
@@ -179,7 +177,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     query.text = this.numberPlaceholders(query.text);
 
     const result = await this.connection.getClient().query(query);
-    return result.rows.map(this.castTypes);
+    return result.rows;
   }
 
   public async searchWithCursor(params: {
@@ -208,31 +206,31 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       values,
       text: `
         SELECT
-        journey_id,
-        trip_id,
-        journey_start_datetime,
-        journey_start_lat,
-        journey_start_lon,
-        journey_start_insee,
-        journey_start_postcode,
-        journey_start_town,
-        journey_start_epci,
-        journey_start_country,
-        journey_end_datetime,
-        journey_end_lat,
-        journey_end_lon,
-        journey_end_insee,
-        journey_end_postcode,
-        journey_end_town,
-        journey_end_epci,
-        journey_end_country,
-        journey_distance,
-        journey_duration,
-        driver_card,
-        passenger_card,
-        operator_class,
-        passenger_over_18,
-        passenger_seats
+          journey_id,
+          trip_id,
+          journey_start_datetime,
+          journey_start_lat,
+          journey_start_lon,
+          journey_start_insee,
+          journey_start_postcodes,
+          journey_start_town,
+          journey_start_epci,
+          journey_start_country,
+          journey_end_datetime,
+          journey_end_lat,
+          journey_end_lon,
+          journey_end_insee,
+          journey_end_postcodes,
+          journey_end_town,
+          journey_end_epci,
+          journey_end_country,
+          journey_distance,
+          journey_duration,
+          driver_card,
+          passenger_card,
+          operator_class,
+          passenger_over_18,
+          passenger_seats
         FROM trip.export
         WHERE journey_start_datetime BETWEEN $1::timestamp AND $2::timestamp
         ${where}

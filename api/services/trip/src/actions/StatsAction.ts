@@ -1,4 +1,5 @@
 // tslint:disable:variable-name
+import { get } from 'lodash';
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 import { get } from 'lodash';
@@ -7,6 +8,7 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/stats.schema';
+import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/StatCacheRepositoryProviderInterface';
 
 @handler(handlerConfig)
 export class StatsAction extends Action {
@@ -40,12 +42,49 @@ export class StatsAction extends Action {
     ],
   ];
 
-  constructor(private pg: TripRepositoryProvider) {
+  constructor(private pg: TripRepositoryProvider, private cache: StatCacheRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    return (await this.pg.stats(this.applyDefaults(params))) || [];
+    switch (this.isCachable(params)) {
+      case 'global':
+        return (await this.cache.getGeneralOrBuild(async () => this.pg.stats(params))) || [];
+      case 'operator':
+        return (await this.cache.getOperatorOrBuild(params.operator_id[0], async () => this.pg.stats(params))) || [];
+      case 'territory':
+        return (await this.cache.getTerritoryOrBuild(params.territory_id[0], async () => this.pg.stats(params))) || [];
+      default:
+        return (await this.pg.stats(this.applyDefaults(params))) || [];
+    }
+  }
+
+  protected isCachable(params: ParamsInterface): null | 'global' | 'operator' | 'territory' {
+    const keys = Object.keys(params);
+
+    if (keys.length > 1) {
+      return;
+    }
+
+    if (keys.length === 0) {
+      return 'global';
+    }
+
+    if (keys[0] === 'operator_id') {
+      if (Array.isArray(params.operator_id) && params.operator_id.length === 1) {
+        return 'operator';
+      }
+      return;
+    }
+
+    if (keys[0] === 'territory_id') {
+      if (Array.isArray(params.territory_id) && params.territory_id.length === 1) {
+        return 'territory';
+      }
+      return;
+    }
+
+    return;
   }
 
   protected applyDefaults(params: ParamsInterface): ParamsInterface {
