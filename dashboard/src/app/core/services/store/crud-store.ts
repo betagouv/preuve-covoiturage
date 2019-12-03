@@ -120,7 +120,10 @@ export abstract class CrudStore<
         }),
       )
 
-      .subscribe((entity) => this.entitySubject.next(new this.modelType().map(entity)));
+      .subscribe((entity) => {
+        const model = new this.modelType().map(entity);
+        this.entitySubject.next(new this.modelType().map(entity));
+      });
   }
 
   deleteSelected(): Observable<boolean> {
