@@ -11,9 +11,9 @@ CREATE MATERIALIZED VIEW trip.list AS (
     extract(hour from cp.datetime) as dayhour,
 
     cis.town as start_town,
-    tis.territory_id::int as start_territory_id,
+    tis.territory_id as start_territory_id,
     cie.town as end_town,
-    tie.territory_id::int as end_territory_id,
+    tie.territory_id as end_territory_id,
     (CASE WHEN cp.distance <> null THEN cp.distance ELSE (cp.meta::json->>'calc_distance')::int END) as distance,
     cp.seats as seats,
     cp.is_driver as is_driver
