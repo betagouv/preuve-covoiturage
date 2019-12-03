@@ -54,8 +54,7 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
 
   private initProfilFormValue(): void {
     this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      const { firstname, lastname, email, phone } = <ProfileInterface>this.authService.user;
-      this.profileForm.setValue({ firstname, lastname, email, phone });
+      this.profileForm.setValue(this.authService.user.toFormValues());
     });
   }
 

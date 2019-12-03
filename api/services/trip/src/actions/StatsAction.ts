@@ -2,7 +2,6 @@
 import { get } from 'lodash';
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
-import { get } from 'lodash';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/stats.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
