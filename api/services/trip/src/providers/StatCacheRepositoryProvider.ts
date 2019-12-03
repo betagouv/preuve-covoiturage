@@ -68,7 +68,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
     });
     if (result.rowCount !== 1) {
       const data = await fn();
-      await this.save({ operator_id, public: true }, data);
+      await this.save({ operator_id, public: false }, data);
       return data;
     }
     return result.rows[0].data;
