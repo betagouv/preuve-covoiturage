@@ -24,6 +24,9 @@ export class MeUserAction extends AbstractAction {
       throw new UnauthorizedException('No connected user');
     }
 
-    return this.userRepository.find(_id);
+    const user = await this.userRepository.find(_id);
+    if (!user) throw new UnauthorizedException('No connected user');
+
+    return user;
   }
 }
