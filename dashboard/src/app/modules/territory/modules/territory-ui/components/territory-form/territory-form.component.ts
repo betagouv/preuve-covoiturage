@@ -72,9 +72,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ...this.territoryForm.value,
         company: {
           ...this.companyDetails,
-          siret: this.territoryForm.value.company.siret,
         },
       };
+
+      if (this.territoryForm.value.company) formValues.company.siret = this.territoryForm.value.company.siret;
       const patch$ = this.fullFormMode
         ? this.territoryStore.updateSelected(formValues)
         : this.territoryStore.patchContact(this.territoryForm.value.contacts, this.editedId);
