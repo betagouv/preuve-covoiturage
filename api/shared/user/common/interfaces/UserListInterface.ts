@@ -3,7 +3,7 @@ export interface UserListInterface {
   email: string;
   firstname: string;
   lastname: string;
-  group: string; // computed prop
+  group: string;
   role: string;
   status: string;
   operator_id: number | null;
