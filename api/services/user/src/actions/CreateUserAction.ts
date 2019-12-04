@@ -46,10 +46,7 @@ export class CreateUserAction extends AbstractAction {
 
   public async handle(request: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // check if the user exists already
-    const foundUser = await this.userRepository.findByEmail(request.email);
-    if (foundUser) {
-      throw new ConflictException('email conflict');
-    }
+    this.userRepository.checkForDoubleEmailAndFail(request.email);
 
     if ('operator_id' in request && 'territory_id' in request) {
       // todo: check this in jsonschema

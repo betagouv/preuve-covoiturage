@@ -57,35 +57,32 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   public onUpdateUser(): void {
     this.isCreatingUpdating = true;
 
-    const errM = (err) => {
-      if (err.status === 409) this.toastr.error('Cette adresse email est déjà utilisée');
-      this.isCreatingUpdating = false;
-      // this.toastr.error(err.message);
-      throw err;
-    };
-
     if (this.isCreating) {
-      this._userStoreService.create(this.createEditUserForm.value).subscribe((data) => {
-        const user = data[0];
-        this.isCreatingUpdating = false;
-        this.toastr.success(
-          `Un email a été envoyé à ${user.email}`,
-          `L'utilisateur ${user.firstname} ${user.lastname} a été créé`,
-        );
-        this.onCloseEditUser.emit(user);
-      }, errM);
+      this._userStoreService.create(this.createEditUserForm.value).subscribe(
+        (data) => {
+          const user = data[0];
+          this.isCreatingUpdating = false;
+          this.toastr.success(
+            `Un email a été envoyé à ${user.email}`,
+            `L'utilisateur ${user.firstname} ${user.lastname} a été créé`,
+          );
+          this.onCloseEditUser.emit(user);
+        },
+        (err) => (this.isCreatingUpdating = false),
+      );
     } else {
       const model = new User();
       model._id = this._userStoreService.entity._id;
 
-      this._userStoreService
-        .patchSelected(User.formValueToUserPatch(this.createEditUserForm.value))
-        .subscribe((data) => {
+      this._userStoreService.patchSelected(User.formValueToUserPatch(this.createEditUserForm.value)).subscribe(
+        (data) => {
           const user = data[0];
           this.isCreatingUpdating = false;
           this.toastr.success(`Les informations ont bien été modifiées`);
           this.onCloseEditUser.emit(user);
-        }, errM);
+        },
+        (err) => (this.isCreatingUpdating = false),
+      );
     }
   }
 

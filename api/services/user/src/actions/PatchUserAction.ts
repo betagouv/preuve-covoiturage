@@ -62,6 +62,10 @@ export class PatchUserAction extends AbstractAction {
 
     let user;
 
+    if (params.patch.email) {
+      await this.userRepository.checkForDoubleEmailAndFail(params.patch.email, params._id);
+    }
+
     switch (scope) {
       case 'territory':
         user = await this.userRepository.findByTerritory(_id, context.call.user.territory_id);
