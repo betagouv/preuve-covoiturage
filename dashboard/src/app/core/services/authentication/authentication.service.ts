@@ -139,12 +139,10 @@ export class AuthenticationService {
   }
 
   public changePassword(oldPassword: string, newPassword: string): Observable<any> {
-    const param: ChangePasswordParam = {
+    const jsonRPCParam = new JsonRPCParam<ChangePasswordParam>('user:changePassword', {
       old_password: oldPassword,
       new_password: newPassword,
-    };
-
-    const jsonRPCParam = new JsonRPCParam('user:changePassword', param);
+    });
 
     return this.jsonRPC.callOne(jsonRPCParam).pipe(tap(console.log));
   }
