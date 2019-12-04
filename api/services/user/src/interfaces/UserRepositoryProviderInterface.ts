@@ -1,5 +1,5 @@
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
-import { UserBaseInterface } from '../shared/user/common/interfaces/UserBaseInterface';
+import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
 import { UserPatchInterface } from '../shared/user/common/interfaces/UserPatchInterface';
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
@@ -7,7 +7,7 @@ import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserL
 import { UserPatchInterfaceBy } from '../shared/user/common/interfaces/UserPatchInterfaceBy';
 
 export interface UserRepositoryProviderInterface {
-  create(data: UserBaseInterface): Promise<UserFindInterface>;
+  create(data: UserCreateInterface): Promise<UserFindInterface>;
 
   list(
     filters: UserListFiltersInterface,
@@ -29,7 +29,7 @@ export interface UserRepositoryProviderInterface {
 }
 
 export abstract class UserRepositoryProviderInterfaceResolver implements UserRepositoryProviderInterface {
-  async create(data: UserBaseInterface): Promise<UserFindInterface> {
+  async create(data: UserCreateInterface): Promise<UserFindInterface> {
     throw new Error();
   }
 

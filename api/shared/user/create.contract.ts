@@ -1,9 +1,10 @@
-import { UserBaseInterface } from './common/interfaces/UserBaseInterface';
 import { UserInterface } from './common/interfaces/UserInterface';
+import { UserCreateInterface } from './common/interfaces/UserCreateInterface';
+import { UserFindInterface } from './common/interfaces/UserFindInterface';
 
-export interface ParamsInterface extends UserBaseInterface {}
+export interface ParamsInterface extends UserCreateInterface {}
 
-export type ResultInterface = UserInterface;
+export type ResultInterface = UserFindInterface;
 
 export const handlerConfig = {
   service: 'user',

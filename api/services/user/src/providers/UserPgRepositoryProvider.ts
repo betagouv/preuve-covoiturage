@@ -1,7 +1,6 @@
 import { provider, ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { UserBaseInterface } from '../shared/user/common/interfaces/UserBaseInterface';
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
 import { UserListInterface } from '../shared/user/common/interfaces/UserListInterface';
@@ -11,7 +10,7 @@ import {
   UserRepositoryProviderInterfaceResolver,
 } from '../interfaces/UserRepositoryProviderInterface';
 import { PaginationParamsInterface } from '../shared/common/interfaces/PaginationParamsInterface';
-import { UserFullInterface } from '../shared/user/common/interfaces/UserFullInterface';
+import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
 
 @provider({
   identifier: UserRepositoryProviderInterfaceResolver,
@@ -49,7 +48,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     this.maxLimit = config.get('pagination.maxLimit', 1000);
   }
 
-  async create(data: UserBaseInterface): Promise<UserFindInterface> {
+  async create(data: UserCreateInterface): Promise<UserFindInterface> {
     // status: 'pending',
     const query = {
       text: `
