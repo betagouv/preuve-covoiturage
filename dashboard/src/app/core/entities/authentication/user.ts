@@ -6,7 +6,6 @@ import { IFormModel } from '~/core/entities/IFormModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { IClone } from '~/core/entities/IClone';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
-import { UserBaseInterface } from '~/core/entities/api/shared/user/common/interfaces/UserBaseInterface';
 
 import { IModel } from '../IModel';
 import { UserListInterface } from '../api/shared/user/common/interfaces/UserListInterface';
@@ -28,13 +27,7 @@ export class BaseUser implements IModel, UserListInterface {
 }
 
 export class User extends BaseUser
-  implements
-    IFormModel,
-    IMapModel<User, UserInterface>,
-    IClone<User>,
-    UserPatchInterface,
-    UserBaseInterface,
-    UserInterface {
+  implements IFormModel, IMapModel<User, UserInterface>, IClone<User>, UserPatchInterface, UserInterface {
   public permissions: UserPermissionsType;
 
   static formValueToUserPatch(formValues): UserPatchInterface {
