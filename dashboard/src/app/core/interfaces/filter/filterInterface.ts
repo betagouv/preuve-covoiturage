@@ -14,7 +14,7 @@ export interface FilterInterface {
     end: number;
   };
   days: WeekDay[];
-  insees: string[];
+  insee: string[];
   distance: {
     min: number;
     max: number;

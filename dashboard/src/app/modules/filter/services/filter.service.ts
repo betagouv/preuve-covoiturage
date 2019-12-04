@@ -34,7 +34,7 @@ export class FilterService {
     }
 
     filter = new Filter({
-      insees,
+      insee: insees,
       date: filterUx.date,
       hour: <any>filterUx.hour,
       days: filterUx.days,
