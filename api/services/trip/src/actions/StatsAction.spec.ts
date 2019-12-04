@@ -45,6 +45,7 @@ describe('Stats action', () => {
         ranks: ['a'],
         operator_id: [5],
         territory_id: [239],
+        insee: ['93010'],
       },
       {
         call: {

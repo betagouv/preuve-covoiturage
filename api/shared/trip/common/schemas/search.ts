@@ -45,11 +45,11 @@ const params = {
   status: {
     type: 'string',
   },
-  towns: {
+  insee: {
     type: 'array',
     minItems: 1,
     items: {
-      type: 'string',
+      macro: 'insee',
     },
   },
   distance: {
