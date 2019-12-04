@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap, map } from 'rxjs/operators';
 import { merge, Observable, of } from 'rxjs';
 import { MatPaginator } from '@angular/material';
 
@@ -31,6 +31,8 @@ export class UsersComponent extends DestroyObservable implements OnInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
+  private users$: Observable<User[]>;
+
   constructor(
     public authenticationService: AuthenticationService,
     public userStoreService: UserStoreService,
@@ -40,10 +42,22 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit() {
-    this.userStoreService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
-      this.users = users;
-      this.usersToShow = users;
-    });
+    this.userStoreService.reset();
+    this.userStoreService.filterSubject.next({ limit: 1000 });
+
+    this.users$ = this.userStoreService.entities$.pipe(
+      tap((users) => {
+        this.users = users;
+        this.usersToShow = users;
+      }),
+    );
+
+    this.userStoreService.entity$
+      .pipe(
+        map((user) => !!user),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((editUserFormVisible) => (this.editUserFormVisible = editUserFormVisible));
 
     this.loadUsers();
     this.initSearchForm();
@@ -53,7 +67,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
 
   ngAfterViewInit() {
     merge(
-      this.userStoreService.entities$,
+      this.users$,
       this.searchFilters.valueChanges.pipe(
         debounceTime(300),
         tap(() => (this.paginator.pageIndex = 0)),
@@ -83,44 +97,64 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     return this.usersFiltered && this.usersFiltered.length;
   }
 
-  addUser() {
-    this.isCreatingUser = true;
+  // addUser() {
+  //   this.isCreatingUser = true;
 
-    this.editUserFormVisible = true;
-    if (this.currentOperator) {
-      this.editedUser = new User({
-        _id: null,
-        email: null,
-        firstname: null,
-        lastname: null,
-        phone: null,
-        group: this.currentGroup,
-        operator_id: this.currentOperator,
-        role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
-        permissions: [],
-      });
-      console.log(this.editedUser);
-    }
-    if (this.currentTerritory) {
-      console.log('territory', this.currentTerritory);
-      this.editedUser = new User({
-        _id: null,
-        email: null,
-        firstname: null,
-        lastname: null,
-        phone: null,
-        group: this.currentGroup,
-        territory_id: this.currentTerritory,
-        role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
-        permissions: [],
-      });
-    }
-  }
+  //   this.editUserFormVisible = true;
+  //   if (this.currentOperator) {
+  //     this.editedUser = new User({
+  //       _id: null,
+  //       email: null,
+  //       firstname: null,
+  //       lastname: null,
+  //       phone: null,
+  //       group: this.currentGroup,
+  //       operator_id: this.currentOperator,
+  //       role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
+  //       permissions: [],
+  //     });
+  //     console.log(this.editedUser);
+  //   }
+  //   if (this.currentTerritory) {
+  //     console.log('territory', this.currentTerritory);
+  //     this.editedUser = new User({
+  //       _id: null,
+  //       email: null,
+  //       firstname: null,
+  //       lastname: null,
+  //       phone: null,
+  //       group: this.currentGroup,
+  //       territory_id: this.currentTerritory,
+  //       role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
+  //       permissions: [],
+  //     });
+  //   }
+  // }
 
   showEditForm(user: User = null) {
-    this.isCreatingUser = false;
-    this.editUserFormVisible = true;
-    this.editedUser = user;
+    // this.isCreatingUser = false;
+    // this.editUserFormVisible = true;
+    // this.editedUser = user;
+
+    if (user) {
+      this.userStoreService.select(user);
+    } else {
+      const newUser = new User();
+      //newUser.group = this.userGroup;
+      if (this.currentOperator) {
+        newUser.group = this.currentGroup;
+        newUser.operator_id = this.currentOperator;
+        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+      }
+      if (this.currentTerritory) {
+        newUser.group = this.currentGroup;
+        newUser.territory_id = this.currentTerritory;
+        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+      }
+      this.userStoreService.selectNew(newUser);
+    }
+
+    this.isCreatingUser = !user;
 
     // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
   }
