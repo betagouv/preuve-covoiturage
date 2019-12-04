@@ -145,15 +145,8 @@ export abstract class CrudStore<
       }),
       tap((item) => {
         if (item.success) {
-          const list = [...this.entitiesSubject.value];
-          const ind = list.findIndex((ent) => ent._id === item._id);
-          if (ind !== -1) {
-            list.splice(ind);
-            this.entitiesSubject.next(list);
-          }
-          if (this.entitySubject.value && this.entitySubject.value._id === id) {
-            this.entitySubject.next(null);
-          }
+          this.loadList();
+          this.entitySubject.next(null);
         }
       }),
       map(() => true),
