@@ -16,7 +16,7 @@ export class Filter {
     end: number;
   };
   days: WeekDay[];
-  towns: string[];
+  insee: string[];
   distance: {
     min: number;
     max: number;
@@ -37,7 +37,7 @@ export class Filter {
         end: null,
       },
       days: [],
-      towns: [],
+      insee: [],
       distance: {
         min: null,
         max: null,
@@ -52,7 +52,7 @@ export class Filter {
     this.date = obj.date;
     this.hour = obj.hour;
     this.days = obj.days;
-    this.towns = obj.towns;
+    this.insee = obj.insee;
     this.distance = obj.distance;
     this.ranks = obj.ranks;
     this.status = obj.status;

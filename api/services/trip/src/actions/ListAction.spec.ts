@@ -43,6 +43,7 @@ describe('List action', () => {
         ranks: ['a'],
         operator_id: [1],
         territory_id: [1],
+        insee: ['93010'],
         skip: 1,
         limit: 2,
       },

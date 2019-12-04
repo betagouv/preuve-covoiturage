@@ -52,7 +52,9 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('searchs & adds towns', () => {
-    cy.get('app-towns-autocomplete mat-form-field input').type('lyo');
+    cy.get('app-territories-insee-autocomplete mat-form-field input').type('lyo');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    cy.get('app-territories-insee-autocomplete mat-form-field input').type('villeurbanne');
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
   });
 

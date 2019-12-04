@@ -4,6 +4,9 @@
   }
   app-territories-insee-autocomplete {
     width: 350px;
+    ::ng-deep .territoryInseeAutocomplete {
+      width: 300px;
+    }
   }
   display: flex;
   & > div {

@@ -6,14 +6,15 @@ import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
-import { CampaignInseeAutocompleteService } from '~/modules/campaign/services/campaign-insee-autocomplete.service';
+// tslint:disable-next-line:max-line-length
+import { TerritoryToInseesAutocompleteService } from '~/shared/modules/territory-to-insees-autocomplete/services/territory-to-insees-autocomplete.service';
 
 @Component({
   selector: 'app-territories-insee-autocomplete',
-  templateUrl: './territories-insee-autocomplete.component.html',
-  styleUrls: ['./territories-insee-autocomplete.component.scss'],
+  templateUrl: './territories-to-insees-autocomplete.component.html',
+  styleUrls: ['./territories-to-insees-autocomplete.component.scss'],
 })
-export class TerritoriesInseeAutocompleteComponent extends DestroyObservable implements OnInit {
+export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable implements OnInit {
   public territoryInseeInputCtrl = new FormControl();
 
   public searchedTerritoryInsees: InseeAndTerritoryInterface[] = [];
@@ -23,7 +24,7 @@ export class TerritoriesInseeAutocompleteComponent extends DestroyObservable imp
 
   @ViewChild('territoryInseeInput', { static: false }) territoryInseeInput: ElementRef;
 
-  constructor(private inseeAutocompleteService: CampaignInseeAutocompleteService) {
+  constructor(private inseeAutocompleteService: TerritoryToInseesAutocompleteService) {
     super();
   }
 
@@ -59,9 +60,6 @@ export class TerritoriesInseeAutocompleteComponent extends DestroyObservable imp
 
   private filterTerritoryInsees(literal: string = ''): void {
     const apiMethod = 'findMainInsee';
-    // if (!isNaN(Number(literal)) && literal.length === 2) {
-    //   apiMethod = 'findDepartementByCode';
-    // }
     const selectedTerritoryInsees = this.territoryInseesControl.value || [];
     this.inseeAutocompleteService[apiMethod](literal).subscribe(
       (foundTerritories) =>

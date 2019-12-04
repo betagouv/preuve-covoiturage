@@ -35,7 +35,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       'date',
       'ranks',
       'distance',
-      'towns',
+      'insee',
       // 'campaign_id',
       'days',
       'hour',
@@ -106,12 +106,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
             case 'campaign_id':
               throw new Error('Unimplemented');
-            // TODO use INSEE codes here (coming from the frontend)
-            case 'towns':
-              const towns = filter.value.map((v: string) => `%${v}%`);
+            case 'insee':
               return {
-                text: 'start_town LIKE ANY($#::text[]) OR end_town LIKE ANY ($#::text[])',
-                values: [towns, towns],
+                text: 'start_insee = ANY($#::text[]) OR end_insee = ANY ($#::text[])',
+                values: [filter.value, filter.value],
               };
             case 'days':
               return {
