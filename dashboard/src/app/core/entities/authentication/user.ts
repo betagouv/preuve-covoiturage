@@ -6,34 +6,28 @@ import { IFormModel } from '~/core/entities/IFormModel';
 import { IMapModel } from '~/core/entities/IMapModel';
 import { IClone } from '~/core/entities/IClone';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
-import { UserBaseInterface } from '~/core/entities/api/shared/user/common/interfaces/UserBaseInterface';
 
 import { IModel } from '../IModel';
+import { UserListInterface } from '../api/shared/user/common/interfaces/UserListInterface';
 
-export class BaseUser implements IModel {
+export class BaseUser implements IModel, UserListInterface {
   public _id: number;
   public email: string;
   public lastname: string;
   public firstname: string;
   public phone: string;
-  public status?: string;
+  public status: string;
   public group: UserGroupEnum;
   public role: UserRoleEnum;
 
   // tslint:disable-next-line:variable-name
-  public operator_id?: number;
+  operator_id: number | null;
   // tslint:disable-next-line:variable-name
-  public territory_id?: number;
+  territory_id: number | null;
 }
 
 export class User extends BaseUser
-  implements
-    IFormModel,
-    IMapModel<User, UserInterface>,
-    IClone<User>,
-    UserPatchInterface,
-    UserBaseInterface,
-    UserInterface {
+  implements IFormModel, IMapModel<User, UserInterface>, IClone<User>, UserPatchInterface, UserInterface {
   public permissions: UserPermissionsType;
 
   static formValueToUserPatch(formValues): UserPatchInterface {

@@ -5,15 +5,16 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { User } from '~/core/entities/authentication/user';
+import { User, BaseUser } from '~/core/entities/authentication/user';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
+import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserApiService extends JsonRpcCrud<User, User, UserPatchInterface> {
+export class UserApiService extends JsonRpcCrud<User, UserListInterface, UserPatchInterface> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
     super(http, router, activatedRoute, 'user');
   }

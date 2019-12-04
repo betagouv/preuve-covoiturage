@@ -11,6 +11,7 @@ import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/us
 // tslint:disable-next-line: max-line-length
 import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
+import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
 @Component({
   selector: 'app-all-users',
@@ -18,9 +19,9 @@ import { UserStoreService } from '~/modules/user/services/user-store.service';
   styleUrls: ['./all-users.component.scss'],
 })
 export class AllUsersComponent extends DestroyObservable implements OnInit {
-  usersToShow: User[];
-  users: User[];
-  usersFiltered: User[];
+  usersToShow: UserListInterface[];
+  users: UserListInterface[];
+  usersFiltered: UserListInterface[];
 
   searchFilters: FormGroup;
   editUserFormVisible = false;
@@ -32,7 +33,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   @ViewChild(MatButtonToggleGroup, { static: false }) toggle: MatButtonToggleGroup;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  users$: Observable<User[]>;
+  users$: Observable<UserListInterface[]>;
 
   public editedUser: User;
   canEditUser$: Observable<boolean>;

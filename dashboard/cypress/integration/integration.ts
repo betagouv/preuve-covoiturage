@@ -183,7 +183,7 @@ function cypress_context_territory() {
         testTerritoryStory();
       } else {
         // local testing
-        testTerritoryStory(true, true, true, true, true, true, true);
+        testTerritoryStory(false, false, true, false, false, false, false);
       }
     });
   });

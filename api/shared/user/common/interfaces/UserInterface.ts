@@ -1,6 +1,13 @@
-import { UserBaseInterface } from './UserBaseInterface';
+export interface UserInterface {
+  email: string;
+  firstname: string;
+  lastname: string;
+  phone?: string;
+  group?: string; // computed prop
+  role: string;
+  operator_id?: number;
+  territory_id?: number;
 
-export interface UserInterface extends UserBaseInterface {
   _id: number;
   permissions: string[];
   status: string;

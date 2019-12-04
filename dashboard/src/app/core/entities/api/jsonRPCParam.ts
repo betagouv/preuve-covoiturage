@@ -1,6 +1,6 @@
 import { IModel } from '~/core/entities/IModel';
 
-export class JsonRPCParam {
+export class JsonRPCParam<T = any> {
   public id: number;
   public method: string;
   public jsonrpc: string;
@@ -13,7 +13,7 @@ export class JsonRPCParam {
     return new JsonRPCParam(method, param);
   }
 
-  constructor(method?: string, params?: any) {
+  constructor(method?: string, params?: T) {
     this.id = new Date().getTime();
     this.method = method ? method : '';
     this.jsonrpc = '2.0';

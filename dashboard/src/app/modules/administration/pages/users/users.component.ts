@@ -11,6 +11,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { UserApiService } from '~/modules/user/services/user-api.service';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
+import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
 @Component({
   selector: 'app-users',
@@ -18,9 +19,9 @@ import { UserStoreService } from '~/modules/user/services/user-store.service';
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent extends DestroyObservable implements OnInit {
-  usersToShow: User[];
-  users: User[];
-  usersFiltered: User[];
+  usersToShow: UserListInterface[];
+  users: UserListInterface[];
+  usersFiltered: UserListInterface[];
   searchFilters: FormGroup;
   editUserFormVisible = false;
   editedUser = new User();
