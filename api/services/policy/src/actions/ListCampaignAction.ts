@@ -1,5 +1,6 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
+import { get } from 'lodash';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
@@ -17,9 +18,10 @@ export class ListCampaignAction extends AbstractAction {
 
   public async handle(params: ParamsInterface, context): Promise<ResultInterface> {
     const result = await this.campaignRepository.findWhere(params);
+    const userTerritoryId = get(context, 'call.user.territory_id');
 
-    if (params.territory_id !== context.call.user.territory_id) {
-      return result.map(this.removeSensitiveRules);
+    if (!userTerritoryId || params.territory_id !== userTerritoryId) {
+      return result.map((c) => this.removeSensitiveRules(c));
     }
 
     return result;
