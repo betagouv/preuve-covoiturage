@@ -31,7 +31,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  private users$: Observable<User[]>;
+  private users$: Observable<UserListInterface[]>;
 
   constructor(
     public authenticationService: AuthenticationService,

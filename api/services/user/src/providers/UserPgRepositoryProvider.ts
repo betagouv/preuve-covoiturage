@@ -1,4 +1,4 @@
-import { provider, ConfigInterfaceResolver } from '@ilos/common';
+import { provider, ConfigInterfaceResolver, NotFoundException, ConflictException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
@@ -46,6 +46,18 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   constructor(protected connection: PostgresConnection, config: ConfigInterfaceResolver) {
     this.defaultLimit = config.get('pagination.defaultLimit', 10);
     this.maxLimit = config.get('pagination.maxLimit', 1000);
+  }
+
+  async checkForDoubleEmailAndFail(email: string, userId = -1) {
+    const query = {
+      text: `SELECT _id FROM ${this.table} WHERE email = '${email}' AND _id='${userId}'`,
+      values: [],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    if (result.rowCount !== 1) {
+      throw new ConflictException(`A User already has the email ${email}`);
+    }
   }
 
   async create(data: UserCreateInterface): Promise<UserFindInterface> {

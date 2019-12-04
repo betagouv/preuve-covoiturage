@@ -79,4 +79,7 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
   async patchByTerritory(_id: number, data: UserPatchInterfaceBy, territory_id: number): Promise<UserFindInterface> {
     throw new Error();
   }
+  async checkForDoubleEmailAndFail(email: string, userId = -1): Promise<void> {
+    throw new Error();
+  }
 }
