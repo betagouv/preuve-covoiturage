@@ -41,10 +41,10 @@ export abstract class JsonRPC {
       urlWithMethods += `${method.method}`;
     });
     return this.http.post(urlWithMethods, methods, finalOptions).pipe(
-      catchHttpStatus(401, (err) => {
-        this.router.navigate(['/login']);
-        throw err;
-      }),
+      // catchHttpStatus(401, (err) => {
+      //   this.router.navigate(['/login']);
+      //   throw err;
+      // }),
       map((response: JsonRPCResponse[]) => {
         const res: { id: number; data: any; meta: any }[] = [];
         // if (response.data) {
