@@ -14,9 +14,7 @@ CREATE MATERIALIZED VIEW trip.list AS (
     tis.territory_id as start_territory_id,
     cie.town as end_town,
     tie.territory_id as end_territory_id,
-    (CASE WHEN cp.distance <> null THEN cp.distance ELSE (cp.meta::json->>'calc_distance')::int END) as distance,
-    cp.seats as seats,
-    cp.is_driver as is_driver
+    (CASE WHEN cp.distance <> null THEN cp.distance ELSE (cp.meta::json->>'calc_distance')::int END) as distance
   FROM carpool.carpools as cp
   JOIN common.insee as cis ON cp.start_insee = cis._id
   JOIN common.insee as cie ON cp.end_insee = cie._id
