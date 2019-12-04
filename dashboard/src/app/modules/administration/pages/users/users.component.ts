@@ -140,7 +140,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       this.userStoreService.select(user);
     } else {
       const newUser = new User();
-      //newUser.group = this.userGroup;
+      // newUser.group = this.userGroup;
       if (this.currentOperator) {
         newUser.group = this.currentGroup;
         newUser.operator_id = this.currentOperator;

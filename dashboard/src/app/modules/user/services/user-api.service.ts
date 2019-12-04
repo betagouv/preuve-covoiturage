@@ -11,8 +11,6 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 import { ToastrService } from 'ngx-toastr';
-import { UserInterface } from '~/core/interfaces/user/profileInterface';
-import { UserFindInterface } from '~/core/entities/api/shared/user/common/interfaces/UserFindInterface';
 
 @Injectable({
   providedIn: 'root',
