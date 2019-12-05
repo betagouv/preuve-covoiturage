@@ -105,7 +105,6 @@ export abstract class CrudStore<
   selectNew(entity: EntityT = new this.modelType()) {
     const newEntity = entity.clone();
     delete newEntity._id;
-    console.log('newEntity : ', newEntity);
     this.entitySubject.next(newEntity);
   }
 
