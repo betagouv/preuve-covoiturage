@@ -19,11 +19,18 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
   searchFilters: FormGroup;
   selectedStatus = CampaignStatusEnum.VALIDATED;
   allStatus = [
-    CampaignStatusEnum.VALIDATED,
-    CampaignStatusEnum.ARCHIVED,
     CampaignStatusEnum.DRAFT,
     CampaignStatusEnum.PENDING,
+    CampaignStatusEnum.VALIDATED,
+    CampaignStatusEnum.ARCHIVED,
   ];
+  titles = {
+    [CampaignStatusEnum.DRAFT]: 'Les campagnes en brouillon',
+    [CampaignStatusEnum.PENDING]: "Les campagnes en cours d'activation",
+    [CampaignStatusEnum.VALIDATED]: 'Les campagnes en cours',
+    [CampaignStatusEnum.ARCHIVED]: 'Les campagnes terminées',
+    [CampaignStatusEnum.TEMPLATE]: 'Les modèles de campagnes',
+  };
 
   constructor(private _campaignService: CampaignService, private fb: FormBuilder) {
     super();

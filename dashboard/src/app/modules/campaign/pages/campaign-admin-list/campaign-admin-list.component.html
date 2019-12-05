@@ -4,8 +4,6 @@
   </app-page-header>
   <app-page-content>
     <div class="CampaignAdminList-header">
-      <h2>Les campagnes {{ getFrenchStatus(selectedStatus) | lowercase }}</h2>
-
       <mat-button-toggle-group [(ngModel)]="selectedStatus" name="userGroup" aria-label="Groupes d'utilisateurs">
         <mat-button-toggle *ngFor="let status of allStatus" [value]="status">{{
           getFrenchStatus(status)
@@ -20,6 +18,8 @@
         </mat-form-field>
       </form>
     </div>
+
+    <h2>{{ titles[selectedStatus] }}</h2>
 
     <app-campaigns-list
       [campaigns]="filteredCampaigns"
