@@ -37,7 +37,7 @@ export class UserApiService extends JsonRpcCrud<User, UserListInterface, UserPat
   protected catchEmailConflict<T>(obs$: Observable<T>): Observable<T> {
     return obs$.pipe(
       catchHttpStatus(409, (err) => {
-        this._toastr.error("L'email rentré est déjà utilisé");
+        this._toastr.error("L'email est déjà utilisé");
         throw err;
       }),
     );
