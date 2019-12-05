@@ -27,7 +27,7 @@ export const expectedFilter: FilterInterface = {
     end: 22,
   },
   days: [0, 1],
-  insees: ['69123', '69266'],
+  insee: ['69123', '69266'],
   distance: {
     min: 80000,
     max: 123000,
