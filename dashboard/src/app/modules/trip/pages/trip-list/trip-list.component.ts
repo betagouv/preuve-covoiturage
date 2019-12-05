@@ -6,7 +6,7 @@ import { TripService } from '~/modules/trip/services/trip.service';
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';
+import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '~/core/const/filter.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 
@@ -68,7 +68,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
 
   onScroll() {
     // TODO stop fetching trips when end (count 0) is reached
-    this.skip += TRIP_SKIP_SCROLL;
+    this.skip += DEFAULT_TRIP_LIMIT;
     const filter = {
       ...this.filterService.filter$.value,
       skip: this.skip,
