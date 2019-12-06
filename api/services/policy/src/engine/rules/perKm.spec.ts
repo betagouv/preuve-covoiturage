@@ -3,7 +3,7 @@ import chaiAsync from 'chai-as-promised';
 import { perKm } from './perKm';
 import { MetadataWrapper } from '../MetadataWrapper';
 
-const meta = new MetadataWrapper(1, {});
+const meta = new MetadataWrapper(1, 'default', {});
 
 chai.use(chaiAsync);
 const { expect } = chai;

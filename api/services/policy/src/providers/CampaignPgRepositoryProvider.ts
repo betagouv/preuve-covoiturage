@@ -277,11 +277,11 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
         SELECT * FROM ${this.table}
         WHERE territory_id = ANY($1::text[])
         AND start_date <= $2
-        AND end_date >= $3
-        AND status = $4
+        AND end_date >= $2
+        AND status = $3
         AND deleted_at IS NULL
       `,
-      values: [territories, date, date, 'active'],
+      values: [territories, date, 'active'],
     };
 
     const result = await this.connection.getClient().query(query);
