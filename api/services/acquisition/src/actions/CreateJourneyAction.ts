@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver, ParseErrorException, ConflictException } from '@ilos/common';
 import { CreateJourneyParamsInterface, PersonInterface } from '@pdc/provider-schema';
 
 import { Journey } from '../entities/Journey';
@@ -52,15 +52,24 @@ export class CreateJourneyAction extends AbstractAction {
     }
 
     // Store in database
-    const journey = await this.journeyRepository.create(payload);
+    try {
+      const journey = await this.journeyRepository.create(payload);
 
-    // Dispatch to the normalization pipeline
-    await this.kernel.notify('normalization:geo', journey, callContext);
+      // Dispatch to the normalization pipeline
+      await this.kernel.notify('normalization:geo', journey, callContext);
 
-    return {
-      journey_id: journey.journey_id,
-      created_at: journey.created_at,
-    };
+      return {
+        journey_id: journey.journey_id,
+        created_at: journey.created_at,
+      };
+    } catch (e) {
+      switch (e.code) {
+        case 11000:
+          throw new ConflictException('Journey already registered');
+        default:
+          throw e;
+      }
+    }
   }
 
   protected cast(jrn: CreateJourneyParamsInterface, operatorId: string): Journey {
