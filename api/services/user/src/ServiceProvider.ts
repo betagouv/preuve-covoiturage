@@ -26,6 +26,7 @@ import { list } from './shared/user/list.schema';
 import { login } from './shared/user/login.schema';
 import { patch } from './shared/user/patch.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
+import { sendInvitationEmail } from './shared/user/sendInvitationEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { SetPermissionsCommand } from './commands/SetPermissionsCommand';
@@ -68,6 +69,7 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     ['user.login', login],
     ['user.patch', patch],
     ['user.sendConfirmEmail', sendConfirmEmail],
+    ['user.sendInvitationEmail', sendInvitationEmail],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
