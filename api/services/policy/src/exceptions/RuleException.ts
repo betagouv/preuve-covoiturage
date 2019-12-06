@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../interfaces/RuleInterface';
 
 export class RuleException extends Error {
   constructor(public rule: ApplicableRuleInterface) {

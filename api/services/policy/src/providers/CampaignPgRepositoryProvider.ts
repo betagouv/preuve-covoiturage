@@ -89,7 +89,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return this.castTypes(result.rows[0]);
   }
 
-  async patch(id: number, patch: { [k: string]: any }): Promise<CampaignInterface> {
+  async patch(id: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
     const updatablefields = [
       'ui_status',
       'name',
@@ -160,7 +160,11 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return;
   }
 
-  async patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<CampaignInterface> {
+  async patchWhereTerritory(
+    id: number,
+    territoryId: number,
+    patch: Partial<CampaignInterface>,
+  ): Promise<CampaignInterface> {
     const updatablefields = [
       'ui_status',
       'name',

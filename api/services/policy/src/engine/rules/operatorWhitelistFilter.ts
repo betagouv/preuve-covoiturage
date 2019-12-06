@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { HIGH } from '../helpers/priority';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 

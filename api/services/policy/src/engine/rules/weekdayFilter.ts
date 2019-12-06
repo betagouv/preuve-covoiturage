@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { HIGH } from '../helpers/priority';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 
@@ -18,7 +18,7 @@ export const weekdayFilter: ApplicableRuleInterface = {
   index: HIGH,
   apply(params: WeekdayParameters) {
     return async (ctx, next) => {
-      const wk = ctx.person.start.datetime.getDay();
+      const wk = ctx.person.datetime.getDay();
       for (const weekday of params) {
         if (wk === weekday) {
           return next();

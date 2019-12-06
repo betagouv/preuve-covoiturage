@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { HIGH } from '../helpers/priority';
 
@@ -52,8 +52,8 @@ export const inseeWhitelistFilter: ApplicableRuleInterface = {
       let whitelisted = false;
       for (const rule of params) {
         if (
-          (!rule.start.length || inList(rule.start, ctx.person.start.insee)) &&
-          (!rule.end.length || inList(rule.end, ctx.person.end.insee))
+          (!rule.start.length || inList(rule.start, ctx.person.start_insee)) &&
+          (!rule.end.length || inList(rule.end, ctx.person.end_insee))
         ) {
           whitelisted = true;
         }
@@ -80,8 +80,8 @@ export const inseeBlacklistFilter: ApplicableRuleInterface = {
       let blacklisted = false;
       for (const rule of params) {
         if (
-          (!rule.start.length || inList(rule.start, ctx.person.start.insee)) &&
-          (!rule.end.length || inList(rule.end, ctx.person.end.insee))
+          (!rule.start.length || inList(rule.start, ctx.person.start_insee)) &&
+          (!rule.end.length || inList(rule.end, ctx.person.end_insee))
         ) {
           blacklisted = true;
         }

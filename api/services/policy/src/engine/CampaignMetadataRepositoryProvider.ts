@@ -15,7 +15,7 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
 
   constructor(protected connection: PostgresConnection) {}
 
-  async get(id: number, key: string | null = 'default'): Promise<MetadataWrapper> {
+  async get(id: number, key: string = 'default'): Promise<MetadataWrapper> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT

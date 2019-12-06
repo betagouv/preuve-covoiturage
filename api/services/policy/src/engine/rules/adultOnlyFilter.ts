@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { HIGH } from '../helpers/priority';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 
@@ -12,7 +12,7 @@ export const adultOnlyFilter: ApplicableRuleInterface = {
   index: HIGH,
   apply() {
     return async (ctx, next) => {
-      if (!ctx.person.identity.over_18) {
+      if (!ctx.person.is_over_18) {
         throw new NotApplicableTargetException(adultOnlyFilter);
       }
       return next();

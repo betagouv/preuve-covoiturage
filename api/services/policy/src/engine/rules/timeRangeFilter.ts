@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { HIGH } from '../helpers/priority';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 
@@ -35,7 +35,7 @@ export const timeRangeFilter: ApplicableRuleInterface = {
   index: HIGH,
   apply(params: TimeRangeParameters) {
     return async (ctx, next) => {
-      const hours = ctx.person.start.datetime.getHours();
+      const hours = ctx.person.datetime.getHours();
       for (const range of params) {
         if (hours >= range.start && hours <= range.end) {
           return next();

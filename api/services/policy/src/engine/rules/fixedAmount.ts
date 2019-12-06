@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { LOW } from '../helpers/priority';
 
 export const fixedAmount: ApplicableRuleInterface = {

@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { LOW } from '../helpers/priority';
 
 export const costBasedAmount: ApplicableRuleInterface = {
@@ -11,7 +11,7 @@ export const costBasedAmount: ApplicableRuleInterface = {
   index: LOW,
   apply() {
     return async (ctx, next) => {
-      ctx.result = ctx.person.contribution;
+      ctx.result = Math.abs(ctx.person.cost); // TODO passenger only ?
       return next();
     };
   },

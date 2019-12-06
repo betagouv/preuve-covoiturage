@@ -4,6 +4,7 @@ import { maxAmountPerTargetRestriction } from './maxAmountPerTargetRestriction';
 import { compose } from '../helpers/compose';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { MetadataWrapper } from '../MetadataWrapper';
+import { faker } from '../helpers/faker';
 
 const meta = new MetadataWrapper(1, 'default', {});
 
@@ -20,98 +21,15 @@ const apply = compose([
     ctx.result = 10;
   },
 ]);
+const uuid = 'uuid';
 
-const trip = {
-  operator_id: [1],
-  status: '',
-  start: new Date(),
-  people: [
-    {
-      is_driver: true,
-      identity: {
-        phone: '0102030405',
-        over_18: false,
-      },
-      operator_class: 'A',
-      operator_id: 1,
+const trip = faker.trip([
+  {
+    is_driver: true,
+    identity_uuid: uuid,
+  },
+]);
 
-      start: {
-        datetime: new Date(),
-        // lat?: number;
-        // lon?: number;
-        insee: 'A',
-        // postcodes?: string[];
-        // town?: string;
-        // country?: string;
-        // literal?: string;
-        // territory?: string;
-      },
-      end: {
-        datetime: new Date(),
-        // lat?: number;
-        // lon?: number;
-        insee: 'A',
-        // postcodes?: string[];
-        // town?: string;
-        // country?: string;
-        // literal?: string;
-        // territory?: string;
-      },
-      distance: 50,
-      duration: 10000,
-      seats: 0,
-      contribution: 10,
-      revenue: 0,
-      expense: 0,
-      incentives: [],
-      payments: [],
-      calc_distance: 0,
-      calc_duration: 0,
-    },
-    {
-      is_driver: false,
-      identity: {
-        phone: '0102030405',
-        over_18: true,
-      },
-      operator_class: 'A',
-      operator_id: 1,
-
-      start: {
-        datetime: new Date(),
-        // lat?: number;
-        // lon?: number;
-        insee: 'B',
-        // postcodes?: string[];
-        // town?: string;
-        // country?: string;
-        // literal?: string;
-        // territory?: string;
-      },
-      end: {
-        datetime: new Date(),
-        // lat?: number;
-        // lon?: number;
-        insee: 'A',
-        // postcodes?: string[];
-        // town?: string;
-        // country?: string;
-        // literal?: string;
-        // territory?: string;
-      },
-      distance: 10000,
-      duration: 10000,
-      seats: 0,
-      contribution: 10,
-      revenue: 0,
-      expense: 0,
-      incentives: [],
-      payments: [],
-      calc_distance: 0,
-      calc_duration: 0,
-    },
-  ],
-};
 describe('Policy rule: max amout per target', () => {
   it('should increase meta data', async () => {
     const data = {
@@ -121,11 +39,11 @@ describe('Policy rule: max amout per target', () => {
       meta,
     };
     await apply(data, async () => {});
-    const datetime = trip.people[0].start.datetime;
+    const datetime = trip.people[0].datetime;
     const [day, month, year] = [datetime.getDate(), datetime.getMonth(), datetime.getFullYear()];
     expect(
       meta.get(
-        `${maxAmountPerTargetRestriction.slug}.${trip.people[0].identity.phone}.day.${day}-${month}-${year}`,
+        `${maxAmountPerTargetRestriction.slug}.${trip.people[0].identity_uuid}.day.${day}-${month}-${year}`,
         null,
       ),
     ).to.eq(10);

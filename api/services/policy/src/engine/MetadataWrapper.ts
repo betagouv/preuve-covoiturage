@@ -1,4 +1,4 @@
-import { MetaInterface } from '../interfaces/RuleInterfaces';
+import { MetaInterface } from '../interfaces/MetaInterface';
 
 export class MetadataWrapper implements MetaInterface {
   protected data: Map<string, any>;
