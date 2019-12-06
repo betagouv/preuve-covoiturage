@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ParseErrorException } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver, ParseErrorException, ConflictException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
 import { alias } from '../shared/acquisition/create.schema';
@@ -19,10 +19,7 @@ const callContext = {
 
 @handler(handlerConfig)
 export class CreateJourneyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
-    ['can', ['journey.create']],
-    ['validate', alias],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
 
   constructor(
     private kernel: KernelInterfaceResolver,
@@ -44,18 +41,27 @@ export class CreateJourneyAction extends AbstractAction {
     }
 
     // Store in database
-    const acquisition = await this.journeyRepository.create(payload, {
-      operator_id: context.call.user.operator_id,
-      application_id: context.call.user.application_id,
-    });
+    try {
+      const acquisition = await this.journeyRepository.create(payload, {
+        operator_id: context.call.user.operator_id,
+        application_id: context.call.user.application_id,
+      });
 
-    // Dispatch to the normalization pipeline
-    await this.kernel.notify('normalization:geo', acquisition, callContext);
+      // Dispatch to the normalization pipeline
+      await this.kernel.notify('normalization:geo', acquisition, callContext);
 
-    return {
-      journey_id: acquisition.journey_id,
-      created_at: acquisition.created_at,
-    };
+      return {
+        journey_id: acquisition.journey_id,
+        created_at: acquisition.created_at,
+      };
+    } catch (e) {
+      switch (e.code) {
+        case 11000:
+          throw new ConflictException('Journey already registered');
+        default:
+          throw e;
+      }
+    }
   }
 
   protected cast(jrn: ParamsInterface, operator_id: number): JourneyInterface {
