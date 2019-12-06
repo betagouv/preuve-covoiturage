@@ -35,7 +35,7 @@ export abstract class CrudStore<
   protected _loadCount = 0;
 
   // filter subject
-  protected _filterSubject = new BehaviorSubject<any>({});
+  protected _filterSubject = new BehaviorSubject<any>(null);
   private _filterSubscription: Subscription;
 
   get filterSubject() {
@@ -65,8 +65,9 @@ export abstract class CrudStore<
   constructor(protected rpcCrud: JsonRpcCrudT, protected modelType: Type<EntityT>) {
     this.rpcCrud = rpcCrud;
     let firstLoad = true;
+
     this._filterSubject.subscribe((filter) => {
-      if (firstLoad) {
+      if (firstLoad && (filter !== null || !firstLoad)) {
         this.loadList();
         firstLoad = false;
       }
