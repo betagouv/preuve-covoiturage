@@ -46,8 +46,6 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
       values: [id, masterKey, metadata.all()],
     };
 
-    console.log(query.text, query.values);
-
     await this.connection.getClient().query(query);
     return;
   }
