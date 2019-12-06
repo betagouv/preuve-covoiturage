@@ -55,7 +55,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
 
     const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
+    if (result.rowCount > 0) {
       throw new ConflictException(`A User already has the email ${email}`);
     }
   }
