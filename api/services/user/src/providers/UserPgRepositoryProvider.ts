@@ -49,13 +49,15 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   async checkForDoubleEmailAndFail(email: string, userId = -1) {
+    console.log('checkForDoubleEmailAndFail ' + email + ' : ' + userId);
+
     const query = {
       text: `SELECT _id FROM ${this.table} WHERE email = $1 AND _id != $2`,
       values: [email, userId],
     };
 
     const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
+    if (result.rowCount > 0) {
       throw new ConflictException(`A User already has the email ${email}`);
     }
   }
