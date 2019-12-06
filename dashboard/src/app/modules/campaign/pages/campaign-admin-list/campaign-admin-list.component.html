@@ -1,0 +1,32 @@
+<div class="CampaignAdminList">
+  <app-page-header>
+    <h1>Liste des campagnes sur tous les territoires</h1>
+  </app-page-header>
+  <app-page-content>
+    <div class="CampaignAdminList-header">
+      <mat-button-toggle-group [(ngModel)]="selectedStatus" name="userGroup" aria-label="Groupes d'utilisateurs">
+        <mat-button-toggle *ngFor="let status of allStatus" [value]="status">{{
+          getFrenchStatus(status)
+        }}</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <form [formGroup]="searchFilters">
+        <mat-form-field appearance="outline">
+          <mat-label>Rechercher</mat-label>
+          <input matInput placeholder="Nom, description" formControlName="query" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </form>
+    </div>
+
+    <h2>{{ titles[selectedStatus] }}</h2>
+
+    <app-campaigns-list
+      [campaigns]="filteredCampaigns"
+      [campaignStatusList]="[selectedStatus]"
+      [loading]="loading"
+      [loaded]="loaded"
+      [noCampaignMessage]="noCampaignMessage"
+    ></app-campaigns-list>
+  </app-page-content>
+</div>

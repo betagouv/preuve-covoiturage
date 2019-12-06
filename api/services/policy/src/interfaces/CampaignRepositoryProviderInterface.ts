@@ -5,8 +5,8 @@ export interface CampaignRepositoryProviderInterface {
   patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<any>;
 
   findOneWhereTerritory(id: number, territoryId: number): Promise<any>;
-  findWhereTerritory(territoryId: number): Promise<any[]>;
-  findTemplates(territoryId: number | null): Promise<any[]>;
+  findWhere(search: { territory_id?: number | null; status?: string }): Promise<any[]>;
+
   deleteDraftOrTemplate(id: number, territoryId: number): Promise<void>;
   findApplicableCampaigns(territories: number[], date: Date): Promise<any[]>;
 }
@@ -28,11 +28,7 @@ export abstract class CampaignRepositoryProviderInterfaceResolver implements Cam
     throw new Error();
   }
 
-  async findWhereTerritory(territoryId: number): Promise<any[]> {
-    throw new Error();
-  }
-
-  async findTemplates(territoryId: number | null): Promise<any[]> {
+  async findWhere(search: { territory_id?: number | null; status?: string }): Promise<any[]> {
     throw new Error();
   }
 

@@ -24,7 +24,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
 
   @ViewChild('campaignInput', { static: false }) campaignInput: ElementRef;
 
-  constructor(private campaignService: CampaignService, private commonDataService: CommonDataService) {
+  constructor(private commonDataService: CommonDataService) {
     super();
   }
 
@@ -65,18 +65,6 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   }
 
   private initCampaigns() {
-    // if (!this.campaignService.campaignsLoaded) {
-    //   this.campaignService
-    //     .load()
-    //     .pipe(takeUntil(this.destroy$))
-    //     .subscribe();
-    // }
-    //
-    // this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
-    //   this.campaigns = campaigns.map((campaign: Campaign) => ({ _id: campaign._id, name: campaign.name }));
-    //   this.filterCampaigns();
-    // });
-
     this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.campaigns = campaigns
         ? campaigns.map((campaign: Campaign) => ({

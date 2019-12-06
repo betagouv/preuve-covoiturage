@@ -1,7 +1,8 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import {
   RestrictionRetributionRule,
-  DistanceRangeGlobalRetributionRule, RankGlobalRetributionRule,
+  DistanceRangeGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -22,7 +23,7 @@ import { RestrictionPeriodsEnum, RestrictionTargetsEnum } from '~/core/enums/cam
 
 export const campaignTemplateStubs: TemplateInterface[] = [
   {
-    _id: '5d6930724f56e6e1d0654543',
+    _id: 51,
     parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Encourager financièrement le covoiturage',
@@ -88,7 +89,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     unit: IncentiveUnitEnum.EUR,
   },
   {
-    _id: '5d69319a9763dc801ea78de6',
+    _id: 52,
     parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Récompenser le covoiturage',
@@ -155,7 +156,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     unit: IncentiveUnitEnum.POINT,
   },
   {
-    _id: '5d69319a9763dc801ea78de4',
+    _id: 53,
     parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Limiter le trafic en semaine',
@@ -229,7 +230,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     unit: IncentiveUnitEnum.EUR,
   },
   {
-    _id: '5d69319a9763dc801ea78iou',
+    _id: 54,
     parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Limiter la pollution',
@@ -297,7 +298,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     unit: IncentiveUnitEnum.EUR,
   },
   {
-    _id: '5d69319a9763dc801ea78pl9',
+    _id: 55,
     parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Limiter les embouteillages du week-end',
@@ -353,7 +354,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     unit: IncentiveUnitEnum.EUR,
   },
   {
-    _id: '5d69319a9763dc801ea78fr6',
+    _id: 56,
     parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: "Limiter le trafic lors d'un évènement ponctuel",
@@ -419,7 +420,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
     unit: IncentiveUnitEnum.EUR,
   },
   {
-    _id: '5d69319a9763dc801ea78ty6',
+    _id: 57,
     parent_id: null,
     status: CampaignStatusEnum.TEMPLATE,
     name: 'Gratuité du covoiturage pour les passagers',

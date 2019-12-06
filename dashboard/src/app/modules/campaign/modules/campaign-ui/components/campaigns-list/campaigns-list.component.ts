@@ -2,14 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-
 import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -18,41 +17,45 @@ import { CampaignFormatingService } from '~/modules/campaign/services/campaign-f
 })
 export class CampaignsListComponent extends DestroyObservable implements OnInit {
   @Input() campaignStatusList: CampaignStatusEnum[] = [];
-  campaigns: CampaignUx[] = [];
+  @Input() campaigns: CampaignUx[];
+  @Input() loading = false;
+  @Input() loaded = false;
+  @Input() noCampaignMessage = `Vous n'avez pas de campagnes.`;
+
   CampaignStatusEnum = CampaignStatusEnum;
 
   constructor(
     private dialog: DialogService,
+    private authService: AuthenticationService,
     public campaignService: CampaignService,
-    public campaignFormatService: CampaignFormatingService,
     private toastr: ToastrService,
   ) {
     super();
   }
 
-  ngOnInit() {
-    this.loadCampaigns();
+  ngOnInit() {}
+
+  showEdition(status: CampaignStatusEnum): boolean {
+    return status === CampaignStatusEnum.DRAFT && this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
   }
 
-  private loadCampaigns(): void {
-    this.campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
-      this.filterCampaignsByStatus(campaigns);
-    });
-
-    if (this.campaignService.campaignsLoaded) {
-      return;
-    }
-    this.campaignService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
+  showValid(status: CampaignStatusEnum): boolean {
+    return (
+      status === CampaignStatusEnum.VALIDATED ||
+      status === CampaignStatusEnum.PENDING ||
+      status === CampaignStatusEnum.ARCHIVED
+    );
   }
 
-  public filterCampaignsByStatus(campaigns: Campaign[]): void {
+  showDelete(status: CampaignStatusEnum): boolean {
+    return status === CampaignStatusEnum.ARCHIVED && this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
+  }
+
+  get filteredCampaigns(): CampaignUx[] {
+    if (!this.campaigns) return null;
     const statusList = this.campaignStatusList;
-    this.campaigns = campaigns
-      .filter((c: Campaign) => statusList.length === 0 || statusList.indexOf(c.status) !== -1)
-      .map((campaign: Campaign) => this.campaignFormatService.toCampaignUxFormat(campaign))
+    return this.campaigns
+      .filter((c: CampaignUx) => statusList.length === 0 || statusList.indexOf(c.status) !== -1)
       .sort((a, b) => (a.start.isAfter(b.start) ? -1 : 1));
   }
 

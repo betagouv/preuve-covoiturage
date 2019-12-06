@@ -9,6 +9,8 @@ import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 
 @Injectable({
   providedIn: 'root',
@@ -20,12 +22,19 @@ export class CampaignService extends ApiService<Campaign> {
     private _http: HttpClient,
     private _jsonRPC: JsonRPCService,
     private _authService: AuthenticationService,
+    private _campaignFormatingService: CampaignFormatingService,
   ) {
     super(_http, _jsonRPC, 'campaign');
   }
 
   get campaignsLoaded(): boolean {
     return this._loaded$.value;
+  }
+
+  get campaignsUx$(): Observable<CampaignUx[]> {
+    return this.entities$.pipe(
+      map((campaigns) => campaigns.map((campaign) => this._campaignFormatingService.toCampaignUxFormat(campaign))),
+    );
   }
 
   public launch(id: number): Observable<[Campaign, Campaign[]]> {

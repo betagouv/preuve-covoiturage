@@ -7,8 +7,8 @@
   <div class="Header-menu" *ngIf="user">
     <div
       class="Header-menu-item campaign-menu-item"
-      *ngIf="hasTerritoryGroup"
-      [routerLink]="'/campaign'"
+      *ngIf="hasTerritoryGroup || hasRegistryGroup"
+      [routerLink]="routerLink"
       routerLinkActive="active"
     >
       Campagnes

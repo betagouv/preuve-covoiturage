@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 
 import { User } from '~/core/entities/authentication/user';
@@ -17,7 +17,6 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
   user: User;
 
   homeLink = '/';
-  CMSLink = URLS.CMSLink;
 
   constructor(public authService: AuthenticationService, public router: Router) {
     super();
@@ -48,7 +47,14 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
     this.authService.logout();
   }
 
+  get routerLink(): string {
+    return this.hasTerritoryGroup ? '/campaign' : '/campaign/list';
+  }
+
   get hasTerritoryGroup(): boolean {
     return this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
+  }
+  get hasRegistryGroup(): boolean {
+    return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY]);
   }
 }

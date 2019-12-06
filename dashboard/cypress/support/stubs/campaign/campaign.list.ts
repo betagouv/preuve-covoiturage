@@ -23,11 +23,12 @@ import { CampaignsGenerator } from '../../generators/campaigns.generator';
 import { operatorStubs } from '../operator/operator.list';
 import { territoryStub } from '../territory/territory.find';
 import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
+import { campaignTemplateStubs } from './campaign-template.list';
 
 export const campaignStubs: Campaign[] = [
   {
-    _id: '5d7775bf37043b8463b2a208',
-    parent_id: '5d6930724f56e6e1d0654542',
+    _id: 31,
+    parent_id: campaignTemplateStubs[0]._id,
     status: CampaignStatusEnum.VALIDATED,
     name: 'Encourager le covoiturage',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
@@ -67,8 +68,8 @@ export const campaignStubs: Campaign[] = [
     territory_id: territoryStub._id,
   },
   {
-    _id: '5d777822ff790e51107c6c4f',
-    parent_id: '5d69319a9763dc801ea78de7',
+    _id: 32,
+    parent_id: campaignTemplateStubs[0]._id,
     status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter le trafic en semaine',
     description: 'Fusce vehicula dolor arcu, sit amet blandit dolor mollis.',
@@ -108,7 +109,7 @@ export const campaignStubs: Campaign[] = [
     territory_id: territoryStub._id,
   },
   {
-    _id: '5d77782eecbdea02802a81eb',
+    _id: 33,
     parent_id: null,
     status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter la pollution',

@@ -233,34 +233,28 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return this.castTypes(result.rows[0]);
   }
 
-  async findWhereTerritory(territoryId: number): Promise<CampaignInterface[]> {
-    const query = {
-      text: `
-        SELECT * FROM ${this.table}
-        WHERE territory_id = $1
-        AND deleted_at IS NULL
-      `,
-      values: [territoryId],
-    };
+  async findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]> {
+    const values = [];
+    let where = '';
 
-    const result = await this.connection.getClient().query(query);
-
-    if (result.rowCount === 0) {
-      return [];
+    if ('territory_id' in search && 'status' in search) {
+      where = 'AND status::text = $1 AND territory_id = $2::text';
+      values.push(search.status, search.territory_id);
+    } else if ('territory_id' in search) {
+      where = 'AND territory_id = $1::text';
+      values.push(search.territory_id);
+    } else if ('status' in search) {
+      where = 'AND status::text = $1';
+      values.push(search.status);
     }
 
-    return result.rows.map(this.castTypes);
-  }
-
-  async findTemplates(territoryId: number | null): Promise<any[]> {
     const query = {
+      values,
       text: `
         SELECT * FROM ${this.table}
-        WHERE territory_id = $1
-        AND status = $2
-        AND deleted_at IS NULL
+        WHERE deleted_at IS NULL
+        ${where}
       `,
-      values: [territoryId, 'template'],
     };
 
     const result = await this.connection.getClient().query(query);

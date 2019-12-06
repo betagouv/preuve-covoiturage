@@ -351,9 +351,10 @@ describe('Campaign service', () => {
       .post('/')
       .send(
         callFactory(
-          'campaign:listTemplate',
+          'campaign:list',
           {
             territory_id: null,
+            status: 'template',
           },
           ['incentive-campaign.list'],
         ),
@@ -372,9 +373,10 @@ describe('Campaign service', () => {
       .post('/')
       .send(
         callFactory(
-          'campaign:listTemplate',
+          'campaign:list',
           {
             territory_id: territory,
+            status: 'template',
           },
           ['incentive-campaign.list'],
         ),

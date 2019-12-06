@@ -10,13 +10,12 @@ import { binding as createSchemaBinding } from './shared/policy/create.schema';
 import { binding as patchSchemaBinding } from './shared/policy/patch.schema';
 import { binding as launchSchemaBinding } from './shared/policy/launch.schema';
 import { binding as deleteSchemaBinding } from './shared/policy/delete.schema';
-import { binding as listTemplateSchemaBinding } from './shared/policy/listTemplate.schema';
+import { binding as listSchemaBinding } from './shared/policy/list.schema';
 
 import { CreateCampaignAction } from './actions/CreateCampaignAction';
 import { PatchCampaignAction } from './actions/PatchCampaignAction';
 import { LaunchCampaignAction } from './actions/LaunchCampaignAction';
 import { ListCampaignAction } from './actions/ListCampaignAction';
-import { ListCampaignTemplateAction } from './actions/ListCampaignTemplateAction';
 import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
 
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
@@ -32,21 +31,8 @@ import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRep
     ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
   ],
-  validator: [
-    createSchemaBinding,
-    patchSchemaBinding,
-    launchSchemaBinding,
-    deleteSchemaBinding,
-    listTemplateSchemaBinding,
-  ],
-  handlers: [
-    CreateCampaignAction,
-    PatchCampaignAction,
-    LaunchCampaignAction,
-    DeleteCampaignAction,
-    ListCampaignAction,
-    ListCampaignTemplateAction,
-  ],
+  validator: [createSchemaBinding, patchSchemaBinding, launchSchemaBinding, deleteSchemaBinding, listSchemaBinding],
+  handlers: [CreateCampaignAction, PatchCampaignAction, LaunchCampaignAction, DeleteCampaignAction, ListCampaignAction],
   connections: [[PostgresConnection, 'connections.postgres']],
   middlewares: [
     ['can', PermissionMiddleware],

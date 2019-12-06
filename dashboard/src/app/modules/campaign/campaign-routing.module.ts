@@ -10,39 +10,46 @@ import { CampaignDiscoverComponent } from '~/modules/campaign/pages/campaign-dis
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignDraftViewComponent } from '~/modules/campaign/pages/campaign-draft-view/campaign-draft-view.component';
 import { CampaignActiveViewComponent } from '~/modules/campaign/pages/campaign-active-view/campaign-active-view.component';
+import { CampaignAdminListComponent } from '~/modules/campaign/pages/campaign-admin-list/campaign-admin-list.component';
 
 const routes: Routes = [
   {
     path: '',
-    data: { groups: [UserGroupEnum.TERRITORY] },
     canActivateChild: [AuthGuard],
     children: [
       {
         path: '',
+        data: { groups: [UserGroupEnum.TERRITORY] },
         component: CampaignDashboardComponent,
       },
       {
         path: 'create',
-        data: { role: 'admin' },
+        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
+        path: 'list',
+        data: { groups: [UserGroupEnum.REGISTRY] },
+        component: CampaignAdminListComponent,
+      },
+      {
         path: 'create/:parentId',
-        data: { role: 'admin' },
+        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
         path: 'discover',
+        data: { groups: [UserGroupEnum.TERRITORY] },
         component: CampaignDiscoverComponent,
       },
       {
         path: 'edit/:campaignId',
-        data: { role: 'admin' },
+        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
         path: 'draft/:campaignId',
-        data: { role: 'admin' },
+        data: { groups: [UserGroupEnum.TERRITORY] },
         component: CampaignDraftViewComponent,
       },
       {

@@ -1,8 +1,7 @@
-export const alias = 'campaign.listTemplate';
+export const alias = 'campaign.list';
 export const schema = {
   type: 'object',
   additionalProperties: false,
-  required: ['territory_id'],
   properties: {
     territory_id: {
       anyOf: [
@@ -11,6 +10,10 @@ export const schema = {
           type: 'null',
         },
       ],
+    },
+    status: {
+      type: 'string',
+      enum: ['template', 'draft', 'active', 'finished'],
     },
   },
 };
