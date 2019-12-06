@@ -80,7 +80,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
         JSON.stringify('ui_status' in data ? data.ui_status : {}),
       ],
     };
-    console.log(query);
+
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
@@ -238,11 +238,16 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     let where = '';
 
     if ('territory_id' in search && 'status' in search) {
-      where = 'AND status::text = $1 AND territory_id = $2::text';
-      values.push(search.status, search.territory_id);
+      where = `AND status::text = $1 AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $2::text'}`;
+      values.push(search.status);
+      if (search.territory_id !== null) {
+        values.push(search.territory_id);
+      }
     } else if ('territory_id' in search) {
-      where = 'AND territory_id = $1::text';
-      values.push(search.territory_id);
+      where = `AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $1::text'}`;
+      if (search.territory_id !== null) {
+        values.push(search.territory_id);
+      }
     } else if ('status' in search) {
       where = 'AND status::text = $1';
       values.push(search.status);

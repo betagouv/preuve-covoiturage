@@ -42,6 +42,7 @@ const fakeCampaign = {
 let db: PostgresConnection;
 
 describe('Campaign service', () => {
+  const ids: number[] = [];
   let transport;
   let request;
   let _id;
@@ -86,10 +87,10 @@ describe('Campaign service', () => {
   });
 
   after(async () => {
-    if (_id) {
+    for (const id of ids) {
       await db.getClient().query({
         text: `DELETE from ${repository.table} WHERE _id = $1`,
-        values: [_id],
+        values: [id],
       });
     }
 
@@ -192,6 +193,7 @@ describe('Campaign service', () => {
         expect(response.body.result).to.have.property('name');
         expect(response.body.result.name).to.eq(fakeCampaign.name);
         _id = response.body.result._id;
+        ids.push(_id);
       })
       .end((err, res) => {
         if (err) {
@@ -298,8 +300,6 @@ describe('Campaign service', () => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.be.an('array');
-        console.log(response.body.result);
-        console.log({ _id });
         const fakeCampaign = response.body.result.filter((c) => {
           return c._id === _id;
         });
@@ -362,17 +362,19 @@ describe('Campaign service', () => {
       .get(ServiceProvider)
       .get(CreateCampaignAction);
 
-    await createCampaignAction.handle({
+    const { _id: idOne } = await createCampaignAction.handle({
       ...fakeCampaign,
       status: 'template',
     });
+    ids.push(idOne);
 
-    await createCampaignAction.handle({
+    const { _id: idTwo } = await createCampaignAction.handle({
       ...fakeCampaign,
       territory_id: null,
       status: 'template',
       name: generalName,
     });
+    ids.push(idTwo);
 
     await request
       .post('/')
