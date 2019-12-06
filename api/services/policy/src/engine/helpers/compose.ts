@@ -1,4 +1,4 @@
-import { RuleHandlerContextInterface, RuleHandlerInterface, MetaInterface } from '../../interfaces/RuleInterfaces';
+import { RuleHandlerContextInterface, RuleHandlerInterface } from '../../interfaces';
 
 export function compose(
   middleware: RuleHandlerInterface[],

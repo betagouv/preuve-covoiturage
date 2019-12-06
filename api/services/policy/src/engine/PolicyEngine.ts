@@ -1,10 +1,10 @@
 import { provider } from '@ilos/common';
 
-import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
-import { TripInterface } from '../shared/common/interfaces/TripInterface';
+import { CampaignInterface } from '../interfaces/CampaignInterface';
+import { TripInterface } from '../interfaces/TripInterface';
 import { CampaignMetadataRepositoryProviderInterfaceResolver } from '../interfaces/CampaignMetadataRepositoryProviderInterface';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
-import { RuleHandlerInterface } from '../interfaces/RuleInterfaces';
+import { RuleHandlerInterface } from '../interfaces/RuleHandlerInterface';
 import { policies } from './rules';
 import { compose } from './helpers/compose';
 import { NotApplicableTargetException } from '../exceptions/NotApplicableTargetException';
@@ -38,7 +38,7 @@ export class PolicyEngine {
   }
 
   public async process(trip: TripInterface) {
-    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.start);
+    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.datetime);
     const results = [];
     for (const campaign of campaigns) {
       // build function
@@ -53,8 +53,8 @@ export class PolicyEngine {
           // do something with result :)
           results.push({
             campaign: campaign._id,
-            trip: trip._id,
-            person: person.identity.phone,
+            trip: 1, // trip_id
+            person: person.identity_uuid,
             amount: ctx.result,
           });
         }

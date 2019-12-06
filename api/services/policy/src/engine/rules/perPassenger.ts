@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { LOWEST } from '../helpers/priority';
 
 export const perPassenger: ApplicableRuleInterface = {

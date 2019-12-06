@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 
 import { adultOnlyFilter } from './adultOnlyFilter';
 import { distanceRangeFilter } from './distanceRangeFilter';
