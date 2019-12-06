@@ -50,7 +50,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   async checkForDoubleEmailAndFail(email: string, userId = -1) {
     const query = {
-      text: `SELECT _id FROM ${this.table} WHERE email = $1 AND _id = $2`,
+      text: `SELECT _id FROM ${this.table} WHERE email = $1 AND _id != $2`,
       values: [email, userId],
     };
 
