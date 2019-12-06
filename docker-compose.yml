@@ -1,7 +1,10 @@
-version: '3'
+version: '3.5'
 services:
   postgres:
-    build: './docker/postgres'
+    build:
+      context: ./docker/postgres
+      shm_size: 4gb
+    shm_size: 4gb
     ports:
       - 5432:5432
     networks:

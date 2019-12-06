@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 # create a permanent network first
 # > docker network create docker-network --subnet 172.24.24.0/24
 networks:
