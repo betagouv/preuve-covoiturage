@@ -1,4 +1,4 @@
-import { MongoConnection, MongoException, ObjectId, CollectionInterface } from '@ilos/connection-mongo';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { ConfigInterfaceResolver, provider, NotFoundException } from '@ilos/common';
 
 import {
@@ -11,41 +11,44 @@ import { MetadataWrapper } from './MetadataWrapper';
   identifier: CampaignMetadataRepositoryProviderInterfaceResolver,
 })
 export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepositoryProviderInterface {
-  constructor(protected config: ConfigInterfaceResolver, protected connection: MongoConnection) {}
+  public readonly table = 'policy.policy_metas';
 
-  protected getDbName(): string {
-    return this.config.get('campaignMetadata.db');
-  }
+  constructor(protected connection: PostgresConnection) {}
 
-  protected getCollectionName(): string {
-    return this.config.get('campaignMetadata.collectionName');
-  }
+  async get(id: number, key: string | null = 'default'): Promise<MetadataWrapper> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT
+          value
+        FROM ${this.table}
+        WHERE
+          policy_id = $1 AND
+          key = $2
+        LIMIT 1`,
+      values: [id, key],
+    });
 
-  protected async getCollection(): Promise<CollectionInterface> {
-    return this.connection
-      .getClient()
-      .db(this.getDbName())
-      .collection(this.getCollectionName());
-  }
-
-  async get(id: number): Promise<MetadataWrapper> {
-    const collection = await this.getCollection();
-    const result = await collection.findOne({ _id: new ObjectId(id) });
-    return new MetadataWrapper(id, result);
+    const data = result.rowCount === 1 ? result.rows[0].value : undefined;
+    return new MetadataWrapper(id, key, data);
   }
 
   async set(metadata: MetadataWrapper): Promise<void> {
-    const collection = await this.getCollection();
-    await collection.updateOne(
-      {
-        _id: new ObjectId(metadata.id),
-      },
-      {
-        data: metadata.all(),
-      },
-      {
-        upsert: true,
-      },
-    );
+    const [id, masterKey] = metadata.signature;
+
+    const query = {
+      text: `
+        INSERT INTO ${this.table} (policy_id, key, value)
+          VALUES ($1, $2, $3)
+          ON CONFLICT (policy_id, key)
+          DO UPDATE SET
+            value = $3 
+      `,
+      values: [id, masterKey, metadata.all()],
+    };
+
+    console.log(query.text, query.values);
+
+    await this.connection.getClient().query(query);
+    return;
   }
 }

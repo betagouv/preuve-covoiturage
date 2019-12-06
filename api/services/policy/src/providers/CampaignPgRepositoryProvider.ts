@@ -11,7 +11,7 @@ import {
   identifier: CampaignRepositoryProviderInterfaceResolver,
 })
 export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderInterface {
-  protected readonly table = 'policy.policies';
+  public readonly table = 'policy.policies';
 
   constructor(protected connection: PostgresConnection) {}
 
