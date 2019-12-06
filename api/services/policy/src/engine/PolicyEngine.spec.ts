@@ -2,22 +2,20 @@ import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { Kernel } from '@ilos/framework';
-import { MongoConnection } from '@ilos/connection-mongo';
+import { PostgresConnection } from '@ilos/connection-postgres';
 import { kernel as kernelDecorator } from '@ilos/common';
 
 import { ServiceProvider } from '../ServiceProvider';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { PolicyEngine } from './PolicyEngine';
+import { CampaignPgRepositoryProvider } from '../providers/CampaignPgRepositoryProvider';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-const start = new Date();
-start.setMonth(start.getMonth() + 1);
-
-const end = new Date();
-end.setMonth(start.getMonth() + 2);
+const start = new Date('2019-01-01');
+const end = new Date('2019-03-01');
 
 const territory = 1;
 
@@ -52,48 +50,40 @@ const fakeCampaign = {
 @kernelDecorator({ children: [ServiceProvider] })
 class CustomKernel extends Kernel {}
 
-const kernel = new CustomKernel();
-
-let db;
-let engine;
-
 describe('Policy engine', () => {
-  let id;
+  const kernel = new CustomKernel();
+
+  let db: PostgresConnection;
+  let engine: PolicyEngine;
+  let repository: CampaignPgRepositoryProvider;
+  let id: number;
 
   before(async () => {
-    process.env.APP_MONGO_DB = 'pdc-test-policy-' + new Date().getTime();
-
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
     await kernel.bootstrap();
 
-    db = kernel
-      .get(ServiceProvider)
-      .get(MongoConnection)
-      .getClient();
+    db = kernel.get(ServiceProvider).get(PostgresConnection);
 
     engine = kernel.get(ServiceProvider).get(PolicyEngine);
-  });
+    repository = kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
 
-  after(async () => {
-    await db.db(process.env.APP_MONGO_DB).dropDatabase();
-    await kernel.shutdown();
-  });
-
-  beforeEach(async () => {
-    const data = await kernel
-      .get(ServiceProvider)
-      .get(CampaignRepositoryProviderInterfaceResolver)
-      .create(fakeCampaign);
+    const data = await repository.create(fakeCampaign);
     id = data._id;
   });
 
-  afterEach(async () => {});
+  after(async () => {
+    await db.getClient().query({
+      text: `DELETE FROM ${repository.table} WHERE _id = $1`,
+      values: [id],
+    });
+    await kernel.shutdown();
+  });
 
   it('works', async () => {
     const trip = {
       start,
-      _id: 'mytrip',
+      _id: 1,
       operator_id: [1],
       territories: [territory],
       status: '',

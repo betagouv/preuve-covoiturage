@@ -5,7 +5,7 @@ import { compose } from '../helpers/compose';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { MetadataWrapper } from '../MetadataWrapper';
 
-const meta = new MetadataWrapper(1, {});
+const meta = new MetadataWrapper(1, 'default', {});
 
 chai.use(chaiAsync);
 const { expect } = chai;

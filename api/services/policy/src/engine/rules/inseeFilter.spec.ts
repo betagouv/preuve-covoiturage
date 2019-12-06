@@ -4,7 +4,7 @@ import { inseeBlacklistFilter, inseeWhitelistFilter } from './inseeFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { MetadataWrapper } from '../MetadataWrapper';
 
-const meta = new MetadataWrapper(1, {});
+const meta = new MetadataWrapper(1, 'default', {});
 
 chai.use(chaiAsync);
 const { expect } = chai;
@@ -144,10 +144,7 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should throw error if start or end is in blacklist with OR operator', () => {
-    const apply = inseeBlacklistFilter.apply([
-      { start: ['A'], end: [] },
-      { start: [], end: ['A'] },
-    ]);
+    const apply = inseeBlacklistFilter.apply([{ start: ['A'], end: [] }, { start: [], end: ['A'] }]);
 
     return expect(
       apply(
@@ -205,10 +202,7 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should do nothin if start or end is in whitelist with OR operator', () => {
-    const apply = inseeWhitelistFilter.apply([
-      { start: ['A'], end: [] },
-      { start: [], end: ['A'] },
-    ]);
+    const apply = inseeWhitelistFilter.apply([{ start: ['A'], end: [] }, { start: [], end: ['A'] }]);
 
     return expect(
       apply(
