@@ -3,9 +3,11 @@ import { TripInterface } from '../shared/common/interfaces/TripInterface';
 import { RuleInterface } from '../shared/common/interfaces/RuleInterface';
 
 export interface MetaInterface {
+  signature: any;
   get(key: string, fallback?: any): any;
   set(key: string, data: any): void;
   all(): { [k: string]: any };
+  keys(): string[];
 }
 
 export interface RuleHandlerContextInterface {
