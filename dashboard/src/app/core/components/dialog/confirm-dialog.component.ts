@@ -11,7 +11,7 @@ import { MatDialogRef } from '@angular/material';
       <button mat-stroked-button mat-dialog-close class="cancel" color="primary">
         Annuler
       </button>
-      <button mat-flat-button [mat-dialog-close]="true" class="confirm" color="primary">
+      <button mat-flat-button [mat-dialog-close]="true" class="confirm" color="{{ color }}">
         {{ confirmBtn }}
       </button>
     </mat-dialog-actions>
@@ -21,6 +21,7 @@ export class ConfirmDialogComponent {
   public title: string;
   public message: string;
   public confirmBtn: string;
+  public color: string;
 
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>) {}
 

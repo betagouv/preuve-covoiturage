@@ -3,17 +3,15 @@
 .UsersList {
   &-list {
     &-item {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      font-family: 'WorkSans', sans-serif;
+      //font-family: 'WorkSans', sans-serif;
+      flex: 1;
 
-      & > * {
-        flex: 1;
+      &-role {
+        flex: 0.5;
+      }
 
-        &.UsersList-list-item-role {
-          flex: 0.5;
-        }
+      &-territory {
+        flex: 0.5;
       }
 
       &-name {

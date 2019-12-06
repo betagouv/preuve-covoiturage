@@ -54,7 +54,7 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
   public onDelete(application: ApplicationInterface) {
     const message = `Etes-vous sûr de vouloir supprimer l'application : ${application.name} ?`;
     this._dialog
-      .confirm("Suppression de l'application", message, 'Confirmer')
+      .confirm("Suppression de l'application", message, 'Confirmer', 'warn')
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {

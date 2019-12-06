@@ -26,6 +26,7 @@
         *ngIf="usersToShow"
         [canEditUser]="canEditUser$ | async"
         [users]="usersToShow"
+        [userGroup]="userGroup"
         (editUser)="showEditForm($event)"
       ></app-users-list>
       <mat-paginator
