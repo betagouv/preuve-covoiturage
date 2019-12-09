@@ -12,6 +12,7 @@ export class MailjetDriver implements MailDriverInterface {
   protected config;
   constructor(
     generalConfig: {
+      debug: boolean;
       from: {
         email: string;
         name: string;
