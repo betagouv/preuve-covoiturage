@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 
 import { ApiService } from '~/core/services/api/api.service';
 import { ApplicationName } from '~/core/entities/operator/applicationName';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import {
-  OperatorApplicationCreatedInterface,
   ApplicationInterface,
+  OperatorApplicationCreatedInterface,
 } from '~/core/interfaces/operator/applicationInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
@@ -48,10 +48,10 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
   }
 
   load(): Observable<ApplicationInterface[]> {
-    if ('operator' in this._authService.user) {
-      const operatorId = this._authService.user.operator;
+    if ('operator_id' in this._authService.user) {
+      const operatorId = this._authService.user.operator_id;
       return super.load({
-        operator_id: operatorId,
+        owner_id: operatorId,
       });
     }
     console.log('only operator users can create applications');
@@ -61,27 +61,52 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
   public createApplicationAndList(
     applicationName: ApplicationName,
   ): Observable<[OperatorApplicationCreatedInterface, ApplicationInterface[]]> {
-    if ('operator' in this._authService.user) {
-      const operatorId = this._authService.user.operator;
-      const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, {
-        operator_id: operatorId,
-        permissions: ['journey.create'],
-        ...applicationName,
-      });
-      return this._jsonRPC.callOne(jsonRPCParam).pipe(
-        map((data) => data.data),
-        mergeMap((createdEntity: { token: string }) =>
-          this.load().pipe(
-            map((entities) => <[OperatorApplicationCreatedInterface, ApplicationInterface[]]>[createdEntity, entities]),
+    if ('operator_id' in this._authService.user) {
+      // const operatorId = this._authService.user.operator_id;
+      // const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, {
+      //   operator_id: operatorId,
+      //   permissions: ['journey.create'],
+      //   ...applicationName,
+      // });
+      // return this._jsonRPC.callOne(jsonRPCParam).pipe(
+      //   map((data) => data.data),
+      //   mergeMap((createdEntity: { token: string }) =>
+      //     this.load().pipe(
+      //       map((entities) => <[OperatorApplicationCreatedInterface, ApplicationInterface[]]>[
+      //       createdEntity,
+      //       entities
+      //       ]),
+      //     ),
+      //   ),
+      // );
+
+      const operatorId = this._authService.user.operator_id;
+
+      return this._http
+        .post(
+          'applications',
+          {
+            owner_id: operatorId,
+            permissions: ['journey.create'],
+            ...applicationName,
+          },
+          { withCredentials: true },
+        )
+        .pipe(
+          mergeMap((createdEntity: { token: string }) =>
+            this.load().pipe(
+              map(
+                (entities) => <[OperatorApplicationCreatedInterface, ApplicationInterface[]]>[createdEntity, entities],
+              ),
+            ),
           ),
-        ),
-      );
+        );
     }
     console.log('only operator users can create applications');
     throw Error();
   }
 
-  public revokeAndList(id: string): Observable<[ApplicationInterface, ApplicationInterface[]]> {
+  public revokeAndList(id: number): Observable<[ApplicationInterface, ApplicationInterface[]]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:revoke`, { _id: id });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),

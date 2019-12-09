@@ -1,4 +1,4 @@
-@import '~src/styles/variables';
+@import 'variables';
 
 .CampaignTemplates {
   font-family: WorkSans, sans-serif;
@@ -16,6 +16,13 @@
   &-wrapper {
     display: flex;
     flex-wrap: wrap;
+  }
+
+  &-missingMessage {
+    display: flex;
+    justify-content: space-around;
+    height: 200px;
+    align-items: center;
   }
 
   &-templateCard {

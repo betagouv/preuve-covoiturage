@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatGridListModule } from '@angular/material';
+import { MatGridListModule, MatPaginatorModule } from '@angular/material';
 
 // tslint:disable-next-line:max-line-length
 import { OperatorImportComponent } from '~/modules/operator/modules/operator-ui/components/operator-import/operator-import.component';
@@ -44,6 +44,7 @@ import { OperatorDetailsComponent } from './components/operator-details/operator
     SharedModule,
     DetailsModule,
     MatGridListModule,
+    MatPaginatorModule,
   ],
 })
 export class OperatorUiModule {}

@@ -1,14 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap, map } from 'rxjs/operators';
+import { merge, Observable, of } from 'rxjs';
+import { MatPaginator } from '@angular/material';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
-import { UserService } from '~/modules/user/services/user.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
-import { Observable } from 'rxjs';
+import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { UserApiService } from '~/modules/user/services/user-api.service';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
+import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
 @Component({
   selector: 'app-users',
@@ -16,67 +19,142 @@ import { Observable } from 'rxjs';
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent extends DestroyObservable implements OnInit {
-  usersToShow: User[];
-  users: User[];
+  usersToShow: UserListInterface[];
+  users: UserListInterface[];
+  usersFiltered: UserListInterface[];
   searchFilters: FormGroup;
   editUserFormVisible = false;
   editedUser = new User();
   canEditUser$: Observable<boolean>;
   isCreatingUser: boolean;
+  PAGE_SIZE = 10;
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+  private users$: Observable<UserListInterface[]>;
 
   constructor(
     public authenticationService: AuthenticationService,
-    public userService: UserService,
+    public userStoreService: UserStoreService,
     private fb: FormBuilder,
   ) {
     super();
   }
 
   ngOnInit() {
+    this.userStoreService.reset();
+    this.userStoreService.filterSubject.next({ limit: 1000 });
+
+    this.users$ = this.userStoreService.entities$.pipe(
+      tap((users) => {
+        this.users = users;
+        this.usersToShow = users;
+      }),
+    );
+
+    this.userStoreService.entity$
+      .pipe(
+        map((user) => !!user),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((editUserFormVisible) => (this.editUserFormVisible = editUserFormVisible));
+
     this.loadUsers();
     this.initSearchForm();
 
     this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
   }
 
-  addUser() {
-    this.isCreatingUser = true;
-
-    this.editUserFormVisible = true;
-    if (this.currentOperator) {
-      this.editedUser = new User({
-        _id: null,
-        email: null,
-        firstname: null,
-        lastname: null,
-        phone: null,
-        group: this.currentGroup,
-        operator: this.currentOperator,
-        role: UserRoleEnum.USER,
-        permissions: [],
+  ngAfterViewInit() {
+    merge(
+      this.users$,
+      this.searchFilters.valueChanges.pipe(
+        debounceTime(300),
+        tap(() => (this.paginator.pageIndex = 0)),
+      ),
+      this.paginator.page,
+    )
+      .pipe(
+        distinctUntilChanged(),
+        switchMap(() => {
+          this.closeUserForm();
+          const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
+          const page = this.paginator.pageIndex;
+          const start = Number(page) * this.PAGE_SIZE;
+          const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
+          this.usersFiltered = this.users.filter((u) =>
+            `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query.toLowerCase()),
+          );
+          return of(this.usersFiltered.slice(start, end));
+        }),
+      )
+      .subscribe((filteredUsers) => {
+        this.usersToShow = filteredUsers;
       });
-      console.log(this.editedUser);
-    }
-    if (this.currentTerritory) {
-      console.log('territory', this.currentTerritory);
-      this.editedUser = new User({
-        _id: null,
-        email: null,
-        firstname: null,
-        lastname: null,
-        phone: null,
-        group: this.currentGroup,
-        territory: this.currentTerritory,
-        role: UserRoleEnum.USER,
-        permissions: [],
-      });
-    }
   }
 
+  get countUsers(): number {
+    return this.usersFiltered && this.usersFiltered.length;
+  }
+
+  // addUser() {
+  //   this.isCreatingUser = true;
+
+  //   this.editUserFormVisible = true;
+  //   if (this.currentOperator) {
+  //     this.editedUser = new User({
+  //       _id: null,
+  //       email: null,
+  //       firstname: null,
+  //       lastname: null,
+  //       phone: null,
+  //       group: this.currentGroup,
+  //       operator_id: this.currentOperator,
+  //       role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
+  //       permissions: [],
+  //     });
+  //     console.log(this.editedUser);
+  //   }
+  //   if (this.currentTerritory) {
+  //     console.log('territory', this.currentTerritory);
+  //     this.editedUser = new User({
+  //       _id: null,
+  //       email: null,
+  //       firstname: null,
+  //       lastname: null,
+  //       phone: null,
+  //       group: this.currentGroup,
+  //       territory_id: this.currentTerritory,
+  //       role: <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`,
+  //       permissions: [],
+  //     });
+  //   }
+  // }
+
   showEditForm(user: User = null) {
-    this.isCreatingUser = false;
-    this.editUserFormVisible = true;
-    this.editedUser = user;
+    // this.isCreatingUser = false;
+    // this.editUserFormVisible = true;
+    // this.editedUser = user;
+
+    if (user) {
+      this.userStoreService.select(user);
+    } else {
+      const newUser = new User();
+      // newUser.group = this.userGroup;
+      if (this.currentOperator) {
+        newUser.group = this.currentGroup;
+        newUser.operator_id = this.currentOperator;
+        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+      }
+      if (this.currentTerritory) {
+        newUser.group = this.currentGroup;
+        newUser.territory_id = this.currentTerritory;
+        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+      }
+      this.userStoreService.selectNew(newUser);
+    }
+
+    this.isCreatingUser = !user;
 
     // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
   }
@@ -93,23 +171,16 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     return this.authenticationService.user.group;
   }
 
-  get currentOperator(): string {
-    return this.authenticationService.user.operator;
+  get currentOperator(): number {
+    return this.authenticationService.user.operator_id;
   }
 
-  get currentTerritory(): string {
-    return this.authenticationService.user.territory;
+  get currentTerritory(): number {
+    return this.authenticationService.user.territory_id;
   }
 
   private loadUsers() {
-    this.userService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
-    this.userService.entities$.pipe(takeUntil(this.destroy$)).subscribe((users) => {
-      this.users = users;
-      this.usersToShow = users;
-    });
+    this.userStoreService.loadList();
   }
 
   private initSearchForm() {
@@ -132,7 +203,8 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   }
 
   public filterUsers() {
-    const query = this.searchFilters ? this.searchFilters.controls.query.value : '';
+    const query = this.searchFilters ? this.searchFilters.controls.query.value.toString().toLowerCase() : '';
+
     this.usersToShow = this.users.filter((u) =>
       `${u.email} ${u.firstname} ${u.lastname}`.toLowerCase().includes(query),
     );

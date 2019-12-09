@@ -1,24 +1,20 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { UpdateTerritoryParamsInterface, TerritoryInterface } from '@pdc/provider-schema';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/update.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/territory/update.schema';
 
-@handler({
-  service: 'territory',
-  method: 'update',
-})
+@handler(handlerConfig)
 export class UpdateTerritoryAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['can', ['territory.update']],
-    ['validate', 'territory.update'],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['territory.update']], ['validate', alias]];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: UpdateTerritoryParamsInterface): Promise<TerritoryInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     return this.territoryRepository.update(params);
   }
 }

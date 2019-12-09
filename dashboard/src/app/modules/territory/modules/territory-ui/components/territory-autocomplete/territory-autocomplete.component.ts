@@ -5,9 +5,9 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 
 import { Territory } from '~/core/entities/territory/territory';
-import { TerritoryService } from '~/modules/territory/services/territory.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territory-autocomplete',
@@ -19,7 +19,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   territoryCtrl = new FormControl();
   selectedTerritory: Territory;
-  selectedTerritoryId: string;
+  selectedTerritoryId: number;
 
   public territories: Territory[] = [];
 
@@ -29,13 +29,13 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   private focusDebounceTimer;
 
-  constructor(private territoryService: TerritoryService, private commonDataService: CommonDataService) {
+  constructor(private territoryApiService: TerritoryApiService, private commonDataService: CommonDataService) {
     super();
   }
 
-  updateTerritory(territoryId: string) {}
+  updateTerritory(territoryId: number) {}
 
-  private selectedTerritoryUpdated(id = this._territoryForm.value ? this._territoryForm.value.toString() : null) {
+  private selectedTerritoryUpdated(id = this._territoryForm.value ? this._territoryForm.value : null) {
     this.selectedTerritoryId = id;
     this.selectedTerritory = this.territories
       ? this.territories.find((territory) => this.selectedTerritoryId === territory._id)
@@ -44,8 +44,10 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
     const val = this.parentForm.getRawValue();
     const newVal = this.selectedTerritory ? this.selectedTerritory._id : null;
-    if (!val || val.territory !== newVal) {
-      this.parentForm.patchValue({ territory: newVal });
+
+    console.log('val : ', val);
+    if (!val || val.territory_id !== newVal) {
+      this.parentForm.patchValue({ territory_id: newVal });
     }
     // this.parentForm.patchValue({ territory: this.selectedTerritory ? this.selectedTerritory._id : null });
   }
@@ -65,13 +67,15 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
       map((value) => this.filter(value)),
     );
 
-    this._territoryForm = this.parentForm.get('territory');
+    this._territoryForm = this.parentForm.get('territory_id');
     this._territoryForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.selectedTerritoryUpdated());
 
     this.selectedTerritoryUpdated();
   }
 
   private filter(value: string): Territory[] {
+    if (!value || typeof value !== 'string') return this.territories;
+
     return this.territories
       ? this.territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase()))
       : null;

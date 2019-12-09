@@ -24,6 +24,7 @@
           <div class="CampaignForm-content-actions">
             <button mat-flat-button class="large" color="primary" matStepperNext *ngIf="showFirstPageNextStep">
               Étape suivante
+              <mat-icon>arrow_forward</mat-icon>
             </button>
           </div>
         </div>
@@ -34,7 +35,7 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-filters-form [campaignForm]="campaignFormGroup"></app-filters-form>
+            <app-filters-form [campaignForm]="campaignFormGroup" [isCreating]="creationFromScratch"></app-filters-form>
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"
@@ -44,9 +45,13 @@
             </app-help-card>
           </div>
           <div class="CampaignForm-content-actions">
-            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
+            <button mat-flat-button class="large" matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              Étape précédente
+            </button>
             <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!canGoToThirdStep">
               Étape suivante
+              <mat-icon>arrow_forward</mat-icon>
             </button>
           </div>
         </div>
@@ -57,7 +62,10 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-parameters-form [campaignForm]="campaignFormGroup"></app-parameters-form>
+            <app-parameters-form
+              [campaignForm]="campaignFormGroup"
+              [isCreating]="creationFromScratch"
+            ></app-parameters-form>
             <!--            *ngIf="!campaignFormGroup.controls.expertMode.value"-->
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
@@ -69,9 +77,13 @@
             <!--            <app-formula-guide *ngIf="campaignFormGroup.controls.expertMode.value"></app-formula-guide>-->
           </div>
           <div class="CampaignForm-content-actions">
-            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
+            <button mat-flat-button class="large" matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              Étape précédente
+            </button>
             <button mat-flat-button class="large" color="primary" matStepperNext [disabled]="!canGoToLastStep">
               Voir le récapitulatif
+              <mat-icon>arrow_forward</mat-icon>
             </button>
           </div>
         </div>
@@ -89,7 +101,10 @@
             ></app-summary-form>
           </div>
           <div class="CampaignForm-content-actions">
-            <button mat-flat-button class="large" matStepperPrevious>Étape précédente</button>
+            <button mat-flat-button class="large" matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              Étape précédente
+            </button>
           </div>
         </div>
       </app-page-content>

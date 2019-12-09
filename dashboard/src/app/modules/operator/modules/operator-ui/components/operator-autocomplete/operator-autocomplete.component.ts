@@ -4,7 +4,6 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
 
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Operator } from '~/core/entities/operator/operator';
 import { CommonDataService } from '~/core/services/common-data.service';
@@ -19,7 +18,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   operatorCtrl = new FormControl();
   selectedOperator: Operator;
-  selectedOperatorId: string;
+  selectedOperatorId: number;
 
   private focusDebounceTimer;
 
@@ -29,29 +28,29 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   private _operatorForm: AbstractControl;
 
-  constructor(private operatorService: OperatorService, private commonDataService: CommonDataService) {
+  constructor(private commonDataService: CommonDataService) {
     super();
   }
 
-  updateOperator(operatorId: string) {}
-
   private selectedOperatorUpdated(
-    id = this._operatorForm && this._operatorForm.value ? this._operatorForm.value.toString() : null,
+    id = this._operatorForm && this._operatorForm.value ? this._operatorForm.value : null,
   ) {
     this.selectedOperatorId = id;
     this.selectedOperator = this.operators
       ? this.operators.find((foperator) => this.selectedOperatorId === foperator._id)
       : null;
-    this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : '');
+
+    this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.name : '');
 
     const val = this.parentForm.getRawValue();
     const newVal = this.selectedOperator ? this.selectedOperator._id : null;
-    if (!val || val.operator !== newVal) {
-      this.parentForm.patchValue({ operator: newVal });
+    if (!val || val.operator_id !== newVal) {
+      this.parentForm.patchValue({ operator_id: newVal });
     }
   }
 
   onOperatorSelect(operator: MatAutocompleteSelectedEvent) {
+    console.log('onOperatorSelect : ', operator);
     clearTimeout(this.focusDebounceTimer);
     this.selectedOperatorUpdated(operator.option.value);
   }
@@ -68,22 +67,24 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
       map((value) => this.filter(value)),
     );
 
-    this._operatorForm = this.parentForm.get('operator');
+    this._operatorForm = this.parentForm.get('operator_id');
     this._operatorForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.selectedOperatorUpdated());
 
     this.selectedOperatorUpdated();
   }
 
   private filter(value: string): Operator[] {
+    if (!value || typeof value !== 'string') return this.operators;
+
     return this.operators
-      ? this.operators.filter((operator) => operator.nom_commercial.toLowerCase().includes(value.toLowerCase()))
+      ? this.operators.filter((operator) => operator.name.toLowerCase().includes(value.toLowerCase()))
       : null;
   }
 
   inputLostFocus() {
     clearTimeout(this.focusDebounceTimer);
     this.focusDebounceTimer = setTimeout(
-      () => this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.nom_commercial : ''),
+      () => this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.name : ''),
       300,
     );
   }

@@ -1,6 +1,6 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { expectedPatchedTerritory } from '../../apiValues/expectedTerritory';
+import { expectedPatchedTerritory } from '../../expectedApiPayload/expectedTerritory';
 
 export function stubTerritoryPatchContacts() {
   cy.route({

@@ -1,29 +1,28 @@
 import { handler, InvalidParamsException } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-import { CampaignInterface } from '@pdc/provider-schema';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/create.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/policy/create.schema';
 
-@handler({
-  service: 'campaign',
-  method: 'create',
-})
+@handler(handlerConfig)
 export class CreateCampaignAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+  public readonly middlewares: ActionMiddleware[] = [
     [
       'scope.it',
       [
         [],
         [
           (params, context) => {
-            if ('territory_id' in params && params.territory_id === context.call.user.territory) {
+            if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
               return 'incentive-campaign.create';
             }
           },
         ],
       ],
     ],
-    ['validate', 'campaign.create'],
+    ['validate', alias],
     'validate.rules',
   ];
 
@@ -31,7 +30,7 @@ export class CreateCampaignAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: CampaignInterface): Promise<CampaignInterface> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     if (params.parent_id) {
       try {
         this.campaignRepository.find(params.parent_id);

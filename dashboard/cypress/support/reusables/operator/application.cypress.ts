@@ -1,7 +1,7 @@
-import { CypressExpectedApplication } from '../../apiValues/expectedApplication';
-import { testNotification } from '../notification.cypress';
+import { closeNotification } from '../notification.cypress';
 import { operatorStubs } from '../../stubs/operator/operator.list';
 import { operatorStub } from '../../stubs/operator/operator.find';
+import { CypressExpectedApplication } from '../../expectedApiPayload/expectedApplication';
 
 export function cypress_applications(e2e = false) {
   it('navigates to application', () => {
@@ -17,14 +17,11 @@ export function cypress_applications(e2e = false) {
 
     if (!e2e) {
       cy.wait('@applicationCreate').then((xhr) => {
-        const params = xhr.request.body[0].params;
-        const method = xhr.request.body[0].method;
-
-        expect(method).equal('application:create');
+        const params = xhr.request.body;
 
         const expectedParams = {
           ...CypressExpectedApplication.get(),
-          operator_id: operatorStub._id,
+          owner_id: operatorStub._id,
           permissions: ['journey.create'],
         };
 
@@ -34,7 +31,7 @@ export function cypress_applications(e2e = false) {
   });
 
   // close creation success notif
-  testNotification();
+  closeNotification();
 
   it('copy token', () => {
     cy.get('.token button').click();
@@ -43,7 +40,7 @@ export function cypress_applications(e2e = false) {
   });
 
   // close copy success notif
-  testNotification();
+  closeNotification();
 
   it('closes window', () => {
     cy.get('.mat-dialog-actions button').click();
@@ -73,5 +70,5 @@ export function cypress_applications(e2e = false) {
   });
 
   // close revoke confirm notification
-  testNotification();
+  closeNotification();
 }

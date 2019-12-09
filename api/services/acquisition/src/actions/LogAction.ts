@@ -1,22 +1,23 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { handler, ContextType, ConfigInterfaceResolver } from '@ilos/common';
-import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 @handler({
   service: 'acquisition',
   method: 'log',
 })
 export class LogAction extends AbstractAction {
-  constructor(
-    private mongo: MongoConnection,
-    private config: ConfigInterfaceResolver,
-    private tokenProvider: TokenProviderInterfaceResolver,
-  ) {
+  private mongo: MongoConnection;
+
+  constructor(private config: ConfigInterfaceResolver) {
     super();
   }
 
   protected async handle(params: { req: any }, context: ContextType): Promise<void> {
+    this.mongo = new MongoConnection({
+      connectionString: this.config.get('connections.mongo.connectionString'),
+    });
+
     if (
       !process.env.REQLOG ||
       !context.channel.metadata.internal ||
@@ -40,13 +41,6 @@ export class LogAction extends AbstractAction {
 
     const hd = JSON.parse(JSON.stringify(params.req.headers));
 
-    let token;
-    try {
-      token = await this.tokenProvider.verify(hd.authorization.replace('Bearer ', ''));
-    } catch (e) {
-      token = e.message;
-    }
-
     delete hd.authorization;
 
     await collection.insertOne({
@@ -54,7 +48,6 @@ export class LogAction extends AbstractAction {
       hd,
       u: `${params.req.method} ${params.req.url}`,
       c: context.call,
-      t: token,
       tz: new Date(),
     });
   }

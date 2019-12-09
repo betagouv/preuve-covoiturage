@@ -4,7 +4,7 @@ import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 
 export interface FilterInterface {
-  campaign_id: string[];
+  campaign_id: number[];
   date: {
     start: Date;
     end: Date;
@@ -14,13 +14,13 @@ export interface FilterInterface {
     end: number;
   };
   days: WeekDay[];
-  towns: string[];
+  insee: string[];
   distance: {
     min: number;
     max: number;
   };
   ranks: TripRankEnum[];
   status: TripStatusEnum;
-  operator_id: string[];
-  territory_id: string[];
+  operator_id: number[];
+  territory_id: number[];
 }

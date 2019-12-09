@@ -1,0 +1,31 @@
+@import 'variables';
+
+.campaignRetributionView {
+  h4 {
+    color: $color-primary;
+  }
+  &-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 330px;
+    min-width: 450px;
+    background-color: white;
+    padding: 30px;
+    > div:first-child {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
+    &-row {
+      p:nth-of-type(2) {
+        padding: 5px 20px;
+        text-align: center;
+      }
+    }
+    &-actions {
+      margin-top: 5px;
+      text-align: center;
+    }
+  }
+}

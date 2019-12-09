@@ -35,11 +35,15 @@
     "coverage": "lerna run --scope @pdc/* coverage",
     "format:fix": "pretty-quick --staged",
     "lint": "lerna run --scope @pdc/* lint",
-    "test": "run-p test:unit test:integration",
-    "test:unit": "lerna run --scope @pdc/* test",
-    "test:integration": "lerna run --scope @pdc/* test:integration",
-    "fix-permissions": "yarn workspace @pdc/service-user ilos fix-permissions",
-    "migrate": "lerna run --scope @pdc/service-* migrate"
+    "test": "run-s test:unit test:integration",
+    "test:unit": "lerna run --parallel --scope @pdc/* test",
+    "test:integration": "lerna run --parallel --scope @pdc/* test:integration",
+    "set-permissions": "yarn workspace @pdc/service-user ilos set-permissions",
+    "migrate": "yarn migrate:up",
+    "migrate:up": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations",
+    "migrate:down": "DATABASE_URL=$APP_POSTGRES_URL db-migrate down --migrations-dir=db/migrations",
+    "migrate:check": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations --check",
+    "sync:mongo": "yarn workspace @pdc/proxy ilos sync:mongo"
   },
   "keywords": [
     "betagouv",

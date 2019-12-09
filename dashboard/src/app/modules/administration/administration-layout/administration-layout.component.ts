@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserManyRoleEnum } from '~/core/enums/user/user-role.enum';
 
 @Component({
   selector: 'app-administration-layout',
@@ -28,32 +29,38 @@ export class AdministrationLayoutComponent implements OnInit {
     {
       path: '/admin/users',
       groups: [UserGroupEnum.OPERATOR, UserGroupEnum.TERRITORY],
-      role: 'admin',
+      role: UserManyRoleEnum.ADMIN,
       label: 'Utilisateurs & accès',
     },
     {
       path: '/admin/all-users',
       groups: [UserGroupEnum.REGISTRY],
-      role: 'admin',
+      role: UserManyRoleEnum.ADMIN,
       label: 'Utilisateurs & accès',
     },
     {
       path: '/admin/all-territories',
       groups: [UserGroupEnum.REGISTRY],
-      role: 'admin',
+      role: UserManyRoleEnum.ADMIN,
       label: 'Territoires',
     },
     {
       path: '/admin/all-operators',
       groups: [UserGroupEnum.REGISTRY],
-      role: 'admin',
+      role: UserManyRoleEnum.ADMIN,
       label: 'Opérateurs',
     },
     {
       path: '/admin/api',
-      role: 'admin',
+      role: UserManyRoleEnum.ADMIN,
       groups: [UserGroupEnum.OPERATOR],
       label: 'API',
+    },
+    {
+      path: '/admin/visibility',
+      role: UserManyRoleEnum.ADMIN,
+      groups: [UserGroupEnum.OPERATOR],
+      label: 'Visibilité',
     },
   ];
 

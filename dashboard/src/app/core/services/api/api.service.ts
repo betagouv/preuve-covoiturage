@@ -64,7 +64,7 @@ export class ApiService<T extends IModel> {
     return new JsonRPCParam(`${this._method}:find`, parameters);
   }
 
-  public getFindByIdJSONParam(_id: string): JsonRPCParam {
+  public getFindByIdJSONParam(_id: number): JsonRPCParam {
     return new JsonRPCParam(`${this._method}:find`, { _id });
   }
 
@@ -98,7 +98,7 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public get(itemId: string): Observable<T> {
+  public get(itemId: number): Observable<T> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:find`, { _id: itemId });
     this._loading$.next(true);
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
@@ -197,7 +197,7 @@ export class ApiService<T extends IModel> {
     );
   }
 
-  public deleteList(id: string, params: { territory_id?: string; operator_id?: string } = {}): Observable<T[]> {
+  public deleteList(id: number, params: { territory_id?: string; operator_id?: string } = {}): Observable<T[]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:delete`, { _id: id, ...params });
     return this._jsonRPCService.callOne(jsonRPCParam).pipe(
       map((data) => data.data),

@@ -1,8 +1,6 @@
 import * as moment from 'moment';
 
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
-
-import { CampaignsGenerator } from '../../generators/campaigns.generator';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
@@ -11,25 +9,33 @@ import {
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import {
+  AmountRetributionRule,
+  ForPassengerRetributionRule,
+} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+
+import { CampaignsGenerator } from '../../generators/campaigns.generator';
 import { operatorStubs } from '../operator/operator.list';
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { territoryStub } from '../territory/territory.find';
+import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
+import { campaignTemplateStubs } from './campaign-template.list';
 
 export const campaignStubs: Campaign[] = [
   {
-    _id: '5d7775bf37043b8463b2a208',
-    parent_id: '5d6930724f56e6e1d0654542',
+    _id: 31,
+    parent_id: campaignTemplateStubs[0]._id,
     status: CampaignStatusEnum.VALIDATED,
     name: 'Encourager le covoiturage',
     description: 'Cras quis nulla commodo, aliquam lectus sed, blandit augue.',
-    start: moment()
+    start_date: moment()
       .subtract('1', 'months')
       .toDate(),
-    end: moment()
+    end_date: moment()
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
@@ -40,15 +46,15 @@ export const campaignStubs: Campaign[] = [
       staggered: false,
     },
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxAmountRetributionRule(10000),
       new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
       new DistanceRangeGlobalRetributionRule({
         min: 0,
-        max: 15,
+        max: 15000,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -56,13 +62,14 @@ export const campaignStubs: Campaign[] = [
         },
       ]),
     ],
-    rules: [],
+    rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
     trips_number: Math.floor(Math.random() * 10000),
-    amount_spent: Math.floor(Math.random() * 20000),
+    amount_spent: 5000,
+    territory_id: territoryStub._id,
   },
   {
-    _id: '5d777822ff790e51107c6c4f',
-    parent_id: '5d69319a9763dc801ea78de7',
+    _id: 32,
+    parent_id: campaignTemplateStubs[0]._id,
     status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter le trafic en semaine',
     description: 'Fusce vehicula dolor arcu, sit amet blandit dolor mollis.',
@@ -73,15 +80,15 @@ export const campaignStubs: Campaign[] = [
       staggered: false,
     },
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxAmountRetributionRule(10000),
       new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
       new DistanceRangeGlobalRetributionRule({
         min: 0,
-        max: 15,
+        max: 15000,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -89,19 +96,20 @@ export const campaignStubs: Campaign[] = [
         },
       ]),
     ],
-    rules: [],
-    start: moment()
+    rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
+    start_date: moment()
       .subtract('1', 'months')
       .toDate(),
-    end: moment()
+    end_date: moment()
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
     trips_number: Math.floor(Math.random() * 10000),
-    amount_spent: Math.floor(Math.random() * 20000),
+    amount_spent: 5000,
+    territory_id: territoryStub._id,
   },
   {
-    _id: '5d77782eecbdea02802a81eb',
+    _id: 33,
     parent_id: null,
     status: CampaignStatusEnum.VALIDATED,
     name: 'Limiter la pollution',
@@ -112,23 +120,23 @@ export const campaignStubs: Campaign[] = [
       for_trip: false,
       staggered: false,
     },
-    start: moment()
+    start_date: moment()
       .subtract('1', 'months')
       .toDate(),
-    end: moment()
+    end_date: moment()
       .add('2', 'months')
       .toDate(),
     unit: IncentiveUnitEnum.EUR,
     global_rules: [
-      new MaxAmountRetributionRule(Math.floor(Math.random() * 10000)),
+      new MaxAmountRetributionRule(10000),
       new MaxTripsRetributionRule(Math.floor(Math.random() * 20000)),
       new DistanceRangeGlobalRetributionRule({
         min: 0,
-        max: 15,
+        max: 15000,
       }),
       new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-      new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-      new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+      new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+      new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
       new TimeRetributionRule([
         {
           start: 8,
@@ -136,9 +144,10 @@ export const campaignStubs: Campaign[] = [
         },
       ]),
     ],
-    rules: [],
+    rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
     trips_number: Math.floor(Math.random() * 10000),
-    amount_spent: Math.floor(Math.random() * 20000),
+    amount_spent: 5000,
+    territory_id: territoryStub._id,
   },
   CypressExpectedCampaign.getAfterCreate(),
 ];

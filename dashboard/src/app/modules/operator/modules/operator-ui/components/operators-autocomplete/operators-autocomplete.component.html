@@ -23,7 +23,7 @@
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOperatorSelect($event)">
     <mat-option *ngFor="let operator of filteredOperators" [value]="operator._id">
-      {{ operator.nom_commercial }}
+      {{ operator.name }}
     </mat-option>
   </mat-autocomplete>
   <mat-error *ngIf="this.operatorIdsControl.hasError('required')">

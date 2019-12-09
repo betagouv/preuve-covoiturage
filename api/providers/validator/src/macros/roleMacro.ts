@@ -1,7 +1,7 @@
 export function roleMacro(schema) {
   return {
     type: 'string',
-    enum: ['admin', 'user'],
+    enum: ['operator.admin', 'operator.user', 'registry.admin', 'registry.user', 'territory.admin', 'territory.user'],
     default: 'user',
   };
 }

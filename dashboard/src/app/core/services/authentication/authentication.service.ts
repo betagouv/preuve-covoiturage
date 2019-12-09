@@ -1,6 +1,6 @@
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, shareReplay, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -8,12 +8,43 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PermissionType } from '~/core/types/permissionType';
 import { User } from '~/core/entities/authentication/user';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
-import { UserService } from '~/modules/user/services/user.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
+import { UserApiService } from '~/modules/user/services/user-api.service';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
 
-import { JsonRPCParam } from '../../entities/api/jsonRPCParam';
-import { JsonRPCService } from '../api/json-rpc.service';
+import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { JsonRPCService } from '~/core/services/api/json-rpc.service';
+
+import {
+  ParamsInterface as ChangePasswordWithPasswordParam,
+  ResultInterface as ChangePasswordWithPasswordResult,
+} from '~/core/entities/api/shared/user/changePasswordWithToken.contract';
+
+import {
+  ParamsInterface as LoginParam,
+  ResultInterface as LoginResult,
+} from '~/core/entities/api/shared/user/login.contract';
+
+import { ParamsInterface as ChangePasswordParam } from '~/core/entities/api/shared/user/changePassword.contract';
+
+import {
+  ParamsInterface as ForgottenPasswordParam,
+  ResultInterface as ForgottenPasswordResult,
+} from '~/core/entities/api/shared/user/forgottenPassword.contract';
+
+import { ParamsInterface as SendInviteEmailParam } from '~/core/entities/api/shared/user/sendInvitationEmail.contract';
+
+import {
+  ParamsInterface as ForgottenPasswordTokenParam,
+  ResultInterface as ForgottenPasswordTokenResult,
+} from '~/core/entities/api/shared/user/checkForgottenToken.contract';
+
+import {
+  ParamsInterface as ConfirmEmailParam,
+  ResultInterface as ConfirmEmailResult,
+} from '~/core/entities/api/shared/user/confirmEmail.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -25,13 +56,14 @@ export class AuthenticationService {
   private userMe$: Observable<User>;
 
   constructor(
-    private userService: UserService,
+    private userApiService: UserApiService,
+    private userStoreService: UserStoreService,
     private jsonRPC: JsonRPCService,
     private router: Router,
     private toastr: ToastrService,
     private http: HttpClient,
   ) {
-    this.userService.user$.subscribe((user: User) => {
+    this.userStoreService.entity$.subscribe((user: User) => {
       const loggedInUser = this.user;
 
       // if userService is updated and match current user we update its state
@@ -47,21 +79,7 @@ export class AuthenticationService {
       }
     });
 
-    this.userMe$ = this.jsonRPC.callOne(new JsonRPCParam('user:me')).pipe(
-      map(({ data }) => {
-        // if forbidden return null
-        if (data.error && data.error.code === -32503) {
-          return null;
-        }
-        return new User(data);
-      }),
-      catchError((errorResponse) => {
-        if (errorResponse.status === 401) return of(null);
-
-        throw errorResponse;
-      }),
-      shareReplay(),
-    );
+    this.userMe$ = this.userApiService.me();
   }
 
   get user$(): Observable<User> {
@@ -72,7 +90,7 @@ export class AuthenticationService {
     return this._user$.getValue();
   }
 
-  call(url: string, payload: any, withCredentials: boolean = true): Observable<any> {
+  call<T = any>(url: string, payload: T, withCredentials: boolean = true): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
@@ -84,17 +102,12 @@ export class AuthenticationService {
   }
 
   public get isAdmin(): boolean {
-    return this.hasRole(UserRoleEnum.ADMIN);
+    return this.hasRole(UserManyRoleEnum.ADMIN);
   }
 
-  public login(email: string, password: string) {
-    return this.call('login', { email, password }).pipe(
-      catchError((response) => {
-        if (response.status === 401) {
-          return of(null);
-        }
-        return throwError(response);
-      }),
+  public login(email: string, password: string): Observable<LoginResult> {
+    return this.call<LoginParam>('login', { email, password }).pipe(
+      catchHttpStatus(401, (err) => null),
       map((loginPayload) => {
         if (loginPayload && loginPayload.result && loginPayload.result.data) {
           return loginPayload.result.data;
@@ -126,7 +139,7 @@ export class AuthenticationService {
   }
 
   public changePassword(oldPassword: string, newPassword: string): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam('user:changePassword', {
+    const jsonRPCParam = new JsonRPCParam<ChangePasswordParam>('user:changePassword', {
       old_password: oldPassword,
       new_password: newPassword,
     });
@@ -173,7 +186,7 @@ export class AuthenticationService {
   /**
    * Check if connected user has role
    */
-  public hasRole(role: UserRoleEnum | null): boolean {
+  public hasRole(role: UserRoleEnum | UserManyRoleEnum): boolean {
     if (!role) {
       return true;
     }
@@ -181,13 +194,14 @@ export class AuthenticationService {
     if (!user) {
       return false;
     }
-    return !role || ('role' in user && role === user.role);
+    return !role || ('role' in user && user.role.indexOf(role) !== -1);
   }
 
   public sendInviteEmail(user: User): Observable<JsonRPCResult> {
-    return this.jsonRPC.callOne(new JsonRPCParam('user:sendInvitationEmail', { _id: user._id }));
+    return this.jsonRPC.callOne(new JsonRPCParam<SendInviteEmailParam>('user:sendInvitationEmail', { _id: user._id }));
   }
 
+  /*
   public restorePassword(email: string, password: string, token: string): Observable<any> {
     return this.call('auth/change-password', {
       email,
@@ -195,63 +209,28 @@ export class AuthenticationService {
       token,
     });
   }
+  */
 
-  public sendForgottenPasswordEmail(email: string): Observable<any> {
-    return this.call('auth/reset-password', { email });
-
-    // const jsonRPCParam = new JsonRPCParam();
-    // jsonRPCParam.method = 'user:forgottenPassword';
-    // jsonRPCParam.params = {
-    //   email,
-    // };
-    //
-    // return this._jsonRPC.callOne(jsonRPCParam);
+  public sendForgottenPasswordEmail(email: string): Observable<ForgottenPasswordResult> {
+    return this.call<ForgottenPasswordParam>('auth/reset-password', { email });
   }
 
   /**
    * Check validity of token & reset
    */
-  public checkPasswordToken(email: string, token: string): Observable<any> {
-    return this.call('auth/check-token', { email, token });
-
-    // const jsonRPCParam = new JsonRPCParam();
-    // jsonRPCParam.method = 'user:checkPasswordToken';
-    // jsonRPCParam.params = {
-    //   email,
-    //   token,
-    // };
-    //
-    // return this._jsonRPC.callOne(jsonRPCParam);
+  public checkPasswordToken(email: string, token: string): Observable<ForgottenPasswordTokenResult> {
+    return this.call<ForgottenPasswordTokenParam>('auth/check-token', { email, token });
   }
 
   /**
    * Check validity of token & reset
    */
-  public confirmEmail(email: string, token: string): Observable<any> {
-    return this.call('auth/confirm-email', { email, token });
-
-    // const jsonRPCParam = new JsonRPCParam();
-    // jsonRPCParam.method = 'user:confirmEmail';
-    // jsonRPCParam.params = {
-    //   email,
-    //   token,
-    // };
-    //
-    // return this._jsonRPC.callOne(jsonRPCParam);
+  public confirmEmail(email: string, token: string): Observable<ConfirmEmailResult> {
+    return this.call<ConfirmEmailParam>('auth/confirm-email', { email, token });
   }
 
-  public sendNewPassword(email: string, password: string, token: string): Observable<any> {
-    return this.call('auth/change-password', { email, password, token });
-
-    // const jsonRPCParam = new JsonRPCParam();
-    // jsonRPCParam.method = 'user:resetPassword';
-    // jsonRPCParam.params = {
-    //   email,
-    //   password,
-    //   token,
-    // };
-    //
-    // return this._jsonRPC.callOne(jsonRPCParam);
+  public sendNewPassword(email: string, password: string, token: string): Observable<ChangePasswordWithPasswordResult> {
+    return this.call<ChangePasswordWithPasswordParam>('auth/change-password', { email, password, token });
   }
 
   check(): Observable<User> {
@@ -266,16 +245,13 @@ export class AuthenticationService {
     );
   }
 
-  public patch(userData: any): Observable<User> {
-    return this.userService.patch(userData).pipe(
-      first(),
-      tap((user: User) => this._user$.next(user)),
-    );
-  }
-
   private onLoggin(user: User) {
     // const redirectToStats = !this.user && user;
     this._hasChecked = true;
+
+    if (typeof user.territory_id === 'string') user.territory_id = parseInt(user.territory_id, 10);
+    if (typeof user.operator_id === 'string') user.operator_id = parseInt(user.operator_id, 10);
+
     this._user$.next(user);
   }
 }

@@ -1,44 +1,29 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, UnauthorizedException } from '@ilos/common';
-import { UserConfirmEmailParamsInterface } from '@pdc/provider-schema';
+import { handler, UnauthorizedException } from '@ilos/common';
 
-import { ForgottenTokenValidatorProviderInterface } from '../interfaces/ForgottenTokenValidatorProviderInterface';
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/confirmEmail.contract';
+import { alias } from '../shared/user/confirmEmail.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 
 /*
  * Confirm email by getting user from 'confirm' and verifying uncrypted 'token' with crypted 'email_token'
  */
-@handler({
-  service: 'user',
-  method: 'confirmEmail',
-})
+@handler(handlerConfig)
 export class ConfirmEmailUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.confirmEmail'],
-    ['content.whitelist', userWhiteListFilterOutput],
-  ];
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 
-  constructor(
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-    private tokenValidator: ForgottenTokenValidatorProviderInterface,
-  ) {
+  constructor(private authRepository: AuthRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: UserConfirmEmailParamsInterface, context: ContextType): Promise<User> {
-    const user = await this.tokenValidator.checkToken(params.email, params.forgotten_token);
-    if (this.tokenValidator.isExpired('confirmation', user.forgotten_at)) {
-      throw new UnauthorizedException('Expired token');
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    if (!(await this.authRepository.challengeTokenByEmail(params.email, params.token))) {
+      throw new UnauthorizedException('Wrong token');
     }
 
-    // user is confirmed, switch the status to active
-    return this.userRepository.update({
-      ...user,
-      status: 'active',
-      forgotten_at: undefined,
-      forgotten_token: undefined,
-    });
+    await this.authRepository.clearTokenByEmail(params.email, this.authRepository.CONFIRMED_STATUS);
+
+    return true;
   }
 }

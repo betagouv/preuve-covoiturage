@@ -1,57 +1,32 @@
-import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { ContextType, ForbiddenException, handler } from '@ilos/common';
-import { UserNotifyParamsInterface } from '@pdc/provider-schema';
+import { ContextType, handler } from '@ilos/common';
 import { NotificationInterfaceResolver } from '@pdc/provider-notification';
 
-import { SendTemplateByEmailParamsInterface } from '../interfaces/SendTemplateByEmailParamsInterface';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/notify.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
 /*
  * Send email to user
  */
-@handler({
-  service: 'user',
-  method: 'notify',
-})
+@handler(handlerConfig)
 export class NotifyUserAction extends AbstractAction {
-  // TODO middlewares (see below in handle())
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.except', ['proxy']]];
 
   constructor(private notificationProvider: NotificationInterfaceResolver) {
     super();
   }
 
-  public async handle(params: UserNotifyParamsInterface, context: ContextType): Promise<void> {
-    // TODO replace this with a proper middleware
-    if (get(context, 'channel.service', '') !== 'user') {
-      throw new ForbiddenException();
-    }
-
-    const sendTemplateByEmailParams: SendTemplateByEmailParamsInterface = {
-      template: params.template,
-      email: params.email,
-      fullname: params.fullname,
-      opts: {},
-    };
-
-    if ('organization' in params) {
-      sendTemplateByEmailParams.opts.organization = params.organization;
-    }
-
-    if ('link' in params) {
-      sendTemplateByEmailParams.opts.link = params.link;
-    }
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    const { templateId, template, email, fullname, ...opts } = params;
 
     return this.notificationProvider.sendTemplateByEmail(
       {
-        template: params.template,
-        email: params.email,
-        fullname: params.fullname,
-        opts: {
-          organization: params.organization,
-          link: params.link,
-        },
+        template,
+        email,
+        fullname,
+        opts,
       },
-      params.templateId ? { template: params.templateId } : null,
+      templateId ? { templateId } : null,
     );
   }
 }

@@ -3,7 +3,6 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { OperatorService } from '~/modules/operator/services/operator.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { Operator } from '~/core/entities/operator/operator';
@@ -17,11 +16,7 @@ export class OperatorComponent extends DestroyObservable implements OnInit {
   public readOnly$: Observable<boolean>;
   operator: Operator;
 
-  constructor(
-    private _operatorService: OperatorService,
-    private _authService: AuthenticationService,
-    private _commonDataService: CommonDataService,
-  ) {
+  constructor(private _authService: AuthenticationService, private _commonDataService: CommonDataService) {
     super();
   }
 

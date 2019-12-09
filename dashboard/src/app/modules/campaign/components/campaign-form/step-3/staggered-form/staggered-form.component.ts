@@ -12,7 +12,10 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 })
 export class StaggeredFormComponent extends DestroyObservable implements OnInit {
   @Input() isFirst: boolean;
+  @Input() campaignForm: FormGroup;
   @Input() formGroup: FormGroup;
+
+  minValue = 0;
 
   _isLast: boolean;
   get isLast(): boolean {
@@ -53,13 +56,24 @@ export class StaggeredFormComponent extends DestroyObservable implements OnInit 
     return this.formGroup.controls;
   }
 
+  get globalMinDistance(): number {
+    return this.campaignForm.get('filters').get('distance_range').value[0];
+  }
+
+  get globalMaxDistance(): number {
+    return this.campaignForm.get('filters').get('distance_range').value[1];
+  }
+
   initForm() {
     this.controls.min.setValidators(Validators.required);
     this.controls.max.setValidators(Validators.required);
     this.controls.max.enable();
     if (this.isFirst) {
-      this.controls.max.setValidators([Validators.required, Validators.min(1)]);
-      this.controls.min.setValue(0);
+      const min = this.globalMinDistance;
+      this.minValue = min;
+      const max = this.globalMaxDistance;
+      this.controls.max.setValidators([Validators.required, Validators.min(min + 1), Validators.max(max)]);
+      this.controls.min.setValue(min);
     }
     if (this.isLast) {
       this.controls.max.disable();
@@ -83,7 +97,9 @@ export class StaggeredFormComponent extends DestroyObservable implements OnInit 
       this.controls.min.setValue(previousMax);
 
       if (!this.isLast) {
-        this.controls.max.setValidators([Validators.required, Validators.min(previousMax + 1)]);
+        const max = this.globalMaxDistance;
+        this.minValue = previousMax + 1;
+        this.controls.max.setValidators([Validators.required, Validators.min(previousMax + 1), Validators.max(max)]);
         this.controls.max.updateValueAndValidity();
       }
     } else {

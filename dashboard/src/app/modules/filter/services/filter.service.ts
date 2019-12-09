@@ -7,6 +7,7 @@ import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { Filter } from '~/core/entities/filter/filter';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { FilterModule } from '~/modules/filter/filter.module';
+import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 @Injectable({
   providedIn: 'root',
@@ -27,11 +28,16 @@ export class FilterService {
       return;
     }
 
+    let insees = [];
+    if ('insees' in filterUx) {
+      insees = filterUx.insees.map((town: InseeAndTerritoryInterface) => town.insees).reduce((a, b) => a.concat(b), []);
+    }
+
     filter = new Filter({
+      insee: insees,
       date: filterUx.date,
       hour: <any>filterUx.hour,
       days: filterUx.days,
-      towns: filterUx.towns,
       distance: filterUx.distance,
       ranks: filterUx.ranks,
       status: filterUx.status,
@@ -43,8 +49,10 @@ export class FilterService {
     if (filter.date.start === null && filter.date.end === null) {
       delete filter.date;
     } else {
-      if (filter.date.start) filter.date.start = filter.date.start.toDate();
-      if (filter.date.end) filter.date.end = filter.date.end.toDate();
+      // set start at the beginning of the day and end at the end.
+      // DO NOT convert to UTC to avoid days overlapping!
+      if (filter.date.start) filter.date.start = `${filter.date.start.toISOString(true).substr(0, 10)}T00:00:00Z`;
+      if (filter.date.end) filter.date.end = `${filter.date.end.toISOString(true).substr(0, 10)}T23:59:59Z`;
     }
 
     if (filter.hour.start === null && filter.hour.end === null) {

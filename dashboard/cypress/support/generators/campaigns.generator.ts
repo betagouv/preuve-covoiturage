@@ -7,8 +7,8 @@ import {
   DistanceRangeGlobalRetributionRule,
   MaxAmountRetributionRule,
   MaxTripsRetributionRule,
-  OperatorIdsRetributionRule,
-  RankRetributionRule,
+  OperatorIdsGlobalRetributionRule,
+  RankGlobalRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -16,6 +16,12 @@ import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaig
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
 
 import { operatorStubs } from '../stubs/operator/operator.list';
+import { territoryStub } from '../stubs/territory/territory.find';
+import {
+  AmountRetributionRule,
+  ForPassengerRetributionRule,
+} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {
@@ -35,15 +41,15 @@ export class CampaignsGenerator {
     const campaignMocks = [...Array(20)].map(
       (val, idx) =>
         <CampaignInterface>{
-          _id: '5d6fa2995623dc991b288f11',
-          status: CampaignStatusEnum[CampaignsGenerator.status[CampaignsGenerator.randomStatus()]],
+          _id: 100,
+          status: CampaignsGenerator.status[CampaignsGenerator.randomStatus()],
           name: `Name ${idx}`,
           description: `Description ${idx}`,
-          start: moment()
+          start_date: moment()
             .subtract(Math.floor(Math.random() * 10), 'days')
             .subtract('1', 'months')
             .toDate(),
-          end: moment()
+          end_date: moment()
             .add('2', 'months')
             .toDate(),
           global_rules: [
@@ -54,8 +60,8 @@ export class CampaignsGenerator {
               max: 15,
             }),
             new WeekdayRetributionRule([0, 1, 2, 3, 4, 5, 6]),
-            new RankRetributionRule([TripRankEnum.A, TripRankEnum.C]),
-            new OperatorIdsRetributionRule([operatorStubs[0]._id]),
+            new RankGlobalRetributionRule([TripRankEnum.A, TripRankEnum.C]),
+            new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
             new TimeRetributionRule([
               {
                 start: 8,
@@ -63,9 +69,17 @@ export class CampaignsGenerator {
               },
             ]),
           ],
-          rules: [],
+          rules: [[new ForPassengerRetributionRule(), new AmountRetributionRule(100)]],
           trips_number: Math.floor(Math.random() * 10000),
           amount_spent: Math.floor(Math.random() * 20000),
+          unit: IncentiveUnitEnum.EUR,
+          territory_id: territoryStub._id,
+          ui_status: {
+            for_driver: true,
+            for_passenger: true,
+            for_trip: false,
+            staggered: false,
+          },
         },
     );
 

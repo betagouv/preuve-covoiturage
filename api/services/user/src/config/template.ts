@@ -13,3 +13,7 @@ export const confirmation = {
 export const email_changed = {
   subject: "Changement d'adresse email",
 };
+
+export const export_csv = {
+  subject: 'Export des données',
+};

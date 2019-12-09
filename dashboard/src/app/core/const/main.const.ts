@@ -1,6 +1,6 @@
 export const URLS = {
   betaGouvSiteLink: 'https://beta.gouv.fr',
-  mainSiteLink: 'http://covoiturage.beta.gouv.fr',
+  CMSLink: 'http://covoiturage.beta.gouv.fr',
   gitbookLink: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/',
   gitbookLinkCSV: 'https://registre-preuve-de-covoiturage.gitbook.io/produit/api/schema-csv',
   // tslint:disable-next-line:max-line-length

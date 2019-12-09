@@ -1,0 +1,24 @@
+.OperatorVisibilityTree {
+  max-height: 388px;
+  overflow-y: auto;
+  background-color: white;
+  padding: 20px;
+  border: 1px solid lightgrey;
+  //border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 5px;
+  &-header {
+    ::ng-deep .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    mat-checkbox {
+      margin-left: 10px;
+    }
+  }
+  mat-checkbox {
+    display: block;
+  }
+}

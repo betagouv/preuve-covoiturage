@@ -1,37 +1,40 @@
 <div class="Users">
-  <div class="Users-header">
-    <h2>
-      Utilisateurs registre autorisés
-    </h2>
-    <mat-button-toggle-group
-      [(ngModel)]="userGroup"
-      (ngModelChange)="closeUserForm(); filterUsers()"
-      name="userGroup"
-      aria-label="Groupes d'utilisateurs"
-    >
-      <mat-button-toggle *ngFor="let group of availableUserGroups" [value]="group">{{
-        getFrenchGroup(group)
-      }}</mat-button-toggle>
-    </mat-button-toggle-group>
+  <div class="Users-list" [hidden]="editUserFormVisible">
+    <div class="Users-list-header">
+      <h2>
+        Utilisateurs registre autorisés
+      </h2>
+      <mat-button-toggle-group [(ngModel)]="userGroup" name="userGroup" aria-label="Groupes d'utilisateurs">
+        <mat-button-toggle *ngFor="let group of availableUserGroups" [value]="group">{{
+          getFrenchGroup(group)
+        }}</mat-button-toggle>
+      </mat-button-toggle-group>
 
-    <form [formGroup]="searchFilters">
-      <mat-form-field appearance="outline">
-        <mat-label>Rechercher</mat-label>
-        <input matInput placeholder="Nom d'utilisateur, email" formControlName="query" />
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </form>
-  </div>
-  <div class="Users-loading" *ngIf="userService.loading">
-    <mat-spinner></mat-spinner>
-  </div>
-  <div class="Users-list">
-    <app-users-list
-      *ngIf="usersToShow"
-      [canEditUser]="canEditUser$ | async"
-      [users]="usersToShow"
-      (editUser)="showEditForm($event)"
-    ></app-users-list>
+      <form [formGroup]="searchFilters">
+        <mat-form-field appearance="outline">
+          <mat-label>Rechercher</mat-label>
+          <input matInput placeholder="Nom d'utilisateur, email" formControlName="query" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </form>
+    </div>
+    <div class="Users-list--loading" *ngIf="userStoreService.isLoading">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div class="Users-list-table">
+      <app-users-list
+        *ngIf="usersToShow"
+        [canEditUser]="canEditUser$ | async"
+        [users]="usersToShow"
+        [userGroup]="userGroup"
+        (editUser)="showEditForm($event)"
+      ></app-users-list>
+      <mat-paginator
+        [hidden]="!usersToShow && !usersFiltered"
+        [length]="countUsers"
+        [pageSize]="PAGE_SIZE"
+      ></mat-paginator>
+    </div>
   </div>
   <div
     class="Users-add"
@@ -52,7 +55,6 @@
       <div class="Users-form">
         <app-create-edit-user-form
           [isCreating]="isCreatingUser"
-          [user]="editedUser"
           [groupEditable]="true"
           (onCloseEditUser)="closeUserForm()"
         ></app-create-edit-user-form>

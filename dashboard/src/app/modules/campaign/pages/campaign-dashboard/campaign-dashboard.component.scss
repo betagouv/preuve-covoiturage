@@ -1,4 +1,4 @@
-@import '~src/styles/variables';
+@import 'variables';
 
 .CampaignDashboard {
   margin-bottom: 50px;
@@ -18,10 +18,9 @@
       padding: 20px;
       border-radius: 6px;
       background: $background-light;
-    }
-
-    .link {
-      margin-top: 20px;
+      &-link {
+        margin-top: 20px;
+      }
     }
 
     &--loading {

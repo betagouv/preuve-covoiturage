@@ -1,0 +1,169 @@
+@import 'variables';
+
+.ParametersForm {
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-date {
+    mat-form-field:not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+
+  &-restrictionExpansion {
+    mat-panel-title {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &-restriction {
+    display: flex;
+    align-items: center;
+
+    & > mat-icon {
+      cursor: pointer;
+      margin: 0 0 14px 20px;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  &-incentiveMode,
+  &-incentiveMode.CampaignSubForm-inputs {
+    padding: 0;
+
+    > div:first-child {
+      text-align: right;
+      padding: 16px 24px 20px 24px;
+      background: $background-white;
+    }
+
+    > div:not(:first-child) {
+      padding: 0 24px 16px 24px;
+    }
+
+    mat-button-toggle-group {
+      height: 88px;
+      border-radius: 0;
+      border: none;
+
+      ::ng-deep.mat-button-toggle {
+        height: calc(100% - 6px);
+        border-radius: 5px;
+        width: 250px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        background-color: $background-light;
+        border: 3px solid $background-light;
+
+        &:hover {
+          background-color: $background-white;
+          border-color: $background-white;
+        }
+
+        &.mat-button-toggle-checked {
+          background-color: $background-white;
+          border: 3px solid $color-primary;
+          color: $black;
+        }
+
+        &:not(:first-child) {
+          margin-left: 10px;
+        }
+
+        &-button {
+          height: 100%;
+          font-size: 16px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    &-value {
+      margin-top: 20px;
+      display: flex;
+
+      &-inputs {
+        flex: 2;
+        position: relative;
+      }
+
+      &-remove {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        mat-icon {
+          cursor: pointer;
+          font-size: 30px;
+          width: 30px;
+          height: 30px;
+        }
+      }
+    }
+
+    &-staggered {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-right: 20px;
+
+      &::after {
+        display: block;
+        position: absolute;
+        height: 100%;
+        content: '';
+        right: 0;
+        border-left: 2px solid $color-secondary;
+      }
+    }
+
+    &-actions {
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+
+  &-formulaExpression {
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  &-arrow {
+    width: 90%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  &-formula {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    app-formula-form {
+      width: 90%;
+    }
+    &-actions {
+      display: flex;
+      justify-content: space-around;
+    }
+    mat-icon {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .shortFormField {
+    width: 100px;
+  }
+}

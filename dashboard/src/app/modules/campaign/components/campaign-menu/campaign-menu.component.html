@@ -5,7 +5,7 @@
     [title]="menu.title"
     [hint]="menu.hint"
     [svgIcon]="menu.svgIcon"
-    (buttonClicked)="menu.callback(router)"
+    (buttonClicked)="menu.callback(router, toastr)"
   >
   </app-menu-card>
 </div>

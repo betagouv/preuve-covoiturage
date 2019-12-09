@@ -1,32 +1,32 @@
-import { sprintf } from 'sprintf-js';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
+import { handler, ContextType, UnauthorizedException } from '@ilos/common';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/sendInvitationEmail.contract';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { alias } from '../shared/user/sendInvitationEmail.schema';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider';
 
 /*
  * send the confirmation email to a user by _id
  */
-@handler({
-  service: 'user',
-  method: 'sendInvitationEmail',
-})
+@handler(handlerConfig)
 export class SendInvitationEmailUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.sendInvitationEmail'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
         ['user.send-confirm-email'],
         [
           (_params, context) => {
-            if (context.call.user.territory) {
+            if (context.call.user.territory_id) {
               return 'territory.users.send-confirm-email';
             }
           },
           (_params, context) => {
-            if (context.call.user.operator) {
+            if (context.call.user.operator_id) {
               return 'operator.users.send-confirm-email';
             }
           },
@@ -37,71 +37,43 @@ export class SendInvitationEmailUserAction extends AbstractAction {
 
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
-    private kernel: KernelInterfaceResolver,
+    private authProvider: AuthRepositoryProviderInterfaceResolver,
+    private notification: UserNotificationProvider,
   ) {
     super();
   }
 
-  public async handle(params: { _id: string }, context: ContextType): Promise<void> {
-    const contextParam: { territory?: string; operator?: string } = {};
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    let user;
 
-    if (context.call.user.territory) {
-      contextParam.territory = context.call.user.territory;
+    switch (scope) {
+      case 'territory':
+        user = await this.userRepository.findByTerritory(params._id, context.call.user.territory_id);
+        break;
+      case 'operator':
+        user = await this.userRepository.findByOperator(params._id, context.call.user.operator_id);
+        break;
+      case 'registry':
+        user = await this.userRepository.find(params._id);
+        break;
     }
 
-    if (context.call.user.operator) {
-      contextParam.operator = context.call.user.operator;
+    if (!user) {
+      throw new UnauthorizedException();
     }
 
-    const user = await this.userRepository.findUser(params._id, contextParam);
-
-    // generate new token for a password reset on first access
-    const reset = this.cryptoProvider.generateToken();
-    const token = this.cryptoProvider.generateToken();
-
-    // set forgotten password properties to set first password
-    user.forgotten_token = await this.cryptoProvider.cryptToken(token);
-    user.forgotten_at = new Date();
-
-    await this.userRepository.update(user);
-
-    const link = sprintf(
-      '%s/activate/%s/%s/',
-      this.config.get('url.appUrl'),
-      encodeURIComponent(user.email),
-      encodeURIComponent(token),
+    const token = await this.authProvider.createTokenByEmail(
+      user.email,
+      this.authProvider.INVITATION_TOKEN,
+      this.authProvider.INVITED_STATUS,
     );
 
-    // debug data for testing
-    if (process.env.NODE_ENV === 'testing') {
-      console.log(`
-******************************************
-[test] Create user
-email: ${user.email}
-token: ${token}
-link:  ${link}
-******************************************
-      `);
-    }
-
-    await this.kernel.call(
-      'user:notify',
-      {
-        link,
-        template: this.config.get('email.templates.invitation'),
-        email: user.email,
-        fullname: user.fullname,
-        templateId: this.config.get('notification.templateIds.invitation'),
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'user',
-        },
-      },
-    );
+    await this.notification.userCreated(token, user.email);
+    return true;
   }
 }

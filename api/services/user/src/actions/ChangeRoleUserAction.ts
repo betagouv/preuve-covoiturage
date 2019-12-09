@@ -1,56 +1,59 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
-import { UserChangeRoleParamsInterface } from '@pdc/provider-schema';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changeRole.contract';
+import { alias } from '../shared/user/changeRole.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Update role of user
  */
-@handler({
-  service: 'user',
-  method: 'changeRole',
-})
+@handler(handlerConfig)
 export class ChangeRoleUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.changeRole'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
         ['user.update'],
         [
           (_params, context) => {
-            if (context.call.user.territory) {
+            if (context.call.user.territory_id) {
               return 'territory.users.update';
             }
           },
           (_params, context) => {
-            if (context.call.user.operator) {
+            if (context.call.user.operator_id) {
               return 'operator.users.update';
             }
           },
         ],
       ],
     ],
-    ['content.whitelist', userWhiteListFilterOutput],
   ];
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: UserChangeRoleParamsInterface, context: ContextType): Promise<User> {
-    const contextParam: { territory?: string; operator?: string } = {};
-
-    if (context.call.user.territory) {
-      contextParam.territory = context.call.user.territory;
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    switch (scope) {
+      case 'territory':
+        await this.userRepository.patchByTerritory(params._id, { role: params.role }, context.call.user.territory_id);
+        break;
+      case 'operator':
+        await this.userRepository.patchByOperator(params._id, { role: params.role }, context.call.user.operator_id);
+        break;
+      case 'registry':
+        await this.userRepository.patch(params._id, { role: params.role });
+        break;
     }
 
-    if (context.call.user.operator) {
-      contextParam.operator = context.call.user.operator;
-    }
-
-    return this.userRepository.patchUser(params._id, { role: params.role }, contextParam);
+    return true;
   }
 }

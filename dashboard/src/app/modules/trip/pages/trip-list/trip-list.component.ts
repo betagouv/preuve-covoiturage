@@ -3,12 +3,12 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { TripService } from '~/modules/trip/services/trip.service';
-import { Trip } from '~/core/entities/trip/trip';
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP, TRIP_SKIP_SCROLL } from '~/core/const/filter.const';
+import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '~/core/const/filter.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 
 @Component({
   selector: 'app-trip-list',
@@ -16,8 +16,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
   styleUrls: ['./trip-list.component.scss'],
 })
 export class TripListComponent extends DestroyObservable implements OnInit {
-  isExporting: boolean;
-  trips: Trip[] = [];
+  trips: LightTripInterface[] = [];
   skip = DEFAULT_TRIP_SKIP;
   limit = DEFAULT_TRIP_LIMIT;
 
@@ -62,31 +61,19 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     return Object.keys(this.filterService.filter$.value).length > 0;
   }
 
+  get total(): number {
+    return this.tripService.total;
+  }
+
   onScroll() {
     // TODO stop fetching trips when end (count 0) is reached
-    this.skip += TRIP_SKIP_SCROLL;
+    this.skip += DEFAULT_TRIP_LIMIT;
     const filter = {
       ...this.filterService.filter$.value,
       skip: this.skip,
       limit: this.limit,
     };
     this.loadTrips(filter, true);
-  }
-
-  exportTrips() {
-    this.isExporting = true;
-    this.tripService
-      .exportTrips()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {
-          this.isExporting = false;
-        },
-        (err) => {
-          this.isExporting = false;
-          this.toastr.error(err.message);
-        },
-      );
   }
 
   private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {

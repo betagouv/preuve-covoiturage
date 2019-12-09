@@ -1,55 +1,53 @@
-import * as _ from 'lodash';
+import { set } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { JourneyInterface } from '@pdc/provider-schema';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/route.contract';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Enrich position data
-@handler({
-  service: 'normalization',
-  method: 'route',
-})
+@handler(handlerConfig)
 export class NormalizationRouteAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['channel.transport', ['queue']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
   constructor(protected wf: WorkflowProvider, private geoProvider: GeoProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(journey: JourneyInterface, context: ContextType): Promise<JourneyInterface> {
+  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     this.logger.debug(`Normalization:route on ${journey._id}`);
 
     // calc distance and duration for passenger
-    const passengerRoute = await this.geoProvider.getRoute(
+    const passengerRoute = await this.geoProvider.getRouteMeta(
       {
-        lon: journey.passenger.start.lon,
-        lat: journey.passenger.start.lat,
+        lon: journey.payload.passenger.start.lon,
+        lat: journey.payload.passenger.start.lat,
       },
       {
-        lon: journey.passenger.end.lon,
-        lat: journey.passenger.end.lat,
+        lon: journey.payload.passenger.end.lon,
+        lat: journey.payload.passenger.end.lat,
       },
     );
 
-    _.set(journey, 'passenger.calc_distance', passengerRoute.distance);
-    _.set(journey, 'passenger.calc_duration', passengerRoute.duration);
+    set(journey, 'payload.passenger.calc_distance', Math.floor(passengerRoute.distance));
+    set(journey, 'payload.passenger.calc_duration', Math.floor(passengerRoute.duration));
 
     // calc distance and duration for driver
-    const driverRoute = await this.geoProvider.getRoute(
+    const driverRoute = await this.geoProvider.getRouteMeta(
       {
-        lon: journey.driver.start.lon,
-        lat: journey.driver.start.lat,
+        lon: journey.payload.driver.start.lon,
+        lat: journey.payload.driver.start.lat,
       },
       {
-        lon: journey.driver.end.lon,
-        lat: journey.driver.end.lat,
+        lon: journey.payload.driver.end.lon,
+        lat: journey.payload.driver.end.lat,
       },
     );
 
-    _.set(journey, 'driver.calc_distance', driverRoute.distance);
-    _.set(journey, 'driver.calc_duration', driverRoute.duration);
+    set(journey, 'payload.driver.calc_distance', Math.floor(driverRoute.distance));
+    set(journey, 'payload.driver.calc_duration', Math.floor(driverRoute.duration));
 
     // Call the next step asynchronously
     await this.wf.next('normalization:route', journey);

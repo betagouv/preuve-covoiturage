@@ -1,7 +1,7 @@
 declare function env(key: string, fallback?: string | boolean): any;
 
 export const mail = {
-  debug: env('APP_MAILGET_DEBUG_MODE', false),
+  debug: env('APP_MAILJET_DEBUG_MODE', false),
   driver: 'mailjet',
   driverOptions: {
     public: env('APP_MAILJET_PUBLIC_KEY', ''),

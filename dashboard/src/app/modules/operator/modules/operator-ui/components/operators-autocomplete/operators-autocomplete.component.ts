@@ -34,10 +34,10 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   ngOnInit() {
     this.loadOperators();
     this.operatorCtrl.valueChanges
-      .pipe(takeUntil(this.destroy$))
       .pipe(
-        filter((literal) => !!literal),
+        filter((literal) => literal !== null && literal !== undefined && typeof literal === 'string'),
         tap((literal: string) => this.filterOperators(literal)),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
@@ -47,11 +47,10 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   /**
-   * todo: r
-   * efactor when search is made server side
+   * todo: refactor when search is made server side
    */
-  getOperatorLabel(operatorId: string): string {
-    return this.operators.find((operator) => operator._id === operatorId).nom_commercial;
+  getOperatorLabel(operatorId: number): string {
+    return this.operators.find((operator) => operator._id === operatorId).name;
   }
 
   public remove(operator: string): void {
@@ -68,7 +67,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     operatorIds.push(event.option.value);
     this.operatorIdsControl.setValue(operatorIds);
     this.operatorInput.nativeElement.value = null;
-    this.operatorCtrl.setValue(null);
+    this.operatorCtrl.setValue('');
   }
 
   private loadOperators() {
@@ -76,7 +75,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
       this.operators = operators
         ? operators.map((operator) => ({
             _id: operator._id,
-            nom_commercial: operator.nom_commercial,
+            name: operator.name,
           }))
         : [];
       this.filterOperators();
@@ -87,8 +86,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     const selectedOperatorIds = this.operatorIdsControl.value || [];
     this.filteredOperators = this.operators.filter(
       (operator) =>
-        selectedOperatorIds.indexOf(operator._id) === -1 &&
-        operator.nom_commercial.toLowerCase().includes(literal.toLowerCase()),
+        selectedOperatorIds.indexOf(operator._id) === -1 && operator.name.toLowerCase().includes(literal.toLowerCase()),
     );
   }
 }

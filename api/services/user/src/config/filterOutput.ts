@@ -1,3 +1,4 @@
+// TODO Adapt to interfaces !
 export const userWhiteListFilterOutput = [
   '_id',
   'email',
@@ -8,6 +9,6 @@ export const userWhiteListFilterOutput = [
   'role',
   'phone',
   'status',
-  'operator',
-  'territory',
+  'operator_id',
+  'territory_id',
 ];

@@ -1,0 +1,32 @@
+<mat-form-field [formGroup]="parentForm" class="territoryInseeAutocomplete" appearance="outline">
+  <mat-label>Communes</mat-label>
+  <mat-chip-list #chipList>
+    <mat-chip
+      *ngFor="let territory of this.territoryInseesControl.value; let i = index"
+      [selectable]="true"
+      [removable]="true"
+      (removed)="remove(i)"
+    >
+      {{ territory.territory_literal }}
+      <mat-icon matChipRemove>remove</mat-icon>
+    </mat-chip>
+    <input
+      matInput
+      placeholder="+ ajouter"
+      aria-label="Ajouter une zone"
+      #territoryInseeInput
+      [formControl]="territoryInseeInputCtrl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputAddOnBlur]="false"
+    />
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritoryInseeSelect($event)">
+    <mat-option *ngFor="let territory of searchedTerritoryInsees" [value]="territory">
+      <span title="{{ territory.territory_literal }} ( {{ territory.context }} )"
+        >{{ territory.territory_literal
+        }}<span class="inseeAutocomplete-result-details">( {{ territory.context }} )</span></span
+      >
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

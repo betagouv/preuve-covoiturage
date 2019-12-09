@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatPaginatorModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from '~/shared/modules/material/material.module';
@@ -28,7 +29,16 @@ import { TerritoryDetailsComponent } from './components/territory-details/territ
     TerritoryViewComponent,
     TerritoryDetailsComponent,
   ],
-  imports: [CommonModule, FormsModule, MaterialModule, ReactiveFormsModule, FormModule, SharedModule, DetailsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MaterialModule,
+    ReactiveFormsModule,
+    FormModule,
+    SharedModule,
+    DetailsModule,
+    MatPaginatorModule,
+  ],
   exports: [
     TerritoryFormComponent,
     TerritoriesAutocompleteComponent,

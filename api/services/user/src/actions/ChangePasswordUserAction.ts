@@ -1,42 +1,32 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ForbiddenException } from '@ilos/common';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { UserChangePasswordParamsInterface } from '@pdc/provider-schema';
 
-import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
-import { User } from '../entities/User';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changePassword.contract';
+import { alias } from '../shared/user/changePassword.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 
 /*
  * Change password of user by sending old & new password
  */
-@handler({
-  service: 'user',
-  method: 'changePassword',
-})
+@handler(handlerConfig)
 export class ChangePasswordUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.changePassword'],
-    ['can', ['profile.update']],
-    ['content.whitelist', userWhiteListFilterOutput],
-  ];
-  constructor(
-    private userRepository: UserRepositoryProviderInterfaceResolver,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
-  ) {
+  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['profile.update']]];
+
+  constructor(private authRepository: AuthRepositoryProviderInterfaceResolver) {
     super();
   }
 
-  public async handle(params: UserChangePasswordParamsInterface, context: UserContextInterface): Promise<User> {
-    const user = await this.userRepository.find(context.call.user._id);
-    if (!(await this.cryptoProvider.comparePassword(params.old_password, user.password))) {
+  public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
+    const id = context.call.user._id;
+
+    if (!(await this.authRepository.challengePasswordById(id, params.old_password))) {
       throw new ForbiddenException('Wrong credentials');
     }
 
-    // change the password
-    const newHashPassword = await this.cryptoProvider.cryptPassword(params.new_password);
+    await this.authRepository.updatePasswordById(id, params.new_password);
 
-    return this.userRepository.patch(user._id, { password: newHashPassword });
+    return true;
   }
 }

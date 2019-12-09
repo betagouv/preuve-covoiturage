@@ -1,0 +1,287 @@
+<div class="ParametersForm CampaignSubForm">
+  <form [formGroup]="campaignForm">
+    <div class="ParametersForm-title">
+      <h2>Définissez des rétributions</h2>
+    </div>
+    <mat-accordion>
+      <!-- MAX RETRIBUTION -->
+      <mat-expansion-panel
+        [expanded]="isCreating"
+        [ngClass]="{
+          'mat-expansion-panel-error':
+            (controls.max_amount.touched && !controls.max_amount.valid) ||
+            (controls.unit.touched && !controls.unit.valid)
+        }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Rétribution totale
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showAmountLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="ParametersForm-maxRetribution CampaignSubForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Rétribution totale</mat-label>
+            <input matInput type="number" min="0" placeholder="50000" formControlName="max_amount" required />
+            <mat-error *ngIf="controls.max_amount.hasError('required')">
+              Le montant de rétribution totale est obligatoire.
+            </mat-error>
+            <mat-error *ngIf="controls.max_amount.hasError('min')">
+              Le montant de rétribution totale doit être supérieur à 0.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="shortFormField">
+            <mat-label>Unité</mat-label>
+            <mat-select formControlName="unit" required>
+              <mat-option *ngFor="let incentiveUnit of incentiveUnitKeys" [value]="incentiveUnit">
+                {{ incentiveUnitFr[incentiveUnit] }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="controls.unit.hasError('required')">
+              L'unité de rétribution est obligatoire.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- START AND END DATES   -->
+      <mat-expansion-panel
+        [ngClass]="{
+          'mat-expansion-panel-error':
+            (controls.start.touched && !controls.start.valid) || (controls.end.touched && !controls.end.valid)
+        }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Dates de début et de fin
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showDateLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs ParametersForm-date">
+          <mat-form-field appearance="outline">
+            <mat-label>Date de début</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerBegin"
+              placeholder="Choose a date"
+              formControlName="start"
+              [min]="minDate"
+              required
+            />
+            <mat-datepicker-toggle matSuffix [for]="pickerBegin"></mat-datepicker-toggle>
+            <mat-datepicker #pickerBegin></mat-datepicker>
+            <mat-error *ngIf="controls.start.hasError('min')">
+              La date de début de votre campagne doit être dans le futur.
+            </mat-error>
+            <mat-error *ngIf="controls.start.hasError('required')">
+              Le date de début de votre campagne est obligatoire.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Date de fin</mat-label>
+            <input
+              matInput
+              [matDatepicker]="pickerEnd"
+              placeholder="Choose a date"
+              formControlName="end"
+              [min]="controls.start.value"
+              required
+            />
+            <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+            <mat-error *ngIf="controls.end.hasError('min')">
+              La date de fin de votre campagne doit être postérieur à la date de début.
+            </mat-error>
+            <mat-error *ngIf="controls.end.hasError('required')">
+              Le date de fin de votre campagne est obligatoire.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- MAX TRIPS -->
+      <mat-expansion-panel
+        [ngClass]="{ 'mat-expansion-panel-error': controls.max_trips.touched && !controls.max_trips.valid }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Nombre de trajets max
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ controls.max_trips.value ? (controls.max_trips.value | number: '1.0-0':'FR') + ' trajets' : '' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="ParametersForm-maxTrips CampaignSubForm-inputs">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de trajets max</mat-label>
+            <input matInput type="number" min="0" placeholder="20000" formControlName="max_trips" />
+            <mat-icon matSuffix>directions_car</mat-icon>
+            <mat-error *ngIf="controls.max_trips.hasError('min')">
+              Le nombre de trajets maximum doit être supérieur à 0.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!--     RESTRICTIONS -->
+      <mat-expansion-panel
+        class="ParametersForm-restrictionExpansion"
+        [ngClass]="{ 'mat-expansion-panel-error': !restrictionFormArray.valid && isRestrictionFormArrayTouched() }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            <span>Restrictions</span>
+            <mat-icon matTooltip="Les restrictions sont appliquées par opérateur.">info</mat-icon>
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ showRestrictionLabel() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs">
+          <div
+            *ngFor="let restrictionFormGroup of restrictionFormArray.controls; let idx = index"
+            class="ParametersForm-restriction"
+          >
+            <app-restriction-form [restrictionformGroup]="restrictionFormGroup"></app-restriction-form>
+            <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
+          </div>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="addRestriction()"
+            [disabled]="!restrictionFormArray.valid"
+          >
+            Ajouter une restriction
+          </button>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- RETRIBUTION -->
+      <mat-expansion-panel
+        [disabled]="!campaignForm.controls.unit.value"
+        [ngClass]="{ 'mat-expansion-panel-error': !retributionsFormArray.valid && retributionsFormArray.touched }"
+      >
+        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+          <mat-panel-title>
+            Rétribution
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="CampaignSubForm-inputs ParametersForm-incentiveMode">
+          <div class="ParametersForm-incentiveMode-toggle" [formGroup]="campaignForm.get('ui_status')">
+            <mat-slide-toggle
+              #staggeredMode
+              color="accent"
+              formControlName="staggered"
+              (change)="onStaggeredChange($event)"
+            >
+              Mode échelonné
+            </mat-slide-toggle>
+          </div>
+          <ng-container>
+            <div
+              class="ParametersForm-incentiveMode-value"
+              *ngFor="let retributionFormGroup of retributionsFormArray.controls; let idx = index"
+            >
+              <div class="ParametersForm-incentiveMode-staggered" *ngIf="staggeredMode.checked">
+                <app-staggered-form
+                  [campaignForm]="campaignForm"
+                  [formGroup]="retributionFormGroup"
+                  [previousFormGroup]="retributionsFormArray.at(idx - 1)"
+                  [isFirst]="idx === 0"
+                  [isLast]="retributionsFormArray.length === idx + 1"
+                >
+                </app-staggered-form>
+              </div>
+              <div class="ParametersForm-incentiveMode-value-inputs">
+                <app-retribution-form
+                  [campaignForm]="campaignForm"
+                  [formGroup]="retributionFormGroup"
+                  [forDriver]="true"
+                  *ngIf="forDriverControl.value"
+                >
+                </app-retribution-form>
+                <app-retribution-form
+                  [campaignForm]="campaignForm"
+                  [formGroup]="retributionFormGroup"
+                  [forPassenger]="true"
+                  *ngIf="forPassengerControl.value"
+                >
+                </app-retribution-form>
+                <app-retribution-form
+                  [campaignForm]="campaignForm"
+                  [formGroup]="retributionFormGroup"
+                  [forTrip]="true"
+                  *ngIf="forTripControl.value"
+                >
+                </app-retribution-form>
+              </div>
+              <div class="ParametersForm-incentiveMode-value-remove">
+                <mat-icon
+                  color="error"
+                  *ngIf="idx !== 0 && retributionsFormArray.length !== idx + 1"
+                  (click)="removeStaggered(idx)"
+                >
+                  delete_outline
+                </mat-icon>
+              </div>
+            </div>
+            <div *ngIf="staggeredMode.checked" class="ParametersForm-incentiveMode-actions">
+              <button mat-stroked-button color="primary" (click)="addStaggered()">
+                Ajouter un échelon
+              </button>
+            </div>
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- FORMULAS -->
+      <!--      <mat-expansion-panel-->
+      <!--        *ngIf="exportModeControl.value"-->
+      <!--        [disabled]="!campaignForm.controls.unit.value"-->
+      <!--        [ngClass]="{ 'mat-expansion-panel-error': !formulasFormArray.valid && formulasFormArray.touched }"-->
+      <!--      >-->
+      <!--        <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">-->
+      <!--          <mat-panel-title>-->
+      <!--            Formules de rétribution-->
+      <!--          </mat-panel-title>-->
+      <!--        </mat-expansion-panel-header>-->
+      <!--        <div class="CampaignSubForm-inputs">-->
+      <!--          <div class="ParametersForm-formulaExpression">-->
+      <!--            <mat-form-field appearance="outline">-->
+      <!--              <mat-label>Explication des calculs</mat-label>-->
+      <!--              <textarea-->
+      <!--                matInput-->
+      <!--                required-->
+      <!--                placeholder="Comment est fait le calcul de l'incitation ?"-->
+      <!--                formControlName="formula_expression"-->
+      <!--              ></textarea>-->
+      <!--            </mat-form-field>-->
+      <!--          </div>-->
+      <!--          <ng-container *ngFor="let formulaFormGroup of formulasFormArray.controls; let idx = index">-->
+      <!--            <div class="ParametersForm-arrow" *ngIf="idx !== 0">-->
+      <!--              <mat-icon>-->
+      <!--                arrow_downward-->
+      <!--              </mat-icon>-->
+      <!--            </div>-->
+      <!--            <div class="ParametersForm-formula">-->
+      <!--              <app-formula-form [formulaFormGroup]="formulaFormGroup" [isFirst]="idx === 0" [index]="idx">-->
+      <!--              </app-formula-form>-->
+      <!--              <mat-icon color="error" *ngIf="idx !== 0" (click)="removeFormula(idx)">-->
+      <!--                delete_outline-->
+      <!--              </mat-icon>-->
+      <!--            </div>-->
+      <!--          </ng-container>-->
+      <!--          <div class="ParametersForm-formula-actions">-->
+      <!--            <button mat-stroked-button color="primary" (click)="addFormula()">-->
+      <!--              Ajouter une formule de calcul d'incitation-->
+      <!--            </button>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </mat-expansion-panel>-->
+    </mat-accordion>
+  </form>
+</div>

@@ -74,8 +74,13 @@
           </div>
 
           <!--          TOWNS -->
-          <div class="filter-towns">
-            <app-towns-autocomplete [parentForm]="filterForm"></app-towns-autocomplete>
+          <div class="filter-insees">
+            <app-territories-insee-autocomplete
+              [parentForm]="filterForm"
+              fieldName="insees"
+            ></app-territories-insee-autocomplete>
+
+            <!--            <app-towns-autocomplete [parentForm]="filterForm"></app-towns-autocomplete>-->
           </div>
 
           <!--          TERRITORIES -->

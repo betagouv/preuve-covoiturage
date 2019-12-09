@@ -1,21 +1,20 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/find.contract';
+import { alias } from '../shared/user/find.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
-import { User } from '../entities/User';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 /*
  * Find user by id
  */
-@handler({
-  service: 'user',
-  method: 'find',
-})
+@handler(handlerConfig)
 export class FindUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.find'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -27,12 +26,12 @@ export class FindUserAction extends AbstractAction {
             }
           },
           (params, context) => {
-            if (context.call.user.territory) {
+            if (context.call.user.territory_id) {
               return 'territory.users.read';
             }
           },
           (params, context) => {
-            if (context.call.user.operator) {
+            if (context.call.user.operator_id) {
               return 'operator.users.read';
             }
           },
@@ -45,17 +44,19 @@ export class FindUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: { _id: string }, context: UserContextInterface): Promise<User> {
-    const contextParam: { territory?: string; operator?: string } = {};
-
-    if (context.call.user.territory) {
-      contextParam.territory = context.call.user.territory;
+  public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    switch (scope) {
+      case 'territory':
+        return this.userRepository.findByTerritory(params._id, context.call.user.territory_id);
+      case 'operator':
+        return this.userRepository.findByOperator(params._id, context.call.user.operator_id);
+      case 'registry':
+        return this.userRepository.find(params._id);
     }
-
-    if (context.call.user.operator) {
-      contextParam.operator = context.call.user.operator;
-    }
-
-    return this.userRepository.findUser(request._id, contextParam);
   }
 }

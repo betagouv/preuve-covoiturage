@@ -1,7 +1,20 @@
-export enum restrictionEnum {
+export enum RestrictionPeriodsEnum {
   DAY = 'day',
-  WEEK = 'week',
   MONTH = 'month',
-  TRIMESTER = 'trimester',
-  ALL = 'all',
+  YEAR = 'year',
+  ALL = 'campaign',
 }
+
+export enum RestrictionTargetsEnum {
+  DRIVER = 'driver',
+  PASSENGER = 'passenger',
+}
+
+export const RESTRICTION_PERIODS: RestrictionPeriodsEnum[] = Object.values(RestrictionPeriodsEnum);
+
+export const RESTRICTION_PERIODS_FR = {
+  [RestrictionPeriodsEnum.DAY]: 'jour',
+  [RestrictionPeriodsEnum.MONTH]: 'mois',
+  [RestrictionPeriodsEnum.YEAR]: 'année',
+  [RestrictionPeriodsEnum.ALL]: 'durée de la campagne',
+};

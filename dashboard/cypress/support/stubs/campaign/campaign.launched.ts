@@ -1,6 +1,6 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 
 export function stubCampaignLaunch() {
   cy.route({

@@ -11,14 +11,14 @@ import {
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
 
 export class CampaignUx {
-  public _id: string;
-  public territory_id?: string;
+  public _id: number;
+  public territory_id?: number;
   public name: string;
   public description: string;
   public start: Moment;
   public end: Moment;
   public status: CampaignStatusEnum;
-  public parent_id: string;
+  public parent_id: number;
   public unit: IncentiveUnitEnum;
   public filters: IncentiveFiltersUxInterface;
   public max_amount: number;
@@ -27,6 +27,7 @@ export class CampaignUx {
   public restrictions: RestrictionUxInterface[];
   public retributions: RetributionUxInterface[];
 
+  // todo: don't use ui_status in campaignUx
   public ui_status: {
     expert_mode?: boolean;
     staggered: boolean;
@@ -55,6 +56,10 @@ export class CampaignUx {
         distance_range: [0, 0],
         rank: [],
         operator_ids: [],
+        insee: {
+          blackList: [],
+          whiteList: [],
+        },
       },
       retributions: [],
       restrictions: [],

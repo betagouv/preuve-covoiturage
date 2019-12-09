@@ -6,8 +6,8 @@ form {
     justify-content: space-around;
   }
   mat-form-field {
-    &.nom_commercial,
-    &.raison_sociale {
+    &.name,
+    &.legal_name {
       width: 558px;
     }
   }

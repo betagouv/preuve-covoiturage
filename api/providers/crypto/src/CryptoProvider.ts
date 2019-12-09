@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcryptjs';
-
 import { provider, ProviderInterface } from '@ilos/common';
 
 import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface';
@@ -20,7 +19,7 @@ export class CryptoProvider implements ProviderInterface {
     return bcrypt.compare(plainPwd, hashedPwd);
   }
 
-  async compareForgottenToken(plainToken: string, hashedToken: string): Promise<boolean> {
+  async compareToken(plainToken: string, hashedToken: string): Promise<boolean> {
     return bcrypt.compare(plainToken, hashedToken);
   }
 

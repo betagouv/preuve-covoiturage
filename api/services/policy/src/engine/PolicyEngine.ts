@@ -1,10 +1,10 @@
 import { provider } from '@ilos/common';
-import { CampaignInterface, TripInterface } from '@pdc/provider-schema';
 
+import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
+import { TripInterface } from '../shared/common/interfaces/TripInterface';
 import { CampaignMetadataRepositoryProviderInterfaceResolver } from '../interfaces/CampaignMetadataRepositoryProviderInterface';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
-import { ApplicableRuleInterface, RuleHandlerInterface } from '../interfaces/RuleInterfaces';
-
+import { RuleHandlerInterface } from '../interfaces/RuleInterfaces';
 import { policies } from './rules';
 import { compose } from './helpers/compose';
 import { NotApplicableTargetException } from '../exceptions/NotApplicableTargetException';
@@ -38,7 +38,7 @@ export class PolicyEngine {
   }
 
   public async process(trip: TripInterface) {
-    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip);
+    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.start);
     const results = [];
     for (const campaign of campaigns) {
       // build function

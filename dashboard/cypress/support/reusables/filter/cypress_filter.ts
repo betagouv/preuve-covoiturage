@@ -1,7 +1,7 @@
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { DEFAULT_TRIP_LIMIT } from '~/core/const/filter.const';
 
-import { expectedFilter, filterEndMoment, filterStartMoment } from '../../apiValues/expectedFilter';
+import { expectedFilter, filterEndMoment, filterStartMoment } from '../../expectedApiPayload/expectedFilter';
 import { territoryStub } from '../../stubs/territory/territory.find';
 import { operatorStub } from '../../stubs/operator/operator.find';
 
@@ -52,7 +52,9 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('searchs & adds towns', () => {
-    cy.get('app-towns-autocomplete mat-form-field input').type('lyo');
+    cy.get('app-territories-insee-autocomplete mat-form-field input').type('lyo');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    cy.get('app-territories-insee-autocomplete mat-form-field input').type('villeurbanne');
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
   });
 
@@ -72,10 +74,10 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('chooses status: en cours', () => {
+    cy.wait(700); // searches is mat-select-panel from ranks
     cy.get('.filter-trip-types mat-form-field:nth-child(2)').click();
     cy.get('.mat-select-panel mat-option:first-child').click();
   });
-
   if (group === UserGroupEnum.TERRITORY || group === UserGroupEnum.REGISTRY) {
     it('chooses operators', () => {
       if (e2e) {

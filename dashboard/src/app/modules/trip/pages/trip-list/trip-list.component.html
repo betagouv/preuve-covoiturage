@@ -16,13 +16,7 @@
     </p>
   </div>
   <div class="TripList-header" *ngIf="trips && !showMessage">
-    <span class="TripList-header-results"> {{ trips.length }} résultats </span>
-    <!--    <div>-->
-    <!--      <button mat-flat-button [appShowSpinner]="isExporting" (click)="exportTrips()" color="primary">-->
-    <!--        <mat-icon>get_app</mat-icon>-->
-    <!--        Téléchargez (.csv)-->
-    <!--      </button>-->
-    <!--    </div>-->
+    <span class="TripList-header-results" *ngIf="total !== null"> {{ total }} résultats </span>
   </div>
   <div class="TripList-content" *ngIf="trips && !showMessage">
     <app-trip-table [data]="trips"></app-trip-table>

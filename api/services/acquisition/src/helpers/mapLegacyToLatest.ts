@@ -1,11 +1,11 @@
-import { Journey } from '../entities/Journey';
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 
 /**
  * Convert and calculate values from legacy schema to latest
  * Delete unused properties to match JSON Schema {additionalProperties: false} rule
  */
 export function mapLegacyToLatest(operatorSiret: string | null) {
-  return (jrn: any): Journey => {
+  return (jrn: any): JourneyInterface => {
     /**
      * Convert passenger
      *

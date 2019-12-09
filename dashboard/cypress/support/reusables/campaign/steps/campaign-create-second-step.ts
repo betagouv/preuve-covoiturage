@@ -1,4 +1,4 @@
-import { CypressExpectedCampaign } from '../../../apiValues/expectedCampaign';
+import { CypressExpectedCampaign } from '../../../expectedApiPayload/expectedCampaign';
 
 export function campaignSecondStepSelectDays() {
   it('selects days', () => {
@@ -47,7 +47,7 @@ export function campaignSecondStepSelectRange() {
     // select min range
     cy.get('.RulesForm .noUi-origin:nth-child(2) .noUi-touch-area')
       .trigger('mousedown', { which: 1, clientX: 100, clientY: 600 })
-      .trigger('mousemove', { which: 1, clientX: 500, clientY: 600 })
+      .trigger('mousemove', { which: 1, clientX: 110, clientY: 600 })
       .trigger('mouseup');
 
     // value should by 85
@@ -57,15 +57,12 @@ export function campaignSecondStepSelectRange() {
 export function campaignSecondStepSelectRanks() {
   it('selects ranks', () => {
     // open RANKS extension
-    cy.get('.RulesForm .mat-expansion-panel:nth-child(3)').click();
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(4)').click();
 
     cy.get('.RulesForm-ranks mat-form-field').click();
 
-    // select rank A
-    cy.get('.mat-select-panel mat-option:first-child').click();
-
-    // select rank C
-    cy.get('.mat-select-panel mat-option:nth-child(3)').click();
+    // unselect rank B
+    cy.get('.mat-select-panel mat-option:nth-child(2)').click();
 
     // focus out of material select
     cy.get('.cdk-overlay-backdrop').click({ force: true });
@@ -75,7 +72,7 @@ export function campaignSecondStepSelectRanks() {
 export function campaignSecondStepSelectTargets(passenger, driver) {
   it('selects targets: passenger & driver', () => {
     // open TARGET extension
-    cy.get('.RulesForm .mat-expansion-panel:nth-child(4)').click();
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(5)').click();
 
     if (driver) {
       // click for driver checkbox
@@ -92,7 +89,7 @@ export function campaignSecondStepSelectTargets(passenger, driver) {
 export function campaignSecondStepSelectOperators() {
   it('selects operators', () => {
     // open OPERATORS extension
-    cy.get('.RulesForm .mat-expansion-panel:nth-child(5)').click();
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(6)').click();
 
     cy.get('.RulesForm-operators mat-form-field').click();
 
@@ -112,5 +109,38 @@ export function campaignSecondStepCheckDisabledNextStep() {
     cy.get('.mat-horizontal-stepper-content:nth-child(2)  .CampaignForm-content-actions button:nth-child(2)').should(
       'be.disabled',
     );
+  });
+}
+
+export function campaignSecondeStepAddInseeFilter(filterType: 'blackList' | 'whiteList') {
+  it(`selects insee filters extension: ${filterType}`, () => {
+    cy.get('.RulesForm .mat-expansion-panel:nth-child(3)').click();
+
+    const child = filterType === 'blackList' ? 1 : 2;
+    cy.get(`.RulesForm-insee .mat-tab-label:nth-child(${child})`);
+
+    cy.get('button.inseeFilter-newElement').click();
+
+    // START
+    cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:first-child input').type('lyo');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
+    // END
+    cy.get('.inseeFilter-list:first-child .inseeFilterStartEnd > div:nth-child(2) input').type('marseil');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
+    cy.get('button.inseeFilter-addElement').click();
+
+    cy.get('button.inseeFilter-newElement').click();
+
+    // START
+    cy.get('.inseeFilter-list:nth-child(2) .inseeFilterStartEnd > div:first-child input').type('paris');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
+    // END
+    cy.get('.inseeFilter-list:nth-child(2) .inseeFilterStartEnd > div:nth-child(2) input').type('massy');
+    cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+
+    cy.get('button.inseeFilter-addElement').click();
   });
 }

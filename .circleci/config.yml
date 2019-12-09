@@ -139,13 +139,14 @@ workflows:
   frontend:
     jobs:
       - front-qa
-      # - front-cypress
+      - front-cypress
       - front-deploy:
           requires:
             - front-qa
-            # - front-cypress
+            - front-cypress
           filters:
             branches:
               only:
                 - dev
                 - staging
+                - staging-v2

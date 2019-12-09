@@ -1,19 +1,19 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/delete.contract';
+import { alias } from '../shared/user/delete.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { UserContextInterface } from '../interfaces/UserContextInterfaces';
 
 /*
  *  Find user by id and delete user
  */
-@handler({
-  service: 'user',
-  method: 'delete',
-})
+@handler(handlerConfig)
 export class DeleteUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.delete'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -25,12 +25,12 @@ export class DeleteUserAction extends AbstractAction {
             }
           },
           (_params, context) => {
-            if (context.call.user.territory) {
+            if (context.call.user.territory_id) {
               return 'territory.users.remove';
             }
           },
           (_params, context) => {
-            if (context.call.user.operator) {
+            if (context.call.user.operator_id) {
               return 'operator.users.remove';
             }
           },
@@ -43,17 +43,24 @@ export class DeleteUserAction extends AbstractAction {
     super();
   }
 
-  public async handle(request: { _id: string }, context: UserContextInterface): Promise<void> {
-    const contextParam: { territory?: string; operator?: string } = {};
-
-    if (context.call.user.territory) {
-      contextParam.territory = context.call.user.territory;
+  public async handle(params: ParamsInterface, context: UserContextInterface): Promise<ResultInterface> {
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    switch (scope) {
+      case 'territory':
+        await this.userRepository.deleteByTerritory(params._id, context.call.user.territory_id);
+        break;
+      case 'operator':
+        await this.userRepository.deleteByOperator(params._id, context.call.user.operator_id);
+        break;
+      case 'registry':
+        await this.userRepository.delete(params._id);
+        break;
     }
 
-    if (context.call.user.operator) {
-      contextParam.operator = context.call.user.operator;
-    }
-
-    return this.userRepository.deleteUser(request._id, contextParam);
+    return true;
   }
 }

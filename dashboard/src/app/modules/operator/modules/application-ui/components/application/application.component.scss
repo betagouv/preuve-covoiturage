@@ -1,9 +1,12 @@
-@import '~src/styles/variables';
+@import 'variables';
 
 .operatorToken {
   ::ng-deep .ListItem {
     margin-bottom: 10px;
     width: 700px;
+  }
+  &-add {
+    margin: 10px 0;
   }
 
   &-list {

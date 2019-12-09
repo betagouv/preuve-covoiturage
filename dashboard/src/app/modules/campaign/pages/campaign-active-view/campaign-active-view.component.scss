@@ -1,0 +1,42 @@
+@import 'variables';
+
+app-page-content {
+  background-color: $background-light;
+}
+
+.campaignActiveView {
+  &--loading {
+    display: flex;
+    justify-content: space-around;
+  }
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &-action {
+      margin-right: 35px;
+    }
+    &-title {
+      h1 {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &-content {
+    & > div {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+    &-summaryAction > div {
+      width: 100%;
+      text-align: center;
+      a {
+        text-decoration: underline;
+      }
+    }
+    app-campaign-rules-view {
+      margin-right: 15px;
+    }
+  }
+}

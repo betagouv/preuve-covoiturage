@@ -2,9 +2,9 @@ import { Operator } from '~/core/entities/operator/operator';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
 export const operatorStub: Operator = {
-  _id: '5c66d89760e6ee004a6cab1f',
-  nom_commercial: 'Opérateur',
-  raison_sociale: 'Opérateur SAS',
+  _id: 1,
+  name: 'Opérateur',
+  legal_name: 'Opérateur SAS',
   company: {
     siren: '123456789',
     naf_entreprise: '1234A',

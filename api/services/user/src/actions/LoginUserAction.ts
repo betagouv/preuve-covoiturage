@@ -1,48 +1,37 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import { UserLoginParamsInterface } from '@pdc/provider-schema';
+import { handler, UnauthorizedException } from '@ilos/common';
+
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/login.contract';
+import { alias } from '../shared/user/login.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { User } from '../entities/User';
-import { userWhiteListFilterOutput } from '../config/filterOutput';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 
 /*
  * Authenticate user by email & pwd - else throws forbidden error
  */
-@handler({
-  service: 'user',
-  method: 'login',
-})
+@handler(handlerConfig)
 export class LoginUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.login'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     ['content.whitelist', userWhiteListFilterOutput],
   ];
 
   constructor(
-    private config: ConfigInterfaceResolver,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
+    private authRepository: AuthRepositoryProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(params: UserLoginParamsInterface, context: ContextType): Promise<User> {
-    let user;
-
-    // cast any user error to 401 Unauthorized
-    // as the findUserByParams will leak existing / not found users with a 404
-    try {
-      user = await this.userRepository.findUserByParams({ email: params.email });
-    } catch (e) {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    if (!(await this.authRepository.challengePasswordByEmail(params.email, params.password))) {
       throw new UnauthorizedException();
     }
 
-    if (!(await this.cryptoProvider.comparePassword(params.password, user.password))) {
-      throw new UnauthorizedException();
-    }
-
+    const user = await this.userRepository.findByEmail(params.email);
     switch (user.status) {
       case 'pending':
         throw new UnauthorizedException('Account is pending validation');
@@ -53,10 +42,6 @@ export class LoginUserAction extends AbstractAction {
       default:
     }
 
-    return this.userRepository.patch(user._id, {
-      forgotten_at: null,
-      forgotten_token: null,
-      last_connected_at: new Date(),
-    });
+    return user;
   }
 }

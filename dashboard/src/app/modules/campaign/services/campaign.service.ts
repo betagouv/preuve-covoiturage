@@ -9,6 +9,8 @@ import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +22,7 @@ export class CampaignService extends ApiService<Campaign> {
     private _http: HttpClient,
     private _jsonRPC: JsonRPCService,
     private _authService: AuthenticationService,
+    private _campaignFormatingService: CampaignFormatingService,
   ) {
     super(_http, _jsonRPC, 'campaign');
   }
@@ -28,7 +31,13 @@ export class CampaignService extends ApiService<Campaign> {
     return this._loaded$.value;
   }
 
-  public launch(id: string): Observable<[Campaign, Campaign[]]> {
+  get campaignsUx$(): Observable<CampaignUx[]> {
+    return this.entities$.pipe(
+      map((campaigns) => campaigns.map((campaign) => this._campaignFormatingService.toCampaignUxFormat(campaign))),
+    );
+  }
+
+  public launch(id: number): Observable<[Campaign, Campaign[]]> {
     const jsonRPCParam = new JsonRPCParam(`${this._method}:launch`, { _id: id });
     return this._jsonRPC.callOne(jsonRPCParam).pipe(
       map((data) => data.data),
@@ -43,8 +52,8 @@ export class CampaignService extends ApiService<Campaign> {
     const params = {
       territory_id: null,
     };
-    if ('territory' in this._authService.user) {
-      params.territory_id = this._authService.user.territory;
+    if ('territory_id' in this._authService.user) {
+      params.territory_id = this._authService.user.territory_id;
     }
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`${this._method}:listTemplate`, { territory_id: params.territory_id });
@@ -59,7 +68,7 @@ export class CampaignService extends ApiService<Campaign> {
     );
   }
 
-  public getLoadedTemplate(templateId: string): TemplateInterface {
+  public getLoadedTemplate(templateId: number): TemplateInterface {
     const template = this._templates$.value.filter((tmp) => tmp._id === templateId)[0];
     if (!template) {
       console.log('template not found !');
@@ -67,11 +76,17 @@ export class CampaignService extends ApiService<Campaign> {
     return template;
   }
 
-  public deleteTemplateOrDraft(id: string): Observable<Campaign[]> {
+  public deleteTemplateOrDraft(id: number): Observable<Campaign[]> {
     const params = {};
-    if ('territory' in this._authService.user) {
-      params['territory_id'] = this._authService.user.territory;
+    if ('territory_id' in this._authService.user) {
+      params['territory_id'] = this._authService.user.territory_id;
     }
     return this.deleteList(id, params);
+  }
+
+  public patchList(campaign: Campaign): Observable<[Campaign, Campaign[]]> {
+    delete campaign.status;
+    delete campaign.territory_id;
+    return super.patchList(campaign);
   }
 }

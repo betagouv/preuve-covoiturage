@@ -5,8 +5,9 @@ import {
   campaignSecondStepSelectTargets,
   campaignSecondStepSelectTimeRange,
 } from './steps/campaign-create-second-step';
-import { CypressExpectedCampaign } from '../../apiValues/expectedCampaign';
-import { testNotification } from '../notification.cypress';
+import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
+import { closeNotification } from '../notification.cypress';
+import { campaignFourthStepClickPreviousStep } from './steps/campaign-create-fourth-step';
 
 export function cypress_campaignEdit(e2e = false) {
   it('clicks on campaign section', () => {
@@ -14,8 +15,12 @@ export function cypress_campaignEdit(e2e = false) {
   });
   it('clicks on edit button', () => {
     cy.get(
-      '.draftList app-list-item:first-child .ListItem:first-child .CampaignsList-item-actions button:nth-child(2)',
+      '.draftList app-list-item:first-child .ListItem:first-child .CampaignsList-item-actions button:nth-child(1)',
     ).click();
+  });
+
+  it('clicks on edit retribution', () => {
+    cy.get('.campaignRetributionView button').click();
   });
 
   // click previous step
@@ -29,7 +34,7 @@ export function cypress_campaignEdit(e2e = false) {
   // passenger amount
   it('sets incitation for passenger', () => {
     // open retribution extension
-    cy.get('.ParametersForm .mat-expansion-panel:nth-child(4)').click();
+    cy.get('.ParametersForm .mat-expansion-panel:nth-child(5)').click();
 
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input')
       .clear()
@@ -85,6 +90,8 @@ export function cypress_campaignEdit(e2e = false) {
         const expectedCampaign = CypressExpectedCampaign.getAfterEdition();
 
         delete expectedCampaign.parent_id;
+        delete expectedCampaign.status;
+        delete expectedCampaign.territory_id;
 
         const { _id, ...campaignProperties } = expectedCampaign;
 
@@ -96,5 +103,5 @@ export function cypress_campaignEdit(e2e = false) {
     }
   });
 
-  testNotification();
+  closeNotification();
 }

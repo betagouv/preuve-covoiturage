@@ -1,13 +1,28 @@
-import { RepositoryInterface, RepositoryInterfaceResolver } from '@ilos/common';
+import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
+import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 
-import { Journey } from '../entities/Journey';
-
-export interface JourneyRepositoryProviderInterface extends RepositoryInterface {
-  createMany(journeys: Journey[]): Promise<Journey[]>;
+export interface JourneyRepositoryProviderInterface {
+  create(
+    journey: JourneyInterface,
+    context: { operator_id: number; application_id: string },
+  ): Promise<AcquisitionInterface>;
+  createMany(
+    journeys: JourneyInterface[],
+    context: { operator_id: number; application_id: string },
+  ): Promise<AcquisitionInterface[]>;
 }
 
-export abstract class JourneyRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  async createMany(journeys: Journey[]): Promise<Journey[]> {
+export abstract class JourneyRepositoryProviderInterfaceResolver implements JourneyRepositoryProviderInterface {
+  async create(
+    journey: JourneyInterface,
+    context: { operator_id: number; application_id: string },
+  ): Promise<AcquisitionInterface> {
+    throw new Error();
+  }
+  async createMany(
+    journeys: JourneyInterface[],
+    context: { operator_id: number; application_id: string },
+  ): Promise<AcquisitionInterface[]> {
     throw new Error();
   }
 }

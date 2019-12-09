@@ -14,6 +14,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { TownInterface } from '~/core/interfaces/geography/townInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
+import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 @Component({
   selector: 'app-filter',
@@ -84,10 +85,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   public filterClick(): void {
-    const filterObj = this.filterForm.value;
-
-    // format for API
-    filterObj.towns = this.filterForm.value.towns.map((town: TownInterface) => town.name);
+    const filterObj = this.filterForm.getRawValue();
 
     this.filterService.setFilter(filterObj);
     this.filterNumber.emit(this.countFilters);
@@ -110,7 +108,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     if (filter.campaignIds.length > 0) count += 1;
     if (filter.days.length > 0) count += 1;
     if (filter.ranks.length > 0) count += 1;
-    if (filter.towns.length > 0) count += 1;
+    if (filter.insees.length > 0) count += 1;
     if (filter.distance.min || filter.distance.min) count += 1;
     if (filter.date.start || filter.date.end) count += 1;
     if (filter.hour.start || filter.hour.end) count += 1;
@@ -148,7 +146,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
         end: [null],
       }),
       days: [[]],
-      towns: [[]],
+      insees: [[]],
       distance: this.fb.group({
         min: [null],
         max: [null],

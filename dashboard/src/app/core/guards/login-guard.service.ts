@@ -18,7 +18,7 @@ export class LoginGuardService implements CanActivate {
     return this.authService.check().pipe(
       tap((user) => {
         if (user) {
-          if (user.territory) {
+          if (user.territory_id) {
             this.router.navigate(['/campaign']);
           } else {
             this.router.navigate(['/trip/stats']);

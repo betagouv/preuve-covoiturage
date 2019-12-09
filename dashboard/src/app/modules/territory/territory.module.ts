@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { TerritoryService } from './services/territory.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 
 @NgModule({
   declarations: [],
-  providers: [TerritoryService],
+  providers: [TerritoryApiService, TerritoryStoreService],
   imports: [CommonModule],
 })
 export class TerritoryModule {}

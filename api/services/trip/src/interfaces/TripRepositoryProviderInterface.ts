@@ -1,35 +1,33 @@
-import { RepositoryInterfaceResolver, RepositoryInterface } from '@ilos/common';
-import { PersonInterface } from '@pdc/provider-schema';
+import { TripSearchInterfaceWithPagination } from '../shared/trip/common/interfaces/TripSearchInterface';
+import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
+import { LightTripInterface } from './LightTripInterface';
+import { StatInterface } from './StatInterface';
 
-import { Trip } from '../entities/Trip';
-
-export interface TripRepositoryProviderInterface extends RepositoryInterface {
-  findByOperatorTripIdAndOperatorId(params: { operator_trip_id?: string; operator_id: string }): Promise<Trip>;
-  findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<Trip>;
-  findByIdAndPatch(
-    id: string,
-    data: {
-      [k: string]: any;
-    },
-  ): Promise<Trip>;
+export interface TripRepositoryInterface {
+  stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
+  search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
+  searchWithCursor(params: {
+    date: { start: Date; end: Date };
+    operator_id?: number[];
+    territory_id?: number[];
+  }): Promise<(count: number) => Promise<LightTripInterface[]>>;
 }
+export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryInterface {
+  public async stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]> {
+    throw new Error();
+  }
 
-export abstract class TripRepositoryProviderInterfaceResolver extends RepositoryInterfaceResolver {
-  public async findByOperatorTripIdAndOperatorId(params: {
-    operator_trip_id?: string;
-    operator_id: string;
-  }): Promise<Trip> {
-    throw new Error('Not implemented');
+  public async search(
+    params: Partial<TripSearchInterfaceWithPagination>,
+  ): Promise<ResultWithPagination<LightTripInterface>> {
+    throw new Error();
   }
-  public async findByPhoneAndTimeRange(phone: string, startTimeRange: { min: Date; max: Date }): Promise<Trip> {
-    throw new Error('Not implemented');
-  }
-  public async findByIdAndPatch(
-    id: string,
-    data: {
-      [k: string]: any;
-    },
-  ): Promise<Trip> {
-    throw new Error('Not implemented');
+
+  public async searchWithCursor(params: {
+    date: { start: Date; end: Date };
+    operator_id?: number[];
+    territory_id?: number[];
+  }): Promise<(count: number) => Promise<LightTripInterface[]>> {
+    throw new Error();
   }
 }

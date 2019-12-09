@@ -1,0 +1,43 @@
+<app-page-content>
+  <div class="campaignActiveView--loading" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="campaignActiveView" *ngIf="!isLoading">
+    <div class="campaignActiveView-header">
+      <div class="campaignActiveView-header-title">
+        <h1>{{ campaignUx.name }}</h1>
+        <p>{{ territory.name }}</p>
+      </div>
+      <div class="campaignDraftView-header-action">
+        <button
+          *ngIf="isLoggedAsTerritory"
+          mat-flat-button
+          type="button"
+          color="primary"
+          routerLink="/campaign/create/{{ campaignUx._id }}"
+        >
+          Dupliquer la campagne
+        </button>
+      </div>
+    </div>
+
+    <div class="campaignActiveView-content">
+      <div>
+        <app-campaign-main-metrics [campaign]="campaignUx"></app-campaign-main-metrics>
+        <app-campaign-contacts [territory]="territory"></app-campaign-contacts>
+      </div>
+      <div>
+        <app-campaign-rules-view [campaign]="campaignUx"></app-campaign-rules-view>
+        <app-campaign-retribution-view [campaign]="campaignUx"></app-campaign-retribution-view>
+      </div>
+      <div class="campaignActiveView-content-summaryAction" *ngIf="!showSummary">
+        <div>
+          <a mat-button (click)="displaySummary()">Voir le texte récapitulatif</a>
+        </div>
+      </div>
+      <div *ngIf="showSummary">
+        <app-campaign-summary-text [campaign]="campaignUx"></app-campaign-summary-text>
+      </div>
+    </div>
+  </div>
+</app-page-content>

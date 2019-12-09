@@ -35,10 +35,10 @@ export class StatFilteredService {
     const user = this._authService.user;
 
     if (user && user.group === UserGroupEnum.TERRITORY) {
-      params['territory_id'] = [user.territory];
+      params['territory_id'] = [user.territory_id];
     }
     if (user && user.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = [user.operator];
+      params['operator_id'] = [user.operator_id];
     }
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`trip:stats`, params);

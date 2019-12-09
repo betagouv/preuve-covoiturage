@@ -1,26 +1,33 @@
 <div class="Users">
-  <div class="Users-header">
-    <h2>
-      Utilisateurs autorisés
-    </h2>
-    <form [formGroup]="searchFilters">
-      <mat-form-field appearance="outline">
-        <mat-label>Rechercher</mat-label>
-        <input matInput placeholder="Nom d'utilisateur, email" formControlName="query" />
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </form>
-  </div>
-  <div class="Users-loading" *ngIf="userService.loading">
-    <mat-spinner></mat-spinner>
-  </div>
-  <div class="Users-list">
-    <app-users-list
-      *ngIf="usersToShow"
-      [users]="usersToShow"
-      [canEditUser]="canEditUser$ | async"
-      (editUser)="showEditForm($event)"
-    ></app-users-list>
+  <div class="Users-list" [hidden]="editUserFormVisible">
+    <div class="Users-list-header">
+      <h2>
+        Utilisateurs autorisés
+      </h2>
+      <form [formGroup]="searchFilters">
+        <mat-form-field appearance="outline">
+          <mat-label>Rechercher</mat-label>
+          <input matInput placeholder="Nom d'utilisateur, email" formControlName="query" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </form>
+    </div>
+    <div class="Users--loading" *ngIf="userStoreService.isLoading">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div class="Users-list-table">
+      <app-users-list
+        *ngIf="usersToShow"
+        [users]="usersToShow"
+        [canEditUser]="canEditUser$ | async"
+        (editUser)="showEditForm($event)"
+      ></app-users-list>
+      <mat-paginator
+        [hidden]="!usersToShow && !usersFiltered"
+        [length]="countUsers"
+        [pageSize]="PAGE_SIZE"
+      ></mat-paginator>
+    </div>
   </div>
   <div
     class="Users-add"
@@ -30,7 +37,7 @@
       mat-flat-button
       class="large"
       *ngIf="!editUserFormVisible; else addUserBlock"
-      (click)="addUser()"
+      (click)="showEditForm()"
       color="primary"
     >
       Ajouter un utilisateur
@@ -39,12 +46,13 @@
       <h2>
         Ajouter un utilisateur
       </h2>
-      <app-create-edit-user-form
-        [user]="editedUser"
-        [groupEditable]="false"
-        [isCreating]="this.isCreatingUser"
-        (onCloseEditUser)="closeUserForm()"
-      ></app-create-edit-user-form>
+      <div class="Users-form">
+        <app-create-edit-user-form
+          [groupEditable]="false"
+          [isCreating]="this.isCreatingUser"
+          (onCloseEditUser)="closeUserForm()"
+        ></app-create-edit-user-form>
+      </div>
     </ng-template>
   </div>
 </div>

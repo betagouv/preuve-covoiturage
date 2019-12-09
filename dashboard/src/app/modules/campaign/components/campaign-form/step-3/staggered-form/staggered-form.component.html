@@ -4,7 +4,14 @@
   <span>{{ controls.min.value !== null ? controls.min.value : '?' }}</span>
   <span *ngIf="!isLast"> à</span>
   <mat-form-field appearance="outline" *ngIf="!isLast">
-    <input matInput type="number" min="0" required [formControl]="controls.max" />
+    <input
+      matInput
+      type="number"
+      min="{{ minValue }}"
+      max="{{ globalMaxDistance }}"
+      required
+      [formControl]="controls.max"
+    />
   </mat-form-field>
   <span> km</span>
 </div>

@@ -1,16 +1,23 @@
 /* tslint:disable:variable-name*/
+import { assignOrDeleteProperties, assignOrDeleteProperty } from '~/core/entities/utils';
+
+import { BaseModel } from '~/core/entities/BaseModel';
+import { IModel } from '~/core/entities/IModel';
+import { IFormModel } from '~/core/entities/IFormModel';
+import { IMapModel } from '~/core/entities/IMapModel';
+import { IClone } from '~/core/entities/IClone';
+
 import { Address } from '../shared/address';
 import { Bank } from '../shared/bank';
 import { CGU } from '../shared/cgu';
 import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
-import { hasOneNotEmptyProperty } from '~/core/entities/utils';
 
-class Territory {
-  public _id: string;
+class Territory extends BaseModel implements IModel, IFormModel, IMapModel<Territory>, IClone<Territory> {
+  public _id: number;
   public name: string;
+  public siret: string;
   public shortname?: string;
-  // public acronym?: string;
   public insee?: string[];
 
   public company?: Company;
@@ -22,9 +29,10 @@ class Territory {
   public cgu?: CGU;
   public coordinates?: any[];
 
-  constructor(data: {
-    _id: string;
+  constructor(data?: {
+    _id: number;
     name: string;
+    siret: string;
     shortname?: string;
     acronym?: string;
     insee?: string[];
@@ -36,28 +44,11 @@ class Territory {
     cgu?: CGU;
     coordinates?: any[];
   }) {
-    // required data
-    if (data && data._id) this._id = data._id;
-
-    if (data && data.name) this.name = data.name;
-
-    // if (data && data.acronym) this.acronym = data.acronym;
-
-    if (data && data.coordinates && data.coordinates.length) this.coordinates = data.coordinates;
-
-    // optional data
-    if (data && data.shortname) this.shortname = data.shortname;
-
-    if (data && data.insee) this.insee = data.insee;
-
-    // optional sub data
-    if (data && hasOneNotEmptyProperty(data.company)) this.company = new Company(data.company);
-
-    if (data && hasOneNotEmptyProperty(data.address)) this.address = new Address(data.address);
-
-    if (data && hasOneNotEmptyProperty(data.contacts)) this.contacts = new Contacts(data.contacts);
-
-    if (data && hasOneNotEmptyProperty(data.cgu)) this.cgu = new CGU(data.cgu);
+    super(data);
+    if (!data) {
+      this.name = '';
+      this.siret = null;
+    }
   }
 
   toFormValues(fullformMode = true) {
@@ -68,21 +59,43 @@ class Territory {
     const val: any = fullformMode
       ? {
           shortname: '',
-          // insee: '',
-          // acronym: '',
           ...this,
-          company: new Company(this.company).toFormValues(),
+          company: { ...new Company(this.company).toFormValues(), siret: this.siret },
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
-          // cgu: formVal,
         }
       : {
           contacts: new Contacts(this.contacts).toFormValues(),
         };
 
     delete val._id;
+    delete val.siret;
 
     return val;
+  }
+
+  clone(): Territory {
+    return new Territory(this);
+  }
+
+  map(data: any): Territory {
+    super.map(data);
+    this.updateFromFormValues(data);
+    this._id = data._id;
+    this.siret = data.siret; // override fromFormValues behaviour with siret (in company form group)
+
+    return this;
+  }
+
+  updateFromFormValues(formValues: any): void {
+    assignOrDeleteProperties(formValues, this, ['name', 'coordinates', 'shortname', 'insee']);
+
+    this.siret = formValues.company && formValues.company.siret ? formValues.company.siret : '';
+
+    assignOrDeleteProperty(formValues, this, 'company', (data) => new Company(data.company));
+    assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
+    assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
+    assignOrDeleteProperty(formValues, this, 'cgu', (data) => new CGU(data.cgu));
   }
 }
 

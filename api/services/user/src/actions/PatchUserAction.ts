@@ -1,31 +1,23 @@
-import { sprintf } from 'sprintf-js';
 import { Action as AbstractAction } from '@ilos/core';
-import { UserPatchParamsInterface } from '@pdc/provider-schema';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
-import {
-  handler,
-  ContextType,
-  KernelInterfaceResolver,
-  ConfigInterfaceResolver,
-  ConflictException,
-} from '@ilos/common';
+import { handler, ContextType, ConflictException, UnauthorizedException } from '@ilos/common';
 
-import { User } from '../entities/User';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/patch.contract';
+import { alias } from '../shared/user/patch.schema';
+import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 
 /*
  * Update properties of user ( firstname, lastname, phone )
  * The user is switched to 'pending' when the email is modified.
  * A confirmation link is sent to the new email and a notification to the old one.
  */
-@handler({
-  service: 'user',
-  method: 'patch',
-})
+@handler(handlerConfig)
 export class PatchUserAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
-    ['validate', 'user.patch'],
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
     [
       'scopeIt',
       [
@@ -37,12 +29,12 @@ export class PatchUserAction extends AbstractAction {
             }
           },
           (_params, context) => {
-            if (context.call.user.territory) {
+            if (context.call.user.territory_id) {
               return 'territory.users.update';
             }
           },
           (_params, context) => {
-            if (context.call.user.operator) {
+            if (context.call.user.operator_id) {
               return 'operator.users.update';
             }
           },
@@ -53,60 +45,59 @@ export class PatchUserAction extends AbstractAction {
   ];
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
-    private cryptoProvider: CryptoProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
-    private kernel: KernelInterfaceResolver,
+    private notification: UserNotificationProvider,
+    private authRepository: AuthRepositoryProviderInterfaceResolver,
   ) {
     super();
   }
 
-  public async handle(params: UserPatchParamsInterface, context: ContextType): Promise<User> {
+  public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    const scope = context.call.user.territory_id
+      ? 'territory'
+      : context.call.user.operator_id
+      ? 'operator'
+      : 'registry';
+    const _id = params._id;
+    const { email, ...patch } = params.patch;
+
+    let user;
+
+    if (params.patch.email) {
+      await this.userRepository.checkForDoubleEmailAndFail(params.patch.email, params._id);
+    }
+
+    switch (scope) {
+      case 'territory':
+        user = await this.userRepository.findByTerritory(_id, context.call.user.territory_id);
+        break;
+      case 'operator':
+        user = await this.userRepository.findByOperator(_id, context.call.user.operator_id);
+        break;
+      case 'registry':
+        user = await this.userRepository.find(_id);
+        break;
+    }
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const updatedUser = await this.userRepository.patch(_id, patch);
+
+    // user didn't change her email
+    if (!email || email === user.email) {
+      return updatedUser;
+    }
+
+    // user changed her email -> ask for email confirmation
     try {
-      const contextParam: { territory?: string; operator?: string } = {};
-
-      // track user and email modification to trigger
-      // the confirmation process with a new token
-      let token: string;
-      let currentUser: User;
-      let emailIsModified = false;
-
-      if (context.call.user.territory) {
-        contextParam.territory = context.call.user.territory;
-      }
-
-      if (context.call.user.operator) {
-        contextParam.operator = context.call.user.operator;
-      }
-
-      const patch: any = { ...params.patch };
-
-      /**
-       * set the status to 'pending' when the user changes her email
-       * and send an email with a confirmation link
-       */
-      if (params.patch && params.patch.email) {
-        currentUser = await this.userRepository.findUser(params._id, contextParam);
-        if (currentUser.email !== params.patch.email) {
-          emailIsModified = true;
-
-          // generate a token and store in the user
-          token = this.cryptoProvider.generateToken();
-          patch.forgotten_token = await this.cryptoProvider.cryptToken(token);
-          patch.forgotten_at = new Date();
-          patch.status = 'pending';
-        }
-      }
-
-      // update the user
-      const patchedUser = await this.userRepository.patchUser(params._id, patch, contextParam);
-
-      if (emailIsModified) {
-        this.notifyOnEmailChange(patch, context, currentUser, token);
-      }
-
-      return patchedUser;
+      const token = await this.authRepository.updateEmailById(_id, email);
+      await this.notification.emailUpdated(token, email, user.email);
+      return {
+        ...updatedUser,
+        email,
+      };
     } catch (e) {
-      // Qualify known errors or re-throw
       switch (e.code) {
         case 11000:
           throw new ConflictException();
@@ -114,66 +105,5 @@ export class PatchUserAction extends AbstractAction {
           throw e;
       }
     }
-  }
-
-  /**
-   * Notify the new and old email addresses about the email change
-   */
-  private async notifyOnEmailChange(patch, context, currentUser, token) {
-    const link = sprintf(
-      '%s/confirm-email/%s/%s/',
-      this.config.get('url.appUrl'),
-      encodeURIComponent(patch.email),
-      encodeURIComponent(token),
-    );
-
-    // debug data for testing
-    if (process.env.NODE_ENV === 'testing') {
-      console.log(`
-******************************************
-[test] Patch user
-email: ${patch.email}
-token: ${token}
-link:  ${link}
-******************************************
-    `);
-    }
-
-    // Notify the new email with a confirmation link
-    await this.kernel.call(
-      'user:notify',
-      {
-        link,
-        template: this.config.get('email.templates.confirmation'),
-        email: patch.email,
-        fullname: currentUser.fullname,
-        templateId: this.config.get('notification.templateIds.emailChange'),
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'user',
-        },
-      },
-    );
-
-    // Notify the previous email about the change
-    await this.kernel.call(
-      'user:notify',
-      {
-        template: this.config.get('email.templates.email_changed'),
-        email: currentUser.email,
-        fullname: currentUser.fullname,
-        templateId: this.config.get('notification.templateIds.emailChange'),
-      },
-      {
-        call: context.call,
-        channel: {
-          ...context.channel,
-          service: 'user',
-        },
-      },
-    );
   }
 }

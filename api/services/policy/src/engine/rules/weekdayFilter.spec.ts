@@ -1,11 +1,10 @@
 import chai from 'chai';
 import chaiAsync from 'chai-as-promised';
 import { weekdayFilter } from './weekdayFilter';
-import { TripInterface } from '@pdc/provider-schema';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { MetadataWrapper } from '../MetadataWrapper';
 
-const meta = new MetadataWrapper('test', {});
+const meta = new MetadataWrapper(1, {});
 
 chai.use(chaiAsync);
 const { expect } = chai;
@@ -16,8 +15,8 @@ const apply = weekdayFilter.apply([startInRange.getDay()]);
 const startOutRange = new Date();
 startOutRange.setDate(startOutRange.getDate() + 1);
 
-const trip: TripInterface = {
-  operator_id: ['operatorA'],
+const trip = {
+  operator_id: [1],
   status: '',
   start: new Date(),
   people: [
@@ -28,7 +27,7 @@ const trip: TripInterface = {
         over_18: false,
       },
       operator_class: 'A',
-      operator_id: 'operatorA',
+      operator_id: 1,
 
       start: {
         datetime: startInRange,
@@ -70,7 +69,7 @@ const trip: TripInterface = {
         over_18: true,
       },
       operator_class: 'B',
-      operator_id: 'operatorB',
+      operator_id: 2,
 
       start: {
         datetime: startOutRange,

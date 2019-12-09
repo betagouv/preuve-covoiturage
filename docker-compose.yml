@@ -1,13 +1,21 @@
-version: '3'
+version: '3.5'
 services:
   postgres:
-    build: './docker/postgres'
+    build:
+      context: ./docker/postgres
+      shm_size: 4gb
+    shm_size: 4gb
     ports:
       - 5432:5432
     networks:
       - front
       - back
     environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: pdc-local
+      PGUSER: postgres
+      PGPASSWORD: postgres
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_DB: 'pdc-local'
@@ -54,8 +62,8 @@ services:
   api:
     build: './docker/api'
     volumes:
-      - ./api:/code
-    working_dir: '/code'
+      - .:/code
+    working_dir: '/code/api'
     command: 'yarn start:http'
     ports:
       - 8080:8080
@@ -128,13 +136,6 @@ services:
       - back
     depends_on:
       - redis
-
-# create a permanent network first
-# > docker network create docker-network --subnet 172.24.24.0/24
 networks:
   front:
-    external:
-      name: docker-network
   back:
-    external:
-      name: docker-network

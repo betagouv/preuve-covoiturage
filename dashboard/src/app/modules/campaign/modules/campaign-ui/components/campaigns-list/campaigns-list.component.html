@@ -1,43 +1,45 @@
 <div class="CampaignsList">
-  <div class="CampaignsList--loading" *ngIf="campaignService.loading && !campaigns">
+  <div class="CampaignsList--loading" *ngIf="loading && !filteredCampaigns">
     <mat-spinner></mat-spinner>
   </div>
-  <app-list-item *ngFor="let campaign of campaigns">
-    <div class="CampaignsList-item">
-      <div class="CampaignsList-item-name">
-        {{ campaign.name }}
+  <ng-container *ngIf="loaded && filteredCampaigns">
+    <app-list-item *ngFor="let campaign of filteredCampaigns">
+      <div class="CampaignsList-item">
+        <div class="CampaignsList-item-name">
+          <p>{{ campaign.name }}</p>
+        </div>
+        <div class="CampaignsList-item-amount">
+          <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.amount_spent">{{
+            campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0'
+          }}</span>
+          <span>Budget: {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="CampaignsList-item-trips">
+          <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.trips_number"
+            >{{ campaign.trips_number }} trajets</span
+          >
+          <span *ngIf="campaign.max_trips">Plafond: {{ campaign.max_trips }} trajets</span>
+        </div>
+        <div class="CampaignsList-item-date">
+          <span
+            >Du {{ campaign.start.toDate() | date: 'dd MMMM' }} au {{ campaign.end.toDate() | date: 'dd MMMM' }}</span
+          >
+        </div>
+        <div class="CampaignsList-item-actions">
+          <button mat-button *ngIf="showEdition(campaign.status)" routerLink="/campaign/draft/{{ campaign._id }}">
+            <mat-icon matTooltip="voir le détail">edit</mat-icon>
+          </button>
+          <button mat-button *ngIf="showValid(campaign.status)" routerLink="/campaign/{{ campaign._id }}">
+            <mat-icon matTooltip="voir le détail">remove_red_eye</mat-icon>
+          </button>
+          <button mat-button (click)="deleteCampaign(campaign)" *ngIf="showDelete(campaign.status)">
+            <mat-icon matTooltip="supprimer" color="error">delete_outline</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class="CampaignsList-item-amount">
-        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.amount_spent">{{
-          campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0'
-        }}</span>
-        <span>Budget: {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}</span>
-      </div>
-      <div class="CampaignsList-item-trips">
-        <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.trips_number"
-          >{{ campaign.trips_number }} trajets</span
-        >
-        <span>Plafond: {{ campaign.max_trips }} trajets</span>
-      </div>
-      <div class="CampaignsList-item-date">
-        <span>Du {{ campaign.start.toDate() | date: 'dd MMMM' }} au {{ campaign.end.toDate() | date: 'dd MMMM' }}</span>
-      </div>
-      <div class="CampaignsList-item-actions" [ngSwitch]="campaign.status">
-        <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" (click)="launchCampaign(campaign._id)">
-          <mat-icon matTooltip="lancer" color="primary">play_arrow</mat-icon>
-        </button>
-        <!-- todo: this should be in campaign view -->
-        <button mat-button *ngSwitchCase="CampaignStatusEnum.DRAFT" routerLink="/campaign/{{ campaign._id }}">
-          <mat-icon matTooltip="modifier">edit</mat-icon>
-        </button>
-        <!--        <a class="link" *ngSwitchDefault>Voir le détail</a> todo: when view is ready-->
-        <button mat-button (click)="deleteCampaign(campaign)" *ngSwitchCase="CampaignStatusEnum.DRAFT">
-          <mat-icon matTooltip="supprimer" color="error">delete_outline</mat-icon>
-        </button>
-      </div>
-    </div>
-  </app-list-item>
-  <div *ngIf="campaignService.campaignsLoaded && campaigns && campaigns.length === 0" class="CampaignsList-notfound">
-    <p>Vous n'avez pas de campagnes.</p>
+    </app-list-item>
+  </ng-container>
+  <div *ngIf="loaded && filteredCampaigns && filteredCampaigns.length === 0" class="CampaignsList-notfound">
+    <p>{{ noCampaignMessage }}</p>
   </div>
 </div>

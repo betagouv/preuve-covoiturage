@@ -1,0 +1,59 @@
+<div class="inseeFilter-header">
+  <ng-container *ngIf="filterType === 'blackList'">
+    <h4>
+      Définir des exceptions
+    </h4>
+    <p>
+      Exclure des trajets ou groupes de trajets de votre campagne
+    </p>
+  </ng-container>
+  <ng-container *ngIf="filterType === 'whiteList'">
+    <h4>
+      Ajouter des trajets autorisés
+    </h4>
+    <p>
+      Inclure des trajets ou groupes de trajets de votre campagne
+    </p>
+  </ng-container>
+</div>
+<form [formGroup]="inseeForm">
+  <div *ngFor="let startEndFormGroup of listFormArray.controls; let idx = index" class="inseeFilter-list">
+    <div class="inseeFilter-list-form" *ngIf="isEditing(idx)">
+      <app-campaign-insee-filter-start-end-form [filterType]="filterType" [startEndFormGroup]="startEndFormGroup">
+      </app-campaign-insee-filter-start-end-form>
+      <button
+        class="inseeFilter-addElement"
+        mat-stroked-button
+        color="primary"
+        (click)="addStartEnd(idx)"
+        [disabled]="!startEndFormGroup.valid"
+      >
+        {{ filterType === 'blackList' ? 'Ajouter cette exception' : 'Ajouter ce trajet' }}
+      </button>
+      <button mat-stroked-button color="secondary" (click)="cancel(idx)">
+        Annuler
+      </button>
+    </div>
+
+    <div class="inseeFilter-list-view" *ngIf="!isEditing(idx)">
+      <app-campaign-insee-filter-start-end-view
+        *ngIf="!isEditing(idx)"
+        [filterType]="filterType"
+        [startTerritories]="startTerritories(idx)"
+        [endTerritories]="endTerritories(idx)"
+      >
+      </app-campaign-insee-filter-start-end-view>
+      <mat-icon *ngIf="!isEditing(idx)" color="error" (click)="removeStartEnd(idx)">delete_outline</mat-icon>
+    </div>
+  </div>
+  <button
+    mat-stroked-button
+    color="primary"
+    class="inseeFilter-newElement"
+    *ngIf="editingIndex === -1"
+    (click)="newStartEnd()"
+    [disabled]="!listFormArray.valid"
+  >
+    {{ filterType === 'blackList' ? 'Ajouter une nouvelle exception' : 'Ajouter un nouveau trajet' }}
+  </button>
+</form>

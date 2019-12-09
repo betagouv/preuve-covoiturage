@@ -1,47 +1,73 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-trip-layout',
   templateUrl: './trip-layout.component.html',
   styleUrls: ['./trip-layout.component.scss'],
 })
-export class TripLayoutComponent implements OnInit {
+export class TripLayoutComponent extends DestroyObservable implements OnInit {
   public filterNumber = '';
   public showFilter = false;
+  public pageHasFilter = false;
 
-  public menu: MenuTabInterface[] = [
-    {
-      path: '/trip/stats',
-      label: 'Chiffres clés',
-    },
+  public menu: MenuTabInterface[];
+
+  constructor(
+    public authenticationService: AuthenticationService,
+    public router: Router,
+    protected sanitizer: DomSanitizer,
+  ) {
+    super();
+  }
+
+  ngOnInit() {
+    this.menu = [
+      {
+        path: '/trip/stats',
+        label: 'Chiffres clés',
+      },
+      {
+        path: '/trip/list',
+        label: 'Liste détaillée',
+      },
+      {
+        path: '/trip/export',
+        groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY],
+        label: 'Export',
+      },
+    ];
     // {
     //   path: '/trip/maps',
     //   groups: [UserGroupEnum.REGISTRY],
     //   label: 'Cartes',
     // },
-    {
-      path: '/trip/list',
-      label: 'Liste détaillée',
-    },
-    // todo: wait until import connected to back
     // {
     //   path: '/trip/import',
     //   groups: [UserGroupEnum.OPERATOR],
     //   label: 'Import',
     // },
-  ];
 
-  constructor(public authenticationService: AuthenticationService, public router: Router) {}
+    this.setShowFilter();
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.setShowFilter(event.url);
+      });
+  }
 
-  ngOnInit() {}
-
-  get hasCorrectUrl(): boolean {
-    return !['/trip/import'].includes(this.router.url);
+  setShowFilter(url = this.router.url): void {
+    this.pageHasFilter = !['/trip/import', '/trip/export'].includes(url);
   }
 
   public setFilterNumber(filterNumber: number) {

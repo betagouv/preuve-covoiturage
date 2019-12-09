@@ -5,10 +5,11 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { REGEXP } from '~/core/const/validators.const';
-import { UserService } from '~/modules/user/services/user.service';
 import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { UserApiService } from '~/modules/user/services/user-api.service';
+import { UserStoreService } from '~/modules/user/services/user-store.service';
 
 @Component({
   selector: 'app-profile-edition',
@@ -21,7 +22,8 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
   constructor(
     private fb: FormBuilder,
     private authService: AuthenticationService,
-    private userService: UserService,
+    private userApiService: UserApiService,
+    private userStoreService: UserStoreService,
     private router: Router,
     private toastr: ToastrService,
   ) {
@@ -39,21 +41,20 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
 
   public onUpdateProfile(): void {
     const user = this.authService.user;
-    const userData = {
-      _id: user._id,
-      ...this.profileForm.value,
-      phone: this.profileForm.value.phone ? this.profileForm.value.phone : null,
-    };
 
-    this.authService.patch(userData).subscribe((updatedUser) => {
-      this.toastr.success('Votre profil a bien été mis à jour');
-    });
+    this.userApiService
+      .patch(user._id, {
+        ...this.profileForm.value,
+        phone: this.profileForm.value.phone ? this.profileForm.value.phone : null,
+      })
+      .subscribe((updatedUser) => {
+        this.toastr.success('Votre profil a bien été mis à jour');
+      });
   }
 
   private initProfilFormValue(): void {
     this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      const { firstname, lastname, email, phone } = <ProfileInterface>this.authService.user;
-      this.profileForm.setValue({ firstname, lastname, email, phone });
+      this.profileForm.setValue(this.authService.user.toFormValues());
     });
   }
 

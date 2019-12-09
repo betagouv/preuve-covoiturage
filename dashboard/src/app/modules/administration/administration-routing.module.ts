@@ -5,9 +5,11 @@ import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { ApiComponent } from '~/modules/administration/pages/api/api.component';
 import { AllUsersComponent } from '~/modules/administration/pages/all-users/all-users.component';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { AllTerritoriesComponent } from '~/modules/administration/pages/all-territories/all-territories.component';
 import { AllOperatorsComponent } from '~/modules/administration/pages/all-operators/all-operators.component';
+// tslint:disable-next-line:max-line-length
+import { OperatorVisibilityComponent } from '~/modules/administration/pages/operator-visibility/operator-visibility.component';
 
 import { OperatorComponent } from './pages/operator/operator.component';
 import { AdministrationLayoutComponent } from './administration-layout/administration-layout.component';
@@ -40,28 +42,32 @@ const routes: Routes = [
       },
       {
         path: 'users',
-        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.OPERATOR], role: UserRoleEnum.ADMIN },
+        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.OPERATOR], role: UserManyRoleEnum.ADMIN },
         component: UsersComponent,
       },
       {
         path: 'all-users',
-        data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
+        data: { groups: [UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: AllUsersComponent,
       },
       {
         path: 'all-territories',
-        data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
+        data: { groups: [UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: AllTerritoriesComponent,
       },
       {
         path: 'all-operators',
-        data: { groups: [UserGroupEnum.REGISTRY], role: UserRoleEnum.ADMIN },
+        data: { groups: [UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: AllOperatorsComponent,
       },
       {
         path: '',
         redirectTo: 'profile',
         pathMatch: 'full',
+      },
+      {
+        path: 'visibility',
+        component: OperatorVisibilityComponent,
       },
     ],
   },

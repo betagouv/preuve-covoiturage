@@ -1,8 +1,8 @@
 /// <reference types="Cypress" />
 import { Territory } from '~/core/entities/territory/territory';
 
-import { expectedPatchedTerritory } from '../../apiValues/expectedTerritory';
-import { testNotification } from '../notification.cypress';
+import { expectedPatchedTerritory } from '../../expectedApiPayload/expectedTerritory';
+import { closeNotification } from '../notification.cypress';
 
 export function cypress_territory(oldValue: Territory, e2e = false) {
   it('navigate to territory', () => {
@@ -47,5 +47,5 @@ export function cypress_territory(oldValue: Territory, e2e = false) {
     }
   });
 
-  testNotification();
+  closeNotification();
 }

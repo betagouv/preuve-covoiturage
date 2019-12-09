@@ -6,7 +6,7 @@ import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 
 export class Filter {
-  campaign_id: string[];
+  campaign_id: number[];
   date: {
     start: Date;
     end: Date;
@@ -16,15 +16,15 @@ export class Filter {
     end: number;
   };
   days: WeekDay[];
-  towns: string[];
+  insee: string[];
   distance: {
     min: number;
     max: number;
   };
   ranks: TripRankEnum[];
   status: TripStatusEnum;
-  operator_id: string[];
-  territory_id: string[];
+  operator_id: number[];
+  territory_id: number[];
   constructor(
     obj: FilterInterface = {
       campaign_id: [],
@@ -37,7 +37,7 @@ export class Filter {
         end: null,
       },
       days: [],
-      towns: [],
+      insee: [],
       distance: {
         min: null,
         max: null,
@@ -52,7 +52,7 @@ export class Filter {
     this.date = obj.date;
     this.hour = obj.hour;
     this.days = obj.days;
-    this.towns = obj.towns;
+    this.insee = obj.insee;
     this.distance = obj.distance;
     this.ranks = obj.ranks;
     this.status = obj.status;

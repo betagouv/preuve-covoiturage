@@ -1,13 +1,11 @@
 import { WeekDay } from '@angular/common';
 
 // tslint:disable:max-classes-per-file
-import {
-  BaseRetributionRuleInterface,
-  RetributionRuleInterface,
-} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+import { BaseRetributionRuleInterface } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import { IncentiveTimeRuleInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { RulesRangeInterface } from '~/core/types/campaign/rulesRangeInterface';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
+import { RestrictionPeriodsEnum, RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
 
 export type GlobalRetributionRuleType =
   | MaxAmountRetributionRule
@@ -15,12 +13,15 @@ export type GlobalRetributionRuleType =
   | WeekdayRetributionRule
   | TimeRetributionRule
   | DistanceRangeGlobalRetributionRule
-  | RankRetributionRule
+  | RankGlobalRetributionRule
   | OnlyAdultRetributionRule
-  | OperatorIdsRetributionRule;
+  | OperatorIdsGlobalRetributionRule
+  | WhiteListGlobalRetributionRule
+  | BlackListGlobalRetributionRule;
 
 export enum GlobalRetributionRulesSlugEnum {
   MAX_AMOUNT = 'max_amount_restriction',
+  RESTRICTION = 'max_amount_per_target_restriction',
   MAX_TRIPS = 'max_trip_restriction',
   ONLY_ADULT = 'adult_only_filter',
   WEEKDAY = 'weekday_filter',
@@ -28,6 +29,8 @@ export enum GlobalRetributionRulesSlugEnum {
   DISTANCE_RANGE = 'distance_range_filter',
   RANK = 'rank_whitelist_filter',
   OPERATOR_IDS = 'operator_whitelist_filter',
+  WHITELIST = 'insee_whitelist_filter',
+  BLACKLIST = 'insee_blacklist_filter',
 }
 
 export interface GlobalRetributionRuleInterface extends BaseRetributionRuleInterface {
@@ -110,7 +113,7 @@ export class DistanceRangeGlobalRetributionRule implements GlobalRetributionRule
   }
 }
 
-export class RankRetributionRule implements GlobalRetributionRuleInterface {
+export class RankGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
   parameters: TripRankEnum[];
@@ -121,13 +124,58 @@ export class RankRetributionRule implements GlobalRetributionRuleInterface {
   }
 }
 
-export class OperatorIdsRetributionRule implements GlobalRetributionRuleInterface {
+export class OperatorIdsGlobalRetributionRule implements GlobalRetributionRuleInterface {
   slug: GlobalRetributionRulesSlugEnum;
   description?: string;
-  parameters: string[];
+  parameters: number[];
 
-  constructor(operatorIds: string[]) {
+  constructor(operatorIds: number[]) {
     this.slug = GlobalRetributionRulesSlugEnum.OPERATOR_IDS;
     this.parameters = operatorIds;
+  }
+}
+
+export class RestrictionRetributionRule implements GlobalRetributionRuleInterface {
+  description?: string;
+  slug: GlobalRetributionRulesSlugEnum;
+  parameters: {
+    target: RestrictionTargetsEnum;
+    amount: number;
+    period: RestrictionPeriodsEnum;
+  };
+
+  constructor(target: RestrictionTargetsEnum, amount: number, period: RestrictionPeriodsEnum) {
+    this.slug = GlobalRetributionRulesSlugEnum.RESTRICTION;
+    this.parameters = {
+      target,
+      amount,
+      period,
+    };
+  }
+}
+
+export type BlackListWhiteListGlobalRetributionRuleType = {
+  start: string[];
+  end: string[];
+}[];
+
+export class BlackListGlobalRetributionRule implements GlobalRetributionRuleInterface {
+  slug: GlobalRetributionRulesSlugEnum;
+  description?: string;
+  parameters: BlackListWhiteListGlobalRetributionRuleType;
+  constructor(params: BlackListWhiteListGlobalRetributionRuleType) {
+    this.slug = GlobalRetributionRulesSlugEnum.BLACKLIST;
+    this.parameters = params;
+  }
+}
+
+export class WhiteListGlobalRetributionRule implements GlobalRetributionRuleInterface {
+  slug: GlobalRetributionRulesSlugEnum;
+  description?: string;
+  parameters: BlackListWhiteListGlobalRetributionRuleType;
+
+  constructor(params: BlackListWhiteListGlobalRetributionRuleType) {
+    this.slug = GlobalRetributionRulesSlugEnum.WHITELIST;
+    this.parameters = params;
   }
 }
