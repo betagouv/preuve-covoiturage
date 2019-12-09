@@ -14,12 +14,13 @@
             #rla="routerLinkActive"
             [active]="rla.isActive"
           >
+            <mat-icon *ngIf="link.label === 'Export'">get_app</mat-icon>
             {{ link.label }}
           </a>
         </ng-container>
       </nav>
       <button
-        *ngIf="hasCorrectUrl"
+        *ngIf="pageHasFilter"
         [matBadge]="filterNumber"
         class="TripLayout-menu-filter-button"
         mat-flat-button
@@ -33,9 +34,9 @@
     </div>
   </app-page-header>
   <app-page-content>
-    <div class="TripLayout-content" [class.filter-triangle]="showFilter && hasCorrectUrl">
+    <div class="TripLayout-content" [class.filter-triangle]="showFilter && pageHasFilter">
       <app-filter
-        *ngIf="hasCorrectUrl"
+        *ngIf="pageHasFilter"
         (filterNumber)="setFilterNumber($event)"
         [showFilter]="showFilter"
         (hideFilter)="toggleFilterDisplay()"

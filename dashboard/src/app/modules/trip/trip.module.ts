@@ -10,6 +10,7 @@ import { UiTripModule } from '~/modules/trip/modules/ui-trip/ui-trip.module';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 import { FilterModule } from '~/modules/filter/filter.module';
 import { CampaignModule } from '~/modules/campaign/campaign.module';
+import { TripExportComponent } from '~/modules/trip/pages/trip-export/trip-export.component';
 
 import { TripLayoutComponent } from './trip-layout/trip-layout.component';
 import { TripStatsComponent } from './pages/trip-stats/trip-stats.component';
@@ -18,7 +19,14 @@ import { TripListComponent } from './pages/trip-list/trip-list.component';
 import { TripImportComponent } from './pages/trip-import/trip-import.component';
 
 @NgModule({
-  declarations: [TripLayoutComponent, TripStatsComponent, TripMapsComponent, TripListComponent, TripImportComponent],
+  declarations: [
+    TripLayoutComponent,
+    TripStatsComponent,
+    TripMapsComponent,
+    TripListComponent,
+    TripImportComponent,
+    TripExportComponent,
+  ],
   imports: [
     TripRoutingModule,
     CommonModule,

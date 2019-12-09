@@ -16,7 +16,6 @@ import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
   styleUrls: ['./trip-list.component.scss'],
 })
 export class TripListComponent extends DestroyObservable implements OnInit {
-  isExporting: boolean;
   trips: LightTripInterface[] = [];
   skip = DEFAULT_TRIP_SKIP;
   limit = DEFAULT_TRIP_LIMIT;
@@ -75,22 +74,6 @@ export class TripListComponent extends DestroyObservable implements OnInit {
       limit: this.limit,
     };
     this.loadTrips(filter, true);
-  }
-
-  exportTrips() {
-    this.isExporting = true;
-    this.tripService
-      .exportTrips()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        () => {
-          this.isExporting = false;
-        },
-        (err) => {
-          this.isExporting = false;
-          this.toastr.error(err.message);
-        },
-      );
   }
 
   private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {

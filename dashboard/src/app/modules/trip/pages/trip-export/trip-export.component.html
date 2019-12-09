@@ -1,0 +1,41 @@
+<div class="exportFilter">
+  <h3>Recevoir les données au format .CSV par email</h3>
+  <form [formGroup]="exportFilterForm" *ngIf="!exported">
+    <div class="exportFilter-dates" formGroupName="date">
+      <mat-form-field appearance="outline">
+        <mat-label>Début</mat-label>
+        <input
+          [min]="minDate"
+          matInput
+          formControlName="start"
+          [matDatepicker]="startDatePicker"
+          placeholder="Choisir une date"
+        />
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Fin</mat-label>
+        <input matInput formControlName="end" [matDatepicker]="endDatePicker" placeholder="Choisir une date" />
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="exportFilter-footer">
+      <button
+        mat-flat-button
+        type="button"
+        color="primary"
+        [appShowSpinner]="isExporting"
+        [disabled]="isExporting"
+        (click)="exportTrips()"
+      >
+        Exporter les trajets
+      </button>
+    </div>
+  </form>
+  <p class="exportFilter-message" *ngIf="exported">
+    L'export est en cours. <br />
+    Quand l'export sera près, vous recevrez un email avec un lien de téléchargement.
+  </p>
+</div>
