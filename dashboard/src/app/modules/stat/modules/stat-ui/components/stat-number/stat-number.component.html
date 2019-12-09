@@ -9,7 +9,8 @@
   </div>
   <div class="stat-number-content">
     <div class="stat-number-title">
-      <p>{{ statNumber.title | number }} {{ statNumber.unit }}</p>
+      <p *ngIf="statNumber.svgIcon === 'carpooling'">{{ statNumber.title | number: '1.2' }}</p>
+      <p *ngIf="statNumber.svgIcon !== 'carpooling'">{{ statNumber.title | number }} {{ statNumber.unit }}</p>
     </div>
     <p class="stat-number-hint">
       {{ statNumber.hint }}

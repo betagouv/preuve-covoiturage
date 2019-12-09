@@ -141,7 +141,7 @@ export class StatFormatService {
     const formatedStat = <FormatedStatInterface>{
       total: {
         trips: get(d, 'trips.total', 0),
-        distance: (get(d, 'distance.total', 0) / 1000) | 0,
+        distance: get(d, 'distance.total', 0) | 0,
         carpoolers: get(d, 'carpoolers.total', 0),
         petrol: (get(d, 'distance.total', 0) * petrolFactor) | 0,
         co2: (get(d, 'distance.total', 0) * co2Factor) | 0,
@@ -206,7 +206,7 @@ export class StatFormatService {
           y: get(d, 'distance.months', [])
             .filter(this.filterOutFutur)
             // tslint:disable-next-line:no-bitwise
-            .map((i) => (i.total / 1000) | 0),
+            .map((i) => i.total | 0),
         }),
         distancePerDay: this.fixWeekDisplay({
           x: get(d, 'distance.days', [])
@@ -216,7 +216,7 @@ export class StatFormatService {
           y: get(d, 'distance.days', [])
             .filter(this.filterLastWeek)
             // tslint:disable-next-line:no-bitwise
-            .map((i) => (i.total / 1000) | 0),
+            .map((i) => i.total | 0),
         }),
         distancePerDayCumulated: {
           x: get(d, 'distance.days', [])
@@ -225,7 +225,7 @@ export class StatFormatService {
           y: get(d, 'distance.days', [])
             .reduce(this.reduceCumulativeData, [])
             // tslint:disable-next-line:no-bitwise
-            .map((i) => (i / 1000) | 0),
+            .map((i) => i | 0),
         },
         carpoolersPerMonth: this.fixMonthDisplay({
           x: get(d, 'carpoolers.months', [])

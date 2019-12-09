@@ -250,9 +250,14 @@ export class HttpTransport implements TransportInterface {
 
           if (req.session.user.territory_id) {
             const list = await this.kernel.handle(
-              makeCall('territory.listOperator', { territory_id: req.session.user.territory_id }),
+              makeCall(
+                'territory:listOperator',
+                { territory_id: req.session.user.territory_id },
+                { user: req.session.user },
+              ),
             );
             req.session.user.authorizedOperators = get(list, 'result', []);
+            console.log('req.session.user.authorizedOperators : ', req.session.user.authorizedOperators);
           }
 
           this.send(res, response);
