@@ -149,4 +149,3 @@ workflows:
               only:
                 - dev
                 - staging
-                - staging-v2
