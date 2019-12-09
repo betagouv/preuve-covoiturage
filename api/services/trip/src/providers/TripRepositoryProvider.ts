@@ -156,7 +156,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
       SELECT
         datetime::date as day,
-        sum(distance*seats)::bigint as distance,
+        sum(distance/1000*seats)::int as distance,
         sum(seats+1)::int as carpoolers,
         count(*)::int as trip,
         '0'::int as trip_subsidized,
