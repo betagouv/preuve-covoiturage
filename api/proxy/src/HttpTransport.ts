@@ -250,7 +250,6 @@ export class HttpTransport implements TransportInterface {
                 { user: req.session.user },
               ),
             );
-            // console.log('list : ', list);
             req.session.user.authorizedOperators = get(list, 'result', []);
             console.log('req.session.user.authorizedOperators : ', req.session.user.authorizedOperators);
           }
