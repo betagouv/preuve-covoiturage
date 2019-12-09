@@ -40,6 +40,7 @@ export class PolicyEngine {
   public async process(trip: TripInterface) {
     const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.datetime);
     const results = [];
+
     for (const campaign of campaigns) {
       // build function
       const apply = this.compose(campaign);
@@ -52,9 +53,9 @@ export class PolicyEngine {
         if (result) {
           // do something with result :)
           results.push({
-            campaign: campaign._id,
-            trip: 1, // trip_id
-            person: person.identity_uuid,
+            policy_id: campaign._id,
+            acquisition_id: person.acquisition_id,
+            identity_uuid: person.identity_uuid,
             amount: ctx.result,
           });
         }
@@ -63,6 +64,7 @@ export class PolicyEngine {
       // save metadata
       await this.metaRepository.set(meta);
     }
+
     return results;
   }
 
