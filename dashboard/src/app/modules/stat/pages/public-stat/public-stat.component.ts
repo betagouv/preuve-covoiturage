@@ -31,8 +31,14 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
     this.publicStatService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       const statNumbersArray = [];
       for (const statName of this.statNumberNames) {
-        const title = _.get(this.publicStatService.stat, statNumbers[statName].path);
+        let title = _.get(this.publicStatService.stat, statNumbers[statName].path);
         const statCard = statNumbers[statName];
+
+        if (statName === 'co2') {
+          title = (title / 1000).toFixed(2);
+          statCard.unit = 'tonnes';
+        }
+
         statNumbersArray.push(
           new StatNumber({
             title,
@@ -42,6 +48,7 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
           }),
         );
       }
+
       this.statNumbers = statNumbersArray;
     });
   }

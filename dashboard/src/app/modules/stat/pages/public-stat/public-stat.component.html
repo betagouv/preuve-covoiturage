@@ -38,9 +38,10 @@
           <mat-icon [svgIcon]="statNumber.svgIcon"></mat-icon>
         </div>
         <div class="stats-number-content">
-          <div class="stats-number-title">
-            <p *ngIf="statNumber.svgIcon === 'carpooling'">{{ statNumber.title | number: '1.2' }}</p>
-            <p *ngIf="statNumber.svgIcon !== 'carpooling'">{{ statNumber.title | number }} {{ statNumber.unit }}</p>
+          <div class="stats-number-title" [ngSwitch]="statNumber.svgIcon">
+            <p *ngSwitchCase="'carpooling'">{{ statNumber.title | number: '1.2' }}</p>
+            <p *ngSwitchCase="'co2'">{{ statNumber.title | number: '1.2' }} {{ statNumber.unit }}</p>
+            <p *ngSwitchDefault>{{ statNumber.title | number }} {{ statNumber.unit }}</p>
           </div>
           <p class="stats-number-hint">
             {{ statNumber.hint }}
