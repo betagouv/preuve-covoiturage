@@ -20,8 +20,6 @@ export class ListTerritoryOperatorAction extends AbstractAction {
               return 'operator.read';
             }
           },
-        ],
-        [
           (params, context) => {
             if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
               return 'territory.read';

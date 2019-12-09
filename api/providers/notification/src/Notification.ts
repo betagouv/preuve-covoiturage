@@ -36,6 +36,7 @@ export class Notification implements NotificationInterface {
 
     this.mailDriver = new this.mailDrivers[this.config.mail.driver](
       {
+        debug: this.config.mail.debug,
         from: this.config.mail.from,
         defaultSubject: this.config.mail.defaultSubject,
       },
