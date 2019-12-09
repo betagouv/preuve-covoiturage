@@ -95,6 +95,7 @@
     "no-ex-assign": true,
     "no-extra-boolean-cast": true,
     "no-extra-semi": true,
+    "semicolon": [true, "always", "ignore-bound-class-methods"],
     "no-inner-declarations": [true, "functions"],
     "no-invalid-regexp": true,
     "no-regex-spaces": true,

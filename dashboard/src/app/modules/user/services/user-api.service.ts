@@ -1,16 +1,16 @@
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 import { map, shareReplay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { User, BaseUser } from '~/core/entities/authentication/user';
+import { User } from '~/core/entities/authentication/user';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
-import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',

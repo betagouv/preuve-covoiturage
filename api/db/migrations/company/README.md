@@ -7,4 +7,3 @@
 ## Notes
 
 Access data throught common.companies
-
