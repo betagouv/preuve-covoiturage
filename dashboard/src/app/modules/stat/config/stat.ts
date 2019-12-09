@@ -1,7 +1,7 @@
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 
-export const petrolFactor = 0.0000636;
-export const co2Factor = 0.000195;
+export const petrolFactor = 0.0000636 * 1000; // liters par km
+export const co2Factor = 0.000195 * 1000; // ( kg per km )
 
 export const TERRITORY_STATS = {
   // todo: add 'operators' when ready
@@ -15,5 +15,5 @@ export const OPERATOR_STATS = {
 };
 
 export const PUBLIC_STATS = {
-  names: <statDataNameType[]>['co2', 'petrol', 'trips', 'distance', 'carpoolers', 'carpoolersPerVehicule'],
+  names: <statDataNameType[]>['trips', 'distance', 'co2', 'petrol', 'carpoolers', 'carpoolersPerVehicule'],
 };
