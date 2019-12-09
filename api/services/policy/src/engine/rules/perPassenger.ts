@@ -3,7 +3,7 @@ import { LOWEST } from '../helpers/priority';
 
 export const perPassenger: ApplicableRuleInterface = {
   slug: 'per_passenger',
-  description: 'Le montant est multiplié par le nombre de passager',
+  description: 'Le montant est multiplié par le nombre total de passager',
   schema: {
     type: 'boolean',
     const: true,
@@ -12,13 +12,7 @@ export const perPassenger: ApplicableRuleInterface = {
   apply() {
     return async (ctx, next) => {
       await next();
-      const nb = ctx.trip.people.reduce((acc, people) => {
-        if (people.is_driver) {
-          return acc;
-        }
-        return acc + ('seats' in people && people.seats ? people.seats : 1);
-      }, 0);
-      ctx.result *= nb;
+      ctx.result *= ctx.trip.people.filter((p) => !p.is_driver).reduce((acc, p) => acc + (p.seats || 1), 0);
     };
   },
 };

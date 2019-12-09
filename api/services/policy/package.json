@@ -10,7 +10,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "NODE_ENV=testing mocha --exit \"src/**/*.spec.ts\"",
-    "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts",
+    "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts tests/**/*.spec.ts",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-campaign --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json"
