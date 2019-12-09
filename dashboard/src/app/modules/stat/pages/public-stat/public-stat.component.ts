@@ -20,8 +20,7 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
 
   statNumberNames = PUBLIC_STATS.names;
 
-  // todo: fix this when 100 000 missings trips found
-  hideStats = true;
+  hideStats = false;
 
   constructor(private publicStatService: StatPublicService) {
     super();
@@ -32,8 +31,14 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
     this.publicStatService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       const statNumbersArray = [];
       for (const statName of this.statNumberNames) {
-        const title = _.get(this.publicStatService.stat, statNumbers[statName].path);
+        let title = _.get(this.publicStatService.stat, statNumbers[statName].path);
         const statCard = statNumbers[statName];
+
+        if (statName === 'co2') {
+          title = (title / 1000).toFixed(2);
+          statCard.unit = 'tonnes';
+        }
+
         statNumbersArray.push(
           new StatNumber({
             title,
@@ -43,6 +48,7 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
           }),
         );
       }
+
       this.statNumbers = statNumbersArray;
     });
   }
