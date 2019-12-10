@@ -454,7 +454,7 @@ export const campaignTemplateStubs: TemplateInterface[] = [
 export function stubCampaignTemplateList() {
   cy.route({
     method: 'POST',
-    url: '/rpc?methods=campaign:listTemplate',
+    url: '/rpc?methods=campaign:list',
     response: (data) =>
       <JsonRPCResponse[]>[
         {

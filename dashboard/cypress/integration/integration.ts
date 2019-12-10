@@ -161,7 +161,7 @@ function cypress_context_territory() {
         stubCampaignList();
         stubOperatorList();
         stubTerritoryList();
-        stubCampaignTemplateList();
+        // stubCampaignTemplateList();
         stubStatList();
         stubLogin(UserGroupEnum.TERRITORY);
         stubUserMe(UserGroupEnum.TERRITORY);
@@ -185,7 +185,7 @@ function cypress_context_territory() {
         testTerritoryStory();
       } else {
         // local testing
-        testTerritoryStory(false, false, false, false, false, false, false, true);
+        testTerritoryStory(false, false, false, true, true, false, false, false);
       }
     });
   });

@@ -26,8 +26,7 @@ export type RetributionRuleType =
   | AmountRetributionRule
   | ForDriverRetributionRule
   | FreeRetributionRule
-  | ForPassengerRetributionRule
-  | FreeRetributionRule;
+  | ForPassengerRetributionRule;
 
 export interface RetributionRuleInterface extends BaseRetributionRuleInterface {
   slug: RetributionRulesSlugEnum;
