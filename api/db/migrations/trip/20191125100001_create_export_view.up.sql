@@ -1,3 +1,4 @@
+DROP MATERIALIZED VIEW IF EXISTS trip.export;
 CREATE MATERIALIZED VIEW trip.export AS (
   SELECT
     cpp.operator_id as operator_id,
@@ -6,16 +7,16 @@ CREATE MATERIALIZED VIEW trip.export AS (
     cpp.acquisition_id::varchar as journey_id,
     cpp.trip_id as trip_id,
     cpp.datetime as journey_start_datetime,
-    trunc(ST_X(cpp.start_position::geometry)::numeric, cis.density::int - 1) as journey_start_lat,
-    trunc(ST_Y(cpp.start_position::geometry)::numeric, cis.density::int - 1) as journey_start_lon,
+    trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(cie.density::int)+2)::int) as journey_start_lat,
+    trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(cie.density::int)+2)::int) as journey_start_lon,
     cpp.start_insee as journey_start_insee,
     cis.postcodes[0] as journey_start_postcode,
     cis.town as journey_start_town,
     null as journey_start_epci, -- TODO
     cis.country as journey_start_country,
     (cpp.datetime + (cpp.duration || ' seconds')::interval) as journey_end_datetime,
-    trunc(ST_X(cpp.end_position::geometry)::numeric, cie.density::int - 1) as journey_end_lat,
-    trunc(ST_Y(cpp.end_position::geometry)::numeric, cie.density::int - 1) as journey_end_lon,
+    trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(cie.density::int)+2)::int) as journey_end_lat,
+    trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(cie.density::int)+2)::int) as journey_end_lon,
     cpp.end_insee as journey_end_insee,
     cie.postcodes[0] as journey_end_postcode,
     cie.town as journey_end_town,
