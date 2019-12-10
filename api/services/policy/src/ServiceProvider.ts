@@ -27,19 +27,14 @@ import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRep
   config: __dirname,
   providers: [
     CampaignPgRepositoryProvider,
-    // CampaignMetadataRepositoryProvider, // FIXME: migrate to pg
+    CampaignMetadataRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
   ],
   validator: [createSchemaBinding, patchSchemaBinding, launchSchemaBinding, deleteSchemaBinding, listSchemaBinding],
   handlers: [CreateCampaignAction, PatchCampaignAction, LaunchCampaignAction, DeleteCampaignAction, ListCampaignAction],
   connections: [[PostgresConnection, 'connections.postgres']],
-  middlewares: [
-    ['can', PermissionMiddleware],
-    ['validate', ValidatorMiddleware],
-    ['scope.it', ScopeToSelfMiddleware],
-    // ['validate.retribution', ValidateRetributionInputMiddleware],
-  ],
+  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scope.it', ScopeToSelfMiddleware]],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

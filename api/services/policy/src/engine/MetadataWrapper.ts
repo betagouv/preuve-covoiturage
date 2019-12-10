@@ -1,9 +1,14 @@
-import { MetaInterface } from '../interfaces/RuleInterfaces';
+import { MetaInterface } from '../interfaces/MetaInterface';
 
 export class MetadataWrapper implements MetaInterface {
   protected data: Map<string, any>;
-  constructor(public readonly id: number, data?: { [k: string]: any }) {
+
+  constructor(public readonly id: number, public readonly key: string | null, data?: { [k: string]: any }) {
     this.data = data ? new Map(Object.entries(data)) : new Map();
+  }
+
+  get signature() {
+    return [this.id, this.key];
   }
 
   get(key: string, fallback?: any): any {
@@ -15,6 +20,10 @@ export class MetadataWrapper implements MetaInterface {
 
   set(key: string, data: any): void {
     this.data.set(key, data);
+  }
+
+  keys(): string[] {
+    return [...this.data.keys()];
   }
 
   all(): { [k: string]: any } {
