@@ -30,7 +30,7 @@ async function checkApplication(
     },
   });
 
-  const app_uuid = get(app, 'result.uuid', '').toString();
+  const app_uuid = get(app, 'result.uuid', '');
   // disabled until owner_id is migrated as integer
   // const owner_id = get(app, 'result.owner_id', null);
   // return app_uuid === payload.a && owner_id === payload.o;

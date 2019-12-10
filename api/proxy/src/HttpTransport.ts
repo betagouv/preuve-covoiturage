@@ -385,7 +385,7 @@ export class HttpTransport implements TransportInterface {
         const application = (response as any).result;
 
         const token = await this.tokenProvider.sign({
-          a: application._id.toString(),
+          a: application.uuid,
           o: application.owner_id,
           s: application.owner_service,
           p: application.permissions,

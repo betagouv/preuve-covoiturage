@@ -4,7 +4,6 @@ import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import { ObjectId } from 'bson';
 import { TransportInterface } from '@ilos/common';
 
 import { bootstrap } from '../src/bootstrap';
@@ -16,7 +15,7 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 
 // tslint:disable-next-line: variable-name
-const operator_id = new ObjectId().toString();
+const operator_id = Math.round(Math.random() * 1000);
 
 describe('Application service', () => {
   before(async () => {
@@ -31,7 +30,6 @@ describe('Application service', () => {
     await transport.down();
   });
 
-  // Database _id
   let application;
 
   it('#1 - Creates an application', () =>
@@ -48,7 +46,7 @@ describe('Application service', () => {
           _context: {
             call: {
               user: {
-                operator: operator_id,
+                operator_id,
                 permissions: ['application.create'],
               },
             },
@@ -60,7 +58,7 @@ describe('Application service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('_id');
+        expect(response.body.result).to.have.property('uuid');
         expect(response.body.result).to.have.property('name', 'Application');
         expect(response.body.result).to.have.property('owner_id', operator_id);
         expect(response.body.result).to.have.property('owner_service', 'operator');
@@ -80,12 +78,14 @@ describe('Application service', () => {
         method: 'application:find',
         params: {
           params: {
-            _id: application._id,
+            uuid: application.uuid,
+            owner_id: application.owner_id,
+            owner_service: application.owner_service,
           },
           _context: {
             call: {
               user: {
-                operator: operator_id,
+                operator_id,
                 permissions: ['application.find'],
               },
             },
@@ -97,7 +97,7 @@ describe('Application service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('_id', application._id);
+        expect(response.body.result).to.have.property('uuid', application.uuid);
         expect(response.body.result).to.have.property('name', 'Application');
         expect(response.body.result).to.have.property('owner_id', operator_id);
         expect(response.body.result).to.have.property('owner_service', 'operator');
@@ -112,7 +112,9 @@ describe('Application service', () => {
         method: 'application:find',
         params: {
           params: {
-            _id: application._id,
+            uuid: application.uuid,
+            // owner_id: application.owner_id,
+            owner_service: application.owner_service,
           },
           _context: {
             call: {
@@ -142,13 +144,13 @@ describe('Application service', () => {
         method: 'application:revoke',
         params: {
           params: {
-            _id: application._id,
+            uuid: application.uuid,
           },
           _context: {
             call: {
               user: {
                 // generate false operator_id
-                operator: String(operator_id)
+                operator_id: String(operator_id)
                   .split('')
                   .reverse()
                   .join(''),
@@ -174,12 +176,12 @@ describe('Application service', () => {
         method: 'application:revoke',
         params: {
           params: {
-            _id: application._id,
+            uuid: application.uuid,
           },
           _context: {
             call: {
               user: {
-                operator: operator_id,
+                operator_id,
                 permissions: ['application.revoke'],
               },
             },
@@ -202,12 +204,12 @@ describe('Application service', () => {
         method: 'application:revoke',
         params: {
           params: {
-            _id: application._id,
+            uuid: application.uuid,
           },
           _context: {
             call: {
               user: {
-                operator: operator_id,
+                operator_id,
                 permissions: ['application.revoke'],
               },
             },
@@ -238,7 +240,7 @@ describe('Application service', () => {
             _context: {
               call: {
                 user: {
-                  operator: operator_id,
+                  operator_id,
                   permissions: ['application.create'],
                 },
               },
@@ -256,7 +258,7 @@ describe('Application service', () => {
             _context: {
               call: {
                 user: {
-                  operator: operator_id,
+                  operator_id,
                   permissions: ['application.create'],
                 },
               },
@@ -274,13 +276,11 @@ describe('Application service', () => {
         jsonrpc: '2.0',
         method: 'application:list',
         params: {
-          params: {
-            operator_id,
-          },
+          params: {},
           _context: {
             call: {
               user: {
-                operator: operator_id,
+                operator_id,
                 permissions: ['application.list'],
               },
             },
@@ -293,7 +293,7 @@ describe('Application service', () => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result.length).to.eq(2);
-        const results = response.body.result.sort((a, b) => (a > b ? 1 : -1));
+        const results = response.body.result.sort((a, b) => (a._id > b._id ? 1 : -1));
 
         expect(results[0]).to.have.property('name', 'Application A');
         expect(results[1]).to.have.property('name', 'Application B');

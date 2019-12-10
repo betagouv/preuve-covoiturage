@@ -2,8 +2,8 @@ import { ApplicationInterface } from './common/interfaces/ApplicationInterface';
 
 export interface ParamsInterface {
   uuid: string;
-  owner_id: string;
-  owner_service: string;
+  owner_id?: string;
+  owner_service?: string;
 }
 
 export interface ResultInterface extends ApplicationInterface {}

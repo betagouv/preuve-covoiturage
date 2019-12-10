@@ -2,7 +2,7 @@ export const alias = 'application.find';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['uuid', 'owner_id', 'owner_service'],
+  required: ['uuid'],
   additionalProperties: false,
   properties: {
     uuid: { macro: 'dbid' },
