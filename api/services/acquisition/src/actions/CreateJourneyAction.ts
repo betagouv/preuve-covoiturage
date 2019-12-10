@@ -56,7 +56,7 @@ export class CreateJourneyAction extends AbstractAction {
       };
     } catch (e) {
       switch (e.code) {
-        case 11000:
+        case '23505':
           throw new ConflictException('Journey already registered');
         default:
           throw e;
@@ -68,7 +68,6 @@ export class CreateJourneyAction extends AbstractAction {
     const journey = {
       ...jrn,
       operator_id,
-      journey_id: `${operator_id}:${jrn.journey_id}`,
     };
 
     // driver AND/OR passenger

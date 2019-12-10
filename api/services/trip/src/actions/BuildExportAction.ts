@@ -105,6 +105,8 @@ export class BuildExportAction extends Action {
         'passenger_over_18',
         'passenger_seats',
       ],
+      // TOCHECK
+      cast: { date: (d) => d.toISOString() },
     });
 
     stringifier.on('readable', async () => {
