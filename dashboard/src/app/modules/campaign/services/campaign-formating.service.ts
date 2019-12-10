@@ -484,8 +484,8 @@ export class CampaignFormatingService {
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
       // format dates : moment --> Date
-      start_date: campaignUx.start.toDate(),
-      end_date: campaignUx.end.toDate(),
+      start_date: <any>campaignUx.start.startOf('day').toISOString(),
+      end_date: <any>campaignUx.end.endOf('day').toISOString(),
     });
 
     //  remove empty or null values

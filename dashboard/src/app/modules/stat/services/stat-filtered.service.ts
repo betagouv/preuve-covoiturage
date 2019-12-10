@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, take, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
@@ -39,6 +40,13 @@ export class StatFilteredService {
     }
     if (user && user.group === UserGroupEnum.OPERATOR) {
       params['operator_id'] = [user.operator_id];
+    }
+
+    if ('date' in filter && filter.date.start) {
+      params.date.start = filter.date.start.toISOString();
+    }
+    if ('date' in filter && filter.date.end) {
+      params.date.end = filter.date.end.toISOString();
     }
     this._loading$.next(true);
     const jsonRPCParam = new JsonRPCParam(`trip:stats`, params);

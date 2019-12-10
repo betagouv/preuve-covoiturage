@@ -81,6 +81,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     if (this.tripService.loading) {
       return;
     }
+
     this.tripService
       .load(filter)
       .pipe(takeUntil(this.destroy$))
