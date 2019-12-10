@@ -81,10 +81,16 @@ const identitySchema = {
 
 const paymentSchema = {
   type: 'object',
-  minProperties: 2,
+  required: ['index', 'siret', 'type', 'amount'],
   additionalProperties: false,
   properties: {
+    index: {
+      type: 'integer',
+      minimum: 0,
+      maximum: 19,
+    },
     siret: { macro: 'siret' },
+    type: { macro: 'varchar' },
     amount: {
       type: 'integer',
       minimum: 0,
@@ -120,6 +126,7 @@ export const driverSchema = {
     payments: {
       type: 'array',
       minItems: 0,
+      maxItems: 20,
       items: paymentSchema,
     },
     distance: {
@@ -167,6 +174,7 @@ export const passengerSchema = {
     payments: {
       type: 'array',
       minItems: 0,
+      maxItems: 20,
       items: paymentSchema,
     },
     distance: {
