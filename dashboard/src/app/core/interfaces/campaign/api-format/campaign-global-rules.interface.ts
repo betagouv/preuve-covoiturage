@@ -21,7 +21,7 @@ export type GlobalRetributionRuleType =
 
 export enum GlobalRetributionRulesSlugEnum {
   MAX_AMOUNT = 'max_amount_restriction',
-  RESTRICTION = 'max_amount_per_target_restriction',
+  RESTRICTION = 'max_trip_per_target_restriction',
   MAX_TRIPS = 'max_trip_restriction',
   ONLY_ADULT = 'adult_only_filter',
   WEEKDAY = 'weekday_filter',

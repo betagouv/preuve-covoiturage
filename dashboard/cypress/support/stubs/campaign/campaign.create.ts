@@ -1,7 +1,6 @@
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 
 export function stubCampaignCreate(status: CampaignStatusEnum) {
