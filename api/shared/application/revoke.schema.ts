@@ -2,12 +2,10 @@ export const alias = 'application.revoke';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['_id'],
+  required: ['uuid'],
   additionalProperties: false,
   properties: {
-    _id: { macro: 'dbid' },
-    owner_id: { macro: 'dbid' },
-    owner_service: { enum: ['operator'] },
+    uuid: { macro: 'dbid' },
   },
 };
 export const binding = [alias, schema];

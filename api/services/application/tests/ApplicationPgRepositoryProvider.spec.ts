@@ -7,7 +7,7 @@ import { ApplicationPgRepositoryProvider } from '../src/providers/ApplicationPgR
 describe('Application pg repository', () => {
   let repository;
   let connection;
-  let id;
+  let uuid;
 
   const sortDesc = (a: number, b: number) => (a > b ? -1 : 1);
 
@@ -25,10 +25,10 @@ describe('Application pg repository', () => {
   });
 
   after(async () => {
-    if (id) {
+    if (uuid) {
       await connection.getClient().query({
-        text: 'DELETE FROM application.applications WHERE _id = $1',
-        values: [id],
+        text: 'DELETE FROM application.applications WHERE uuid = $1',
+        values: [uuid],
       });
     }
 
@@ -43,7 +43,7 @@ describe('Application pg repository', () => {
       permissions: ['journey.create'],
     });
 
-    id = result._id;
+    uuid = result.uuid;
     expect(result.name).to.eq('Dummy Application');
   });
 
@@ -54,28 +54,28 @@ describe('Application pg repository', () => {
     });
 
     expect(result).to.be.an('array');
-    expect(result.sort(sortDesc)[0]._id).to.eq(id);
+    expect(result.sort(sortDesc)[0].uuid).to.eq(uuid);
   });
 
   it('should find an application', async () => {
     const result = await repository.find({
-      _id: id,
+      uuid,
       owner_id: '12345',
       owner_service: 'operator',
     });
 
-    expect(result._id).to.eq(id);
+    expect(result.uuid).to.eq(uuid);
   });
 
   it('should revoke application by id', async () => {
-    await repository.revoke({ _id: id, owner_id: '12345', owner_service: 'operator' });
+    await repository.revoke({ uuid, owner_id: '12345', owner_service: 'operator' });
     const result = await connection.getClient().query({
-      text: 'SELECT * FROM application.applications WHERE _id = $1 LIMIT 1',
-      values: [id],
+      text: 'SELECT * FROM application.applications WHERE uuid = $1 LIMIT 1',
+      values: [uuid],
     });
 
     const rows = result.rows.sort(sortDesc);
-    expect(rows[0]._id).to.eq(id);
+    expect(rows[0].uuid).to.eq(uuid);
     expect(rows[0].deleted_at).to.be.a('date');
   });
 });
