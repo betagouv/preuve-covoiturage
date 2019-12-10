@@ -79,10 +79,6 @@ export class CreateJourneyAction extends AbstractAction {
 
   protected castPerson(person: PersonInterface, driver = false): PersonInterface {
     return {
-      distance: 0,
-      duration: 0,
-      contribution: 0,
-      revenue: 0,
       expense: 0,
       incentives: [],
       payments: [],

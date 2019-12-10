@@ -98,11 +98,11 @@ export const schema = {
               },
               calc_distance: {
                 type: 'integer',
-                minimum: 0,
+                exclusiveMinimum: 0,
               },
               calc_duration: {
                 type: 'integer',
-                minimum: 0,
+                exclusiveMinimum: 0,
               },
             },
           },
