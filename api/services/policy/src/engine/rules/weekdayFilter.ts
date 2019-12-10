@@ -18,11 +18,8 @@ export const weekdayFilter: ApplicableRuleInterface = {
   index: HIGH,
   apply(params: WeekdayParameters) {
     return async (ctx, next) => {
-      const wk = ctx.person.datetime.getDay();
-      for (const weekday of params) {
-        if (wk === weekday) {
-          return next();
-        }
+      if (params.indexOf(ctx.person.datetime.getDay()) > -1) {
+        return next();
       }
       throw new NotApplicableTargetException(weekdayFilter);
     };

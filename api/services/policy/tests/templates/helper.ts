@@ -7,6 +7,7 @@ import { CampaignPgRepositoryProvider } from '../../src/providers/CampaignPgRepo
 import { ServiceProvider } from '../../src/ServiceProvider';
 import { CampaignInterface } from '../../src/interfaces';
 import { PolicyEngine } from '../../src/engine/PolicyEngine';
+import { CampaignMetadataRepositoryProvider } from '../../src/engine/CampaignMetadataRepositoryProvider';
 
 @kernelDecorator({
   children: [ServiceProvider],
@@ -40,6 +41,13 @@ export function helper() {
           .getClient()
           .query({
             text: `DELETE FROM ${get(CampaignPgRepositoryProvider).table} WHERE _id = $1`,
+            values: [policyId],
+          });
+
+        await get(PostgresConnection)
+          .getClient()
+          .query({
+            text: `DELETE FROM ${get(CampaignMetadataRepositoryProvider).table} WHERE policy_id = $1`,
             values: [policyId],
           });
       }

@@ -1,4 +1,4 @@
-const template1 = {
+export const financialIncentivePolicy = {
   parent_id: null,
   status: 'template',
   name: 'Encourager financièrement le covoiturage',
@@ -117,7 +117,7 @@ const template1 = {
   unit: 'euro',
 };
 
-const template2 = {
+export const nonFinancialIncentivePolicy = {
   parent_id: null,
   status: 'template',
   name: 'Récompenser le covoiturage',
@@ -237,7 +237,7 @@ const template2 = {
   unit: 'point',
 };
 
-const template3 = {
+export const weekdayTrafficLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Limiter le trafic en semaine',
@@ -245,7 +245,7 @@ const template3 = {
   global_rules: [
     {
       slug: 'weekday_filter',
-      parameters: [0, 1, 2, 3, 4],
+      parameters: [1, 2, 3, 4, 5], // WARN: 0 = dimanche
     },
     {
       slug: 'rank_whitelist_filter',
@@ -268,7 +268,7 @@ const template3 = {
       },
     },
     {
-      slug: 'max_amount_per_target_restriction',
+      slug: 'max_trip_per_target_restriction',
       parameters: {
         target: 'driver',
         amount: 8,
@@ -276,7 +276,7 @@ const template3 = {
       },
     },
     {
-      slug: 'max_amount_per_target_restriction',
+      slug: 'max_trip_per_target_restriction',
       parameters: {
         target: 'passenger',
         amount: 2,
@@ -381,7 +381,7 @@ const template3 = {
   unit: 'euro',
 };
 
-const template4 = {
+export const pollutionLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Limiter la pollution',
@@ -403,7 +403,7 @@ const template4 = {
       },
     },
     {
-      slug: 'max_amount_per_target_restriction',
+      slug: 'max_trip_per_target_restriction',
       parameters: {
         target: 'driver',
         amount: 8,
@@ -411,7 +411,7 @@ const template4 = {
       },
     },
     {
-      slug: 'max_amount_per_target_restriction',
+      slug: 'max_trip_per_target_restriction',
       parameters: {
         target: 'passenger',
         amount: 2,
@@ -512,7 +512,7 @@ const template4 = {
   unit: 'euro',
 };
 
-const template5 = {
+export const weekendTrafficLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Limiter les embouteillages du week-end',
@@ -521,7 +521,7 @@ const template5 = {
   global_rules: [
     {
       slug: 'weekday_filter',
-      parameters: [4, 6],
+      parameters: [5, 0],
     },
     {
       slug: 'rank_whitelist_filter',
@@ -603,7 +603,7 @@ const template5 = {
   unit: 'euro',
 };
 
-const template6 = {
+export const eventTrafficLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: "Limiter le trafic lors d'un évènement ponctuel",
@@ -722,7 +722,7 @@ const template6 = {
   unit: 'euro',
 };
 
-const template7 = {
+export const freeTravelForPassengerPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Gratuité du covoiturage pour les passagers',

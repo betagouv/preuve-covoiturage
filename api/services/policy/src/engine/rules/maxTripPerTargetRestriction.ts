@@ -37,7 +37,7 @@ export const maxTripPerTargetRestriction: ApplicableRuleInterface = {
         (params.target === 'driver' && !ctx.person.is_driver) ||
         (params.target === 'passenger' && ctx.person.is_driver)
       ) {
-        return;
+        return next();
       }
 
       const datetime = ctx.person.datetime;

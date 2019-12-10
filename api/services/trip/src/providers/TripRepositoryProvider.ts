@@ -230,7 +230,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           passenger_over_18,
           passenger_seats
         FROM trip.export
-        WHERE journey_start_datetime BETWEEN $1::timestamp AND $2::timestamp
+        WHERE $1::timestamp <= journey_start_datetime AND journey_start_datetime <= $2::timestamp
         ${where}
       `,
     };
