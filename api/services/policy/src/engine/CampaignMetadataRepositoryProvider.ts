@@ -41,7 +41,7 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
           VALUES ($1, $2, $3)
           ON CONFLICT (policy_id, key)
           DO UPDATE SET
-            value = $3 
+            value = $3
       `,
       values: [id, masterKey, metadata.all()],
     };
