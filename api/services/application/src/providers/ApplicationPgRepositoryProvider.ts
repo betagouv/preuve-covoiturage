@@ -44,6 +44,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
         WHERE owner_service = $1
         AND owner_id = $2::varchar
         AND uuid = $3
+        AND deleted_at IS NULL
         LIMIT 1
       `,
       values: [owner_service, owner_id, uuid],
