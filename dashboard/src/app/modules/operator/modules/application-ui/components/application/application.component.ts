@@ -58,8 +58,9 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
+          console.log(application);
           this.applicationService
-            .revokeAndList(application._id)
+            .revokeAndList(application)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               (data) => {
