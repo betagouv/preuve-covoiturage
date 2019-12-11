@@ -63,7 +63,7 @@ export function cypress_applications(e2e = false) {
         expect(method).equal('application:revoke');
 
         expect(params).eql({
-          _id: CypressExpectedApplication.getAfterCreate()._id,
+          uuid: CypressExpectedApplication.getAfterCreate().uuid,
         });
       });
     }
