@@ -78,6 +78,8 @@ export const schema = {
             properties: {
               payments: {
                 type: 'array',
+                minItems: 0,
+                maxItems: 20,
                 items: {
                   type: 'object',
                   required: ['index', 'siret', 'type', 'amount'],
@@ -86,23 +88,25 @@ export const schema = {
                     index: {
                       type: 'integer',
                       minimum: 0,
+                      maximum: 19,
                     },
                     siret: { macro: 'siret' },
                     type: { macro: 'varchar' },
                     amount: {
                       type: 'integer',
                       minimum: 0,
+                      maximum: 100000,
                     },
                   },
                 },
               },
               calc_distance: {
                 type: 'integer',
-                minimum: 0,
+                exclusiveMinimum: 0,
               },
               calc_duration: {
                 type: 'integer',
-                minimum: 0,
+                exclusiveMinimum: 0,
               },
             },
           },

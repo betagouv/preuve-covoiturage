@@ -5,10 +5,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { TransportInterface } from '@ilos/common';
-import { MongoConnection } from '@ilos/connection-mongo';
 
 import { bootstrap } from '../src/bootstrap';
-import { ServiceProvider } from '../src/ServiceProvider';
 import { callFactory } from './helpers/callFactory';
 
 import { test2MissingUserAuth } from './mocks/test2MissingUserAuth';
@@ -35,6 +33,8 @@ import { test23WrongIncentiveAmount } from './mocks/test23WrongIncentiveAmount';
 import { test24WrongPaymentAmount } from './mocks/test24WrongPaymentAmount';
 import { test25UnsupportedTravelPass } from './mocks/test25UnsupportedTravelPass';
 import { test26DuplicateJourneyId } from './mocks/test26DuplicateJourneyId';
+import { test27DistanceIsZero } from './mocks/test27DistanceIsZero';
+import { test28DurationIsZero } from './mocks/test28DurationIsZero';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -43,7 +43,7 @@ let transport: TransportInterface;
 let request: supertest.SuperTest<supertest.Test>;
 
 const user = {
-  operator: '5d13c703bb3ed9807cad2745',
+  operator_id: 1,
   operator_name: 'MaxiCovoit',
   permissions: ['journey.create'],
 };
@@ -52,7 +52,6 @@ const rpcCall = callFactory(user);
 
 describe('Acquisition service', async () => {
   before(async () => {
-    process.env.APP_MONGO_DB = 'pdc-test-' + new Date().getTime();
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
@@ -61,14 +60,6 @@ describe('Acquisition service', async () => {
   });
 
   after(async () => {
-    await (<MongoConnection>transport
-      .getKernel()
-      .get(ServiceProvider)
-      .get(MongoConnection))
-      .getClient()
-      .db(process.env.APP_MONGO_DB)
-      .dropDatabase();
-
     await transport.down();
   });
 
@@ -246,7 +237,7 @@ describe('Acquisition service', async () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
-        expect(response.body.result).to.have.property('journey_id', test13MissingOperatorJourneyId.journey_id);
+        expect(response.body.result).to.have.property('journey_id', test14JourneyTooOld.journey_id);
       });
   });
 
@@ -382,30 +373,55 @@ describe('Acquisition service', async () => {
       });
   });
 
-  // it('#26 - Duplicate journey_id', async () => {
-  //   // First Journey: OK
-  //   await request
-  //     .post('/')
-  //     .send(rpcCall(test26DuplicateJourneyId))
-  //     .set('Accept', 'application/json')
-  //     .set('Content-Type', 'application/json')
-  //     .expect((response: supertest.Response) => {
-  //       expect(response.status).to.equal(200);
-  //       expect(response.body).to.have.property('result');
-  //       expect(response.body.result).to.have.property('journey_id', test26DuplicateJourneyId.journey_id);
-  //     });
+  it('#26 - Duplicate journey_id', async () => {
+    // First Journey: OK
+    await request
+      .post('/')
+      .send(rpcCall(test26DuplicateJourneyId))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('result');
+        expect(response.body.result).to.have.property('journey_id', test26DuplicateJourneyId.journey_id);
+      });
 
-  //   // Second Journey: Conflict
-  //   await request
-  //     .post('/')
-  //     .send(rpcCall(test26DuplicateJourneyId))
-  //     .set('Accept', 'application/json')
-  //     .set('Content-Type', 'application/json')
-  //     .expect((response: supertest.Response) => {
-  //       console.log(response.body);
-  //       expect(response.status).to.equal(409);
-  //       expect(response.body).to.have.property('error');
-  //       expect(response.body.error).to.have.property('message');
-  //     });
-  // });
+    // Second Journey: Conflict
+    await request
+      .post('/')
+      .send(rpcCall(test26DuplicateJourneyId))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(409);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message');
+      });
+  });
+
+  it('#27 - distance is 0', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test27DistanceIsZero))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message', 'Invalid params');
+      });
+  });
+
+  it('#28 - duration is 0', async () => {
+    return request
+      .post('/')
+      .send(rpcCall(test28DurationIsZero))
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .expect((response: supertest.Response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.have.property('error');
+        expect(response.body.error).to.have.property('message', 'Invalid params');
+      });
+  });
 });
