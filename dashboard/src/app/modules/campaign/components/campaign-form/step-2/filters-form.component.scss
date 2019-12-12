@@ -41,6 +41,9 @@
     mat-checkbox:last-child {
       margin-top: 15px;
     }
+    &-forTrip--hidden {
+      display: none;
+    }
   }
 
   &-range.CampaignSubForm-inputs {
