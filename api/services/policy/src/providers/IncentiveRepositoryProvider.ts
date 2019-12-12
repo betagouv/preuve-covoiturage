@@ -1,5 +1,6 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+
 import {
   IncentiveInterface,
   IncentiveRepositoryProviderInterface,

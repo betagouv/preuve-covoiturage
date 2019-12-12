@@ -12,6 +12,7 @@ export const adultOnlyFilter: ApplicableRuleInterface = {
   index: HIGH,
   apply() {
     return async (ctx, next) => {
+      // tslint:disable-next-line: no-boolean-literal-compare
       if ('is_over_18' in ctx.person && ctx.person.is_over_18 === false) {
         throw new NotApplicableTargetException(adultOnlyFilter);
       }
