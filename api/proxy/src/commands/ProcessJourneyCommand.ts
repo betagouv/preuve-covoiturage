@@ -108,17 +108,17 @@ export class ProcessJourneyCommand implements CommandInterface {
         LEFT JOIN ${options.metatable}
         ON ${options.table}._id = ${options.metatable}.acquisition_id
         WHERE carpool.carpools.acquisition_id IS NULL
-        AND (${options.metatable}.meta IS NULL OR ${options.metatable}.meta <> $1)
-        LIMIT $2
+        AND ${options.metatable}.meta IS NULL
+        LIMIT $1
       `,
-        values: [options.tag, options.limit],
+        values: [options.limit],
       };
     }
 
     const cursorCb = readClient.query(new Cursor(query.text, query.values));
     const cursor = promisify(cursorCb.read.bind(cursorCb));
     let count = 0;
-    const ROW_COUNT = 5;
+    const ROW_COUNT = 10000;
 
     const context: ContextType = {
       call: {
