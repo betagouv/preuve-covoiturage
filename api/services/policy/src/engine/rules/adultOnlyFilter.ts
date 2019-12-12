@@ -12,7 +12,7 @@ export const adultOnlyFilter: ApplicableRuleInterface = {
   index: HIGH,
   apply() {
     return async (ctx, next) => {
-      if (!ctx.person.is_over_18) {
+      if ('is_over_18' in ctx.person && ctx.person.is_over_18 === false) {
         throw new NotApplicableTargetException(adultOnlyFilter);
       }
       return next();
