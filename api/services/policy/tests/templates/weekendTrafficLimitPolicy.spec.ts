@@ -20,9 +20,11 @@ describe('Template: weekendTrafficLimitPolicy', () => {
   const { up, down } = helper();
   let engine: PolicyEngine;
   let policy_id: number;
+  let policy: CampaignInterface;
 
   before(async () => {
-    ({ engine, policy_id } = await up(template));
+    ({ engine, policy } = await up(template));
+    policy_id = policy._id;
   });
 
   after(async () => {
@@ -32,9 +34,9 @@ describe('Template: weekendTrafficLimitPolicy', () => {
   it('should work', async () => {
     const results = [];
     for (const trip of trips) {
-      const r = await engine.process(trip);
+      const r = await engine.process(trip, policy);
       results.push(...r);
     }
-    expect(results).to.deep.members([{ policy_id, acquisition_id: 8, identity_uuid: '6', amount: 150 }]);
+    expect(results).to.deep.members([{ policy_id, carpool_id: 8, identity_uuid: '6', amount: 150 }]);
   });
 });

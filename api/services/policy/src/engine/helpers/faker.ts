@@ -4,7 +4,7 @@ const datetime = new Date('2019-01-15');
 
 const basePerson: PersonInterface = {
   datetime,
-  acquisition_id: 1,
+  carpool_id: 1,
   identity_uuid: 'person',
   is_over_18: null,
   has_travel_pass: false,
