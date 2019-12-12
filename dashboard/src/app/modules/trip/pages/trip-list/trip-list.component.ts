@@ -9,6 +9,7 @@ import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '~/core/const/filter.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-trip-list',
@@ -40,6 +41,14 @@ export class TripListComponent extends DestroyObservable implements OnInit {
         limit: this.limit,
       });
     });
+  }
+
+  get columnsDisplayed(): string[] {
+    const columns = ['startCity', 'endCity', 'date', 'campaigns', 'incentives', 'class', 'status'];
+    if (this.authService.user.group !== UserGroupEnum.OPERATOR) {
+      columns.splice(5, 0, 'operator');
+    }
+    return columns;
   }
 
   get loading(): boolean {

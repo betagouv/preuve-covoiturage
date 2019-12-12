@@ -24,8 +24,8 @@
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onTerritoryInseeSelect($event)">
     <mat-option *ngFor="let territory of searchedTerritoryInsees" [value]="territory">
       <span title="{{ territory.territory_literal }} ( {{ territory.context }} )"
-        >{{ territory.territory_literal
-        }}<span class="inseeAutocomplete-result-details">( {{ territory.context }} )</span></span
+        >{{ territory.territory_literal }}
+        <span class="inseeAutocomplete-result-details">( {{ territory.context }} )</span></span
       >
     </mat-option>
   </mat-autocomplete>

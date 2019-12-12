@@ -40,7 +40,11 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
         ? 'Êtes-vous sûr de vouloir charger un nouveau modèle ?'
         : "Êtes-vous sûr de vouloir repartir d'un modèle vierge ?";
       this._dialog
-        .confirm(title, message, 'Confirmer')
+        .confirm({
+          title,
+          message,
+          color: 'Confirmer',
+        })
         .pipe(takeUntil(this.destroy$))
         .subscribe((result) => {
           if (result) {

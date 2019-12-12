@@ -10,14 +10,21 @@ import { ConfirmDialogComponent } from '~/core/components/dialog/confirm-dialog.
 export class DialogService {
   constructor(public dialog: MatDialog) {}
 
-  confirm(title: string, message: string, confirmBtn: string = 'Oui', color: string = 'primary'): Observable<any> {
+  confirm(params: {
+    title?: string;
+    message?: string;
+    confirmBtn?: string;
+    cancelBtn?: string;
+    color?: string;
+  }): Observable<any> {
     let dialogRef: MatDialogRef<ConfirmDialogComponent>;
 
     dialogRef = this.dialog.open(ConfirmDialogComponent);
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.message = message;
-    dialogRef.componentInstance.confirmBtn = confirmBtn;
-    dialogRef.componentInstance.color = color;
+    dialogRef.componentInstance.title = params.title || '';
+    dialogRef.componentInstance.message = params.message || '';
+    dialogRef.componentInstance.confirmBtn = params.confirmBtn || 'Confirmer';
+    dialogRef.componentInstance.cancelBtn = params.cancelBtn || 'Annuler';
+    dialogRef.componentInstance.color = params.color || 'primary';
 
     return dialogRef.afterClosed();
   }

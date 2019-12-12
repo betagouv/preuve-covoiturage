@@ -64,7 +64,7 @@ export class CampaignUiService {
       text += `<li><b>`;
 
       // CONDUCTEUR
-      if (valueForDriver && (uiStatus.for_trip || uiStatus.for_driver)) {
+      if (valueForDriver && uiStatus.for_driver) {
         // tslint:disable-next-line:max-line-length
         text += ` ${valueForDriver} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
         text += perKmForDriver ? ' par km' : '';
@@ -73,10 +73,10 @@ export class CampaignUiService {
           text += ' pour le conducteur';
         }
       }
-      text += valueForDriver && (valueForPassenger || free) ? ', ' : '';
+      text += uiStatus.for_driver && uiStatus.for_passenger ? ', ' : '';
 
       // PASSAGERS
-      if (uiStatus.for_trip || uiStatus.for_passenger) {
+      if ((valueForPassenger || free) && uiStatus.for_passenger) {
         if (free) {
           text += ' gratuit pour le(s) passager(s)';
         } else if (valueForPassenger !== null) {
@@ -85,6 +85,15 @@ export class CampaignUiService {
           text += ` pour le(s) passager(s)`;
         }
       }
+
+      // TRAJET
+      if (uiStatus.for_trip) {
+        // tslint:disable-next-line:max-line-length
+        text += ` ${valueForDriver} ${INCENTIVE_UNITS_FR[unit]} par trajet`;
+        text += perKmForDriver ? ' par km' : '';
+        text += perPassenger ? ' par passager' : '';
+      }
+
       if (min || max) {
         if (!max || max >= CAMPAIGN_RULES_MAX_DISTANCE_KM) {
           text += ` à partir de ${min} km`;
@@ -241,20 +250,28 @@ export class CampaignUiService {
         ? 'conducteurs et passagers'
         : campaign.ui_status.for_driver
         ? 'conducteurs'
-        : 'passagers'
+        : campaign.ui_status.for_passenger
+        ? 'passagers'
+        : 'covoiturages'
     }`;
 
     // ONLY ADULT
     summaryText += ` ${campaign.only_adult ? 'majeurs' : ''}</b>`;
 
     // DISTANCE
-    summaryText += ` effectuant un trajet`;
-    if (campaign.filters.distance_range[1] > 99) {
-      summaryText += ` d'au moins ${campaign.filters.distance_range[0]} km`;
-    } else if (campaign.filters.distance_range[0] < 1) {
-      summaryText += ` d'au plus ${campaign.filters.distance_range[1]} km`;
-    } else {
-      summaryText += ` compris entre ${campaign.filters.distance_range[0]} à ${campaign.filters.distance_range[1]} km`;
+    if (campaign.filters.distance_range[0] > 0 || campaign.filters.distance_range[1] < CAMPAIGN_RULES_MAX_DISTANCE_KM) {
+      summaryText += ` effectuant un trajet`;
+      if (campaign.filters.distance_range[1] === CAMPAIGN_RULES_MAX_DISTANCE_KM) {
+        summaryText += ` d'au moins ${campaign.filters.distance_range[0]} km`;
+      } else if (
+        campaign.filters.distance_range[0] === 0 &&
+        campaign.filters.distance_range[1] < CAMPAIGN_RULES_MAX_DISTANCE_KM
+      ) {
+        summaryText += ` d'au plus ${campaign.filters.distance_range[1]} km`;
+      } else {
+        summaryText +=
+          ` compris entre ${campaign.filters.distance_range[0]}` + ` à ${campaign.filters.distance_range[1]} km`;
+      }
     }
     summaryText += ` sont incités selon les règles suivantes : </p>`;
 

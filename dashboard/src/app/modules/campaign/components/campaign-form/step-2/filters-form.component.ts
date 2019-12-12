@@ -200,7 +200,11 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
       const title = 'Changement de type de filtre';
       const message = 'Attention, les données seront supprimées.';
       this._dialog
-        .confirm(title, message, 'Confirmer')
+        .confirm({
+          title,
+          message,
+          confirmBtn: 'Confirmer',
+        })
         .pipe(takeUntil(this.destroy$))
         .subscribe((result) => {
           if (result) {
