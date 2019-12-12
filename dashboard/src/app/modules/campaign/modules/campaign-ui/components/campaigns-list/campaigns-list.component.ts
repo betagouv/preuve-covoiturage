@@ -48,7 +48,10 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   }
 
   showDelete(status: CampaignStatusEnum): boolean {
-    return status === CampaignStatusEnum.ARCHIVED && this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
+    return (
+      (status === CampaignStatusEnum.ARCHIVED || status === CampaignStatusEnum.DRAFT) &&
+      this.authService.hasAnyGroup([UserGroupEnum.TERRITORY])
+    );
   }
 
   get filteredCampaigns(): CampaignUx[] {
@@ -61,7 +64,11 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
 
   deleteCampaign(campaign: CampaignUx): void {
     this.dialog
-      .confirm('Suppression', `Êtes-vous sûr de vouloir supprimer la campagne: ${campaign.name} ?`, 'Supprimer', 'warn')
+      .confirm({
+        title: `Êtes-vous sûr de vouloir supprimer la campagne : ${campaign.name} ?`,
+        confirmBtn: 'Supprimer',
+        color: 'warn',
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {

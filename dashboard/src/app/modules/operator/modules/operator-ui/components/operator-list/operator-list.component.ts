@@ -40,7 +40,12 @@ export class OperatorListComponent extends DestroyObservable implements OnInit {
 
   onDelete(operator) {
     this._dialogService
-      .confirm('Voulez-vous supprimer cet opérateur ?', '')
+      .confirm({
+        title: 'Êtes-vous sûr de vouloir supprimer cet opérateur ?',
+        confirmBtn: 'Oui',
+        cancelBtn: 'Non',
+        color: 'warn',
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe((hasConfirmed) => {
         if (hasConfirmed) {

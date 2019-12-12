@@ -1,5 +1,8 @@
 .Operators-list {
   &-item-actions {
     text-align: right;
+    & > *:not(:last-child) {
+      margin-right: 10px;
+    }
   }
 }
