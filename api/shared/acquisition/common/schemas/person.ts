@@ -1,3 +1,6 @@
+import { payment } from '../../../common/schemas/payment';
+import { position as positionSchema } from '../../../common/schemas/position';
+
 const incentiveSchema = {
   type: 'object',
   additionalProperties: false,
@@ -14,27 +17,6 @@ const incentiveSchema = {
       minimum: 0,
       maximum: 100000,
     },
-  },
-};
-
-const positionSchema = {
-  type: 'object',
-  required: ['datetime'],
-  additionalProperties: false,
-  minProperties: 2,
-  dependencies: {
-    lat: ['lon'],
-    lon: ['lat'],
-    country: ['literal'],
-    literal: ['country'],
-  },
-  properties: {
-    datetime: { macro: 'timestamp' },
-    lat: { macro: 'lat' },
-    lon: { macro: 'lon' },
-    insee: { macro: 'insee' },
-    country: { macro: 'varchar' },
-    literal: { macro: 'longchar' },
   },
 };
 
@@ -79,26 +61,6 @@ const identitySchema = {
   },
 };
 
-const paymentSchema = {
-  type: 'object',
-  required: ['index', 'siret', 'type', 'amount'],
-  additionalProperties: false,
-  properties: {
-    index: {
-      type: 'integer',
-      minimum: 0,
-      maximum: 19,
-    },
-    siret: { macro: 'siret' },
-    type: { macro: 'varchar' },
-    amount: {
-      type: 'integer',
-      minimum: 0,
-      maximum: 100000,
-    },
-  },
-};
-
 export const driverSchema = {
   type: 'object',
   required: ['identity', 'start', 'end', 'revenue', 'incentives'],
@@ -127,7 +89,7 @@ export const driverSchema = {
       type: 'array',
       minItems: 0,
       maxItems: 20,
-      items: paymentSchema,
+      items: payment,
     },
     distance: {
       type: 'integer',
@@ -175,7 +137,7 @@ export const passengerSchema = {
       type: 'array',
       minItems: 0,
       maxItems: 20,
-      items: paymentSchema,
+      items: payment,
     },
     distance: {
       type: 'integer',
