@@ -4,8 +4,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { takeUntil } from 'rxjs/operators';
 
 import { TripService } from '~/modules/trip/services/trip.service';
+import { DialogService } from '~/core/services/dialog.service';
+import { DestroyObservable } from '~/core/components/destroy-observable';
 
 @Component({
   selector: 'app-trip-export',
@@ -16,7 +19,7 @@ import { TripService } from '~/modules/trip/services/trip.service';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class TripExportComponent implements OnInit {
+export class TripExportComponent extends DestroyObservable implements OnInit {
   isExporting: boolean;
   exported = false;
   minDate = moment()
@@ -24,7 +27,14 @@ export class TripExportComponent implements OnInit {
     .toDate();
   exportFilterForm: FormGroup;
 
-  constructor(public tripService: TripService, private _toastr: ToastrService, private _fb: FormBuilder) {}
+  constructor(
+    public tripService: TripService,
+    private _toastr: ToastrService,
+    private _fb: FormBuilder,
+    private _dialog: DialogService,
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.initForm();
@@ -32,18 +42,31 @@ export class TripExportComponent implements OnInit {
 
   exportTrips() {
     const filter = this.exportFilterForm.getRawValue();
-    this.isExporting = true;
-    this.tripService.exportTrips(filter).subscribe(
-      () => {
-        this._toastr.success('Export en cours', 'Vous allez recevoir un email avec un lien de téléchargement.');
-        this.isExporting = false;
-        this.exported = true;
-      },
-      (err) => {
-        this.isExporting = false;
-        this._toastr.error(err.message);
-      },
-    );
+    this._dialog
+      .confirm({
+        title: 'Export des trajets',
+        message:
+          `Confirmez-vous l'export du ${moment(filter.date.start).format('D MMMM YYYY')}` +
+          ` au ${moment(filter.date.end).format('D MMMM YYYY')} ?`,
+        confirmBtn: 'Confirmer',
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        if (result) {
+          this.isExporting = true;
+          this.tripService.exportTrips(filter).subscribe(
+            () => {
+              this._toastr.success('Export en cours', 'Vous allez recevoir un email avec un lien de téléchargement.');
+              this.isExporting = false;
+              this.exported = true;
+            },
+            (err) => {
+              this.isExporting = false;
+              this._toastr.error(err.message);
+            },
+          );
+        }
+      });
   }
 
   private initForm() {
