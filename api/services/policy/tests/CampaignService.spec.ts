@@ -2,12 +2,13 @@ import supertest from 'supertest';
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { MongoConnection } from '@ilos/connection-mongo';
+import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { bootstrap } from '../src/bootstrap';
 import { ServiceProvider } from '../src/ServiceProvider';
 import { CampaignRepositoryProviderInterfaceResolver } from '../src/interfaces/CampaignRepositoryProviderInterface';
 import { CreateCampaignAction } from '../src/actions/CreateCampaignAction';
+import { CampaignPgRepositoryProvider } from '../src/providers/CampaignPgRepositoryProvider';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -18,13 +19,13 @@ start.setMonth(start.getMonth() + 1);
 const end = new Date();
 end.setMonth(start.getMonth() + 2);
 
-const territory = '5cef990d133992029c1abe44';
+const territory = 1;
 const fakeCampaign = {
   territory_id: territory,
   name: 'Ma campagne',
   description: 'Incite les covoitureurs',
-  start: start.toISOString(),
-  end: end.toISOString(),
+  start_date: start.toISOString(),
+  end_date: end.toISOString(),
   unit: 'euro',
   status: 'draft',
   global_rules: [],
@@ -38,12 +39,14 @@ const fakeCampaign = {
   ],
 };
 
-let db: MongoConnection;
+let db: PostgresConnection;
 
 describe('Campaign service', () => {
+  const ids: number[] = [];
   let transport;
   let request;
   let _id;
+  let repository: CampaignPgRepositoryProvider;
 
   const callFactory = (method: string, data: any, permissions: string[]) => ({
     method,
@@ -59,7 +62,7 @@ describe('Campaign service', () => {
         call: {
           user: {
             permissions,
-            territory,
+            territory_id: territory,
           },
         },
       },
@@ -67,8 +70,6 @@ describe('Campaign service', () => {
   });
 
   before(async () => {
-    process.env.APP_MONGO_DB = 'pdc-test-policy-' + new Date().getTime();
-
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 
@@ -77,14 +78,21 @@ describe('Campaign service', () => {
     db = transport
       .getKernel()
       .get(ServiceProvider)
-      .get(MongoConnection);
+      .get(PostgresConnection);
+
+    repository = transport
+      .getKernel()
+      .get(ServiceProvider)
+      .get(CampaignPgRepositoryProvider);
   });
 
   after(async () => {
-    await db
-      .getClient()
-      .db(process.env.APP_MONGO_DB)
-      .dropDatabase();
+    for (const id of ids) {
+      await db.getClient().query({
+        text: `DELETE from ${repository.table} WHERE _id = $1`,
+        values: [id],
+      });
+    }
 
     await transport.down();
   });
@@ -110,7 +118,7 @@ describe('Campaign service', () => {
           'campaign:create',
           {
             ...fakeCampaign,
-            territory_id: '5cef990d133992029c1abe55',
+            territory_id: 2,
           },
           ['incentive-campaign.create'],
         ),
@@ -142,7 +150,25 @@ describe('Campaign service', () => {
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(400);
         expect(response.body).to.have.property('error');
-        expect(response.body.error.data).to.eq('data.status should be equal to one of the allowed values');
+        expect(response.body.error.data).to.eq(
+          JSON.stringify([
+            {
+              keyword: 'enum',
+              dataPath: '.status',
+              schemaPath: '#/properties/status/enum',
+              params: {
+                allowedValues: ['draft', 'template'],
+              },
+              message: 'should be equal to one of the allowed values',
+              schema: ['draft', 'template'],
+              parentSchema: {
+                type: 'string',
+                enum: ['draft', 'template'],
+              },
+              data: 'other',
+            },
+          ]),
+        );
       });
   });
 
@@ -167,21 +193,17 @@ describe('Campaign service', () => {
         expect(response.body.result).to.have.property('name');
         expect(response.body.result.name).to.eq(fakeCampaign.name);
         _id = response.body.result._id;
+        ids.push(_id);
       })
       .end((err, res) => {
         if (err) {
           done(err);
         }
 
-        transport
-          .getKernel()
-          .get(ServiceProvider)
-          .get(CampaignRepositoryProviderInterfaceResolver)
-          .find(_id)
-          .then((dbEntry) => {
-            expect(_id).to.eq(dbEntry._id);
-            done();
-          });
+        repository.find(_id).then((data) => {
+          expect(_id).to.eq(data._id);
+          done();
+        });
       });
   });
 
@@ -211,15 +233,10 @@ describe('Campaign service', () => {
         if (err) {
           done(err);
         }
-        transport
-          .getKernel()
-          .get(ServiceProvider)
-          .get(CampaignRepositoryProviderInterfaceResolver)
-          .find(_id)
-          .then((dbEntry) => {
-            expect(dbEntry.name).to.eq('Ma nouvelle campagne');
-            done();
-          });
+        repository.find(_id).then((data) => {
+          expect(data.name).to.eq('Ma nouvelle campagne');
+          done();
+        });
       });
   });
 
@@ -268,16 +285,26 @@ describe('Campaign service', () => {
   it('Listing campaign', () => {
     return request
       .post('/')
-      .send(callFactory('campaign:list', {}, ['incentive-campaign.list']))
+      .send(
+        callFactory(
+          'campaign:list',
+          {
+            territory_id: territory,
+          },
+          ['incentive-campaign.list'],
+        ),
+      )
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.be.an('array');
-        expect(response.body.result.length).to.be.eq(1);
-        expect(response.body.result[0]).to.have.property('_id');
-        expect(response.body.result[0]._id).to.eq(_id);
+        const fakeCampaign = response.body.result.filter((c) => {
+          return c._id === _id;
+        });
+        expect(fakeCampaign).to.be.an('array');
+        expect(fakeCampaign.length).to.be.eq(1);
       });
   });
 
@@ -335,17 +362,19 @@ describe('Campaign service', () => {
       .get(ServiceProvider)
       .get(CreateCampaignAction);
 
-    await createCampaignAction.handle({
+    const { _id: idOne } = await createCampaignAction.handle({
       ...fakeCampaign,
       status: 'template',
     });
+    ids.push(idOne);
 
-    await createCampaignAction.handle({
+    const { _id: idTwo } = await createCampaignAction.handle({
       ...fakeCampaign,
       territory_id: null,
       status: 'template',
       name: generalName,
     });
+    ids.push(idTwo);
 
     await request
       .post('/')

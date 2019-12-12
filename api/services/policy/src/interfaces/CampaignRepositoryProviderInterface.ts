@@ -1,34 +1,40 @@
-export interface CampaignRepositoryProviderInterface {
-  find(id: number): Promise<any>;
-  create(params: any): Promise<any>;
-  patch(id: number, patch: any): Promise<any>;
-  patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<any>;
+import { CampaignInterface } from './CampaignInterface';
 
-  findOneWhereTerritory(id: number, territoryId: number): Promise<any>;
-  findWhere(search: { territory_id?: number | null; status?: string }): Promise<any[]>;
+export interface CampaignRepositoryProviderInterface {
+  find(id: number): Promise<CampaignInterface>;
+  create(params: CampaignInterface): Promise<CampaignInterface>;
+  patch(id: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface>;
+  patchWhereTerritory(id: number, territoryId: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface>;
+
+  findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface>;
+  findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]>;
 
   deleteDraftOrTemplate(id: number, territoryId: number): Promise<void>;
-  findApplicableCampaigns(territories: number[], date: Date): Promise<any[]>;
+  findApplicableCampaigns(territories: number[], date: Date): Promise<CampaignInterface[]>;
 }
 
 export abstract class CampaignRepositoryProviderInterfaceResolver implements CampaignRepositoryProviderInterface {
-  async find(id: number): Promise<any> {
+  async find(id: number): Promise<CampaignInterface> {
     throw new Error();
   }
-  async create(params: any): Promise<any> {
+  async create(params: CampaignInterface): Promise<CampaignInterface> {
     throw new Error();
   }
-  async patch(id: number, patch: any): Promise<any> {
+  async patch(id: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
     throw new Error();
   }
-  async patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<any> {
+  async patchWhereTerritory(
+    id: number,
+    territoryId: number,
+    patch: Partial<CampaignInterface>,
+  ): Promise<CampaignInterface> {
     throw new Error();
   }
-  async findOneWhereTerritory(id: number, territoryId: number): Promise<any> {
+  async findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface> {
     throw new Error();
   }
 
-  async findWhere(search: { territory_id?: number | null; status?: string }): Promise<any[]> {
+  async findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]> {
     throw new Error();
   }
 
@@ -36,7 +42,7 @@ export abstract class CampaignRepositoryProviderInterfaceResolver implements Cam
     throw new Error();
   }
 
-  async findApplicableCampaigns(territories: number[], d: Date): Promise<any[]> {
+  async findApplicableCampaigns(territories: number[], d: Date): Promise<CampaignInterface[]> {
     throw new Error();
   }
 }

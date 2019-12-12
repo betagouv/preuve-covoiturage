@@ -3,7 +3,7 @@ export const test12MissingJourneyId = {
   passenger: {
     identity: { phone: '+33612345678' },
     start: { datetime: new Date(), literal: 'Paris' },
-    end: { datetime: new Date(new Date().getTime() - 1000), literal: 'Evry' },
+    end: { datetime: new Date(new Date().getTime() - 1000), literal: 'Evry', country: 'France' },
     contribution: 0,
     incentives: [],
   },

@@ -11,7 +11,7 @@ import {
   identifier: CampaignRepositoryProviderInterfaceResolver,
 })
 export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderInterface {
-  protected readonly table = 'policy.policies';
+  public readonly table = 'policy.policies';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -80,7 +80,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
         JSON.stringify('ui_status' in data ? data.ui_status : {}),
       ],
     };
-    console.log(query);
+
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
@@ -89,7 +89,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return this.castTypes(result.rows[0]);
   }
 
-  async patch(id: number, patch: { [k: string]: any }): Promise<CampaignInterface> {
+  async patch(id: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
     const updatablefields = [
       'ui_status',
       'name',
@@ -160,7 +160,11 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return;
   }
 
-  async patchWhereTerritory(id: number, territoryId: number, patch: any): Promise<CampaignInterface> {
+  async patchWhereTerritory(
+    id: number,
+    territoryId: number,
+    patch: Partial<CampaignInterface>,
+  ): Promise<CampaignInterface> {
     const updatablefields = [
       'ui_status',
       'name',
@@ -238,11 +242,16 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     let where = '';
 
     if ('territory_id' in search && 'status' in search) {
-      where = 'AND status::text = $1 AND territory_id = $2::text';
-      values.push(search.status, search.territory_id);
+      where = `AND status::text = $1 AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $2::text'}`;
+      values.push(search.status);
+      if (search.territory_id !== null) {
+        values.push(search.territory_id);
+      }
     } else if ('territory_id' in search) {
-      where = 'AND territory_id = $1::text';
-      values.push(search.territory_id);
+      where = `AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $1::text'}`;
+      if (search.territory_id !== null) {
+        values.push(search.territory_id);
+      }
     } else if ('status' in search) {
       where = 'AND status::text = $1';
       values.push(search.status);
@@ -272,11 +281,11 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
         SELECT * FROM ${this.table}
         WHERE territory_id = ANY($1::text[])
         AND start_date <= $2
-        AND end_date >= $3
-        AND status = $4
+        AND end_date >= $2
+        AND status = $3
         AND deleted_at IS NULL
       `,
-      values: [territories, date, date, 'active'],
+      values: [territories, date, 'active'],
     };
 
     const result = await this.connection.getClient().query(query);

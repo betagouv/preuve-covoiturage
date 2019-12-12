@@ -64,9 +64,9 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
           const page = this.paginator.pageIndex;
           const start = Number(page) * this.PAGE_SIZE;
           const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
-          this.territoriesFiltered = this.territories.filter((t) =>
-            t.name.toLowerCase().includes(this._filterLiteral.value),
-          );
+          this.territoriesFiltered = this.territories
+            .filter((t) => t.name.toLowerCase().includes(this._filterLiteral.value))
+            .sort((a, b) => a.name.localeCompare(b.name));
           return of(this.territoriesFiltered.slice(start, end));
         }),
         takeUntil(this.destroy$),

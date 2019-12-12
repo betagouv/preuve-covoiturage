@@ -28,12 +28,17 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
   public roles = USER_ROLES;
   public groups = USER_GROUPS;
+  protected _emailHasChanged: boolean;
+  protected _baseEmail: string;
 
   constructor(private fb: FormBuilder, private _userStoreService: UserStoreService, private toastr: ToastrService) {
     super();
   }
 
   updateFormValues(user: User) {
+    this._emailHasChanged = false;
+    this._baseEmail = user.email;
+
     this.updateValidators();
     if (this.createEditUserForm) {
       this.createEditUserForm.setValue(user.toFormValues());
@@ -59,8 +64,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
     if (this.isCreating) {
       this._userStoreService.create(this.createEditUserForm.value).subscribe(
-        (data) => {
-          const user = data[0];
+        (user) => {
           this.isCreatingUpdating = false;
           this.toastr.success(
             `Un email a été envoyé à ${user.email}`,
@@ -72,13 +76,18 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       );
     } else {
       const model = new User();
+      const emailHasChanged = this._emailHasChanged;
       model._id = this._userStoreService.entity._id;
 
       this._userStoreService.patchSelected(User.formValueToUserPatch(this.createEditUserForm.value)).subscribe(
         (data) => {
-          const user = data[0];
+          const user = data;
           this.isCreatingUpdating = false;
-          this.toastr.success(`Les informations ont bien été modifiées`);
+          this.toastr.success(
+            `Les informations ont bien été modifiées${
+              emailHasChanged ? `. Un email a été envoyé à ${user.email}` : ''
+            }`,
+          );
           this.onCloseEditUser.emit(user);
         },
         (err) => (this.isCreatingUpdating = false),
@@ -90,7 +99,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     if (this.createEditUserForm) {
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
-      console.log('operatorEditable', this.operatorEditable, 'territoryEditable', this.territoryEditable);
       this.createEditUserForm.controls['operator_id'].setValidators(
         this.groupEditable && this.operatorEditable && this.isCreating ? Validators.required : null,
       );
@@ -139,6 +147,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       .subscribe((currentUser) => this.updateFormValues(currentUser));
 
     this.createEditUserForm.valueChanges.subscribe((formVal) => {
+      this._emailHasChanged = this._baseEmail !== formVal.email;
       const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;

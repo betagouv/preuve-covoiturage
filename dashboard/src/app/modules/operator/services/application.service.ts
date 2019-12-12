@@ -62,24 +62,6 @@ export class ApplicationService extends ApiService<ApplicationInterface> {
     applicationName: ApplicationName,
   ): Observable<[OperatorApplicationCreatedInterface, ApplicationInterface[]]> {
     if ('operator_id' in this._authService.user) {
-      // const operatorId = this._authService.user.operator_id;
-      // const jsonRPCParam = new JsonRPCParam(`${this._method}:create`, {
-      //   operator_id: operatorId,
-      //   permissions: ['journey.create'],
-      //   ...applicationName,
-      // });
-      // return this._jsonRPC.callOne(jsonRPCParam).pipe(
-      //   map((data) => data.data),
-      //   mergeMap((createdEntity: { token: string }) =>
-      //     this.load().pipe(
-      //       map((entities) => <[OperatorApplicationCreatedInterface, ApplicationInterface[]]>[
-      //       createdEntity,
-      //       entities
-      //       ]),
-      //     ),
-      //   ),
-      // );
-
       const operatorId = this._authService.user.operator_id;
 
       return this._http

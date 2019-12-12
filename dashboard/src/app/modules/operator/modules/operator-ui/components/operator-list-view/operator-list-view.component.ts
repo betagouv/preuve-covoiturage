@@ -44,10 +44,6 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
     this.operatorStoreService.entity$.subscribe((entity) => {
       this.showForm = !!entity;
     });
-
-    // this._operatorService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-    //   this.operators = operators;
-    // });
   }
 
   ngAfterViewInit() {
@@ -64,9 +60,9 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
           const page = this.paginator.pageIndex;
           const start = Number(page) * this.PAGE_SIZE;
           const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
-          this.operatorsFiltered = this.operators.filter((t) =>
-            t.name.toLowerCase().includes(this._filterLiteral.value),
-          );
+          this.operatorsFiltered = this.operators
+            .filter((t) => t.name.toLowerCase().includes(this._filterLiteral.value))
+            .sort((a, b) => a.name.localeCompare(b.name));
           return of(this.operatorsFiltered.slice(start, end));
         }),
       )

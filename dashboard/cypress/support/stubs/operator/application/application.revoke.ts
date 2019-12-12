@@ -1,7 +1,5 @@
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 
-import { expectedPatchedOperator } from '../../../expectedApiPayload/expectedOperator';
-
 export function stubApplicationRevoke() {
   cy.route({
     method: 'POST',

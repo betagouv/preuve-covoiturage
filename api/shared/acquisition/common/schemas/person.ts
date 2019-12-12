@@ -1,3 +1,6 @@
+import { payment } from '../../../common/schemas/payment';
+import { position as positionSchema } from '../../../common/schemas/position';
+
 const incentiveSchema = {
   type: 'object',
   additionalProperties: false,
@@ -6,7 +9,7 @@ const incentiveSchema = {
     index: {
       type: 'integer',
       minimum: 0,
-      maximum: 42,
+      maximum: 19,
     },
     siret: { macro: 'siret' },
     amount: {
@@ -14,27 +17,6 @@ const incentiveSchema = {
       minimum: 0,
       maximum: 100000,
     },
-  },
-};
-
-const positionSchema = {
-  type: 'object',
-  required: ['datetime'],
-  additionalProperties: false,
-  minProperties: 2,
-  dependencies: {
-    lat: ['lon'],
-    lon: ['lat'],
-    country: ['literal'],
-    literal: ['country'],
-  },
-  properties: {
-    datetime: { macro: 'timestamp' },
-    lat: { macro: 'lat' },
-    lon: { macro: 'lon' },
-    insee: { macro: 'insee' },
-    country: { macro: 'varchar' },
-    literal: { macro: 'longchar' },
   },
 };
 
@@ -79,20 +61,6 @@ const identitySchema = {
   },
 };
 
-const paymentSchema = {
-  type: 'object',
-  minProperties: 2,
-  additionalProperties: false,
-  properties: {
-    siret: { macro: 'siret' },
-    amount: {
-      type: 'integer',
-      minimum: 0,
-      maximum: 100000,
-    },
-  },
-};
-
 export const driverSchema = {
   type: 'object',
   required: ['identity', 'start', 'end', 'revenue', 'incentives'],
@@ -120,16 +88,17 @@ export const driverSchema = {
     payments: {
       type: 'array',
       minItems: 0,
-      items: paymentSchema,
+      maxItems: 20,
+      items: payment,
     },
     distance: {
       type: 'integer',
-      minimum: 0,
+      exclusiveMinimum: 0,
       maximum: 1000000,
     },
     duration: {
       type: 'integer',
-      minimum: 0,
+      exclusiveMinimum: 0,
       maximum: 86400,
     },
   },
@@ -167,16 +136,17 @@ export const passengerSchema = {
     payments: {
       type: 'array',
       minItems: 0,
-      items: paymentSchema,
+      maxItems: 20,
+      items: payment,
     },
     distance: {
       type: 'integer',
-      minimum: 0,
+      exclusiveMinimum: 0,
       maximum: 1000000,
     },
     duration: {
       type: 'integer',
-      minimum: 0,
+      exclusiveMinimum: 0,
       maximum: 86400,
     },
   },

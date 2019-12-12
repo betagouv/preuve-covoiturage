@@ -1,9 +1,15 @@
 export const payment = {
   type: 'object',
-  minProperties: 2,
+  required: ['index', 'siret', 'type', 'amount'],
   additionalProperties: false,
   properties: {
-    pass_type: { macro: 'varchar' },
+    index: {
+      type: 'integer',
+      minimum: 0,
+      maximum: 19,
+    },
+    siret: { macro: 'siret' },
+    type: { macro: 'varchar' },
     amount: {
       type: 'integer',
       minimum: 0,

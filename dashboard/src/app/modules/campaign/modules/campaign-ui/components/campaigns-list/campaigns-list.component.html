@@ -27,7 +27,7 @@
         </div>
         <div class="CampaignsList-item-actions">
           <button mat-button *ngIf="showEdition(campaign.status)" routerLink="/campaign/draft/{{ campaign._id }}">
-            <mat-icon matTooltip="voir le détail">edit</mat-icon>
+            <mat-icon matTooltip="voir le détail" color="primary">edit</mat-icon>
           </button>
           <button mat-button *ngIf="showValid(campaign.status)" routerLink="/campaign/{{ campaign._id }}">
             <mat-icon matTooltip="voir le détail">remove_red_eye</mat-icon>

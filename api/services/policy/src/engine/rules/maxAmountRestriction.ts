@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { HIGHEST } from '../helpers/priority';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 
@@ -28,7 +28,7 @@ export const maxAmountRestriction: ApplicableRuleInterface = {
   index: HIGHEST,
   apply(params: MaxAmountParameters) {
     return async (ctx, next) => {
-      const datetime = ctx.person.start.datetime;
+      const datetime = ctx.person.datetime;
       const [month, year] = [datetime.getMonth(), datetime.getFullYear()];
       let keyPeriod = 'global';
       if (params.period === 'month') {

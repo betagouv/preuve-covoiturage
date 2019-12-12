@@ -1,4 +1,4 @@
 export const test6Nobody = {
-  journey_id: '1234',
+  journey_id: 'test6Nobody',
   operator_class: 'A',
 };

@@ -105,6 +105,8 @@ export class BuildExportAction extends Action {
         'passenger_over_18',
         'passenger_seats',
       ],
+      // cast date to ISOString with a 15 minutes rounding (900 seconds)
+      cast: { date: (d: Date) => new Date(Math.round(d.getTime() / 900000) * 900000).toISOString() },
     });
 
     stringifier.on('readable', async () => {

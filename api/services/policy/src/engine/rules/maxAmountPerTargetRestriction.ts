@@ -1,4 +1,4 @@
-import { ApplicableRuleInterface } from '../../interfaces/RuleInterfaces';
+import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 import { HIGHEST } from '../helpers/priority';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 
@@ -40,7 +40,7 @@ export const maxAmountPerTargetRestriction: ApplicableRuleInterface = {
         return;
       }
 
-      const datetime = ctx.person.start.datetime;
+      const datetime = ctx.person.datetime;
       const [day, month, year] = [datetime.getDate(), datetime.getMonth(), datetime.getFullYear()];
       let keyPeriod = 'global';
       switch (params.period) {
@@ -55,7 +55,7 @@ export const maxAmountPerTargetRestriction: ApplicableRuleInterface = {
           break;
       }
 
-      const key = `${maxAmountPerTargetRestriction.slug}.${ctx.person.identity.phone}.${params.period}.${keyPeriod}`;
+      const key = `${maxAmountPerTargetRestriction.slug}.${ctx.person.identity_uuid}.${params.period}.${keyPeriod}`;
       const periodConsuption = ctx.meta.get(key, 0);
 
       // test if consuption > limit
