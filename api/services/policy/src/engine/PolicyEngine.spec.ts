@@ -1,16 +1,10 @@
-import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { Kernel } from '@ilos/framework';
-import { PostgresConnection } from '@ilos/connection-postgres';
-import { kernel as kernelDecorator } from '@ilos/common';
 
-import { ServiceProvider } from '../ServiceProvider';
-
-import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
+import { CampaignMetadataRepositoryProviderInterfaceResolver, CampaignInterface, MetaInterface } from '../interfaces';
 import { PolicyEngine } from './PolicyEngine';
-import { CampaignPgRepositoryProvider } from '../providers/CampaignPgRepositoryProvider';
 import { faker } from './helpers/faker';
+import { MetadataWrapper } from './MetadataWrapper';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -20,7 +14,8 @@ const end = new Date('2019-03-01');
 
 const territory = 1;
 
-const fakeCampaign = {
+const fakeCampaign: CampaignInterface = {
+  _id: 1,
   territory_id: territory,
   name: 'Ma campagne',
   description: 'Incite les covoitureurs',
@@ -48,59 +43,30 @@ const fakeCampaign = {
   ],
 };
 
-@kernelDecorator({ children: [ServiceProvider] })
-class CustomKernel extends Kernel {}
+class CampaignMetadataRepositoryProvider extends CampaignMetadataRepositoryProviderInterfaceResolver {
+  async get(id: number, key: string = 'default'): Promise<MetaInterface> {
+    return new MetadataWrapper(id, key, {});
+  }
+  async set(meta: MetaInterface): Promise<void> {
+    return;
+  }
+}
 
 describe('Policy engine', () => {
-  const kernel = new CustomKernel();
-
-  let db: PostgresConnection;
-  let engine: PolicyEngine;
-  let repository: CampaignPgRepositoryProvider;
-  let id: number;
-
-  before(async () => {
-    const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
-    process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
-    await kernel.bootstrap();
-
-    db = kernel.get(ServiceProvider).get(PostgresConnection);
-
-    engine = kernel.get(ServiceProvider).get(PolicyEngine);
-    repository = kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
-
-    const data = await repository.create(fakeCampaign);
-    id = data._id;
-  });
-
-  after(async () => {
-    await db.getClient().query({
-      text: `DELETE FROM ${repository.table} WHERE _id = $1`,
-      values: [id],
-    });
-    await kernel.shutdown();
-  });
+  const engine: PolicyEngine = new PolicyEngine(new CampaignMetadataRepositoryProvider());
 
   it('works', async () => {
-    const trip = faker.trip([], {
+    const trip = faker.trip([{}], {
       territories: [territory],
       datetime: start,
     });
 
-    const applicableCampaigns = await kernel
-      .get(ServiceProvider)
-      .get(CampaignRepositoryProviderInterfaceResolver)
-      .findApplicableCampaigns(trip.territories, trip.datetime);
-
-    expect(applicableCampaigns).to.be.an('array');
-    expect(applicableCampaigns.length).to.be.eq(1);
-
-    const result = await engine.process(trip);
+    const result = await engine.process(trip, fakeCampaign);
     expect(result).to.be.an('array');
     expect(result.length).to.eq(1);
-    expect(result[0].campaign).to.eq(id);
+    expect(result[0].policy_id).to.eq(fakeCampaign._id);
     // expect(result[0].trip).to.eq(trip._id);
     // expect(result[0].person).to.eq(trip.people[1].identity.phone);
-    expect(result[0].amount).to.eq((trip.people[1].distance / 1000) * <number>fakeCampaign.rules[0][1].parameters);
+    expect(result[0].amount).to.eq((trip.people[0].distance / 1000) * <number>fakeCampaign.rules[0][1].parameters);
   });
 });
