@@ -55,7 +55,10 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
         distinctUntilChanged(),
         switchMap(() => {
           const lowerCasedQuery = this.searchFilter ? this.searchFilter.controls.query.value.toLowerCase() : '';
-          return of(this.territories.filter((t) => `${t.name}`.toLowerCase().includes(lowerCasedQuery)));
+          const filteredTerritories = this.territories.filter((t) =>
+            `${t.name}`.toLowerCase().includes(lowerCasedQuery),
+          );
+          return of(filteredTerritories);
         }),
       )
       .pipe(takeUntil(this.destroy$))
@@ -123,7 +126,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   private updateVisibilityForm(): void {
-    const territories = this.territories;
+    const territories = this.territories.sort((a, b) => a.name.localeCompare(b.name));
     const formGroups = [];
     const territoryIds = this.checkedTerritoryIds;
     for (const territory of territories) {
