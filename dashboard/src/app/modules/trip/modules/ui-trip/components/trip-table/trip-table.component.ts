@@ -14,16 +14,7 @@ import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
   styleUrls: ['./trip-table.component.scss'],
 })
 export class TripTableComponent extends DestroyObservable implements OnInit {
-  displayedColumns: string[] = [
-    'startCity',
-    'endCity',
-    'date',
-    'campaigns',
-    'incentives',
-    'operator',
-    'class',
-    'status',
-  ];
+  @Input() displayedColumns: string[];
   @Input() data: LightTripInterface[];
   private operators: Operator[];
   private campaigns: Campaign[];
