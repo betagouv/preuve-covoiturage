@@ -23,7 +23,7 @@ context('E2E', () => {
   });
 
   before(() => {
-    cy.clearCookie('pdc-session');
+    cy.clearCookies();
   });
 
   describe('REGISTRY', () => {
