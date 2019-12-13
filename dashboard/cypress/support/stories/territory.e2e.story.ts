@@ -13,8 +13,9 @@ import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { campaignTemplateStubs } from '../stubs/campaign/campaign-template.list';
 import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypress_campaign_create_from_template';
 import { cypress_campaignEditCreatedFromTemplate } from '../reusables/campaign/cypress_campaign_edit_created_from_template';
+import { TestsInterface } from '../../config/tests.interface';
 
-export function territoryE2EStory() {
+export function territoryE2EStory(config: TestsInterface['territory']) {
   cypress_login(
     {
       email: 'territory@example.com',
@@ -24,44 +25,56 @@ export function territoryE2EStory() {
     true,
   );
 
-  // PROFILE UPDATE
-  describe('Profile update', () => {
-    cypress_profile(cypress_logging_users.territories, true);
-  });
-
-  // TERRITORY UPDATE
-  describe('Territory update', () => {
-    cypress_territory(territoryStub, true);
-  });
-
-  // // CAMPAIGNS
-  // describe('Create new campaign', () => {
-  //   cypress_campaignCreate(true);
-  // });
-  //
-  // describe('Edit campaign', () => {
-  //   cypress_campaignEdit(true);
-  // });
-  //
-  // describe('Launch campaign', () => {
-  //   cypress_campaignLaunch(true);
-  // });
-
-  const length = <number>campaignTemplateStubs.length;
-  for (let i = 0; i < length; i += 1) {
-    describe(`Create from template ${i + 1}`, () => {
-      cypress_campaignCreateFromTemplate(i, true);
+  if (config.profile) {
+    // PROFILE UPDATE
+    describe('Profile update', () => {
+      cypress_profile(cypress_logging_users.territories, true);
     });
   }
 
-  describe('Edit latest campaign from template', () => {
-    cypress_campaignEditCreatedFromTemplate();
-  });
+  if (config.territory) {
+    // TERRITORY UPDATE
+    describe('Territory update', () => {
+      cypress_territory(territoryStub, true);
+    });
+  }
 
-  // FILTERS
-  describe('Filter trips', () => {
-    cypress_filter(true, UserGroupEnum.TERRITORY);
-  });
+  if (config.newcampaign) {
+    describe('Create new campaign', () => {
+      cypress_campaignCreate(true);
+    });
+  }
+  if (config.editcampaign) {
+    describe('Edit campaign', () => {
+      cypress_campaignEdit(true);
+    });
+  }
+
+  if (config.launchcampaign) {
+    describe('Launch campaign', () => {
+      cypress_campaignLaunch(true);
+    });
+  }
+
+  if (config.newFromTemplate) {
+    const length = <number>campaignTemplateStubs.length;
+    for (let i = 0; i < length; i += 1) {
+      describe(`Create from template ${i + 1}`, () => {
+        cypress_campaignCreateFromTemplate(i, true);
+      });
+    }
+
+    describe('Edit latest campaign from template', () => {
+      cypress_campaignEditCreatedFromTemplate();
+    });
+  }
+
+  if (config.filters) {
+    // FILTERS
+    describe('Filter trips', () => {
+      cypress_filter(true, UserGroupEnum.TERRITORY);
+    });
+  }
 
   // LOGOUT
   describe('Logout', () => {
