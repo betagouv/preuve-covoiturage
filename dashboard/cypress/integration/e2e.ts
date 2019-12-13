@@ -1,12 +1,23 @@
 import { territoryE2EStory } from '../support/stories/territory.e2e.story';
 import { operatorE2EStory } from '../support/stories/operator.e2e.story';
 import { registryE2EStory } from '../support/stories/registry.e2e.story';
-import { stubCampaignTemplateList } from '../support/stubs/campaign/campaign-template.list';
+import { DEBUG_CONFIG } from '../config/debug.config';
+import { CI_CONFIG } from '../config/ci.config';
+
+const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
+const config = isLocal ? DEBUG_CONFIG.e2e : CI_CONFIG.e2e;
+
+/*
+
+  E2E requires users for registry, operator and territory :
+
+  admin@example.com / admin1234
+  territory@example.com / admin1234
+  operator@example.com / admin1234
+
+ */
 
 context('E2E', () => {
-  if (!Cypress.env('ENV_NAME') || Cypress.env('ENV_NAME') !== 'local') {
-    return;
-  }
   Cypress.Cookies.defaults({
     whitelist: 'pdc-session',
   });
@@ -15,25 +26,24 @@ context('E2E', () => {
     cy.clearCookies();
   });
 
-  beforeEach(() => {
-    cy.server();
-    cy.route({
-      method: 'POST',
-      url: '/rpc?methods=campaign:create',
-    }).as('campaignCreate');
-    // todo: TEMP in e2e until templates are in dbb
-    stubCampaignTemplateList();
-  });
-
-  describe('REGISTRY - users', () => {
-    registryE2EStory();
+  describe('REGISTRY', () => {
+    if (!('registry' in config)) {
+      return;
+    }
+    registryE2EStory(config.registry);
   });
 
   describe('TERRITORY', () => {
-    territoryE2EStory();
+    if (!('territory' in config)) {
+      return;
+    }
+    territoryE2EStory(config.territory);
   });
 
   describe('OPERATOR', () => {
-    operatorE2EStory();
+    if (!('operator' in config)) {
+      return;
+    }
+    operatorE2EStory(config.operator);
   });
 });
