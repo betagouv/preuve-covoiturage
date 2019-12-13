@@ -14,7 +14,6 @@ import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypres
 // tslint:disable-next-line:max-line-length
 import { cypress_campaignEditCreatedFromTemplate } from '../reusables/campaign/cypress_campaign_edit_created_from_template';
 import { TestsInterface } from '../../config/tests.interface';
-import { campaignTemplateStubs } from '../stubs/campaign/campaign.list';
 
 export function territoryE2EStory(config: TestsInterface['territory']) {
   cypress_login(
