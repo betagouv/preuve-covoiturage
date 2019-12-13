@@ -12,65 +12,57 @@ import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypress_campaign_create_from_template';
 import { campaignTemplateStubs } from '../stubs/campaign/campaign-template.list';
 import { cypress_export } from '../reusables/trip/cypress_trip';
+import { TestsInterface } from '../../config/tests.interface';
 
-export function testTerritoryStory(
-  profile = true,
-  territory = true,
-  filters = true,
-  newcampaign = true,
-  editcampaign = true,
-  launchcampaign = false,
-  newFromTemplate = false,
-  exportTrips = false,
-) {
+export function testTerritoryStory(config: TestsInterface['territory']) {
   // TEST PROFILE UPDATE
-  if (profile) {
+  if (config.profile) {
     describe('Profile update', () => {
       cypress_profile(cypress_logging_users.territories);
     });
   }
 
   // TEST TERRITORY UPDATE
-  if (territory) {
+  if (config.territory) {
     describe('Territory update', () => {
       cypress_territory(territoryStub);
     });
   }
 
   // TEST FILTERS
-  if (filters) {
+  if (config.filters) {
     describe('Filter trips', () => {
       cypress_filter(false, UserGroupEnum.TERRITORY);
     });
   }
 
   // TEST EXPORT
-  if (exportTrips) {
+  if (config.exportTrips) {
     describe('Export trips', () => {
       cypress_export(false);
     });
   }
 
   // TEST CAMPAIGNS
-  if (newcampaign) {
+  if (config.newcampaign) {
     describe('Create new campaign', () => {
       cypress_campaignCreate();
     });
   }
 
-  if (editcampaign) {
+  if (config.editcampaign) {
     describe('Edit latest campaign', () => {
       cypress_campaignEdit();
     });
   }
 
-  if (launchcampaign) {
+  if (config.launchcampaign) {
     describe('Launch campaign', () => {
       cypress_campaignLaunch();
     });
   }
 
-  if (newFromTemplate) {
+  if (config.newFromTemplate) {
     const length = <number>campaignTemplateStubs.length;
     // for (let i = 0; i < length; i += 1) {
     //   describe(`Create from template ${i + 1}`, () => {
