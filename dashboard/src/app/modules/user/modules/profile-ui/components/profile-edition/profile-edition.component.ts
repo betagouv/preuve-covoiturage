@@ -41,7 +41,7 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
 
   public onUpdateProfile(): void {
     const user = this.authService.user;
-
+    // initProfilFormValue
     this.userApiService
       .patch(user._id, {
         ...this.profileForm.value,
@@ -54,7 +54,12 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
 
   private initProfilFormValue(): void {
     this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      this.profileForm.setValue(this.authService.user.toFormValues());
+      const profileFormValues = this.authService.user.toFormValues();
+      delete profileFormValues.role;
+      delete profileFormValues.group;
+      delete profileFormValues.territory_id;
+      delete profileFormValues.operator_id;
+      this.profileForm.setValue(profileFormValues);
     });
   }
 
