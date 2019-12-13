@@ -180,6 +180,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
   public async searchWithCursor(params: {
     date: { start: Date; end: Date };
+    operator_territory_id?: number; // territory id for operator visibility filtering
     operator_id?: number[];
     territory_id?: number[];
   }): Promise<(count: number) => Promise<LightTripInterface[]>> {
@@ -198,6 +199,15 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     } else if (params.territory_id) {
       where = `AND ${territoryWhere}`;
       values.push(params.territory_id, params.territory_id);
+    }
+
+    // operator visibility extra filtering
+    let territoryOpVJoin = '';
+    let territoryOpVNameSelect = 'operator_name,';
+
+    if (params.operator_territory_id) {
+      territoryOpVJoin = `LEFT JOIN territory.territory_operators teop on teop.operator_id = export.operator_id::int AND teop.territory_id = '${params.operator_territory_id}'`;
+      territoryOpVNameSelect = `(CASE WHEN teop.operator_id <> 0 THEN export.operator_name ELSE '' END) as operator_name,`;
     }
 
     const query = {
@@ -226,15 +236,16 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           journey_duration,
           driver_card,
           passenger_card,
+          ${territoryOpVNameSelect}
           operator_class,
           passenger_over_18,
           passenger_seats
         FROM trip.export
+        ${territoryOpVJoin}
         WHERE $1::timestamp <= journey_start_datetime AND journey_start_datetime <= $2::timestamp
         ${where}
       `,
     };
-
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(query.text, query.values));
 

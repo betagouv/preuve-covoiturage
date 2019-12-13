@@ -6,6 +6,7 @@ export interface ParamsInterface {
       start: Date;
       end: Date;
     };
+    operator_territory_id?: number; // territory id for operator visibility filtering
     operator_id?: number[];
     territory_id?: number[];
   };

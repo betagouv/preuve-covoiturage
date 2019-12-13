@@ -77,7 +77,7 @@ services:
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
       APP_MONGO_DB: pdc-local
       APP_REDIS_URL: redis://redis:6379
-      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
+      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc_local_2
     networks:
       - front
       - back
@@ -101,7 +101,7 @@ services:
       APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
       APP_MONGO_DB: pdc-local
       APP_REDIS_URL: redis://redis:6379
-      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
+      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc_local_2
     networks:
       - front
       - back
