@@ -102,6 +102,7 @@ export class BuildExportAction extends Action {
         'driver_card',
         'passenger_card',
         'operator_class',
+        'operator_name',
         'passenger_over_18',
         'passenger_seats',
       ],
