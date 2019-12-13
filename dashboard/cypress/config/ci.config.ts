@@ -15,7 +15,7 @@ export const CI_CONFIG = {
     registry: {
       profile: true,
       filters: true,
-      users: true,
+      users: false,
       campaigns: true,
     },
     territory: {

@@ -3,9 +3,6 @@
  */
 import { TestsInterface } from './tests.interface';
 
-/**
- * Don't not commit changes to this file, to avoid conflicts
- */
 export const DEBUG_CONFIG = {
   integration: <TestsInterface>{
     operator: {
@@ -18,7 +15,7 @@ export const DEBUG_CONFIG = {
     registry: {
       profile: false,
       filters: false,
-      users: true,
+      users: false,
       campaigns: false,
     },
     territory: {
@@ -34,21 +31,21 @@ export const DEBUG_CONFIG = {
   },
   e2e: <TestsInterface>{
     operator: {
-      profile: true,
-      operator: true,
-      applications: true,
-      filters: true,
-      visibility: true,
+      profile: false,
+      operator: false,
+      applications: false,
+      filters: false,
+      visibility: false,
     },
     registry: {
-      profile: true,
-      filters: true,
+      profile: false,
+      filters: false,
       users: false,
       campaigns: false,
     },
     territory: {
-      profile: true,
-      territory: true,
+      profile: false,
+      territory: false,
       filters: false,
       newcampaign: false,
       editcampaign: false,
