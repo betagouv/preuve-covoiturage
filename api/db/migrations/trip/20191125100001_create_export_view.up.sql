@@ -31,7 +31,7 @@ CREATE MATERIALIZED VIEW trip.export AS (
     cip.over_18 as passenger_over_18,
     cpp.seats as passenger_seats
   FROM carpool.carpools as cpp
-  JOIN operator.operators as ope ON ope._id = CAST (cpp.operator_id as INTEGER)
+  JOIN operator.operators as ope ON ope._id = cpp.operator_id::int
   JOIN territory.insee AS tis ON tis._id = cpp.start_insee
   JOIN territory.insee AS tie ON tie._id = cpp.end_insee
   JOIN common.insee AS cis ON cis._id = cpp.start_insee
