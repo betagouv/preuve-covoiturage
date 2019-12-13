@@ -1,5 +1,9 @@
 ## Tests d'intégration et end2end pour le front du Registre de Preuve de Covoiturage
 
+### Config
+
+Configure the tests to run in ci.config.ts for continuous integration and debug.config.ts for local debugging.
+
 ### Run tests
 
 #### As run in circle-ci
@@ -20,7 +24,7 @@ In GUI
 
 In terminal
 
-- yarn cypress run --env ENV_NAME=local --spec cypress/integration/integration.ts
+- yarn cypress run --env ENV_NAME=local --spec cypress/integration/\*.integration.ts
 
 ### Organisation
 

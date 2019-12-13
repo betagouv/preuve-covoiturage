@@ -54,6 +54,7 @@ export class ExportAction extends Action {
 
     const email = get(context, 'call.user.email');
     const fullname = `${get(context, 'call.user.firstname', '')} ${get(context, 'call.user.lastname', '')}`;
+    params.operator_territory_id = get(context, 'call.user.territory_id');
 
     if (!email) {
       throw new InvalidParamsException();

@@ -7,6 +7,7 @@ export interface TripRepositoryInterface {
   stats(params: Partial<TripSearchInterfaceWithPagination>): Promise<StatInterface[]>;
   search(params: Partial<TripSearchInterfaceWithPagination>): Promise<ResultWithPagination<LightTripInterface>>;
   searchWithCursor(params: {
+    operator_territory_id?: number; // territory id for operator visibility filtering
     date: { start: Date; end: Date };
     operator_id?: number[];
     territory_id?: number[];
@@ -25,6 +26,7 @@ export abstract class TripRepositoryProviderInterfaceResolver implements TripRep
 
   public async searchWithCursor(params: {
     date: { start: Date; end: Date };
+    operator_territory_id?: number; // territory id for operator visibility filtering
     operator_id?: number[];
     territory_id?: number[];
   }): Promise<(count: number) => Promise<LightTripInterface[]>> {
