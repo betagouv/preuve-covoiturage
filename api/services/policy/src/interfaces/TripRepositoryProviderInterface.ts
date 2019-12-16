@@ -1,11 +1,11 @@
 import { TripInterface } from './TripInterface';
 
 export interface TripRepositoryProviderInterface {
-  getByTripId(id: number): Promise<TripInterface>;
+  findByTripId(id: string): Promise<TripInterface>;
 }
 
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryProviderInterface {
-  async getByTripId(id: number): Promise<TripInterface> {
+  async findByTripId(id: string): Promise<TripInterface> {
     throw new Error();
   }
 }

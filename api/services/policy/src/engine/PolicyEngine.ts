@@ -3,11 +3,9 @@ import { provider } from '@ilos/common';
 import {
   CampaignInterface,
   CampaignMetadataRepositoryProviderInterfaceResolver,
-  CampaignRepositoryProviderInterfaceResolver,
   IncentiveInterface,
   TripInterface,
   RuleHandlerInterface,
-  IncentiveRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 import { policies } from './rules';
 import { compose } from './helpers/compose';

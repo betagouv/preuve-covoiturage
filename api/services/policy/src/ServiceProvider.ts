@@ -24,12 +24,16 @@ import { PolicyEngine } from './engine/PolicyEngine';
 import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRepositoryProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { ApplyAction } from './actions/ApplyAction';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
+import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 
 @serviceProvider({
   config: __dirname,
+  commands: [PolicyProcessCommand],
   providers: [
     CampaignPgRepositoryProvider,
     CampaignMetadataRepositoryProvider,
+    TripRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
     IncentiveRepositoryProvider,

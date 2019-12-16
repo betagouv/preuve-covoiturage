@@ -11,6 +11,10 @@ export {
   IncentiveRepositoryProviderInterface,
   IncentiveRepositoryProviderInterfaceResolver,
 } from './IncentiveRepositoryProviderInterface';
+export {
+  TripRepositoryProviderInterface,
+  TripRepositoryProviderInterfaceResolver,
+} from './TripRepositoryProviderInterface';
 export { MetaInterface } from './MetaInterface';
 export { PersonInterface } from './PersonInterface';
 export { RuleHandlerInterface, RuleHandlerContextInterface } from './RuleHandlerInterface';

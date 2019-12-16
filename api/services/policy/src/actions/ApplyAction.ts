@@ -7,14 +7,16 @@ import { PolicyEngine } from '../engine/PolicyEngine';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   CampaignRepositoryProviderInterfaceResolver,
+  TripRepositoryProviderInterfaceResolver,
   IncentiveInterface,
 } from '../interfaces';
 
 @handler(handlerConfig)
 export class ApplyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['carpool']]];
+  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['carpool', handlerConfig.service]]];
 
   constructor(
+    private tripRepository: TripRepositoryProviderInterfaceResolver,
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
     private engine: PolicyEngine,
@@ -23,13 +25,20 @@ export class ApplyAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    // 1. Find applicable campaign for this trip
-    const campaigns = await this.campaignRepository.findApplicableCampaigns(params.territories, params.datetime);
+    // 1. Find trip
+    const trip = await this.tripRepository.findByTripId(params.trip_id);
+    if (!trip) {
+      // Throw Error ?
+      return;
+    }
 
-    // 2. For each campaign, use policy engine to generate incentive
+    // 2. Find applicable campaign for this trip
+    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.datetime);
+
+    // 3. For each campaign, use policy engine to generate incentive
     for (const campaign of campaigns) {
-      const incentives: IncentiveInterface[] = await this.engine.process(params, campaign);
-      // 3. Save it to db
+      const incentives: IncentiveInterface[] = await this.engine.process(trip, campaign);
+      // 4. Save it to db
       // TODO: add a create many method
       for (const incentive of incentives) {
         await this.incentiveRepository.create(incentive);

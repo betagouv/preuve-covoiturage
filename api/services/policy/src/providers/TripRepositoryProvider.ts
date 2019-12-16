@@ -11,7 +11,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
 
   constructor(protected connection: PostgresConnection) {}
 
-  async getByTripId(trip_id: number): Promise<TripInterface> {
+  async findByTripId(trip_id: string): Promise<TripInterface> {
     const query = {
       text: `
         SELECT
@@ -43,31 +43,35 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
 
     let hasDriver = false;
 
-    return results.rows
-      .reduce(
-        (acc, row) => {
-          const { start_territory_id, end_territory_id, ...person } = row;
+    const trip = results.rows.reduce(
+      (acc, row) => {
+        const { start_territory_id, end_territory_id, ...person } = row;
 
-          if (row.is_driver && hasDriver) {
-            return acc;
-          } else if (row.is_driver && !hasDriver) {
-            hasDriver = true;
-          }
-
-          acc.people.push(person);
-          acc.territories.add(start_territory_id);
-          acc.territories.add(end_territory_id);
-          acc.datetime =
-            acc.datetime === null ? row.datetime : acc.datetime > row.datetime ? row.datetime : acc.datetime;
-
+        if (row.is_driver && hasDriver) {
           return acc;
-        },
-        {
-          territories: new Set(),
-          datetime: null,
-          people: [],
-        },
-      )
-      .map((r) => ({ ...r, territories: [...r.territories] }));
+        }
+
+        if (row.is_driver && !hasDriver) {
+          hasDriver = true;
+        }
+
+        acc.people.push(person);
+        acc.territories.add(start_territory_id);
+        acc.territories.add(end_territory_id);
+        acc.datetime = acc.datetime === null ? row.datetime : acc.datetime > row.datetime ? row.datetime : acc.datetime;
+
+        return acc;
+      },
+      {
+        territories: new Set(),
+        datetime: null,
+        people: [],
+      },
+    );
+
+    return {
+      ...trip,
+      territories: [...trip.territories],
+    };
   }
 }
