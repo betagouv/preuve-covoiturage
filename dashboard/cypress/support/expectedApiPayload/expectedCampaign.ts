@@ -33,7 +33,7 @@ export class CypressExpectedCampaign {
     .startOf('day');
   static endMoment = Cypress.moment()
     .add(3, 'months')
-    .startOf('day');
+    .endOf('day');
 
   static maxAmount = 10000;
   static maxTrips = 50000;
@@ -57,10 +57,10 @@ export class CypressExpectedCampaign {
   static secondRestrictionAmount = 6;
 
   static get(): Campaign {
-    const campaign = new Campaign({
+    return new Campaign({
       _id: null,
-      start_date: CypressExpectedCampaign.startMoment.toDate(),
-      end_date: CypressExpectedCampaign.endMoment.toDate(),
+      start_date: <any>CypressExpectedCampaign.startMoment.toISOString(),
+      end_date: <any>CypressExpectedCampaign.endMoment.toISOString(),
       unit: IncentiveUnitEnum.EUR,
       description: CypressExpectedCampaign.description,
       name: CypressExpectedCampaign.campaignName,
@@ -159,11 +159,6 @@ export class CypressExpectedCampaign {
       parent_id: null,
       territory_id: cypress_logging_users[UserGroupEnum.TERRITORY].territory_id,
     });
-
-    campaign.start_date = <any>campaign.start_date.toISOString();
-    campaign.end_date = <any>campaign.end_date.toISOString();
-
-    return campaign;
   }
 
   static getAfterCreate(): Campaign {

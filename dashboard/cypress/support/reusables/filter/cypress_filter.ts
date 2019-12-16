@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { DEFAULT_TRIP_LIMIT } from '~/core/const/filter.const';
 
@@ -106,6 +108,17 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
 
         const filter = {
           ...expectedFilter,
+          hour: {
+            // time zone hacky fix until ddb has timezones
+            start: moment()
+              .hours(expectedFilter.hour.start)
+              .utc()
+              .hours(),
+            end: moment()
+              .hours(expectedFilter.hour.end)
+              .utc()
+              .hours(),
+          },
           skip: 0,
           limit: DEFAULT_TRIP_LIMIT,
         };

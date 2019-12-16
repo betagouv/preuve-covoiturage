@@ -2,7 +2,6 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 /// <reference types="Cypress" />
 import { cypress_addUser } from './addUser.cypress';
-import { expectedNewUsers } from '../../expectedApiPayload/expectedUser';
 import { closeNotification } from '../notification.cypress';
 
 export function cypress_users(e2e = false) {
@@ -26,10 +25,4 @@ export function cypress_users(e2e = false) {
     cypress_addUser(UserGroupEnum.OPERATOR);
   });
   closeNotification();
-
-  // update territory
-
-  // update operator
-
-  // delete user
 }
