@@ -72,8 +72,11 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   private initForm() {
     const start = moment()
       .subtract(1, 'month')
+      .startOf('day')
       .toDate();
-    const end = new Date();
+    const end = moment()
+      .endOf('day')
+      .toDate();
     this.exportFilterForm = this._fb.group({
       date: this._fb.group({
         start: [start],

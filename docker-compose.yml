@@ -11,11 +11,6 @@ services:
       - front
       - back
     environment:
-      PGHOST: postgres
-      PGPORT: 5432
-      PGDATABASE: pdc-local
-      PGUSER: postgres
-      PGPASSWORD: postgres
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_DB: 'pdc-local'
@@ -72,12 +67,6 @@ services:
     environment:
       NODE_ENV: local
       PORT: 8080
-      APP_SUPERUSER_EMAIL: admin@example.com
-      APP_SUPERUSER_PASSWORD: admin1234
-      APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
-      APP_MONGO_DB: pdc-local
-      APP_REDIS_URL: redis://redis:6379
-      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
     networks:
       - front
       - back
@@ -96,12 +85,7 @@ services:
       - 9230:9230
     env_file: ./api/.env
     environment:
-      NODE_ENV: local
       APP_WORKER: 'true'
-      APP_MONGO_URL: mongodb://mongo:mongo@mongo:27017
-      APP_MONGO_DB: pdc-local
-      APP_REDIS_URL: redis://redis:6379
-      APP_POSTGRES_URL: postgresql://postgres:postgres@postgres:5432/pdc-local
     networks:
       - front
       - back
@@ -109,21 +93,6 @@ services:
       - mongo
       - redis
       - postgres
-
-  dashboard:
-    build: './docker/dashboard'
-    tty: true
-    volumes:
-      - ./dashboard:/code
-    working_dir: '/code'
-    command: 'ng serve --host 0.0.0.0'
-    ports:
-      - 4200:4200
-    networks:
-      - front
-      - back
-    depends_on:
-      - api
 
   arena:
     build: ./docker/arena

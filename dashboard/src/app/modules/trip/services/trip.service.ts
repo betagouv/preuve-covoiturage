@@ -59,8 +59,12 @@ export class TripService {
     // map moment to date
     const params = {
       date: {
-        start: moment(filter.date.start).toDate(),
-        end: moment(filter.date.end).toDate(),
+        start: moment(filter.date.start)
+          .startOf('day')
+          .toISOString(),
+        end: moment(filter.date.end)
+          .endOf('day')
+          .toISOString(),
       },
     };
     const loggedUser = this._authService.user;
@@ -82,6 +86,12 @@ export class TripService {
     }
     if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
       params['operator_id'] = [loggedUser.operator_id];
+    }
+    if ('date' in filter && filter.date.start) {
+      params.date.start = filter.date.start.toISOString();
+    }
+    if ('date' in filter && filter.date.end) {
+      params.date.end = filter.date.end.toISOString();
     }
     this._listFilters = params;
     this._loading$.next(true);
