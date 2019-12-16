@@ -4,7 +4,7 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
-import { ScopeToSelfMiddleware } from '@pdc/provider-middleware';
+import { ScopeToSelfMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
 import { binding as createSchemaBinding } from './shared/policy/create.schema';
 import { binding as patchSchemaBinding } from './shared/policy/patch.schema';
@@ -22,19 +22,38 @@ import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryPr
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyEngine } from './engine/PolicyEngine';
 import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRepositoryProvider';
+import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
+import { ApplyAction } from './actions/ApplyAction';
+import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
+import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 
 @serviceProvider({
   config: __dirname,
+  commands: [PolicyProcessCommand],
   providers: [
     CampaignPgRepositoryProvider,
     CampaignMetadataRepositoryProvider,
+    TripRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
+    IncentiveRepositoryProvider,
   ],
   validator: [createSchemaBinding, patchSchemaBinding, launchSchemaBinding, deleteSchemaBinding, listSchemaBinding],
-  handlers: [CreateCampaignAction, PatchCampaignAction, LaunchCampaignAction, DeleteCampaignAction, ListCampaignAction],
+  handlers: [
+    CreateCampaignAction,
+    PatchCampaignAction,
+    LaunchCampaignAction,
+    DeleteCampaignAction,
+    ListCampaignAction,
+    ApplyAction,
+  ],
   connections: [[PostgresConnection, 'connections.postgres']],
-  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scope.it', ScopeToSelfMiddleware]],
+  middlewares: [
+    ['can', PermissionMiddleware],
+    ['validate', ValidatorMiddleware],
+    ['scope.it', ScopeToSelfMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
+  ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

@@ -114,7 +114,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             case 'days':
               return {
                 text: 'weekday = ANY ($#::int[])',
-                values: [filter.value],
+                values: [filter.value % 7], // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
               };
             case 'hour': {
               return {
