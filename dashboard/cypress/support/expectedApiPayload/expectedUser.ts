@@ -1,7 +1,6 @@
 import { UserInterface } from '~/core/interfaces/user/profileInterface';
-
-import { UserRoleEnum } from '../../../src/app/core/enums/user/user-role.enum';
-import { UserGroupEnum } from '../../../src/app/core/enums/user/user-group.enum';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
 
 import { operatorStub } from '../stubs/operator/operator.find';
 import { territoryStub } from '../stubs/territory/territory.find';
@@ -10,6 +9,7 @@ export const expectedNewUsers: { [key in UserGroupEnum]: UserInterface } = {
   territories: <UserInterface>{
     firstname: 'Admin',
     lastname: 'Territoire',
+    group: UserGroupEnum.TERRITORY,
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
     role: UserRoleEnum.TERRITORY_ADMIN,
@@ -18,6 +18,7 @@ export const expectedNewUsers: { [key in UserGroupEnum]: UserInterface } = {
   operators: <UserInterface>{
     firstname: 'Admin',
     lastname: 'Opérateur',
+    group: UserGroupEnum.OPERATOR,
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
     role: UserRoleEnum.OPERATOR_ADMIN,
@@ -26,6 +27,7 @@ export const expectedNewUsers: { [key in UserGroupEnum]: UserInterface } = {
   registry: <UserInterface>{
     firstname: 'Admin',
     lastname: 'Registre',
+    group: UserGroupEnum.REGISTRY,
     phone: '0612345678',
     email: 'registredepreuve@yopmail.com',
     role: UserRoleEnum.REGISTRY_ADMIN,
