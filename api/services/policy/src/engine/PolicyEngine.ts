@@ -59,7 +59,7 @@ export class PolicyEngine {
           policy_id: campaign._id,
           carpool_id: person.carpool_id,
           identity_uuid: person.identity_uuid,
-          amount: ctx.result,
+          amount: Math.round(ctx.result),
           // status
           // detail
         });

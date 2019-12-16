@@ -21,15 +21,15 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         INSERT INTO ${this.table} (
           carpool_id,
           policy_id,
-          amount
+          amount,
           status,
           meta
         ) VALUES (
-          $1,
-          $2,
-          $3,
+          $1::varchar,
+          $2::varchar,
+          $3::integer,
           $4,
-          $5
+          $5::json
         )
       `,
       values: [data.carpool_id, data.policy_id, data.amount, data.status || 'validated', data.detail || '{}'],

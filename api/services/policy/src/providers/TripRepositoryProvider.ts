@@ -17,7 +17,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         SELECT
           identity_uuid,
           carpool_id,
-          operator_id,
+          operator_id::integer,
           operator_class,
           is_over_18,
           is_driver,
