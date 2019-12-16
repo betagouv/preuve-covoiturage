@@ -140,12 +140,18 @@ workflows:
     jobs:
       - front-qa
       - front-cypress
-      - front-deploy:
+      - front-deploy-dev:
+          requires:
+            - front-qa
+          filters:
+            branches:
+              only:
+                - dev
+      - front-deploy-staging:
           requires:
             - front-qa
             - front-cypress
           filters:
             branches:
               only:
-                - dev
                 - staging
