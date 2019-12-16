@@ -28,14 +28,14 @@ export function registryE2EStory(config: TestsInterface['registry']) {
   if (config.filters) {
     // FILTERS
     describe('Filter trips', () => {
-      cypress_filter(false, UserGroupEnum.REGISTRY);
+      cypress_filter(true, UserGroupEnum.REGISTRY);
     });
   }
 
   if (config.users) {
     // USERS
     describe('Manage users', () => {
-      cypress_users();
+      cypress_users(true);
     });
   }
 
