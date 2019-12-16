@@ -15,7 +15,7 @@ export const DEBUG_CONFIG = {
     registry: {
       profile: false,
       filters: false,
-      users: false,
+      users: true,
       campaigns: false,
     },
     territory: {
@@ -31,22 +31,22 @@ export const DEBUG_CONFIG = {
   },
   e2e: <TestsInterface>{
     operator: {
-      profile: false,
-      operator: false,
-      applications: false,
-      filters: false,
-      visibility: false,
+      profile: true,
+      operator: true,
+      applications: true,
+      filters: true,
+      visibility: true,
     },
     registry: {
-      profile: false,
+      profile: true,
       filters: false,
       users: false,
       campaigns: false,
     },
     territory: {
-      profile: false,
-      territory: false,
-      filters: false,
+      profile: true,
+      territory: true,
+      filters: true,
       newcampaign: false,
       editcampaign: false,
       launchcampaign: false,
