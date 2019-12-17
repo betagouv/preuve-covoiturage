@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +10,6 @@ import { Territory } from '~/core/entities/territory/territory';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
