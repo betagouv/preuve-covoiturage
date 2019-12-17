@@ -8,8 +8,14 @@ import {
   TerritoryRepositoryProviderInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 
-import { signature as companyFindSignature } from '../shared/company/find.contract';
-import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
+import {
+  signature as companyFindSignature,
+  ParamsInterface as CompanyFindParams,
+} from '../shared/company/find.contract';
+import {
+  signature as companyFetchSignature,
+  ParamsInterface as CompanyFetchParams,
+} from '../shared/company/fetch.contract';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -47,7 +53,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return territory;
   }
 
-  async hasDoubleSiretThenFail(siret: string, id = 0): Promise<void> {
+  async hasDoubleSiretThenFail(siret: string, id: number = 0) {
     const query = {
       text: `SELECT * from ${this.table} WHERE siret = $1 AND _id != $2 `,
       values: [siret, id],
@@ -112,7 +118,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     if (data.siret) {
-      await this.kernel.notify(companyFetchSignature, data.siret, {
+      await this.kernel.call(companyFetchSignature, data.siret, {
         channel: { service: 'operator' },
         call: { user: { permissions: ['company.fetch'] } },
       });
@@ -146,7 +152,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     await this.hasDoubleSiretThenFail(data.siret, _id);
 
     if (data.siret) {
-      await this.kernel.notify(companyFetchSignature, data.siret, {
+      await this.kernel.call(companyFetchSignature, data.siret, {
         channel: { service: 'operator' },
         call: { user: { permissions: ['company.fetch'] } },
       });
