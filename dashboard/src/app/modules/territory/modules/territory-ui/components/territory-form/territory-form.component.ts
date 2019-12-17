@@ -85,9 +85,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           this.toastr.success(`${modifiedTerritory.name} a été mis à jour !`);
           this.close.emit();
         },
-        (err) => {
-          this.toastr.error(`Une erreur est survenue lors de la mis à jour du territoire`);
-        },
+        // (err) => {
+        //   this.toastr.error(`Une erreur est survenue lors de la mis à jour du territoire`);
+        // },
       );
     } else throw new Error('Territory creation not supported');
   }

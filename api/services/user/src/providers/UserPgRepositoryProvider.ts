@@ -107,6 +107,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     };
 
     const result = await this.connection.getClient().query(query);
+
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create user (${JSON.stringify(data)})`);
     }
