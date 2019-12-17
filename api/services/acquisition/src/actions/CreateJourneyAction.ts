@@ -1,5 +1,14 @@
+import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver, ParseErrorException, ConflictException } from '@ilos/common';
+import {
+  handler,
+  ContextType,
+  KernelInterfaceResolver,
+  ParseErrorException,
+  ConflictException,
+  ValidatorInterfaceResolver,
+  InvalidParamsException,
+} from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
 import { alias } from '../shared/acquisition/create.schema';
@@ -19,17 +28,39 @@ const callContext = {
 
 @handler(handlerConfig)
 export class CreateJourneyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']]];
 
   constructor(
     private kernel: KernelInterfaceResolver,
     private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
+    private validator: ValidatorInterfaceResolver,
   ) {
     super();
   }
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const now = new Date();
+
+    // validate the payload manually to log rejected journeys
+    try {
+      await this.validator.validate(params, alias);
+    } catch (e) {
+      await this.kernel.notify(
+        'acquisition:logerror',
+        {
+          operator_id: get(context, 'call.user.operator_id', 0),
+          source: 'api.v2',
+          error_message: e.message,
+          error_code: '400',
+          auth: get(context, 'call.user'),
+          headers: get(context, 'call.metadata.req.headers', {}),
+          body: params,
+        },
+        { channel: { service: 'acquisition' } },
+      );
+
+      throw new InvalidParamsException(e.message);
+    }
 
     // assign the operator from context
     const payload: JourneyInterface = this.cast(params, context.call.user.operator_id);

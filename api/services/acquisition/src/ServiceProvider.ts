@@ -4,28 +4,31 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
+import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
 import { create } from './shared/acquisition/create.schema';
 import { createLegacy } from './shared/acquisition/createLegacy.schema';
+import { logerror } from './shared/acquisition/logerror.schema';
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
+import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider';
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
-// import { LogAction } from './actions/LogAction';
+import { LogErrorAction } from './actions/LogErrorAction';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
 
 @serviceProvider({
   config: __dirname,
-  queues: ['normalization'],
-  providers: [JourneyPgRepositoryProvider],
-  validator: [['journey.createLegacy', createLegacy], ['journey.create', create]],
-  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
+  queues: ['normalization', 'acquisition'],
+  providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider],
+  validator: [['journey.createLegacy', createLegacy], ['journey.create', create], ['acquisition.logerror', logerror]],
+  middlewares: [
+    ['can', PermissionMiddleware],
+    ['validate', ValidatorMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
+  ],
   connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
   commands: [MigrateDataCommand],
-  handlers: [
-    CreateJourneyLegacyAction,
-    CreateJourneyAction,
-    // LogAction,
-  ],
+  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
