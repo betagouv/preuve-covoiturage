@@ -1,7 +1,7 @@
 export interface ApplicationInterface {
   _id?: number;
   uuid: string;
-  owner_id: string; // TODO fix to convert to number
+  owner_id: number;
   owner_service: string;
   name: string;
   permissions: string[];

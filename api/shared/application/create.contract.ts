@@ -2,7 +2,7 @@ import { ApplicationInterface } from './common/interfaces/ApplicationInterface';
 
 export interface ParamsInterface {
   name: string;
-  owner_id?: string;
+  owner_id?: number;
   owner_service?: string;
   permissions?: string[];
 }

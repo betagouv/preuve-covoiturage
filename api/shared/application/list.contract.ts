@@ -1,7 +1,7 @@
 import { ApplicationInterface } from './common/interfaces/ApplicationInterface';
 
 export interface ParamsInterface {
-  owner_id?: string;
+  owner_id?: number;
   owner_service?: string;
 }
 

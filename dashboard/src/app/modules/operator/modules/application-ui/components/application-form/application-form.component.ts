@@ -5,11 +5,11 @@ import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 
 import { User } from '~/core/entities/authentication/user';
-import { ApplicationName } from '~/core/entities/operator/applicationName';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { ApplicationStoreService } from '~/modules/operator/services/application-store.service';
 
 import { ApplicationModalComponent } from '../application-modal/application-modal.component';
-import { ApplicationService } from '../../../../services/application.service';
 
 @Component({
   selector: 'app-application-form',
@@ -25,8 +25,9 @@ export class ApplicationFormComponent extends DestroyObservable implements OnIni
   constructor(
     public dialog: MatDialog,
     private fb: FormBuilder,
-    private operatorTokenService: ApplicationService,
-    private toastr: ToastrService,
+    private _applicationStoreService: ApplicationStoreService,
+    private _toastr: ToastrService,
+    private _authService: AuthenticationService,
   ) {
     super();
   }
@@ -34,34 +35,31 @@ export class ApplicationFormComponent extends DestroyObservable implements OnIni
   ngOnInit() {
     this.initForm();
   }
-
   get controls() {
     return this.applicationForm.controls;
   }
 
   public onCreateToken(): void {
-    const applicationName = new ApplicationName(this.applicationForm.value);
-    this.operatorTokenService
-      .createApplicationAndList(applicationName)
+    const applicationName = this.applicationForm.value.name;
+    const operatorId = this._authService.user.operator_id;
+    this._applicationStoreService
+      .createApplicationAndList({
+        name: applicationName,
+        owner_id: operatorId,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
-          const token = data[0].token;
+          const token = data.token;
           this.onClose.emit();
           this.openModal({
             token,
             name: applicationName.name,
           });
-          this.toastr.success("Le token d'accès à l'API a bien été créé");
-          // todo: should be in service
-          this.operatorTokenService
-            .load()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe();
+          this._toastr.success("Le token d'accès à l'API a bien été créé");
         },
         (err) => {
           this.onClose.emit();
-          // this.toastr.error(err.message);
         },
       );
   }
