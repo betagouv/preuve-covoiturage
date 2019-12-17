@@ -11,13 +11,11 @@ import { Contact } from '~/core/entities/shared/contact';
 import { Company, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 
 @Component({
@@ -43,7 +41,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     public authService: AuthenticationService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private commonDataService: CommonDataService,
     private companyService: CompanyService,
     private territoryStore: TerritoryStoreService,
   ) {
@@ -65,8 +62,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   public onSubmit(): void {
-    const territory = new Territory();
-
     if (this.editedId) {
       const formValues = {
         ...this.territoryForm.value,
