@@ -49,7 +49,10 @@ export class MigrateDataCommand implements CommandInterface {
       .collection(options.collection);
     const writeClient = postgres.getClient();
 
-    const cursor = readClient.find({});
+    // fetch existing
+    const existing = await writeClient.query('SELECT siret FROM operator.operators');
+
+    const cursor = readClient.find({ 'company.siret': { $nin: existing.rows.map((i) => i.siret) } });
 
     // tslint:disable-next-line: no-constant-condition
     while (true) {

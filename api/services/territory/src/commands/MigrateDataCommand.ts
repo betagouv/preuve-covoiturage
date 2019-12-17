@@ -50,7 +50,13 @@ export class MigrateDataCommand implements CommandInterface {
       .collection(options.collection);
     const writeClient = postgres.getClient();
 
-    const cursor = readClient.find({ deleted_at: null });
+    // fetch existing
+    const existing = await writeClient.query('SELECT siret FROM territory.territories');
+
+    const cursor = readClient.find({
+      deleted_at: null,
+      'company.siret': { $nin: existing.rows.map((i) => i.siret) },
+    });
 
     // tslint:disable-next-line: no-constant-condition
     while (true) {
