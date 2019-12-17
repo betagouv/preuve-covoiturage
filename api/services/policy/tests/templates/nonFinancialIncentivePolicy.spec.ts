@@ -41,11 +41,11 @@ describe('Template: nonFinancialIncentivePolicy', () => {
       { policy_id, carpool_id: 3, identity_uuid: '4', amount: 10 },
       { policy_id, carpool_id: 3, identity_uuid: '5', amount: 5 },
       { policy_id, carpool_id: 4, identity_uuid: '4', amount: 30 },
-      { policy_id, carpool_id: 4, identity_uuid: '5', amount: 7.5 },
+      { policy_id, carpool_id: 4, identity_uuid: '5', amount: 8 },
       { policy_id, carpool_id: 5, identity_uuid: '4', amount: 100 },
       { policy_id, carpool_id: 5, identity_uuid: '5', amount: 50 },
       { policy_id, carpool_id: 7, identity_uuid: '4', amount: 15 },
-      { policy_id, carpool_id: 7, identity_uuid: '5', amount: 7.5 },
+      { policy_id, carpool_id: 7, identity_uuid: '5', amount: 8 },
       { policy_id, carpool_id: 8, identity_uuid: '6', amount: 15 },
       { policy_id, carpool_id: 8, identity_uuid: '7', amount: 5 },
     ]);
