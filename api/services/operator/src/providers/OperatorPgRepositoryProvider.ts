@@ -1,4 +1,4 @@
-import { provider, NotFoundException, KernelInterfaceResolver } from '@ilos/common';
+import { provider, NotFoundException, kernel, KernelInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
@@ -9,8 +9,14 @@ import {
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface';
 
-import { signature as companyFindSignature } from '../shared/company/find.contract';
-import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
+import {
+  signature as companyFindSignature,
+  ParamsInterface as CompanyFindParams,
+} from '../shared/company/find.contract';
+import {
+  signature as companyFetchSignature,
+  ParamsInterface as CompanyFetchParams,
+} from '../shared/company/fetch.contract';
 
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
@@ -75,7 +81,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
   async create(data: OperatorInterface): Promise<OperatorDbInterface> {
     if (data.siret) {
-      await this.kernel.notify(companyFetchSignature, data.siret, {
+      await this.kernel.call(companyFetchSignature, data.siret, {
         channel: { service: 'operator' },
         call: { user: { permissions: ['company.fetch'] } },
       });
@@ -155,7 +161,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
   async patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface> {
     if (patch.siret) {
-      await this.kernel.notify(companyFetchSignature, patch.siret, {
+      await this.kernel.call(companyFetchSignature, patch.siret, {
         channel: { service: 'operator' },
         call: { user: { permissions: ['company.fetch'] } },
       });
