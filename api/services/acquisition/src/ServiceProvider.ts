@@ -14,7 +14,6 @@ import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
-import { MigrateDataCommand } from './commands/MigrateDataCommand';
 
 @serviceProvider({
   config: __dirname,
@@ -27,7 +26,6 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
-  commands: [MigrateDataCommand],
   handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
