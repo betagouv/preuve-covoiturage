@@ -1,5 +1,5 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { MongoConnection } from '@ilos/connection-mongo';
+import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 @command()
@@ -61,6 +61,7 @@ export class MigrateDataCommand implements CommandInterface {
         INSERT INTO application.applications
         ( uuid, name, owner_id, owner_service, permissions, created_at )
         VALUES ( $1, $2, $3, $4, $5, $6 )
+        ON CONFLICT DO NOTHING
         `,
           values: [
             doc._id.toString(),
