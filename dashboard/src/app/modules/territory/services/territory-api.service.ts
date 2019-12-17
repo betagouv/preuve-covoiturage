@@ -29,7 +29,7 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
   protected catchSiretConflict<T>(obs$: Observable<T>): Observable<T> {
     return obs$.pipe(
       catchHttpStatus(409, (err) => {
-        this._toastr.error('Ce numéro SIRET est déjà utilisé par un autre territoire.');
+        this._toastr.error('Ce numéro de siret est déjà utilisé par un autre territoire.');
         throw err;
       }),
     );
