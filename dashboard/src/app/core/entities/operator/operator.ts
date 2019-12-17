@@ -1,5 +1,5 @@
 /* tslint:disable:variable-name*/
-import { assignOrDeleteProperties, assignOrDeleteProperty, hasOneNotEmptyProperty } from '~/core/entities/utils';
+import { assignOrDeleteProperties, assignOrDeleteProperty } from '~/core/entities/utils';
 
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IModel } from '~/core/entities/IModel';
