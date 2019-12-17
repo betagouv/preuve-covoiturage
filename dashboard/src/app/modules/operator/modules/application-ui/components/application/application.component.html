@@ -1,8 +1,8 @@
 <div class="operatorToken">
-  <div *ngIf="applicationService.loading">
+  <div *ngIf="loading">
     <mat-spinner></mat-spinner>
   </div>
-  <div class="operatorToken-list" *ngIf="!applicationService.loading && applicationService.operatorApplications">
+  <div class="operatorToken-list" *ngIf="!loading && applications">
     <app-list-item *ngFor="let application of applications">
       <div class="operatorToken-list-item">
         <div class="operatorToken-list-item-name">
@@ -10,20 +10,15 @@
         </div>
         <div class="operatorToken-list-item-createdDate">
           Créé le
-          {{ application.created_at.toLocaleDateString() }}
+          {{ application.created_at | date: 'd MMMM yyyy' }}
         </div>
         <div class="operatorToken-list-item-actions">
-          <a
-            class="link"
-            *ngIf="authenticationService.hasAnyPermission(['application.revoke'])"
-            (click)="onDelete(application)"
-            >Désactiver l'accès</a
-          >
+          <a class="link" *ngIf="canRevoke" (click)="onDelete(application)">Désactiver l'accès</a>
         </div>
       </div>
     </app-list-item>
   </div>
-  <div class="operatorToken-add" *ngIf="authenticationService.hasAnyPermission(['application.create'])">
+  <div class="operatorToken-add" *ngIf="canCreate">
     <button
       mat-flat-button
       class="large"
