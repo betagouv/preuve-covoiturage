@@ -45,8 +45,6 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
 
     const trip = results.rows.reduce(
       (acc, row) => {
-        const { start_territory_id, end_territory_id, ...person } = row;
-
         if (row.is_driver && hasDriver) {
           return acc;
         }
@@ -55,9 +53,9 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
           hasDriver = true;
         }
 
-        acc.people.push(person);
-        acc.territories.add(start_territory_id);
-        acc.territories.add(end_territory_id);
+        acc.people.push(row);
+        acc.territories.add(row.start_territory_id);
+        acc.territories.add(row.end_territory_id);
         acc.datetime = acc.datetime === null ? row.datetime : acc.datetime > row.datetime ? row.datetime : acc.datetime;
 
         return acc;
