@@ -1,4 +1,4 @@
-import { provider, NotFoundException, kernel, KernelInterfaceResolver } from '@ilos/common';
+import { provider, NotFoundException, KernelInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
