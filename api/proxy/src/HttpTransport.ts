@@ -191,11 +191,9 @@ export class HttpTransport implements TransportInterface {
           return;
         }
 
-        const response = await this.kernel.handle(makeCall('acquisition:createLegacy', req.body, { user }));
-
-        if (mapStatusCode(response) >= 400) {
-          console.log('[error - acq-v1]', this.parseErrorData(response));
-        }
+        const response = await this.kernel.handle(
+          makeCall('acquisition:createLegacy', req.body, { user, metadata: { req } }),
+        );
 
         // warn the user about this endpoint deprecation agenda
         // https://github.com/betagouv/preuve-covoiturage/issues/383
@@ -223,11 +221,9 @@ export class HttpTransport implements TransportInterface {
       '/v2/journeys',
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
-        const response = await this.kernel.handle(makeCall('acquisition:create', req.body, { user }));
-
-        if (mapStatusCode(response) >= 400) {
-          console.log('[error - acq-v2]', this.parseErrorData(response));
-        }
+        const response = await this.kernel.handle(
+          makeCall('acquisition:create', req.body, { user, metadata: { req } }),
+        );
 
         this.send(res, response);
       }),

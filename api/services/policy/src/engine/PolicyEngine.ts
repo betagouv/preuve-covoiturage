@@ -1,20 +1,19 @@
 import { provider } from '@ilos/common';
 
-import { CampaignInterface } from '../interfaces/CampaignInterface';
-import { TripInterface } from '../interfaces/TripInterface';
-import { CampaignMetadataRepositoryProviderInterfaceResolver } from '../interfaces/CampaignMetadataRepositoryProviderInterface';
-import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
-import { RuleHandlerInterface } from '../interfaces/RuleHandlerInterface';
+import {
+  CampaignInterface,
+  CampaignMetadataRepositoryProviderInterfaceResolver,
+  IncentiveInterface,
+  TripInterface,
+  RuleHandlerInterface,
+} from '../interfaces';
 import { policies } from './rules';
 import { compose } from './helpers/compose';
 import { NotApplicableTargetException } from '../exceptions/NotApplicableTargetException';
 
 @provider()
 export class PolicyEngine {
-  constructor(
-    protected campaignRepository: CampaignRepositoryProviderInterfaceResolver,
-    protected metaRepository: CampaignMetadataRepositoryProviderInterfaceResolver,
-  ) {}
+  constructor(protected metaRepository: CampaignMetadataRepositoryProviderInterfaceResolver) {}
 
   protected compose(campaign: CampaignInterface) {
     const rules = this.getOrderedApplicableRules(campaign).map(compose);
@@ -37,34 +36,37 @@ export class PolicyEngine {
     };
   }
 
-  public async process(trip: TripInterface) {
-    const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.datetime);
-    const results = [];
-
-    for (const campaign of campaigns) {
-      // build function
-      const apply = this.compose(campaign);
-      // get metadata wrapper
-      const meta = await this.metaRepository.get(campaign._id);
-
-      for (const person of trip.people) {
-        const ctx = { trip, person, meta, result: 1 };
-        const result = await apply(ctx);
-        if (result) {
-          // do something with result :)
-          results.push({
-            policy_id: campaign._id,
-            acquisition_id: person.acquisition_id,
-            identity_uuid: person.identity_uuid,
-            amount: ctx.result,
-          });
-        }
-      }
-
-      // save metadata
-      await this.metaRepository.set(meta);
+  public async process(trip: TripInterface, campaign: CampaignInterface): Promise<IncentiveInterface[]> {
+    const results: IncentiveInterface[] = [];
+    if (
+      trip.territories.indexOf(campaign.territory_id) < 0 ||
+      trip.datetime > campaign.end_date ||
+      trip.datetime < campaign.start_date
+    ) {
+      return results;
     }
 
+    const apply = this.compose(campaign);
+
+    // get metadata wrapper
+    const meta = await this.metaRepository.get(campaign._id);
+
+    for (const person of trip.people) {
+      const ctx = { trip, person, meta, result: 1 };
+      const result = await apply(ctx);
+      if (result) {
+        results.push({
+          policy_id: campaign._id,
+          carpool_id: person.carpool_id,
+          identity_uuid: person.identity_uuid,
+          amount: Math.round(ctx.result),
+          // status
+          // detail
+        });
+      }
+    }
+
+    await this.metaRepository.set(meta);
     return results;
   }
 

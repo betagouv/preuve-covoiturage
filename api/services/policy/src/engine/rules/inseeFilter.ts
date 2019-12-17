@@ -31,7 +31,6 @@ const blacklistWhitelistSchema = {
 interface InseeParamsInterface {
   start: string[];
   end: string[];
-  operator: 'and' | 'or';
 }
 
 type InseeParamsType = InseeParamsInterface[];

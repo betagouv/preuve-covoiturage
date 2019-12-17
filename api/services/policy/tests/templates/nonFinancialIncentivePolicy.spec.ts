@@ -20,9 +20,11 @@ describe('Template: nonFinancialIncentivePolicy', () => {
   const { up, down } = helper();
   let engine: PolicyEngine;
   let policy_id: number;
+  let policy: CampaignInterface;
 
   before(async () => {
-    ({ engine, policy_id } = await up(template));
+    ({ engine, policy } = await up(template));
+    policy_id = policy._id;
   });
 
   after(async () => {
@@ -32,20 +34,20 @@ describe('Template: nonFinancialIncentivePolicy', () => {
   it('should work', async () => {
     const results = [];
     for (const trip of trips) {
-      const r = await engine.process(trip);
+      const r = await engine.process(trip, policy);
       results.push(...r);
     }
     expect(results).to.deep.members([
-      { policy_id, acquisition_id: 3, identity_uuid: '4', amount: 10 },
-      { policy_id, acquisition_id: 3, identity_uuid: '5', amount: 5 },
-      { policy_id, acquisition_id: 4, identity_uuid: '4', amount: 30 },
-      { policy_id, acquisition_id: 4, identity_uuid: '5', amount: 7.5 },
-      { policy_id, acquisition_id: 5, identity_uuid: '4', amount: 100 },
-      { policy_id, acquisition_id: 5, identity_uuid: '5', amount: 50 },
-      { policy_id, acquisition_id: 7, identity_uuid: '4', amount: 15 },
-      { policy_id, acquisition_id: 7, identity_uuid: '5', amount: 7.5 },
-      { policy_id, acquisition_id: 8, identity_uuid: '6', amount: 15 },
-      { policy_id, acquisition_id: 8, identity_uuid: '7', amount: 5 },
+      { policy_id, carpool_id: 3, identity_uuid: '4', amount: 10 },
+      { policy_id, carpool_id: 3, identity_uuid: '5', amount: 5 },
+      { policy_id, carpool_id: 4, identity_uuid: '4', amount: 30 },
+      { policy_id, carpool_id: 4, identity_uuid: '5', amount: 8 },
+      { policy_id, carpool_id: 5, identity_uuid: '4', amount: 100 },
+      { policy_id, carpool_id: 5, identity_uuid: '5', amount: 50 },
+      { policy_id, carpool_id: 7, identity_uuid: '4', amount: 15 },
+      { policy_id, carpool_id: 7, identity_uuid: '5', amount: 8 },
+      { policy_id, carpool_id: 8, identity_uuid: '6', amount: 15 },
+      { policy_id, carpool_id: 8, identity_uuid: '7', amount: 5 },
     ]);
   });
 });

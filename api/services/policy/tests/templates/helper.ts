@@ -26,13 +26,13 @@ export function helper() {
 
   return {
     get,
-    async up(template: CampaignInterface): Promise<{ engine: PolicyEngine; policy_id: number }> {
+    async up(template: CampaignInterface): Promise<{ engine: PolicyEngine; policy: CampaignInterface }> {
       await kernel.bootstrap();
-      const { _id } = await get(CampaignPgRepositoryProvider).create(template);
-      policyId = _id;
+      const policy = await get(CampaignPgRepositoryProvider).create(template);
+      policyId = policy._id;
       return {
         engine: get(PolicyEngine),
-        policy_id: policyId,
+        policy,
       };
     },
     async down() {

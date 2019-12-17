@@ -1,5 +1,12 @@
+import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import {
+  handler,
+  ContextType,
+  KernelInterfaceResolver,
+  ValidatorInterfaceResolver,
+  InvalidParamsException,
+} from '@ilos/common';
 
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/createLegacy.contract';
@@ -8,13 +15,34 @@ import { mapLegacyToLatest } from '../helpers/mapLegacyToLatest';
 
 @handler(handlerConfig)
 export class CreateJourneyLegacyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']]];
 
-  constructor(private kernel: KernelInterfaceResolver) {
+  constructor(private kernel: KernelInterfaceResolver, private validator: ValidatorInterfaceResolver) {
     super();
   }
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
+    // validate the payload manually to log rejected journeys
+    try {
+      await this.validator.validate(params, alias);
+    } catch (e) {
+      await this.kernel.notify(
+        'acquisition:logerror',
+        {
+          operator_id: get(context, 'call.user.operator_id', 0),
+          source: 'api.v1',
+          error_message: e.message,
+          error_code: '400',
+          auth: get(context, 'call.user'),
+          headers: get(context, 'call.metadata.req.headers', {}),
+          body: params,
+        },
+        { channel: { service: 'acquisition' } },
+      );
+
+      throw new InvalidParamsException(e.message);
+    }
+
     // extract the SIRET to set a default sponsor in the incentives
     const operatorSiret = await this.getOperatorSiret(context.call.user.operator_id);
 
