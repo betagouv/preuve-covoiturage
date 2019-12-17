@@ -26,7 +26,7 @@ export class FindOperatorAction extends AbstractAction {
     }
     */
 
-    //operator.company = kernel.call(companyFindSignature, { siret: operator.siret },{channel: });
+    // operator.company = kernel.call(companyFindSignature, { siret: operator.siret },{channel: });
 
     return operator;
   }
