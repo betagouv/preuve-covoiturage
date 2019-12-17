@@ -10,7 +10,6 @@ import { Territory } from '~/core/entities/territory/territory';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
-import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
