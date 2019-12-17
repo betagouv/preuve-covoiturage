@@ -12,11 +12,6 @@ import { ParamsInterface } from '~/core/entities/api/shared/territory/patchConta
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { ToastrService } from 'ngx-toastr';
 
-import {
-  ParamsInterface as OTVisibityParams,
-  ResultInterface as OTVisibityResults,
-} from '../../../core/entities/api/shared/territory/listOperator.contract';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -34,7 +29,7 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
   protected catchSiretConflict<T>(obs$: Observable<T>): Observable<T> {
     return obs$.pipe(
       catchHttpStatus(409, (err) => {
-        this._toastr.error('Ce numéro SIRET est déjà utilisé par un autre territoire.');
+        this._toastr.error('Ce numéro de siret est déjà utilisé par un autre territoire.');
         throw err;
       }),
     );
@@ -46,13 +41,5 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
 
   update(item: Territory): Observable<Territory> {
     return this.catchSiretConflict(super.update(item));
-  }
-
-  getOperatorVisibility(territoryId: number): Observable<OTVisibityResults> {
-    const jsonRPCParam = new JsonRPCParam<OTVisibityParams>(`${this.method}:listOperator`, {
-      territory_id: territoryId,
-    });
-
-    return this.callOne(jsonRPCParam).pipe(map((data) => <OTVisibityResults>data.data));
   }
 }
