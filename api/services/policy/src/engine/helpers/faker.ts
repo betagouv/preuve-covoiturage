@@ -6,7 +6,7 @@ const basePerson: PersonInterface = {
   datetime,
   carpool_id: 1,
   identity_uuid: 'person',
-  is_over_18: null,
+  is_over_18: true,
   has_travel_pass: false,
   operator_id: 1,
   operator_class: 'C',
@@ -17,6 +17,8 @@ const basePerson: PersonInterface = {
   duration: 600,
   distance: 5000,
   cost: 2,
+  start_territory_id: 1,
+  end_territory_id: 1,
 };
 
 const baseTrip: TripInterface = {
