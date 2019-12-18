@@ -1,4 +1,4 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider, NotFoundException, KernelInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { OperatorInterface } from '../shared/operator/common/interfaces/OperatorInterface';
@@ -9,13 +9,22 @@ import {
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface';
 
+import {
+  signature as companyFindSignature,
+  ParamsInterface as CompanyFindParams,
+} from '../shared/company/find.contract';
+import {
+  signature as companyFetchSignature,
+  ParamsInterface as CompanyFetchParams,
+} from '../shared/company/fetch.contract';
+
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
 })
 export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderInterface {
   public readonly table = 'operator.operators';
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
   async find(id: number): Promise<OperatorDbInterface> {
     const query = {
@@ -32,6 +41,15 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
 
     if (result.rowCount === 0) {
       return undefined;
+    }
+
+    const operator = result.rows[0];
+    if (operator.siret) {
+      operator.company = await this.kernel.call(
+        companyFindSignature,
+        { siret: operator.siret },
+        { channel: { service: 'operator' }, call: { user: { permissions: ['company.find'] } } },
+      );
     }
 
     return result.rows[0];
@@ -62,6 +80,13 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   async create(data: OperatorInterface): Promise<OperatorDbInterface> {
+    if (data.siret) {
+      await this.kernel.notify(companyFetchSignature, data.siret, {
+        channel: { service: 'operator' },
+        call: { user: { permissions: ['company.fetch'] } },
+      });
+    }
+
     const query = {
       text: `
         INSERT INTO ${this.table} (
@@ -123,6 +148,7 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   // TODO
   async update(data: OperatorDbInterface): Promise<OperatorDbInterface> {
     const { _id, ...patch } = data;
+
     return this.patch(_id, {
       company: '{}',
       address: '{}',
@@ -134,6 +160,13 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
   }
 
   async patch(id: number, patch: { [k: string]: any }): Promise<OperatorDbInterface> {
+    if (patch.siret) {
+      await this.kernel.notify(companyFetchSignature, patch.siret, {
+        channel: { service: 'operator' },
+        call: { user: { permissions: ['company.fetch'] } },
+      });
+    }
+
     const updatablefields = [
       'name',
       'legal_name',
