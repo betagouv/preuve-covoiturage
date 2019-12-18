@@ -1,11 +1,13 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil, tap, mergeMap, map } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 
 import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-operators-autocomplete',
@@ -25,9 +27,12 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   // if different from default
   @Input() fieldName = 'operatorIds';
 
-  @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
+  @Input() onlyVisible = false;
 
-  constructor(private commonDataService: CommonDataService) {
+  @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
+  protected visibleOperatorIds: number[] | null;
+
+  constructor(private commonDataService: CommonDataService, private territoryApiService: TerritoryApiService) {
     super();
   }
 
@@ -71,6 +76,18 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   private loadOperators() {
+    this.commonDataService.currentTerritory$
+      .pipe(
+        mergeMap((userTerritory) =>
+          userTerritory ? this.territoryApiService.getOperatorVisibility(userTerritory._id) : of(null),
+        ),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((visibleOperators) => {
+        this.visibleOperatorIds = visibleOperators;
+        this.filterOperators();
+      });
+
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators
         ? operators.map((operator) => ({
@@ -86,7 +103,9 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     const selectedOperatorIds = this.operatorIdsControl.value || [];
     this.filteredOperators = this.operators.filter(
       (operator) =>
-        selectedOperatorIds.indexOf(operator._id) === -1 && operator.name.toLowerCase().includes(literal.toLowerCase()),
+        (!this.visibleOperatorIds || this.visibleOperatorIds.indexOf(operator._id) !== -1) &&
+        selectedOperatorIds.indexOf(operator._id) === -1 &&
+        operator.name.toLowerCase().includes(literal.toLowerCase()),
     );
   }
 }
