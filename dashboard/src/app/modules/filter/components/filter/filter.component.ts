@@ -15,6 +15,7 @@ import { TownInterface } from '~/core/interfaces/geography/townInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
+import { DAYS } from '~/core/const/days.const';
 
 @Component({
   selector: 'app-filter',
@@ -50,7 +51,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   public classes = TRIP_RANKS;
   public tripStatusList = TRIP_STATUS;
 
-  public days: WeekDay[] = [0, 1, 2, 3, 4, 5, 6];
+  public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
 
   @Input() set showFilter(showFilter: boolean) {
     this._showFilter = showFilter;
@@ -121,9 +122,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
 
   public getDaysFrench(day: WeekDay) {
-    return moment()
-      .isoWeekday(day + 1)
-      .format('dddd');
+    return DAYS[day];
   }
 
   public get hasGroupOperatorOrRegistry(): boolean {
