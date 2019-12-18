@@ -10,10 +10,11 @@ import { cypress_logging_users } from '../stubs/auth/login';
 import { cypress_territory } from '../reusables/territory/cypress_territory';
 import { territoryStub } from '../stubs/territory/territory.find';
 import { cypress_logout } from '../reusables/auth/cypress_logout';
-import { campaignTemplateStubs } from '../stubs/campaign/campaign-template.list';
 import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypress_campaign_create_from_template';
+// tslint:disable-next-line:max-line-length
 import { cypress_campaignEditCreatedFromTemplate } from '../reusables/campaign/cypress_campaign_edit_created_from_template';
 import { TestsInterface } from '../../config/tests.interface';
+import { campaignTemplateStubs } from '../stubs/campaign/campaign.list';
 
 export function territoryE2EStory(config: TestsInterface['territory']) {
   cypress_login(

@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, take, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { pipe } from 'rxjs';
 
 import { Territory } from '~/core/entities/territory/territory';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DialogService } from '~/core/services/dialog.service';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-campaign-draft-view',
@@ -23,12 +23,12 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   campaignUx: CampaignUx;
 
   constructor(
+    private _authService: AuthenticationService,
     private _commonDataService: CommonDataService,
     private _dialog: DialogService,
     private _router: Router,
     private _route: ActivatedRoute,
-    private _campaignService: CampaignService,
-    private _campaignFormatService: CampaignFormatingService, // todo: refactor, this should not be need,
+    private _campaignStoreService: CampaignStoreService,
     private _toastr: ToastrService,
   ) {
     super();
@@ -41,6 +41,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
       if (notFound) {
         this._router.navigate(['/404']);
       } else {
+        // tslint:disable-next-line:no-debugger
         this.loadCampaign(Number(params.get('campaignId')));
       }
     });
@@ -52,27 +53,30 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   }
 
   private loadCampaign(campaignId: number) {
-    if (!this._campaignService.campaignsLoaded) {
-      this._campaignService
-        .load()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe();
-    }
-    this._campaignService.entities$
+    this._campaignStoreService
+      .selectEntityByIdFromList(campaignId)
       .pipe(
-        filter((campaigns) => campaigns.length > 0),
+        take(1),
         takeUntil(this.destroy$),
       )
-      .subscribe((campaigns: Campaign[]) => {
-        const foundCampaign = campaigns.filter((campaign) => campaign._id === campaignId)[0];
-        if (foundCampaign) {
-          this.campaignUx = this._campaignFormatService.toCampaignUxFormat(foundCampaign);
-        } else {
+      .subscribe(
+        (campaign: Campaign) => {
+          console.log({ campaign });
+          this.campaignUx = campaign.toFormValues();
+        },
+        (err) => {
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });
-        }
-      });
+        },
+      );
+
+    if (!this._campaignStoreService.loaded) {
+      if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+        this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+      }
+      this._campaignStoreService.loadList();
+    }
   }
 
   launchCampaign(id: number): void {
@@ -82,7 +86,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
     //   .pipe(takeUntil(this.destroy$))
     //   .subscribe((result) => {
     //     if (result) {
-    //       this._campaignService
+    //       this._campaignStoreService
     //         .launch(id)
     //         .pipe(takeUntil(this.destroy$))
     //         .subscribe(

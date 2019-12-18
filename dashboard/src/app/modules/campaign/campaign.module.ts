@@ -21,9 +21,9 @@ import { CampaignMenuComponent } from './components/campaign-menu/campaign-menu.
 import { CampaignsListComponent } from './modules/campaign-ui/components/campaigns-list/campaigns-list.component';
 import { CampaignCreateEditComponent } from './pages/campaign-create-edit/campaign-create-edit.component';
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
-import { CampaignTemplatesComponent } from './components/campaign-form/step-1/campaign-templates/campaign-templates.component';
+import { CampaignTemplatesComponent } from './components/campaign-form/step-1/campaign-templates.component';
 import { FiltersFormComponent } from './components/campaign-form/step-2/filters-form.component';
-import { SummaryFormComponent } from './components/campaign-form/step-4/summary-form/summary-form.component';
+import { SummaryFormComponent } from './components/campaign-form/step-4/summary-form.component';
 // tslint:disable-next-line:max-line-length
 import { RestrictionFormComponent } from './components/campaign-form/step-3/restriction-form/restriction-form.component';
 // tslint:disable-next-line:max-line-length

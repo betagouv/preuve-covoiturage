@@ -12,7 +12,7 @@ import {
 
 export class CampaignUx {
   public _id: number;
-  public territory_id?: number;
+  public territory_id: number;
   public name: string;
   public description: string;
   public start: Moment;
@@ -43,6 +43,7 @@ export class CampaignUx {
     obj: CampaignUXInterface = {
       _id: null,
       name: '',
+      territory_id: null,
       description: '',
       unit: null,
       start: null,

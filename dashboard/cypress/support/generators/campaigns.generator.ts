@@ -1,7 +1,11 @@
 import * as moment from 'moment';
 
-import { CampaignInterface } from '../../../src/app/core/interfaces/campaign/api-format/campaignInterface';
-import { Campaign } from '../../../src/app/core/entities/campaign/api-format/campaign';
+import {
+  AmountRetributionRule,
+  ForPassengerRetributionRule,
+} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/CampaignInterface';
 
 import {
   DistanceRangeGlobalRetributionRule,
@@ -14,14 +18,8 @@ import {
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import { CampaignStatusEnum } from '../../../src/app/core/enums/campaign/campaign-status.enum';
 import { TripRankEnum } from '../../../src/app/core/enums/trip/trip-rank.enum';
-
 import { operatorStubs } from '../stubs/operator/operator.list';
 import { territoryStub } from '../stubs/territory/territory.find';
-import {
-  AmountRetributionRule,
-  ForPassengerRetributionRule,
-} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 
 export class CampaignsGenerator {
   private static get status(): CampaignStatusEnum[] {
@@ -37,7 +35,7 @@ export class CampaignsGenerator {
     return Math.floor(Math.random() * CampaignsGenerator.status.length);
   }
 
-  static get list(): Campaign[] {
+  static get list(): CampaignInterface[] {
     const campaignMocks = [...Array(20)].map(
       (val, idx) =>
         <CampaignInterface>{
