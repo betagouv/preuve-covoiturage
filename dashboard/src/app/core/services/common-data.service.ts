@@ -7,11 +7,12 @@ import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
 import { Territory } from '~/core/entities/territory/territory';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
+import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -67,7 +68,7 @@ export class CommonDataService {
   constructor(
     private operatorApiService: OperatorApiService,
     private territoryApiService: TerritoryApiService,
-    private campaignService: CampaignService,
+    private campaignApiService: CampaignApiService,
     private authenticationService: AuthenticationService,
     private jsonRPCService: JsonRPCService,
   ) {
@@ -109,7 +110,7 @@ export class CommonDataService {
   }
 
   loadCampaigns(): Observable<Campaign[]> {
-    return this.campaignService.load().pipe(
+    return this.campaignApiService.getList().pipe(
       map((campaigns) => campaigns.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1))),
       tap((campaigns) => this._campaigns$.next(campaigns)),
     );
@@ -122,7 +123,7 @@ export class CommonDataService {
           const params = [this.operatorApiService.paramGetList(), this.territoryApiService.paramGetList()];
 
           if (this.authenticationService.hasAnyPermission(['incentive-campaign.list'])) {
-            params.push(this.campaignService.getListJSONParam());
+            params.push(this.campaignApiService.paramGetList());
           }
 
           if (user.territory_id) {
@@ -173,7 +174,9 @@ export class CommonDataService {
 
         if (campaignsR && campaignsR.data) {
           this._campaigns$.next(
-            campaignsR.data.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1)),
+            campaignsR.data
+              .filter((campaign) => CampaignStatusEnum.TEMPLATE !== campaign.status)
+              .sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1)),
           );
         }
 

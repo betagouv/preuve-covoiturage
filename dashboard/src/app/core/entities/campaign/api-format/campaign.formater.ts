@@ -1,21 +1,8 @@
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { Injectable } from '@angular/core';
 
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import {
-  AmountRetributionRule,
-  ForDriverRetributionRule,
-  ForPassengerRetributionRule,
-  FreeRetributionRule,
-  PerKmRetributionRule,
-  PerPassengerRetributionRule,
-  RangeRetributionRule,
-  RetributionRuleInterface,
-  RetributionRulesSlugEnum,
-  RetributionRuleType,
-} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import {
   BlackListGlobalRetributionRule,
   BlackListWhiteListGlobalRetributionRuleType,
@@ -37,19 +24,26 @@ import {
   RestrictionUxInterface,
   RetributionUxInterface,
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
+import {
+  AmountRetributionRule,
+  ForDriverRetributionRule,
+  ForPassengerRetributionRule,
+  FreeRetributionRule,
+  PerKmRetributionRule,
+  PerPassengerRetributionRule,
+  RangeRetributionRule,
+  RetributionRuleInterface,
+  RetributionRulesSlugEnum,
+  RetributionRuleType,
+} from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
+import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
+import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/CampaignInterface';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class CampaignFormatingService {
-  constructor(private _authService: AuthenticationService) {}
-
-  public toCampaignUxFormat(campaign: Campaign): CampaignUx {
+export class CampaignFormater {
+  static toUx(campaign: Campaign): CampaignUx {
     const { _id, name, description, territory_id, status, unit, parent_id, ui_status } = campaign;
 
     const campaignUx = <CampaignUx>{
@@ -295,13 +289,14 @@ export class CampaignFormatingService {
     return new CampaignUx(campaignUx);
   }
 
-  public toCampaignFormat(campaignUx: CampaignUx): Campaign {
+  static toApi(campaignUx: CampaignUx): CampaignInterface {
     const {
       _id,
       name,
       description,
       status,
       unit,
+      territory_id,
       parent_id,
       ui_status,
       filters,
@@ -311,8 +306,6 @@ export class CampaignFormatingService {
       only_adult,
       restrictions,
     } = campaignUx;
-
-    let { territory_id } = campaignUx;
 
     // GLOBAL RULES
     const campaignGlobalRetributionRules: GlobalRetributionRuleType[] = [];
@@ -462,17 +455,17 @@ export class CampaignFormatingService {
       }
     });
 
-    // set territory of user
-    if (this._authService.user.territory_id) {
-      territory_id = this._authService.user.territory_id;
-    }
-
     // UI_STATUS
     ui_status.for_passenger = !!ui_status.for_passenger;
     ui_status.for_driver = !!ui_status.for_driver;
     ui_status.for_trip = !!ui_status.for_trip;
 
-    const campaign = new Campaign({
+    // //  remove empty or null values
+    // if (campaign.parent_id === null) {
+    //   delete campaign.parent_id;
+    // }
+
+    return {
       _id,
       name,
       description,
@@ -486,13 +479,6 @@ export class CampaignFormatingService {
       // format dates : moment --> Date
       start_date: <any>campaignUx.start.startOf('day').toISOString(),
       end_date: <any>campaignUx.end.endOf('day').toISOString(),
-    });
-
-    //  remove empty or null values
-    if (campaign.parent_id === null) {
-      delete campaign.parent_id;
-    }
-
-    return campaign;
+    };
   }
 }

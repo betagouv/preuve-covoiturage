@@ -52,8 +52,6 @@ export function cypress_campaignCreateFromTemplate(templateIndex: number, e2e = 
   campaignThirdStepClickNextStep();
 
   it('clicks button to save campaign', () => {
-    cy.pause();
-
     cy.get('.SummaryForm .SummaryForm-actions button:nth-of-type(1)').click();
 
     if (!e2e) {

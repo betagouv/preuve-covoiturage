@@ -1,13 +1,24 @@
 import { Moment } from 'moment';
 
 import { IncentiveFiltersUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
-import { BaseCampaignInterface } from '~/core/interfaces/campaign/api-format/campaignInterface';
 import { RestrictionPeriodsEnum } from '~/core/enums/campaign/restrictions.enum';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
+import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 
-export interface CampaignUXInterface extends BaseCampaignInterface {
+export interface CampaignUXInterface {
   _id: number;
   start: Moment;
   end: Moment;
+  territory_id: number;
+  name: string;
+  description: string;
+  status: CampaignStatusEnum;
+  unit: IncentiveUnitEnum;
+  parent_id: number;
+  amount_spent?: number;
+  trips_number?: number;
+  ui_status: UiStatusInterface;
   filters: IncentiveFiltersUxInterface;
   retributions: RetributionUxInterface[];
   max_trips: number;

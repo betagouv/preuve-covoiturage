@@ -3,6 +3,9 @@
  */
 import { TestsInterface } from './tests.interface';
 
+/**
+ * Don't not commit changes to this file, to avoid conflicts
+ */
 export const DEBUG_CONFIG = {
   integration: <TestsInterface>{
     operator: {
@@ -39,14 +42,14 @@ export const DEBUG_CONFIG = {
     },
     registry: {
       profile: true,
-      filters: false,
+      filters: true,
       users: false,
       campaigns: false,
     },
     territory: {
       profile: true,
       territory: true,
-      filters: true,
+      filters: false,
       newcampaign: false,
       editcampaign: false,
       launchcampaign: false,
