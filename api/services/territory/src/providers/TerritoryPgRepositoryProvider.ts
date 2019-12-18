@@ -118,7 +118,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     if (data.siret) {
-      await this.kernel.call(companyFetchSignature, data.siret, {
+      await this.kernel.notify(companyFetchSignature, data.siret, {
         channel: { service: 'operator' },
         call: { user: { permissions: ['company.fetch'] } },
       });
@@ -152,7 +152,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     await this.hasDoubleSiretThenFail(data.siret, _id);
 
     if (data.siret) {
-      await this.kernel.call(companyFetchSignature, data.siret, {
+      await this.kernel.notify(companyFetchSignature, data.siret, {
         channel: { service: 'operator' },
         call: { user: { permissions: ['company.fetch'] } },
       });

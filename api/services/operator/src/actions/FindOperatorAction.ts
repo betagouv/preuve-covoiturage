@@ -18,19 +18,6 @@ export class FindOperatorAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const operator = this.operatorRepository.find(params._id);
-
-    /*
-
-    console.log('operator.siret : ', operator.siret);
-    if (operator.siret) {
-      operator.company = kernel.call(companyFindSignature, { siret: operator.siret },{channel: });
-      console.log('operator.company : ', operator.company);
-    }
-    */
-
-    // operator.company = kernel.call(companyFindSignature, { siret: operator.siret },{channel: });
-
-    return operator;
+    return this.operatorRepository.find(params._id);
   }
 }
