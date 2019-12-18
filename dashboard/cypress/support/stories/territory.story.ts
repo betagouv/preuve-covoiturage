@@ -12,6 +12,7 @@ import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypress_campaign_create_from_template';
 import { cypress_export } from '../reusables/trip/cypress_trip';
 import { TestsInterface } from '../../config/tests.interface';
+import { campaignTemplateStubs } from '../stubs/campaign/campaign.list';
 
 export function testTerritoryStory(config: TestsInterface['territory']) {
   // TEST PROFILE UPDATE
