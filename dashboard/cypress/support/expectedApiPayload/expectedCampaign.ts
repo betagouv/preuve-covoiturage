@@ -76,7 +76,7 @@ export class CypressExpectedCampaign {
             end: CypressExpectedCampaign.secondTimeEnd,
           },
         ]),
-        new WeekdayRetributionRule([0]),
+        new WeekdayRetributionRule([1]),
         new OperatorIdsGlobalRetributionRule([operatorStubs[0]._id]),
         new DistanceRangeGlobalRetributionRule({
           min: 2000,
