@@ -8,6 +8,7 @@ import { OperatorNameInterface } from '~/core/interfaces/operator/operatorInterf
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-operators-autocomplete',
@@ -30,7 +31,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   @Input() onlyVisible = false;
 
   @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
-  protected visibleOperatorIds: number[] | null = null;
+  protected visibleOperatorIds: number[] | null;
 
   constructor(private commonDataService: CommonDataService, private territoryApiService: TerritoryApiService) {
     super();
@@ -76,6 +77,18 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   private loadOperators() {
+    this.commonDataService.currentTerritory$
+      .pipe(
+        mergeMap((userTerritory) =>
+          userTerritory ? this.territoryApiService.getOperatorVisibility(userTerritory._id) : of(null),
+        ),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((visibleOperators) => {
+        this.visibleOperatorIds = visibleOperators;
+        this.filterOperators();
+      });
+
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators
         ? operators.map((operator) => ({
