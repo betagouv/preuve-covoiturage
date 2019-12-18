@@ -161,7 +161,6 @@ link:  ${link}
     const user = await this.userRepository.findByEmail(email);
 
     const link = this.getUrl(url, user.email, token);
-    this.log('Create user', user.email, token, link);
     await this.sendMail({
       link,
       email,
