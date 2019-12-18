@@ -26,6 +26,7 @@ export class JsonRpcCrud<
   EntityT extends IModel,
   ListEntityT extends IModel = EntityT,
   IPatchT = any,
+  IDeleteT = any,
   IGetT = any,
   IGetListT = any,
   ICreateT = EntityT,

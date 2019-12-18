@@ -9,7 +9,7 @@ import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 import { operatorStubs } from '../stubs/operator/operator.list';
 import { cypress_logging_users } from '../stubs/auth/login';
-import { campaignTemplateStubs } from '../stubs/campaign/campaign-template.list';
+import { campaignTemplateStubs } from '../stubs/campaign/campaign.list';
 
 export class CypressExpectedTemplates {
   static startMoment = Cypress.moment()
@@ -17,7 +17,7 @@ export class CypressExpectedTemplates {
     .startOf('day');
   static endMoment = Cypress.moment()
     .add(3, 'months')
-    .startOf('day');
+    .endOf('day');
 
   static maxAmount = 10000;
   static maxTrips = 50000;
@@ -27,8 +27,8 @@ export class CypressExpectedTemplates {
       (template) =>
         new Campaign({
           ...template,
-          start_date: <any>CypressExpectedTemplates.startMoment.toDate().toISOString(),
-          end_date: <any>CypressExpectedTemplates.endMoment.toDate().toISOString(),
+          start_date: <any>CypressExpectedTemplates.startMoment.toISOString(),
+          end_date: <any>CypressExpectedTemplates.endMoment.toISOString(),
           global_rules: [
             ...template.global_rules,
             new MaxAmountRetributionRule(CypressExpectedTemplates.maxAmount),
@@ -44,7 +44,7 @@ export class CypressExpectedTemplates {
 
   static getAfterCreate(index: number): Campaign {
     const afterCreationCampaign = CypressExpectedTemplates.get()[index];
-    afterCreationCampaign._id = '5d8a3f7c6caa8c7f95a364f7';
+    afterCreationCampaign._id = 541;
     return afterCreationCampaign;
   }
 }

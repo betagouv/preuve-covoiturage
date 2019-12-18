@@ -27,23 +27,23 @@
     </mat-form-field>
     <div class="SummaryForm-actions">
       <button
-        *ngIf="campaignForm.controls._id.value"
+        *ngIf="!isCreating"
         [appShowSpinner]="loading"
         mat-flat-button
         class="large"
         color="primary"
-        (click)="saveCampaign(false)"
+        (click)="saveCampaign()"
         [disabled]="!campaignForm.valid"
       >
         Enregistrer
       </button>
       <button
-        *ngIf="!campaignForm.controls._id.value"
+        *ngIf="isCreating"
         [appShowSpinner]="loading"
         mat-flat-button
         class="large"
         color="primary"
-        (click)="saveCampaign(false)"
+        (click)="saveCampaign()"
         [disabled]="!campaignForm.valid"
       >
         Enregistrer en brouillon

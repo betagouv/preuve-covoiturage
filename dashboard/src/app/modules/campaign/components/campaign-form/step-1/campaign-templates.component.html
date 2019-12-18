@@ -1,6 +1,6 @@
 <div class="CampaignTemplates">
   <h2>Choisissez l'objectif de votre campagne</h2>
-  <div class="CampaignTemplates--loading" *ngIf="campaignService.loading && !templates">
+  <div class="CampaignTemplates--loading" *ngIf="loading && !templates">
     <mat-spinner></mat-spinner>
   </div>
   <div class="CampaignTemplates-missingMessage" *ngIf="templates && templates.length === 0">
