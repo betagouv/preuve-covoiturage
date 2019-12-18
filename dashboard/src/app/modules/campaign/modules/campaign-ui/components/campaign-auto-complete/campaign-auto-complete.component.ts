@@ -68,10 +68,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
     this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.campaigns = campaigns
         ? campaigns
-            .filter(
-              (campaign) =>
-                campaign.status === CampaignStatusEnum.VALIDATED || campaign.status === CampaignStatusEnum.ARCHIVED,
-            )
+            .filter((campaign) => campaign.status === CampaignStatusEnum.VALIDATED || CampaignStatusEnum.ARCHIVED)
             .map((campaign: Campaign) => ({
               _id: campaign._id,
               name: campaign.name,
