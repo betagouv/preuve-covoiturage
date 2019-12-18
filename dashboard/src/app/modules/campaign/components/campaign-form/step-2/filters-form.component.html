@@ -21,14 +21,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Jours de la semaine</mat-label>
             <mat-select multiple formControlName="weekday" required>
-              <!--              todo: use enum WeekDay -->
-              <mat-option [value]="0">Lundi</mat-option>
-              <mat-option [value]="1">Mardi</mat-option>
-              <mat-option [value]="2">Mercredi</mat-option>
-              <mat-option [value]="3">Jeudi</mat-option>
-              <mat-option [value]="4">Vendredi</mat-option>
-              <mat-option [value]="5">Samedi</mat-option>
-              <mat-option [value]="6">Dimanche</mat-option>
+              <mat-option *ngFor="let day of days" [value]="day">{{ getDaysFrench(day) }}</mat-option>
             </mat-select>
             <mat-error *ngIf="controls.weekday.hasError('required')">
               Les jours de la semaine sont obligatoires.
