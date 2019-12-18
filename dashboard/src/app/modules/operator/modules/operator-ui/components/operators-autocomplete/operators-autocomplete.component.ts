@@ -30,7 +30,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   @Input() onlyVisible = false;
 
   @ViewChild('operatorInput', { static: false }) operatorInput: ElementRef;
-  protected visibleOperatorIds: number[] | null;
+  protected visibleOperatorIds: number[] | null = null;
 
   constructor(private commonDataService: CommonDataService, private territoryApiService: TerritoryApiService) {
     super();
@@ -87,16 +87,17 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
         this.visibleOperatorIds = visibleOperators;
         this.filterOperators();
       });
-
-    this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
-      this.operators = operators
-        ? operators.map((operator) => ({
-            _id: operator._id,
-            name: operator.name,
-          }))
-        : [];
-      this.filterOperators();
-    });
+    if (this.onlyVisible) {
+      this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
+        this.operators = operators
+          ? operators.map((operator) => ({
+              _id: operator._id,
+              name: operator.name,
+            }))
+          : [];
+        this.filterOperators();
+      });
+    }
   }
 
   private filterOperators(literal: string = ''): void {
