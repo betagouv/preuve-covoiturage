@@ -63,7 +63,7 @@ class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operat
     const val: any = fullFormMode
       ? {
           ...this,
-          name: this.name ? this.name : '',
+          name: this.name || '',
           legal_name: this.legal_name || '',
           company: { ...new Company(this.company).toFormValues(), siret: this.siret },
           contacts: new Contacts(this.contacts).toFormValues(),
