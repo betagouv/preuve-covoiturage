@@ -3,19 +3,21 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
-import * as _ from 'lodash';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
 
 @Component({
   selector: 'app-campaign-form',
@@ -47,10 +49,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
 
   constructor(
+    private _authService: AuthenticationService,
     private _dialog: DialogService,
     private _formBuilder: FormBuilder,
-    private _campaignService: CampaignService,
-    private _campaignFormatService: CampaignFormatingService,
+    private _campaignApiService: CampaignApiService,
+    private _campaignStoreService: CampaignStoreService,
     private _toastr: ToastrService,
     private _router: Router,
   ) {
@@ -59,18 +62,18 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.initForms();
-
     if (this.campaignId) {
       this.loadCampaign(this.campaignId);
     } else if (this.parentId) {
       this.creationFromParentId = true;
-      // todo: get date range
-      // todo: reproduce same date range in duplicate
+      // todo: get date range and reproduce same date range in duplicate
       this.loadCampaign(this.parentId, true);
     } else {
+      this._campaignStoreService.selectNew();
       this.creationFromScratch = true;
       this.loading = false;
     }
+    this.initCampaigns();
   }
 
   public get controls() {
@@ -78,7 +81,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   get showFirstPageNextStep() {
-    return this.campaignFormGroup.controls.parent_id.value || this.campaignFormGroup.controls._id.value;
+    return this.campaignFormGroup.controls.parent_id.value || this.campaignId;
   }
 
   get canGoToThirdStep(): boolean {
@@ -114,25 +117,30 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   saveCampaign() {
-    const campaignUx = _.cloneDeep(this.campaignFormGroup.getRawValue());
-    const campaign: Campaign = this._campaignFormatService.toCampaignFormat(campaignUx);
-    if (campaign._id) {
-      this.patchCampaign(campaign);
+    const formValues = this.campaignFormGroup.getRawValue();
+
+    // get territory of user
+    if (this._authService.user.territory_id) {
+      formValues.territory_id = this._authService.user.territory_id;
+    }
+
+    if (this.creationFromScratch || this.creationFromParentId) {
+      this.createCampaign(formValues);
     } else {
-      this.createCampaign(campaign);
+      const campaign = new Campaign();
+      this.patchCampaign(campaign.toCampaignPatch(formValues));
     }
   }
 
-  private patchCampaign(campaign: Campaign) {
-    this._campaignService
-      .patchList(campaign)
+  private patchCampaign(params: CampaignInterface) {
+    this._campaignStoreService
+      .patchSelected(params)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
-          const campaignPatched = data[0];
           this.requestLoading = false;
-          this._router.navigate([`/campaign/draft/${campaign._id}`]).then(() => {
-            this._toastr.success(`La campagne ${campaignPatched.name} a bien été mise à jour`);
+          this._router.navigate([`/campaign/draft/${this.campaignId}`]).then(() => {
+            this._toastr.success(`La campagne ${params.name} a bien été mise à jour`);
           });
         },
         (error) => {
@@ -143,15 +151,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private createCampaign(campaign: Campaign) {
-    this._campaignService
-      .createList(campaign)
+  private createCampaign(formValues: CampaignUx) {
+    this._campaignStoreService
+      .create(formValues)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
-          const campaignSaved = data[0];
           this.requestLoading = false;
-          this._toastr.success(`La campagne ${campaignSaved.name} a bien été enregistrée`);
+          this._toastr.success(`La campagne ${formValues.name} a bien été enregistrée`);
           this._router.navigate(['/campaign']);
         },
         (error) => {
@@ -164,7 +171,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   private initForms() {
     this.campaignFormGroup = this._formBuilder.group({
-      _id: [null],
       name: [null, Validators.required],
       description: [null],
       status: [],
@@ -202,34 +208,45 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   public setTemplate(templateId: number | null = null) {
-    let campaign = new CampaignUx();
+    let campaign;
 
     if (templateId) {
       // get template from service
-      campaign = this._campaignFormatService.toCampaignUxFormat({
-        ...this._campaignService.getLoadedTemplate(templateId),
-        _id: null,
-        parent_id: templateId,
-      });
+      this._campaignStoreService
+        .selectEntityByIdFromList(templateId)
+        .pipe(
+          take(1),
+          takeUntil(this.destroy$),
+        )
+        .subscribe(
+          (template) => {
+            campaign = new Campaign({
+              ...template,
+              _id: null,
+              parent_id: templateId,
+            }).toFormValues();
+            this.setCampaignToForm(campaign, true);
+          },
+          (err) => {
+            this._toastr.error('Template not found !');
+          },
+        );
     } else {
-      // new campagn from scratch with default values
+      // new campaign from scratch with default values
+      campaign = new CampaignUx();
       campaign.filters.rank = [TripRankEnum.A, TripRankEnum.B, TripRankEnum.C];
+      this.setCampaignToForm(campaign, true);
     }
-
-    // load it
-    this.setCampaignToForm(campaign, true);
   }
 
   private setCampaignToForm(campaign: CampaignUx, isTemplate = false) {
     // patch main
     this.campaignFormGroup.patchValue({
-      _id: isTemplate ? null : campaign._id,
       parent_id: campaign.parent_id,
       status: isTemplate ? CampaignStatusEnum.DRAFT : campaign.status,
       name: campaign.name,
       description: campaign.description,
-      start: campaign.start,
-      // todo: (temp ) start: isTemplate ? null : campaign.start,
+      start: isTemplate ? null : campaign.start,
       end: isTemplate ? null : campaign.end,
       max_trips: campaign.max_trips,
       max_amount: campaign.max_amount,
@@ -266,7 +283,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     const blackListFormArray = <FormArray>filtersForm.get('insee').get('blackList');
     blackListFormArray.clear();
     campaign.filters.insee.blackList.forEach((insee) => {
-      console.log({ insee });
       blackListFormArray.push(
         this._formBuilder.group({
           start: [insee.start],
@@ -353,25 +369,34 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   private loadCampaign(campaignId: number, isDuplicate = false) {
-    if (!this._campaignService.campaignsLoaded) {
-      this._campaignService
-        .load()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe();
+    this._campaignStoreService
+      .selectEntityByIdFromList(campaignId)
+      .pipe(
+        take(1),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(
+        (campaign: Campaign) => {
+          if (isDuplicate) {
+            this._campaignStoreService.selectNew();
+          }
+          this.setCampaignToForm(campaign.toFormValues(), isDuplicate);
+        },
+        (err) => {
+          this._router.navigate(['/campaign']).then(() => {
+            this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
+          });
+        },
+      );
+  }
+
+  private initCampaigns() {
+    if (!this._campaignStoreService.loaded) {
+      if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+        this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+      }
+      this._campaignStoreService.loadList();
     }
-    this._campaignService.entities$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
-      if (campaigns.length === 0) {
-        return;
-      }
-      const foundCampaign = campaigns.filter((campaign) => Number(campaign._id) === campaignId)[0];
-      if (foundCampaign) {
-        const campaignUx = this._campaignFormatService.toCampaignUxFormat(foundCampaign);
-        this.setCampaignToForm(campaignUx, isDuplicate);
-      } else {
-        this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
-        this._router.navigate(['/campaign']);
-      }
-    });
   }
 
   private setLastAvailableStep(): void {

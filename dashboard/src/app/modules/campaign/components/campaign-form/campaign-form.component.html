@@ -10,6 +10,7 @@
           <div class="CampaignForm-content-wrapper">
             <app-campaign-templates
               (setTemplate)="setTemplate($event)"
+              [isCreating]="creationFromScratch || creationFromParentId"
               [matStepper]="stepper"
               [campaignForm]="campaignFormGroup"
             ></app-campaign-templates>
@@ -96,6 +97,7 @@
           <div class="CampaignForm-content-wrapper CampaignForm-content-wrapper--summary">
             <app-summary-form
               [campaignForm]="campaignFormGroup"
+              [isCreating]="creationFromScratch || creationFromParentId"
               [loading]="requestLoading"
               (onSaveCampaign)="saveCampaign()"
             ></app-summary-form>

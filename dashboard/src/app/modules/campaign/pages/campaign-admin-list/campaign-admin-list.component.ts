@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { merge, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
+import { merge } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-campaign-admin-list',
@@ -32,7 +34,11 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     [CampaignStatusEnum.TEMPLATE]: 'Les modèles de campagnes',
   };
 
-  constructor(private _campaignService: CampaignService, private fb: FormBuilder) {
+  constructor(
+    private _authService: AuthenticationService,
+    private _campaignStoreService: CampaignStoreService,
+    private fb: FormBuilder,
+  ) {
     super();
   }
 
@@ -46,7 +52,7 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
 
   private loadCampaigns(): void {
     merge(
-      this._campaignService.campaignsUx$.pipe(
+      this._campaignStoreService.campaignsUx$.pipe(
         tap((campaigns: CampaignUx[]) => (this.campaigns = campaigns)),
         takeUntil(this.destroy$),
       ),
@@ -62,21 +68,15 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
       .subscribe((campaigns) => {
         this.filteredCampaigns = campaigns;
       });
-    if (this._campaignService.campaignsLoaded) {
-      return;
-    }
-    this._campaignService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
+    this._campaignStoreService.loadList();
   }
 
   get loading(): boolean {
-    return this._campaignService.loading;
+    return this._campaignStoreService.isLoading;
   }
 
   get loaded(): boolean {
-    return this._campaignService.loaded;
+    return !!this.filteredCampaigns;
   }
 
   getFrenchStatus(status: CampaignStatusEnum): string {

@@ -10,9 +10,9 @@ import { cypress_profile } from '../reusables/profile/cypress_profile';
 import { cypress_logging_users } from '../stubs/auth/login';
 import { cypress_logout } from '../reusables/auth/cypress_logout';
 import { cypress_campaignCreateFromTemplate } from '../reusables/campaign/cypress_campaign_create_from_template';
-import { campaignTemplateStubs } from '../stubs/campaign/campaign-template.list';
 import { cypress_export } from '../reusables/trip/cypress_trip';
 import { TestsInterface } from '../../config/tests.interface';
+import { campaignTemplateStubs } from '../stubs/campaign/campaign.list';
 
 export function testTerritoryStory(config: TestsInterface['territory']) {
   // TEST PROFILE UPDATE
@@ -64,11 +64,11 @@ export function testTerritoryStory(config: TestsInterface['territory']) {
 
   if (config.newFromTemplate) {
     const length = <number>campaignTemplateStubs.length;
-    // for (let i = 0; i < length; i += 1) {
-    //   describe(`Create from template ${i + 1}`, () => {
-    cypress_campaignCreateFromTemplate(6);
-    // });
-    // }
+    for (let i = 0; i < length; i += 1) {
+      describe(`Create from template ${i + 1}`, () => {
+        cypress_campaignCreateFromTemplate(i);
+      });
+    }
 
     // describe('Edit latest campaign from template', () => {
     //   cypress_campaignEditCreatedFromTemplate(0);

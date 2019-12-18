@@ -4,23 +4,28 @@ import { FormGroup } from '@angular/forms';
 import { MatStepper } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TemplateInterface } from '~/core/interfaces/campaign/templateInterface';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 
 @Component({
   selector: 'app-campaign-templates',
-  templateUrl: './campaign-templates.html',
+  templateUrl: './campaign-templates.component.html',
   styleUrls: ['./campaign-templates.component.scss'],
 })
 export class CampaignTemplatesComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
+  @Input() isCreating: boolean;
   @Input() matStepper: MatStepper;
   @Output() setTemplate = new EventEmitter();
-  templates: TemplateInterface[];
+  templates: Campaign[];
 
-  constructor(public campaignService: CampaignService, private _dialog: DialogService, private toastr: ToastrService) {
+  constructor(
+    private _campaignStoreService: CampaignStoreService,
+    private _dialog: DialogService,
+    private _toastr: ToastrService,
+  ) {
     super();
   }
 
@@ -32,9 +37,12 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
     return this.campaignForm.controls.parent_id.value;
   }
 
+  public get loading() {
+    return this._campaignStoreService.isLoading;
+  }
+
   public onTemplateCardClick(templateId: number | null) {
-    // if campaign form has template_id or _id
-    if (this.campaignForm.controls._id.value || this.campaignForm.controls.parent_id.value) {
+    if (!this.isCreating) {
       const title = templateId ? "Chargement d'un modèle" : 'Réinitialisation';
       const message = templateId
         ? 'Êtes-vous sûr de vouloir charger un nouveau modèle ?'
@@ -43,7 +51,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
         .confirm({
           title,
           message,
-          color: 'Confirmer',
+          color: 'primary',
         })
         .pipe(takeUntil(this.destroy$))
         .subscribe((result) => {
@@ -59,11 +67,8 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
   }
 
   private loadCampaignTemplates() {
-    this.campaignService
-      .loadTemplates()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((templates) => {
-        this.templates = templates;
-      });
+    this._campaignStoreService.templates$.pipe(takeUntil(this.destroy$)).subscribe((templates) => {
+      this.templates = templates;
+    });
   }
 }

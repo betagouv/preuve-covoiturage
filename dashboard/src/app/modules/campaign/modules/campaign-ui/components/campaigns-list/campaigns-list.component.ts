@@ -6,9 +6,9 @@ import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 
 @Component({
   selector: 'app-campaigns-list',
@@ -26,8 +26,8 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
 
   constructor(
     private dialog: DialogService,
-    private authService: AuthenticationService,
-    public campaignService: CampaignService,
+    private _authService: AuthenticationService,
+    private _campaignStoreService: CampaignStoreService,
     private toastr: ToastrService,
   ) {
     super();
@@ -36,7 +36,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   ngOnInit() {}
 
   showEdition(status: CampaignStatusEnum): boolean {
-    return status === CampaignStatusEnum.DRAFT && this.authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
+    return status === CampaignStatusEnum.DRAFT && this._authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
   }
 
   showValid(status: CampaignStatusEnum): boolean {
@@ -50,7 +50,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
   showDelete(status: CampaignStatusEnum): boolean {
     return (
       (status === CampaignStatusEnum.ARCHIVED || status === CampaignStatusEnum.DRAFT) &&
-      this.authService.hasAnyGroup([UserGroupEnum.TERRITORY])
+      this._authService.hasAnyGroup([UserGroupEnum.TERRITORY])
     );
   }
 
@@ -72,8 +72,11 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
-          this.campaignService
-            .deleteTemplateOrDraft(campaign._id)
+          const params = {
+            territory_id: this._authService.user.territory_id,
+          };
+          this._campaignStoreService
+            .deleteByTerritoryId({ _id: campaign._id, ...params })
             .pipe(takeUntil(this.destroy$))
             .subscribe(
               () => {
