@@ -48,10 +48,10 @@ export class RefreshAction extends Action implements InitHookInterface {
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     switch (params) {
       case 'list':
-        await this.pg.getClient().query(`REFRESH VIEW trip.list`);
+        await this.pg.getClient().query(`REFRESH MATERIALIZED VIEW trip.list`);
         return;
       case 'export':
-        await this.pg.getClient().query(`REFRESH VIEW trip.export`);
+        await this.pg.getClient().query(`REFRESH MATERIALIZED VIEW trip.export`);
         return;
     }
   }
