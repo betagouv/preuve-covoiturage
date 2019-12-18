@@ -11,6 +11,11 @@ import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { ParamsInterface } from '~/core/entities/api/shared/territory/patchContacts.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
+import {
+  ParamsInterface as OTVisibityParams,
+  ResultInterface as OTVisibityResults,
+} from '../../../core/entities/api/shared/territory/listOperator.contract';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -40,5 +45,13 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
 
   update(item: Territory): Observable<Territory> {
     return this.catchSiretConflict(super.update(item));
+  }
+
+  getOperatorVisibility(territoryId: number): Observable<OTVisibityResults> {
+    const jsonRPCParam = new JsonRPCParam<OTVisibityParams>(`${this.method}:listOperator`, {
+      territory_id: territoryId,
+    });
+
+    return this.callOne(jsonRPCParam).pipe(map((data) => <OTVisibityResults>data.data));
   }
 }
