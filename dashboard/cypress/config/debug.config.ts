@@ -49,11 +49,7 @@ export const DEBUG_CONFIG = {
     territory: {
       profile: true,
       territory: true,
-<<<<<<< HEAD
       filters: false,
-=======
-      filters: true,
->>>>>>> (dash) fix: user tests, update e2e local tests
       newcampaign: false,
       editcampaign: false,
       launchcampaign: false,
