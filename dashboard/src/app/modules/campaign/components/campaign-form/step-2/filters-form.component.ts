@@ -10,6 +10,8 @@ import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.cons
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
+import { WeekDay } from '@angular/common';
+import * as moment from 'moment';
 import { DAYS } from '~/core/const/days.const';
 
 @Component({
