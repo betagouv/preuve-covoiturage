@@ -17,7 +17,6 @@ import { binding as exportBinding } from './shared/trip/export.schema';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
-import { PublicStatsAction } from './actions/PublicStatsAction';
 import { RefreshAction } from './actions/RefreshAction';
 import { ExportAction } from './actions/ExportAction';
 import { BuildExportAction } from './actions/BuildExportAction';
@@ -34,7 +33,7 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
     ['scopeIt', ScopeToSelfMiddleware],
   ],
   connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
-  handlers: [ListAction, PublicStatsAction, StatsAction, RefreshAction, ExportAction, BuildExportAction],
+  handlers: [ListAction, StatsAction, RefreshAction, ExportAction, BuildExportAction],
   queues: ['trip'],
 })
 export class ServiceProvider extends AbstractServiceProvider {
