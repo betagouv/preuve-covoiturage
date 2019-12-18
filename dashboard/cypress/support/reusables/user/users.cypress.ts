@@ -9,6 +9,7 @@ export function cypress_users(e2e = false) {
     cy.get('.Header-user').click();
     cy.get('.mat-menu-item:nth-child(1)').click();
     cy.get('.mat-tab-link:nth-child(2)').click();
+    cy.wait(1000);
   });
 
   it('add a registry admin user', () => {
