@@ -73,6 +73,7 @@ export class HttpTransport implements TransportInterface {
     this.registerSessionHandler();
     this.registerSecurity();
     this.registerGlobalMiddlewares();
+    this.registerStatsRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
     this.registerLegacyServerRoute();
@@ -226,6 +227,21 @@ export class HttpTransport implements TransportInterface {
         );
 
         this.send(res, response);
+      }),
+    );
+  }
+
+  private registerStatsRoutes() {
+    this.app.get(
+      '/stats',
+      asyncHandler(async (req, res, next) => {
+        const response = await this.kernel.handle(makeCall('trip:publicStats', {}));
+
+        if (!response || Array.isArray(response) || 'error' in response) {
+          res.status(mapStatusCode(response)).json(this.parseErrorData(response));
+        } else {
+          res.json(response.result);
+        }
       }),
     );
   }
