@@ -34,7 +34,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   fullFormMode = false;
 
-  private editedId: number;
+  public editedId: number;
   private companyDetails: CompanyInterface;
 
   constructor(
@@ -203,6 +203,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private setTerritoryFormValue(territory: Territory) {
     // base values for form
     this.editedId = territory ? territory._id : null;
+    console.log('this.editedId : ', this.editedId);
 
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);

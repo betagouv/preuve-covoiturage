@@ -111,7 +111,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   }
 
   private initOperatorFormValue(): void {
-    this.isCreating = !this.operator;
+    this.isCreating = !this.operator._id;
     if (this.operator) {
       this.setOperatorFormValue(this.operator);
     }
@@ -119,7 +119,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
 
   // todo: ugly ...
   private setOperatorFormValue(operator: Operator) {
-    this.isCreating = !operator;
+    this.isCreating = !this.operator._id;
     // base values for form
     this.editedOperatorId = operator ? operator._id : null;
 
