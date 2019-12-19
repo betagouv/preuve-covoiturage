@@ -20,6 +20,26 @@ const arena = Arena({
       hostId: 'redis',
       url: process.env.APP_REDIS_URL,
     },
+    {
+      name: 'trip',
+      hostId: 'redis',
+      url: process.env.APP_REDIS_URL,
+    },
+    {
+      name: 'campaign',
+      hostId: 'redis',
+      url: process.env.APP_REDIS_URL,
+    },
+    {
+      name: 'fraud',
+      hostId: 'redis',
+      url: process.env.APP_REDIS_URL,
+    },
+    {
+      name: 'acquisition',
+      hostId: 'redis',
+      url: process.env.APP_REDIS_URL,
+    },
   ],
 });
 
