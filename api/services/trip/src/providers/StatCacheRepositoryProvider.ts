@@ -23,7 +23,7 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
           data
         FROM ${this.table}
         WHERE is_public = true AND operator_id IS NULL AND territory_id IS NULL
-        AND extract(hour from age(now(), updated_at)) < 24
+        AND (extract(epoch from age(now(), updated_at)) / 3600) < 24
         LIMIT 1
       `);
     if (result.rowCount !== 1) {
