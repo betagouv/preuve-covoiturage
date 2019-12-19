@@ -1,8 +1,8 @@
 import { FormControl } from '@angular/forms';
 
 import { Bank } from '~/core/entities/shared/bank';
+import { REGEXP } from '~/core/const/validators.const';
 import { ibanValidator } from '~/shared/modules/form/validators/iban.validator';
-
 import { bicValidator } from '../validators/bic.validator';
 
 export class FormBank {
