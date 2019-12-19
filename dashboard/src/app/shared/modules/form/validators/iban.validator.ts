@@ -10,8 +10,8 @@ function validIban(value: string) {
     alphaMap[val] = index + 10;
   });
 
-  rearrange.split('').forEach((value, index) => {
-    nm[index] = alphaMap[value] || value;
+  rearrange.split('').forEach((val, index) => {
+    nm[index] = alphaMap[val] || val;
   });
 
   const cleanIban = nm.join('').toString();
