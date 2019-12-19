@@ -13,11 +13,13 @@
   <mat-form-field class="iban" appearance="outline">
     <mat-label>IBAN</mat-label>
     <input matInput formControlName="iban" />
-    <mat-error *ngIf="parentForm.controls.iban.hasError('pattern')">Le format de l'iban n'est pas valide</mat-error>
+    <mat-error *ngIf="parentForm.controls.iban.hasError('ibanWrongFormat')"
+      >Le format de l'iban n'est pas valide</mat-error
+    >
   </mat-form-field>
   <mat-form-field class="bic" appearance="outline">
     <mat-label>BIC</mat-label>
     <input matInput formControlName="bic" />
-    <mat-error *ngIf="parentForm.controls.bic.hasError('pattern')">Le format du bic n'est pas valide</mat-error>
+    <mat-error *ngIf="parentForm.controls.bic.hasError('bicWrongFormat')">Le format du bic n'est pas valide</mat-error>
   </mat-form-field>
 </form>
