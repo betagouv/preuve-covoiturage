@@ -2,6 +2,8 @@ import { FormControl, Validators } from '@angular/forms';
 
 import { Bank } from '~/core/entities/shared/bank';
 import { REGEXP } from '~/core/const/validators.const';
+import { ibanValidator } from '~/shared/modules/form/validators/iban.validator';
+import { bicValidator } from '../validators/bic.validator';
 
 export class FormBank {
   bank_name = new FormControl(); // tslint:disable-line variable-name
@@ -15,9 +17,10 @@ export class FormBank {
     this.client_name.setValue(bank.client_name);
 
     this.iban.setValue(bank.iban);
-    this.iban.setValidators([Validators.pattern(REGEXP.iban)]);
+    this.iban.setValidators([ibanValidator]);
+    // this.iban.setValidators([Validators.pattern(REGEXP.iban)]);
 
     this.bic.setValue(bank.bic);
-    this.bic.setValidators([Validators.pattern(REGEXP.bic)]);
+    this.bic.setValidators([bicValidator]);
   }
 }
