@@ -57,7 +57,7 @@
       [disabled]="!territoryForm.valid"
       color="primary"
     >
-      Mettre à jour les informations
+      {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
     </button>
     <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
       Fermer
