@@ -93,7 +93,6 @@ export abstract class CrudStore<
           if (this._loadCount > 0) this._loadCount -= 1;
         }),
       )
-
       .subscribe((list) => {
         this.entitiesSubject.next(list);
       });

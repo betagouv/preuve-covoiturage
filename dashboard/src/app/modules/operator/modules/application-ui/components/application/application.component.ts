@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { ApplicationInterface } from '~/core/interfaces/operator/applicationInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
-
-import { ApplicationService } from '../../../../services/application.service';
+import { ApplicationStoreService } from '~/modules/operator/services/application-store.service';
+import { Application } from '~/core/entities/operator/application';
 
 @Component({
   selector: 'app-application',
@@ -15,12 +14,12 @@ import { ApplicationService } from '../../../../services/application.service';
   styleUrls: ['./application.component.scss'],
 })
 export class ApplicationComponent extends DestroyObservable implements OnInit {
-  public applications: ApplicationInterface[];
+  public applications: Application[];
   public showCreateApplicationForm = false;
 
   constructor(
-    public authenticationService: AuthenticationService,
-    public applicationService: ApplicationService,
+    private _authService: AuthenticationService,
+    private _applicationStoreService: ApplicationStoreService,
     private _toastr: ToastrService,
     private _dialog: DialogService,
   ) {
@@ -32,15 +31,19 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
   }
 
   private loadOperatorTokens() {
-    if (!this.applicationService.loaded) {
-      this.applicationService
-        .load()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe();
-    }
-    this.applicationService.application$.pipe(takeUntil(this.destroy$)).subscribe((applications) => {
-      this.applications = applications;
-    });
+    const operatorId = this._authService.user.operator_id;
+    this._applicationStoreService.filterSubject.next({ owner_id: operatorId });
+
+    this._applicationStoreService.entities$
+      .pipe(
+        map((applications) => applications.sort((a, b) => a.name.localeCompare(b.name))),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((applications) => {
+        this.applications = applications;
+      });
+
+    this._applicationStoreService.loadList();
   }
 
   public addToken() {
@@ -51,7 +54,19 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
     this.showCreateApplicationForm = false;
   }
 
-  public onDelete(application: ApplicationInterface) {
+  public get canRevoke(): boolean {
+    return this._authService.hasAnyPermission(['application.revoke']);
+  }
+
+  public get canCreate(): boolean {
+    return this._authService.hasAnyPermission(['application.create']);
+  }
+
+  public get loading(): boolean {
+    return this._applicationStoreService.isLoading;
+  }
+
+  public onDelete(application: Application) {
     const title = `Etes-vous sûr de vouloir supprimer l'application : ${application.name} ?`;
     this._dialog
       .confirm({
@@ -63,8 +78,7 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
-          console.log(application);
-          this.applicationService
+          this._applicationStoreService
             .revokeAndList(application)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
