@@ -2,6 +2,7 @@ import { ApplicableRuleInterface } from '../../interfaces/RuleInterface';
 
 import { adultOnlyFilter } from './adultOnlyFilter';
 import { distanceRangeFilter } from './distanceRangeFilter';
+import { idfm } from './idfm';
 import { inseeBlacklistFilter, inseeWhitelistFilter } from './inseeFilter';
 import { maxAmountPerTargetRestriction } from './maxAmountPerTargetRestriction';
 import { maxAmountRestriction } from './maxAmountRestriction';
@@ -25,6 +26,7 @@ export const policies: ApplicableRuleInterface[] = [
   costBasedAmount,
   distanceRangeFilter,
   fixedAmount,
+  idfm,
   inseeBlacklistFilter,
   inseeWhitelistFilter,
   maxAmountPerTargetRestriction,
