@@ -12,7 +12,7 @@ CREATE MATERIALIZED VIEW policy.trips AS (
     cp.seats as seats,
     cp.cost as cost,
     cp.is_driver as is_driver,
-    (CASE WHEN ci.travel_pass_user_id IS NOT NULL THEN '1'::boolean ELSE '0'::boolean END) as has_travel_pass,
+    (CASE WHEN ci.travel_pass_user_id IS NOT NULL THEN true ELSE false END) as has_travel_pass,
     (CASE WHEN ci.over_18 IS NOT NULL THEN ci.over_18 ELSE null END) as is_over_18,
     ci.uuid as identity_uuid,
     tis.territory_id as start_territory_id,
