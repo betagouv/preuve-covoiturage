@@ -5,7 +5,7 @@ import v4 from 'uuid/v4';
 import csvStringify from 'csv-stringify';
 
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { FileStorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
@@ -21,6 +21,7 @@ export class BuildExportAction extends Action {
   ];
 
   constructor(
+    private config: ConfigInterfaceResolver,
     private pg: TripRepositoryProvider,
     private file: FileStorageProvider,
     private kernel: KernelInterfaceResolver,
@@ -52,24 +53,25 @@ export class BuildExportAction extends Action {
     const email = params.from.email;
     const fullname = params.from.fullname;
 
-    await this.kernel.notify<NotifyParamsInterface>(
-      notifySignature,
-      {
-        password,
-        email,
-        fullname,
-        template: 'export_csv',
-        link: url,
+    const emailParams = {
+      password,
+      email,
+      fullname,
+      template: this.config.get('email.templates.export_csv'),
+      templateId: this.config.get('notification.templateIds.export_csv'),
+      link: url,
+    };
+
+    console.log('emailParams : ', emailParams);
+
+    await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
+      channel: {
+        service: 'trip',
       },
-      {
-        channel: {
-          service: 'trip',
-        },
-        call: {
-          user: {},
-        },
+      call: {
+        user: {},
       },
-    );
+    });
 
     return;
   }
