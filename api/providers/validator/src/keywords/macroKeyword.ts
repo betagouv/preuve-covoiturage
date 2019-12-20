@@ -8,6 +8,7 @@ import { nafMacro } from '../macros/nafMacro';
 import { nicMacro } from '../macros/nicMacro';
 import { dbidMacro } from '../macros/dbidMacro';
 import { phoneMacro } from '../macros/phoneMacro';
+import { phonetruncMacro } from '../macros/phonetruncMacro';
 import { postcodeMacro } from '../macros/postcodeMacro';
 import { sirenMacro } from '../macros/sirenMacro';
 import { siretMacro } from '../macros/siretMacro';
@@ -35,6 +36,7 @@ const macroStore = {
   nic: nicMacro,
   dbid: dbidMacro,
   phone: phoneMacro,
+  phonetrunc: phonetruncMacro,
   postcode: postcodeMacro,
   rna: rnaMacro,
   siren: sirenMacro,
