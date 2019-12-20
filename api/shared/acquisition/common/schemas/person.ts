@@ -48,13 +48,15 @@ const travelPassSchema = {
 
 const identitySchema = {
   type: 'object',
-  required: ['phone'],
+  anyOf: [{ required: ['phone'] }, { required: ['operator_user_id', 'phone_trunc'] }],
   additionalProperties: false,
   properties: {
     firstname: { macro: 'varchar' },
     lastname: { macro: 'varchar' },
     email: { macro: 'email' },
     phone: { macro: 'phone' },
+    phone_trunc: { macro: 'phonetrunc' },
+    operator_user_id: { macro: 'varchar' },
     company: { macro: 'varchar' },
     over_18: { enum: [true, false, null], default: null },
     travel_pass: travelPassSchema,

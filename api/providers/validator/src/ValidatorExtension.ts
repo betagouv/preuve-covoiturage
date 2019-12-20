@@ -9,6 +9,7 @@ import { nafCustomFormat } from './formats/nafCustomFormat';
 import { nicCustomFormat } from './formats/nicCustomFormat';
 import { objectidCustomFormat } from './formats/objectidCustomFormat';
 import { phoneCustomFormat } from './formats/phoneCustomFormat';
+import { phonetruncCustomFormat } from './formats/phonetruncCustomFormat';
 import { postcodeCustomFormat } from './formats/postcodeCustomFormat';
 import { sirenCustomFormat } from './formats/sirenCustomFormat';
 import { siretCustomFormat } from './formats/siretCustomFormat';
@@ -36,6 +37,7 @@ export class ValidatorExtension extends ValidatorParentExtension {
     validator.registerCustomKeyword({ name: 'nic', type: 'format', definition: nicCustomFormat });
     validator.registerCustomKeyword({ name: 'objectid', type: 'format', definition: objectidCustomFormat });
     validator.registerCustomKeyword({ name: 'phone', type: 'format', definition: phoneCustomFormat });
+    validator.registerCustomKeyword({ name: 'phonetrunc', type: 'format', definition: phonetruncCustomFormat });
     validator.registerCustomKeyword({ name: 'postcode', type: 'format', definition: postcodeCustomFormat });
     validator.registerCustomKeyword({ name: 'rna', type: 'format', definition: rnaCustomFormat });
     validator.registerCustomKeyword({ name: 'siren', type: 'format', definition: sirenCustomFormat });
