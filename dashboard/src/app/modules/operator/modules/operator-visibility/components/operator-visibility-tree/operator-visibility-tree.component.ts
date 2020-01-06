@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, of } from 'rxjs';
@@ -64,7 +64,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
       .pipe(takeUntil(this.destroy$))
       .subscribe((filteredTerritories) => {
         this.territoryIdsToShow = filteredTerritories.map((territory) => territory._id);
-        // console.log('this.territoryIdsToShow : ', this.territoryIdsToShow);
         this.updateVisibilityForm();
       });
   }
@@ -119,6 +118,10 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     return this.territoryIdsToShow.indexOf(id) !== -1;
   }
 
+  public get countCheckedTerritories(): number {
+    return this.checkedTerritoryIds.length;
+  }
+
   private initVisibilityForm(): void {
     this.visibilityFormGroup = this._fb.group({
       territories: this._fb.array([]),
@@ -135,20 +138,6 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     this.visibilityFormGroup = this._fb.group({
       territories: this._fb.array(formGroups),
     });
-
-    /*
-    this.visibilityFormGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
-      this.checkedTerritoryIds = this.territoriesFormArray.value.reduce(
-        (checkedTerritories: number[], checked: boolean, index: number) => {
-          if (checked) {
-            checkedTerritories.push(this.territories[index]._id);
-          }
-          return checkedTerritories;
-        },
-        [],
-      );
-    });
-     */
   }
 
   private initSearchForm(): void {
