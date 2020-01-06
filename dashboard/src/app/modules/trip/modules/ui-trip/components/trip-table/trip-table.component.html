@@ -43,7 +43,13 @@
   <ng-container matColumnDef="operator">
     <th mat-header-cell *matHeaderCellDef>Opérateur</th>
     <td mat-cell *matCellDef="let row">
-      {{ getOperator(row) }}
+      <span *ngIf="row.operator_id === null"
+        >Non visible
+        <mat-icon class="operatorInfoIcon" matTooltip="Opérateur ayant choisi de ne pas faire apparaître son nom."
+          >info_outline</mat-icon
+        >
+      </span>
+      <span *ngIf="row.operator_id !== null">{{ getOperator(row) }}</span>
     </td>
   </ng-container>
 
