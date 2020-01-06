@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import * as moment from 'moment';
 import { WeekDay } from '@angular/common';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
@@ -11,11 +10,10 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { TRIP_RANKS } from '~/core/enums/trip/trip-rank.enum';
 import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { TownInterface } from '~/core/interfaces/geography/townInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
-import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 import { DAYS } from '~/core/const/days.const';
+import { dateRangeValidator } from '~/modules/filter/validators/date-range.validator';
 
 @Component({
   selector: 'app-filter',
@@ -75,10 +73,24 @@ export class FilterComponent extends DestroyObservable implements OnInit {
 
     // reset filter on page trip page load
     this.filterService.filter$.next({});
+
+    this.startControl.valueChanges.subscribe(() => {
+      this.onDateInput();
+    });
+    this.endControl.valueChanges.subscribe(() => {
+      this.onDateInput();
+    });
   }
 
   get controls() {
     return this.filterForm.controls;
+  }
+
+  get startControl() {
+    return this.filterForm.get('date').get('start');
+  }
+  get endControl() {
+    return this.filterForm.get('date').get('end');
   }
 
   public onCloseClick(): void {
@@ -133,27 +145,48 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]);
   }
 
+  /**
+   * Called on each input in either date field
+   */
+  public onDateInput(): void {
+    this.filterForm.updateValueAndValidity();
+    if (this.filterForm.hasError('dateRange')) {
+      this.startControl.setErrors({
+        dateRange: true,
+      });
+      this.endControl.setErrors({
+        dateRange: true,
+      });
+    } else {
+      this.startControl.setErrors(null);
+      this.endControl.setErrors(null);
+    }
+  }
+
   private initForm() {
-    this.filterForm = this.fb.group({
-      campaignIds: [[]],
-      date: this.fb.group({
-        start: [null],
-        end: [null],
-      }),
-      hour: this.fb.group({
-        start: [null],
-        end: [null],
-      }),
-      days: [[]],
-      insees: [[]],
-      distance: this.fb.group({
-        min: [null],
-        max: [null],
-      }),
-      ranks: [[]],
-      status: [null],
-      operatorIds: [[]],
-      territoryIds: [[]],
-    });
+    this.filterForm = this.fb.group(
+      {
+        campaignIds: [[]],
+        date: this.fb.group({
+          start: [null],
+          end: [null],
+        }),
+        hour: this.fb.group({
+          start: [null],
+          end: [null],
+        }),
+        days: [[]],
+        insees: [[]],
+        distance: this.fb.group({
+          min: [null],
+          max: [null],
+        }),
+        ranks: [[]],
+        status: [null],
+        operatorIds: [[]],
+        territoryIds: [[]],
+      },
+      { validator: dateRangeValidator },
+    );
   }
 }
