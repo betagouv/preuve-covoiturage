@@ -130,7 +130,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
     const query = {
       text: `
-      DELETE ${this.table}
+      DELETE FROM ${this.table}
         WHERE _id = $1
         ${where ? (where.operator_id ? 'AND operator_id = $2' : 'AND territory_id = $2') : ''}
       `,
