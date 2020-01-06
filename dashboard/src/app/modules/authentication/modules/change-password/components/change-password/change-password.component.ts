@@ -15,6 +15,9 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 })
 export class ChangePasswordComponent extends DestroyObservable implements OnInit {
   public changePasswordForm: FormGroup;
+  public oldPasswordType = 'password';
+  public passwordType = 'password';
+  public confirmPasswordType = 'password';
 
   constructor(private fb: FormBuilder, private authentication: AuthenticationService, private toastr: ToastrService) {
     super();
@@ -67,6 +70,16 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
       });
     } else {
       this.passwordVerification.setErrors(null);
+    }
+  }
+
+  public onPasswordTypeToggle(index: 0 | 1 | 2) {
+    if (index === 0) {
+      this.oldPasswordType = this.oldPasswordType === 'password' ? 'text' : 'password';
+    } else if (index === 1) {
+      this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
+    } else {
+      this.confirmPasswordType = this.confirmPasswordType === 'password' ? 'text' : 'password';
     }
   }
 
