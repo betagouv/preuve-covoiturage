@@ -116,12 +116,22 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   }
 
   protected async deleteWhere(id: number, where?: { operator_id?: number; territory_id?: number }): Promise<boolean> {
+    // Soft delete
+    // const query = {
+    //   text: `
+    //   UPDATE ${this.table}
+    //     SET deleted_at = NOW()
+    //     WHERE _id = $1
+    //     AND deleted_at is NULL
+    //     ${where ? (where.operator_id ? 'AND operator_id = $2' : 'AND territory_id = $2') : ''}
+    //   `,
+    //   values: [id],
+    // };
+
     const query = {
       text: `
-      UPDATE ${this.table}
-        SET deleted_at = NOW()
+      DELETE ${this.table}
         WHERE _id = $1
-        AND deleted_at is NULL
         ${where ? (where.operator_id ? 'AND operator_id = $2' : 'AND territory_id = $2') : ''}
       `,
       values: [id],
