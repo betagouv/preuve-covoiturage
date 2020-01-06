@@ -29,9 +29,17 @@
 
       &-actions {
         text-align: right;
-
-        & > *:not(:last-child) {
-          margin-right: 10px;
+        &:last-child {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          height: inherit;
+          a {
+            cursor: pointer;
+          }
+          & > *:not(:last-child) {
+            margin-right: 10px;
+          }
         }
       }
     }
