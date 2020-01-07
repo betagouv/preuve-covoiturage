@@ -10,6 +10,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserApiService } from '~/modules/user/services/user-api.service';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-profile-edition',
@@ -47,6 +48,7 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
         ...this.profileForm.value,
         phone: this.profileForm.value.phone ? this.profileForm.value.phone : null,
       })
+
       .subscribe((updatedUser) => {
         this.toastr.success('Votre profil a bien été mis à jour');
       });
