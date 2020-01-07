@@ -12,6 +12,7 @@ import { ResultInterface as LaunchResultInterface } from '~/core/entities/api/sh
 import { ParamsInterface as DeleteParamsInterface } from '~/core/entities/api/shared/policy/delete.contract';
 import { ParamsInterface as CreateParamsInterface } from '~/core/entities/api/shared/policy/create.contract';
 import { ParamsInterface as PatchParamsInterface } from '~/core/entities/api/shared/policy/patch.contract';
+import { ParamsInterface as ListParamsInterface } from '~/core/entities/api/shared/policy/list.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,7 @@ export class CampaignApiService extends JsonRpcCrud<
   PatchParamsInterface['patch'],
   any,
   any,
-  any,
+  ListParamsInterface,
   any,
   CreateParamsInterface
 > {
