@@ -1,14 +1,22 @@
 import expressMung from 'express-mung';
 import { RPCSingleResponseType } from '@ilos/common';
 
+declare interface HasPossibleNestedResult {
+  result?: any | { meta: any; data: any };
+}
+
+declare interface HasNestedResult {
+  result?: { meta: any; data: any };
+}
+
 /**
  * Wrap the { results: ... } from JSON RPC
  * in { meta: ..., data: ... } to normalize a metadata schema
  * between queries.
  * Applies to arrays or single objects
  */
-export const mapResults = (doc): RPCSingleResponseType => {
-  if (typeof doc.result === 'undefined') return doc;
+export const mapResults = (doc: HasPossibleNestedResult): HasNestedResult => {
+  if (!('result' in doc)) return doc;
 
   if (typeof doc.result !== 'object') {
     doc.result = {
@@ -35,7 +43,7 @@ export const mapResults = (doc): RPCSingleResponseType => {
   return doc;
 };
 
-export const patchBody = (body): any => (Array.isArray(body) ? body.map(mapResults) : mapResults(body));
+export const patchBody = (body, req, res): any => (Array.isArray(body) ? body.map(mapResults) : mapResults(body));
 
 // eslint-disable-next-line no-unused-vars
 export const dataWrapMiddleware = expressMung.json(patchBody);
