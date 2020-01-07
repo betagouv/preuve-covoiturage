@@ -38,7 +38,7 @@ export class SyncMongoCommand implements CommandInterface {
       signature: '-l, --limit <limit>',
       description: 'Limit to apply',
       // tslint:disable-next-line: no-unnecessary-callback-wrapper
-      coerce: (s: string) => Number(s),
+      coerce: (s: string): number => Number(s),
     },
   ];
 

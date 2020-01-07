@@ -5,14 +5,15 @@ import { mapStatusCode } from '@ilos/transport-http';
 export type MapRequestType = (body: any, query?: any, params?: any, session?: any) => any;
 export type MapResponseType = (result: any, error: any, session?: any) => any;
 
-const defaultMapResponse: MapResponseType = (result, error, session?: any) => {
+const defaultMapResponse: MapResponseType = (result, error) => {
   if (error) {
     return error;
   }
   return result;
 };
 
-const defaultMapRequest: MapRequestType = (body: any, query?: any, params?: any, session?: any) => body;
+// const defaultMapRequest: MapRequestType = (body: any, query?: any, params?: any, session?: any) => body;
+const defaultMapRequest: MapRequestType = (body: any) => body;
 
 const autoMapRequest: MapRequestType = (body: any, query?: any, params?: any) => ({
   ...query,
@@ -33,7 +34,7 @@ export type ArrayRouteMapType = [
   string, // route
   string, // signature
   (MapRequestType | 'auto')?, // mapRequest
-  MapResponseType?, // mapResponse
+  MapResponseType? // mapResponse
 ];
 
 export type RouteHandlerType = (
