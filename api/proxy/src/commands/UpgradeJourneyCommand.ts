@@ -41,7 +41,7 @@ export class UpgradeJourneyCommand implements CommandInterface {
       signature: '-l, --limit <limit>',
       description: 'Limit to apply',
       // tslint:disable-next-line: no-unnecessary-callback-wrapper
-      coerce: (s: string) => Number(s),
+      coerce: (s: string): number => Number(s),
     },
   ];
 
@@ -126,7 +126,8 @@ export class UpgradeJourneyCommand implements CommandInterface {
         current.passenger.incentives = [];
         current.passenger.payments = [];
 
-        const r = await (<any>handler).handle(current, context);
+        await (handler as any).handle(current, context);
+
         if (options.tag) {
           await collection.updateOne(
             { _id: current._id },

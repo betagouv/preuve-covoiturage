@@ -9,7 +9,7 @@ export function errorHandlerMiddleware(
   _req: express.Request,
   res: express.Response,
   _next: express.NextFunction,
-) {
+): void {
   let code: number;
 
   switch (err.message) {

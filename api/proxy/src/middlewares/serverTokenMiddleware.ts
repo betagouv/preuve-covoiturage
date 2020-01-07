@@ -38,7 +38,7 @@ async function checkApplication(
     throw new UnauthorizedException('Unauthorized application');
   }
 
-  return <ApplicationInterface>(app as any).result;
+  return (app as any).result as ApplicationInterface;
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProvider) {
@@ -49,9 +49,9 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         return next();
       }
 
-      const payload = await (<Promise<any>>(
-        tokenProvider.verify(token.toString().replace('Bearer ', ''), { ignoreExpiration: true })
-      ));
+      const payload = await (tokenProvider.verify(token.toString().replace('Bearer ', ''), {
+        ignoreExpiration: true,
+      }) as Promise<any>);
 
       /**
        * Handle V1 token format conversion
