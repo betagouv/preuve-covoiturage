@@ -1,3 +1,5 @@
+@import 'variables';
+
 .stats {
   max-width: 100%;
   margin: 30px auto;
@@ -15,6 +17,7 @@
     margin: auto;
     @media (max-width: 1400px) {
       justify-content: space-evenly;
+      @include supportEdge(justify-content, space-around);
     }
   }
 
