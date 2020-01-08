@@ -97,21 +97,23 @@ export class CommonDataService {
 
   loadOperators(): Observable<Operator[]> {
     return this.operatorApiService.getList().pipe(
-      map((operators) => operators.sort((operatorA, operatorB) => (operatorA.name > operatorB.name ? 1 : -1))),
+      map((operators) => operators.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name))),
       tap((operators) => this._operators$.next(operators)),
     );
   }
 
   loadTerritories(): Observable<Territory[]> {
     return this.territoryApiService.getList().pipe(
-      map((territories) => territories.sort((territoryA, territoryB) => (territoryA.name > territoryB.name ? 1 : -1))),
+      map((territories) =>
+        territories.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
+      ),
       tap((territories) => this._territories$.next(territories)),
     );
   }
 
   loadCampaigns(): Observable<Campaign[]> {
     return this.campaignApiService.getList().pipe(
-      map((campaigns) => campaigns.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1))),
+      map((campaigns) => campaigns.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
       tap((campaigns) => this._campaigns$.next(campaigns)),
     );
   }
@@ -127,9 +129,9 @@ export class CommonDataService {
           }
 
           if (user.territory_id) {
-            params.push(this.territoryApiService.paramGetById(user.territory_id ? user.territory_id : null));
+            params.push(this.territoryApiService.paramGetById(user.territory_id));
           } else if (user.operator_id) {
-            params.push(this.operatorApiService.paramGetById(user.operator_id ? user.operator_id : null));
+            params.push(this.operatorApiService.paramGetById(user.operator_id));
           }
 
           return this.jsonRPCService.call(params, {}, false);
@@ -162,13 +164,13 @@ export class CommonDataService {
 
         if (operatorsR.data) {
           this._operators$.next(
-            operatorsR.data.sort((operatorA, operatorB) => (operatorA.name > operatorB.name ? 1 : -1)),
+            operatorsR.data.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name)),
           );
         }
 
         if (territoriesR.data) {
           this._territories$.next(
-            territoriesR.data.sort((territoryA, territoryB) => (territoryA.name > territoryB.name ? 1 : -1)),
+            territoriesR.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
           );
         }
 
@@ -176,7 +178,7 @@ export class CommonDataService {
           this._campaigns$.next(
             campaignsR.data
               .filter((campaign) => CampaignStatusEnum.TEMPLATE !== campaign.status)
-              .sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1)),
+              .sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name)),
           );
         }
 
