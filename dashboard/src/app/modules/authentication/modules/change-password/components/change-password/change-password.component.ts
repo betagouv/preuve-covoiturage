@@ -7,6 +7,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { PASSWORD } from '~/core/const/validators.const';
 import { passwordMatchValidator } from '~/modules/authentication/validators/password-match.validator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-change-password',
@@ -42,9 +43,17 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
   onChangePassword(): void {
     this.authentication
       .changePassword(this.changePasswordForm.value.old_password, this.changePasswordForm.value.new_password)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        catchHttpStatus(403, (err) => {
+          this.toastr.error('Ancien mot de passe non valide');
+          return null;
+        }),
+        takeUntil(this.destroy$),
+      )
+
       .subscribe(
         (result) => {
+          if (!result) return;
           this.toastr.success('Votre mot de passe a été mis à jour');
           this.changePasswordForm.reset();
           Object.keys(this.changePasswordForm.controls).forEach((key) => {
