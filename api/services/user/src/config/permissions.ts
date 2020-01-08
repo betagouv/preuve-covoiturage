@@ -84,6 +84,7 @@ export const territory = {
       'incentive-campaign.read',
       'users.list',
       'territory.users.list',
+      'operator.list',
     ],
   },
 };
