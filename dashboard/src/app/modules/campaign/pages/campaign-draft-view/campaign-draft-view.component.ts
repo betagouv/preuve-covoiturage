@@ -35,7 +35,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   }
 
   ngOnInit() {
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTo(0, 0);
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
     this._route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
       const notFound = !params.has('campaignId');
       if (notFound) {
