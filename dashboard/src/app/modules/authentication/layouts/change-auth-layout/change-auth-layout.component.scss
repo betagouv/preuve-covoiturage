@@ -1,6 +1,9 @@
+@import 'variables';
+
 .changeAuthLayout {
   display: flex;
   justify-content: space-evenly;
+  @include supportEdge(justify-content, space-around);
   align-items: center;
 
   & > * {
