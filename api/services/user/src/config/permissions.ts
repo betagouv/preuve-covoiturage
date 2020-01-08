@@ -82,6 +82,8 @@ export const territory = {
       'incentive-policy.read',
       'incentive-campaign.list',
       'incentive-campaign.read',
+      'users.list',
+      'territory.users.list',
     ],
   },
 };
@@ -146,6 +148,8 @@ export const operator = {
       'operator.trip.list',
       'operator.trip.stats',
       'incentive-campaign.list',
+      'user.list',
+      'operator.users.list',
     ],
   },
 };

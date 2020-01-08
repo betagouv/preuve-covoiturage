@@ -42,7 +42,7 @@ const routes: Routes = [
       },
       {
         path: 'users',
-        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.OPERATOR], role: UserManyRoleEnum.ADMIN },
+        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.OPERATOR] },
         component: UsersComponent,
       },
       {
