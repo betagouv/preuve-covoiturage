@@ -43,6 +43,7 @@ mat-form-field.mat-form-field-appearance-outline {
       padding: 0.5em 0;
     }
   }
+  @include supportEdge(width, 180px);
 }
 
 // full with helper (autocomplete dropdowns)
