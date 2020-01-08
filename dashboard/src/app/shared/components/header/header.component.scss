@@ -64,4 +64,7 @@
   .mat-menu-content {
     width: 240px;
   }
+  .mat-menu-panel {
+    @include supportEdge(overflow, hidden !important);
+  }
 }
