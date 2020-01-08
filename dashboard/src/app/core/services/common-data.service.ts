@@ -119,6 +119,7 @@ export class CommonDataService {
   }
 
   public loadAll() {
+    console.log('common > loadAll');
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
