@@ -134,3 +134,11 @@ $size-small-padding: 15px;
 $size-large-width: 1272px;
 
 $responsive-large: 1400px;
+
+// BROWSER COMPATIBILITY
+
+@mixin supportEdge($propertyName, $value) {
+  @supports (-ms-accelerator: true) or (-ms-ime-align: auto) {
+    #{$propertyName}: $value;
+  }
+}
