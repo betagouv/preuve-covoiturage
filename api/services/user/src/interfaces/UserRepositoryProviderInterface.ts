@@ -68,6 +68,10 @@ export abstract class UserRepositoryProviderInterfaceResolver implements UserRep
     throw new Error();
   }
 
+  async patchRole(_id: number, role: string, roleSuffixOnly?: boolean): Promise<void> {
+    throw new Error();
+  }
+
   async patch(_id: number, data: UserPatchInterfaceBy): Promise<UserFindInterface> {
     throw new Error();
   }
