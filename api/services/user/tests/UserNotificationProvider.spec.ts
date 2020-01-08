@@ -45,6 +45,7 @@ class UserRepository extends UserRepositoryProviderInterfaceResolver {
       firstname,
       lastname,
       _id: 1,
+      phone: null,
       role: 'registry.admin',
       group: 'registry',
       status: 'active',
@@ -128,7 +129,7 @@ describe('User notification provider', async () => {
     const email = 'j@vj.com';
     const token = 'toto';
     await provider.userCreated(token, email);
-    const [segment, template, templateId] = provider.CONFIRMATION;
+    const [segment, template, templateId] = provider.INVITATION;
     const link = `${cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
     expect(kernel.notify).to.have.been.calledWith(
       'user:notify',
@@ -141,6 +142,5 @@ describe('User notification provider', async () => {
       },
       provider.defaultContext,
     );
-    expect(logger.log).to.have.been.called;
   });
 });

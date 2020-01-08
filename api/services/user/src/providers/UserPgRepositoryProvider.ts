@@ -118,10 +118,8 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   protected async deleteWhere(id: number, where?: { operator_id?: number; territory_id?: number }): Promise<boolean> {
     const query = {
       text: `
-      UPDATE ${this.table}
-        SET deleted_at = NOW()
+      DELETE FROM ${this.table}
         WHERE _id = $1
-        AND deleted_at is NULL
         ${where ? (where.operator_id ? 'AND operator_id = $2' : 'AND territory_id = $2') : ''}
       `,
       values: [id],
@@ -162,7 +160,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       text: `
         SELECT count(*) as total FROM ${this.table}
         ${whereClauses.text}
-        ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at IS NULL
       `,
       values: whereClauses.values,
     };
@@ -202,7 +199,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           ${this.groupCastStatement}
         FROM ${this.table}
         ${whereClauses.text}
-        ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at IS NULL
         LIMIT ${limit}
         OFFSET ${offset}
       `,
@@ -309,7 +305,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
         FROM ${this.table}
         ${this.permissionsJoin}
         ${whereClauses.text}
-        ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at IS NULL
         LIMIT 1
       `,
       values: whereClauses.values,
@@ -396,7 +391,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
         UPDATE ${this.table}
           SET ${setClauses.text}
           ${whereClauses.text}
-          ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at is NULL
         RETURNING
           _id,
           status,
