@@ -83,6 +83,7 @@ export class PatchUserAction extends AbstractAction {
     }
 
     const updatedUser = await this.userRepository.patch(_id, patch);
+    if (patch.role) await this.userRepository.patchRole(_id, patch.role, true);
 
     // user didn't change her email
     if (!email || email === user.email) {
