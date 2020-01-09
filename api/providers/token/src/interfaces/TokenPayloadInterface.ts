@@ -1,6 +1,7 @@
 /**
  * a: application_id
  * o: operator_id
+ * s: service
  * p: permissions
  * v: version of the token payload
  */

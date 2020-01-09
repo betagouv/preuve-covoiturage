@@ -198,8 +198,9 @@ export class HttpTransport implements TransportInterface {
 
         // warn the user about this endpoint deprecation agenda
         // https://github.com/betagouv/preuve-covoiturage/issues/383
-        const warning =
-          'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
+        // prettier-ignore
+        // eslint-disable-next-line
+        const warning = 'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
 
         // correct error code on Mongo conflicts
         let code = mapStatusCode(response);
