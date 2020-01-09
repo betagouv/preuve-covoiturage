@@ -1,4 +1,4 @@
-import { provider, ConfigInterfaceResolver, ConflictException, NotFoundException } from '@ilos/common';
+import { provider, ConfigInterfaceResolver, ConflictException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
