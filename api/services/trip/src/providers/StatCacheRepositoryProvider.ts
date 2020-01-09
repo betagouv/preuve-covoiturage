@@ -25,14 +25,18 @@ export class StatCacheRepositoryProvider implements StatCacheRepositoryProviderI
   constructor(public connection: PostgresConnection, private config: ConfigInterfaceResolver) {}
 
   public async getGeneralOrBuild(fn: Function): Promise<StatInterface[]> {
-    const result = await this.connection.getClient().query(`
-        SELECT
-          data
-        FROM ${this.table}
-        WHERE is_public = true AND operator_id IS NULL AND territory_id IS NULL
-        AND (extract(epoch from age(now(), updated_at)) / 3600) < 24
-        LIMIT 1
-      `);
+    const result = await this.connection.getClient().query({
+      text: `
+      SELECT
+        data
+      FROM ${this.table}
+      WHERE is_public = true AND operator_id IS NULL AND territory_id IS NULL
+      AND (extract(epoch from age(now(), updated_at)) / 3600) < $1
+      LIMIT 1
+    `,
+      values: [this.config.get('cache.expireInHours', 24)],
+    });
+
     if (result.rowCount !== 1) {
       console.log('[stat cache miss] public');
 
