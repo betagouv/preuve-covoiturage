@@ -1,4 +1,4 @@
-export function bicCast({ data }: { data: string }) {
+export function bicCast({ data }: { data: string }): string {
   if (!data) {
     throw new Error('Invalid BIC');
   }

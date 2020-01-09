@@ -1,4 +1,4 @@
-export function phonetruncMacro(schema) {
+export function phonetruncMacro(): { type: string; format: string; minLength: number; maxLength: number } {
   return {
     type: 'string',
     format: 'phonetrunc',

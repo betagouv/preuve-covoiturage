@@ -1,4 +1,4 @@
-export function ibanCast({ data }: { data: string }) {
+export function ibanCast({ data }: { data: string }): string {
   if (!data) {
     throw new Error('Invalid IBAN');
   }

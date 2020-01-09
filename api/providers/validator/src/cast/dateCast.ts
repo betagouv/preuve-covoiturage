@@ -1,4 +1,4 @@
-export function dateCast({ data }: { data: string | number | Date }) {
+export function dateCast({ data }: { data: string | number | Date }): Date {
   if (!data) {
     throw new Error('Invalid Date');
   }

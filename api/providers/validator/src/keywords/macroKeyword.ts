@@ -61,7 +61,7 @@ export const macroKeyword = {
   name: 'macro',
   type: 'keyword',
   definition: {
-    macro(schema: string, parentSchema, it) {
+    macro(schema: string, parentSchema, it): any {
       if (schema in macroStore) {
         return macroStore[schema](schema, parentSchema, it);
       }

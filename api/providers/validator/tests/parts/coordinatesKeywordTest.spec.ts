@@ -3,8 +3,8 @@ import { NewableType } from '@ilos/common';
 
 import { ValidatorInterface } from '../../src';
 
-export function coordinatesKeywordTest(getProvider, FakeObject: NewableType<any>) {
-  return () => {
+export function coordinatesKeywordTest(getProvider, FakeObject: NewableType<any>): Function {
+  return (): void => {
     let provider: ValidatorInterface;
     beforeEach(async () => {
       const schema = {

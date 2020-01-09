@@ -1,4 +1,4 @@
-export function timestampMacro(schema) {
+export function timestampMacro(): { type: string; pattern: string; cast: string } {
   return {
     type: 'string',
     // from https://github.com/epoberezkin/ajv/commit/382c2b9ed151287e4ff0f233d689563f90cd5c20

@@ -1,4 +1,4 @@
-export function dbidMacro(schema) {
+export function dbidMacro(): { anyOf: object[] } {
   return {
     anyOf: [
       // MongoDB ObjectID

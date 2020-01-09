@@ -1,4 +1,4 @@
-export function nicMacro(schema) {
+export function nicMacro(): { type: string; format: string; minLength: number; maxLength: number } {
   return {
     type: 'string',
     format: 'nic',
