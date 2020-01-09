@@ -6,5 +6,6 @@
   "editor.detectIndentation": false,
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "eslint.packageManager": "yarn"
 }
