@@ -39,6 +39,8 @@ describe('Route mapping', () => {
   app.use(
     expressSession({
       secret: 'SECRET',
+      resave: false,
+      saveUninitialized: false,
     }),
   );
 

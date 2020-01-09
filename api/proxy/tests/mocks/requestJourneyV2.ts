@@ -1,6 +1,6 @@
 export const requestJourney = {
   operator_class: 'B',
-  journey_id: (() => `${Math.random()}-${Math.random()}-${Math.random()}`)(),
+  journey_id: ((): string => `${Math.random()}-${Math.random()}-${Math.random()}`)(),
   operator_journey_id: 'a65f2757-a324-4fde-a1a9-fd1acb2a04be',
   passenger: {
     distance: 34039,

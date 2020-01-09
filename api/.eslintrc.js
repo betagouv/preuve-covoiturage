@@ -13,12 +13,14 @@ module.exports = {
     sourceType: 'module', // Allows for the use of imports
   },
   rules: {
+    semi: ['error', 'always'],
     'prettier/prettier': 'error',
+    'max-len': ['warn', { code: 120 }],
     '@typescript-eslint/no-empty-interface': ['error', { allowSingleExtends: true }],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/camelcase': 'off', // postgresql compat
     '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'none', ignoreRestSiblings: true }],
     '@typescript-eslint/no-empty-function': 'off',
-    '@typescript-eslint/ban-ts-ignore': 'warn',
+    '@typescript-eslint/ban-ts-ignore': 'off',
   },
 };
