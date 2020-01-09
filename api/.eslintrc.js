@@ -4,6 +4,7 @@ module.exports = {
     node: true,
     mocha: true,
   },
+  plugins: ['prettier'],
   extends: [
     'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
   ],
@@ -12,6 +13,7 @@ module.exports = {
     sourceType: 'module', // Allows for the use of imports
   },
   rules: {
+    'prettier/prettier': 'error',
     '@typescript-eslint/no-empty-interface': ['error', { allowSingleExtends: true }],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/camelcase': 'off', // postgresql compat

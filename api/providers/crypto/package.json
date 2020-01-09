@@ -10,7 +10,7 @@
     "watch": "tsc -w",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-crypto --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "lint": "eslint 'src/**/*.ts'",
     "test": "mocha --exit src/*.spec.ts src/**/*.spec.ts"
   },
   "dependencies": {

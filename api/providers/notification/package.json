@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
+    "lint": "eslint 'src/**/*.ts'",
     "coverage": "nyc --all --reporter=text mocha tests/**/*.spec.ts src/**/*.spec.ts",
     "test": "echo '[provider-notification] No tests'; exit 0",
     "test:integration": "echo '[provider-notification] No tests'; exit 0"
