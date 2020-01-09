@@ -29,7 +29,10 @@ import { LogErrorAction } from './actions/LogErrorAction';
     ['validate', ValidatorMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
-  connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
+  connections: [
+    [PostgresConnection, 'connections.postgres'],
+    [RedisConnection, 'connections.redis'],
+  ],
   handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {

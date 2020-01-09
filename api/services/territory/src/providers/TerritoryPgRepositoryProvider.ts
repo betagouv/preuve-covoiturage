@@ -47,7 +47,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return territory;
   }
 
-  async hasDoubleSiretThenFail(siret: string, id: number = 0) {
+  async hasDoubleSiretThenFail(siret: string, id = 0): Promise<void> {
     const query = {
       text: `SELECT * from ${this.table} WHERE siret = $1 AND _id != $2 `,
       values: [siret, id],

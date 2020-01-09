@@ -9,14 +9,8 @@ import {
   OperatorRepositoryProviderInterfaceResolver,
 } from '../interfaces/OperatorRepositoryProviderInterface';
 
-import {
-  signature as companyFindSignature,
-  ParamsInterface as CompanyFindParams,
-} from '../shared/company/find.contract';
-import {
-  signature as companyFetchSignature,
-  ParamsInterface as CompanyFetchParams,
-} from '../shared/company/fetch.contract';
+import { signature as companyFindSignature } from '../shared/company/find.contract';
+import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
 
 @provider({
   identifier: OperatorRepositoryProviderInterfaceResolver,
