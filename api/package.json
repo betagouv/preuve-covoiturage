@@ -33,8 +33,8 @@
     "build:services": "lerna run --parallel --scope @pdc/service-* build",
     "coverage-ci": "lerna run --parallel --scope @pdc/* coverage-ci",
     "coverage": "lerna run --parallel --scope @pdc/* coverage",
-    "format:fix": "pretty-quick --staged",
-    "lint": "lerna run --parallel --scope @pdc/* lint",
+    "format:fix": "lint-staged",
+    "lint": "lerna run --scope @pdc/* lint",
     "test": "run-s test:unit test:integration",
     "test:unit": "lerna run --parallel --scope @pdc/* test",
     "test:integration": "lerna run --parallel --scope @pdc/* test:integration",
@@ -62,11 +62,18 @@
     "eslint": "^6.8.0",
     "eslint-plugin-prettier": "^3.1.2",
     "lerna": "^3.20.2",
+    "lint-staged": "^9.5.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1",
     "ts-node": "^8.5.4",
     "tslint": "^5.17.0",
     "typescript": "^3.7.4"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
   }
 }

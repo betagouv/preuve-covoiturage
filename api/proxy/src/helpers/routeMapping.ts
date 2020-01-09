@@ -34,7 +34,7 @@ export type ArrayRouteMapType = [
   string, // route
   string, // signature
   (MapRequestType | 'auto')?, // mapRequest
-  MapResponseType? // mapResponse
+  MapResponseType?, // mapResponse
 ];
 
 export type RouteHandlerType = (
