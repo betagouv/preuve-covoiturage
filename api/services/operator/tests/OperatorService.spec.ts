@@ -13,7 +13,7 @@ describe('Operator service', () => {
   let transport;
   let request;
 
-  const callFactory = (method: string, data: any, permissions: string[]) => ({
+  const callFactory = (method: string, data: any, permissions: string[]): object => ({
     method,
     id: 1,
     jsonrpc: '2.0',

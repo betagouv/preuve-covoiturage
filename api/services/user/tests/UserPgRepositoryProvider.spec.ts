@@ -7,7 +7,7 @@ import { UserPgRepositoryProvider } from '../src/providers/UserPgRepositoryProvi
 import { UserCreateInterface } from '../src/shared/user/common/interfaces/UserCreateInterface';
 
 class Config extends ConfigInterfaceResolver {
-  get(_k: string, fb: string) {
+  get(_k: string, fb: string): string {
     return fb;
   }
 }

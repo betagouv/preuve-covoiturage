@@ -9,8 +9,8 @@ export interface TerritoryRepositoryProviderInterface {
   delete(_id: number): Promise<void>;
   update(data: PatchParamsInterface): Promise<TerritoryDbInterface>;
   patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbInterface>;
-  findByInsee(insee: String): Promise<TerritoryDbInterface>;
-  findByPosition(lon: Number, lat: Number): Promise<TerritoryDbInterface>;
+  findByInsee(insee: string): Promise<TerritoryDbInterface>;
+  findByPosition(lon: number, lat: number): Promise<TerritoryDbInterface>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
@@ -38,11 +38,11 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async findByInsee(insee: String): Promise<TerritoryDbInterface> {
+  async findByInsee(insee: string): Promise<TerritoryDbInterface> {
     throw new Error();
   }
 
-  async findByPosition(lon: Number, lat: Number): Promise<TerritoryDbInterface> {
+  async findByPosition(lon: number, lat: number): Promise<TerritoryDbInterface> {
     throw new Error();
   }
 }

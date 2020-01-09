@@ -7,7 +7,7 @@ import { RPCSingleResponseType } from '@ilos/common';
  * between queries.
  * Applies to arrays or single objects
  */
-export const mapResults = (doc: RPCSingleResponseType): RPCSingleResponseType => {
+export const mapResults = (doc): RPCSingleResponseType => {
   if (typeof doc.result === 'undefined') return doc;
 
   if (typeof doc.result !== 'object') {

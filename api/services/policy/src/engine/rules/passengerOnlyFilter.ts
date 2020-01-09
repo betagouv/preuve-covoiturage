@@ -11,7 +11,7 @@ export const passengerOnlyFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply() {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       if (ctx.person.is_driver) {
         throw new NotApplicableTargetException(passengerOnlyFilter);
       }

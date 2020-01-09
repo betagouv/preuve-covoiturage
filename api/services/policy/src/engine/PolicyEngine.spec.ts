@@ -44,7 +44,7 @@ const fakeCampaign: CampaignInterface = {
 };
 
 class CampaignMetadataRepositoryProvider extends CampaignMetadataRepositoryProviderInterfaceResolver {
-  async get(id: number, key: string = 'default'): Promise<MetaInterface> {
+  async get(id: number, key = 'default'): Promise<MetaInterface> {
     return new MetadataWrapper(id, key, {});
   }
   async set(meta: MetaInterface): Promise<void> {
@@ -67,6 +67,6 @@ describe('Policy engine', () => {
     expect(result[0].policy_id).to.eq(fakeCampaign._id);
     // expect(result[0].trip).to.eq(trip._id);
     // expect(result[0].person).to.eq(trip.people[1].identity.phone);
-    expect(result[0].amount).to.eq((trip.people[0].distance / 1000) * <number>fakeCampaign.rules[0][1].parameters);
+    expect(result[0].amount).to.eq(((trip.people[0].distance / 1000) * fakeCampaign.rules[0][1].parameters) as number);
   });
 });

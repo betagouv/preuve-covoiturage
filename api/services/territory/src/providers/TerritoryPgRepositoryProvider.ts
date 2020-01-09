@@ -47,7 +47,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return territory;
   }
 
-  async hasDoubleSiretThenFail(siret: string, id: number = 0) {
+  async hasDoubleSiretThenFail(siret: string, id = 0): Promise<void> {
     const query = {
       text: `SELECT * from ${this.table} WHERE siret = $1 AND _id != $2 `,
       values: [siret, id],
@@ -214,11 +214,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows[0];
   }
 
-  async findByInsee(insee: String): Promise<TerritoryDbInterface> {
+  async findByInsee(insee: string): Promise<TerritoryDbInterface> {
     throw new Error('This is not implemented here'); // move to normalization service
   }
 
-  async findByPosition(lon: Number, lat: Number): Promise<TerritoryDbInterface> {
+  async findByPosition(lon: number, lat: number): Promise<TerritoryDbInterface> {
     throw new Error('This is not implemented here'); // move to normalization servie
   }
 }

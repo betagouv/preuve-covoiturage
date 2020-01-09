@@ -24,7 +24,10 @@ import { NormalizationIdentityAction } from './actions/NormalizationIdentityActi
     NormalizationIdentityAction,
   ],
   middlewares: [['channel.service.only', ChannelServiceWhitelistMiddleware]],
-  connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
+  connections: [
+    [RedisConnection, 'connections.redis'],
+    [PostgresConnection, 'connections.postgres'],
+  ],
   queues: ['normalization'],
   validator: [],
 })

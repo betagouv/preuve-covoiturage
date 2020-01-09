@@ -1,4 +1,4 @@
-export function callFactory(method: string, params: any, perms: string[] = null) {
+export function callFactory(method: string, params: any, perms: string[] = null): object {
   const permissions = perms || [`user.${method}`];
 
   return {

@@ -124,7 +124,8 @@ export const nonFinancialIncentivePolicy = {
   name: 'Récompenser le covoiturage',
   slug: 'recompenser_le_covoiturage',
   description:
-    "Campagne d'incitation basée sur un système de gratification par points donnant accès à un catalogue de récompenses (place de parking, place de piscine, composteur, etc.)",
+    "Campagne d'incitation basée sur un système de gratification par points donnant accès" +
+    ' à un catalogue de récompenses (place de parking, place de piscine, composteur, etc.)',
   global_rules: [
     {
       slug: 'rank_whitelist_filter',

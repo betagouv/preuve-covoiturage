@@ -30,7 +30,7 @@ export abstract class AuthRepositoryProviderInterfaceResolver implements AuthRep
   readonly UNCONFIRMED_STATUS: string;
   readonly INVITED_STATUS: string;
 
-  async createTokenByEmail(email: string, type: string, status: string = 'pending'): Promise<string | undefined> {
+  async createTokenByEmail(email: string, type: string, status = 'pending'): Promise<string | undefined> {
     throw new Error();
   }
 

@@ -1,5 +1,5 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { ConfigInterfaceResolver, provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 
 import {
   CampaignMetadataRepositoryProviderInterface,
@@ -15,7 +15,7 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
 
   constructor(protected connection: PostgresConnection) {}
 
-  async get(id: number, key: string = 'default'): Promise<MetadataWrapper> {
+  async get(id: number, key = 'default'): Promise<MetadataWrapper> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT

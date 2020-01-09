@@ -114,7 +114,8 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             case 'days':
               return {
                 text: 'weekday = ANY ($#::int[])',
-                values: [filter.value === 0 ? 7 : filter.value], // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
+                values: [filter.value === 0 ? 7 : filter.value],
+                // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
               };
             case 'hour': {
               return {
@@ -188,7 +189,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const values: any[] = [params.date.start, params.date.end];
 
     const territoryWhere = '(start_territory_id = ANY ($3::int[]) OR end_territory_id = ANY ($4::int[]))';
-    const operatorWhere = (i: number) => `operator_id = ANY ($${i}::text[])`;
+    const operatorWhere = (i: number): string => `operator_id = ANY ($${i}::text[])`;
 
     if (params.operator_id && params.territory_id) {
       where = `AND ${operatorWhere(5)} AND ${territoryWhere}`;
@@ -206,10 +207,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     let territoryOpVNameSelect = 'operator_name,';
 
     if (params.operator_territory_id) {
-      territoryOpVJoin = `LEFT JOIN territory.territory_operators teop on teop.operator_id = export.operator_id::int AND teop.territory_id = '${
-        params.operator_territory_id
-      }'`;
-      territoryOpVNameSelect = `(CASE WHEN teop.operator_id <> 0 THEN export.operator_name ELSE '' END) as operator_name,`;
+      territoryOpVJoin = `
+        LEFT JOIN territory.territory_operators teop
+        ON teop.operator_id = export.operator_id::int
+        AND teop.territory_id = '${params.operator_territory_id}'`;
+      territoryOpVNameSelect = `
+        (CASE WHEN teop.operator_id <> 0 THEN export.operator_name ELSE '' END)
+        AS operator_name,`;
     }
 
     const query = {

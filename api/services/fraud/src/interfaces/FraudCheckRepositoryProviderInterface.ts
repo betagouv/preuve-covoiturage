@@ -1,4 +1,4 @@
-import { FraudCheck, FraudCheckResult, FraudCheckComplete, DefaultMetaInterface } from './FraudCheck';
+import { FraudCheck, FraudCheckComplete, DefaultMetaInterface } from './FraudCheck';
 
 export interface FraudCheckRepositoryProviderInterface {
   findOrCreateFraudCheck<T = DefaultMetaInterface>(acquisitionId: number, method: string): Promise<FraudCheck<T>>;

@@ -8,7 +8,10 @@ import { alias } from '../shared/territory/update.schema';
 
 @handler(handlerConfig)
 export class UpdateTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['territory.update']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['territory.update']],
+    ['validate', alias],
+  ];
 
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();

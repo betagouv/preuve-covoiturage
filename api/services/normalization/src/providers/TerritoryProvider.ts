@@ -1,15 +1,5 @@
-import { provider, ContextType } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
-
-const context: ContextType = {
-  call: {
-    user: {},
-  },
-  channel: {
-    service: 'normalization',
-    transport: 'queue',
-  },
-};
 
 @provider()
 export class TerritoryProvider {

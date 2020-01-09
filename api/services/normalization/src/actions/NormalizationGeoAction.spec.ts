@@ -10,7 +10,8 @@
 // import { NormalizationGeoAction } from './NormalizationGeoAction';
 // import { ServiceProvider as BaseServiceProvider } from '../../../user/src/ServiceProvider';
 // import { FindUserAction } from '../../../user/src/actions/FindUserAction';
-// import { UserRepositoryProviderInterfaceResolver } from '../../../user/src/interfaces/repository/UserRepositoryProviderInterface';
+// import { UserRepositoryProviderInterfaceResolver } from
+// '../../../user/src/interfaces/repository/UserRepositoryProviderInterface';
 //
 // const { expect } = chai;
 //

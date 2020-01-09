@@ -9,7 +9,7 @@ describe('Application pg repository', () => {
   let connection;
   let uuid;
 
-  const sortDesc = (a: number, b: number) => (a > b ? -1 : 1);
+  const sortDesc = (a: number, b: number): number => (a > b ? -1 : 1);
 
   before(async () => {
     connection = new PostgresConnection({

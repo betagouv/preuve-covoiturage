@@ -1,6 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler } from '@ilos/common';
 
+// eslint-disable-next-line
 import { TerritoryOperatorRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryOperatorRepositoryProviderInterface';
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/updateOperator.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
@@ -14,7 +15,7 @@ export class UpdateTerritoryOperatorAction extends AbstractAction {
       [
         ['this.is.not.a.valid.permission'],
         [
-          (params, context) => {
+          (params, context): string => {
             if ('operator_id' in params && params.operator_id === context.call.user.operator_id) {
               return 'operator.update';
             }

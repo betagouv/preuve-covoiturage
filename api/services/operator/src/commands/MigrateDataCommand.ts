@@ -63,8 +63,19 @@ export class MigrateDataCommand implements CommandInterface {
         await writeClient.query({
           text: `
         INSERT INTO operator.operators
-        ( name, legal_name, siret, company, address, bank, contacts, cgu_accepted_at, cgu_accepted_by, created_at, updated_at )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
+        (
+          name,
+          legal_name,
+          siret,
+          company,
+          address,
+          bank,
+          contacts,
+          cgu_accepted_at,
+          cgu_accepted_by,
+          created_at,
+          updated_at
+        ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
         `,
           values: [
             doc.nom_commercial,

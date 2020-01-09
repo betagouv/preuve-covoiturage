@@ -49,7 +49,10 @@ import { SeedCommand } from './commands/SeedCommand';
     ListCampaignAction,
     ApplyAction,
   ],
-  connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
+  connections: [
+    [PostgresConnection, 'connections.postgres'],
+    [RedisConnection, 'connections.redis'],
+  ],
   queues: ['campaign'],
   middlewares: [
     ['can', PermissionMiddleware],

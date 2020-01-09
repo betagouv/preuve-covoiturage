@@ -16,7 +16,7 @@ export const rankWhitelistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: RankWhitelistParameters) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       if (params.indexOf(ctx.person.operator_class) < 0) {
         throw new NotApplicableTargetException(rankWhitelistFilter);
       }

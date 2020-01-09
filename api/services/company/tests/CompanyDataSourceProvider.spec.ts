@@ -9,7 +9,7 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 
 describe('Company data source provider', () => {
-  let provider: CompanyDataSourceProvider = new CompanyDataSourceProvider();
+  const provider: CompanyDataSourceProvider = new CompanyDataSourceProvider();
   it('should fetch from data source with a siret id', async () => {
     const data = await provider.find('12000101100010');
     expect(data).to.have.all.keys([

@@ -15,7 +15,7 @@ import { policies } from '../engine/rules';
 export class ValidateRuleParametersMiddleware implements MiddlewareInterface, InitHookInterface {
   constructor(private validator: ValidatorInterfaceResolver) {}
 
-  async init() {
+  async init(): Promise<void> {
     for (const policy of policies) {
       if (policy.schema) {
         this.validator.registerValidator(policy.schema, `policies.${policy.slug}`);

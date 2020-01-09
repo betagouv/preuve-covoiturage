@@ -13,8 +13,8 @@
 // const appId = '5d265236c3a9744f81ebef5c';
 // const operatorId = '5d265241f360e9a1538a0b7d';
 
-// const token =
-//   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjVkMjY1MjM2YzNhOTc0NGY4MWViZWY1YyIsIm9wZXJhdG9ySWQiOiI1ZDI2NTI0MWYzNjBlOWExNTM4YTBiN2QiLCJpYXQiOjE1NjI3OTI3MDd9.VXO7foy2U-GJ1fAUuTwGLE8K2xK5MvF0WADE2GQN214';
+// eslint-disable-next-line
+// const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjVkMjY1MjM2YzNhOTc0NGY4MWViZWY1YyIsIm9wZXJhdG9ySWQiOiI1ZDI2NTI0MWYzNjBlOWExNTM4YTBiN2QiLCJpYXQiOjE1NjI3OTI3MDd9.VXO7foy2U-GJ1fAUuTwGLE8K2xK5MvF0WADE2GQN214';
 
 // describe('TokenProvider', () => {
 //   it('sign the payload', async () => {
