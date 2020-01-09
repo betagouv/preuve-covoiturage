@@ -1,4 +1,4 @@
-export function sirenMacro(schema) {
+export function sirenMacro(): { type: string; format: string; minLength: number; maxLength: number } {
   return {
     type: 'string',
     format: 'siren',

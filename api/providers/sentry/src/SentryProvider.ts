@@ -6,7 +6,7 @@ import { Sentry } from './Sentry';
 export class SentryProvider implements ProviderInterface {
   constructor(protected config: ConfigInterfaceResolver) {}
 
-  boot() {
+  boot(): void {
     const dsn = this.config.get('sentry.dsn', null);
     const env = this.config.get('sentry.environment', null);
     const version = this.config.get('sentry.version', null);

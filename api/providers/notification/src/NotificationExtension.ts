@@ -28,12 +28,12 @@ export class NotificationExtension implements RegisterHookInterface, InitHookInt
     },
   ) {}
 
-  register(serviceContainer: ServiceContainerInterface) {
+  register(serviceContainer: ServiceContainerInterface): void {
     serviceContainer.bind(Notification);
     serviceContainer.registerHooks(Notification.prototype, NotificationInterfaceResolver);
   }
 
-  async init(serviceContainer: ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface): Promise<void> {
     if (this.config) {
       const container = serviceContainer.getContainer();
 

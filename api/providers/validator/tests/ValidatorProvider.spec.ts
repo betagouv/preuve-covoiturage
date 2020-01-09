@@ -35,7 +35,7 @@ class FakeObject {
   }
 }
 
-async function getProvider() {
+async function getProvider(): Promise<ValidatorInterfaceResolver> {
   const serviceProvider = new ServiceProvider();
   await serviceProvider.register();
   await serviceProvider.init();

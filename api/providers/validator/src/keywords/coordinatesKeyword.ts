@@ -1,6 +1,6 @@
 export const coordinatesKeyword = {
   type: 'number',
-  compile(schema: string) {
+  compile(schema: string): Function {
     let min: number;
     let max: number;
     let regex: RegExp;

@@ -1,7 +1,7 @@
 import { ProviderInterface } from '@ilos/common';
 
 export interface CryptoProviderInterface extends ProviderInterface {
-  boot();
+  boot(): Promise<void>;
   cryptPassword(plainPassword): Promise<string>;
   cryptToken(plainToken): Promise<string>;
   comparePassword(plainPwd: string, hashedPwd: string): Promise<boolean>;
@@ -10,9 +10,7 @@ export interface CryptoProviderInterface extends ProviderInterface {
 }
 
 export abstract class CryptoProviderInterfaceResolver implements CryptoProviderInterface {
-  async boot() {
-    //
-  }
+  async boot(): Promise<void> {}
   async cryptPassword(plainPassword: string): Promise<string> {
     throw new Error();
   }
@@ -26,7 +24,7 @@ export abstract class CryptoProviderInterfaceResolver implements CryptoProviderI
   async compareToken(plainToken: string, hashedToken: string): Promise<boolean> {
     throw new Error();
   }
-  generateToken(length: number = 32): string {
+  generateToken(length = 32): string {
     throw new Error();
   }
 }

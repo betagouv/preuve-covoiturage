@@ -17,10 +17,8 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': ['error', { allowSingleExtends: true }],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/camelcase': 'off', // postgresql compat
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { vars: 'all', args: 'after-used', ignoreRestSiblings: true, argsIgnorePattern: '_?next|_?req|_?res' },
-    ],
+    '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'none', ignoreRestSiblings: true }],
+    '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/ban-ts-ignore': 'warn',
   },
 };

@@ -1,4 +1,4 @@
-export function emailCast({ data }: { data: string }) {
+export function emailCast({ data }: { data: string }): string {
   if (!data) {
     throw new Error('Invalid email');
   }

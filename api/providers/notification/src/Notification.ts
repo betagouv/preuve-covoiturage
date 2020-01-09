@@ -24,12 +24,12 @@ export class Notification implements NotificationInterface {
     //
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.config = this.configProvider.get('notification');
     this.registerMailDriver();
   }
 
-  protected registerMailDriver() {
+  protected registerMailDriver(): void {
     if (!(this.config.mail.driver in this.mailDrivers)) {
       throw new Error(`Mail driver ${this.config.mail.driver} not found`);
     }
