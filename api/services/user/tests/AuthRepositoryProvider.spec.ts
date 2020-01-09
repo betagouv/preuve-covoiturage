@@ -6,6 +6,7 @@ import { CryptoProvider, CryptoProviderInterfaceResolver } from '@pdc/provider-c
 
 import { AuthRepositoryProvider } from '../src/providers/AuthRepositoryProvider';
 import { AuthRepositoryProviderInterface } from '../src/interfaces/AuthRepositoryProviderInterface';
+import { UserFindInterface } from '../src/shared/user/common/interfaces/UserFindInterface';
 
 class Config extends ConfigInterfaceResolver {
   config = {
@@ -13,7 +14,7 @@ class Config extends ConfigInterfaceResolver {
     invitation: 7 * 86400,
     reset: 1 * 86400,
   };
-  get(k: string, fb: string) {
+  get(k: string, fb: string): string {
     const key = k.split('.').pop();
     if (key in this.config) {
       return this.config[key];
@@ -27,7 +28,7 @@ describe('Auth pg repository', async () => {
   let connection;
   let id;
   const email = 'toto@toto.com';
-  const getUser = async function(customEmail = email) {
+  const getUser = async function(customEmail = email): Promise<UserFindInterface> {
     const result = await connection.getClient().query({
       text: 'SELECT * from auth.users where email = $1',
       values: [customEmail],
@@ -47,7 +48,7 @@ describe('Auth pg repository', async () => {
 
     repository = new AuthRepositoryProvider(
       connection,
-      (<unknown>new CryptoProvider()) as CryptoProviderInterfaceResolver,
+      (new CryptoProvider() as unknown) as CryptoProviderInterfaceResolver,
       new Config(),
     );
 

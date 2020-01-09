@@ -11,7 +11,7 @@ export class ContactsSchemaMigration extends ParentMigration {
     super();
   }
 
-  async up() {
+  async up(): Promise<void> {
     const connection = new MongoConnection({
       connectionString: this.config.get('mongo.connectionString'),
     });
@@ -62,7 +62,7 @@ export class ContactsSchemaMigration extends ParentMigration {
     await Promise.all(updates);
   }
 
-  async down() {
+  async down(): Promise<void> {
     // No down migration
     // After the migration, contacts are not required to be existing users.
     // This makes reverting to an ObjectId impossible.

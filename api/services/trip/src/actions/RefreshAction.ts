@@ -13,7 +13,7 @@ export class RefreshAction extends Action implements InitHookInterface {
     super();
   }
 
-  async init() {
+  async init(): Promise<void> {
     await this.kernel.notify('trip:refresh', 'list', {
       call: {
         user: {},

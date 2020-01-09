@@ -1,4 +1,3 @@
-// tslint:disable: no-unused-expression max-classes-per-file
 import { describe } from 'mocha';
 import chai from 'chai';
 import sinon from 'sinon';
@@ -23,13 +22,13 @@ const cfg = {
   'url.appUrl': 'http://myurl',
 };
 class Config extends ConfigInterfaceResolver {
-  get(k: string, fb: string) {
+  get(k: string, fb: string): string {
     return k in cfg ? cfg[k] : fb;
   }
 }
 
 class Kernel extends KernelInterfaceResolver {
-  async notify(method: string, params: any, context: any) {
+  async notify(method: string, params: any, context: any): Promise<void> {
     return;
   }
 }
@@ -64,7 +63,7 @@ describe('User notification provider', async () => {
   beforeEach(() => {
     kernel = new Kernel();
     logger = {
-      log(_message: string) {},
+      log(_message: string): void {},
     };
     provider = new UserNotificationProvider(new Config(), kernel, new UserRepository(), logger);
     sinon.spy(kernel, 'notify');
@@ -98,7 +97,7 @@ describe('User notification provider', async () => {
     await provider.emailUpdated(token, email, oldEmail);
 
     const [segment, template, templateId] = provider.CONFIRMATION;
-    const [_, emailChangedTemplate, emailChangedTemplateId] = provider.EMAIL_CHANGED;
+    const [, emailChangedTemplate, emailChangedTemplateId] = provider.EMAIL_CHANGED;
 
     const link = `${cfg['url.appUrl']}/${segment}/${encodeURIComponent(email)}/${encodeURIComponent(token)}/`;
     expect(kernel.notify).to.have.been.calledWith(

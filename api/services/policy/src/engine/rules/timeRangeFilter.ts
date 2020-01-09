@@ -34,7 +34,7 @@ export const timeRangeFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: TimeRangeParameters) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       const hours = ctx.person.datetime.getHours();
       for (const range of params) {
         if (hours >= range.start && hours <= range.end) {

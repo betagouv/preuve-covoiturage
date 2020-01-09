@@ -31,7 +31,7 @@ export class WorkflowProvider extends HasLogger implements InitHookInterface {
     super();
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.steps = this.config.get('workflow.steps');
   }
 

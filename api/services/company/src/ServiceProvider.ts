@@ -15,7 +15,10 @@ import { FindAction } from './actions/FindAction';
   config: __dirname,
   providers: [CompanyRepositoryProvider, CompanyDataSourceProvider],
   validator: [fetchBinding, findBinding],
-  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware]],
+  middlewares: [
+    ['can', PermissionMiddleware],
+    ['validate', ValidatorMiddleware],
+  ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [FetchAction, FindAction],
 })

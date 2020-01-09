@@ -14,11 +14,11 @@ import { CampaignMetadataRepositoryProvider } from '../../src/engine/CampaignMet
 })
 class Kernel extends AbstractKernel {}
 
-export function helper() {
+export function helper(): { get: Function; up: Function; down: Function } {
   const kernel = new Kernel();
   const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
   process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
-  const get = <T>(id: IdentifierType<T>) => {
+  const get = <T>(id: IdentifierType<T>): T => {
     return kernel.get(ServiceProvider).get<T>(id);
   };
 
@@ -35,7 +35,7 @@ export function helper() {
         policy,
       };
     },
-    async down() {
+    async down(): Promise<void> {
       if (policyId) {
         await get(PostgresConnection)
           .getClient()

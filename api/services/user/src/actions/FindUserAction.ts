@@ -20,17 +20,17 @@ export class FindUserAction extends AbstractAction {
       [
         ['user.read'],
         [
-          (params, context) => {
+          (params, context): string => {
             if ('_id' in params && params._id === context.call.user._id) {
               return 'profile.read';
             }
           },
-          (params, context) => {
+          (params, context): string => {
             if (context.call.user.territory_id) {
               return 'territory.users.read';
             }
           },
-          (params, context) => {
+          (params, context): string => {
             if (context.call.user.operator_id) {
               return 'operator.users.read';
             }

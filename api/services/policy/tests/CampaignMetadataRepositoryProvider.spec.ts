@@ -10,7 +10,7 @@ const { expect } = chai;
 let repository: CampaignMetadataRepositoryProvider;
 let connection: PostgresConnection;
 describe('Campaign metadata repository', () => {
-  let policyId = 0;
+  const policyId = 0;
 
   before(async () => {
     connection = new PostgresConnection({

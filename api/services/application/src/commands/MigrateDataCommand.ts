@@ -1,5 +1,5 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
-import { MongoConnection, ObjectId } from '@ilos/connection-mongo';
+import { MongoConnection } from '@ilos/connection-mongo';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 @command()

@@ -2,7 +2,7 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs';
 import v4 from 'uuid/v4';
-import csvStringify from 'csv-stringify';
+import csvStringify, { Stringifier } from 'csv-stringify';
 
 import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
@@ -76,7 +76,7 @@ export class BuildExportAction extends Action {
     return;
   }
 
-  protected async getStringifier(fd: fs.promises.FileHandle) {
+  protected async getStringifier(fd: fs.promises.FileHandle): Promise<Stringifier> {
     const stringifier = csvStringify({
       delimiter: ';',
       header: true,
@@ -109,7 +109,7 @@ export class BuildExportAction extends Action {
         'passenger_seats',
       ],
       // cast date to ISOString with a 15 minutes rounding (900 seconds)
-      cast: { date: (d: Date) => new Date(Math.round(d.getTime() / 900000) * 900000).toISOString() },
+      cast: { date: (d: Date): string => new Date(Math.round(d.getTime() / 900000) * 900000).toISOString() },
     });
 
     stringifier.on('readable', async () => {

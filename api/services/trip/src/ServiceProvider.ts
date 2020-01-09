@@ -32,7 +32,10 @@ import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProv
     ['channel.transport', ChannelTransportMiddleware],
     ['scopeIt', ScopeToSelfMiddleware],
   ],
-  connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
+  connections: [
+    [RedisConnection, 'connections.redis'],
+    [PostgresConnection, 'connections.postgres'],
+  ],
   handlers: [ListAction, StatsAction, RefreshAction, ExportAction, BuildExportAction],
   queues: ['trip'],
 })
