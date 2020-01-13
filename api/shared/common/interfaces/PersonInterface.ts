@@ -2,6 +2,7 @@ import { PositionInterface } from './PositionInterface';
 import { IdentityInterface } from './IdentityInterface';
 import { PaymentInterface } from './PaymentInterface';
 import { IncentiveInterface } from './IncentiveInterface';
+import { GeoPositionInterface } from './GeoPositionInterface';
 
 export interface PersonInterface {
   is_driver?: boolean;
@@ -28,12 +29,17 @@ export interface PersonInterface {
   cost?: number;
 }
 
+export interface FinalizePositionInterface extends GeoPositionInterface {
+  insee: string;
+  datetime: Date;
+}
+
 export interface FinalizedPersonInterface {
   is_driver: boolean;
   identity: IdentityInterface;
-
-  start: PositionInterface;
-  end: PositionInterface;
+  datetime: Date;
+  start: FinalizePositionInterface;
+  end: FinalizePositionInterface;
   seats: number;
   distance: number;
   duration: number;

@@ -1,4 +1,11 @@
-import { PartialGeoInterface } from '@pdc/provider-geo/dist/interfaces';
+import { PositionInterface } from '../common/interfaces/PositionInterface';
+
+export interface PartialGeoInterface {
+  lat: number;
+  lon: number;
+  insee: string;
+  literal?: string;
+}
 
 export type ResultInterface = {
   start: {
@@ -13,8 +20,8 @@ export type ResultInterface = {
   };
 };
 export interface ParamsInterface {
-  start: PartialGeoInterface;
-  end: PartialGeoInterface;
+  start: PositionInterface;
+  end: PositionInterface;
 }
 
 export const handlerConfig = {

@@ -85,6 +85,7 @@ export class NormalisationProcessAction extends AbstractAction {
     return {
       is_driver: true,
       identity: person.identity,
+      datetime: person.start.datetime,
       start: {
         lon: person.start.lon,
         lat: person.start.lat,
