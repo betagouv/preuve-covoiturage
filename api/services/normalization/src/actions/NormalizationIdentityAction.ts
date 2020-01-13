@@ -16,25 +16,7 @@ export class NormalizationIdentityAction extends AbstractAction {
     super();
   }
 
-  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
-    this.logger.debug(`Normalization:identity on ${journey._id}`);
-
-    const normalizedJourney = { ...journey };
-
-    if (journey.payload.passenger) {
-      journey.payload.passenger.identity = this.normalizeIdentity(journey.payload.passenger.identity);
-    }
-
-    if (journey.payload.driver) {
-      journey.payload.driver.identity = this.normalizeIdentity(journey.payload.driver.identity);
-    }
-
-    await this.wf.next('normalization:identity', normalizedJourney);
-
-    return normalizedJourney;
-  }
-
-  private normalizeIdentity(identity: IdentityInterface | LegacyIdentityInterface): IdentityInterface {
+  public async handle(identity: ParamsInterface): Promise<ResultInterface> {
     if ('travel_pass' in identity && typeof identity === 'object') {
       const id = {
         ...identity,
