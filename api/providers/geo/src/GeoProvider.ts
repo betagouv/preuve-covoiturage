@@ -16,6 +16,7 @@ import {
 import {
   EtalabGeoAdministriveProvider,
   EtalabGeoAdressProvider,
+  LocalGeoProvider,
   LocalOSRMProvider,
   OSMNominatimProvider,
   OSRMProvider,
@@ -26,22 +27,32 @@ import {
   identifier: GeoProviderInterfaceResolver,
 })
 export class GeoProvider implements GeoProviderInterface {
-  protected geoCoderProviders: GeoCoderInterface[] = [
-    new EtalabGeoAdressProvider(),
-    new PhotonProvider(),
-    new OSMNominatimProvider(),
-  ];
+  protected geoCoderProviders: GeoCoderInterface[] = [];
+  protected inseeCoderProviders: InseeCoderInterface[] = [];
+  protected inseeReverseCoderProviders: InseeReverseCoderInterface[] = [];
+  protected routeMetaProviders: RouteMetaProviderInterface[] = [];
 
-  protected inseeCoderProviders: InseeCoderInterface[] = [
-    new EtalabGeoAdministriveProvider(),
-    new EtalabGeoAdressProvider(),
-  ];
+  constructor(
+    etalabGeoAdministriveProvider: EtalabGeoAdministriveProvider,
+    etalabGeoAdressProvider: EtalabGeoAdressProvider,
+    localOsrmProvider: LocalOSRMProvider,
+    localGeoProvider: LocalGeoProvider,
+    osmnominatimProvider: OSMNominatimProvider,
+    osrmProvider: OSRMProvider,
+    photonProvider: PhotonProvider,
+  ) {
+    // Geocoders => litteral to point
+    this.geoCoderProviders = [etalabGeoAdressProvider, photonProvider, osmnominatimProvider];
 
-  protected inseeReverseCoderProviders: InseeReverseCoderInterface[] = [new EtalabGeoAdministriveProvider()];
+    // InseeCoders => point to insee
+    this.inseeCoderProviders = [localGeoProvider, etalabGeoAdministriveProvider, etalabGeoAdressProvider];
 
-  protected routeMetaProviders: RouteMetaProviderInterface[] = [new LocalOSRMProvider(), new OSRMProvider()];
+    // InseeReverseCoders => insee to point
+    this.inseeReverseCoderProviders = [etalabGeoAdministriveProvider];
 
-  constructor() {}
+    // RouteMetaCoders => point,point to distance,duration
+    this.routeMetaProviders = [localOsrmProvider, osrmProvider];
+  }
 
   async literalToPosition(literal: string): Promise<PointInterface> {
     const failure = [];
