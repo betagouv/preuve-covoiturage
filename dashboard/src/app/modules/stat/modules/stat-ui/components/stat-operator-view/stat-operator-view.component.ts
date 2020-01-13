@@ -4,7 +4,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { URLS } from '~/core/const/main.const';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
-import { StatFilteredService } from '~/modules/stat/services/stat-filtered.service';
+import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-store.service';
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -33,7 +33,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
 
   statViewConfig = OPERATOR_STATS;
 
-  constructor(public statService: StatFilteredService, public filterService: FilterService) {
+  constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
     super();
   }
 
@@ -56,18 +56,18 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
   }
 
   get loading(): boolean {
-    return this.statService.loading;
+    return this.statService.isLoading;
   }
 
   get loaded(): boolean {
-    return this.statService.loaded;
+    return !!this.statService.stat;
   }
 
   private loadStat(filter: FilterUxInterface | {} = {}): void {
-    if (this.statService.loading) {
+    if (this.statService.isLoading) {
       return;
     }
-    this.statService.loadOne(filter).subscribe();
+    this.statService.load(filter);
   }
 
   /**
