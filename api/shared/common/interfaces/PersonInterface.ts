@@ -25,4 +25,24 @@ export interface PersonInterface {
 
   calc_distance?: number;
   calc_duration?: number;
+  cost?: number;
+}
+
+export interface FinalizedPersonInterface {
+  is_driver: boolean;
+  identity: IdentityInterface;
+
+  start: PositionInterface;
+  end: PositionInterface;
+  seats: number;
+  distance: number;
+  duration: number;
+  cost: number;
+  meta: PersonMetaInterface;
+}
+
+export interface PersonMetaInterface {
+  payments: PaymentInterface[];
+  calc_distance: number;
+  calc_duration: number;
 }
