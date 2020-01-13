@@ -5,7 +5,7 @@ import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
 export abstract class GetListStore<
   EntityT,
-  EntityListT,
+  EntityListT = EntityT,
   JsonRpcGetListT extends JsonRpcGetList<EntityT, EntityListT> = JsonRpcGetList<EntityT, EntityListT>
 > {
   protected entitiesSubject = new BehaviorSubject<EntityListT[]>([]);

@@ -1,36 +1,35 @@
 // tslint:disable:no-bitwise
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { map, take, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { StatFormatService } from '~/modules/stat/services/stat-format.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
+import { StatApiService } from '~/modules/stat/services/stat-api.service';
+import { GetListStore } from '~/core/services/store/getlist-store';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StatFilteredService {
+export class StatFilteredStoreService extends GetListStore<StatInterface> {
   private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
-  private _loaded$ = new BehaviorSubject<boolean>(false);
-  private _loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private _http: HttpClient,
-    private _jsonRPC: JsonRPCService,
-    private _statFormatService: StatFormatService,
+    statApi: StatApiService,
     private _authService: AuthenticationService,
-  ) {}
+    private _statFormatService: StatFormatService,
+  ) {
+    super(statApi);
+    this.entitiesSubject.subscribe((data) => {
+      this._formatedStat$.next(this._statFormatService.formatData(data));
+    });
+  }
 
-  public loadOne(filter: FilterInterface | {} = {}): Observable<StatInterface[]> {
+  public load(filter: FilterInterface | {} = {}): void {
     const params = _.cloneDeep(filter);
 
     const user = this._authService.user;
@@ -48,25 +47,8 @@ export class StatFilteredService {
     if ('date' in filter && filter.date.end) {
       params.date.end = filter.date.end.toISOString();
     }
-    this._loading$.next(true);
-    const jsonRPCParam = new JsonRPCParam(`trip:stats`, params);
-    return this._jsonRPC.callOne(jsonRPCParam).pipe(
-      map((data) => data.data),
-      tap((data: StatInterface[]) => {
-        const formatedStat = this._statFormatService.formatData(data);
-        this._formatedStat$.next(formatedStat);
-        this._loaded$.next(true);
-        this._loading$.next(false);
-      }),
-    );
-  }
-
-  get loading(): boolean {
-    return this._loading$.value;
-  }
-
-  get loaded(): boolean {
-    return this._loaded$.value;
+    this._filterSubject.next(params);
+    super.loadList();
   }
 
   get stat(): FormatedStatInterface {
@@ -79,6 +61,5 @@ export class StatFilteredService {
 
   init() {
     this._formatedStat$.next(null);
-    this._loaded$.next(false);
   }
 }

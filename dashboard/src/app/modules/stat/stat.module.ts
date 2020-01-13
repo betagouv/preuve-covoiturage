@@ -5,12 +5,12 @@ import { MatIconModule, MatProgressSpinnerModule } from '@angular/material';
 import { StatRoutingModule } from '~/modules/stat/stat-routing.module';
 import { StatUIModule } from '~/modules/stat/modules/stat-ui/stat-ui.module';
 
-import { StatFilteredService } from './services/stat-filtered.service';
+import { StatFilteredStoreService } from './services/stat-filtered-store.service';
 import { PublicStatComponent } from './pages/public-stat/public-stat.component';
 
 @NgModule({
   declarations: [PublicStatComponent],
   imports: [CommonModule, StatRoutingModule, StatUIModule, MatIconModule, MatProgressSpinnerModule],
-  providers: [StatFilteredService],
+  providers: [StatFilteredStoreService],
 })
 export class StatModule {}
