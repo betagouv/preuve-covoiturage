@@ -12,7 +12,8 @@ import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { WorkflowProvider } from '../providers/WorkflowProvider';
 import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
-import { IncentiveInterface } from 'src/shared/common/interfaces/IncentiveInterface';
+
+import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
 
 // Enrich position data
 @handler(handlerConfig)
