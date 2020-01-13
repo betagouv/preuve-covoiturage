@@ -1,28 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { ApiService } from '~/core/services/api/api.service';
-import { Territory } from '~/core/entities/territory/territory';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
+import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
+import { CompanyV2 } from '~/core/entities/shared/companyV2';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CompanyService extends ApiService<Territory> {
-  constructor(
-    private _http: HttpClient,
-    private _jsonRPC: JsonRPCService,
-    private _authService: AuthenticationService,
-  ) {
-    super(_http, _jsonRPC, 'company');
+export class CompanyService extends JsonRpcGetList<CompanyV2> {
+  constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
+    super(http, router, activatedRoute, 'company');
   }
 
-  findCompany(siret: string, source?: string) {
-    console.log('siret : ', siret);
-    return this._jsonRPC.callOne(new JsonRPCParam(this._method + ':find', { siret, source })).pipe(
+  findCompany(siret: string, source?: string): Observable<CompanyV2> {
+    return this.get({ siret, source }).pipe(
       map((company) => {
         const siren = parseInt(siret.substr(0, 9), 10);
         let tvaPrefix = ((12 + 3 * (siren % 97)) % 97).toString();
@@ -31,10 +25,10 @@ export class CompanyService extends ApiService<Territory> {
         }
         // tslint:disable-next-line:variable-name
         const intra_vat = `FR${tvaPrefix}${siren}`;
-        return {
-          ...company.data,
+        return new CompanyV2({
+          ...company,
           intra_vat,
-        };
+        });
       }),
     );
   }
