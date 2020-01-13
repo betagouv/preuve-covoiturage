@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { Address, Bank, Company, Contacts, Operator } from '~/core/entities/operator/operator';
+import { Address, Bank, Company, Operator } from '~/core/entities/operator/operator';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { FormContact } from '~/shared/modules/form/forms/form-contact';
