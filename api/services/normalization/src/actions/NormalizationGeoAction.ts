@@ -16,21 +16,10 @@ export class NormalizationGeoAction extends AbstractAction {
     super();
   }
 
-  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
-    const normalizedJourney = { ...journey };
-    this.logger.debug(`Normalization:geo on ${journey._id}`);
-
-    for (const path of ['passenger.start', 'passenger.end', 'driver.start', 'driver.end']) {
-      const { lat, lon, insee, literal } = get(journey, `payload.${path}`);
-      const result = await this.geoProvider.checkAndComplete({ lat, lon, insee, literal });
-      set(normalizedJourney, `payload.${path}.lat`, result.lat);
-      set(normalizedJourney, `payload.${path}.lon`, result.lon);
-      set(normalizedJourney, `payload.${path}.insee`, result.insee);
-    }
-
-    // Call the next step asynchronously
-    await this.wf.next('normalization:geo', normalizedJourney);
-
-    return normalizedJourney;
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    return {
+      start: await this.geoProvider.checkAndComplete(params.start),
+      end: await this.geoProvider.checkAndComplete(params.end),
+    };
   }
 }

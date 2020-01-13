@@ -20,35 +20,25 @@ export class NormalizationTerritoryAction extends AbstractAction {
     super();
   }
 
-  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
-    this.logger.debug(`Normalization:territory on ${journey._id}`);
-    const normalizedJourney = { ...journey };
-
-    const promises: Promise<void>[] = [];
-
-    for (const dataPath of [
-      'payload.passenger.start',
-      'payload.passenger.end',
-      'payload.driver.start',
-      'payload.driver.end',
-    ]) {
-      promises.push(this.fillTerritories(normalizedJourney, dataPath));
-    }
-    await Promise.all(promises);
-
-    await this.wf.next('normalization:territory', normalizedJourney);
-
-    return normalizedJourney;
+  public async handle(payload: ParamsInterface): Promise<ResultInterface> {
+    return {
+      start: await this.fillTerritories(payload.start),
+      end: await this.fillTerritories(payload.end),
+    };
   }
 
-  private async fillTerritories(journey: ParamsInterface, dataPath: string): Promise<void> {
-    const position: PositionInterface = get(journey, dataPath);
+  private async fillTerritories(position: PositionInterface): Promise<number> {
+    // const position: PositionInterface = get(journey, dataPath);
+    let result = 0;
+
     if ('insee' in position) {
-      set(journey, `${dataPath}.territory`, await this.territory.findByInsee(position.insee));
+      result = await this.territory.findByInsee(position.insee);
     } else if ('lat' in position && 'lon' in position) {
-      set(journey, `${dataPath}.territory`, await this.territory.findByPoint({ lon: position.lon, lat: position.lat }));
+      result = await this.territory.findByPoint({ lon: position.lon, lat: position.lat });
     } else {
       throw new InvalidParamsException('Missing INSEE code or lat & lon');
     }
+
+    return result;
   }
 }
