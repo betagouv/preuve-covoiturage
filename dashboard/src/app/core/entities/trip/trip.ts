@@ -1,9 +1,10 @@
 import { LightTripIncentives, LightTripInterface } from '~/core/interfaces/trip/tripInterface';
+import { BaseModel } from '~/core/entities/BaseModel';
 
 // tslint:disable:variable-name
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
 
-export class LightTrip {
+export class LightTrip extends BaseModel {
   public status: TripStatusEnum;
   public trip_id: number;
   public is_driver: boolean;
@@ -16,15 +17,20 @@ export class LightTrip {
   public campaigns_id: number[];
 
   constructor(obj?: LightTripInterface) {
-    this.status = (obj && obj.status) || null;
-    this.trip_id = (obj && obj.trip_id) || null;
-    this.is_driver = (obj && obj.is_driver) || null;
-    this.start_town = (obj && obj.start_town) || null;
-    this.start_datetime = (obj && obj.start_datetime) || null;
-    this.operator_class = (obj && obj.operator_class) || null;
-    this.operator_id = (obj && obj.operator_id) || null;
-    this.end_town = (obj && obj.end_town) || null;
-    this.incentives = (obj && obj.incentives) || [];
-    this.campaigns_id = (obj && obj.campaigns_id) || [];
+    super(obj);
+  }
+
+  map(data: any): LightTrip {
+    this.status = (data && data.status) || null;
+    this.trip_id = (data && data.trip_id) || null;
+    this.is_driver = (data && data.is_driver) || null;
+    this.start_town = (data && data.start_town) || null;
+    this.start_datetime = (data && data.start_datetime) || null;
+    this.operator_class = (data && data.operator_class) || null;
+    this.operator_id = (data && data.operator_id) || null;
+    this.end_town = (data && data.end_town) || null;
+    this.incentives = (data && data.incentives) || [];
+    this.campaigns_id = (data && data.campaigns_id) || [];
+    return this;
   }
 }
