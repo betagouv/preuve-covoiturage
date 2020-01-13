@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import axios from 'axios';
-import { NotFoundException } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 
 import { PointInterface, GeoCoderInterface } from '../interfaces';
 
@@ -21,6 +21,7 @@ interface PhotonResponse {
   };
 }
 
+@provider()
 export class PhotonProvider implements GeoCoderInterface {
   protected domain = 'https://photon.komoot.de/api';
 

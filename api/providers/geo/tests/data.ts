@@ -6,6 +6,14 @@ export const insee = {
   code: '91377',
 };
 
+export const inseeForeign = {
+  position: {
+    lat: 44.744022,
+    lon: 9.197445,
+  },
+  code: '99127',
+};
+
 export const inseeError = {
   position: {
     lat: 39.868827,
