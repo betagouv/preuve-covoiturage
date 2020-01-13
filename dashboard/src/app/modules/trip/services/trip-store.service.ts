@@ -1,50 +1,31 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { finalize, map, tap } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
-import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 import { LightTrip } from '~/core/entities/trip/trip';
-import { ExportFilterInterface, ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
+import { ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
+import { GetListStore } from '~/core/services/store/getlist-store';
+import { TripApiService } from '~/modules/trip/services/trip-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TripService {
+export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApiService> {
   protected _total$ = new BehaviorSubject<number>(null);
-  private _method = 'trip';
-  protected _listFilters = {};
 
-  protected _loading$ = new BehaviorSubject<boolean>(false);
-  protected _loaded$ = new BehaviorSubject<boolean>(false);
-
-  protected _entities$ = new BehaviorSubject<LightTripInterface[]>([]);
-
-  get loading(): boolean {
-    return this._loading$.value;
+  constructor(protected tripApi: TripApiService, private _authService: AuthenticationService) {
+    super(tripApi);
   }
 
   get loaded(): boolean {
-    return this._loaded$.value;
+    return !!this.entitiesSubject.value;
   }
-
-  public getListJSONParam(parameters: object = {}): JsonRPCParam {
-    return new JsonRPCParam(`${this._method}:list`, parameters);
-  }
-
-  constructor(
-    private _http: HttpClient,
-    private _jsonRPC: JsonRPCService,
-    private _authService: AuthenticationService,
-  ) {}
 
   // total
   get total$(): Observable<number> {
@@ -74,11 +55,10 @@ export class TripService {
     if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
       params['operator_id'] = [loggedUser.operator_id];
     }
-    const jsonRPCParam = new JsonRPCParam(`${this._method}:export`, params);
-    return this._jsonRPC.callOne(jsonRPCParam);
+    return this.rpcGetList.exportTrips(params);
   }
 
-  public load(filter: FilterInterface | {} = {}): Observable<LightTripInterface[]> {
+  public load(filter: FilterInterface | {} = {}, loadMore = false): void {
     const params = _.cloneDeep(filter);
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
@@ -93,18 +73,28 @@ export class TripService {
     if ('date' in filter && filter.date.end) {
       params.date.end = filter.date.end.toISOString();
     }
-    this._listFilters = params;
-    this._loading$.next(true);
-    return this._jsonRPC.callOne(this.getListJSONParam(params)).pipe(
-      tap((data) => {
-        this._total$.next(data.meta['pagination']['total']);
-        this._loaded$.next(true);
-      }),
-      map((data) => data.data.map((trip) => new LightTrip(trip))),
-      finalize(() => {
-        this._loading$.next(false);
-      }),
-    );
+    this.filterSubject.next(params);
+    this.dismissGetSubject.next();
+    this.dismissGetListSubject.next();
+    this._loadCount += 1;
+    this.rpcGetList
+      .getTrips(this.filterSubject.value)
+      .pipe(
+        takeUntil(this.dismissGetListSubject),
+        finalize(() => {
+          if (this._loadCount > 0) this._loadCount -= 1;
+        }),
+      )
+      .subscribe((jsonRpcResult: any) => {
+        this._total$.next(jsonRpcResult.meta['pagination']['total']);
+        const trips = jsonRpcResult.data.map((trip) => new LightTrip(trip));
+        const storeTrips = loadMore ? this.entitiesSubject.value.concat(trips) : trips;
+        this.entitiesSubject.next(storeTrips);
+      });
+  }
+
+  public upload(file: any): Observable<any> {
+    return this.rpcGetList.upload(file);
   }
 
   // todo: uncomment when api route is made
@@ -117,13 +107,4 @@ export class TripService {
   //     responseType: 'blob',
   //   });
   // }
-
-  public upload(file: any): Observable<any> {
-    const jsonRPCParam = new JsonRPCParam(`acquisition.import`, { csv: file });
-    return this._jsonRPC.callOne(jsonRPCParam, {
-      reportProgress: true,
-      // TODO: Gilles investigate specific post option paramters
-      // observe: 'events',
-    });
-  }
 }

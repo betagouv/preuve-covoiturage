@@ -17,7 +17,7 @@ export class StatStoreService extends GetListStore<StatInterface> {
   private _formatedStat$ = new BehaviorSubject<FormatedStatInterface>(null);
 
   constructor(
-    statApi: StatApiService,
+    protected statApi: StatApiService,
     private _authService: AuthenticationService,
     private _statFormatService: StatFormatService,
   ) {

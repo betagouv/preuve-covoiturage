@@ -2,8 +2,8 @@ import { Moment } from 'moment';
 
 export interface ExportFilterInterface {
   date?: {
-    start: Date;
-    end: Date;
+    start: string;
+    end: string;
   };
 }
 

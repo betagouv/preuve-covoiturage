@@ -17,4 +17,8 @@ export class StatApiService extends JsonRpcGetList<StatInterface> {
   paramGetList(params?) {
     return new JsonRPCParam(`${this.method}:stats`, { ...this.defaultListParam, ...params });
   }
+
+  test() {
+    return 'blo';
+  }
 }
