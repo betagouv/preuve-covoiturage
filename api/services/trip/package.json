@@ -62,9 +62,9 @@
     "@ilos/core": "~0",
     "@ilos/env": "~0",
     "@ilos/repository": "~0",
+    "@pdc/provider-file": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
-    "@pdc/provider-file": "~0",
     "csv-stringify": "^5.3.3",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
@@ -88,10 +88,6 @@
     "nyc": "^14.1.1",
     "supertest": "^4.0.2",
     "ts-node": "^8.1.0",
-    "tslint": "^5.15.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-eslint-rules": "^5.4.0",
-    "tslint-import-group-ordering": "^2.1.1",
     "typescript": "^3.5.3"
   }
 }
