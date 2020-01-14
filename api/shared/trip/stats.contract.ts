@@ -1,11 +1,11 @@
-import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearchInterface';
+import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
 
-export interface ParamsInterface extends TripSearchInterfaceWithPagination {}
+export interface ParamsInterface extends TripSearchInterface {}
 
-interface SingleResultInterface {
+export interface SingleResultInterface {
   day: Date;
   distance: number;
-  carpooles: number;
+  carpoolers: number;
   trip: number;
   trip_subsidized: number;
   operators: number;

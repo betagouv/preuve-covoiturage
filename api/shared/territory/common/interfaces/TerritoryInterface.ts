@@ -1,4 +1,4 @@
-import { CompanyInterface } from '../../../common/interfaces/CompanyInterface';
+import { CompanyInterface } from '../../../common/interfaces/CompanyInterface2';
 import { AddressInterface } from '../../../common/interfaces/AddressInterface';
 import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
 
