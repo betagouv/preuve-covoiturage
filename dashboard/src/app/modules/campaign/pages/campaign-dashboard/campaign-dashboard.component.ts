@@ -18,6 +18,7 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
   campaignStatus = CampaignStatusEnum;
   canCreateCampaign$: Observable<boolean>;
   campaigns: CampaignUx[];
+  camSeeDraft$: Observable<boolean>;
 
   constructor(private _authService: AuthenticationService, private _campaignStoreService: CampaignStoreService) {
     super();
@@ -25,7 +26,15 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
 
   ngOnInit() {
     this.canCreateCampaign$ = this._authService.user$.pipe(
-      map((user) => user && this._authService.hasAnyPermission(['incentive-campaign.create'])),
+      map(
+        (user) => user && this._authService.hasAnyPermission(['incentive-campaign.create']),
+        takeUntil(this.destroy$),
+      ),
+    );
+
+    this.camSeeDraft$ = this._authService.user$.pipe(
+      map((user) => user && this._authService.isAdmin),
+      takeUntil(this.destroy$),
     );
     this.loadCampaigns();
   }

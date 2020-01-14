@@ -36,6 +36,8 @@ export class User extends BaseUser
     if (formValues.firstname) userPatch.firstname = formValues.firstname;
     if (formValues.lastname) userPatch.lastname = formValues.lastname;
     if (formValues.phone) userPatch.phone = formValues.phone;
+    if (formValues.role) userPatch.role = formValues.role;
+
     return userPatch;
   }
 

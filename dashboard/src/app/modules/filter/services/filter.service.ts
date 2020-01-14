@@ -57,21 +57,20 @@ export class FilterService {
     if (filter.hour.start === null && filter.hour.end === null) {
       delete filter.hour;
     } else {
-      // only get hours
       // time zone hacky fix until ddb has timezones
-      if (filter.hour.start && filter.hour.start.length > 1) {
+      if (filter.hour.start) {
         filter.hour.start = moment()
-          .hours(filter.hour.start.slice(0, 2))
+          .hours(filter.hour.start)
           .utc()
           .hours();
       } else {
         filter.hour.start = 0;
       }
 
-      if (filter.hour.end && filter.hour.end.length > 1) {
+      if (filter.hour.end) {
         // time zone hacky fix until ddb has timezones
         filter.hour.end = moment()
-          .hours(filter.hour.end.slice(0, 2))
+          .hours(filter.hour.end)
           .utc()
           .hours();
       } else {

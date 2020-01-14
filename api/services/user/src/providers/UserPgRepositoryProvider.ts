@@ -27,7 +27,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     'email',
     'firstname',
     'lastname',
-    'role',
+    // 'role',
     // 'password',
     'phone',
     // 'status',
@@ -433,6 +433,38 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id });
+  }
+
+  async patchRole(_id: number, role: string, roleSuffixOnly?: boolean): Promise<void> {
+    let finalRole = role;
+    if (roleSuffixOnly) {
+      const user = await this.find(_id);
+      if (!user) throw new NotFoundException();
+      switch (user.group) {
+        case 'territories':
+          finalRole = `territory.${role}`;
+
+          break;
+
+        case 'operators':
+          finalRole = `operator.${role}`;
+
+          break;
+        default:
+          finalRole = `${user.group}.${role}`;
+
+          break;
+      }
+    }
+
+    const query = {
+      text: `UPDATE ${this.table}
+          SET role = $1 
+          WHERE _id = $2`,
+      values: [finalRole, _id],
+    };
+
+    await this.connection.getClient().query(query);
   }
 
   async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface> {

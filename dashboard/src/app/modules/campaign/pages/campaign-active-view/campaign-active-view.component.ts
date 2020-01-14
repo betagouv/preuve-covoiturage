@@ -36,7 +36,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
   }
 
   ngOnInit() {
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTo(0, 0);
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
     this._route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
       const notFound = !params.has('campaignId');
       if (notFound) {
