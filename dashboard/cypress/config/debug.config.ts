@@ -18,14 +18,14 @@ export const DEBUG_CONFIG = {
     registry: {
       profile: false,
       filters: false,
-      users: true,
+      users: false,
       campaigns: false,
     },
     territory: {
       profile: false,
       territory: false,
       filters: false,
-      newcampaign: false,
+      newcampaign: true,
       editcampaign: false,
       launchcampaign: false,
       newFromTemplate: false,

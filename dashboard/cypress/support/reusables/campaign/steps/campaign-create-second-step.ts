@@ -56,6 +56,7 @@ export function campaignSecondStepSelectRange() {
 
 export function campaignSecondStepSelectRanks() {
   it('selects ranks', () => {
+    cy.wait(200);
     // open RANKS extension
     cy.get('.RulesForm .mat-expansion-panel:nth-child(4)').click();
 
@@ -76,12 +77,14 @@ export function campaignSecondStepSelectTargets(passenger, driver) {
 
     if (driver) {
       // click for driver checkbox
-      cy.get('.RulesForm .RulesForm-target-forDriver .mat-checkbox-layout').click();
+      cy.wait(200);
+      cy.get('.RulesForm .RulesForm-target-forDriver .mat-checkbox-layout').click({ force: true });
     }
 
     if (passenger) {
       // click for passenger checkbox
-      cy.get('.RulesForm .RulesForm-target-forPassenger .mat-checkbox-layout').click();
+      cy.wait(200);
+      cy.get('.RulesForm .RulesForm-target-forPassenger .mat-checkbox-layout').click({ force: true });
     }
   });
 }
