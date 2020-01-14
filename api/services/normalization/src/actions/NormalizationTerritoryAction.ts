@@ -5,18 +5,13 @@ import { handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/territory.contract';
 import { PositionInterface } from '../shared/common/interfaces/PositionInterface';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { WorkflowProvider } from '../providers/WorkflowProvider';
-import { TerritoryProvider } from '../providers/TerritoryProvider';
+import { TerritoryProviderInterfaceResolver } from '../interfaces/TerritoryProviderInterface';
 
 @handler(handlerConfig)
 export class NormalizationTerritoryAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
-  constructor(
-    protected kernel: KernelInterfaceResolver,
-    protected territory: TerritoryProvider,
-    protected wf: WorkflowProvider,
-  ) {
+  constructor(protected territory: TerritoryProviderInterfaceResolver) {
     super();
   }
 
