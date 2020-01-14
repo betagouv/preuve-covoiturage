@@ -25,38 +25,21 @@ export class Filter {
   status: TripStatusEnum;
   operator_id: number[];
   territory_id: number[];
-  constructor(
-    obj: FilterInterface = {
-      campaign_id: [],
-      date: {
-        start: null,
-        end: null,
-      },
-      hour: {
-        start: null,
-        end: null,
-      },
-      days: [],
-      insee: [],
-      distance: {
-        min: null,
-        max: null,
-      },
-      ranks: [],
-      status: null,
-      operator_id: [],
-      territory_id: [],
-    },
-  ) {
-    this.campaign_id = obj.campaign_id;
-    this.date = obj.date;
-    this.hour = obj.hour;
-    this.days = obj.days;
-    this.insee = obj.insee;
-    this.distance = obj.distance;
-    this.ranks = obj.ranks;
-    this.status = obj.status;
-    this.operator_id = obj.operator_id;
-    this.territory_id = obj.territory_id;
+  constructor(obj?: FilterInterface) {
+    if (obj) this.map(obj);
+  }
+
+  map(data: any): Filter {
+    if (data.campaign_id) this.campaign_id = data.campaign_id;
+    if (data.date) this.date = data.date;
+    if (data.hour) this.hour = data.hour;
+    if (data.days) this.days = data.days;
+    if (data.insee) this.insee = data.insee;
+    if (data.distance) this.distance = data.distance;
+    if (data.ranks) this.ranks = data.ranks;
+    if (data.status) this.status = data.status;
+    if (data.operator_id) this.operator_id = data.operator_id;
+    if (data.territory_id) this.territory_id = data.territory_id;
+    return this;
   }
 }

@@ -9,11 +9,14 @@ import { ExportFilterInterface } from '~/core/interfaces/filter/exportFilterInte
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { LightTrip } from '~/core/entities/trip/trip';
+// tslint:disable-next-line:max-line-length
+import { TripSearchInterfaceWithPagination } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { ResultInterface as TripSearchResultInterface } from '~/core/entities/api/shared/trip/list.contract';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TripApiService extends JsonRpcGetList<LightTrip> {
+export class TripApiService extends JsonRpcGetList<LightTrip, LightTrip, any, TripSearchInterfaceWithPagination> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute) {
     super(http, router, activatedRoute, 'trip');
   }
@@ -23,7 +26,7 @@ export class TripApiService extends JsonRpcGetList<LightTrip> {
     return this.callOne(jsonRPCParam);
   }
 
-  getTrips(params?): Observable<JsonRPCResult> {
+  getTrips(params?: TripSearchInterfaceWithPagination): Observable<TripSearchResultInterface> {
     return this.callOne(this.paramGetList(params)).pipe(map((data) => data));
   }
 

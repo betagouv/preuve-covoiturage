@@ -1,10 +1,11 @@
-import { LightTripIncentives, LightTripInterface } from '~/core/interfaces/trip/tripInterface';
+// tslint:disable:variable-name
 import { BaseModel } from '~/core/entities/BaseModel';
 
-// tslint:disable:variable-name
+import { SingleResultInterface as LightTripInterface } from '~/core/entities/api/shared/trip/list.contract';
+
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';
 
-export class LightTrip extends BaseModel {
+export class LightTrip {
   public status: TripStatusEnum;
   public trip_id: number;
   public is_driver: boolean;
@@ -13,11 +14,11 @@ export class LightTrip extends BaseModel {
   public operator_class: string;
   public operator_id: number;
   public end_town: string;
-  incentives: LightTripIncentives[];
+  incentives: number;
   public campaigns_id: number[];
 
   constructor(obj?: LightTripInterface) {
-    super(obj);
+    if (obj) this.map(obj);
   }
 
   map(data: any): LightTrip {
