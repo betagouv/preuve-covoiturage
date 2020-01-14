@@ -1,6 +1,5 @@
-import { get, set } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, InvalidParamsException, KernelInterfaceResolver } from '@ilos/common';
+import { handler, InvalidParamsException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/territory.contract';
 import { PositionInterface } from '../shared/common/interfaces/PositionInterface';

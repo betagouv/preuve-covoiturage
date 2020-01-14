@@ -2,9 +2,8 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { PartialGeoInterface, GeoInterface, PointInterface, RouteMeta } from '@pdc/provider-geo/dist/interfaces';
+import { PointInterface, RouteMeta } from '@pdc/provider-geo/dist/interfaces';
 
-import { TerritoryProviderInterfaceResolver } from '../interfaces/TerritoryProviderInterface';
 import { NormalizationRouteAction } from './NormalizationRouteAction';
 
 class GeoProvider extends GeoProviderInterfaceResolver {

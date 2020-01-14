@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 
 describe('LocalGeoProvider', () => {
-  let connection: PostgresConnection = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
+  const connection: PostgresConnection = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
 
   before(async () => {
     await connection.up();

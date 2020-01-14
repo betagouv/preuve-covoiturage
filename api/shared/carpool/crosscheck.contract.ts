@@ -1,6 +1,3 @@
-import { IdentityInterface } from '../common/interfaces/IdentityInterface';
-import { PaymentInterface } from '../common/interfaces/PaymentInterface';
-import { GeoPositionInterface } from '../common/interfaces/GeoPositionInterface';
 import { FinalizedPersonInterface } from '../common/interfaces/PersonInterface';
 
 export interface ParamsInterface {

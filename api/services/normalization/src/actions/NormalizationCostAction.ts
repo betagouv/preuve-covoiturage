@@ -9,8 +9,6 @@ import {
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { WorkflowProvider } from '../providers/WorkflowProvider';
-import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 
 import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
@@ -66,11 +64,11 @@ export class NormalizationCostAction extends AbstractAction {
 
   protected normalizeCost(
     siret: string,
-    revenue: number = 0,
-    contribution: number = 0,
+    revenue = 0,
+    contribution = 0,
     incentives?: IncentiveInterface[],
     payments?: PaymentInterface[],
-    isDriver: boolean = false,
+    isDriver = false,
   ): [number, PaymentInterface[]] {
     const cleanIncentives = incentives && incentives.length ? incentives : [];
     const inputPayments = payments && payments.length ? payments : [];

@@ -1,4 +1,3 @@
-import { AcquisitionInterface } from '../acquisition/common/interfaces/AcquisitionInterface';
 import { PositionInterface } from '../common/interfaces/PositionInterface';
 
 export type ResultInterface = {

@@ -1,4 +1,3 @@
-import { AcquisitionInterface } from '../acquisition/common/interfaces/AcquisitionInterface';
 import { IdentityInterface } from '../common/interfaces/IdentityInterface';
 import { LegacyIdentityInterface } from '../common/interfaces/LegacyIdentityInterface';
 

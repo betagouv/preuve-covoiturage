@@ -1,11 +1,8 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { handler } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/identity.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { WorkflowProvider } from '../providers/WorkflowProvider';
-import { IdentityInterface } from '../shared/common/interfaces/IdentityInterface';
-import { LegacyIdentityInterface } from '../shared/common/interfaces/LegacyIdentityInterface';
 
 // Enrich position data
 @handler(handlerConfig)

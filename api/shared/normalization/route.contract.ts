@@ -1,5 +1,3 @@
-import { AcquisitionInterface } from '../acquisition/common/interfaces/AcquisitionInterface';
-
 export type ResultInterface = {
   calc_distance: number;
   calc_duration: number;

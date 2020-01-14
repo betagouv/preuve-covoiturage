@@ -1,5 +1,3 @@
-import { AcquisitionInterface } from '../acquisition/common/interfaces/AcquisitionInterface';
-import { PersonInterface } from '../common/interfaces/PersonInterface';
 import { IncentiveInterface } from '../common/interfaces/IncentiveInterface';
 import { PaymentInterface } from '../common/interfaces/PaymentInterface';
 
