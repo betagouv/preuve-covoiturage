@@ -35,8 +35,8 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('chooses hours', () => {
-    cy.get('.filter-timeAndDays mat-form-field:first-child input').type(`${expectedFilter.hour.start}:00`);
-    cy.get('.filter-timeAndDays mat-form-field:nth-child(2) input').type(`${expectedFilter.hour.end}:00`);
+    cy.get('.filter-timeAndDays mat-form-field:first-child input').type(`${expectedFilter.hour.start}`);
+    cy.get('.filter-timeAndDays mat-form-field:nth-child(2) input').type(`${expectedFilter.hour.end}`);
   });
 
   it('chooses days', () => {
