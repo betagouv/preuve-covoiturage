@@ -1,9 +1,7 @@
-import { stubCampaignTemplateList } from '../../../stubs/campaign/campaign-template.list';
-
 export function campaignFirstStepCustom() {
   it('chooses campaign', () => {
     // select custom campaign
-    cy.get('.CampaignTemplates-custom > a').click();
+    cy.get('.CampaignTemplates-custom > a').click({ force: true });
   });
 }
 

@@ -74,9 +74,4 @@ export function testTerritoryStory(config: TestsInterface['territory']) {
     //   cypress_campaignEditCreatedFromTemplate(0);
     // });
   }
-
-  // LOGOUT
-  describe('Logout', () => {
-    cypress_logout();
-  });
 }
