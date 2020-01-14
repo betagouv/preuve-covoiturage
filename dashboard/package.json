@@ -9,7 +9,7 @@
     "build": "ng build --configuration=$NODE_ENV",
     "lint": "ng lint",
     "format:fix": "pretty-quick --staged",
-    "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec cypress/integration/*.integration.ts",
+    "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec 'cypress/integration/*.integration.ts'",
     "test:integration": "yarn run cypress run --spec cypress/integration/*.integration.ts",
     "open:cypress:debug": "yarn run cypress open --env ENV_NAME=local",
     "open:cypress": "yarn run cypress open"
@@ -47,7 +47,7 @@
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.801.1",
+    "@angular-devkit/build-angular": "~0.803.22",
     "@angular/cli": "~8.1.1",
     "@angular/compiler-cli": "~8.1.1",
     "@angular/language-service": "~8.1.1",
