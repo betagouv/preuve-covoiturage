@@ -28,6 +28,12 @@
         animation: spin 2s cubic-bezier(0.1, 0.7, 1, 0.1) infinite;
       }
 
+      @supports (-ms-accelerator: true) or (-ms-ime-align: auto) {
+        .circle-rotate {
+          transform-origin: calc(100% * 1.58 / 2) 50%;
+        }
+      }
+
       @keyframes spin {
         25% {
           transform: rotate(90deg);

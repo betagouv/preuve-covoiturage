@@ -13,6 +13,7 @@ export const patch = {
         email: { macro: 'email' },
         lastname: { macro: 'varchar' },
         firstname: { macro: 'varchar' },
+        role: { macro: 'varchar' },
         phone: { oneOf: [{ macro: 'phone' }, { type: 'null' }] },
       },
     },

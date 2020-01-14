@@ -27,7 +27,7 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
     'email',
     'firstname',
     'lastname',
-    'role',
+    // 'role',
     // 'password',
     'phone',
     // 'status',
@@ -118,10 +118,8 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
   protected async deleteWhere(id: number, where?: { operator_id?: number; territory_id?: number }): Promise<boolean> {
     const query = {
       text: `
-      UPDATE ${this.table}
-        SET deleted_at = NOW()
+      DELETE FROM ${this.table}
         WHERE _id = $1
-        AND deleted_at is NULL
         ${where ? (where.operator_id ? 'AND operator_id = $2' : 'AND territory_id = $2') : ''}
       `,
       values: [id],
@@ -162,7 +160,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
       text: `
         SELECT count(*) as total FROM ${this.table}
         ${whereClauses.text}
-        ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at IS NULL
       `,
       values: whereClauses.values,
     };
@@ -202,7 +199,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
           ${this.groupCastStatement}
         FROM ${this.table}
         ${whereClauses.text}
-        ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at IS NULL
         LIMIT ${limit}
         OFFSET ${offset}
       `,
@@ -309,7 +305,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
         FROM ${this.table}
         ${this.permissionsJoin}
         ${whereClauses.text}
-        ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at IS NULL
         LIMIT 1
       `,
       values: whereClauses.values,
@@ -396,7 +391,6 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
         UPDATE ${this.table}
           SET ${setClauses.text}
           ${whereClauses.text}
-          ${whereClauses.text ? 'AND' : 'WHERE'} deleted_at is NULL
         RETURNING
           _id,
           status,
@@ -439,6 +433,38 @@ export class UserPgRepositoryProvider implements UserRepositoryProviderInterface
 
   async patch(_id: number, data: UserPatchInterface): Promise<UserFindInterface> {
     return this.patchWhere(data, { _id });
+  }
+
+  async patchRole(_id: number, role: string, roleSuffixOnly?: boolean): Promise<void> {
+    let finalRole = role;
+    if (roleSuffixOnly) {
+      const user = await this.find(_id);
+      if (!user) throw new NotFoundException();
+      switch (user.group) {
+        case 'territories':
+          finalRole = `territory.${role}`;
+
+          break;
+
+        case 'operators':
+          finalRole = `operator.${role}`;
+
+          break;
+        default:
+          finalRole = `${user.group}.${role}`;
+
+          break;
+      }
+    }
+
+    const query = {
+      text: `UPDATE ${this.table}
+          SET role = $1 
+          WHERE _id = $2`,
+      values: [finalRole, _id],
+    };
+
+    await this.connection.getClient().query(query);
   }
 
   async patchByOperator(_id: number, data: UserPatchInterface, operator_id: number): Promise<UserFindInterface> {

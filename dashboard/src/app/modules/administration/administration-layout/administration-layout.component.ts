@@ -29,7 +29,6 @@ export class AdministrationLayoutComponent implements OnInit {
     {
       path: '/admin/users',
       groups: [UserGroupEnum.OPERATOR, UserGroupEnum.TERRITORY],
-      role: UserManyRoleEnum.ADMIN,
       label: 'Utilisateurs & accès',
     },
     {

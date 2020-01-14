@@ -37,19 +37,21 @@
           [loaded]="loaded"
         ></app-campaigns-list>
       </div>
-      <div class="CampaignDashboard-content-header">
-        <h2>Vos campagnes en brouillon</h2>
-        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary" *ngIf="canCreateCampaign$ | async">
-          Nouveau brouillon
-        </button>
-      </div>
-      <div class="CampaignDashboard-content-list draftList">
-        <app-campaigns-list
-          [campaigns]="campaigns"
-          [campaignStatusList]="[campaignStatus.DRAFT]"
-          [loading]="loading"
-          [loaded]="loaded"
-        ></app-campaigns-list>
+      <div *ngIf="camSeeDraft$ | async">
+        <div class="CampaignDashboard-content-header">
+          <h2>Vos campagnes en brouillon</h2>
+          <button mat-flat-button [routerLink]="'/campaign/create'" color="primary" *ngIf="canCreateCampaign$ | async">
+            Nouveau brouillon
+          </button>
+        </div>
+        <div class="CampaignDashboard-content-list draftList">
+          <app-campaigns-list
+            [campaigns]="campaigns"
+            [campaignStatusList]="[campaignStatus.DRAFT]"
+            [loading]="loading"
+            [loaded]="loaded"
+          ></app-campaigns-list>
+        </div>
       </div>
       <div class="CampaignDashboard-content-header">
         <h2>Vos campagnes terminées</h2>
