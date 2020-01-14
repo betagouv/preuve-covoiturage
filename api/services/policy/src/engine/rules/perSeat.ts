@@ -10,7 +10,7 @@ export const perSeat: ApplicableRuleInterface = {
   },
   index: LOWEST,
   apply() {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       await next();
       ctx.result *= ctx.person.seats || 1;
     };

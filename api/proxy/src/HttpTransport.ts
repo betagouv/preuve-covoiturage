@@ -439,14 +439,14 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/certificates/generate',
       asyncHandler(async (req, res, next) => {
-        const response = <any>await this.kernel.handle({
+        const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
           method: 'certificate:generate',
           params: {
             ...req.query,
           },
-        });
+        })) as any;
 
         // console.log(response.result);
         res.set('Content-type', 'text/html');

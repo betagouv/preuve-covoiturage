@@ -22,7 +22,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
 
   constructor(protected connection: PostgresConnection) {}
 
-  async findById(_id: string, withLog: boolean = false): Promise<CertificateInterface> {
+  async findById(_id: string, withLog = false): Promise<CertificateInterface> {
     const result = await this.connection.getClient().query({
       text: `SELECT * FROM ${this.table} WHERE _id = $1`,
       values: [_id],
@@ -33,7 +33,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     return withLog ? this.withLog(result.rows[0]) : result.rows[0];
   }
 
-  async findByOperatorId(operator_id: string, withLog: boolean = false): Promise<CertificateInterface[]> {
+  async findByOperatorId(operator_id: string, withLog = false): Promise<CertificateInterface[]> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT * FROM ${this.table}
@@ -44,7 +44,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
 
     if (!result.rowCount) return [];
 
-    return <CertificateInterface[]>(withLog ? this.withLog(result.rows) : result.rows);
+    return (withLog ? this.withLog(result.rows) : result.rows) as CertificateInterface[];
   }
 
   async create(params: CertificateBaseInterface): Promise<CertificateInterface> {
@@ -104,7 +104,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     certificates: CertificateInterface | CertificateInterface[],
   ): Promise<CertificateInterface | CertificateInterface[]> {
     const isMany: boolean = Array.isArray(certificates);
-    const certs = <CertificateInterface[]>(isMany ? certificates : [certificates]);
+    const certs = (isMany ? certificates : [certificates]) as CertificateInterface[];
 
     // search for all access_log for all certificate_id
     const result = await this.connection.getClient().query({

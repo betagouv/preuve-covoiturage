@@ -14,10 +14,10 @@ export interface CertificateRepositoryProviderInterface {
 }
 
 export abstract class CertificateRepositoryProviderInterfaceResolver implements CertificateRepositoryProviderInterface {
-  async findById(_id: string, withLog: boolean = false): Promise<CertificateInterface> {
+  async findById(_id: string, withLog = false): Promise<CertificateInterface> {
     throw new Error('Method not implemented.');
   }
-  async findByOperatorId(operator_id: string, withLog: boolean = false): Promise<CertificateInterface[]> {
+  async findByOperatorId(operator_id: string, withLog = false): Promise<CertificateInterface[]> {
     throw new Error('Method not implemented.');
   }
   async create(params: CertificateBaseInterface): Promise<CertificateInterface> {

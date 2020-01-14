@@ -1,5 +1,7 @@
 import chai from 'chai';
 import chaiAsync from 'chai-as-promised';
+import { describe } from 'mocha';
+
 import { perSeat } from './perSeat';
 import { MetadataWrapper } from '../MetadataWrapper';
 import { faker } from '../helpers/faker';
@@ -10,7 +12,10 @@ chai.use(chaiAsync);
 const { expect } = chai;
 const apply = perSeat.apply(true);
 
-const trip = faker.trip([{ seats: 0, is_driver: true }, { seats: 5, is_driver: false }]);
+const trip = faker.trip([
+  { seats: 0, is_driver: true },
+  { seats: 5, is_driver: false },
+]);
 
 describe('Policy rule: per seat', () => {
   it('should multiply result by number of seat', async () => {

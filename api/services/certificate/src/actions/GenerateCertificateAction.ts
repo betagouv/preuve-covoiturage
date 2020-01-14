@@ -65,7 +65,7 @@ export class GenerateCertificateAction extends AbstractAction {
     };
 
     // store the certificate
-    const cert = await this.certRepository.create({
+    await this.certRepository.create({
       meta,
       identity_id: 'c37b7a3a-4a93-4b05-8751-d502efd2d245',
       operator_id: 'c91cfb80-afcb-4c1d-ba12-103da7c8bb2e',

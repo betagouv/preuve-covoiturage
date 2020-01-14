@@ -16,7 +16,10 @@ import { binding as printBinding } from './shared/certificate/print.schema';
   config: __dirname,
   providers: [CertificatePgRepositoryProvider, CarpoolPgRepositoryProvider, CertificatePrinterProvider],
   validator: [generateBinding, printBinding],
-  middlewares: [['validate', ValidatorMiddleware], ['can', PermissionMiddleware]],
+  middlewares: [
+    ['validate', ValidatorMiddleware],
+    ['can', PermissionMiddleware],
+  ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [GenerateCertificateAction, PrintCertificateAction],
 })

@@ -1,5 +1,3 @@
-import { CertificateInterface } from './common/interfaces/CertificateInterface';
-
 export interface ParamsInterface {
   operator_user_id: string;
   start_at?: Date;
