@@ -21,7 +21,9 @@ export class PolicyEngine {
       // for each rule set of rules
       for (const rule of rules) {
         try {
+          // here duplicate ctx
           await rule(ctx);
+          // then copy ctx.result to ctx.results[]
           // if rule not throwing something, stop
           return true;
         } catch (e) {
