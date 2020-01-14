@@ -31,7 +31,6 @@ export interface PersonInterface {
 
 export interface FinalizePositionInterface extends GeoPositionInterface {
   insee: string;
-  datetime: Date;
 }
 
 export interface FinalizedPersonInterface {
