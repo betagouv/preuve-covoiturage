@@ -20,6 +20,6 @@
   </div>
   <div class="TripList-content" *ngIf="trips && !showMessage">
     <app-trip-table [data]="trips" [displayedColumns]="columnsDisplayed"></app-trip-table>
-    <mat-progress-bar mode="indeterminate" *ngIf="tripService.loading"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
   </div>
 </div>

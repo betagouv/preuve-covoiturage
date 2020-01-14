@@ -189,7 +189,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
         )
         .subscribe((value) => {
           this.companyService
-            .findCompany(value, 'remote')
+            .findCompany({ siret: value, source: 'remote' })
             .pipe(
               catchHttpStatus(404, (err) => {
                 this.toastr.error('Entreprise non trouvée');

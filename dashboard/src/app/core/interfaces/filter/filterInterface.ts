@@ -1,26 +1,8 @@
-import { WeekDay } from '@angular/common';
-
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
+import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
 
-export interface FilterInterface {
-  campaign_id: number[];
-  date: {
-    start: Date;
-    end: Date;
-  };
-  hour: {
-    start: number;
-    end: number;
-  };
-  days: WeekDay[];
-  insee: string[];
-  distance: {
-    min: number;
-    max: number;
-  };
-  ranks: TripRankEnum[];
-  status: TripStatusEnum;
-  operator_id: number[];
-  territory_id: number[];
+export interface FilterInterface extends TripSearchInterface {
+  ranks?: TripRankEnum[];
+  status?: TripStatusEnum;
 }

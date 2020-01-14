@@ -1,7 +1,3 @@
-export interface StatInterface {
-  carpoolers: number;
-  day: string; // date iso format
-  distance: number; //  in kilometers ;
-  trip: number;
-  trip_subsidized: number;
-}
+import { SingleResultInterface } from '~/core/entities/api/shared/trip/stats.contract';
+
+export interface StatInterface extends SingleResultInterface {}
