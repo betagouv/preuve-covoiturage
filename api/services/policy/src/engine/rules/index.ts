@@ -15,6 +15,7 @@ import { weekdayFilter } from './weekdayFilter';
 import { costBasedAmount } from './costBasedAmount';
 import { fixedAmount } from './fixedAmount';
 import { perPassenger } from './perPassenger';
+import { perSeat } from './perSeat';
 import { perKm } from './perKm';
 import { passengerOnlyFilter } from './passengerOnlyFilter';
 import { driverOnlyFilter } from './driverOnlyFilter';
@@ -35,6 +36,7 @@ export const policies: ApplicableRuleInterface[] = [
   maxTripRestriction,
   operatorWhitelistFilter,
   perKm,
+  perSeat,
   perPassenger,
   rankWhitelistFilter,
   timeRangeFilter,
