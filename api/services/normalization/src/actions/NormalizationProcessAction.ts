@@ -43,6 +43,12 @@ import {
   ResultInterface as TerritoryResultInterface,
 } from '../shared/normalization/territory.contract';
 
+import {
+  signature as crossCheckSignature,
+  ParamsInterface as CrossCheckParamsInterface,
+  ResultInterface as CrossCheckResultInterface,
+} from '../shared/carpool/crosscheck.contract';
+
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/process.contract';
 
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
@@ -50,6 +56,16 @@ import { WorkflowProvider } from '../providers/WorkflowProvider';
 import { PersonInterface, FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 import { PointInterface } from '@pdc/provider-geo/dist/interfaces';
+
+const context: ContextType = {
+  call: {
+    user: {},
+  },
+  channel: {
+    service: 'normalization',
+    transport: 'queue',
+  },
+};
 
 // Enrich position data
 @handler(handlerConfig)
@@ -62,13 +78,32 @@ export class NormalisationProcessAction extends AbstractAction {
 
   public async handle(journey: ParamsInterface): Promise<ResultInterface> {
     const normalizedJourney: ResultInterface = { ...journey };
+    const people: FinalizedPersonInterface[] = [];
 
     if (journey.payload.driver) {
       normalizedJourney.payload.driver = await this.handlePerson(journey.payload.driver, journey);
+      people.push(this.finalizePerson(normalizedJourney.payload.driver));
     }
     if (journey.payload.passenger) {
-      normalizedJourney.payload.passenger = await this.handlePerson(journey.payload.driver, journey);
+      normalizedJourney.payload.passenger = await this.handlePerson(journey.payload.passenger, journey);
+      people.push(this.finalizePerson(journey.payload.passenger));
     }
+
+    const normalizedData: CrossCheckParamsInterface = {
+      people,
+      operator_trip_id: journey.payload.operator_journey_id,
+      created_at: journey.created_at,
+      operator_id: journey.operator_id,
+      operator_class: journey.payload.operator_class,
+      acquisition_id: journey._id,
+      operator_journey_id: journey.journey_id,
+    };
+
+    this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
+      crossCheckSignature,
+      normalizedData,
+      context,
+    );
 
     return normalizedJourney;
   }
@@ -83,20 +118,18 @@ export class NormalisationProcessAction extends AbstractAction {
     );
 
     return {
-      is_driver: true,
+      is_driver: !!person.is_driver,
       identity: person.identity,
       datetime: person.start.datetime,
       start: {
         lon: person.start.lon,
         lat: person.start.lat,
         insee: person.start.insee,
-        datetime: person.start.datetime,
       },
       end: {
         lon: person.end.lon,
         lat: person.end.lat,
         insee: person.end.insee,
-        datetime: person.end.datetime,
       },
       seats: person.seats || 0,
       duration: driverDuration,
@@ -112,16 +145,6 @@ export class NormalisationProcessAction extends AbstractAction {
 
   public async handlePerson(person: PersonInterface, journey: ParamsInterface): Promise<PersonInterface> {
     const finalPerson: PersonInterface = { ...person };
-
-    const context: ContextType = {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: 'normalization',
-        transport: 'queue',
-      },
-    };
 
     // Cost ------------------------------------------------------------------------------------
 

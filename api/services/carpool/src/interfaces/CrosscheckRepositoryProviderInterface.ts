@@ -15,7 +15,7 @@ export abstract class CrosscheckRepositoryProviderInterfaceResolver implements C
     datetime: Date;
     start: PositionInterface;
     end: PositionInterface;
-    identity_uuid: string;
+    identity_uuid?: string;
   }): Promise<string> {
     throw new Error();
   }
