@@ -1,6 +1,9 @@
 {
   "rulesDirectory": ["node_modules/codelyzer"],
   "extends": ["tslint-config-airbnb", "tslint-eslint-rules", "tslint-import-group-ordering"],
+  "linterOptions": {
+    "exclude": ["../api/*"]
+  },
   "rules": {
     "align": false,
     "arrow-return-shorthand": true,
