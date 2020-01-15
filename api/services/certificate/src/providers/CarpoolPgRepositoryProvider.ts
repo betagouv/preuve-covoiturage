@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
@@ -10,22 +10,52 @@ import {
   identifier: CarpoolRepositoryProviderInterfaceResolver,
 })
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
-  // TODO make a read-only view for this
   public readonly table = 'carpool.carpools';
+  public readonly id_table = 'certificate.identities';
 
   constructor(protected connection: PostgresConnection) {}
 
   // TODO replace any output by proper interface
-  // FIXME operator_user_id as identity.phone for now!
-  async find(params: { operator_user_id: string; start_at: Date; end_at: Date }): Promise<any[]> {
-    const { operator_user_id, start_at, end_at } = params;
+  async find(params: { identity: string; start_at?: Date; end_at?: Date }): Promise<any[]> {
+    // identity is a phone number for now!
+    const { identity } = params;
+    let { start_at, end_at } = params;
+
+    // fetch all identities by phone number
+    const idResult = await this.connection.getClient().query({
+      text: `SELECT * FROM ${this.id_table} WHERE phone IN ($1) LIMIT 1`,
+      values: [identity],
+    });
+
+    if (idResult.rowCount === 0) {
+      throw new NotFoundException(`Identity not found (${identity})`);
+    }
+
+    const { identities } = idResult.rows[0];
+
+    // normalize dates
+    if (!end_at || end_at.getTime() > new Date().getTime()) {
+      end_at = new Date();
+    }
+
+    if (!start_at || start_at.getTime() >= end_at.getTime()) {
+      start_at = new Date('2018-01-01T00:00:00+0100');
+    }
+
+    // fetch the number of kilometers per month
     const result = await this.connection.getClient().query({
       text: `
-        SELECT * FROM ${this.table}
-        WHERE (identity).phone = $1
-        AND datetime $2 AND $3
+        SELECT
+          to_char(datetime,'MM') AS m,
+          extract(year from datetime) AS y,
+          sum(distance::float)/1000 as km
+        FROM ${this.table}
+        WHERE identity_id IN (${identities.join(',')})
+        AND datetime >= $1 AND datetime <= $2
+        GROUP BY (m, y)
+        ORDER BY y DESC, m DESC
       `,
-      values: [operator_user_id, start_at, end_at],
+      values: [start_at, end_at],
     });
 
     return result.rows;
