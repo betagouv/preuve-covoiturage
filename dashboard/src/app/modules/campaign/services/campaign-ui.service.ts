@@ -9,7 +9,10 @@ import {
 import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
+import {
+  IncentiveFiltersUxInterface,
+  IncentiveTimeRuleUxInterface,
+} from '~/core/entities/campaign/ux-format/incentive-filters';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
@@ -165,8 +168,59 @@ export class CampaignUiService {
     return `De ${range[0]} à ${range[1]} km`;
   }
 
-  public insee(): string {
-    return '';
+  public insee(insee: IncentiveFiltersUxInterface['insee']): string {
+    let text = '';
+    if (insee.blackList && insee.blackList.length > 0) {
+      text += `Les axes suivant sont incités : <ul>`;
+
+      insee.blackList.forEach((axe) => {
+        text += `<li> De `;
+        axe.start.forEach((city, index) => {
+          if (index > 0 && index === axe.start.length - 1) {
+            text += ' ou ';
+          } else if (index > 0) {
+            text += ', ';
+          }
+          text += `<b>${city.territory_literal}</b>`;
+        });
+        text += ` à `;
+        axe.end.forEach((city, index) => {
+          if (index > 0 && index === axe.end.length - 1) {
+            text += ' ou ';
+          } else if (index > 0) {
+            text += ', ';
+          }
+          text += `<b>${city.territory_literal}</b>`;
+        });
+        text += `.</li>`;
+      });
+    } else if (insee.whiteList && insee.whiteList.length > 0) {
+      text += `Les trajets doivent être sur les axes suivants : <ul>`;
+
+      insee.whiteList.forEach((axe) => {
+        text += `<li> De`;
+        axe.start.forEach((city, index) => {
+          if (index > 0 && index === axe.start.length - 1) {
+            text += ' ou ';
+          } else if (index > 0) {
+            text += ', ';
+          }
+          text += `<b>${city.territory_literal}</b>`;
+        });
+        text += ` à `;
+        axe.end.forEach((city, index) => {
+          if (index > 0 && index === axe.end.length - 1) {
+            text += ' ou ';
+          } else if (index > 0) {
+            text += ', ';
+          }
+          text += `<b>${city.territory_literal}</b>`;
+        });
+        text += `.</li>`;
+      });
+    }
+
+    return text;
   }
 
   public restrictions(restrictions: RestrictionUxInterface[] = []) {
@@ -175,7 +229,7 @@ export class CampaignUiService {
     }
     let text = '';
     restrictions.forEach((restriction: RestrictionUxInterface, index) => {
-      text += `<li><b>${restriction.quantity} trajets maximum pour le ${
+      text += `<li><b>${restriction.quantity} trajet(s) maximum pour le ${
         restriction.is_driver ? 'conducteur' : 'passager'
       } `;
 
@@ -224,11 +278,11 @@ export class CampaignUiService {
         break;
       case IncentiveUnitEnum.POINT:
         // tslint:disable-next-line:max-line-length
-        summaryText += ` <b>${new DecimalPipe(this.locale).transform(campaign.max_amount, '1.0-0', 'FR')} point`;
-        if (campaign.max_amount > 1) {
-          summaryText += 's';
-        }
-        summaryText += `s</b>.</p>`;
+        summaryText += ` <b>${new DecimalPipe(this.locale).transform(
+          campaign.max_amount,
+          '1.0-0',
+          'FR',
+        )} points</b>.</p>`;
         break;
     }
 
@@ -289,6 +343,11 @@ export class CampaignUiService {
     // RANKS
     summaryText += `proposant des preuves de classe`;
     summaryText += ` <b>${campaign.filters.rank ? campaign.filters.rank.join(' ou ') : ''}</b>.</p>`;
+
+    // TRAJETS
+    if (campaign.filters.insee) {
+      summaryText += `<p>${this.insee(campaign.filters.insee)}</p>`;
+    }
 
     return summaryText;
   }

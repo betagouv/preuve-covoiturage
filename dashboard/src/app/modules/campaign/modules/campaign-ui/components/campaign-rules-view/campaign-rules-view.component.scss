@@ -9,7 +9,7 @@
     flex-direction: column;
     justify-content: space-evenly;
     @include supportEdge(justify-content, space-around);
-    height: 330px;
+    min-height: 330px;
     min-width: 450px;
     background-color: white;
     padding: 30px;
