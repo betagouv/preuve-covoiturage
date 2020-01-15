@@ -48,15 +48,19 @@ export class CampaignRulesViewComponent implements OnInit {
     return this._campaignUiService.ranks(rank);
   }
 
+  get insee(): string {
+    const insee = this.campaign.filters.insee;
+    if (insee) {
+      return this._campaignUiService.insee(insee);
+    }
+    return 'Aucune restriction géographique.';
+  }
+
   get distance(): string {
     const range = this.campaign.filters.distance_range;
     if (!range) {
       return '';
     }
     return this._campaignUiService.distance(range);
-  }
-
-  get insee(): string {
-    return 'Tous les trajets';
   }
 }
