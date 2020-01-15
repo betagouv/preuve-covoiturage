@@ -1,5 +1,5 @@
 export interface ParamsInterface {
-  operator_user_id: string;
+  identity: string;
   start_at?: Date;
   end_at?: Date;
 }

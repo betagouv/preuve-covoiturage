@@ -449,10 +449,14 @@ export class HttpTransport implements TransportInterface {
      * The route that renders an HTML certificate based on params
      * - only accessible by the backend itself
      * - requires access to public assets (images)
+     *
+     * TEST ME : http://localhost:8080/certificates/render?identity=+33619660000
      */
     this.app.get(
       '/certificates/render',
       asyncHandler(async (req, res, next) => {
+        console.log('http render params', { q: req.query });
+
         const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
@@ -462,10 +466,16 @@ export class HttpTransport implements TransportInterface {
           },
         })) as any;
 
+        if (response.error) {
+          res.status(mapStatusCode(response.error.code));
+          res.json(response);
+          return;
+        }
+
         // console.log(response.result);
-        res.set('Content-type', 'text/html');
+        res.set('Content-type', response.result.contentType);
         res.status(200);
-        res.send(response.result);
+        res.send(response.result.data);
       }),
     );
 

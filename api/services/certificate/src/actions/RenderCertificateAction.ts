@@ -18,7 +18,9 @@ export class RenderCertificateAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    // carpool.find(operator_user_id, start_at, end_at)
+    console.log('render', { params });
+
+    // carpoolRepository.find(operator_user_id, start_at, end_at)
     const meta = {
       total_km: 1000,
       total_point: 2000,
@@ -70,14 +72,18 @@ export class RenderCertificateAction extends AbstractAction {
       identity_id: 'c37b7a3a-4a93-4b05-8751-d502efd2d245',
       operator_id: 'c91cfb80-afcb-4c1d-ba12-103da7c8bb2e',
       territory_id: '1327eafd-9a9c-44f5-84b6-bac6c6c77dda',
-      start_at: params.start_at,
-      end_at: params.end_at,
+      start_at: params.start_at || new Date('2018-01-01T00:00:00+0100'),
+      end_at: params.end_at || new Date(),
     });
+
+    const html = fs.readFileSync(path.resolve(__dirname, '../templates/certificate.html'), { encoding: 'utf8' });
+
+    // TODO modify HTML with handlebar/template provider
 
     // return HTML / JSON
     return {
       contentType: 'text/html',
-      data: fs.readFileSync(path.resolve(__dirname, '../templates/certificate.html'), { encoding: 'utf8' }),
+      data: html,
     };
   }
 }
