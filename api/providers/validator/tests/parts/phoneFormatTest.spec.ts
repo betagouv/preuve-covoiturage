@@ -3,9 +3,9 @@ import { NewableType } from '@ilos/common';
 
 import { ValidatorInterface } from '../../src';
 
-export function phoneFormatTest(getProvider, FakeObject: NewableType<any>) {
+export function phoneFormatTest(getProvider, FakeObject: NewableType<any>): Function {
   let provider: ValidatorInterface;
-  return () => {
+  return (): void => {
     before(async () => {
       const schema = {
         $schema: 'http://json-schema.org/draft-07/schema#',

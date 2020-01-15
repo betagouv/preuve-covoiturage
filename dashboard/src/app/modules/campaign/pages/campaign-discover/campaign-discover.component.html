@@ -3,7 +3,7 @@
     <h1 class="page-title">Campagnes incitatives ({{ campaigns ? campaigns.length : 0 }})</h1>
   </app-page-header>
   <app-page-content>
-    <div class="CampaignDiscover--loading" *ngIf="campaignService.loading && !campaigns">
+    <div class="CampaignDiscover--loading" *ngIf="loading && !campaigns">
       <mat-spinner></mat-spinner>
     </div>
     <div class="CampaignDiscover-wrapper" *ngIf="campaigns">

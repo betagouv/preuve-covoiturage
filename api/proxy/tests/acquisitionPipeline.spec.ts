@@ -13,7 +13,7 @@ import { requestJourney } from './mocks/requestJourneyV2';
 const { expect } = chai;
 
 class Queue extends QueueTransport {
-  async up(opts) {
+  async up(opts): Promise<void> {
     await super.up(opts);
   }
 }
@@ -25,7 +25,6 @@ describe('Acquisition pipeline', () => {
   let request;
   let token;
   let operator;
-  let application;
 
   before(async () => {
     process.env.APP_MONGO_DB = `pdc-test-acquisition-${new Date().getTime()}`;
@@ -71,7 +70,7 @@ describe('Acquisition pipeline', () => {
       },
     );
 
-    application = appCreateResponse.application;
+    appCreateResponse.application;
     token = appCreateResponse.token;
   });
 

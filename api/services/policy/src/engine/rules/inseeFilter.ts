@@ -47,7 +47,7 @@ export const inseeWhitelistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: InseeParamsType) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       let whitelisted = false;
       for (const rule of params) {
         if (
@@ -75,7 +75,7 @@ export const inseeBlacklistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: InseeParamsType) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       let blacklisted = false;
       for (const rule of params) {
         if (

@@ -1,4 +1,3 @@
-import { UserInterface } from './common/interfaces/UserInterface';
 import { UserCreateInterface } from './common/interfaces/UserCreateInterface';
 import { UserFindInterface } from './common/interfaces/UserFindInterface';
 

@@ -1,15 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import * as moment from 'moment';
+import { FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 
 import { UtilsService } from '~/core/services/utils.service';
-import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 
 @Component({
@@ -19,13 +15,13 @@ import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.servi
 })
 export class SummaryFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
+  @Input() isCreating: boolean;
   @Input() loading: boolean;
   @Output() onSaveCampaign: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(
     public utils: UtilsService,
     private toastr: ToastrService,
-    private campaignService: CampaignService,
     private campaignSummaryService: CampaignUiService,
   ) {
     super();
@@ -53,7 +49,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     this.toastr.success('Le récapitulatif a été copié !');
   }
 
-  saveCampaign(isTemplate: boolean) {
+  saveCampaign(isTemplate: boolean = false) {
     if (isTemplate) {
       this.controls.status.setValue(CampaignStatusEnum.TEMPLATE);
     }

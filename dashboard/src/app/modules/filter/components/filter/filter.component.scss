@@ -48,6 +48,15 @@
     justify-content: space-between;
   }
 
+  &-timeAndDays {
+    input {
+      width: 45px;
+    }
+    &-hourUnit {
+      margin-right: 35px;
+    }
+  }
+
   &-dates,
   &-insees,
   &-status {
@@ -75,5 +84,8 @@
 :host ::ng-deep {
   .mat-form-field-wrapper {
     padding-bottom: 0;
+  }
+  .mat-form-field-appearance-outline .mat-form-field-suffix {
+    top: 0;
   }
 }

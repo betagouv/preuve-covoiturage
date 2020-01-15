@@ -7,11 +7,12 @@ import { Operator } from '~/core/entities/operator/operator';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { User } from '~/core/entities/authentication/user';
 import { Territory } from '~/core/entities/territory/territory';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
+import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -67,7 +68,7 @@ export class CommonDataService {
   constructor(
     private operatorApiService: OperatorApiService,
     private territoryApiService: TerritoryApiService,
-    private campaignService: CampaignService,
+    private campaignApiService: CampaignApiService,
     private authenticationService: AuthenticationService,
     private jsonRPCService: JsonRPCService,
   ) {
@@ -96,39 +97,42 @@ export class CommonDataService {
 
   loadOperators(): Observable<Operator[]> {
     return this.operatorApiService.getList().pipe(
-      map((operators) => operators.sort((operatorA, operatorB) => (operatorA.name > operatorB.name ? 1 : -1))),
+      map((operators) => operators.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name))),
       tap((operators) => this._operators$.next(operators)),
     );
   }
 
   loadTerritories(): Observable<Territory[]> {
     return this.territoryApiService.getList().pipe(
-      map((territories) => territories.sort((territoryA, territoryB) => (territoryA.name > territoryB.name ? 1 : -1))),
+      map((territories) =>
+        territories.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
+      ),
       tap((territories) => this._territories$.next(territories)),
     );
   }
 
   loadCampaigns(): Observable<Campaign[]> {
-    return this.campaignService.load().pipe(
-      map((campaigns) => campaigns.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1))),
+    return this.campaignApiService.getList().pipe(
+      map((campaigns) => campaigns.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
       tap((campaigns) => this._campaigns$.next(campaigns)),
     );
   }
 
   public loadAll() {
+    console.log('common > loadAll');
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
           const params = [this.operatorApiService.paramGetList(), this.territoryApiService.paramGetList()];
 
           if (this.authenticationService.hasAnyPermission(['incentive-campaign.list'])) {
-            params.push(this.campaignService.getListJSONParam());
+            params.push(this.campaignApiService.paramGetList());
           }
 
           if (user.territory_id) {
-            params.push(this.territoryApiService.paramGetById(user.territory_id ? user.territory_id : null));
+            params.push(this.territoryApiService.paramGetById(user.territory_id));
           } else if (user.operator_id) {
-            params.push(this.operatorApiService.paramGetById(user.operator_id ? user.operator_id : null));
+            params.push(this.operatorApiService.paramGetById(user.operator_id));
           }
 
           return this.jsonRPCService.call(params, {}, false);
@@ -161,19 +165,21 @@ export class CommonDataService {
 
         if (operatorsR.data) {
           this._operators$.next(
-            operatorsR.data.sort((operatorA, operatorB) => (operatorA.name > operatorB.name ? 1 : -1)),
+            operatorsR.data.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name)),
           );
         }
 
         if (territoriesR.data) {
           this._territories$.next(
-            territoriesR.data.sort((territoryA, territoryB) => (territoryA.name > territoryB.name ? 1 : -1)),
+            territoriesR.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
           );
         }
 
         if (campaignsR && campaignsR.data) {
           this._campaigns$.next(
-            campaignsR.data.sort((campaignA, campaignB) => (campaignA.name > campaignB.name ? 1 : -1)),
+            campaignsR.data
+              .filter((campaign) => CampaignStatusEnum.TEMPLATE !== campaign.status)
+              .sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name)),
           );
         }
 

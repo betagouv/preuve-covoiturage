@@ -14,7 +14,10 @@ import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class CreateApplicationAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['application.create']]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
+    ['can', ['application.create']],
+  ];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();

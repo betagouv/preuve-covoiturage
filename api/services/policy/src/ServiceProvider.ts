@@ -27,10 +27,11 @@ import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProv
 import { ApplyAction } from './actions/ApplyAction';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
+import { SeedCommand } from './commands/SeedCommand';
 
 @serviceProvider({
   config: __dirname,
-  commands: [PolicyProcessCommand],
+  commands: [PolicyProcessCommand, SeedCommand],
   providers: [
     CampaignPgRepositoryProvider,
     CampaignMetadataRepositoryProvider,
@@ -48,7 +49,10 @@ import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
     ListCampaignAction,
     ApplyAction,
   ],
-  connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
+  connections: [
+    [PostgresConnection, 'connections.postgres'],
+    [RedisConnection, 'connections.redis'],
+  ],
   queues: ['campaign'],
   middlewares: [
     ['can', PermissionMiddleware],

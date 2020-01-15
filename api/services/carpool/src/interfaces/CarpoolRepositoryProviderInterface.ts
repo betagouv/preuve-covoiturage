@@ -1,4 +1,3 @@
-import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 import { PeopleWithIdInterface } from './Carpool';
 
 export interface CarpoolRepositoryProviderInterface {

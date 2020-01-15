@@ -20,7 +20,7 @@ const mockConnectedUser = {
   permissions: ['user.create'],
 };
 
-async function noop(params, context) {
+async function noop(params: any, context: any): Promise<void> {
   return;
 }
 
@@ -35,8 +35,8 @@ const mockCreateUserParameters = {
   password: 'password',
 };
 
-function contextFactory(params) {
-  return <ContextType>{
+function contextFactory(params): ContextType {
+  return {
     call: {
       user: {
         ...mockConnectedUser,
@@ -58,12 +58,12 @@ describe('Middleware Scopetoself', () => {
     const result = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
       ['user.create'],
       [
-        (params, context) => {
+        (params, context): string => {
           if ('aom' in params && params.aom === context.call.user.aom) {
             return 'aom.users.add';
           }
         },
-        (params, context) => {
+        (params, context): string => {
           if ('operator' in params && params.aom === context.call.user.aom) {
             return 'operator.users.add';
           }
@@ -82,12 +82,12 @@ describe('Middleware Scopetoself', () => {
     const response = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
       ['user.create'],
       [
-        (params, context) => {
+        (params, context): string => {
           if ('aom' in params && params.aom === context.call.user.aom) {
             return 'aom.users.add';
           }
         },
-        (params, context) => {
+        (params, context): string => {
           if ('operator' in params && params.aom === context.call.user.aom) {
             return 'operator.users.add';
           }
@@ -107,12 +107,12 @@ describe('Middleware Scopetoself', () => {
       middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
         ['user.create'],
         [
-          (params, context) => {
+          (params, context): string => {
             if ('aom' in params && params.aom === context.call.user.aom) {
               return 'aom.users.add';
             }
           },
-          (params, context) => {
+          (params, context): string => {
             if ('operator' in params && params.aom === context.call.user.aom) {
               return 'operator.users.add';
             }
@@ -131,12 +131,12 @@ describe('Middleware Scopetoself', () => {
       middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
         ['user.create'],
         [
-          (params, context) => {
+          (params, context): string => {
             if ('aom' in params && params.aom === context.call.user.aom) {
               return 'aom.users.add';
             }
           },
-          (params, context) => {
+          (params, context): string => {
             if ('operator' in params && params.aom === context.call.user.aom) {
               return 'operator.users.add';
             }

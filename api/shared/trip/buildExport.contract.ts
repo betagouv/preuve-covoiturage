@@ -1,5 +1,3 @@
-import { TripSearchInterface } from './common/interfaces/TripSearchInterface';
-
 export interface ParamsInterface {
   query: {
     date: {

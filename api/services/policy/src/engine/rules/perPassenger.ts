@@ -10,7 +10,7 @@ export const perPassenger: ApplicableRuleInterface = {
   },
   index: LOWEST,
   apply() {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       await next();
       ctx.result *= ctx.trip.people.filter((p) => !p.is_driver).reduce((acc, p) => acc + (p.seats || 1), 0);
     };

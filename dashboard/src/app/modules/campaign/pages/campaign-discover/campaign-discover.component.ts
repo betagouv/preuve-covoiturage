@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
-import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
 @Component({
   selector: 'app-campaign-discover',
@@ -17,13 +18,17 @@ export class CampaignDiscoverComponent implements OnInit {
   campaignsToShow: CampaignUx[];
 
   constructor(
-    public campaignService: CampaignService,
-    public campaignFormatService: CampaignFormatingService,
+    private _authService: AuthenticationService,
+    public campaignStoreService: CampaignStoreService,
     private toastr: ToastrService,
   ) {}
 
   ngOnInit() {
     this.loadCampaigns();
+  }
+
+  public loading(): boolean {
+    return this.campaignStoreService.isLoading;
   }
 
   onMapResize($event) {
@@ -51,9 +56,9 @@ export class CampaignDiscoverComponent implements OnInit {
   }
 
   private loadCampaigns(): void {
-    this.campaignService.load().subscribe(
+    this.campaignStoreService.campaignsUx$.subscribe(
       (campaigns) => {
-        this.campaigns = campaigns.map(this.campaignFormatService.toCampaignUxFormat);
+        this.campaigns = campaigns;
         this.campaignsToShow = this.campaigns;
       },
       (err) => {
@@ -67,6 +72,10 @@ export class CampaignDiscoverComponent implements OnInit {
         this.campaignsToShow = this.campaigns;
       },
     );
+    if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+      this.campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+    }
+    this.campaignStoreService.loadList();
   }
 
   private generateCampaigns(idx): any {

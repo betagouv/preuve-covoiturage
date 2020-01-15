@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "scalingo-prebuild": "/bin/sh ./scalingo/prebuild.sh",
-    "scalingo-build": "run-s build:providers build:services build:proxy",
+    "scalingo-build": "/bin/sh ./scalingo/build.sh",
     "scalingo-postbuild": "/bin/sh ./scalingo/postbuild.sh",
     "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
     "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
@@ -29,11 +29,11 @@
     "ls": "lerna ls",
     "build": "run-s clean build:providers build:services build:proxy",
     "build:proxy": "lerna run --scope @pdc/proxy build",
-    "build:providers": "lerna run --scope @pdc/provider-* build",
-    "build:services": "lerna run --scope @pdc/service-* build",
-    "coverage-ci": "lerna run --scope @pdc/* coverage-ci",
-    "coverage": "lerna run --scope @pdc/* coverage",
-    "format:fix": "pretty-quick --staged",
+    "build:providers": "yarn workspace @pdc/provider-crypto build && lerna run --parallel --scope @pdc/provider-* build",
+    "build:services": "lerna run --parallel --scope @pdc/service-* build",
+    "coverage-ci": "lerna run --parallel --scope @pdc/* coverage-ci",
+    "coverage": "lerna run --parallel --scope @pdc/* coverage",
+    "format:fix": "lint-staged",
     "lint": "lerna run --scope @pdc/* lint",
     "test": "run-s test:unit test:integration",
     "test:unit": "lerna run --parallel --scope @pdc/* test",
@@ -43,7 +43,6 @@
     "migrate:up": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations",
     "migrate:down": "DATABASE_URL=$APP_POSTGRES_URL db-migrate down --migrations-dir=db/migrations",
     "migrate:check": "DATABASE_URL=$APP_POSTGRES_URL db-migrate up --migrations-dir=db/migrations --check",
-    "sync:mongo": "yarn workspace @pdc/proxy ilos sync:mongo",
     "process:journey": "yarn workspace @pdc/proxy ilos process:journey"
   },
   "keywords": [
@@ -58,12 +57,22 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "devDependencies": {
-    "lerna": "^3.13.4",
+    "@typescript-eslint/eslint-plugin": "^2.15.0",
+    "@typescript-eslint/parser": "^2.15.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "lerna": "^3.20.2",
+    "lint-staged": "^9.5.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^1.17.1",
-    "pretty-quick": "^1.11.0",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.17.0",
-    "typescript": "^3.5.3"
+    "prettier": "^1.19.1",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
   }
 }

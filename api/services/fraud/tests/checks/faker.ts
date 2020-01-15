@@ -5,7 +5,7 @@ import { kernel } from '@ilos/common';
 
 import { ServiceProvider } from '../../src/ServiceProvider';
 import { AbstractQueryCheck } from '../../src/engine/AbstractQueryCheck';
-import { StaticCheckInterface, CheckInterface } from '../../src/interfaces/CheckInterface';
+import { StaticCheckInterface } from '../../src/interfaces/CheckInterface';
 import { PostgresConnection } from '@ilos/connection-postgres/dist';
 
 const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
@@ -76,7 +76,7 @@ class Kernel extends ParentKernel {}
 export const faker = {
   kernel: null,
   connection: null,
-  async up() {
+  async up(): Promise<void> {
     this.kernel = new Kernel();
     await this.kernel.bootstrap();
     this.connection = this.kernel
@@ -108,14 +108,14 @@ export const faker = {
       )
     `);
   },
-  async clean() {
+  async clean(): Promise<void> {
     if (this.connection) {
       await this.connection.query(`
       DELETE FROM fraud_test_table
       `);
     }
   },
-  async down() {
+  async down(): Promise<void> {
     if (this.connection) {
       await this.connection.query(`
       DROP TABLE fraud_test_table

@@ -11,18 +11,18 @@ chai.use(chaiNock);
 const { expect } = chai;
 
 class FakeTemplate extends TemplateInterfaceResolver {
-  getMetadata(key: string) {
+  getMetadata(key: string): { subject: string } {
     return {
       subject: 'Mot de passe oublié',
     };
   }
-  get(key: string, opts: any) {
+  get(key: string, opts: any): string {
     return `Bonjour ${opts.fullname}, voici le lien ${opts.link}`;
   }
 }
 
 class FakeConfig extends ConfigInterfaceResolver {
-  get(key: string, fallback?: any) {
+  get(key: string, fallback?: any): { mail: object } {
     return {
       mail: {
         debug: false,
@@ -44,10 +44,10 @@ class FakeConfig extends ConfigInterfaceResolver {
     };
   }
 }
+
 const provider = new Notification(new FakeConfig(), new FakeTemplate());
-let nockRequest;
-const url: RegExp = /mailjet/;
-const endpoint: RegExp = /send/;
+const url = /mailjet/;
+const endpoint = /send/;
 
 describe('Notification service', async () => {
   before(async () => {
@@ -60,7 +60,7 @@ describe('Notification service', async () => {
 
   it('send correct request to mailjet', (done) => {
     let body;
-    nockRequest = nock(url)
+    nock(url)
       .post(endpoint, (b) => {
         body = b;
         return b;
@@ -105,7 +105,7 @@ describe('Notification service', async () => {
 
   it('send correct request to mailjet with template', (done) => {
     let body;
-    nockRequest = nock(url)
+    nock(url)
       .post(endpoint, (b) => {
         body = b;
         return b;

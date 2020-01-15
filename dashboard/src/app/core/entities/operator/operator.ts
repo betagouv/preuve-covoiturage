@@ -1,5 +1,5 @@
 /* tslint:disable:variable-name*/
-import { assignOrDeleteProperties, assignOrDeleteProperty, hasOneNotEmptyProperty } from '~/core/entities/utils';
+import { assignOrDeleteProperties, assignOrDeleteProperty } from '~/core/entities/utils';
 
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IModel } from '~/core/entities/IModel';
@@ -63,6 +63,8 @@ class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operat
     const val: any = fullFormMode
       ? {
           ...this,
+          name: this.name || '',
+          legal_name: this.legal_name || '',
           company: { ...new Company(this.company).toFormValues(), siret: this.siret },
           contacts: new Contacts(this.contacts).toFormValues(),
           bank: new Bank(this.bank).toFormValues(),
@@ -86,7 +88,7 @@ class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operat
     assignOrDeleteProperty(formValues, this, 'company', (data) => new Company(data.company));
     assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
-    assignOrDeleteProperty(formValues, this, 'bank', (data) => new Bank(data.cgu));
+    assignOrDeleteProperty(formValues, this, 'bank', (data) => new Bank(data.bank));
   }
 
   clone(): Operator {

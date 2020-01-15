@@ -10,7 +10,7 @@ export const costBasedAmount: ApplicableRuleInterface = {
   },
   index: LOW,
   apply() {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       ctx.result = Math.abs(ctx.person.cost); // TODO passenger only ?
       return next();
     };

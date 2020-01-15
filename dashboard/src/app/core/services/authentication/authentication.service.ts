@@ -117,7 +117,7 @@ export class AuthenticationService {
       tap((user) => {
         if (user) {
           this.onLoggin(new User(user));
-          if (user.territory) {
+          if (user.territory_id) {
             this.router.navigate(['/campaign']);
           } else {
             this.router.navigate(['/trip/stats']);

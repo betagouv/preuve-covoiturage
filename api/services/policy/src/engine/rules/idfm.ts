@@ -26,7 +26,7 @@ export const idfm: ApplicableRuleInterface = {
   },
   index: LOW,
   apply(params: IdfmParamsInterface) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       if (!ctx.person.is_driver) {
         throw new NotApplicableTargetException(idfm);
       }
@@ -39,7 +39,8 @@ export const idfm: ApplicableRuleInterface = {
             p.start_territory_id === params.territory_id && // au départ
             p.end_territory_id === params.territory_id && // et à l'arrivée de l'ile de france
             p.distance >= 2000 && // trajet supérieur à 2km seulement
-            !(params.paris_insee_code.indexOf(p.start_insee) >= 0 && params.paris_insee_code.indexOf(p.end_insee) >= 0), // mais pas Paris-Paris
+            !(params.paris_insee_code.indexOf(p.start_insee) >= 0 && params.paris_insee_code.indexOf(p.end_insee) >= 0),
+          // mais pas Paris-Paris
         )
         .map((p) => ({ distance: p.distance, seats: p.seats }))
         .sort((p1, p2) => (p1.distance > p2.distance ? 1 : p1.distance < p2.distance ? -1 : 0));

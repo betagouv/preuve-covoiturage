@@ -13,7 +13,7 @@ export const operatorWhitelistFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: OperatorWhitelistParameters) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       if (params.indexOf(ctx.person.operator_id) < 0) {
         throw new NotApplicableTargetException(operatorWhitelistFilter);
       }

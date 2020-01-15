@@ -3,4 +3,5 @@ export interface UserPatchInterface {
   firstname?: string;
   lastname?: string;
   phone?: string;
+  role?: string;
 }

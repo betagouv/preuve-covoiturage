@@ -9,9 +9,10 @@
     "build": "ng build --configuration=$NODE_ENV",
     "lint": "ng lint",
     "format:fix": "pretty-quick --staged",
-    "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec cypress/integration/integration.ts",
-    "test:integration": "yarn run cypress run --spec cypress/integration/integration.ts",
-    "open:cypress": "yarn run cypress open --env ENV_NAME=local"
+    "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec cypress/integration/*.integration.ts",
+    "test:integration": "yarn run cypress run --spec cypress/integration/*.integration.ts",
+    "open:cypress:debug": "yarn run cypress open --env ENV_NAME=local",
+    "open:cypress": "yarn run cypress open"
   },
   "private": true,
   "dependencies": {

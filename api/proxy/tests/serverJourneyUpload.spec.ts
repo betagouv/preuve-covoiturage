@@ -15,7 +15,7 @@ describe('Send journey using application token', async () => {
   // fake Config provider
   class Config implements ConfigInterface {
     private config: Map<string, any> = new Map();
-    async init() {
+    async init(): Promise<void> {
       this.config.set('jwt.secret', 'abcd1234');
       this.config.set('jwt.ttl', -1);
       this.config.set('jwt.alg', 'HS256');
@@ -26,7 +26,7 @@ describe('Send journey using application token', async () => {
     get(key: string, fallback?: any): any {
       return this.config.get(key);
     }
-    set(key: string, value: any) {
+    set<T>(key: string, value: T): T {
       throw new Error('Not implemented in tests');
     }
   }
@@ -87,6 +87,7 @@ describe('Send journey using application token', async () => {
     token = await tokenProvider.sign({
       a: application._id.toString(),
       o: application.operator_id,
+      s: 'operator',
       p: application.permissions,
       v: 2,
     });

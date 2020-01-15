@@ -8,7 +8,10 @@ import { alias } from '../shared/operator/update.schema';
 
 @handler(handlerConfig)
 export class UpdateOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['operator.update']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['operator.update']],
+    ['validate', alias],
+  ];
 
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();

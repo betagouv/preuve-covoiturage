@@ -18,8 +18,14 @@ import { FraudCheckAllAction } from './actions/FraudCheckAllAction';
   commands: [FraudCheckProcessCommand],
   providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine],
   validator: [],
-  middlewares: [['validate', ValidatorMiddleware], ['channel.service.except', ChannelServiceBlacklistMiddleware]],
-  connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
+  middlewares: [
+    ['validate', ValidatorMiddleware],
+    ['channel.service.except', ChannelServiceBlacklistMiddleware],
+  ],
+  connections: [
+    [RedisConnection, 'connections.redis'],
+    [PostgresConnection, 'connections.postgres'],
+  ],
   handlers: [FraudCheckAction, FraudCheckAllAction],
   queues: ['fraud'],
 })

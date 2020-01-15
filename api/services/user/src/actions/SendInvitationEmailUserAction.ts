@@ -20,12 +20,12 @@ export class SendInvitationEmailUserAction extends AbstractAction {
       [
         ['user.send-confirm-email'],
         [
-          (_params, context) => {
+          (_params, context): string => {
             if (context.call.user.territory_id) {
               return 'territory.users.send-confirm-email';
             }
           },
-          (_params, context) => {
+          (_params, context): string => {
             if (context.call.user.operator_id) {
               return 'operator.users.send-confirm-email';
             }

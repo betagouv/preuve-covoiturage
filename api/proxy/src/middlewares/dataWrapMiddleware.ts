@@ -1,4 +1,5 @@
 import expressMung from 'express-mung';
+import { RPCSingleResponseType } from '@ilos/common';
 
 /**
  * Wrap the { results: ... } from JSON RPC
@@ -6,8 +7,8 @@ import expressMung from 'express-mung';
  * between queries.
  * Applies to arrays or single objects
  */
-export const mapResults = (doc: any) => {
-  if (!('result' in doc)) return doc;
+export const mapResults = (doc): RPCSingleResponseType => {
+  if (typeof doc.result === 'undefined') return doc;
 
   if (typeof doc.result !== 'object') {
     doc.result = {
@@ -34,7 +35,7 @@ export const mapResults = (doc: any) => {
   return doc;
 };
 
-export const patchBody = (body, req, res) => (Array.isArray(body) ? body.map(mapResults) : mapResults(body));
+export const patchBody = (body): any => (Array.isArray(body) ? body.map(mapResults) : mapResults(body));
 
 // eslint-disable-next-line no-unused-vars
 export const dataWrapMiddleware = expressMung.json(patchBody);

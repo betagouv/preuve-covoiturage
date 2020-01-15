@@ -16,7 +16,7 @@ const apply = compose([
     amount: 10,
     period: 'month',
   }),
-  async (ctx) => {
+  async (ctx): Promise<void> => {
     ctx.result = 10;
   },
 ]);

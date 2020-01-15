@@ -17,7 +17,7 @@ export const weekdayFilter: ApplicableRuleInterface = {
   },
   index: HIGH,
   apply(params: WeekdayParameters) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       if (params.indexOf(ctx.person.datetime.getDay()) > -1) {
         return next();
       }

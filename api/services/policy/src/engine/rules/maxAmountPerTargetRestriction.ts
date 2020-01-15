@@ -32,7 +32,7 @@ export const maxAmountPerTargetRestriction: ApplicableRuleInterface = {
   },
   index: HIGHEST,
   apply(params: MaxAmountParameters) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       if (
         (params.target === 'driver' && !ctx.person.is_driver) ||
         (params.target === 'passenger' && ctx.person.is_driver)

@@ -1,5 +1,5 @@
 // tslint:disable: prefer-template
-export function sessionSecretGenerator() {
+export function sessionSecretGenerator(): string {
   return (
     Math.random()
       .toString(36)

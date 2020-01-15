@@ -11,7 +11,7 @@
     "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../coverage/proxy --temp-dir=../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "lint": "tslint -c ../tslint.json -p tsconfig.json"
+    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -61,10 +61,6 @@
     "supertest": "^4.0.2",
     "ts-node": "^8.1.0",
     "tsconfig-paths": "^3.8.0",
-    "tslint": "^5.15.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-eslint-rules": "^5.4.0",
-    "tslint-import-group-ordering": "^2.1.1",
     "typescript": "^3.5.3"
   },
   "dependencies": {
@@ -83,8 +79,8 @@
     "@pdc/provider-token": "~0",
     "@pdc/service-acquisition": "~0",
     "@pdc/service-application": "~0",
-    "@pdc/service-company": "~0",
     "@pdc/service-carpool": "~0",
+    "@pdc/service-company": "~0",
     "@pdc/service-fraud": "~0",
     "@pdc/service-normalization": "~0",
     "@pdc/service-operator": "~0",

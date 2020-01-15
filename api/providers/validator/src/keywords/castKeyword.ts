@@ -10,7 +10,13 @@ export const castKeyword = {
   definition: {
     modifying: true,
     errors: false,
-    compile: (schema, parentSchema, it) => (data, dataPath, parentData, parentKey, rootData) => {
+    compile: (schema: string, parentSchema, it): Function => (
+      data,
+      dataPath,
+      parentData,
+      parentKey,
+      rootData,
+    ): boolean => {
       if (schema in castStore) {
         parentData[parentKey] = castStore[schema]({
           schema,

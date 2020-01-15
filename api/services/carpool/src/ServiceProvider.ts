@@ -17,8 +17,14 @@ import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvid
   config: __dirname,
   providers: [CarpoolRepositoryProvider, CrosscheckRepositoryProvider, IdentityRepositoryProvider],
   validator: [binding],
-  middlewares: [['validate', ValidatorMiddleware], ['channel.service.only', ChannelServiceWhitelistMiddleware]],
-  connections: [[RedisConnection, 'connections.redis'], [PostgresConnection, 'connections.postgres']],
+  middlewares: [
+    ['validate', ValidatorMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
+  ],
+  connections: [
+    [RedisConnection, 'connections.redis'],
+    [PostgresConnection, 'connections.postgres'],
+  ],
   handlers: [CrosscheckAction, DispatchAction],
   queues: ['carpool'],
 })

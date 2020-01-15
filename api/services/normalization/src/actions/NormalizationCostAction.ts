@@ -70,7 +70,7 @@ export class NormalizationCostAction extends AbstractAction {
     // tslint:disable-next-line: no-bitwise
     const cost = (isDriver ? -revenue - incentiveAmount : contribution + incentiveAmount) | 0;
 
-    const isIncentive = (d) => d.type === 'incentive';
+    const isIncentive = (d: { type: string }): boolean => d.type === 'incentive';
 
     const payments = [
       ...incentives.map((p) => ({ ...p, type: 'incentive' })),

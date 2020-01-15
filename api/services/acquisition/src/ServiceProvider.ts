@@ -19,13 +19,20 @@ import { LogErrorAction } from './actions/LogErrorAction';
   config: __dirname,
   queues: ['normalization', 'acquisition'],
   providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider],
-  validator: [['journey.createLegacy', createLegacy], ['journey.create', create], ['acquisition.logerror', logerror]],
+  validator: [
+    ['journey.createLegacy', createLegacy],
+    ['journey.create', create],
+    ['acquisition.logerror', logerror],
+  ],
   middlewares: [
     ['can', PermissionMiddleware],
     ['validate', ValidatorMiddleware],
     ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
-  connections: [[PostgresConnection, 'connections.postgres'], [RedisConnection, 'connections.redis']],
+  connections: [
+    [PostgresConnection, 'connections.postgres'],
+    [RedisConnection, 'connections.redis'],
+  ],
   handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {

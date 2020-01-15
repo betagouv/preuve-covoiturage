@@ -2,6 +2,7 @@ export const financialIncentivePolicy = {
   parent_id: null,
   status: 'template',
   name: 'Encourager financièrement le covoiturage',
+  slug: 'encourager_financierement_le_covoiturage',
   description: "Campagne d'incitation financière au covoiturage à destination des conducteurs et des passagers.",
   global_rules: [
     {
@@ -121,8 +122,10 @@ export const nonFinancialIncentivePolicy = {
   parent_id: null,
   status: 'template',
   name: 'Récompenser le covoiturage',
+  slug: 'recompenser_le_covoiturage',
   description:
-    "Campagne d'incitation basée sur un système de gratification par points donnant accès à un catalogue de récompenses (place de parking, place de piscine, composteur, etc.)",
+    "Campagne d'incitation basée sur un système de gratification par points donnant accès" +
+    ' à un catalogue de récompenses (place de parking, place de piscine, composteur, etc.)',
   global_rules: [
     {
       slug: 'rank_whitelist_filter',
@@ -241,6 +244,7 @@ export const weekdayTrafficLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Limiter le trafic en semaine',
+  slug: 'limiter_le_trafic_en_semaine',
   description: "Campagne d'incitation pour limiter le trafic en semaine.",
   global_rules: [
     {
@@ -385,6 +389,7 @@ export const pollutionLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Limiter la pollution',
+  slug: 'limiter_la_pollution',
   description: "Campagne d'incitation financière activable en cas de pic de pollution pour encourager le covoiturage.",
   global_rules: [
     {
@@ -516,6 +521,7 @@ export const weekendTrafficLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Limiter les embouteillages du week-end',
+  slug: 'limiter_les_embouteillages_du_weekend',
   description:
     "Campagne d'incitation financière pour limiter les embouteillages les week-end notamment en cas de chassé croisé. ",
   global_rules: [
@@ -607,6 +613,7 @@ export const eventTrafficLimitPolicy = {
   parent_id: null,
   status: 'template',
   name: "Limiter le trafic lors d'un évènement ponctuel",
+  slug: 'limiter_le_trafic_lors_d_un_evenement_ponctuel',
   description: "Campagne d'incitation financière au covoiturage pour un événement ponctuel.",
   global_rules: [
     {
@@ -726,6 +733,7 @@ export const freeTravelForPassengerPolicy = {
   parent_id: null,
   status: 'template',
   name: 'Gratuité du covoiturage pour les passagers',
+  slug: 'gratuite_du_covoiturage_pour_les_passagers',
   description:
     "Campagne d'incitation ou la participation financière du passager est pris en charge par la collectivité.",
   global_rules: [

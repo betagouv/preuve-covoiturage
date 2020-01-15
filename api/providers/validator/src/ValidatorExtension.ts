@@ -25,7 +25,7 @@ import { castKeyword } from './keywords/castKeyword';
   override: true,
 })
 export class ValidatorExtension extends ValidatorParentExtension {
-  async init(serviceContainer: ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface): Promise<void> {
     const validator = serviceContainer.getContainer().get(ValidatorInterfaceResolver);
 
     // register string formats

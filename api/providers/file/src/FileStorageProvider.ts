@@ -21,7 +21,7 @@ export class FileStorageProvider implements ProviderInterface {
 
   constructor(private crypto: CryptoProvider) {}
 
-  async init() {
+  async init(): Promise<void> {
     await fs.promises.access(this.binpath, fs.constants.R_OK);
     const { stdout, stderr } = await execP(`sha256sum ${this.binpath}`);
     if (stderr) {
@@ -32,7 +32,7 @@ export class FileStorageProvider implements ProviderInterface {
     }
   }
 
-  async copy(filename: string, password = this.crypto.generateToken()) {
+  async copy(filename: string, password = this.crypto.generateToken()): Promise<{ password: string; url: string }> {
     await fs.promises.access(filename, fs.constants.R_OK);
     const command = [this.binpath, 'upload', filename, ...this.flags, ...this.buildOptions(password)].join(' ');
 
@@ -46,7 +46,7 @@ export class FileStorageProvider implements ProviderInterface {
     };
   }
 
-  protected buildOptions(password: string, days: number = 1, name: string = 'pdc_export.csv'): string[] {
+  protected buildOptions(password: string, days = 1, name = 'pdc_export.csv'): string[] {
     return [
       `-e ${days}d`, // expires
       `-n ${name}`, // name

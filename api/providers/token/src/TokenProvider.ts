@@ -30,7 +30,10 @@ export class TokenProvider implements ProviderInterface, TokenProviderInterface,
   }
 
   async verify(token: string, options: jwt.VerifyOptions = {}): Promise<TokenPayloadInterface> {
-    const decoded = <TokenPayloadInterface>await jwt.verify(token, this.secret, { ...this.verifyOptions, ...options });
+    const decoded = (await jwt.verify(token, this.secret, {
+      ...this.verifyOptions,
+      ...options,
+    })) as TokenPayloadInterface;
 
     // override config TTL when ignoreExpiration option is passed
     const ttl = 'ignoreExpiration' in options && options.ignoreExpiration ? -1 : this.ttl;
