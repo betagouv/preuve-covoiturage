@@ -101,7 +101,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
   }
 
   get countUsers(): number {
-    return this.usersFiltered && this.usersFiltered.filter((user) => user.group === this.userGroup).length;
+    return this.usersFiltered && this.usersFiltered.length;
   }
 
   showEditForm(user?: User) {

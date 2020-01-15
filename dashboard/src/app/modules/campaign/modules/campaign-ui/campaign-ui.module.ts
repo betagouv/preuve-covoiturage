@@ -14,6 +14,7 @@ import { CampaignMainStatsViewComponent } from './components/campaign-main-stats
 import { CampaignSummaryTextComponent } from './components/campaign-summary-text/campaign-summary-text.component';
 import { CampaignRulesViewComponent } from './components/campaign-rules-view/campaign-rules-view.component';
 import { CampaignMainMetricsComponent } from './components/campaign-main-metrics/campaign-main-metrics.component';
+import { CampaignTableComponent } from './components/campaign-table/campaign-table.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { CampaignMainMetricsComponent } from './components/campaign-main-metrics
     CampaignSummaryTextComponent,
     CampaignRulesViewComponent,
     CampaignMainMetricsComponent,
+    CampaignTableComponent,
   ],
   imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, ChartjsModule, RouterModule],
   exports: [
@@ -33,6 +35,7 @@ import { CampaignMainMetricsComponent } from './components/campaign-main-metrics
     CampaignRulesViewComponent,
     CampaignSummaryTextComponent,
     CampaignMainMetricsComponent,
+    CampaignTableComponent,
   ],
 })
 export class CampaignUiModule {}
