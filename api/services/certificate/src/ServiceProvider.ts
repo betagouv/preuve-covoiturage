@@ -7,20 +7,20 @@ import { PermissionMiddleware } from '@ilos/package-acl';
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
 import { CertificatePrinterProvider } from './providers/CertificatePrinterProvider';
-import { GenerateCertificateAction } from './actions/GenerateCertificateAction';
+import { RenderCertificateAction } from './actions/RenderCertificateAction';
 import { PrintCertificateAction } from './actions/PrintCertificateAction';
-import { binding as generateBinding } from './shared/certificate/generate.schema';
+import { binding as renderBinding } from './shared/certificate/render.schema';
 import { binding as printBinding } from './shared/certificate/print.schema';
 
 @serviceProvider({
   config: __dirname,
   providers: [CertificatePgRepositoryProvider, CarpoolPgRepositoryProvider, CertificatePrinterProvider],
-  validator: [generateBinding, printBinding],
+  validator: [renderBinding, printBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
     ['can', PermissionMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
-  handlers: [GenerateCertificateAction, PrintCertificateAction],
+  handlers: [RenderCertificateAction, PrintCertificateAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {}

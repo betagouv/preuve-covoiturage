@@ -419,7 +419,16 @@ export class HttpTransport implements TransportInterface {
   }
 
   // FIXME
+  // - add server authentication
+  // - block access to /generate route
   private registerCertificateRoutes(): void {
+    /**
+     * Public route for operators to print a certificate
+     * based on params (identity, start date, end date, ...)
+     * - accessible with an application token
+     * - uses /certificates/render to capture the rendered certificate
+     * - print a PDF/PNG returned back to the caller
+     */
     this.app.get(
       '/certificates/print',
       asyncHandler(async (req, res, next) => {
@@ -436,13 +445,18 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
+    /**
+     * The route that renders an HTML certificate based on params
+     * - only accessible by the backend itself
+     * - requires access to public assets (images)
+     */
     this.app.get(
-      '/certificates/generate',
+      '/certificates/render',
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle({
           id: 1,
           jsonrpc: '2.0',
-          method: 'certificate:generate',
+          method: 'certificate:render',
           params: {
             ...req.query,
           },

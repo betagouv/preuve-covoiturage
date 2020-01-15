@@ -4,13 +4,13 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/generate.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { alias } from '../shared/certificate/generate.schema';
+import { alias } from '../shared/certificate/render.schema';
 
 @handler(handlerConfig)
-export class GenerateCertificateAction extends AbstractAction {
-  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.generate']], ['validate', alias]];
+export class RenderCertificateAction extends AbstractAction {
+  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.render']], ['validate', alias]];
   public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 
   constructor(private certRepository: CertificateRepositoryProviderInterfaceResolver) {
