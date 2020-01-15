@@ -3,7 +3,11 @@
     <h1>Liste des campagnes sur tous les territoires</h1>
   </app-page-header>
   <app-page-content>
-    <div class="CampaignAdminList-header">
+    <div class="CampaignAdminList--loading" *ngIf="!campaigns">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div class="CampaignAdminList-header" [hidden]="!campaigns">
       <mat-button-toggle-group [(ngModel)]="selectedStatus" name="userGroup" aria-label="Groupes d'utilisateurs">
         <mat-button-toggle *ngFor="let status of allStatus" [value]="status">{{
           getFrenchStatus(status)
@@ -19,14 +23,15 @@
       </form>
     </div>
 
-    <h2>{{ titles[selectedStatus] }}</h2>
+    <h2 *ngIf="campaigns">{{ titles[selectedStatus] }}</h2>
 
-    <app-campaigns-list
-      [campaigns]="filteredCampaigns"
-      [campaignStatusList]="[selectedStatus]"
-      [loading]="loading"
-      [loaded]="loaded"
-      [noCampaignMessage]="noCampaignMessage"
-    ></app-campaigns-list>
+    <div [hidden]="!displayData">
+      <app-campaign-table [status]="selectedStatus" [campaigns]="campaignsToShow"></app-campaign-table>
+      <mat-paginator [length]="countCampaigns" [pageSize]="PAGE_SIZE"></mat-paginator>
+    </div>
+
+    <div *ngIf="!displayData" class="CampaignsList-notfound">
+      <p>{{ noCampaignMessage }}</p>
+    </div>
   </app-page-content>
 </div>

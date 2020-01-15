@@ -1,0 +1,94 @@
+<table mat-table [dataSource]="campaigns">
+  <!--      Name -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Nom</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-name">
+      {{ campaign.name }}
+    </td>
+  </ng-container>
+
+  <!-- Territory name -->
+  <ng-container matColumnDef="territory">
+    <th mat-header-cell *matHeaderCellDef>Territoire</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-email">
+      {{ getTerritoryName(campaign.territory_id) }}
+    </td>
+  </ng-container>
+
+  <!-- Amount spent -->
+  <ng-container matColumnDef="amount_spent">
+    <th mat-header-cell *matHeaderCellDef>Incitation</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-role">
+      <ng-container *ngIf="campaign.amount_spent && isEuro(this.campaign.unit)">
+        {{ campaign.amount_spent | currency: 'EUR':'symbol':'1.0-0' }}
+      </ng-container>
+      <ng-container *ngIf="campaign.amount_spent && !isEuro(this.campaign.unit)">
+        {{ campaign.amount_spent }}
+      </ng-container>
+      <ng-container *ngIf="!campaign.amount_spent">
+        -
+      </ng-container>
+    </td>
+  </ng-container>
+
+  <!-- Max amount -->
+  <ng-container matColumnDef="max_amount">
+    <th mat-header-cell *matHeaderCellDef>Budget</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-operator">
+      <ng-container *ngIf="isEuro(this.campaign.unit)">
+        {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}
+      </ng-container>
+      <ng-container *ngIf="!isEuro(this.campaign.unit)"> {{ campaign.max_amount }} pts </ng-container>
+    </td>
+  </ng-container>
+
+  <!-- Number of trips -->
+  <ng-container matColumnDef="trips_number">
+    <th mat-header-cell *matHeaderCellDef>Trajets</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
+      <ng-container *ngIf="campaign.amount_spent"> {{ campaign.trips_number }} tjs </ng-container>
+      <ng-container *ngIf="!campaign.amount_spent">
+        -
+      </ng-container>
+    </td>
+  </ng-container>
+
+  <!-- Max number of trips -->
+  <ng-container matColumnDef="max_trips">
+    <th mat-header-cell *matHeaderCellDef>Plafond</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
+      <ng-container *ngIf="campaign.max_trips"> {{ campaign.max_trips }} tjs </ng-container>
+      <ng-container *ngIf="!campaign.max_trips">
+        -
+      </ng-container>
+    </td>
+  </ng-container>
+
+  <!-- Start date -->
+  <ng-container matColumnDef="start">
+    <th mat-header-cell *matHeaderCellDef>Début</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
+      {{ campaign.start.toDate() | date: 'dd MMMM yyyy' }}
+    </td>
+  </ng-container>
+
+  <!-- End date -->
+  <ng-container matColumnDef="end">
+    <th mat-header-cell *matHeaderCellDef>Fin</th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-territory">
+      {{ campaign.end.toDate() | date: 'dd MMMM yyyy' }}
+    </td>
+  </ng-container>
+
+  <!-- Actions -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let campaign" class="UsersList-list-item UsersList-list-item-actions">
+      <button mat-button *ngIf="canShowDetails(campaign.status)" routerLink="/campaign/{{ campaign._id }}">
+        <mat-icon matTooltip="voir le détail">remove_red_eye</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

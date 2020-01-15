@@ -37,6 +37,7 @@ import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-
 import { CampaignDraftViewComponent } from './pages/campaign-draft-view/campaign-draft-view.component';
 import { CampaignActiveViewComponent } from './pages/campaign-active-view/campaign-active-view.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
+import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign
     TerritoryUiModule,
     OperatorUiModule,
     CampaignUiModule,
+    MatPaginatorModule,
   ],
   providers: [CurrencyPipe, DecimalPipe],
   exports: [CampaignsListComponent, TerritoriesToInseesAutocompleteComponent],
