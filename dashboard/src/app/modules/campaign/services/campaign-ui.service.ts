@@ -23,17 +23,6 @@ enum RestrictionPeriodsEnum {
   ALL = 'campaign',
 }
 
-// todo: remove this duplicate
-const RESTRICTION_PERIODS: RestrictionPeriodsEnum[] = Object.values(RestrictionPeriodsEnum);
-
-// todo: remove this duplicate
-const RESTRICTION_PERIODS_FR = {
-  [RestrictionPeriodsEnum.DAY]: 'jour',
-  [RestrictionPeriodsEnum.MONTH]: 'mois',
-  [RestrictionPeriodsEnum.YEAR]: 'année',
-  [RestrictionPeriodsEnum.ALL]: 'durée de la campagne',
-};
-
 /*
  * Human readible definitions of campaign rules.
  * */
@@ -235,11 +224,11 @@ export class CampaignUiService {
         break;
       case IncentiveUnitEnum.POINT:
         // tslint:disable-next-line:max-line-length
-        summaryText += ` <b>${new DecimalPipe(this.locale).transform(
-          campaign.max_amount,
-          '1.0-0',
-          'FR',
-        )} points</b>.</p>`;
+        summaryText += ` <b>${new DecimalPipe(this.locale).transform(campaign.max_amount, '1.0-0', 'FR')} point`;
+        if (campaign.max_amount > 1) {
+          summaryText += 's';
+        }
+        summaryText += `s</b>.</p>`;
         break;
     }
 
