@@ -56,7 +56,7 @@ export class CampaignMainMetricsComponent implements OnInit {
       this.daysPassed = 0;
     } else if (today.isAfter(end)) {
       // already finished
-      this.daysPassed = 0;
+      this.daysPassed = period;
       this.daysRemaining = 0;
     } else {
       this.daysPassed = today.diff(start, 'days');
