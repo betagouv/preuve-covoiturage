@@ -20,15 +20,15 @@ import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterfa
 export class NormalizationCostAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
-  constructor(private wf: WorkflowProvider, private kernel: KernelInterfaceResolver) {
+  constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+  protected async getSiret(operatorId): Promise<string> {
     const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
       operatorFindSignature,
       {
-        _id: Number(params.operator_id),
+        _id: Number(operatorId),
       },
       {
         call: {
@@ -41,6 +41,11 @@ export class NormalizationCostAction extends AbstractAction {
         },
       },
     );
+    return siret;
+  }
+
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const siret = await this.getSiret(params.operator_id);
 
     const [cost, payments] = this.normalizeCost(
       siret,
@@ -106,7 +111,7 @@ export class NormalizationCostAction extends AbstractAction {
       index: cleanPayments.length,
       type: 'payment',
       // tslint:disable-next-line: no-bitwise
-      amount: (Math.abs(cost) - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0,
+      amount: ((isDriver ? Math.abs(cost) : cost) - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0,
     });
 
     return [cost, cleanPayments];

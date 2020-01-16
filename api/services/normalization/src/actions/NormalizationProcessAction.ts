@@ -1,61 +1,40 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
-
-import {
-  signature as operatorFindSignature,
-  ParamsInterface as OperatorFindParamsInterface,
-  ResultInterface as OperatorFindResultInterface,
-} from '../shared/operator/find.contract';
-
-import {
-  signature as crosscheckSignature,
-  ParamsInterface as CrosscheckParamsInterface,
-  ResultInterface as CrosscheckResultInterface,
-} from '../shared/carpool/crosscheck.contract';
+import { PointInterface } from '@pdc/provider-geo/dist/interfaces';
 
 import {
   signature as costSignature,
   ParamsInterface as CostParamsInterface,
   ResultInterface as CostResultInterface,
 } from '../shared/normalization/cost.contract';
-
 import {
   signature as identitySignature,
   ParamsInterface as IdentityParamsInterface,
   ResultInterface as IdentityResultInterface,
 } from '../shared/normalization/identity.contract';
-
 import {
   signature as geoSignature,
   ParamsInterface as GeoParamsInterface,
   ResultInterface as GeoResultInterface,
 } from '../shared/normalization/geo.contract';
-
 import {
   signature as routeSignature,
   ParamsInterface as RouteParamsInterface,
   ResultInterface as RouteResultInterface,
 } from '../shared/normalization/route.contract';
-
 import {
   signature as territorySignature,
   ParamsInterface as TerritoryParamsInterface,
   ResultInterface as TerritoryResultInterface,
 } from '../shared/normalization/territory.contract';
-
 import {
   signature as crossCheckSignature,
   ParamsInterface as CrossCheckParamsInterface,
   ResultInterface as CrossCheckResultInterface,
 } from '../shared/carpool/crosscheck.contract';
-
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/process.contract';
-
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { WorkflowProvider } from '../providers/WorkflowProvider';
 import { PersonInterface, FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
-import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
-import { PointInterface } from '@pdc/provider-geo/dist/interfaces';
 
 const context: ContextType = {
   call: {

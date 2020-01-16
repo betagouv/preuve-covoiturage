@@ -12,7 +12,7 @@ import { WorkflowProvider } from '../providers/WorkflowProvider';
 export class NormalizationGeoAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
-  constructor(protected wf: WorkflowProvider, private geoProvider: GeoProviderInterfaceResolver) {
+  constructor(private geoProvider: GeoProviderInterfaceResolver) {
     super();
   }
 

@@ -1,109 +1,50 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import * as _ from 'lodash';
-// import { Container, Interfaces, Types } from '@ilos/core';
-// import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-// import { ConfigInterfaceResolver } from '@ilos/config';
-// import { ValidatorProviderInterfaceResolver, ValidatorProvider } from '@ilos/provider-validator';
-//
-// import { journey } from '../../tests/mocks/journey';
-// import { NormalizationGeoAction } from './NormalizationGeoAction';
-// import { ServiceProvider as BaseServiceProvider } from '../../../user/src/ServiceProvider';
-// import { FindUserAction } from '../../../user/src/actions/FindUserAction';
-// import { UserRepositoryProviderInterfaceResolver } from '../../../user/src/interfaces/repository/UserRepositoryProviderInterface';
-//
-// const { expect } = chai;
-//
-// @Container.provider()
-// class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-//   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
-//     return;
-//   }
-// }
-//
-// @Container.provider()
-// class FakeGeoProvider extends GeoProviderInterfaceResolver {
-//   public async getTown({ lon, lat, insee, literal }: any): Promise<any> {
-//     return {
-//       lon: 5.3682,
-//       lat: 43.2392,
-//       country: 'France',
-//       insee: '13208',
-//       town: 'Marseille',
-//       postcodes: ['13008'],
-//     };
-//   }
-// }
-//
-// @Container.provider()
-// class FakeConfigProvider extends ConfigInterfaceResolver {
-//   async boot(): Promise<void> {
-//     return;
-//   }
-//   get(_key, fallback) {
-//     return fallback;
-//   }
-// }
-//
-//
-//
-// class ServiceProvider extends BaseServiceProvider {
-//   readonly handlers = [FindUserAction];
-//   readonly alias: any[] = [
-//     [ConfigInterfaceResolver, FakeConfigProvider],
-//     [ValidatorProviderInterfaceResolver, ValidatorProvider],
-//     [Interfaces.KernelInterfaceResolver, FakeKernelProvider],
-//   ];
-//
-//   protected registerConfig() {}
-// }
-//
-// let serviceProvider;
-//
-//
-// const journeyMarseilleLyon = { ...journey };
-//
-// ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map((path:string) => {
-//   _.set(journeyMarseilleLyon, `${path}lon`, 5.3682);
-//   _.set(journeyMarseilleLyon, `${path}lat`, 43.2392);
-// });
-//
-// const normalizationProcessAction = new NormalizationGeoAction(new FakeKernelProvider(), new FakeGeoProvider());
-//
-//
-// const mockProcessNormalizationParams = {
-//   journey,
-// };
-//
-// describe('NORMALIZATION ACTION - geo', () => {
-//   before(() => {
-//
-//   });
-//   it('should find town and complete passenger & driver position', async () => {
-//     const result = await normalizationProcessAction.normalizeGeo({
-//       ...journeyMarseilleLyon,
-//     });
-//
-//     const expectedResult = { ...journeyMarseilleLyon };
-//
-//
-//     ['passenger.start', 'passenger.end', 'driver.start', 'driver.end'].map((path:string) => {
-//       _.set(expectedResult,
-//         path,
-//         {
-//         lon: 5.3682,
-//           lat: 43.2392,
-//         country: 'France',
-//         insee: '13208',
-//         town: 'Marseille',
-//         postcodes: ['13008'],
-//       });
-//     });
-//
-//     nockRequest.on('request', (req, interceptor, body) => {
-//       console.log(req);
-//     });
-//
-//     expect(result).to.eql(expectedResult);
-//   });
-// });
+import { describe } from 'mocha';
+import { expect } from 'chai';
+import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
+import { PartialGeoInterface, GeoInterface } from '@pdc/provider-geo/dist/interfaces';
+
+import { NormalizationGeoAction } from './NormalizationGeoAction';
+
+class GeoProvider extends GeoProviderInterfaceResolver {
+  async checkAndComplete(data: PartialGeoInterface): Promise<GeoInterface> {
+    return {
+      lat: data.lat,
+      lon: data.lon,
+      insee: `${data.lat.toString(10)}_${data.lon.toString(10)}`,
+    };
+  }
+}
+
+describe('Geo normalization action', async () => {
+  it('Should return expected result', async () => {
+    const provider = new GeoProvider();
+    const action = new NormalizationGeoAction(provider);
+
+    const result = await action.handle({
+      start: {
+        lat: 0.0001,
+        lon: 0.0002,
+        datetime: new Date(),
+      },
+      end: {
+        lat: 0.0003,
+        lon: 0.0004,
+        datetime: new Date(),
+      },
+    });
+
+    expect(result).to.have.property('start');
+    expect(result.start).to.have.own.property(
+      'insee',
+      `${result.start.lat.toString(10)}_${result.start.lon.toString(10)}`,
+      'have start.insee property matching lat, lon values',
+    );
+
+    expect(result).to.have.property('end');
+    expect(result.end).to.have.own.property(
+      'insee',
+      `${result.end.lat.toString(10)}_${result.end.lon.toString(10)}`,
+      'have end.insee property matching lat, lon values',
+    );
+  });
+});
