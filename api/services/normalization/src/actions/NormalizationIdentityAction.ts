@@ -12,7 +12,7 @@ import { LegacyIdentityInterface } from '../shared/common/interfaces/LegacyIdent
 export class NormalizationIdentityAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
-  constructor(private wf: WorkflowProvider, private kernel: KernelInterfaceResolver) {
+  constructor() {
     super();
   }
 
