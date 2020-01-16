@@ -1,6 +1,6 @@
-import { ApplicableRuleInterface } from '../../../interfaces/RuleInterface';
+import { StaticRuleInterface } from '../../interfaces/RuleInterface';
 
-import { costBasedAmountSetter } from './costBasedAmountSetter';
-import { fixedAmountSetter } from './fixedAmountSetter';
+import { CostBasedAmountSetter } from './CostBasedAmountSetter';
+import { FixedAmountSetter } from './FixedAmountSetter';
 
-export const setters: ApplicableRuleInterface[] = [fixedAmountSetter, costBasedAmountSetter];
+export const setters: StaticRuleInterface[] = [FixedAmountSetter, CostBasedAmountSetter];

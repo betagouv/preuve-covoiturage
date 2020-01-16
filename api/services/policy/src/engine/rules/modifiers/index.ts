@@ -1,7 +1,7 @@
-import { ApplicableRuleInterface } from '../../../interfaces/RuleInterface';
+import { StaticRuleInterface } from '../../interfaces/RuleInterface';
 
-import { perPassengerModifier } from './perPassengerModifier';
-import { perSeatModifier } from './perSeatModifier';
-import { perKmModifier } from './perKmModifier';
+import { PerPassengerModifier } from './PerPassengerModifier';
+import { PerSeatModifier } from './PerSeatModifier';
+import { PerKmModifier } from './PerKmModifier';
 
-export const modifiers: ApplicableRuleInterface[] = [perKmModifier, perSeatModifier, perPassengerModifier];
+export const modifiers: StaticRuleInterface[] = [PerKmModifier, PerSeatModifier, PerPassengerModifier];

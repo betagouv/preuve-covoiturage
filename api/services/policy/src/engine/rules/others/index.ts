@@ -1,15 +1,15 @@
-import { ApplicableRuleInterface } from '../../../interfaces/RuleInterface';
+import { StaticRuleInterface } from '../../interfaces/RuleInterface';
 
-import { idfm } from './idfm';
-import { maxAmountPerTargetRestriction } from './maxAmountPerTargetRestriction';
-import { maxAmountRestriction } from './maxAmountRestriction';
-import { maxTripPerTargetRestriction } from './maxTripPerTargetRestriction';
-import { maxTripRestriction } from './maxTripRestriction';
+// import { IdfmRegular } from './IdfmRegular';
+// import { MaxAmountPerTargetRestriction } from './MaxAmountPerTargetRestriction';
+// import { MaxAmountRestriction } from './MaxAmountRestriction';
+// import { MaxTripPerTargetRestriction } from './MaxTripPerTargetRestriction';
+// import { MaxTripRestriction } from './MaxTripRestriction';
 
-export const others: ApplicableRuleInterface[] = [
-  idfm,
-  maxAmountPerTargetRestriction,
-  maxAmountRestriction,
-  maxTripPerTargetRestriction,
-  maxTripRestriction,
+export const others: StaticRuleInterface[] = [
+  // IdfmRegular,
+  // MaxAmountPerTargetRestriction,
+  // MaxAmountRestriction,
+  // MaxTripPerTargetRestriction,
+  // MaxTripRestriction,
 ];

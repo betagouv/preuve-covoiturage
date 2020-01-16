@@ -17,7 +17,5 @@ export {
 } from './TripRepositoryProviderInterface';
 export { MetaInterface } from './MetaInterface';
 export { PersonInterface } from './PersonInterface';
-export { RuleHandlerInterface, RuleHandlerContextInterface } from './RuleHandlerInterface';
-export { RuleInterface, ApplicableRuleInterface } from './RuleInterface';
 export { TripInterface } from './TripInterface';
 export { IncentiveInterface } from './IncentiveInterface';
