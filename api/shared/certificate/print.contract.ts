@@ -2,6 +2,7 @@ export interface ParamsInterface {
   identity: string;
   start_at?: Date;
   end_at?: Date;
+  type?: string;
 }
 
 // export interface ResultInterface extends CertificateInterface {}

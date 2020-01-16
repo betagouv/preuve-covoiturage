@@ -1,13 +1,13 @@
 export interface CertificatePrinterProviderInterface {
-  png(): Promise<void>;
-  pdf(): Promise<void>;
+  png(identity: string, start_at: Date, end_at: Date): Promise<Buffer>;
+  pdf(identity: string, start_at: Date, end_at: Date): Promise<Buffer>;
 }
 
 export abstract class CertificatePrinterProviderInterfaceResolver implements CertificatePrinterProviderInterface {
-  async png(): Promise<void> {
+  async png(identity: string, start_at: Date, end_at: Date): Promise<Buffer> {
     throw new Error('Method not implemented.');
   }
-  async pdf(): Promise<void> {
+  async pdf(identity: string, start_at: Date, end_at: Date): Promise<Buffer> {
     throw new Error('Method not implemented.');
   }
 }

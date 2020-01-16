@@ -2,11 +2,14 @@ export interface ParamsInterface {
   identity: string;
   start_at: Date;
   end_at: Date;
+  type: 'html' | 'json';
 }
 
 export interface ResultInterface {
-  contentType: 'text/html' | 'application/pdf' | 'image/png';
-  data: string | Buffer;
+  type: 'text/html' | 'application/json';
+  data: string | Buffer | object;
+  params: ParamsInterface;
+  code: number;
 }
 
 export type RepositoryInterface = Required<ParamsInterface>;

@@ -432,16 +432,33 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/certificates/print',
       asyncHandler(async (req, res, next) => {
-        const response = await this.kernel.handle({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'certificate:print',
-          params: {
-            ...req.query,
-          },
-        });
+        try {
+          const type = this.getTypeFromHeaders(req.headers);
 
-        return this.send(res, response);
+          const response = await this.kernel.call(
+            'certificate:print',
+            { ...req.query, type },
+            { channel: { service: 'certificate' } },
+          );
+
+          switch (type) {
+            case 'png':
+              res.set('Content-type', 'image/png');
+              res.send(response);
+              break;
+            case 'json':
+              res.set('Content-type', 'application/json');
+              res.send(response);
+              break;
+            default:
+              res.set('Content-type', 'application/pdf');
+              res.send(response);
+          }
+        } catch (e) {
+          const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
+          res.status(htmlStatusCode);
+          res.json({ error: htmlStatusCode, message: e.rpcError.data });
+        }
       }),
     );
 
@@ -455,27 +472,22 @@ export class HttpTransport implements TransportInterface {
     this.app.get(
       '/certificates/render',
       asyncHandler(async (req, res, next) => {
-        console.log('http render params', { q: req.query });
+        try {
+          console.log('http render params', { ...req.query });
 
-        const response = (await this.kernel.handle({
-          id: 1,
-          jsonrpc: '2.0',
-          method: 'certificate:render',
-          params: {
-            ...req.query,
-          },
-        })) as any;
+          const response = await this.kernel.call(
+            'certificate:render',
+            { ...req.query },
+            { channel: { service: 'certificate' } },
+          );
 
-        if (response.error) {
-          res.status(mapStatusCode(response.error.code));
-          res.json(response);
-          return;
+          res.set('Content-type', response.type);
+          res.status(response.code);
+          res.send(response.data);
+        } catch (e) {
+          console.log(e);
+          throw e;
         }
-
-        // console.log(response.result);
-        res.set('Content-type', response.result.contentType);
-        res.status(200);
-        res.send(response.result.data);
       }),
     );
 
@@ -577,5 +589,16 @@ export class HttpTransport implements TransportInterface {
     } catch (e) {}
 
     return response;
+  }
+
+  private getTypeFromHeaders(headers: { [key: string]: string }): 'png' | 'json' | 'pdf' {
+    switch (headers['accept']) {
+      case 'image/png':
+        return 'png';
+      case 'application/json':
+        return 'json';
+      default:
+        return 'pdf';
+    }
   }
 }

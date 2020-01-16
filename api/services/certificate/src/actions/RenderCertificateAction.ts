@@ -4,6 +4,7 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
+import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/render.schema';
@@ -13,12 +14,18 @@ export class RenderCertificateAction extends AbstractAction {
   // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.render']], ['validate', alias]];
   public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
 
-  constructor(private certRepository: CertificateRepositoryProviderInterfaceResolver) {
+  constructor(
+    private certRepository: CertificateRepositoryProviderInterfaceResolver,
+    private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
+  ) {
     super();
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    console.log('render', { params });
+    // console.log('render', { params });
+
+    const data = await this.carpoolRepository.find(params);
+    // console.log({ data });
 
     // carpoolRepository.find(operator_user_id, start_at, end_at)
     const meta = {
@@ -76,13 +83,23 @@ export class RenderCertificateAction extends AbstractAction {
       end_at: params.end_at || new Date(),
     });
 
-    const html = fs.readFileSync(path.resolve(__dirname, '../templates/certificate.html'), { encoding: 'utf8' });
+    // return the JSON object or render the HTML document
+    if (params.type === 'json') {
+      return {
+        type: 'application/json',
+        code: 200,
+        params,
+        data,
+      };
+    }
 
     // TODO modify HTML with handlebar/template provider
+    const html = fs.readFileSync(path.resolve(__dirname, '../../src/templates/certificate.html'), { encoding: 'utf8' });
 
-    // return HTML / JSON
     return {
-      contentType: 'text/html',
+      type: 'text/html',
+      code: 200,
+      params,
       data: html,
     };
   }

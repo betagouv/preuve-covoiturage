@@ -6,7 +6,7 @@
   "scripts": {
     "cli": "ilos",
     "migrate": "echo 'no migrations'",
-    "copy-static": "cp -R ./src/templates ./dist/ && cp -R ./src/assets ./dist/",
+    "copy-static": "cp -R ./src/assets ./dist/",
     "start": "yarn serve",
     "build": "tsc && yarn copy-static",
     "watch": "tsc -w",
