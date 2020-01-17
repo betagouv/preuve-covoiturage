@@ -2,7 +2,7 @@ export const alias = 'certificate.render';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['identity'],
+  required: ['identity', 'start_at', 'end_at'],
   additionalProperties: false,
   properties: {
     identity: { type: 'string', maxLength: 64 },

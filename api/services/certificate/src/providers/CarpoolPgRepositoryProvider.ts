@@ -18,8 +18,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
   // TODO replace any output by proper interface
   async find(params: { identity: string; start_at?: Date; end_at?: Date }): Promise<any[]> {
     // identity is a phone number for now!
-    const { identity } = params;
-    let { start_at, end_at } = params;
+    const { identity, start_at, end_at } = params;
 
     // fetch all identities by phone number
     const idResult = await this.connection.getClient().query({
@@ -32,15 +31,6 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     }
 
     const { identities } = idResult.rows[0];
-
-    // normalize dates
-    if (!end_at || end_at.getTime() > new Date().getTime()) {
-      end_at = new Date();
-    }
-
-    if (!start_at || start_at.getTime() >= end_at.getTime()) {
-      start_at = new Date('2018-01-01T00:00:00+0100');
-    }
 
     // fetch the number of kilometers per month
     const result = await this.connection.getClient().query({

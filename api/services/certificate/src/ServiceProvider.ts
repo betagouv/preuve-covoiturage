@@ -4,6 +4,7 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
 import { PermissionMiddleware } from '@ilos/package-acl';
+import { DateProvider } from '@pdc/provider-date';
 
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
@@ -15,7 +16,7 @@ import { binding as printBinding } from './shared/certificate/print.schema';
 
 @serviceProvider({
   config: __dirname,
-  providers: [CertificatePgRepositoryProvider, CarpoolPgRepositoryProvider, CertificatePrinterProvider],
+  providers: [CertificatePgRepositoryProvider, CarpoolPgRepositoryProvider, CertificatePrinterProvider, DateProvider],
   validator: [renderBinding, printBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],

@@ -9,10 +9,10 @@
 
 <body>
   <article role="document" class="b__document">
-    <!-- operator's section -->
+    {{!-- operator's section --}}
     <aside class="b__aside"></aside>
 
-    <!-- registry section -->
+    {{!-- registry section --}}
     <article class="b__article">
       <header class="b__header">
         <div class="b__column b__column--left">
@@ -20,75 +20,38 @@
         </div>
         <div class="b__column b__column--right">
           <h1 class="h--subtitle">{{meta.title}}</h1>
-          <h2 class="h--title">Paris Ile-de-France</h2>
+          <h2 class="h--title">{{territory.name}}</h2>
           <ul class="list--unstyled">
-            <li><strong>Date d'émission</strong>&nbsp;: 7 décembre 2019 à 10h45</li>
-            <li><strong>Opérateur</strong>&nbsp;: Mobicoop</li>
+            <li><strong>Date d'émission</strong>&nbsp;: {{certificate.created_at}}</li>
+            <li><strong>Opérateur</strong>&nbsp;: {{operator.name}}</li>
           </ul>
         </div>
       </header>
       <main class="b__main">
         <div class="b__column b__column--full text--center">
-          Période&nbsp;: du 1<sup>er</sup> janvier au 7 décembre 2019
+          Période&nbsp;: du {{certificate.start_at}} au {{certificate.end_at}}
         </div>
         <table role="table" class="table--full-alternate">
           <tbody>
+
+            {{#each data.rows}}
             <tr>
-              <td>Décembre</td>
-              <td>112&nbsp;km</td>
+              <td>{{this.month}}</td>
+              <td>{{this.distance}}&nbsp;km</td>
             </tr>
+            {{/each}}
+
             <tr>
-              <td>Novembre</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Octobre</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Septembre</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Août</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Juillet</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Juin</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Mai</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Avril</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Mars</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Février</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td>Janvier</td>
-              <td>112&nbsp;km</td>
-            </tr>
-            <tr>
-              <td><strong>Total 2019</strong></td>
-              <td><strong>3203&nbsp;km</strong></td>
+              <td><strong>Total</strong></td>
+              <td><strong>{{data.total_km}}&nbsp;km</strong></td>
             </tr>
           </tbody>
         </table>
         <div class="b__column b__column--full b__column--data">
-          <p><strong>Coût total</strong>&nbsp;: 238€ <strong>Reste à charge</strong>&nbsp;: 113€</p>
+          <p>
+            <strong>Coût total</strong>&nbsp;: {{data.total_cost}}€
+            <strong>Reste à charge</strong>&nbsp;: {{data.remaining}}€
+          </p>
           <p class="text--italic">
             Un problème&nbsp;? Une question&nbsp;? Contactez-nous sur
             <a href="{{meta.contact.url}}">{{meta.contact.url}}</a>.
@@ -104,9 +67,9 @@
         </ul>
 
         {{!-- QR-code with verification URL --}}
-        {{{qr.svg}}}
+        {{{validation.qrcode}}}
 
-        <p class="qr-code--label">Vérifiez la validité de cette attestation en ligne.</p>
+        <p class="qr-code--label">Vérifiez la validité de cette attestation sur {{validation.url}}</p>
       </footer>
     </article>
   </article>
