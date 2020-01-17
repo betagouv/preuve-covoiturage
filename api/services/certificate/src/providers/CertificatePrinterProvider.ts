@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer';
-import { provider } from '@ilos/common';
+import { provider, ConfigInterfaceResolver } from '@ilos/common';
 
 import {
   CertificatePrinterProviderInterface,
@@ -12,6 +12,8 @@ import {
 export class CertificatePrinterProvider implements CertificatePrinterProviderInterface {
   private browser: any;
   private page: any;
+
+  constructor(private config: ConfigInterfaceResolver) {}
 
   async png(identity: string, start_at: Date, end_at: Date): Promise<Buffer> {
     // TODO catch errors and log
@@ -42,8 +44,7 @@ export class CertificatePrinterProvider implements CertificatePrinterProviderInt
     const start = !!start_at ? `&start_at=${start_at.toISOString()}` : '';
     const end = !!end_at ? `&end_at=${end_at.toISOString()}` : '';
 
-    console.log('getUrl', { id, start, end });
-    return `http://localhost:8080/certificates/render/?identity=${id}${start}${end}`;
+    return `${this.config.get('url.apiUrl')}/certificates/render/?identity=${id}${start}${end}`;
   }
 
   private async init(): Promise<void> {

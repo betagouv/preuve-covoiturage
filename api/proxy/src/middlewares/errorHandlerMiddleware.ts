@@ -1,4 +1,4 @@
-import express = require('express');
+import express from 'express';
 
 // error handler - !! keep the next argument !!
 // otherwise Express doesn't use it as error handler

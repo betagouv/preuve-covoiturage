@@ -160,7 +160,8 @@ a:active {
 .qr-code--label {
   position: absolute;
   bottom: calc(118px * -0.2);
-  right: calc(118px * -5.1);
+  left: calc(118px * 18.6);
+  width: 100%;
   font-size: 0.6em;
   line-height: 1.4;
   transform: rotateZ(-90deg);
@@ -171,6 +172,6 @@ a:active {
   position: absolute;
   bottom: calc(118px * 0.5);
   right: calc(118px * 0.5);
-  transform: scale(1.5);
+  transform: scale(1.2);
   transform-origin: bottom right;
 }

@@ -467,7 +467,7 @@ export class HttpTransport implements TransportInterface {
      * - only accessible by the backend itself
      * - requires access to public assets (images)
      *
-     * TEST ME : http://localhost:8080/certificates/render?identity=+33619660000
+     * TEST ME : http://localhost:8080/certificates/render?identity=%2B33619660000
      */
     this.app.get(
       '/certificates/render',

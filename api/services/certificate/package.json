@@ -63,6 +63,7 @@
     "@ilos/package-acl": "~0",
     "@ilos/template": "~0",
     "@pdc/provider-date": "~0",
+    "@pdc/provider-qrcode": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",
     "puppeteer": "^2.0.0"
