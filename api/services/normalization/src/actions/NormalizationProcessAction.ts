@@ -78,7 +78,7 @@ export class NormalisationProcessAction extends AbstractAction {
       operator_journey_id: journey.journey_id,
     };
 
-    this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
+    await this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
       crossCheckSignature,
       normalizedData,
       context,
