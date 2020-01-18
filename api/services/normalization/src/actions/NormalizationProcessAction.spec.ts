@@ -9,7 +9,12 @@ import chaiAsPromised from 'chai-as-promised';
 
 import { NormalisationProcessAction } from './NormalizationProcessAction';
 
-import { irtSystemXTestCoupleMatching as testCouple } from '../../tests/IRTSystemXTestData';
+import {
+  irtSystemXTestCoupleMatching as testCouple,
+  irtSystemXTestDriver as driver,
+  irtSystemXTestPassenger as passenger,
+  irtSystemXTestDifferentDriver as differentDriver,
+} from '../../tests/IRTSystemXTestData';
 
 import {
   signature as costSignature,
@@ -150,7 +155,10 @@ describe('Normalization process action', () => {
 
   it('NormalizationProcessAction should handle imput data and result cross check params data', async () => {
     const action = new NormalisationProcessAction(new Kernel());
-
+    console.log('testCouple', JSON.stringify(testCouple));
+    // console.log('driver', driver);
+    // console.log('passenger', passenger);
+    // console.log('differentDriver', differentDriver);
     const result = action.handle(testCouple);
 
     return expect(result).to.not.rejected;
