@@ -1,19 +1,4 @@
-export interface CertificateMetaInterface {
-  total_km: number;
-  total_point: number;
-  total_cost: number;
-  remaining: number;
-  rows: object[];
-}
-
-export interface CertificateAccessLogInterface {
-  certificate_id?: string;
-  ip: string;
-  user_agent: string;
-  user_id: string;
-  content_type: string;
-  created_at: Date;
-}
+import { CertificateMetaInterface } from './CertificateMetaInterface';
 
 export interface CertificateBaseInterface {
   identity_id: string;

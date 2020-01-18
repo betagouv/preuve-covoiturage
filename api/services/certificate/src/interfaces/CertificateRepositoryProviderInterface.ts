@@ -1,11 +1,10 @@
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import {
-  CertificateBaseInterface,
-  CertificateMetaInterface,
-  CertificateAccessLogInterface,
-} from '../shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
+import { CertificateAccessLogInterface } from '../shared/certificate/common/interfaces/CertificateAccessLogInterface';
 
 export interface CertificateRepositoryProviderInterface {
+  findByUuid(uuid: string, withLog: boolean): Promise<CertificateInterface>;
   findById(_id: string, withLog: boolean): Promise<CertificateInterface>;
   findByOperatorId(operator_id: string, withLog: boolean): Promise<CertificateInterface[]>;
   create(params: CertificateBaseInterface): Promise<CertificateInterface>;
@@ -14,6 +13,9 @@ export interface CertificateRepositoryProviderInterface {
 }
 
 export abstract class CertificateRepositoryProviderInterfaceResolver implements CertificateRepositoryProviderInterface {
+  async findByUuid(uuid: string, withLog = false): Promise<CertificateInterface> {
+    throw new Error('Method not implemented.');
+  }
   async findById(_id: string, withLog = false): Promise<CertificateInterface> {
     throw new Error('Method not implemented.');
   }

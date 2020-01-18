@@ -12,4 +12,6 @@ CREATE TABLE IF NOT EXISTS certificate.certificates
 	meta jsonb NOT NULL DEFAULT '{}'
 );
 
+CREATE UNIQUE INDEX ON certificate.certificates (uuid);
+
 CREATE TRIGGER touch_certificates_updated_at BEFORE UPDATE ON certificate.certificates FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();

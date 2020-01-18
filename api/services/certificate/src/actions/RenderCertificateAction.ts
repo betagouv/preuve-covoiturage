@@ -2,13 +2,13 @@ import { upperFirst } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, TemplateInterfaceResolver } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
+import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/render.schema';
-import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode/dist';
 
 @handler(handlerConfig)
 export class RenderCertificateAction extends AbstractAction {

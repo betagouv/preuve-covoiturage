@@ -3,11 +3,9 @@ import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
-import {
-  CertificateBaseInterface,
-  CertificateMetaInterface,
-  CertificateAccessLogInterface,
-} from '../shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CertificateBaseInterface } from '../shared/certificate/common/interfaces/CertificateBaseInterface';
+import { CertificateMetaInterface } from '../shared/certificate/common/interfaces/CertificateMetaInterface';
+import { CertificateAccessLogInterface } from '../shared/certificate/common/interfaces/CertificateAccessLogInterface';
 import {
   CertificateRepositoryProviderInterface,
   CertificateRepositoryProviderInterfaceResolver,
@@ -22,9 +20,20 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
 
   constructor(protected connection: PostgresConnection) {}
 
+  async findByUuid(uuid: string, withLog = false): Promise<CertificateInterface> {
+    const result = await this.connection.getClient().query({
+      text: `SELECT * FROM ${this.table} WHERE uuid = $1 LIMIT 1`,
+      values: [uuid],
+    });
+
+    if (!result.rowCount) throw new NotFoundException(`Certificate not found: ${uuid}`);
+
+    return withLog ? this.withLog(result.rows[0]) : result.rows[0];
+  }
+
   async findById(_id: string, withLog = false): Promise<CertificateInterface> {
     const result = await this.connection.getClient().query({
-      text: `SELECT * FROM ${this.table} WHERE _id = $1`,
+      text: `SELECT * FROM ${this.table} WHERE _id = $1 LIMIT 1`,
       values: [_id],
     });
 
@@ -107,14 +116,11 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     const certs = (isMany ? certificates : [certificates]) as CertificateInterface[];
 
     // search for all access_log for all certificate_id
-    const result = await this.connection.getClient().query({
-      text: `
+    const result = await this.connection.getClient().query(`
         SELECT * FROM ${this.accessLogTable}
-        WHERE certificate_id IN $1
+        WHERE certificate_id IN (${map(certs, '_id').join(',')})
         ORDER BY certificate_id
-      `,
-      values: [map(certs, '_id')],
-    });
+    `);
 
     // merge access_log as a table in each certificate
     const merge = certs.map((cert) => ({

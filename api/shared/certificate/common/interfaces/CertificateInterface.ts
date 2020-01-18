@@ -1,4 +1,5 @@
-import { CertificateBaseInterface, CertificateAccessLogInterface } from './CertificateBaseInterface';
+import { CertificateBaseInterface } from './CertificateBaseInterface';
+import { CertificateAccessLogInterface } from './CertificateAccessLogInterface';
 
 export interface CertificateInterface extends CertificateBaseInterface {
   _id: string;
