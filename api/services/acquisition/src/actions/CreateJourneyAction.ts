@@ -79,7 +79,8 @@ export class CreateJourneyAction extends AbstractAction {
       });
 
       // Dispatch to the normalization pipeline
-      await this.kernel.notify('normalization:geo', acquisition, callContext);
+      // await this.kernel.notify('normalization:geo', acquisition, callContext);
+      await this.kernel.notify('normalization:process', acquisition, callContext);
 
       return {
         journey_id: acquisition.journey_id,
