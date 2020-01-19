@@ -3,16 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { takeUntil, mergeMap, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-// import {
-//   ParamsInterface as FindParamsInterface,
-//   ResultInterface as FindResultInterface,
-// } from '~/core/entities/api/shared/certificate/find.contract';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
+import { phoneIdentityValidator } from '../../validators/identity-phone.validator';
+
 import { CertificateApiService } from '../../services/certificate-api.service';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-generate',
@@ -38,7 +36,7 @@ export class GenerateComponent extends DestroyObservable implements OnInit {
 
   ngOnInit() {
     this.printForm = this.fb.group({
-      identity: ['', [Validators.required]],
+      identity: ['', [Validators.required, phoneIdentityValidator]],
       start_at: [null],
       end_at: [null],
     });
