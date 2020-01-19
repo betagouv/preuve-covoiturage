@@ -11,7 +11,7 @@ import {
 } from '~/core/entities/api/shared/certificate/find.contract';
 import { JsonRPC } from '~/core/services/api/json-rpc.service';
 import { ParamsInterface as PrintParamsInterface } from '~/core/entities/api/shared/certificate/print.contract';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
