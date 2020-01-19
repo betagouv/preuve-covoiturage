@@ -1,5 +1,7 @@
 import chai from 'chai';
 import chaiAsync from 'chai-as-promised';
+import { describe } from 'mocha';
+
 import { perSeat } from './perSeat';
 import { MetadataWrapper } from '../MetadataWrapper';
 import { faker } from '../helpers/faker';

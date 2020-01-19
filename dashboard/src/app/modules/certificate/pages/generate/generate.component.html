@@ -1,0 +1,43 @@
+<div>
+  <form [formGroup]="printForm" class="GenerateForm">
+    <h3>Générer une attestation</h3>
+
+    <mat-form-field appearance="outline">
+      <mat-label>+33XXXXXXXXX</mat-label>
+      <input matInput type="string" formControlName="identity" />
+      <mat-error *ngIf="controls.identity.hasError('required')">Ce champs est requis.</mat-error>
+      <mat-error *ngIf="controls.identity.hasError('phoneIdentity')">
+        Veuillez rentrer le numéro de téléphone avec son indicatif (ex. +33612345678).</mat-error
+      >
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Date de début</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickerBegin"
+        placeholder="Choisir une date de début"
+        formControlName="start_at"
+      />
+      <mat-datepicker-toggle matSuffix [for]="pickerBegin"></mat-datepicker-toggle>
+      <mat-datepicker #pickerBegin></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Date de fin</mat-label>
+      <input matInput [matDatepicker]="pickerEnd" placeholder="Choisir une date de fin" formControlName="end_at" />
+      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+    </mat-form-field>
+    <div>
+      <button
+        type="submit"
+        mat-flat-button
+        class="large"
+        (click)="onConfirm()"
+        color="primary"
+        [disabled]="!printForm.valid"
+      >
+        Mettre à jour
+      </button>
+    </div>
+  </form>
+</div>

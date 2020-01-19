@@ -1,0 +1,18 @@
+<div>
+  <div class="loading" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="generate" *ngIf="data">
+    <div>
+      <h3>Attestation {{ data.uuid }}</h3>
+      <p>
+        <strong>Commence du {{ data.start_at | date: 'dd/MM/yyyy' }} au {{ data.end_at | date: 'dd/MM/yyyy' }} </strong>
+      </p>
+      <p><strong>Nombre de KM</strong> {{ data.total_km }}</p>
+      <p><strong *ngIf="data.total_point !== undefined">Points</strong> {{ data.total_point }}</p>
+      <p><strong *ngIf="data.total_cost !== undefined">Coût</strong> {{ data.total_cost }}</p>
+      <p><strong *ngIf="data.remaining !== undefined">Restants</strong> {{ data.remaining }}</p>
+    </div>
+  </div>
+</div>

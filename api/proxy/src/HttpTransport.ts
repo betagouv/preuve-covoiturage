@@ -76,6 +76,7 @@ export class HttpTransport implements TransportInterface {
     this.registerStatsRoutes();
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
+    this.registerCertificateRoutes();
     this.registerLegacyServerRoute();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
@@ -417,6 +418,88 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
+  // FIXME
+  // - add server authentication
+  // - block access to /generate route
+  private registerCertificateRoutes(): void {
+    /**
+     * Public route for operators to print a certificate
+     * based on params (identity, start date, end date, ...)
+     * - accessible with an application token
+     * - uses /certificates/render to capture the rendered certificate
+     * - print a PDF/PNG returned back to the caller
+     */
+    this.app.get(
+      '/certificates/print',
+      asyncHandler(async (req, res, next) => {
+        try {
+          const type = this.getTypeFromHeaders(req.headers);
+
+          const response = await this.kernel.call(
+            'certificate:print',
+            { ...req.query, type },
+            { channel: { service: 'certificate' } },
+          );
+
+          switch (type) {
+            case 'png':
+              res.set('Content-type', 'image/png');
+              res.set('Content-disposition', 'attachment; filename=print.png');
+              res.send(response);
+              break;
+            case 'json':
+              res.set('Content-type', 'application/json');
+              res.send(response);
+              break;
+            default:
+              res.set('Content-type', 'application/pdf');
+              res.set('Content-disposition', `attachment; filename=print.pdf`);
+              res.send(response);
+          }
+        } catch (e) {
+          console.log(e);
+          const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
+          res.status(htmlStatusCode);
+          res.json({ error: htmlStatusCode, message: e.rpcError.data });
+        }
+      }),
+    );
+
+    /**
+     * The route that renders an HTML certificate based on params
+     * - only accessible by the backend itself
+     * - requires access to public assets (images)
+     *
+     * TEST ME : http://localhost:8080/certificates/render?identity=%2B~/.config/mimeapps.list
+     */
+    this.app.get(
+      '/certificates/render',
+      asyncHandler(async (req, res, next) => {
+        try {
+          const response = await this.kernel.call(
+            'certificate:render',
+            { ...req.query },
+            { channel: { service: 'certificate' } },
+          );
+
+          if (!response || !response.data) {
+            throw new Error('Failed to generate certificate');
+          }
+
+          res.set('Content-type', response.type);
+          res.status(response.code);
+          res.send(response.data);
+        } catch (e) {
+          console.log(e);
+          throw e;
+        }
+      }),
+    );
+
+    // public assets routes
+    this.app.use('/certificates/assets', express.static('../../services/certificate/dist/assets'));
+  }
+
   private registerAfterAllHandlers(): void {
     this.app.use(Sentry.Handlers.errorHandler());
 
@@ -511,5 +594,16 @@ export class HttpTransport implements TransportInterface {
     } catch (e) {}
 
     return response;
+  }
+
+  private getTypeFromHeaders(headers: { [key: string]: string }): 'png' | 'json' | 'pdf' {
+    switch (headers['accept']) {
+      case 'image/png':
+        return 'png';
+      case 'application/json':
+        return 'json';
+      default:
+        return 'pdf';
+    }
   }
 }
