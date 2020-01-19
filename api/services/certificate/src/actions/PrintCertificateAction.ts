@@ -5,6 +5,7 @@ import { CertificatePrinterProviderInterfaceResolver } from '../interfaces/Certi
 import { handlerConfig, ParamsInterface } from '../shared/certificate/print.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/print.schema';
+import { castParams } from '../utils/castParams';
 
 @handler(handlerConfig)
 export class PrintCertificateAction extends AbstractAction {
@@ -17,11 +18,7 @@ export class PrintCertificateAction extends AbstractAction {
 
   // FIXME return type in ResultInterface declaration
   public async handle(params: ParamsInterface, context: ContextType): Promise<Buffer | string> {
-    const { start_at, end_at, type } = params;
-    let { identity } = params;
-
-    // fix replaced + in query params
-    identity = identity.replace(/^\s([0-9]{2,3})/, '+$1');
+    const { identity, start_at, end_at, type } = castParams<ParamsInterface>(params);
 
     switch (type) {
       case 'png':

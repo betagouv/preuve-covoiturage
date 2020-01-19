@@ -444,20 +444,20 @@ export class HttpTransport implements TransportInterface {
           switch (type) {
             case 'png':
               res.set('Content-type', 'image/png');
-              res.set('Content-disposition', 'attachment');
+              res.set('Content-disposition', 'attachment; filename=print.png');
               res.send(response);
               break;
             case 'json':
               res.set('Content-type', 'application/json');
-              res.set('Content-disposition', 'attachment');
-
               res.send(response);
               break;
             default:
               res.set('Content-type', 'application/pdf');
+              res.set('Content-disposition', `attachment; filename=print.pdf`);
               res.send(response);
           }
         } catch (e) {
+          console.log(e);
           const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
           res.status(htmlStatusCode);
           res.json({ error: htmlStatusCode, message: e.rpcError.data });
@@ -470,19 +470,21 @@ export class HttpTransport implements TransportInterface {
      * - only accessible by the backend itself
      * - requires access to public assets (images)
      *
-     * TEST ME : http://localhost:8080/certificates/render?identity=%2B33619660000
+     * TEST ME : http://localhost:8080/certificates/render?identity=%2B~/.config/mimeapps.list
      */
     this.app.get(
       '/certificates/render',
       asyncHandler(async (req, res, next) => {
         try {
-          console.log('http render params', { ...req.query });
-
           const response = await this.kernel.call(
             'certificate:render',
             { ...req.query },
             { channel: { service: 'certificate' } },
           );
+
+          if (!response || !response.data) {
+            throw new Error('Failed to generate certificate');
+          }
 
           res.set('Content-type', response.type);
           res.status(response.code);

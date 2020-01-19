@@ -9,6 +9,7 @@ import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/Carpoo
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/render.schema';
+import { castParams } from '../utils/castParams';
 
 @handler(handlerConfig)
 export class RenderCertificateAction extends AbstractAction {
@@ -27,10 +28,10 @@ export class RenderCertificateAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // TODO find a better way to cast input before calling the action
-    params = this.castParams(params);
+    params = castParams<ParamsInterface>(params);
 
     const identity = { uuid: 'b409aa51-dee8-4276-9dde-b55d3fd0c7e9' };
-    const operator = { uuid: 'c5b07e35-651e-4688-b0b7-2811073bfcf3', name: 'Mobicops' };
+    const operator = { uuid: 'c5b07e35-651e-4688-b0b7-2811073bfcf3', name: 'Mobicoop' };
     const territory = { uuid: '4b5b1de9-6a06-4ed7-b405-c9141a7437d6', name: 'Paris Ile-de-France' };
 
     // fetch the data for this identity, operator and territory and map to template object
@@ -95,22 +96,5 @@ export class RenderCertificateAction extends AbstractAction {
         },
       }),
     };
-  }
-
-  private castParams(params: ParamsInterface): ParamsInterface {
-    // TODO check for automatic casting
-    params.start_at = new Date(params.start_at);
-    params.end_at = new Date(params.end_at);
-
-    // normalize dates
-    if (!params.end_at || params.end_at.getTime() > new Date().getTime()) {
-      params.end_at = new Date();
-    }
-
-    if (!params.start_at || params.start_at.getTime() >= params.end_at.getTime()) {
-      params.start_at = new Date('2018-01-01T00:00:00+0100');
-    }
-
-    return params;
   }
 }

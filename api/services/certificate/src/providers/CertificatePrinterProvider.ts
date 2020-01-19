@@ -40,11 +40,11 @@ export class CertificatePrinterProvider implements CertificatePrinterProviderInt
   }
 
   private getUrl(identity: string, start_at: Date, end_at: Date): string {
-    const id = encodeURIComponent(identity);
-    const start = !!start_at ? `&start_at=${start_at.toISOString()}` : '';
-    const end = !!end_at ? `&end_at=${end_at.toISOString()}` : '';
+    const id = `identity=${encodeURIComponent(identity)}`;
+    const start = `start_at=${start_at.toISOString()}`;
+    const end = `end_at=${end_at.toISOString()}`;
 
-    return `${this.config.get('url.apiUrl')}/certificates/render/?identity=${id}${start}${end}`;
+    return `${this.config.get('url.apiUrl')}/certificates/render/?${id}&${start}&${end}`;
   }
 
   private async init(): Promise<void> {

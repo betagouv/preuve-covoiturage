@@ -3,11 +3,11 @@
     <h3>Générer une attestation</h3>
 
     <mat-form-field appearance="outline">
-      <mat-label>+33XXXXXXXX</mat-label>
+      <mat-label>+33XXXXXXXXX</mat-label>
       <input matInput type="string" formControlName="identity" />
-      <mat-error *ngIf="controls.identity.hasError('required')"> Ce champs est requis.</mat-error>
+      <mat-error *ngIf="controls.identity.hasError('required')">Ce champs est requis.</mat-error>
       <mat-error *ngIf="controls.identity.hasError('phoneIdentity')">
-        Veuillez rentrer le numéro de téléphone au format +33000000000.</mat-error
+        Veuillez rentrer le numéro de téléphone avec son indicatif (ex. +33612345678).</mat-error
       >
     </mat-form-field>
     <mat-form-field appearance="outline">

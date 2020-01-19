@@ -35,6 +35,7 @@ export class CertificateApiService extends JsonRPC {
       data.identity,
     )}${startVar}${endVar}`;
 
+    console.log({ url });
     window.open(url, '_blank');
   }
 

@@ -27,7 +27,7 @@ const routes: Routes = [
         component: GenerateComponent,
       },
       {
-        path: 'check/:certificateUid',
+        path: 'check/:uuid',
         component: CheckComponent,
       },
     ],
