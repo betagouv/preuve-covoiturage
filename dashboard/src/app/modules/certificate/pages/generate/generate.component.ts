@@ -44,11 +44,13 @@ export class GenerateComponent extends DestroyObservable implements OnInit {
 
   onConfirm() {
     if (this.printForm.valid) {
-      console.log('this.campaignForm : ', this.printForm.value);
-
       this.certificateService.downloadPrint(this.printForm.value);
 
-      this.printForm.reset();
+      this.printForm.patchValue({
+        identity: '',
+        start_at: '',
+        end_at: '',
+      });
     }
   }
 }

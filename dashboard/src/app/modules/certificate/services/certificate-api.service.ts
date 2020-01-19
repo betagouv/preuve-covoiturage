@@ -28,27 +28,29 @@ export class CertificateApiService extends JsonRPC {
   // }
 
   downloadPrint(data: PrintParamsInterface) {
-    const startVar = data.start_at ? `&start_at=${data.start_at.toISOString()}` : '';
-    const endVar = data.end_at ? `&end_at=${data.end_at.toISOString()}` : '';
+    const startVar = data.start_at ? `&start_at=${encodeURIComponent(data.start_at.toISOString())}` : '';
+    const endVar = data.end_at ? `&end_at=${encodeURIComponent(data.end_at.toISOString())}` : '';
 
-    const url = `${environment.apiUrl}certificates/print?type=png&identity=${data.identity}${startVar}${endVar}`;
+    const url = `${environment.apiUrl}certificates/print?identity=${encodeURIComponent(
+      data.identity,
+    )}${startVar}${endVar}`;
 
     window.open(url, '_blank');
   }
 
   find(uuid: string): Observable<FindResultInterface> {
     console.log('uuid : ', uuid);
-    return of({
-      uuid: '34999a03-cfc5-463e-8d64-97af0f507004',
-      signature: '5xQw9KTH5Y9sIuOulU5KPEfreFPlfxljE3uwdkpDpb8=',
-      start_at: new Date('2019-01-01T00:00:00.000Z'),
-      end_at: new Date('2020-01-17T12:38:32.801Z'),
-      created_at: new Date('2020-01-17T12:38:32.832Z'),
-      total_km: 9597,
-      total_point: 0,
-      total_cost: 0,
-      remaining: 0,
-    }).pipe(delay(3000));
+    // return of({
+    //   uuid: '34999a03-cfc5-463e-8d64-97af0f507004',
+    //   signature: '5xQw9KTH5Y9sIuOulU5KPEfreFPlfxljE3uwdkpDpb8=',
+    //   start_at: new Date('2019-01-01T00:00:00.000Z'),
+    //   end_at: new Date('2020-01-17T12:38:32.801Z'),
+    //   created_at: new Date('2020-01-17T12:38:32.832Z'),
+    //   total_km: 9597,
+    //   total_point: 0,
+    //   total_cost: 0,
+    //   remaining: 0,
+    // }).pipe(delay(3000));
 
     return super
       .callOne(new JsonRPCParam<FindParamsInterface>('certificate:find', { uuid }))
