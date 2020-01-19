@@ -12,6 +12,7 @@ import {
 export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInterface {
   public readonly table = 'carpool.carpools';
   public readonly id_table = 'certificate.identities';
+  public readonly incentive_table = 'policy.incentives';
 
   constructor(protected connection: PostgresConnection) {}
 
@@ -38,8 +39,11 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         SELECT
           to_char(datetime,'MM') AS m,
           extract(year from datetime) AS y,
-          sum(distance::float)/1000 as km
-        FROM ${this.table}
+          sum(distance::float)/1000 as km,
+          sum(amount::float)/100 as eur
+        FROM ${this.table} AS cc
+        LEFT JOIN ${this.incentive_table} AS pi
+        ON cc._id = pi.carpool_id::int
         WHERE identity_id IN (${identities.join(',')})
         AND datetime >= $1 AND datetime <= $2
         GROUP BY (m, y)

@@ -35,17 +35,22 @@ export class RenderCertificateAction extends AbstractAction {
     const territory = { uuid: '4b5b1de9-6a06-4ed7-b405-c9141a7437d6', name: 'Paris Ile-de-France' };
 
     // fetch the data for this identity, operator and territory and map to template object
-    const rows = await this.carpoolRepository.find(params);
+    const rows = (await this.carpoolRepository.find(params)).slice(0, 11);
+
+    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0));
+    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0));
+    const remaining = (total_km * 0.558 - total_cost) | 0;
+
     const meta = {
+      total_km,
+      total_cost,
+      remaining,
+      total_point: 0,
       rows: rows.map((line, index) => ({
         index,
         month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
         distance: line.km | 0,
       })),
-      total_km: Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)),
-      total_point: 0,
-      total_cost: 0,
-      remaining: 0,
     };
 
     // store the certificate

@@ -63,8 +63,8 @@
     "@ilos/package-acl": "~0",
     "@ilos/template": "~0",
     "@pdc/provider-date": "~0",
-    "@pdc/provider-qrcode": "~0",
     "@pdc/provider-middleware": "~0",
+    "@pdc/provider-qrcode": "~0",
     "@pdc/provider-validator": "~0",
     "puppeteer": "^2.0.0"
   },
@@ -76,6 +76,7 @@
     "@types/sinon-chai": "^3.2.3",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "faker": "^4.1.0",
     "lodash": "^4.17.15",
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",

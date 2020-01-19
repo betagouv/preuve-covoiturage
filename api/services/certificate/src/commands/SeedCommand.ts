@@ -1,3 +1,4 @@
+import faker from 'faker';
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
@@ -60,14 +61,11 @@ export class SeedCommand implements CommandInterface {
 
       for (let i = 0; i < options.number; i++) {
         const cpD = await this.fakeCarpool(driver._id, true);
-        console.log(`> inserted carpool driver: ${cpD._id}`);
 
         const cpP = await this.fakeCarpool(passenger._id, true);
-        console.log(`> inserted carpool passenger: ${cpP._id}`);
 
         await this.fakeIncentive(cpD._id);
         await this.fakeIncentive(cpP._id);
-        console.log('inserted incentives');
       }
 
       await this.db.query('COMMIT');
@@ -102,11 +100,11 @@ export class SeedCommand implements CommandInterface {
     const result = await this.db.query({
       text: `
         INSERT INTO carpool.carpools
-        ( is_driver, distance, identity_id )
-        VALUES ( $1, $2, $3 )
+        ( is_driver, distance, datetime, identity_id )
+        VALUES ( $1, $2, $3, $4 )
         RETURNING *
       `,
-      values: [is_driver, (Math.random() * 100000) | 0, identity_id],
+      values: [is_driver, (Math.random() * 10000) | 0, faker.date.past(2), identity_id],
     });
 
     return result.rows[0];
