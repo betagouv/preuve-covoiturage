@@ -7,7 +7,7 @@ export interface ParamsInterface {
 
 export interface ResultInterface {
   type: 'text/html' | 'application/json';
-  data: string | Buffer | object;
+  data: string | object;
   params: ParamsInterface;
   code: number;
 }

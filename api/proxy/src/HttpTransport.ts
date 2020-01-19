@@ -444,10 +444,13 @@ export class HttpTransport implements TransportInterface {
           switch (type) {
             case 'png':
               res.set('Content-type', 'image/png');
+              res.set('Content-disposition', 'attachment');
               res.send(response);
               break;
             case 'json':
               res.set('Content-type', 'application/json');
+              res.set('Content-disposition', 'attachment');
+
               res.send(response);
               break;
             default:

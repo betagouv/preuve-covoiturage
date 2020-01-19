@@ -21,6 +21,10 @@ const routes: Routes = [
         canLoad: [AuthGuard],
       },
       {
+        path: 'certificate',
+        loadChildren: () => import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
+      },
+      {
         path: 'registry',
         loadChildren: () => import('./modules/registry/registry.module').then((mod) => mod.RegistryModule),
         canLoad: [AuthGuard],
