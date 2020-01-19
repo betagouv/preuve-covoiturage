@@ -14,6 +14,7 @@ import { CertificatePrinterProvider } from './providers/CertificatePrinterProvid
 import { RenderCertificateAction } from './actions/RenderCertificateAction';
 import { PrintCertificateAction } from './actions/PrintCertificateAction';
 import { FindCertificateAction } from './actions/FindCertificateAction';
+import { SeedCommand } from './commands/SeedCommand';
 import { binding as renderBinding } from './shared/certificate/render.schema';
 import { binding as printBinding } from './shared/certificate/print.schema';
 import { binding as findBinding } from './shared/certificate/find.schema';
@@ -35,6 +36,7 @@ import { binding as findBinding } from './shared/certificate/find.schema';
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [RenderCertificateAction, PrintCertificateAction, FindCertificateAction],
+  commands: [SeedCommand],
   template: {
     path: path.resolve(__dirname, 'templates').replace('/dist/', '/src/'),
     meta: 'templates',
