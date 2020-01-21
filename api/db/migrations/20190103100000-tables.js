@@ -7,7 +7,6 @@ var { setup, up, down } = createMigration(
     'application/001_create_application_table',
     'auth/001_create_auth_table',
     'carpool/001_create_carpool_table',
-    'certificate/001_create_certificate_table',
     'common/001_create_insee_table',
     'common/002_create_role_table',
     'fraudcheck/001_create_fraudcheck_table',
