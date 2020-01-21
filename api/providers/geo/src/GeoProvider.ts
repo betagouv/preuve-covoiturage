@@ -58,9 +58,9 @@ export class GeoProvider implements GeoProviderInterface {
     const failure = [];
     for (const geocoder of this.geoCoderProviders) {
       try {
-        return geocoder.literalToPosition(literal);
+        return await geocoder.literalToPosition(literal);
       } catch (e) {
-        failure.push(e.message);
+        failure.push('literalToPosition ' + e.message);
       }
     }
     throw new Error(failure.join(', '));
@@ -70,11 +70,12 @@ export class GeoProvider implements GeoProviderInterface {
     const failure = [];
     for (const inseeReverseCoder of this.inseeReverseCoderProviders) {
       try {
-        return inseeReverseCoder.inseeToPosition(insee);
+        return await inseeReverseCoder.inseeToPosition(insee);
       } catch (e) {
-        failure.push(e.message);
+        failure.push('inseeToPosition ' + e.message);
       }
     }
+
     throw new Error(failure.join(', '));
   }
 
@@ -82,9 +83,9 @@ export class GeoProvider implements GeoProviderInterface {
     const failure = [];
     for (const inseecoder of this.inseeCoderProviders) {
       try {
-        return inseecoder.positionToInsee(geo);
+        return await inseecoder.positionToInsee(geo);
       } catch (e) {
-        failure.push(e.message);
+        failure.push('positionToInsee ' + e.message);
       }
     }
     throw new Error(failure.join(', '));
@@ -94,9 +95,9 @@ export class GeoProvider implements GeoProviderInterface {
     const failure = [];
     for (const routeMeta of this.routeMetaProviders) {
       try {
-        return routeMeta.getRouteMeta(start, end);
+        return await routeMeta.getRouteMeta(start, end);
       } catch (e) {
-        failure.push(e.message);
+        failure.push('getRouteMeta ' + e.message);
       }
     }
     throw new Error(failure.join(', '));
