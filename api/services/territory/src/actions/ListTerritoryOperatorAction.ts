@@ -1,6 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
+// eslint-disable-next-line
 import { TerritoryOperatorRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryOperatorRepositoryProviderInterface';
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/listOperator.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
@@ -15,12 +16,12 @@ export class ListTerritoryOperatorAction extends AbstractAction {
       [
         ['this.is.not.a.valid.permission'],
         [
-          (params, context) => {
+          (params, context): string => {
             if ('operator_id' in params && params.operator_id === context.call.user.operator_id) {
               return 'operator.read';
             }
           },
-          (params, context) => {
+          (params, context): string => {
             if ('territory_id' in params && params.territory_id === context.call.user.territory_id) {
               return 'territory.read';
             }

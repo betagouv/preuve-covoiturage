@@ -1,4 +1,4 @@
-export function postcodeMacro(schema) {
+export function postcodeMacro(): { type: string; format: string; minLength: number; maxLength: number } {
   return {
     type: 'string',
     format: 'postcode',

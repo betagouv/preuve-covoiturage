@@ -1,4 +1,4 @@
-import { CampaignInterface } from '~/core/interfaces/campaign/api-format/campaignInterface';
+import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/CampaignInterface';
 
 // tslint:disable-next-line:no-empty-interface
 export interface TemplateInterface extends CampaignInterface {}

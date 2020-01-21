@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import { HighDurationCheck as Check } from '../../src/engine/checks/HighDurationCheck';
 
 import { faker } from './faker';
-import { equal } from 'assert';
 
 describe(`Check: ${Check.key}`, async () => {
   before(async () => {

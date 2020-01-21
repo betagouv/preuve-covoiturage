@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, take, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
-import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { Territory } from '~/core/entities/territory/territory';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DialogService } from '~/core/services/dialog.service';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
-import { CampaignFormatingService } from '~/modules/campaign/services/campaign-formating.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 
 @Component({
   selector: 'app-campaign-active-view',
@@ -30,15 +29,14 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
     private _dialog: DialogService,
     private _router: Router,
     private _route: ActivatedRoute,
-    private _campaignService: CampaignService,
-    private _campaignFormatService: CampaignFormatingService, // todo: refactor, this should not be need,
+    private _campaignStoreService: CampaignStoreService,
     private _toastr: ToastrService,
   ) {
     super();
   }
 
   ngOnInit() {
-    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTo(0, 0);
+    document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
     this._route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
       const notFound = !params.has('campaignId');
       if (notFound) {
@@ -62,28 +60,29 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
   }
 
   private loadCampaign(campaignId: number) {
-    if (!this._campaignService.campaignsLoaded) {
-      this._campaignService
-        .load()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe();
-    }
-    this._campaignService.entities$
+    this._campaignStoreService
+      .selectEntityByIdFromList(campaignId)
       .pipe(
-        filter((campaigns) => campaigns.length > 0),
+        take(1),
         takeUntil(this.destroy$),
       )
-      .subscribe((campaigns: Campaign[]) => {
-        const foundCampaign = campaigns.filter((campaign) => campaign._id === campaignId)[0];
-        if (foundCampaign) {
-          this.campaignUx = this._campaignFormatService.toCampaignUxFormat(foundCampaign);
-          this.loadTerritory(foundCampaign.territory_id);
-        } else {
+      .subscribe(
+        (campaign: Campaign) => {
+          this.campaignUx = campaign.toFormValues();
+          this.loadTerritory(campaign.territory_id);
+        },
+        (err) => {
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });
-        }
-      });
+        },
+      );
+    if (!this._campaignStoreService.loaded) {
+      if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+        this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+      }
+      this._campaignStoreService.loadList();
+    }
   }
 
   private loadTerritory(id: number) {

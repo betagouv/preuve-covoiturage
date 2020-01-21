@@ -1,4 +1,4 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
@@ -49,7 +49,11 @@ export class TerritoryOperatorRepositoryProvider implements TerritoryOperatorRep
     await client.query('BEGIN');
     try {
       const deleteQuery = {
-        text: `DELETE FROM ${this.table} WHERE operator_id = $1::int AND NOT (territory_id = ANY($2::int[])) RETURNING territory_id`,
+        text: `
+          DELETE FROM ${this.table}
+          WHERE operator_id = $1::int
+          AND NOT (territory_id = ANY($2::int[]))
+          RETURNING territory_id`,
         values: [id, list],
       };
 

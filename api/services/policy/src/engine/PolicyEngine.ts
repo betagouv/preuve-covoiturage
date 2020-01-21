@@ -15,9 +15,9 @@ import { NotApplicableTargetException } from '../exceptions/NotApplicableTargetE
 export class PolicyEngine {
   constructor(protected metaRepository: CampaignMetadataRepositoryProviderInterfaceResolver) {}
 
-  protected compose(campaign: CampaignInterface) {
+  protected compose(campaign: CampaignInterface): Function {
     const rules = this.getOrderedApplicableRules(campaign).map(compose);
-    return async (ctx) => {
+    return async (ctx): Promise<boolean> => {
       // for each rule set of rules
       for (const rule of rules) {
         try {

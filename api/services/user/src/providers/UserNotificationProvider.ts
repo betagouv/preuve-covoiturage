@@ -99,7 +99,7 @@ link:  ${link}
    * Generate token and send forgotten password email
    */
   async passwordForgotten(token: string, email: string): Promise<void> {
-    const [url, template, templateId] = this.FORGOTTEN;
+    const [url, , templateId] = this.FORGOTTEN;
     const link = this.getUrl(url, email, token);
 
     this.log('Forgotten Password', email, token, link);
@@ -124,7 +124,7 @@ link:  ${link}
    */
   async emailUpdated(token: string, email: string, oldEmail?: string): Promise<void> {
     const [url, template, templateId] = this.CONFIRMATION;
-    const [_, emailChangedTemplate, emailChangedTemplateId] = this.EMAIL_CHANGED;
+    const [, emailChangedTemplate, emailChangedTemplateId] = this.EMAIL_CHANGED;
 
     const link = this.getUrl(url, email, token);
 
@@ -161,7 +161,6 @@ link:  ${link}
     const user = await this.userRepository.findByEmail(email);
 
     const link = this.getUrl(url, user.email, token);
-    this.log('Create user', user.email, token, link);
     await this.sendMail({
       link,
       email,

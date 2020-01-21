@@ -4,10 +4,10 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { Campaign } from '~/core/entities/campaign/api-format/campaign';
 import { CampaignNameInterface } from '~/core/interfaces/campaign/campaign-name.interface';
 import { CommonDataService } from '~/core/services/common-data.service';
+import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 
 @Component({
   selector: 'app-campaign-auto-complete',
@@ -67,10 +67,15 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   private initCampaigns() {
     this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.campaigns = campaigns
-        ? campaigns.map((campaign: Campaign) => ({
-            _id: campaign._id,
-            name: campaign.name,
-          }))
+        ? campaigns
+            .filter(
+              (campaign) =>
+                campaign.status === CampaignStatusEnum.VALIDATED || campaign.status === CampaignStatusEnum.ARCHIVED,
+            )
+            .map((campaign: Campaign) => ({
+              _id: campaign._id,
+              name: campaign.name,
+            }))
         : null;
       if (campaigns) this.filterCampaigns();
     });

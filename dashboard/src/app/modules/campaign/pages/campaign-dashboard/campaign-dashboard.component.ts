@@ -4,9 +4,10 @@ import { Observable } from 'rxjs';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { CampaignService } from '~/modules/campaign/services/campaign.service';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   selector: 'app-campaign-dashboard',
@@ -17,41 +18,42 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
   campaignStatus = CampaignStatusEnum;
   canCreateCampaign$: Observable<boolean>;
   campaigns: CampaignUx[];
+  camSeeDraft$: Observable<boolean>;
 
-  constructor(private authentificationService: AuthenticationService, private _campaignService: CampaignService) {
+  constructor(private _authService: AuthenticationService, private _campaignStoreService: CampaignStoreService) {
     super();
   }
 
   ngOnInit() {
-    this.canCreateCampaign$ = this.authentificationService.user$.pipe(
-      map((user) => user && this.authentificationService.hasAnyPermission(['incentive-campaign.create'])),
+    this.canCreateCampaign$ = this._authService.user$.pipe(
+      map(
+        (user) => user && this._authService.hasAnyPermission(['incentive-campaign.create']),
+        takeUntil(this.destroy$),
+      ),
+    );
+
+    this.camSeeDraft$ = this._authService.user$.pipe(
+      map((user) => user && this._authService.isAdmin),
+      takeUntil(this.destroy$),
     );
     this.loadCampaigns();
   }
 
   private loadCampaigns(): void {
-    this._campaignService.campaignsUx$
-      .pipe(
-        filter((campaigns) => !!campaigns),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((campaigns: CampaignUx[]) => {
-        this.campaigns = campaigns;
-      });
-    if (this.loaded) {
-      return;
+    this._campaignStoreService.campaignsUx$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: CampaignUx[]) => {
+      this.campaigns = campaigns;
+    });
+    if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+      this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
     }
-    this._campaignService
-      .load()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe();
+    this._campaignStoreService.loadList();
   }
 
   get loading(): boolean {
-    return this._campaignService.loading;
+    return this._campaignStoreService.isLoading;
   }
 
   get loaded(): boolean {
-    return this._campaignService.campaignsLoaded;
+    return !!this.campaigns;
   }
 }

@@ -13,7 +13,10 @@ import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class FindApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['validate', alias], ['can', ['application.find']]];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', alias],
+    ['can', ['application.find']],
+  ];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();

@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType, InvalidRequestException, ConflictException } from '@ilos/common';
+import { handler, ContextType, InvalidRequestException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
 import { alias } from '../shared/user/create.schema';
@@ -21,12 +21,12 @@ export class CreateUserAction extends AbstractAction {
       [
         ['user.create'],
         [
-          (params, context) => {
+          (params, context): string => {
             if ('territory' in params && params.territory === context.call.user.territory_id) {
               return 'territory.users.add';
             }
           },
-          (params, context) => {
+          (params, context): string => {
             if ('operator' in params && params.operator === context.call.user.operator_id) {
               return 'operator.users.add';
             }
@@ -46,7 +46,7 @@ export class CreateUserAction extends AbstractAction {
 
   public async handle(request: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // check if the user exists already
-    this.userRepository.checkForDoubleEmailAndFail(request.email);
+    await this.userRepository.checkForDoubleEmailAndFail(request.email);
 
     if ('operator_id' in request && 'territory_id' in request) {
       // todo: check this in jsonschema

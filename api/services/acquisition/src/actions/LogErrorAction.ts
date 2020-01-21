@@ -8,7 +8,10 @@ import { ErrorRepositoryProviderInterfaceResolver } from '../interfaces/ErrorRep
 
 @handler(handlerConfig)
 export class LogErrorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['channel.service.only', ['acquisition']],
+    ['validate', alias],
+  ];
 
   constructor(private repo: ErrorRepositoryProviderInterfaceResolver) {
     super();

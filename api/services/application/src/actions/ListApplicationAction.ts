@@ -13,7 +13,10 @@ import { setOwner } from '../helpers/setOwner';
 
 @handler(handlerConfig)
 export class ListApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [['validate', alias], ['can', ['application.list']]];
+  public readonly middlewares: (string | [string, any])[] = [
+    ['validate', alias],
+    ['can', ['application.list']],
+  ];
 
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();

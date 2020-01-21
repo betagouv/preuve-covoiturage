@@ -1,7 +1,7 @@
 import { InvalidParamsException, ContextType } from '@ilos/common';
 
 export function setOwner<T>(service: 'operator', params: any, context: ContextType): T {
-  const data = <T & { owner_id: string; owner_service: string }>{ ...params };
+  const data = { ...params } as T & { owner_id: string; owner_service: string };
   const key = `${service}_id`;
 
   // force owner to be the user's service

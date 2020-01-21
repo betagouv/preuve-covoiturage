@@ -2,10 +2,10 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs';
 import v4 from 'uuid/v4';
-import csvStringify from 'csv-stringify';
+import csvStringify, { Stringifier } from 'csv-stringify';
 
 import { Action } from '@ilos/core';
-import { handler, ContextType, KernelInterfaceResolver } from '@ilos/common';
+import { handler, ContextType, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { FileStorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
@@ -21,6 +21,7 @@ export class BuildExportAction extends Action {
   ];
 
   constructor(
+    private config: ConfigInterfaceResolver,
     private pg: TripRepositoryProvider,
     private file: FileStorageProvider,
     private kernel: KernelInterfaceResolver,
@@ -52,29 +53,30 @@ export class BuildExportAction extends Action {
     const email = params.from.email;
     const fullname = params.from.fullname;
 
-    await this.kernel.notify<NotifyParamsInterface>(
-      notifySignature,
-      {
-        password,
-        email,
-        fullname,
-        template: 'export_csv',
-        link: url,
+    const emailParams = {
+      password,
+      email,
+      fullname,
+      template: this.config.get('email.templates.export_csv'),
+      templateId: this.config.get('notification.templateIds.export_csv'),
+      link: url,
+    };
+
+    console.log('emailParams : ', emailParams);
+
+    await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
+      channel: {
+        service: 'trip',
       },
-      {
-        channel: {
-          service: 'trip',
-        },
-        call: {
-          user: {},
-        },
+      call: {
+        user: {},
       },
-    );
+    });
 
     return;
   }
 
-  protected async getStringifier(fd: fs.promises.FileHandle) {
+  protected async getStringifier(fd: fs.promises.FileHandle): Promise<Stringifier> {
     const stringifier = csvStringify({
       delimiter: ';',
       header: true,
@@ -107,7 +109,7 @@ export class BuildExportAction extends Action {
         'passenger_seats',
       ],
       // cast date to ISOString with a 15 minutes rounding (900 seconds)
-      cast: { date: (d: Date) => new Date(Math.round(d.getTime() / 900000) * 900000).toISOString() },
+      cast: { date: (d: Date): string => new Date(Math.round(d.getTime() / 900000) * 900000).toISOString() },
     });
 
     stringifier.on('readable', async () => {

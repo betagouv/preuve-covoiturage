@@ -11,13 +11,11 @@ import { Contact } from '~/core/entities/shared/contact';
 import { Company, Territory } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
-import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 
 @Component({
@@ -36,14 +34,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   fullFormMode = false;
 
-  private editedId: number;
+  public editedId: number;
   private companyDetails: CompanyInterface;
 
   constructor(
     public authService: AuthenticationService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-    private commonDataService: CommonDataService,
     private companyService: CompanyService,
     private territoryStore: TerritoryStoreService,
   ) {
@@ -65,8 +62,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   public onSubmit(): void {
-    const territory = new Territory();
-
     if (this.editedId) {
       const formValues = {
         ...this.territoryForm.value,
@@ -85,9 +80,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           this.toastr.success(`${modifiedTerritory.name} a été mis à jour !`);
           this.close.emit();
         },
-        (err) => {
-          this.toastr.error(`Une erreur est survenue lors de la mis à jour du territoire`);
-        },
+        // (err) => {
+        //   this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+        // },
       );
     } else throw new Error('Territory creation not supported');
   }
@@ -208,6 +203,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private setTerritoryFormValue(territory: Territory) {
     // base values for form
     this.editedId = territory ? territory._id : null;
+    console.log('this.editedId : ', this.editedId);
 
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);

@@ -10,7 +10,10 @@ chai.use(chaiAsync);
 const { expect } = chai;
 const apply = perPassenger.apply(true);
 
-const trip = faker.trip([{ seats: 10, is_driver: true }, { seats: 5, is_driver: false }]);
+const trip = faker.trip([
+  { seats: 10, is_driver: true },
+  { seats: 5, is_driver: false },
+]);
 
 describe('Policy rule: per passenger', () => {
   it('should multiply result by number of passenger', async () => {

@@ -18,7 +18,7 @@ export class StatsAction extends Action {
       [
         ['trip.stats'],
         [
-          (params, context) => {
+          (params, context): string => {
             if (
               'territory_id' in params &&
               params.territory_id.length === 1 &&
@@ -27,7 +27,7 @@ export class StatsAction extends Action {
               return 'territory.trip.stats';
             }
           },
-          (params, context) => {
+          (params, context): string => {
             if (
               'operator_id' in params &&
               params.operator_id.length === 1 &&

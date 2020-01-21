@@ -1,4 +1,4 @@
-export function varcharMacro(schema) {
+export function varcharMacro(): { type: string; minLength: number; maxLength: number } {
   return {
     type: 'string',
     minLength: 1,

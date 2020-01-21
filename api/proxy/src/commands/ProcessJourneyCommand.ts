@@ -48,7 +48,7 @@ export class ProcessJourneyCommand implements CommandInterface {
       signature: '-l, --limit <limit>',
       description: 'Limit to apply',
       // tslint:disable-next-line: no-unnecessary-callback-wrapper
-      coerce: (s: string) => Number(s),
+      coerce: (s: string): number => Number(s),
     },
   ];
 
@@ -136,7 +136,7 @@ export class ProcessJourneyCommand implements CommandInterface {
 
       for (const line of result) {
         try {
-          await (<any>handler).handle(line, context);
+          await (handler as any).handle(line, context);
           await writeClient.query({
             text: `
                 INSERT INTO ${options.metatable}

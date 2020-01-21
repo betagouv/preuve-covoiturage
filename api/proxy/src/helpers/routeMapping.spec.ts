@@ -4,6 +4,7 @@ import { Kernel as AbstractKernel } from '@ilos/core';
 import express from 'express';
 import bodyParser from 'body-parser';
 import expressSession from 'express-session';
+import { RPCResponseType } from '@ilos/common';
 
 import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping';
 
@@ -17,7 +18,7 @@ describe('Route mapping', () => {
     lastname: 'Test',
   };
 
-  function responseFactory(method, params) {
+  function responseFactory(method: string, params: any): any {
     return {
       method,
       params,
@@ -38,6 +39,8 @@ describe('Route mapping', () => {
   app.use(
     expressSession({
       secret: 'SECRET',
+      resave: false,
+      saveUninitialized: false,
     }),
   );
 
@@ -47,7 +50,7 @@ describe('Route mapping', () => {
   });
 
   class Kernel extends AbstractKernel {
-    async handle(call) {
+    async handle(call): Promise<RPCResponseType> {
       return {
         jsonrpc: '2.0',
         id: call.id,
@@ -65,7 +68,7 @@ describe('Route mapping', () => {
       verb: 'post',
       route: '/user/:id',
       signature: 'user:update',
-      mapRequest(body, query, params) {
+      mapRequest(body, query, params): any {
         return {
           ...body,
           id: params.id,
@@ -76,7 +79,7 @@ describe('Route mapping', () => {
       verb: 'get',
       route: '/user/:id',
       signature: 'user:read',
-      mapResponse(response) {
+      mapResponse(response): any {
         return {
           ...response,
           params: fakeUser,
@@ -93,7 +96,7 @@ describe('Route mapping', () => {
       verb: 'get',
       route: '/user',
       signature: 'user:list',
-      mapRequest(body, query, params) {
+      mapRequest(body, query): any {
         return {
           ...body,
           ...query,

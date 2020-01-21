@@ -11,7 +11,7 @@ export class AppV1toV2Migration extends ParentMigration {
     super();
   }
 
-  async up() {
+  async up(): Promise<void> {
     const connection = new MongoConnection({
       connectionString: this.config.get('mongo.connectionString'),
     });
@@ -54,7 +54,7 @@ export class AppV1toV2Migration extends ParentMigration {
     console.log('> deleted .applications from all operators');
   }
 
-  async down() {
+  async down(): Promise<void> {
     // No down migration
   }
 }

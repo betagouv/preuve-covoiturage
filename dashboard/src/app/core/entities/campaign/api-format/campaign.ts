@@ -1,15 +1,22 @@
 // tslint:disable:variable-name
 
-import { CampaignInterface } from '~/core/interfaces/campaign/api-format/campaignInterface';
 import { IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 import { RetributionRuleType } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import { GlobalRetributionRuleType } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import { BaseModel } from '~/core/entities/BaseModel';
+import { IFormModel } from '~/core/entities/IFormModel';
+import { IModel } from '~/core/entities/IModel';
+import { IMapModel } from '~/core/entities/IMapModel';
+import { IClone } from '~/core/entities/IClone';
+import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
+import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
+import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/CampaignInterface';
 
-export class Campaign {
+export class Campaign extends BaseModel implements IFormModel, IModel, IMapModel<Campaign>, IClone<Campaign> {
   public _id: number;
-  public territory_id?: number;
+  public territory_id: number;
   public name: string;
   public description: string;
   public start_date: Date;
@@ -24,46 +31,75 @@ export class Campaign {
   public rules: RetributionRuleType[][];
   public global_rules: GlobalRetributionRuleType[];
 
-  constructor(
-    obj: CampaignInterface = {
-      _id: null,
-      name: '',
-      description: '',
-      unit: null,
-      start_date: null,
-      end_date: null,
-      status: null,
-      parent_id: null,
-      rules: [],
-      global_rules: [],
-      ui_status: {
+  constructor(data?: CampaignInterface) {
+    super(data);
+    if (!data) {
+      this._id = null;
+      this.name = '';
+      this.description = '';
+      this.unit = null;
+      this.start_date = null;
+      this.end_date = null;
+      this.status = null;
+      this.parent_id = null;
+      this.rules = [];
+      this.global_rules = [];
+      this.ui_status = {
         for_driver: null,
         for_passenger: null,
         for_trip: null,
         staggered: null,
-      },
-    },
-  ) {
-    this._id = obj._id;
-    this.name = obj.name;
-    this.description = obj.description;
-    this.start_date = obj.start_date;
-    this.end_date = obj.end_date;
-    this.status = obj.status;
-    this.parent_id = obj.parent_id;
-    this.unit = obj.unit;
-    this.rules = obj.rules;
-    this.global_rules = obj.global_rules;
-    this.ui_status = obj.ui_status;
+      };
+    }
+  }
 
-    if (obj.territory_id) {
-      this.territory_id = obj.territory_id;
+  map(data: any): Campaign {
+    super.map(data);
+    this._id = data._id;
+    this.name = data.name;
+    this.description = data.description;
+    this.start_date = data.start_date;
+    this.end_date = data.end_date;
+    this.status = data.status;
+    this.parent_id = data.parent_id;
+    this.unit = data.unit;
+    this.rules = data.rules;
+    this.global_rules = data.global_rules;
+    this.ui_status = data.ui_status;
+
+    if (data.territory_id) {
+      this.territory_id = data.territory_id;
     }
-    if (obj.amount_spent) {
-      this.amount_spent = obj.amount_spent;
+    if (data.amount_spent) {
+      this.amount_spent = data.amount_spent;
     }
-    if (obj.trips_number) {
-      this.trips_number = obj.trips_number;
+    if (data.trips_number) {
+      this.trips_number = data.trips_number;
     }
+    return this;
+  }
+
+  toFormValues(): CampaignUx {
+    return CampaignFormater.toUx(this);
+  }
+
+  updateFromFormValues(formValues: any): void {
+    Object.assign(this, CampaignFormater.toApi(formValues));
+    if (this.parent_id === null) {
+      delete this.parent_id;
+    }
+  }
+
+  toCampaignPatch(formValues): Campaign {
+    const campaign = new Campaign(CampaignFormater.toApi(formValues));
+    delete campaign._id;
+    delete campaign.status;
+    delete campaign.territory_id;
+    delete campaign.parent_id;
+    return campaign;
+  }
+
+  clone(): Campaign {
+    return new Campaign(this);
   }
 }

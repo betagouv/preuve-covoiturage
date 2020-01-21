@@ -21,7 +21,11 @@ import { ApplicationPgRepositoryProvider } from './providers/ApplicationPgReposi
   config: __dirname,
   providers: [ApplicationPgRepositoryProvider],
   validator: [listBinding, findBinding, createBinding, revokeBinding],
-  middlewares: [['can', PermissionMiddleware], ['validate', ValidatorMiddleware], ['scopeIt', ScopeToSelfMiddleware]],
+  middlewares: [
+    ['can', PermissionMiddleware],
+    ['validate', ValidatorMiddleware],
+    ['scopeIt', ScopeToSelfMiddleware],
+  ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [ListApplicationAction, FindApplicationAction, CreateApplicationAction, RevokeApplicationAction],
   commands: [MigrateCommand, MigrateDataCommand],

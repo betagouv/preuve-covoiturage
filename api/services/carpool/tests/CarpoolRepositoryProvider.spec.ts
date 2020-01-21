@@ -1,5 +1,4 @@
 import { describe } from 'mocha';
-import { expect } from 'chai';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { CarpoolRepositoryProvider } from '../src/providers/CarpoolRepositoryProvider';
 import { PeopleWithIdInterface } from '../src/interfaces/Carpool';
@@ -7,7 +6,7 @@ import { PeopleWithIdInterface } from '../src/interfaces/Carpool';
 describe('CarpoolRepositoryProvider', () => {
   let connection: PostgresConnection;
   let repository: CarpoolRepositoryProvider;
-  let acquisition_id: number = 0;
+  const acquisition_id = 0;
   before(async () => {
     connection = new PostgresConnection({
       connectionString: process.env.APP_POSTGRES_URL,
@@ -33,6 +32,7 @@ describe('CarpoolRepositoryProvider', () => {
       acquisition_id: number;
       operator_id: number;
       operator_journey_id: string;
+      operator_trip_id: string;
       created_at: Date;
       operator_class: string;
       trip_id: string;
@@ -40,6 +40,7 @@ describe('CarpoolRepositoryProvider', () => {
       acquisition_id,
       operator_id: 0,
       operator_journey_id: 'myid',
+      operator_trip_id: 'myopid',
       created_at: new Date(),
       operator_class: 'A',
       trip_id: '973b462f-6521-4b57-85c8-970c2d34fb10',
@@ -47,7 +48,7 @@ describe('CarpoolRepositoryProvider', () => {
     const people: PeopleWithIdInterface[] = [
       {
         identity_id: 0,
-        operator_trip_id: 0,
+        // operator_trip_id: 0,
         is_driver: true,
         datetime: new Date(),
         start: {
@@ -72,7 +73,7 @@ describe('CarpoolRepositoryProvider', () => {
       },
       {
         identity_id: 0,
-        operator_trip_id: 0,
+        // operator_trip_id: 0,
         is_driver: false,
         datetime: new Date(),
         start: {

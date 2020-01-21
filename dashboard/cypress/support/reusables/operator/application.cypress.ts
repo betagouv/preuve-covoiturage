@@ -46,12 +46,6 @@ export function cypress_applications(e2e = false) {
     cy.get('.mat-dialog-actions button').click();
   });
 
-  if (e2e) {
-    it('check created item is at top', () => {
-      cy.get('app-list-item:first-child .operatorToken-list-item-name').contains(CypressExpectedApplication.get().name);
-    });
-  }
-
   it('revoke application', () => {
     cy.get('app-list-item:first-child .operatorToken-list-item-actions a').click();
     cy.get('mat-dialog-actions button:nth-child(2)').click();

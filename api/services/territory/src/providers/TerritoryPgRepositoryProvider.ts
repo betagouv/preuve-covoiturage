@@ -1,4 +1,4 @@
-import { provider, NotFoundException } from '@ilos/common';
+import { provider, NotFoundException, KernelInterfaceResolver, ConflictException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { TerritoryInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
@@ -8,13 +8,16 @@ import {
   TerritoryRepositoryProviderInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 
+import { signature as companyFindSignature } from '../shared/company/find.contract';
+import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
+
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
 })
 export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProviderInterface {
   public readonly table = 'territory.territories';
 
-  constructor(protected connection: PostgresConnection) {}
+  constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
   async find(id: number): Promise<TerritoryDbInterface> {
     const query = {
@@ -32,8 +35,27 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     if (result.rowCount === 0) {
       return undefined;
     }
+    const territory = result.rows[0];
+    if (territory.siret) {
+      territory.company = await this.kernel.call(
+        companyFindSignature,
+        { siret: territory.siret },
+        { channel: { service: 'operator' }, call: { user: { permissions: ['company.find'] } } },
+      );
+    }
 
-    return result.rows[0];
+    return territory;
+  }
+
+  async hasDoubleSiretThenFail(siret: string, id = 0): Promise<void> {
+    const query = {
+      text: `SELECT * from ${this.table} WHERE siret = $1 AND _id != $2 `,
+      values: [siret, id],
+    };
+
+    const rowCount = (await this.connection.getClient().query(query)).rowCount;
+    console.log('rowCount : ', rowCount);
+    if (rowCount !== 0) throw new ConflictException('Double siret is not allowed for territory ' + id);
   }
 
   async all(): Promise<TerritoryDbInterface[]> {
@@ -50,6 +72,8 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   }
 
   async create(data: TerritoryInterface): Promise<TerritoryDbInterface> {
+    await this.hasDoubleSiretThenFail(data.siret);
+
     const query = {
       text: `
         INSERT INTO ${this.table}
@@ -86,6 +110,14 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     if (result.rowCount !== 1) {
       throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
     }
+
+    if (data.siret) {
+      await this.kernel.notify(companyFetchSignature, data.siret, {
+        channel: { service: 'operator' },
+        call: { user: { permissions: ['company.fetch'] } },
+      });
+    }
+
     return result.rows[0];
   }
 
@@ -111,6 +143,15 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   // TODO
   async update(data: TerritoryDbInterface): Promise<TerritoryDbInterface> {
     const { _id, ...patch } = data;
+    await this.hasDoubleSiretThenFail(data.siret, _id);
+
+    if (data.siret) {
+      await this.kernel.notify(companyFetchSignature, data.siret, {
+        channel: { service: 'operator' },
+        call: { user: { permissions: ['company.fetch'] } },
+      });
+    }
+
     return this.patch(_id, {
       parent_id: null,
       shortname: null,
@@ -173,11 +214,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows[0];
   }
 
-  async findByInsee(insee: String): Promise<TerritoryDbInterface> {
+  async findByInsee(insee: string): Promise<TerritoryDbInterface> {
     throw new Error('This is not implemented here'); // move to normalization service
   }
 
-  async findByPosition(lon: Number, lat: Number): Promise<TerritoryDbInterface> {
+  async findByPosition(lon: number, lat: number): Promise<TerritoryDbInterface> {
     throw new Error('This is not implemented here'); // move to normalization servie
   }
 }

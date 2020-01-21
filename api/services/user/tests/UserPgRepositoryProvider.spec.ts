@@ -4,10 +4,10 @@ import { ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { UserPgRepositoryProvider } from '../src/providers/UserPgRepositoryProvider';
-import { UserBaseInterface } from '../src/shared/user/common/interfaces/UserBaseInterface';
+import { UserCreateInterface } from '../src/shared/user/common/interfaces/UserCreateInterface';
 
 class Config extends ConfigInterfaceResolver {
-  get(_k: string, fb: string) {
+  get(_k: string, fb: string): string {
     return fb;
   }
 }
@@ -29,7 +29,7 @@ const list = [
 
 const find = ['ui_status', 'permissions', ...list];
 
-const territoryInput: UserBaseInterface = {
+const territoryInput: UserCreateInterface = {
   email: 'territory@toto.com',
   firstname: 'toto',
   lastname: 'tata',
@@ -39,7 +39,7 @@ const territoryInput: UserBaseInterface = {
   territory_id: 1,
 };
 
-const operatorInput: UserBaseInterface = {
+const operatorInput: UserCreateInterface = {
   email: 'operator@toto.com',
   firstname: 'toto',
   lastname: 'tata',
@@ -49,7 +49,7 @@ const operatorInput: UserBaseInterface = {
   // territory_id: 1,
 };
 
-const registryInput: UserBaseInterface = {
+const registryInput: UserCreateInterface = {
   email: 'registry@toto.com',
   firstname: 'toto',
   lastname: 'tata',
@@ -196,8 +196,7 @@ describe('User pg repository', async () => {
       text: `SELECT * FROM ${repository.table} WHERE _id = $1 LIMIT 1`,
       values: [id.registry],
     });
-    expect(result.rows[0]._id).to.eq(id.registry);
-    expect(result.rows[0].deleted_at).to.be.a('date');
+    expect(result.rowCount).to.eq(0);
 
     const resultFromRepository = await repository.find(id.registry);
     expect(resultFromRepository).to.eq(undefined);
@@ -209,8 +208,7 @@ describe('User pg repository', async () => {
       text: `SELECT * FROM ${repository.table} WHERE _id = $1 LIMIT 1`,
       values: [id.territory],
     });
-    expect(result.rows[0]._id).to.eq(id.territory);
-    expect(result.rows[0].deleted_at).to.be.a('date');
+    expect(result.rowCount).to.eq(0);
 
     const resultFromRepository = await repository.find(id.territory);
     expect(resultFromRepository).to.eq(undefined);
@@ -223,7 +221,6 @@ describe('User pg repository', async () => {
       values: [id.operator],
     });
     expect(result.rows[0]._id).to.eq(id.operator);
-    expect(result.rows[0].deleted_at).to.eq(null);
 
     const resultFromRepository = await repository.find(id.operator);
     expect(resultFromRepository).not.to.eq(undefined);

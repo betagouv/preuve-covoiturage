@@ -1,5 +1,5 @@
 import { RPCException } from '@ilos/common';
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 import { bootstrap } from '../../src/bootstrap';
 
@@ -15,7 +15,7 @@ export class MockFactory {
     await this.transport.down();
   }
 
-  public call(method: string, params: any) {
+  public call(method: string, params: any): object {
     return {
       method,
       id: 1,
@@ -35,7 +35,7 @@ export class MockFactory {
     };
   }
 
-  public notify(method: string, params: any) {
+  public notify(method: string, params: any): object {
     return {
       method,
       id: 0,
@@ -55,7 +55,7 @@ export class MockFactory {
     };
   }
 
-  public error(err: RPCException) {
+  public error(err: RPCException): object {
     return {
       status: 200,
       data: {
@@ -70,7 +70,7 @@ export class MockFactory {
     };
   }
 
-  public request() {
+  public request(): AxiosInstance {
     return axios.create({
       baseURL: `http://127.0.0.1:${this.port}`,
       timeout: 1000,

@@ -10,7 +10,7 @@ export const fixedAmount: ApplicableRuleInterface = {
   },
   index: LOW,
   apply(params: number) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       ctx.result = params;
       return next();
     };

@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { finalize, map, takeUntil, tap } from 'rxjs/operators';
+import { filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { Type } from '@angular/core';
 
 import { IModel } from '~/core/entities/IModel';
@@ -66,8 +66,8 @@ export abstract class CrudStore<
     this.rpcCrud = rpcCrud;
     let firstLoad = true;
 
-    this._filterSubject.subscribe((filter) => {
-      if (firstLoad && (filter !== null || !firstLoad)) {
+    this._filterSubject.subscribe((filt) => {
+      if (firstLoad && (filt !== null || !firstLoad)) {
         this.loadList();
         firstLoad = false;
       }
@@ -93,7 +93,6 @@ export abstract class CrudStore<
           if (this._loadCount > 0) this._loadCount -= 1;
         }),
       )
-
       .subscribe((list) => {
         this.entitiesSubject.next(list);
       });
@@ -103,10 +102,27 @@ export abstract class CrudStore<
     this.selectById(entity._id);
   }
 
+  // select Entity from List
+  selectEntityByIdFromList(id: number): Observable<EntityT> {
+    return this.entities$.pipe(
+      filter((entities) => entities.length > 0),
+      map((entities: EntityListT[]) => {
+        const foundEntityListItem = entities.filter((entity) => entity._id === id)[0];
+        if (foundEntityListItem) {
+          const foundEntity = new this.modelType().map(foundEntityListItem);
+          this.entitySubject.next(foundEntity);
+          return foundEntity;
+        }
+        throw Error();
+      }),
+    );
+  }
+
   selectNew(entity: EntityT = new this.modelType()) {
     const newEntity = entity.clone();
     delete newEntity._id;
     this.entitySubject.next(newEntity);
+    return newEntity;
   }
 
   protected selectById(id: number) {
@@ -188,7 +204,7 @@ export abstract class CrudStore<
     );
   }
 
-  create(formValues): Observable<EntityT> {
+  create(formValues: FormModelT): Observable<EntityT> {
     const newEntity = this.entitySubject.value.clone();
     newEntity.updateFromFormValues(formValues);
     this._loadCount += 1;

@@ -41,15 +41,15 @@ export class HttpTransport implements TransportInterface {
 
   constructor(private kernel: KernelInterface) {}
 
-  getKernel() {
+  getKernel(): KernelInterface {
     return this.kernel;
   }
 
-  getInstance() {
+  getInstance(): http.Server {
     return this.server;
   }
 
-  async up(opts: string[] = []) {
+  async up(opts: string[] = []): Promise<void> {
     this.getProviders();
 
     const optsPort = parseInt(opts[0], 10);
@@ -61,13 +61,13 @@ export class HttpTransport implements TransportInterface {
     this.start(port);
   }
 
-  async down() {
+  async down(): Promise<void> {
     if (this.server) {
       this.server.close();
     }
   }
 
-  setup() {
+  setup(): void {
     this.registerBeforeAllHandlers();
     this.registerBodyHandler();
     this.registerSessionHandler();
@@ -85,23 +85,23 @@ export class HttpTransport implements TransportInterface {
     return this.app;
   }
 
-  private async getProviders() {
+  private async getProviders(): Promise<void> {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
     this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
     this.tokenProvider = this.kernel.getContainer().get(TokenProviderInterfaceResolver);
   }
 
-  private registerBeforeAllHandlers() {
+  private registerBeforeAllHandlers(): void {
     this.kernel.getContainer().get(SentryProvider);
     this.app.use(Sentry.Handlers.requestHandler());
   }
 
-  private registerBodyHandler() {
+  private registerBodyHandler(): void {
     this.app.use(bodyParser.json({ limit: '2mb' }));
     this.app.use(bodyParser.urlencoded({ extended: false }));
   }
 
-  private registerSessionHandler() {
+  private registerSessionHandler(): void {
     // needed for reverse-proxy compatibility
     // must be set before configuring the session
     this.app.set('trust proxy', 1);
@@ -129,7 +129,7 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerSecurity() {
+  private registerSecurity(): void {
     // protect with typical headers and enable cors
     this.app.use(helmet());
 
@@ -149,7 +149,7 @@ export class HttpTransport implements TransportInterface {
     this.app.use(serverTokenMiddleware(this.kernel, this.tokenProvider));
   }
 
-  private registerGlobalMiddlewares() {
+  private registerGlobalMiddlewares(): void {
     this.app.use(signResponseMiddleware);
     this.app.use(dataWrapMiddleware);
   }
@@ -164,7 +164,7 @@ export class HttpTransport implements TransportInterface {
    *    v: number
    * }
    */
-  private registerLegacyServerRoute() {
+  private registerLegacyServerRoute(): void {
     // V1 payload
     this.app.post(
       '/journeys/push',
@@ -198,8 +198,9 @@ export class HttpTransport implements TransportInterface {
 
         // warn the user about this endpoint deprecation agenda
         // https://github.com/betagouv/preuve-covoiturage/issues/383
-        const warning =
-          'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
+        // prettier-ignore
+        // eslint-disable-next-line
+        const warning = 'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
 
         // correct error code on Mongo conflicts
         let code = mapStatusCode(response);
@@ -231,7 +232,7 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerStatsRoutes() {
+  private registerStatsRoutes(): void {
     this.app.get(
       '/stats',
       asyncHandler(async (req, res, next) => {
@@ -248,7 +249,7 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerAuthRoutes() {
+  private registerAuthRoutes(): void {
     /**
      * Log the user in based on email and password combination
      */
@@ -372,7 +373,7 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerApplicationRoutes() {
+  private registerApplicationRoutes(): void {
     /**
      * Create an application
      */
@@ -416,7 +417,7 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private registerAfterAllHandlers() {
+  private registerAfterAllHandlers(): void {
     this.app.use(Sentry.Handlers.errorHandler());
 
     // general error handler
@@ -427,7 +428,7 @@ export class HttpTransport implements TransportInterface {
   /**
    * Calls to the /rpc endpoint
    */
-  private registerCallHandler() {
+  private registerCallHandler(): void {
     const endpoint = this.config.get('proxy.rpc.endpoint');
     this.app.get(
       endpoint,
@@ -480,7 +481,7 @@ export class HttpTransport implements TransportInterface {
     );
   }
 
-  private start(port: number = 8080) {
+  private start(port = 8080): void {
     this.server = this.app.listen(port, () => console.log(`Listening on port ${port}`));
   }
 

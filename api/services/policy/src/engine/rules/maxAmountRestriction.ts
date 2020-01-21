@@ -27,7 +27,7 @@ export const maxAmountRestriction: ApplicableRuleInterface = {
   },
   index: HIGHEST,
   apply(params: MaxAmountParameters) {
-    return async (ctx, next) => {
+    return async (ctx, next): Promise<void> => {
       const datetime = ctx.person.datetime;
       const [month, year] = [datetime.getMonth(), datetime.getFullYear()];
       let keyPeriod = 'global';

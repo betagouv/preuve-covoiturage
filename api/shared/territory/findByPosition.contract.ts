@@ -1,8 +1,8 @@
 import { TerritoryInterface } from './common/interfaces/TerritoryInterface';
 
 export interface ParamsInterface {
-  lat: Number;
-  lon: Number;
+  lat: number;
+  lon: number;
 }
 
 export interface ResultInterface extends TerritoryInterface {

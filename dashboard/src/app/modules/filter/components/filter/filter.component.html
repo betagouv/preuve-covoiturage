@@ -25,7 +25,9 @@
                 formControlName="start"
                 [matDatepicker]="startDatePicker"
                 placeholder="Choisir une date"
+                (input)="onDateInput()"
               />
+              <mat-error *ngIf="startControl.hasError('dateRange')"> </mat-error>
               <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #startDatePicker></mat-datepicker>
             </mat-form-field>
@@ -34,17 +36,23 @@
               <input matInput formControlName="end" [matDatepicker]="endDatePicker" placeholder="Choisir une date" />
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #endDatePicker></mat-datepicker>
+              <mat-error *ngIf="endControl.hasError('dateRange')"> </mat-error>
             </mat-form-field>
+            <mat-error *ngIf="startControl.hasError('dateRange')">
+              La date de début ne peut pas être défini après la date de fin.
+            </mat-error>
           </div>
           <div class="filter-timeAndDays">
             <ng-container formGroupName="hour">
               <mat-form-field class="start-time" appearance="outline">
                 <mat-label>De</mat-label>
-                <input matInput formControlName="start" type="time" step="3600" />
+                <input matInput #minTime formControlName="start" type="number" min="0" max="23" />
+                <span class="filter-timeAndDays-hourUnit" *ngIf="minTime.value" matSuffix>H</span>
               </mat-form-field>
               <mat-form-field class="end-time" appearance="outline">
                 <mat-label>A</mat-label>
-                <input matInput formControlName="end" type="time" step="3600" />
+                <input matInput #maxTime formControlName="end" type="number" min="0" max="23" />
+                <span class="filter-timeAndDays-hourUnit" *ngIf="maxTime.value" matSuffix>H</span>
               </mat-form-field>
             </ng-container>
             <mat-form-field class="days" appearance="outline">
@@ -117,12 +125,15 @@
             <app-operators-autocomplete
               *ngIf="hasGroupRegistryOrTerritory"
               [parentForm]="filterForm"
+              [onlyVisible]="true"
             ></app-operators-autocomplete>
           </div>
         </div>
       </div>
       <div class="filter-footer">
-        <button mat-flat-button type="button" color="primary" (click)="filterClick()">Affiner les résultats</button>
+        <button mat-flat-button type="button" color="primary" [disabled]="!filterForm.valid" (click)="filterClick()">
+          Affiner les résultats
+        </button>
         <button mat-button class="filter-footer-reinitialize" type="button" (click)="reinitializeClick()">
           Réinitialiser les filtres
         </button>

@@ -6,10 +6,14 @@ import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/Campa
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
+import { CampaignInterface } from '../interfaces';
 
 @handler(handlerConfig)
 export class ListCampaignAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['incentive-campaign.list']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['incentive-campaign.list']],
+    ['validate', alias],
+  ];
   protected readonly sensitiveRules = ['operator_whitelist_filter'];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
@@ -27,7 +31,7 @@ export class ListCampaignAction extends AbstractAction {
     return result;
   }
 
-  protected removeSensitiveRules(campaign) {
+  protected removeSensitiveRules(campaign): CampaignInterface {
     return {
       ...campaign,
       global_rules: Array.isArray(campaign.global_rules)

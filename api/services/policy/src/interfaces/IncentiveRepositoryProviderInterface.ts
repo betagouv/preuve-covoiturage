@@ -1,4 +1,3 @@
-import { CampaignInterface } from './CampaignInterface';
 import { IncentiveInterface } from './IncentiveInterface';
 
 export interface IncentiveRepositoryProviderInterface {

@@ -26,7 +26,7 @@ export class NotifyUserAction extends AbstractAction {
         fullname,
         opts,
       },
-      templateId ? { templateId } : null,
+      templateId ? { template: templateId } : null,
     );
   }
 }

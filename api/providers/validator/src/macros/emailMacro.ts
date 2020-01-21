@@ -1,4 +1,4 @@
-export function emailMacro(schema) {
+export function emailMacro(): { type: string; format: string; minLength: number; maxLength: number } {
   return {
     type: 'string',
     format: 'email',

@@ -7,7 +7,7 @@ export class MetadataWrapper implements MetaInterface {
     this.data = data ? new Map(Object.entries(data)) : new Map();
   }
 
-  get signature() {
+  get signature(): [number, string] {
     return [this.id, this.key];
   }
 

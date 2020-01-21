@@ -17,7 +17,7 @@ describe('Fraudcheck repository', async () => {
   let connection: PostgresConnection;
 
   const fakeMethod = 'mymethod';
-  let acquisitionId = 1;
+  const acquisitionId = 1;
   let id: number;
   before(async () => {
     connection = new PostgresConnection({

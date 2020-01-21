@@ -19,17 +19,17 @@ export class DeleteUserAction extends AbstractAction {
       [
         ['user.delete'],
         [
-          (params, context) => {
+          (params, context): string => {
             if ('_id' in params && params._id === context.call.user._id) {
               return 'profile.delete';
             }
           },
-          (_params, context) => {
+          (_params, context): string => {
             if (context.call.user.territory_id) {
               return 'territory.users.remove';
             }
           },
-          (_params, context) => {
+          (_params, context): string => {
             if (context.call.user.operator_id) {
               return 'operator.users.remove';
             }

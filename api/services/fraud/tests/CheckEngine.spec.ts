@@ -21,7 +21,7 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 
 describe('Check engine', async () => {
-  let meta: FraudCheck = {
+  const meta: FraudCheck = {
     _id: 1,
     karma: 0,
     meta: {},
