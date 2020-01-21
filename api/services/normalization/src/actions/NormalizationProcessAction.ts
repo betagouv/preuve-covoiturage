@@ -48,7 +48,7 @@ const context: ContextType = {
 
 // Enrich position data
 @handler(handlerConfig)
-export class NormalisationProcessAction extends AbstractAction {
+export class NormalizationProcessAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
   constructor(private kernel: KernelInterfaceResolver) {
@@ -128,6 +128,7 @@ export class NormalisationProcessAction extends AbstractAction {
     // Cost ------------------------------------------------------------------------------------
 
     try {
+      console.log('>> Cost');
       const { cost, payments } = await this.kernel.call<CostParamsInterface, CostResultInterface>(
         costSignature,
         {
@@ -144,11 +145,15 @@ export class NormalisationProcessAction extends AbstractAction {
       finalPerson['cost'] = cost;
       finalPerson.payments = payments;
     } catch (e) {
-      console.error('normalisation ', costSignature, ' failed on ', finalPerson);
+      console.error('!! normalisation ', costSignature, ' failed on ', finalPerson, e.message);
+      console.log(e.stack);
+
       throw e;
     }
 
     // Identity ------------------------------------------------------------------------------------
+    console.log('>> Identity');
+
     try {
       finalPerson.identity = await this.kernel.call<IdentityParamsInterface, IdentityResultInterface>(
         identitySignature,
@@ -156,12 +161,17 @@ export class NormalisationProcessAction extends AbstractAction {
         context,
       );
     } catch (e) {
-      console.error('normalisation ', identitySignature, ' failed on ', finalPerson);
+      console.error('!! normalisation ', identitySignature, ' failed on ', finalPerson, e.message);
+      console.log(e.stack);
+
       throw e;
     }
 
     // Geo ------------------------------------------------------------------------------------
+
     try {
+      console.log('>> Geo');
+
       const { start, end } = await this.kernel.call<GeoParamsInterface, GeoResultInterface>(
         geoSignature,
         {
@@ -176,6 +186,8 @@ export class NormalisationProcessAction extends AbstractAction {
 
       // Route ------------------------------------------------------------------------------------
       try {
+        console.log('>> Route');
+
         const { calc_distance, calc_duration } = await this.kernel.call<RouteParamsInterface, RouteResultInterface>(
           routeSignature,
           {
@@ -188,16 +200,21 @@ export class NormalisationProcessAction extends AbstractAction {
         finalPerson.calc_distance = calc_distance;
         finalPerson.calc_duration = calc_duration;
       } catch (e) {
-        console.error('normalisation ', routeSignature, ' failed on ', finalPerson);
+        console.error('!! normalisation ', routeSignature, ' failed on ', finalPerson, e.message);
+        console.log(e.stack);
         throw e;
       }
     } catch (e) {
-      console.error('normalisation ', geoSignature, ' failed on ', finalPerson);
+      console.error('!! normalisation ', geoSignature, ' failed on ', finalPerson, e.message);
+      console.log(e.stack);
+
       throw e;
     }
 
     // Territory ------------------------------------------------------------------------------------
     try {
+      console.log('>> Territory');
+
       const territories = await this.kernel.call<TerritoryParamsInterface, TerritoryResultInterface>(
         territorySignature,
         {
@@ -210,7 +227,9 @@ export class NormalisationProcessAction extends AbstractAction {
       finalPerson.start.territory_id = territories.start;
       finalPerson.end.territory_id = territories.end;
     } catch (e) {
-      console.error('normalisation ', territorySignature, ' failed on ', finalPerson);
+      console.error('!! normalisation ', territorySignature, ' failed on ', finalPerson, e.message);
+      console.log(e.stack);
+
       throw e;
     }
 

@@ -37,23 +37,31 @@ export class CrosscheckAction extends Action {
       p1.is_driver > p2.is_driver ? 1 : -1,
     );
 
-    const driver = sortedArray[0].is_driver ? sortedArray.shift() : null;
-    const passengers = sortedArray;
+    const driverInd = sortedArray.findIndex((user) => user.is_driver);
+
+    const passengers = [...sortedArray];
+    const driver = driverInd !== -1 ? passengers.splice(driverInd, 1)[0] : null;
+
+    // console.log('driver : ', driver);
     // const passengers = people.filter((p) => !p.is_driver);
 
     let driverIdentity: { _id: number; uuid: string } = null;
 
-    if (driver !== null) {
+    console.log('driverIdentity : ', driverIdentity);
+
+    if (driver) {
       driverIdentity = await this.identity.create(driver.identity);
       toProcess.push({ ...driver, identity_id: driverIdentity._id });
     }
 
+    console.log('sortedArray[0] : ', sortedArray[0]);
+
     // Get a trip id
     const tripId = await this.crosscheck.getTripId({
       operator_trip_id: journey.operator_trip_id,
-      datetime: driver.datetime,
-      start: driver.start,
-      end: driver.end,
+      datetime: sortedArray[0].datetime,
+      start: sortedArray[0].start,
+      end: sortedArray[0].end,
       identity_uuid: driver !== null ? driverIdentity.uuid : null,
     });
 
