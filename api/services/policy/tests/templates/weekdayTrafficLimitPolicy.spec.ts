@@ -37,7 +37,7 @@ describe('Template: weekdayTrafficLimitPolicy', () => {
       const r = await engine.process(trip, policy);
       results.push(...r);
     }
-    expect(results).to.deep.members([
+    expect(results.filter(r => r.amount > 0)).to.deep.members([
       { policy_id, carpool_id: 4, identity_uuid: '4', amount: 300 },
       { policy_id, carpool_id: 4, identity_uuid: '5', amount: 75 },
       { policy_id, carpool_id: 5, identity_uuid: '4', amount: 1000 },

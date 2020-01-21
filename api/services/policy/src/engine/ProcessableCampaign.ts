@@ -85,6 +85,7 @@ class RuleSet {
     ctx = await this.transform(ctx);
     result = await this.set(ctx);
     context.result = await this.modify(ctx, result);
+    context.stack.push(`pathresult: ${context.result}`);
   }
 
   filterSql(): { text: string, values: any[] } {
@@ -112,15 +113,20 @@ class RuleSet {
 
     let currentResult = result;
     for(const rule of this.modifierSet) {
-      currentResult = await rule.modify(context, result);
+      currentResult = await rule.modify(context, currentResult);
+      context.stack.push(`${(rule.constructor as StaticRuleInterface).slug} : ${currentResult}`);
     }
 
     return currentResult;
   }
 
   async set(context: RuleHandlerContextInterface): Promise<number> {
-    if (this.setterSet.length === 0) { return 0 };
-    return this.setterSet[0].set(context);
+    let result: number = 0;
+    if (this.setterSet.length > 0) {
+      result = await this.setterSet[0].set(context);
+      context.stack.push(`${(this.setterSet[0].constructor as StaticRuleInterface).slug} : ${result}`);
+    }
+    return result;
   }
 
   async transform(context: RuleHandlerContextInterface): Promise<RuleHandlerContextInterface> {
@@ -150,22 +156,32 @@ export class Campaign extends RuleSet {
 
   async apply(context: RuleHandlerParamsInterface): Promise<void> {
     let { result, ...ctx } = context;
-    await this.filter(ctx);
-    ctx = await this.transform(ctx);
-    result = 0;
+    try {
+      result = 0;
+      await this.filter(ctx);
+      ctx = await this.transform(ctx);
 
-    for(const ruleSet of this.ruleSets) {
-      const currentContext = { ...ctx, result: 0 };
-      try {
-        await ruleSet.apply(currentContext);
-      } catch(e) {
-        if (!(e instanceof NotApplicableTargetException)) {
-          throw e;
+      for(const ruleSet of this.ruleSets) {
+        const currentContext = { ...ctx, result: 0 };
+        try {
+          await ruleSet.apply(currentContext);
+        } catch(e) {
+          if (!(e instanceof NotApplicableTargetException)) {
+            throw e;
+          }
+          context.stack.push(e.message);
         }
+        result += currentContext.result;
       }
-      result += currentContext.result;
+  
+      context.stack.push(`result: ${result}`);
+      context.result = await this.modify(ctx, result);
+    } catch(e) {
+      if (!(e instanceof NotApplicableTargetException)) {
+        throw e;
+      }
+      context.stack.push(e.message);
+      context.result = 0;
     }
-
-    context.result = await this.modify(ctx, result);
   }
 }

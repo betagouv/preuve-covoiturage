@@ -52,23 +52,16 @@ export class PolicyEngine {
     const meta = await this.metaRepository.get(campaign._id);
 
     for (const person of trip.people) {
-      const ctx = { trip, person, meta, result: undefined };
-      try {
-        await pc.apply(ctx);
-        results.push({
-          policy_id: campaign._id,
-          carpool_id: person.carpool_id,
-          identity_uuid: person.identity_uuid,
-          amount: Math.round(ctx.result),
-          // status
-          // detail
-        });
-      } catch(e) {
-        console.log(e.name, e.message);
-        if (!(e instanceof NotApplicableTargetException)) {
-          throw e;
-        }
-      }
+      const ctx = { trip, person, meta, result: undefined, stack: [] };
+      await pc.apply(ctx);
+      results.push({
+        policy_id: campaign._id,
+        carpool_id: person.carpool_id,
+        identity_uuid: person.identity_uuid,
+        amount: Math.round(ctx.result),
+        // status
+        // detail:
+      });
     }
 
     await this.metaRepository.set(meta);

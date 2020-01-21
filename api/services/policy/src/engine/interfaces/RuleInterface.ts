@@ -9,12 +9,10 @@ export interface RuleHandlerContextInterface {
   person: PersonInterface;
   trip: TripInterface;
   meta: MetaInterface;
+  stack: string[];
 }
 
-export interface RuleHandlerParamsInterface {
-  person: PersonInterface;
-  trip: TripInterface;
-  meta: MetaInterface;
+export interface RuleHandlerParamsInterface extends RuleHandlerContextInterface {
   result: number | undefined;
 }
 

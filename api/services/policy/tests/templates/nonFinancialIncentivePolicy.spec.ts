@@ -37,7 +37,7 @@ describe('Template: nonFinancialIncentivePolicy', () => {
       const r = await engine.process(trip, policy);
       results.push(...r);
     }
-    expect(results).to.deep.members([
+    expect(results.filter(r => r.amount > 0)).to.deep.members([
       { policy_id, carpool_id: 3, identity_uuid: '4', amount: 10 },
       { policy_id, carpool_id: 3, identity_uuid: '5', amount: 5 },
       { policy_id, carpool_id: 4, identity_uuid: '4', amount: 30 },
