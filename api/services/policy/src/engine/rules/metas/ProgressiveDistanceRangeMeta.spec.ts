@@ -1,5 +1,4 @@
 import chai from 'chai';
-import { ProgressiveDistanceRangeMeta } from './ProgressiveDistanceRangeMeta';
 import { ProcessableCampaign } from '../../ProcessableCampaign';
 import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
@@ -87,7 +86,7 @@ describe('Policy rule: progressive distance range meta', () => {
     expect(data.result).to.eq(
       1 * 30 + // de 0 à 1 km = 30cts
       4 * 20 + // de 1 à 5 km = 20cts
-      5 * 10 // de 5 à 10 km = 10 cts
+        5 * 10, // de 5 à 10 km = 10 cts
     );
   });
 });

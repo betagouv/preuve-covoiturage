@@ -26,7 +26,7 @@ export class DistanceBoundingTransformer extends TransformerRule<DistanceBoundin
   };
 
   async transform(context: RuleHandlerParamsInterface): Promise<RuleHandlerParamsInterface> {
-    if(this.parameters.minimum) {
+    if (this.parameters.minimum) {
       context.person.distance = Math.max(this.parameters.minimum, context.person.distance);
     }
     if (this.parameters.maximum) {

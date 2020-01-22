@@ -1,7 +1,7 @@
 import { TRANSFORMER } from '../helpers/type';
 import { HIGH } from '../helpers/priority';
 import { AbstractRule } from './AbstractRule';
-import { TransformerRuleInterface, RuleHandlerParamsInterface, RuleHandlerContextInterface } from '../interfaces';
+import { TransformerRuleInterface, RuleHandlerParamsInterface } from '../interfaces';
 
 export abstract class TransformerRule<P = any> extends AbstractRule<P> implements TransformerRuleInterface {
   static readonly type = TRANSFORMER;
@@ -9,7 +9,7 @@ export abstract class TransformerRule<P = any> extends AbstractRule<P> implement
 
   async apply(context: RuleHandlerParamsInterface): Promise<void> {
     const newContext = await this.transform(context);
-    Object.keys(newContext).forEach(k => {
+    Object.keys(newContext).forEach((k) => {
       context[k] = newContext[k];
     });
   }
