@@ -37,7 +37,7 @@ describe('Template: pollutionLimitPolicy', () => {
       const r = await engine.process(trip, policy);
       results.push(...r);
     }
-    expect(results.filter(r => r.amount > 0)).to.deep.members([
+    expect(results.filter((r) => r.amount > 0)).to.deep.members([
       { policy_id, carpool_id: 3, identity_uuid: '4', amount: 100 },
       { policy_id, carpool_id: 3, identity_uuid: '5', amount: 2 },
       { policy_id, carpool_id: 4, identity_uuid: '4', amount: 300 },

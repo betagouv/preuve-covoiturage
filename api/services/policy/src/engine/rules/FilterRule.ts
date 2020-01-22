@@ -2,7 +2,6 @@ import { FILTER } from '../helpers/type';
 import { HIGH } from '../helpers/priority';
 import { RuleHandlerParamsInterface, FilterRuleInterface, RuleHandlerContextInterface } from '../interfaces';
 import { AbstractRule } from './AbstractRule';
-import { NotApplicableTargetException } from '../exceptions/NotApplicableTargetException';
 
 export abstract class FilterRule<P = any> extends AbstractRule<P> implements FilterRuleInterface {
   static readonly type = FILTER;

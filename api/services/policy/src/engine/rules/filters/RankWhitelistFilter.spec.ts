@@ -17,29 +17,23 @@ const trip = faker.trip([{ operator_class: 'A' }, { operator_class: 'B' }]);
 describe('Policy rule: rank filter', () => {
   it('should throw error if rank out of whitelist', () => {
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[1],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[1],
+      }),
     ).to.eventually.rejectedWith(NotApplicableTargetException, RankWhitelistFilter.description);
   });
 
   it('should do nothing if rank in whitelist', () => {
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[0],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[0],
+      }),
     ).to.eventually.fulfilled;
   });
 });

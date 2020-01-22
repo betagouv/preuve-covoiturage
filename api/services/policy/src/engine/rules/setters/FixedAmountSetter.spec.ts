@@ -15,10 +15,11 @@ const trip = faker.trip([{}]);
 describe('Policy rule: fixed amount', () => {
   it('should replace result by fixed amount', async () => {
     const context = {
-      result: 0,
-      person: trip.people[0],
       trip,
       meta,
+      stack: [],
+      result: 0,
+      person: trip.people[0],
     };
     await test.apply(context);
     expect(context.result).to.eq(amount);

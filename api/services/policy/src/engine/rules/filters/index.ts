@@ -9,6 +9,7 @@ import { RankWhitelistFilter } from './RankWhitelistFilter';
 import { TimeRangeFilter } from './TimeRangeFilter';
 import { WeekdayFilter } from './WeekdayFilter';
 import { PassengerOnlyFilter } from './PassengerOnlyFilter';
+import { MetaMaximumFilter } from './MetaMaximumFilter';
 
 export const filters: StaticRuleInterface[] = [
   AdultOnlyFilter,
@@ -16,6 +17,7 @@ export const filters: StaticRuleInterface[] = [
   DriverOnlyFilter,
   InseeBlacklistFilter,
   InseeWhitelistFilter,
+  MetaMaximumFilter,
   OperatorWhitelistFilter,
   PassengerOnlyFilter,
   RankWhitelistFilter,

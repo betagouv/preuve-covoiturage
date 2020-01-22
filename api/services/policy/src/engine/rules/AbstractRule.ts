@@ -6,7 +6,7 @@ export abstract class AbstractRule<P = any> {
   static readonly slug: string;
   static readonly index: priority;
   static readonly type: type;
-  static readonly schema?: { [k:string]: any };
+  static readonly schema?: { [k: string]: any };
   static readonly description?: string;
 
   constructor(protected parameters?: P) {}

@@ -62,7 +62,7 @@ describe('Policy engine', () => {
     });
 
     const result = await engine.process(trip, fakeCampaign);
-    console.log({ result });
+
     expect(result).to.be.an('array');
     expect(result.length).to.eq(1);
     expect(result[0].policy_id).to.eq(fakeCampaign._id);

@@ -33,15 +33,12 @@ describe('Policy rule: insee white and black list', () => {
     ]);
 
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[0],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[0],
+      }),
     ).to.eventually.rejectedWith(NotApplicableTargetException, InseeBlacklistFilter.description);
   });
 
@@ -54,34 +51,28 @@ describe('Policy rule: insee white and black list', () => {
     ]);
 
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[1],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[1],
+      }),
     ).to.eventually.fulfilled;
   });
 
   it('should throw error if start or end is in blacklist with OR operator', () => {
     const test = new InseeBlacklistFilter([
       { start: ['A'], end: [] },
-      { start: [], end: ['A'] }
+      { start: [], end: ['A'] },
     ]);
 
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[1],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[1],
+      }),
     ).to.eventually.rejectedWith(NotApplicableTargetException, InseeBlacklistFilter.description);
   });
 
@@ -94,15 +85,12 @@ describe('Policy rule: insee white and black list', () => {
     ]);
 
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[1],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[1],
+      }),
     ).to.eventually.rejectedWith(NotApplicableTargetException, InseeWhitelistFilter.description);
   });
 
@@ -115,15 +103,12 @@ describe('Policy rule: insee white and black list', () => {
     ]);
 
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[0],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[0],
+      }),
     ).to.eventually.fulfilled;
   });
 
@@ -134,15 +119,12 @@ describe('Policy rule: insee white and black list', () => {
     ]);
 
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[1],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[1],
+      }),
     ).to.eventually.fulfilled;
   });
 });

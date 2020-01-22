@@ -5,7 +5,7 @@ import { FilterRule } from '../FilterRule';
 export class RankWhitelistFilter extends FilterRule<string[]> {
   static readonly slug: string = 'rank_whitelist_filter';
   static readonly description: string = 'Filtre par classe de preuve';
-  static readonly schema: { [k:string]: any } = {
+  static readonly schema: { [k: string]: any } = {
     type: 'array',
     items: {
       type: 'string',

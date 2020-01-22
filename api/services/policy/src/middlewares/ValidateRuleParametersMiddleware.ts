@@ -12,7 +12,7 @@ import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignIn
 import { rules } from '../engine/rules';
 
 const availablePolicieSlugs = rules.map((policy) => policy.slug);
-const noParameterRuleSlugs = rules.filter(r => !('schema' in r)).map(r => r.slug);
+const noParameterRuleSlugs = rules.filter((r) => !('schema' in r)).map((r) => r.slug);
 
 // TODO : refactor
 @middleware()

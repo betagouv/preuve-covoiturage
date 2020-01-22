@@ -17,29 +17,23 @@ const trip = faker.trip([{ is_driver: true }, { is_driver: false }]);
 describe('Policy rule: passenger only filter', () => {
   it('should throw error if person is not passenger', () => {
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[0],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        person: trip.people[0],
+        trip,
+        meta,
+        stack: [],
+      }),
     ).to.eventually.rejectedWith(NotApplicableTargetException, PassengerOnlyFilter.description);
   });
 
   it('should do nothing if person is passenger', () => {
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[1],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        trip,
+        meta,
+        stack: [],
+        person: trip.people[1],
+      }),
     ).to.eventually.fulfilled;
   });
 });

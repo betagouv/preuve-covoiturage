@@ -282,7 +282,7 @@ export const weekdayTrafficLimitPolicy = {
     {
       slug: 'max_trip_per_target_restriction',
       parameters: {
-        target: 'passenger_modifier',
+        target: 'passenger',
         amount: 2,
         period: 'day',
       },
@@ -418,7 +418,7 @@ export const pollutionLimitPolicy = {
     {
       slug: 'max_trip_per_target_restriction',
       parameters: {
-        target: 'passenger_modifier',
+        target: 'passenger',
         amount: 2,
         period: 'day',
       },

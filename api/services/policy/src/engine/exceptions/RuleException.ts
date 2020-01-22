@@ -1,2 +1,1 @@
-export class RuleException extends Error {
-}
+export class RuleException extends Error {}

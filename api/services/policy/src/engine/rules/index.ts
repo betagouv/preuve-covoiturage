@@ -4,13 +4,7 @@ import { StaticRuleInterface } from '../interfaces/RuleInterface';
 import { filters } from './filters';
 import { modifiers } from './modifiers';
 import { setters } from './setters';
+import { posts } from './posts';
+import { metas } from './metas';
 
-/* import other rules */
-import { others } from './others';
-
-export const rules: StaticRuleInterface[] = [
-  ...filters,
-  ...modifiers,
-  ...setters,
-  ...others,
-];
+export const rules: StaticRuleInterface[] = [...filters, ...modifiers, ...setters, ...posts, ...metas];

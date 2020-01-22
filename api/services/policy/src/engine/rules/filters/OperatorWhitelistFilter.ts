@@ -5,7 +5,7 @@ import { FilterRule } from '../FilterRule';
 export class OperatorWhitelistFilter extends FilterRule<number[]> {
   static readonly slug: string = 'operator_whitelist_filter';
   static readonly description: string = 'Filtre par opérateur';
-  static readonly schema: { [k:string]: any } = {
+  static readonly schema: { [k: string]: any } = {
     type: 'array',
     items: { macro: 'serial' },
   };

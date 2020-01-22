@@ -5,7 +5,7 @@ import { FilterRule } from '../FilterRule';
 export class WeekdayFilter extends FilterRule<number[]> {
   static readonly slug: string = 'weekday_filter';
   static readonly description: string = "La politique n'est applicable que sur les jours indiqué";
-  static readonly schema: { [k:string]: any } = {
+  static readonly schema: { [k: string]: any } = {
     type: 'array',
     items: {
       type: 'integer',
@@ -14,7 +14,7 @@ export class WeekdayFilter extends FilterRule<number[]> {
     },
   };
   async filter(ctx: RuleHandlerContextInterface): Promise<void> {
-    if(this.parameters.indexOf(ctx.person.datetime.getDay()) < 0) {
+    if (this.parameters.indexOf(ctx.person.datetime.getDay()) < 0) {
       throw new NotApplicableTargetException(WeekdayFilter.description);
     }
   }

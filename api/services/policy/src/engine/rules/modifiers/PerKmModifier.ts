@@ -6,6 +6,6 @@ export class PerKmModifier extends ModifierRule {
   static readonly description: string = 'Le montant est multiplié par le nombre de km';
 
   async modify(ctx: RuleHandlerContextInterface, result: number): Promise<number> {
-    return result * ctx.person.distance / 1000;
+    return (result * ctx.person.distance) / 1000;
   }
 }

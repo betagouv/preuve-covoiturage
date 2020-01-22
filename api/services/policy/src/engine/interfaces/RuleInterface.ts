@@ -29,7 +29,7 @@ export interface StaticRuleInterface<H = MetaOrApplicableRuleInterface, P = any>
   schema?: { [k: string]: any };
   index?: priority;
   type: type;
-  new(params?: P): H;
+  new (params?: P): H;
 }
 
 // apply(parameters?: any): RuleHandlerInterface;
@@ -43,12 +43,12 @@ export interface MetaRuleInterface {
 }
 
 export interface FilterRuleInterface extends AppliableRuleInterface {
-  filterSql?(): { text: string, values: any[] };
+  filterSql?(): { text: string; values: any[] };
   filter(context: RuleHandlerContextInterface): Promise<void>;
-};
+}
 
 export interface ModifierRuleInterface extends AppliableRuleInterface {
-  modify(context: RuleHandlerContextInterface, result: number): Promise<number>
+  modify(context: RuleHandlerContextInterface, result: number): Promise<number>;
 }
 
 export interface SetterRuleInterface extends AppliableRuleInterface {
@@ -59,4 +59,10 @@ export interface TransformerRuleInterface extends AppliableRuleInterface {
   transform(context: RuleHandlerContextInterface): Promise<RuleHandlerContextInterface>;
 }
 
-export type MetaOrApplicableRuleInterface = FilterRuleInterface | MetaRuleInterface | ModifierRuleInterface | SetterRuleInterface | TransformerRuleInterface;
+export type MetaOrApplicableRuleInterface =
+  | AppliableRuleInterface
+  | FilterRuleInterface
+  | MetaRuleInterface
+  | ModifierRuleInterface
+  | SetterRuleInterface
+  | TransformerRuleInterface;

@@ -10,7 +10,7 @@ interface Range {
 export class TimeRangeFilter extends FilterRule<Range[]> {
   static readonly slug: string = 'time_range_filter';
   static readonly description: string = 'Filtre par horaire';
-  static readonly schema: { [k:string]: any } = {
+  static readonly schema: { [k: string]: any } = {
     type: 'array',
     items: {
       type: 'object',

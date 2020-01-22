@@ -1,17 +1,17 @@
 import {
   RuleInterface,
   StaticRuleInterface,
-  MetaOrApplicableRuleInterface,
   MetaRuleInterface,
   FilterRuleInterface,
   SetterRuleInterface,
   ModifierRuleInterface,
   TransformerRuleInterface,
   RuleHandlerContextInterface,
-  RuleHandlerParamsInterface
+  RuleHandlerParamsInterface,
+  AppliableRuleInterface,
 } from './interfaces';
 import { rules as availableRules } from './rules';
-import { META, FILTER, TRANSFORMER, SETTER, MODIFIER } from './helpers/type';
+import { META, FILTER, TRANSFORMER, SETTER, MODIFIER, POST } from './helpers/type';
 import { UnprocessableRuleSetException } from './exceptions/UnprocessableRuleSetException';
 import { NotApplicableTargetException } from './exceptions/NotApplicableTargetException';
 
@@ -23,28 +23,31 @@ import { NotApplicableTargetException } from './exceptions/NotApplicableTargetEx
   3. Compile rule
   4. Apply
 */
-class RuleSet {
+class RuleSet
+  implements
+    FilterRuleInterface,
+    TransformerRuleInterface,
+    SetterRuleInterface,
+    ModifierRuleInterface,
+    AppliableRuleInterface {
   protected filterNativeSet: FilterRuleInterface[];
   protected filterSqlSet: FilterRuleInterface[];
   protected transformerSet: TransformerRuleInterface[];
   protected setterSet: SetterRuleInterface[];
   protected modifierSet: ModifierRuleInterface[];
+  protected postSet: AppliableRuleInterface[];
 
   protected availableRules: StaticRuleInterface[] = availableRules;
 
-  constructor(
-    ruleDefinitions: RuleInterface[],
-  ) {
-      this.sort(
-        this.resolve(ruleDefinitions)
-      );
+  constructor(ruleDefinitions: RuleInterface[]) {
+    this.sort(this.resolve(ruleDefinitions));
   }
 
-  resolve(ruleDefinitions: RuleInterface[]): { ctor: StaticRuleInterface, def: RuleInterface }[] {
+  resolve(ruleDefinitions: RuleInterface[]): { ctor: StaticRuleInterface; def: RuleInterface }[] {
     return ruleDefinitions
       .map((def) => ({
         def,
-        ctor: this.availableRules.find((p) => p.slug === def.slug), 
+        ctor: this.availableRules.find((p) => p.slug === def.slug),
       }))
       .map(({ ctor, def }) => {
         if (ctor === undefined) {
@@ -53,12 +56,8 @@ class RuleSet {
         return { ctor, def };
       })
       .reduce((acc, { ctor, def }) => {
-        if(ctor.type === META) {
-          acc.push(
-            ...this.resolve(
-              (new ctor(def.parameters) as MetaRuleInterface).build()
-            ),
-          );
+        if (ctor.type === META) {
+          acc.push(...this.resolve((new ctor(def.parameters) as MetaRuleInterface).build()));
         } else {
           acc.push({ ctor, def });
         }
@@ -71,12 +70,25 @@ class RuleSet {
   }
 
   // order by priority
-  sort(rules: { ctor: StaticRuleInterface, def: RuleInterface }[]): void {
-    this.filterNativeSet = rules.filter(({ ctor }) => ctor.type === FILTER && !ctor.prototype.filterSql).map((r) => this.instanciate<FilterRuleInterface>(r.ctor, r.def));
-    this.filterSqlSet = rules.filter(({ ctor }) => ctor.type === FILTER && ctor.prototype.filterSql).map((r) => this.instanciate<FilterRuleInterface>(r.ctor, r.def));
-    this.transformerSet = rules.filter(({ ctor }) => ctor.type === TRANSFORMER).map((r) => this.instanciate<TransformerRuleInterface>(r.ctor, r.def));
-    this.setterSet = rules.filter(({ ctor }) => ctor.type === SETTER).map((r) => this.instanciate<SetterRuleInterface>(r.ctor, r.def));
-    this.modifierSet = rules.filter(({ ctor }) => ctor.type === MODIFIER).map((r) => this.instanciate<ModifierRuleInterface>(r.ctor, r.def));
+  sort(rules: { ctor: StaticRuleInterface; def: RuleInterface }[]): void {
+    this.filterNativeSet = rules
+      .filter(({ ctor }) => ctor.type === FILTER && !ctor.prototype.filterSql)
+      .map((r) => this.instanciate<FilterRuleInterface>(r.ctor, r.def));
+    this.filterSqlSet = rules
+      .filter(({ ctor }) => ctor.type === FILTER && ctor.prototype.filterSql)
+      .map((r) => this.instanciate<FilterRuleInterface>(r.ctor, r.def));
+    this.transformerSet = rules
+      .filter(({ ctor }) => ctor.type === TRANSFORMER)
+      .map((r) => this.instanciate<TransformerRuleInterface>(r.ctor, r.def));
+    this.setterSet = rules
+      .filter(({ ctor }) => ctor.type === SETTER)
+      .map((r) => this.instanciate<SetterRuleInterface>(r.ctor, r.def));
+    this.modifierSet = rules
+      .filter(({ ctor }) => ctor.type === MODIFIER)
+      .map((r) => this.instanciate<ModifierRuleInterface>(r.ctor, r.def));
+    this.postSet = rules
+      .filter(({ ctor }) => ctor.type === POST)
+      .map((r) => this.instanciate<AppliableRuleInterface>(r.ctor, r.def));
   }
 
   async apply(context: RuleHandlerParamsInterface): Promise<void> {
@@ -86,24 +98,34 @@ class RuleSet {
     result = await this.set(ctx);
     context.result = await this.modify(ctx, result);
     context.stack.push(`pathresult: ${context.result}`);
+    await this.post({ ...ctx, result });
   }
 
-  filterSql(): { text: string, values: any[] } {
+  filterSql(): { text: string; values: any[] } {
     const filters = [];
-    for(const rule of this.filterSqlSet) {
+    for (const rule of this.filterSqlSet) {
       filters.push(rule.filterSql());
     }
     return {
-      text: filters.map(f => f.text).join(' AND '),
-      values: filters.map(f => f.values).reduce((acc, curr) => {
-        acc.push(...curr);
-        return acc;
-      }, []),
+      text: filters.map((f) => f.text).join(' AND '),
+      values: filters
+        .map((f) => f.values)
+        .reduce((acc, curr) => {
+          acc.push(...curr);
+          return acc;
+        }, []),
     };
   }
 
+  async post(context: RuleHandlerParamsInterface): Promise<void> {
+    for (const rule of this.postSet) {
+      await rule.apply(context);
+      context.stack.push((rule.constructor as StaticRuleInterface).slug);
+    }
+  }
+
   async filter(context: RuleHandlerContextInterface): Promise<void> {
-    await Promise.all([...this.filterNativeSet].map(r => r.filter(context)));
+    await Promise.all([...this.filterNativeSet].map((r) => r.filter(context)));
   }
 
   async modify(context: RuleHandlerContextInterface, result: number): Promise<number> {
@@ -112,7 +134,7 @@ class RuleSet {
     }
 
     let currentResult = result;
-    for(const rule of this.modifierSet) {
+    for (const rule of this.modifierSet) {
       currentResult = await rule.modify(context, currentResult);
       context.stack.push(`${(rule.constructor as StaticRuleInterface).slug} : ${currentResult}`);
     }
@@ -121,7 +143,7 @@ class RuleSet {
   }
 
   async set(context: RuleHandlerContextInterface): Promise<number> {
-    let result: number = 0;
+    let result = 0;
     if (this.setterSet.length > 0) {
       result = await this.setterSet[0].set(context);
       context.stack.push(`${(this.setterSet[0].constructor as StaticRuleInterface).slug} : ${result}`);
@@ -135,7 +157,7 @@ class RuleSet {
     }
 
     let currentContext = JSON.parse(JSON.stringify(context));
-    for(const rule of this.transformerSet) {
+    for (const rule of this.transformerSet) {
       currentContext = await rule.transform(currentContext);
     }
 
@@ -143,13 +165,10 @@ class RuleSet {
   }
 }
 
-export class Campaign extends RuleSet {
+export class ProcessableCampaign extends RuleSet {
   protected ruleSets: RuleSet[];
 
-  constructor(
-    globalRules: RuleInterface[],
-    rules: RuleInterface[][],
-  ) {
+  constructor(globalRules: RuleInterface[], rules: RuleInterface[][]) {
     super(globalRules);
     this.ruleSets = rules.map((set) => new RuleSet(set));
   }
@@ -161,11 +180,11 @@ export class Campaign extends RuleSet {
       await this.filter(ctx);
       ctx = await this.transform(ctx);
 
-      for(const ruleSet of this.ruleSets) {
+      for (const ruleSet of this.ruleSets) {
         const currentContext = { ...ctx, result: 0 };
         try {
           await ruleSet.apply(currentContext);
-        } catch(e) {
+        } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
           }
@@ -173,10 +192,11 @@ export class Campaign extends RuleSet {
         }
         result += currentContext.result;
       }
-  
+
       context.stack.push(`result: ${result}`);
       context.result = await this.modify(ctx, result);
-    } catch(e) {
+      await this.post({ ...ctx, result });
+    } catch (e) {
       if (!(e instanceof NotApplicableTargetException)) {
         throw e;
       }

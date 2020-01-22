@@ -21,9 +21,10 @@ describe('Policy rule: distance range filter', () => {
   it('should throw error if out of range', () => {
     return expect(
       test.filter({
-        person: trip.people[1],
         trip,
         meta,
+        stack: [],
+        person: trip.people[1],
       }),
     ).to.eventually.rejectedWith(NotApplicableTargetException, DistanceRangeFilter.description);
   });
@@ -31,9 +32,10 @@ describe('Policy rule: distance range filter', () => {
   it('should do nothing if in range', () => {
     return expect(
       test.filter({
-        person: trip.people[0],
         trip,
         meta,
+        stack: [],
+        person: trip.people[0],
       }),
     ).to.eventually.fulfilled;
   });

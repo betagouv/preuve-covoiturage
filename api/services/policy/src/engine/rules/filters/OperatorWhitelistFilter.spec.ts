@@ -16,29 +16,23 @@ const trip = faker.trip([{ operator_id: 1 }, { operator_id: 2 }]);
 describe('Policy rule: operator filter', () => {
   it('should throw error if operator out of whitelist', () => {
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[1],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        person: trip.people[1],
+        trip,
+        meta,
+        stack: [],
+      }),
     ).to.eventually.rejectedWith(NotApplicableTargetException, OperatorWhitelistFilter.description);
   });
 
   it('should do nothing if operator in whitelist', () => {
     return expect(
-      test.filter(
-        {
-
-          person: trip.people[0],
-          trip,
-          meta,
-        },
-
-      ),
+      test.filter({
+        person: trip.people[0],
+        trip,
+        meta,
+        stack: [],
+      }),
     ).to.eventually.fulfilled;
   });
 });

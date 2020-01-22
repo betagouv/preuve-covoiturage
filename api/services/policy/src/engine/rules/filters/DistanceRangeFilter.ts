@@ -10,7 +10,7 @@ interface Parameters {
 export class DistanceRangeFilter extends FilterRule<Parameters> {
   static readonly slug: string = 'distance_range_filter';
   static readonly description: string = 'Filtre par distance';
-  static readonly schema: { [k:string]: any } = {
+  static readonly schema: { [k: string]: any } = {
     type: 'object',
     additionalProperties: false,
     properties: {
