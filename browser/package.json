@@ -1,0 +1,20 @@
+{
+  "name": "@pdc/headless-browser",
+  "version": "0.0.1",
+  "description": "Headless browser to take screenshots and return PDF or PNG from URL",
+  "main": "start.js",
+  "repository": "https://github.com/betagouv/preuve-covoiturage/",
+  "author": "beta.gouv",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "start": "node start.js"
+  },
+  "dependencies": {
+    "ajv": "^6.11.0",
+    "express": "^4.17.1",
+    "express-ipfilter": "^1.1.1",
+    "helmet": "^3.21.2",
+    "puppeteer": "^2.0.0"
+  }
+}
