@@ -4,6 +4,7 @@ import { TransformerRule } from '../TransformerRule';
 interface DistanceBoundingTransformerParams {
   minimum?: number;
   maximum?: number;
+  offset?: number;
 }
 
 export class DistanceBoundingTransformer extends TransformerRule<DistanceBoundingTransformerParams> {
@@ -30,6 +31,9 @@ export class DistanceBoundingTransformer extends TransformerRule<DistanceBoundin
     }
     if (this.parameters.maximum) {
       context.person.distance = Math.min(this.parameters.maximum, context.person.distance);
+    }
+    if (this.parameters.offset) {
+      context.person.distance += this.parameters.offset;
     }
     return context;
   }

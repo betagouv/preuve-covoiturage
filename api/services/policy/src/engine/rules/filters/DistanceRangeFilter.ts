@@ -3,8 +3,8 @@ import { NotApplicableTargetException } from '../../exceptions/NotApplicableTarg
 import { FilterRule } from '../FilterRule';
 
 interface Parameters {
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
 }
 
 export class DistanceRangeFilter extends FilterRule<Parameters> {
