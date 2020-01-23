@@ -15,7 +15,7 @@ ajv.addSchema(
     properties: {
       api: {
         type: 'string',
-        enum: [...(process.env.APP_ALLOWED_API || 'localhost:8080').split(',').map((s) => s.trim())],
+        enum: [...(process.env.APP_ALLOWED_API || 'http://localhost:8080').split(',').map((s) => s.trim())],
       },
       uuid: { type: 'string', format: 'uuid', minLength: 36, maxLength: 36 },
       type: { type: 'string', enum: ['pdf', 'png'] },
@@ -53,6 +53,10 @@ app.use(express.json());
 app.use(helmet());
 app.use(helmet.referrerPolicy());
 app.use(helmet.noCache());
+app.use((req, res, next) => {
+  console.log(req.headers);
+  next();
+});
 app.use(ipfilter(ips, { mode: 'allow' }));
 
 // boot the chrome server
@@ -64,12 +68,6 @@ const init = async (req, res, next) => {
 };
 
 init().then(() => {
-  console.log('> setup routes');
-
-  app.get('/hello', (req, res, next) => {
-    res.json({ hello: 'world' });
-  });
-
   // routes
   app.post('/print', async (req, res, next) => {
     try {
@@ -78,27 +76,30 @@ init().then(() => {
         throw new InvalidParamsError(ajv.errors);
       }
 
-      await page.goto('https://google.com');
+      const uuid = req.body.uuid.replace(/[^a-b0-9-]/gi, '').toLowerCase();
+      const url = `${req.body.api}/render/${uuid}`;
+
+      // snap and log!
+      await page.goto(url);
+      console.log(`Printed ${type}: ${url}`);
 
       switch (req.body.type) {
         case 'png':
           res
             .set('Content-type', 'image/png')
-            .set('Content-disposition', `attachment; filename=${req.body.uuid}.png`)
+            .set('Content-disposition', `attachment; filename=${uuid}.png`)
             .send(await page.screenshot({ fullPage: true }));
           break;
         default:
           res
             .set('Content-type', 'application/pdf')
-            .set('Content-disposition', `attachment; filename=${req.body.uuid}.pdf`)
+            .set('Content-disposition', `attachment; filename=${uuid}.pdf`)
             .send(await page.pdf({ format: 'A4' }));
       }
     } catch (e) {
       next(e);
     }
   });
-
-  // shutdown
 
   // errors
   app.use((err, req, res, next) => {
@@ -116,7 +117,6 @@ init().then(() => {
     switch (response.type) {
       case 'InvalidParamsError':
         response.code = 400;
-        console.log(JSON.parse(response.message));
         response.message = JSON.parse(response.message);
         res.status(400);
         res.json(response);
