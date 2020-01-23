@@ -53,12 +53,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(helmet.referrerPolicy());
 app.use(helmet.noCache());
-app.set('trust proxy', ['loopback', 'uniquelocal']);
-app.use((req, res, next) => {
-  console.log(req.ip, req.headers);
-  next();
-});
-app.use(ipfilter(ips, { mode: 'allow' }));
+app.use(ipfilter(ips, { mode: 'allow', trustProxy: ['loopback', 'uniquelocal'] }));
 
 // boot the chrome server
 const init = async (req, res, next) => {
