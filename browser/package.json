@@ -16,5 +16,8 @@
     "express-ipfilter": "^1.1.1",
     "helmet": "^3.21.2",
     "puppeteer": "^2.0.0"
+  },
+  "engines": {
+    "node": "12.x.x"
   }
 }
