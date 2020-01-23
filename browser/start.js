@@ -53,8 +53,9 @@ app.use(express.json());
 app.use(helmet());
 app.use(helmet.referrerPolicy());
 app.use(helmet.noCache());
+app.set('trust proxy', ['loopback', 'uniquelocal']);
 app.use((req, res, next) => {
-  console.log(req.headers);
+  console.log(req.ip, req.headers);
   next();
 });
 app.use(ipfilter(ips, { mode: 'allow' }));
