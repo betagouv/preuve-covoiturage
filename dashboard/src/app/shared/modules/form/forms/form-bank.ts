@@ -18,7 +18,6 @@ export class FormBank {
 
     this.iban.setValue(bank.iban);
     this.iban.setValidators([ibanValidator]);
-    // this.iban.setValidators([Validators.pattern(REGEXP.iban)]);
 
     this.bic.setValue(bank.bic);
     this.bic.setValidators([bicValidator]);

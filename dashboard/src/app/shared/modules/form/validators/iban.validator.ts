@@ -33,4 +33,4 @@ function modulo(aNumStr, aDiv) {
 }
 
 export const ibanValidator: ValidatorFn = (formGroup: FormGroup): ValidationErrors | null =>
-  !validIban(formGroup.value) ? { ibanWrongFormat: true } : null;
+  formGroup.value && !validIban(formGroup.value) ? { ibanWrongFormat: true } : null;
