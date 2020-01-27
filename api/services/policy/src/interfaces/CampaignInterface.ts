@@ -1,4 +1,4 @@
-import { RuleInterface } from './RuleInterface';
+import { RuleInterface } from '../engine/interfaces/RuleInterface';
 
 export interface CampaignInterface {
   _id?: number;
