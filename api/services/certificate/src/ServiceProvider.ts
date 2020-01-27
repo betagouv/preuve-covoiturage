@@ -12,11 +12,11 @@ import { CertificatePgRepositoryProvider } from './providers/CertificatePgReposi
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
 import { CertificatePrinterProvider } from './providers/CertificatePrinterProvider';
 import { RenderCertificateAction } from './actions/RenderCertificateAction';
-import { PrintCertificateAction } from './actions/PrintCertificateAction';
+import { CreateCertificateAction } from './actions/CreateCertificateAction';
 import { FindCertificateAction } from './actions/FindCertificateAction';
 import { SeedCommand } from './commands/SeedCommand';
 import { binding as renderBinding } from './shared/certificate/render.schema';
-import { binding as printBinding } from './shared/certificate/print.schema';
+import { binding as createBinding } from './shared/certificate/create.schema';
 import { binding as findBinding } from './shared/certificate/find.schema';
 
 @serviceProvider({
@@ -29,13 +29,10 @@ import { binding as findBinding } from './shared/certificate/find.schema';
     CarpoolPgRepositoryProvider,
     CertificatePrinterProvider,
   ],
-  validator: [renderBinding, printBinding, findBinding],
-  middlewares: [
-    ['validate', ValidatorMiddleware],
-    ['can', PermissionMiddleware],
-  ],
+  validator: [renderBinding, createBinding, findBinding],
+  middlewares: [['validate', ValidatorMiddleware], ['can', PermissionMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
-  handlers: [RenderCertificateAction, PrintCertificateAction, FindCertificateAction],
+  handlers: [RenderCertificateAction, CreateCertificateAction, FindCertificateAction],
   commands: [SeedCommand],
   template: {
     path: path.resolve(__dirname, 'templates').replace('/dist/', '/src/'),

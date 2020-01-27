@@ -1,9 +1,10 @@
 import express from 'express';
 import { get } from 'lodash';
 import { KernelInterface, UnauthorizedException, ForbiddenException } from '@ilos/common';
-import { TokenPayloadInterface, TokenProvider } from '@pdc/provider-token';
+import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import { ApplicationInterface } from '../shared/application/common/interfaces/ApplicationInterface';
+import { TokenPayloadInterface } from '../shared/application/common/interfaces/TokenPayloadInterface';
 
 interface Request extends express.Request {
   operator: string;
@@ -41,7 +42,7 @@ async function checkApplication(
   return (app as any).result as ApplicationInterface;
 }
 
-export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProvider) {
+export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
   return async (req: Request, res: express.Response, next: Function): Promise<void> => {
     try {
       const token = get(req, 'headers.authorization', null);
@@ -49,7 +50,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         return next();
       }
 
-      const payload = await (tokenProvider.verify(token.toString().replace('Bearer ', ''), {
+      const payload = await (tokenProvider.verify<TokenPayloadInterface>(token.toString().replace('Bearer ', ''), {
         ignoreExpiration: true,
       }) as Promise<any>);
 

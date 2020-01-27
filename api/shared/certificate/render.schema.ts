@@ -2,13 +2,16 @@ export const alias = 'certificate.render';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['identity', 'start_at', 'end_at'],
+  required: ['uuid', 'token'],
   additionalProperties: false,
   properties: {
-    identity: { type: 'string', maxLength: 64 },
-    start_at: { macro: 'timestamp' },
-    end_at: { macro: 'timestamp' },
-    type: { type: 'string', enum: ['html', 'json'], maxLength: 4 },
+    uuid: { type: 'string', format: 'uuid', minLength: 36, maxLength: 36 },
+    token: {
+      type: 'string',
+      pattern: '^ey[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$',
+      minLength: 32,
+      maxLength: 512,
+    },
   },
 };
 export const binding = [alias, schema];

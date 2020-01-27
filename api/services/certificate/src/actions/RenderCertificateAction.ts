@@ -1,15 +1,14 @@
-import { upperFirst } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, TemplateInterfaceResolver } from '@ilos/common';
+import { handler, TemplateInterfaceResolver, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
+import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { RenderTokenPayloadInterface } from '../shared/certificate/common/interfaces/RenderTokenPayloadInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/render.schema';
-import { castParams } from '../utils/castParams';
 
 @handler(handlerConfig)
 export class RenderCertificateAction extends AbstractAction {
@@ -18,60 +17,33 @@ export class RenderCertificateAction extends AbstractAction {
 
   constructor(
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
-    private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
     private templateProvider: TemplateInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
     private qrcodeProvider: QrcodeProviderInterfaceResolver,
+    private tokenProvider: TokenProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    // TODO find a better way to cast input before calling the action
-    params = castParams<ParamsInterface>(params);
+    // validate token
+    try {
+      const payload = await this.tokenProvider.verify<RenderTokenPayloadInterface>(params.token, {
+        issuer: this.config.get('token.render.issuer'),
+        audience: this.config.get('token.render.audience'),
+        ignoreExpiration: true,
+      });
 
-    const identity = { uuid: 'b409aa51-dee8-4276-9dde-b55d3fd0c7e9' };
-    const operator = { uuid: 'c5b07e35-651e-4688-b0b7-2811073bfcf3', name: 'Mobicoop' };
-    const territory = { uuid: '4b5b1de9-6a06-4ed7-b405-c9141a7437d6', name: 'Paris Ile-de-France' };
-
-    // fetch the data for this identity, operator and territory and map to template object
-    const rows = (await this.carpoolRepository.find(params)).slice(0, 11);
-
-    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0));
-    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0));
-    const remaining = (total_km * 0.558 - total_cost) | 0;
-
-    const meta = {
-      total_km,
-      total_cost,
-      remaining,
-      total_point: 0,
-      rows: rows.map((line, index) => ({
-        index,
-        month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
-        distance: line.km | 0,
-      })),
-    };
-
-    // store the certificate
-    const certificate = await this.certRepository.create({
-      meta,
-      identity_id: identity.uuid,
-      operator_id: identity.uuid,
-      territory_id: identity.uuid,
-      start_at: params.start_at,
-      end_at: params.end_at,
-    });
-
-    // return the JSON object...
-    if (params.type === 'json') {
-      return {
-        type: 'application/json',
-        code: 200,
-        params,
-        data: rows,
-      };
+      // make sure the token has been issued for this certificate
+      if (payload.uuid !== params.uuid) {
+        throw new Error('Token not matching the certificate');
+      }
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
     }
+
+    const certificate = await this.certRepository.findByUuid(params.uuid);
 
     // fetch template metadata
     const templateMeta = this.templateProvider.getMetadata('certificate');
@@ -85,10 +57,10 @@ export class RenderCertificateAction extends AbstractAction {
       code: 200,
       params,
       data: this.templateProvider.get('certificate', {
-        data: meta,
-        identity,
-        operator,
-        territory,
+        data: certificate.meta,
+        identity: certificate.identity_id,
+        operator: certificate.operator_id,
+        territory: certificate.territory_id,
         certificate: {
           created_at: this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à k:m'),
           start_at: this.dateProvider.format(certificate.start_at, 'd MMMM yyyy'),

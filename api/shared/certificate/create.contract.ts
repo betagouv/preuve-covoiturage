@@ -1,20 +1,18 @@
 export interface ParamsInterface {
-  uuid: string;
-  token: string;
+  identity: string;
+  start_at?: Date;
+  end_at?: Date;
+  type?: string;
 }
 
-export interface ResultInterface {
-  type: 'text/html';
-  data: string;
-  params: ParamsInterface;
-  code: number;
-}
+// export interface ResultInterface extends CertificateInterface {}
+export type ResultInterface = void;
 
 export type RepositoryInterface = Required<ParamsInterface>;
 
 export const handlerConfig = {
   service: 'certificate',
-  method: 'render',
+  method: 'create',
 };
 
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
