@@ -34,12 +34,11 @@ init().then(() => {
         throw new InvalidParamsError(ajv.errors);
       }
 
-      const uuid = req.body.uuid.replace(/[^a-b0-9-]/gi, '').toLowerCase();
+      const uuid = req.body.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
       const url = `${req.body.api}/certificates/render/${uuid}`;
 
       // snap and log!
       await page.setExtraHTTPHeaders({ authorization: `Bearer ${req.body.token}` });
-      console.log({ authorization: `Bearer ${req.body.token}` });
       await page.goto(url);
       console.log(`Printed ${req.headers.accept}: ${url}`);
 
@@ -54,7 +53,7 @@ init().then(() => {
           res
             .set('Content-type', 'application/pdf')
             .set('Content-disposition', `attachment; filename=${uuid}.pdf`)
-            .send(await page.pdf({ format: 'A4' }));
+            .send(await page.pdf({ format: 'A4', scale: 0.3333 }));
       }
     } catch (e) {
       next(e);

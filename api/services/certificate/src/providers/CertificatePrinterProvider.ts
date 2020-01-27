@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer';
 import { provider, ConfigInterfaceResolver } from '@ilos/common';
 
 import {
@@ -19,24 +18,26 @@ export class CertificatePrinterProvider implements CertificatePrinterProviderInt
     // TODO catch errors and log
     // Do not render image/pdf on errors
 
-    await this.init();
-    await this.page.goto(this.getUrl(identity, start_at, end_at));
-    const png: Buffer = await this.page.screenshot({ fullPage: true });
-    await this.destroy();
+    // await this.init();
+    // await this.page.goto(this.getUrl(identity, start_at, end_at));
+    // const png: Buffer = await this.page.screenshot({ fullPage: true });
+    // await this.destroy();
 
-    return png;
+    // return png;
+    return new Buffer('png');
   }
 
   async pdf(identity: string, start_at: Date, end_at: Date): Promise<Buffer> {
     // TODO catch errors and log
     // Do not render image/pdf on errors
 
-    await this.init();
-    await this.page.goto(this.getUrl(identity, start_at, end_at));
-    const pdf: Buffer = await this.page.pdf({ format: 'A4', scale: 0.3333 });
-    await this.destroy();
+    // await this.init();
+    // await this.page.goto(this.getUrl(identity, start_at, end_at));
+    // const pdf: Buffer = await this.page.pdf({ format: 'A4', scale: 0.3333 });
+    // await this.destroy();
 
-    return pdf;
+    // return pdf;
+    return new Buffer('pdf');
   }
 
   private getUrl(identity: string, start_at: Date, end_at: Date): string {
@@ -45,14 +46,5 @@ export class CertificatePrinterProvider implements CertificatePrinterProviderInt
     const end = `end_at=${end_at.toISOString()}`;
 
     return `${this.config.get('url.apiUrl')}/certificates/render/?${id}&${start}&${end}`;
-  }
-
-  private async init(): Promise<void> {
-    this.browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    this.page = await this.browser.newPage();
-  }
-
-  private async destroy(): Promise<void> {
-    await this.browser.close();
   }
 }

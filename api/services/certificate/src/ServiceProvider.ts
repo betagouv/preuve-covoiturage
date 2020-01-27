@@ -30,7 +30,10 @@ import { binding as findBinding } from './shared/certificate/find.schema';
     CertificatePrinterProvider,
   ],
   validator: [renderBinding, createBinding, findBinding],
-  middlewares: [['validate', ValidatorMiddleware], ['can', PermissionMiddleware]],
+  middlewares: [
+    ['validate', ValidatorMiddleware],
+    ['can', PermissionMiddleware],
+  ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [RenderCertificateAction, CreateCertificateAction, FindCertificateAction],
   commands: [SeedCommand],
