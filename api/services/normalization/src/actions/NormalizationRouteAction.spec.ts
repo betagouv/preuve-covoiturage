@@ -32,7 +32,7 @@ describe('Route normalization action', async () => {
     };
     const result = await action.handle(params);
 
-    console.log('result : ', result);
+    // console.log('result : ', result);
 
     expect(result).has.own.property(
       'calc_distance',

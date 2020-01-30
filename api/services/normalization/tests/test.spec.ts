@@ -68,7 +68,7 @@ describe('toto', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        console.log('response : ', response);
+        // console.log('response : ', response);
         _id = response.body.result._id;
       });
   });
