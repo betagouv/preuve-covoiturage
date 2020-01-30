@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { upperFirst } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType, TemplateInterfaceResolver } from '@ilos/common';

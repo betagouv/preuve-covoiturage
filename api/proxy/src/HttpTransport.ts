@@ -5,9 +5,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { get } from 'lodash';
-// tslint:disable-next-line: import-name
 import Redis from 'ioredis';
-// tslint:disable-next-line: import-name
 import createStore from 'connect-redis';
 import {
   TransportInterface,
@@ -518,11 +516,7 @@ export class HttpTransport implements TransportInterface {
         try {
           const type = this.getTypeFromHeaders(req.headers);
 
-          const response = await this.kernel.call(
-            'certificate:create',
-            { ...req.query, type },
-            { channel: { service: 'certificate' } },
-          );
+          await this.kernel.call('certificate:create', { ...req.query, type }, { channel: { service: 'certificate' } });
 
           // return 201 CREATED or 404 NOT FOUND...
         } catch (e) {
