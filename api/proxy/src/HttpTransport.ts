@@ -5,9 +5,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { get } from 'lodash';
-// tslint:disable-next-line: import-name
 import Redis from 'ioredis';
-// tslint:disable-next-line: import-name
 import createStore from 'connect-redis';
 import {
   TransportInterface,
@@ -30,6 +28,7 @@ import { asyncHandler } from './helpers/asyncHandler';
 import { makeCall } from './helpers/routeMapping';
 import { nestParams } from './helpers/nestParams';
 import { serverTokenMiddleware } from './middlewares/serverTokenMiddleware';
+import { TokenPayloadInterface } from './shared/application/common/interfaces/TokenPayloadInterface';
 
 export class HttpTransport implements TransportInterface {
   app: express.Express;
@@ -37,7 +36,7 @@ export class HttpTransport implements TransportInterface {
   env: EnvInterface;
   port: string;
   server: http.Server;
-  tokenProvider;
+  tokenProvider: TokenProviderInterfaceResolver;
 
   constructor(private kernel: KernelInterface) {}
 
@@ -145,9 +144,6 @@ export class HttpTransport implements TransportInterface {
         credentials: true,
       }),
     );
-
-    // register the JWT server middleware
-    this.app.use(serverTokenMiddleware(this.kernel, this.tokenProvider));
   }
 
   private registerGlobalMiddlewares(): void {
@@ -169,6 +165,7 @@ export class HttpTransport implements TransportInterface {
     // V1 payload
     this.app.post(
       '/journeys/push',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
         const isLatest =
@@ -222,6 +219,7 @@ export class HttpTransport implements TransportInterface {
     // V2 payload
     this.app.post(
       '/v2/journeys',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const user = get(req, 'session.user', {});
         const response = await this.kernel.handle(
@@ -405,7 +403,7 @@ export class HttpTransport implements TransportInterface {
 
         const application = (response as any).result;
 
-        const token = await this.tokenProvider.sign({
+        const token = await this.tokenProvider.sign<TokenPayloadInterface>({
           a: application.uuid,
           o: application.owner_id,
           s: application.owner_service,
@@ -420,65 +418,25 @@ export class HttpTransport implements TransportInterface {
 
   // FIXME
   // - add server authentication
-  // - block access to /generate route
+  // - block access to POST /certificates route
   private registerCertificateRoutes(): void {
     /**
-     * Public route for operators to print a certificate
-     * based on params (identity, start date, end date, ...)
-     * - accessible with an application token
-     * - uses /certificates/render to capture the rendered certificate
-     * - print a PDF/PNG returned back to the caller
-     */
-    this.app.get(
-      '/certificates/print',
-      asyncHandler(async (req, res, next) => {
-        try {
-          const type = this.getTypeFromHeaders(req.headers);
-
-          const response = await this.kernel.call(
-            'certificate:print',
-            { ...req.query, type },
-            { channel: { service: 'certificate' } },
-          );
-
-          switch (type) {
-            case 'png':
-              res.set('Content-type', 'image/png');
-              res.set('Content-disposition', 'attachment; filename=print.png');
-              res.send(response);
-              break;
-            case 'json':
-              res.set('Content-type', 'application/json');
-              res.send(response);
-              break;
-            default:
-              res.set('Content-type', 'application/pdf');
-              res.set('Content-disposition', `attachment; filename=print.pdf`);
-              res.send(response);
-          }
-        } catch (e) {
-          console.log(e);
-          const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
-          res.status(htmlStatusCode);
-          res.json({ error: htmlStatusCode, message: e.rpcError.data });
-        }
-      }),
-    );
-
-    /**
      * The route that renders an HTML certificate based on params
-     * - only accessible by the backend itself
+     * - only accessible by the printer with JWT authentication
      * - requires access to public assets (images)
      *
-     * TEST ME : http://localhost:8080/certificates/render?identity=%2B~/.config/mimeapps.list
+     * TEST ME : http://localhost:8080/certificates/render?identity=%2B
      */
     this.app.get(
-      '/certificates/render',
+      '/certificates/render/:uuid',
       asyncHandler(async (req, res, next) => {
         try {
           const response = await this.kernel.call(
             'certificate:render',
-            { ...req.query },
+            {
+              uuid: req.params.uuid,
+              token: String(req.headers.authorization).replace('Bearer ', ''),
+            },
             { channel: { service: 'certificate' } },
           );
 
@@ -498,6 +456,78 @@ export class HttpTransport implements TransportInterface {
 
     // public assets routes
     this.app.use('/certificates/assets', express.static('../../services/certificate/dist/assets'));
+
+    /**
+     * Download a PNG or PDF of the certificate
+     * - accessible with an application token
+     * - uses /certificates/render to capture the rendered certificate
+     * - uses the remote printer to capture the rendered certificate
+     * - print a PDF/PNG returned back to the caller
+     */
+    this.app.get(
+      '/certificates/download/:uuid',
+      asyncHandler(async (req, res, next) => {
+        try {
+          const type = this.getTypeFromHeaders(req.headers);
+          const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
+
+          const response = await this.kernel.call(
+            'certificate:download',
+            { uuid, type },
+            { channel: { service: 'certificate' } },
+          );
+
+          switch (type) {
+            case 'png':
+              res.set('Content-type', 'image/png');
+              res.set('Content-disposition', `attachment; filename=${uuid}.png`);
+              res.send(response);
+              break;
+            // case 'json':
+            //   res.set('Content-type', 'application/json');
+            //   res.send(response);
+            //   break;
+            default:
+              res.set('Content-type', 'application/pdf');
+              res.set('Content-disposition', `attachment; filename=${uuid}.pdf`);
+              res.send(response);
+          }
+        } catch (e) {
+          console.log(e);
+          const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
+          res.status(htmlStatusCode);
+          res.json({ error: htmlStatusCode, message: e.rpcError.data });
+        }
+      }),
+    );
+
+    /**
+     * Public route for operators to generate a certificate
+     * based on params (identity, start date, end date, ...)
+     * - accessible with an application token
+     * - generate a certificate to be printed when calling /certificates/download/{uuid}
+     * - uses /certificates/render to capture the rendered certificate
+     * - uses the remote printer to capture the rendered certificate
+     * - print a PDF/PNG returned back to the caller
+     */
+    this.app.post(
+      '/certificates',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        try {
+          const type = this.getTypeFromHeaders(req.headers);
+
+          await this.kernel.call('certificate:create', { ...req.query, type }, { channel: { service: 'certificate' } });
+
+          // return 201 CREATED or 404 NOT FOUND...
+        } catch (e) {
+          console.log(e);
+          const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
+          res.status(htmlStatusCode);
+          res.json({ error: htmlStatusCode, message: e.rpcError.data });
+        }
+      }),
+    );
   }
 
   private registerAfterAllHandlers(): void {

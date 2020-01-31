@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { provider, ProviderInterface, ConfigInterfaceResolver, InitHookInterface } from '@ilos/common';
 
-import { TokenProviderInterfaceResolver, TokenProviderInterface, TokenPayloadInterface } from './interfaces';
+import { TokenProviderInterfaceResolver, TokenProviderInterface } from './interfaces';
 
 @provider({
   identifier: TokenProviderInterfaceResolver,
@@ -25,15 +25,15 @@ export class TokenProvider implements ProviderInterface, TokenProviderInterface,
     this.verifyOptions = { ...this.config.get('jwt.verifyOptions') };
   }
 
-  async sign(payload: TokenPayloadInterface, options: jwt.SignOptions = {}): Promise<string> {
+  async sign<T extends string | Buffer | object>(payload: T, options: jwt.SignOptions = {}): Promise<string> {
     return jwt.sign(payload, this.secret, { ...this.signOptions, ...options });
   }
 
-  async verify(token: string, options: jwt.VerifyOptions = {}): Promise<TokenPayloadInterface> {
+  async verify<T extends string | Buffer | object>(token: string, options: jwt.VerifyOptions = {}): Promise<T> {
     const decoded = (await jwt.verify(token, this.secret, {
       ...this.verifyOptions,
       ...options,
-    })) as TokenPayloadInterface;
+    })) as T;
 
     // override config TTL when ignoreExpiration option is passed
     const ttl = 'ignoreExpiration' in options && options.ignoreExpiration ? -1 : this.ttl;

@@ -1,13 +1,11 @@
 export interface ParamsInterface {
-  identity: string;
-  start_at: Date;
-  end_at: Date;
-  type: 'html' | 'json';
+  uuid: string;
+  token: string;
 }
 
 export interface ResultInterface {
-  type: 'text/html' | 'application/json';
-  data: string | object;
+  type: 'text/html';
+  data: string;
   params: ParamsInterface;
   code: number;
 }

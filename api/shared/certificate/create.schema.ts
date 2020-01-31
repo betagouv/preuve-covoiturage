@@ -1,4 +1,4 @@
-export const alias = 'certificate.print';
+export const alias = 'certificate.create';
 export const schema = {
   $id: alias,
   type: 'object',

@@ -1,16 +1,16 @@
-export const alias = 'certificate.render';
+export const alias = 'certificate.download';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['uuid', 'token'],
+  required: ['uuid', 'type'],
   additionalProperties: false,
   properties: {
     uuid: { type: 'string', format: 'uuid', minLength: 36, maxLength: 36 },
-    token: {
+    type: {
       type: 'string',
-      pattern: '^ey[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$',
-      minLength: 32,
-      maxLength: 512,
+      enum: ['json', 'pdf', 'png'],
+      minLength: 3,
+      maxLength: 4,
     },
   },
 };

@@ -65,8 +65,7 @@
     "@pdc/provider-date": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-qrcode": "~0",
-    "@pdc/provider-validator": "~0",
-    "puppeteer": "^2.0.0"
+    "@pdc/provider-validator": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

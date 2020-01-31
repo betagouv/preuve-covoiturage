@@ -20,7 +20,6 @@
   ],
   "scripts": {
     "scalingo-prebuild": "/bin/sh ./scalingo/prebuild.sh",
-    "scalingo-build": "/bin/sh ./scalingo/build.sh",
     "scalingo-postbuild": "/bin/sh ./scalingo/postbuild.sh",
     "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
     "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
