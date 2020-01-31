@@ -71,40 +71,6 @@ For none secret values configuring the system, commit the ENV vars in `docker-co
 
 For _static_ application configuration (timeout, etc.) edit/add the `.ts` files in each service `config/` folder.
 
-### Access the database in the docker container
-
-To access the MongoDB instance, you must start the container first and then
-enter it to access the mongo shell.
-
-1. `(local)$ docker-compose up -d mongo`
-2. `(local)$ docker-compose exec mongo bash`
-3. `(docker)$ mongo -u mongo -p mongo`
-4. `(mongo shell)> use pdc-local`
-
-If you have mongo shell or a GUI like Compass, you can connect directly to
-the server on port 27017:
-
-1. `(local)$ mongo -u mongo -p mongo --host localhost:27017 --authenticationDatabase=admin`
-
-#### import / export mongo database
-
-```bash
-# export the database to a compressed archive
-$ docker-compose exec mongo mongodump -u mongo -p mongo \
-    --db=pdc-local \
-    --authenticationDatabase=admin \
-    --gzip \
-    --archive=/data/db/exports/mongodump-$(date +%Y%m%d%H%M%S).archive.gz
-
-# import an exports archive to 'pdc-local' database
-$ docker-compose exec mongo mongorestore -u mongo -p mongo \
-    --drop \
-    --gzip \
-    --nsFrom="pdc-api-staging-1234.*" \
-    --nsTo="pdc-local.*" \
-    --archive=/data/db/imports/mongodump-20190510084207.archive.gz
-```
-
 ### CLI commands
 
 ##### inside the `api` container
@@ -117,6 +83,10 @@ $ docker-compose exec mongo mongorestore -u mongo -p mongo \
 
 - `yarn cypress open` opens cypress GUI
 - `yarn cypress run` runs integration tests with cypress ( requires installation of cypress locally )
+
+### Versions
+
+The project follows the [semver](https://semver.org/) specification.
 
 # License
 
