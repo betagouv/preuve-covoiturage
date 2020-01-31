@@ -465,30 +465,31 @@ export class HttpTransport implements TransportInterface {
      * - print a PDF/PNG returned back to the caller
      */
     this.app.get(
-      '/certificates/download',
+      '/certificates/download/:uuid',
       asyncHandler(async (req, res, next) => {
         try {
           const type = this.getTypeFromHeaders(req.headers);
+          const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
 
           const response = await this.kernel.call(
             'certificate:download',
-            { ...req.query, type },
+            { uuid, type },
             { channel: { service: 'certificate' } },
           );
 
           switch (type) {
             case 'png':
               res.set('Content-type', 'image/png');
-              res.set('Content-disposition', 'attachment; filename=print.png');
+              res.set('Content-disposition', `attachment; filename=${uuid}.png`);
               res.send(response);
               break;
-            case 'json':
-              res.set('Content-type', 'application/json');
-              res.send(response);
-              break;
+            // case 'json':
+            //   res.set('Content-type', 'application/json');
+            //   res.send(response);
+            //   break;
             default:
               res.set('Content-type', 'application/pdf');
-              res.set('Content-disposition', `attachment; filename=print.pdf`);
+              res.set('Content-disposition', `attachment; filename=${uuid}.pdf`);
               res.send(response);
           }
         } catch (e) {

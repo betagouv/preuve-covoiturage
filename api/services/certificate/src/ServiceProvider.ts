@@ -10,14 +10,16 @@ import { CryptoProvider } from '@pdc/provider-crypto';
 
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
-import { CertificatePrinterProvider } from './providers/CertificatePrinterProvider';
+import { HtmlPrinterProvider } from './providers/HtmlPrinterProvider';
 import { RenderCertificateAction } from './actions/RenderCertificateAction';
 import { CreateCertificateAction } from './actions/CreateCertificateAction';
 import { FindCertificateAction } from './actions/FindCertificateAction';
+import { DownloadCertificateAction } from './actions/DownloadCertificateAction';
 import { SeedCommand } from './commands/SeedCommand';
 import { binding as renderBinding } from './shared/certificate/render.schema';
 import { binding as createBinding } from './shared/certificate/create.schema';
 import { binding as findBinding } from './shared/certificate/find.schema';
+import { binding as downloadBinding } from './shared/certificate/download.schema';
 
 @serviceProvider({
   config: __dirname,
@@ -27,15 +29,12 @@ import { binding as findBinding } from './shared/certificate/find.schema';
     CryptoProvider,
     CertificatePgRepositoryProvider,
     CarpoolPgRepositoryProvider,
-    CertificatePrinterProvider,
+    HtmlPrinterProvider,
   ],
-  validator: [renderBinding, createBinding, findBinding],
-  middlewares: [
-    ['validate', ValidatorMiddleware],
-    ['can', PermissionMiddleware],
-  ],
+  validator: [renderBinding, createBinding, findBinding, downloadBinding],
+  middlewares: [['validate', ValidatorMiddleware], ['can', PermissionMiddleware]],
   connections: [[PostgresConnection, 'connections.postgres']],
-  handlers: [RenderCertificateAction, CreateCertificateAction, FindCertificateAction],
+  handlers: [RenderCertificateAction, DownloadCertificateAction, CreateCertificateAction, FindCertificateAction],
   commands: [SeedCommand],
   template: {
     path: path.resolve(__dirname, 'templates').replace('/dist/', '/src/'),
