@@ -1,27 +1,31 @@
 # Registre de Preuve de covoiturage
 
-Le registre de preuve de covoiturage est un projet beta.gouv.fr qui a pour but de certifier qu'un covoiturage a bien eu lieu. L'objectif de l'outil est l'incitation des utilisateurs à pratiquer le covoiturage courte distance pour réduire l'auto-solisme et réduire l'emprunte écologique des déplacements courts.
+Le registre de preuve de covoiturage est un projet [beta.gouv.fr](https://beta.gouv.fr) qui a pour but de certifier qu'un covoiturage a bien eu lieu. L'objectif de l'outil est d'agir en tant que tiers de confiance entre les différents acteurs du covoiturage (opérateurs, autorités organisatrices de mobilité, entreprises, régions, etc.) pour simplifier la mise en place d'incitations à destination des covoitureuses et covoitureurs. Cette Startup d'État a pour objectif d'aider à réduire l'auto-solisme et l'emprunte écologique des déplacements courts.
 
-[http://covoiturage.beta.gouv.fr/](http://covoiturage.beta.gouv.fr/)
+- Plus d'informations sur le [registre de preuve de covoiturage](http://covoiturage.beta.gouv.fr/)
+- [Documentation générale](https://registre-preuve-de-covoiturage.gitbook.io/produit/)
+- [Documentation technique](https://registre-preuve-de-covoiturage.gitbook.io/produit/mode-demploi/envoyer-des-trajets)
+- [Statistiques publiques](https://app.covoiturage.beta.gouv.fr/stats)
 
-### Docker Services
+### Services
 
 An easy way to boot the application on your local machine is by using Docker.
 You will need `docker` and `docker-compose`.
 
-| Service         | slug        | ENV              | URL                               | Folder     |
-| --------------- | ----------- | ---------------- | --------------------------------- | ---------- |
-| Frontend        | `dashboard` | APP_APP_URL      | http://localhost:4200             | /dashboard |
-| API             | `api`       | APP_API_URL      | http://localhost:8080             | /api       |
-| MongoDB \*      | `mongo`     | APP_MONGO_URL    | mongodb://mongo:mongo@mongo:27017 | -          |
-| Redis           | `redis`     | APP_REDIS_URL    | redis://redis:6379                | -          |
-| Redis Client    | `arena`     | -                | http://localhost:4567             | -          |
-| Postgres        | `postgres`  | APP_POSTGRES_URL | postgresql://postgres:post        | -          |
-| Postgres Client | `pgadmin`   | -                | http://localhost:5050             | -          |
+| Service         | slug       | ENV              | URL                               | Folder     |
+| --------------- | ---------- | ---------------- | --------------------------------- | ---------- |
+| Frontend \*     | `-`        | APP_APP_URL      | http://localhost:4200             | /dashboard |
+| API             | `api`      | APP_API_URL      | http://localhost:8080             | /api       |
+| Printer         | `printer`  | APP_PRINTER_URL  | http://localhost:3000             | /printer   |
+| MongoDB \*\*    | `mongo`    | APP_MONGO_URL    | mongodb://mongo:mongo@mongo:27017 | -          |
+| Redis           | `redis`    | APP_REDIS_URL    | redis://redis:6379                | -          |
+| Redis Client    | `arena`    | -                | http://localhost:4567             | -          |
+| Postgres        | `postgres` | APP_POSTGRES_URL | postgresql://postgres:post        | -          |
+| Postgres Client | `pgadmin`  | -                | http://localhost:5050             | -          |
 
-- Mongo is being deprecated and will be removed when Postgres migration is complete.
-
-> `docker-compose.yml` is used in `local` environment only
+> \* The Frontend doesn't run in Docker. Install NodeJS locally and run it with `yarn start` from the `dashboard` folder.  
+> \*\* Mongo is being deprecated and will be removed when Postgres migration is complete.  
+> ⚠️ `docker-compose.yml` is used in `local` environment only
 
 ### Installation
 
@@ -31,10 +35,8 @@ You will need `docker` and `docker-compose`.
 4. `docker-compose build`
 5. `docker-compose run api yarn`
 6. `docker-compose run api yarn run build`
-7. `docker-compose run dashboard yarn`
-   <!-- 8. `docker-compose run worker yarn` -->
-8. `docker-compose run api yarn migrate`
-9. `docker-compose run api yarn set-permissions`
+7. `docker-compose run api yarn migrate`
+8. `docker-compose run api yarn set-permissions`
 
 #### clone ilos locally
 
@@ -57,14 +59,7 @@ yarn run build
 
 ### Run the stack
 
-1. `docker-compose up`
-2. [Access the dashboard](http://localhost:4200)
-3. Connect with one of the following test users:
-   - admin with `admin@example.com` / `admin1234`
-     <!-- - territory with `territory@example.com` / `admin1234`
-   - operator with `operator@example.com` / `admin1234` -->
-
-`Ctrl-C` to kill the process
+`// TODO seed users and make easy onboarding`
 
 ### Configuration
 
@@ -114,13 +109,6 @@ $ docker-compose exec mongo mongorestore -u mongo -p mongo \
 
 ##### inside the `api` container
 
-<!--
-- `yarn migrate` run up migrations
-- `yarn migrate:down` run down migrations
-- `yarn lint`
-- `yarn test` run the tests
--->
-
 - `yarn set-permissions` reset all users' permissions based on their group and role
 - `yarn workspace @pdc/... run test`
 - `yarn workspace @pdc/... run test:integration`
@@ -130,12 +118,8 @@ $ docker-compose exec mongo mongorestore -u mongo -p mongo \
 - `yarn cypress open` opens cypress GUI
 - `yarn cypress run` runs integration tests with cypress ( requires installation of cypress locally )
 
-### API documentation
-
-- [Documentation (French)](https://registre-preuve-de-covoiturage.gitbook.io/produit/)
-
 # License
 
-DINSIC, 2017-2019.
+DINUM, 2017-2020.
 
 The source code is published under [Apache license 2.0](./LICENSE).
