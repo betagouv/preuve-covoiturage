@@ -10,8 +10,8 @@ import {
   ResultInterface as FindResultInterface,
 } from '~/core/entities/api/shared/certificate/find.contract';
 import { JsonRPC } from '~/core/services/api/json-rpc.service';
-import { ParamsInterface as PrintParamsInterface } from '~/core/entities/api/shared/certificate/print.contract';
-import { environment } from '../../../../environments/environment';
+import { ParamsInterface as DownloadParamsInterface } from '~/core/entities/api/shared/certificate/download.contract';
+// import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -27,16 +27,15 @@ export class CertificateApiService extends JsonRPC {
   //   throw new Error('Not implemented');
   // }
 
-  downloadPrint(data: PrintParamsInterface) {
-    const startVar = data.start_at ? `&start_at=${encodeURIComponent(data.start_at.toISOString())}` : '';
-    const endVar = data.end_at ? `&end_at=${encodeURIComponent(data.end_at.toISOString())}` : '';
-
-    const url = `${environment.apiUrl}certificates/print?identity=${encodeURIComponent(
-      data.identity,
-    )}${startVar}${endVar}`;
-
-    console.log({ url });
-    window.open(url, '_blank');
+  downloadPrint(data: DownloadParamsInterface) {
+    // TODO use /certificates/download/:uuid
+    // const startVar = data.start_at ? `&start_at=${encodeURIComponent(data.start_at.toISOString())}` : '';
+    // const endVar = data.end_at ? `&end_at=${encodeURIComponent(data.end_at.toISOString())}` : '';
+    // const url = `${environment.apiUrl}certificates/print?identity=${encodeURIComponent(
+    //   data.identity,
+    // )}${startVar}${endVar}`;
+    // console.log({ url });
+    // window.open(url, '_blank');
   }
 
   find(uuid: string): Observable<FindResultInterface> {

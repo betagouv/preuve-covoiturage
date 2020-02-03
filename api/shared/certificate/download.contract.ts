@@ -3,7 +3,8 @@ export interface ParamsInterface {
   type: string;
 }
 
-export type ResultInterface = Buffer;
+// should be Buffer but fails with the frontend
+export type ResultInterface = any;
 
 export const handlerConfig = {
   service: 'certificate',
