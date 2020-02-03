@@ -24,7 +24,7 @@ const routes: Routes = [
       },
       {
         path: 'create',
-        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
+        data: { permissions: ['incentive-campaign.create'], groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
@@ -34,7 +34,7 @@ const routes: Routes = [
       },
       {
         path: 'create/:parentId',
-        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
+        data: { permissions: ['incentive-campaign.create'], groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
@@ -44,7 +44,7 @@ const routes: Routes = [
       },
       {
         path: 'edit/:campaignId',
-        data: { role: 'admin', groups: [UserGroupEnum.TERRITORY] },
+        data: { permissions: ['incentive-campaign.update'], groups: [UserGroupEnum.TERRITORY] },
         component: CampaignCreateEditComponent,
       },
       {
