@@ -20,7 +20,7 @@
 
   <mat-form-field appearance="outline" *ngIf="groupEditable && isCreating">
     <mat-label>Groupe</mat-label>
-    <mat-select required formControlName="group" (selectionChange)="onGroupChange()">
+    <mat-select required formControlName="group">
       <mat-option *ngFor="let group of groups" [value]="group">{{ getFrenchGroup(group) }}</mat-option>
     </mat-select>
   </mat-form-field>
