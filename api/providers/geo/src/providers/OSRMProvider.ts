@@ -1,8 +1,10 @@
 import { get } from 'lodash';
 import axios from 'axios';
+import { provider } from '@ilos/common';
 
 import { PointInterface, RouteMetaProviderInterface, RouteMeta } from '../interfaces';
 
+@provider()
 export class OSRMProvider implements RouteMetaProviderInterface {
   protected domain = 'http://router.project-osrm.org';
 

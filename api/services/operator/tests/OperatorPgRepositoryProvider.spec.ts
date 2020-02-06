@@ -1,8 +1,16 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { describe } from 'mocha';
 import { expect } from 'chai';
+import { Kernel as AbstractKernel } from '@ilos/framework';
+import { kernel as kernelDecorator, KernelInterface } from '@ilos/common';
 
+import { ServiceProvider } from '../src/ServiceProvider';
 import { OperatorPgRepositoryProvider } from '../src/providers/OperatorPgRepositoryProvider';
+
+@kernelDecorator({
+  children: [ServiceProvider],
+})
+class Kernel extends AbstractKernel {}
 
 describe('Operator pg repository', () => {
   let repository;
@@ -19,7 +27,7 @@ describe('Operator pg repository', () => {
 
     await connection.up();
 
-    repository = new OperatorPgRepositoryProvider(connection);
+    repository = new OperatorPgRepositoryProvider(connection, new Kernel());
   });
 
   after(async () => {

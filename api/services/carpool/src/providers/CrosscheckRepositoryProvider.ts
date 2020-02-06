@@ -26,7 +26,7 @@ export class CrosscheckRepositoryProvider implements CrosscheckRepositoryProvide
     datetime: Date;
     start: PositionInterface;
     end: PositionInterface;
-    identity_uuid: string;
+    identity_uuid?: string;
   }): Promise<string> {
     let tripId: string;
 

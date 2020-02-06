@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { get } from 'lodash';
-import { NotFoundException } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 
 import { InseeCoderInterface, PointInterface } from '../interfaces';
 
+@provider()
 export class EtalabGeoAdministriveProvider implements InseeCoderInterface {
   protected domain = 'https://geo.api.gouv.fr';
 

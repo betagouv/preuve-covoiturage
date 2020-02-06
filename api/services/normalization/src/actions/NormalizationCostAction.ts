@@ -13,23 +13,22 @@ import { WorkflowProvider } from '../providers/WorkflowProvider';
 import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 
+import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
+
 // Enrich position data
 @handler(handlerConfig)
 export class NormalizationCostAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
 
-  constructor(private wf: WorkflowProvider, private kernel: KernelInterfaceResolver) {
+  constructor(private kernel: KernelInterfaceResolver) {
     super();
   }
 
-  public async handle(journey: ParamsInterface): Promise<ResultInterface> {
-    this.logger.debug(`Normalization:cost on ${journey._id}`);
-
-    const normalizedJourney = { ...journey };
+  protected async getSiret(operatorId): Promise<string> {
     const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
       operatorFindSignature,
       {
-        _id: Number(journey.operator_id),
+        _id: Number(operatorId),
       },
       {
         call: {
@@ -42,38 +41,49 @@ export class NormalizationCostAction extends AbstractAction {
         },
       },
     );
-
-    if (journey.payload.passenger) {
-      const [cost, payments] = this.normalizeCost(siret, journey.payload.passenger, false);
-      journey.payload.passenger['cost'] = cost;
-      journey.payload.passenger.payments = payments;
-    }
-
-    if (journey.payload.driver) {
-      const [cost, payments] = this.normalizeCost(siret, journey.payload.driver, true);
-      journey.payload.driver['cost'] = cost;
-      journey.payload.driver.payments = payments;
-    }
-
-    await this.wf.next('normalization:cost', normalizedJourney);
-
-    return normalizedJourney;
+    return siret;
   }
 
-  protected normalizeCost(siret: string, data: PersonInterface, isDriver?: boolean): [number, PaymentInterface[]] {
-    const incentives = data.incentives && data.incentives.length ? data.incentives : [];
-    const inputPayments = data.payments && data.payments.length ? data.payments : [];
-    const incentiveAmount = incentives.reduce((total, current) => total + current.amount, 0);
-    const revenue = data.revenue || 0;
-    const contribution = data.contribution || 0;
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    const siret = await this.getSiret(params.operator_id);
+
+    const [cost, payments] = this.normalizeCost(
+      siret,
+      params.revenue,
+      params.contribution,
+      params.incentives,
+      params.payments,
+      params.isDriver,
+    );
+
+    // finalPerson['cost'] = cost;
+    // finalPerson.payments = payments;
+
+    return { cost, payments };
+  }
+
+  //  ------------------------------------------------------------------------------------
+
+  protected normalizeCost(
+    siret: string,
+    revenue: number = 0,
+    contribution: number = 0,
+    incentives?: IncentiveInterface[],
+    payments?: PaymentInterface[],
+    isDriver: boolean = false,
+  ): [number, PaymentInterface[]] {
+    const cleanIncentives = incentives && incentives.length ? incentives : [];
+    const inputPayments = payments && payments.length ? payments : [];
+    const incentiveAmount = cleanIncentives.reduce((total, current) => total + current.amount, 0);
+    // const revenue = data.revenue || 0;
 
     // tslint:disable-next-line: no-bitwise
     const cost = (isDriver ? -revenue - incentiveAmount : contribution + incentiveAmount) | 0;
 
     const isIncentive = (d: { type: string }): boolean => d.type === 'incentive';
 
-    const payments = [
-      ...incentives.map((p) => ({ ...p, type: 'incentive' })),
+    const cleanPayments = [
+      ...cleanIncentives.map((p) => ({ ...p, type: 'incentive' })),
       ...inputPayments.map((p) => ({ ...p, type: 'payment', index: -1 })),
     ]
       .sort((a, b) => {
@@ -96,14 +106,14 @@ export class NormalizationCostAction extends AbstractAction {
       })
       .map((p, i) => ({ ...p, index: i }));
 
-    payments.push({
+    cleanPayments.push({
       siret,
-      index: payments.length,
+      index: cleanPayments.length,
       type: 'payment',
       // tslint:disable-next-line: no-bitwise
-      amount: (Math.abs(cost) - payments.reduce((sum, item) => sum + item.amount, 0)) | 0,
+      amount: ((isDriver ? Math.abs(cost) : cost) - cleanPayments.reduce((sum, item) => sum + item.amount, 0)) | 0,
     });
 
-    return [cost, payments];
+    return [cost, cleanPayments];
   }
 }

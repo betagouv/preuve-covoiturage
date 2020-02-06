@@ -1,8 +1,14 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import {
+  TerritoryProviderInterface,
+  TerritoryProviderInterfaceResolver,
+} from '../interfaces/TerritoryProviderInterface';
 
-@provider()
-export class TerritoryProvider {
+@provider({
+  identifier: TerritoryProviderInterfaceResolver,
+})
+export class TerritoryProvider implements TerritoryProviderInterface {
   protected readonly pivotTable = 'territory.insee';
   protected readonly geoTable = 'common.insee';
 
