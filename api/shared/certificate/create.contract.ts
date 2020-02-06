@@ -1,12 +1,12 @@
+import { CertificateInterface } from './common/interfaces/CertificateInterface';
+
 export interface ParamsInterface {
   identity: string;
   start_at?: Date;
   end_at?: Date;
-  type?: string;
 }
 
-// export interface ResultInterface extends CertificateInterface {}
-export type ResultInterface = void;
+export interface ResultInterface extends CertificateInterface {}
 
 export type RepositoryInterface = Required<ParamsInterface>;
 

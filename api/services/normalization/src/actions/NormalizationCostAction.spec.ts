@@ -1,26 +1,25 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
-import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-import { PartialGeoInterface, GeoInterface } from '@pdc/provider-geo/dist/interfaces';
 
 import { NormalizationCostAction } from './NormalizationCostAction';
 
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
+import { ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
 
 class MockedNormalizationCostAction extends NormalizationCostAction {
   constructor() {
     super(null);
   }
-  protected async getSiret(operatorId): Promise<string> {
+  protected async getSiret(): Promise<string> {
     return '53996626700012';
   }
 }
 
-function testPayments(params: ParamsInterface, result: ResultInterface, userType: string) {
+function testPayments(params: ParamsInterface, result: ResultInterface, userType: string): void {
   console.log(
     'params.payments.length : ',
     result.payments.length,
     params.payments.length + params.incentives.length + 1,
+    userType,
   );
 
   expect(result.payments.length).to.be.eq(

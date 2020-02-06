@@ -1,11 +1,9 @@
-import { get, set } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/geo.contract';
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
-import { WorkflowProvider } from '../providers/WorkflowProvider';
 
 // Enrich position data
 @handler(handlerConfig)

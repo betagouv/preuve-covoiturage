@@ -17,7 +17,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
   constructor(protected connection: PostgresConnection) {}
 
   // TODO replace any output by proper interface
-  async find(params: { identity: string; start_at?: Date; end_at?: Date }): Promise<any[]> {
+  async find(params: { identity: string; start_at: Date; end_at: Date }): Promise<any[]> {
     // identity is a phone number for now!
     const { identity, start_at, end_at } = params;
 

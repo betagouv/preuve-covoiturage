@@ -1,4 +1,3 @@
-// tslint:disable max-classes-per-file
 import { describe } from 'mocha';
 import chai from 'chai';
 import { Kernel as AbstractKernel } from '@ilos/framework';
@@ -7,45 +6,31 @@ import { AjvValidator } from '@ilos/validator';
 
 import chaiAsPromised from 'chai-as-promised';
 
-import { NormalisationProcessAction } from './NormalizationProcessAction';
+import { NormalizationProcessAction } from './NormalizationProcessAction';
+
+import { irtSystemXTestCoupleMatching as testCouple } from '../../tests/IRTSystemXTestData';
 
 import {
-  irtSystemXTestCoupleMatching as testCouple,
-  irtSystemXTestDriver as driver,
-  irtSystemXTestPassenger as passenger,
-  irtSystemXTestDifferentDriver as differentDriver,
-} from '../../tests/IRTSystemXTestData';
-
-import {
-  signature as costSignature,
   ParamsInterface as CostParamsInterface,
   ResultInterface as CostResultInterface,
 } from '../shared/normalization/cost.contract';
 import {
-  signature as identitySignature,
   ParamsInterface as IdentityParamsInterface,
   ResultInterface as IdentityResultInterface,
 } from '../shared/normalization/identity.contract';
 import {
-  signature as geoSignature,
   ParamsInterface as GeoParamsInterface,
   ResultInterface as GeoResultInterface,
 } from '../shared/normalization/geo.contract';
 import {
-  signature as routeSignature,
   ParamsInterface as RouteParamsInterface,
   ResultInterface as RouteResultInterface,
 } from '../shared/normalization/route.contract';
 import {
-  signature as territorySignature,
   ParamsInterface as TerritoryParamsInterface,
   ResultInterface as TerritoryResultInterface,
 } from '../shared/normalization/territory.contract';
-import {
-  signature as crossCheckSignature,
-  ParamsInterface as CrossCheckParamsInterface,
-  ResultInterface as CrossCheckResultInterface,
-} from '../shared/carpool/crosscheck.contract';
+import { signature as crossCheckSignature } from '../shared/carpool/crosscheck.contract';
 import { schema as crosscheckSchema } from '../shared/carpool/crosscheck.schema';
 
 chai.use(chaiAsPromised);
@@ -63,7 +48,7 @@ describe('Normalization process action', () => {
 
   validator.registerValidator(crosscheckSchema, 'crosscheck_schema');
 
-  const { expect, assert } = chai;
+  const { expect } = chai;
 
   type ContextType = {
     channel: {
@@ -154,7 +139,7 @@ describe('Normalization process action', () => {
   }
 
   it('NormalizationProcessAction should handle imput data and result cross check params data', async () => {
-    const action = new NormalisationProcessAction(new Kernel());
+    const action = new NormalizationProcessAction(new Kernel());
     console.log('testCouple', JSON.stringify(testCouple));
     // console.log('driver', driver);
     // console.log('passenger', passenger);

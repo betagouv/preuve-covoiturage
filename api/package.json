@@ -21,6 +21,7 @@
   ],
   "scripts": {
     "scalingo-prebuild": "/bin/sh ./scalingo/prebuild.sh",
+    "scalingo-build": "/bin/sh ./scalingo/build.sh",
     "scalingo-postbuild": "/bin/sh ./scalingo/postbuild.sh",
     "start:http": "yarn workspace @pdc/proxy ilos http $PORT",
     "start:queue": "yarn workspace @pdc/proxy ilos queue $APP_REDIS_URL",
@@ -66,7 +67,6 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
     "ts-node": "^8.5.4",
-    "tslint": "^5.17.0",
     "typescript": "^3.7.4"
   },
   "lint-staged": {

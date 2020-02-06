@@ -431,6 +431,10 @@ export class HttpTransport implements TransportInterface {
       '/certificates/render/:uuid',
       asyncHandler(async (req, res, next) => {
         try {
+          if (get(req, 'headers.authorization', '') === '') {
+            throw new UnauthorizedException();
+          }
+
           const response = await this.kernel.call(
             'certificate:render',
             {
@@ -448,7 +452,8 @@ export class HttpTransport implements TransportInterface {
           res.status(response.code);
           res.send(response.data);
         } catch (e) {
-          console.log(e);
+          console.log('rpcError' in e ? e.rpcError : e.message);
+          console.log(e.stack);
           throw e;
         }
       }),
@@ -468,6 +473,10 @@ export class HttpTransport implements TransportInterface {
       '/certificates/download/:uuid',
       asyncHandler(async (req, res, next) => {
         try {
+          if (get(req, 'headers.authorization', '') === '') {
+            throw new UnauthorizedException();
+          }
+
           const type = this.getTypeFromHeaders(req.headers);
           const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
 
@@ -493,6 +502,7 @@ export class HttpTransport implements TransportInterface {
               res.send(response);
           }
         } catch (e) {
+          // TODO check this
           console.log(e);
           const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
           res.status(htmlStatusCode);
@@ -506,26 +516,19 @@ export class HttpTransport implements TransportInterface {
      * based on params (identity, start date, end date, ...)
      * - accessible with an application token
      * - generate a certificate to be printed when calling /certificates/download/{uuid}
-     * - uses /certificates/render to capture the rendered certificate
-     * - uses the remote printer to capture the rendered certificate
-     * - print a PDF/PNG returned back to the caller
      */
     this.app.post(
       '/certificates',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
-        try {
-          const type = this.getTypeFromHeaders(req.headers);
+        const response = await this.kernel.call(
+          'certificate:create',
+          { ...req.body },
+          { channel: { service: 'certificate' } },
+        );
 
-          await this.kernel.call('certificate:create', { ...req.query, type }, { channel: { service: 'certificate' } });
-
-          // return 201 CREATED or 404 NOT FOUND...
-        } catch (e) {
-          console.log(e);
-          const htmlStatusCode = mapStatusCode({ id: 1, jsonrpc: '2.0', error: e.rpcError });
-          res.status(htmlStatusCode);
-          res.json({ error: htmlStatusCode, message: e.rpcError.data });
-        }
+        // return 201 CREATED or 404 NOT FOUND...
+        this.send(res, response);
       }),
     );
   }

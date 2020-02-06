@@ -1,8 +1,9 @@
 // tslint:disable:max-line-length
+import { NouisliderModule } from 'ng2-nouislider';
 import { NgModule } from '@angular/core';
 import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NouisliderModule } from 'ng2-nouislider';
+import { MatPaginatorModule } from '@angular/material';
 
 import { CampaignRoutingModule } from '~/modules/campaign/campaign-routing.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
@@ -37,7 +38,6 @@ import { CampaignInseeFilterStartEndViewComponent } from './components/campaign-
 import { CampaignDraftViewComponent } from './pages/campaign-draft-view/campaign-draft-view.component';
 import { CampaignActiveViewComponent } from './pages/campaign-active-view/campaign-active-view.component';
 import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign-admin-list.component';
-import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   declarations: [

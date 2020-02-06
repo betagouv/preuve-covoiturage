@@ -3,10 +3,9 @@ import { describe } from 'mocha';
 import chai from 'chai';
 
 import { NormalizationIdentityAction } from './NormalizationIdentityAction';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/identity.contract';
 import { LegacyIdentityInterface } from '../shared/common/interfaces/LegacyIdentityInterface';
 
-const { expect, assert } = chai;
+const { expect } = chai;
 
 describe('Identity normalization action', () => {
   it('Should work', async () => {

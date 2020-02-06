@@ -1,21 +1,16 @@
 import supertest from 'supertest';
 import path from 'path';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { bootstrap } from '../src/bootstrap';
-
-const { expect } = chai;
-let _id: number;
 
 describe('toto', () => {
   let transport;
   let request;
   let connection: PostgresConnection;
 
-  const callFactory = (method: string, data: any, permissions: string[]) => ({
+  const callFactory = (method: string, data: any, permissions: string[]): object => ({
     method,
     id: 1,
     jsonrpc: '2.0',
@@ -68,8 +63,8 @@ describe('toto', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
-        // console.log('response : ', response);
-        _id = response.body.result._id;
+        console.log('response : ', response);
+        // _id = response.body.result._id;
       });
   });
 });

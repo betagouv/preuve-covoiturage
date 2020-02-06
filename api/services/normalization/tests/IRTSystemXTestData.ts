@@ -1,6 +1,5 @@
 import { AcquisitionInterface } from '../src/shared/acquisition/common/interfaces/AcquisitionInterface';
 import { JourneyInterface } from '../src/shared/common/interfaces/JourneyInterface';
-import { PersonInterface } from '../src/shared/common/interfaces/PersonInterface';
 
 export function mockJourneyToAcquisition(journey: JourneyInterface, acquisition: any = null): AcquisitionInterface {
   return {

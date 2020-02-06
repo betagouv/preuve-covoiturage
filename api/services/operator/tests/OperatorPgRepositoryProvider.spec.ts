@@ -2,7 +2,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import { Kernel as AbstractKernel } from '@ilos/framework';
-import { kernel as kernelDecorator, KernelInterface } from '@ilos/common';
+import { kernel as kernelDecorator } from '@ilos/common';
 
 import { ServiceProvider } from '../src/ServiceProvider';
 import { OperatorPgRepositoryProvider } from '../src/providers/OperatorPgRepositoryProvider';

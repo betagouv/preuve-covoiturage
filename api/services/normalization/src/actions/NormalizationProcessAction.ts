@@ -1,6 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
-import { PointInterface } from '@pdc/provider-geo/dist/interfaces';
 
 import {
   signature as costSignature,
