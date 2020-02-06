@@ -16,7 +16,15 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
 
   constructor(protected connection: PostgresConnection) {}
 
-  // TODO replace any output by proper interface
+  /**
+   * Find all carpools for an identity on a given period of time
+   * As the identity service is missing, we target an identity by phone number
+   * which gives us a list of matching identities from the certificate.identities view.
+   *
+   * TODO find a more elegant way to use the join on carpool and policy schemas
+   * TODO filter by operator and territory too
+   * TODO replace any output by proper interface
+   */
   async find(params: { identity: string; start_at: Date; end_at: Date }): Promise<any[]> {
     // identity is a phone number for now!
     const { identity, start_at, end_at } = params;
