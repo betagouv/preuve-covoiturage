@@ -1,20 +1,10 @@
 // tslint:disable:no-bitwise
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
 import { get } from 'lodash';
 import * as moment from 'moment';
 
-import { JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { CalculatedStat } from '~/core/entities/stat/calculatedStat';
-import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { Axes, FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
-import { ApiService } from '~/core/services/api/api.service';
-import { CalculatedStatInterface } from '~/core/interfaces/stat/calculatedStatInterface';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
-import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
-import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 
 import { co2Factor, petrolFactor } from '../config/stat';

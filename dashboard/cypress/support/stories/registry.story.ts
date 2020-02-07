@@ -36,9 +36,4 @@ export function testRegistryStory(config: TestsInterface['registry']) {
       cypress_campaign_list();
     });
   }
-
-  // LOGOUT
-  describe('Logout', () => {
-    cypress_logout();
-  });
 }

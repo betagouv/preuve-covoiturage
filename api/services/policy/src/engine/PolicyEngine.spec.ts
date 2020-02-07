@@ -32,11 +32,11 @@ const fakeCampaign: CampaignInterface = {
   rules: [
     [
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
     ],
@@ -62,6 +62,7 @@ describe('Policy engine', () => {
     });
 
     const result = await engine.process(trip, fakeCampaign);
+
     expect(result).to.be.an('array');
     expect(result.length).to.eq(1);
     expect(result[0].policy_id).to.eq(fakeCampaign._id);

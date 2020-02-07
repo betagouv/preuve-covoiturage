@@ -3,10 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { JsonRPC, JsonRPCService } from '~/core/services/api/json-rpc.service';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { IModel } from '~/core/entities/IModel';
 import { PatchParams } from '~/core/services/store/crud-store';
+import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
 export interface DeleteResponse {
   _id: number;
@@ -14,8 +14,6 @@ export interface DeleteResponse {
 }
 
 export enum CrudActions {
-  FIND = 'find',
-  LIST = 'list',
   CREATE = 'create',
   UPDATE = 'update',
   PATCH = 'patch',
@@ -31,35 +29,9 @@ export class JsonRpcCrud<
   IGetListT = any,
   ICreateT = EntityT,
   IUpdateT = EntityT
-> extends JsonRPC {
+> extends JsonRpcGetList<EntityT, ListEntityT, IGetT, IGetListT> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected method: string) {
-    super(http, router, activatedRoute);
-  }
-
-  protected defaultListParam: any = {};
-
-  paramGetList(params?: IGetListT) {
-    return new JsonRPCParam(`${this.method}:${CrudActions.LIST}`, { ...this.defaultListParam, ...params });
-  }
-
-  paramGet(params: IGetT) {
-    return new JsonRPCParam(`${this.method}:${CrudActions.FIND}`, params);
-  }
-
-  paramGetById(id: number) {
-    return this.paramGet(<any>{ _id: id });
-  }
-
-  get(params: IGetT): Observable<EntityT> {
-    return this.callOne(this.paramGet(params)).pipe(map((data) => data.data));
-  }
-
-  getList(params?: IGetListT): Observable<ListEntityT[]> {
-    return this.callOne(this.paramGetList(params)).pipe(map((data) => data.data));
-  }
-
-  getById(id: number): Observable<EntityT> {
-    return this.get(<any>{ _id: id });
+    super(http, router, activatedRoute, method);
   }
 
   create(item: EntityT): Observable<EntityT> {

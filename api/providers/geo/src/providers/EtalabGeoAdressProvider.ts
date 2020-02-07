@@ -1,9 +1,10 @@
 import { get } from 'lodash';
 import axios from 'axios';
-import { NotFoundException } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 
 import { GeoCoderInterface, PointInterface, InseeCoderInterface } from '../interfaces';
 
+@provider()
 export class EtalabGeoAdressProvider implements GeoCoderInterface, InseeCoderInterface {
   protected domain = 'https://api-adresse.data.gouv.fr';
 

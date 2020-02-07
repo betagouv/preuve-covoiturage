@@ -7,7 +7,7 @@ import { StatNumber } from '~/core/entities/stat/statNumber';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
 import { statNumbers } from '../../../../config/statNumbers';
-import { StatFilteredService } from '../../../../services/stat-filtered.service';
+import { StatFilteredStoreService } from '../../../../services/stat-filtered-store.service';
 
 @Component({
   selector: 'app-stat-number',
@@ -31,7 +31,7 @@ export class StatNumberComponent extends DestroyObservable implements OnInit {
 
   @Output() linkClicked: EventEmitter<string> = new EventEmitter();
 
-  constructor(private statService: StatFilteredService) {
+  constructor(private statService: StatFilteredStoreService) {
     super();
   }
 

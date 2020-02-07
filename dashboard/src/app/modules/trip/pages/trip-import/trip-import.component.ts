@@ -5,9 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { requiredFileTypeValidator } from '~/modules/trip/validators/required-file-type.validator';
-import { TripService } from '~/modules/trip/services/trip.service';
-import { HTTP, URLS } from '~/core/const/main.const';
+import { URLS } from '~/core/const/main.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 
 @Component({
   selector: 'app-trip-import',
@@ -19,7 +19,7 @@ export class TripImportComponent extends DestroyObservable implements OnInit {
   public tripImportForm: FormGroup;
   public progress = 0;
 
-  constructor(private fb: FormBuilder, private tripService: TripService, private toastr: ToastrService) {
+  constructor(private fb: FormBuilder, private tripService: TripStoreService, private toastr: ToastrService) {
     super();
   }
 

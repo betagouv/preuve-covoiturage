@@ -1,8 +1,9 @@
 // tslint:disable:max-line-length
+import { NouisliderModule } from 'ng2-nouislider';
 import { NgModule } from '@angular/core';
 import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NouisliderModule } from 'ng2-nouislider';
+import { MatPaginatorModule } from '@angular/material';
 
 import { CampaignRoutingModule } from '~/modules/campaign/campaign-routing.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
@@ -76,6 +77,7 @@ import { CampaignAdminListComponent } from './pages/campaign-admin-list/campaign
     TerritoryUiModule,
     OperatorUiModule,
     CampaignUiModule,
+    MatPaginatorModule,
   ],
   providers: [CurrencyPipe, DecimalPipe],
   exports: [CampaignsListComponent, TerritoriesToInseesAutocompleteComponent],

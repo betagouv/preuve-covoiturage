@@ -2,12 +2,12 @@ import { TripSearchInterfaceWithPagination } from './common/interfaces/TripSearc
 import { ResultWithPagination } from '../common/interfaces/ResultWithPagination';
 
 export interface ParamsInterface extends TripSearchInterfaceWithPagination {}
-interface SingleResultInterface {
+export interface SingleResultInterface {
   trip_id: string;
   start_town?: string;
   end_town?: string;
   start_datetime: Date;
-  operator_id: string;
+  operator_id: number;
   incentives: number;
   operator_class: string;
 }

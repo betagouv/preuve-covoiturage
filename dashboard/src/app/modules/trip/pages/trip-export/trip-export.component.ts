@@ -6,9 +6,9 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { takeUntil } from 'rxjs/operators';
 
-import { TripService } from '~/modules/trip/services/trip.service';
 import { DialogService } from '~/core/services/dialog.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { TripStoreService } from '~/modules/trip/services/trip-store.service';
 
 @Component({
   selector: 'app-trip-export',
@@ -28,7 +28,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
   exportFilterForm: FormGroup;
 
   constructor(
-    public tripService: TripService,
+    public tripService: TripStoreService,
     private _toastr: ToastrService,
     private _fb: FormBuilder,
     private _dialog: DialogService,

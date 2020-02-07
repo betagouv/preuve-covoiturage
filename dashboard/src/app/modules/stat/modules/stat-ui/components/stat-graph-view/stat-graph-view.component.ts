@@ -3,7 +3,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { StatService } from '~/modules/stat/services/stat.service';
+import { StatStoreService } from '~/modules/stat/services/stat-store.service';
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
@@ -17,7 +17,7 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
   @Input() graphName: statDataNameType;
   graphData: { [key in chartNameType]: Axes } = null;
 
-  constructor(public statService: StatService) {
+  constructor(public statService: StatStoreService) {
     super();
   }
 
@@ -26,11 +26,11 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
   }
 
   get loading(): boolean {
-    return this.statService.loading;
+    return this.statService.isLoading;
   }
 
   get loaded(): boolean {
-    return this.statService.loaded;
+    return !!this.statService.stat;
   }
 
   private loadStat(): void {
@@ -40,13 +40,12 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
       }
     });
 
-    if (this.statService.loading || this.statService.loaded) {
+    if (this.loading || this.loaded) {
       return;
     }
 
     // reset stats on load
     this.statService.init();
-
-    this.statService.loadOne().subscribe();
+    this.statService.load();
   }
 }

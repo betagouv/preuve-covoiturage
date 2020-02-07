@@ -45,9 +45,4 @@ export function testOperatorStory(config: TestsInterface['operator']) {
       cypress_filter(false, UserGroupEnum.OPERATOR);
     });
   }
-
-  // LOGOUT
-  describe('Logout', () => {
-    cypress_logout();
-  });
 }

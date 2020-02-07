@@ -12,11 +12,13 @@ import { NormalizationTerritoryAction } from './actions/NormalizationTerritoryAc
 import { NormalizationCostAction } from './actions/NormalizationCostAction';
 import { NormalizationRouteAction } from './actions/NormalizationRouteAction';
 import { NormalizationIdentityAction } from './actions/NormalizationIdentityAction';
+import { NormalizationProcessAction } from './actions/NormalizationProcessAction';
 
 @serviceProvider({
   config: __dirname,
   providers: [GeoProvider, TerritoryProvider, WorkflowProvider],
   handlers: [
+    NormalizationProcessAction,
     NormalizationGeoAction,
     NormalizationRouteAction,
     NormalizationTerritoryAction,

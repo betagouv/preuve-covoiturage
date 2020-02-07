@@ -33,7 +33,6 @@ const fakeCampaign = {
     [
       {
         slug: 'adult_only_filter',
-        parameters: true,
       },
     ],
   ],
@@ -394,8 +393,7 @@ describe('Campaign service', () => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.be.an('array');
-        expect(response.body.result.length).to.eq(1);
-        expect(response.body.result[0].name).to.eq(generalName);
+        expect(response.body.result.filter((c) => c._id === idTwo).length).to.eq(1);
       });
 
     await request

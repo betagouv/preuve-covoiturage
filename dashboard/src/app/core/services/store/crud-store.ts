@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { Type } from '@angular/core';
 
@@ -7,6 +7,7 @@ import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
 import { IFormModel } from '~/core/entities/IFormModel';
 import { IClone } from '~/core/entities/IClone';
 import { IMapModel } from '~/core/entities/IMapModel';
+import { GetListStore } from '~/core/services/store/getlist-store';
 
 export type PatchParams<IPatchParamT> = {
   _id: number;
@@ -19,83 +20,13 @@ export abstract class CrudStore<
   IPatchT = any,
   JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT, IPatchT> = JsonRpcCrud<EntityT, EntityListT, IPatchT>,
   FormModelT = any
-> {
-  protected entitiesSubject = new BehaviorSubject<EntityListT[]>([]);
-  protected entitySubject = new BehaviorSubject<EntityT>(null);
-
+> extends GetListStore<EntityT, EntityListT, JsonRpcCrudT> {
   // dismiss subject triggerd in order to cancel current rpc calls
-  protected dismissGetSubject = new Subject();
   protected dismissDeleteSubject = new Subject();
-  protected dismissGetListSubject = new Subject();
   protected dismissUpdateCreateSubject = new Subject();
 
-  // content
-  protected _entities$ = this.entitiesSubject.asObservable();
-  protected _entity$ = this.entitySubject.asObservable();
-  protected _loadCount = 0;
-
-  // filter subject
-  protected _filterSubject = new BehaviorSubject<any>(null);
-  private _filterSubscription: Subscription;
-
-  get filterSubject() {
-    return this._filterSubject;
-  }
-
-  get loadCount() {
-    return this._loadCount;
-  }
-
-  get isLoading() {
-    return this._loadCount > 0;
-  }
-
-  get entity$() {
-    return this._entity$;
-  }
-
-  get entity() {
-    return this.entitySubject.value;
-  }
-
-  get entities$() {
-    return this._entities$;
-  }
-
   constructor(protected rpcCrud: JsonRpcCrudT, protected modelType: Type<EntityT>) {
-    this.rpcCrud = rpcCrud;
-    let firstLoad = true;
-
-    this._filterSubject.subscribe((filt) => {
-      if (firstLoad && (filt !== null || !firstLoad)) {
-        this.loadList();
-        firstLoad = false;
-      }
-    });
-  }
-
-  reset() {
-    this._loadCount = 0;
-    this.entitiesSubject.next([]);
-    this._filterSubject.next({});
-    this.entitySubject.next(null);
-  }
-
-  loadList() {
-    this.dismissGetSubject.next();
-    this.dismissGetListSubject.next();
-    this._loadCount += 1;
-    this.rpcCrud
-      .getList(this.filterSubject.value)
-      .pipe(
-        takeUntil(this.dismissGetListSubject),
-        finalize(() => {
-          if (this._loadCount > 0) this._loadCount -= 1;
-        }),
-      )
-      .subscribe((list) => {
-        this.entitiesSubject.next(list);
-      });
+    super(rpcCrud);
   }
 
   select(entity: EntityListT) {
@@ -221,9 +152,8 @@ export abstract class CrudStore<
   }
 
   dismissAllRpcActions() {
+    super.dismissAllRpcActions();
     this.dismissUpdateCreateSubject.next();
     this.dismissDeleteSubject.next();
-    this.dismissGetListSubject.next();
-    this.dismissGetSubject.next();
   }
 }

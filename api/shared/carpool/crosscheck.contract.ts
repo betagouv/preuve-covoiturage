@@ -1,29 +1,4 @@
-import { IdentityInterface } from '../common/interfaces/IdentityInterface';
-import { PaymentInterface } from '../common/interfaces/PaymentInterface';
-import { GeoPositionInterface } from '../common/interfaces/GeoPositionInterface';
-
-interface PersonMetaInterface {
-  payments: PaymentInterface[];
-  calc_distance: number;
-  calc_duration: number;
-}
-
-interface Position extends GeoPositionInterface {
-  insee: string;
-}
-
-interface PersonInterface {
-  is_driver: boolean;
-  datetime: Date;
-  start: Position;
-  end: Position;
-  seats: number;
-  duration: number;
-  distance?: number; // TODO: fix this as nullable :)
-  identity: IdentityInterface;
-  cost: number; // TODO: add this !
-  meta: PersonMetaInterface; // TODO: add this !
-}
+import { FinalizedPersonInterface } from '../common/interfaces/PersonInterface';
 
 export interface ParamsInterface {
   operator_trip_id?: string;
@@ -32,7 +7,7 @@ export interface ParamsInterface {
   operator_journey_id: string; // journey_id  // TODO: add this !
   created_at: Date;
   operator_class: string;
-  people: PersonInterface[];
+  people: FinalizedPersonInterface[];
 }
 
 export type ResultInterface = void;

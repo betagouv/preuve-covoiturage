@@ -22,6 +22,7 @@ import { stubApiAdress } from '../support/stubs/external/api-adresse';
 import { stubTripExport } from '../support/stubs/trip/trip.export';
 import { DEBUG_CONFIG } from '../config/debug.config';
 import { CI_CONFIG } from '../config/ci.config';
+import { cypress_logout } from '../support/reusables/auth/cypress_logout';
 
 const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
 
@@ -68,5 +69,10 @@ context('TERRITORY', () => {
 
     // run tests
     testTerritoryStory(config.territory);
+
+    // LOGOUT
+    describe('Logout', () => {
+      cypress_logout();
+    });
   });
 });

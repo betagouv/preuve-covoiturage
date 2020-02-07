@@ -76,18 +76,6 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   private loadOperators() {
-    this.commonDataService.currentTerritory$
-      .pipe(
-        mergeMap((userTerritory) =>
-          userTerritory ? this.territoryApiService.getOperatorVisibility(userTerritory._id) : of(null),
-        ),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((visibleOperators) => {
-        this.visibleOperatorIds = visibleOperators;
-        this.filterOperators();
-      });
-
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators
         ? operators.map((operator) => ({

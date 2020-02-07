@@ -2,14 +2,14 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
-import { TripService } from '~/modules/trip/services/trip.service';
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { DEFAULT_TRIP_LIMIT, DEFAULT_TRIP_SKIP } from '~/core/const/filter.const';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { LightTripInterface } from '~/core/interfaces/trip/tripInterface';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { TripStoreService } from '~/modules/trip/services/trip-store.service';
+import { LightTrip } from '~/core/entities/trip/trip';
 
 @Component({
   selector: 'app-trip-list',
@@ -17,13 +17,13 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
   styleUrls: ['./trip-list.component.scss'],
 })
 export class TripListComponent extends DestroyObservable implements OnInit {
-  trips: LightTripInterface[] = [];
+  trips: LightTrip[] = [];
   skip = DEFAULT_TRIP_SKIP;
   limit = DEFAULT_TRIP_LIMIT;
 
   constructor(
     public filterService: FilterService,
-    public tripService: TripService,
+    public tripService: TripStoreService,
     private toastr: ToastrService,
     private cd: ChangeDetectorRef,
     private authService: AuthenticationService,
@@ -41,6 +41,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
         limit: this.limit,
       });
     });
+    this.tripService.entities$.pipe(takeUntil(this.destroy$)).subscribe((trips) => (this.trips = trips));
   }
 
   get columnsDisplayed(): string[] {
@@ -52,11 +53,11 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   get loading(): boolean {
-    return this.tripService.loading;
+    return this.tripService.isLoading;
   }
 
   get loaded(): boolean {
-    return this.tripService.loading;
+    return !!this.tripService.loaded;
   }
 
   /**
@@ -75,7 +76,6 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   onScroll() {
-    // TODO stop fetching trips when end (count 0) is reached
     this.skip += DEFAULT_TRIP_LIMIT;
     const filter = {
       ...this.filterService.filter$.value,
@@ -86,21 +86,10 @@ export class TripListComponent extends DestroyObservable implements OnInit {
   }
 
   private loadTrips(filter: FilterInterface | {} = {}, loadMore = false): void {
-    const user = this.authService.user;
-    if (this.tripService.loading) {
+    if (this.tripService.isLoading) {
       return;
     }
 
-    this.tripService
-      .load(filter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (trips) => {
-          this.trips = loadMore ? this.trips.concat(trips) : trips;
-        },
-        (err) => {
-          this.toastr.error(err.message);
-        },
-      );
+    this.tripService.load(filter);
   }
 }

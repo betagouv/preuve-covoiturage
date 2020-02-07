@@ -1,13 +1,24 @@
+import crypto from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import { provider, ProviderInterface } from '@ilos/common';
+// import { ConfigExtension } from '@ilos/config';
 
 import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface';
 
 @provider({
   identifier: CryptoProviderInterfaceResolver,
+  // require: [ConfigExtension],
 })
 export class CryptoProvider implements ProviderInterface {
   private saltRounds = 10;
+
+  async sha256(content: string): Promise<string> {
+    // TODO get secret from config
+    return crypto
+      .createHmac('sha256', 'abcd')
+      .update(content)
+      .digest('base64');
+  }
 
   async cryptPassword(plainPassword: string): Promise<string> {
     return bcrypt.hash(plainPassword, this.saltRounds);
