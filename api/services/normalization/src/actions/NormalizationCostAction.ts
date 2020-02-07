@@ -23,23 +23,27 @@ export class NormalizationCostAction extends AbstractAction {
   }
 
   protected async getSiret(operatorId): Promise<string> {
-    const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
-      operatorFindSignature,
-      {
-        _id: Number(operatorId),
-      },
-      {
-        call: {
-          user: {
-            permissions: ['operator.read'],
+    try {
+      const { siret } = await this.kernel.call<OperatorFindParamsInterface, OperatorFindResultInterface>(
+        operatorFindSignature,
+        {
+          _id: Number(operatorId),
+        },
+        {
+          call: {
+            user: {
+              permissions: ['operator.read'],
+            },
+          },
+          channel: {
+            service: 'normalization',
           },
         },
-        channel: {
-          service: 'normalization',
-        },
-      },
-    );
-    return siret;
+      );
+      return siret;
+    } catch (e) {
+      return null;
+    }
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
