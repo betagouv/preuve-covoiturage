@@ -26,22 +26,28 @@ export class FindAction extends AbstractAction {
     if (source && source === 'remote') {
       return this.ds.find(siret);
     }
-    const res = await this.repository.find(siret);
 
-    if (res === undefined) {
-      await this.kernel.call(fetchSignature, siret, {
-        call: {
-          user: {
-            permissions: ['company.fetch'],
+    try {
+      const res = await this.repository.find(siret);
+
+      if (res === undefined) {
+        await this.kernel.call(fetchSignature, siret, {
+          call: {
+            user: {
+              permissions: ['company.fetch'],
+            },
           },
-        },
-        channel: {
-          service: handlerConfig.service,
-        },
-      });
-      return this.handle(params);
-    }
+          channel: {
+            service: handlerConfig.service,
+          },
+        });
+        return this.handle(params);
+      }
 
-    return res;
+      return res;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   }
 }
