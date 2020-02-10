@@ -297,6 +297,14 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     return result.rows.map(this.castTypes);
   }
 
+  async getTemplates(): Promise<CampaignInterface[]> {
+    const result = await this.connection.getClient().query(`
+      SELECT * FROM ${this.table} WHERE status = 'template' AND deleted_at IS NULL
+    `);
+
+    return result.rows;
+  }
+
   private castTypes(row: any): any {
     return {
       ...row,

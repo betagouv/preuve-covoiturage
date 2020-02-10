@@ -11,6 +11,7 @@ export interface CampaignRepositoryProviderInterface {
 
   deleteDraftOrTemplate(id: number, territoryId: number): Promise<void>;
   findApplicableCampaigns(territories: number[], date: Date): Promise<CampaignInterface[]>;
+  getTemplates(): Promise<CampaignInterface[]>;
 }
 
 export abstract class CampaignRepositoryProviderInterfaceResolver implements CampaignRepositoryProviderInterface {
@@ -43,6 +44,10 @@ export abstract class CampaignRepositoryProviderInterfaceResolver implements Cam
   }
 
   async findApplicableCampaigns(territories: number[], d: Date): Promise<CampaignInterface[]> {
+    throw new Error();
+  }
+
+  async getTemplates(): Promise<CampaignInterface[]> {
     throw new Error();
   }
 }

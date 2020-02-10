@@ -52,6 +52,7 @@ export const territory = {
       'incentive-campaign.read',
       'incentive-campaign.update',
       'incentive-campaign.delete',
+      'incentive-campaign.templates',
     ],
   },
   user: {
@@ -82,6 +83,7 @@ export const territory = {
       'incentive-policy.read',
       'incentive-campaign.list',
       'incentive-campaign.read',
+      'incentive-campaign.templates',
       'users.list',
       'territory.users.list',
       'operator.list',
@@ -127,6 +129,7 @@ export const operator = {
       'operator.trip.list',
       'operator.trip.stats',
       'incentive-campaign.list',
+      'incentive-campaign.templates',
     ],
   },
   user: {
@@ -149,6 +152,7 @@ export const operator = {
       'operator.trip.list',
       'operator.trip.stats',
       'incentive-campaign.list',
+      'incentive-campaign.templates',
       'user.list',
       'operator.users.list',
     ],
@@ -193,6 +197,7 @@ export const registry = {
       'profile.password',
       'profile.delete',
       'incentive-campaign.list',
+      'incentive-campaign.templates',
     ],
   },
 };
