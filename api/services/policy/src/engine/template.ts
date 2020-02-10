@@ -523,7 +523,7 @@ export const weekendTrafficLimitPolicy = {
   name: 'Limiter les embouteillages du week-end',
   slug: 'limiter_les_embouteillages_du_weekend',
   description:
-    "Campagne d'incitation financière pour limiter les embouteillages les week-end notamment en cas de chassé croisé. ",
+    "Campagne d'incitation financière pour limiter les embouteillages les week-end notamment en cas de chassé croisé.",
   global_rules: [
     {
       slug: 'weekday_filter',

@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { describe } from 'mocha';
 
 import { TripInterface, CampaignInterface } from '../../src/interfaces';
 import { PolicyEngine } from '../../src/engine/PolicyEngine';
@@ -37,7 +38,6 @@ describe('Template: weekendTrafficLimitPolicy', () => {
       const r = await engine.process(trip, policy);
       results.push(...r);
     }
-    console.log({ trips, results });
 
     expect(results.filter((r) => r.amount > 0)).to.deep.members([
       { policy_id, carpool_id: 8, identity_uuid: '6', amount: 150 },
