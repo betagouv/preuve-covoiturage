@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
-import { take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil, filter, map } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
@@ -212,11 +212,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
     if (templateId) {
       // get template from service
-      this._campaignStoreService
-        .selectEntityByIdFromList(templateId)
+      this._campaignStoreService.templates$
         .pipe(
-          take(1),
           takeUntil(this.destroy$),
+          map((cas) => cas.find((ca) => ca._id === templateId)),
+          // take(1),
         )
         .subscribe(
           (template) => {
@@ -391,12 +391,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   private initCampaigns() {
-    if (!this._campaignStoreService.loaded) {
-      if (this._authService.user.group === UserGroupEnum.TERRITORY) {
-        this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
-      }
-      this._campaignStoreService.loadList();
-    }
+    this._campaignStoreService.loadCampaigns();
+
+    // if (!this._campaignStoreService.loaded) {
+    // if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+    //   // this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+    //   this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+    // }
+    // }
   }
 
   private setLastAvailableStep(): void {
