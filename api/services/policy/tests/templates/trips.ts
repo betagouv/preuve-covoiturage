@@ -80,7 +80,7 @@ const tripDefinitions = [
     passenger_identity_uuid: '7',
     passenger_seats: 3,
     inside: true,
-    datetime: '2019-01-20T11:00:00.000Z',
+    datetime: '2019-01-20T13:00:00.000Z',
   },
 ];
 
