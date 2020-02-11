@@ -10,7 +10,7 @@ interface MetaAmountPostParameters {
 
 export class MetaAmountPost extends PostRule<MetaAmountPostParameters> {
   static readonly slug: string = 'meta_amount_post';
-  static readonly description: string = "Incrémente le montant d'incitation";
+  static readonly description: string = "Incrémente le montant de l'incitation";
   static readonly schema: { [k: string]: any } = {
     type: 'object',
     required: ['prefix', 'period'],

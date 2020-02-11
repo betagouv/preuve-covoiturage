@@ -49,7 +49,7 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
             }
           } else {
             if (noParameterRuleSlugs.indexOf(rule.slug) < 0) {
-              throw new InvalidParamsException(`Unparametred rule ${rule.slug}`);
+              throw new InvalidParamsException(`Unconfigured rule ${rule.slug}`);
             }
           }
         }

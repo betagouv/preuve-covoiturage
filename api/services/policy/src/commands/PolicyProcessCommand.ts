@@ -38,10 +38,6 @@ export class PolicyProcessCommand implements CommandInterface {
   public async call(id, options): Promise<string> {
     const { territory, after, databaseUri, detach, limit } = options;
 
-    // console.log({
-    //   id, options,
-    // });
-
     if (id) {
       await this.processOne(id, detach);
       return `Operation done for ${id}`;
