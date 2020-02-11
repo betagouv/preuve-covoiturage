@@ -198,7 +198,7 @@ export class CampaignUiService {
       text += `Les trajets doivent être sur les axes suivants : <ul>`;
 
       insee.whiteList.forEach((axe) => {
-        text += `<li> De`;
+        text += `<li> De `;
         axe.start.forEach((city, index) => {
           if (index > 0 && index === axe.start.length - 1) {
             text += ' ou ';
