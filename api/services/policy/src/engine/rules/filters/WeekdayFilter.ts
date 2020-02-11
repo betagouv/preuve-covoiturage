@@ -4,7 +4,7 @@ import { FilterRule } from '../FilterRule';
 
 export class WeekdayFilter extends FilterRule<number[]> {
   static readonly slug: string = 'weekday_filter';
-  static readonly description: string = "La politique n'est applicable que sur les jours indiqué";
+  static readonly description: string = "La politique n'est applicable que sur les jours indiqués";
   static readonly schema: { [k: string]: any } = {
     type: 'array',
     items: {
