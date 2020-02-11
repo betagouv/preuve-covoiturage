@@ -28,6 +28,7 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
   }
 
   async process(params: CampaignInterface, context: ContextType, next?: Function, options?: any): Promise<ResultType> {
+    console.log('>> ');
     const globalRules = params.global_rules && params.global_rules.length ? params.global_rules : [];
     const ruleSets = params.rules && params.rules.length ? [globalRules, ...params.rules] : [globalRules];
 
@@ -35,6 +36,8 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
       if (ruleSet.length && ruleSet.length > 0) {
         const notApplicablePolicies = ruleSet.filter((policy) => availablePolicieSlugs.indexOf(policy.slug) < 0);
         if (notApplicablePolicies.length > 0) {
+          console.log('!! Unknown retribution rules');
+
           throw new InvalidParamsException(
             `Unknown retribution rules: ${notApplicablePolicies.map((rule) => rule.slug).join(', ')}`,
           );
@@ -45,16 +48,23 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
             try {
               await this.validator.validate(rule.parameters, `policies.${rule.slug}`);
             } catch (e) {
+              console.log(' rule ', rule);
+              console.log('!! e : ', e);
               throw new InvalidParamsException(e.message);
             }
           } else {
             if (noParameterRuleSlugs.indexOf(rule.slug) < 0) {
+              console.log(' rule ', rule);
+              console.log('!! InvalidParamsException e : ', `Unconfigured rule ${rule.slug}`);
+
               throw new InvalidParamsException(`Unconfigured rule ${rule.slug}`);
             }
           }
         }
       }
     }
+
+    console.log('OK');
 
     return next(params, context);
   }
