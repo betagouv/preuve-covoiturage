@@ -5,6 +5,8 @@ export class PerPassengerModifier extends ModifierRule {
   static readonly slug: string = 'per_passenger_modifier';
   static readonly description: string = 'Le montant est multiplié par le nombre total de passagers';
 
+  static readonly schema = {};
+
   async modify(ctx: RuleHandlerContextInterface, result: number): Promise<number> {
     return result * ctx.trip.people.filter((p) => !p.is_driver).reduce((acc, p) => acc + (p.seats || 1), 0);
   }

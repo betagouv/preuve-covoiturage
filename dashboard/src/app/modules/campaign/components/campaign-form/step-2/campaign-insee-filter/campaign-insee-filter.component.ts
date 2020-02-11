@@ -56,7 +56,7 @@ export class CampaignInseeFilterComponent implements OnInit {
   generateStartEndFormGroup(): FormGroup {
     return this._formBuilder.group({
       start: [[], Validators.required],
-      end: [[], Validators.required],
+      end: [[]],
     });
   }
 }
