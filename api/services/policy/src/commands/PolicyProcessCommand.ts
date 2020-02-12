@@ -19,6 +19,10 @@ export class PolicyProcessCommand implements CommandInterface {
       description: 'Process all trip id after given date',
     },
     {
+      signature: '-u, --until <date>',
+      description: 'Process all trip id until given date',
+    },
+    {
       signature: '-t, --territory <territory>',
       description: 'Process all trip id given territory',
     },
@@ -36,7 +40,7 @@ export class PolicyProcessCommand implements CommandInterface {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   public async call(id, options): Promise<string> {
-    const { territory, after, databaseUri, detach, limit } = options;
+    const { territory, after, until, databaseUri, detach, limit } = options;
 
     if (id) {
       await this.processOne(id, detach);
@@ -51,8 +55,8 @@ export class PolicyProcessCommand implements CommandInterface {
     const values = [];
 
     if (territory && after) {
-      whereClause = 'WHERE datetime > $1::timestamp AND (start_territory_id = $2::int OR end_territory_id = $2::int)';
-      values.push(new Date(after), territory);
+      whereClause = `WHERE datetime > $1::timestamp AND datetime < $2::timestamp AND (start_territory_id = $3::int OR end_territory_id = $3::int)`;
+      values.push(new Date(after), new Date(until).toISOString(), territory);
     } else if (territory) {
       whereClause = 'WHERE start_territory_id = $1::int OR end_territory_id = $1::int';
       values.push(territory);
