@@ -62,7 +62,7 @@ export class CampaignFormater {
           whiteList: [],
           blackList: [],
         },
-        weekday: [],
+        weekday: [1, 2, 3, 4, 5, 6, 0],
         operator_ids: [],
         distance_range: [0, 0],
       },
@@ -97,6 +97,7 @@ export class CampaignFormater {
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY) {
         campaignUx.filters.weekday = <WeekdayRetributionRule['parameters']>retributionRule.parameters;
+        console.log('campaignUx.filters.weekday : ', campaignUx.filters.weekday);
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.TIME) {
         const parameters = <TimeRetributionRule['parameters']>retributionRule.parameters;
