@@ -52,7 +52,7 @@ export class CampaignUx {
       parent_id: null,
       only_adult: null,
       filters: {
-        weekday: [],
+        weekday: [0, 1, 2, 3, 4, 5, 6],
         time: [],
         distance_range: [0, 0],
         rank: [],
