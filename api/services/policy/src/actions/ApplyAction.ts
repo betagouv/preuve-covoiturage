@@ -26,8 +26,16 @@ export class ApplyAction extends AbstractAction {
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     // 1. Find trips
+    console.log('>>> search trips');
     const trips = await this.tripRepository.findTripsById(params.trips);
 
+    // TMP - optimized for IDFM campaign
+    // console.log('>>> search applicable campaigns');
+    // const campaigns = await this.campaignRepository.findApplicableCampaigns([239], new Date('2020-01-27T00:00:00Z'));
+
+    let allIncentives = [];
+
+    console.log('>>> process campaigns for all trips');
     for (const trip of trips) {
       // 2. Find applicable campaign for this trip
       const campaigns = await this.campaignRepository.findApplicableCampaigns(trip.territories, trip.datetime);
@@ -35,17 +43,11 @@ export class ApplyAction extends AbstractAction {
       // 3. For each campaign, use policy engine to generate incentive
       for (const campaign of campaigns) {
         const incentives: IncentiveInterface[] = await this.engine.process(trip, campaign);
-        // 4. Save it to db
-        // TODO: add a create many method
-        for (const incentive of incentives) {
-          await this.incentiveRepository.create(incentive);
-        }
-
-        console.log(
-          `>>> Incentives calculated for ${(trip.people[0] as any).trip_id}:`,
-          incentives.map((i) => i.amount).join(','),
-        );
+        allIncentives = [...allIncentives, ...incentives];
       }
     }
+
+    console.log('>>> save incentives');
+    await this.incentiveRepository.createMany(allIncentives);
   }
 }

@@ -50,7 +50,7 @@ export class PolicyProcessCommand implements CommandInterface {
     {
       signature: '-b, --batch <batch>',
       description: 'Batch size',
-      default: 1000,
+      default: 10000,
     },
     {
       signature: '-l, --limit <limit>',
@@ -137,13 +137,13 @@ export class PolicyProcessCommand implements CommandInterface {
 
       try {
         if (ids.length) {
+          console.log(`>> process ${ids.length} trips`);
           await this.process(ids, detach);
-          console.log(`>> Operation done for batch ${result.length - count + 1}`);
         }
       } catch (e) {
         console.log(`>> Operation failed for (${e.message})`);
       }
-    } while (count > 1);
+    } while (count > 0);
 
     client.release();
     await connection.down();
