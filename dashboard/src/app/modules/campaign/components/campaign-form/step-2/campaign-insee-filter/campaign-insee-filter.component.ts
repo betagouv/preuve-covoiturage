@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
+import { tripLocationValidator } from '~/modules/campaign/validators/trip-location.validator';
 
 @Component({
   selector: 'app-campaign-insee-filter',
@@ -54,9 +55,12 @@ export class CampaignInseeFilterComponent implements OnInit {
   }
 
   generateStartEndFormGroup(): FormGroup {
-    return this._formBuilder.group({
-      start: [[], Validators.required],
-      end: [[]],
-    });
+    return this._formBuilder.group(
+      {
+        start: [[]],
+        end: [[]],
+      },
+      { validators: [tripLocationValidator] },
+    );
   }
 }
