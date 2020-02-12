@@ -42,4 +42,19 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
 
     return;
   }
+
+  async createMany(data: IncentiveInterface[]): Promise<void> {
+    try {
+      await this.connection.getClient().query('BEGIN');
+
+      for (const item of data) {
+        await this.create(item);
+      }
+
+      await this.connection.getClient().query('COMMIT');
+    } catch (e) {
+      console.log('Failed Incentive CreateMany: ', e.message);
+      await this.connection.getClient().query('ROLLBACK');
+    }
+  }
 }
