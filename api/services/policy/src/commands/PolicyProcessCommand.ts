@@ -81,7 +81,7 @@ export class PolicyProcessCommand implements CommandInterface {
     const cursor = client.query(new Cursor(query, values));
 
     const promisifiedCursorRead = promisify(cursor.read.bind(cursor));
-    const ROW_COUNT = 10;
+    const ROW_COUNT = 1000;
     let count = 0;
 
     do {
