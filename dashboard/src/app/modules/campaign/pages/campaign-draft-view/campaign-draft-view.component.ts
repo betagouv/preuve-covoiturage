@@ -53,15 +53,12 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   }
 
   private loadCampaign(campaignId: number) {
+    console.log('> loadCampaign');
     this._campaignStoreService
-      .selectEntityByIdFromList(campaignId)
-      .pipe(
-        take(1),
-        takeUntil(this.destroy$),
-      )
+      .getById(campaignId)
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         (campaign: Campaign) => {
-          console.log({ campaign });
           this.campaignUx = campaign.toFormValues();
         },
         (err) => {
@@ -71,12 +68,12 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
         },
       );
 
-    if (!this._campaignStoreService.loaded) {
-      if (this._authService.user.group === UserGroupEnum.TERRITORY) {
-        this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
-      }
-      this._campaignStoreService.loadList();
-    }
+    // if (!this._campaignStoreService.loaded) {
+    //   if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+    //     this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+    //   }
+    //   this._campaignStoreService.loadList();
+    // }
   }
 
   launchCampaign(id: number): void {

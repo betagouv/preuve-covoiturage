@@ -56,22 +56,25 @@ export abstract class CrudStore<
     return newEntity;
   }
 
-  protected selectById(id: number) {
+  public getById(id: number) {
     this.dismissGetSubject.next();
     this._loadCount += 1;
-    this.rpcCrud
-      .getById(id)
-      .pipe(
-        takeUntil(this.dismissGetSubject),
-        finalize(() => {
-          if (this._loadCount > 0) this._loadCount -= 1;
-        }),
-      )
+    console.log('> getById ');
+    return this.rpcCrud.getById(id).pipe(
+      finalize(() => {
+        if (this._loadCount > 0) this._loadCount -= 1;
+        console.log('this._loadCount : ', this._loadCount);
+      }),
+      takeUntil(this.dismissGetSubject),
+      map((entity) => new this.modelType().map(entity)),
+      tap((entity) => {
+        this.entitySubject.next(entity);
+      }),
+    );
+  }
 
-      .subscribe((entity) => {
-        const model = new this.modelType().map(entity);
-        this.entitySubject.next(new this.modelType().map(entity));
-      });
+  protected selectById(id: number) {
+    this.getById(id).subscribe();
   }
 
   deleteSelected(): Observable<boolean> {

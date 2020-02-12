@@ -138,6 +138,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
+          console.log('data : ', data);
           this.requestLoading = false;
           this._router.navigate([`/campaign/draft/${this.campaignId}`]).then(() => {
             this._toastr.success(`La campagne ${params.name} a bien été mise à jour`);
@@ -370,11 +371,8 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   private loadCampaign(campaignId: number, isDuplicate = false) {
     this._campaignStoreService
-      .selectEntityByIdFromList(campaignId)
-      .pipe(
-        take(1),
-        takeUntil(this.destroy$),
-      )
+      .getById(campaignId)
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         (campaign: Campaign) => {
           if (isDuplicate) {
