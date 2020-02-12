@@ -179,7 +179,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         time: this._formBuilder.array([]),
         distance_range: [this._defaultRange, Validators.required],
         rank: [null, Validators.required],
-        operator_ids: [[], Validators.required],
+        operator_ids: [[]],
         insee: this._formBuilder.group({
           whiteList: this._formBuilder.array([]),
           blackList: this._formBuilder.array([]),
