@@ -1,5 +1,7 @@
 import chai from 'chai';
 import chaiAsync from 'chai-as-promised';
+import { describe } from 'mocha';
+
 import { IdfmRegular } from './IdfmRegular';
 import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
@@ -420,5 +422,40 @@ describe('Policy rule: IdfmRegular', () => {
     };
     await test.apply(context);
     expect(context.result).to.eq(800);
+  });
+
+  it('case 13', async () => {
+    const trip = faker.trip([
+      {
+        ...defaultTripParams,
+        is_driver: true,
+        distance: 4025,
+        cost: -200,
+      },
+      {
+        ...defaultTripParams,
+        is_driver: false,
+        distance: 4025,
+        seats: 1,
+        cost: 300,
+      },
+      {
+        ...defaultTripParams,
+        is_driver: false,
+        distance: 4038,
+        seats: 1,
+        cost: 300,
+      },
+    ]);
+
+    const context = {
+      stack: [],
+      result: 0,
+      person: trip.people[0],
+      trip,
+      meta,
+    };
+    await test.apply(context);
+    expect(context.result).to.eq(150);
   });
 });
