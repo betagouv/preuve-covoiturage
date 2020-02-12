@@ -171,10 +171,18 @@ export class CampaignUiService {
   public insee(insee: IncentiveFiltersUxInterface['insee']): string {
     let text = '';
     if (insee.blackList && insee.blackList.length > 0) {
-      text += `Les axes suivant sont incités : <ul>`;
+      text += `Les axes suivant sont ignorés : <ul>`;
 
       insee.blackList.forEach((axe) => {
-        text += `<li> De `;
+        text += '<li>';
+        if (axe.start.length > 0) {
+          if (axe.end.length > 0) {
+            text += `De `;
+          } else {
+            text += `En partance de `;
+          }
+        }
+
         axe.start.forEach((city, index) => {
           if (index > 0 && index === axe.start.length - 1) {
             text += ' ou ';
@@ -183,7 +191,15 @@ export class CampaignUiService {
           }
           text += `<b>${city.territory_literal}</b>`;
         });
-        text += ` à `;
+
+        if (axe.end.length > 0) {
+          if (axe.start.length > 0) {
+            text += ` à `;
+          } else {
+            text += `A destination de `;
+          }
+        }
+
         axe.end.forEach((city, index) => {
           if (index > 0 && index === axe.end.length - 1) {
             text += ' ou ';
@@ -198,7 +214,15 @@ export class CampaignUiService {
       text += `Les trajets doivent être sur les axes suivants : <ul>`;
 
       insee.whiteList.forEach((axe) => {
-        text += `<li> De `;
+        text += '<li>';
+        if (axe.start.length > 0) {
+          if (axe.end.length > 0) {
+            text += `De `;
+          } else {
+            text += `En partance de `;
+          }
+        }
+
         axe.start.forEach((city, index) => {
           if (index > 0 && index === axe.start.length - 1) {
             text += ' ou ';
@@ -207,7 +231,14 @@ export class CampaignUiService {
           }
           text += `<b>${city.territory_literal}</b>`;
         });
-        text += ` à `;
+
+        if (axe.end.length > 0) {
+          if (axe.start.length > 0) {
+            text += ` à `;
+          } else {
+            text += `A destination de `;
+          }
+        }
         axe.end.forEach((city, index) => {
           if (index > 0 && index === axe.end.length - 1) {
             text += ' ou ';
