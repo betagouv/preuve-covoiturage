@@ -22,7 +22,7 @@
 // }
 
 export interface ParamsInterface {
-  trip_id: string;
+  trips: string[];
 }
 
 export type ResultInterface = void;
