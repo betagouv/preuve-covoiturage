@@ -12,13 +12,35 @@ const meta = new MetadataWrapper(1, 'default', {});
 chai.use(chaiAsync);
 const { expect } = chai;
 const test = new IdfmRegular({
-  territory_id: 11,
-  paris_insee_code: ['75115', '75116'],
+  territory_id: 1,
+  paris_insee_code: [
+    '75056',
+    '75101',
+    '75102',
+    '75103',
+    '75104',
+    '75105',
+    '75106',
+    '75107',
+    '75108',
+    '75109',
+    '75110',
+    '75111',
+    '75112',
+    '75113',
+    '75114',
+    '75115',
+    '75116',
+    '75117',
+    '75118',
+    '75119',
+    '75120',
+  ],
 });
 
 const defaultTripParams = {
-  start_territory_id: 11,
-  end_territory_id: 11,
+  start_territory_id: 1,
+  end_territory_id: 1,
 };
 
 describe('Policy rule: IdfmRegular', () => {
@@ -457,5 +479,69 @@ describe('Policy rule: IdfmRegular', () => {
     };
     await test.apply(context);
     expect(context.result).to.eq(150);
+  });
+
+  it('case 14', async () => {
+    const trip = faker.trip([
+      {
+        ...defaultTripParams,
+        is_driver: true,
+        distance: 18948,
+        cost: 0,
+        start_insee: '75056', // would make it fail. No Paris to Paris
+        end_insee: '75056',
+      },
+      {
+        ...defaultTripParams,
+        is_driver: false,
+        distance: 6, // makes it fail. passenger dist must be > 2000
+        seats: 1,
+        cost: 0,
+        start_insee: '94021',
+        end_insee: '75056',
+      },
+    ]);
+
+    const context = {
+      stack: [],
+      result: 0,
+      person: trip.people[0],
+      trip,
+      meta,
+    };
+
+    await expect(test.apply(context)).to.rejectedWith(NotApplicableTargetException);
+  });
+
+  it('case 15', async () => {
+    const trip = faker.trip([
+      {
+        ...defaultTripParams,
+        is_driver: true,
+        distance: 15463,
+        cost: 0,
+        start_insee: '75056',
+        end_insee: '91027',
+      },
+      {
+        ...defaultTripParams,
+        is_driver: false,
+        distance: 15, // makes it fail. passenger dist must be > 2000
+        seats: 1,
+        cost: 0,
+        start_insee: '75056',
+        end_insee: '91027',
+      },
+    ]);
+
+    const context = {
+      stack: [],
+      result: 0,
+      person: trip.people[0],
+      trip,
+      meta,
+    };
+
+    await expect(test.apply(context)).to.rejectedWith(NotApplicableTargetException);
   });
 });
