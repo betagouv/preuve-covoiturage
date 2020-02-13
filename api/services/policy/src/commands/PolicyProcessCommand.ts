@@ -14,6 +14,7 @@
  * -a / --after         pass a start date (e.g. '2020-01-01T00:00:00Z')
  * -u / --until         pass an end date (e.g. '2020-01-01T00:00:00Z')
  * -t / --territory     pass a territory ID from the `territory.territories` table
+ * -o / --operator      pass a operator ID from the `operator.operators` table
  * -l / --limit         pass an integer to limit the number of trips to process
  * -u / --database-uri  pass a PostgreSQL URI to connect. Defaults to APP_POSTGRES_URL env var
  *                      e.g. postgresql://{username}:{password}@{host}:{port}/{database}
@@ -48,6 +49,10 @@ export class PolicyProcessCommand implements CommandInterface {
       description: 'Process all trip id given territory',
     },
     {
+      signature: '-o, --operator <operator>',
+      description: 'Process all trip id given operator',
+    },
+    {
       signature: '-b, --batch <batch>',
       description: 'Batch size',
       default: 10000,
@@ -76,7 +81,7 @@ export class PolicyProcessCommand implements CommandInterface {
   constructor(protected kernel: KernelInterfaceResolver) {}
 
   public async call(id: string, options): Promise<string> {
-    const { territory, after, until, databaseUri, detach, limit, batch } = options;
+    const { territory, operator, after, until, databaseUri, detach, limit, batch } = options;
 
     if (id) {
       await this.process(id, detach);
@@ -90,21 +95,43 @@ export class PolicyProcessCommand implements CommandInterface {
     // cap the batch size by the limit
     const batchSize = limit && limit < batch ? limit : batch;
 
-    let whereClause = '';
+    const text = [];
     const values = [];
 
-    if (territory && after) {
-      whereClause = `WHERE datetime > $1::timestamp AND datetime < $2::timestamp AND (start_territory_id = $3::int OR end_territory_id = $3::int)`;
-      values.push(new Date(after), new Date(until).toISOString(), territory);
-    } else if (territory) {
-      whereClause = 'WHERE start_territory_id = $1::int OR end_territory_id = $1::int';
-      values.push(territory);
-    } else if (after) {
-      const afterDate = new Date(after);
-      console.log(`>> Processing for trip after ${afterDate.toISOString()}`);
-      whereClause = `WHERE datetime > $1::timestamp`;
-      values.push(afterDate);
+    if (after) {
+      text.push('datetime > $#::timestamp');
+      values.push(new Date(after));
     }
+
+    if (until) {
+      text.push('datetime < $#::timestamp');
+      values.push(new Date(until));
+    }
+
+    if (territory) {
+      text.push('(start_territory_id = $#::int OR end_territory_id = $#::int)');
+      values.push(territory);
+      values.push(territory);
+    }
+
+    if (operator) {
+      text.push('operator_id = $#::int');
+      values.push(operator);
+    }
+
+    // build the WHERE clause and replace $# by their increasing indexes
+    const whereClause =
+      text.length === 0
+        ? ''
+        : 'WHERE ' +
+          text
+            .join(' AND ')
+            .split('$#')
+            .reduce(
+              (acc, current, idx, origin) =>
+                idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`,
+              '',
+            );
 
     const connection = new PostgresConnection({
       connectionString: databaseUri,
@@ -114,11 +141,11 @@ export class PolicyProcessCommand implements CommandInterface {
 
     const client = await connection.getClient().connect();
     const query = `
-    SELECT
-      distinct trip_id
-    FROM ${this.table}
-      ${whereClause}
-      ${limit ? `LIMIT ${limit}` : ''}
+      SELECT
+        distinct trip_id
+      FROM ${this.table}
+        ${whereClause}
+        ${limit ? `LIMIT ${limit}` : ''}
     `;
 
     const cursor = client.query(new Cursor(query, values));
