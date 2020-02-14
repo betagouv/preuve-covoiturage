@@ -187,19 +187,12 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   private initSelectedInseeFilterTabIndex() {
-    if (this.hasInseeWhiteList) {
-      // prevent loading bug of mat tab group
-      setTimeout(() => {
-        this.inseeFilterTabGroup.selectedIndex = 1;
-        this.selectedInseeFilterTabIndex = 1;
-      }, 1000);
-    } else if (this.hasInseeBlackList) {
-      this.inseeFilterTabGroup.selectedIndex = 0;
-      this.selectedInseeFilterTabIndex = 0;
-    } else {
-      this.inseeFilterTabGroup.selectedIndex = 0;
-      this.selectedInseeFilterTabIndex = 0;
-    }
+    setTimeout(() => {
+      this.inseeFilterTabGroup.selectedIndex = this.selectedInseeFilterTabIndex = this.campaignForm.get('ui_status')
+        .value.insee_mode
+        ? 1
+        : 0;
+    }, 1000);
   }
 
   selectedInseeFilterTabIndexChange(nextIndex: 0 | 1) {
@@ -221,10 +214,14 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
             this.blackListFormArray.clear();
             this.inseeFilterTabGroup.selectedIndex = nextIndex;
             this.selectedInseeFilterTabIndex = nextIndex;
+            this.campaignForm.get('ui_status').patchValue({ insee_mode: nextIndex === 1 });
+            // console.log("this.campaignForm.get('ui_status').value : ", this.campaignForm.get('ui_status').value);
           }
         });
     } else {
       this.selectedInseeFilterTabIndex = nextIndex;
+      this.campaignForm.get('ui_status').patchValue({ insee_mode: nextIndex === 1 });
+      // console.log("this.campaignForm.get('ui_status').value : ", this.campaignForm.get('ui_status').value);
     }
   }
 }
