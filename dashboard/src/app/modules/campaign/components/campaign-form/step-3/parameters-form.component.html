@@ -24,7 +24,15 @@
         <div class="ParametersForm-maxRetribution CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Rétribution totale</mat-label>
-            <input matInput type="number" min="0" placeholder="50000" formControlName="max_amount" required />
+            <input
+              matInput
+              type="number"
+              min="0"
+              placeholder="50000"
+              formControlName="max_amount"
+              required
+              autocomplete="off"
+            />
             <mat-error *ngIf="controls.max_amount.hasError('required')">
               Le montant de rétribution totale est obligatoire.
             </mat-error>
@@ -70,6 +78,7 @@
               placeholder="Choose a date"
               formControlName="start"
               [min]="minDate"
+              autocomplete="off"
               required
             />
             <mat-datepicker-toggle matSuffix [for]="pickerBegin"></mat-datepicker-toggle>
@@ -90,6 +99,7 @@
               formControlName="end"
               [min]="controls.start.value"
               required
+              autocomplete="off"
             />
             <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
             <mat-datepicker #pickerEnd></mat-datepicker>
@@ -118,7 +128,7 @@
         <div class="ParametersForm-maxTrips CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Nombre de trajets max</mat-label>
-            <input matInput type="number" min="0" placeholder="20000" formControlName="max_trips" />
+            <input matInput type="number" min="0" placeholder="20000" formControlName="max_trips" autocomplete="off" />
             <mat-icon matSuffix>directions_car</mat-icon>
             <mat-error *ngIf="controls.max_trips.hasError('min')">
               Le nombre de trajets maximum doit être supérieur à 0.

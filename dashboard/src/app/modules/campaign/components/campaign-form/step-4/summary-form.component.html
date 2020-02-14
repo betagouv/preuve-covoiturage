@@ -13,7 +13,7 @@
   <form [formGroup]="campaignForm">
     <mat-form-field appearance="outline">
       <mat-label>Donnez un nom à votre campagne</mat-label>
-      <input matInput formControlName="name" required />
+      <input matInput formControlName="name" required autocomplete="off" />
       <mat-error *ngIf="controls.name.hasError('required')">
         Le nom de la campagne est obligatoire.
       </mat-error>
