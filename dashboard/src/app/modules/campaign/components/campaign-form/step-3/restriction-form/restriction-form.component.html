@@ -1,7 +1,7 @@
 <form [formGroup]="restrictionformGroup" class="RestrictionForm">
   <mat-form-field appearance="outline" class="RestrictionForm-howMuch">
     <mat-label>Combien</mat-label>
-    <input matInput type="number" min="0" placeholder="1" required formControlName="quantity" />
+    <input matInput type="number" min="0" placeholder="1" required formControlName="quantity" autocomplete="off" />
   </mat-form-field>
   <span>trajets maximum par</span>
   <mat-form-field appearance="outline" class="RestrictionForm-who">

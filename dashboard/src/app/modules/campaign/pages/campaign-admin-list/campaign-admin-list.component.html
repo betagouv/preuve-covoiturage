@@ -17,7 +17,7 @@
       <form [formGroup]="searchFilters">
         <mat-form-field appearance="outline">
           <mat-label>Rechercher</mat-label>
-          <input matInput placeholder="Nom, description" formControlName="query" />
+          <input matInput placeholder="Nom, description" formControlName="query" autocomplete="off" />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </form>
