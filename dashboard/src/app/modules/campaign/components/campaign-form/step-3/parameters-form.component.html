@@ -218,6 +218,15 @@
                   *ngIf="forTripControl.value"
                 >
                 </app-retribution-form>
+
+                <mat-error
+                  *ngIf="
+                    retributionsFormArray.hasError('uniqueRetribution') &&
+                    retributionsFormArray.getError('uniqueRetribution')[idx]
+                  "
+                >
+                  Au moins une des rétributions doit avoir un montant supérieur à zéro.
+                </mat-error>
               </div>
               <div class="ParametersForm-incentiveMode-value-remove">
                 <mat-icon
