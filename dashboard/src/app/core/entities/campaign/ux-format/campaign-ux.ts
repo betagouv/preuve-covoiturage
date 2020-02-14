@@ -31,6 +31,7 @@ export class CampaignUx {
   public ui_status: {
     expert_mode?: boolean;
     staggered: boolean;
+    insee_mode: boolean;
     for_driver: boolean;
     for_passenger: boolean;
     for_trip: boolean;
@@ -71,6 +72,7 @@ export class CampaignUx {
         for_passenger: null,
         for_trip: null,
         staggered: null,
+        insee_mode: null,
       },
     },
   ) {

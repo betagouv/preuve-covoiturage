@@ -20,6 +20,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
 import { RestrictionRetributionRule } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import { uniqueRetributionValidator } from '../../validators/retribution-unique.validator';
+import { tripTabValidator } from '../../validators/trip-tab.validator';
 
 @Component({
   selector: 'app-campaign-form',
@@ -183,10 +184,13 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         distance_range: [this._defaultRange, Validators.required],
         rank: [null, Validators.required],
         operator_ids: [[]],
-        insee: this._formBuilder.group({
-          whiteList: this._formBuilder.array([]),
-          blackList: this._formBuilder.array([]),
-        }),
+        insee: this._formBuilder.group(
+          {
+            whiteList: this._formBuilder.array([]),
+            blackList: this._formBuilder.array([]),
+          },
+          { validators: [tripTabValidator] },
+        ),
       }),
       only_adult: [null],
       ui_status: this._formBuilder.group({
@@ -194,6 +198,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         for_passenger: [null],
         for_trip: [null],
         staggered: [false],
+        insee_mode: [false],
       }),
       start: [null, Validators.required],
       end: [null, Validators.required],
@@ -271,8 +276,9 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       for_driver: campaign.ui_status.for_driver,
       for_passenger: campaign.ui_status.for_passenger,
       for_trip: campaign.ui_status.for_trip,
-      // initialize staggered
-      staggered: campaign.ui_status.staggered !== null ? campaign.ui_status.staggered : false,
+      staggered: !!campaign.ui_status.staggered, // initialize staggered
+      // initialize insee_mode
+      insee_mode: campaign.ui_status.insee_mode || campaign.filters.insee.whiteList.length > 0,
     });
 
     // patch form arrays
