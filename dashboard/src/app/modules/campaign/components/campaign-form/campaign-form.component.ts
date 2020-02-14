@@ -18,6 +18,8 @@ import { CampaignApiService } from '~/modules/campaign/services/campaign-api.ser
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
+import { RestrictionRetributionRule } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+import { uniqueRetributionValidator } from '../../validators/retribution-unique.validator';
 
 @Component({
   selector: 'app-campaign-form',
@@ -200,7 +202,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       max_trips: [null, Validators.min(1)],
       parent_id: [null],
       restrictions: this._formBuilder.array([]),
-      retributions: this._formBuilder.array([]),
+      retributions: this._formBuilder.array([], { validators: [uniqueRetributionValidator] }),
     });
   }
 

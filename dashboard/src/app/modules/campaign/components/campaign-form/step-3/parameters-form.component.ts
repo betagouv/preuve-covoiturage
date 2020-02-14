@@ -7,6 +7,7 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { uniqueRetributionValidator } from '~/modules/campaign/validators/retribution-unique.validator';
 
 @Component({
   selector: 'app-parameters-form',
@@ -132,20 +133,23 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   }
 
   generateRetributionFormGroup(): FormGroup {
-    return this._formBuilder.group({
-      for_driver: this._formBuilder.group({
-        amount: [null],
-        per_passenger: [false],
-        per_km: [false],
-      }),
-      for_passenger: this._formBuilder.group({
-        free: [false],
-        per_km: [false],
-        amount: [null],
-      }),
-      min: [null],
-      max: [null],
-    });
+    return this._formBuilder.group(
+      {
+        for_driver: this._formBuilder.group({
+          amount: [null],
+          per_passenger: [false],
+          per_km: [false],
+        }),
+        for_passenger: this._formBuilder.group({
+          free: [false],
+          per_km: [false],
+          amount: [null],
+        }),
+        min: [null],
+        max: [null],
+      },
+      // { validators: [uniqueRetributionValidator] },
+    );
   }
 
   generateRestrictionFormGroup(): FormGroup {
