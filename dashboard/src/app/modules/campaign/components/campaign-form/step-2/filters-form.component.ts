@@ -11,6 +11,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 import { DAYS } from '~/core/const/days.const';
+import { tripTabValidator } from '~/modules/campaign/validators/trip-tab.validator';
 
 @Component({
   selector: 'app-filters-form',
@@ -192,7 +193,21 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
         .value.insee_mode
         ? 1
         : 0;
+
+      this.updateInseeValidator();
     }, 1000);
+  }
+
+  updateInseeValidator() {
+    // Apply rule : At least one trip has to be defined if user select "choose autorized trajects"
+
+    const checkForEmptyInsees = this.campaignForm.get('ui_status').value.insee_mode;
+    const inseeFG = this.campaignForm.get('filters').get('insee');
+
+    // set validator only if user select "choose autorized trajects"
+    inseeFG.setValidators(checkForEmptyInsees ? [tripTabValidator] : []);
+    inseeFG.markAllAsTouched();
+    inseeFG.updateValueAndValidity();
   }
 
   selectedInseeFilterTabIndexChange(nextIndex: 0 | 1) {
@@ -215,13 +230,14 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
             this.inseeFilterTabGroup.selectedIndex = nextIndex;
             this.selectedInseeFilterTabIndex = nextIndex;
             this.campaignForm.get('ui_status').patchValue({ insee_mode: nextIndex === 1 });
-            // console.log("this.campaignForm.get('ui_status').value : ", this.campaignForm.get('ui_status').value);
           }
+
+          this.updateInseeValidator();
         });
     } else {
       this.selectedInseeFilterTabIndex = nextIndex;
       this.campaignForm.get('ui_status').patchValue({ insee_mode: nextIndex === 1 });
-      // console.log("this.campaignForm.get('ui_status').value : ", this.campaignForm.get('ui_status').value);
+      this.updateInseeValidator();
     }
   }
 }
