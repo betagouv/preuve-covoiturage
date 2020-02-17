@@ -299,7 +299,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
 
   async getTemplates(): Promise<CampaignInterface[]> {
     const result = await this.connection.getClient().query(`
-      SELECT * FROM ${this.table} WHERE status = 'template' AND deleted_at IS NULL
+      SELECT * FROM ${this.table} WHERE status = 'template' AND deleted_at IS NULL ORDER BY slug
     `);
 
     return result.rows;
