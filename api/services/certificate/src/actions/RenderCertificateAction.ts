@@ -1,8 +1,9 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, TemplateInterfaceResolver, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
+import { handler, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
+import { TemplateInterfaceResolver } from '@pdc/provider-template';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { RenderTokenPayloadInterface } from '../shared/certificate/common/interfaces/RenderTokenPayloadInterface';

@@ -12,6 +12,7 @@ import {
   ContentWhitelistMiddleware,
   ChannelServiceBlacklistMiddleware,
 } from '@pdc/provider-middleware';
+import { TemplateExtension } from '@pdc/provider-template'; 
 
 import { changePassword } from './shared/user/changePassword.schema';
 import { changePasswordWithToken } from './shared/user/changePasswordWithToken.schema';
@@ -106,5 +107,5 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
   commands: [MigrateDataCommand, SetPermissionsCommand, SeedUsersCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, NotificationExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, TemplateExtension, NotificationExtension];
 }

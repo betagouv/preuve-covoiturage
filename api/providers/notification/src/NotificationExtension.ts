@@ -1,6 +1,5 @@
 import {
   ConfigInterfaceResolver,
-  TemplateInterfaceResolver,
   RegisterHookInterface,
   InitHookInterface,
   ServiceContainerInterface,
@@ -8,9 +7,10 @@ import {
 } from '@ilos/common';
 
 import { ConfigExtension } from '@ilos/config';
-import { TemplateExtension } from '@ilos/template';
 
-import { NotificationInterfaceResolver } from './common';
+import { TemplateExtension, TemplateInterfaceResolver } from '@pdc/provider-template';
+
+import { NotificationInterfaceResolver } from './interfaces';
 import { Notification } from './Notification';
 
 @extension({

@@ -50,7 +50,7 @@
     "@ilos/common": "~0",
     "@ilos/config": "~0",
     "@ilos/core": "~0",
-    "@ilos/template": "~0"
+    "@pdc/provider-template": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

@@ -3,7 +3,8 @@ import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
 
-import { ConfigInterfaceResolver, TemplateInterfaceResolver } from '@ilos/common';
+import { ConfigInterfaceResolver } from '@ilos/common';
+import { TemplateInterfaceResolver } from '@pdc/provider-template';
 
 import { Notification } from '../Notification';
 

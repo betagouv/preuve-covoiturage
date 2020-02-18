@@ -61,7 +61,7 @@
     "@ilos/env": "~0",
     "@ilos/framework": "~0",
     "@pdc/package-acl": "~0",
-    "@ilos/template": "~0",
+    "@pdc/provider-template": "~0",
     "@pdc/provider-date": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-qrcode": "~0",

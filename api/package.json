@@ -30,7 +30,7 @@
     "ls": "lerna ls",
     "build": "run-s clean build:providers build:services build:proxy",
     "build:proxy": "lerna run --scope @pdc/proxy build",
-    "build:providers": "yarn workspace @pdc/provider-crypto build && lerna run --parallel --scope @pdc/provider-* build",
+    "build:providers": "yarn workspace @pdc/provider-crypto build && yarn workspace @pdc/provider-template build && lerna run --parallel --scope @pdc/provider-* build",
     "build:services": "lerna run --parallel --scope @pdc/service-* build",
     "coverage-ci": "lerna run --parallel --scope @pdc/* coverage-ci",
     "coverage": "lerna run --parallel --scope @pdc/* coverage",

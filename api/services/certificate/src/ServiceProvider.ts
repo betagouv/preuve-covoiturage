@@ -1,5 +1,5 @@
 import path from 'path';
-import { serviceProvider } from '@ilos/common';
+import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
@@ -7,6 +7,7 @@ import { PermissionMiddleware } from '@pdc/package-acl';
 import { DateProvider } from '@pdc/provider-date';
 import { QrcodeProvider } from '@pdc/provider-qrcode';
 import { CryptoProvider } from '@pdc/provider-crypto';
+import { TemplateExtension } from '@pdc/provider-template';
 
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
@@ -41,4 +42,6 @@ import { binding as downloadBinding } from './shared/certificate/download.schema
     meta: 'templates',
   },
 })
-export class ServiceProvider extends AbstractServiceProvider {}
+export class ServiceProvider extends AbstractServiceProvider {
+  readonly extensions: NewableType<ExtensionInterface>[] = [TemplateExtension];
+}
