@@ -10,8 +10,8 @@
     "start": "yarn serve",
     "build": "tsc && yarn copy-static",
     "watch": "tsc -w",
-    "test": "NODE_ENV=testing mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts",
+    "test": "echo '[provider-qrcode] No tests'; exit 0",
+    "test:integration": "echo '[provider-qrcode] No tests'; exit 0",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-user --temp-dir=../../.nyc_output --all --reporter=lcovonly mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
