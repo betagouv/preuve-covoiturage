@@ -3,7 +3,7 @@ import { serviceProvider } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
-import { PermissionMiddleware } from '@ilos/package-acl';
+import { PermissionMiddleware } from '@pdc/package-acl';
 import { DateProvider } from '@pdc/provider-date';
 import { QrcodeProvider } from '@pdc/provider-qrcode';
 import { CryptoProvider } from '@pdc/provider-crypto';

@@ -59,7 +59,7 @@
     "@ilos/connection-postgres": "~0",
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
-    "@ilos/package-acl": "~0",
+    "@pdc/package-acl": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/provider-validator": "~0"

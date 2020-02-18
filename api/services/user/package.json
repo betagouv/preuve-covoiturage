@@ -61,7 +61,7 @@
     "@ilos/core": "~0",
     "@ilos/env": "~0",
     "@ilos/framework": "~0",
-    "@ilos/package-acl": "~0",
+    "@pdc/package-acl": "~0",
     "@ilos/template": "~0",
     "@pdc/provider-crypto": "~0",
     "@pdc/provider-middleware": "~0",

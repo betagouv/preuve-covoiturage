@@ -1,0 +1,72 @@
+{
+  "name": "@pdc/package-acl",
+  "version": "0.4.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "Apache-2.0",
+  "author": "Nicolas Mérigot <nicolas@belenio.fr>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/betagouv/ilos.git"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha src/*.spec.ts src/**/*.spec.ts",
+    "test:integration": "mocha tests/**/*.spec.ts",
+    "coverage-ci": "nyc --all --reporter=lcov mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "coverage": "nyc --all --reporter=text mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "watch-test": "yarn test -- --watchAll",
+    "watch": "tsc -w",
+    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+  },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
+      "src/interfaces/**",
+      "src/types/**",
+      "src/exceptions/**",
+      "src/**/index.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.9",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^13.7.1",
+    "@types/sinon": "^7.5.1",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^7.0.1",
+    "nyc": "^15.0.0",
+    "ts-node": "^8.6.2",
+    "tsconfig-paths": "^3.8.0",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "@ilos/common": "~0",
+    "@ilos/core": "~0"
+  }
+}
