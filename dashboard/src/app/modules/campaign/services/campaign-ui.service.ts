@@ -16,6 +16,7 @@ import {
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
+import { DAYS } from '~/core/const/days.const';
 
 // todo: remove this duplicate
 enum RestrictionPeriodsEnum {
@@ -103,13 +104,7 @@ export class CampaignUiService {
       return '';
     }
     let text = '';
-    text += weekDays
-      .map((weekDay: WeekDay) =>
-        moment()
-          .isoWeekday(weekDay + 1)
-          .format('dddd'),
-      )
-      .join(', ');
+    text += weekDays.map((weekDay) => DAYS[weekDay]).join(', ');
 
     if (timeRanges && timeRanges.length > 0) {
       if (weekDays.length > 0) {
