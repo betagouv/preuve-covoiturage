@@ -26,7 +26,6 @@ import { FindTerritoryByInseeAction } from './actions/FindTerritoryByInseeAction
 import { FindTerritoryByPositionAction } from './actions/FindTerritoryByPositionAction';
 import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
-import { MigrateCommand } from './commands/MigrateCommand';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorAction';
 import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
@@ -63,7 +62,7 @@ import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperat
     UpdateTerritoryOperatorAction,
     ListTerritoryOperatorAction,
   ],
-  commands: [MigrateCommand, MigrateDataCommand],
+  commands: [MigrateDataCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

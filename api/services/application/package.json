@@ -60,7 +60,6 @@
     "@ilos/core": "~0",
     "@ilos/framework": "~0",
     "@ilos/package-acl": "~0",
-    "@ilos/repository": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-token": "~0",
     "@pdc/provider-validator": "~0"
