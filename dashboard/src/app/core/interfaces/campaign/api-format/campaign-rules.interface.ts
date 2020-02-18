@@ -50,7 +50,6 @@ export class PerKmRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.PER_KM;
-    this.parameters = true;
   }
 }
 
@@ -61,7 +60,6 @@ export class PerPassengerRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.PER_PASSENGER;
-    this.parameters = true;
   }
 }
 
@@ -72,7 +70,6 @@ export class ForDriverRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FOR_DRIVER;
-    this.parameters = true;
   }
 }
 
@@ -83,7 +80,6 @@ export class ForPassengerRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FOR_PASSENGER;
-    this.parameters = true;
   }
 }
 
@@ -105,6 +101,5 @@ export class FreeRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FREE;
-    this.parameters = true;
   }
 }
