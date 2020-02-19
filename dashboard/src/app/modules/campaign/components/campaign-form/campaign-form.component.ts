@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
-import { take, takeUntil, filter, map } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
@@ -16,11 +16,9 @@ import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.cons
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
-import { RestrictionRetributionRule } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
+
 import { uniqueRetributionValidator } from '../../validators/retribution-unique.validator';
-import { tripTabValidator } from '../../validators/trip-tab.validator';
 
 @Component({
   selector: 'app-campaign-form',

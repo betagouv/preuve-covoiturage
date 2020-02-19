@@ -17,6 +17,7 @@ import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.cons
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { DAYS } from '~/core/const/days.const';
+import { RestrictionUnitEnum } from '~/core/enums/campaign/restrictions.enum';
 
 // todo: remove this duplicate
 enum RestrictionPeriodsEnum {
@@ -262,13 +263,16 @@ export class CampaignUiService {
     return text;
   }
 
-  public restrictions(restrictions: RestrictionUxInterface[] = []) {
+  public restrictions(restrictions: RestrictionUxInterface[] = [], amountUnit: string = 'point') {
     if (restrictions.length === 0) {
       return 'Aucune restriction.';
     }
     let text = '';
+
     restrictions.forEach((restriction: RestrictionUxInterface, index) => {
-      text += `<li><b>${restriction.quantity} trajet(s) maximum pour le ${
+      const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)  `;
+
+      text += `<li><b>${restriction.quantity} ${unit} maximum pour le ${
         restriction.is_driver ? 'conducteur' : 'passager'
       } `;
 
@@ -374,7 +378,7 @@ export class CampaignUiService {
       summaryText += '<p>Les restrictions suivantes seront appliquées :</p>';
 
       // RESTRICTIONS
-      summaryText += `<ul>${this.restrictions(campaign.restrictions)}</ul>`;
+      summaryText += `<ul>${this.restrictions(campaign.restrictions, campaign.unit)}</ul>`;
     }
 
     // OPERATORS & RANKS

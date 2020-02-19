@@ -3,7 +3,15 @@
     <mat-label>Combien</mat-label>
     <input matInput type="number" min="0" placeholder="1" required formControlName="quantity" autocomplete="off" />
   </mat-form-field>
-  <span>trajets maximum par</span>
+
+  <mat-form-field appearance="outline" class="RestrictionForm-what">
+    <mat-label>Quoi</mat-label>
+    <mat-select required formControlName="unit">
+      <mat-option value="amount">{{ unitLabel }}</mat-option>
+      <mat-option value="trip">Trajets</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <span>maximum par</span>
   <mat-form-field appearance="outline" class="RestrictionForm-who">
     <mat-label>Qui</mat-label>
     <mat-select required formControlName="is_driver">
