@@ -157,20 +157,44 @@
             *ngFor="let restrictionFormGroup of restrictionFormArray.controls; let idx = index"
             class="ParametersForm-restriction"
           >
-            <app-restriction-form
-              [restrictionformGroup]="restrictionFormGroup"
-              [unit]="campaignForm.controls.unit.value"
-            ></app-restriction-form>
-            <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
+            <div class="RestrictionBlock">
+              <span>
+                {{ campaignUI.restriction(restrictionFormGroup.value, campaignForm.controls.unit.value) }}
+              </span>
+              <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
+            </div>
           </div>
+
           <button
+            *ngIf="!editRestrictionForm"
             mat-stroked-button
             color="primary"
-            (click)="addRestriction()"
+            (click)="startEditRestriction()"
             [disabled]="!restrictionFormArray.valid"
           >
             Ajouter une restriction
           </button>
+
+          <div *ngIf="editRestrictionForm">
+            <p><strong>Création d'une restriction</strong></p>
+
+            <app-restriction-form
+              [restrictionformGroup]="editRestrictionForm"
+              [unit]="campaignForm.controls.unit.value"
+            ></app-restriction-form>
+
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="addRestriction()"
+              [disabled]="!editRestrictionForm.valid"
+            >
+              Confirmer
+            </button>
+            <button mat-stroked-button (click)="cancelEditRestriction()">
+              Annuler
+            </button>
+          </div>
         </div>
       </mat-expansion-panel>
 
