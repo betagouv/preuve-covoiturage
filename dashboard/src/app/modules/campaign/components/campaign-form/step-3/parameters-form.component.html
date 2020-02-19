@@ -139,6 +139,7 @@
 
       <!--     RESTRICTIONS -->
       <mat-expansion-panel
+        [disabled]="!campaignForm.controls.unit.value"
         class="ParametersForm-restrictionExpansion"
         [ngClass]="{ 'mat-expansion-panel-error': !restrictionFormArray.valid && isRestrictionFormArrayTouched() }"
       >
@@ -156,7 +157,10 @@
             *ngFor="let restrictionFormGroup of restrictionFormArray.controls; let idx = index"
             class="ParametersForm-restriction"
           >
-            <app-restriction-form [restrictionformGroup]="restrictionFormGroup"></app-restriction-form>
+            <app-restriction-form
+              [restrictionformGroup]="restrictionFormGroup"
+              [unit]="campaignForm.controls.unit.value"
+            ></app-restriction-form>
             <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
           </div>
           <button

@@ -157,6 +157,7 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
       quantity: [null],
       is_driver: [null],
       period: [null],
+      unit: [null],
     });
   }
 

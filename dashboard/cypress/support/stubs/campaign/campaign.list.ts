@@ -10,7 +10,7 @@ import {
   MaxTripsRetributionRule,
   OperatorIdsGlobalRetributionRule,
   RankGlobalRetributionRule,
-  RestrictionRetributionRule,
+  TripRestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -188,8 +188,8 @@ export const campaignTemplateStubs: TemplateInterface[] = [
         min: 2000,
         max: 150000,
       }),
-      new RestrictionRetributionRule(RestrictionTargetsEnum.DRIVER, 8, RestrictionPeriodsEnum.DAY),
-      new RestrictionRetributionRule(RestrictionTargetsEnum.PASSENGER, 2, RestrictionPeriodsEnum.DAY),
+      new TripRestrictionRetributionRule(RestrictionTargetsEnum.DRIVER, 8, RestrictionPeriodsEnum.DAY),
+      new TripRestrictionRetributionRule(RestrictionTargetsEnum.PASSENGER, 2, RestrictionPeriodsEnum.DAY),
     ],
     rules: [
       [
@@ -258,8 +258,8 @@ export const campaignTemplateStubs: TemplateInterface[] = [
         min: 2000,
         max: 150000,
       }),
-      new RestrictionRetributionRule(RestrictionTargetsEnum.DRIVER, 8, RestrictionPeriodsEnum.DAY),
-      new RestrictionRetributionRule(RestrictionTargetsEnum.PASSENGER, 2, RestrictionPeriodsEnum.DAY),
+      new TripRestrictionRetributionRule(RestrictionTargetsEnum.DRIVER, 8, RestrictionPeriodsEnum.DAY),
+      new TripRestrictionRetributionRule(RestrictionTargetsEnum.PASSENGER, 2, RestrictionPeriodsEnum.DAY),
     ],
     rules: [
       [

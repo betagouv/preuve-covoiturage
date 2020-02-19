@@ -5,6 +5,11 @@ export enum RestrictionPeriodsEnum {
   ALL = 'campaign',
 }
 
+export enum RestrictionUnitEnum {
+  AMOUNT = 'amount',
+  TRIP = 'trip',
+}
+
 export enum RestrictionTargetsEnum {
   DRIVER = 'driver',
   PASSENGER = 'passenger',
