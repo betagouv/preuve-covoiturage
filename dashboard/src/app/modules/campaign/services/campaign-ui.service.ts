@@ -99,17 +99,20 @@ export class CampaignUiService {
     return text;
   }
 
-  public daysAndTimes(weekDays: WeekDay[] = [], timeRanges: IncentiveTimeRuleUxInterface[] = []): string {
+  public formatWeekDays(weekDays: WeekDay[]): string {
     if (weekDays.length === 0) {
       return '';
     }
     let text = '';
     text += weekDays.map((weekDay) => DAYS[weekDay]).join(', ');
 
+    return text;
+  }
+
+  public formatWeekTime(timeRanges: IncentiveTimeRuleUxInterface[]): string {
+    let text = '';
+
     if (timeRanges && timeRanges.length > 0) {
-      if (weekDays.length > 0) {
-        text += ' <br>';
-      }
       text += ' De ';
       text += timeRanges
         .map((timeRange: IncentiveTimeRuleUxInterface) => {
@@ -121,6 +124,16 @@ export class CampaignUiService {
         .join(', ');
     }
     return text;
+  }
+
+  public daysAndTimes(
+    weekDays: WeekDay[] = [],
+    timeRanges: IncentiveTimeRuleUxInterface[] = [],
+    dayTimeSeparator = '<br>',
+  ): string {
+    return `${this.formatWeekDays(weekDays)}${weekDays.length ? dayTimeSeparator : ''}${this.formatWeekTime(
+      timeRanges,
+    )}`;
   }
 
   public ranks(ranks: TripRankEnum[]): string {
@@ -291,6 +304,16 @@ export class CampaignUiService {
     // DATE
     summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
     summaryText += ` ${moment(campaign.end).format('dddd DD MMMM YYYY')}</b>, limitée à`;
+
+    // WEEK DAYS
+
+    if (campaign.filters.weekday.length && campaign.filters.time.length) {
+      summaryText += `${campaign.filters.weekday.length ? `${this.formatWeekDays(campaign.filters.weekday)}` : ''}${
+        campaign.filters.time.length ? `${this.formatWeekTime(campaign.filters.time)}` : ''
+      }`;
+    }
+
+    summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
 
     // MAXIMUM AMOUNT
     switch (unit) {
