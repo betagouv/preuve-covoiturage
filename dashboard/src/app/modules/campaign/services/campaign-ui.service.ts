@@ -263,39 +263,42 @@ export class CampaignUiService {
     return text;
   }
 
-  public restrictions(restrictions: RestrictionUxInterface[] = [], amountUnit: string = 'point') {
+  public restriction(restriction: RestrictionUxInterface, amountUnit: string): string {
+    let text = '';
+    const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)  `;
+
+    text += `${restriction.quantity} ${unit} maximum pour le ${restriction.is_driver ? 'conducteur' : 'passager'} `;
+
+    switch (restriction.period) {
+      // @ts-ignore
+      case RestrictionPeriodsEnum.DAY:
+        text += 'par jour.';
+        break;
+      // @ts-ignore
+      case RestrictionPeriodsEnum.MONTH:
+        text += 'par mois.';
+        break;
+      // @ts-ignore
+      case RestrictionPeriodsEnum.YEAR:
+        text += 'sur une année.';
+        break;
+      // @ts-ignore
+      case RestrictionPeriodsEnum.ALL:
+        text += 'sur toute la durée de la campagne.';
+        break;
+    }
+
+    return text;
+  }
+
+  public restrictions(restrictions: RestrictionUxInterface[] = [], amountUnit: string = '') {
     if (restrictions.length === 0) {
       return 'Aucune restriction.';
     }
     let text = '';
 
     restrictions.forEach((restriction: RestrictionUxInterface, index) => {
-      const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)  `;
-
-      text += `<li><b>${restriction.quantity} ${unit} maximum pour le ${
-        restriction.is_driver ? 'conducteur' : 'passager'
-      } `;
-
-      switch (restriction.period) {
-        // @ts-ignore
-        case RestrictionPeriodsEnum.DAY:
-          text += 'par jour.';
-          break;
-        // @ts-ignore
-        case RestrictionPeriodsEnum.MONTH:
-          text += 'par mois.';
-          break;
-        // @ts-ignore
-        case RestrictionPeriodsEnum.YEAR:
-          text += 'sur une année.';
-          break;
-        // @ts-ignore
-        case RestrictionPeriodsEnum.ALL:
-          text += 'sur toute la durée de la campagne.';
-          break;
-      }
-
-      text += '</b></li>';
+      text += `<li><b>${this.restriction(restriction, amountUnit)}</b></li>`;
     });
     return text;
   }
