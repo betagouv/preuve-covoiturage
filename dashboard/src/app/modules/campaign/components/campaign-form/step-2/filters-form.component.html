@@ -191,10 +191,14 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="RulesForm-operators CampaignSubForm-inputs">
-          <app-operators-autocomplete
-            [parentForm]="filtersForm"
-            [fieldName]="'operator_ids'"
-          ></app-operators-autocomplete>
+          <mat-checkbox formControlName="all_operators" color="primary">Tous les opérateurs</mat-checkbox>
+          <p>
+            <app-operators-autocomplete
+              *ngIf="!filtersForm.value.all_operators"
+              [parentForm]="filtersForm"
+              [fieldName]="'operator_ids'"
+            ></app-operators-autocomplete>
+          </p>
         </div>
       </mat-expansion-panel>
     </mat-accordion>

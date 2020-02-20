@@ -8,6 +8,7 @@ export interface IncentiveFiltersUxInterface {
   distance_range: RulesRangeUxType;
   rank: TripRankEnum[];
   operator_ids: number[];
+  all_operators: boolean;
   insee: {
     blackList: IncentiveInseeFilterInterface[];
     whiteList: IncentiveInseeFilterInterface[];
