@@ -182,6 +182,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         distance_range: [this._defaultRange, Validators.required],
         rank: [null, Validators.required],
         operator_ids: [[]],
+        all_operators: [true],
         insee: this._formBuilder.group({
           whiteList: this._formBuilder.array([]),
           blackList: this._formBuilder.array([]),
@@ -263,6 +264,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       distance_range: campaign.filters.distance_range,
       rank: campaign.filters.rank,
       operator_ids: campaign.filters.operator_ids,
+      all_operators: !campaign.filters.operator_ids || campaign.filters.operator_ids.length === 0,
     });
 
     // patch uiStatus

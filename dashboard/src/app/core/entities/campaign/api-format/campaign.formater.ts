@@ -333,7 +333,9 @@ export class CampaignFormater {
       );
     }
     campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
-    campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
+    campaignGlobalRetributionRules.push(
+      new OperatorIdsGlobalRetributionRule(campaignUx.filters.all_operators ? [] : campaignUx.filters.operator_ids),
+    );
     campaignGlobalRetributionRules.push(
       new DistanceRangeGlobalRetributionRule({
         min: filters.distance_range[0] ? Number(filters.distance_range[0]) * 1000 : filters.distance_range[0],

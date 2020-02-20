@@ -45,6 +45,15 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   ngOnInit() {
     this.initTargetChangeDetection();
     // this.initInseeTabChangeDetection();
+    this.initAllOperatorChangeDetection();
+  }
+
+  initAllOperatorChangeDetection() {
+    this.filtersForm
+      .get('all_operators')
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.updateOperatorsValidator());
+    this.updateOperatorsValidator();
   }
 
   ngAfterViewInit() {
@@ -147,8 +156,11 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
 
   showOperatorsLabel(): string {
     const operators = this.filtersForm.get('operator_ids').value;
+    const allOperators = this.filtersForm.get('all_operators').value;
     let label = '';
-    if (operators) {
+    if (allOperators) {
+      label = 'Tous les opérateurs';
+    } else {
       const multipleOperators = operators.length > 1;
       label += `${operators.length} opérateur${multipleOperators ? 's' : ''}
       participant${multipleOperators ? 's' : ''} à la campagne`;
@@ -200,9 +212,14 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     }, 1000);
   }
 
-  updateInseeValidator() {
-    // Apply rule : At least one trip has to be defined if user select "choose autorized trajects"
+  updateOperatorsValidator() {
+    const operatorIdsForm = this.filtersForm.get('operator_ids');
+    operatorIdsForm.setValidators(this.filtersForm.get('all_operators').value ? [] : [Validators.required]);
+    operatorIdsForm.updateValueAndValidity();
+    operatorIdsForm.markAllAsTouched();
+  }
 
+  updateInseeValidator() {
     const checkForEmptyInsees = this.campaignForm.get('ui_status').value.insee_mode;
     const inseeFG = this.campaignForm.get('filters').get('insee');
 
