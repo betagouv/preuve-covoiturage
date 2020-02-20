@@ -27,8 +27,6 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   selectedInseeFilterTabIndex;
   loading = true;
 
-  public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
-
   @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
   private initValue = 0;
 
@@ -38,6 +36,10 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     private _campaignUiService: CampaignUiService,
   ) {
     super();
+  }
+
+  get days() {
+    return this._campaignUiService.days;
   }
 
   ngOnInit() {

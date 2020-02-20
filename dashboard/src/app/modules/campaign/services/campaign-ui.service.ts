@@ -35,6 +35,8 @@ enum RestrictionPeriodsEnum {
   providedIn: 'root',
 })
 export class CampaignUiService {
+  public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
+
   constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   public retributions(campaign: CampaignUx): string {
@@ -104,10 +106,11 @@ export class CampaignUiService {
     if (weekDays.length === 0) {
       return '';
     }
-    let text = '';
-    text += weekDays.map((weekDay) => DAYS[weekDay]).join(', ');
 
-    return text;
+    return this.days
+      .filter((dInd) => weekDays.indexOf(dInd) !== -1)
+      .map((weekDay) => DAYS[weekDay])
+      .join(', ');
   }
 
   public formatWeekTime(timeRanges: IncentiveTimeRuleUxInterface[]): string {
