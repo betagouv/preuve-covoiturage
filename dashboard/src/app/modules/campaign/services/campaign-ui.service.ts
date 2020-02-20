@@ -50,8 +50,8 @@ export class CampaignUiService {
       const perKmForPassenger = retribution.for_passenger.per_km;
       const free = retribution.for_passenger.free;
       const perPassenger = retribution.for_driver.per_passenger;
-      const min = retribution.min;
-      const max = retribution.max;
+      const min = retribution.min ? retribution.min : 0;
+      const max = retribution.max ? retribution.max : 0;
       if (!valueForDriver && !valueForPassenger && !free) {
         continue;
       }
