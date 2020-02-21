@@ -77,29 +77,33 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
   }
 
   launchCampaign(id: number): void {
-    this._toastr.info(`Vous ne pouvez pas encore lancer de campagne.`);
-    // this._dialog
-    //   .confirm('Lancement de la campagne', 'Êtes-vous sûr de vouloir lancer la campagne ?', 'Confirmer')
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((result) => {
-    //     if (result) {
-    //       this._campaignStoreService
-    //         .launch(id)
-    //         .pipe(takeUntil(this.destroy$))
-    //         .subscribe(
-    //           (data) => {
-    //             const campaignSaved = data[0];
-    //             this._router.navigate(['/campaign']).then(() => {
-    //               this._toastr.success(`La campagne ${campaignSaved.name} a bien été lancé`);
-    //             });
-    //           },
-    //           (error) => {
-    //             console.error(error);
-    //             this._toastr.error('Une erreur est survenue lors du lancement de la campagne');
-    //           },
-    //         );
-    //     }
-    //   });
+    // this._toastr.info(`Vous ne pouvez pas encore lancer de campagne.`);
+    this._dialog
+      .confirm({
+        title: 'Lancement de la campagne',
+        message: 'Êtes-vous sûr de vouloir lancer la campagne ?',
+        confirmBtn: 'Confirmer',
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        if (result) {
+          this._campaignStoreService
+            .launch(id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(
+              (data) => {
+                const campaignSaved = data;
+                this._router.navigate(['/campaign']).then(() => {
+                  this._toastr.success(`Votre campagne a bien été lancé`);
+                });
+              },
+              (error) => {
+                console.error(error);
+                this._toastr.error('Une erreur est survenue lors du lancement de la campagne');
+              },
+            );
+        }
+      });
   }
 
   private loadTerritory() {
