@@ -15,7 +15,8 @@ import {
   OnlyAdultRetributionRule,
   OperatorIdsGlobalRetributionRule,
   RankGlobalRetributionRule,
-  RestrictionRetributionRule,
+  TripRestrictionRetributionRule,
+  AmountRestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
   WhiteListGlobalRetributionRule,
@@ -24,7 +25,7 @@ import {
   RestrictionUxInterface,
   RetributionUxInterface,
 } from '~/core/interfaces/campaign/ux-format/campaign-ux.interface';
-import { RestrictionTargetsEnum } from '~/core/enums/campaign/restrictions.enum';
+import { RestrictionTargetsEnum, RestrictionUnitEnum } from '~/core/enums/campaign/restrictions.enum';
 import {
   AmountRetributionRule,
   ForDriverRetributionRule,
@@ -62,7 +63,7 @@ export class CampaignFormater {
           whiteList: [],
           blackList: [],
         },
-        weekday: [],
+        weekday: [1, 2, 3, 4, 5, 6, 0],
         operator_ids: [],
         distance_range: [0, 0],
       },
@@ -112,12 +113,22 @@ export class CampaignFormater {
         campaignUx.filters.rank = <RankGlobalRetributionRule['parameters']>retributionRule.parameters;
       }
 
-      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION) {
-        const parameters = <RestrictionRetributionRule['parameters']>retributionRule.parameters;
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_TRIP) {
+        const parameters = <TripRestrictionRetributionRule['parameters']>retributionRule.parameters;
         campaignUx.restrictions.push(<RestrictionUxInterface>{
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
           quantity: parameters.amount,
           period: parameters.period,
+          unit: RestrictionUnitEnum.TRIP,
+        });
+      }
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT) {
+        const parameters = <TripRestrictionRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.restrictions.push(<RestrictionUxInterface>{
+          is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
+          quantity: parameters.amount,
+          period: parameters.period,
+          unit: RestrictionUnitEnum.AMOUNT,
         });
       }
 
@@ -321,7 +332,9 @@ export class CampaignFormater {
       );
     }
     campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
-    campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
+    if (!campaignUx.filters.all_operators) {
+      campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
+    }
     campaignGlobalRetributionRules.push(
       new DistanceRangeGlobalRetributionRule({
         min: filters.distance_range[0] ? Number(filters.distance_range[0]) * 1000 : filters.distance_range[0],
@@ -370,13 +383,20 @@ export class CampaignFormater {
     }
 
     restrictions.forEach((restriction) => {
-      campaignGlobalRetributionRules.push(
-        new RestrictionRetributionRule(
-          restriction.is_driver ? RestrictionTargetsEnum.DRIVER : RestrictionTargetsEnum.PASSENGER,
-          restriction.quantity,
-          restriction.period,
-        ),
-      );
+      const restrictionRule =
+        restriction.unit === RestrictionUnitEnum.TRIP
+          ? new TripRestrictionRetributionRule(
+              restriction.is_driver ? RestrictionTargetsEnum.DRIVER : RestrictionTargetsEnum.PASSENGER,
+              restriction.quantity,
+              restriction.period,
+            )
+          : new AmountRestrictionRetributionRule(
+              restriction.is_driver ? RestrictionTargetsEnum.DRIVER : RestrictionTargetsEnum.PASSENGER,
+              restriction.quantity,
+              restriction.period,
+            );
+
+      campaignGlobalRetributionRules.push(restrictionRule);
     });
 
     // RETRIBUTION RULES

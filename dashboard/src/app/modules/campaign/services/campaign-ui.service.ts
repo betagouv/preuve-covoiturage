@@ -16,6 +16,8 @@ import {
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
+import { DAYS } from '~/core/const/days.const';
+import { RestrictionUnitEnum } from '~/core/enums/campaign/restrictions.enum';
 
 // todo: remove this duplicate
 enum RestrictionPeriodsEnum {
@@ -33,6 +35,8 @@ enum RestrictionPeriodsEnum {
   providedIn: 'root',
 })
 export class CampaignUiService {
+  public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
+
   constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   public retributions(campaign: CampaignUx): string {
@@ -48,8 +52,8 @@ export class CampaignUiService {
       const perKmForPassenger = retribution.for_passenger.per_km;
       const free = retribution.for_passenger.free;
       const perPassenger = retribution.for_driver.per_passenger;
-      const min = retribution.min;
-      const max = retribution.max;
+      const min = retribution.min ? retribution.min : 0;
+      const max = retribution.max ? retribution.max : 0;
       if (!valueForDriver && !valueForPassenger && !free) {
         continue;
       }
@@ -98,23 +102,21 @@ export class CampaignUiService {
     return text;
   }
 
-  public daysAndTimes(weekDays: WeekDay[] = [], timeRanges: IncentiveTimeRuleUxInterface[] = []): string {
+  public formatWeekDays(weekDays: WeekDay[]): string {
     if (weekDays.length === 0) {
       return '';
     }
-    let text = '';
-    text += weekDays
-      .map((weekDay: WeekDay) =>
-        moment()
-          .isoWeekday(weekDay + 1)
-          .format('dddd'),
-      )
+
+    return this.days
+      .filter((dInd) => weekDays.indexOf(dInd) !== -1)
+      .map((weekDay) => DAYS[weekDay])
       .join(', ');
+  }
+
+  public formatWeekTime(timeRanges: IncentiveTimeRuleUxInterface[]): string {
+    let text = '';
 
     if (timeRanges && timeRanges.length > 0) {
-      if (weekDays.length > 0) {
-        text += ' <br>';
-      }
       text += ' De ';
       text += timeRanges
         .map((timeRange: IncentiveTimeRuleUxInterface) => {
@@ -126,6 +128,16 @@ export class CampaignUiService {
         .join(', ');
     }
     return text;
+  }
+
+  public daysAndTimes(
+    weekDays: WeekDay[] = [],
+    timeRanges: IncentiveTimeRuleUxInterface[] = [],
+    dayTimeSeparator = '<br>',
+  ): string {
+    return `${this.formatWeekDays(weekDays)}${weekDays.length ? dayTimeSeparator : ''}${this.formatWeekTime(
+      timeRanges,
+    )}`;
   }
 
   public ranks(ranks: TripRankEnum[]): string {
@@ -171,10 +183,18 @@ export class CampaignUiService {
   public insee(insee: IncentiveFiltersUxInterface['insee']): string {
     let text = '';
     if (insee.blackList && insee.blackList.length > 0) {
-      text += `Les axes suivant sont incités : <ul>`;
+      text += `Les axes suivant sont ignorés : <ul>`;
 
       insee.blackList.forEach((axe) => {
-        text += `<li> De `;
+        text += '<li>';
+        if (axe.start.length > 0) {
+          if (axe.end.length > 0) {
+            text += `De `;
+          } else {
+            text += `En partance de `;
+          }
+        }
+
         axe.start.forEach((city, index) => {
           if (index > 0 && index === axe.start.length - 1) {
             text += ' ou ';
@@ -183,7 +203,15 @@ export class CampaignUiService {
           }
           text += `<b>${city.territory_literal}</b>`;
         });
-        text += ` à `;
+
+        if (axe.end.length > 0) {
+          if (axe.start.length > 0) {
+            text += ` à `;
+          } else {
+            text += `A destination de `;
+          }
+        }
+
         axe.end.forEach((city, index) => {
           if (index > 0 && index === axe.end.length - 1) {
             text += ' ou ';
@@ -198,7 +226,15 @@ export class CampaignUiService {
       text += `Les trajets doivent être sur les axes suivants : <ul>`;
 
       insee.whiteList.forEach((axe) => {
-        text += `<li> De`;
+        text += '<li>';
+        if (axe.start.length > 0) {
+          if (axe.end.length > 0) {
+            text += `De `;
+          } else {
+            text += `En partance de `;
+          }
+        }
+
         axe.start.forEach((city, index) => {
           if (index > 0 && index === axe.start.length - 1) {
             text += ' ou ';
@@ -207,7 +243,14 @@ export class CampaignUiService {
           }
           text += `<b>${city.territory_literal}</b>`;
         });
-        text += ` à `;
+
+        if (axe.end.length > 0) {
+          if (axe.start.length > 0) {
+            text += ` à `;
+          } else {
+            text += `A destination de `;
+          }
+        }
         axe.end.forEach((city, index) => {
           if (index > 0 && index === axe.end.length - 1) {
             text += ' ou ';
@@ -223,36 +266,42 @@ export class CampaignUiService {
     return text;
   }
 
-  public restrictions(restrictions: RestrictionUxInterface[] = []) {
+  public restriction(restriction: RestrictionUxInterface, amountUnit: string): string {
+    let text = '';
+    const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)  `;
+
+    text += `${restriction.quantity} ${unit} maximum pour le ${restriction.is_driver ? 'conducteur' : 'passager'} `;
+
+    switch (restriction.period) {
+      // @ts-ignore
+      case RestrictionPeriodsEnum.DAY:
+        text += 'par jour.';
+        break;
+      // @ts-ignore
+      case RestrictionPeriodsEnum.MONTH:
+        text += 'par mois.';
+        break;
+      // @ts-ignore
+      case RestrictionPeriodsEnum.YEAR:
+        text += 'sur une année.';
+        break;
+      // @ts-ignore
+      case RestrictionPeriodsEnum.ALL:
+        text += 'sur toute la durée de la campagne.';
+        break;
+    }
+
+    return text;
+  }
+
+  public restrictions(restrictions: RestrictionUxInterface[] = [], amountUnit: string = '') {
     if (restrictions.length === 0) {
       return 'Aucune restriction.';
     }
     let text = '';
+
     restrictions.forEach((restriction: RestrictionUxInterface, index) => {
-      text += `<li><b>${restriction.quantity} trajet(s) maximum pour le ${
-        restriction.is_driver ? 'conducteur' : 'passager'
-      } `;
-
-      switch (restriction.period) {
-        // @ts-ignore
-        case RestrictionPeriodsEnum.DAY:
-          text += 'par jour.';
-          break;
-        // @ts-ignore
-        case RestrictionPeriodsEnum.MONTH:
-          text += 'par mois.';
-          break;
-        // @ts-ignore
-        case RestrictionPeriodsEnum.YEAR:
-          text += 'sur une année.';
-          break;
-        // @ts-ignore
-        case RestrictionPeriodsEnum.ALL:
-          text += 'sur toute la durée de la campagne.';
-          break;
-      }
-
-      text += '</b></li>';
+      text += `<li><b>${this.restriction(restriction, amountUnit)}</b></li>`;
     });
     return text;
   }
@@ -265,6 +314,16 @@ export class CampaignUiService {
     // DATE
     summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
     summaryText += ` ${moment(campaign.end).format('dddd DD MMMM YYYY')}</b>, limitée à`;
+
+    // WEEK DAYS
+
+    if (campaign.filters.weekday.length && campaign.filters.time.length) {
+      summaryText += `${campaign.filters.weekday.length ? `${this.formatWeekDays(campaign.filters.weekday)}` : ''}${
+        campaign.filters.time.length ? `${this.formatWeekTime(campaign.filters.time)}` : ''
+      }`;
+    }
+
+    summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
 
     // MAXIMUM AMOUNT
     switch (unit) {
@@ -325,7 +384,7 @@ export class CampaignUiService {
       summaryText += '<p>Les restrictions suivantes seront appliquées :</p>';
 
       // RESTRICTIONS
-      summaryText += `<ul>${this.restrictions(campaign.restrictions)}</ul>`;
+      summaryText += `<ul>${this.restrictions(campaign.restrictions, campaign.unit)}</ul>`;
     }
 
     // OPERATORS & RANKS

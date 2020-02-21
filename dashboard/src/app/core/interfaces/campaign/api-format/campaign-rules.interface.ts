@@ -10,13 +10,13 @@ export interface BaseRetributionRuleInterface {
 }
 
 export enum RetributionRulesSlugEnum {
-  DISTANCE_RANGE = 'distance_range_filter',
-  PER_KM = 'per_km',
+  DISTANCE_RANGE = 'progressive_distance_range_meta',
+  PER_KM = 'per_km_modifier',
   FREE = 'cost_based_amount',
   FOR_DRIVER = 'driver_only_filter',
   FOR_PASSENGER = 'passenger_only_filter',
-  PER_PASSENGER = 'per_passenger',
-  AMOUNT = 'fixed_amount',
+  PER_PASSENGER = 'per_passenger_modifier',
+  AMOUNT = 'fixed_amount_setter',
 }
 
 export type RetributionRuleType =
@@ -50,7 +50,6 @@ export class PerKmRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.PER_KM;
-    this.parameters = true;
   }
 }
 
@@ -61,7 +60,6 @@ export class PerPassengerRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.PER_PASSENGER;
-    this.parameters = true;
   }
 }
 
@@ -72,7 +70,6 @@ export class ForDriverRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FOR_DRIVER;
-    this.parameters = true;
   }
 }
 
@@ -83,7 +80,6 @@ export class ForPassengerRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FOR_PASSENGER;
-    this.parameters = true;
   }
 }
 
@@ -105,6 +101,5 @@ export class FreeRetributionRule implements RetributionRuleInterface {
 
   constructor() {
     this.slug = RetributionRulesSlugEnum.FREE;
-    this.parameters = true;
   }
 }

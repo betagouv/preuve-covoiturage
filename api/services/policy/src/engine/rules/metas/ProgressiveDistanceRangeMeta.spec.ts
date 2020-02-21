@@ -14,8 +14,8 @@ const campaign = new ProcessableCampaign(
       {
         slug: 'progressive_distance_range_meta',
         parameters: {
-          minimum: 0,
-          maximum: 1000,
+          min: 0,
+          max: 1000,
         },
       },
       {
@@ -30,8 +30,8 @@ const campaign = new ProcessableCampaign(
       {
         slug: 'progressive_distance_range_meta',
         parameters: {
-          minimum: 1000,
-          maximum: 5000,
+          min: 1000,
+          max: 5000,
         },
       },
       {
@@ -46,8 +46,8 @@ const campaign = new ProcessableCampaign(
       {
         slug: 'progressive_distance_range_meta',
         parameters: {
-          minimum: 5000,
-          maximum: 10000,
+          min: 5000,
+          max: 10000,
         },
       },
       {

@@ -98,7 +98,7 @@ class RuleSet
     result = await this.set(ctx);
     context.result = await this.modify(ctx, result);
     context.stack.push(`pathresult: ${context.result}`);
-    await this.post({ ...ctx, result });
+    await this.post(context);
   }
 
   filterSql(): { text: string; values: any[] } {
@@ -120,7 +120,7 @@ class RuleSet
   async post(context: RuleHandlerParamsInterface): Promise<void> {
     for (const rule of this.postSet) {
       await rule.apply(context);
-      context.stack.push((rule.constructor as StaticRuleInterface).slug);
+      context.stack.push(`${(rule.constructor as StaticRuleInterface).slug}: ${context.result}`);
     }
   }
 

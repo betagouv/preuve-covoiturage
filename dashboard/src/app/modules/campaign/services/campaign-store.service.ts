@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { finalize, map, takeUntil, tap } from 'rxjs/operators';
 
 import { CrudStore } from '~/core/services/store/crud-store';
@@ -12,6 +12,7 @@ import { ResultInterface as LaunchResultInterface } from '~/core/entities/api/sh
 import { ParamsInterface as PatchParamsInterface } from '~/core/entities/api/shared/policy/patch.contract';
 import { ParamsInterface as DeleteParamsInterface } from '~/core/entities/api/shared/policy/delete.contract';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { ParamsInterface } from '~/core/entities/api/shared/trip/stats.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,11 @@ export class CampaignStoreService extends CrudStore<
   CampaignApiService,
   CampaignUx
 > {
+  protected templatesSubject = new BehaviorSubject<Campaign[]>([]);
+  protected dismissTempatesListSubject = new Subject();
+
+  protected _templates$ = this.templatesSubject.asObservable();
+
   constructor(protected campaignApi: CampaignApiService, private _authService: AuthenticationService) {
     super(campaignApi, Campaign);
   }
@@ -31,19 +37,11 @@ export class CampaignStoreService extends CrudStore<
    * all campaign in UX format except for templates
    */
   get campaignsUx$(): Observable<CampaignUx[]> {
-    return this.entities$.pipe(
-      map((campaigns) =>
-        campaigns
-          .filter((campaign) => campaign.status !== CampaignStatusEnum.TEMPLATE)
-          .map((campaign) => new Campaign(campaign).toFormValues()),
-      ),
-    );
+    return this.entities$.pipe(map((campaigns) => campaigns.map((campaign) => new Campaign(campaign).toFormValues())));
   }
 
   get templates$(): Observable<Campaign[]> {
-    return this.entities$.pipe(
-      map((campaigns) => campaigns.filter((campaign) => campaign.status === CampaignStatusEnum.TEMPLATE)),
-    );
+    return this._templates$;
   }
 
   get campaignUx(): CampaignUx {
@@ -56,6 +54,27 @@ export class CampaignStoreService extends CrudStore<
 
   launch(id: number): Observable<LaunchResultInterface> {
     return this.rpcCrud.launch(id).pipe(tap(this.loadList));
+  }
+
+  loadCampaigns() {
+    this._loadCount += 1;
+    this.campaignApi
+      .loadTemplates()
+      .pipe(
+        finalize(() => (this._loadCount -= 1)),
+        takeUntil(this.dismissTempatesListSubject),
+      )
+      .subscribe((campaigns) => this.templatesSubject.next(campaigns));
+  }
+
+  dismissAllRpcActions() {
+    super.dismissAllRpcActions();
+    this.dismissTempatesListSubject.next();
+  }
+
+  reset() {
+    super.reset();
+    this.templatesSubject.next([]);
   }
 
   deleteByTerritoryId(params: DeleteParamsInterface): Observable<boolean> {

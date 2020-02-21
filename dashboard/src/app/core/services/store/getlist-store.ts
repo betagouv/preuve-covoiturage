@@ -67,6 +67,7 @@ export abstract class GetListStore<
   }
 
   loadList() {
+    if (!this.dismissGetSubject) return;
     this.dismissGetSubject.next();
     this.dismissGetListSubject.next();
     this._loadCount += 1;

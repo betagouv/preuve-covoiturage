@@ -11,6 +11,7 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 import { DAYS } from '~/core/const/days.const';
+import { tripTabValidator } from '~/modules/campaign/validators/trip-tab.validator';
 
 @Component({
   selector: 'app-filters-form',
@@ -26,8 +27,6 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   selectedInseeFilterTabIndex;
   loading = true;
 
-  public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
-
   @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
   private initValue = 0;
 
@@ -39,9 +38,22 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     super();
   }
 
+  get days() {
+    return this._campaignUiService.days;
+  }
+
   ngOnInit() {
     this.initTargetChangeDetection();
     // this.initInseeTabChangeDetection();
+    this.initAllOperatorChangeDetection();
+  }
+
+  initAllOperatorChangeDetection() {
+    this.filtersForm
+      .get('all_operators')
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.updateOperatorsValidator());
+    this.updateOperatorsValidator();
   }
 
   ngAfterViewInit() {
@@ -144,8 +156,11 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
 
   showOperatorsLabel(): string {
     const operators = this.filtersForm.get('operator_ids').value;
+    const allOperators = this.filtersForm.get('all_operators').value;
     let label = '';
-    if (operators) {
+    if (allOperators) {
+      label = 'Tous les opérateurs';
+    } else {
       const multipleOperators = operators.length > 1;
       label += `${operators.length} opérateur${multipleOperators ? 's' : ''}
       participant${multipleOperators ? 's' : ''} à la campagne`;
@@ -187,19 +202,31 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   private initSelectedInseeFilterTabIndex() {
-    if (this.hasInseeWhiteList) {
-      // prevent loading bug of mat tab group
-      setTimeout(() => {
-        this.inseeFilterTabGroup.selectedIndex = 1;
-        this.selectedInseeFilterTabIndex = 1;
-      }, 1000);
-    } else if (this.hasInseeBlackList) {
-      this.inseeFilterTabGroup.selectedIndex = 0;
-      this.selectedInseeFilterTabIndex = 0;
-    } else {
-      this.inseeFilterTabGroup.selectedIndex = 0;
-      this.selectedInseeFilterTabIndex = 0;
-    }
+    setTimeout(() => {
+      this.inseeFilterTabGroup.selectedIndex = this.selectedInseeFilterTabIndex = this.campaignForm.get('ui_status')
+        .value.insee_mode
+        ? 1
+        : 0;
+
+      this.updateInseeValidator();
+    }, 1000);
+  }
+
+  updateOperatorsValidator() {
+    const operatorIdsForm = this.filtersForm.get('operator_ids');
+    operatorIdsForm.setValidators(this.filtersForm.get('all_operators').value ? [] : [Validators.required]);
+    operatorIdsForm.updateValueAndValidity();
+    operatorIdsForm.markAllAsTouched();
+  }
+
+  updateInseeValidator() {
+    const checkForEmptyInsees = this.campaignForm.get('ui_status').value.insee_mode;
+    const inseeFG = this.campaignForm.get('filters').get('insee');
+
+    // set validator only if user select "choose autorized trajects"
+    inseeFG.setValidators(checkForEmptyInsees ? [tripTabValidator] : []);
+    inseeFG.markAllAsTouched();
+    inseeFG.updateValueAndValidity();
   }
 
   selectedInseeFilterTabIndexChange(nextIndex: 0 | 1) {
@@ -221,10 +248,15 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
             this.blackListFormArray.clear();
             this.inseeFilterTabGroup.selectedIndex = nextIndex;
             this.selectedInseeFilterTabIndex = nextIndex;
+            this.campaignForm.get('ui_status').patchValue({ insee_mode: nextIndex === 1 });
           }
+
+          this.updateInseeValidator();
         });
     } else {
       this.selectedInseeFilterTabIndex = nextIndex;
+      this.campaignForm.get('ui_status').patchValue({ insee_mode: nextIndex === 1 });
+      this.updateInseeValidator();
     }
   }
 }

@@ -24,7 +24,15 @@
         <div class="ParametersForm-maxRetribution CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Rétribution totale</mat-label>
-            <input matInput type="number" min="0" placeholder="50000" formControlName="max_amount" required />
+            <input
+              matInput
+              type="number"
+              min="0"
+              placeholder="50000"
+              formControlName="max_amount"
+              required
+              autocomplete="off"
+            />
             <mat-error *ngIf="controls.max_amount.hasError('required')">
               Le montant de rétribution totale est obligatoire.
             </mat-error>
@@ -70,6 +78,7 @@
               placeholder="Choose a date"
               formControlName="start"
               [min]="minDate"
+              autocomplete="off"
               required
             />
             <mat-datepicker-toggle matSuffix [for]="pickerBegin"></mat-datepicker-toggle>
@@ -90,6 +99,7 @@
               formControlName="end"
               [min]="controls.start.value"
               required
+              autocomplete="off"
             />
             <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
             <mat-datepicker #pickerEnd></mat-datepicker>
@@ -118,7 +128,7 @@
         <div class="ParametersForm-maxTrips CampaignSubForm-inputs">
           <mat-form-field appearance="outline">
             <mat-label>Nombre de trajets max</mat-label>
-            <input matInput type="number" min="0" placeholder="20000" formControlName="max_trips" />
+            <input matInput type="number" min="0" placeholder="20000" formControlName="max_trips" autocomplete="off" />
             <mat-icon matSuffix>directions_car</mat-icon>
             <mat-error *ngIf="controls.max_trips.hasError('min')">
               Le nombre de trajets maximum doit être supérieur à 0.
@@ -129,6 +139,7 @@
 
       <!--     RESTRICTIONS -->
       <mat-expansion-panel
+        [disabled]="!campaignForm.controls.unit.value"
         class="ParametersForm-restrictionExpansion"
         [ngClass]="{ 'mat-expansion-panel-error': !restrictionFormArray.valid && isRestrictionFormArrayTouched() }"
       >
@@ -146,17 +157,44 @@
             *ngFor="let restrictionFormGroup of restrictionFormArray.controls; let idx = index"
             class="ParametersForm-restriction"
           >
-            <app-restriction-form [restrictionformGroup]="restrictionFormGroup"></app-restriction-form>
-            <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
+            <div class="RestrictionBlock">
+              <span>
+                {{ campaignUI.restriction(restrictionFormGroup.value, campaignForm.controls.unit.value) }}
+              </span>
+              <mat-icon color="error" (click)="removeRestriction(idx)">delete_outline</mat-icon>
+            </div>
           </div>
+
           <button
+            *ngIf="!editRestrictionForm"
             mat-stroked-button
             color="primary"
-            (click)="addRestriction()"
+            (click)="startEditRestriction()"
             [disabled]="!restrictionFormArray.valid"
           >
             Ajouter une restriction
           </button>
+
+          <div *ngIf="editRestrictionForm">
+            <p><strong>Création d'une restriction</strong></p>
+
+            <app-restriction-form
+              [restrictionformGroup]="editRestrictionForm"
+              [unit]="campaignForm.controls.unit.value"
+            ></app-restriction-form>
+
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="addRestriction()"
+              [disabled]="!editRestrictionForm.valid"
+            >
+              Confirmer
+            </button>
+            <button mat-stroked-button (click)="cancelEditRestriction()">
+              Annuler
+            </button>
+          </div>
         </div>
       </mat-expansion-panel>
 
@@ -218,6 +256,15 @@
                   *ngIf="forTripControl.value"
                 >
                 </app-retribution-form>
+
+                <mat-error
+                  *ngIf="
+                    retributionsFormArray.hasError('uniqueRetribution') &&
+                    retributionsFormArray.getError('uniqueRetribution')[idx]
+                  "
+                >
+                  Au moins une des rétributions doit avoir un montant supérieur à zéro.
+                </mat-error>
               </div>
               <div class="ParametersForm-incentiveMode-value-remove">
                 <mat-icon

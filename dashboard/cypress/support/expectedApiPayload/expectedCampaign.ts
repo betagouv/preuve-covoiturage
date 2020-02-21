@@ -9,7 +9,7 @@ import {
   MaxTripsRetributionRule,
   OperatorIdsGlobalRetributionRule,
   RankGlobalRetributionRule,
-  RestrictionRetributionRule,
+  TripRestrictionRetributionRule,
   TimeRetributionRule,
   WeekdayRetributionRule,
 } from '../../../src/app/core/interfaces/campaign/api-format/campaign-global-rules.interface';
@@ -94,12 +94,12 @@ export class CypressExpectedCampaign {
         ]),
         new MaxAmountRetributionRule(CypressExpectedCampaign.maxAmount),
         new MaxTripsRetributionRule(CypressExpectedCampaign.maxTrips),
-        new RestrictionRetributionRule(
+        new TripRestrictionRetributionRule(
           RestrictionTargetsEnum.PASSENGER,
           CypressExpectedCampaign.firstRestrictionAmount,
           RestrictionPeriodsEnum.ALL,
         ),
-        new RestrictionRetributionRule(
+        new TripRestrictionRetributionRule(
           RestrictionTargetsEnum.DRIVER,
           CypressExpectedCampaign.secondRestrictionAmount,
           RestrictionPeriodsEnum.DAY,

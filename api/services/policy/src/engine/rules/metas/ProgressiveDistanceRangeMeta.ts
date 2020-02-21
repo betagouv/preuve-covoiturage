@@ -4,8 +4,8 @@ import { DistanceRangeFilter } from '../filters/DistanceRangeFilter';
 import { DistanceBoundingTransformer } from '../transformers/DistanceBoundingTransformer';
 
 interface ProgressiveDistanceRangeMetaParameters {
-  minimum: number;
-  maximum: number;
+  min: number;
+  max: number;
 }
 
 export class ProgressiveDistanceRangeMeta extends MetaRule<ProgressiveDistanceRangeMetaParameters> {
@@ -14,17 +14,17 @@ export class ProgressiveDistanceRangeMeta extends MetaRule<ProgressiveDistanceRa
   static readonly schema: { [k: string]: any } = {
     type: 'object',
     additionalProperties: false,
-    required: ['minimum', 'maximum'],
+    required: ['min', 'max'],
     properties: {
-      minimum: {
+      min: {
         type: 'integer',
-        minimum: 0,
-        maximum: 500000,
+        min: 0,
+        max: 500000,
       },
-      maximum: {
+      max: {
         type: 'integer',
-        minimum: 0,
-        maximum: 500000,
+        min: 0,
+        max: 500000,
       },
     },
   };
@@ -34,14 +34,14 @@ export class ProgressiveDistanceRangeMeta extends MetaRule<ProgressiveDistanceRa
       {
         slug: DistanceRangeFilter.slug,
         parameters: {
-          min: this.parameters.minimum,
+          minimum: this.parameters.min,
         },
       },
       {
         slug: DistanceBoundingTransformer.slug,
         parameters: {
-          offset: -this.parameters.minimum,
-          maximum: this.parameters.maximum,
+          offset: -this.parameters.min,
+          maximum: this.parameters.max,
         },
       },
     ];

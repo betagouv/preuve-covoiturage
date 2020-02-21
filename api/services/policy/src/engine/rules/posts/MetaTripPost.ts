@@ -10,7 +10,7 @@ interface MetaTripPostParameters {
 
 export class MetaTripPost extends PostRule<MetaTripPostParameters> {
   static readonly slug: string = 'meta_trip_post';
-  static readonly description: string = 'Incrémente le nombre de trajet';
+  static readonly description: string = 'Incrémente le nombre de trajets';
   static readonly schema: { [k: string]: any } = {
     type: 'object',
     required: ['prefix', 'period'],
