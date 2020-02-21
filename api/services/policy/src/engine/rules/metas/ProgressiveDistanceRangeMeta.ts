@@ -34,14 +34,14 @@ export class ProgressiveDistanceRangeMeta extends MetaRule<ProgressiveDistanceRa
       {
         slug: DistanceRangeFilter.slug,
         parameters: {
-          min: this.parameters.min,
+          minimum: this.parameters.min,
         },
       },
       {
         slug: DistanceBoundingTransformer.slug,
         parameters: {
           offset: -this.parameters.min,
-          max: this.parameters.max,
+          maximum: this.parameters.max,
         },
       },
     ];
