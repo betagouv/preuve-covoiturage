@@ -98,7 +98,6 @@ export class CampaignFormater {
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY) {
         campaignUx.filters.weekday = <WeekdayRetributionRule['parameters']>retributionRule.parameters;
-        console.log('campaignUx.filters.weekday : ', campaignUx.filters.weekday);
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.TIME) {
         const parameters = <TimeRetributionRule['parameters']>retributionRule.parameters;
@@ -333,9 +332,9 @@ export class CampaignFormater {
       );
     }
     campaignGlobalRetributionRules.push(new WeekdayRetributionRule(campaignUx.filters.weekday));
-    campaignGlobalRetributionRules.push(
-      new OperatorIdsGlobalRetributionRule(campaignUx.filters.all_operators ? [] : campaignUx.filters.operator_ids),
-    );
+    if (!campaignUx.filters.all_operators) {
+      campaignGlobalRetributionRules.push(new OperatorIdsGlobalRetributionRule(campaignUx.filters.operator_ids));
+    }
     campaignGlobalRetributionRules.push(
       new DistanceRangeGlobalRetributionRule({
         min: filters.distance_range[0] ? Number(filters.distance_range[0]) * 1000 : filters.distance_range[0],
