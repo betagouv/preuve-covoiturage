@@ -85,11 +85,11 @@ export class PolicyProcessCommand implements CommandInterface {
 
     if (id) {
       await this.process(id, detach);
-      console.log(`>> Operation done for ${id}`);
+      return `>> Operation done for ${id}`;
     }
 
     if (!databaseUri) {
-      console.log('>> If id is not provided, you must specify a database uri');
+      return '>> If id is not provided, you must specify a database uri';
     }
 
     // cap the batch size by the limit
