@@ -4,16 +4,12 @@ import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 
 import { handlerConfig, ParamsInterface } from '../shared/certificate/create.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/create.schema';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class CreateCertificateAction extends AbstractAction {
-  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.create']], ['validate', alias]];
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
-
   constructor(
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,

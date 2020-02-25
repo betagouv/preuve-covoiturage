@@ -8,14 +8,10 @@ import { TemplateInterfaceResolver } from '@pdc/provider-template';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { RenderTokenPayloadInterface } from '../shared/certificate/common/interfaces/RenderTokenPayloadInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/render.schema';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class RenderCertificateAction extends AbstractAction {
-  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.render']], ['validate', alias]];
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
-
   constructor(
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private templateProvider: TemplateInterfaceResolver,

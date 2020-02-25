@@ -8,17 +8,17 @@ import {
   RepositoryInterface,
 } from '../shared/application/create.contract';
 import { alias } from '../shared/application/create.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 import { setOwner } from '../helpers/setOwner';
 
-@handler(handlerConfig)
-export class CreateApplicationAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['can', ['application.create']],
-  ];
-
+  ],
+})
+export class CreateApplicationAction extends AbstractAction {
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();
   }

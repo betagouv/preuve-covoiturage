@@ -13,7 +13,6 @@ import {
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/create.contract';
 import { alias } from '../shared/acquisition/create.schema';
 import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 
@@ -26,10 +25,8 @@ const callContext = {
   },
 };
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['can', ['journey.create']]] })
 export class CreateJourneyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']]];
-
   constructor(
     private kernel: KernelInterfaceResolver,
     private journeyRepository: JourneyRepositoryProviderInterfaceResolver,

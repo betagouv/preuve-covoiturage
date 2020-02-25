@@ -3,12 +3,9 @@ import { handler, ContextType, InitHookInterface, KernelInterfaceResolver } from
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/refresh.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['channel.service.only', [handlerConfig.service]]] })
 export class RefreshAction extends Action implements InitHookInterface {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', [handlerConfig.service]]];
-
   constructor(private pg: PostgresConnection, private kernel: KernelInterfaceResolver) {
     super();
   }

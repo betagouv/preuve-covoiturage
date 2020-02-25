@@ -2,7 +2,6 @@ import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/apply.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { PolicyEngine } from '../engine/PolicyEngine';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
@@ -11,10 +10,8 @@ import {
   IncentiveInterface,
 } from '../interfaces';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['channel.service.only', ['carpool', handlerConfig.service]]] })
 export class ApplyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['carpool', handlerConfig.service]]];
-
   constructor(
     private tripRepository: TripRepositoryProviderInterfaceResolver,
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,

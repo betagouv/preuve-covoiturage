@@ -4,16 +4,15 @@ import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/export.schema';
 import {
   signature as buildSignature,
   ParamsInterface as BuildParamsInterface,
 } from '../shared/trip/buildExport.contract';
 
-@handler(handlerConfig)
-export class ExportAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -41,8 +40,9 @@ export class ExportAction extends Action {
         ],
       ],
     ],
-  ];
-
+  ],
+})
+export class ExportAction extends Action {
   constructor(private kernel: KernelInterfaceResolver) {
     super();
   }

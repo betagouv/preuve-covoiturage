@@ -5,7 +5,6 @@ import { handler, ContextType } from '@ilos/common';
 import { FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/crosscheck.contract';
 import { alias } from '../shared/carpool/crosscheck.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
@@ -13,13 +12,14 @@ import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/Ident
 /*
  * Import journey in carpool database
  */
-@handler(handlerConfig)
-export class CrosscheckAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class CrosscheckAction extends Action {
   constructor(
     private carpool: CarpoolRepositoryProviderInterfaceResolver,
     private crosscheck: CrosscheckRepositoryProviderInterfaceResolver,

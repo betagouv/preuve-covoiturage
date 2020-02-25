@@ -3,16 +3,16 @@ import { handler } from '@ilos/common';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/find.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/territory/find.schema';
 
-@handler(handlerConfig)
-export class FindTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['can', ['territory.read']],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class FindTerritoryAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

@@ -3,7 +3,6 @@ import { handler, ContextType, InvalidRequestException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/create.contract';
 import { alias } from '../shared/user/create.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
@@ -12,9 +11,9 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 /*
  * Create user and call forgotten password action
  */
-@handler(handlerConfig)
-export class CreateUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -35,7 +34,9 @@ export class CreateUserAction extends AbstractAction {
       ],
     ],
     ['content.whitelist', userWhiteListFilterOutput],
-  ];
+  ],
+})
+export class CreateUserAction extends AbstractAction {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private notification: UserNotificationProvider,

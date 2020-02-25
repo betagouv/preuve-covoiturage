@@ -4,14 +4,10 @@ import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/certificate/find.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/find.schema';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class FindCertificateAction extends AbstractAction {
-  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.read']], ['validate', alias]];
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
-
   constructor(
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private crypto: CryptoProviderInterfaceResolver,

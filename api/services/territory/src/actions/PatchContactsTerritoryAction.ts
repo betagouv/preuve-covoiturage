@@ -3,16 +3,16 @@ import { Action as AbstractAction } from '@ilos/core';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/patchContacts.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/territory/patchContacts.schema';
 
-@handler(handlerConfig)
-export class PatchContactsTerritoryAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['can', ['territory.contacts.update']],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class PatchContactsTerritoryAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

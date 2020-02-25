@@ -10,16 +10,16 @@ import { FileStorageProvider } from '@pdc/provider-file';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/buildExport.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { signature as notifySignature, ParamsInterface as NotifyParamsInterface } from '../shared/user/notify.contract';
 
-@handler(handlerConfig)
-export class BuildExportAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['channel.service.only', [handlerConfig.service]],
     ['channel.transport', ['queue']],
-  ];
-
+  ],
+})
+export class BuildExportAction extends Action {
   constructor(
     private config: ConfigInterfaceResolver,
     private pg: TripRepositoryProvider,

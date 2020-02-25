@@ -3,14 +3,10 @@ import { handler } from '@ilos/common';
 
 import { HtmlPrinterProviderInterfaceResolver } from '../interfaces/HtmlPrinterProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/download.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/download.schema';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class DownloadCertificateAction extends AbstractAction {
-  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.download']], ['validate', alias]];
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
-
   constructor(private printer: HtmlPrinterProviderInterfaceResolver) {
     super();
   }
