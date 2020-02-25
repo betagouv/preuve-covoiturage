@@ -12,7 +12,7 @@ import {
   ContentWhitelistMiddleware,
   ChannelServiceBlacklistMiddleware,
 } from '@pdc/provider-middleware';
-import { TemplateExtension } from '@pdc/provider-template'; 
+import { TemplateExtension } from '@pdc/provider-template';
 
 import { changePassword } from './shared/user/changePassword.schema';
 import { changePasswordWithToken } from './shared/user/changePasswordWithToken.schema';
@@ -32,6 +32,7 @@ import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { SetPermissionsCommand } from './commands/SetPermissionsCommand';
 
+import { config } from './config';
 import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
 import { ChangePasswordWithTokenUserAction } from './actions/ChangePasswordWithTokenUserAction';
 import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
@@ -54,7 +55,7 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
 import { SeedUsersCommand } from './commands/SeedUsersCommand';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [UserPgRepositoryProvider, CryptoProvider, AuthRepositoryProvider, UserNotificationProvider],
   validator: [
     ['user.changePassword', changePassword],
@@ -107,5 +108,9 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
   commands: [MigrateDataCommand, SetPermissionsCommand, SeedUsersCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, TemplateExtension, NotificationExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [
+    ValidatorExtension,
+    TemplateExtension,
+    NotificationExtension,
+  ];
 }

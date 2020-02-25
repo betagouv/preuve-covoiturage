@@ -9,6 +9,7 @@ import { QrcodeProvider } from '@pdc/provider-qrcode';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TemplateExtension } from '@pdc/provider-template';
 
+import { config } from './config';
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
 import { HtmlPrinterProvider } from './providers/HtmlPrinterProvider';
@@ -23,7 +24,7 @@ import { binding as findBinding } from './shared/certificate/find.schema';
 import { binding as downloadBinding } from './shared/certificate/download.schema';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [
     DateProvider,
     QrcodeProvider,
@@ -33,7 +34,10 @@ import { binding as downloadBinding } from './shared/certificate/download.schema
     HtmlPrinterProvider,
   ],
   validator: [renderBinding, createBinding, findBinding, downloadBinding],
-  middlewares: [['validate', ValidatorMiddleware], ['can', PermissionMiddleware]],
+  middlewares: [
+    ['validate', ValidatorMiddleware],
+    ['can', PermissionMiddleware],
+  ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [RenderCertificateAction, DownloadCertificateAction, CreateCertificateAction, FindCertificateAction],
   commands: [SeedCommand],

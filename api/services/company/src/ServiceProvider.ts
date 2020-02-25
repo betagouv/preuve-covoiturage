@@ -4,6 +4,7 @@ import { PermissionMiddleware } from '@pdc/package-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
+import { config } from './config';
 import { binding as fetchBinding } from './shared/company/fetch.schema';
 import { binding as findBinding } from './shared/company/find.schema';
 import { CompanyRepositoryProvider } from './providers/CompanyRepositoryProvider';
@@ -12,7 +13,7 @@ import { FetchAction } from './actions/FetchAction';
 import { FindAction } from './actions/FindAction';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [CompanyRepositoryProvider, CompanyDataSourceProvider],
   validator: [fetchBinding, findBinding],
   middlewares: [

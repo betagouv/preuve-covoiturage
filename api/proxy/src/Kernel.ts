@@ -15,6 +15,7 @@ import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 
+import { config } from './config';
 import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
 import { MapIdCommand } from './commands/MapIdCommand';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
@@ -23,8 +24,7 @@ import { GeoFetchCommand } from './commands/GeoFetchCommand';
 import { SyncMongoCommand } from './commands/SyncMongoCommand';
 
 @kernel({
-  env: null,
-  config: __dirname,
+  config,
   children: [
     ...applicationBootstrap.serviceProviders,
     ...acquisitionBootstrap.serviceProviders,

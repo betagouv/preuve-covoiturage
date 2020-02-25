@@ -1,4 +1,4 @@
-declare function env(key: string, fallback?: string | number): any;
+import { env } from '@ilos/core';
 
 /**
  * Super complicated token to crypt the JWT tokens

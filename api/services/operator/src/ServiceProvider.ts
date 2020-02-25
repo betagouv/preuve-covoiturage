@@ -11,6 +11,7 @@ import { binding as deleteBinding } from './shared/operator/delete.schema';
 import { binding as findBinding } from './shared/operator/find.schema';
 import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
 
+import { config } from './config';
 import { OperatorPgRepositoryProvider } from './providers/OperatorPgRepositoryProvider';
 import { ListOperatorAction } from './actions/ListOperatorAction';
 import { CreateOperatorAction } from './actions/CreateOperatorAction';
@@ -21,7 +22,7 @@ import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorActi
 import { MigrateDataCommand } from './commands/MigrateDataCommand';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [OperatorPgRepositoryProvider],
   validator: [createBinding, updateBinding, deleteBinding, findBinding, patchContactsBinding],
   handlers: [

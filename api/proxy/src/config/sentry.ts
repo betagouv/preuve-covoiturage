@@ -1,4 +1,4 @@
-declare function env(key: string, fallback?: string): any;
+import { env } from '@ilos/core';
 
 export const dsn = env('SENTRY_DSN', null);
 export const environment = env('SENTRY_ENV', env('APP_ENV', 'local'));

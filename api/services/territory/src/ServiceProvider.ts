@@ -18,6 +18,8 @@ import { deleteTerritory } from './shared/territory/delete.schema';
 import { findByInsee } from './shared/territory/findByInsee.schema';
 import { findByPosition } from './shared/territory/findByPosition.schema';
 import { patchContacts } from './shared/territory/patchContacts.schema';
+
+import { config } from './config';
 import { TerritoryPgRepositoryProvider } from './providers/TerritoryPgRepositoryProvider';
 import { ListTerritoryAction } from './actions/ListTerritoryAction';
 import { UpdateTerritoryAction } from './actions/UpdateTerritoryAction';
@@ -31,7 +33,7 @@ import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorActi
 import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [TerritoryPgRepositoryProvider, TerritoryOperatorRepositoryProvider],
   validator: [
     ['territory.find', find],

@@ -12,13 +12,12 @@ import {
   KernelInterface,
   ConfigInterface,
   ConfigInterfaceResolver,
-  EnvInterface,
-  EnvInterfaceResolver,
   RPCSingleCallType,
   UnauthorizedException,
   RPCResponseType,
   InvalidRequestException,
 } from '@ilos/common';
+import { env } from '@ilos/core';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
@@ -33,7 +32,6 @@ import { TokenPayloadInterface } from './shared/application/common/interfaces/To
 export class HttpTransport implements TransportInterface {
   app: express.Express;
   config: ConfigInterface;
-  env: EnvInterface;
   port: string;
   server: http.Server;
   tokenProvider: TokenProviderInterfaceResolver;
@@ -87,7 +85,6 @@ export class HttpTransport implements TransportInterface {
 
   private async getProviders(): Promise<void> {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
-    this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
     this.tokenProvider = this.kernel.getContainer().get(TokenProviderInterfaceResolver);
   }
 
@@ -118,7 +115,7 @@ export class HttpTransport implements TransportInterface {
           httpOnly: true,
           maxAge: this.config.get('proxy.session.maxAge'),
           // https everywhere but in local development
-          secure: this.env.get('APP_ENV', 'local') !== 'local',
+          secure: env('APP_ENV', 'local') !== 'local',
         },
         name: sessionName,
         secret: sessionSecret,

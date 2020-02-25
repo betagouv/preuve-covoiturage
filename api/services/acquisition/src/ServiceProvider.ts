@@ -6,6 +6,7 @@ import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
+import { config } from './config';
 import { create } from './shared/acquisition/create.schema';
 import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { logerror } from './shared/acquisition/logerror.schema';
@@ -16,7 +17,7 @@ import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   queues: ['normalization', 'acquisition'],
   providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider],
   validator: [
