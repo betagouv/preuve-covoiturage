@@ -2,8 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
 import { serviceProvider } from '@ilos/common';
-import { ConfigExtension } from '@ilos/config';
-import { EnvExtension } from '@ilos/env';
+import { Extensions } from '@ilos/core';
 
 import { phoneFormatTest } from './parts/phoneFormatTest.spec';
 import { bicFormatTest } from './parts/bicFormatTest.spec';
@@ -23,7 +22,7 @@ const { expect, assert } = chai;
   validator: [],
 })
 class ServiceProvider extends BaseServiceProvider {
-  extensions = [EnvExtension, ConfigExtension, ValidatorExtension];
+  extensions = [Extensions.Config, ValidatorExtension];
 }
 let provider;
 
@@ -79,7 +78,10 @@ describe('Json Schema provider', () => {
     };
 
     provider.addSchema(schema, FakeObject);
-    return assert.isRejected(provider.validate(new FakeObject({ hello: 1 })), 'data.hello should be string');
+    return assert.isRejected(
+      provider.validate(new FakeObject({ hello: 1 })),
+      '[{"keyword":"type","dataPath":".hello","schemaPath":"#/properties/hello/type","params":{"type":"string"},"message":"should be string"}]',
+    );
   });
 
   it('should works with ref', async () => {

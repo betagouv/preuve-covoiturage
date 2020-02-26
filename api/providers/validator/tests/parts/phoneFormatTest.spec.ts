@@ -1,11 +1,12 @@
+import { Suite } from 'mocha';
 import { expect } from 'chai';
 import { NewableType } from '@ilos/common';
 
 import { ValidatorInterface } from '../../src';
 
-export function phoneFormatTest(getProvider, FakeObject: NewableType<any>): Function {
+export function phoneFormatTest(getProvider, FakeObject: NewableType<any>): (this: Suite) => void {
   let provider: ValidatorInterface;
-  return (): void => {
+  return function(): void {
     before(async () => {
       const schema = {
         $schema: 'http://json-schema.org/draft-07/schema#',
@@ -36,18 +37,29 @@ export function phoneFormatTest(getProvider, FakeObject: NewableType<any>): Func
     });
 
     it('too short', (done) => {
-      provider.validate(new FakeObject({ phone: '012345' })).catch((err: Error) => {
-        expect(err.message).to.equal('data.phone should NOT be shorter than 10 characters');
-        done();
-      });
+      provider
+        .validate(new FakeObject({ phone: '012345' }))
+        .then(() => {
+          done('number should not validate');
+        })
+        .catch((err: Error) => {
+          expect(err.message).to.equal(
+            '[{"keyword":"minLength","dataPath":".phone","schemaPath":"#/properties/phone/minLength","params":{"limit":10},"message":"should NOT be shorter than 10 characters"}]',
+          );
+          done();
+        });
     });
 
     it('too long', (done) => {
       provider
         .validate(new FakeObject({ phone: '00331234567890' }))
-        .then(done)
+        .then(() => {
+          done('number should not validate');
+        })
         .catch((err: Error) => {
-          expect(err.message).to.equal('data.phone should match format "phone"');
+          expect(err.message).to.equal(
+            '[{"keyword":"format","dataPath":".phone","schemaPath":"#/properties/phone/format","params":{"format":"phone"},"message":"should match format \\"phone\\""}]',
+          );
           done();
         });
     });
