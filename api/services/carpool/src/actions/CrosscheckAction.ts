@@ -29,7 +29,7 @@ export class CrosscheckAction extends Action {
   }
 
   public async handle(journey: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    this.logger.debug(`${handlerConfig.service}:${handlerConfig.method}`, journey.acquisition_id);
+    // this.logger.debug(`${handlerConfig.service}:${handlerConfig.method}`, journey.acquisition_id);
     const toProcess = [];
     const { people, ...sharedData } = journey;
 
