@@ -1,4 +1,4 @@
-declare function env(key: string, fallback?: any): any;
+import { env } from '@ilos/core';
 
 /**
  * Mongo collection to use for storing data
