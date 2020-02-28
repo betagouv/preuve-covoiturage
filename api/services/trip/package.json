@@ -54,12 +54,10 @@
   "dependencies": {
     "@ilos/cli": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0",
     "@ilos/connection-manager": "~0",
     "@ilos/connection-postgres": "~0",
     "@ilos/connection-redis": "~0",
     "@ilos/core": "~0",
-    "@ilos/env": "~0",
     "@pdc/provider-file": "~0",
     "@pdc/provider-middleware": "~0",
     "@pdc/provider-validator": "~0",

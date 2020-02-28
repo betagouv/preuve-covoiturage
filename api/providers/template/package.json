@@ -63,9 +63,8 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "handlebars": "^4.7.3",
+    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0",
-    "@ilos/core": "~0"
+    "handlebars": "^4.7.3"
   }
 }

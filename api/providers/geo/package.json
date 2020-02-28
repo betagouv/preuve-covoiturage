@@ -15,16 +15,12 @@
     "test:integration": "mocha --exit tests/*.spec.ts"
   },
   "dependencies": {
+    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0",
     "@ilos/connection-postgres": "~0",
-    "@ilos/env": "~0",
     "@pdc/provider-validator": "~0",
     "axios": "^0.19.0",
     "lodash": "^4.17.11"
-  },
-  "peerDependencies": {
-    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

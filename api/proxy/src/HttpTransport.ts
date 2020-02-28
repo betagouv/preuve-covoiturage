@@ -309,6 +309,8 @@ export class HttpTransport implements TransportInterface {
           params: { email: req.body.email },
         });
 
+        console.log(response);
+
         this.send(res, response);
       }),
     );

@@ -1,4 +1,3 @@
-// tslint:disable:variable-name
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
@@ -14,10 +13,7 @@ import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/Ident
  */
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]],
-    ['validate', alias],
-  ],
+  middlewares: [['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]], ['validate', alias]],
 })
 export class CrosscheckAction extends Action {
   constructor(
@@ -42,19 +38,12 @@ export class CrosscheckAction extends Action {
     const passengers = [...sortedArray];
     const driver = driverInd !== -1 ? passengers.splice(driverInd, 1)[0] : null;
 
-    // console.log('driver : ', driver);
-    // const passengers = people.filter((p) => !p.is_driver);
-
     let driverIdentity: { _id: number; uuid: string } = null;
-
-    console.log('driverIdentity : ', driverIdentity);
 
     if (driver) {
       driverIdentity = await this.identity.create(driver.identity);
       toProcess.push({ ...driver, identity_id: driverIdentity._id });
     }
-
-    console.log('sortedArray[0] : ', sortedArray[0]);
 
     // Get a trip id
     const tripId = await this.crosscheck.getTripId({

@@ -6,8 +6,6 @@ import {
   extension,
 } from '@ilos/common';
 
-import { ConfigExtension } from '@ilos/config';
-
 import { TemplateExtension, TemplateInterfaceResolver } from '@pdc/provider-template';
 
 import { NotificationInterfaceResolver } from './interfaces';
@@ -15,7 +13,7 @@ import { Notification } from './Notification';
 
 @extension({
   name: 'notification',
-  require: [ConfigExtension, TemplateExtension],
+  require: [TemplateExtension],
   override: true,
 })
 export class NotificationExtension implements RegisterHookInterface, InitHookInterface {

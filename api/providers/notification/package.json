@@ -44,13 +44,10 @@
     "instrument": true
   },
   "dependencies": {
-    "node-mailjet": "^3.3.1"
-  },
-  "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/config": "~0",
     "@ilos/core": "~0",
-    "@pdc/provider-template": "~0"
+    "@ilos/common": "~0",
+    "@pdc/provider-template": "~0",
+    "node-mailjet": "^3.3.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

@@ -6,7 +6,7 @@
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
   "scripts": {
-    "fff": "mkdir -p bin && wget -O bin/ffsend https://data.covoiturage.beta.gouv.fr/ffsend && chmod +x bin/ffsend",
+    "fff": "mkdir -p bin && wget -nv -O bin/ffsend https://data.covoiturage.beta.gouv.fr/ffsend && chmod +x bin/ffsend",
     "build": "yarn fff && tsc",
     "watch": "tsc -w",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-sentry --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
@@ -15,12 +15,9 @@
     "test": "mocha --exit src/*.spec.ts src/**/*.spec.ts"
   },
   "dependencies": {
+    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0",
     "@pdc/provider-crypto": "~0"
-  },
-  "peerDependencies": {
-    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

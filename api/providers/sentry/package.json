@@ -14,12 +14,9 @@
     "test": "mocha --exit src/*.spec.ts src/**/*.spec.ts"
   },
   "dependencies": {
+    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0",
     "@sentry/node": "^5.6.2"
-  },
-  "peerDependencies": {
-    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

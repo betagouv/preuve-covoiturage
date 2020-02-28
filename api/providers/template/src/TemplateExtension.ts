@@ -5,14 +5,12 @@ import {
   ServiceContainerInterface,
   extension,
 } from '@ilos/common';
-import { ConfigExtension } from '@ilos/config';
 
 import { HandlebarsTemplate } from './HandlebarsTemplate';
 import { TemplateInterfaceResolver } from './interfaces';
 
 @extension({
   name: 'template',
-  require: [ConfigExtension],
   autoload: true,
 })
 export class TemplateExtension implements RegisterHookInterface, InitHookInterface {
