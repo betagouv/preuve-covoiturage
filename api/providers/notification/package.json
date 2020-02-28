@@ -48,21 +48,5 @@
     "@ilos/common": "~0",
     "@pdc/provider-template": "~0",
     "node-mailjet": "^3.3.1"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.2.0",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/mocha": "^5.2.6",
-    "@types/nock": "^10.0.3",
-    "@types/node": "^12.12.11",
-    "@types/node-mailjet": "^3.3.0",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "chai-nock": "^1.1.0",
-    "mocha": "^6.1.4",
-    "nock": "^10.0.6",
-    "nyc": "^14.1.1",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.4.5"
   }
 }

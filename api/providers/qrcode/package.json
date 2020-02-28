@@ -14,18 +14,6 @@
     "test": "echo '[provider-qrcode] No tests'; exit 0",
     "test:integration": "echo '[provider-qrcode] No tests'; exit 0"
   },
-  "devDependencies": {
-    "@types/chai": "^4.2.7",
-    "@types/chai-as-promised": "^7.1.2",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^13.1.7",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "mocha": "^7.0.0",
-    "nyc": "^15.0.0",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.7.5"
-  },
   "mocha": {
     "require": [
       "ts-node/register",
