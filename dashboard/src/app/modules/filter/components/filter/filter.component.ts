@@ -44,21 +44,9 @@ import { dateRangeValidator } from '~/modules/filter/validators/date-range.valid
   ],
 })
 export class FilterComponent extends DestroyObservable implements OnInit {
-  public filterForm: FormGroup;
-  public _showFilter = false;
-  public classes = TRIP_RANKS;
-  public tripStatusList = TRIP_STATUS;
-
-  public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
-
   @Input() set showFilter(showFilter: boolean) {
     this._showFilter = showFilter;
   }
-
-  @Output() filterNumber = new EventEmitter();
-  @Output() hideFilter = new EventEmitter();
-
-  @ViewChild('townInput', { static: false }) townInput: ElementRef;
 
   constructor(
     public authService: AuthenticationService,
@@ -66,20 +54,6 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     private filterService: FilterService,
   ) {
     super();
-  }
-
-  ngOnInit() {
-    this.initForm();
-
-    // reset filter on page trip page load
-    this.filterService.filter$.next({});
-
-    this.startControl.valueChanges.subscribe(() => {
-      this.onDateInput();
-    });
-    this.endControl.valueChanges.subscribe(() => {
-      this.onDateInput();
-    });
   }
 
   get controls() {
@@ -91,26 +65,6 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   }
   get endControl() {
     return this.filterForm.get('date').get('end');
-  }
-
-  public onCloseClick(): void {
-    this.hideFilter.emit();
-  }
-
-  public filterClick(): void {
-    const filterObj = this.filterForm.getRawValue();
-
-    this.filterService.setFilter(filterObj);
-    this.filterNumber.emit(this.countFilters);
-    this.hideFilter.emit();
-  }
-
-  public reinitializeClick(): void {
-    // all values to null and reset touch & validation
-    this.filterForm.reset();
-    // set init values
-    this.initForm();
-    this.filterNumber.emit(0);
   }
 
   public get countFilters(): number {
@@ -129,37 +83,12 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     return count;
   }
 
-  public getStatusFrench(status: TripStatusEnum) {
-    return TRIP_STATUS_FR[status];
-  }
-
-  // delegate method
-  dayLabel = dayLabelCapitalized;
-
   public get hasGroupOperatorOrRegistry(): boolean {
     return this.authService.hasAnyGroup([UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY]);
   }
 
   public get hasGroupRegistryOrTerritory(): boolean {
     return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]);
-  }
-
-  /**
-   * Called on each input in either date field
-   */
-  public onDateInput(): void {
-    this.filterForm.updateValueAndValidity();
-    if (this.filterForm.hasError('dateRange')) {
-      this.startControl.setErrors({
-        dateRange: true,
-      });
-      this.endControl.setErrors({
-        dateRange: true,
-      });
-    } else {
-      this.startControl.setErrors(null);
-      this.endControl.setErrors(null);
-    }
   }
 
   private initForm() {
@@ -187,5 +116,75 @@ export class FilterComponent extends DestroyObservable implements OnInit {
       },
       { validator: dateRangeValidator },
     );
+  }
+  public filterForm: FormGroup;
+  public _showFilter = false;
+  public classes = TRIP_RANKS;
+  public tripStatusList = TRIP_STATUS;
+
+  public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
+
+  @Output() filterNumber = new EventEmitter();
+  @Output() hideFilter = new EventEmitter();
+
+  @ViewChild('townInput', { static: false }) townInput: ElementRef;
+
+  // delegate method
+  dayLabel = dayLabelCapitalized;
+
+  ngOnInit() {
+    this.initForm();
+
+    // reset filter on page trip page load
+    this.filterService.filter$.next({});
+
+    this.startControl.valueChanges.subscribe(() => {
+      this.onDateInput();
+    });
+    this.endControl.valueChanges.subscribe(() => {
+      this.onDateInput();
+    });
+  }
+
+  public onCloseClick(): void {
+    this.hideFilter.emit();
+  }
+
+  public filterClick(): void {
+    const filterObj = this.filterForm.getRawValue();
+
+    this.filterService.setFilter(filterObj);
+    this.filterNumber.emit(this.countFilters);
+    this.hideFilter.emit();
+  }
+
+  public reinitializeClick(): void {
+    // all values to null and reset touch & validation
+    this.filterForm.reset();
+    // set init values
+    this.initForm();
+    this.filterNumber.emit(0);
+  }
+
+  public getStatusFrench(status: TripStatusEnum) {
+    return TRIP_STATUS_FR[status];
+  }
+
+  /**
+   * Called on each input in either date field
+   */
+  public onDateInput(): void {
+    this.filterForm.updateValueAndValidity();
+    if (this.filterForm.hasError('dateRange')) {
+      this.startControl.setErrors({
+        dateRange: true,
+      });
+      this.endControl.setErrors({
+        dateRange: true,
+      });
+    } else {
+      this.startControl.setErrors(null);
+      this.endControl.setErrors(null);
+    }
   }
 }
