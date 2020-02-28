@@ -1,19 +1,10 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import { describe } from 'mocha';
+import test from 'ava';
 
 import { ParamsType, ContextType, ResultType, ForbiddenException, InvalidParamsException } from '@ilos/common';
 
 import { RoleMiddleware } from './RoleMiddleware';
 
-chai.use(chaiAsPromised);
-const { expect } = chai;
-
 const middleware = new RoleMiddleware();
-
-async function noop(params, context) {
-  return;
-}
 
 const callFactory = (group: string, role: string) => ({
   method: 'test',
@@ -33,54 +24,47 @@ const callFactory = (group: string, role: string) => ({
   result: <ResultType>null,
 });
 
-describe('Role middleware', () => {
-  it('works: super admin', async () => {
-    const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, ['superAdmin'])).to.become(undefined);
-  });
+test('Role middleware: super admin', async (t) => {
+  const { params, context } = callFactory('registry', 'admin');
+  t.is(await middleware.process(params, context, () => 'next()', ['superAdmin']), 'next()');
+});
 
-  it('works: admin', async () => {
-    const { params, context } = callFactory('operator', 'admin');
-    await expect(middleware.process(params, context, noop, ['admin'])).to.become(undefined);
-  });
+test('Role middleware: operator admin', async (t) => {
+  const { params, context } = callFactory('operator', 'admin');
+  t.is(await middleware.process(params, context, () => 'next()', ['admin']), 'next()');
+});
 
-  it('works: user', async () => {
-    const { params, context } = callFactory('aom', 'user');
-    await expect(middleware.process(params, context, noop, ['user'])).to.become(undefined);
-  });
+test('Role middleware: territory admin', async (t) => {
+  const { params, context } = callFactory('territory', 'admin');
+  t.is(await middleware.process(params, context, () => 'next()', ['admin']), 'next()');
+});
 
-  it('works: aom', async () => {
-    const { params, context } = callFactory('aom', 'admin');
-    await expect(middleware.process(params, context, noop, ['admin'])).to.become(undefined);
-  });
+test('Role middleware: user', async (t) => {
+  const { params, context } = callFactory('operator', 'user');
+  t.is(await middleware.process(params, context, () => 'next()', ['user']), 'next()');
+});
 
-  it('works: operator', async () => {
-    const { params, context } = callFactory('operator', 'admin');
-    await expect(middleware.process(params, context, noop, ['admin'])).to.become(undefined);
+test('Role middleware: unknown', async (t) => {
+  const { params, context } = callFactory('operator', 'user');
+  await t.throwsAsync(middleware.process(params, context, () => 'next()', ['unknown']), {
+    instanceOf: ForbiddenException,
   });
+});
 
-  it('works: registry', async () => {
-    const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, ['admin'])).to.become(undefined);
+test('Role middleware: null', async (t) => {
+  const { params, context } = callFactory('operator', 'user');
+  await t.throwsAsync(middleware.process(params, context, () => 'next()', [null]), {
+    instanceOf: InvalidParamsException,
   });
+});
 
-  it('fails: unknown', async () => {
-    const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, ['unknown'])).to.be.rejectedWith(ForbiddenException);
-  });
-
-  it('fails: null', async () => {
-    const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, [null])).to.be.rejectedWith(InvalidParamsException);
-  });
-
-  it('fails: empty', async () => {
-    const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, [])).to.be.rejectedWith(InvalidParamsException);
-  });
-
-  it('fails: undefined', async () => {
-    const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, [undefined])).to.be.rejectedWith(InvalidParamsException);
+test('Role middleware: empty', async (t) => {
+  const { params, context } = callFactory('operator', 'user');
+  await t.throwsAsync(middleware.process(params, context, () => 'next()', []), { instanceOf: InvalidParamsException });
+});
+test('Role middleware: undefined', async (t) => {
+  const { params, context } = callFactory('operator', 'user');
+  await t.throwsAsync(middleware.process(params, context, () => 'next()', [undefined]), {
+    instanceOf: InvalidParamsException,
   });
 });

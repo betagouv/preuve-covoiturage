@@ -27,7 +27,7 @@
     "clean": "rm -rf ./**/dist",
     "watch": "lerna run --parallel watch",
     "ls": "lerna ls",
-    "build": "run-s clean build:providers build:services build:proxy",
+    "build": "lerna run --scope @pdc/* --sort build",
     "build:proxy": "lerna run --scope @pdc/proxy build",
     "build:providers": "yarn workspace @pdc/provider-crypto build && yarn workspace @pdc/provider-template build && lerna run --parallel --scope @pdc/provider-* build",
     "build:services": "lerna run --parallel --scope @pdc/service-* build",

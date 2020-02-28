@@ -1,19 +1,9 @@
-import { describe } from 'mocha';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
+import test from 'ava';
 import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '@ilos/common';
 
 import { PermissionMiddleware } from './PermissionMiddleware';
 
-chai.use(chaiAsPromised);
-const { expect } = chai;
-
 const middleware = new PermissionMiddleware();
-
-async function noop(params, context) {
-  return;
-}
 
 const callFactory = (permissions: string[]) => ({
   method: 'test',
@@ -32,44 +22,33 @@ const callFactory = (permissions: string[]) => ({
   result: <ResultType>null,
 });
 
-describe('Permission middleware', () => {
-  it('works: matching 1 permission', async () => {
-    const permissions: string[] = ['test.ok'];
-    const { params, context } = callFactory(permissions);
+test('Permission middleware: matching 1 permission', async (t) => {
+  const permissions = ['test.ok'];
+  const { params, context } = callFactory(permissions);
+  t.is(await middleware.process(params, context, () => {}, permissions), undefined);
+});
 
-    await expect(middleware.process(params, context, noop, permissions)).to.become(undefined);
-  });
+test('Permission middleware: no method permissions', async (t) => {
+  const permissions = ['test.ok'];
+  const { params, context } = callFactory(permissions);
+  await t.throwsAsync(middleware.process(params, context, () => {}, []), { instanceOf: InvalidParamsException });
+});
 
-  it('works: matching all permissions', async () => {
-    const permissions: string[] = ['test.ok'];
-    const { params, context } = callFactory(permissions);
+test('Permission middleware: no user permissions', async (t) => {
+  const { params, context } = callFactory([]);
+  await t.throwsAsync(middleware.process(params, context, () => {}, ['not-ok']), { instanceOf: ForbiddenException });
+});
 
-    await expect(middleware.process(params, context, noop, permissions)).to.become(undefined);
-  });
+test('Permission middleware: different permission', async (t) => {
+  const permissions: string[] = ['test.ok'];
+  const { params, context } = callFactory(permissions);
+  await t.throwsAsync(middleware.process(params, context, () => {}, ['not-ok']), { instanceOf: ForbiddenException });
+});
 
-  it('works: no method permissions', async () => {
-    const permissions: string[] = ['test.ok'];
-    const { params, context } = callFactory(permissions);
-
-    await expect(middleware.process(params, context, noop, [])).to.be.rejectedWith(InvalidParamsException);
-  });
-
-  it('fails: no user permissions', async () => {
-    const { params, context } = callFactory([]);
-    await expect(middleware.process(params, context, noop, ['not-ok'])).to.be.rejectedWith(ForbiddenException);
-  });
-
-  it('fails: different permission', async () => {
-    const permissions: string[] = ['test.ok'];
-    const { params, context } = callFactory(permissions);
-    await expect(middleware.process(params, context, noop, ['test.not-ok'])).to.be.rejectedWith(ForbiddenException);
-  });
-
-  it('fails: not matching all permissions', async () => {
-    const permissions: string[] = ['test.perm1'];
-    const { params, context } = callFactory(permissions);
-    await expect(middleware.process(params, context, noop, ['test.perm1', 'test.perm2'])).to.be.rejectedWith(
-      ForbiddenException,
-    );
+test('Permission middleware: not matching all permissions', async (t) => {
+  const permissions: string[] = ['perm1'];
+  const { params, context } = callFactory(permissions);
+  await t.throwsAsync(middleware.process(params, context, () => {}, ['perm1', 'perm2']), {
+    instanceOf: ForbiddenException,
   });
 });

@@ -1,42 +1,33 @@
-import { expect } from 'chai';
-import { describe } from 'mocha';
+import test from 'ava';
 
 import { reduceRoles } from './reduceRoles';
 
-describe('reduce roles', () => {
-  it('works: admin', async () => {
-    const roles = ['admin'];
-    const pass = roles.reduce(reduceRoles(roles, 'registry', 'admin'), true);
-    await expect(pass).to.be.true;
-  });
+test('Reduce roles: admin', (t) => {
+  const roles = ['admin'];
+  t.true(roles.reduce(reduceRoles(roles, 'registry', 'admin'), true));
+});
 
-  it('works: super admin', async () => {
-    const roles = ['superadmin'];
-    const pass = roles.reduce(reduceRoles(roles, 'registry', 'admin'), true);
-    await expect(pass).to.be.true;
-  });
+test('Reduce roles: super admin', (t) => {
+  const roles = ['superadmin'];
+  t.true(roles.reduce(reduceRoles(roles, 'registry', 'admin'), true));
+});
 
-  it('works: admin registry', async () => {
-    const roles = ['admin', 'registry'];
-    const pass = roles.reduce(reduceRoles(roles, 'registry', 'admin'), true);
-    await expect(pass).to.be.true;
-  });
+test('Reduce roles: admin registry', (t) => {
+  const roles = ['admin', 'registry'];
+  t.true(roles.reduce(reduceRoles(roles, 'registry', 'admin'), true));
+});
 
-  it('works: registry admin (inverted)', async () => {
-    const roles = ['registry', 'admin'];
-    const pass = roles.reduce(reduceRoles(roles, 'registry', 'admin'), true);
-    await expect(pass).to.be.true;
-  });
+test('Reduce roles: registry admin (inverted)', (t) => {
+  const roles = ['registry', 'admin'];
+  t.true(roles.reduce(reduceRoles(roles, 'registry', 'admin'), true));
+});
 
-  it('fails: admin, user', async () => {
-    const roles = ['user', 'admin'];
-    const pass = roles.reduce(reduceRoles(roles, 'registry', 'admin'), true);
-    await expect(pass).to.be.false;
-  });
+test('Reduce roles: user', (t) => {
+  const roles = ['user', 'admin'];
+  t.false(roles.reduce(reduceRoles(roles, 'registry', 'admin'), true));
+});
 
-  it('fails: unknown', async () => {
-    const roles = ['unknown'];
-    const pass = roles.reduce(reduceRoles(roles, 'registry', 'admin'), true);
-    await expect(pass).to.be.false;
-  });
+test('Reduce roles: unknown', (t) => {
+  const roles = ['unknown'];
+  t.false(roles.reduce(reduceRoles(roles, 'registry', 'admin'), true));
 });
