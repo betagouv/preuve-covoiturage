@@ -58,7 +58,7 @@
             <mat-form-field class="days" appearance="outline">
               <mat-label>Jours de la semaine</mat-label>
               <mat-select formControlName="days" multiple>
-                <mat-option *ngFor="let day of days" [value]="day">{{ getDaysFrench(day) }}</mat-option>
+                <mat-option *ngFor="let day of days" [value]="day">{{ dayLabel(day) }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>

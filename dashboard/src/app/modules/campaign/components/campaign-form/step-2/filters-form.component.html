@@ -21,7 +21,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Jours de la semaine</mat-label>
             <mat-select multiple formControlName="weekday" required>
-              <mat-option *ngFor="let day of days" [value]="day">{{ getDaysFrench(day) }}</mat-option>
+              <mat-option *ngFor="let day of days" [value]="day">{{ dayLabel(day) }}</mat-option>
             </mat-select>
             <mat-error *ngIf="controls.weekday.hasError('required')">
               Les jours de la semaine sont obligatoires.

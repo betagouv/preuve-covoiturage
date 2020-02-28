@@ -135,9 +135,10 @@ export class CampaignUiService {
     timeRanges: IncentiveTimeRuleUxInterface[] = [],
     dayTimeSeparator = '<br>',
   ): string {
-    return `${this.formatWeekDays(weekDays)}${weekDays.length ? dayTimeSeparator : ''}${this.formatWeekTime(
+    const days = `${this.formatWeekDays(weekDays)}${weekDays.length ? dayTimeSeparator : ''}${this.formatWeekTime(
       timeRanges,
     )}`;
+    return days.charAt(0).toUpperCase() + days.slice(1);
   }
 
   public ranks(ranks: TripRankEnum[]): string {
@@ -318,7 +319,7 @@ export class CampaignUiService {
     // WEEK DAYS
 
     if (campaign.filters.weekday.length && campaign.filters.time.length) {
-      summaryText += `${campaign.filters.weekday.length ? `${this.formatWeekDays(campaign.filters.weekday)}` : ''}${
+      summaryText += ` ${campaign.filters.weekday.length ? `${this.formatWeekDays(campaign.filters.weekday)}` : ''}${
         campaign.filters.time.length ? `${this.formatWeekTime(campaign.filters.time)}` : ''
       }`;
     }
