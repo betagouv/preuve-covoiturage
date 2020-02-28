@@ -32,19 +32,6 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin1234
     volumes:
       - ./db/pgadmin:/pgadmin4/volume
-  mongo:
-    image: 'mongo:4.0'
-    ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: 'mongo'
-      MONGO_INITDB_ROOT_PASSWORD: 'mongo'
-      MONGO_INITDB_DATABASE: 'pdc-local'
-    volumes:
-      - ./db/mongo:/data/db
-    networks:
-      - front
-      - back
 
   redis:
     build: './docker/redis'
@@ -70,7 +57,6 @@ services:
       - front
       - back
     depends_on:
-      - mongo
       - redis
       - postgres
 
@@ -87,7 +73,6 @@ services:
       - front
       - back
     depends_on:
-      - mongo
       - redis
       - postgres
 

@@ -197,11 +197,7 @@ export class HttpTransport implements TransportInterface {
         // eslint-disable-next-line
         const warning = 'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
 
-        // correct error code on Mongo conflicts
         let code = mapStatusCode(response);
-        if (code === 500 && (get(response, 'error.data', '') as string).substr(0, 6) === 'E11000') {
-          code = 409;
-        }
 
         res.status(code).json({
           meta: {

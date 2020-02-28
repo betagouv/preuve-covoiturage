@@ -1,7 +1,5 @@
 import { env } from '@ilos/core';
 
-export const collectionName = env('APP_USER_DB', 'users');
-export const db = env('APP_MONGO_DB');
 export const defaultLimit = 1000;
 export const defaultSkip = 0;
 export const tokenExpiration = {

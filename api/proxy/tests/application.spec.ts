@@ -21,7 +21,6 @@ describe('Operator applications', () => {
   let applicationB;
 
   before(async () => {
-    process.env.APP_MONGO_DB = `pdc-test-applications-${new Date().getTime()}`;
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 

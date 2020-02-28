@@ -13,16 +13,6 @@ export function errorHandlerMiddleware(
   let code: number;
 
   switch (err.message) {
-    case 'MongoError':
-      switch (err.message.match(/^([A-Z0-9])+/)[0]) {
-        case 'E11000':
-          code = 409;
-          break;
-        default:
-          code = 500;
-      }
-      break;
-
     case 'Bad Request Error':
     case 'Validation Error':
       code = 400;

@@ -27,7 +27,6 @@ describe('Acquisition pipeline', () => {
   let operator;
 
   before(async () => {
-    process.env.APP_MONGO_DB = `pdc-test-acquisition-${new Date().getTime()}`;
     const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
     process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 

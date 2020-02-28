@@ -3,7 +3,6 @@ import * as connections from './connections';
 import * as email from './email';
 import * as filterOutput from './filterOutput';
 import * as groups from './groups';
-import * as migration from './migration';
 import * as notification from './notification';
 import * as pagination from './pagination';
 import * as permissions from './permissions';
@@ -17,7 +16,6 @@ export const config = {
   email,
   filterOutput,
   groups,
-  migration,
   notification,
   pagination,
   permissions,

@@ -16,12 +16,9 @@ import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 
 import { config } from './config';
-import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
-import { MapIdCommand } from './commands/MapIdCommand';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 import { GeoFetchCommand } from './commands/GeoFetchCommand';
-import { SyncMongoCommand } from './commands/SyncMongoCommand';
 
 @kernel({
   config,
@@ -41,12 +38,9 @@ import { SyncMongoCommand } from './commands/SyncMongoCommand';
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [
-    UpgradeJourneyCommand,
     ProcessJourneyCommand,
-    MapIdCommand,
     MigrateInseeCommand,
     GeoFetchCommand,
-    SyncMongoCommand,
   ],
 })
 export class Kernel extends BaseKernel {}

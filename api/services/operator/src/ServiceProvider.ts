@@ -19,7 +19,6 @@ import { UpdateOperatorAction } from './actions/UpdateOperatorAction';
 import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
-import { MigrateDataCommand } from './commands/MigrateDataCommand';
 
 @serviceProvider({
   config,
@@ -39,7 +38,7 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     ['validate', ValidatorMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
   ],
-  commands: [MigrateDataCommand],
+  commands: [],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
