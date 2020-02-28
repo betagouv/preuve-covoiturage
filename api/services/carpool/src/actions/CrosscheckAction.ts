@@ -13,10 +13,7 @@ import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/Ident
  */
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]],
-    ['validate', alias],
-  ],
+  middlewares: [['channel.service.only', ['acquisition', 'normalization', handlerConfig.service]], ['validate', alias]],
 })
 export class CrosscheckAction extends Action {
   constructor(
