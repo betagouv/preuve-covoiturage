@@ -68,10 +68,10 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
       params['operator_id'] = [loggedUser.operator_id];
     }
     if ('date' in filter && filter.date.start) {
-      params.date.start = filter.date.start.toISOString();
+      params['date'].start = filter.date.start.toISOString();
     }
     if ('date' in filter && filter.date.end) {
-      params.date.end = filter.date.end.toISOString();
+      params['date'].end = filter.date.end.toISOString();
     }
     this.filterSubject.next(params);
     this.dismissGetSubject.next();
