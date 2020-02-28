@@ -64,7 +64,11 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
       .findTowns(literal)
       .pipe(takeUntil(this.destroy$))
       .subscribe((towns: TownInterface[]) => {
-        this.filteredTowns = _.differenceWith<TownInterface, {[k: string]: any}>(towns, this.townForm.value, (x, y) => x.name === y.name);
+        this.filteredTowns = _.differenceWith<TownInterface, { [k: string]: any }>(
+          towns,
+          this.townForm.value,
+          (x, y) => x.name === y.name,
+        );
       });
   }
 

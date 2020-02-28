@@ -1,5 +1,3 @@
-import { env } from '@ilos/core';
-
 export const defaultLimit = 1000;
 export const defaultSkip = 0;
 export const tokenExpiration = {

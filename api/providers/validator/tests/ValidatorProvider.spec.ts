@@ -80,6 +80,7 @@ describe('Json Schema provider', () => {
     provider.addSchema(schema, FakeObject);
     return assert.isRejected(
       provider.validate(new FakeObject({ hello: 1 })),
+      // eslint-disable-next-line
       '[{"keyword":"type","dataPath":".hello","schemaPath":"#/properties/hello/type","params":{"type":"string"},"message":"should be string"}]',
     );
   });

@@ -6,9 +6,12 @@ import { RoleMiddleware } from './RoleMiddleware';
 
 const middleware = new RoleMiddleware();
 
-const callFactory = (group: string, role: string) => ({
+const callFactory = (
+  group: string,
+  role: string,
+): { method: string; context: ContextType; params: ParamsType; result: ResultType } => ({
   method: 'test',
-  context: <ContextType>{
+  context: {
     channel: {
       service: '',
       transport: 'http',
@@ -20,8 +23,8 @@ const callFactory = (group: string, role: string) => ({
       },
     },
   },
-  params: <ParamsType>{},
-  result: <ResultType>null,
+  params: {},
+  result: null,
 });
 
 test('Role middleware: super admin', async (t) => {

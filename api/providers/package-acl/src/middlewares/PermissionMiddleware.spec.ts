@@ -5,9 +5,11 @@ import { PermissionMiddleware } from './PermissionMiddleware';
 
 const middleware = new PermissionMiddleware();
 
-const callFactory = (permissions: string[]) => ({
+const callFactory = (
+  permissions: string[],
+): { method: string; context: ContextType; params: ParamsType; result: ResultType } => ({
   method: 'test',
-  context: <ContextType>{
+  context: {
     channel: {
       service: '',
       transport: 'http',
@@ -18,8 +20,8 @@ const callFactory = (permissions: string[]) => ({
       },
     },
   },
-  params: <ParamsType>{},
-  result: <ResultType>null,
+  params: {},
+  result: null,
 });
 
 test('Permission middleware: matching 1 permission', async (t) => {

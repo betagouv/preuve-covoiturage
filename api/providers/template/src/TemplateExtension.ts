@@ -23,7 +23,7 @@ export class TemplateExtension implements RegisterHookInterface, InitHookInterfa
     //
   }
 
-  register(serviceContainer: ServiceContainerInterface) {
+  register(serviceContainer: ServiceContainerInterface): void {
     const container = serviceContainer.getContainer();
 
     container.bind(HandlebarsTemplate).toSelf();
@@ -31,7 +31,7 @@ export class TemplateExtension implements RegisterHookInterface, InitHookInterfa
     serviceContainer.registerHooks(HandlebarsTemplate.prototype, TemplateInterfaceResolver);
   }
 
-  async init(serviceContainer: ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface): Promise<void> {
     if (this.config) {
       const container = serviceContainer.getContainer();
 

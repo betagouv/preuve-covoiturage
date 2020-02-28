@@ -1,7 +1,7 @@
 import { ProviderInterface } from '@ilos/common';
 
 export interface TemplateInterface extends ProviderInterface {
-  loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any });
+  loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any }): void;
 
   setMetadata(templateName: string, metadata: any): void;
 
@@ -15,7 +15,7 @@ export interface TemplateInterface extends ProviderInterface {
 }
 
 export abstract class TemplateInterfaceResolver implements TemplateInterface {
-  loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any }) {
+  loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any }): void {
     throw new Error();
   }
 

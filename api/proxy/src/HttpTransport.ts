@@ -197,9 +197,7 @@ export class HttpTransport implements TransportInterface {
         // eslint-disable-next-line
         const warning = 'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
 
-        let code = mapStatusCode(response);
-
-        res.status(code).json({
+        res.status(mapStatusCode(response)).json({
           meta: {
             warning,
             supported_until: '2020-01-01T00:00:00Z',

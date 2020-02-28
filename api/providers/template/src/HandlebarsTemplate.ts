@@ -17,7 +17,7 @@ export class HandlebarsTemplate implements TemplateInterface {
     this.hbs = Handlebars.create();
   }
 
-  loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any }) {
+  loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any }): void {
     if (fs.existsSync(templatePath)) {
       fs.readdirSync(templatePath, 'utf8').forEach((basename) => {
         const filename = `${templatePath}/${basename}`;

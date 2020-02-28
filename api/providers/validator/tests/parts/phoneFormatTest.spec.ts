@@ -44,6 +44,7 @@ export function phoneFormatTest(getProvider, FakeObject: NewableType<any>): (thi
         })
         .catch((err: Error) => {
           expect(err.message).to.equal(
+            // eslint-disable-next-line
             '[{"keyword":"minLength","dataPath":".phone","schemaPath":"#/properties/phone/minLength","params":{"limit":10},"message":"should NOT be shorter than 10 characters"}]',
           );
           done();
@@ -58,6 +59,7 @@ export function phoneFormatTest(getProvider, FakeObject: NewableType<any>): (thi
         })
         .catch((err: Error) => {
           expect(err.message).to.equal(
+            // eslint-disable-next-line
             '[{"keyword":"format","dataPath":".phone","schemaPath":"#/properties/phone/format","params":{"format":"phone"},"message":"should match format \\"phone\\""}]',
           );
           done();

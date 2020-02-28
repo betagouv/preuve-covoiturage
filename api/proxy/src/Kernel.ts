@@ -37,10 +37,6 @@ import { GeoFetchCommand } from './commands/GeoFetchCommand';
     ...certificateBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [
-    ProcessJourneyCommand,
-    MigrateInseeCommand,
-    GeoFetchCommand,
-  ],
+  commands: [ProcessJourneyCommand, MigrateInseeCommand, GeoFetchCommand],
 })
 export class Kernel extends BaseKernel {}

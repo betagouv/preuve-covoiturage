@@ -19,7 +19,7 @@
     "test:integration": "echo '[package-acl] No tests'; exit 0",
     "coverage-ci": "nyc --all --reporter=lcov ava",
     "coverage": "nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'"
   },
   "ava": {
     "files": [

@@ -20,7 +20,7 @@
     "coverage": "nyc --all --reporter=text mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
     "watch-test": "yarn test -- --watchAll",
     "watch": "tsc -w",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'"
   },
   "mocha": {
     "require": [
