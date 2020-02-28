@@ -8,28 +8,19 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-middleware --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "lint": "eslint 'src/**/*.ts'",
-    "test": "mocha --exit src/**/*.spec.ts"
+    "test": "ava",
+    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-middleware --temp-dir=../../.nyc_output --all --reporter=lcov ava",
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "@ilos/common": "~0",
     "lodash": "^4.17.14"
   },
-  "devDependencies": {
-    "@types/chai": "^4.2.0",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/json-schema": "^7.0.3",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^12.12.11",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "json-schema": "^0.2.3",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.1",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.5.3"
+  "ava": {
+    "files": [
+      "./**/*.spec.js"
+    ]
   },
   "mocha": {
     "require": [
