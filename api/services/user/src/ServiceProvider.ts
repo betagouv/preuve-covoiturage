@@ -1,7 +1,7 @@
 import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@pdc/package-acl';
+import { PermissionMiddleware } from '@pdc/provider-acl';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { NotificationExtension } from '@pdc/provider-notification';

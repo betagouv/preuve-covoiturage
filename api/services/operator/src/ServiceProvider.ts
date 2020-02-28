@@ -1,6 +1,6 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@pdc/package-acl';
+import { PermissionMiddleware } from '@pdc/provider-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ContentBlacklistMiddleware } from '@pdc/provider-middleware';

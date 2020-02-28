@@ -24,8 +24,16 @@ export const inseeError = {
 export const geo = {
   literal: '30 avenue carnot massy',
   position: {
-    lat: 48.727023,
-    lon: 2.263571,
+    lat: 48.728599,
+    lon: 2.264861,
+  },
+};
+
+export const geoNominatim = {
+  literal: '30 avenue carnot massy',
+  position: {
+    lat: 48.7271484,
+    lon: 2.2635856,
   },
 };
 
@@ -54,6 +62,19 @@ export const route = {
     lat: 48.847218,
     lon: 2.305447,
   },
-  distance: 500,
-  duration: 60,
+  distance: 512.3,
+  duration: 48,
+};
+
+export const routeOsrm = {
+  start: {
+    lat: 48.851047,
+    lon: 2.309339,
+  },
+  end: {
+    lat: 48.847218,
+    lon: 2.305447,
+  },
+  distance: 512.3,
+  duration: 80.5,
 };

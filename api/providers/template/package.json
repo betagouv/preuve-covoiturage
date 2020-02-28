@@ -1,57 +1,18 @@
 {
   "name": "@pdc/provider-template",
-  "version": "0.4.1",
-  "publishConfig": {
-    "access": "public"
-  },
+  "version": "0.0.1",
+  "private": true,
   "license": "Apache-2.0",
   "author": "Nicolas Mérigot <nicolas@belenio.fr>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/betagouv/ilos.git"
-  },
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "echo '[template] No tests'; exit 0",
-    "test:integration": "echo '[template] No tests'; exit 0",
-    "coverage-ci": "nyc --all --reporter=lcov ava",
-    "coverage": "nyc --all --reporter=text ava",
+    "test": "echo '[provider-template] No tests'; exit 0",
+    "test:integration": "echo '[provider-template] No tests'; exit 0",
+    "coverage-ci": "echo '[provider-template] No tests'; exit 0",
+    "coverage": "echo '[provider-template] No tests'; exit 0",
     "lint": "eslint 'src/**/*.ts'"
-  },
-  "ava": {
-    "files": [
-      "./**/*.spec.ts"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**",
-      "src/**/index.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
-  },
-  "dependencies": {
-    "@ilos/core": "~0",
-    "@ilos/common": "~0",
-    "handlebars": "^4.7.3"
   }
 }

@@ -8,11 +8,11 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-geo --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
-    "test": "echo '[provider-geo] No tests'; exit 0",
-    "test:integration": "mocha --exit tests/*.spec.ts"
+    "test": "ava",
+    "test:integration": "ava",
+    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-geo --temp-dir=../../.nyc_output --all --reporter=lcov ava",
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "@ilos/core": "~0",
@@ -22,10 +22,9 @@
     "axios": "^0.19.0",
     "lodash": "^4.17.11"
   },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
+  "ava": {
+    "files": [
+      "dist/tests/*.spec.js"
     ]
   },
   "nyc": {

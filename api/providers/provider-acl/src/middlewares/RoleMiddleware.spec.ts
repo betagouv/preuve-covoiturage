@@ -49,25 +49,37 @@ test('Role middleware: user', async (t) => {
 
 test('Role middleware: unknown', async (t) => {
   const { params, context } = callFactory('operator', 'user');
-  await t.throwsAsync(middleware.process(params, context, () => 'next()', ['unknown']), {
-    instanceOf: ForbiddenException,
-  });
+  await t.throwsAsync(
+    middleware.process(params, context, () => 'next()', ['unknown']),
+    {
+      instanceOf: ForbiddenException,
+    },
+  );
 });
 
 test('Role middleware: null', async (t) => {
   const { params, context } = callFactory('operator', 'user');
-  await t.throwsAsync(middleware.process(params, context, () => 'next()', [null]), {
-    instanceOf: InvalidParamsException,
-  });
+  await t.throwsAsync(
+    middleware.process(params, context, () => 'next()', [null]),
+    {
+      instanceOf: InvalidParamsException,
+    },
+  );
 });
 
 test('Role middleware: empty', async (t) => {
   const { params, context } = callFactory('operator', 'user');
-  await t.throwsAsync(middleware.process(params, context, () => 'next()', []), { instanceOf: InvalidParamsException });
+  await t.throwsAsync(
+    middleware.process(params, context, () => 'next()', []),
+    { instanceOf: InvalidParamsException },
+  );
 });
 test('Role middleware: undefined', async (t) => {
   const { params, context } = callFactory('operator', 'user');
-  await t.throwsAsync(middleware.process(params, context, () => 'next()', [undefined]), {
-    instanceOf: InvalidParamsException,
-  });
+  await t.throwsAsync(
+    middleware.process(params, context, () => 'next()', [undefined]),
+    {
+      instanceOf: InvalidParamsException,
+    },
+  );
 });
