@@ -16,7 +16,7 @@
             <ng-container *ngIf="!isEuro(campaign.unit)"> {{ campaign.amount_spent }} Pts </ng-container>
           </span>
           <span>
-            Budget:
+            Budget&nbsp;:
             <ng-container *ngIf="isEuro(campaign.unit)">
               {{ campaign.max_amount | currency: 'EUR':'symbol':'1.0-0' }}
             </ng-container>
@@ -27,7 +27,7 @@
           <span *ngIf="campaign.status !== CampaignStatusEnum.DRAFT && campaign.trips_number"
             >{{ campaign.trips_number }} trajet(s)</span
           >
-          <span *ngIf="campaign.max_trips">Plafond: {{ campaign.max_trips }} trajets</span>
+          <span *ngIf="campaign.max_trips">Plafond&nbsp;:&nbsp;{{ campaign.max_trips }} trajets</span>
         </div>
         <div class="CampaignsList-item-date">
           <span

@@ -394,8 +394,8 @@ export class CampaignUiService {
     // OPERATORS
     if (campaign.filters.operator_ids) {
       const nbOperators = campaign.filters.operator_ids.length;
-      const s = nbOperators > 1 ? 's' : '';
-      summaryText += ` à ${nbOperators} opérateur${s} présent${s} sur le territoire, `;
+      const s = nbOperators !== 1 ? 's' : '';
+      summaryText += ` à ${nbOperators ? nbOperators : 'tous les'} opérateur${s} présent${s} sur le territoire, `;
     } else {
       summaryText += ' aux opérateurs ';
     }
