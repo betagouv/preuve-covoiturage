@@ -12,7 +12,7 @@ import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/t
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
-import { DAYS } from '~/core/const/days.const';
+import { DAYS, dayLabelCapitalized } from '~/core/const/days.const';
 import { dateRangeValidator } from '~/modules/filter/validators/date-range.validator';
 
 @Component({
@@ -133,9 +133,8 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     return TRIP_STATUS_FR[status];
   }
 
-  public getDaysFrench(day: WeekDay) {
-    return DAYS[day];
-  }
+  // delegate method
+  dayLabel = dayLabelCapitalized;
 
   public get hasGroupOperatorOrRegistry(): boolean {
     return this.authService.hasAnyGroup([UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY]);
