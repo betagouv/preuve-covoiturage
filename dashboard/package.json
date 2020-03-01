@@ -8,7 +8,7 @@
     "build:review": "eval \"echo \\\"$(cat src/environments/environment.review.ts.template)\\\"\" | sed 's|$REVIEW_ID|'$REVIEW_ID'|g' | sed 's|$BRANCH|'$BRANCH'|g' > src/environments/environment.review.ts && cp -f src/environments/environment.review.ts src/environments/environment.ts && ng build --configuration=review",
     "build": "ng build --configuration=$NODE_ENV",
     "lint": "ng lint",
-    "format:fix": "pretty-quick --staged",
+    "format:fix": "pretty-quick --staged --pattern 'dashboard/**/*'",
     "test:integration:debug": "yarn run cypress run --env ENV_NAME=local --spec 'cypress/integration/*.integration.ts'",
     "test:integration": "yarn run cypress run --spec cypress/integration/*.integration.ts",
     "open:cypress:debug": "yarn run cypress open --env ENV_NAME=local",
