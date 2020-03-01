@@ -15,5 +15,8 @@
     "test:integration": "echo '[provider-notification] No tests'; exit 0",
     "coverage": "echo '[provider-notification] No tests'; exit 0",
     "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "@pdc/provider-template": "~0"
   }
 }
