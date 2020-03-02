@@ -12,7 +12,7 @@ export interface BaseRetributionRuleInterface {
 export enum RetributionRulesSlugEnum {
   DISTANCE_RANGE = 'progressive_distance_range_meta',
   PER_KM = 'per_km_modifier',
-  FREE = 'cost_based_amount',
+  FREE = 'cost_based_amount_setter',
   FOR_DRIVER = 'driver_only_filter',
   FOR_PASSENGER = 'passenger_only_filter',
   PER_PASSENGER = 'per_passenger_modifier',
