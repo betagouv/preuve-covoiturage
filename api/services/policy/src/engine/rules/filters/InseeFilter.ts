@@ -39,7 +39,7 @@ function inList(list: string[], insee: string): boolean {
 
 export class InseeWhitelistFilter extends InseeFilter {
   static readonly slug: string = 'insee_whitelist_filter';
-  static readonly description: string = 'Liste blanche de code insee';
+  static readonly description: string = 'Liste blanche de codes INSEE';
 
   async filter(ctx: RuleHandlerContextInterface): Promise<void> {
     let whitelisted = false;
@@ -60,7 +60,7 @@ export class InseeWhitelistFilter extends InseeFilter {
 
 export class InseeBlacklistFilter extends InseeFilter {
   static readonly slug: string = 'insee_blacklist_filter';
-  static readonly description: string = 'Liste noire de code insee';
+  static readonly description: string = 'Liste noire de codes INSEE';
 
   async filter(ctx: RuleHandlerContextInterface): Promise<void> {
     let blacklisted = false;

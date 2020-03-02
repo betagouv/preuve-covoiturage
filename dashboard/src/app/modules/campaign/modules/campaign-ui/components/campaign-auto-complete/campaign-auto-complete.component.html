@@ -19,6 +19,7 @@
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputAddOnBlur]="false"
+      autocomplete="off"
     />
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCampaignSelect($event)">

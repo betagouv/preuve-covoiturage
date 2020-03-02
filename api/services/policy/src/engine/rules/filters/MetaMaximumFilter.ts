@@ -11,7 +11,7 @@ interface MetaMaxParameters {
 }
 export class MetaMaximumFilter extends FilterRule<MetaMaxParameters> {
   static readonly slug: string = 'meta_maximum_filter';
-  static readonly description: string = 'Filtre par maximum via les méta données';
+  static readonly description: string = 'Filtre par maximum via les méta-données';
   static readonly schema: { [k: string]: any } = {
     type: 'object',
     required: ['amount', 'period', 'prefix'],

@@ -5,6 +5,7 @@ export interface UiStatusInterface {
   for_passenger: boolean;
   for_trip: boolean;
   staggered: boolean;
+  insee_mode: boolean;
   insee_filter?: UiStatusInseeFilterInterface;
 }
 

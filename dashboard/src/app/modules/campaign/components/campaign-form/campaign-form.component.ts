@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
-import { take, takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
@@ -16,8 +16,9 @@ import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.cons
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CampaignInterface } from '~/core/entities/api/shared/policy/common/interfaces/CampaignInterface';
+
+import { uniqueRetributionValidator } from '../../validators/retribution-unique.validator';
 
 @Component({
   selector: 'app-campaign-form',
@@ -138,6 +139,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (data) => {
+          console.log('data : ', data);
           this.requestLoading = false;
           this._router.navigate([`/campaign/draft/${this.campaignId}`]).then(() => {
             this._toastr.success(`La campagne ${params.name} a bien été mise à jour`);
@@ -179,7 +181,8 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         time: this._formBuilder.array([]),
         distance_range: [this._defaultRange, Validators.required],
         rank: [null, Validators.required],
-        operator_ids: [[], Validators.required],
+        operator_ids: [[]],
+        all_operators: [true],
         insee: this._formBuilder.group({
           whiteList: this._formBuilder.array([]),
           blackList: this._formBuilder.array([]),
@@ -191,6 +194,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         for_passenger: [null],
         for_trip: [null],
         staggered: [false],
+        insee_mode: [false],
       }),
       start: [null, Validators.required],
       end: [null, Validators.required],
@@ -199,7 +203,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       max_trips: [null, Validators.min(1)],
       parent_id: [null],
       restrictions: this._formBuilder.array([]),
-      retributions: this._formBuilder.array([]),
+      retributions: this._formBuilder.array([], { validators: [uniqueRetributionValidator] }),
     });
   }
 
@@ -212,11 +216,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
     if (templateId) {
       // get template from service
-      this._campaignStoreService
-        .selectEntityByIdFromList(templateId)
+      this._campaignStoreService.templates$
         .pipe(
-          take(1),
           takeUntil(this.destroy$),
+          map((cas) => cas.find((ca) => ca._id === templateId)),
+          // take(1),
         )
         .subscribe(
           (template) => {
@@ -260,6 +264,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       distance_range: campaign.filters.distance_range,
       rank: campaign.filters.rank,
       operator_ids: campaign.filters.operator_ids,
+      all_operators: !campaign.filters.operator_ids || campaign.filters.operator_ids.length === 0,
     });
 
     // patch uiStatus
@@ -268,8 +273,9 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       for_driver: campaign.ui_status.for_driver,
       for_passenger: campaign.ui_status.for_passenger,
       for_trip: campaign.ui_status.for_trip,
-      // initialize staggered
-      staggered: campaign.ui_status.staggered !== null ? campaign.ui_status.staggered : false,
+      staggered: !!campaign.ui_status.staggered, // initialize staggered
+      // initialize insee_mode
+      insee_mode: campaign.ui_status.insee_mode || campaign.filters.insee.whiteList.length > 0,
     });
 
     // patch form arrays
@@ -370,11 +376,8 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   private loadCampaign(campaignId: number, isDuplicate = false) {
     this._campaignStoreService
-      .selectEntityByIdFromList(campaignId)
-      .pipe(
-        take(1),
-        takeUntil(this.destroy$),
-      )
+      .getById(campaignId)
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         (campaign: Campaign) => {
           if (isDuplicate) {
@@ -391,12 +394,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   private initCampaigns() {
-    if (!this._campaignStoreService.loaded) {
-      if (this._authService.user.group === UserGroupEnum.TERRITORY) {
-        this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
-      }
-      this._campaignStoreService.loadList();
-    }
+    this._campaignStoreService.loadCampaigns();
+
+    // if (!this._campaignStoreService.loaded) {
+    // if (this._authService.user.group === UserGroupEnum.TERRITORY) {
+    //   // this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+    //   this._campaignStoreService.filterSubject.next({ territory_id: this._authService.user.territory_id });
+    // }
+    // }
   }
 
   private setLastAvailableStep(): void {

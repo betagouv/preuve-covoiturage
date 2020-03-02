@@ -14,6 +14,7 @@ import {
 })
 export class RestrictionFormComponent implements OnInit {
   @Input() restrictionformGroup: FormGroup;
+  @Input() unit = 'Points';
 
   restrictionPeriods = RESTRICTION_PERIODS;
 
@@ -21,6 +22,10 @@ export class RestrictionFormComponent implements OnInit {
 
   ngOnInit() {
     this.initValidators();
+  }
+
+  get unitLabel() {
+    return `${this.unit.charAt(0).toUpperCase() + this.unit.slice(1)}s`;
   }
 
   get controls() {
@@ -35,5 +40,6 @@ export class RestrictionFormComponent implements OnInit {
     this.restrictionformGroup.get('quantity').setValidators([Validators.required, Validators.min(0)]);
     this.restrictionformGroup.get('is_driver').setValidators(Validators.required);
     this.restrictionformGroup.get('period').setValidators(Validators.required);
+    this.restrictionformGroup.get('unit').setValidators(Validators.required);
   }
 }

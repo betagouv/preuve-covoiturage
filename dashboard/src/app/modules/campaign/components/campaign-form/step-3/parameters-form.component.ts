@@ -7,6 +7,8 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { uniqueRetributionValidator } from '~/modules/campaign/validators/retribution-unique.validator';
+import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 
 @Component({
   selector: 'app-parameters-form',
@@ -24,8 +26,14 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnitEnum);
   incentiveUnitFr = INCENTIVE_UNITS_FR;
+  editRestrictionForm: FormGroup;
 
-  constructor(private currencyPipe: CurrencyPipe, private numberPipe: DecimalPipe, private _formBuilder: FormBuilder) {
+  constructor(
+    private currencyPipe: CurrencyPipe,
+    private numberPipe: DecimalPipe,
+    private _formBuilder: FormBuilder,
+    public campaignUI: CampaignUiService,
+  ) {
     super();
   }
 
@@ -97,8 +105,17 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     return 'Pas de restrictions';
   }
 
+  startEditRestriction() {
+    this.editRestrictionForm = this.generateRestrictionFormGroup();
+  }
+
+  cancelEditRestriction() {
+    delete this.editRestrictionForm;
+  }
+
   addRestriction() {
-    this.restrictionFormArray.push(this.generateRestrictionFormGroup());
+    this.restrictionFormArray.push(this.editRestrictionForm);
+    delete this.editRestrictionForm;
   }
 
   removeRestriction(idx) {
@@ -132,20 +149,23 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   }
 
   generateRetributionFormGroup(): FormGroup {
-    return this._formBuilder.group({
-      for_driver: this._formBuilder.group({
-        amount: [null],
-        per_passenger: [false],
-        per_km: [false],
-      }),
-      for_passenger: this._formBuilder.group({
-        free: [false],
-        per_km: [false],
-        amount: [null],
-      }),
-      min: [null],
-      max: [null],
-    });
+    return this._formBuilder.group(
+      {
+        for_driver: this._formBuilder.group({
+          amount: [null],
+          per_passenger: [false],
+          per_km: [false],
+        }),
+        for_passenger: this._formBuilder.group({
+          free: [false],
+          per_km: [false],
+          amount: [null],
+        }),
+        min: [null],
+        max: [null],
+      },
+      // { validators: [uniqueRetributionValidator] },
+    );
   }
 
   generateRestrictionFormGroup(): FormGroup {
@@ -153,6 +173,7 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
       quantity: [null],
       is_driver: [null],
       period: [null],
+      unit: [null],
     });
   }
 
