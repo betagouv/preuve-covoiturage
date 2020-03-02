@@ -1,0 +1,29 @@
+{
+  "name": "@pdc/helper-test",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "ava",
+    "test:integration": "echo '[provider-sentry] No tests'; exit 0",
+    "coverage-ci": "echo '[provider-sentry] No tests'; exit 0",
+    "coverage": "nyc --all --reporter=text ava",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "ava": {
+    "files": [
+      "dist/**/*.spec.js"
+    ]
+  },
+  "dependencies": {
+    "@ilos/framework": "~0",
+    "@ilos/common": "~0"
+  },
+  "devDependencies": {
+    "@ilos/core": "~0"
+  }
+}
