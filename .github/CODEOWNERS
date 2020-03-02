@@ -33,20 +33,7 @@
 #							       Frontend
 ################################################################################
 
-/dashboard/cypress					@samueleyre
-/dashboard/src/app/modules/administration   @gillesboisson
-/dashboard/src/app/modules/authentication   @gillesboisson
-/dashboard/src/app/modules/campaign @samueleyre
-/dashboard/src/app/modules/company  @gillesboisson
-/dashboard/src/app/modules/filter   @samueleyre
-/dashboard/src/app/modules/operator @gillesboisson
-/dashboard/src/app/modules/stat @samueleyre
-/dashboard/src/app/modules/territory @gillesboisson
-/dashboard/src/app/modules/trip @samueleyre @gillesboisson
-/dashboard/src/app/modules/ui-guide @samueleyre @gillesboisson
-/dashboard/src/app/modules/user @gillesboisson
-/dashboard/src/app/shared   @samueleyre @gillesboisson
-/dashboard/src/app/core @samueleyre @gillesboisson
+/dashboard					@gillesboisson
 
 ################################################################################
 #						         Shared Resources
@@ -62,4 +49,3 @@
 /CHANGELOG.md						@jonathanfallon
 /LICENSE							@jonathanfallon
 /README.md							@jonathanfallon
-
