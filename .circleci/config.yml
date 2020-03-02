@@ -200,7 +200,6 @@ workflows:
       - front-deploy-staging:
           requires:
             - front-qa
-            - front-cypress
           filters:
             branches:
               only:
