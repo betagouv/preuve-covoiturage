@@ -527,7 +527,7 @@ export const weekendTrafficLimitPolicy = {
   global_rules: [
     {
       slug: 'weekday_filter',
-      parameters: [5, 0],
+      parameters: [6, 0],
     },
     {
       slug: 'rank_whitelist_filter',
