@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, take, takeUntil, tap } from 'rxjs/operators';
+import { filter, take, takeUntil, tap, map } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
@@ -12,6 +12,8 @@ import { DialogService } from '~/core/services/dialog.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-campaign-draft-view',
@@ -21,6 +23,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 export class CampaignDraftViewComponent extends DestroyObservable implements OnInit {
   territory: Territory;
   campaignUx: CampaignUx;
+  userIsDemo: boolean;
 
   constructor(
     private _authService: AuthenticationService,
@@ -46,6 +49,10 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
       }
     });
     this.loadTerritory();
+
+    this._authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => (this.userIsDemo = this._authService.hasRole(UserRoleEnum.TERRITORY_DEMO)));
   }
 
   get isLoading() {
@@ -78,6 +85,16 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
 
   launchCampaign(id: number): void {
     // this._toastr.info(`Vous ne pouvez pas encore lancer de campagne.`);
+
+    if (this.userIsDemo) {
+      this._toastr.error(
+        `Vous ne pouvez pas lancer de campagne car vous êtes en mode découverte,
+        Veuillez contacter le registre de covoiturage pour activer votre compte.`,
+      );
+
+      return;
+    }
+
     this._dialog
       .confirm({
         title: 'Lancement de la campagne',
