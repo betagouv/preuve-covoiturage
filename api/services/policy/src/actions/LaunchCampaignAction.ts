@@ -10,7 +10,7 @@ import { alias } from '../shared/policy/launch.schema';
 @handler(handlerConfig)
 export class LaunchCampaignAction extends AbstractAction {
   public readonly middlewares: ActionMiddleware[] = [
-    ['can', ['incentive-campaign.create']],
+    ['can', ['incentive-campaign.create', 'incentive-campaign.launch']],
     ['validate', alias],
   ];
 
