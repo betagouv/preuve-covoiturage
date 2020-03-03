@@ -67,7 +67,7 @@ export function serviceProviderMacro<
   ) => {
     const context = {
       ...emptyContext,
-      currentContext,
+      ...currentContext,
     };
 
     const kernel = t.context.kernel;
@@ -88,7 +88,7 @@ export function serviceProviderMacro<
   ) => {
     const context = {
       ...emptyContext,
-      currentContext,
+      ...currentContext,
     };
 
     const kernel = t.context.kernel;
