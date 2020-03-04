@@ -10,7 +10,7 @@ import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.cons
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
-import { DAYS } from '~/core/const/days.const';
+import { DAYS, dayLabelCapitalized } from '~/core/const/days.const';
 import { tripTabValidator } from '~/modules/campaign/validators/trip-tab.validator';
 
 @Component({
@@ -26,6 +26,9 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE_KM;
   selectedInseeFilterTabIndex;
   loading = true;
+
+  // delegate method
+  dayLabel = dayLabelCapitalized;
 
   @ViewChild('mtg', { static: false }) inseeFilterTabGroup: MatTabGroup;
   private initValue = 0;
@@ -150,9 +153,12 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     return this._campaignUiService.targets(forDriver, forPassenger, forTrip, onlyAdult);
   }
 
+  /*
   public getDaysFrench(day: WeekDay) {
-    return DAYS[day];
+    // return // get string with first letter upper case
+    return DAYS[day].charAt(0).toUpperCase() + DAYS[day].slice(1);
   }
+  */
 
   showOperatorsLabel(): string {
     const operators = this.filtersForm.get('operator_ids').value;
