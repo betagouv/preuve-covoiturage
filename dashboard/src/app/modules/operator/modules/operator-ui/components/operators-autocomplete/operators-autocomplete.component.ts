@@ -100,7 +100,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     }
   }
 
-  private filterOperators(literal: string = ''): void {
+  private filterOperators(literal = ''): void {
     const selectedOperatorIds = this.operatorIdsControl.value || [];
     this.filteredOperators = this.operators.filter(
       (operator) =>

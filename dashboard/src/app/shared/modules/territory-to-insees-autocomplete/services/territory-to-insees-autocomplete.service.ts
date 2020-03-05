@@ -19,7 +19,7 @@ export class TerritoryToInseesAutocompleteService {
   /**
    * search a town by name with adresse api
    */
-  public findMainInsee(literal: string = ''): Observable<InseeAndTerritoryInterface[]> {
+  public findMainInsee(literal = ''): Observable<InseeAndTerritoryInterface[]> {
     const params = `/?q=${encodeURIComponent(literal)}&type=municipality&limit=15`;
     return this.http.get(`${this.addressApiDomain}${params}`).pipe(
       filter((response) => response && response['features']),

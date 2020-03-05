@@ -58,7 +58,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
     this.searchedTerritoryInsees = [];
   }
 
-  private filterTerritoryInsees(literal: string = ''): void {
+  private filterTerritoryInsees(literal = ''): void {
     const apiMethod = 'findMainInsee';
     const selectedTerritoryInsees = this.territoryInseesControl.value || [];
     this.inseeAutocompleteService[apiMethod](literal).subscribe(

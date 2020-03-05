@@ -49,7 +49,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     this.toastr.success('Le récapitulatif a été copié !');
   }
 
-  saveCampaign(isTemplate: boolean = false): void {
+  saveCampaign(isTemplate = false): void {
     if (isTemplate) {
       this.controls.status.setValue(CampaignStatusEnum.TEMPLATE);
     }

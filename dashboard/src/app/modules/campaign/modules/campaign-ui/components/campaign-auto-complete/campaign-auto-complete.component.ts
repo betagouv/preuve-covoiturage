@@ -81,7 +81,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
     });
   }
 
-  private filterCampaigns(literal: string = ''): void {
+  private filterCampaigns(literal = ''): void {
     const selectedCampaignIds = this.campaignIdsControl.value || [];
     this.filteredCampaigns = this.campaigns.filter(
       (campaign) => selectedCampaignIds.indexOf(campaign._id) === -1 && campaign.name.toLowerCase().includes(literal),

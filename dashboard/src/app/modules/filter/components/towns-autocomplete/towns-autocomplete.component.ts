@@ -56,7 +56,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     }
   }
 
-  public findTowns(literal: string = ''): void {
+  public findTowns(literal = ''): void {
     if (literal === undefined || literal === null) {
       return;
     }

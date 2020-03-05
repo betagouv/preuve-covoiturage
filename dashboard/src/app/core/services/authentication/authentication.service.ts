@@ -90,7 +90,7 @@ export class AuthenticationService {
     return this._user$.getValue();
   }
 
-  call<T = any>(url: string, payload: T, withCredentials: boolean = true): Observable<any> {
+  call<T = any>(url: string, payload: T, withCredentials = true): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

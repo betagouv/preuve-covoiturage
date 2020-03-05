@@ -77,7 +77,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     this.territoryCtrl.setValue('');
   }
 
-  private filterTerritories(literal: string = ''): void {
+  private filterTerritories(literal = ''): void {
     const selectedTerritoryIds = this.territoryIdsControl.value || [];
     this.filteredTerritories = this.territories.filter(
       (territory) =>
