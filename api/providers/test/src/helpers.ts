@@ -6,6 +6,10 @@ import {
 } from '@ilos/common';
 import { Kernel as AbstractKernel } from '@ilos/framework';
 
+export interface KernelTestInterface {
+  kernel: KernelInterface;
+}
+
 export function makeKernel(serviceProviderCtor: NewableType<ServiceContainerInterface>): KernelInterface {
   @kernelDecorator({
     children: [serviceProviderCtor],
@@ -13,3 +17,4 @@ export function makeKernel(serviceProviderCtor: NewableType<ServiceContainerInte
   class Kernel extends AbstractKernel {}
   return new Kernel();
 }
+

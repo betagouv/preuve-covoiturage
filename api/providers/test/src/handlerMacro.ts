@@ -1,11 +1,7 @@
 import { ContextType, ServiceContainerInterface, NewableType, KernelInterface } from '@ilos/common';
 import { Macro, TestInterface, ExecutionContext } from 'ava';
 
-import { makeKernel } from './helpers';
-
-interface KernelTestInterface {
-  kernel: KernelInterface;
-}
+import { makeKernel, KernelTestInterface } from './helpers';
 
 interface HandlerConfigInterface {
   service: string;
