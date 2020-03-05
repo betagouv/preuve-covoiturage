@@ -31,8 +31,8 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           status,
           meta
         ) VALUES (
-          $1::varchar,
-          $2::varchar,
+          $1,
+          $2,
           $3::integer,
           $4,
           $5::json

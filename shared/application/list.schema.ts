@@ -4,7 +4,7 @@ export const schema = {
   type: 'object',
   additionalProperties: false,
   properties: {
-    owner_id: { macro: 'dbid' },
+    owner_id: { macro: 'serial' },
     owner_service: { enum: ['operator'] },
   },
 };

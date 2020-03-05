@@ -23,7 +23,7 @@ describe('Acquisition service provider', () => {
 
   it('boots', async () => {
     const sp = new Kernel();
-    await expect(sp.register()).to.become(undefined);
-    await expect(sp.init()).to.become(undefined);
+    expect(await sp.register()).to.eq(undefined);
+    expect(await sp.init()).to.eq(undefined);
   });
 });

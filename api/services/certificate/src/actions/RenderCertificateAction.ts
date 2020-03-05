@@ -55,9 +55,9 @@ export class RenderCertificateAction extends AbstractAction {
       params,
       data: this.templateProvider.get('certificate', {
         data: certificate.meta,
-        identity: certificate.identity_id,
-        operator: certificate.operator_id,
-        territory: certificate.territory_id,
+        identity: certificate.identity_uuid,
+        operator: certificate.operator_uuid,
+        territory: certificate.territory_uuid,
         certificate: {
           created_at: this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à k:m'),
           start_at: this.dateProvider.format(certificate.start_at, 'd MMMM yyyy'),

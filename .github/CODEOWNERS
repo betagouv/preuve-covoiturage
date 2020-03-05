@@ -3,49 +3,49 @@
 ################################################################################
 
 # Resources
-/api/db								@jonathanfallon @nmrgt
+/api/db								        @jonathanfallon @nmrgt
 
 # Reverse Proxy
-/api/proxy							@jonathanfallon @nmrgt
+/api/proxy							      @jonathanfallon @nmrgt
 
 # API services
 /api/services/acquisition			@jonathanfallon
 /api/services/application			@jonathanfallon
 /api/services/certificate			@jonathanfallon
-/api/services/company				@nmrgt
-/api/services/fraud					@nmrgt
-/api/services/normalization			@jonathanfallon
+/api/services/company				  @nmrgt
+/api/services/fraud					  @nmrgt
+/api/services/normalization		@jonathanfallon
 /api/services/operator				@jonathanfallon
-/api/services/policy				@nmrgt
+/api/services/policy				  @nmrgt
 /api/services/territory				@jonathanfallon
-/api/services/trip					@nmrgt
-/api/services/user					@jonathanfallon
+/api/services/trip					  @nmrgt
+/api/services/user					  @jonathanfallon
 
-/api/providers/crypto				@nmrgt
-/api/providers/geo					@jonathanfallon
-/api/providers/middleware			@nmrgt
-/api/providers/notification			@nmrgt
-/api/providers/sentry				@jonathanfallon
-/api/providers/token				@jonathanfallon
-/api/providers/validator			@jonathanfallon
+/api/providers/crypto				  @nmrgt
+/api/providers/geo					  @jonathanfallon
+/api/providers/middleware		  @nmrgt
+/api/providers/notification	  @nmrgt
+/api/providers/sentry				  @jonathanfallon
+/api/providers/token				  @jonathanfallon
+/api/providers/validator		  @jonathanfallon
 
 ################################################################################
 #							       Frontend
 ################################################################################
 
-/dashboard					@gillesboisson
+/dashboard					          @gillesboisson
 
 ################################################################################
 #						         Shared Resources
 ################################################################################
-/api/shared							@jonathanfallon @gillesboisson
-/docker-compose*					@jonathanfallon
-/docker								@jonathanfallon
-/api/scalingo						@jonathanfallon
-/scalingo.json						@jonathanfallon
+/api/shared							      @jonathanfallon @gillesboisson
+/docker-compose*					    @jonathanfallon
+/docker								        @jonathanfallon
+/api/scalingo						      @jonathanfallon
+/scalingo.json						    @jonathanfallon
 
-/.circleci							@jonathanfallon
+/.circleci							      @jonathanfallon
 
-/CHANGELOG.md						@jonathanfallon
-/LICENSE							@jonathanfallon
-/README.md							@jonathanfallon
+/CHANGELOG.md						      @jonathanfallon
+/LICENSE							        @jonathanfallon
+/README.md							      @jonathanfallon

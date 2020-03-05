@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
@@ -40,6 +40,7 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
       map((user) => user && this._authService.isDemo),
       takeUntil(this.destroy$),
     );
+
     this.loadCampaigns();
   }
 

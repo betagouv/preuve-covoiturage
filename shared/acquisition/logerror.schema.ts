@@ -5,7 +5,7 @@ export const logerror = {
   required: ['operator_id', 'source', 'auth', 'headers', 'body'],
   additionalProperties: false,
   properties: {
-    operator_id: { type: 'number', minimum: 1 },
+    operator_id: { macro: 'serial' },
     source: { type: 'string', enum: ['csv', 'api.v1', 'api.v2'] },
     error_message: { type: 'string', minLength: 0, maxLength: 4096 },
     error_code: { type: 'string', minLength: 0, maxLength: 32 },

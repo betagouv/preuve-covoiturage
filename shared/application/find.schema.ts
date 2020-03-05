@@ -6,7 +6,7 @@ export const schema = {
   additionalProperties: false,
   properties: {
     uuid: { macro: 'dbid' },
-    owner_id: { macro: 'dbid' },
+    owner_id: { macro: 'serial' },
     owner_service: { enum: ['operator'] },
   },
 };

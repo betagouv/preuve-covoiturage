@@ -7,7 +7,7 @@ export type ResultInterface = {
 };
 
 export interface ParamsInterface {
-  operator_id: number | string;
+  operator_id: number;
   revenue?: number;
   contribution?: number;
   incentives?: IncentiveInterface[];

@@ -55,9 +55,9 @@ export class CreateCertificateAction extends AbstractAction {
       meta,
       end_at,
       start_at,
-      identity_id: person.uuid,
-      operator_id: operator.uuid,
-      territory_id: territory.uuid,
+      identity_uuid: person.uuid,
+      operator_uuid: operator.uuid,
+      territory_uuid: territory.uuid,
     });
 
     return certificate;

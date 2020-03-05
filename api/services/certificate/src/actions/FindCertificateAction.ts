@@ -16,15 +16,15 @@ export class FindCertificateAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    console.log('find', { params });
-
     const { uuid } = params;
 
     const certificate = await this.certRepository.findByUuid(uuid, true);
 
     return {
       uuid: certificate.uuid,
-      signature: await this.crypto.sha256(certificate.identity_id + certificate.operator_id + certificate.territory_id),
+      signature: await this.crypto.sha256(
+        certificate.identity_uuid + certificate.operator_uuid + certificate.territory_uuid,
+      ),
       start_at: certificate.start_at,
       end_at: certificate.end_at,
       created_at: certificate.created_at,

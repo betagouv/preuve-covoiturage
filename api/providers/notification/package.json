@@ -17,6 +17,10 @@
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "@pdc/provider-template": "~0"
+    "@pdc/provider-template": "~0",
+    "node-mailjet": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/node-mailjet": "^3.3.3"
   }
 }

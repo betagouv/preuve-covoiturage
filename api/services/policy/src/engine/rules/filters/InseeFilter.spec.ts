@@ -62,7 +62,10 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should throw error if start or end is in blacklist with OR operator', () => {
-    const test = new InseeBlacklistFilter([{ start: ['A'], end: [] }, { start: [], end: ['A'] }]);
+    const test = new InseeBlacklistFilter([
+      { start: ['A'], end: [] },
+      { start: [], end: ['A'] },
+    ]);
 
     return expect(
       test.filter({
@@ -111,7 +114,10 @@ describe('Policy rule: insee white and black list', () => {
   });
 
   it('should do nothin if start or end is in whitelist with OR operator', () => {
-    const test = new InseeWhitelistFilter([{ start: ['A'], end: [] }, { start: [], end: ['A'] }]);
+    const test = new InseeWhitelistFilter([
+      { start: ['A'], end: [] },
+      { start: [], end: ['A'] },
+    ]);
 
     return expect(
       test.filter({

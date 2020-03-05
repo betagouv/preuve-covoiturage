@@ -8,7 +8,10 @@ import { alias } from '../shared/policy/find.schema';
 
 @handler(handlerConfig)
 export class FindCampaignAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['incentive-campaign.read']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['incentive-campaign.read']],
+    ['validate', alias],
+  ];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
     super();

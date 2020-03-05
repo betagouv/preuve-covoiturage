@@ -43,7 +43,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
           sum(amount::float)/100 as eur
         FROM ${this.table} AS cc
         LEFT JOIN ${this.incentive_table} AS pi
-        ON cc._id = pi.carpool_id::int
+        ON cc._id = pi.carpool_id
         WHERE identity_id IN (${identities.join(',')})
         AND datetime >= $1 AND datetime <= $2
         GROUP BY (m, y)
