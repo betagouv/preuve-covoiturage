@@ -29,10 +29,6 @@ export class ApplyAction extends AbstractAction {
     console.log('>>> search trips');
     const trips = await this.tripRepository.findTripsById(params.trips);
 
-    // TMP - optimized for IDFM campaign
-    // console.log('>>> search applicable campaigns');
-    // const campaigns = await this.campaignRepository.findApplicableCampaigns([239], new Date('2020-01-27T00:00:00Z'));
-
     let allIncentives = [];
 
     console.log('>>> process campaigns for all trips');

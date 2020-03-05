@@ -13,15 +13,13 @@ import {
 })
 export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterface {
   public readonly table = 'policy.incentives';
-  private connSingleton: Promise<PoolClient> = null;
-
   constructor(protected connection: PostgresConnection) {}
 
   async create(data: IncentiveInterface, options: IncentiveCreateOptionsType = {}): Promise<void> {
     const opts = { connection: null, release: true, ...options };
 
     if (opts.connection === null) {
-      opts.connection = await this.getConnection();
+      opts.connection = await this.connection.getClient().connect();
     }
 
     const query = {
@@ -56,7 +54,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
   }
 
   async createMany(data: IncentiveInterface[]): Promise<void> {
-    const conn: PoolClient = await this.getConnection();
+    const conn: PoolClient = await this.connection.getClient().connect();
 
     try {
       await conn.query('BEGIN');
@@ -72,13 +70,5 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     }
 
     conn.release();
-  }
-
-  private async getConnection(): Promise<PoolClient> {
-    if (this.connSingleton === null) {
-      this.connSingleton = this.connection.getClient().connect();
-    }
-
-    return this.connSingleton;
   }
 }
