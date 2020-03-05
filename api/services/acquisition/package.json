@@ -9,10 +9,9 @@
     "start": "yarn serve",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "NODE_ENV=testing mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "test:integration": "NODE_ENV=testing mocha --exit tests/**/*.spec.ts",
-    "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov mocha -exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha -exit src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "test": "ava",
+    "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov ava",
+    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
@@ -21,35 +20,6 @@
     "workingDir": "./dist",
     "bootstrap": "./bootstrap.js",
     "app": {}
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**",
-      "src/config/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
   },
   "dependencies": {
     "@ilos/cli": "~0",
