@@ -2,11 +2,11 @@ import { Observable, Subject } from 'rxjs';
 import { filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { Type } from '@angular/core';
 
-import { IModel } from '~/core/entities/IModel';
+import { Model } from '~/core/entities/IModel';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { IFormModel } from '~/core/entities/IFormModel';
-import { IClone } from '~/core/entities/IClone';
-import { IMapModel } from '~/core/entities/IMapModel';
+import { FormModel } from '~/core/entities/IFormModel';
+import { Clone } from '~/core/entities/IClone';
+import { MapModel } from '~/core/entities/IMapModel';
 import { GetListStore } from '~/core/services/store/getlist-store';
 
 export type PatchParams<IPatchParamT> = {
@@ -15,8 +15,8 @@ export type PatchParams<IPatchParamT> = {
 };
 
 export abstract class CrudStore<
-  EntityT extends IModel & IFormModel<FormModelT> & IClone<EntityT> & IMapModel<EntityT>,
-  EntityListT extends IModel = EntityT,
+  EntityT extends Model & FormModel<FormModelT> & Clone<EntityT> & MapModel<EntityT>,
+  EntityListT extends Model = EntityT,
   IPatchT = any,
   JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT, IPatchT> = JsonRpcCrud<EntityT, EntityListT, IPatchT>,
   FormModelT = any

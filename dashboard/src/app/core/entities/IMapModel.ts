@@ -1,3 +1,3 @@
-export interface IMapModel<T, SourceT = any> {
+export interface MapModel<T, SourceT = any> {
   map(data: SourceT): T;
 }
