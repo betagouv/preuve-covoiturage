@@ -36,7 +36,7 @@ export class FilterService {
     filter = new Filter({
       insee: insees,
       date: filterUx.date,
-      hour: <any>filterUx.hour,
+      hour: filterUx.hour as any,
       days: filterUx.days,
       distance: filterUx.distance,
       ranks: filterUx.ranks,

@@ -40,7 +40,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   }
 
   get territoryInseesControl(): FormControl {
-    return <FormControl>this.parentForm.get(this.fieldName);
+    return this.parentForm.get(this.fieldName) as FormControl;
   }
 
   public remove(index: number): void {

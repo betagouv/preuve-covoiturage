@@ -34,7 +34,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
   }
 
   get retributionParametersControls() {
-    const formGroup = <FormGroup>this.campaignForm.get('retributionParameters');
+    const formGroup = this.campaignForm.get('retributionParameters') as FormGroup;
     return formGroup.controls;
   }
 

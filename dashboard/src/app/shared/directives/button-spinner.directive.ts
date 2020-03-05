@@ -32,12 +32,12 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     this.originalInnerHTML = this.el.nativeElement.querySelector('.mat-button-wrapper').innerHTML;
 
     // Set the button to maintain the same dimensions, even once we put the spinner inside.
-    if ((<HTMLElement>this.el.nativeElement).offsetWidth) {
-      this.el.nativeElement.style.width = `${(<HTMLElement>this.el.nativeElement).offsetWidth}px`;
+    if ((this.el.nativeElement as HTMLElement).offsetWidth) {
+      this.el.nativeElement.style.width = `${(this.el.nativeElement as HTMLElement).offsetWidth}px`;
     }
 
-    if ((<HTMLElement>this.el.nativeElement).offsetHeight) {
-      this.el.nativeElement.style.height = `${(<HTMLElement>this.el.nativeElement).offsetHeight}px`;
+    if ((this.el.nativeElement as HTMLElement).offsetHeight) {
+      this.el.nativeElement.style.height = `${(this.el.nativeElement as HTMLElement).offsetHeight}px`;
     }
 
     // Create the spinner
@@ -53,7 +53,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     this.renderer.setStyle(this.spinner._elementRef.nativeElement, 'display', 'none');
 
     // Apply new styles to the button content's container
-    const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
+    const span = (this.el.nativeElement as HTMLSpanElement).querySelector('.mat-button-wrapper');
     this.renderer.setStyle(span, 'display', 'flex');
     this.renderer.setStyle(span, 'align-items', 'center');
     this.renderer.setStyle(span, 'justify-content', 'center');
@@ -66,7 +66,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
         this.originalInnerHTML = this.el.nativeElement.querySelector('.mat-button-wrapper').innerHTML;
 
         // Clear the button's text
-        const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
+        const span = this.el.nativeElement.querySelector('.mat-button-wrapper') as HTMLSpanElement;
         span.innerText = '';
 
         // Append the spinner
@@ -83,7 +83,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
         // Remove the spinner
         this.renderer.removeChild(this.el.nativeElement.firstChild, this.spinner._elementRef.nativeElement);
 
-        const span = <HTMLSpanElement>this.el.nativeElement.querySelector('.mat-button-wrapper');
+        const span = (this.el.nativeElement as HTMLSpanElement).querySelector('.mat-button-wrapper');
         span.innerHTML = this.originalInnerHTML;
       }
 

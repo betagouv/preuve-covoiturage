@@ -69,7 +69,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   get territoriesFormArray(): FormArray {
-    return <FormArray>this.visibilityFormGroup.get('territories');
+    return this.visibilityFormGroup.get('territories') as FormArray;
   }
 
   get hasFilter(): boolean {

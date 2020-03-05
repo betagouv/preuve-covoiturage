@@ -28,7 +28,7 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
   }
 
   get uiStatusControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status');
+    return this.campaignForm.get('ui_status') as FormControl;
   }
 
   get campaignFormControls() {
@@ -40,15 +40,15 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
   }
 
   get forDriverFormGroup(): FormGroup {
-    return <FormGroup>this.formGroup.get('for_driver');
+    return this.formGroup.get('for_driver') as FormGroup;
   }
 
   get forPassengerFormGroup(): FormGroup {
-    return <FormGroup>this.formGroup.get('for_passenger');
+    return this.formGroup.get('for_passenger') as FormGroup;
   }
 
   get freeControl(): FormControl {
-    return <FormControl>this.forPassengerFormGroup.get('free');
+    return this.forPassengerFormGroup.get('free') as FormControl;
   }
 
   get isEuros(): boolean {

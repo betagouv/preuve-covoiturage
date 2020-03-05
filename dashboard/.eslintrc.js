@@ -17,7 +17,7 @@ module.exports = {
     semi: ['error', 'always'],
 
     // Extra rules
-    '@typescript-eslint/consistent-type-assertions': 'off',
+    // '@typescript-eslint/consistent-type-assertions': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-use-before-define': 'off',

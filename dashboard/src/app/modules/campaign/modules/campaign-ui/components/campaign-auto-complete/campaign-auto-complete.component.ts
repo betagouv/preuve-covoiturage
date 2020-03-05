@@ -37,7 +37,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   }
 
   get campaignIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get('campaignIds');
+    return this.parentForm.get('campaignIds') as FormControl;
   }
 
   /**

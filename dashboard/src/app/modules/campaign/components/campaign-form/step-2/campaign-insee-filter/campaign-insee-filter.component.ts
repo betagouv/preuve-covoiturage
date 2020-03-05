@@ -28,7 +28,7 @@ export class CampaignInseeFilterComponent implements OnInit {
   }
 
   get listFormArray() {
-    return <FormArray>this.inseeForm.get(this.filterType);
+    return this.inseeForm.get(this.filterType) as FormArray;
   }
 
   isEditing(index: number) {

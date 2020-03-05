@@ -144,12 +144,12 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       if (this.currentOperator) {
         newUser.group = this.currentGroup;
         newUser.operator_id = this.currentOperator;
-        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as UserRoleEnum;
       }
       if (this.currentTerritory) {
         newUser.group = this.currentGroup;
         newUser.territory_id = this.currentTerritory;
-        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as UserRoleEnum;
       }
       this.userStoreService.selectNew(newUser);
     }

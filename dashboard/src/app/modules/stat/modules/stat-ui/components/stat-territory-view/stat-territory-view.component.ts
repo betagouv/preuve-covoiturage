@@ -76,7 +76,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
    * select graph to be displayed
    */
   public showGraph(graphName: string): void {
-    this.graphName = <statDataNameType>graphName;
+    this.graphName = graphName as statDataNameType;
     this.resetSelected();
     this.selected[graphName] = true;
     this.scrollToTop();

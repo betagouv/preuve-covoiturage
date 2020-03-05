@@ -24,7 +24,7 @@ export class CampaignGeoService {
           .filter((el) => _.get(el, 'geometry.coordinates', null))
           .map((el) => {
             const coordinates = _.get(el, 'geometry.coordinates');
-            return <GeoDataInterface>{ lon: coordinates[0], lat: coordinates[1] };
+            return { lon: coordinates[0], lat: coordinates[1] } as GeoDataInterface;
           }),
       ),
     );

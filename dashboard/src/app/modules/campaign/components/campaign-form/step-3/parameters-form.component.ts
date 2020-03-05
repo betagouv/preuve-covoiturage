@@ -58,23 +58,23 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
   }
 
   get forDriverControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_driver');
+    return this.campaignForm.get('ui_status').get('for_driver') as FormControl;
   }
 
   get forPassengerControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_passenger');
+    return this.campaignForm.get('ui_status').get('for_passenger') as FormControl;
   }
 
   get forTripControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_trip');
+    return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
   }
 
   get restrictionFormArray(): FormArray {
-    return <FormArray>this.campaignForm.get('restrictions');
+    return this.campaignForm.get('restrictions') as FormArray;
   }
 
   get retributionsFormArray(): FormArray {
-    return <FormArray>this.campaignForm.get('retributions');
+    return this.campaignForm.get('retributions') as FormArray;
   }
 
   showDateLabel(): string {

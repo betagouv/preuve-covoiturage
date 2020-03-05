@@ -139,7 +139,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const stopFindCompany = new Subject();
 
     this.territoryForm = this.fb.group(formOptions);
-    const companyFormGroup: FormGroup = <FormGroup>this.territoryForm.controls.company;
+    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
 
     if (companyFormGroup) {
       companyFormGroup.controls.siret.valueChanges

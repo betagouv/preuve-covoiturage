@@ -44,7 +44,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
   }
 
   get townForm(): FormControl {
-    return <FormControl>this.parentForm.get('towns');
+    return this.parentForm.get('towns') as FormControl;
   }
 
   public remove(town: TownInterface): void {

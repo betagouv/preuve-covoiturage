@@ -295,14 +295,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     });
 
     // patch form arrays
-    const timeFormArray = <FormArray>filtersForm.get('time');
+    const timeFormArray = filtersForm.get('time') as FormArray;
     timeFormArray.clear();
     campaign.filters.time.forEach((time) => {
       timeFormArray.push(this._formBuilder.control(time));
     });
 
     // patch insee filter
-    const blackListFormArray = <FormArray>filtersForm.get('insee').get('blackList');
+    const blackListFormArray = filtersForm.get('insee').get('blackList') as FormArray;
     blackListFormArray.clear();
     campaign.filters.insee.blackList.forEach((insee) => {
       blackListFormArray.push(
@@ -313,7 +313,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
     });
 
-    const whiteListFormArray = <FormArray>filtersForm.get('insee').get('whiteList');
+    const whiteListFormArray = filtersForm.get('insee').get('whiteList') as FormArray;
     whiteListFormArray.clear();
     campaign.filters.insee.whiteList.forEach((insee) => {
       whiteListFormArray.push(
@@ -325,14 +325,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     });
 
     // patch restriction
-    const restrictionFormArray = <FormArray>this.campaignFormGroup.get('restrictions');
+    const restrictionFormArray = this.campaignFormGroup.get('restrictions') as FormArray;
     restrictionFormArray.clear();
     campaign.restrictions.forEach((restriction) => {
       restrictionFormArray.push(this._formBuilder.group(restriction));
     });
 
     // patch retribution
-    const retributionFormArray = <FormArray>this.campaignFormGroup.get('retributions');
+    const retributionFormArray = this.campaignFormGroup.get('retributions') as FormArray;
     retributionFormArray.clear();
     if (campaign.retributions.length === 0) {
       // initialize retribution

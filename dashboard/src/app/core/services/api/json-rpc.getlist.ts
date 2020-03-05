@@ -27,7 +27,7 @@ export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetLis
   }
 
   paramGetById(id: number) {
-    return this.paramGet(<any>{ _id: id });
+    return this.paramGet({ _id: id } as any);
   }
 
   get(params: IGetT): Observable<EntityT> {
@@ -39,6 +39,6 @@ export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetLis
   }
 
   getById(id: number): Observable<EntityT> {
-    return this.get(<any>{ _id: id });
+    return this.get({ _id: id } as any);
   }
 }

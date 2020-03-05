@@ -128,7 +128,7 @@ export class StatFormatService {
   }
 
   private formatUxStats(d: CalculatedStat): FormatedStatInterface {
-    const formatedStat = <FormatedStatInterface>{
+    const formatedStat = {
       total: {
         trips: get(d, 'trips.total', 0),
         distance: get(d, 'distance.total', 0) | 0,
@@ -315,7 +315,7 @@ export class StatFormatService {
             .map((val) => val.total.toFixed(2)),
         }),
       },
-    };
+    } as FormatedStatInterface;
 
     return formatedStat;
   }

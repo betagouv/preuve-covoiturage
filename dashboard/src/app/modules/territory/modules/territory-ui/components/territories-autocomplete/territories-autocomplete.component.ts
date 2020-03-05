@@ -41,7 +41,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   }
 
   get territoryIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get('territoryIds');
+    return this.parentForm.get('territoryIds') as FormControl;
   }
 
   getTerritoryLabel(territoryId): string {

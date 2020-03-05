@@ -65,7 +65,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   get filtersForm(): FormGroup {
-    return <FormGroup>this.campaignForm.get('filters');
+    return this.campaignForm.get('filters') as FormGroup;
   }
 
   get controls() {
@@ -73,7 +73,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   get forDriverControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_driver');
+    return this.campaignForm.get('ui_status').get('for_driver') as FormControl;
   }
 
   get forPassengerControl(): FormControl {
@@ -81,15 +81,15 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   get InseeForm(): FormGroup {
-    return <FormGroup>this.filtersForm.get('insee');
+    return this.filtersForm.get('insee') as FormGroup;
   }
 
   get forTripControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_trip');
+    return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
   }
 
   get timeCtrlArray(): FormArray {
-    return <FormArray>this.filtersForm.get('time');
+    return this.filtersForm.get('time') as FormArray;
   }
 
   addTimeFilter() {
@@ -101,11 +101,11 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   get whiteListFormArray(): FormArray {
-    return <FormArray>this.InseeForm.get('whiteList');
+    return this.InseeForm.get('whiteList') as FormArray;
   }
 
   get blackListFormArray(): FormArray {
-    return <FormArray>this.InseeForm.get('blackList');
+    return this.InseeForm.get('blackList') as FormArray;
   }
 
   get hasInseefilter() {

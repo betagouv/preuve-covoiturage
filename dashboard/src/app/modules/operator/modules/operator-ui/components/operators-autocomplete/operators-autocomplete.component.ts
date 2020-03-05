@@ -48,7 +48,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   get operatorIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get(this.fieldName);
+    return this.parentForm.get(this.fieldName) as FormControl;
   }
 
   /**

@@ -47,7 +47,7 @@ export class CampaignFormater {
   static toUx(campaign: Campaign): CampaignUx {
     const { _id, name, description, territory_id, status, unit, parent_id, ui_status } = campaign;
 
-    const campaignUx = <CampaignUx>{
+    const campaignUx = {
       _id,
       name,
       description,
@@ -74,47 +74,47 @@ export class CampaignFormater {
       restrictions: [],
       start: moment(campaign.start_date),
       end: moment(campaign.end_date),
-    };
+    } as CampaignUx;
 
     // GLOBAL RULES
     campaign.global_rules.forEach((retributionRule: GlobalRetributionRuleInterface) => {
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_TRIPS) {
-        const parameters = <MaxTripsRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = retributionRule.parameters as MaxTripsRetributionRule['parameters'];
         campaignUx.max_trips = parameters.amount;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.MAX_AMOUNT) {
-        const parameters = <MaxAmountRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = retributionRule.parameters as MaxAmountRetributionRule['parameters'];
         campaignUx.max_amount = parameters.amount;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.ONLY_ADULT) {
         campaignUx.only_adult = true;
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.DISTANCE_RANGE) {
-        const parameters = <DistanceRangeGlobalRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = retributionRule.parameters as DistanceRangeGlobalRetributionRule['parameters'];
         campaignUx.filters.distance_range = [
           parameters.min !== -1 ? Number(parameters.min) / 1000 : null,
           parameters.max !== -1 ? Number(parameters.max) / 1000 : null,
         ];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WEEKDAY) {
-        campaignUx.filters.weekday = <WeekdayRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.weekday = retributionRule.parameters as WeekdayRetributionRule['parameters'];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.TIME) {
-        const parameters = <TimeRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = retributionRule.parameters as TimeRetributionRule['parameters'];
         campaignUx.filters.time = parameters.map((timeRange) => ({
           start: timeRange.start > 9 ? `${timeRange.start}:00` : `0${timeRange.start}:00`,
           end: timeRange.end > 9 ? `${timeRange.end}:00` : `0${timeRange.end}:00`,
         }));
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.OPERATOR_IDS) {
-        campaignUx.filters.operator_ids = <OperatorIdsGlobalRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.operator_ids = retributionRule.parameters as OperatorIdsGlobalRetributionRule['parameters'];
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RANK) {
-        campaignUx.filters.rank = <RankGlobalRetributionRule['parameters']>retributionRule.parameters;
+        campaignUx.filters.rank = retributionRule.parameters as RankGlobalRetributionRule['parameters'];
       }
 
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_TRIP) {
-        const parameters = <TripRestrictionRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push(<RestrictionUxInterface>{
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
           quantity: parameters.amount,
@@ -123,18 +123,18 @@ export class CampaignFormater {
         });
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT) {
-        const parameters = <TripRestrictionRetributionRule['parameters']>retributionRule.parameters;
-        campaignUx.restrictions.push(<RestrictionUxInterface>{
+        const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
+        campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
           quantity: parameters.amount,
           period: parameters.period,
           unit: RestrictionUnitEnum.AMOUNT,
-        });
+        } as RestrictionUxInterface);
       }
 
       // INSEE BLACKLIST : Verify data in ui-status is correct
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.BLACKLIST) {
-        const parameters = <BlackListGlobalRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = retributionRule.parameters as BlackListGlobalRetributionRule['parameters'];
         const uiStatusStarts = campaign.ui_status.insee_filter.blackList.map((startEnd) =>
           startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
         );
@@ -161,7 +161,7 @@ export class CampaignFormater {
 
       // INSEE WHITELIST : Verify data in ui-status is correct
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.WHITELIST) {
-        const parameters = <WhiteListGlobalRetributionRule['parameters']>retributionRule.parameters;
+        const parameters = retributionRule.parameters as WhiteListGlobalRetributionRule['parameters'];
         const uiStatusStarts = campaign.ui_status.insee_filter.whiteList.map((startEnd) =>
           startEnd.start.reduce((acc: string[], val) => [...val.insees, ...acc], []),
         );
@@ -221,13 +221,13 @@ export class CampaignFormater {
         // construct retributions
         retributionRuleArray.forEach((retributionRule: RetributionRuleInterface) => {
           if (retributionRule.slug === RetributionRulesSlugEnum.DISTANCE_RANGE) {
-            const parameters = <DistanceRangeGlobalRetributionRule['parameters']>retributionRule.parameters;
+            const parameters = retributionRule.parameters as DistanceRangeGlobalRetributionRule['parameters'];
             retribution.min = parameters.min !== 0 ? Number(parameters.min) / 1000 : null;
             retribution.max = Number(parameters.max) / 1000;
           }
           if (slugs.indexOf(RetributionRulesSlugEnum.FOR_PASSENGER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
-              const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
+              const parameters = retributionRule.parameters as AmountRetributionRule['parameters'];
               retribution.for_passenger.amount =
                 campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters) : Number(parameters) / 100; // to euros
             }
@@ -239,7 +239,7 @@ export class CampaignFormater {
             }
           } else if (slugs.indexOf(RetributionRulesSlugEnum.FOR_DRIVER) !== -1) {
             if (retributionRule.slug === RetributionRulesSlugEnum.AMOUNT) {
-              const parameters = <AmountRetributionRule['parameters']>retributionRule.parameters;
+              const parameters = retributionRule.parameters as AmountRetributionRule['parameters'];
               retribution.for_driver.amount =
                 campaign.unit === IncentiveUnitEnum.POINT ? Number(parameters) : Number(parameters) / 100; // to euros
             }
@@ -497,8 +497,8 @@ export class CampaignFormater {
       rules: campaignRetributionRules,
       global_rules: campaignGlobalRetributionRules,
       // format dates : moment --> Date
-      start_date: <any>campaignUx.start.startOf('day').toISOString(),
-      end_date: <any>campaignUx.end.endOf('day').toISOString(),
+      start_date: campaignUx.start.startOf('day').toISOString() as any,
+      end_date: campaignUx.end.endOf('day').toISOString() as any,
     };
   }
 }
