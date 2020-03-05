@@ -36,7 +36,11 @@
       <app-page-content>
         <div class="CampaignForm-content">
           <div class="CampaignForm-content-wrapper">
-            <app-filters-form [campaignForm]="campaignFormGroup" [isCreating]="creationFromScratch"></app-filters-form>
+            <app-filters-form
+              [campaignForm]="campaignFormGroup"
+              [isCreating]="creationFromScratch"
+              [displayOperatorFilter]="!userIsDemo"
+            ></app-filters-form>
             <app-help-card
               [svgIcon]="helpCard.svgIcon"
               [title]="helpCard.title"

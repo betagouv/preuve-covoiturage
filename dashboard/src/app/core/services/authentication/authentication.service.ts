@@ -105,6 +105,10 @@ export class AuthenticationService {
     return this.hasRole(UserManyRoleEnum.ADMIN);
   }
 
+  public get isDemo(): boolean {
+    return this.user.role === UserRoleEnum.TERRITORY_DEMO;
+  }
+
   public login(email: string, password: string): Observable<LoginResult> {
     return this.call<LoginParam>('login', { email, password }).pipe(
       catchHttpStatus(401, (err) => null),

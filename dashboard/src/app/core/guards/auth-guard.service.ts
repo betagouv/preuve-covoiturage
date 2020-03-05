@@ -51,8 +51,10 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
 
         const isInGroups = 'groups' in route.data ? this.authService.hasAnyGroup(route.data['groups']) : true;
         const hasRole = 'role' in route.data ? this.authService.hasRole(route.data['role']) : true;
+        const hasPermissions =
+          'permissions' in route.data ? this.authService.hasAnyPermission(route.data['permissions']) : true;
 
-        if (!isInGroups || !hasRole) {
+        if (!isInGroups || !hasRole || !hasPermissions) {
           this.router.navigate(['/']).then(() => {
             this.toastr.error("Vous n'êtes pas autorisé à accéder à cette page.");
           });

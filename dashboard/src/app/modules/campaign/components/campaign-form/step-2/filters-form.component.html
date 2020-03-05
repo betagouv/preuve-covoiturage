@@ -179,7 +179,11 @@
           </ng-container>
         </div>
       </mat-expansion-panel>
+
+      <h3>displayOperatorFilter : {{ displayOperatorFilter }}</h3>
+
       <mat-expansion-panel
+        *ngIf="displayOperatorFilter"
         [ngClass]="{ 'mat-expansion-panel-error': controls.operator_ids.touched && !controls.operator_ids.valid }"
       >
         <mat-expansion-panel-header [collapsedHeight]="'60px'" [expandedHeight]="'60px'">

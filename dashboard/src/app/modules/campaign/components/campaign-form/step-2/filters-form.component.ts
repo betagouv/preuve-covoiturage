@@ -21,6 +21,7 @@ import { tripTabValidator } from '~/modules/campaign/validators/trip-tab.validat
 export class FiltersFormComponent extends DestroyObservable implements OnInit, AfterViewInit {
   @Input() campaignForm: FormGroup;
   @Input() isCreating = false;
+  @Input() displayOperatorFilter = false;
 
   tripClassKeys = Object.keys(TripRankEnum);
   maxDistance = CAMPAIGN_RULES_MAX_DISTANCE_KM;

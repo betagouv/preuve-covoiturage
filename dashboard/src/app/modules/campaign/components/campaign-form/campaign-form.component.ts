@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
-import { takeUntil, map } from 'rxjs/operators';
+import { take, takeUntil, map } from 'rxjs/operators';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
@@ -48,6 +48,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   private _defaultRange: RulesRangeUxType = [0, CAMPAIGN_RULES_MAX_DISTANCE_KM];
   @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
+  public userIsDemo: boolean;
 
   constructor(
     private _authService: AuthenticationService,
@@ -74,6 +75,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       this.creationFromScratch = true;
       this.loading = false;
     }
+
+    this._authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => (this.userIsDemo = user && user.role.indexOf('demo') !== -1));
+
     this.initCampaigns();
   }
 
@@ -99,12 +105,22 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       filtersFormGroup.get('distance_range').valid &&
       filtersFormGroup.get('rank').valid &&
       filtersFormGroup.get('insee').valid &&
-      filtersFormGroup.get('operator_ids').valid &&
       this.campaignFormGroup.get('only_adult').valid
     );
   }
 
   get canGoToLastStep(): boolean {
+    console.log(
+      'can go last step',
+      this.campaignFormGroup.get('filters').valid,
+      this.campaignFormGroup.get('max_amount').valid,
+      this.campaignFormGroup.get('max_trips').valid,
+      this.campaignFormGroup.get('start').valid,
+      this.campaignFormGroup.get('end').valid,
+      this.campaignFormGroup.get('unit').valid,
+      this.campaignFormGroup.get('restrictions').valid,
+      this.campaignFormGroup.get('retributions').valid,
+    );
     return (
       this.campaignFormGroup.get('filters').valid &&
       this.campaignFormGroup.get('max_amount').valid &&

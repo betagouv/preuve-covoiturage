@@ -22,6 +22,7 @@ import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.servi
 export class ParametersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() isCreating = false;
+  // @Input() displayOperatorFilters = false;
 
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnitEnum);
