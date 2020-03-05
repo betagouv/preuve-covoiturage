@@ -31,6 +31,7 @@ export class CampaignUx {
   public ui_status: {
     expert_mode?: boolean;
     staggered: boolean;
+    insee_mode: boolean;
     for_driver: boolean;
     for_passenger: boolean;
     for_trip: boolean;
@@ -52,11 +53,12 @@ export class CampaignUx {
       parent_id: null,
       only_adult: null,
       filters: {
-        weekday: [],
+        weekday: [0, 1, 2, 3, 4, 5, 6],
         time: [],
         distance_range: [0, 0],
         rank: [],
         operator_ids: [],
+        all_operators: true,
         insee: {
           blackList: [],
           whiteList: [],
@@ -71,6 +73,7 @@ export class CampaignUx {
         for_passenger: null,
         for_trip: null,
         staggered: null,
+        insee_mode: null,
       },
     },
   ) {

@@ -1,13 +1,11 @@
 export const rule = {
   type: 'object',
   additionalProperties: false,
-  required: ['slug', 'parameters'],
+  required: ['slug'],
   properties: {
     slug: {
       type: 'string',
     },
-    parameters: {
-      default: null,
-    },
+    parameters: {},
   },
 };

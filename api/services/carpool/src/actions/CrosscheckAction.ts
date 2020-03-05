@@ -2,9 +2,9 @@
 import { Action } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
+import { FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/carpool/crosscheck.contract';
 import { alias } from '../shared/carpool/crosscheck.schema';
-
 import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { CrosscheckRepositoryProviderInterfaceResolver } from '../interfaces/CrosscheckRepositoryProviderInterface';
@@ -33,19 +33,36 @@ export class CrosscheckAction extends Action {
     const toProcess = [];
     const { people, ...sharedData } = journey;
 
-    const driver = people.filter((p) => p.is_driver).pop();
-    const passengers = people.filter((p) => !p.is_driver);
+    const sortedArray = people.sort((p1: FinalizedPersonInterface, p2: FinalizedPersonInterface) =>
+      p1.is_driver > p2.is_driver ? 1 : -1,
+    );
 
-    const driverIdentity = await this.identity.create(driver.identity);
-    toProcess.push({ ...driver, identity_id: driverIdentity._id });
+    const driverInd = sortedArray.findIndex((user) => user.is_driver);
+
+    const passengers = [...sortedArray];
+    const driver = driverInd !== -1 ? passengers.splice(driverInd, 1)[0] : null;
+
+    // console.log('driver : ', driver);
+    // const passengers = people.filter((p) => !p.is_driver);
+
+    let driverIdentity: { _id: number; uuid: string } = null;
+
+    console.log('driverIdentity : ', driverIdentity);
+
+    if (driver) {
+      driverIdentity = await this.identity.create(driver.identity);
+      toProcess.push({ ...driver, identity_id: driverIdentity._id });
+    }
+
+    console.log('sortedArray[0] : ', sortedArray[0]);
 
     // Get a trip id
     const tripId = await this.crosscheck.getTripId({
       operator_trip_id: journey.operator_trip_id,
-      datetime: driver.datetime,
-      start: driver.start,
-      end: driver.end,
-      identity_uuid: driverIdentity.uuid,
+      datetime: sortedArray[0].datetime,
+      start: sortedArray[0].start,
+      end: sortedArray[0].end,
+      identity_uuid: driver !== null ? driverIdentity.uuid : null,
     });
 
     // Build identity for every participant

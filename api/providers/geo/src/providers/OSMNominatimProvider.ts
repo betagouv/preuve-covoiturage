@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { NotFoundException } from '@ilos/common';
+import { NotFoundException, provider } from '@ilos/common';
 
 import { GeoCoderInterface, PointInterface } from '../interfaces';
 
+@provider()
 export class OSMNominatimProvider implements GeoCoderInterface {
   private domain = 'https://nominatim.openstreetmap.org/';
 

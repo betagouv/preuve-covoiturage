@@ -29,6 +29,6 @@ export class CampaignRetributionViewComponent implements OnInit {
   }
 
   get restrictions(): string {
-    return this._campaignUiService.restrictions(this.campaign.restrictions);
+    return this._campaignUiService.restrictions(this.campaign.restrictions, this.campaign.unit);
   }
 }

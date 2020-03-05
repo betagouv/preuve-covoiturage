@@ -46,6 +46,13 @@
       <mat-icon *ngIf="!isEditing(idx)" color="error" (click)="removeStartEnd(idx)">delete_outline</mat-icon>
     </div>
   </div>
+
+  <div class="inseeFilter-header" *ngIf="filterType === 'whiteList' && inseeForm.hasError('tripEmptyList')">
+    <mat-error>
+      Au moins une règle de trajets doit être définie.
+    </mat-error>
+  </div>
+
   <button
     mat-stroked-button
     color="primary"

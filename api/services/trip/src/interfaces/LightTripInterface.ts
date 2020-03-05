@@ -3,7 +3,7 @@ export interface LightTripInterface {
   start_town?: string;
   end_town?: string;
   start_datetime: Date;
-  operator_id: string;
+  operator_id: number;
   incentives: any;
   operator_class: string;
 }

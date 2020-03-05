@@ -48,7 +48,8 @@ export class Campaign extends BaseModel implements IFormModel, IModel, IMapModel
         for_driver: null,
         for_passenger: null,
         for_trip: null,
-        staggered: null,
+        staggered: false,
+        insee_mode: false,
       };
     }
   }

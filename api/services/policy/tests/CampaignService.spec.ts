@@ -2,6 +2,7 @@ import supertest from 'supertest';
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { describe } from 'mocha';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { bootstrap } from '../src/bootstrap';
@@ -33,7 +34,6 @@ const fakeCampaign = {
     [
       {
         slug: 'adult_only_filter',
-        parameters: true,
       },
     ],
   ],
@@ -376,48 +376,17 @@ describe('Campaign service', () => {
     });
     ids.push(idTwo);
 
+    // Check campaign template 2
     await request
       .post('/')
-      .send(
-        callFactory(
-          'campaign:list',
-          {
-            territory_id: null,
-            status: 'template',
-          },
-          ['incentive-campaign.list'],
-        ),
-      )
+      .send(callFactory('campaign:templates', {}, ['incentive-campaign.templates']))
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .expect((response: supertest.Response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('result');
         expect(response.body.result).to.be.an('array');
-        expect(response.body.result.length).to.eq(1);
-        expect(response.body.result[0].name).to.eq(generalName);
-      });
-
-    await request
-      .post('/')
-      .send(
-        callFactory(
-          'campaign:list',
-          {
-            territory_id: territory,
-            status: 'template',
-          },
-          ['incentive-campaign.list'],
-        ),
-      )
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .expect((response: supertest.Response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('result');
-        expect(response.body.result).to.be.an('array');
-        expect(response.body.result.length).to.eq(1);
-        expect(response.body.result[0].name).to.eq(fakeCampaign.name);
+        expect(response.body.result.filter((c) => c._id === idTwo).length).to.eq(1);
       });
   });
 });

@@ -8,17 +8,4 @@ import { FormGroup } from '@angular/forms';
 })
 export class FormBankComponent {
   @Input() parentForm: FormGroup;
-
-  public get bank_nameControl() {
-    return this.parentForm.controls.bank_name;
-  }
-  public get client_nameControl() {
-    return this.parentForm.controls.client_name;
-  }
-  public get ibanControl() {
-    return this.parentForm.controls.iban;
-  }
-  public get bicControl() {
-    return this.parentForm.controls.bic;
-  }
 }

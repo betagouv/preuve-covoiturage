@@ -11,7 +11,7 @@ import { TERRITORY_STATS } from '~/modules/stat/config/stat';
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
-import { StatFilteredService } from '../../../../services/stat-filtered.service';
+import { StatFilteredStoreService } from '../../../../services/stat-filtered-store.service';
 
 @Component({
   selector: 'app-stat-territory-view',
@@ -35,7 +35,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
 
   statViewConfig = TERRITORY_STATS;
 
-  constructor(public statService: StatFilteredService, public filterService: FilterService) {
+  constructor(public statService: StatFilteredStoreService, public filterService: FilterService) {
     super();
   }
 
@@ -58,18 +58,18 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
   }
 
   get loading(): boolean {
-    return this.statService.loading;
+    return this.statService.isLoading;
   }
 
   get loaded(): boolean {
-    return this.statService.loaded;
+    return !!this.statService.stat;
   }
 
   private loadStat(filter: FilterUxInterface | {} = {}): void {
-    if (this.statService.loading) {
+    if (this.statService.isLoading) {
       return;
     }
-    this.statService.loadOne(filter).subscribe();
+    this.statService.load(filter);
   }
 
   /**

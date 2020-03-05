@@ -32,6 +32,7 @@ export function cypress_campaignCreate(e2e = false) {
 
   it('clicks button to create new campaign', () => {
     cy.get('.CampaignDashboard-trips-header button').click();
+    cy.wait(2000);
   });
 
   // FIRST STEP
@@ -100,7 +101,7 @@ export function cypress_campaignCreate(e2e = false) {
     // press 'par km'
     cy.get(
       '.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-checkbox:first-of-type .mat-checkbox-layout',
-    ).click();
+    ).click({ force: true });
 
     // passenger amount
     cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input').type(

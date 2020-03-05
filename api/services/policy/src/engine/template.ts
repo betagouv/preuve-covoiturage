@@ -35,11 +35,11 @@ export const financialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -56,15 +56,15 @@ export const financialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -81,7 +81,7 @@ export const financialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
     ],
@@ -98,11 +98,11 @@ export const financialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
     ],
@@ -111,7 +111,7 @@ export const financialIncentivePolicy = {
     for_driver: true,
     for_passenger: true,
     for_trip: false,
-    staggered: false,
+    staggered: true,
   },
   start_date: null,
   end_date: null,
@@ -157,11 +157,11 @@ export const nonFinancialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 1,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -178,15 +178,15 @@ export const nonFinancialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 1,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -203,7 +203,7 @@ export const nonFinancialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 50,
       },
     ],
@@ -220,11 +220,11 @@ export const nonFinancialIncentivePolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 50,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
     ],
@@ -233,7 +233,7 @@ export const nonFinancialIncentivePolicy = {
     for_driver: true,
     for_passenger: true,
     for_trip: false,
-    staggered: false,
+    staggered: true,
   },
   start_date: null,
   end_date: null,
@@ -302,11 +302,11 @@ export const weekdayTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -323,15 +323,15 @@ export const weekdayTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -348,7 +348,7 @@ export const weekdayTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
     ],
@@ -365,11 +365,11 @@ export const weekdayTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
     ],
@@ -378,7 +378,7 @@ export const weekdayTrafficLimitPolicy = {
     for_driver: true,
     for_passenger: true,
     for_trip: false,
-    staggered: false,
+    staggered: true,
   },
   start_date: null,
   end_date: null,
@@ -438,7 +438,7 @@ export const pollutionLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'cost_based_amount',
+        slug: 'cost_based_amount_setter',
         parameters: true,
       },
     ],
@@ -455,15 +455,15 @@ export const pollutionLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -480,7 +480,7 @@ export const pollutionLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
     ],
@@ -497,11 +497,11 @@ export const pollutionLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
     ],
@@ -510,7 +510,7 @@ export const pollutionLimitPolicy = {
     for_driver: true,
     for_passenger: true,
     for_trip: false,
-    staggered: false,
+    staggered: true,
   },
   start_date: null,
   end_date: null,
@@ -523,11 +523,11 @@ export const weekendTrafficLimitPolicy = {
   name: 'Limiter les embouteillages du week-end',
   slug: 'limiter_les_embouteillages_du_weekend',
   description:
-    "Campagne d'incitation financière pour limiter les embouteillages les week-end notamment en cas de chassé croisé. ",
+    "Campagne d'incitation financière pour limiter les embouteillages les week-end notamment en cas de chassé croisé.",
   global_rules: [
     {
       slug: 'weekday_filter',
-      parameters: [5, 0],
+      parameters: [6, 0],
     },
     {
       slug: 'rank_whitelist_filter',
@@ -564,15 +564,15 @@ export const weekendTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -589,11 +589,11 @@ export const weekendTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
     ],
@@ -602,7 +602,7 @@ export const weekendTrafficLimitPolicy = {
     for_driver: true,
     for_passenger: false,
     for_trip: false,
-    staggered: false,
+    staggered: true,
   },
   start_date: null,
   end_date: null,
@@ -646,11 +646,11 @@ export const eventTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -667,15 +667,15 @@ export const eventTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 10,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
       {
-        slug: 'per_km',
+        slug: 'per_km_modifier',
         parameters: true,
       },
     ],
@@ -692,7 +692,7 @@ export const eventTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
     ],
@@ -709,11 +709,11 @@ export const eventTrafficLimitPolicy = {
         parameters: true,
       },
       {
-        slug: 'fixed_amount',
+        slug: 'fixed_amount_setter',
         parameters: 500,
       },
       {
-        slug: 'per_passenger',
+        slug: 'per_passenger_modifier',
         parameters: true,
       },
     ],
@@ -722,7 +722,7 @@ export const eventTrafficLimitPolicy = {
     for_driver: true,
     for_passenger: true,
     for_trip: false,
-    staggered: false,
+    staggered: true,
   },
   start_date: null,
   end_date: null,
@@ -760,7 +760,7 @@ export const freeTravelForPassengerPolicy = {
         parameters: true,
       },
       {
-        slug: 'cost_based_amount',
+        slug: 'cost_based_amount_setter',
         parameters: true,
       },
     ],

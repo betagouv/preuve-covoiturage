@@ -1,71 +1,42 @@
-// // tslint:disable max-classes-per-file
-// import chai from 'chai';
-// import * as _ from 'lodash';
-// import { Container, Interfaces, Types } from '@ilos/core';
-// import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
-//
-// import { NormalizationProcessAction } from './NormalizationProcessAction';
-// import { journey } from '../../tests/mocks/journey';
-// import { positionPaths } from '../config/normalization';
-//
-// const { expect } = chai;
-//
-// @Container.provider()
-// class FakeKernelProvider extends Interfaces.KernelInterfaceResolver {
-//   async notify(method: string, params: any[] | { [p: string]: any }, context: Types.ContextType): Promise<void> {
-//     return;
-//   }
-// }
-//
-// @Container.provider()
-// class FakeGeoProvider extends GeoProviderInterfaceResolver {
-//   public async getTown({ lon, lat, insee, literal }: any): Promise<any> {
-//     return {
-//       lon: 5.3682,
-//       lat: 43.2392,
-//       country: 'France',
-//       insee: '13208',
-//       town: 'Marseille',
-//       postcodes: ['13008'],
-//     };
-//   }
-// }
-//
-// //
-// // const mockProcessNormalizationParams = {
-// //   journey,
-// // };
-//
-// const journeyMarseilleLyon = { ...journey };
-//
-// positionPaths.map((path:string) => {
-//   _.set(journeyMarseilleLyon, `${path}lon`, 5.3682);
-//   _.set(journeyMarseilleLyon, `${path}lat`, 43.2392);
-// });
-//
-// const normalizationProcessAction = new NormalizationProcessAction(new FakeKernelProvider(), new FakeGeoProvider());
-//
-// describe('NORMALIZATION ACTION - Process', () => {
-//   it('should find town and complete passenger & driver position', async () => {
-//     const result = await normalizationProcessAction.normalizeGeo({
-//       ...journeyMarseilleLyon,
-//     });
-//
-//     const expectedResult = { ...journeyMarseilleLyon };
-//
-//     positionPaths.map((path:string) => {
-//       _.set(expectedResult,
-//         path,
-//         {
-//         lon: 5.3682,
-//           lat: 43.2392,
-//         country: 'France',
-//         insee: '13208',
-//         town: 'Marseille',
-//         postcodes: ['13008'],
-//       });
-//     });
-//
-//     expect(result).to.eql(expectedResult);
-//   });
-// });
+// tslint:disable max-classes-per-file
+import { describe } from 'mocha';
+import { expect } from 'chai';
+
+import { TerritoryProviderInterfaceResolver } from '../interfaces/TerritoryProviderInterface';
+import { NormalizationTerritoryAction } from './NormalizationTerritoryAction';
+
+class TerritoryProvider extends TerritoryProviderInterfaceResolver {
+  async findByInsee(insee: string): Promise<number> {
+    return insee.length;
+  }
+  async findByPoint({ lon, lat }: { lon: number; lat: number }): Promise<number> {
+    return Math.floor(lon + lat * 1000);
+  }
+}
+
+describe('Territory normalization action', async () => {
+  it('Should', async () => {
+    const provider = new TerritoryProvider();
+    const action = new NormalizationTerritoryAction(provider);
+    const params = {
+      start: {
+        insee: '012345',
+        datetime: new Date('2020-01-01'),
+      },
+      end: {
+        lat: 0.001,
+        lon: 0.002,
+        datetime: new Date('2020-02-02'),
+      },
+    };
+    const result = await action.handle(params);
+
+    expect(result).has.own.property('start', params.start.insee.length, 'have start with territory id matching insee');
+
+    expect(result).has.own.property(
+      'end',
+      Math.floor(params.end.lon + params.end.lat * 1000),
+      'have end with territory id matching lat lng',
+    );
+  });
+});

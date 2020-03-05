@@ -1,4 +1,3 @@
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 import { stubCampaignList } from '../support/stubs/campaign/campaign.list';
@@ -23,6 +22,7 @@ import { stubVisibilityList } from '../support/stubs/territory/territory.listOpe
 import { stubVisibilityUpdate } from '../support/stubs/territory/territory.updateOperator';
 import { DEBUG_CONFIG } from '../config/debug.config';
 import { CI_CONFIG } from '../config/ci.config';
+import { cypress_logout } from '../support/reusables/auth/cypress_logout';
 
 const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
 
@@ -71,5 +71,10 @@ context('OPERATOR', () => {
 
     // run tests
     testOperatorStory(config.operator);
+
+    // LOGOUT
+    describe('Logout', () => {
+      cypress_logout();
+    });
   });
 });

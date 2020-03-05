@@ -82,6 +82,7 @@
     "@pdc/service-carpool": "~0",
     "@pdc/service-company": "~0",
     "@pdc/service-fraud": "~0",
+    "@pdc/service-certificate": "~0",
     "@pdc/service-normalization": "~0",
     "@pdc/service-operator": "~0",
     "@pdc/service-policy": "~0",

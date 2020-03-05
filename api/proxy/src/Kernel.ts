@@ -5,6 +5,7 @@ import { TokenProvider } from '@pdc/provider-token';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
 import { bootstrap as applicationBootstrap } from '@pdc/service-application';
 import { bootstrap as carpoolBootstrap } from '@pdc/service-carpool';
+import { bootstrap as certificateBootstrap } from '@pdc/service-certificate';
 import { bootstrap as companyBootstrap } from '@pdc/service-company';
 import { bootstrap as fraudBootstrap } from '@pdc/service-fraud';
 import { bootstrap as normalizationBootstrap } from '@pdc/service-normalization';
@@ -36,6 +37,7 @@ import { SyncMongoCommand } from './commands/SyncMongoCommand';
     ...territoryBootstrap.serviceProviders,
     ...tripcheckBootstrap.serviceProviders,
     ...userBootstrap.serviceProviders,
+    ...certificateBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
   commands: [

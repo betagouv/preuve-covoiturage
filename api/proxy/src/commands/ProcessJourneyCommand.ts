@@ -11,7 +11,7 @@ import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 @command()
 export class ProcessJourneyCommand implements CommandInterface {
-  protected readonly command = 'normalization:geo';
+  protected readonly command = 'normalization:process';
 
   static readonly signature: string = 'process:journey';
   static readonly description: string = 'Push a journey from acquisition to the pipeline';
