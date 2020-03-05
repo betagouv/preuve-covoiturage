@@ -142,9 +142,12 @@ export class PolicyProcessCommand implements CommandInterface {
     const client = await connection.getClient().connect();
     const query = `
       SELECT
-        distinct trip_id
+        trip_id,
+        min(datetime) as min_date
       FROM ${this.table}
         ${whereClause}
+        GROUP BY trip_id
+        ORDER BY min_date ASC
         ${limit ? `LIMIT ${limit}` : ''}
     `;
 
