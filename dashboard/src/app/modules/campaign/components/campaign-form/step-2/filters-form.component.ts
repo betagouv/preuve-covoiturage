@@ -77,7 +77,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
   }
 
   get forPassengerControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_passenger');
+    return this.campaignForm.get('ui_status').get('for_passenger') as FormControl;
   }
 
   get InseeForm(): FormGroup {
