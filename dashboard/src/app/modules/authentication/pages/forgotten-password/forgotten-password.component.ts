@@ -25,13 +25,13 @@ export class ForgottenPasswordComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.forgottenPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
   }
 
-  sendEmail() {
+  sendEmail(): void {
     this.authService
       .sendForgottenPasswordEmail(this.forgottenPasswordForm.controls.email.value)
       .pipe(

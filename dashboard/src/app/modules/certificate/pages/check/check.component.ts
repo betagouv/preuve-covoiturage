@@ -29,7 +29,7 @@ export class CheckComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.activatedRoute.params
       .pipe(
         takeUntil(this.destroy$),

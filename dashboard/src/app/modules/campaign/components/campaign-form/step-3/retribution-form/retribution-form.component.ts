@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
@@ -22,7 +22,7 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.setValidators();
     this.initOnChange();
   }
@@ -31,11 +31,11 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
     return this.campaignForm.get('ui_status') as FormControl;
   }
 
-  get campaignFormControls() {
+  get campaignFormControls(): { [key: string]: AbstractControl } {
     return this.campaignForm.controls;
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.formGroup.controls;
   }
 
@@ -55,7 +55,7 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
     return this.campaignForm.controls.unit.value === IncentiveUnitEnum.EUR;
   }
 
-  private initOnChange() {
+  private initOnChange(): void {
     this.uiStatusControl.valueChanges.subscribe(() => {
       this.setValidators();
     });
@@ -64,7 +64,7 @@ export class RetributionFormComponent extends DestroyObservable implements OnIni
     });
   }
 
-  private setValidators() {
+  private setValidators(): void {
     const validators = [Validators.required, Validators.min(0)];
     const uiStatus = this.uiStatusControl.value;
     const free = this.freeControl.value;

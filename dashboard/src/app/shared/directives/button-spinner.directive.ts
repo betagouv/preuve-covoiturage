@@ -27,7 +27,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     private componentFactoryResolver: ComponentFactoryResolver,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     // Record the button's original text
     this.originalInnerHTML = this.el.nativeElement.querySelector('.mat-button-wrapper').innerHTML;
 
@@ -59,7 +59,7 @@ export class ButtonSpinnerDirective implements OnInit, OnChanges {
     this.renderer.setStyle(span, 'justify-content', 'center');
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (typeof changes.showSpinner === 'object' && !changes.showSpinner.isFirstChange()) {
       if (changes.showSpinner.currentValue === true) {
         // Record the button's original text

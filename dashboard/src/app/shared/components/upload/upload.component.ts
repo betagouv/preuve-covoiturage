@@ -20,7 +20,7 @@ export class UploadComponent implements ControlValueAccessor {
   onChange: Function;
   public file: File | null = null;
 
-  @HostListener('change', ['$event.target.files']) emitFiles(event: FileList) {
+  @HostListener('change', ['$event.target.files']) emitFiles(event: FileList): void {
     const file = event && event.item(0);
     this.onChange(file);
     this.file = file;
@@ -28,19 +28,19 @@ export class UploadComponent implements ControlValueAccessor {
 
   constructor(private host: ElementRef<HTMLInputElement>) {}
 
-  writeValue(value: null) {
+  writeValue(value: null): void {
     // clear file input
     this.host.nativeElement.value = '';
     this.file = null;
   }
 
-  registerOnChange(fn: Function) {
+  registerOnChange(fn: Function): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: Function) {}
+  registerOnTouched(fn: Function): void {}
 
-  onChooseFile() {
+  onChooseFile(): void {
     this.inputFile.nativeElement.click();
   }
 }

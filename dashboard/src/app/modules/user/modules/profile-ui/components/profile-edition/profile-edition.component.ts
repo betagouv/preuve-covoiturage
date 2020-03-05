@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
@@ -31,12 +31,12 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initProfilForm();
     this.initProfilFormValue();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.profileForm.controls;
   }
 

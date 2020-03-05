@@ -115,12 +115,12 @@ export class CampaignFormater {
 
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_TRIP) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
-        campaignUx.restrictions.push(<RestrictionUxInterface>{
+        campaignUx.restrictions.push({
           is_driver: parameters.target === RestrictionTargetsEnum.DRIVER,
           quantity: parameters.amount,
           period: parameters.period,
           unit: RestrictionUnitEnum.TRIP,
-        });
+        } as RestrictionUxInterface);
       }
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];

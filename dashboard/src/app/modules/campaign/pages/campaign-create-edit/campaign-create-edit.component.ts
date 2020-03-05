@@ -20,7 +20,7 @@ export class CampaignCreateEditComponent extends DestroyObservable implements On
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     merge(this._route.paramMap, this._route.queryParamMap)
       .pipe(takeUntil(this.destroy$))
       .subscribe((params: ParamMap) => {

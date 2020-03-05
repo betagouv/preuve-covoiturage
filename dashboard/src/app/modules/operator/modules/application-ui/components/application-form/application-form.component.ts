@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
@@ -32,10 +32,10 @@ export class ApplicationFormComponent extends DestroyObservable implements OnIni
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initForm();
   }
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.applicationForm.controls;
   }
 
@@ -64,7 +64,7 @@ export class ApplicationFormComponent extends DestroyObservable implements OnIni
       );
   }
 
-  private openModal(token: { name: string; token: string }) {
+  private openModal(token: { name: string; token: string }): void {
     const dialogRef = this.dialog.open(ApplicationModalComponent, {
       width: '600px',
       data: token,

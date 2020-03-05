@@ -23,9 +23,9 @@ export class TerritoryListComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  onEdit(territory: Territory) {
+  onEdit(territory: Territory): void {
     this.edit.emit(territory);
   }
 }

@@ -14,16 +14,16 @@ export class TerritoryFilterComponent implements OnInit {
 
   constructor(private _fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initSearchForm();
   }
 
-  filter() {
+  filter(): void {
     const query = this.searchFilters ? this.searchFilters.controls.query.value.toLowerCase() : '';
     this.filterLiteralChange.emit(query);
   }
 
-  private initSearchForm() {
+  private initSearchForm(): void {
     this.searchFilters = this._fb.group({
       query: [''],
     });

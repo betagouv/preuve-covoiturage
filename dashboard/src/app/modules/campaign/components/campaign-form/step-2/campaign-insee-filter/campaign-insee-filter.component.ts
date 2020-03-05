@@ -17,7 +17,7 @@ export class CampaignInseeFilterComponent implements OnInit {
 
   constructor(private _formBuilder: FormBuilder) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   startTerritories(index: number): InseeAndTerritoryInterface[] {
     return this.listFormArray.controls[index].get('start').value;
@@ -27,29 +27,29 @@ export class CampaignInseeFilterComponent implements OnInit {
     return this.listFormArray.controls[index].get('end').value;
   }
 
-  get listFormArray() {
+  get listFormArray(): FormArray {
     return this.inseeForm.get(this.filterType) as FormArray;
   }
 
-  isEditing(index: number) {
+  isEditing(index: number): boolean {
     return this.editingIndex === index;
   }
 
-  addStartEnd(idx: number) {
+  addStartEnd(idx: number): void {
     this.editingIndex = -1;
   }
 
-  newStartEnd() {
+  newStartEnd(): void {
     this.listFormArray.push(this.generateStartEndFormGroup());
     this.editingIndex = this.listFormArray.controls.length - 1;
   }
 
-  removeStartEnd(idx) {
+  removeStartEnd(idx): void {
     this.listFormArray.removeAt(idx);
     if (this.editingIndex !== -1) this.editingIndex -= 1;
   }
 
-  cancel(idx) {
+  cancel(idx): void {
     this.listFormArray.removeAt(idx);
     this.editingIndex = -1;
   }

@@ -38,12 +38,12 @@ export class CampaignMainMetricsComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initPeriod();
     this.initBudget();
   }
 
-  private initPeriod() {
+  private initPeriod(): void {
     const start = moment(this.campaign.start);
     const end = moment(this.campaign.end);
     const today = moment();
@@ -64,7 +64,7 @@ export class CampaignMainMetricsComponent implements OnInit {
     }
   }
 
-  private initBudget() {
+  private initBudget(): void {
     if (!this.campaign.amount_spent) {
       this.budgetSpent = 0;
       this.budgetRemaining = this.campaign.max_amount;

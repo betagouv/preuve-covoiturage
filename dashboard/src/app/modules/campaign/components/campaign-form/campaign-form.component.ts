@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
@@ -62,7 +62,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initForms();
     if (this.campaignId) {
       this.loadCampaign(this.campaignId);
@@ -83,11 +83,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     this.initCampaigns();
   }
 
-  public get controls() {
+  public get controls(): { [key: string]: AbstractControl } {
     return this.campaignFormGroup.controls;
   }
 
-  get showFirstPageNextStep() {
+  get showFirstPageNextStep(): void {
     return this.campaignFormGroup.controls.parent_id.value || this.campaignId;
   }
 
@@ -133,7 +133,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     );
   }
 
-  saveCampaign() {
+  saveCampaign(): void {
     const formValues = this.campaignFormGroup.getRawValue();
 
     // get territory of user
@@ -149,7 +149,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private patchCampaign(params: CampaignInterface) {
+  private patchCampaign(params: CampaignInterface): void {
     this._campaignStoreService
       .patchSelected(params)
       .pipe(takeUntil(this.destroy$))
@@ -169,7 +169,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private createCampaign(formValues: CampaignUx) {
+  private createCampaign(formValues: CampaignUx): void {
     this._campaignStoreService
       .create(formValues)
       .pipe(takeUntil(this.destroy$))
@@ -187,7 +187,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private initForms() {
+  private initForms(): void {
     this.campaignFormGroup = this._formBuilder.group({
       name: [null, Validators.required],
       description: [null],
@@ -223,11 +223,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     });
   }
 
-  public initCampaign() {
+  public initCampaign(): void {
     this.campaignFormGroup.setValue(new CampaignUx());
   }
 
-  public setTemplate(templateId: number | null = null) {
+  public setTemplate(templateId: number | null = null): void {
     let campaign;
 
     if (templateId) {
@@ -259,7 +259,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private setCampaignToForm(campaign: CampaignUx, isTemplate = false) {
+  private setCampaignToForm(campaign: CampaignUx, isTemplate = false): void {
     // patch main
     this.campaignFormGroup.patchValue({
       parent_id: campaign.parent_id,
@@ -390,7 +390,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private loadCampaign(campaignId: number, isDuplicate = false) {
+  private loadCampaign(campaignId: number, isDuplicate = false): void {
     this._campaignStoreService
       .getById(campaignId)
       .pipe(takeUntil(this.destroy$))
@@ -409,7 +409,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private initCampaigns() {
+  private initCampaigns(): void {
     this._campaignStoreService.loadCampaigns();
 
     // if (!this._campaignStoreService.loaded) {

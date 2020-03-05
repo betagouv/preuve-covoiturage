@@ -14,5 +14,5 @@ export class CampaignInseeFilterStartEndViewComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

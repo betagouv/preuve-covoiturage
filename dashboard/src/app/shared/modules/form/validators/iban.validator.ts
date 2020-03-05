@@ -1,6 +1,6 @@
 import { FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-function validIban(value: string) {
+function validIban(value: string): boolean {
   const rearrange = value.substring(4, value.length) + value.substring(0, 4);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const alphaMap = {};
@@ -19,7 +19,7 @@ function validIban(value: string) {
   return res;
 }
 
-function modulo(aNumStr, aDiv) {
+function modulo(aNumStr, aDiv): number {
   let tmp = '';
   let r;
 

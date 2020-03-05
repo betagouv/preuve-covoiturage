@@ -20,7 +20,7 @@ export class StatFormatService {
   }
 
   private calculateStats(result: StatInterface[]): CalculatedStat {
-    const fillDays = (acc, target, date, data = {}) => {
+    const fillDays = (acc, target, date, data = {}): void => {
       Object.keys(data).forEach((key) => {
         acc[target][key] += data[key];
       });
@@ -29,7 +29,7 @@ export class StatFormatService {
         ...data,
       });
     };
-    const fillMonth = (acc, target, day, data = {}) => {
+    const fillMonth = (acc, target, day, data = {}): void => {
       const monthIndex = acc[target].months.findIndex(
         (month) =>
           month.date ===

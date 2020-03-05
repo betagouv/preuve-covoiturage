@@ -44,7 +44,7 @@ export class JsonRpcCrud<
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  patch(id: number, patch: IPatchT) {
+  patch(id: number, patch: IPatchT): Observable<EntityT> {
     const patchParams: PatchParams<IPatchT> = {
       patch,
       _id: id,

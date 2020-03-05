@@ -112,7 +112,7 @@ export class User extends BaseUser
       if (formVal.operator_id) this.operator_id = formVal.operator_id;
       else delete this.operator_id;
 
-      this.role = <UserRoleEnum>`${userGroupRole[formVal.group]}.${formVal.role}`; // consolidate final role
+      this.role = `${userGroupRole[formVal.group]}.${formVal.role}` as UserRoleEnum; // consolidate final role
     }
 
     delete formVal.group;

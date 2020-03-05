@@ -26,7 +26,7 @@ export class PublicStatComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadStat();
     this.publicStatService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       const statNumbersArray = [];

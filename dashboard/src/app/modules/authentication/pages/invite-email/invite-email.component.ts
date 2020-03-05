@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
@@ -33,7 +33,7 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // this.confirmEmail();
     this.newPasswordForm = this.fb.group(
       {
@@ -53,10 +53,10 @@ export class InviteEmailComponent extends DestroyObservable implements OnInit {
     this.email = this.activatedRoute.snapshot.params['email'];
   }
 
-  get password() {
+  get password(): AbstractControl {
     return this.newPasswordForm.get('new_password');
   }
-  get passwordVerification() {
+  get passwordVerification(): AbstractControl {
     return this.newPasswordForm.get('password_verification');
   }
 

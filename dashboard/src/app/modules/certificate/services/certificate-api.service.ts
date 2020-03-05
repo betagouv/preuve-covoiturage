@@ -27,7 +27,7 @@ export class CertificateApiService extends JsonRPC {
   //   throw new Error('Not implemented');
   // }
 
-  downloadPrint(data: DownloadParamsInterface) {
+  downloadPrint(data: DownloadParamsInterface): void {
     // TODO use /certificates/download/:uuid
     // const startVar = data.start_at ? `&start_at=${encodeURIComponent(data.start_at.toISOString())}` : '';
     // const endVar = data.end_at ? `&end_at=${encodeURIComponent(data.end_at.toISOString())}` : '';

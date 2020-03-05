@@ -33,7 +33,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadVisibility();
     this.initSearchForm();
     this.initVisibilityForm();
@@ -104,7 +104,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     );
   }
 
-  public checkAll($event: any) {
+  public checkAll($event: any): void {
     if ($event.checked) {
       const formValues = Array(this.territories.length).fill(true);
       this.territoriesFormArray.setValue(formValues);
@@ -146,7 +146,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     });
   }
 
-  private loadVisibility() {
+  private loadVisibility(): void {
     this._operatorVisilibityService.loadOne().subscribe();
   }
 }

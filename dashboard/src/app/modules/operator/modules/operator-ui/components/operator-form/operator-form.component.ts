@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
@@ -49,7 +49,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
       this.initOperatorForm();
@@ -59,7 +59,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     });
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.operatorForm.controls;
   }
 
@@ -118,7 +118,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
   }
 
   // todo: ugly ...
-  private setOperatorFormValue(operator: Operator) {
+  private setOperatorFormValue(operator: Operator): void {
     this.isCreating = !this.operator._id;
     // base values for form
     this.editedOperatorId = operator ? operator._id : null;
@@ -129,7 +129,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
     this.operatorForm.setValue(operatorConstruct);
   }
 
-  private updateValidation() {
+  private updateValidation(): void {
     if (this.operatorForm && this.fullFormMode) {
       this.operatorForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
       this.operatorForm.controls['legal_name'].setValidators(this.fullFormMode ? Validators.required : null);

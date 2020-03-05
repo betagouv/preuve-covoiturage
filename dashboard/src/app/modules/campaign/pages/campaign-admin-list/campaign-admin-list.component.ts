@@ -46,11 +46,11 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initSearchForm();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.loadCampaigns();
   }
 
@@ -98,13 +98,13 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     return this.campaignsToShow && this.campaignsToShow.length !== 0;
   }
 
-  get noCampaignMessage() {
+  get noCampaignMessage(): string {
     return this.searchFilters && this.searchFilters.controls.query.value
       ? 'Pas de résultats avec vos critères de recherche'
       : `Aucune campagne ${this.getFrenchStatus(this.selectedStatus).toLowerCase()}.`;
   }
 
-  private initSearchForm() {
+  private initSearchForm(): void {
     this.searchFilters = this.fb.group({
       query: [''],
     });

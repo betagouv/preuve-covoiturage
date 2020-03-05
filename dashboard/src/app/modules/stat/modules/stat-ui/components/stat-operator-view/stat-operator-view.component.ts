@@ -37,7 +37,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;

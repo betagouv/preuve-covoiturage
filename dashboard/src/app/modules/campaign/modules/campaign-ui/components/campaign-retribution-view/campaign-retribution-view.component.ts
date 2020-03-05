@@ -15,9 +15,9 @@ export class CampaignRetributionViewComponent implements OnInit {
   @Input() campaign: CampaignUx;
   constructor(private _authenticationService: AuthenticationService, private _campaignUiService: CampaignUiService) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  get canEdit() {
+  get canEdit(): boolean {
     return (
       this._authenticationService.hasRole(UserRoleEnum.TERRITORY_ADMIN) &&
       this.campaign.status === CampaignStatusEnum.DRAFT

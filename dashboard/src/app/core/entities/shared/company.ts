@@ -23,7 +23,7 @@ export class Company {
     if (obj && obj.vat_intra) this.vat_intra = obj.vat_intra;
   }
 
-  toFormValues() {
+  toFormValues(): any {
     const formVal = {
       naf_entreprise: '',
       nature_juridique: '',

@@ -39,7 +39,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;

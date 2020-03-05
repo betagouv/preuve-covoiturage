@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, AbstractControl, FormControl } from '@angular/forms';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { WeekDay } from '@angular/common';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
@@ -56,15 +56,15 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.filterForm.controls;
   }
 
-  get startControl() {
-    return this.filterForm.get('date').get('start');
+  get startControl(): FormControl {
+    return this.filterForm.get('date').get('start') as FormControl;
   }
-  get endControl() {
-    return this.filterForm.get('date').get('end');
+  get endControl(): FormControl {
+    return this.filterForm.get('date').get('end') as FormControl;
   }
 
   public get countFilters(): number {
@@ -91,7 +91,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     return this.authService.hasAnyGroup([UserGroupEnum.REGISTRY, UserGroupEnum.TERRITORY]);
   }
 
-  private initForm() {
+  private initForm(): void {
     this.filterForm = this.fb.group(
       {
         campaignIds: [[]],
@@ -132,7 +132,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
   // delegate method
   dayLabel = dayLabelCapitalized;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initForm();
 
     // reset filter on page trip page load
@@ -166,7 +166,7 @@ export class FilterComponent extends DestroyObservable implements OnInit {
     this.filterNumber.emit(0);
   }
 
-  public getStatusFrench(status: TripStatusEnum) {
+  public getStatusFrench(status: TripStatusEnum): string {
     return TRIP_STATUS_FR[status];
   }
 

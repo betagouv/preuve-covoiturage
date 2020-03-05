@@ -14,5 +14,5 @@ export class StatChartContainerComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

@@ -35,7 +35,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
     this._route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
       const notFound = !params.has('campaignId');
@@ -53,11 +53,11 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
       .subscribe(() => (this.userIsDemo = this._authService.hasRole(UserRoleEnum.TERRITORY_DEMO)));
   }
 
-  get isLoading() {
+  get isLoading(): boolean {
     return !this.territory || !this.campaignUx;
   }
 
-  private loadCampaign(campaignId: number) {
+  private loadCampaign(campaignId: number): void {
     console.log('> loadCampaign');
     this._campaignStoreService
       .getById(campaignId)
@@ -120,7 +120,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
       });
   }
 
-  private loadTerritory() {
+  private loadTerritory(): void {
     this._commonDataService.currentTerritory$
       .pipe(takeUntil(this.destroy$))
       .subscribe((territory) => (this.territory = territory));

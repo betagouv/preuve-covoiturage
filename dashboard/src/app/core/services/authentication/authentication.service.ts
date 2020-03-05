@@ -133,7 +133,7 @@ export class AuthenticationService {
     );
   }
 
-  public logout(message = 'Vous avez bien été déconnecté') {
+  public logout(message = 'Vous avez bien été déconnecté'): void {
     this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
       this._user$.next(null);
       this.router.navigate(['/login']).then(() => {
@@ -249,7 +249,7 @@ export class AuthenticationService {
     );
   }
 
-  private onLoggin(user: User) {
+  private onLoggin(user: User): void {
     // const redirectToStats = !this.user && user;
     this._hasChecked = true;
 

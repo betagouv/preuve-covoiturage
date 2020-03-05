@@ -1,7 +1,7 @@
 import { filter, takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
@@ -36,7 +36,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     super();
   }
 
-  updateFormValues(user: User) {
+  updateFormValues(user: User): void {
     this._emailHasChanged = false;
     this._baseEmail = user.email;
     this.userGroup = user.group;
@@ -47,17 +47,17 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['isCreating'] || changes['groupEditable']) {
       this.updateValidators();
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initForm();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.createEditUserForm.controls;
   }
 
@@ -97,7 +97,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     }
   }
 
-  updateValidators(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable) {
+  updateValidators(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable): void {
     if (this.createEditUserForm) {
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);

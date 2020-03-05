@@ -17,7 +17,7 @@ export class CampaignCardComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   getTerritoryLabel(territoryId: number): string {
     //    todo:

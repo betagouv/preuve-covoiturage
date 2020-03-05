@@ -28,7 +28,7 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.menu = [
       {
         path: '/trip/stats',
@@ -70,7 +70,7 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
     this.pageHasFilter = !['/trip/import', '/trip/export'].includes(url);
   }
 
-  public setFilterNumber(filterNumber: number) {
+  public setFilterNumber(filterNumber: number): void {
     this.filterNumber = filterNumber === 0 ? '' : filterNumber.toString();
   }
 

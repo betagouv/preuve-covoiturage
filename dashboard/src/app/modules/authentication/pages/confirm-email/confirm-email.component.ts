@@ -26,7 +26,7 @@ export class ConfirmEmailComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.confirmEmail();
   }
 

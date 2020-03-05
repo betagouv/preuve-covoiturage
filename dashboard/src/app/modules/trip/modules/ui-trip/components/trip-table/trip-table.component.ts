@@ -23,12 +23,12 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.commonData.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => (this.operators = operators));
     this.commonData.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns) => (this.campaigns = campaigns));
   }
 
-  getIconStatus(status: TripStatusEnum) {
+  getIconStatus(status: TripStatusEnum): string {
     switch (status) {
       case TripStatusEnum.LOCKED:
         return 'check_circle';
@@ -43,7 +43,7 @@ export class TripTableComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  getIconClass(status: TripStatusEnum) {
+  getIconClass(status: TripStatusEnum): string {
     switch (status) {
       case TripStatusEnum.LOCKED:
         return 'success';

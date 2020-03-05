@@ -36,7 +36,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadOperators();
     this.operatorCtrl.valueChanges
       .pipe(
@@ -75,7 +75,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     this.operatorCtrl.setValue('');
   }
 
-  private loadOperators() {
+  private loadOperators(): void {
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators
         ? operators.map((operator) => ({

@@ -49,7 +49,7 @@ export class StatGraphComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.options = statChartOptions;
   }
 

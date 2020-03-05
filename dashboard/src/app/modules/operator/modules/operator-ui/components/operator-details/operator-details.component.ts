@@ -20,7 +20,7 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['operator']) {
@@ -30,7 +30,7 @@ export class OperatorDetailsComponent extends DestroyObservable implements OnIni
     }
   }
 
-  private setOperatorDetails(operator: Operator) {
+  private setOperatorDetails(operator: Operator): void {
     this.operator = operator.toFormValues();
 
     // base values for form

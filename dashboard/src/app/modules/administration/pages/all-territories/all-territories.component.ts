@@ -19,17 +19,17 @@ export class AllTerritoriesComponent extends DestroyObservable implements OnInit
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  onEdit(territory: Territory) {}
+  onEdit(territory: Territory): void {}
 
-  onDelete(territory: Territory) {}
+  onDelete(territory: Territory): void {}
 
-  closeForm() {
+  closeForm(): void {
     throw new Error('not implemented');
   }
 
-  showEditForm() {
+  showEditForm(): void {
     throw new Error('not implemented');
   }
 }

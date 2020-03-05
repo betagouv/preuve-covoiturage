@@ -41,7 +41,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userStoreService.reset();
     this.userStoreService.filterSubject.next({ limit: 1000 });
 
@@ -65,7 +65,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     merge(
       this.users$,
       this.searchFilters.valueChanges.pipe(
@@ -131,7 +131,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   //   }
   // }
 
-  showEditForm(user: User = null) {
+  showEditForm(user: User = null): void {
     // this.isCreatingUser = false;
     // this.editUserFormVisible = true;
     // this.editedUser = user;
@@ -159,7 +159,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
   }
 
-  closeUserForm() {
+  closeUserForm(): void {
     this.editUserFormVisible = false;
   }
 
@@ -179,11 +179,11 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     return this.authenticationService.user.territory_id;
   }
 
-  private loadUsers() {
+  private loadUsers(): void {
     this.userStoreService.loadList();
   }
 
-  private initSearchForm() {
+  private initSearchForm(): void {
     this.searchFilters = this.fb.group({
       query: [''],
     });
@@ -202,7 +202,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       });
   }
 
-  public filterUsers() {
+  public filterUsers(): void {
     const query = this.searchFilters ? this.searchFilters.controls.query.value.toString().toLowerCase() : '';
 
     this.usersToShow = this.users.filter((u) =>

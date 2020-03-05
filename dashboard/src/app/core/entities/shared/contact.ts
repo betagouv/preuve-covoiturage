@@ -13,7 +13,7 @@ export class Contact {
     if (obj && obj.phone) this.phone = obj.phone;
   }
 
-  toFormValues() {
+  toFormValues(): any {
     return {
       firstname: '',
       lastname: '',

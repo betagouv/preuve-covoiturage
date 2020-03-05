@@ -25,7 +25,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.townForm.valueChanges
       .pipe(
         tap((towns: TownInterface[]) => {

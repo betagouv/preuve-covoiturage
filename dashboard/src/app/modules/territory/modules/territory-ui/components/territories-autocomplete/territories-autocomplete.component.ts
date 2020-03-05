@@ -29,7 +29,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initTerritories();
     this.territoryCtrl.valueChanges
       .pipe(
@@ -48,7 +48,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     return this.territories.find((territory) => territory._id === territoryId).shortname;
   }
 
-  private initTerritories() {
+  private initTerritories(): void {
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories: Territory[]) => {
       this.territories = territories
         ? territories.map((territory: Territory) => ({

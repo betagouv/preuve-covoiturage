@@ -18,15 +18,15 @@ export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetLis
 
   protected defaultListParam: any = {};
 
-  paramGetList(params?: IGetListT) {
+  paramGetList(params?: IGetListT): JsonRPCParam<any> {
     return new JsonRPCParam(`${this.method}:${GetListActions.LIST}`, { ...this.defaultListParam, ...params });
   }
 
-  paramGet(params: IGetT) {
+  paramGet(params: IGetT): JsonRPCParam<any> {
     return new JsonRPCParam(`${this.method}:${GetListActions.FIND}`, params);
   }
 
-  paramGetById(id: number) {
+  paramGetById(id: number): JsonRPCParam<any> {
     return this.paramGet({ _id: id } as any);
   }
 

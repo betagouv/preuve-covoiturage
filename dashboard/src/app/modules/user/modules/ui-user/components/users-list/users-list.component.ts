@@ -35,9 +35,9 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  ngAfterViewInit() {}
+  ngAfterViewInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('userGroup' in changes) {
@@ -65,7 +65,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
     return this.userGroup === UserGroupEnum.TERRITORY;
   }
 
-  onDelete(user: User) {
+  onDelete(user: User): void {
     this.dialogService
       .confirm({
         title: 'Voulez-vous supprimer cet utilisateur ?',
@@ -126,7 +126,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
     return foundTerritory.name;
   }
 
-  public onSendInvitation(user: User) {
+  public onSendInvitation(user: User): void {
     this.authService
       .sendInviteEmail(user)
       .pipe(takeUntil(this.destroy$))
@@ -135,7 +135,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
       });
   }
 
-  public onEdit(user: User) {
+  public onEdit(user: User): void {
     this.editUser.emit(user);
   }
 }

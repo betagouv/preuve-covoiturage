@@ -51,7 +51,7 @@ class Territory extends BaseModel implements IModel, IFormModel, IMapModel<Terri
     }
   }
 
-  toFormValues(fullformMode = true) {
+  toFormValues(fullformMode = true): any {
     // TODO: keep it for later
     // const cgu = new CGU(this.cgu);
     // const formVal = cgu.toFormValues();

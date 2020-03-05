@@ -28,7 +28,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initCampaigns();
     this.campaignCtrl.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -64,7 +64,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
     this.campaignCtrl.setValue(null);
   }
 
-  private initCampaigns() {
+  private initCampaigns(): void {
     this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.campaigns = campaigns
         ? campaigns

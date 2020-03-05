@@ -56,7 +56,7 @@ export class CampaignStoreService extends CrudStore<
     return this.rpcCrud.launch(id).pipe(tap(this.loadList));
   }
 
-  loadCampaigns() {
+  loadCampaigns(): void {
     this._loadCount += 1;
     this.campaignApi
       .loadTemplates()
@@ -67,12 +67,12 @@ export class CampaignStoreService extends CrudStore<
       .subscribe((campaigns) => this.templatesSubject.next(campaigns));
   }
 
-  dismissAllRpcActions() {
+  dismissAllRpcActions(): void {
     super.dismissAllRpcActions();
     this.dismissTempatesListSubject.next();
   }
 
-  reset() {
+  reset(): void {
     super.reset();
     this.templatesSubject.next([]);
   }
