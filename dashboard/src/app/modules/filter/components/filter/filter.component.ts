@@ -12,7 +12,7 @@ import { TRIP_STATUS, TRIP_STATUS_FR, TripStatusEnum } from '~/core/enums/trip/t
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
-import { DAYS, dayLabelCapitalized } from '~/core/const/days.const';
+import { dayLabelCapitalized } from '~/core/const/days.const';
 import { dateRangeValidator } from '~/modules/filter/validators/date-range.validator';
 
 @Component({

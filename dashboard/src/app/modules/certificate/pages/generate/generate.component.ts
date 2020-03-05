@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil, mergeMap, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { FormGroup, FormBuilder, FormControl, Validators, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { phoneIdentityValidator } from '../../validators/identity-phone.validator';
 

@@ -5,12 +5,10 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { REGEXP } from '~/core/const/validators.const';
-import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserApiService } from '~/modules/user/services/user-api.service';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-profile-edition',

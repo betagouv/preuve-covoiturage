@@ -79,8 +79,4 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     this.townInput.nativeElement.value = null;
     this.townCtrl.setValue('');
   }
-
-  private filterTowns(): void {
-    const selectedTowns = this.townForm.value;
-  }
 }

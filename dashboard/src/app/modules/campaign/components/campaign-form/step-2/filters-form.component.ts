@@ -1,16 +1,14 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
-import { MatPaginator, MatTabChangeEvent, MatTabGroup, MatTabLabel } from '@angular/material';
-import { WeekDay } from '@angular/common';
-import * as moment from 'moment';
+import { MatTabGroup } from '@angular/material';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
-import { DAYS, dayLabelCapitalized } from '~/core/const/days.const';
+import { dayLabelCapitalized } from '~/core/const/days.const';
 import { tripTabValidator } from '~/modules/campaign/validators/trip-tab.validator';
 
 @Component({

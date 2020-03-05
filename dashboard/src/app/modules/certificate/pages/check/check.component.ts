@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil, mergeMap, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';

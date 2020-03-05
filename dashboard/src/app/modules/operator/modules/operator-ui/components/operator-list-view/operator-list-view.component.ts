@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
-import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of } from 'rxjs';
+import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material';
 
 import { Operator } from '~/core/entities/operator/operator';

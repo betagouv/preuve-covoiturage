@@ -1,4 +1,4 @@
-import { USER_GROUPS, UserGroupEnum } from '~/core/enums/user/user-group.enum';
+import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 export enum UserManyRoleEnum {
   USER = 'user',

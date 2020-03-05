@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/fo
 
 import { INCENTIVE_UNITS_FR, IncentiveUnitEnum } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interface';
 
 @Component({
   selector: 'app-retribution-form',

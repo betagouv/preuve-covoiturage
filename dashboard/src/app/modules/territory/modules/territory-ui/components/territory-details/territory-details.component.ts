@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 
 import { Territory } from '~/core/entities/territory/territory';
-import { Operator } from '~/core/entities/operator/operator';
 
 @Component({
   selector: 'app-territory-details',

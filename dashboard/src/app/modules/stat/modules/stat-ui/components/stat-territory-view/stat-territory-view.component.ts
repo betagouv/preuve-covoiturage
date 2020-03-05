@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { distinctUntilChanged, take, takeUntil } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';

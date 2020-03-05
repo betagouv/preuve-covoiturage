@@ -1,6 +1,3 @@
-// tslint:disable:variable-name
-import { BaseModel } from '~/core/entities/BaseModel';
-
 import { SingleResultInterface as LightTripInterface } from '~/core/entities/api/shared/trip/list.contract';
 
 import { TripStatusEnum } from '../../enums/trip/trip-status.enum';

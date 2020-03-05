@@ -7,7 +7,6 @@ import { map } from 'rxjs/operators';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
 import { ExportFilterInterface } from '~/core/interfaces/filter/exportFilterInterface';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
-import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { LightTrip } from '~/core/entities/trip/trip';
 // eslint-disable-next-line
 import { TripSearchInterfaceWithPagination } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';

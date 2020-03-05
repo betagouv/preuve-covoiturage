@@ -1,6 +1,3 @@
-/* tslint:disable:variable-name*/
-import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
-
 export class Company {
   naf_entreprise: string;
   nature_juridique: string;

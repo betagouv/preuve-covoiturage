@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { filter, takeUntil, tap, mergeMap, map } from 'rxjs/operators';
+import { filter, takeUntil, tap, mergeMap } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { of } from 'rxjs';

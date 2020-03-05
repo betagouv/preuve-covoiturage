@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { StatNumber } from '~/core/entities/stat/statNumber';
 import { statNumbers } from '~/modules/stat/config/statNumbers';
 import { URLS } from '~/core/const/main.const';
-import { PUBLIC_STATS, TERRITORY_STATS } from '~/modules/stat/config/stat';
+import { PUBLIC_STATS } from '~/modules/stat/config/stat';
 import { StatPublicService } from '~/modules/stat/services/stat-public.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 
