@@ -23,7 +23,7 @@ module.exports = {
     // '@typescript-eslint/no-use-before-define': 'off',
     // '@typescript-eslint/no-inferrable-types': 'off',
     // '@typescript-eslint/interface-name-prefix': 'off',
-    'prefer-const': 'off',
+    // 'prefer-const': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
     'prettier/prettier': 'error',
     'max-len': ['warn', { code: 120 }],

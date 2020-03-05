@@ -21,8 +21,6 @@ export class FilterService {
   public setFilter(params: FilterUxInterface | {} = {}): void {
     const filterUx = _.cloneDeep(params);
 
-    let filter;
-
     // if empty don't set filter
     if (!('campaignIds' in filterUx)) {
       return;
@@ -33,7 +31,7 @@ export class FilterService {
       insees = filterUx.insees.map((town: InseeAndTerritoryInterface) => town.insees).reduce((a, b) => a.concat(b), []);
     }
 
-    filter = new Filter({
+    const filter = new Filter({
       insee: insees,
       date: filterUx.date,
       hour: filterUx.hour as any,
@@ -50,8 +48,8 @@ export class FilterService {
       delete filter.date;
     } else {
       // set start at the beginning of the day and end at the end.
-      if (filter.date.start) filter.date.start = filter.date.start.startOf('day').toDate();
-      if (filter.date.end) filter.date.end = filter.date.end.endOf('day').toDate();
+      if (filter.date.start) filter.date.start = (filter.date.start as any).startOf('day').toDate();
+      if (filter.date.end) filter.date.end = (filter.date.end as any).endOf('day').toDate();
     }
 
     if (filter.hour.start === null && filter.hour.end === null) {
