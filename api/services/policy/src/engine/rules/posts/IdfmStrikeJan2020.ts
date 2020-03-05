@@ -7,9 +7,9 @@ interface IdfmParametersInterface {
   paris_insee_code: string[];
 }
 
-export class IdfmRegular extends PostRule<IdfmParametersInterface> {
-  static readonly slug: string = 'idfm_regular';
-  static readonly description: string = 'Politique régulière IDFM';
+export class IdfmStrikeJan2020 extends PostRule<IdfmParametersInterface> {
+  static readonly slug: string = 'idfm_strike_jan2020';
+  static readonly description: string = 'Politique de grève IDFM janvier 2020';
   static readonly schema: { [k: string]: any } = {
     type: 'object',
     required: ['territory_id', 'paris_insee_code'],
@@ -27,7 +27,7 @@ export class IdfmRegular extends PostRule<IdfmParametersInterface> {
   };
   async apply(ctx: RuleHandlerParamsInterface): Promise<void> {
     if (!ctx.person.is_driver) {
-      throw new NotApplicableTargetException(IdfmRegular.slug);
+      throw new NotApplicableTargetException(IdfmStrikeJan2020.slug);
     }
 
     const eligibleJourneys = ctx.trip.people
@@ -63,24 +63,10 @@ export class IdfmRegular extends PostRule<IdfmParametersInterface> {
       .sort((p1, p2) => (p1.distance > p2.distance ? 1 : p1.distance < p2.distance ? -1 : 0));
 
     if (eligibleJourneys.length === 0) {
-      throw new NotApplicableTargetException(`Campaign "${IdfmRegular.slug}" not Application on target`);
+      throw new NotApplicableTargetException(`Campaign "${IdfmStrikeJan2020.slug}" not Application on target`);
     }
 
-    let result = 0;
-    // 2km to 15km
-    {
-      // const journeys = eligibleJourneys.filter(p => p.distance < 15000);
-      const distance = eligibleJourneys.reduce((acc, j) => acc + Math.min(15000, j.distance) * j.seats, 0);
-      result += Math.max(150, (10 * distance) / 1000);
-    }
-
-    // 15km to 30km
-    {
-      const journeys = eligibleJourneys.filter((p) => p.distance > 15000);
-      const distance = journeys.reduce((acc, j) => acc + (Math.min(30000, j.distance) - 15000) * j.seats, 0);
-      result += (10 * distance) / 1000;
-    }
-
-    ctx.result = result;
+    // give 4€ for any distance
+    ctx.result = 400;
   }
 }

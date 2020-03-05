@@ -1,3 +1,25 @@
+/**
+ * Process policies on a set of trips from the `policy.trips` table
+ *
+ * ! Note: run all these commands in the workspace. prefix with before the policy:process action:
+ *         `docker-compose run api yarn workspace @pdc/service-policy ilos`
+ *
+ * The basic signature is to pass a trip_id as this :
+ * $ ilos policy:process {trip_id}
+ *
+ * Run the command as detached (requires workers to handle the jobs from the Redis queues)
+ * $ ilos policy:process {trip_id} -d
+ *
+ * Leaving the {trip_id} will process all matching trips which can be filtered by :
+ * -a / --after         pass a start date (e.g. '2020-01-01T00:00:00Z')
+ * -u / --until         pass an end date (e.g. '2020-01-01T00:00:00Z')
+ * -t / --territory     pass a territory ID from the `territory.territories` table
+ * -o / --operator      pass a operator ID from the `operator.operators` table
+ * -l / --limit         pass an integer to limit the number of trips to process
+ * -u / --database-uri  pass a PostgreSQL URI to connect. Defaults to APP_POSTGRES_URL env var
+ *                      e.g. postgresql://{username}:{password}@{host}:{port}/{database}
+ */
+
 import { command, CommandInterface, CommandOptionType, KernelInterfaceResolver } from '@ilos/common';
 import { promisify } from 'util';
 import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
@@ -27,6 +49,15 @@ export class PolicyProcessCommand implements CommandInterface {
       description: 'Process all trip id given territory',
     },
     {
+      signature: '-o, --operator <operator>',
+      description: 'Process all trip id given operator',
+    },
+    {
+      signature: '-b, --batch <batch>',
+      description: 'Batch size',
+      default: 10000,
+    },
+    {
       signature: '-l, --limit <limit>',
       description: 'Limit',
     },
@@ -37,35 +68,70 @@ export class PolicyProcessCommand implements CommandInterface {
     },
   ];
 
+  private context = {
+    call: {
+      user: {},
+    },
+    channel: {
+      service: 'campaign',
+      transport: 'cli',
+    },
+  };
+
   constructor(protected kernel: KernelInterfaceResolver) {}
 
-  public async call(id, options): Promise<string> {
-    const { territory, after, until, databaseUri, detach, limit } = options;
+  public async call(id: string, options): Promise<string> {
+    const { territory, operator, after, until, databaseUri, detach, limit, batch } = options;
 
     if (id) {
-      await this.processOne(id, detach);
-      return `Operation done for ${id}`;
+      await this.process(id, detach);
+      return `>> Operation done for ${id}`;
     }
 
     if (!databaseUri) {
-      return 'If id is not provided, you must specify a database uri';
+      return '>> If id is not provided, you must specify a database uri';
     }
 
-    let whereClause = '';
+    // cap the batch size by the limit
+    const batchSize = limit && limit < batch ? limit : batch;
+
+    const text = [];
     const values = [];
 
-    if (territory && after) {
-      whereClause = `WHERE datetime > $1::timestamp AND datetime < $2::timestamp AND (start_territory_id = $3::int OR end_territory_id = $3::int)`;
-      values.push(new Date(after), new Date(until).toISOString(), territory);
-    } else if (territory) {
-      whereClause = 'WHERE start_territory_id = $1::int OR end_territory_id = $1::int';
-      values.push(territory);
-    } else if (after) {
-      const afterDate = new Date(after);
-      console.log(`Processing for trip after ${afterDate.toISOString()}`);
-      whereClause = `WHERE datetime > $1::timestamp`;
-      values.push(afterDate);
+    if (after) {
+      text.push('datetime > $#::timestamp');
+      values.push(new Date(after));
     }
+
+    if (until) {
+      text.push('datetime < $#::timestamp');
+      values.push(new Date(until));
+    }
+
+    if (territory) {
+      text.push('(start_territory_id = $#::int OR end_territory_id = $#::int)');
+      values.push(territory);
+      values.push(territory);
+    }
+
+    if (operator) {
+      text.push('operator_id = $#::int');
+      values.push(operator);
+    }
+
+    // build the WHERE clause and replace $# by their increasing indexes
+    const whereClause =
+      text.length === 0
+        ? ''
+        : 'WHERE ' +
+          text
+            .join(' AND ')
+            .split('$#')
+            .reduce(
+              (acc, current, idx, origin) =>
+                idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`,
+              '',
+            );
 
     const connection = new PostgresConnection({
       connectionString: databaseUri,
@@ -75,57 +141,53 @@ export class PolicyProcessCommand implements CommandInterface {
 
     const client = await connection.getClient().connect();
     const query = `
-    SELECT
-      trip_id
-    FROM ${this.table}
-      ${whereClause}
-      ${limit ? `LIMIT ${limit}` : ''}
+      SELECT
+        trip_id,
+        min(datetime) as min_date
+      FROM ${this.table}
+        ${whereClause}
+        GROUP BY trip_id
+        ORDER BY min_date ASC
+        ${limit ? `LIMIT ${limit}` : ''}
     `;
 
     const cursor = client.query(new Cursor(query, values));
 
     const promisifiedCursorRead = promisify(cursor.read.bind(cursor));
-    const ROW_COUNT = 1000;
     let count = 0;
 
     do {
-      const result = await promisifiedCursorRead(ROW_COUNT);
+      const result = await promisifiedCursorRead(batchSize);
       count = result.length;
-      for (const line of result) {
-        const { trip_id } = line;
-        try {
-          await this.processOne(trip_id, detach);
-          console.log(`Operation done for ${trip_id}`);
-        } catch (e) {
-          console.log(`Operation failed for ${trip_id} (${e.message})`);
-        }
-      }
-    } while (count !== 0);
 
-    await client.release();
+      const ids = [];
+      for (const line of result) {
+        ids.push(line.trip_id);
+      }
+
+      try {
+        if (ids.length) {
+          console.log(`>> process ${ids.length} trips`);
+          await this.process(ids, detach);
+        }
+      } catch (e) {
+        console.log(`>> Operation failed for (${e.message})`);
+      }
+    } while (count > 0);
+
+    client.release();
     await connection.down();
-    return 'Done!';
+
+    return '';
   }
 
-  protected async processOne(tripId: number, detach = false): Promise<void> {
-    const context = {
-      call: {
-        user: {},
-      },
-      channel: {
-        service: 'campaign',
-        transport: 'cli',
-      },
-    };
-
-    const params: any = {
-      trip_id: tripId,
-    };
+  protected async process(ids: string | string[], detach = false): Promise<void> {
+    const trips = Array.isArray(ids) ? ids : [ids];
 
     if (detach) {
-      return this.kernel.notify(this.processAction, params, context);
+      return this.kernel.notify(this.processAction, { trips }, this.context);
     }
 
-    return this.kernel.call(this.processAction, params, context);
+    return this.kernel.call(this.processAction, { trips }, this.context);
   }
 }
