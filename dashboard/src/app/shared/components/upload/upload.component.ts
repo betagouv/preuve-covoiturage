@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
+/*eslint-disable */
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
@@ -14,6 +15,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
 })
 export class UploadComponent implements ControlValueAccessor {
+  /*eslint-enable */
+
   @Input() progress;
   @ViewChild('inputFile', { static: false }) inputFile;
 

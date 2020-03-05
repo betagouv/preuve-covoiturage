@@ -11,6 +11,7 @@ import {
 
 import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
+/*eslint-disable */
 @Component({
   providers: [
     {
@@ -24,6 +25,8 @@ import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format
   styleUrls: ['./range-time-picker.component.scss'],
 })
 export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
+  /*eslint-enable */
+
   timeRangeForm: FormGroup;
 
   @Input() timeRange: IncentiveTimeRuleUxInterface = { start: null, end: null };
