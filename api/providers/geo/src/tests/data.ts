@@ -76,5 +76,5 @@ export const routeOsrm = {
     lon: 2.305447,
   },
   distance: 512.3,
-  duration: 80.5,
+  duration: 79.8,
 };
