@@ -39,7 +39,7 @@
         <strong>Non accessible en mode découverte</strong>
         <br />Sera visible lors de l'activation de la première campagne
       </p>
-      <div class="CampaignDashboard-content-list activeList" *ngIf="!displayDemoCaption$ | async">
+      <div class="CampaignDashboard-content-list activeList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
           [campaigns]="campaigns"
           [campaignStatusList]="[campaignStatus.VALIDATED, campaignStatus.PENDING]"
@@ -70,7 +70,7 @@
         <strong>Non accessible en mode découverte</strong>
         <br />Sera visible lors de l'activation de la première campagne
       </p>
-      <div class="CampaignDashboard-content-list archivedList" *ngIf="!displayDemoCaption$ | async">
+      <div class="CampaignDashboard-content-list archivedList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
           [campaigns]="campaigns"
           [campaignStatusList]="[campaignStatus.ARCHIVED]"
