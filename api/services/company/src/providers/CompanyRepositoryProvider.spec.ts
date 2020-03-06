@@ -78,23 +78,26 @@ test.serial('should update data if siret alread exists', async (t) => {
 test.serial('should return a company on known siret', async (t) => {
   const res = await t.context.repository.find('12000101100010');
   t.true(typeof res === 'object');
-  t.deepEqual(Reflect.ownKeys(res).sort(), [
-    'siret',
-    'siren',
-    'nic',
-    'legal_name',
-    'company_naf_code',
-    'establishment_naf_code',
-    'legal_nature_code',
-    'legal_nature_label',
-    'nonprofit_code',
-    'intra_vat',
-    'address',
-    'lon',
-    'lat',
-    'headquarter',
-    'updated_at',
-  ].sort());
+  t.deepEqual(
+    Reflect.ownKeys(res).sort(),
+    [
+      'siret',
+      'siren',
+      'nic',
+      'legal_name',
+      'company_naf_code',
+      'establishment_naf_code',
+      'legal_nature_code',
+      'legal_nature_label',
+      'nonprofit_code',
+      'intra_vat',
+      'address',
+      'lon',
+      'lat',
+      'headquarter',
+      'updated_at',
+    ].sort(),
+  );
 
   t.is(res.siret, t.context.data.siret);
   t.is(res.siren, t.context.data.siren);
@@ -105,7 +108,7 @@ test.serial('should return a company on known siret', async (t) => {
   t.is(res.legal_nature_code, t.context.data.legal_nature_code);
   t.is(res.legal_nature_label, t.context.data.legal_nature_label);
   t.is(res.nonprofit_code, null);
-  t.is(res.intra_vat, null)
+  t.is(res.intra_vat, null);
   t.is(res.address, t.context.data.address);
   t.is(res.lon, t.context.data.lon);
   t.is(res.lat, t.context.data.lat);

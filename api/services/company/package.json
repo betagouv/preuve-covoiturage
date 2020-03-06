@@ -12,7 +12,7 @@
     "test": "ava",
     "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-territory --temp-dir=../../.nyc_output --all --reporter=lcov ava",
     "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'"
   },
   "main": "./dist/bootstrap.js",
   "config": {

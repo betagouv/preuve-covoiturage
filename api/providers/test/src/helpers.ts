@@ -1,9 +1,4 @@
-import {
-  ServiceContainerInterface,
-  NewableType,
-  KernelInterface,
-  kernel as kernelDecorator,
-} from '@ilos/common';
+import { ServiceContainerInterface, NewableType, KernelInterface, kernel as kernelDecorator } from '@ilos/common';
 import { Kernel as AbstractKernel } from '@ilos/framework';
 
 export interface KernelTestInterface {
@@ -17,4 +12,3 @@ export function makeKernel(serviceProviderCtor: NewableType<ServiceContainerInte
   class Kernel extends AbstractKernel {}
   return new Kernel();
 }
-

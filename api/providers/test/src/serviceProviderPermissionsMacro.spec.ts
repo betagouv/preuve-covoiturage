@@ -4,7 +4,7 @@ import { handler as handlerDecorator, serviceProvider as serviceProviderDecorato
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core';
 import { PermissionMiddleware } from '@pdc/provider-acl';
 
-import { serviceProviderMacro } from './serviceProviderMacro';
+import { handlerMacro } from './handlerMacro';
 
 const handlerConfig = {
   service: 'test',
@@ -29,7 +29,7 @@ class Action extends AbstractAction {
 })
 class ServiceProvider extends AbstractServiceProvider {}
 
-const { test, success, error } = serviceProviderMacro<ParamsInterface, ResultInterface>(
+const { test, success, error } = handlerMacro<ParamsInterface, ResultInterface>(
   anyTest,
   ServiceProvider,
   handlerConfig,

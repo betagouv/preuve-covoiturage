@@ -1,4 +1,4 @@
-import { ContextType, ServiceContainerInterface, NewableType, KernelInterface } from '@ilos/common';
+import { ContextType, ServiceContainerInterface, NewableType } from '@ilos/common';
 import { Macro, TestInterface, ExecutionContext } from 'ava';
 
 import { makeKernel, KernelTestInterface } from './helpers';
