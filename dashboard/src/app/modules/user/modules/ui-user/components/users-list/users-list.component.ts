@@ -7,7 +7,6 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
-import { UserApiService } from '~/modules/user/services/user-api.service';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
@@ -35,9 +34,9 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  ngAfterViewInit() {}
+  ngAfterViewInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('userGroup' in changes) {
@@ -65,7 +64,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
     return this.userGroup === UserGroupEnum.TERRITORY;
   }
 
-  onDelete(user: User) {
+  onDelete(user: User): void {
     this.dialogService
       .confirm({
         title: 'Voulez-vous supprimer cet utilisateur ?',
@@ -126,7 +125,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
     return foundTerritory.name;
   }
 
-  public onSendInvitation(user: User) {
+  public onSendInvitation(user: User): void {
     this.authService
       .sendInviteEmail(user)
       .pipe(takeUntil(this.destroy$))
@@ -135,7 +134,7 @@ export class UsersListComponent extends DestroyObservable implements OnInit, Aft
       });
   }
 
-  public onEdit(user: User) {
+  public onEdit(user: User): void {
     this.editUser.emit(user);
   }
 }

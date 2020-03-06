@@ -5,9 +5,9 @@ import { tap } from 'rxjs/operators';
 import { CrudStore } from '~/core/services/store/crud-store';
 import { ApplicationApiService } from '~/modules/operator/services/application-api.service';
 import { Application } from '~/core/entities/operator/application';
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line
 import { ParamsInterface as ApplicationCreateInterface } from '~/core/entities/api/shared/application/create.contract';
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line
 import { ApplicationCreateResultInterface } from '~/core/entities/api/shared/application/common/interfaces/ApplicationCreateResultInterface';
 
 @Injectable({

@@ -25,7 +25,7 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.canCreateCampaign$ = this._authService.user$.pipe(
       map((user) => user && this._authService.hasAnyPermission(['incentive-campaign.create'])),
       takeUntil(this.destroy$),

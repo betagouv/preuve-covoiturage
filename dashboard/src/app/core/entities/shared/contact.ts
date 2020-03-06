@@ -1,5 +1,3 @@
-import { ContactInterface } from '~/core/entities/api/shared/common/interfaces/ContactInterface';
-
 export class Contact {
   firstname: string;
   lastname: string;
@@ -13,7 +11,7 @@ export class Contact {
     if (obj && obj.phone) this.phone = obj.phone;
   }
 
-  toFormValues() {
+  toFormValues(): any {
     return {
       firstname: '',
       lastname: '',

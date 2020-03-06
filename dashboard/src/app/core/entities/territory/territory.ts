@@ -2,10 +2,10 @@
 import { assignOrDeleteProperties, assignOrDeleteProperty } from '~/core/entities/utils';
 
 import { BaseModel } from '~/core/entities/BaseModel';
-import { IModel } from '~/core/entities/IModel';
-import { IFormModel } from '~/core/entities/IFormModel';
-import { IMapModel } from '~/core/entities/IMapModel';
-import { IClone } from '~/core/entities/IClone';
+import { Model } from '~/core/entities/IModel';
+import { FormModel } from '~/core/entities/IFormModel';
+import { MapModel } from '~/core/entities/IMapModel';
+import { Clone } from '~/core/entities/IClone';
 
 import { Address } from '../shared/address';
 import { Bank } from '../shared/bank';
@@ -13,7 +13,7 @@ import { CGU } from '../shared/cgu';
 import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
 
-class Territory extends BaseModel implements IModel, IFormModel, IMapModel<Territory>, IClone<Territory> {
+class Territory extends BaseModel implements Model, FormModel, MapModel<Territory>, Clone<Territory> {
   public _id: number;
   public name: string;
   public siret: string;
@@ -51,7 +51,7 @@ class Territory extends BaseModel implements IModel, IFormModel, IMapModel<Terri
     }
   }
 
-  toFormValues(fullformMode = true) {
+  toFormValues(fullformMode = true): any {
     // TODO: keep it for later
     // const cgu = new CGU(this.cgu);
     // const formVal = cgu.toFormValues();

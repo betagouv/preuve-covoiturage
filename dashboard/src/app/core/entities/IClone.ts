@@ -1,3 +1,3 @@
-export interface IClone<T> {
+export interface Clone<T> {
   clone(): T;
 }

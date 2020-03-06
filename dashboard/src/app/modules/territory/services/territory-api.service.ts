@@ -52,6 +52,6 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
       territory_id: territoryId,
     });
 
-    return this.callOne(jsonRPCParam).pipe(map((data) => <OTVisibityResults>data.data));
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data as OTVisibityResults));
   }
 }

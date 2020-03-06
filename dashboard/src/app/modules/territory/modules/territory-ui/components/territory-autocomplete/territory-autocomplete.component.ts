@@ -33,9 +33,9 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     super();
   }
 
-  updateTerritory(territoryId: number) {}
+  updateTerritory(territoryId: number): void {}
 
-  private selectedTerritoryUpdated(id = this._territoryForm.value ? this._territoryForm.value : null) {
+  private selectedTerritoryUpdated(id = this._territoryForm.value ? this._territoryForm.value : null): void {
     this.selectedTerritoryId = id;
     this.selectedTerritory = this.territories
       ? this.territories.find((territory) => this.selectedTerritoryId === territory._id)
@@ -52,12 +52,12 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     // this.parentForm.patchValue({ territory: this.selectedTerritory ? this.selectedTerritory._id : null });
   }
 
-  onTerritorySelect(territory: MatAutocompleteSelectedEvent) {
+  onTerritorySelect(territory: MatAutocompleteSelectedEvent): void {
     clearTimeout(this.focusDebounceTimer);
     this.selectedTerritoryUpdated(territory.option.value);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
       this.territories = territories ? territories : null;
     });
@@ -81,7 +81,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
       : null;
   }
 
-  inputLostFocus() {
+  inputLostFocus(): void {
     clearTimeout(this.focusDebounceTimer);
     this.focusDebounceTimer = setTimeout(() => {
       this.territoryCtrl.setValue(this.selectedTerritory ? this.selectedTerritory.name : '');

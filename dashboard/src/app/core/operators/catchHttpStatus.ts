@@ -5,7 +5,7 @@ export function catchHttpStatus<T>(
   status: number,
   action: (err: any) => Observable<T>,
 ): (source: Observable<T>) => Observable<T> {
-  return (source: Observable<any>) =>
+  return (source: Observable<any>): Observable<T> =>
     source.pipe(
       catchError((err) => {
         if (err.status === status) {

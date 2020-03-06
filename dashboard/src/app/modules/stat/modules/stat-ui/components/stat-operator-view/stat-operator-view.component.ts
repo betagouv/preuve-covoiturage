@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { take, takeUntil } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
 import { URLS } from '~/core/const/main.const';
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
@@ -8,7 +8,7 @@ import { StatFilteredStoreService } from '~/modules/stat/services/stat-filtered-
 import { FilterService } from '~/modules/filter/services/filter.service';
 import { FilterUxInterface } from '~/core/interfaces/filter/filterUxInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { OPERATOR_STATS, TERRITORY_STATS } from '~/modules/stat/config/stat';
+import { OPERATOR_STATS } from '~/modules/stat/config/stat';
 import { chartNameType } from '~/core/types/stat/chartNameType';
 import { Axes } from '~/core/interfaces/stat/formatedStatInterface';
 
@@ -37,7 +37,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
@@ -74,7 +74,7 @@ export class StatOperatorViewComponent extends DestroyObservable implements OnIn
    * select graph to be displayed
    */
   public showGraph(graphName: string): void {
-    this.graphName = <statDataNameType>graphName;
+    this.graphName = graphName as statDataNameType;
     this.resetSelected();
     this.selected[graphName] = true;
     this.scrollToTop();

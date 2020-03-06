@@ -30,7 +30,7 @@ export class CampaignContactsComponent implements OnInit {
   //       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   //  }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const address = this.territory.address && this.territory.address.postcode;
     if (!address) {
       this.loading = false;
@@ -54,7 +54,7 @@ export class CampaignContactsComponent implements OnInit {
       });
   }
 
-  private initMap(coordinates: GeoDataInterface) {
+  private initMap(coordinates: GeoDataInterface): void {
     this.map = L.map('map', { minZoom: 2, maxZoom: 12, zoomControl: false }).setView(
       [coordinates.lat, coordinates.lon],
       5.5,

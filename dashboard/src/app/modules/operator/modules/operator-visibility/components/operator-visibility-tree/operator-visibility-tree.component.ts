@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { merge, of } from 'rxjs';
@@ -33,7 +33,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadVisibility();
     this.initSearchForm();
     this.initVisibilityForm();
@@ -69,7 +69,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
   }
 
   get territoriesFormArray(): FormArray {
-    return <FormArray>this.visibilityFormGroup.get('territories');
+    return this.visibilityFormGroup.get('territories') as FormArray;
   }
 
   get hasFilter(): boolean {
@@ -104,7 +104,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     );
   }
 
-  public checkAll($event: any) {
+  public checkAll($event: any): void {
     if ($event.checked) {
       const formValues = Array(this.territories.length).fill(true);
       this.territoriesFormArray.setValue(formValues);
@@ -146,7 +146,7 @@ export class OperatorVisibilityTreeComponent extends DestroyObservable implement
     });
   }
 
-  private loadVisibility() {
+  private loadVisibility(): void {
     this._operatorVisilibityService.loadOne().subscribe();
   }
 }

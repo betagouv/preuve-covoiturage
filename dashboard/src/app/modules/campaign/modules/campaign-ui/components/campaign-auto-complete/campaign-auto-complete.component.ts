@@ -28,7 +28,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initCampaigns();
     this.campaignCtrl.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -37,7 +37,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
   }
 
   get campaignIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get('campaignIds');
+    return this.parentForm.get('campaignIds') as FormControl;
   }
 
   /**
@@ -64,7 +64,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
     this.campaignCtrl.setValue(null);
   }
 
-  private initCampaigns() {
+  private initCampaigns(): void {
     this.commonDataService.campaigns$.pipe(takeUntil(this.destroy$)).subscribe((campaigns: Campaign[]) => {
       this.campaigns = campaigns
         ? campaigns
@@ -81,7 +81,7 @@ export class CampaignAutoCompleteComponent extends DestroyObservable implements 
     });
   }
 
-  private filterCampaigns(literal: string = ''): void {
+  private filterCampaigns(literal = ''): void {
     const selectedCampaignIds = this.campaignIdsControl.value || [];
     this.filteredCampaigns = this.campaigns.filter(
       (campaign) => selectedCampaignIds.indexOf(campaign._id) === -1 && campaign.name.toLowerCase().includes(literal),

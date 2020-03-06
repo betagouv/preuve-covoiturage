@@ -11,7 +11,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 export class TripStatsComponent implements OnInit {
   constructor(public authenticationService: AuthenticationService) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   get isTerritoryOrRegistry(): boolean {
     return this.authenticationService.hasAnyGroup([UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY]);

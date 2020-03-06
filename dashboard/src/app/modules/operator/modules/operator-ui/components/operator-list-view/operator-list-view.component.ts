@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
-import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, merge, Observable, of } from 'rxjs';
+import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material';
 
 import { Operator } from '~/core/entities/operator/operator';
@@ -34,7 +34,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadOperators();
     this.operators$ = this.operatorStoreService.entities$.pipe(
       filter((data) => !!data),
@@ -46,7 +46,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     merge(
       this.operators$,
       this._filterLiteral.pipe(
@@ -75,16 +75,16 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
     return this.operatorsFiltered && this.operatorsFiltered.length;
   }
 
-  pipeFilter(literal: any) {
+  pipeFilter(literal: any): void {
     this._filterLiteral.next(literal);
   }
 
-  pipeEdit(operator: any) {
+  pipeEdit(operator: any): void {
     this.isCreating = false;
     this.operatorStoreService.select(operator);
   }
 
-  close() {
+  close(): void {
     this.loadOperators();
     this.showForm = false;
   }
@@ -94,7 +94,7 @@ export class OperatorListViewComponent extends DestroyObservable implements OnIn
     this.operatorStoreService.selectNew();
   }
 
-  private loadOperators() {
+  private loadOperators(): void {
     this.operatorStoreService.loadList();
   }
 }

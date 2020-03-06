@@ -9,7 +9,6 @@ import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserManyRoleEnum, UserRoleEnum } from '~/core/enums/user/user-role.enum';
-import { UserApiService } from '~/modules/user/services/user-api.service';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
 
@@ -41,7 +40,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userStoreService.reset();
     this.userStoreService.filterSubject.next({ limit: 1000 });
 
@@ -65,7 +64,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     merge(
       this.users$,
       this.searchFilters.valueChanges.pipe(
@@ -131,7 +130,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
   //   }
   // }
 
-  showEditForm(user: User = null) {
+  showEditForm(user: User = null): void {
     // this.isCreatingUser = false;
     // this.editUserFormVisible = true;
     // this.editedUser = user;
@@ -144,12 +143,12 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       if (this.currentOperator) {
         newUser.group = this.currentGroup;
         newUser.operator_id = this.currentOperator;
-        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as UserRoleEnum;
       }
       if (this.currentTerritory) {
         newUser.group = this.currentGroup;
         newUser.territory_id = this.currentTerritory;
-        newUser.role = <UserRoleEnum>`${this.currentGroup}.'${UserManyRoleEnum.USER}`;
+        newUser.role = `${this.currentGroup}.'${UserManyRoleEnum.USER}` as UserRoleEnum;
       }
       this.userStoreService.selectNew(newUser);
     }
@@ -159,7 +158,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     // this.editForm.startEdit(this.isCreatingUser, true, editedUser);
   }
 
-  closeUserForm() {
+  closeUserForm(): void {
     this.editUserFormVisible = false;
   }
 
@@ -179,11 +178,11 @@ export class UsersComponent extends DestroyObservable implements OnInit {
     return this.authenticationService.user.territory_id;
   }
 
-  private loadUsers() {
+  private loadUsers(): void {
     this.userStoreService.loadList();
   }
 
-  private initSearchForm() {
+  private initSearchForm(): void {
     this.searchFilters = this.fb.group({
       query: [''],
     });
@@ -202,7 +201,7 @@ export class UsersComponent extends DestroyObservable implements OnInit {
       });
   }
 
-  public filterUsers() {
+  public filterUsers(): void {
     const query = this.searchFilters ? this.searchFilters.controls.query.value.toString().toLowerCase() : '';
 
     this.usersToShow = this.users.filter((u) =>

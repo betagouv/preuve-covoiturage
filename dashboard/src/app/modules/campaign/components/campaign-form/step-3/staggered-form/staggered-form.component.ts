@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -48,11 +48,11 @@ export class StaggeredFormComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.subscribeToPreviousFormValue();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.formGroup.controls;
   }
 
@@ -64,7 +64,7 @@ export class StaggeredFormComponent extends DestroyObservable implements OnInit 
     return this.campaignForm.get('filters').get('distance_range').value[1];
   }
 
-  initForm() {
+  initForm(): void {
     this.controls.min.setValidators(Validators.required);
     this.controls.max.setValidators(Validators.required);
     this.controls.max.enable();
@@ -80,7 +80,7 @@ export class StaggeredFormComponent extends DestroyObservable implements OnInit 
     }
   }
 
-  subscribeToPreviousFormValue() {
+  subscribeToPreviousFormValue(): void {
     if (!this.previousFormGroup) {
       return;
     }
@@ -90,7 +90,7 @@ export class StaggeredFormComponent extends DestroyObservable implements OnInit 
     });
   }
 
-  onPreviousValueChange() {
+  onPreviousValueChange(): void {
     const value = this.previousFormGroup.value;
     if (value.max) {
       const previousMax = Number(value.max);

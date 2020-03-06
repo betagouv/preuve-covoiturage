@@ -43,7 +43,7 @@ export class UserApiService extends JsonRpcCrud<User, UserListInterface, UserPat
     );
   }
 
-  patch(id: number, patch: UserPatchInterface) {
+  patch(id: number, patch: UserPatchInterface): Observable<any> {
     return this.catchEmailConflict(super.patch(id, patch));
   }
 

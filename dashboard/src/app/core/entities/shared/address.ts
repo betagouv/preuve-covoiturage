@@ -13,7 +13,7 @@ export class Address {
     if (obj && obj.country) this.country = obj.country;
   }
 
-  toFormValues() {
+  toFormValues(): any {
     return {
       street: '',
       postcode: '',

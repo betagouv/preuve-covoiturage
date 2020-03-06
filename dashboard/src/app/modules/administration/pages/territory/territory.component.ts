@@ -20,7 +20,7 @@ export class TerritoryComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.readOnly$ = this._authService.user$.pipe(
       takeUntil(this.destroy$),
       map((user) => user && !this._authService.hasAnyPermission(['territory.update'])),

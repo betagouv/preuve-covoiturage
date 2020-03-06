@@ -37,7 +37,7 @@ export class CampaignApiService extends JsonRpcCrud<
   }
 
   loadTemplates(): Observable<Campaign[]> {
-    return this.callOne(new JsonRPCParam(`${this.method}:templates`, {})).pipe(map((data) => <Campaign[]>data.data));
+    return this.callOne(new JsonRPCParam(`${this.method}:templates`, {})).pipe(map((data) => data.data as Campaign[]));
   }
 
   deleteByTerritoryId(params: DeleteParamsInterface): Observable<DeleteResponse> {

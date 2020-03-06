@@ -25,7 +25,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.townForm.valueChanges
       .pipe(
         tap((towns: TownInterface[]) => {
@@ -44,7 +44,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
   }
 
   get townForm(): FormControl {
-    return <FormControl>this.parentForm.get('towns');
+    return this.parentForm.get('towns') as FormControl;
   }
 
   public remove(town: TownInterface): void {
@@ -56,7 +56,7 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     }
   }
 
-  public findTowns(literal: string = ''): void {
+  public findTowns(literal = ''): void {
     if (literal === undefined || literal === null) {
       return;
     }
@@ -78,9 +78,5 @@ export class TownsAutocompleteComponent extends DestroyObservable implements OnI
     this.townForm.setValue(towns);
     this.townInput.nativeElement.value = null;
     this.townCtrl.setValue('');
-  }
-
-  private filterTowns(): void {
-    const selectedTowns = this.townForm.value;
   }
 }

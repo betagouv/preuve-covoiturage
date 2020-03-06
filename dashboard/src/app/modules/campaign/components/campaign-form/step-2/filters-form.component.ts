@@ -1,16 +1,14 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
-import { MatPaginator, MatTabChangeEvent, MatTabGroup, MatTabLabel } from '@angular/material';
-import { WeekDay } from '@angular/common';
-import * as moment from 'moment';
+import { MatTabGroup } from '@angular/material';
 
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { CAMPAIGN_RULES_MAX_DISTANCE_KM } from '~/core/const/campaign/rules.const';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
-import { DAYS, dayLabelCapitalized } from '~/core/const/days.const';
+import { dayLabelCapitalized } from '~/core/const/days.const';
 import { tripTabValidator } from '~/modules/campaign/validators/trip-tab.validator';
 
 @Component({
@@ -42,17 +40,17 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     super();
   }
 
-  get days() {
+  get days(): number[] {
     return this._campaignUiService.days;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initTargetChangeDetection();
     // this.initInseeTabChangeDetection();
     this.initAllOperatorChangeDetection();
   }
 
-  initAllOperatorChangeDetection() {
+  initAllOperatorChangeDetection(): void {
     this.filtersForm
       .get('all_operators')
       .valueChanges.pipe(takeUntil(this.destroy$))
@@ -60,63 +58,63 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     this.updateOperatorsValidator();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.initSelectedInseeFilterTabIndex();
   }
 
   get filtersForm(): FormGroup {
-    return <FormGroup>this.campaignForm.get('filters');
+    return this.campaignForm.get('filters') as FormGroup;
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.filtersForm.controls;
   }
 
   get forDriverControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_driver');
+    return this.campaignForm.get('ui_status').get('for_driver') as FormControl;
   }
 
   get forPassengerControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_passenger');
+    return this.campaignForm.get('ui_status').get('for_passenger') as FormControl;
   }
 
   get InseeForm(): FormGroup {
-    return <FormGroup>this.filtersForm.get('insee');
+    return this.filtersForm.get('insee') as FormGroup;
   }
 
   get forTripControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_trip');
+    return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
   }
 
   get timeCtrlArray(): FormArray {
-    return <FormArray>this.filtersForm.get('time');
+    return this.filtersForm.get('time') as FormArray;
   }
 
-  addTimeFilter() {
+  addTimeFilter(): void {
     this.timeCtrlArray.push(this._formBuilder.control(null, Validators.required));
   }
 
-  removeTimeFilter(idx) {
+  removeTimeFilter(idx): void {
     this.timeCtrlArray.removeAt(idx);
   }
 
   get whiteListFormArray(): FormArray {
-    return <FormArray>this.InseeForm.get('whiteList');
+    return this.InseeForm.get('whiteList') as FormArray;
   }
 
   get blackListFormArray(): FormArray {
-    return <FormArray>this.InseeForm.get('blackList');
+    return this.InseeForm.get('blackList') as FormArray;
   }
 
-  get hasInseefilter() {
+  get hasInseefilter(): boolean {
     return this.hasInseeBlackList || this.hasInseeWhiteList;
   }
 
-  get hasInseeBlackList() {
+  get hasInseeBlackList(): boolean {
     return this.InseeForm.get('blackList').value && this.InseeForm.get('blackList').value.length > 0;
   }
 
-  get hasInseeWhiteList() {
+  get hasInseeWhiteList(): boolean {
     return this.InseeForm.get('whiteList').value && this.InseeForm.get('whiteList').value.length > 0;
   }
 
@@ -175,7 +173,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     return label;
   }
 
-  isTimeCtrlArrayTouched() {
+  isTimeCtrlArrayTouched(): boolean {
     for (const control of this.timeCtrlArray.controls) {
       if (!control.valid && control.touched) {
         return true;
@@ -184,7 +182,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     return false;
   }
 
-  private initTargetChangeDetection() {
+  private initTargetChangeDetection(): void {
     this.forDriverControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((checked) => {
       if (checked) {
         this.forTripControl.setValue(false);
@@ -208,7 +206,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     });
   }
 
-  private initSelectedInseeFilterTabIndex() {
+  private initSelectedInseeFilterTabIndex(): void {
     setTimeout(() => {
       this.inseeFilterTabGroup.selectedIndex = this.selectedInseeFilterTabIndex = this.campaignForm.get('ui_status')
         .value.insee_mode
@@ -219,14 +217,14 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     }, 1000);
   }
 
-  updateOperatorsValidator() {
+  updateOperatorsValidator(): void {
     const operatorIdsForm = this.filtersForm.get('operator_ids');
     operatorIdsForm.setValidators(this.filtersForm.get('all_operators').value ? [] : [Validators.required]);
     operatorIdsForm.updateValueAndValidity();
     operatorIdsForm.markAllAsTouched();
   }
 
-  updateInseeValidator() {
+  updateInseeValidator(): void {
     const checkForEmptyInsees = this.campaignForm.get('ui_status').value.insee_mode;
     const inseeFG = this.campaignForm.get('filters').get('insee');
 
@@ -236,7 +234,7 @@ export class FiltersFormComponent extends DestroyObservable implements OnInit, A
     inseeFG.updateValueAndValidity();
   }
 
-  selectedInseeFilterTabIndexChange(nextIndex: 0 | 1) {
+  selectedInseeFilterTabIndexChange(nextIndex: 0 | 1): void {
     if (nextIndex === this.selectedInseeFilterTabIndex) return;
     if ((nextIndex === 0 && this.hasInseeWhiteList) || (nextIndex === 1 && this.hasInseeBlackList)) {
       this.inseeFilterTabGroup.selectedIndex = nextIndex === 1 ? 0 : 1;

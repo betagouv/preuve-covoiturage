@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 import { GeoDataInterface } from '~/core/interfaces/geography/geoDataInterface';
 
@@ -24,7 +24,7 @@ export class CampaignGeoService {
           .filter((el) => _.get(el, 'geometry.coordinates', null))
           .map((el) => {
             const coordinates = _.get(el, 'geometry.coordinates');
-            return <GeoDataInterface>{ lon: coordinates[0], lat: coordinates[1] };
+            return { lon: coordinates[0], lat: coordinates[1] } as GeoDataInterface;
           }),
       ),
     );

@@ -90,7 +90,7 @@ export class AuthenticationService {
     return this._user$.getValue();
   }
 
-  call<T = any>(url: string, payload: T, withCredentials: boolean = true): Observable<any> {
+  call<T = any>(url: string, payload: T, withCredentials = true): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
@@ -133,7 +133,7 @@ export class AuthenticationService {
     );
   }
 
-  public logout(message = 'Vous avez bien été déconnecté') {
+  public logout(message = 'Vous avez bien été déconnecté'): void {
     this.http.post('logout', {}, { withCredentials: true }).subscribe((response) => {
       this._user$.next(null);
       this.router.navigate(['/login']).then(() => {
@@ -249,7 +249,7 @@ export class AuthenticationService {
     );
   }
 
-  private onLoggin(user: User) {
+  private onLoggin(user: User): void {
     // const redirectToStats = !this.user && user;
     this._hasChecked = true;
 

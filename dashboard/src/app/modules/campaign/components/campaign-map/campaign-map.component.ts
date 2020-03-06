@@ -26,22 +26,22 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initMap();
     this.initTerritoryViews();
     this.map.on('move', this.catchUserEvents.bind(this));
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy(): void {}
 
-  private initMap() {
+  private initMap(): void {
     this.map = L.map('map', { minZoom: 2, maxZoom: 12 }).setView([46.227638, 2.213749], 5.5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
   }
 
-  private initTerritoryViews() {
+  private initTerritoryViews(): void {
     // todo: get territories
     const territories: Territory[] = this.campaigns.map(
       (c) => new Territory({ siret: '', _id: c.territory_id, name: 'territory_name' }),
@@ -62,7 +62,7 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
     this.generatePointsCluster(territories);
   }
 
-  private generatePointsCluster(territories: Territory[]) {
+  private generatePointsCluster(territories: Territory[]): void {
     const points = territories.map((t) => t.coordinates);
     // @ts-ignore
     const markersCluster = new M.MarkerClusterGroup({
@@ -76,7 +76,7 @@ export class CampaignMapComponent implements OnInit, OnDestroy {
     this.map.addLayer(markersCluster);
   }
 
-  private catchUserEvents() {
+  private catchUserEvents(): void {
     const bounds = this.map.getBounds();
     const boundsArray = [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()];
     this.onMapResize.emit(boundsArray);

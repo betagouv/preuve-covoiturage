@@ -1,7 +1,7 @@
-import { IModel } from '~/core/entities/IModel';
-import { IMapModel } from '~/core/entities/IMapModel';
+import { Model } from '~/core/entities/IModel';
+import { MapModel } from '~/core/entities/IMapModel';
 
-export class BaseModel implements IModel, IMapModel<BaseModel> {
+export class BaseModel implements Model, MapModel<BaseModel> {
   _id: number;
 
   constructor(data?: any) {

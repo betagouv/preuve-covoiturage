@@ -34,7 +34,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
 
   private selectedOperatorUpdated(
     id = this._operatorForm && this._operatorForm.value ? this._operatorForm.value : null,
-  ) {
+  ): void {
     this.selectedOperatorId = id;
     this.selectedOperator = this.operators
       ? this.operators.find((foperator) => this.selectedOperatorId === foperator._id)
@@ -49,13 +49,13 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     }
   }
 
-  onOperatorSelect(operator: MatAutocompleteSelectedEvent) {
+  onOperatorSelect(operator: MatAutocompleteSelectedEvent): void {
     console.log('onOperatorSelect : ', operator);
     clearTimeout(this.focusDebounceTimer);
     this.selectedOperatorUpdated(operator.option.value);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators;
       this.selectedOperatorUpdated();
@@ -81,7 +81,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
       : null;
   }
 
-  inputLostFocus() {
+  inputLostFocus(): void {
     clearTimeout(this.focusDebounceTimer);
     this.focusDebounceTimer = setTimeout(
       () => this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.name : ''),

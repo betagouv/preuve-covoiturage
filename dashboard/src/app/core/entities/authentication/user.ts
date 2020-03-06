@@ -2,15 +2,15 @@ import { userGroupRole, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserInterface, UserPermissionsType } from '~/core/interfaces/user/profileInterface';
 
-import { IFormModel } from '~/core/entities/IFormModel';
-import { IMapModel } from '~/core/entities/IMapModel';
-import { IClone } from '~/core/entities/IClone';
+import { FormModel } from '~/core/entities/IFormModel';
+import { MapModel } from '~/core/entities/IMapModel';
+import { Clone } from '~/core/entities/IClone';
 import { UserPatchInterface } from '~/core/entities/api/shared/user/common/interfaces/UserPatchInterface';
 
-import { IModel } from '../IModel';
+import { Model } from '../IModel';
 import { UserListInterface } from '../api/shared/user/common/interfaces/UserListInterface';
 
-export class BaseUser implements IModel, UserListInterface {
+export class BaseUser implements Model, UserListInterface {
   public _id: number;
   public email: string;
   public lastname: string;
@@ -27,7 +27,7 @@ export class BaseUser implements IModel, UserListInterface {
 }
 
 export class User extends BaseUser
-  implements IFormModel, IMapModel<User, UserInterface>, IClone<User>, UserPatchInterface, UserInterface {
+  implements FormModel, MapModel<User, UserInterface>, Clone<User>, UserPatchInterface, UserInterface {
   public permissions: UserPermissionsType;
 
   static formValueToUserPatch(formValues): UserPatchInterface {
@@ -112,7 +112,7 @@ export class User extends BaseUser
       if (formVal.operator_id) this.operator_id = formVal.operator_id;
       else delete this.operator_id;
 
-      this.role = <UserRoleEnum>`${userGroupRole[formVal.group]}.${formVal.role}`; // consolidate final role
+      this.role = `${userGroupRole[formVal.group]}.${formVal.role}` as UserRoleEnum; // consolidate final role
     }
 
     delete formVal.group;

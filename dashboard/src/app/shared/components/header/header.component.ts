@@ -22,7 +22,7 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.authService.user$.subscribe((user) => {
       this.user = user;
     });
@@ -39,7 +39,7 @@ export class HeaderComponent extends DestroyObservable implements OnInit {
       });
   }
 
-  setHomeLink(url: string) {
+  setHomeLink(url: string): void {
     this.homeLink = url === '/stats' ? URLS.CMSLink : '/';
   }
 

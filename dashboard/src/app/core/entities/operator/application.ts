@@ -1,13 +1,13 @@
 /* tslint:disable:variable-name*/
-import { IModel } from '~/core/entities/IModel';
-import { IMapModel } from '~/core/entities/IMapModel';
+import { Model } from '~/core/entities/IModel';
+import { MapModel } from '~/core/entities/IMapModel';
 import { BaseModel } from '~/core/entities/BaseModel';
-import { IClone } from '~/core/entities/IClone';
+import { Clone } from '~/core/entities/IClone';
 import { ApplicationInterface } from '~/core/entities/api/shared/application/common/interfaces/ApplicationInterface';
-import { IFormModel } from '~/core/entities/IFormModel';
+import { FormModel } from '~/core/entities/IFormModel';
 
 export class Application extends BaseModel
-  implements IModel, IFormModel, IMapModel<Application>, IClone<Application>, ApplicationInterface {
+  implements Model, FormModel, MapModel<Application>, Clone<Application>, ApplicationInterface {
   _id: number;
   uuid: string;
   owner_id: number;

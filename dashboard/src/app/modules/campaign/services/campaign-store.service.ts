@@ -11,8 +11,6 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { ResultInterface as LaunchResultInterface } from '~/core/entities/api/shared/policy/launch.contract';
 import { ParamsInterface as PatchParamsInterface } from '~/core/entities/api/shared/policy/patch.contract';
 import { ParamsInterface as DeleteParamsInterface } from '~/core/entities/api/shared/policy/delete.contract';
-import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
-import { ParamsInterface } from '~/core/entities/api/shared/trip/stats.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +54,7 @@ export class CampaignStoreService extends CrudStore<
     return this.rpcCrud.launch(id).pipe(tap(this.loadList));
   }
 
-  loadCampaigns() {
+  loadCampaigns(): void {
     this._loadCount += 1;
     this.campaignApi
       .loadTemplates()
@@ -67,12 +65,12 @@ export class CampaignStoreService extends CrudStore<
       .subscribe((campaigns) => this.templatesSubject.next(campaigns));
   }
 
-  dismissAllRpcActions() {
+  dismissAllRpcActions(): void {
     super.dismissAllRpcActions();
     this.dismissTempatesListSubject.next();
   }
 
-  reset() {
+  reset(): void {
     super.reset();
     this.templatesSubject.next([]);
   }

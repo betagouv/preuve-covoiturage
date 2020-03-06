@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 
 import { Territory } from '~/core/entities/territory/territory';
-import { Operator } from '~/core/entities/operator/operator';
 
 @Component({
   selector: 'app-territory-details',
@@ -14,7 +13,7 @@ export class TerritoryDetailsComponent implements OnInit, OnChanges {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['territory']) {
@@ -24,7 +23,7 @@ export class TerritoryDetailsComponent implements OnInit, OnChanges {
     }
   }
 
-  private setTerritoryDetails(territory: Territory) {
-    this.territory = territory.toFormValues();
+  private setTerritoryDetails(territory: Territory): void {
+    this.territory = territory.toFormValues() as Territory;
   }
 }

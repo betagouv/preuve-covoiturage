@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import { IModel } from '~/core/entities/IModel';
+import { Model } from '~/core/entities/IModel';
 import { PatchParams } from '~/core/services/store/crud-store';
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
@@ -21,8 +21,8 @@ export enum CrudActions {
 }
 
 export class JsonRpcCrud<
-  EntityT extends IModel,
-  ListEntityT extends IModel = EntityT,
+  EntityT extends Model,
+  ListEntityT extends Model = EntityT,
   IPatchT = any,
   IDeleteT = any,
   IGetT = any,
@@ -44,7 +44,7 @@ export class JsonRpcCrud<
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
-  patch(id: number, patch: IPatchT) {
+  patch(id: number, patch: IPatchT): Observable<EntityT> {
     const patchParams: PatchParams<IPatchT> = {
       patch,
       _id: id,

@@ -295,7 +295,7 @@ export class CampaignUiService {
     return text;
   }
 
-  public restrictions(restrictions: RestrictionUxInterface[] = [], amountUnit: string = '') {
+  public restrictions(restrictions: RestrictionUxInterface[] = [], amountUnit = ''): string {
     if (restrictions.length === 0) {
       return 'Aucune restriction.';
     }

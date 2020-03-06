@@ -65,5 +65,5 @@ export class AdministrationLayoutComponent implements OnInit {
 
   constructor(public authenticationService: AuthenticationService) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

@@ -5,9 +5,17 @@ import { AuthGuard } from '~/core/guards/auth-guard.service';
 
 import { NotFoundComponent } from '~/core/components/not-found/not-found.component';
 
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line
 import { NotAuthenticatedLayoutComponent } from './core/components/not-authenticated-layout/not-authenticated-layout.component';
 import { AuthenticatedLayoutComponent } from './core/components/authenticated-layout/authenticated-layout.component';
+import { CampaignModule } from './modules/campaign/campaign.module';
+import { CertificateModule } from './modules/certificate/certificate.module';
+import { RegistryModule } from './modules/registry/registry.module';
+import { TripModule } from './modules/trip/trip.module';
+import { AdministrationModule } from './modules/administration/administration.module';
+import { UiGuideModule } from './modules/ui-guide/ui-guide.module';
+import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { StatModule } from './modules/stat/stat.module';
 
 const routes: Routes = [
   {
@@ -17,32 +25,36 @@ const routes: Routes = [
     children: [
       {
         path: 'campaign',
-        loadChildren: () => import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
+        loadChildren: (): Promise<CampaignModule> =>
+          import('./modules/campaign/campaign.module').then((mod) => mod.CampaignModule),
         canLoad: [AuthGuard],
       },
       {
         path: 'certificate',
-        loadChildren: () => import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
+        loadChildren: (): Promise<CertificateModule> =>
+          import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
       },
       {
         path: 'registry',
-        loadChildren: () => import('./modules/registry/registry.module').then((mod) => mod.RegistryModule),
+        loadChildren: (): Promise<RegistryModule> =>
+          import('./modules/registry/registry.module').then((mod) => mod.RegistryModule),
         canLoad: [AuthGuard],
       },
       {
         path: 'trip',
-        loadChildren: () => import('./modules/trip/trip.module').then((mod) => mod.TripModule),
+        loadChildren: (): Promise<TripModule> => import('./modules/trip/trip.module').then((mod) => mod.TripModule),
         canLoad: [AuthGuard],
       },
       {
         path: 'admin',
-        loadChildren: () =>
+        loadChildren: (): Promise<AdministrationModule> =>
           import('./modules/administration/administration.module').then((mod) => mod.AdministrationModule),
         canLoad: [AuthGuard],
       },
       {
         path: 'ui-guide',
-        loadChildren: () => import('./modules/ui-guide/ui-guide.module').then((mod) => mod.UiGuideModule),
+        loadChildren: (): Promise<UiGuideModule> =>
+          import('./modules/ui-guide/ui-guide.module').then((mod) => mod.UiGuideModule),
       },
     ],
   },
@@ -52,12 +64,12 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: () =>
+        loadChildren: (): Promise<AuthenticationModule> =>
           import('./modules/authentication/authentication.module').then((mod) => mod.AuthenticationModule),
       },
       {
         path: '',
-        loadChildren: () => import('./modules/stat/stat.module').then((mod) => mod.StatModule),
+        loadChildren: (): Promise<StatModule> => import('./modules/stat/stat.module').then((mod) => mod.StatModule),
       },
     ],
   },

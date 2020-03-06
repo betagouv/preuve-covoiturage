@@ -9,7 +9,7 @@ export class FrenchMatPaginatorIntl extends MatPaginatorIntl {
   nextPageLabel = 'Page suivante';
   previousPageLabel = 'Page précédante';
 
-  getRangeLabel = (page, pageSize, length) => {
+  getRangeLabel = (page, pageSize, length): string => {
     if (length === 0 || pageSize === 0) {
       return `0 de ${length}`;
     }

@@ -31,7 +31,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
 
   protected territories$: Observable<Territory[]>;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.territories$ = this._territoryStoreService.entities$.pipe(
       filter((data) => !!data),
       tap((territories) => (this.territories = territories)),
@@ -80,19 +80,19 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
     return this.territoriesFiltered && this.territoriesFiltered.length;
   }
 
-  pipeFilter(literal: any) {
+  pipeFilter(literal: any): void {
     this._filterLiteral.next(literal);
   }
 
-  pipeEdit(territory: any) {
+  pipeEdit(territory: any): void {
     this._territoryStoreService.select(territory);
   }
 
-  close() {
+  close(): void {
     this.showForm = false;
   }
 
-  loadTerritories() {
+  loadTerritories(): void {
     this._territoryStoreService.loadList();
   }
 }
