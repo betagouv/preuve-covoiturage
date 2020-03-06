@@ -3,13 +3,10 @@ import { handler } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/route.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
 // Enrich position data
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['channel.service.only', ['acquisition', handlerConfig.service]]] })
 export class NormalizationRouteAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
-
   constructor(private geoProvider: GeoProviderInterfaceResolver) {
     super();
   }

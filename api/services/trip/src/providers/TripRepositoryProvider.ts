@@ -56,11 +56,13 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 text: '(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))',
                 values: [filter.value, filter.value],
               };
+
             case 'operator_id':
               return {
-                text: 'operator_id = ANY ($#::text[])',
+                text: 'operator_id = ANY ($#::int[])',
                 values: [filter.value],
               };
+
             case 'status':
               throw new Error('Unimplemented');
 
@@ -87,6 +89,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 text: 'operator_class = ANY ($#::text[])',
                 values: [filter.value],
               };
+
             case 'distance':
               if (filter.value.min && filter.value.max) {
                 return {
@@ -104,19 +107,23 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 text: 'distance <= $#::int',
                 values: [filter.value.max],
               };
+
             case 'campaign_id':
               throw new Error('Unimplemented');
+
             case 'insee':
               return {
                 text: 'start_insee = ANY($#::text[]) OR end_insee = ANY ($#::text[])',
                 values: [filter.value, filter.value],
               };
+
             case 'days':
               return {
                 text: 'weekday = ANY ($#::int[])',
                 values: [filter.value === 0 ? 7 : filter.value],
                 // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
               };
+
             case 'hour': {
               return {
                 text: '($#::int <= dayhour AND dayhour <= $#::int)',

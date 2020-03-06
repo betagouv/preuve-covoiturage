@@ -5,7 +5,7 @@ import { TripStatusEnum } from '~/core/enums/trip/trip-status.enum';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
 export interface FilterUxInterface {
-  campaignIds: string[];
+  campaignIds: number[];
   date: {
     start: Date;
     end: Date;
@@ -22,6 +22,6 @@ export interface FilterUxInterface {
   };
   ranks: TripRankEnum[];
   status: TripStatusEnum;
-  operatorIds: string[];
-  territoryIds: string[];
+  operatorIds: number[];
+  territoryIds: number[];
 }

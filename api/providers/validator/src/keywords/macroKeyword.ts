@@ -24,6 +24,7 @@ import { uuidMacro } from '../macros/uuidMacro';
 import { groupMacro } from '../macros/groupMacro';
 import { longcharMacro } from '../macros/longcharMacro';
 import { permissionsMacro } from '../macros/permissionsMacro';
+import { integerMacro } from '../macros/integerMacro';
 
 const macroStore = {
   bic: bicMacro,
@@ -51,6 +52,7 @@ const macroStore = {
   password: passwordMacro,
   role: roleMacro,
   serial: serialMacro,
+  integer: integerMacro,
   uuid: uuidMacro,
   group: groupMacro,
   token: tokenMacro,

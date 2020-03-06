@@ -11,13 +11,14 @@ import { alias } from '../shared/application/list.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 import { setOwner } from '../helpers/setOwner';
 
-@handler(handlerConfig)
-export class ListApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['can', ['application.list']],
-  ];
-
+  ],
+})
+export class ListApplicationAction extends AbstractAction {
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();
   }

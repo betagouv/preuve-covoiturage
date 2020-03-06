@@ -3,20 +3,20 @@ import { handler, ForbiddenException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changePassword.contract';
 import { alias } from '../shared/user/changePassword.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 
 /*
  * Change password of user by sending old & new password
  */
-@handler(handlerConfig)
-export class ChangePasswordUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['can', ['profile.update']],
-  ];
-
+  ],
+})
+export class ChangePasswordUserAction extends AbstractAction {
   constructor(private authRepository: AuthRepositoryProviderInterfaceResolver) {
     super();
   }

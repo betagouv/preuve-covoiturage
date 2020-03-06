@@ -15,7 +15,6 @@ const { expect } = chai;
 const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
 process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
 process.env.APP_ENV = 'testing';
-process.env.APP_MONGO_DB = '';
 
 @kernel({
   children: [ServiceProvider],

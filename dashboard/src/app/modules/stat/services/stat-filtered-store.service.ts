@@ -42,10 +42,10 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     }
 
     if ('date' in filter && filter.date.start) {
-      params.date.start = filter.date.start.toISOString();
+      params['date'].start = filter.date.start.toISOString();
     }
     if ('date' in filter && filter.date.end) {
-      params.date.end = filter.date.end.toISOString();
+      params['date'].end = filter.date.end.toISOString();
     }
     this._filterSubject.next(params);
     super.loadList();

@@ -1,148 +1,115 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import { describe } from 'mocha';
-
+import anyTest, { TestInterface } from 'ava';
 import { ContextType, ForbiddenException } from '@ilos/common';
 
 import { ScopeToSelfMiddleware } from './ScopeToSelfMiddleware';
 
-chai.use(chaiAsPromised);
-const { expect } = chai;
+const test = anyTest as TestInterface<{
+  mockConnectedUser: any;
+  mockCreateUserParameters: any;
+  contextFactory: Function;
+  middlewareConfig: any;
+  middleware: ScopeToSelfMiddleware;
+}>;
 
-const mockConnectedUser = {
-  _id: '1ab',
-  email: 'john.schmidt@example.com',
-  firstname: 'john',
-  lastname: 'schmidt',
-  phone: '0624857425',
-  group: 'registry',
-  role: 'admin',
-  permissions: ['user.create'],
-};
-
-async function noop(params: any, context: any): Promise<void> {
-  return;
-}
-
-const mockCreateUserParameters = {
-  email: 'edouard.nelson@example.com',
-  firstname: 'edouard',
-  lastname: 'nelson',
-  phone: '0622222233',
-  group: 'registry',
-  role: 'admin',
-  aom: 'aomid',
-  password: 'password',
-};
-
-function contextFactory(params): ContextType {
-  return {
-    call: {
-      user: {
-        ...mockConnectedUser,
-        ...params,
+test.before((t) => {
+  t.context.contextFactory = (params): ContextType => {
+    return {
+      call: {
+        user: {
+          ...t.context.mockConnectedUser,
+          ...params,
+        },
       },
-    },
-    channel: {
-      service: '',
-    },
+      channel: {
+        service: '',
+      },
+    };
   };
-}
 
-const middleware = new ScopeToSelfMiddleware();
+  t.context.mockConnectedUser = {
+    _id: '1ab',
+    email: 'john.schmidt@example.com',
+    firstname: 'john',
+    lastname: 'schmidt',
+    phone: '0624857425',
+    group: 'registry',
+    role: 'admin',
+    permissions: ['user.create'],
+  };
 
-describe('Middleware Scopetoself', () => {
-  const mockCreateUserContext = contextFactory({ permissions: ['user.create'] });
+  t.context.mockCreateUserParameters = {
+    email: 'edouard.nelson@example.com',
+    firstname: 'edouard',
+    lastname: 'nelson',
+    phone: '+33622222233',
+    role: 'admin',
+    territory: 42,
+  };
 
-  it('should have permission to create user', async () => {
-    const result = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
-      ['user.create'],
-      [
-        (params, context): string => {
-          if ('aom' in params && params.aom === context.call.user.aom) {
-            return 'aom.users.add';
-          }
-        },
-        (params, context): string => {
-          if ('operator' in params && params.aom === context.call.user.aom) {
-            return 'operator.users.add';
-          }
-        },
-      ],
-    ]);
+  t.context.middlewareConfig = [
+    ['user.create'],
+    [
+      (params, context): string => {
+        if ('territory' in params && params.territory === context.call.user.territory) {
+          return 'territory.users.add';
+        }
+      },
+      (params, context): string => {
+        if ('operator' in params && params.territory === context.call.user.territory) {
+          return 'operator.users.add';
+        }
+      },
+    ],
+  ];
 
-    expect(result).to.equal(undefined);
-  });
+  t.context.middleware = new ScopeToSelfMiddleware();
 });
 
-describe('Middleware Scopetoself', () => {
-  const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: mockCreateUserParameters.aom });
+test('Middleware Scopetoself: has permission to create user', async (t) => {
+  const result = await t.context.middleware.process(
+    t.context.mockCreateUserParameters,
+    t.context.contextFactory({ permissions: ['user.create'] }),
+    () => 'next() called',
+    t.context.middlewareConfig,
+  );
 
-  it('Has no permission to create user - should throw permission error', async () => {
-    const response = await middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
-      ['user.create'],
-      [
-        (params, context): string => {
-          if ('aom' in params && params.aom === context.call.user.aom) {
-            return 'aom.users.add';
-          }
-        },
-        (params, context): string => {
-          if ('operator' in params && params.aom === context.call.user.aom) {
-            return 'operator.users.add';
-          }
-        },
-      ],
-    ]);
-
-    expect(response).to.equal(undefined);
-  });
+  t.is(result, 'next() called');
 });
 
-describe('Middleware Scopetoself', () => {
-  const mockCreateUserContext = contextFactory({ permissions: [], aom: mockCreateUserParameters.aom });
+test('Middleware Scopetoself: has permission to create territory user', async (t) => {
+  const result = await t.context.middleware.process(
+    t.context.mockCreateUserParameters,
+    t.context.contextFactory({
+      permissions: ['territory.users.add'],
+      territory: t.context.mockCreateUserParameters.territory,
+    }),
+    () => 'next() called',
+    t.context.middlewareConfig,
+  );
 
-  it('Aom admin - has no permission to create aom user - should throw permission error', async () => {
-    await expect(
-      middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
-        ['user.create'],
-        [
-          (params, context): string => {
-            if ('aom' in params && params.aom === context.call.user.aom) {
-              return 'aom.users.add';
-            }
-          },
-          (params, context): string => {
-            if ('operator' in params && params.aom === context.call.user.aom) {
-              return 'operator.users.add';
-            }
-          },
-        ],
-      ]),
-    ).to.rejectedWith(ForbiddenException);
-  });
+  t.is(result, 'next() called');
 });
 
-describe('Middleware Scopetoself', () => {
-  const mockCreateUserContext = contextFactory({ permissions: ['aom.users.add'], aom: 'wrongAomId' });
+test('Middleware Scopetoself: territory admin - has no permission to create territory user', async (t) => {
+  await t.throwsAsync(
+    t.context.middleware.process(
+      t.context.mockCreateUserParameters,
+      t.context.contextFactory({ permissions: [], territory: t.context.mockCreateUserParameters.territory }),
+      () => {},
+      t.context.middlewareConfig,
+    ),
+    { instanceOf: ForbiddenException },
+  );
+});
 
-  it('Aom registry - has wrong aom to create aom user - should throw permission error', async () => {
-    await expect(
-      middleware.process(mockCreateUserParameters, mockCreateUserContext, noop, [
-        ['user.create'],
-        [
-          (params, context): string => {
-            if ('aom' in params && params.aom === context.call.user.aom) {
-              return 'aom.users.add';
-            }
-          },
-          (params, context): string => {
-            if ('operator' in params && params.aom === context.call.user.aom) {
-              return 'operator.users.add';
-            }
-          },
-        ],
-      ]),
-    ).to.rejectedWith(ForbiddenException);
-  });
+test('Middleware Scopetoself: registry admin - wrong territory', async (t) => {
+  await t.throwsAsync(
+    t.context.middleware.process(
+      t.context.mockCreateUserParameters,
+      t.context.contextFactory({ permissions: ['territory.users.add'], territory: 0 }),
+      () => {},
+      t.context.middlewareConfig,
+    ),
+    { instanceOf: ForbiddenException },
+  );
 });

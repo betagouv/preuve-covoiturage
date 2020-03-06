@@ -1,5 +1,5 @@
 // tslint:disable: no-unused-expression
-
+import { Suite } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { NewableType } from '@ilos/common';
@@ -9,10 +9,10 @@ import { ValidatorInterface } from '../../src';
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-export function rnaFormatTest(getProvider, FakeObject: NewableType<any>): Function {
+export function rnaFormatTest(getProvider, FakeObject: NewableType<any>): (this: Suite) => void {
   let provider: ValidatorInterface;
 
-  return (): void => {
+  return function(): void {
     before(
       async (): Promise<void> => {
         const schema = {

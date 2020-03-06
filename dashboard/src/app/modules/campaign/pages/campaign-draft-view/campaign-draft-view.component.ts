@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, take, takeUntil, tap, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
@@ -10,10 +10,8 @@ import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CommonDataService } from '~/core/services/common-data.service';
 import { DialogService } from '~/core/services/dialog.service';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserRoleEnum } from '~/core/enums/user/user-role.enum';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-campaign-draft-view',
@@ -52,7 +50,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
 
     this._authService.user$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => (this.userIsDemo = this._authService.hasRole(UserRoleEnum.TERRITORY_DEMO)));
+      .subscribe(() => (this.userIsDemo = this._authService.hasRole(UserRoleEnum.TERRITORY_DEMO)));
   }
 
   get isLoading() {
@@ -108,8 +106,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
             .launch(id)
             .pipe(takeUntil(this.destroy$))
             .subscribe(
-              (data) => {
-                const campaignSaved = data;
+              () => {
                 this._router.navigate(['/campaign']).then(() => {
                   this._toastr.success(`Votre campagne a bien été lancé`);
                 });

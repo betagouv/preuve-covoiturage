@@ -1,6 +1,6 @@
 import { isNumber } from 'lodash';
 
-export function inseeCast({ data }: { data: string }): string {
+export function inseeCast({ data }: { data: string | number }): string {
   if (!data) {
     throw new Error('Invalid INSEE code');
   }

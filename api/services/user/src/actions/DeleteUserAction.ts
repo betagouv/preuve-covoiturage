@@ -3,16 +3,15 @@ import { handler } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/delete.contract';
 import { alias } from '../shared/user/delete.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 /*
  *  Find user by id and delete user
  */
-@handler(handlerConfig)
-export class DeleteUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -37,8 +36,9 @@ export class DeleteUserAction extends AbstractAction {
         ],
       ],
     ],
-  ];
-
+  ],
+})
+export class DeleteUserAction extends AbstractAction {
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }

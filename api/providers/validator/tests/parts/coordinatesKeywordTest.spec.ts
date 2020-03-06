@@ -1,10 +1,11 @@
+import { Suite } from 'mocha';
 import { expect } from 'chai';
 import { NewableType } from '@ilos/common';
 
 import { ValidatorInterface } from '../../src';
 
-export function coordinatesKeywordTest(getProvider, FakeObject: NewableType<any>): Function {
-  return (): void => {
+export function coordinatesKeywordTest(getProvider, FakeObject: NewableType<any>): (this: Suite) => void {
+  return function(): void {
     let provider: ValidatorInterface;
     beforeEach(async () => {
       const schema = {

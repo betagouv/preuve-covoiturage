@@ -5,15 +5,16 @@ import { get } from 'lodash';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/list.contract';
 import { alias } from '../shared/policy/list.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { CampaignInterface } from '../interfaces';
 
-@handler(handlerConfig)
-export class ListCampaignAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['can', ['incentive-campaign.list']],
     ['validate', alias],
-  ];
+  ],
+})
+export class ListCampaignAction extends AbstractAction {
   protected readonly sensitiveRules = ['operator_whitelist_filter'];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {

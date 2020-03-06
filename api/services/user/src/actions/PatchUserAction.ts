@@ -3,7 +3,6 @@ import { handler, ContextType, ConflictException, UnauthorizedException } from '
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/patch.contract';
 import { alias } from '../shared/user/patch.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
@@ -14,9 +13,9 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
  * The user is switched to 'pending' when the email is modified.
  * A confirmation link is sent to the new email and a notification to the old one.
  */
-@handler(handlerConfig)
-export class PatchUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -42,7 +41,9 @@ export class PatchUserAction extends AbstractAction {
       ],
     ],
     ['content.whitelist', userWhiteListFilterOutput],
-  ];
+  ],
+})
+export class PatchUserAction extends AbstractAction {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private notification: UserNotificationProvider,

@@ -5,16 +5,16 @@ import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/Compan
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/company/fetch.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/company/fetch.schema';
 
-@handler(handlerConfig)
-export class FetchAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['can', ['company.fetch']],
-  ];
-
+  ],
+})
+export class FetchAction extends AbstractAction {
   constructor(
     private ds: CompanyDataSourceProviderInterfaceResolver,
     private repository: CompanyRepositoryProviderInterfaceResolver,

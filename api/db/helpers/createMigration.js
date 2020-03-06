@@ -30,7 +30,7 @@ exports.createMigration = function(files, basePath = __dirname) {
       for (const file of files) {
         data += `${resolveFile(file, 'up.sql')}\n`;
       }
-      console.log(data);
+      // console.log(data);
       return db.runSql(data);
     },
     down: async function(db) {
@@ -38,7 +38,7 @@ exports.createMigration = function(files, basePath = __dirname) {
       for (const file of files.reverse()) {
         data += `${resolveFile(file, 'down.sql')}\n`;
       }
-      console.log(data);
+      // console.log(data);
       return db.runSql(data);
     },
   };

@@ -1,6 +1,6 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@ilos/package-acl';
+import { PermissionMiddleware } from '@pdc/provider-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ContentBlacklistMiddleware } from '@pdc/provider-middleware';
@@ -11,6 +11,7 @@ import { binding as deleteBinding } from './shared/operator/delete.schema';
 import { binding as findBinding } from './shared/operator/find.schema';
 import { binding as patchContactsBinding } from './shared/operator/patchContacts.schema';
 
+import { config } from './config';
 import { OperatorPgRepositoryProvider } from './providers/OperatorPgRepositoryProvider';
 import { ListOperatorAction } from './actions/ListOperatorAction';
 import { CreateOperatorAction } from './actions/CreateOperatorAction';
@@ -18,11 +19,9 @@ import { UpdateOperatorAction } from './actions/UpdateOperatorAction';
 import { DeleteOperatorAction } from './actions/DeleteOperatorAction';
 import { FindOperatorAction } from './actions/FindOperatorAction';
 import { PatchContactsOperatorAction } from './actions/PatchContactsOperatorAction';
-import { MigrateCommand } from './commands/MigrateCommand';
-import { MigrateDataCommand } from './commands/MigrateDataCommand';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [OperatorPgRepositoryProvider],
   validator: [createBinding, updateBinding, deleteBinding, findBinding, patchContactsBinding],
   handlers: [
@@ -39,7 +38,7 @@ import { MigrateDataCommand } from './commands/MigrateDataCommand';
     ['validate', ValidatorMiddleware],
     ['content.blacklist', ContentBlacklistMiddleware],
   ],
-  commands: [MigrateCommand, MigrateDataCommand],
+  commands: [],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

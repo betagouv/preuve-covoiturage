@@ -3,15 +3,15 @@ import { Action as AbstractAction } from '@ilos/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/list.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
-@handler(handlerConfig)
-export class ListOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['can', ['operator.list']],
     ['content.blacklist', ['data.*.contacts', 'data.*.bank']],
-  ];
-
+  ],
+})
+export class ListOperatorAction extends AbstractAction {
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }

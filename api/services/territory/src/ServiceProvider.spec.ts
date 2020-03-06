@@ -11,17 +11,15 @@ import { ServiceProvider } from './ServiceProvider';
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
-process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
-process.env.APP_ENV = 'testing';
-process.env.APP_MONGO_DB = '';
-
-@kernel({
-  children: [ServiceProvider],
-})
-class Kernel extends ParentKernel {}
-
 describe('Territory service provider', () => {
+  const configDir = process.env.APP_CONFIG_DIR ? process.env.APP_CONFIG_DIR : './config';
+  process.env.APP_CONFIG_DIR = path.join('..', 'dist', configDir);
+  process.env.APP_ENV = 'testing';
+
+  @kernel({
+    children: [ServiceProvider],
+  })
+  class Kernel extends ParentKernel {}
   it('boots', async () => {
     const sp = new Kernel();
     await expect(sp.register()).to.become(undefined);

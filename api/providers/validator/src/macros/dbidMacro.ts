@@ -1,14 +1,6 @@
 export function dbidMacro(): { anyOf: object[] } {
   return {
     anyOf: [
-      // MongoDB ObjectID
-      {
-        type: 'string',
-        format: 'objectid',
-        minLength: 24,
-        maxLength: 24,
-      },
-
       // regular string
       {
         type: 'string',

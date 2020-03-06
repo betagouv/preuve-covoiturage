@@ -6,7 +6,7 @@ import { ValidatorMiddleware } from '@pdc/provider-validator';
 import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
 import { binding } from './shared/carpool/crosscheck.schema';
-
+import { config } from './config';
 import { CarpoolRepositoryProvider } from './providers/CarpoolRepositoryProvider';
 import { CrosscheckAction } from './actions/CrosscheckAction';
 import { DispatchAction } from './actions/DispatchAction';
@@ -14,7 +14,7 @@ import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryPr
 import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvider';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [CarpoolRepositoryProvider, CrosscheckRepositoryProvider, IdentityRepositoryProvider],
   validator: [binding],
   middlewares: [

@@ -1,7 +1,7 @@
 import path from 'path';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@ilos/package-acl';
+import { PermissionMiddleware } from '@pdc/provider-acl';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { NotificationExtension } from '@pdc/provider-notification';
@@ -12,6 +12,7 @@ import {
   ContentWhitelistMiddleware,
   ChannelServiceBlacklistMiddleware,
 } from '@pdc/provider-middleware';
+import { TemplateExtension } from '@pdc/provider-template';
 
 import { changePassword } from './shared/user/changePassword.schema';
 import { changePasswordWithToken } from './shared/user/changePasswordWithToken.schema';
@@ -28,9 +29,9 @@ import { patch } from './shared/user/patch.schema';
 import { sendConfirmEmail } from './shared/user/sendConfirmEmail.schema';
 import { sendInvitationEmail } from './shared/user/sendInvitationEmail.schema';
 import { UserPgRepositoryProvider } from './providers/UserPgRepositoryProvider';
-import { MigrateDataCommand } from './commands/MigrateDataCommand';
 import { SetPermissionsCommand } from './commands/SetPermissionsCommand';
 
+import { config } from './config';
 import { ChangePasswordUserAction } from './actions/ChangePasswordUserAction';
 import { ChangePasswordWithTokenUserAction } from './actions/ChangePasswordWithTokenUserAction';
 import { ChangeRoleUserAction } from './actions/ChangeRoleUserAction';
@@ -53,7 +54,7 @@ import { UserNotificationProvider } from './providers/UserNotificationProvider';
 import { SeedUsersCommand } from './commands/SeedUsersCommand';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [UserPgRepositoryProvider, CryptoProvider, AuthRepositoryProvider, UserNotificationProvider],
   validator: [
     ['user.changePassword', changePassword],
@@ -103,8 +104,12 @@ import { SeedUsersCommand } from './commands/SeedUsersCommand';
     template: path.resolve(__dirname, 'templates'),
     templateMeta: 'template',
   },
-  commands: [MigrateDataCommand, SetPermissionsCommand, SeedUsersCommand],
+  commands: [SetPermissionsCommand, SeedUsersCommand],
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, NotificationExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [
+    ValidatorExtension,
+    TemplateExtension,
+    NotificationExtension,
+  ];
 }
