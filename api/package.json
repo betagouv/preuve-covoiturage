@@ -52,6 +52,7 @@
   },
   "homepage": "https://github.com/betagouv/preuve-covoiturage#readme",
   "devDependencies": {
+    "@ava/typescript": "^1.1.1",
     "@types/bcryptjs": "^2.4.2",
     "@types/bull": "^3.12.1",
     "@types/chai": "^4.2.9",
