@@ -20,6 +20,7 @@
     ]
   },
   "dependencies": {
+    "@pdc/provider-acl": "~0",
     "@ilos/framework": "~0",
     "@ilos/common": "~0"
   },
