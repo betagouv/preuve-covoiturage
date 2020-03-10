@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, map } from 'rxjs/operators';
 
 import { MenuTabInterface } from '~/core/interfaces/admin/adminLayoutInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-trip-layout',
@@ -19,6 +19,7 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
   public pageHasFilter = false;
 
   public menu: MenuTabInterface[];
+  canExport$: Observable<boolean>;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -29,6 +30,17 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canExport$ = this.authenticationService.user$.pipe(
+      takeUntil(this.destroy$),
+      map((user) =>
+        this.authenticationService.hasAnyPermission([
+          'trip.export',
+          'operator.trip.export',
+          'territory.trip.export',
+        ] as any),
+      ),
+    );
+
     this.menu = [
       {
         path: '/trip/stats',
@@ -38,11 +50,11 @@ export class TripLayoutComponent extends DestroyObservable implements OnInit {
         path: '/trip/list',
         label: 'Liste détaillée',
       },
-      {
-        path: '/trip/export',
-        groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY],
-        label: 'Export',
-      },
+      // {
+      //   path: '/trip/export',
+      //   groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY],
+      //   label: 'Export',
+      // },
     ];
     // {
     //   path: '/trip/maps',

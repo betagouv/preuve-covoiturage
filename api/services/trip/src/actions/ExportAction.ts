@@ -17,7 +17,7 @@ import {
     [
       'scopeIt',
       [
-        ['trip.list'],
+        ['trip.export'],
         [
           (params, context): string => {
             if (
@@ -25,7 +25,7 @@ import {
               params.territory_id.length === 1 &&
               params.territory_id[0] === context.call.user.territory_id
             ) {
-              return 'territory.trip.list';
+              return 'territory.trip.export';
             }
           },
           (params, context): string => {
@@ -34,7 +34,7 @@ import {
               params.operator_id.length === 1 &&
               params.operator_id[0] === context.call.user.operator_id
             ) {
-              return 'operator.trip.list';
+              return 'operator.trip.export';
             }
           },
         ],
