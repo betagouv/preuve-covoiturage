@@ -28,6 +28,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       operator_class: string;
       operator_trip_id: string;
       trip_id: string;
+      status: string;
     },
     people: PeopleWithIdInterface[],
   ): Promise<void> {
@@ -59,6 +60,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       operator_class: string;
       trip_id: string;
       operator_trip_id: string;
+      status: string;
     },
     person: PeopleWithIdInterface,
   ): Promise<void> {
@@ -69,6 +71,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
           operator_id,
           trip_id,
           identity_id,
+          status,
           is_driver,
           operator_class,
           datetime,
@@ -85,12 +88,13 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
           operator_journey_id,
           meta
         )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`,
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
       values: [
         shared.acquisition_id,
         shared.operator_id,
         shared.trip_id,
         person.identity_id,
+        shared.status,
         person.is_driver,
         shared.operator_class,
         person.datetime,

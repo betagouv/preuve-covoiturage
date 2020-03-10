@@ -10,6 +10,7 @@ export interface CarpoolRepositoryProviderInterface {
       created_at: Date;
       operator_class: string;
       trip_id: string;
+      status: string;
     },
     people: PeopleWithIdInterface[],
   ): Promise<void>;
@@ -24,6 +25,7 @@ export abstract class CarpoolRepositoryProviderInterfaceResolver implements Carp
       created_at: Date;
       operator_class: string;
       trip_id: string;
+      status: string;
     },
     people: PeopleWithIdInterface[],
   ): Promise<void> {
