@@ -45,7 +45,6 @@ export class OnlyAdultRetributionRule implements GlobalRetributionRuleInterface 
 
   constructor() {
     this.slug = GlobalRetributionRulesSlugEnum.ONLY_ADULT;
-    this.parameters = true;
   }
 }
 
