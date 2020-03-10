@@ -26,6 +26,7 @@ export class CampaignUx {
   public only_adult: boolean;
   public restrictions: RestrictionUxInterface[];
   public retributions: RetributionUxInterface[];
+  public passenger_seat: boolean;
 
   // todo: don't use ui_status in campaignUx
   public ui_status: {
@@ -64,6 +65,7 @@ export class CampaignUx {
           whiteList: [],
         },
       },
+      passenger_seat: true,
       retributions: [],
       restrictions: [],
       max_amount: null,

@@ -110,17 +110,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
   }
 
   get canGoToLastStep(): boolean {
-    console.log(
-      'can go last step',
-      this.campaignFormGroup.get('filters').valid,
-      this.campaignFormGroup.get('max_amount').valid,
-      this.campaignFormGroup.get('max_trips').valid,
-      this.campaignFormGroup.get('start').valid,
-      this.campaignFormGroup.get('end').valid,
-      this.campaignFormGroup.get('unit').valid,
-      this.campaignFormGroup.get('restrictions').valid,
-      this.campaignFormGroup.get('retributions').valid,
-    );
     return (
       this.campaignFormGroup.get('filters').valid &&
       this.campaignFormGroup.get('max_amount').valid &&
@@ -212,6 +201,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         staggered: [false],
         insee_mode: [false],
       }),
+      passenger_seat: [true],
       start: [null, Validators.required],
       end: [null, Validators.required],
       max_amount: [null, [Validators.required, Validators.min(1)]],

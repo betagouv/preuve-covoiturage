@@ -20,6 +20,7 @@ import {
   TimeRetributionRule,
   WeekdayRetributionRule,
   WhiteListGlobalRetributionRule,
+  PassengerSeatRule,
 } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import {
   RestrictionUxInterface,
@@ -89,6 +90,11 @@ export class CampaignFormater {
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.ONLY_ADULT) {
         campaignUx.only_adult = true;
       }
+
+      if (retributionRule.slug === GlobalRetributionRulesSlugEnum.PER_SEAT_MODIFIER) {
+        campaignUx.passenger_seat = true;
+      }
+
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.DISTANCE_RANGE) {
         const parameters = retributionRule.parameters as DistanceRangeGlobalRetributionRule['parameters'];
         campaignUx.filters.distance_range = [
@@ -122,6 +128,7 @@ export class CampaignFormater {
           unit: RestrictionUnitEnum.TRIP,
         } as RestrictionUxInterface);
       }
+
       if (retributionRule.slug === GlobalRetributionRulesSlugEnum.RESTRICTION_AMOUNT) {
         const parameters = retributionRule.parameters as TripRestrictionRetributionRule['parameters'];
         campaignUx.restrictions.push({
@@ -316,6 +323,7 @@ export class CampaignFormater {
       max_trips,
       only_adult,
       restrictions,
+      passenger_seat,
     } = campaignUx;
 
     // GLOBAL RULES
@@ -347,6 +355,9 @@ export class CampaignFormater {
       ...ui_status,
       insee_filter: filters.insee,
     };
+
+    // PASSENGER SEAT
+    if (passenger_seat) campaignGlobalRetributionRules.push(new PassengerSeatRule());
 
     // WHITELIST
     if (filters.insee.whiteList.length > 0) {
