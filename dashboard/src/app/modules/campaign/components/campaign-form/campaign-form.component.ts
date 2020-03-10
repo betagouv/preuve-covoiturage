@@ -271,6 +271,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       max_trips: campaign.max_trips,
       max_amount: campaign.max_amount,
       unit: campaign.unit,
+      only_adult: campaign.only_adult,
     });
 
     // patch rules
