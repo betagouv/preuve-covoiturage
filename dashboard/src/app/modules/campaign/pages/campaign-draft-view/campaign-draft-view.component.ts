@@ -86,7 +86,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
 
     if (this.userIsDemo) {
       this._toastr.error(
-        `Vous ne pouvez pas lancer de campagne car vous êtes en mode découverte,
+        `Vous ne pouvez pas lancer de campagne car vous êtes en mode découverte.
         Veuillez contacter le registre de covoiturage pour activer votre compte.`,
       );
 
