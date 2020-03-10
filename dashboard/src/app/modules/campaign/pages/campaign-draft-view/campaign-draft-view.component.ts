@@ -108,7 +108,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
             .subscribe(
               () => {
                 this._router.navigate(['/campaign']).then(() => {
-                  this._toastr.success(`Votre campagne a bien été lancé`);
+                  this._toastr.success(`Votre campagne a bien été lancée`);
                 });
               },
               (error) => {
