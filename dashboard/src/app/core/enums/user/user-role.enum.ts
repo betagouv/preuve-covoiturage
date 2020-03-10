@@ -32,8 +32,8 @@ export const USER_GROUP_ROLES = {
 };
 
 export const USER_ROLES_FR = {
-  user: 'consultation',
-  admin: 'administrateur',
+  user: 'Consultation',
+  admin: 'Administrateur',
   demo: 'Découverte',
   // admin: 'administrateur',
 };

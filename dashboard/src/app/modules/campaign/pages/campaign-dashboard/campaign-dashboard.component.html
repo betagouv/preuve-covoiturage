@@ -36,8 +36,8 @@
         </button>
       </div>
       <p *ngIf="displayDemoCaption$ | async">
-        <strong>Non accessible en mode découverte</strong>
-        <br />Sera visible lors de l'activation de la première campagne
+        <strong>Non accessible en mode découverte.</strong>
+        <br />Sera visible lors de l'activation de la première campagne.
       </p>
       <div class="CampaignDashboard-content-list activeList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
@@ -67,8 +67,8 @@
         <h2>Vos campagnes terminées</h2>
       </div>
       <p *ngIf="displayDemoCaption$ | async">
-        <strong>Non accessible en mode découverte</strong>
-        <br />Sera visible lors de l'activation de la première campagne
+        <strong>Non accessible en mode découverte.</strong>
+        <br />Sera visible lors de l'activation de la première campagne.
       </p>
       <div class="CampaignDashboard-content-list archivedList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
