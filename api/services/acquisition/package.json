@@ -15,11 +15,22 @@
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
-  "main": "./dist/bootstrap.js",
+  "main": "./dist/src/bootstrap.js",
   "config": {
-    "workingDir": "./dist",
-    "bootstrap": "./bootstrap.js",
-    "app": {}
+    "workingDir": "./dist/src",
+    "bootstrap": "./bootstrap.js"
+  },
+  "ava": {
+    "files": [
+      "src/**/*.spec.ts",
+      "tests/**/*.spec.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/src/",
+        "tests/": "dist/tests/"
+      }
+    }
   },
   "dependencies": {
     "@ilos/cli": "~0",
