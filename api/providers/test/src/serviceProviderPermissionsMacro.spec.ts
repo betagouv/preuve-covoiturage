@@ -1,11 +1,21 @@
 import anyTest from 'ava';
 import { get } from 'lodash';
-import { handler as handlerDecorator, serviceProvider as serviceProviderDecorator, ContextType } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider, Action as AbstractAction } from '@ilos/core';
-import { PermissionMiddleware } from '@pdc/provider-acl';
+import {
+  handler as handlerDecorator,
+  middleware,
+  MiddlewareInterface,
+  serviceProvider as serviceProviderDecorator,
+  ContextType,
+  ForbiddenException,
+  InvalidParamsException,
+} from '@ilos/common';
 
 import { handlerMacro } from './handlerMacro';
 
+/**
+ * Mock the action
+ */
 const handlerConfig = {
   service: 'test',
   method: 'run',
@@ -23,6 +33,53 @@ class Action extends AbstractAction {
   }
 }
 
+/**
+ * Mock the middleware
+ */
+
+declare type ParamsType = {};
+declare type ResultType = {};
+
+@middleware()
+export class PermissionMiddleware implements MiddlewareInterface {
+  async process(
+    params: ParamsType,
+    context: ContextType,
+    next: Function,
+    neededPermissions: string[],
+  ): Promise<ResultType> {
+    if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
+      throw new InvalidParamsException('No permissions defined');
+    }
+
+    let permissions = [];
+
+    if (
+      !!context.call &&
+      !!context.call.user &&
+      !!context.call.user.permissions &&
+      !!context.call.user.permissions.length
+    ) {
+      permissions = context.call.user.permissions;
+    }
+
+    if (permissions.length === 0) {
+      throw new ForbiddenException('Invalid permissions');
+    }
+
+    const pass = neededPermissions.reduce((p, c) => p && (permissions || []).indexOf(c) > -1, true);
+
+    if (!pass) {
+      throw new ForbiddenException('Invalid permissions');
+    }
+
+    return next(params, context);
+  }
+}
+
+/**
+ * Mock the service provider
+ */
 @serviceProviderDecorator({
   handlers: [Action],
   middlewares: [['can', PermissionMiddleware]],
