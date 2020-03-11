@@ -1175,9 +1175,9 @@
     "@types/node" "*"
 
 "@types/bull@^3.5.11":
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/@types/bull/-/bull-3.12.0.tgz#683d7a08db64823076c4b5ac00eea73e5b6947fa"
-  integrity sha512-oKj9X8bxBF7OyAsCPGg2hu9msQPM/WwIRJfUHd0xzmKDMYOBepzbWdIuQDoX1xyvDskdjbW2Io7chbxqARae7A==
+  version "3.12.1"
+  resolved "https://registry.yarnpkg.com/@types/bull/-/bull-3.12.1.tgz#dcf1ac40c4314a3dfa1a4a12662ce7201b2e4efa"
+  integrity sha512-mn1xmqKBNxllUGuOSBDOvsRpLHPDTSOsGQiHTv6t1gvGtIc/L1IFsN3YTmwf3AZenKzUcBQDGFLrCKt+abhrvQ==
   dependencies:
     "@types/ioredis" "*"
 
@@ -1188,10 +1188,15 @@
   dependencies:
     "@types/chai" "*"
 
-"@types/chai@*", "@types/chai@^4.1.7", "@types/chai@^4.2.0", "@types/chai@^4.2.7":
+"@types/chai@*", "@types/chai@^4.2.0", "@types/chai@^4.2.7":
   version "4.2.8"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.8.tgz#c8d645506db0d15f4aafd4dfa873f443ad87ea59"
   integrity sha512-U1bQiWbln41Yo6EeHMr+34aUhvrMVyrhn9lYfPSpLTCrZlGxU4Rtn1bocX+0p2Fc/Jkd2FanCEXdw0WNfHHM0w==
+
+"@types/chai@^4.1.7":
+  version "4.2.10"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.10.tgz#1122da40faabb81795580dc9f06c1e71e2ebbbe4"
+  integrity sha512-TlWWgb21+0LdkuFqEqfmy7NEgfB/7Jjux15fWQAh3P93gbmXuwTM/vxEdzW89APIcI2BgKR48yjeAkdeH+4qvQ==
 
 "@types/color-name@^1.1.1":
   version "1.1.1"
@@ -2015,20 +2020,20 @@ builtins@^1.0.3:
   integrity sha1-y5T662HIaWRR2zZTThQi+U8K7og=
 
 bull@^3.7.0:
-  version "3.12.1"
-  resolved "https://registry.yarnpkg.com/bull/-/bull-3.12.1.tgz#ced62d0afca81c9264b44f1b6f39243df5d2e73f"
-  integrity sha512-X3bSP7gTqPXLYVSyUtQuTOqZuU0GwVbV304Et84Z8bxYP60R1VD3FUOLsESVRA9LIUEOWVH3hE8MFqlszmO0Gw==
+  version "3.13.0"
+  resolved "https://registry.yarnpkg.com/bull/-/bull-3.13.0.tgz#232935f9a5c0c87be6eb2aa95e434ff115bacd7a"
+  integrity sha512-nP8ICMNHGYDNt6cgPqBPm90n57xA+/Om2wI2EGEOIJtWutjrYt8JAWiiFYjZKrly9UkKlrfG9qgOCwFFdS5xaw==
   dependencies:
     cron-parser "^2.13.0"
     debuglog "^1.0.0"
-    get-port "^5.0.0"
+    get-port "^5.1.1"
     ioredis "^4.14.1"
     lodash "^4.17.15"
-    p-timeout "^3.1.0"
-    promise.prototype.finally "^3.1.1"
+    p-timeout "^3.2.0"
+    promise.prototype.finally "^3.1.2"
     semver "^6.3.0"
-    util.promisify "^1.0.0"
-    uuid "^3.3.3"
+    util.promisify "^1.0.1"
+    uuid "^3.4.0"
 
 byline@^5.0.0:
   version "5.0.0"
@@ -4051,7 +4056,7 @@ get-port@^4.2.0:
   resolved "https://registry.yarnpkg.com/get-port/-/get-port-4.2.0.tgz#e37368b1e863b7629c43c5a323625f95cf24b119"
   integrity sha512-/b3jarXkH8KJoOMQc3uVGHASwGLPq3gSFJ7tgJm2diza+bydJPTGOibin2steecKeOylE8oY2JERlVWkAJO6yw==
 
-get-port@^5.0.0:
+get-port@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/get-port/-/get-port-5.1.1.tgz#0469ed07563479de6efb986baf053dcd7d4e3193"
   integrity sha512-g/Q1aTSDOxFpchXC4i8ZWvxA1lnPqx/JHqcpIw0/LX9T8x/GBbi6YnlN5nhaKIFkT8oFsscUKgDJYxfwfS6QsQ==
@@ -6136,9 +6141,9 @@ mocha@^7.0.0:
     yargs-unparser "1.6.0"
 
 mock-fs@^4.9.0:
-  version "4.10.4"
-  resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.10.4.tgz#4eaa3d6f7da2f44e1f3dd6b462cbbcb7b082e3d4"
-  integrity sha512-gDfZDLaPIvtOusbusLinfx6YSe2YpQsDT8qdP41P47dQ/NQggtkHukz7hwqgt8QvMBmAv+Z6DGmXPyb5BWX2nQ==
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.11.0.tgz#0828107e4b843a6ba855ecebfe3c6e073b69db92"
+  integrity sha512-Yp4o3/ZA15wsXqJTT+R+9w2AYIkD1i80Lds47wDbuUhOvQvm+O2EfjFZSz0pMgZZSPHRhGxgcd2+GL4+jZMtdw==
 
 modify-values@^1.0.0:
   version "1.0.1"
@@ -6868,7 +6873,7 @@ p-reduce@^1.0.0:
   resolved "https://registry.yarnpkg.com/p-reduce/-/p-reduce-1.0.0.tgz#18c2b0dd936a4690a529f8231f58a0fdb6a47dfa"
   integrity sha1-GMKw3ZNqRpClKfgjH1ig/bakffo=
 
-p-timeout@^3.1.0:
+p-timeout@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/p-timeout/-/p-timeout-3.2.0.tgz#c7e17abc971d2a7962ef83626b35d635acf23dfe"
   integrity sha512-rhIwUycgwwKcP9yTOOFK/AKsAopjjCakVqLHePO3CC6Mir1Z99xT+R63jZxAT5lFZLa2inS5h+ZS2GvR99/FBg==
@@ -7112,9 +7117,9 @@ pg-connection-string@0.1.3:
   integrity sha1-2hhHsglA5C7hSSvq9l1J2RskXfc=
 
 pg-cursor@^2.0.0:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/pg-cursor/-/pg-cursor-2.1.5.tgz#912096479cd8263b9eba38e84d9d64c641a55c0a"
-  integrity sha512-+LSPIxw7awEhQrb8sqT2Sxr+8RoEAzURMX18oaOQebItqaO94WUh3deHQs9vh3m14E2lz7q7ebRl1s/ODfJAkQ==
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/pg-cursor/-/pg-cursor-2.1.6.tgz#1cca3f30525a7d02c39ffb4d48383a55f963beb5"
+  integrity sha512-61En061/NFsfKOY0EvIdcl1l2FDvoeFSD2RLe57qA0rX0TbNxQ1TK9JOZaTTKrxk6L8opiHAv/IRAoHFMacKEQ==
 
 pg-int8@1.0.1:
   version "1.0.1"
@@ -7143,9 +7148,9 @@ pg-types@^2.1.0:
     postgres-interval "^1.1.0"
 
 pg@^7.12.1:
-  version "7.18.1"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-7.18.1.tgz#67f59c47a99456fcb34f9fe53662b79d4a992f6d"
-  integrity sha512-1KtKBKg/zWrjEEv//klBbVOPGucuc7HHeJf6OEMueVcUeyF3yueHf+DvhVwBjIAe9/97RAydO/lWjkcMwssuEw==
+  version "7.18.2"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-7.18.2.tgz#4e219f05a00aff4db6aab1ba02f28ffa4513b0bb"
+  integrity sha512-Mvt0dGYMwvEADNKy5PMQGlzPudKcKKzJds/VbOeZJpb6f/pI3mmoXX0JksPgI3l3JPP/2Apq7F36O63J7mgveA==
   dependencies:
     buffer-writer "2.0.0"
     packet-reader "1.0.0"
@@ -7300,7 +7305,7 @@ promise-retry@^1.1.1:
     err-code "^1.0.0"
     retry "^0.10.0"
 
-promise.prototype.finally@^3.1.1:
+promise.prototype.finally@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/promise.prototype.finally/-/promise.prototype.finally-3.1.2.tgz#b8af89160c9c673cefe3b4c4435b53cfd0287067"
   integrity sha512-A2HuJWl2opDH0EafgdjwEw7HysI8ff/n4lW4QEVBCUXFk9QeGecBWv0Deph0UmLe3tTNYegz8MOjsVuE6SMoJA==
@@ -8887,7 +8892,12 @@ tslib@1.9.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.0.tgz#e37a86fda8cbbaf23a057f473c9f4dc64e5fc2e8"
   integrity sha512-f/qGG2tUkrISBlQZEjEqoZ3B2+npJjIf04H1wuAv9iA8i04Icp+61KRXxFdha22670NJopsZCIjhC3SnjPRKrQ==
 
-tslib@^1.7.1, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
+tslib@^1.7.1, tslib@^1.8.0:
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
+  integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
+
+tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
   integrity sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==
@@ -9180,7 +9190,7 @@ util-promisify@^2.1.0:
   dependencies:
     object.getownpropertydescriptors "^2.0.3"
 
-util.promisify@^1.0.0:
+util.promisify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/util.promisify/-/util.promisify-1.0.1.tgz#6baf7774b80eeb0f7520d8b81d07982a59abbaee"
   integrity sha512-g9JpC/3He3bm38zsLupWryXHoEcS22YHthuPQSJdMy6KNrzIRzWqcsHzD/WUnqe45whVou4VIsPew37DoXWNrA==
@@ -9195,7 +9205,7 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@^3.0.1, uuid@^3.3.2, uuid@^3.3.3:
+uuid@^3.0.1, uuid@^3.3.2, uuid@^3.3.3, uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
