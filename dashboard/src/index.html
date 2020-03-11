@@ -18,6 +18,21 @@
         overflow: hidden;
       }
 
+      .hidden {
+        display: none !important;
+      }
+
+      #ie-warning img {
+        width: 100%;
+        max-width: 520px;
+      }
+
+      #ie-warning {
+        padding: 30px;
+        text-align: center;
+        font-size: 16px;
+      }
+
       .splashscreen svg {
         width: 25%;
       }
@@ -117,6 +132,17 @@
             </g>
           </g>
         </svg>
+      </div>
+      <div id="ie-warning" class="hidden">
+        <img
+          _ngcontent-pim-c2=""
+          alt="Logo de la Marianne, covoiturage.beta.gouv.fr"
+          src="assets/img/covoituragebetagouvfr.svg"
+        />
+        <p>
+          Votre navigateur (Internet Explorer) n'est pas supporté par le registre de preuve de covoiturage, veuillez
+          utiliser un navigateur plus récent
+        </p>
       </div>
     </app-root>
   </body>
