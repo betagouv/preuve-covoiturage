@@ -403,8 +403,14 @@ export class CampaignUiService {
     if (!campaign.filters.operator_ids.length) {
       summaryText += ` est ouvertes à tous les opérateurs présents sur le territoire, `;
     } else {
-      summaryText += 'est limitée aux opérateurs ';
-      summaryText += this.commonData.operators.map((operator) => operator.name).join(', ') + ' ';
+      summaryText += `est limitée  ${
+        campaign.filters.operator_ids.length === 1 ? "à l'opérateur " : 'aux opérateurs '
+      } `;
+      summaryText +=
+        this.commonData.operators
+          .filter((operator) => campaign.filters.operator_ids.indexOf(operator._id) !== -1)
+          .map((operator) => operator.name)
+          .join(', ') + ' ';
     }
 
     // RANKS
