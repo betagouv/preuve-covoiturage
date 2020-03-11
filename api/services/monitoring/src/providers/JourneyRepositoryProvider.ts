@@ -1,19 +1,40 @@
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { provider } from '@ilos/common';
 
 export interface JourneyRepositoryProviderInterface {
+  acquiredJourneys(): Promise<number>;
+  allCarpools(): Promise<number>;
   missingCarpools(): Promise<number>;
 }
 
 export abstract class JourneyRepositoryProviderInterfaceResolver implements JourneyRepositoryProviderInterface {
+  async acquiredJourneys(): Promise<number> {
+    throw new Error('Method not implemented.');
+  }
+  async allCarpools(): Promise<number> {
+    throw new Error('Method not implemented.');
+  }
   async missingCarpools(): Promise<number> {
     throw new Error('Method not implemented.');
   }
 }
 
-export class JourneyRepositoryProvider extends JourneyRepositoryProviderInterfaceResolver {
-  constructor(private pg: PostgresConnection) {
-    super();
+@provider({ identifier: JourneyRepositoryProviderInterfaceResolver })
+export class JourneyRepositoryProvider implements JourneyRepositoryProviderInterface {
+  constructor(private pg: PostgresConnection) {}
+
+  async acquiredJourneys(): Promise<number> {
+    const results = await this.pg.getClient().query(`SELECT count(*) FROM acquisition.acquisitions`);
+
+    return results.rowCount ? parseInt(results.rows[0].count, 10) : -1;
   }
+
+  async allCarpools(): Promise<number> {
+    const results = await this.pg.getClient().query(`SELECT count(*) FROM carpool.carpools`);
+
+    return results.rowCount ? parseInt(results.rows[0].count, 10) : -1;
+  }
+
   async missingCarpools(): Promise<number> {
     const results = await this.pg.getClient().query(`
       SELECT count(cc._id)
@@ -23,6 +44,6 @@ export class JourneyRepositoryProvider extends JourneyRepositoryProviderInterfac
       WHERE cc.acquisition_id IS NULL
     `);
 
-    return results.rows[0] || -1;
+    return results.rowCount ? parseInt(results.rows[0].count, 10) : -1;
   }
 }

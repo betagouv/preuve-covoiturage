@@ -5,20 +5,20 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 
 import { config } from './config';
-import { binding as fetchBinding } from './shared/company/fetch.schema';
-import { binding as findBinding } from './shared/company/find.schema';
-import { FindAction } from './actions/FindAction';
+import { binding as statsBinding } from './shared/monitoring/journeys/stats.schema';
+import { JourneysStatsAction } from './actions/JourneysStatsAction';
+import { JourneyRepositoryProvider } from './providers/JourneyRepositoryProvider';
 
 @serviceProvider({
   config,
-  providers: [],
-  validator: [fetchBinding, findBinding],
+  providers: [JourneyRepositoryProvider],
+  validator: [statsBinding],
   middlewares: [
     ['can', PermissionMiddleware],
     ['validate', ValidatorMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
-  handlers: [FindAction],
+  handlers: [JourneysStatsAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

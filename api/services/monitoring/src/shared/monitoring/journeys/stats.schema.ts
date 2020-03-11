@@ -1,11 +1,7 @@
 export const alias = 'monitoring.journeys.stats';
 export const schema = {
   type: 'object',
-  additionalProperties: false,
-  required: [],
-  properties: {
-    // TODO
-  },
+  maxProperties: 0,
 };
 
 export const binding = [alias, schema];
