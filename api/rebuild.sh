@@ -9,8 +9,8 @@ if [ ${PWD##*/} != "api" ]; then
   exit 1;
 fi
 
-rm -rf ./**/dist
-rm -rf ./**/node_modules
+find . -type d -name node_modules -exec rm -rf {} \;
+find . -type d -name dist -exec rm -rf {} \;
 
 cd ilos
 yarn
