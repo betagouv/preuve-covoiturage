@@ -3,12 +3,16 @@ import { provider } from '@ilos/common';
 
 export interface JourneyRepositoryProviderInterface {
   acquiredJourneys(): Promise<number>;
+  acquiredFailedJourneys(): Promise<number>;
   allCarpools(): Promise<number>;
   missingCarpools(): Promise<number>;
 }
 
 export abstract class JourneyRepositoryProviderInterfaceResolver implements JourneyRepositoryProviderInterface {
   async acquiredJourneys(): Promise<number> {
+    throw new Error('Method not implemented.');
+  }
+  async acquiredFailedJourneys(): Promise<number> {
     throw new Error('Method not implemented.');
   }
   async allCarpools(): Promise<number> {
@@ -25,6 +29,12 @@ export class JourneyRepositoryProvider implements JourneyRepositoryProviderInter
 
   async acquiredJourneys(): Promise<number> {
     const results = await this.pg.getClient().query(`SELECT count(*) FROM acquisition.acquisitions`);
+
+    return results.rowCount ? parseInt(results.rows[0].count, 10) : -1;
+  }
+
+  async acquiredFailedJourneys(): Promise<number> {
+    const results = await this.pg.getClient().query(`SELECT count(*) FROM acquisition.errors`);
 
     return results.rowCount ? parseInt(results.rows[0].count, 10) : -1;
   }

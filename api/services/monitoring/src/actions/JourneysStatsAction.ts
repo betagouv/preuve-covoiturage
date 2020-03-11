@@ -19,16 +19,27 @@ export class JourneysStatsAction extends AbstractAction {
 
   public async handle(): Promise<ResultInterface> {
     const acquired = await this.journeyRepository.acquiredJourneys();
+    const acquired_failed = await this.journeyRepository.acquiredFailedJourneys();
     const carpools = await this.journeyRepository.allCarpools();
     const missing = await this.journeyRepository.missingCarpools();
+
+    // TODO
+    // - normalization errors
 
     return {
       pipeline: {
         acquired,
+        acquired_failed,
+        acquired_failed_ratio: this.round(acquired_failed / acquired, 5),
         carpools,
         missing,
-        missing_ratio: Math.round((missing / acquired) * 100 * 1000) / 1000,
+        missing_ratio: this.round(missing / acquired),
+        carpool_ratio: this.round(carpools / acquired),
       },
     };
+  }
+
+  private round(n: number, p = 3): number {
+    return Math.round(n * Math.pow(10, p)) / Math.pow(10, p);
   }
 }
