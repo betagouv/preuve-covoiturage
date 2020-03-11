@@ -18,6 +18,7 @@ import { RulesRangeUxType } from '~/core/types/campaign/rulesRangeInterface';
 import { TripRankEnum } from '~/core/enums/trip/trip-rank.enum';
 import { DAYS } from '~/core/const/days.const';
 import { RestrictionUnitEnum } from '~/core/enums/campaign/restrictions.enum';
+import { CommonDataService } from '~/core/services/common-data.service';
 
 // todo: remove this duplicate
 enum RestrictionPeriodsEnum {
@@ -37,7 +38,7 @@ enum RestrictionPeriodsEnum {
 export class CampaignUiService {
   public days: WeekDay[] = [1, 2, 3, 4, 5, 6, 0];
 
-  constructor(@Inject(LOCALE_ID) private locale: string) {}
+  constructor(@Inject(LOCALE_ID) private locale: string, private commonData: CommonDataService) {}
 
   public retributions(campaign: CampaignUx): string {
     const retributions: RetributionUxInterface[] = campaign.retributions;
@@ -59,6 +60,14 @@ export class CampaignUiService {
       }
       text += `<li><b>`;
 
+      if (min || max) {
+        if (!max || max >= CAMPAIGN_RULES_MAX_DISTANCE_KM) {
+          text += `À partir de ${min} km : `;
+        } else {
+          text += `De ${min} à ${max} km : `;
+        }
+      }
+
       // CONDUCTEUR
       if (valueForDriver && uiStatus.for_driver) {
         // tslint:disable-next-line:max-line-length
@@ -69,7 +78,7 @@ export class CampaignUiService {
           text += ' pour le conducteur';
         }
       }
-      text += uiStatus.for_driver && uiStatus.for_passenger ? ', ' : '';
+      // text += uiStatus.for_driver && uiStatus.for_passenger ? ', ' : '';
 
       // PASSAGERS
       if ((valueForPassenger || free) && uiStatus.for_passenger) {
@@ -90,13 +99,6 @@ export class CampaignUiService {
         text += perPassenger ? ' par passager' : '';
       }
 
-      if (min || max) {
-        if (!max || max >= CAMPAIGN_RULES_MAX_DISTANCE_KM) {
-          text += ` à partir de ${min} km`;
-        } else {
-          text += ` de ${min} à ${max} km`;
-        }
-      }
       text += `.</li></b>`;
     }
     return text;
@@ -137,7 +139,7 @@ export class CampaignUiService {
   ): string {
     const days = `${this.formatWeekDays(weekDays)}${weekDays.length ? dayTimeSeparator : ''}${this.formatWeekTime(
       timeRanges,
-    )}`;
+    ).toLowerCase()}`;
     return days.charAt(0).toUpperCase() + days.slice(1);
   }
 
@@ -184,7 +186,7 @@ export class CampaignUiService {
   public insee(insee: IncentiveFiltersUxInterface['insee']): string {
     let text = '';
     if (insee.blackList && insee.blackList.length > 0) {
-      text += `Les axes suivant sont ignorés : <ul>`;
+      text += `Les axes suivants ne sont pas incités : <ul>`;
 
       insee.blackList.forEach((axe) => {
         text += '<li>';
@@ -224,7 +226,7 @@ export class CampaignUiService {
         text += `.</li>`;
       });
     } else if (insee.whiteList && insee.whiteList.length > 0) {
-      text += `Les trajets doivent être sur les axes suivants : <ul>`;
+      text += `Les trajets incités doivent être sur les axes suivants : <ul>`;
 
       insee.whiteList.forEach((axe) => {
         text += '<li>';
@@ -326,10 +328,10 @@ export class CampaignUiService {
     ) {
       summaryText += ` ${campaign.filters.weekday.length ? `${this.formatWeekDays(campaign.filters.weekday)}` : ''}${
         campaign.filters.time.length ? `${this.formatWeekTime(campaign.filters.time)}` : ''
-      }`;
+      }`.toLowerCase();
     }
 
-    summaryText += ` ${moment(campaign.start).format('dddd DD MMMM YYYY')} au`;
+    summaryText += `<p>Cette campagne est limitée à `;
 
     // MAXIMUM AMOUNT
     switch (unit) {
@@ -350,6 +352,7 @@ export class CampaignUiService {
         )} points</b>.</p>`;
         break;
     }
+    summaryText += `</p>`;
 
     // TARGET
     summaryText += `<p>Les <b>`;
@@ -394,15 +397,20 @@ export class CampaignUiService {
     }
 
     // OPERATORS & RANKS
-    summaryText += '<p>La campagne est limitée';
+    summaryText += '<p>La campagne ';
 
     // OPERATORS
-    if (campaign.filters.operator_ids) {
-      const nbOperators = campaign.filters.operator_ids.length;
-      const s = nbOperators !== 1 ? 's' : '';
-      summaryText += ` à ${nbOperators ? nbOperators : 'tous les'} opérateur${s} présent${s} sur le territoire, `;
+    if (!campaign.filters.operator_ids.length) {
+      summaryText += ` est ouvertes à tous les opérateurs présents sur le territoire, `;
     } else {
-      summaryText += ' aux opérateurs ';
+      summaryText += `est limitée  ${
+        campaign.filters.operator_ids.length === 1 ? "à l'opérateur " : 'aux opérateurs '
+      } `;
+      summaryText +=
+        this.commonData.operators
+          .filter((operator) => campaign.filters.operator_ids.indexOf(operator._id) !== -1)
+          .map((operator) => operator.name)
+          .join(', ') + ' ';
     }
 
     // RANKS
