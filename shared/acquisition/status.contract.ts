@@ -5,6 +5,7 @@ export interface ParamsInterface {
 export interface ResultInterface {
   journey_id: string;
   status: string;
+  created_at: Date;
   metadata?: object;
 }
 
