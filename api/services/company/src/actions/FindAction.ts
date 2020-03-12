@@ -11,7 +11,10 @@ import { signature as fetchSignature } from '../shared/company/fetch.contract';
 
 @handler(handlerConfig)
 export class FindAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias], ['can', ['company.find']]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['validate', alias],
+    ['can', ['company.find']],
+  ];
 
   constructor(
     private ds: CompanyDataSourceProviderInterfaceResolver,

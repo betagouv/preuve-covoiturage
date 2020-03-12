@@ -1,5 +1,6 @@
 import { CampaignInterface } from './common/interfaces/CampaignInterface';
 
+// eslint-disable-next-line
 export interface ParamsInterface {}
 
 export type ResultInterface = CampaignInterface[];
