@@ -49,7 +49,6 @@ export class StatusAction extends AbstractAction {
       return {
         journey_id: params.journey_id,
         status: 'ok',
-        created_at: acq.created_at,
       };
     } catch (e) {
       // look for the submission in the error table
@@ -59,7 +58,6 @@ export class StatusAction extends AbstractAction {
       return {
         journey_id: params.journey_id,
         status: err.error_message, // TODO improve
-        created_at: err.created_at,
       };
     }
 
