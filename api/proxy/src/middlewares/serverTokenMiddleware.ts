@@ -118,7 +118,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       // The only permissions now. Store in the token or retrieve
       // from the application service later if it gets more complex.
       if (!payload.p) {
-        payload.p = ['journey.create'];
+        payload.p = ['journey.create', 'journey.status'];
       }
 
       // Check and get the app
