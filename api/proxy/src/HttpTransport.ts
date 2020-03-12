@@ -390,8 +390,37 @@ export class HttpTransport implements TransportInterface {
   private registerJourneyStatusRoutes(): void {
     this.app.get(
       '/journeys/:journey_id',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const { journey_id } = req.params;
+
+        const user = get(req, 'session.user', null);
+
+        // make sure there is a user
+        if (!user || !('permissions' in user)) {
+          return res.status(401).json({
+            journey_id,
+            error: {
+              code: 401,
+              message: 'Unauthorized. An application token is required',
+            },
+          });
+        }
+
+        // validate permissions
+        if (user.permissions.indexOf('journey.status') === -1) {
+          return res.status(403).json({
+            journey_id,
+            error: {
+              code: 403,
+              message:
+                "Forbidden. The 'journey.status' permission is required " +
+                'to access this route. Your application token might need to be ' +
+                `updated. Navigate to ${this.config.get('proxy.appUrl')}/admin/api and ` +
+                'generate a new application token to get this permission.',
+            },
+          });
+        }
 
         // check the journey_id pattern
         if (new RegExp('[^a-z0-9-_]', 'i').test(journey_id)) {
@@ -406,13 +435,21 @@ export class HttpTransport implements TransportInterface {
 
         // call the action with the session user as context
         const response = await this.kernel.handle(
-          nestParams(
-            { id: 1, jsonrpc: '2.0', method: 'acquisition:status', params: { journey_id } },
-            { ...get(req, 'session.user', null), permissions: ['journey.status'] },
-          ),
+          nestParams({ id: 1, jsonrpc: '2.0', method: 'acquisition:status', params: { journey_id } }, user),
         );
 
-        this.send(res, response);
+        const anyResponse = (response as unknown) as any;
+        console.log({ anyResponse });
+        if ('result' in anyResponse) res.status(mapStatusCode(anyResponse)).json(anyResponse.result);
+        else if ('error' in anyResponse) res.status(mapStatusCode(anyResponse)).json(anyResponse.error);
+        else
+          res.status(500).json({
+            journey_id,
+            error: {
+              code: 500,
+              message: 'Server error',
+            },
+          });
       }),
     );
   }
