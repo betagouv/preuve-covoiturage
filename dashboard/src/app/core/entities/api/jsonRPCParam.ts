@@ -1,4 +1,4 @@
-import { IModel } from '~/core/entities/IModel';
+import { Model } from '~/core/entities/IModel';
 
 export class JsonRPCParam<T = any> {
   public id: number;
@@ -6,7 +6,7 @@ export class JsonRPCParam<T = any> {
   public jsonrpc: string;
   public params: any;
 
-  static createPatchParam(method: string, item: IModel): JsonRPCParam {
+  static createPatchParam(method: string, item: Model): JsonRPCParam {
     const patch = { ...item };
     const param = { patch, _id: item._id };
     delete patch._id;

@@ -3,12 +3,11 @@ import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/list.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/list.schema';
 
-@handler(handlerConfig)
-export class ListAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -36,8 +35,9 @@ export class ListAction extends Action {
         ],
       ],
     ],
-  ];
-
+  ],
+})
+export class ListAction extends Action {
   constructor(private pg: TripRepositoryProvider) {
     super();
   }

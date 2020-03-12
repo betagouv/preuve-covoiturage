@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
 import { merge } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -9,7 +9,6 @@ import { DestroyObservable } from '~/core/components/destroy-observable';
 import { CAMPAIGN_STATUS_FR, CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
 import { CampaignStoreService } from '~/modules/campaign/services/campaign-store.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
-import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 
 @Component({
   templateUrl: './campaign-admin-list.component.html',
@@ -46,11 +45,11 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initSearchForm();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.loadCampaigns();
   }
 
@@ -98,13 +97,13 @@ export class CampaignAdminListComponent extends DestroyObservable implements OnI
     return this.campaignsToShow && this.campaignsToShow.length !== 0;
   }
 
-  get noCampaignMessage() {
+  get noCampaignMessage(): string {
     return this.searchFilters && this.searchFilters.controls.query.value
       ? 'Pas de résultats avec vos critères de recherche'
       : `Aucune campagne ${this.getFrenchStatus(this.selectedStatus).toLowerCase()}.`;
   }
 
-  private initSearchForm() {
+  private initSearchForm(): void {
     this.searchFilters = this.fb.group({
       query: [''],
     });

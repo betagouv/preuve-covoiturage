@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
@@ -18,24 +18,29 @@ export class CampaignDashboardComponent extends DestroyObservable implements OnI
   campaignStatus = CampaignStatusEnum;
   canCreateCampaign$: Observable<boolean>;
   campaigns: CampaignUx[];
-  camSeeDraft$: Observable<boolean>;
+  canSeeDraft$: Observable<boolean>;
+  displayDemoCaption$: Observable<boolean>;
 
   constructor(private _authService: AuthenticationService, private _campaignStoreService: CampaignStoreService) {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.canCreateCampaign$ = this._authService.user$.pipe(
-      map(
-        (user) => user && this._authService.hasAnyPermission(['incentive-campaign.create']),
-        takeUntil(this.destroy$),
-      ),
-    );
-
-    this.camSeeDraft$ = this._authService.user$.pipe(
-      map((user) => user && this._authService.isAdmin),
+      map((user) => user && this._authService.hasAnyPermission(['incentive-campaign.create'])),
       takeUntil(this.destroy$),
     );
+
+    this.canSeeDraft$ = this._authService.user$.pipe(
+      map((user) => user && (this._authService.isAdmin || this._authService.isDemo)),
+      takeUntil(this.destroy$),
+    );
+
+    this.displayDemoCaption$ = this._authService.user$.pipe(
+      map((user) => user && this._authService.isDemo),
+      takeUntil(this.destroy$),
+    );
+
     this.loadCampaigns();
   }
 

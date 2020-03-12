@@ -25,6 +25,7 @@ export interface CampaignUXInterface {
   max_amount: number;
   only_adult: boolean;
   restrictions: RestrictionUxInterface[];
+  passenger_seat: boolean;
 }
 
 export interface RetributionUxInterface {

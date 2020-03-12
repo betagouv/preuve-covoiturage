@@ -16,7 +16,7 @@ export class StatApiService extends JsonRpcGetList<StatInterface, StatInterface,
     super(http, router, activatedRoute, 'trip');
   }
 
-  paramGetList(params?) {
+  paramGetList(params?): JsonRPCParam {
     return new JsonRPCParam(`${this.method}:stats`, { ...this.defaultListParam, ...params });
   }
 }

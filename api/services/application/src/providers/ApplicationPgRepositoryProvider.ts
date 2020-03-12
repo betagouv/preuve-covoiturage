@@ -24,7 +24,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       text: `
         SELECT * FROM ${this.table}
         WHERE owner_service = $1
-        AND owner_id = $2::varchar
+        AND owner_id = $2
         AND deleted_at IS NULL
       `,
       values: [owner_service, owner_id],
@@ -34,7 +34,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
 
     if (!result.rowCount) return [];
 
-    return result.rows.map(this.castTypes);
+    return result.rows;
   }
 
   async find({ uuid, owner_id, owner_service }: FindInterface): Promise<ApplicationInterface> {
@@ -42,7 +42,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       text: `
         SELECT * FROM ${this.table}
         WHERE owner_service = $1
-        AND owner_id = $2::varchar
+        AND owner_id = $2
         AND uuid = $3
         AND deleted_at IS NULL
         LIMIT 1
@@ -56,7 +56,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       throw new Error(`Application not found (${uuid})`);
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   async findByUuid({ uuid }: { uuid: string }): Promise<ApplicationInterface> {
@@ -75,7 +75,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       throw new Error(`Application not found (${uuid})`);
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   async create({ name, owner_id, owner_service, permissions }: CreateInterface): Promise<ApplicationInterface> {
@@ -84,7 +84,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
         INSERT INTO ${this.table} (
           name, owner_id, owner_service, permissions
         ) VALUES (
-          $1, $2::varchar, $3, $4
+          $1, $2, $3, $4
         ) RETURNING *
       `,
       values: [name, owner_id, owner_service, permissions],
@@ -96,7 +96,7 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
       throw new Error(`Unable to create application (${name})`);
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   async revoke({ uuid, owner_id, owner_service }: RevokeInterface): Promise<void> {
@@ -117,12 +117,5 @@ export class ApplicationPgRepositoryProvider implements ApplicationRepositoryPro
     if (result.rowCount !== 1) {
       throw new NotFoundException(`Revoking application failed (${uuid})`);
     }
-  }
-
-  private castTypes(row: any): any {
-    return {
-      ...row,
-      owner_id: typeof row.owner_id === 'string' ? parseInt(row.owner_id, 10) : row.owner_id,
-    };
   }
 }

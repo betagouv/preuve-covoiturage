@@ -7,7 +7,7 @@ import {
   TerritoriesPermissionsUserType,
 } from '~/core/types/permissionType';
 
-import { operator, registry, territory } from '../../../../../../api/services/user/src/config/permissions';
+import { operator, registry, territory } from '~/core/entities/api/shared/user/permissions.config';
 
 export const TERRITORIES_PERMISSIONS = {
   admin: <TerritoriesPermissionsAdminType[]>territory.admin.permissions,

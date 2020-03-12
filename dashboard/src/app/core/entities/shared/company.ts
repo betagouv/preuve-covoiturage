@@ -1,6 +1,3 @@
-/* tslint:disable:variable-name*/
-import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
-
 export class Company {
   naf_entreprise: string;
   nature_juridique: string;
@@ -23,7 +20,7 @@ export class Company {
     if (obj && obj.vat_intra) this.vat_intra = obj.vat_intra;
   }
 
-  toFormValues() {
+  toFormValues(): any {
     const formVal = {
       naf_entreprise: '',
       nature_juridique: '',

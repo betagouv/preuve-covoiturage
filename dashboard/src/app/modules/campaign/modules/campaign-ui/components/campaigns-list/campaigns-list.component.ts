@@ -34,7 +34,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   showEdition(status: CampaignStatusEnum): boolean {
     return status === CampaignStatusEnum.DRAFT && this._authService.hasAnyGroup([UserGroupEnum.TERRITORY]);
@@ -55,7 +55,7 @@ export class CampaignsListComponent extends DestroyObservable implements OnInit 
     );
   }
 
-  isEuro(unit: IncentiveUnitEnum) {
+  isEuro(unit: IncentiveUnitEnum): boolean {
     return unit === IncentiveUnitEnum.EUR;
   }
 

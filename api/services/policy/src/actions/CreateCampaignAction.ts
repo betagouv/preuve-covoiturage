@@ -3,12 +3,11 @@ import { Action as AbstractAction } from '@ilos/core';
 
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/create.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/policy/create.schema';
 
-@handler(handlerConfig)
-export class CreateCampaignAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     [
       'scope.it',
       [
@@ -24,8 +23,9 @@ export class CreateCampaignAction extends AbstractAction {
     ],
     ['validate', alias],
     'validate.rules',
-  ];
-
+  ],
+})
+export class CreateCampaignAction extends AbstractAction {
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
     super();
   }

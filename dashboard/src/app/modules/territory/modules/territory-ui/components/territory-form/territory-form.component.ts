@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
@@ -47,7 +47,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.fullFormMode = user && user.group === UserGroupEnum.REGISTRY;
       this.initTerritoryForm();
@@ -57,7 +57,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     });
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.territoryForm.controls;
   }
 
@@ -139,7 +139,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const stopFindCompany = new Subject();
 
     this.territoryForm = this.fb.group(formOptions);
-    const companyFormGroup: FormGroup = <FormGroup>this.territoryForm.controls.company;
+    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
 
     if (companyFormGroup) {
       companyFormGroup.controls.siret.valueChanges
@@ -192,7 +192,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.updateValidation();
   }
 
-  private updateValidation() {
+  private updateValidation(): void {
     if (this.territoryForm && this.fullFormMode) {
       this.territoryForm.controls['name'].setValidators(this.fullFormMode ? Validators.required : null);
       this.territoryForm.controls['shortname'].setValidators(this.fullFormMode ? Validators.max(12) : null);
@@ -200,7 +200,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   // todo: ugly ...
-  private setTerritoryFormValue(territory: Territory) {
+  private setTerritoryFormValue(territory: Territory): void {
     // base values for form
     this.editedId = territory ? territory._id : null;
     console.log('this.editedId : ', this.editedId);

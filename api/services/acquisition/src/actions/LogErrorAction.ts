@@ -3,16 +3,16 @@ import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/logerror.contract';
 import { alias } from '../shared/acquisition/logerror.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { ErrorRepositoryProviderInterfaceResolver } from '../interfaces/ErrorRepositoryProviderInterface';
 
-@handler(handlerConfig)
-export class LogErrorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['channel.service.only', ['acquisition']],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class LogErrorAction extends AbstractAction {
   constructor(private repo: ErrorRepositoryProviderInterfaceResolver) {
     super();
   }

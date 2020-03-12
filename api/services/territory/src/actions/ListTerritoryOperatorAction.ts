@@ -4,12 +4,11 @@ import { handler } from '@ilos/common';
 // eslint-disable-next-line
 import { TerritoryOperatorRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryOperatorRepositoryProviderInterface';
 import { configHandler, ParamsInterface, ResultInterface } from '../shared/territory/listOperator.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/territory/listOperator.schema';
 
-@handler(configHandler)
-export class ListTerritoryOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...configHandler,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -29,8 +28,9 @@ export class ListTerritoryOperatorAction extends AbstractAction {
         ],
       ],
     ],
-  ];
-
+  ],
+})
+export class ListTerritoryOperatorAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryOperatorRepositoryProviderInterfaceResolver) {
     super();
   }

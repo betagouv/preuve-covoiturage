@@ -31,10 +31,25 @@ export class IdfmRegular extends PostRule<IdfmParametersInterface> {
     }
 
     const eligibleJourneys = ctx.trip.people
+      // Uncomment this for debug
+      // .map((p) => {
+      //   console.log({
+      //     is_not_driver: !p.is_driver,
+      //     is_over_18: p.is_over_18 !== false,
+      //     start_idf: p.start_territory_id === this.parameters.territory_id,
+      //     end_idf: p.end_territory_id === this.parameters.territory_id,
+      //     not_pp: !(
+      //       this.parameters.paris_insee_code.indexOf(p.start_insee) >= 0 &&
+      //       this.parameters.paris_insee_code.indexOf(p.end_insee) >= 0
+      //     ),
+      //     above_2km: p.distance >= 2000,
+      //   });
+      //   return p;
+      // })
       .filter(
         (p) =>
           !p.is_driver &&
-          p.is_over_18 &&
+          p.is_over_18 !== false && // accept TRUE and NULL @issue #848
           p.start_territory_id === this.parameters.territory_id && // au départ
           p.end_territory_id === this.parameters.territory_id && // et à l'arrivée de l'ile de france
           p.distance >= 2000 && // trajet supérieur à 2km seulement
@@ -48,7 +63,7 @@ export class IdfmRegular extends PostRule<IdfmParametersInterface> {
       .sort((p1, p2) => (p1.distance > p2.distance ? 1 : p1.distance < p2.distance ? -1 : 0));
 
     if (eligibleJourneys.length === 0) {
-      throw new NotApplicableTargetException(IdfmRegular.slug);
+      throw new NotApplicableTargetException(`Campaign "${IdfmRegular.slug}" not Application on target`);
     }
 
     let result = 0;

@@ -27,18 +27,18 @@ export class CampaignMenuComponent implements OnInit {
 
   constructor(public router: Router, public toastr: ToastrService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.menus[0].callback = this.createCampaign;
     this.menus[1].callback = this.discoverCampaign;
   }
 
-  createCampaign(router: Router, toastr: ToastrService) {
+  createCampaign(router: Router, toastr: ToastrService): void {
     // todo: reconnect when simulation is operational is fixed
     // router.navigate(['/campaign/create']);
     toastr.success('Cette section sera bientôt disponible !');
   }
 
-  discoverCampaign(router: Router, toastr: ToastrService) {
+  discoverCampaign(router: Router, toastr: ToastrService): void {
     // todo: reconnect when discover is fixed
     // router.navigate(['/campaign/discover']);
     toastr.success('Cette section sera bientôt disponible !');

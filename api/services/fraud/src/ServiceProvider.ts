@@ -6,6 +6,7 @@ import { ValidatorMiddleware } from '@pdc/provider-validator';
 import { ChannelServiceBlacklistMiddleware } from '@pdc/provider-middleware';
 import { GeoProvider } from '@pdc/provider-geo';
 
+import { config } from './config';
 import { FraudCheckProcessCommand } from './commands/FraudCheckProcessCommand';
 import { FraudCheckRepositoryProvider } from './providers/FraudCheckRepositoryProvider';
 
@@ -14,7 +15,7 @@ import { CheckEngine } from './engine/CheckEngine';
 import { FraudCheckAllAction } from './actions/FraudCheckAllAction';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   commands: [FraudCheckProcessCommand],
   providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine],
   validator: [],

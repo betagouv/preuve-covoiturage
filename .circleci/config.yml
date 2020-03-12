@@ -3,7 +3,6 @@ jobs:
   api-ts:
     docker:
       - image: circleci/node:10
-      - image: circleci/mongo:4.0
       - image: circleci/redis:4
       - image: circleci/postgres:11.5-alpine-postgis-ram
         environment:
@@ -14,7 +13,6 @@ jobs:
     parallelism: 1
     environment:
       NODE_ENV: testing
-      APP_MONGO_URL: mongodb://127.0.0.1:27017/pdc-test
       APP_REDIS_URL: redis://127.0.0.1:6379
       APP_POSTGRES_URL: postgresql://postgres:postgres@127.0.0.1:5432/pdc-local
     steps:
@@ -172,11 +170,7 @@ workflows:
             branches:
               only:
                 - dev
-      - front-cypress:
-          filters:
-            branches:
-              only:
-                - dev
+
       - front-deploy-dev:
           requires:
             - front-qa

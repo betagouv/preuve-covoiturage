@@ -31,7 +31,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.filterService.filter$.pipe(takeUntil(this.destroy$)).subscribe((filter: FilterInterface) => {
       // reset skip when new search
       this.skip = 0;
@@ -75,7 +75,7 @@ export class TripListComponent extends DestroyObservable implements OnInit {
     return this.tripService.total;
   }
 
-  onScroll() {
+  onScroll(): void {
     this.skip += DEFAULT_TRIP_LIMIT;
     const filter = {
       ...this.filterService.filter$.value,

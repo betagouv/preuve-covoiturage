@@ -20,6 +20,7 @@ export type GlobalRetributionRuleType =
   | BlackListGlobalRetributionRule;
 
 export enum GlobalRetributionRulesSlugEnum {
+  PER_SEAT_MODIFIER = 'per_seat_modifier',
   MAX_AMOUNT = 'max_amount_restriction',
   RESTRICTION_TRIP = 'max_trip_per_target_restriction',
   RESTRICTION_AMOUNT = 'max_amount_per_target_restriction',
@@ -45,7 +46,16 @@ export class OnlyAdultRetributionRule implements GlobalRetributionRuleInterface 
 
   constructor() {
     this.slug = GlobalRetributionRulesSlugEnum.ONLY_ADULT;
-    this.parameters = true;
+  }
+}
+
+export class PassengerSeatRule implements GlobalRetributionRuleInterface {
+  description?: string;
+  slug: GlobalRetributionRulesSlugEnum;
+  parameters: boolean;
+
+  constructor() {
+    this.slug = GlobalRetributionRulesSlugEnum.PER_SEAT_MODIFIER;
   }
 }
 

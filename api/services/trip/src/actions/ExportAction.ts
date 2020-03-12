@@ -4,21 +4,20 @@ import { Action } from '@ilos/core';
 import { handler, ContextType, KernelInterfaceResolver, InvalidParamsException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/export.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/export.schema';
 import {
   signature as buildSignature,
   ParamsInterface as BuildParamsInterface,
 } from '../shared/trip/buildExport.contract';
 
-@handler(handlerConfig)
-export class ExportAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
       [
-        ['trip.list'],
+        ['trip.export'],
         [
           (params, context): string => {
             if (
@@ -26,7 +25,7 @@ export class ExportAction extends Action {
               params.territory_id.length === 1 &&
               params.territory_id[0] === context.call.user.territory_id
             ) {
-              return 'territory.trip.list';
+              return 'territory.trip.export';
             }
           },
           (params, context): string => {
@@ -35,14 +34,15 @@ export class ExportAction extends Action {
               params.operator_id.length === 1 &&
               params.operator_id[0] === context.call.user.operator_id
             ) {
-              return 'operator.trip.list';
+              return 'operator.trip.export';
             }
           },
         ],
       ],
     ],
-  ];
-
+  ],
+})
+export class ExportAction extends Action {
   constructor(private kernel: KernelInterfaceResolver) {
     super();
   }

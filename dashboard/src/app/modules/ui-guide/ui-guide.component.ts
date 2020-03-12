@@ -11,7 +11,7 @@ export class UiGuideComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   onShowSpinner(): void {
     this.showSpinner = true;

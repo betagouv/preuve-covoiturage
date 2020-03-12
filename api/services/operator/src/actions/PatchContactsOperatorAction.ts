@@ -3,16 +3,16 @@ import { Action as AbstractAction } from '@ilos/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared//operator/patchContacts.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/operator/patchContacts.schema';
 
-@handler(handlerConfig)
-export class PatchContactsOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['can', ['operator.contacts.update']],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class PatchContactsOperatorAction extends AbstractAction {
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }

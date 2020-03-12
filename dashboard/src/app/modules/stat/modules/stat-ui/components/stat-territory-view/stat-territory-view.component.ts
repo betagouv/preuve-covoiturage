@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { distinctUntilChanged, take, takeUntil } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 
 import { statDataNameType } from '~/core/types/stat/statDataNameType';
 import { GraphNamesInterface } from '~/core/interfaces/stat/graphNamesInterface';
@@ -39,7 +39,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.resetSelected();
     this.graphName = this.statViewConfig.defaultGraphName;
     this.selected.trips = true;
@@ -76,7 +76,7 @@ export class StatTerritoryViewComponent extends DestroyObservable implements OnI
    * select graph to be displayed
    */
   public showGraph(graphName: string): void {
-    this.graphName = <statDataNameType>graphName;
+    this.graphName = graphName as statDataNameType;
     this.resetSelected();
     this.selected[graphName] = true;
     this.scrollToTop();

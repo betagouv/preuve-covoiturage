@@ -14,17 +14,15 @@ import { bootstrap as policyBootstrap } from '@pdc/service-policy';
 import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
+import { bootstrap as monitoringBootstrap } from '@pdc/service-monitoring';
 
-import { UpgradeJourneyCommand } from './commands/UpgradeJourneyCommand';
-import { MapIdCommand } from './commands/MapIdCommand';
+import { config } from './config';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';
 import { ProcessJourneyCommand } from './commands/ProcessJourneyCommand';
 import { GeoFetchCommand } from './commands/GeoFetchCommand';
-import { SyncMongoCommand } from './commands/SyncMongoCommand';
 
 @kernel({
-  env: null,
-  config: __dirname,
+  config,
   children: [
     ...applicationBootstrap.serviceProviders,
     ...acquisitionBootstrap.serviceProviders,
@@ -38,15 +36,9 @@ import { SyncMongoCommand } from './commands/SyncMongoCommand';
     ...tripcheckBootstrap.serviceProviders,
     ...userBootstrap.serviceProviders,
     ...certificateBootstrap.serviceProviders,
+    ...monitoringBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [
-    UpgradeJourneyCommand,
-    ProcessJourneyCommand,
-    MapIdCommand,
-    MigrateInseeCommand,
-    GeoFetchCommand,
-    SyncMongoCommand,
-  ],
+  commands: [ProcessJourneyCommand, MigrateInseeCommand, GeoFetchCommand],
 })
 export class Kernel extends BaseKernel {}

@@ -17,14 +17,12 @@ You will need `docker` and `docker-compose`.
 | Frontend \*     | `-`        | APP_APP_URL      | http://localhost:4200             | /dashboard |
 | API             | `api`      | APP_API_URL      | http://localhost:8080             | /api       |
 | Printer         | `printer`  | APP_PRINTER_URL  | http://localhost:3000             | /printer   |
-| MongoDB \*\*    | `mongo`    | APP_MONGO_URL    | mongodb://mongo:mongo@mongo:27017 | -          |
 | Redis           | `redis`    | APP_REDIS_URL    | redis://redis:6379                | -          |
 | Redis Client    | `arena`    | -                | http://localhost:4567             | -          |
 | Postgres        | `postgres` | APP_POSTGRES_URL | postgresql://postgres:post        | -          |
 | Postgres Client | `pgadmin`  | -                | http://localhost:5050             | -          |
 
 > \* The Frontend doesn't run in Docker. Install NodeJS locally and run it with `yarn start` from the `dashboard` folder.  
-> \*\* Mongo is being deprecated and will be removed when Postgres migration is complete.  
 > ⚠️ `docker-compose.yml` is used in `local` environment only
 
 ### Installation

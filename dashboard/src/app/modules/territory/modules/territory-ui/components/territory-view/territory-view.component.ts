@@ -12,5 +12,5 @@ export class TerritoryViewComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

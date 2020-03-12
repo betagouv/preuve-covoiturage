@@ -28,7 +28,7 @@ export class OperatorVisilibityService {
     private _toastr: ToastrService,
   ) {}
 
-  get isLoaded() {
+  get isLoaded(): boolean {
     return this._loaded$.value;
   }
 

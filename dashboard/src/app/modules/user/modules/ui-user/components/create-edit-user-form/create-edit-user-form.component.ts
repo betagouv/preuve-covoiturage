@@ -1,12 +1,12 @@
 import { filter, takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { REGEXP } from '~/core/const/validators.const';
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { USER_ROLES, USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
+import { USER_GROUP_ROLES, USER_ROLES_FR, UserRoleEnum } from '~/core/enums/user/user-role.enum';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 
@@ -26,18 +26,20 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
   territoryEditable = false;
   operatorEditable = false;
 
-  public roles = USER_ROLES;
+  public roles = USER_GROUP_ROLES;
   public groups = USER_GROUPS;
   protected _emailHasChanged: boolean;
   protected _baseEmail: string;
+  userGroup: string;
 
   constructor(private fb: FormBuilder, private _userStoreService: UserStoreService, private toastr: ToastrService) {
     super();
   }
 
-  updateFormValues(user: User) {
+  updateFormValues(user: User): void {
     this._emailHasChanged = false;
     this._baseEmail = user.email;
+    this.userGroup = user.group;
 
     this.updateValidators();
     if (this.createEditUserForm) {
@@ -45,17 +47,17 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['isCreating'] || changes['groupEditable']) {
       this.updateValidators();
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initForm();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.createEditUserForm.controls;
   }
 
@@ -95,7 +97,7 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     }
   }
 
-  updateValidators(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable) {
+  updateValidators(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable): void {
     if (this.createEditUserForm) {
       this.createEditUserForm.controls['role'].setValidators(isCreating ? Validators.required : null);
       this.createEditUserForm.controls['group'].setValidators(groupEditable ? Validators.required : null);
@@ -117,12 +119,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
 
   public getFrenchGroup(group: UserGroupEnum): string {
     return USER_GROUPS_FR[group];
-  }
-
-  onGroupChange(): void {
-    this.createEditUserForm.get('operator_id').setValue(null);
-    this.createEditUserForm.get('territory_id').setValue(null);
-    this.updateValidators();
   }
 
   private initForm(isCreating: boolean = this.isCreating, groupEditable: boolean = this.groupEditable): void {
@@ -149,10 +145,19 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
     this.createEditUserForm.valueChanges.subscribe((formVal) => {
       this._emailHasChanged = this._baseEmail !== formVal.email;
       const territoryEditable = formVal.group === UserGroupEnum.TERRITORY;
+      let updateValidators = false;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;
         // if (!territoryEditable) this.createEditUserForm.patchValue({ territory: '' });
-        this.updateValidators();
+        updateValidators = true;
+      }
+      if (formVal.group !== this.userGroup) {
+        this.userGroup = formVal.group;
+        console.log(this.userGroup, this.roles, this.roles[this.userGroup]);
+        this.createEditUserForm.get('operator_id').setValue(null);
+        this.createEditUserForm.get('territory_id').setValue(null);
+        this.createEditUserForm.get('role').setValue(null);
+        updateValidators = true;
       }
 
       const operatorEditable = formVal.group === UserGroupEnum.OPERATOR;
@@ -160,8 +165,10 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         this.operatorEditable = operatorEditable;
         // todo: not sure this is valid, operator should not be reset during edition of form
         // if (operatorEditable) this.createEditUserForm.patchValue({ operator: '' });
-        this.updateValidators();
+        updateValidators = true;
       }
+
+      if (updateValidators) this.updateValidators();
     });
 
     this.updateValidators(isCreating, groupEditable);

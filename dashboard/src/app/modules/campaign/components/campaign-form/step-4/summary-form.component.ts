@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 
 import { UtilsService } from '~/core/services/utils.service';
@@ -27,14 +27,14 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.campaignForm.controls;
   }
 
-  get retributionParametersControls() {
-    const formGroup = <FormGroup>this.campaignForm.get('retributionParameters');
+  get retributionParametersControls(): { [key: string]: AbstractControl } {
+    const formGroup = this.campaignForm.get('retributionParameters') as FormGroup;
     return formGroup.controls;
   }
 
@@ -49,7 +49,7 @@ export class SummaryFormComponent extends DestroyObservable implements OnInit {
     this.toastr.success('Le récapitulatif a été copié !');
   }
 
-  saveCampaign(isTemplate: boolean = false) {
+  saveCampaign(isTemplate = false): void {
     if (isTemplate) {
       this.controls.status.setValue(CampaignStatusEnum.TEMPLATE);
     }

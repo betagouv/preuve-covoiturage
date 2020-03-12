@@ -32,7 +32,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return undefined;
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   // TODO interface
@@ -86,7 +86,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new Error(`Unable to create campaign (${JSON.stringify(data)})`);
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   async patch(id: number, patch: Partial<CampaignInterface>): Promise<CampaignInterface> {
@@ -138,7 +138,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new NotFoundException(`campaign not found (${id})`);
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   async deleteDraftOrTemplate(id: number): Promise<void> {
@@ -213,7 +213,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       throw new NotFoundException(`campaign not found (${id})`);
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   async findOneWhereTerritory(id: number, territoryId: number): Promise<CampaignInterface> {
@@ -234,7 +234,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return undefined;
     }
 
-    return this.castTypes(result.rows[0]);
+    return result.rows[0];
   }
 
   async findWhere(search: { territory_id?: number | null; status?: string }): Promise<CampaignInterface[]> {
@@ -242,13 +242,13 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     let where = '';
 
     if ('territory_id' in search && 'status' in search) {
-      where = `AND status::text = $1 AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $2::text'}`;
+      where = `AND status::text = $1 AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $2'}`;
       values.push(search.status);
       if (search.territory_id !== null) {
         values.push(search.territory_id);
       }
     } else if ('territory_id' in search) {
-      where = `AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $1::text'}`;
+      where = `AND territory_id ${search.territory_id === null ? 'IS NULL' : '= $1'}`;
       if (search.territory_id !== null) {
         values.push(search.territory_id);
       }
@@ -272,14 +272,14 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return [];
     }
 
-    return result.rows.map(this.castTypes);
+    return result.rows;
   }
 
   async findApplicableCampaigns(territories: number[], date: Date): Promise<any[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
-        WHERE territory_id = ANY($1::text[])
+        WHERE territory_id = ANY($1::integer[])
         AND start_date <= $2
         AND end_date >= $2
         AND status = $3
@@ -294,7 +294,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
       return [];
     }
 
-    return result.rows.map(this.castTypes);
+    return result.rows;
   }
 
   async getTemplates(): Promise<CampaignInterface[]> {
@@ -303,12 +303,5 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
     `);
 
     return result.rows;
-  }
-
-  private castTypes(row: any): any {
-    return {
-      ...row,
-      territory_id: typeof row.territory_id === 'string' ? parseInt(row.territory_id, 10) : row.territory_id,
-    };
   }
 }

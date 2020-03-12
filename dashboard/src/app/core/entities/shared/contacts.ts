@@ -14,7 +14,7 @@ export class Contacts {
     if (obj && hasOneNotEmptyProperty(obj.technical)) this.technical = new Contact(obj.technical);
   }
 
-  toFormValues() {
+  toFormValues(): { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact } {
     return {
       gdpr_dpo: new Contact(this.gdpr_dpo).toFormValues(),
       gdpr_controller: new Contact(this.gdpr_controller).toFormValues(),

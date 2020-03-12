@@ -4,9 +4,13 @@ echo "---------------------------------------------"
 echo "            Rebuid ilos && app               "
 echo "---------------------------------------------"
 
-rm -rf ./**/dist
-rm -rf ./**/node_modules
-rm -rf ./node_modules
+if [ ${PWD##*/} != "api" ]; then
+  echo 'Error: run me from "api" folder';
+  exit 1;
+fi
+
+find . -type d -name node_modules -exec rm -rf {} \;
+find . -type d -name dist -exec rm -rf {} \;
 
 cd ilos
 yarn

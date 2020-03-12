@@ -51,7 +51,7 @@ export class TerritoryOperatorRepositoryProvider implements TerritoryOperatorRep
       const deleteQuery = {
         text: `
           DELETE FROM ${this.table}
-          WHERE operator_id = $1::int
+          WHERE operator_id = $1
           AND NOT (territory_id = ANY($2::int[]))
           RETURNING territory_id`,
         values: [id, list],
@@ -62,7 +62,7 @@ export class TerritoryOperatorRepositoryProvider implements TerritoryOperatorRep
         text: `
           INSERT INTO ${this.table}
           (operator_id, territory_id)
-          SELECT $1::int as operator_id, territory_id
+          SELECT $1 as operator_id, territory_id
           FROM UNNEST ($2::int[]) as territory_id
           ON CONFLICT DO NOTHING`,
         values: [id, list], // Array(list.length).fill(id)

@@ -5,6 +5,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { GeoProvider } from '@pdc/provider-geo';
 import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
+import { config } from './config';
 import { WorkflowProvider } from './providers/WorkflowProvider';
 import { TerritoryProvider } from './providers/TerritoryProvider';
 import { NormalizationGeoAction } from './actions/NormalizationGeoAction';
@@ -15,7 +16,7 @@ import { NormalizationIdentityAction } from './actions/NormalizationIdentityActi
 import { NormalizationProcessAction } from './actions/NormalizationProcessAction';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [GeoProvider, TerritoryProvider, WorkflowProvider],
   handlers: [
     NormalizationProcessAction,

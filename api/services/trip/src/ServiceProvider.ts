@@ -14,6 +14,7 @@ import { binding as listBinding } from './shared/trip/list.schema';
 import { binding as statsBinding } from './shared/trip/stats.schema';
 import { binding as exportBinding } from './shared/trip/export.schema';
 
+import { config } from './config';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
 import { ListAction } from './actions/ListAction';
 import { StatsAction } from './actions/StatsAction';
@@ -23,7 +24,7 @@ import { BuildExportAction } from './actions/BuildExportAction';
 import { StatCacheRepositoryProvider } from './providers/StatCacheRepositoryProvider';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   providers: [TripRepositoryProvider, StatCacheRepositoryProvider],
   validator: [listBinding, statsBinding, exportBinding],
   middlewares: [

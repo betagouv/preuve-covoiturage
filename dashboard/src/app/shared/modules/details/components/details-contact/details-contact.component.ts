@@ -13,5 +13,5 @@ export class DetailsContactComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

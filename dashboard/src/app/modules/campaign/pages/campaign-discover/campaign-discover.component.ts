@@ -23,7 +23,7 @@ export class CampaignDiscoverComponent implements OnInit {
     private toastr: ToastrService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadCampaigns();
   }
 
@@ -31,7 +31,7 @@ export class CampaignDiscoverComponent implements OnInit {
     return this.campaignStoreService.isLoading;
   }
 
-  onMapResize($event) {
+  onMapResize($event): void {
     this.campaignsToShow = this.campaigns.filter((c: CampaignUx) => {
       // todo: get coordinates from territory
       let territoryCoords;

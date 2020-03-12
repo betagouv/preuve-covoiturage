@@ -12,13 +12,12 @@ import {
   KernelInterface,
   ConfigInterface,
   ConfigInterfaceResolver,
-  EnvInterface,
-  EnvInterfaceResolver,
   RPCSingleCallType,
   UnauthorizedException,
   RPCResponseType,
   InvalidRequestException,
 } from '@ilos/common';
+import { env } from '@ilos/core';
 import { Sentry, SentryProvider } from '@pdc/provider-sentry';
 import { mapStatusCode } from '@ilos/transport-http';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
@@ -33,7 +32,6 @@ import { TokenPayloadInterface } from './shared/application/common/interfaces/To
 export class HttpTransport implements TransportInterface {
   app: express.Express;
   config: ConfigInterface;
-  env: EnvInterface;
   port: string;
   server: http.Server;
   tokenProvider: TokenProviderInterfaceResolver;
@@ -87,7 +85,6 @@ export class HttpTransport implements TransportInterface {
 
   private async getProviders(): Promise<void> {
     this.config = this.kernel.getContainer().get(ConfigInterfaceResolver);
-    this.env = this.kernel.getContainer().get(EnvInterfaceResolver);
     this.tokenProvider = this.kernel.getContainer().get(TokenProviderInterfaceResolver);
   }
 
@@ -118,7 +115,8 @@ export class HttpTransport implements TransportInterface {
           httpOnly: true,
           maxAge: this.config.get('proxy.session.maxAge'),
           // https everywhere but in local development
-          secure: this.env.get('APP_ENV', 'local') !== 'local',
+          secure: env('APP_ENV', 'local') !== 'local',
+          sameSite: 'none',
         },
         name: sessionName,
         secret: sessionSecret,
@@ -200,13 +198,7 @@ export class HttpTransport implements TransportInterface {
         // eslint-disable-next-line
         const warning = 'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
 
-        // correct error code on Mongo conflicts
-        let code = mapStatusCode(response);
-        if (code === 500 && (get(response, 'error.data', '') as string).substr(0, 6) === 'E11000') {
-          code = 409;
-        }
-
-        res.status(code).json({
+        res.status(mapStatusCode(response)).json({
           meta: {
             warning,
             supported_until: '2020-01-01T00:00:00Z',
@@ -315,6 +307,8 @@ export class HttpTransport implements TransportInterface {
           method: 'user:forgottenPassword',
           params: { email: req.body.email },
         });
+
+        console.log(response);
 
         this.send(res, response);
       }),

@@ -26,11 +26,11 @@ export class ConfirmDialogComponent {
 
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>) {}
 
-  public accept() {
+  public accept(): void {
     this.dialogRef.close(true);
   }
 
-  public decline() {
+  public decline(): void {
     this.dialogRef.close(false);
   }
 }

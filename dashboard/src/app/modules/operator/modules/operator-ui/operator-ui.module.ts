@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatGridListModule, MatPaginatorModule } from '@angular/material';
 
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line
 import { OperatorImportComponent } from '~/modules/operator/modules/operator-ui/components/operator-import/operator-import.component';
 import { SharedModule } from '~/shared/shared.module';
 import { FormModule } from '~/shared/modules/form/form.module';

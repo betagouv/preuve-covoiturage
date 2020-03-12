@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -36,11 +36,11 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initForm();
   }
 
-  exportTrips() {
+  exportTrips(): void {
     const filter = this.exportFilterForm.getRawValue();
     this._dialog
       .confirm({
@@ -69,7 +69,7 @@ export class TripExportComponent extends DestroyObservable implements OnInit {
       });
   }
 
-  private initForm() {
+  private initForm(): void {
     const start = moment()
       .subtract(1, 'month')
       .startOf('day')

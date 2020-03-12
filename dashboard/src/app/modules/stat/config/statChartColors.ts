@@ -1,4 +1,4 @@
-import { ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartDataSets } from 'chart.js';
 
 import { chartNamesType } from '~/core/types/stat/chartNameType';
 

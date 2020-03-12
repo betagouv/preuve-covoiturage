@@ -20,7 +20,7 @@ export class StatFormatService {
   }
 
   private calculateStats(result: StatInterface[]): CalculatedStat {
-    const fillDays = (acc, target, date, data = {}) => {
+    const fillDays = (acc, target, date, data = {}): void => {
       Object.keys(data).forEach((key) => {
         acc[target][key] += data[key];
       });
@@ -29,7 +29,7 @@ export class StatFormatService {
         ...data,
       });
     };
-    const fillMonth = (acc, target, day, data = {}) => {
+    const fillMonth = (acc, target, day, data = {}): void => {
       const monthIndex = acc[target].months.findIndex(
         (month) =>
           month.date ===
@@ -128,7 +128,7 @@ export class StatFormatService {
   }
 
   private formatUxStats(d: CalculatedStat): FormatedStatInterface {
-    const formatedStat = <FormatedStatInterface>{
+    const formatedStat = {
       total: {
         trips: get(d, 'trips.total', 0),
         distance: get(d, 'distance.total', 0) | 0,
@@ -315,7 +315,7 @@ export class StatFormatService {
             .map((val) => val.total.toFixed(2)),
         }),
       },
-    };
+    } as FormatedStatInterface;
 
     return formatedStat;
   }

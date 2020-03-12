@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class UtilsService {
   constructor() {}
 
-  copyToClipboard(textToCopy: string) {
+  copyToClipboard(textToCopy: string): void {
     const selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
     selBox.style.left = '0';
@@ -20,7 +20,7 @@ export class UtilsService {
     document.body.removeChild(selBox);
   }
 
-  copySelectionToClipboarcById(id: string) {
+  copySelectionToClipboarcById(id: string): void {
     const text = document.getElementById(id);
     const selection = window.getSelection();
     const range = document.createRange();
@@ -31,7 +31,7 @@ export class UtilsService {
     window.getSelection().removeAllRanges();
   }
 
-  hasOneNotEmptyProperty(object: any, maxRec = 3) {
+  hasOneNotEmptyProperty(object: any, maxRec = 3): boolean {
     let hasNonEmpty = false;
     const values = Object.values(object);
 

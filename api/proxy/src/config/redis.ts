@@ -1,3 +1,3 @@
-declare function env(key: string, fallback?: string | number): any;
+import { env } from '@ilos/core';
 
 export const connectionString = env('APP_REDIS_URL');

@@ -8,7 +8,7 @@ import { AuthenticationService } from '~/core/services/authentication/authentica
 import { User } from '~/core/entities/authentication/user';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { USER_GROUPS, USER_GROUPS_FR, UserGroupEnum } from '~/core/enums/user/user-group.enum';
-// tslint:disable-next-line: max-line-length
+// eslint-disable-next-line
 import { CreateEditUserFormComponent } from '~/modules/user/modules/ui-user/components/create-edit-user-form/create-edit-user-form.component';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
 import { UserListInterface } from '~/core/entities/api/shared/user/common/interfaces/UserListInterface';
@@ -46,7 +46,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userStoreService.reset();
     this.userStoreService.filterSubject.next({ limit: 1000 });
 
@@ -66,7 +66,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     this.canEditUser$ = this.authenticationService.hasAnyPermissionObs(['user.update']);
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     merge(
       this.users$,
       this.searchFilters.valueChanges.pipe(
@@ -104,7 +104,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     return this.usersFiltered && this.usersFiltered.length;
   }
 
-  showEditForm(user?: User) {
+  showEditForm(user?: User): void {
     if (user) {
       this.userStoreService.select(user);
     } else {
@@ -116,7 +116,7 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     this.isCreatingUser = !user;
   }
 
-  closeUserForm() {
+  closeUserForm(): void {
     this.editUserFormVisible = false;
   }
 
@@ -124,11 +124,11 @@ export class AllUsersComponent extends DestroyObservable implements OnInit {
     return USER_GROUPS_FR[group];
   }
 
-  private loadUsers() {
+  private loadUsers(): void {
     this.userStoreService.loadList();
   }
 
-  private initSearchForm() {
+  private initSearchForm(): void {
     this.searchFilters = this.fb.group({
       query: [''],
     });

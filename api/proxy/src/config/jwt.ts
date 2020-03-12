@@ -1,4 +1,4 @@
-declare function env(key: string, fallback?: string | number): any;
+import { env } from '@ilos/core';
 
 /**
  * Super complicated token to crypt the JWT tokens
@@ -15,7 +15,7 @@ export const secret = env('APP_JWT_SECRET');
  * Time to life: Token lifetime in seconds
  * -1 means infinity
  */
-export const ttl = parseInt(env('APP_JWT_TTL', 86400), 10);
+export const ttl = env('APP_JWT_TTL', 86400);
 
 export const alg = 'HS256';
 export const signOptions = {};

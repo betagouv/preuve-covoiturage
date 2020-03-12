@@ -32,13 +32,13 @@ export class OperatorListComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  onEdit(operator) {
+  onEdit(operator): void {
     this.edit.emit(operator);
   }
 
-  onDelete(operator) {
+  onDelete(operator): void {
     this._dialogService
       .confirm({
         title: 'Êtes-vous sûr de vouloir supprimer cet opérateur ?',

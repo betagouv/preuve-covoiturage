@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { Territory } from '~/core/entities/territory/territory';
@@ -19,17 +18,17 @@ export class AllTerritoriesComponent extends DestroyObservable implements OnInit
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  onEdit(territory: Territory) {}
+  onEdit(territory: Territory): void {}
 
-  onDelete(territory: Territory) {}
+  onDelete(territory: Territory): void {}
 
-  closeForm() {
+  closeForm(): void {
     throw new Error('not implemented');
   }
 
-  showEditForm() {
+  showEditForm(): void {
     throw new Error('not implemented');
   }
 }

@@ -11,13 +11,14 @@ import { alias } from '../shared/application/revoke.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 import { setOwner } from '../helpers/setOwner';
 
-@handler(handlerConfig)
-export class RevokeApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['can', ['application.revoke']],
-  ];
-
+  ],
+})
+export class RevokeApplicationAction extends AbstractAction {
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();
   }

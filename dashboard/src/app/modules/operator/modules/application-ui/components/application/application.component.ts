@@ -26,11 +26,11 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadOperatorTokens();
   }
 
-  private loadOperatorTokens() {
+  private loadOperatorTokens(): void {
     const operatorId = this._authService.user.operator_id;
     this._applicationStoreService.filterSubject.next({ owner_id: operatorId });
 
@@ -46,11 +46,11 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
     this._applicationStoreService.loadList();
   }
 
-  public addToken() {
+  public addToken(): void {
     this.showCreateApplicationForm = true;
   }
 
-  public closeTokenForm() {
+  public closeTokenForm(): void {
     this.showCreateApplicationForm = false;
   }
 
@@ -66,7 +66,7 @@ export class ApplicationComponent extends DestroyObservable implements OnInit {
     return this._applicationStoreService.isLoading;
   }
 
-  public onDelete(application: Application) {
+  public onDelete(application: Application): void {
     const title = `Etes-vous sûr de vouloir supprimer l'application : ${application.name} ?`;
     this._dialog
       .confirm({

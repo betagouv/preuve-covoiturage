@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil, mergeMap, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { phoneIdentityValidator } from '../../validators/identity-phone.validator';
 
@@ -30,11 +27,11 @@ export class GenerateComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.printForm.controls;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.printForm = this.fb.group({
       identity: ['', [Validators.required, phoneIdentityValidator]],
       start_at: [null],
@@ -42,7 +39,7 @@ export class GenerateComponent extends DestroyObservable implements OnInit {
     });
   }
 
-  onConfirm() {
+  onConfirm(): void {
     if (this.printForm.valid) {
       this.certificateService.downloadPrint(this.printForm.value);
 

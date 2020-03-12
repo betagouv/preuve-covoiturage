@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { filter, takeUntil, tap, mergeMap, map } from 'rxjs/operators';
+import { filter, takeUntil, tap, mergeMap } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { of } from 'rxjs';
@@ -36,7 +36,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadOperators();
     this.operatorCtrl.valueChanges
       .pipe(
@@ -48,7 +48,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
   }
 
   get operatorIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get(this.fieldName);
+    return this.parentForm.get(this.fieldName) as FormControl;
   }
 
   /**
@@ -75,7 +75,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     this.operatorCtrl.setValue('');
   }
 
-  private loadOperators() {
+  private loadOperators(): void {
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators
         ? operators.map((operator) => ({
@@ -100,7 +100,7 @@ export class OperatorsAutocompleteComponent extends DestroyObservable implements
     }
   }
 
-  private filterOperators(literal: string = ''): void {
+  private filterOperators(literal = ''): void {
     const selectedOperatorIds = this.operatorIdsControl.value || [];
     this.filteredOperators = this.operators.filter(
       (operator) =>

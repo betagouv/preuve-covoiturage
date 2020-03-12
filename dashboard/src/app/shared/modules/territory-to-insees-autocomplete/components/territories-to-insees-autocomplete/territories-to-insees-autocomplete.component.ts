@@ -1,12 +1,13 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import * as _ from 'lodash';
 import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
 
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { InseeAndTerritoryInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
-// tslint:disable-next-line:max-line-length
+
+// eslint-disable-next-line
 import { TerritoryToInseesAutocompleteService } from '~/shared/modules/territory-to-insees-autocomplete/services/territory-to-insees-autocomplete.service';
 
 @Component({
@@ -18,7 +19,6 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   public territoryInseeInputCtrl = new FormControl();
 
   public searchedTerritoryInsees: InseeAndTerritoryInterface[] = [];
-
   @Input() parentForm: FormGroup;
   @Input() fieldName: string;
 
@@ -28,7 +28,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.territoryInseeInputCtrl.valueChanges
       .pipe(
         debounceTime(500),
@@ -40,7 +40,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
   }
 
   get territoryInseesControl(): FormControl {
-    return <FormControl>this.parentForm.get(this.fieldName);
+    return this.parentForm.get(this.fieldName) as FormControl;
   }
 
   public remove(index: number): void {
@@ -58,7 +58,7 @@ export class TerritoriesToInseesAutocompleteComponent extends DestroyObservable 
     this.searchedTerritoryInsees = [];
   }
 
-  private filterTerritoryInsees(literal: string = ''): void {
+  private filterTerritoryInsees(literal = ''): void {
     const apiMethod = 'findMainInsee';
     const selectedTerritoryInsees = this.territoryInseesControl.value || [];
     this.inseeAutocompleteService[apiMethod](literal).subscribe(

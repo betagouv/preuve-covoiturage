@@ -11,7 +11,7 @@ import { AuthGuard } from '~/core/guards/auth-guard.service';
 import { ConfirmDialogComponent } from '~/core/components/dialog/confirm-dialog.component';
 import { MaterialModule } from '~/shared/modules/material/material.module';
 
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line
 import { NotAuthenticatedLayoutComponent } from './components/not-authenticated-layout/not-authenticated-layout.component';
 import { AuthenticatedLayoutComponent } from './components/authenticated-layout/authenticated-layout.component';
 import { HttpApiInterceptor } from './interceptor/http.interceptor';

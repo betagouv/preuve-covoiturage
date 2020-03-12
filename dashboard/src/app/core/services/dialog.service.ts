@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
 
 import { ConfirmDialogComponent } from '~/core/components/dialog/confirm-dialog.component';
@@ -17,9 +17,9 @@ export class DialogService {
     cancelBtn?: string;
     color?: string;
   }): Observable<any> {
-    let dialogRef: MatDialogRef<ConfirmDialogComponent>;
+    // let dialogRef: MatDialogRef<ConfirmDialogComponent>;
 
-    dialogRef = this.dialog.open(ConfirmDialogComponent);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent);
     dialogRef.componentInstance.title = params.title || '';
     dialogRef.componentInstance.message = params.message || '';
     dialogRef.componentInstance.confirmBtn = params.confirmBtn || 'Confirmer';

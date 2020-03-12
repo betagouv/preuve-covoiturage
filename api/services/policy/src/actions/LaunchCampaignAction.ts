@@ -4,16 +4,16 @@ import { Action as AbstractAction } from '@ilos/core';
 import { CampaignRepositoryProviderInterfaceResolver } from '../interfaces/CampaignRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/policy/launch.contract';
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/policy/launch.schema';
 
-@handler(handlerConfig)
-export class LaunchCampaignAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
-    ['can', ['incentive-campaign.create']],
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    ['can', ['incentive-campaign.create', 'incentive-campaign.launch']],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class LaunchCampaignAction extends AbstractAction {
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
     super();
   }

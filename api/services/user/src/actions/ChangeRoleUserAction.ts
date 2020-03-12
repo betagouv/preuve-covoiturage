@@ -3,15 +3,14 @@ import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/changeRole.contract';
 import { alias } from '../shared/user/changeRole.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 
 /*
  * Update role of user
  */
-@handler(handlerConfig)
-export class ChangeRoleUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -31,7 +30,9 @@ export class ChangeRoleUserAction extends AbstractAction {
         ],
       ],
     ],
-  ];
+  ],
+})
+export class ChangeRoleUserAction extends AbstractAction {
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }

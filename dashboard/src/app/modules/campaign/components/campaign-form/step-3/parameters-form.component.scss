@@ -1,5 +1,15 @@
 @import 'variables';
 
+.checkbox-hint {
+  display: block;
+  padding-left: 25px;
+}
+
+.mat-checkbox .mat-icon {
+  font-size: 19px;
+  transform: translateY(4px);
+}
+
 .ParametersForm {
   &-title {
     display: flex;

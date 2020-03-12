@@ -15,7 +15,7 @@ export class CGU {
     if (data && data.acceptedBy) this.acceptedBy = data.acceptedBy;
   }
 
-  toFormValues() {
+  toFormValues(): any {
     return {
       accepted: false,
       acceptedAt: '',

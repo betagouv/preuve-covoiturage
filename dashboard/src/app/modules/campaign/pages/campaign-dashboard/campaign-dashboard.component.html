@@ -25,11 +25,21 @@
       <app-campaign-menu></app-campaign-menu>
       <div class="CampaignDashboard-content-header">
         <h2>Vos campagnes en cours</h2>
-        <button mat-flat-button [routerLink]="'/campaign/create'" color="primary" *ngIf="canCreateCampaign$ | async">
+        <button
+          mat-flat-button
+          [routerLink]="'/campaign/create'"
+          [disabled]="displayDemoCaption$"
+          color="primary"
+          *ngIf="canCreateCampaign$ | async"
+        >
           Nouvelle campagne
         </button>
       </div>
-      <div class="CampaignDashboard-content-list activeList">
+      <p *ngIf="displayDemoCaption$ | async">
+        <strong>Non accessible en mode découverte.</strong>
+        <br />Sera visible lors de l'activation de la première campagne.
+      </p>
+      <div class="CampaignDashboard-content-list activeList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
           [campaigns]="campaigns"
           [campaignStatusList]="[campaignStatus.VALIDATED, campaignStatus.PENDING]"
@@ -37,7 +47,7 @@
           [loaded]="loaded"
         ></app-campaigns-list>
       </div>
-      <div *ngIf="camSeeDraft$ | async">
+      <div *ngIf="canSeeDraft$ | async">
         <div class="CampaignDashboard-content-header">
           <h2>Vos campagnes en brouillon</h2>
           <button mat-flat-button [routerLink]="'/campaign/create'" color="primary" *ngIf="canCreateCampaign$ | async">
@@ -56,7 +66,11 @@
       <div class="CampaignDashboard-content-header">
         <h2>Vos campagnes terminées</h2>
       </div>
-      <div class="CampaignDashboard-content-list archivedList">
+      <p *ngIf="displayDemoCaption$ | async">
+        <strong>Non accessible en mode découverte.</strong>
+        <br />Sera visible lors de l'activation de la première campagne.
+      </p>
+      <div class="CampaignDashboard-content-list archivedList" *ngIf="!(displayDemoCaption$ | async)">
         <app-campaigns-list
           [campaigns]="campaigns"
           [campaignStatusList]="[campaignStatus.ARCHIVED]"

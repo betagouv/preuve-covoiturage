@@ -1,6 +1,6 @@
-import { IModel } from '~/core/entities/IModel';
+import { Model } from '~/core/entities/IModel';
 
-export interface IFormModel<FormModelT = any> extends IModel {
+export interface FormModel<FormModelT = any> extends Model {
   updateFromFormValues(formValues: FormModelT): void;
   toFormValues(): FormModelT;
 }

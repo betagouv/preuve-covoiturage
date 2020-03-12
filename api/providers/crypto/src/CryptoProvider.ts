@@ -1,13 +1,11 @@
 import crypto from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import { provider, ProviderInterface } from '@ilos/common';
-// import { ConfigExtension } from '@ilos/config';
 
 import { CryptoProviderInterfaceResolver } from './interfaces/CryptoProviderInterface';
 
 @provider({
   identifier: CryptoProviderInterfaceResolver,
-  // require: [ConfigExtension],
 })
 export class CryptoProvider implements ProviderInterface {
   private saltRounds = 10;

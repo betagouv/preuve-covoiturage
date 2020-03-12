@@ -2,11 +2,11 @@ import { Observable, Subject } from 'rxjs';
 import { filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { Type } from '@angular/core';
 
-import { IModel } from '~/core/entities/IModel';
+import { Model } from '~/core/entities/IModel';
 import { JsonRpcCrud } from '~/core/services/api/json-rpc.crud';
-import { IFormModel } from '~/core/entities/IFormModel';
-import { IClone } from '~/core/entities/IClone';
-import { IMapModel } from '~/core/entities/IMapModel';
+import { FormModel } from '~/core/entities/IFormModel';
+import { Clone } from '~/core/entities/IClone';
+import { MapModel } from '~/core/entities/IMapModel';
 import { GetListStore } from '~/core/services/store/getlist-store';
 
 export type PatchParams<IPatchParamT> = {
@@ -15,8 +15,8 @@ export type PatchParams<IPatchParamT> = {
 };
 
 export abstract class CrudStore<
-  EntityT extends IModel & IFormModel<FormModelT> & IClone<EntityT> & IMapModel<EntityT>,
-  EntityListT extends IModel = EntityT,
+  EntityT extends Model & FormModel<FormModelT> & Clone<EntityT> & MapModel<EntityT>,
+  EntityListT extends Model = EntityT,
   IPatchT = any,
   JsonRpcCrudT extends JsonRpcCrud<EntityT, EntityListT, IPatchT> = JsonRpcCrud<EntityT, EntityListT, IPatchT>,
   FormModelT = any
@@ -29,7 +29,7 @@ export abstract class CrudStore<
     super(rpcCrud);
   }
 
-  select(entity: EntityListT) {
+  select(entity: EntityListT): void {
     this.selectById(entity._id);
   }
 
@@ -49,21 +49,19 @@ export abstract class CrudStore<
     );
   }
 
-  selectNew(entity: EntityT = new this.modelType()) {
+  selectNew(entity: EntityT = new this.modelType()): EntityT {
     const newEntity = entity.clone();
     delete newEntity._id;
     this.entitySubject.next(newEntity);
     return newEntity;
   }
 
-  public getById(id: number) {
+  public getById(id: number): Observable<EntityT> {
     this.dismissGetSubject.next();
     this._loadCount += 1;
-    console.log('> getById ');
     return this.rpcCrud.getById(id).pipe(
       finalize(() => {
         if (this._loadCount > 0) this._loadCount -= 1;
-        console.log('this._loadCount : ', this._loadCount);
       }),
       takeUntil(this.dismissGetSubject),
       map((entity) => new this.modelType().map(entity)),
@@ -73,7 +71,7 @@ export abstract class CrudStore<
     );
   }
 
-  protected selectById(id: number) {
+  protected selectById(id: number): void {
     this.getById(id).subscribe();
   }
 
@@ -154,7 +152,7 @@ export abstract class CrudStore<
     );
   }
 
-  dismissAllRpcActions() {
+  dismissAllRpcActions(): void {
     super.dismissAllRpcActions();
     this.dismissUpdateCreateSubject.next();
     this.dismissDeleteSubject.next();

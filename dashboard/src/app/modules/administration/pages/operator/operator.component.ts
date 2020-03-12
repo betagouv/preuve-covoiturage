@@ -20,7 +20,7 @@ export class OperatorComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // readonly apply only for non admin user
     this.readOnly$ = this._authService.user$.pipe(
       takeUntil(this.destroy$),

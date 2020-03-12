@@ -10,6 +10,7 @@ export {
 export {
   IncentiveRepositoryProviderInterface,
   IncentiveRepositoryProviderInterfaceResolver,
+  IncentiveCreateOptionsType,
 } from './IncentiveRepositoryProviderInterface';
 export {
   TripRepositoryProviderInterface,

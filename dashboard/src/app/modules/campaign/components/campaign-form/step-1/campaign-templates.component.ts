@@ -29,7 +29,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadCampaignTemplates();
   }
 
@@ -37,11 +37,11 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
     return this.campaignForm.controls.parent_id.value;
   }
 
-  public get loading() {
+  public get loading(): boolean {
     return this._campaignStoreService.isLoading;
   }
 
-  public onTemplateCardClick(templateId: number | null) {
+  public onTemplateCardClick(templateId: number | null): void {
     if (!this.isCreating) {
       const title = templateId ? "Chargement d'un modèle" : 'Réinitialisation';
       const message = templateId
@@ -66,7 +66,7 @@ export class CampaignTemplatesComponent extends DestroyObservable implements OnI
     }
   }
 
-  private loadCampaignTemplates() {
+  private loadCampaignTemplates(): void {
     this._campaignStoreService.templates$.pipe(takeUntil(this.destroy$)).subscribe((templates) => {
       this.templates = templates;
     });

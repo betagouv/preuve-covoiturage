@@ -1,4 +1,4 @@
-declare function env(key: string, fallback?: string | boolean): any;
+import { env } from '@ilos/core';
 
 export const render = {
   issuer: env('APP_API_URL'),

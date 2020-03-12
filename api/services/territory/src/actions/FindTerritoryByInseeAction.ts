@@ -3,17 +3,17 @@ import { handler } from '@ilos/common';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/findByInsee.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/territory/findByInsee.schema';
 import { blacklist } from '../config/filterOutput';
 
-@handler(handlerConfig)
-export class FindTerritoryByInseeAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['content.blacklist', blacklist],
-  ];
-
+  ],
+})
+export class FindTerritoryByInseeAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }

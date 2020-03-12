@@ -8,59 +8,15 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-sentry --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "lint": "eslint 'src/**/*.ts'",
-    "test": "mocha --exit src/*.spec.ts src/**/*.spec.ts"
+    "test": "echo '[provider-sentry] No tests'; exit 0",
+    "test:integration": "echo '[provider-sentry] No tests'; exit 0",
+    "coverage-ci": "echo '[provider-sentry] No tests'; exit 0",
+    "coverage": "echo '[provider-sentry] No tests'; exit 0",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
+    "@ilos/core": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0",
     "@sentry/node": "^5.6.2"
-  },
-  "peerDependencies": {
-    "@ilos/core": "~0"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.2.0",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/google-libphonenumber": "^7.4.17",
-    "@types/lodash": "^4.14.136",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^12.12.11",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.1",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.5.3"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
   }
 }

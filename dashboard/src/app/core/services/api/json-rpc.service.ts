@@ -7,7 +7,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { JsonRPCResult } from '~/core/entities/api/jsonRPCResult';
 import { JsonRPCResponse } from '~/core/entities/api/jsonRPCResponse';
 import { JsonRPCError } from '~/core/entities/api/jsonRPCError';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 import { JsonRPCOptions } from '~/core/entities/api/jsonRPCOptions';
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';

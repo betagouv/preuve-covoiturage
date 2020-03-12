@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
@@ -31,7 +31,7 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // this.checkToken();
     this.token = this.activatedRoute.snapshot.params['token'];
     this.email = this.activatedRoute.snapshot.params['email'];
@@ -51,11 +51,11 @@ export class ResetForgottenPasswordComponent extends DestroyObservable implement
     );
   }
 
-  get password() {
+  get password(): AbstractControl {
     return this.newPasswordForm.get('new_password');
   }
 
-  get passwordVerification() {
+  get passwordVerification(): AbstractControl {
     return this.newPasswordForm.get('password_verification');
   }
 

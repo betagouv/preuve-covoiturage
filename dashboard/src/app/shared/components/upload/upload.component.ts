@@ -1,6 +1,7 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
+/*eslint-disable */
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
@@ -14,13 +15,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
 })
 export class UploadComponent implements ControlValueAccessor {
+  /*eslint-enable */
+
   @Input() progress;
   @ViewChild('inputFile', { static: false }) inputFile;
 
   onChange: Function;
   public file: File | null = null;
 
-  @HostListener('change', ['$event.target.files']) emitFiles(event: FileList) {
+  @HostListener('change', ['$event.target.files']) emitFiles(event: FileList): void {
     const file = event && event.item(0);
     this.onChange(file);
     this.file = file;
@@ -28,19 +31,19 @@ export class UploadComponent implements ControlValueAccessor {
 
   constructor(private host: ElementRef<HTMLInputElement>) {}
 
-  writeValue(value: null) {
+  writeValue(value: null): void {
     // clear file input
     this.host.nativeElement.value = '';
     this.file = null;
   }
 
-  registerOnChange(fn: Function) {
+  registerOnChange(fn: Function): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: Function) {}
+  registerOnTouched(fn: Function): void {}
 
-  onChooseFile() {
+  onChooseFile(): void {
     this.inputFile.nativeElement.click();
   }
 }
