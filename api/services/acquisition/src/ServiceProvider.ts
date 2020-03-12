@@ -7,13 +7,14 @@ import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator
 import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
 import { config } from './config';
-import { create } from './shared/acquisition/create.schema';
-import { createLegacy } from './shared/acquisition/createLegacy.schema';
-import { logerror } from './shared/acquisition/logerror.schema';
-import { cancel } from './shared/acquisition/cancel.schema';
-import { resolveerror } from './shared/acquisition/resolveerror.schema';
-import { searcherrors } from './shared/acquisition/searcherrors.schema';
-import { summaryerrors } from './shared/acquisition/summaryerrors.schema';
+import { schema as create } from './shared/acquisition/create.schema';
+import { schema as createLegacy } from './shared/acquisition/createLegacy.schema';
+import { schema as logerror } from './shared/acquisition/logerror.schema';
+import { schema as cancel } from './shared/acquisition/cancel.schema';
+import { schema as resolveerror } from './shared/acquisition/resolveerror.schema';
+import { schema as searcherrors } from './shared/acquisition/searcherrors.schema';
+import { schema as summaryerrors } from './shared/acquisition/summaryerrors.schema';
+import { schema as statuserrors } from './shared/acquisition/status.schema';
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
 import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider';
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
@@ -24,16 +25,18 @@ import { CancelJourneyAction } from './actions/CancelJourneyAction';
 import { ResolveErrorAction } from './actions/ResolveErrorAction';
 import { SearchErrorAction } from './actions/SearchErrorAction';
 import { SummaryErrorAction } from './actions/SummaryErrorAction';
+import { StatusAction } from './actions/StatusAction';
 
 @serviceProvider({
   config,
   queues: ['normalization', 'acquisition'],
   providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider],
   validator: [
-    ['journey.createLegacy', createLegacy],
     ['journey.create', create],
-    ['acquisition.logerror', logerror],
+    ['journey.createLegacy', createLegacy],
     ['journey.cancel', cancel],
+    ['journey.status', statuserrors],
+    ['acquisition.logerror', logerror],
     ['acquisition.resolveerror', resolveerror],
     ['acquisition.searcherrors', searcherrors],
     ['acquisition.summaryerrors', summaryerrors],
@@ -56,6 +59,7 @@ import { SummaryErrorAction } from './actions/SummaryErrorAction';
     SearchErrorAction,
     SummaryErrorAction,
     CancelJourneyAction,
+    StatusAction,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {

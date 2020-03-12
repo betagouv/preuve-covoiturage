@@ -72,6 +72,7 @@ export class HttpTransport implements TransportInterface {
     this.registerGlobalMiddlewares();
     this.registerStatsRoutes();
     this.registerAuthRoutes();
+    this.registerJourneyStatusRoutes();
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
     this.registerLegacyServerRoute();
@@ -380,6 +381,36 @@ export class HttpTransport implements TransportInterface {
           method: 'user:confirmEmail',
           params: { email: req.body.email, token: req.body.token },
         });
+
+        this.send(res, response);
+      }),
+    );
+  }
+
+  private registerJourneyStatusRoutes(): void {
+    this.app.get(
+      '/journeys/:journey_id',
+      asyncHandler(async (req, res, next) => {
+        const { journey_id } = req.params;
+
+        // check the journey_id pattern
+        if (new RegExp('[^a-z0-9-_]', 'i').test(journey_id)) {
+          return res.status(400).json({
+            journey_id,
+            error: {
+              code: 400,
+              message: 'Invalid journey_id. Must match /[a-z0-9-_]/i pattern',
+            },
+          });
+        }
+
+        // call the action with the session user as context
+        const response = await this.kernel.handle(
+          nestParams(
+            { id: 1, jsonrpc: '2.0', method: 'acquisition:status', params: { journey_id } },
+            { ...get(req, 'session.user', null), permissions: ['journey.status'] },
+          ),
+        );
 
         this.send(res, response);
       }),

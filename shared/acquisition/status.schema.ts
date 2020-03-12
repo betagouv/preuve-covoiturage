@@ -1,4 +1,4 @@
-export const alias = 'journey.cancel';
+export const alias = 'journey.status';
 export const schema = {
   $id: alias,
   type: 'object',

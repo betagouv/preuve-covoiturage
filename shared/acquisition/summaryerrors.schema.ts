@@ -1,5 +1,5 @@
 export const alias = 'acquisition.summaryerrors';
-export const summaryerrors = {
+export const schema = {
   $id: alias,
   type: 'object',
   required: ['group_by'],
@@ -14,3 +14,5 @@ export const summaryerrors = {
     group_by: { type: 'string', enum: ['operator_id', 'journey_id', 'error_stage'] },
   },
 };
+
+export const binding = [alias, schema];

@@ -29,7 +29,7 @@ delete dSchema.properties.incentives;
 delete dSchema.properties.payments;
 
 export const alias = 'journey.createLegacy';
-export const createLegacy = {
+export const schema = {
   $id: alias,
   type: 'object',
   required: ['journey_id', 'operator_class'],
@@ -44,3 +44,5 @@ export const createLegacy = {
     driver: dSchema,
   },
 };
+
+export const binding = [alias, schema];

@@ -1,4 +1,5 @@
 import { PeopleWithIdInterface } from './Carpool';
+import { CarpoolInterface } from '../shared/carpool/interfaces/CarpoolInterface';
 
 export interface CarpoolRepositoryProviderInterface {
   importFromAcquisition(
@@ -15,9 +16,11 @@ export interface CarpoolRepositoryProviderInterface {
     people: PeopleWithIdInterface[],
   ): Promise<void>;
   updateStatus(acquisition_id: number, status: string): Promise<void>;
+  find(acquisition_id: number): Promise<CarpoolInterface>;
 }
+
 export abstract class CarpoolRepositoryProviderInterfaceResolver implements CarpoolRepositoryProviderInterface {
-  abstract async importFromAcquisition(
+  async importFromAcquisition(
     shared: {
       acquisition_id: number;
       operator_id: number;
@@ -29,6 +32,15 @@ export abstract class CarpoolRepositoryProviderInterfaceResolver implements Carp
       status: string;
     },
     people: PeopleWithIdInterface[],
-  ): Promise<void>;
-  abstract async updateStatus(acquisition_id: number, status: string): Promise<void>;
+  ): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async updateStatus(acquisition_id: number, status: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async find(acquisition_id: number): Promise<CarpoolInterface> {
+    throw new Error('Method not implemented.');
+  }
 }

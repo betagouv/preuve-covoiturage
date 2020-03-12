@@ -6,6 +6,7 @@ import {
   JourneyRepositoryProviderInterfaceResolver,
 } from '../interfaces/JourneyRepositoryProviderInterface';
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
+import { ParamsFindInterface } from '../shared/acquisition/common/interfaces/ParamsFindInterface';
 import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 
 @provider({
@@ -40,6 +41,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
 
     return result.rows[0];
   }
+
   async exists(journey_id: string, operator_id: number, application_id: number): Promise<number> {
     const query = {
       text: `
@@ -60,5 +62,29 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     }
 
     return result.rows[0]._id;
+  }
+
+  async find(params: ParamsFindInterface): Promise<AcquisitionInterface> {
+    const { journey_id, operator_id } = params;
+
+    const values = operator_id ? [journey_id, operator_id] : [journey_id];
+    const whereOperator = operator_id ? ' AND operator_id = $2' : '';
+
+    const results = await this.connection.getClient().query({
+      values,
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE journey_id = $1${whereOperator}
+        LIMIT 1
+      `,
+    });
+
+    if (!results.rowCount) {
+      throw new NotFoundException(
+        `[acquisition.journeys:find] journey_id not found (${journey_id}) for operator (${operator_id})`,
+      );
+    }
+
+    return results.rows[0];
   }
 }

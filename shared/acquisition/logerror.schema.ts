@@ -1,5 +1,5 @@
 export const alias = 'acquisition.logerror';
-export const logerror = {
+export const schema = {
   $id: alias,
   type: 'object',
   required: ['operator_id', 'source', 'auth', 'headers', 'body', 'error_stage', 'journey_id'],
@@ -18,3 +18,5 @@ export const logerror = {
     body: { type: 'object', additionalProperties: true },
   },
 };
+
+export const binding = [alias, schema];

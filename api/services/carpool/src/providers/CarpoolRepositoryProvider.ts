@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 
 import {
@@ -7,6 +7,7 @@ import {
 } from '../interfaces/CarpoolRepositoryProviderInterface';
 
 import { PeopleWithIdInterface } from '../interfaces/Carpool';
+import { CarpoolInterface } from '../shared/carpool/interfaces/CarpoolInterface';
 
 /*
  * Trip specific repository
@@ -60,6 +61,19 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
       await client.release();
       throw e;
     }
+  }
+
+  async find(acquisition_id: number): Promise<CarpoolInterface> {
+    const results = await this.connection.getClient().query({
+      text: `SELECT * from ${this.table} WHERE acquisition_id = $1 LIMIT 1;`,
+      values: [acquisition_id],
+    });
+
+    if (!results.rowCount) {
+      throw new NotFoundException(`[carpool:find] journey_id (${acquisition_id}) not found`);
+    }
+
+    return results.rows[0];
   }
 
   protected async addParticipant(

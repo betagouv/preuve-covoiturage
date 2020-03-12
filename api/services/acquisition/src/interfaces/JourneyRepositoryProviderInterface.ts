@@ -1,4 +1,5 @@
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
+import { ParamsFindInterface } from '../shared/acquisition/common/interfaces/ParamsFindInterface';
 import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 
 export interface JourneyRepositoryProviderInterface {
@@ -8,6 +9,7 @@ export interface JourneyRepositoryProviderInterface {
   ): Promise<AcquisitionInterface>;
 
   exists(journey_id: string, operator_id: number, application_id: number): Promise<number>;
+  find(params: ParamsFindInterface): Promise<AcquisitionInterface>;
 }
 
 export abstract class JourneyRepositoryProviderInterfaceResolver implements JourneyRepositoryProviderInterface {
@@ -15,10 +17,14 @@ export abstract class JourneyRepositoryProviderInterfaceResolver implements Jour
     journey: JourneyInterface,
     context: { operator_id: number; application_id: number },
   ): Promise<AcquisitionInterface> {
-    throw new Error();
+    throw new Error('Method not implemented.');
   }
 
   async exists(journey_id: string, operator_id: number, application_id: number): Promise<number> {
-    throw new Error();
+    throw new Error('Method not implemented.');
+  }
+
+  async find(params: ParamsFindInterface): Promise<AcquisitionInterface> {
+    throw new Error('Method not implemented.');
   }
 }

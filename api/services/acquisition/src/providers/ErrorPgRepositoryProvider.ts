@@ -1,6 +1,7 @@
-import { provider } from '@ilos/common';
+import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
+import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 import {
   ErrorRepositoryProviderInterface,
   ErrorRepositoryProviderInterfaceResolver,
@@ -21,7 +22,10 @@ import {
   ParamsInterface as SummaryParamsInterface,
   ResultInterface as SummaryResultInterface,
 } from '../shared/acquisition/summaryerrors.contract';
-import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
+import {
+  ParamsInterface as FindParamsInterface,
+  ResultInterface as FindResultInterface,
+} from '../shared/acquisition/finderrors.contract';
 
 @provider({
   identifier: ErrorRepositoryProviderInterfaceResolver,
@@ -112,7 +116,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
       values: [data.operator_id, data.journey_id, data.error_stage],
     };
 
-    return await (await this.connection.getClient().query(query)).rows.length;
+    return (await this.connection.getClient().query(query)).rows.length;
   }
 
   async log(data: LogParamsInterface): Promise<LogResultInterface> {
@@ -169,5 +173,29 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     const result = await this.connection.getClient().query(query);
 
     return result.rows[0];
+  }
+
+  async find(params: FindParamsInterface): Promise<FindResultInterface> {
+    const { journey_id, operator_id } = params;
+
+    const values = operator_id ? [journey_id, operator_id] : [journey_id];
+    const whereOperator = operator_id ? ' AND operator_id = $2' : '';
+
+    const results = await this.connection.getClient().query({
+      values,
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE journey_id = $1${whereOperator}
+        LIMIT 1
+      `,
+    });
+
+    if (!results.rowCount) {
+      throw new NotFoundException(
+        `[acquisition.errors:find] journey_id not found (${journey_id}) for operator (${operator_id})`,
+      );
+    }
+
+    return results.rows[0];
   }
 }

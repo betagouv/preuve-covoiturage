@@ -1,11 +1,11 @@
-export const alias = 'journey.cancel';
+export const alias = 'carpool.find';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['journey_id'],
+  required: ['acquisition_id'],
   additionalProperties: false,
   properties: {
-    journey_id: { macro: 'varchar' },
+    acquisition_id: { macro: 'serial' },
   },
 };
 

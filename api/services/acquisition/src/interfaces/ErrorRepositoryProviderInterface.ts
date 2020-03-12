@@ -1,4 +1,3 @@
-import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 import {
   ParamsInterface as LogParamsInterface,
   ResultInterface as LogResultInterface,
@@ -15,12 +14,17 @@ import {
   ParamsInterface as SummaryParamsInterface,
   ResultInterface as SummaryResultInterface,
 } from '../shared/acquisition/summaryerrors.contract';
+import {
+  ParamsInterface as FindParamsInterface,
+  ResultInterface as FindResultInterface,
+} from '../shared/acquisition/finderrors.contract';
 
 export interface ErrorRepositoryProviderInterface {
-  search(data: SearchParamsInterface): Promise<AcquisitionErrorInterface[]>;
+  search(data: SearchParamsInterface): Promise<SearchResultInterface>;
   log(data: LogParamsInterface): Promise<LogResultInterface>;
   resolve(data: ResolveParamsInterface): Promise<number>;
   summary(filter: SummaryParamsInterface): Promise<SummaryResultInterface>;
+  find(params: FindParamsInterface): Promise<FindResultInterface>;
 }
 
 export abstract class ErrorRepositoryProviderInterfaceResolver implements ErrorRepositoryProviderInterface {
@@ -37,6 +41,10 @@ export abstract class ErrorRepositoryProviderInterfaceResolver implements ErrorR
   }
 
   async summary(filter: SummaryParamsInterface): Promise<SummaryResultInterface> {
+    throw new Error('Not implemented');
+  }
+
+  async find(params: FindParamsInterface): Promise<FindResultInterface> {
     throw new Error('Not implemented');
   }
 }

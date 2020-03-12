@@ -1,5 +1,5 @@
 export const alias = 'acquisition.resolveerror';
-export const resolveerror = {
+export const schema = {
   $id: alias,
   type: 'object',
   required: ['operator_id', 'error_stage', 'journey_id'],
@@ -10,3 +10,5 @@ export const resolveerror = {
     error_stage: { type: 'string', enum: ['acquisition', 'normalization', 'fraud'] },
   },
 };
+
+export const binding = [alias, schema];

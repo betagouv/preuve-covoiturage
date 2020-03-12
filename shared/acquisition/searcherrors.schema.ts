@@ -1,5 +1,5 @@
 export const alias = 'acquisition.searcherrors';
-export const searcherrors = {
+export const schema = {
   $id: alias,
   type: 'object',
   required: [],
@@ -13,3 +13,5 @@ export const searcherrors = {
     error_stage: { type: 'string', enum: ['acquisition', 'normalization', 'fraud'] },
   },
 };
+
+export const binding = [alias, schema];

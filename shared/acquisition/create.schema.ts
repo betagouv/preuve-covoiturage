@@ -1,7 +1,7 @@
 import { passengerSchema, driverSchema } from './common/schemas/person';
 
 export const alias = 'journey.create';
-export const create = {
+export const schema = {
   $id: alias,
   type: 'object',
   required: ['journey_id', 'operator_class'],
@@ -16,3 +16,5 @@ export const create = {
     driver: driverSchema,
   },
 };
+
+export const binding = [alias, schema];
