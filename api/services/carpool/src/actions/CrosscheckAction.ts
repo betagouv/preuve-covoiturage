@@ -54,8 +54,6 @@ export class CrosscheckAction extends Action {
       toProcess.push({ ...driver, identity_id: driverIdentity._id });
     }
 
-    console.log('sortedArray[0] : ', sortedArray[0]);
-
     // Get a trip id
     const tripId = await this.crosscheck.getTripId({
       operator_trip_id: journey.operator_trip_id,
