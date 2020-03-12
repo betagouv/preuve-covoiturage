@@ -401,7 +401,7 @@ export class CampaignUiService {
 
     // OPERATORS
     if (!campaign.filters.operator_ids.length) {
-      summaryText += ` est ouvertes à tous les opérateurs présents sur le territoire, `;
+      summaryText += ` est ouverte à tous les opérateurs présents sur le territoire, `;
     } else {
       summaryText += `est limitée  ${
         campaign.filters.operator_ids.length === 1 ? "à l'opérateur " : 'aux opérateurs '
