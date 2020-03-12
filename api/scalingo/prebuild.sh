@@ -11,6 +11,10 @@ git clone https://github.com/betagouv/ilos
 cd ilos
 
 # 2020/03/02 use tagged master@0.4.1 until ilos is published or completely cleaned
+echo -n "current branch:"
+echo $(git rev-parse --abbrev-ref HEAD)
+echo $NODE_ENV
+
 if [ $(git rev-parse --abbrev-ref HEAD) = 'master' ]; then
   git checkout 0.4.1
 else
@@ -19,8 +23,9 @@ fi
 
 yarn
 yarn build
-rm -rf ./node_modules
-rm -rf ./**/node_modules
+
+find . -name "node_modules" -exec rm -rf {} \;
+
 echo -n "[ilos] size: "; du -ch | tail -n 1
 cd ..
 mv ilos api/ilos
