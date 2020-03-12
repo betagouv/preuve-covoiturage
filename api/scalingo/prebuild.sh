@@ -11,11 +11,7 @@ git clone https://github.com/betagouv/ilos
 cd ilos
 
 # 2020/03/02 use tagged master@0.4.1 until ilos is published or completely cleaned
-echo -n "current branch:"
-echo $(git rev-parse --abbrev-ref HEAD)
-echo $NODE_ENV
-
-if [ $(git rev-parse --abbrev-ref HEAD) = 'master' ]; then
+if [ $NODE_ENV = 'production' ]; then
   git checkout 0.4.1
 else
   git checkout dev
