@@ -67,6 +67,7 @@
     "@pdc/service-territory": "~0",
     "@pdc/service-trip": "~0",
     "@pdc/service-user": "~0",
+    "@pdc/service-monitoring": "~0",
     "body-parser": "^1.19.0",
     "connect-redis": "^4.0.3",
     "cors": "^2.8.5",
