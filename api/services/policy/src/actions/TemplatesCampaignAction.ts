@@ -8,7 +8,10 @@ import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 
 @handler(handlerConfig)
 export class TemplatesCampaignAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['incentive-campaign.templates']], ['validate', alias]];
+  public readonly middlewares: ActionMiddleware[] = [
+    ['can', ['incentive-campaign.templates']],
+    ['validate', alias],
+  ];
 
   constructor(private campaignRepository: CampaignRepositoryProviderInterfaceResolver) {
     super();

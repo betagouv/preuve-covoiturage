@@ -32,7 +32,10 @@ import { binding as downloadBinding } from './shared/certificate/download.schema
     HtmlPrinterProvider,
   ],
   validator: [renderBinding, createBinding, findBinding, downloadBinding],
-  middlewares: [['validate', ValidatorMiddleware], ['can', PermissionMiddleware]],
+  middlewares: [
+    ['validate', ValidatorMiddleware],
+    ['can', PermissionMiddleware],
+  ],
   connections: [[PostgresConnection, 'connections.postgres']],
   handlers: [RenderCertificateAction, DownloadCertificateAction, CreateCertificateAction, FindCertificateAction],
   commands: [SeedCommand],

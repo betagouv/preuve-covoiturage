@@ -61,6 +61,6 @@ export class CreateJourneyLegacyAction extends AbstractAction {
       { channel: { service: 'acquisition' }, call: { user: { permissions: ['operator.read'] } } },
     );
 
-    return ('company' in operator && operator.company) ? operator.company.siret : null;
+    return 'company' in operator && operator.company ? operator.company.siret : null;
   }
 }
