@@ -113,7 +113,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
             case 'insee':
               return {
-                text: 'start_insee = ANY($#::text[]) OR end_insee = ANY ($#::text[])',
+                text: '(start_insee = ANY($#::text[]) OR end_insee = ANY ($#::text[]))',
                 values: [filter.value, filter.value],
               };
 
