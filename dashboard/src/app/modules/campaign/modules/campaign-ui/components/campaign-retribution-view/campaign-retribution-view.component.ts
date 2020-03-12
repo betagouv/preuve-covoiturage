@@ -19,7 +19,8 @@ export class CampaignRetributionViewComponent implements OnInit {
 
   get canEdit(): boolean {
     return (
-      this._authenticationService.hasRole(UserRoleEnum.TERRITORY_ADMIN) &&
+      (this._authenticationService.hasRole(UserRoleEnum.TERRITORY_ADMIN) ||
+        this._authenticationService.hasRole(UserRoleEnum.TERRITORY_DEMO)) &&
       this.campaign.status === CampaignStatusEnum.DRAFT
     );
   }
