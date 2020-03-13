@@ -76,7 +76,6 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     },
     { channel: { service: 'proxy' }, call: { user: { permissions: ['acquisition.logrequest'] } } },
   );
-
   console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id')}`);
 }
 
