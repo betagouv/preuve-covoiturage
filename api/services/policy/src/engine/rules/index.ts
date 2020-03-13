@@ -5,8 +5,16 @@ import { filters } from './filters';
 import { modifiers } from './modifiers';
 import { setters } from './setters';
 import { stateful } from './stateful';
-import { basic } from './basic';
+import { native } from './native';
 import { metas } from './metas';
 import { transformers } from './transformers';
 
-export const rules: StaticRuleInterface[] = [...filters, ...modifiers, ...setters, ...stateful, ...basic, ...metas, ...transformers];
+export const rules: StaticRuleInterface[] = [
+  ...filters,
+  ...modifiers,
+  ...setters,
+  ...stateful,
+  ...native,
+  ...metas,
+  ...transformers,
+];
