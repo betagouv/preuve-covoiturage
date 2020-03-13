@@ -1,7 +1,7 @@
 import { RuleInterface } from '../../interfaces';
 import { MetaRule } from '../MetaRule';
 import { MetaMaximumFilter } from '../filters/MetaMaximumFilter';
-import { MetaAmountPost } from '../posts/MetaAmountPost';
+import { MetaAmountPost } from '../stateful/MetaAmountPost';
 
 interface MaxAmountParameters {
   amount: number;

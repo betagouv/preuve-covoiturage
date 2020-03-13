@@ -1,4 +1,4 @@
-import { PostRule } from '../PostRule';
+import { StatefulRule } from '../StatefulRule';
 import { RuleHandlerParamsInterface } from '../../interfaces';
 import { getMetaKey, period } from '../../helpers/getMetaKey';
 
@@ -8,7 +8,7 @@ interface MetaTripPostParameters {
   prefix: string;
 }
 
-export class MetaTripPost extends PostRule<MetaTripPostParameters> {
+export class MetaTripPost extends StatefulRule<MetaTripPostParameters> {
   static readonly slug: string = 'meta_trip_post';
   static readonly description: string = 'Incrémente le nombre de trajets';
   static readonly schema: { [k: string]: any } = {

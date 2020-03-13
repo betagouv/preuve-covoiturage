@@ -1,4 +1,4 @@
-import { PostRule } from '../PostRule';
+import { StatefulRule } from '../StatefulRule';
 import { RuleHandlerParamsInterface } from '../../interfaces';
 import { getMetaKey, period } from '../../helpers/getMetaKey';
 
@@ -8,7 +8,7 @@ interface MetaAmountPostParameters {
   prefix: string;
 }
 
-export class MetaAmountPost extends PostRule<MetaAmountPostParameters> {
+export class MetaAmountPost extends StatefulRule<MetaAmountPostParameters> {
   static readonly slug: string = 'meta_amount_post';
   static readonly description: string = "Incrémente le montant de l'incitation";
   static readonly schema: { [k: string]: any } = {
