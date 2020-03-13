@@ -30,8 +30,7 @@ class RuleSet
     SetterRuleInterface,
     ModifierRuleInterface,
     AppliableRuleInterface {
-  protected filterNativeSet: FilterRuleInterface[];
-  protected filterSqlSet: FilterRuleInterface[];
+  protected filterSet: FilterRuleInterface[];
   protected transformerSet: TransformerRuleInterface[];
   protected setterSet: SetterRuleInterface[];
   protected modifierSet: ModifierRuleInterface[];
@@ -71,11 +70,8 @@ class RuleSet
 
   // order by priority
   sort(rules: { ctor: StaticRuleInterface; def: RuleInterface }[]): void {
-    this.filterNativeSet = rules
-      .filter(({ ctor }) => ctor.type === FILTER && !ctor.prototype.filterSql)
-      .map((r) => this.instanciate<FilterRuleInterface>(r.ctor, r.def));
-    this.filterSqlSet = rules
-      .filter(({ ctor }) => ctor.type === FILTER && ctor.prototype.filterSql)
+    this.filterSet = rules
+      .filter(({ ctor }) => ctor.type === FILTER)
       .map((r) => this.instanciate<FilterRuleInterface>(r.ctor, r.def));
     this.transformerSet = rules
       .filter(({ ctor }) => ctor.type === TRANSFORMER)
@@ -101,22 +97,6 @@ class RuleSet
     await this.post(context);
   }
 
-  filterSql(): { text: string; values: any[] } {
-    const filters = [];
-    for (const rule of this.filterSqlSet) {
-      filters.push(rule.filterSql());
-    }
-    return {
-      text: filters.map((f) => f.text).join(' AND '),
-      values: filters
-        .map((f) => f.values)
-        .reduce((acc, curr) => {
-          acc.push(...curr);
-          return acc;
-        }, []),
-    };
-  }
-
   async post(context: RuleHandlerParamsInterface): Promise<void> {
     for (const rule of this.postSet) {
       await rule.apply(context);
@@ -125,7 +105,7 @@ class RuleSet
   }
 
   async filter(context: RuleHandlerContextInterface): Promise<void> {
-    await Promise.all([...this.filterNativeSet].map((r) => r.filter(context)));
+    await Promise.all([...this.filterSet].map((r) => r.filter(context)));
   }
 
   async modify(context: RuleHandlerContextInterface, result: number): Promise<number> {

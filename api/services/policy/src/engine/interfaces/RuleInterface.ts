@@ -43,7 +43,6 @@ export interface MetaRuleInterface {
 }
 
 export interface FilterRuleInterface extends AppliableRuleInterface {
-  filterSql?(): { text: string; values: any[] };
   filter(context: RuleHandlerContextInterface): Promise<void>;
 }
 

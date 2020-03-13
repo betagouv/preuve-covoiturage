@@ -1,8 +1,8 @@
 import { priority, LOWEST } from '../helpers/priority';
 import { type, DEFAULT } from '../helpers/type';
-import { RuleHandlerParamsInterface } from '../interfaces';
+import { RuleHandlerParamsInterface, AppliableRuleInterface } from '../interfaces';
 
-export abstract class AbstractRule<P = any> {
+export abstract class AbstractRule<P = any> implements AppliableRuleInterface {
   static readonly type: type = DEFAULT;
   static readonly priority: priority = LOWEST;
 
