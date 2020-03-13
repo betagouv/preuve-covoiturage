@@ -7,10 +7,10 @@ export abstract class ModifierRule<P = any> extends AbstractRule<P> implements M
   static readonly type = MODIFIER;
   static readonly priority = LOWEST;
 
-  async apply(context: RuleHandlerParamsInterface): Promise<void> {
+  apply(context: RuleHandlerParamsInterface): void {
     const { result, ...ctx } = context;
-    context.result = await this.modify(ctx, result);
+    context.result = this.modify(ctx, result);
   }
 
-  abstract async modify(context: RuleHandlerContextInterface, result: number): Promise<number>;
+  abstract modify(context: RuleHandlerContextInterface, result: number): number;
 }

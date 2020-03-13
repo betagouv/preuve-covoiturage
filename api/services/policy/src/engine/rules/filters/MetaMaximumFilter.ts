@@ -37,7 +37,7 @@ export class MetaMaximumFilter extends FilterRule<MetaMaxParameters> {
     },
   };
 
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     if (
       this.parameters.target &&
       ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||

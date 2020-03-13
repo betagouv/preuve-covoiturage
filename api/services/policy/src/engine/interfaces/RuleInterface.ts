@@ -8,7 +8,6 @@ import { type } from '../helpers/type';
 export interface RuleHandlerContextInterface {
   person: PersonInterface;
   trip: TripInterface;
-  meta: MetaInterface;
   stack: string[];
 }
 
@@ -35,7 +34,13 @@ export interface StaticRuleInterface<H = MetaOrApplicableRuleInterface, P = any>
 // apply(parameters?: any): RuleHandlerInterface;
 
 export interface AppliableRuleInterface {
-  apply(context: RuleHandlerParamsInterface): Promise<void>;
+  apply(context: RuleHandlerParamsInterface): void;
+}
+
+export interface StatefulRuleInterface<S = any> {
+  getState(context: RuleHandlerParamsInterface, metaGetter: MetaInterface): Promise<S>;
+  apply(context: RuleHandlerParamsInterface, state: S): void;
+  setState(context: RuleHandlerParamsInterface, metaGetter: MetaInterface, state: S): Promise<void>;
 }
 
 export interface MetaRuleInterface {
@@ -43,19 +48,19 @@ export interface MetaRuleInterface {
 }
 
 export interface FilterRuleInterface extends AppliableRuleInterface {
-  filter(context: RuleHandlerContextInterface): Promise<void>;
+  filter(context: RuleHandlerContextInterface): void;
 }
 
 export interface ModifierRuleInterface extends AppliableRuleInterface {
-  modify(context: RuleHandlerContextInterface, result: number): Promise<number>;
+  modify(context: RuleHandlerContextInterface, result: number): number;
 }
 
 export interface SetterRuleInterface extends AppliableRuleInterface {
-  set(context: RuleHandlerContextInterface): Promise<number>;
+  set(context: RuleHandlerContextInterface): number;
 }
 
 export interface TransformerRuleInterface extends AppliableRuleInterface {
-  transform(context: RuleHandlerContextInterface): Promise<RuleHandlerContextInterface>;
+  transform(context: RuleHandlerContextInterface): RuleHandlerContextInterface;
 }
 
 export type MetaOrApplicableRuleInterface =

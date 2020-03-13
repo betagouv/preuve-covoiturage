@@ -12,5 +12,5 @@ export abstract class AbstractRule<P = any> implements AppliableRuleInterface {
 
   constructor(protected parameters?: P) {}
 
-  abstract async apply(context: RuleHandlerParamsInterface): Promise<void>;
+  abstract apply(context: RuleHandlerParamsInterface): void;
 }

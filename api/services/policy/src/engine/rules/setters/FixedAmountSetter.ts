@@ -9,7 +9,7 @@ export class FixedAmountSetter extends SetterRule<number> {
     minimum: 0,
   };
 
-  async set(ctx: RuleHandlerContextInterface): Promise<number> {
+  set(ctx: RuleHandlerContextInterface): number {
     return this.parameters;
   }
 }

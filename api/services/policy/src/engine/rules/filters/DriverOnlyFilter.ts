@@ -6,7 +6,7 @@ export class DriverOnlyFilter extends FilterRule {
   static readonly slug: string = 'driver_only_filter';
   static readonly description: string = "La politique n'est applicable qu'aux conducteurs";
 
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     if (!ctx.person.is_driver) {
       throw new NotApplicableTargetException(DriverOnlyFilter.description);
     }

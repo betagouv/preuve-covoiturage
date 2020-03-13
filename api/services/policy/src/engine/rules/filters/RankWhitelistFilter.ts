@@ -13,7 +13,7 @@ export class RankWhitelistFilter extends FilterRule<string[]> {
     },
   };
 
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     if (this.parameters.indexOf(ctx.person.operator_class) < 0) {
       throw new NotApplicableTargetException(RankWhitelistFilter.description);
     }

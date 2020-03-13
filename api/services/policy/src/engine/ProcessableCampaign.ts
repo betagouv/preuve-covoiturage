@@ -34,7 +34,7 @@ class RuleSet
   protected transformerSet: TransformerRuleInterface[];
   protected setterSet: SetterRuleInterface[];
   protected modifierSet: ModifierRuleInterface[];
-  protected postSet: AppliableRuleInterface[];
+  protected nativeSet: AppliableRuleInterface[];
 
   protected availableRules: StaticRuleInterface[] = availableRules;
 
@@ -82,63 +82,64 @@ class RuleSet
     this.modifierSet = rules
       .filter(({ ctor }) => ctor.type === MODIFIER)
       .map((r) => this.instanciate<ModifierRuleInterface>(r.ctor, r.def));
-    this.postSet = rules
-      .filter(({ ctor }) => ctor.type === POST)
+    this.nativeSet = rules
+      .filter(({ ctor }) => ctor.type === DEFAULT)
       .map((r) => this.instanciate<AppliableRuleInterface>(r.ctor, r.def));
   }
 
-  async apply(context: RuleHandlerParamsInterface): Promise<void> {
+  apply(context: RuleHandlerParamsInterface): void {
     let { result, ...ctx } = context;
-    await this.filter(ctx);
-    ctx = await this.transform(ctx);
-    result = await this.set(ctx);
-    context.result = await this.modify(ctx, result);
+    this.filter(ctx);
+    ctx = this.transform(ctx);
+    result = this.set(ctx);
+    context.result = this.modify(ctx, result);
     context.stack.push(`pathresult: ${context.result}`);
-    await this.post(context);
+    this.nativeApply(context);
   }
 
-  async post(context: RuleHandlerParamsInterface): Promise<void> {
-    for (const rule of this.postSet) {
-      await rule.apply(context);
+  protected nativeApply(context: RuleHandlerParamsInterface): void {
+    for (const rule of this.nativeSet) {
+      rule.apply(context);
       context.stack.push(`${(rule.constructor as StaticRuleInterface).slug}: ${context.result}`);
     }
   }
 
-  async filter(context: RuleHandlerContextInterface): Promise<void> {
-    await Promise.all([...this.filterSet].map((r) => r.filter(context)));
+  filter(context: RuleHandlerContextInterface): void {
+    [...this.filterSet].map((r) => r.filter(context));
   }
 
-  async modify(context: RuleHandlerContextInterface, result: number): Promise<number> {
+  modify(context: RuleHandlerContextInterface, result: number): number {
     if (this.modifierSet.length === 0) {
       return result;
     }
 
     let currentResult = result;
     for (const rule of this.modifierSet) {
-      currentResult = await rule.modify(context, currentResult);
+      currentResult = rule.modify(context, currentResult);
       context.stack.push(`${(rule.constructor as StaticRuleInterface).slug} : ${currentResult}`);
     }
 
     return currentResult;
   }
 
-  async set(context: RuleHandlerContextInterface): Promise<number> {
+  set(context: RuleHandlerContextInterface): number {
     let result = 0;
     if (this.setterSet.length > 0) {
-      result = await this.setterSet[0].set(context);
+      // take the first, ignore others
+      result = this.setterSet[0].set(context);
       context.stack.push(`${(this.setterSet[0].constructor as StaticRuleInterface).slug} : ${result}`);
     }
     return result;
   }
 
-  async transform(context: RuleHandlerContextInterface): Promise<RuleHandlerContextInterface> {
+  transform(context: RuleHandlerContextInterface): RuleHandlerContextInterface {
     if (this.transformerSet.length === 0) {
       return context;
     }
 
     let currentContext = JSON.parse(JSON.stringify(context));
     for (const rule of this.transformerSet) {
-      currentContext = await rule.transform(currentContext);
+      currentContext = rule.transform(currentContext);
     }
 
     return currentContext;
@@ -153,17 +154,17 @@ export class ProcessableCampaign extends RuleSet {
     this.ruleSets = rules.map((set) => new RuleSet(set));
   }
 
-  async apply(context: RuleHandlerParamsInterface): Promise<void> {
+  apply(context: RuleHandlerParamsInterface): void {
     let { result, ...ctx } = context;
     try {
       result = 0;
-      await this.filter(ctx);
-      ctx = await this.transform(ctx);
+      this.filter(ctx);
+      ctx = this.transform(ctx);
 
       for (const ruleSet of this.ruleSets) {
         const currentContext = { ...ctx, result: 0 };
         try {
-          await ruleSet.apply(currentContext);
+          ruleSet.apply(currentContext);
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
@@ -174,8 +175,8 @@ export class ProcessableCampaign extends RuleSet {
       }
 
       context.stack.push(`result: ${result}`);
-      context.result = await this.modify(ctx, result);
-      await this.post({ ...ctx, result });
+      context.result = this.modify(ctx, result);
+      this.nativeApply({ ...ctx, result });
     } catch (e) {
       if (!(e instanceof NotApplicableTargetException)) {
         throw e;

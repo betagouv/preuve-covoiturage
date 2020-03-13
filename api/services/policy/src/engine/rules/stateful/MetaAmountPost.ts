@@ -1,4 +1,4 @@
-import { StatefulRule } from '../StatefulRule';
+import { StatefulRule } from '../AbstractStatefulRule';
 import { RuleHandlerParamsInterface } from '../../interfaces';
 import { getMetaKey, period } from '../../helpers/getMetaKey';
 
@@ -32,7 +32,7 @@ export class MetaAmountPost extends StatefulRule<MetaAmountPostParameters> {
     },
   };
 
-  async apply(ctx: RuleHandlerParamsInterface): Promise<void> {
+  apply(ctx: RuleHandlerParamsInterface): Promise<void> {
     if (
       (this.parameters.target &&
         ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||
