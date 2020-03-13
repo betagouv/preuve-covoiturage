@@ -71,6 +71,11 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         throw new ForbiddenException();
       }
 
+      // cast foreign keys to integer
+      if ('o' in payload && typeof payload.o === 'string') {
+        payload.o = parseInt(payload.o, 10);
+      }
+
       // Check and get the app
       const app = await checkApplication(kernel, payload);
 
