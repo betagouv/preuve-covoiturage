@@ -31,6 +31,8 @@ async function checkApplication(
     },
   });
 
+  console.log({ checkApplication: app });
+
   const app_uuid = get(app, 'result.uuid', '');
   // disabled until owner_id is migrated as integer
   // const owner_id = get(app, 'result.owner_id', null);
@@ -66,6 +68,7 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     },
     { channel: { service: 'proxy' }, call: { user: { permissions: ['acquisition.logrequest'] } } },
   );
+
   console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id')}`);
 }
 
@@ -102,11 +105,6 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
 
       if (!payload.a || !payload.o) {
         throw new ForbiddenException();
-      }
-
-      // cast foreign keys to integer
-      if ('o' in payload && typeof payload.o === 'string') {
-        payload.o = parseInt(payload.o, 10);
       }
 
       // Check and get the app
