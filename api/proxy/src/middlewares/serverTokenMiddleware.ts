@@ -115,6 +115,14 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         throw new ForbiddenException();
       }
 
+      // cast foreign keys to integer
+      if ('o' in payload && typeof payload.o === 'string') {
+        payload.o = parseInt(payload.o, 10);
+      }
+
+      // Check and get the app
+      const app = await checkApplication(kernel, payload);
+
       // The only permissions now. Store in the token or retrieve
       // from the application service later if it gets more complex.
       if (!payload.p) {
