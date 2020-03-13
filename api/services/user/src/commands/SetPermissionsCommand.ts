@@ -29,11 +29,12 @@ export class SetPermissionsCommand implements CommandInterface {
   constructor(private config: ConfigInterfaceResolver) {}
 
   public async call(options): Promise<string> {
+    let pg;
     let pgClient;
     try {
-      const pg = new PostgresConnection({ connectionString: options.databaseUri });
+      pg = new PostgresConnection({ connectionString: options.databaseUri });
       await pg.up();
-      pgClient = pg.getClient();
+      pgClient = await pg.getClient().connect();
 
       // reset all users' permissions based on config
       const perms: PermsConfig = this.config.get('permissions');
@@ -71,6 +72,9 @@ export class SetPermissionsCommand implements CommandInterface {
 
       console.log('[set-permissions] ERROR', e.message);
     }
+
+    pgClient.release();
+    await pg.down();
 
     return '';
   }
