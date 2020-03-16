@@ -2,15 +2,18 @@ import { provider } from '@ilos/common';
 
 import {
   CampaignInterface,
-  CampaignMetadataRepositoryProviderInterfaceResolver,
   IncentiveInterface,
   TripInterface,
 } from '../interfaces';
+import {
+  MetadataProviderInterfaceResolver,
+} from './interfaces';
+
 import { ProcessableCampaign } from './ProcessableCampaign';
 
 @provider()
 export class PolicyEngine {
-  constructor(protected metaRepository: CampaignMetadataRepositoryProviderInterfaceResolver) {}
+  constructor(protected metaRepository: MetadataProviderInterfaceResolver) {}
 
   public async process(trip: TripInterface, campaign: CampaignInterface): Promise<IncentiveInterface[]> {
     const results: IncentiveInterface[] = [];
@@ -33,14 +36,20 @@ export class PolicyEngine {
       results.push({
         policy_id: campaign._id,
         carpool_id: person.carpool_id,
-        identity_uuid: person.identity_uuid,
         amount: Math.round(ctx.result),
+        result: Math.round(ctx.result),
+        datetime: ctx.person.datetime,
+        status: 'draft',
+        state: 'regular',
+        meta: {
+          // TODO
+        }
         // status
         // detail:
-      });
+      } as any);
     }
 
-    await this.metaRepository.set(meta);
+    await this.metaRepository.set(campaign._id, meta);
     return results;
   }
 }

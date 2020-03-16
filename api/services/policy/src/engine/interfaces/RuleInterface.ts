@@ -1,6 +1,6 @@
 import { TripInterface } from '../../interfaces/TripInterface';
 import { PersonInterface } from '../../interfaces/PersonInterface';
-import { MetaInterface } from '../../interfaces/MetaInterface';
+import { MetaInterface } from './MetaInterface';
 
 import { priority } from '../helpers/priority';
 import { type } from '../helpers/type';
@@ -9,6 +9,11 @@ export interface RuleHandlerContextInterface {
   person: PersonInterface;
   trip: TripInterface;
   stack: string[];
+}
+
+export interface ResultInterface {
+  result: number; // result of calculation
+  amount: number; // final result = amount of the incentive
 }
 
 export interface RuleHandlerParamsInterface extends RuleHandlerContextInterface {
@@ -22,7 +27,7 @@ export interface RuleInterface {
   parameters?: any;
 }
 
-export interface StaticRuleInterface<H = MetaOrApplicableRuleInterface, P = any> {
+export interface StaticRuleInterface<H = MetaOrApplicableOrStatefulRuleInterface, P = any> {
   slug: string;
   description?: string;
   schema?: { [k: string]: any };
@@ -37,10 +42,11 @@ export interface AppliableRuleInterface {
   apply(context: RuleHandlerParamsInterface): void;
 }
 
-export interface StatefulRuleInterface<S = any> {
-  getState(context: RuleHandlerParamsInterface, metaGetter: MetaInterface): Promise<S>;
-  apply(context: RuleHandlerParamsInterface, state: S): void;
-  setState(context: RuleHandlerParamsInterface, metaGetter: MetaInterface, state: S): Promise<void>;
+export interface StatefulRuleInterface {
+  readonly uuid: string;
+  getState(context: RuleHandlerContextInterface, metaGetter: MetaInterface): number;
+  apply(result: ResultInterface, state: number): ResultInterface;
+  setState(result: ResultInterface, state: number): number;
 }
 
 export interface MetaRuleInterface {
@@ -63,10 +69,11 @@ export interface TransformerRuleInterface extends AppliableRuleInterface {
   transform(context: RuleHandlerContextInterface): RuleHandlerContextInterface;
 }
 
-export type MetaOrApplicableRuleInterface =
+export type MetaOrApplicableOrStatefulRuleInterface =
   | AppliableRuleInterface
   | FilterRuleInterface
   | MetaRuleInterface
   | ModifierRuleInterface
   | SetterRuleInterface
-  | TransformerRuleInterface;
+  | TransformerRuleInterface
+  | StatefulRuleInterface;
