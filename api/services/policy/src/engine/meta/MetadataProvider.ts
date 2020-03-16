@@ -2,20 +2,21 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import { provider } from '@ilos/common';
 
 import {
-  CampaignMetadataRepositoryProviderInterface,
-  CampaignMetadataRepositoryProviderInterfaceResolver,
-} from '../interfaces/CampaignMetadataRepositoryProviderInterface';
+  MetadataProviderInterface,
+  MetadataProviderInterfaceResolver,
+} from '../interfaces/MetadataProviderInterface';
 import { MetadataWrapper } from './MetadataWrapper';
+import { MetaInterface } from '../interfaces';
 
 @provider({
-  identifier: CampaignMetadataRepositoryProviderInterfaceResolver,
+  identifier: MetadataProviderInterfaceResolver,
 })
-export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepositoryProviderInterface {
+export class MetadataProvider implements MetadataProviderInterface {
   public readonly table = 'policy.policy_metas';
 
   constructor(protected connection: PostgresConnection) {}
 
-  async get(id: number, keys: string[] = ['default']): Promise<MetadataWrapper> {
+  async get(id: number, keys: string[] = ['default']): Promise<MetaInterface> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT
@@ -30,10 +31,10 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
     return new MetadataWrapper(id, result.rows);
   }
 
-  async set(metadata: MetadataWrapper): Promise<void> {
+  async set(policyId: number, metadata: MetaInterface): Promise<void> {
     const keys = metadata.keys();
     const values = metadata.values();
-    const policyId = new Array(keys.length).map(_ => metadata.policy_id);
+    const policyIds = new Array(keys.length).map(_ => policyId);
     const query = {
       text: `
         INSERT INTO ${this.table} (policy_id, key, value)
@@ -43,7 +44,7 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
           value = excluded.value
       `,
       values: [
-        policyId,
+        policyIds,
         keys,
         values
       ],

@@ -27,7 +27,7 @@ import { FindCampaignAction } from './actions/FindCampaignAction';
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyEngine } from './engine/PolicyEngine';
-import { CampaignMetadataRepositoryProvider } from './engine/meta/CampaignMetadataRepositoryProvider';
+import { MetadataProvider } from './engine/meta/MetadataProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { ApplyAction } from './actions/ApplyAction';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
@@ -39,7 +39,7 @@ import { SeedCommand } from './commands/SeedCommand';
   commands: [PolicyProcessCommand, SeedCommand],
   providers: [
     CampaignPgRepositoryProvider,
-    CampaignMetadataRepositoryProvider,
+    MetadataProvider,
     TripRepositoryProvider,
     ['validate.rules', ValidateRuleParametersMiddleware],
     PolicyEngine,
