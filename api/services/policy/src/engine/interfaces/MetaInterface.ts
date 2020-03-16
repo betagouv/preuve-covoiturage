@@ -1,0 +1,6 @@
+export interface MetaInterface {
+  get(key: string, fallback?: number): number;
+  set(key: string, data: number): void;
+  keys(): string[];
+  values(): number[];
+}

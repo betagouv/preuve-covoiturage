@@ -27,7 +27,7 @@ import { FindCampaignAction } from './actions/FindCampaignAction';
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
 import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyEngine } from './engine/PolicyEngine';
-import { CampaignMetadataRepositoryProvider } from './engine/CampaignMetadataRepositoryProvider';
+import { CampaignMetadataRepositoryProvider } from './engine/meta/CampaignMetadataRepositoryProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
 import { ApplyAction } from './actions/ApplyAction';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';

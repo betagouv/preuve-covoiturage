@@ -15,7 +15,7 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
 
   constructor(protected connection: PostgresConnection) {}
 
-  async get(id: number, key = 'default'): Promise<MetadataWrapper> {
+  async get(id: number, keys: string[] = ['default']): Promise<MetadataWrapper> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT
@@ -23,27 +23,30 @@ export class CampaignMetadataRepositoryProvider implements CampaignMetadataRepos
         FROM ${this.table}
         WHERE
           policy_id = $1 AND
-          key = $2
-        LIMIT 1`,
-      values: [id, key],
+          key = ANY($2::varchar[])`,
+      values: [id, keys],
     });
 
-    const data = result.rowCount === 1 ? result.rows[0].value : undefined;
-    return new MetadataWrapper(id, key, data);
+    return new MetadataWrapper(id, result.rows);
   }
 
   async set(metadata: MetadataWrapper): Promise<void> {
-    const [id, masterKey] = metadata.signature;
-
+    const keys = metadata.keys();
+    const values = metadata.values();
+    const policyId = new Array(keys.length).map(_ => metadata.policy_id);
     const query = {
       text: `
         INSERT INTO ${this.table} (policy_id, key, value)
-          VALUES ($1, $2, $3)
-          ON CONFLICT (policy_id, key)
-          DO UPDATE SET
-            value = $3
+          SELECT * FROM UNNEST($1::int[], $2::varchar[], $3::json[])
+        ON CONFLICT (policy_id, key)
+        DO UPDATE SET
+          value = excluded.value
       `,
-      values: [id, masterKey, metadata.all()],
+      values: [
+        policyId,
+        keys,
+        values
+      ],
     };
 
     await this.connection.getClient().query(query);
