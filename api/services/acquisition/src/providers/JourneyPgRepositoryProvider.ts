@@ -40,4 +40,21 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
 
     return result.rows[0];
   }
+  async exists(journey_id: string, operator_id: number, application_id: number): Promise<boolean> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT
+          true
+        FROM ${this.table}
+        WHERE operator_id = $1
+        AND journey_id = $2::varchar
+        AND application_id = $3::varchar
+        LIMIT 1`,
+      values: [operator_id, journey_id, application_id],
+    });
+    if (result.rowCount !== 1) {
+      return false;
+    }
+    return true;
+  }
 }
