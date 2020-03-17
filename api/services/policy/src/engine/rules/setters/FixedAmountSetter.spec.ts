@@ -1,27 +1,24 @@
-import chai from 'chai';
-import chaiAsync from 'chai-as-promised';
+import test from 'ava';
+
 import { FixedAmountSetter } from './FixedAmountSetter';
-import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
 
-const meta = new MetadataWrapper(1, 'default', {});
+function setup() {
+  const amount = 1000;
+  const rule = new FixedAmountSetter(amount);
+  const trip = faker.trip([{}]);
 
-chai.use(chaiAsync);
-const { expect } = chai;
-const amount = 1000;
-const test = new FixedAmountSetter(amount);
-const trip = faker.trip([{}]);
+  return { amount, rule, trip };
+}
 
-describe('Policy rule: fixed amount', () => {
-  it('should replace result by fixed amount', async () => {
-    const context = {
-      trip,
-      meta,
-      stack: [],
-      result: 0,
-      person: trip.people[0],
-    };
-    await test.apply(context);
-    expect(context.result).to.eq(amount);
-  });
+test('should replace result by fixed amount', async (t) => {
+  const { amount, rule, trip } = setup();
+  const context = {
+    trip,
+    stack: [],
+    result: 0,
+    person: trip.people[0],
+  };
+  await rule.apply(context);
+  t.is(context.result, amount);
 });

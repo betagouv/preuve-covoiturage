@@ -1,10 +1,10 @@
-import { TripInterface } from '../../src/interfaces';
-import { faker } from '../../src/engine/helpers/faker';
+import { TripInterface } from '../../interfaces';
+import { faker } from '../helpers/faker';
 
 const tripDefinitions = [
   {
-    passenger_carpool_id: 1,
-    driver_carpool_id: 1,
+    passenger_carpool_id: 11,
+    driver_carpool_id: 10,
     distance: 1000,
     driver_identity_uuid: '0',
     passenger_identity_uuid: '1',
@@ -13,8 +13,8 @@ const tripDefinitions = [
     datetime: '2019-01-15T11:00:00.000Z',
   },
   {
-    passenger_carpool_id: 2,
-    driver_carpool_id: 2,
+    passenger_carpool_id: 23,
+    driver_carpool_id: 22,
     distance: 5000,
     driver_identity_uuid: '2',
     passenger_identity_uuid: '3',
@@ -23,8 +23,8 @@ const tripDefinitions = [
     datetime: '2019-01-15T11:00:00.000Z',
   },
   {
-    passenger_carpool_id: 3,
-    driver_carpool_id: 3,
+    passenger_carpool_id: 35,
+    driver_carpool_id: 34,
     distance: 5000,
     driver_identity_uuid: '4',
     passenger_identity_uuid: '5',
@@ -33,8 +33,8 @@ const tripDefinitions = [
     datetime: '2019-01-15T04:00:00.000Z',
   },
   {
-    passenger_carpool_id: 4,
-    driver_carpool_id: 4,
+    passenger_carpool_id: 45,
+    driver_carpool_id: 44,
     distance: 7500,
     driver_identity_uuid: '4',
     passenger_identity_uuid: '5',
@@ -43,8 +43,8 @@ const tripDefinitions = [
     datetime: '2019-01-15T11:00:00.000Z',
   },
   {
-    passenger_carpool_id: 5,
-    driver_carpool_id: 5,
+    passenger_carpool_id: 55,
+    driver_carpool_id: 54,
     distance: 75000,
     driver_identity_uuid: '4',
     passenger_identity_uuid: '5',
@@ -53,8 +53,8 @@ const tripDefinitions = [
     datetime: '2019-01-15T13:00:00.000Z',
   },
   {
-    passenger_carpool_id: 6,
-    driver_carpool_id: 6,
+    passenger_carpool_id: 67,
+    driver_carpool_id: 66,
     distance: 750000,
     driver_identity_uuid: '6',
     passenger_identity_uuid: '7',
@@ -63,8 +63,8 @@ const tripDefinitions = [
     datetime: '2019-01-15T11:00:00.000Z',
   },
   {
-    passenger_carpool_id: 7,
-    driver_carpool_id: 7,
+    passenger_carpool_id: 75,
+    driver_carpool_id: 74,
     distance: 7500,
     driver_identity_uuid: '4',
     passenger_identity_uuid: '5',
@@ -73,8 +73,8 @@ const tripDefinitions = [
     datetime: '2019-01-17T11:00:00.000Z',
   },
   {
-    passenger_carpool_id: 8,
-    driver_carpool_id: 8,
+    passenger_carpool_id: 87,
+    driver_carpool_id: 86,
     distance: 5000,
     driver_identity_uuid: '6',
     passenger_identity_uuid: '7',

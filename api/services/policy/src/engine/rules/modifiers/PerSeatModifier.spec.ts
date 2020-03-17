@@ -1,40 +1,33 @@
-import chai from 'chai';
-import chaiAsync from 'chai-as-promised';
+import test from 'ava';
 import { PerSeatModifier } from './PerSeatModifier';
-import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
 
-const meta = new MetadataWrapper(1, 'default', {});
+function setup() {
+  const rule = new PerSeatModifier();
 
-chai.use(chaiAsync);
-const { expect } = chai;
-const test = new PerSeatModifier();
+  const trip = faker.trip([
+    { seats: 0, is_driver: true },
+    { seats: 5, is_driver: false },
+  ]);
+  return { rule, trip };
+}
+test('should multiply result by number of seat', async (t) => {
+  const { rule, trip } = setup();
+  const context = {
+    trip,
+    stack: [],
+    result: 10,
+    person: trip.people[0],
+  };
+  await rule.apply(context);
+  t.is(context.result, 10);
 
-const trip = faker.trip([
-  { seats: 0, is_driver: true },
-  { seats: 5, is_driver: false },
-]);
-
-describe('Policy rule: per seat', () => {
-  it('should multiply result by number of seat', async () => {
-    const context = {
-      trip,
-      meta,
-      stack: [],
-      result: 10,
-      person: trip.people[0],
-    };
-    await test.apply(context);
-    expect(context.result).to.eq(10);
-
-    const context2 = {
-      trip,
-      meta,
-      stack: [],
-      result: 10,
-      person: trip.people[1],
-    };
-    await test.apply(context2);
-    expect(context2.result).to.eq(50);
-  });
+  const context2 = {
+    trip,
+    stack: [],
+    result: 10,
+    person: trip.people[1],
+  };
+  await rule.apply(context2);
+  t.is(context2.result, 50);
 });

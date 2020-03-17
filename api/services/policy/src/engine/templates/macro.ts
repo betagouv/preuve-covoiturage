@@ -1,0 +1,100 @@
+import anyTest, { TestInterface, Macro, ExecutionContext } from 'ava';
+import { kernel as kernelDecorator, KernelInterface } from '@ilos/common';
+import { Kernel as AbstractKernel } from '@ilos/framework';
+import { PostgresConnection } from '@ilos/connection-postgres';
+
+import { TripInterface } from '../../interfaces';
+import { CampaignPgRepositoryProvider } from '../../providers/CampaignPgRepositoryProvider';
+import { ServiceProvider } from '../../ServiceProvider';
+import { CampaignInterface } from '../../interfaces';
+import { PolicyEngine } from '../PolicyEngine';
+import { MetadataProvider } from '../meta/MetadataProvider';
+import { trips as defaultTrips } from './trips';
+
+interface TestContext {
+  kernel: KernelInterface;
+  engine: PolicyEngine;
+  policyId: number;
+}
+
+export function macro(
+  policy: CampaignInterface,
+): {
+  test: TestInterface<TestContext>;
+  results: Macro<[{ carpool_id: number; amount: number }[], TripInterface[]?], TestContext>;
+} {
+  const test = anyTest as TestInterface<TestContext>;
+
+  @kernelDecorator({
+    children: [ServiceProvider],
+  })
+  class Kernel extends AbstractKernel {}
+
+  test.before(async (t) => {
+    t.context.kernel = new Kernel();
+    await t.context.kernel.bootstrap();
+    const repository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
+    const { _id } = await repository.create(policy);
+    t.context.policyId = _id;
+    t.context.engine = t.context.kernel.get(ServiceProvider).get(PolicyEngine);
+  });
+
+  test.after.always(async (t) => {
+    if (t.context.policyId) {
+      const connection = t.context.kernel
+        .get(ServiceProvider)
+        .get(PostgresConnection)
+        .getClient();
+      const campaignRepository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
+      const metaRepository = t.context.kernel.get(ServiceProvider).get(MetadataProvider);
+      await connection.query({
+        text: `DELETE FROM ${campaignRepository.table} WHERE _id = $1`,
+        values: [t.context.policyId],
+      });
+
+      await connection.query({
+        text: `DELETE FROM ${metaRepository.table} WHERE policy_id = $1`,
+        values: [t.context.policyId],
+      });
+    }
+
+    await t.context.kernel.shutdown();
+  });
+
+  const results: Macro<[{ carpool_id: number; amount: number }[], TripInterface[]?], TestContext> = async (
+    t: ExecutionContext<TestContext>,
+    expected: { carpool_id: number; amount: number }[],
+    trips: TripInterface[] = defaultTrips,
+  ) => {
+    const incentives = [];
+
+    for (const trip of trips) {
+      const r = await t.context.engine.process(trip, policy);
+      incentives.push(...r);
+    }
+    t.log(incentives);
+    t.is(
+      incentives.length,
+      trips
+        .filter(
+          (tr) =>
+            tr.territories.indexOf(policy.territory_id) >= 0 &&
+            tr.datetime >= policy.start_date &&
+            tr.datetime <= policy.end_date,
+        )
+        .map((tr) => tr.people.length)
+        .reduce((sum, i) => sum + i, 0),
+    );
+    t.is(incentives.length, expected.length, 'every trip should have an incentive');
+    for (const { amount, carpool_id } of expected) {
+      t.is(incentives.find((i) => i.carpool_id === carpool_id).amount, amount);
+    }
+  };
+
+  results.title = (providedTitle = '', input, expected): string => `${providedTitle} ${input} = ${expected}`.trim();
+
+  return {
+    test,
+    results,
+  };
+}

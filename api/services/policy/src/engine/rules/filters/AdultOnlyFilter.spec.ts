@@ -1,39 +1,34 @@
-import chai from 'chai';
-import chaiAsync from 'chai-as-promised';
+import test from 'ava';
 import { AdultOnlyFilter } from './AdultOnlyFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
 
-const meta = new MetadataWrapper(1, 'default', {});
+function setup() {
+  const rule = new AdultOnlyFilter();
+  const trip = faker.trip([{ is_over_18: false }, { is_over_18: true }]);
 
-chai.use(chaiAsync);
-const { expect } = chai;
+  return { rule, trip };
+}
 
-const test = new AdultOnlyFilter();
+test('should throw error if person is not adult', async (t) => {
+  const { rule, trip } = setup();
+  const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[0],
+    }),
+  );
+  t.is(err.message, AdultOnlyFilter.description);
+});
 
-const trip = faker.trip([{ is_over_18: false }, { is_over_18: true }]);
-
-describe('Policy rule: adult only filter', () => {
-  it('should throw error if person is not adult', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[0],
-      }),
-    ).to.eventually.rejectedWith(NotApplicableTargetException, AdultOnlyFilter.description);
-  });
-
-  it('should do nothing if person is adult', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[1],
-      }),
-    ).to.eventually.fulfilled;
-  });
+test('should do nothing if person is adult', async (t) => {
+  const { rule, trip } = setup();
+  await t.notThrowsAsync(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[1],
+    }),
+  );
 });
