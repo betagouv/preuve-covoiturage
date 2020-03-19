@@ -11,6 +11,8 @@
  * - authorization header use
  * - fake uuid
  * - not matching operator_id and uuid
+ * - soft-deleted application
+ * - wrong permissions
  */
 
 import anyTest, { TestInterface } from 'ava';
@@ -273,7 +275,68 @@ test('Wrong operator', async (t) => {
       })}`,
     )
     .expect((response: supertest.Response) => {
+      t.is(response.status, 403);
+      t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
+    });
+});
+
+test('Deleted application', async (t) => {
+  // soft-delete the application
+  await t.context.pgClient.query({
+    text: `UPDATE application.applications SET deleted_at = NOW() WHERE uuid = $1`,
+    values: [t.context.application.uuid],
+  });
+
+  const pl = payloadV2();
+
+  await t.context.request
+    .post(`/v2/journeys`)
+    .send(pl)
+    .set('Accept', 'application/json')
+    .set('Content-type', 'application/json')
+    .set(
+      'Authorization',
+      `Bearer ${await t.context.token.sign({
+        a: t.context.application.uuid,
+        o: t.context.operators[0],
+        s: 'operator',
+        p: ['journey.create'],
+        v: 2,
+      })}`,
+    )
+    .expect((response: supertest.Response) => {
       t.is(response.status, 401);
       t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
+    });
+
+  // un-soft-delete the application
+  await t.context.pgClient.query({
+    text: `UPDATE application.applications SET deleted_at = NULL WHERE uuid = $1`,
+    values: [t.context.application.uuid],
+  });
+});
+
+test('Wrong permissions', async (t) => {
+  const pl = payloadV2();
+
+  return t.context.request
+    .post(`/v2/journeys`)
+    .send(pl)
+    .set('Accept', 'application/json')
+    .set('Content-type', 'application/json')
+    .set(
+      'Authorization',
+      `Bearer ${await t.context.token.sign({
+        a: t.context.application.uuid,
+        o: t.context.operators[0],
+        s: 'operator',
+        p: ['wrong.permission'],
+        v: 2,
+      })}`,
+    )
+    .expect((response: supertest.Response) => {
+      t.log(response.status, response.body);
+      t.is(response.status, 403);
+      t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
     });
 });
