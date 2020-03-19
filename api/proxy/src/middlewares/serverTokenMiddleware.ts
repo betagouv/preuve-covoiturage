@@ -31,8 +31,6 @@ async function checkApplication(
     },
   });
 
-  console.log({ checkApplication: app });
-
   const app_uuid = get(app, 'result.uuid', '');
   const owner_id = get(app, 'result.owner_id', null);
   const matchUuid = app_uuid === payload.a;
@@ -116,9 +114,6 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       if (!payload.a || !payload.o) {
         throw new ForbiddenException();
       }
-
-      // Check and get the app
-      const app = await checkApplication(kernel, payload);
 
       // The only permissions now. Store in the token or retrieve
       // from the application service later if it gets more complex.
