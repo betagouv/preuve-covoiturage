@@ -14,22 +14,28 @@ export function errorHandlerMiddleware(
 
   switch (err.message) {
     case 'Bad Request Error':
+    case 'Bad Request':
     case 'Validation Error':
+    case 'Validation':
       code = 400;
       break;
 
     case 'Unauthorized Error':
+    case 'Unauthorized':
       code = 401;
       break;
 
+    case 'Forbidden Error':
     case 'Forbidden':
       code = 403;
       break;
 
+    case 'Not Found Error':
     case 'Not Found':
       code = 404;
       break;
 
+    case 'Conflict Error':
     case 'Conflict':
       code = 409;
       break;
