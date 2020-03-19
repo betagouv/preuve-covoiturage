@@ -1,14 +1,32 @@
+/**
+ * Test application creation for the operators.
+ *
+ * 3 types of token exist: V1, V2 varchar and V2 integer.
+ * We need to make sure legacy versions (V1, V2 varchar) are still compatible.
+ *
+ * Tested:
+ * - operator creation
+ * - operator admin login with cookie (/login)
+ * - application creation
+ * - authorization header use
+ */
+
 import anyTest, { TestInterface } from 'ava';
 import supertest from 'supertest';
 import { get } from 'lodash';
 
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
-import { KernelInterface, TransportInterface, ConfigInterface } from '@ilos/common';
+import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
 
 import { HttpTransport } from '../src/HttpTransport';
 import { Kernel } from '../src/Kernel';
+import { payloadV2 } from './mocks/payloadV2';
+import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
+import { createOperatorFactory } from './helpers/createOperatorFactory';
+import { createOperatorAdminSqlFactory } from './helpers/createUserFactory';
+import { cookieLoginHelper } from './helpers/cookieLoginHelper';
 
 interface ContextType {
   kernel: KernelInterface;
@@ -22,86 +40,12 @@ interface ContextType {
   operators: number[];
   users: number[];
   operatorA: any;
-  operatorB: any;
   operatorAUser: any;
-  operatorBUser: any;
   application: any;
   cookies: string;
 }
 
 const test = anyTest as TestInterface<ContextType>;
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
-function payload() {
-  return {
-    operator_class: 'B',
-    journey_id: `test-${getRandomInt(100000000)}`,
-    operator_journey_id: 'a65f2757-f960-4abc-a1a1-fd7eca4a04be',
-    passenger: {
-      distance: 34039,
-      duration: 1485,
-      incentives: [],
-      contribution: 76,
-      seats: 1,
-      identity: {
-        over_18: true,
-        phone_trunc: '+337672012',
-        operator_user_id: `test-${getRandomInt(100000000)}`,
-      },
-      start: {
-        datetime: '2019-07-10T11:51:07Z',
-        lat: 48.77826,
-        lon: 2.21223,
-      },
-      end: {
-        datetime: '2019-07-10T12:34:14Z',
-        lat: 48.82338,
-        lon: 1.78668,
-      },
-    },
-    driver: {
-      distance: 34039,
-      duration: 1485,
-      incentives: [],
-      revenue: 376,
-      identity: {
-        over_18: true,
-        phone: '+33783884322',
-      },
-      start: {
-        datetime: '2019-07-10T11:51:07Z',
-        lat: 48.77826,
-        lon: 2.21223,
-      },
-      end: {
-        datetime: '2019-07-10T12:34:14Z',
-        lat: 48.82338,
-        lon: 1.78668,
-      },
-    },
-  };
-}
-
-class MockConfigProvider implements ConfigInterface {
-  get(key: string, fallback?: any) {
-    return get(
-      {
-        jwt: {
-          secret: process.env.APP_JWT_SECRET,
-          ttl: -1,
-          alg: 'HS256',
-          signOptions: {},
-          verifyOptions: {},
-        },
-      },
-      key,
-      fallback,
-    );
-  }
-}
 
 /**
  * Initialise testing context with connections and fixtures
@@ -117,7 +61,7 @@ test.before(async (t) => {
   t.context.pgClient = await t.context.pg.getClient().connect();
 
   t.context.crypto = new CryptoProvider();
-  t.context.token = new TokenProvider(new MockConfigProvider());
+  t.context.token = new TokenProvider(new MockJWTConfigProvider());
   await t.context.token.init();
 
   t.context.kernel = new Kernel();
@@ -128,86 +72,37 @@ test.before(async (t) => {
   t.context.request = supertest(t.context.app.getInstance());
 
   /**
-   * Create 2 operators
+   * Create the operator
    */
-  t.context.operatorA = await t.context.kernel.call(
-    'operator:create',
-    {
-      name: 'Operator A',
-      legal_name: 'Operator A inc.',
-      siret: '78017154200027',
-    },
-    {
-      call: { user: { permissions: ['operator.create'] } },
-      channel: {
-        service: 'operator',
-        transport: 'http',
-      },
-    },
-  );
+  t.context.operatorA = await createOperatorFactory(t.context.kernel, {
+    name: 'Operator A',
+    legal_name: 'Operator A inc.',
+    siret: '78017154200027',
+  });
 
-  t.context.operatorB = await t.context.kernel.call(
-    'operator:create',
-    {
-      name: 'Operator B',
-      legal_name: 'Operator B inc.',
-      siret: '78017154200027',
-    },
-    {
-      call: { user: { permissions: ['operator.create'] } },
-      channel: {
-        service: 'operator',
-        transport: 'http',
-      },
-    },
-  );
-
-  t.context.operators.push(t.context.operatorA._id, t.context.operatorB._id);
+  t.context.operators.push(t.context.operatorA._id);
 
   /**
    * Create users for these operators
    */
   await t.context.pgClient.query('BEGIN');
   for (const id of t.context.operators) {
-    const user = await t.context.pgClient.query({
-      text: `
-        INSERT INTO auth.users
-        (email, password, firstname, lastname, role, status, operator_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING _id
-      `,
-      values: [
-        `operator_${id}@example.com`,
-        await t.context.crypto.cryptPassword('admin1234'),
-        `operator ${id}`,
-        'Example',
-        'operator.admin',
-        'active',
-        id,
-      ],
-    });
-
-    t.context.users.push(user.rows[0]._id);
+    const user = await createOperatorAdminSqlFactory(t.context.pgClient, t.context.crypto, id);
+    t.context.users.push(user._id);
   }
 
   await t.context.pgClient.query('COMMIT');
 });
 
 test.beforeEach(async (t) => {
-  // log the operatorUser
-  const res = await t.context.request.post('/login').send({
-    email: `operator_${t.context.operators[0]}@example.com`,
-    password: 'admin1234',
-  });
-  const re = new RegExp('; path=/; httponly', 'gi');
+  // login with the operator admin
+  t.context.cookies = await cookieLoginHelper(
+    t.context.request,
+    `operator_${t.context.operators[0]}@example.com`,
+    'admin1234',
+  );
 
-  // Save the cookie to use it later to retrieve the session
-  if (!res.headers['set-cookie']) {
-    throw new Error('Failed to set cookie');
-  }
-
-  t.context.cookies = res.headers['set-cookie'].map((r: string) => r.replace(re, '')).join('; ');
-
+  // create an application
   await t.context.request
     .post(`/applications`)
     .send({ name: 'Application A' })
@@ -265,7 +160,7 @@ test.after.always(async (t) => {
  *
  */
 test('Application V1', async (t) => {
-  const pl = payload();
+  const pl = payloadV2();
 
   return t.context.request
     .post(`/v2/journeys`)
@@ -286,7 +181,7 @@ test('Application V1', async (t) => {
 });
 
 test('Application V2 integer', async (t) => {
-  const pl = payload();
+  const pl = payloadV2();
 
   return t.context.request
     .post(`/v2/journeys`)
@@ -310,7 +205,7 @@ test('Application V2 integer', async (t) => {
 });
 
 test('Application V2 varchar (old)', async (t) => {
-  const pl = payload();
+  const pl = payloadV2();
 
   return t.context.request
     .post(`/v2/journeys`)
