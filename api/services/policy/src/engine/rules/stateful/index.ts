@@ -1,5 +1,5 @@
-import { MetaAmountPost } from './MetaAmountPost';
 import { StaticRuleInterface } from '../../interfaces';
-import { MetaTripPost } from './MetaTripPost';
+import { MaxAmountRestriction } from './MaxAmountRestriction';
+import { MaxTripRestriction } from './MaxTripRestriction';
 
-export const stateful: StaticRuleInterface[] = [MetaAmountPost, MetaTripPost];
+export const stateful: StaticRuleInterface[] = [MaxAmountRestriction, MaxTripRestriction];

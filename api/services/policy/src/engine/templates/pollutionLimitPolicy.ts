@@ -21,7 +21,7 @@ export const pollutionLimitPolicy = {
       },
     },
     {
-      slug: 'max_trip_per_target_restriction',
+      slug: 'max_trip_restriction',
       parameters: {
         target: 'driver',
         amount: 8,
@@ -29,7 +29,7 @@ export const pollutionLimitPolicy = {
       },
     },
     {
-      slug: 'max_trip_per_target_restriction',
+      slug: 'max_trip_restriction',
       parameters: {
         target: 'passenger',
         amount: 2,

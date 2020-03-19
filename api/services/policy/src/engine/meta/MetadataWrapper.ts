@@ -7,7 +7,7 @@ export class MetadataWrapper implements MetaInterface {
     this.data = data ? new Map(data) : new Map();
   }
 
-  get(key: string, fallback?: number): number {
+  get(key: string, fallback: number = 0): number {
     if (this.data.has(key)) {
       return this.data.get(key);
     }
@@ -30,7 +30,7 @@ export class MetadataWrapper implements MetaInterface {
 export class FakeMetadataWrapper implements MetaInterface {
   protected data: Map<string, number> = new Map();
 
-  get(key: string, fallback?: number): number {
+  get(key: string, fallback: number = 0): number {
     if (!this.data.has(key)) {
       this.data.set(key, fallback);
     }
