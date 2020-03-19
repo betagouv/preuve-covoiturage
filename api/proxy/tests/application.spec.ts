@@ -273,6 +273,7 @@ test('Wrong operator', async (t) => {
       })}`,
     )
     .expect((response: supertest.Response) => {
+      t.is(response.status, 401);
       t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
     });
 });
