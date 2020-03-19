@@ -335,7 +335,6 @@ test('Wrong permissions', async (t) => {
       })}`,
     )
     .expect((response: supertest.Response) => {
-      t.log(response.status, response.body);
       t.is(response.status, 403);
       t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
     });
