@@ -9,6 +9,8 @@
  * - operator admin login with cookie (/login)
  * - application creation
  * - authorization header use
+ * - fake uuid
+ * - not matching operator_id and uuid
  */
 
 import anyTest, { TestInterface } from 'ava';
@@ -225,5 +227,52 @@ test('Application V2 varchar (old)', async (t) => {
     .expect((response: supertest.Response) => {
       t.is(response.status, 200);
       t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
+    });
+});
+
+test('Application Not Found', async (t) => {
+  const pl = payloadV2();
+
+  return t.context.request
+    .post(`/v2/journeys`)
+    .send(pl)
+    .set('Accept', 'application/json')
+    .set('Content-type', 'application/json')
+    .set(
+      'Authorization',
+      `Bearer ${await t.context.token.sign({
+        a: 'not-a-uuid',
+        o: t.context.operators[0],
+        s: 'operator',
+        p: ['journey.create'],
+        v: 2,
+      })}`,
+    )
+    .expect((response: supertest.Response) => {
+      t.is(response.status, 401);
+      t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
+    });
+});
+
+test('Wrong operator', async (t) => {
+  const pl = payloadV2();
+
+  return t.context.request
+    .post(`/v2/journeys`)
+    .send(pl)
+    .set('Accept', 'application/json')
+    .set('Content-type', 'application/json')
+    .set(
+      'Authorization',
+      `Bearer ${await t.context.token.sign({
+        a: t.context.application.uuid,
+        o: 0,
+        s: 'operator',
+        p: ['journey.create'],
+        v: 2,
+      })}`,
+    )
+    .expect((response: supertest.Response) => {
+      t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
     });
 });
