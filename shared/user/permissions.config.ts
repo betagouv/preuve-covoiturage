@@ -65,7 +65,6 @@ export const territory = {
       'company.find',
       'user.list',
       'territory.contacts.update',
-
       'territory.trip.list',
       'territory.trip.stats',
       'territory.update',

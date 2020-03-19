@@ -15,6 +15,7 @@ import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
+import { LogRequestAction } from './actions/LogRequestAction';
 
 @serviceProvider({
   config,
@@ -34,7 +35,7 @@ import { LogErrorAction } from './actions/LogErrorAction';
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],
   ],
-  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction],
+  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction, LogRequestAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];
