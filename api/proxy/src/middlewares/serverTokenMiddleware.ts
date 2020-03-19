@@ -31,8 +31,6 @@ async function checkApplication(
     },
   });
 
-  console.log({ checkApplication: app });
-
   const app_uuid = get(app, 'result.uuid', '');
   // disabled until owner_id is migrated as integer
   // const owner_id = get(app, 'result.owner_id', null);
