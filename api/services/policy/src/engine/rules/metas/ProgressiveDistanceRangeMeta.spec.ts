@@ -3,9 +3,16 @@ import { ProcessableCampaign } from '../../ProcessableCampaign';
 import { faker } from '../../helpers/faker';
 
 function setup() {
-  const campaign = new ProcessableCampaign(
-    [],
-    [
+  const campaign = new ProcessableCampaign({
+    territory_id: 1,
+    name: 'test',
+    description: '',
+    start_date: new Date(),
+    end_date: new Date(),
+    unit: 'euro',
+    status: 'draft',
+    global_rules: [],
+    rules: [
       [
         {
           slug: 'progressive_distance_range_meta',
@@ -55,7 +62,7 @@ function setup() {
         },
       ],
     ],
-  );
+  });
   const trip = faker.trip([{ distance: 15000 }]);
 
   return { campaign, trip };
@@ -65,17 +72,16 @@ test('should work', async (t) => {
   const { campaign, trip } = setup();
   const data = {
     trip,
-    result: 0,
     stack: [],
     person: trip.people[0],
   };
 
-  await campaign.apply(data);
+  const incentive = await campaign.apply(data);
 
   t.is(
-    data.result,
+    incentive.result,
     1 * 30 + // de 0 à 1 km = 30cts
     4 * 20 + // de 1 à 5 km = 20cts
-    5 * 10, // de 5 à 10 km = 10 cts
+      5 * 10, // de 5 à 10 km = 10 cts
   );
 });

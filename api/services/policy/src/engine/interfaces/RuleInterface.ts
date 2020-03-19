@@ -11,11 +11,6 @@ export interface RuleHandlerContextInterface {
   stack: string[];
 }
 
-export interface ResultInterface {
-  result: number; // result of calculation
-  amount: number; // final result = amount of the incentive
-}
-
 export interface RuleHandlerParamsInterface extends RuleHandlerContextInterface {
   result: number | undefined;
 }
@@ -45,8 +40,8 @@ export interface AppliableRuleInterface {
 export interface StatefulRuleInterface {
   readonly uuid: string;
   getState(context: RuleHandlerContextInterface, metaGetter: MetaInterface): number;
-  apply(result: ResultInterface, state: number): ResultInterface;
-  setState(result: ResultInterface, state: number): number;
+  apply(result: number, state: number): number;
+  setState(result: number, state: number): number;
 }
 
 export interface MetaRuleInterface {

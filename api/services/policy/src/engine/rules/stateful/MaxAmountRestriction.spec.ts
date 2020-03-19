@@ -34,8 +34,13 @@ function setup(cfg: Partial<StatefulRestrictionParameters> = {}) {
   return { rule, trip };
 }
 
-test('should throw an exception if wrong target', async (t) => {
-  const meta = new MetadataWrapper(0);
+test('should not call meta if wrong target', async (t) => {
+  class MetaWrapper extends MetadataWrapper {
+    get(k:string, fb: number): number {
+      throw new Error('This should not be called');
+    }
+  }
+  const meta = new MetaWrapper(0);
   const { rule, trip } = setup({ target: 'driver' });
   const context = {
     trip: trip,
@@ -43,7 +48,7 @@ test('should throw an exception if wrong target', async (t) => {
     person: trip.people.find(p => !p.is_driver),
   };
 
-  await t.throwsAsync<NotApplicableTargetException>(async () => rule.getState(context, meta));
+  await t.notThrowsAsync(async () => rule.getState(context, meta));
 });
 
 test('should properly build build meta key and set initial state', async (t) => {
@@ -68,41 +73,17 @@ test('should properly build build meta key and set initial state', async (t) => 
 });
 
 test('should throw an exception if limit is reached', async (t) => {
-  const { rule, trip } = setup();
-  const context = {
-    trip: trip,
-    stack: [],
-    result: 20,
-    amount: 20,
-    person: trip.people[0],
-  };
-
-  await t.throwsAsync<NotApplicableTargetException>(async () => rule.apply(context, 20));
+  const { rule } = setup();
+  await t.throwsAsync<NotApplicableTargetException>(async () => rule.apply(20, 20));
 });
 
 test('should do nothing if limit is not reached', async (t) => {
-  const { rule, trip } = setup();
-  const context = {
-    trip: trip,
-    stack: [],
-    result: 5,
-    amount: 5,
-    person: trip.people[0],
-  };
-
-  await t.notThrowsAsync(async () => rule.apply(context, 0));
+  const { rule } = setup();
+  await t.notThrowsAsync(async () => rule.apply(5, 0));
 });
 
 test('should properly update state', async (t) => {
-  const { rule, trip } = setup();
-  const context = {
-    trip: trip,
-    stack: [],
-    result: 5,
-    amount: 5,
-    person: trip.people[0],
-  };
-
-  const result = rule.setState(context, 0);
+  const { rule } = setup();
+  const result = rule.setState(5, 0);
   t.is(result, 5);
 });

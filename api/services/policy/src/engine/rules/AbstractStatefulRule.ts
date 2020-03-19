@@ -1,6 +1,6 @@
 import { LOWEST, priority } from '../helpers/priority';
 import { type, STATEFUL } from '../helpers/type';
-import { ResultInterface, StatefulRuleInterface, RuleHandlerContextInterface } from '../interfaces';
+import { StatefulRuleInterface, RuleHandlerContextInterface } from '../interfaces';
 import { MetaInterface } from '../interfaces';
 
 interface StatefulParametersDefaultInterface {
@@ -23,6 +23,6 @@ export abstract class AbstractStatefulRule<P extends StatefulParametersDefaultIn
   }
 
   abstract getState(context: RuleHandlerContextInterface, metaGetter: MetaInterface): number;
-  abstract apply(result: ResultInterface, state: number): ResultInterface;
-  abstract setState(result: ResultInterface, state: number): number;
+  abstract apply(result: number, state: number): number;
+  abstract setState(result: number, state: number): number;
 }

@@ -1,7 +1,7 @@
 import { AbstractStatefulRule } from '../AbstractStatefulRule';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { getMetaKey } from '../../helpers/getMetaKey';
-import { ResultInterface, MetaInterface, RuleHandlerContextInterface } from '../../interfaces';
+import { MetaInterface, RuleHandlerContextInterface } from '../../interfaces';
 
 export interface StatefulRestrictionParameters {
   target?: 'driver' | 'passenger';
@@ -42,7 +42,7 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
         ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||
           (this.parameters.target === 'passenger' && ctx.person.is_driver))
     ) {
-      throw new NotApplicableTargetException();
+      return 0;
     }
 
     const key = getMetaKey(
@@ -54,15 +54,13 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
     return meta.get(key, 0);
   }
 
-  apply(result: ResultInterface, state: number): ResultInterface {
+  apply(result: number, state: number): number {
     // test if consuption > limit
     if (state >= this.parameters.amount) {
       throw new NotApplicableTargetException(this.getErrorMessage());
     }
-    return {
-      ...result,
-    };
+    return result;
   }
 
-  abstract setState(result: ResultInterface, state: number): number;
+  abstract setState(result: number, state: number): number;
 }

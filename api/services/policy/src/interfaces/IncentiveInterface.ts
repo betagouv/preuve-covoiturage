@@ -1,8 +1,24 @@
+
+export enum IncentiveStateEnum {
+  Regular = 'regular',
+  Null = 'null',
+  Disabled = 'disabled',
+}
+
+export enum IncentiveStatusEnum {
+  Draft = 'draft',
+  Valitated = 'validated',
+  Warning = 'warning',
+  Error = 'error',
+}
+
 export interface IncentiveInterface {
-  policy_id: number;
   carpool_id: number;
-  identity_uuid?: string;
+  policy_id: number;
+  datetime: Date;
+  result: number;
   amount: number;
-  detail?: { [k: string]: any };
-  status?: string;
+  state: IncentiveStateEnum;
+  status: IncentiveStatusEnum;
+  meta: { [k: string]: string };
 }

@@ -25,28 +25,14 @@ export class PolicyEngine {
       return results;
     }
 
-    const pc = new ProcessableCampaign(campaign.global_rules, campaign.rules);
+    const pc = new ProcessableCampaign(campaign);
 
     // get metadata wrapper
     const meta = await this.metaRepository.get(campaign._id);
 
     for (const person of trip.people) {
       const ctx = { trip, person, meta, result: undefined, stack: [] };
-      await pc.apply(ctx);
-      results.push({
-        policy_id: campaign._id,
-        carpool_id: person.carpool_id,
-        amount: Math.round(ctx.result),
-        result: Math.round(ctx.result),
-        datetime: ctx.person.datetime,
-        status: 'draft',
-        state: 'regular',
-        meta: {
-          // TODO
-        }
-        // status
-        // detail:
-      } as any);
+      results.push(await pc.apply(ctx));
     }
 
     await this.metaRepository.set(campaign._id, meta);

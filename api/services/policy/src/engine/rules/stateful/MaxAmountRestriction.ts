@@ -1,4 +1,3 @@
-import { ResultInterface } from '../../interfaces';
 import { AbstractStatefulRestriction } from './AbstractStatefulRestriction';
 
 export class MaxAmountRestriction extends AbstractStatefulRestriction {
@@ -13,7 +12,7 @@ export class MaxAmountRestriction extends AbstractStatefulRestriction {
     return MaxAmountRestriction.description;
   }
 
-  setState(result: ResultInterface, state: number): number {
-    return state + result.amount;
+  setState(result: number, state: number): number {
+    return state + result;
   }
 }

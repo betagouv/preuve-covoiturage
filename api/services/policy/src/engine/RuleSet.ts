@@ -59,7 +59,7 @@ export class RuleSet extends AbstractRuleSet
     this.nativeApply(context);
   }
 
-  protected nativeApply(context: RuleHandlerParamsInterface): void {
+  nativeApply(context: RuleHandlerParamsInterface): void {
     for (const rule of this.nativeSet) {
       rule.apply(context);
       context.stack.push(`${(rule.constructor as StaticRuleInterface).slug}: ${context.result}`);
