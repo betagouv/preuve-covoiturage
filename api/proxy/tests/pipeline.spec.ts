@@ -3,7 +3,8 @@
  *
  * We wanna make sure the submitted journey makes it through all steps by
  * running the app and the worker, sending a journey to the REST endpoint
- * before checking the carpool.carpools table after some delay.
+ * before checking the carpool.carpools table when all normalization jobs
+ * are processed.
  */
 
 import anyTest, { TestInterface } from 'ava';
@@ -149,16 +150,16 @@ test.after.always(async (t) => {
     if (t.context.journeys.length) {
       t.log(`Cleaning up journeys (${t.context.journeys.join(',')})`);
       await t.context.pgClient.query(
-        `DELETE FROM acquisition.acquisitions WHERE journey_id IN (${t.context.journeys.join(',')})`,
+        `DELETE FROM acquisition.acquisitions WHERE journey_id IN ('${t.context.journeys.join("','")}')`,
       );
       await t.context.pgClient.query(
-        `DELETE FROM carpool.carpools WHERE operator_journey_id IN (${t.context.journeys.join(',')})`,
+        `DELETE FROM carpool.carpools WHERE operator_journey_id IN ('${t.context.journeys.join("','")}')`,
       );
     }
 
     await t.context.pgClient.query('COMMIT');
   } catch (e) {
-    t.log(e.message);
+    t.log('[after.always catch]', e.message);
     await t.context.pgClient.query('ROLLBACK');
   }
 
@@ -170,31 +171,14 @@ test.after.always(async (t) => {
 
 test.cb('Pipeline check', (t) => {
   const pl = payloadV2();
-  const checkInDb = (operator_journey_id: string): Promise<boolean> =>
-    new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          const result = await t.context.pgClient.query({
-            text: 'SELECT operator_journey_id FROM carpool.carpools WHERE operator_journey_id = $1',
-            values: [operator_journey_id],
-          });
-
-          if (!result.rowCount) throw new Error(`Not found ${operator_journey_id}`);
-
-          resolve(result.rows[0].operator_journey_id);
-        } catch (e) {
-          console.log('reject');
-          reject(e);
-        }
-      }, 1000);
-    });
+  const normQueue = t.context.worker.queues.filter((q) => q.name === 'normalization').pop();
 
   t.context.token
     .sign({
       a: t.context.application.uuid,
       o: t.context.operators[0],
       s: 'operator',
-      p: ['journey.create'],
+      p: ['journey.create', 'journey.status'],
       v: 2,
     })
     .then((token) => {
@@ -205,6 +189,9 @@ test.cb('Pipeline check', (t) => {
         .set('Content-type', 'application/json')
         .set('Authorization', `Bearer ${token}`)
         .expect((response: supertest.Response) => {
+          t.timeout(20000);
+          t.plan(3);
+
           // make sure the journey has been sent properly
           t.is(response.status, 200);
 
@@ -213,12 +200,23 @@ test.cb('Pipeline check', (t) => {
 
           t.context.journeys.push(operator_journey_id);
 
-          checkInDb(operator_journey_id)
-            .then((res) => {
-              t.is(res, operator_journey_id);
+          // find the job in the queue and attach a hook to resolve when finished
+          normQueue.getJobs(['active', 'waiting']).then((jobs) => {
+            const job = jobs.filter((j) => get(j, 'data.params.params.journey_id', '') === operator_journey_id)[0];
+            if (!job) {
+              t.end(new Error('Job not found'));
+            }
+
+            job.finished().then(async () => {
+              const result = await t.context.pgClient.query({
+                text: 'SELECT operator_journey_id FROM carpool.carpools WHERE operator_journey_id = $1',
+                values: [operator_journey_id],
+              });
+
+              t.is(get(result.rows[0], 'operator_journey_id', 'not-found'), operator_journey_id);
               t.end();
-            })
-            .catch(t.end);
+            });
+          });
         });
     })
     .catch(t.end);

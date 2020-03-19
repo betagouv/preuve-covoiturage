@@ -198,7 +198,7 @@ test('Application V2 integer', async (t) => {
         a: t.context.application.uuid,
         o: t.context.operators[0],
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'journey.status'],
         v: 2,
       })}`,
     )
@@ -222,7 +222,7 @@ test('Application V2 varchar (old)', async (t) => {
         a: t.context.application.uuid,
         o: `${t.context.operators[0]}`,
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'journey.status'],
         v: 2,
       })}`,
     )
@@ -246,7 +246,7 @@ test('Application Not Found', async (t) => {
         a: 'not-a-uuid',
         o: t.context.operators[0],
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'journey.status'],
         v: 2,
       })}`,
     )
@@ -270,7 +270,7 @@ test('Wrong operator', async (t) => {
         a: t.context.application.uuid,
         o: 0,
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'journey.status'],
         v: 2,
       })}`,
     )
@@ -300,7 +300,7 @@ test('Deleted application', async (t) => {
         a: t.context.application.uuid,
         o: t.context.operators[0],
         s: 'operator',
-        p: ['journey.create'],
+        p: ['journey.create', 'journey.status'],
         v: 2,
       })}`,
     )
@@ -330,7 +330,7 @@ test('Wrong permissions', async (t) => {
         a: t.context.application.uuid,
         o: t.context.operators[0],
         s: 'operator',
-        p: ['wrong.permission'],
+        p: ['wrong.permission', 'journey.status'],
         v: 2,
       })}`,
     )
