@@ -8,7 +8,7 @@ export const logerror = {
     operator_id: { macro: 'serial' },
     journey_id: { type: 'string' },
     source: { type: 'string', enum: ['csv', 'api.v1', 'api.v2'] },
-    error_stage: { type: 'string', enum: ['acquisition', 'normalisation', 'fraud'] },
+    error_stage: { type: 'string', enum: ['acquisition', 'normalization', 'fraud'] },
     error_message: { oneOf: [{ type: 'null' }, { type: 'string', minLength: 0, maxLength: 4096 }] },
     error_code: { oneOf: [{ type: 'null' }, { type: 'string', minLength: 0, maxLength: 32 }] },
     error_line: { oneOf: [{ type: 'null' }, { type: 'integer', minimum: 1, maximum: 1000000 }] },

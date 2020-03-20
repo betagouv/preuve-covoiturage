@@ -1,6 +1,6 @@
 export enum ErrorStage {
   Acquisition = 'acquisition',
-  Normalisation = 'normalisation',
+  Normalisation = 'normalization',
   Fraud = 'fraud',
 }
 

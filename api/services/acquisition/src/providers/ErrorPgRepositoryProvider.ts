@@ -7,6 +7,10 @@ import {
 } from '../interfaces/ErrorRepositoryProviderInterface';
 import { ParamsInterface as CreateInterface } from '../shared/acquisition/logerror.contract';
 import { ParamsInterface as ResolveInterface } from '../shared/acquisition/resolveerror.contract';
+import { ParamsInterface as SearchErrorsInterface } from '../shared/acquisition/searcherrors.contract';
+import { ParamsInterface as SummaryErrorsInterface } from '../shared/acquisition/summaryerrors.contract';
+import { ResultInterface as SummaryResultInterface } from '../shared/acquisition/summaryerrors.contract';
+import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 @provider({
   identifier: ErrorRepositoryProviderInterfaceResolver,
@@ -15,6 +19,79 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
   public readonly table = 'acquisition.errors';
 
   constructor(protected connection: PostgresConnection) {}
+
+  protected searchWhere(data: SearchErrorsInterface): { wheres: string[]; values: any[] } {
+    const wheres = [];
+    const values = [];
+
+    if (data.journey_id !== undefined) {
+      wheres.push('journey_id = $' + (wheres.length + 1));
+      values.push(data.journey_id);
+    }
+
+    if (data.error_stage !== undefined) {
+      wheres.push('error_stage = $' + (wheres.length + 1));
+      values.push(data.error_stage);
+    }
+
+    if (data.operator_id !== undefined) {
+      wheres.push('operator_id = $' + (wheres.length + 1));
+      values.push(data.operator_id);
+    }
+
+    if (data.error_code !== undefined) {
+      wheres.push('error_code = $' + (wheres.length + 1));
+      values.push(data.error_code);
+    }
+
+    if (data.start_date !== undefined) {
+      wheres.push('created_at >= $' + (wheres.length + 1));
+      values.push(data.start_date.toISOString());
+    }
+
+    if (data.end_date !== undefined) {
+      wheres.push('created_at < $' + (wheres.length + 1));
+      values.push(data.end_date.toISOString());
+    }
+
+    return {
+      wheres,
+      values,
+    };
+  }
+
+  async summary(filter: SummaryErrorsInterface): Promise<SummaryResultInterface> {
+    const { wheres, values } = this.searchWhere(filter);
+
+    const query = {
+      text: `SELECT COUNT(_id) as count, ${filter.group_by} as group_base FROM ${this.table} ${
+        wheres.length ? `WHERE ${wheres.join(' AND ')}` : ''
+      } GROUP BY ${filter.group_by}`,
+      values,
+    };
+
+    const rows = (await this.connection.getClient().query<{ group_base: number | string; count: string }>(query)).rows;
+
+    const res: {} = {};
+
+    for (const row of rows) {
+      res[row.group_base.toString()] = parseFloat(row.count);
+    }
+
+    return res;
+  }
+
+  async search(filter: SearchErrorsInterface): Promise<AcquisitionErrorInterface[]> {
+    const { wheres, values } = this.searchWhere(filter);
+
+    const query = {
+      text: `SELECT *  FROM ${this.table} ${wheres.length ? `WHERE ${wheres.join(' AND ')}` : ''}`,
+      values,
+    };
+
+    return (await this.connection.getClient().query<AcquisitionErrorInterface>(query)).rows;
+  }
+
   async resolve(data: ResolveInterface): Promise<number> {
     const query = {
       text: `
