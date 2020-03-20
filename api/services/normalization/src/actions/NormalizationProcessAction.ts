@@ -192,7 +192,6 @@ export class NormalizationProcessAction extends AbstractAction {
     }
 
     // Identity ------------------------------------------------------------------------------------
-    // console.log('>> Identity');
 
     try {
       finalPerson.identity = await this.kernel.call<IdentityParamsInterface, IdentityResultInterface>(
@@ -201,8 +200,6 @@ export class NormalizationProcessAction extends AbstractAction {
         context,
       );
     } catch (e) {
-      // console.error('!! normalisation ', identitySignature, ' failed on ', finalPerson, e.message);
-      // console.log(e.stack);
       await this.logError(NormalisationErrorStage.Identity, journey, e);
       throw e;
     }
@@ -261,8 +258,6 @@ export class NormalizationProcessAction extends AbstractAction {
       finalPerson.start.territory_id = territories.start;
       finalPerson.end.territory_id = territories.end;
     } catch (e) {
-      // console.error('!! normalisation ', territorySignature, ' failed on ', finalPerson, e.message);
-      // console.log(e.stack);
       await this.logError(NormalisationErrorStage.Territory, journey, e);
 
       throw e;

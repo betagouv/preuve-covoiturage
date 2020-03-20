@@ -116,8 +116,6 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
       };
 
       const result = await this.connection.getClient().query(query);
-      // console.log('result.rows[0].attempt : ', result.rows[0]);
-      console.log('result.rowCount : ', [data.operator_id, data.journey_id, data.error_stage], result.rowCount);
       attempt = result.rowCount > 0 ? parseFloat(result.rows[0].error_attempt) + 1 : 1;
     } else {
       attempt = data.error_attempt;
