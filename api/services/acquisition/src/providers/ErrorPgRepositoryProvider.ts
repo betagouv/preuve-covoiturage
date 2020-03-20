@@ -124,7 +124,18 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     const query = {
       text: `
         INSERT INTO ${this.table}
-        ( operator_id, journey_id, source, error_message, error_code, error_line, auth, headers, body, error_stage, error_attempt, error_resolved )
+        ( operator_id,
+          journey_id,
+          source,
+          error_message,
+          error_code,
+          error_line,
+          auth,
+          headers,
+          body,
+          error_stage,
+          error_attempt,
+          error_resolved )
         VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
         RETURNING _id, created_at
       `,

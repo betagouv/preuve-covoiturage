@@ -145,7 +145,7 @@ export class NormalizationProcessAction extends AbstractAction {
     journey: ParamsInterface,
     e: Error,
     errorCode = '500',
-  ) {
+  ): Promise<void> {
     await this.kernel.notify<LogErrorParamsInterface>(
       'acquisition:logerror',
       {
