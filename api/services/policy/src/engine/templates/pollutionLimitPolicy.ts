@@ -23,6 +23,7 @@ export const pollutionLimitPolicy = {
     {
       slug: 'max_trip_restriction',
       parameters: {
+        uuid: 'driver_max_trip_restriction',
         target: 'driver',
         amount: 8,
         period: 'day',
@@ -31,6 +32,7 @@ export const pollutionLimitPolicy = {
     {
       slug: 'max_trip_restriction',
       parameters: {
+        uuid: 'passenger_max_trip_restriction',
         target: 'passenger',
         amount: 2,
         period: 'day',

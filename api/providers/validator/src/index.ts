@@ -1,4 +1,4 @@
-export { ValidatorMiddleware } from '@ilos/validator';
+export { ValidatorMiddleware, AjvValidator } from '@ilos/validator';
 
 export { ValidatorInterface, ValidatorInterfaceResolver } from '@ilos/common';
 

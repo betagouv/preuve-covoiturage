@@ -5,8 +5,8 @@ import {
 } from './interfaces';
 import { NotApplicableTargetException } from './exceptions/NotApplicableTargetException';
 import { RuleSet } from './RuleSet';
-import { StatefulRuleSet } from './StatefulRuleSet';
-import { IncentiveInterface, CampaignInterface } from '../interfaces';
+import { StatefulRuleSet } from './set/StatefulRuleSet';
+import { IncentiveStatusEnum, IncentiveStateEnum, IncentiveInterface, CampaignInterface } from '../interfaces';
 
 export class ProcessableCampaign {
   protected globalSet: RuleSet;
@@ -16,22 +16,22 @@ export class ProcessableCampaign {
 
   constructor(protected campaign: CampaignInterface) {
     this.globalSet = new RuleSet(campaign.global_rules);
-    // this.globalStatefulSet = new StatefulRuleSet(globalRules);
     this.ruleSets = campaign.rules.map((set) => new RuleSet(set));
-    // this.statefulRuleSets = rules.map((set) => new StatefulRuleSet(set));
   }
 
   apply(context: RuleHandlerContextInterface): IncentiveInterface {
     let result = 0;
+
+    let incentiveState: Map<string, string> = new Map();
+
     try {
-      let ctx = context;
-      this.globalSet.filter(ctx);
-      ctx = this.globalSet.transform(ctx);
+      let ctx = { ...context, result };
+      incentiveState = this.globalSet.apply(ctx);
 
       for (const ruleSet of this.ruleSets) {
-        const currentContext = { ...ctx, result: 0 };
+        const currentContext = { ...ctx, result };
         try {
-          ruleSet.apply(currentContext);
+          incentiveState = new Map([...incentiveState, ...ruleSet.apply(currentContext)]);
         } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
@@ -42,8 +42,6 @@ export class ProcessableCampaign {
       }
 
       context.stack.push(`result: ${result}`);
-      result = this.globalSet.modify(ctx, result);
-      this.globalSet.nativeApply({ ...ctx, result });
     } catch (e) {
       if (!(e instanceof NotApplicableTargetException)) {
         throw e;
@@ -52,19 +50,20 @@ export class ProcessableCampaign {
       result = 0;
     }
 
+    const meta = [...incentiveState].reduce((obj, [k, v]) => {
+      obj[k] = v;
+      return obj;
+    }, {});
+
     return {
-      policy_id: this.campaign._id,
+      meta,
       carpool_id: context.person.carpool_id,
-      amount: Math.round(result),
-      result: Math.round(result),
+      policy_id: this.campaign._id,
       datetime: context.person.datetime,
-      status: 'draft',
-      state: 'regular',
-      meta: {
-        // TODO
-      }
-      // status
-      // detail:
-    } as any;
+      result: Math.round(result),
+      amount: Math.round(result),
+      state: IncentiveStateEnum.Regular,
+      status: IncentiveStatusEnum.Draft,
+    };
   }
 }

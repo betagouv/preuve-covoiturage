@@ -1,26 +1,26 @@
 import test from 'ava';
-import { CampaignInterface } from '../interfaces';
-import { MetadataProviderInterfaceResolver, MetaInterface } from './interfaces';
-import { PolicyEngine } from './PolicyEngine';
-import { faker } from './helpers/faker';
-import { MetadataWrapper } from './meta/MetadataWrapper';
+import { faker } from '../helpers/faker';
+import { MetadataWrapper } from '../meta/MetadataWrapper';
 import { StatefulRuleSet } from './StatefulRuleSet';
-import { getMetaKey } from './helpers/getMetaKey';
-import { IncentiveStateEnum, IncentiveStatusEnum } from '../interfaces/IncentiveInterface';
+import { getMetaKey } from '../helpers/getMetaKey';
+import { IncentiveStateEnum, IncentiveStatusEnum } from '../../interfaces/IncentiveInterface';
+import { MaxAmountRestriction } from '../rules/stateful/MaxAmountRestriction';
+import { MaxTripRestriction } from '../rules/stateful/MaxTripRestriction';
+import { FixedAmountSetter } from '../rules/setters/FixedAmountSetter';
 
 function setup() {
   const statefulSet = new StatefulRuleSet([
     {
-      slug: 'max_amount_restriction',
-      parameters: {
+      ctor: MaxAmountRestriction,
+      params: {
         uuid: 'max_amount_restriction_uuid',
         amount: 100,
         period: 'month',
       },
     },
     {
-      slug: 'max_trip_restriction',
-      parameters: {
+      ctor: MaxTripRestriction,
+      params: {
         uuid: 'max_trip_restriction_uuid',
         amount: 2,
         period: 'day',
@@ -28,8 +28,8 @@ function setup() {
       },
     },
     {
-      slug: 'fixed_amount_setter',
-      parameters: {
+      ctor: FixedAmountSetter,
+      params: {
         amount: 10,
       },
     },
@@ -40,22 +40,23 @@ function setup() {
 
 test('should properly build initial state', async (t) => {
   const { statefulSet } = setup();
-  const trip = faker.trip([{
-    is_driver: true,
-    identity_uuid: 'driver',
-  }]);
+  const trip = faker.trip([
+    {
+      is_driver: true,
+      identity_uuid: 'driver',
+    },
+  ]);
 
-  const { incentive, policy } = statefulSet.buildInitialState({
+  const incentive = statefulSet.buildInitialState({
     trip,
     person: trip.people[0],
     stack: [],
   });
-  t.log(incentive, policy);
 
   const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip.people[0].identity_uuid);
 
-  // incentive state 
+  // incentive state
   t.true(incentive instanceof Map);
   t.deepEqual([...incentive.keys()], ['max_amount_restriction_uuid', 'max_trip_restriction_uuid']);
 
@@ -63,18 +64,20 @@ test('should properly build initial state', async (t) => {
   t.is(incentive.get('max_trip_restriction_uuid'), tripRestrictionKey);
 
   // policy state
-  t.true(policy instanceof Map);
-  t.deepEqual([...policy.keys()], [amountRestrictionKey, tripRestrictionKey]);
-  t.is(policy.get(amountRestrictionKey), 0);
-  t.is(policy.get(tripRestrictionKey), 0);
+  // t.true(policy instanceof Map);
+  // t.deepEqual([...policy.keys()], [amountRestrictionKey, tripRestrictionKey]);
+  // t.is(policy.get(amountRestrictionKey), 0);
+  // t.is(policy.get(tripRestrictionKey), 0);
 });
 
 test('should list state keys', async (t) => {
   const { statefulSet } = setup();
-  const trip = faker.trip([{
-    is_driver: true,
-    identity_uuid: 'driver',
-  }]);
+  const trip = faker.trip([
+    {
+      is_driver: true,
+      identity_uuid: 'driver',
+    },
+  ]);
 
   const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip.people[0].identity_uuid);
@@ -93,15 +96,17 @@ test('should list state keys', async (t) => {
       max_trip_restriction_uuid: tripRestrictionKey,
     },
   });
-  t.deepEqual(keys, [amountRestrictionKey, tripRestrictionKey])
+  t.deepEqual(keys, [amountRestrictionKey, tripRestrictionKey]);
 });
 
 test('should apply stateful rules and update meta', async (t) => {
   const { statefulSet } = setup();
-  const trip = faker.trip([{
-    is_driver: true,
-    identity_uuid: 'driver',
-  }]);
+  const trip = faker.trip([
+    {
+      is_driver: true,
+      identity_uuid: 'driver',
+    },
+  ]);
 
   const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip.people[0].identity_uuid);
@@ -111,29 +116,41 @@ test('should apply stateful rules and update meta', async (t) => {
     [tripRestrictionKey, 2],
   ]);
 
-  const r = statefulSet.apply({
-    carpool_id: 1,
-    policy_id: 1,
-    datetime: trip.datetime,
-    result: 100,
-    amount: 0,
-    state: IncentiveStateEnum.Regular,
-    status: IncentiveStatusEnum.Draft,
-    meta: {
-      toto: 'this should not be visible',
-      max_amount_restriction_uuid: amountRestrictionKey,
-      max_trip_restriction_uuid: tripRestrictionKey,
+  const r = statefulSet.apply(
+    {
+      carpool_id: 1,
+      policy_id: 1,
+      datetime: trip.datetime,
+      result: 100,
+      amount: 0,
+      state: IncentiveStateEnum.Regular,
+      status: IncentiveStatusEnum.Draft,
+      meta: {
+        toto: 'this should not be visible',
+        max_amount_restriction_uuid: amountRestrictionKey,
+        max_trip_restriction_uuid: tripRestrictionKey,
+      },
     },
-  }, meta);
+    meta,
+  );
   t.is(r, 0);
+
+  t.true(meta.has(amountRestrictionKey));
+  t.is(meta.get(amountRestrictionKey), 150);
+
+
+  t.true(meta.has(tripRestrictionKey));
+  t.is(meta.get(tripRestrictionKey), 3);
 });
 
 test('should do nothing if key is missing in incentive meta', async (t) => {
   const { statefulSet } = setup();
-  const trip = faker.trip([{
-    is_driver: true,
-    identity_uuid: 'driver',
-  }]);
+  const trip = faker.trip([
+    {
+      is_driver: true,
+      identity_uuid: 'driver',
+    },
+  ]);
 
   const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip.people[0].identity_uuid);
@@ -143,29 +160,34 @@ test('should do nothing if key is missing in incentive meta', async (t) => {
     [tripRestrictionKey, 1],
   ]);
 
-  const result = statefulSet.apply({
-    carpool_id: 1,
-    policy_id: 1,
-    datetime: trip.datetime,
-    result: 100,
-    amount: 0,
-    state: IncentiveStateEnum.Regular,
-    status: IncentiveStatusEnum.Draft,
-    meta: {
-      toto: 'this should not be visible',
-      max_amount_restriction_uuid: amountRestrictionKey,
-      // max_trip_restriction_uuid: tripRestrictionKey,
+  const result = statefulSet.apply(
+    {
+      carpool_id: 1,
+      policy_id: 1,
+      datetime: trip.datetime,
+      result: 100,
+      amount: 0,
+      state: IncentiveStateEnum.Regular,
+      status: IncentiveStatusEnum.Draft,
+      meta: {
+        toto: 'this should not be visible',
+        max_amount_restriction_uuid: amountRestrictionKey,
+        // max_trip_restriction_uuid: tripRestrictionKey,
+      },
     },
-  }, meta)
+    meta,
+  );
   t.is(result, 100);
 });
 
-test('should throw if key is missing in policy meta', async (t) => {
+test('should use default value if key is missing in policy meta', async (t) => {
   const { statefulSet } = setup();
-  const trip = faker.trip([{
-    is_driver: true,
-    identity_uuid: 'driver',
-  }]);
+  const trip = faker.trip([
+    {
+      is_driver: true,
+      identity_uuid: 'driver',
+    },
+  ]);
 
   const amountRestrictionKey = getMetaKey('max_amount_restriction', trip.datetime, 'month', 'global');
   const tripRestrictionKey = getMetaKey('max_trip_restriction', trip.datetime, 'day', trip.people[0].identity_uuid);
@@ -175,19 +197,24 @@ test('should throw if key is missing in policy meta', async (t) => {
     [tripRestrictionKey, 2],
   ]);
 
-  const err = t.throws(() => statefulSet.apply({
-    carpool_id: 1,
-    policy_id: 1,
-    datetime: trip.datetime,
-    result: 100,
-    amount: 0,
-    state: IncentiveStateEnum.Regular,
-    status: IncentiveStatusEnum.Draft,
-    meta: {
-      toto: 'this should not be visible',
-      max_amount_restriction_uuid: amountRestrictionKey,
-      max_trip_restriction_uuid: tripRestrictionKey,
+  statefulSet.apply(
+    {
+      carpool_id: 1,
+      policy_id: 1,
+      datetime: trip.datetime,
+      result: 100,
+      amount: 0,
+      state: IncentiveStateEnum.Regular,
+      status: IncentiveStatusEnum.Draft,
+      meta: {
+        toto: 'this should not be visible',
+        max_amount_restriction_uuid: amountRestrictionKey,
+        max_trip_restriction_uuid: tripRestrictionKey,
+      },
     },
-  }, meta));
-  t.is(err.message, 'Unable to build state, missing key');
+    meta,
+  );
+
+  t.true(meta.has(amountRestrictionKey));
+  t.is(meta.get(amountRestrictionKey), 100);
 });

@@ -1,7 +1,5 @@
-import { TripInterface } from '../../interfaces/TripInterface';
-import { PersonInterface } from '../../interfaces/PersonInterface';
+import { TripInterface, PersonInterface, IncentiveInterface } from '../../interfaces';
 import { MetaInterface } from './MetaInterface';
-
 import { priority } from '../helpers/priority';
 import { type } from '../helpers/type';
 
@@ -42,6 +40,12 @@ export interface StatefulRuleInterface {
   getState(context: RuleHandlerContextInterface, metaGetter: MetaInterface): number;
   apply(result: number, state: number): number;
   setState(result: number, state: number): number;
+}
+
+export interface StatefulRuleSetInterface {
+  buildInitialState(context: RuleHandlerContextInterface): Map<string, string>;
+  listStateKeys(incentive: IncentiveInterface): string[];
+  apply(incentive: IncentiveInterface, meta: MetaInterface): number;
 }
 
 export interface MetaRuleInterface {

@@ -14,4 +14,4 @@ export {
 } from './TripRepositoryProviderInterface';
 export { PersonInterface } from './PersonInterface';
 export { TripInterface } from './TripInterface';
-export { IncentiveInterface } from './IncentiveInterface';
+export { IncentiveInterface, IncentiveStateEnum, IncentiveStatusEnum } from './IncentiveInterface';

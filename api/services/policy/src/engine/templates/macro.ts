@@ -21,7 +21,7 @@ export function macro(
   policy: CampaignInterface,
 ): {
   test: TestInterface<TestContext>;
-  results: Macro<[{ carpool_id: number; amount: number }[], TripInterface[]?], TestContext>;
+  results: Macro<[{ carpool_id: number; amount: number, meta?: {[k:string]: string} }[], TripInterface[]?], TestContext>;
 } {
   const test = anyTest as TestInterface<TestContext>;
 
@@ -61,9 +61,9 @@ export function macro(
     await t.context.kernel.shutdown();
   });
 
-  const results: Macro<[{ carpool_id: number; amount: number }[], TripInterface[]?], TestContext> = async (
+  const results: Macro<[{ carpool_id: number; amount: number, meta?: {[k:string]: string} }[], TripInterface[]?], TestContext> = async (
     t: ExecutionContext<TestContext>,
-    expected: { carpool_id: number; amount: number }[],
+    expected: { carpool_id: number; amount: number, meta?: {[k:string]: string} }[],
     trips: TripInterface[] = defaultTrips,
   ) => {
     const incentives = [];
@@ -86,8 +86,12 @@ export function macro(
         .reduce((sum, i) => sum + i, 0),
     );
     t.is(incentives.length, expected.length, 'every trip should have an incentive');
-    for (const { amount, carpool_id } of expected) {
-      t.is(incentives.find((i) => i.carpool_id === carpool_id).amount, amount);
+    for (const { amount, carpool_id, meta } of expected) {
+      const incentive = incentives.find((i) => i.carpool_id === carpool_id);
+      t.is(incentive.amount, amount);
+      if (meta) {
+        t.deepEqual(incentive.meta, meta);
+      }
     }
   };
 
