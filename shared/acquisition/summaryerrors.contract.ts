@@ -1,4 +1,3 @@
-import { ErrorStage, AcquisitionErrorInterface } from './common/interfaces/AcquisitionErrorInterface';
 import { ParamsInterface as SearchErrorInterface } from './searcherrors.contract';
 
 export enum GroupByOptions {
