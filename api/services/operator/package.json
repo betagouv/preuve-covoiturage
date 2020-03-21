@@ -4,51 +4,26 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "cli": "ilos",
-    "migrate": "ilos migrate",
-    "start": "yarn serve",
+    "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "NODE_ENV=testing mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-operator --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "test": "ava",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "main": "./dist/bootstrap.js",
   "config": {
     "workingDir": "./dist",
-    "bootstrap": "./bootstrap.js",
-    "app": {}
+    "bootstrap": "./bootstrap.js"
   },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
+  "ava": {
+    "files": [
+      "src/tests/**/*.spec.ts"
     ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**",
-      "src/config/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "typescript": {
+      "rewritePaths": {
+        "src/tests/": "dist/tests/"
+      }
+    }
   },
   "dependencies": {
     "@ilos/cli": "~0",

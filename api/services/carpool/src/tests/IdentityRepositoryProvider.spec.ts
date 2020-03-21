@@ -1,7 +1,7 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { IdentityRepositoryProvider } from '../src/providers/IdentityRepositoryProvider';
+import { IdentityRepositoryProvider } from '../providers/IdentityRepositoryProvider';
 
 describe('IdentityRepositoryProvider', () => {
   let connection: PostgresConnection;

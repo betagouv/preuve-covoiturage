@@ -4,31 +4,26 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "cli": "ilos",
-    "migrate": "echo 'no migrations'",
-    "start": "yarn serve",
+    "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "test:integration": "NODE_ENV=testing mocha --exit tests/*.spec.ts tests/**/*.spec.ts",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/service-campaign --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/*.spec.ts src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
     "lint": "eslint 'src/**/*.ts'"
   },
   "main": "./dist/bootstrap.js",
   "config": {
     "workingDir": "./dist",
-    "bootstrap": "./bootstrap.js",
-    "app": {}
+    "bootstrap": "./bootstrap.js"
   },
-  "nyc": {
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/**/interfaces/**",
-      "src/**/exceptions/**",
-      "src/config/**",
-      "src/shared/**"
-    ]
+  "ava": {
+    "files": [
+      "src/tests/**/*.spec.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/tests/": "dist/tests/"
+      }
+    }
   },
   "dependencies": {
     "@ilos/cli": "~0",

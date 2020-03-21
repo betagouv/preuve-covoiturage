@@ -4,9 +4,7 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "cli": "ilos",
-    "migrate": "echo 'no migrations'",
-    "start": "yarn serve",
+    "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
