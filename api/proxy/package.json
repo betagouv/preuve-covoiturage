@@ -8,23 +8,21 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "test:integration": "echo '[proxy] no integration tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'"
   },
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "config": {
-    "workingDir": "./dist/src",
+    "workingDir": "./dist",
     "bootstrap": "./bootstrap.js"
   },
   "ava": {
     "files": [
-      "tests/**/*.spec.ts"
+      "src/tests/**/*.spec.ts"
     ],
     "typescript": {
       "rewritePaths": {
-        "src/": "dist/src/",
-        "tests/": "dist/tests/"
+        "src/tests/": "dist/tests/"
       }
     }
   },

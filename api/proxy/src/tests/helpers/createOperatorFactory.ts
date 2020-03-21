@@ -1,6 +1,6 @@
 import { KernelInterface } from '@ilos/common';
-import { OperatorInterface } from '../../src/shared/operator/common/interfaces/OperatorInterface';
-import { OperatorDbInterface } from '../../src/shared/operator/common/interfaces/OperatorDbInterface';
+import { OperatorInterface } from '../../shared/operator/common/interfaces/OperatorInterface';
+import { OperatorDbInterface } from '../../shared/operator/common/interfaces/OperatorDbInterface';
 
 export async function createOperatorFactory(
   kernel: KernelInterface,
