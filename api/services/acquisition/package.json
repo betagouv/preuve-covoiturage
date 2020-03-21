@@ -10,25 +10,21 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "coverage-ci": "NODE_ENV=testing nyc --all --reporter=lcov ava",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
+    "lint": "eslint 'src/**/*.ts'",
     "copy-static": "cp -R ./src/templates ./dist/"
   },
-  "main": "./dist/src/bootstrap.js",
+  "main": "./dist/bootstrap.js",
   "config": {
-    "workingDir": "./dist/src",
+    "workingDir": "./dist",
     "bootstrap": "./bootstrap.js"
   },
   "ava": {
     "files": [
-      "src/**/*.spec.ts",
-      "tests/**/*.spec.ts"
+      "src/tests/**/*.spec.ts"
     ],
     "typescript": {
       "rewritePaths": {
-        "src/": "dist/src/",
-        "tests/": "dist/tests/"
+        "src/tests/": "dist/tests/"
       }
     }
   },
