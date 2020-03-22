@@ -18,11 +18,11 @@
   },
   "ava": {
     "files": [
-      "src/tests/**/*.spec.ts"
+      "src/**/*.spec.ts"
     ],
     "typescript": {
       "rewritePaths": {
-        "src/tests/": "dist/tests/"
+        "src/": "dist/"
       }
     }
   },

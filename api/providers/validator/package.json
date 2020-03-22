@@ -8,39 +8,18 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-validator --temp-dir=../../.nyc_output --all --reporter=lcov mocha --exit src/**/*.spec.ts",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text mocha --exit src/**/*.spec.ts",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
-    "test": "mocha --exit src/**/*.spec.ts",
-    "test:integration": "mocha --exit tests/*.spec.ts"
+    "test": "ava",
+    "lint": "eslint 'src/**/*.ts'"
   },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
+  "ava": {
+    "files": [
+      "src/**/*.spec.ts"
     ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
   },
   "dependencies": {
     "@ilos/core": "~0",

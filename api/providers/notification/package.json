@@ -5,16 +5,21 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "test": "echo '[provider-notification] No tests'; exit 0",
-    "test:integration": "echo '[provider-notification] No tests'; exit 0",
-    "coverage": "echo '[provider-notification] No tests'; exit 0",
     "lint": "eslint 'src/**/*.ts'"
+  },
+  "ava": {
+    "files": [
+      "src/**/*.spec.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
   },
   "dependencies": {
     "@pdc/provider-template": "~0",

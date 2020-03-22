@@ -7,7 +7,7 @@
     "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "echo '[monitoring] no tests'; exit 0",
+    "test": "ava",
     "lint": "eslint 'src/**/*.ts'",
     "stats:journeys": "ilos stats:journeys"
   },
@@ -18,11 +18,11 @@
   },
   "ava": {
     "files": [
-      "src/tests/**/*.spec.ts"
+      "src/**/*.spec.ts"
     ],
     "typescript": {
       "rewritePaths": {
-        "src/tests/": "dist/tests/"
+        "src/": "dist/"
       }
     }
   },

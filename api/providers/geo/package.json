@@ -9,10 +9,17 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "test:integration": "ava",
-    "coverage-ci": "NODE_ENV=testing nyc --report-dir=../../coverage/provider-geo --temp-dir=../../.nyc_output --all --reporter=lcov ava",
-    "coverage": "NODE_ENV=testing nyc --all --reporter=text ava",
     "lint": "eslint 'src/**/*.ts'"
+  },
+  "ava": {
+    "files": [
+      "src/**/*.spec.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
   },
   "dependencies": {
     "@ilos/core": "~0",
@@ -21,32 +28,5 @@
     "@pdc/provider-validator": "~0",
     "axios": "^0.19.0",
     "lodash": "^4.17.11"
-  },
-  "ava": {
-    "files": [
-      "dist/tests/*.spec.js"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
   }
 }

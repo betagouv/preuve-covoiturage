@@ -1,14 +1,17 @@
-import chai from 'chai';
+import test from 'ava';
 
 import { ibanCast } from './ibanCast';
 
-const { expect, assert } = chai;
+test('cast proper IBAN', (t) => t.deepEqual(ibanCast({ data: 'NL91ABNA0517164300' }), 'NL91ABNA0517164300'));
+test('remove spaces', (t) => t.deepEqual(ibanCast({ data: 'nl91 abna 0517 1643 00' }), 'NL91ABNA0517164300'));
+test('cast to uppercase', (t) => t.deepEqual(ibanCast({ data: 'nl91abna0517164300' }), 'NL91ABNA0517164300'));
 
-describe('ibanCast', () => {
-  it('cast proper IBAN', () => assert(ibanCast({ data: 'NL91ABNA0517164300' }) === 'NL91ABNA0517164300'));
-  it('remove spaces', () => assert(ibanCast({ data: 'nl91 abna 0517 1643 00' }) === 'NL91ABNA0517164300'));
-  it('cast to uppercase', () => assert(ibanCast({ data: 'nl91abna0517164300' }) === 'NL91ABNA0517164300'));
-  it('fails on empty', () => expect(ibanCast.bind(null, { data: '' })).to.throw('Invalid IBAN'));
-  it('fails on null', () => expect(ibanCast.bind(null, { data: null })).to.throw('Invalid IBAN'));
-  it('fails on undefined', () => expect(ibanCast.bind(null, { data: undefined })).to.throw('Invalid IBAN'));
+test('fails on empty', (t) => {
+  t.throws(() => ibanCast({ data: '' }), { message: 'Invalid IBAN' });
+});
+test('fails on null', (t) => {
+  t.throws(() => ibanCast({ data: null }), { message: 'Invalid IBAN' });
+});
+test('fails on undefined', (t) => {
+  t.throws(() => ibanCast({ data: undefined }), { message: 'Invalid IBAN' });
 });

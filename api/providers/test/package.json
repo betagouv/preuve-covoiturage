@@ -9,15 +9,17 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "ava",
-    "test:integration": "echo '[provider-sentry] No tests'; exit 0",
-    "coverage-ci": "echo '[provider-sentry] No tests'; exit 0",
-    "coverage": "nyc --all --reporter=text ava",
     "lint": "eslint 'src/**/*.ts'"
   },
   "ava": {
     "files": [
-      "dist/**/*.spec.js"
-    ]
+      "src/**/*.spec.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
   },
   "dependencies": {
     "@ilos/framework": "~0",
