@@ -78,7 +78,7 @@ export class RuleSet {
     return this.statefulSet.listStateKeys(incentive);
   }
 
-  statefulApply(incentive: IncentiveInterface, meta: MetaInterface): number {
+  applyStateful(incentive: IncentiveInterface, meta: MetaInterface): number {
     return this.statefulSet.apply(incentive, meta);
   }
 }

@@ -15,6 +15,7 @@ interface TestContext {
   kernel: KernelInterface;
   engine: PolicyEngine;
   policyId: number;
+  policy: CampaignInterface;
 }
 
 export function macro(
@@ -34,8 +35,8 @@ export function macro(
     t.context.kernel = new Kernel();
     await t.context.kernel.bootstrap();
     const repository = t.context.kernel.get(ServiceProvider).get(CampaignPgRepositoryProvider);
-    const { _id } = await repository.create(policy);
-    t.context.policyId = _id;
+    t.context.policy = await repository.create(policy);
+    t.context.policyId = t.context.policy._id;
     t.context.engine = t.context.kernel.get(ServiceProvider).get(PolicyEngine);
   });
 
@@ -69,7 +70,7 @@ export function macro(
     const incentives = [];
 
     for (const trip of trips) {
-      const r = await t.context.engine.process(trip, policy);
+      const r = await t.context.engine.process(trip, t.context.policy);
       incentives.push(...r);
     }
     t.log(incentives);
