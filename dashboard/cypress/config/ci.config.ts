@@ -1,10 +1,8 @@
-import { TestsInterface } from './tests.interface';
-
 /**
  * continuous integration tests
  */
 export const CI_CONFIG = {
-  integration: <TestsInterface>{
+  integration: {
     operator: {
       profile: true,
       operator: true,
@@ -22,14 +20,14 @@ export const CI_CONFIG = {
       profile: true,
       territory: true,
       filters: true,
-      newcampaign: true,
-      editcampaign: true,
+      newcampaign: false,
+      editcampaign: false,
       launchcampaign: false,
       newFromTemplate: false,
       exportTrips: false,
     },
   },
-  e2e: <TestsInterface>{
+  e2e: {
     // no tests
   },
 };
