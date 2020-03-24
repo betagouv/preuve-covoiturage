@@ -20,5 +20,4 @@ export interface IncentiveInterface {
   state: IncentiveStateEnum;
   status: IncentiveStatusEnum;
   meta: { [k: string]: string };
-  detail?: any;
 }
