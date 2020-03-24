@@ -26,7 +26,7 @@ export class CampaignTableComponent implements OnInit {
 
   constructor(private _commonDataService: CommonDataService) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   canShowDetails(status: CampaignStatusEnum): boolean {
     return (

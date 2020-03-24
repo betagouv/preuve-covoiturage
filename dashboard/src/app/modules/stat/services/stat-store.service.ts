@@ -9,6 +9,8 @@ import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
 import { StatApiService } from '~/modules/stat/services/stat-api.service';
 import { StatFormatService } from '~/modules/stat/services/stat-format.service';
+import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +23,7 @@ export class StatStoreService extends GetListStore<StatInterface> {
     private _authService: AuthenticationService,
     private _statFormatService: StatFormatService,
   ) {
-    super(statApi);
+    super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
     this.entitiesSubject.pipe(filter((val) => val.length > 0)).subscribe((data) => {
       this._formatedStat$.next(this._statFormatService.formatData(data));
     });
@@ -48,7 +50,7 @@ export class StatStoreService extends GetListStore<StatInterface> {
     return this._formatedStat$;
   }
 
-  init() {
+  init(): void {
     this._formatedStat$.next(null);
   }
 }

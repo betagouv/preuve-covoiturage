@@ -35,7 +35,7 @@ export class StatNumberComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.statService.stat$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.initStatNumber(this.statNumberName);
     });

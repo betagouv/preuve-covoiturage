@@ -3,7 +3,6 @@ import { handler, UnauthorizedException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/login.contract';
 import { alias } from '../shared/user/login.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
 
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
@@ -12,13 +11,14 @@ import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepos
 /*
  * Authenticate user by email & pwd - else throws forbidden error
  */
-@handler(handlerConfig)
-export class LoginUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['content.whitelist', userWhiteListFilterOutput],
-  ];
-
+  ],
+})
+export class LoginUserAction extends AbstractAction {
   constructor(
     private authRepository: AuthRepositoryProviderInterfaceResolver,
     private userRepository: UserRepositoryProviderInterfaceResolver,

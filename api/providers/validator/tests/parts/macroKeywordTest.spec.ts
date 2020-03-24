@@ -1,11 +1,12 @@
+import { Suite } from 'mocha';
 import { expect } from 'chai';
 import { NewableType } from '@ilos/common';
 
 import { ValidatorInterface } from '../../src';
 
-export function macroKeywordTest(getProvider, FakeObject: NewableType<any>): Function {
+export function macroKeywordTest(getProvider, FakeObject: NewableType<any>): (this: Suite) => void {
   let provider: ValidatorInterface;
-  return (): void => {
+  return function(): void {
     before(async () => {
       const schema = {
         $schema: 'http://json-schema.org/draft-07/schema#',

@@ -9,5 +9,4 @@
   "trailingComma": "all",
   "endOfLine": "lf",
   "jsxSingleQuote": true,
-  "requireConfig": true
 }

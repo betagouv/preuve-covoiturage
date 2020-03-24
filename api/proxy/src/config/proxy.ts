@@ -1,4 +1,4 @@
-declare function env(key: string, fallback?: string | number): any;
+import { env } from '@ilos/core';
 
 export const appUrl = env('APP_APP_URL', 'http://localhost:4200');
 export const apiUrl = env('APP_API_URL', 'http://localhost:8080');

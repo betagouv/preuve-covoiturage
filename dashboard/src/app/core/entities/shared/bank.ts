@@ -12,7 +12,7 @@ export class Bank {
     if (obj && obj.bic) this.bic = obj.bic;
   }
 
-  toFormValues() {
+  toFormValues(): any {
     return {
       bank_name: '',
       client_name: '',

@@ -3,7 +3,6 @@ import { handler, ContextType, UnauthorizedException } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/sendInvitationEmail.contract';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/user/sendInvitationEmail.schema';
 import { AuthRepositoryProviderInterfaceResolver } from '../interfaces/AuthRepositoryProviderInterface';
 import { UserNotificationProvider } from '../providers/UserNotificationProvider';
@@ -11,9 +10,9 @@ import { UserNotificationProvider } from '../providers/UserNotificationProvider'
 /*
  * send the confirmation email to a user by _id
  */
-@handler(handlerConfig)
-export class SendInvitationEmailUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -33,8 +32,9 @@ export class SendInvitationEmailUserAction extends AbstractAction {
         ],
       ],
     ],
-  ];
-
+  ],
+})
+export class SendInvitationEmailUserAction extends AbstractAction {
   constructor(
     private userRepository: UserRepositoryProviderInterfaceResolver,
     private authProvider: AuthRepositoryProviderInterfaceResolver,

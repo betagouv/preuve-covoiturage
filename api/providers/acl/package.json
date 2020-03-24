@@ -1,0 +1,50 @@
+{
+  "name": "@pdc/provider-acl",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Nicolas Mérigot <nicolas@belenio.fr>",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "ava",
+    "test:integration": "echo '[provider-acl] No tests'; exit 0",
+    "coverage-ci": "nyc --all --reporter=lcov ava",
+    "coverage": "nyc --all --reporter=text ava",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "@ilos/common": "~0",
+    "@ilos/core": "~0"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
+      "src/interfaces/**",
+      "src/types/**",
+      "src/exceptions/**",
+      "src/**/index.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  }
+}

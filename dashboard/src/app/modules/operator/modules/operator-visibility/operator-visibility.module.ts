@@ -6,7 +6,7 @@ import { MatTreeModule } from '@angular/material';
 import { SharedModule } from '~/shared/shared.module';
 import { MaterialModule } from '~/shared/modules/material/material.module';
 
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line
 import { OperatorVisibilityTreeComponent } from './components/operator-visibility-tree/operator-visibility-tree.component';
 
 @NgModule({

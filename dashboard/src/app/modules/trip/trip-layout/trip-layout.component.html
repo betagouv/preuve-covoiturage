@@ -18,6 +18,18 @@
             {{ link.label }}
           </a>
         </ng-container>
+
+        <a
+          mat-tab-link
+          *ngIf="canExport$ | async"
+          routerLink="/trip/export"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [active]="rla.isActive"
+        >
+          <mat-icon>get_app</mat-icon>
+          Export
+        </a>
       </nav>
       <button
         *ngIf="pageHasFilter"

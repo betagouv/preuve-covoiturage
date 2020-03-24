@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import * as _ from 'lodash';
 
 import { FormatedStatInterface } from '~/core/interfaces/stat/formatedStatInterface';
 import { StatFormatService } from '~/modules/stat/services/stat-format.service';

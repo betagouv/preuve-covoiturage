@@ -1,0 +1,18 @@
+{
+  "name": "@pdc/provider-template",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Nicolas Mérigot <nicolas@belenio.fr>",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo '[provider-template] No tests'; exit 0",
+    "test:integration": "echo '[provider-template] No tests'; exit 0",
+    "coverage-ci": "echo '[provider-template] No tests'; exit 0",
+    "coverage": "echo '[provider-template] No tests'; exit 0",
+    "lint": "eslint 'src/**/*.ts'"
+  }
+}

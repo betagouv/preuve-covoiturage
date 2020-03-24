@@ -3,7 +3,6 @@ import { handler, UnauthorizedException } from '@ilos/common';
 import { get } from 'lodash';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/me.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { userWhiteListFilterOutput } from '../config/filterOutput';
@@ -11,9 +10,8 @@ import { userWhiteListFilterOutput } from '../config/filterOutput';
 /*
  * Find user by id
  */
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['content.whitelist', userWhiteListFilterOutput]] })
 export class MeUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['content.whitelist', userWhiteListFilterOutput]];
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }

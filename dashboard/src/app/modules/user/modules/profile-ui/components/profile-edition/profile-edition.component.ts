@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil } from 'rxjs/operators';
 
 import { REGEXP } from '~/core/const/validators.const';
-import { ProfileInterface } from '~/core/interfaces/user/profileInterface';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { UserApiService } from '~/modules/user/services/user-api.service';
 import { UserStoreService } from '~/modules/user/services/user-store.service';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-profile-edition',
@@ -31,12 +29,12 @@ export class ProfileEditionComponent extends DestroyObservable implements OnInit
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initProfilForm();
     this.initProfilFormValue();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.profileForm.controls;
   }
 

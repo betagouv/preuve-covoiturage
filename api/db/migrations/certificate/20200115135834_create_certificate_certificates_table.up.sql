@@ -2,9 +2,9 @@ CREATE TABLE IF NOT EXISTS certificate.certificates
 (
 	_id serial primary key,
 	uuid uuid NOT NULL DEFAULT uuid_generate_v4 (),
-	identity_id varchar NOT NULL,
-	operator_id varchar NOT NULL,
-	territory_id varchar NOT NULL,
+	identity_id varchar NOT NULL, -- renamed to identity_uuid in later migration
+	operator_id varchar NOT NULL, -- renamed to operator_uuid in later migration
+	territory_id varchar NOT NULL, -- renamed to territory_uuid in later migration
 	start_at timestamp with time zone NOT NULL,
 	end_at timestamp with time zone NOT NULL,
 	created_at timestamp with time zone NOT NULL DEFAULT NOW(),

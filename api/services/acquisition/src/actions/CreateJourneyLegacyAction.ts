@@ -8,15 +8,12 @@ import {
   InvalidParamsException,
 } from '@ilos/common';
 
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/createLegacy.contract';
 import { alias } from '../shared/acquisition/createLegacy.schema';
 import { mapLegacyToLatest } from '../helpers/mapLegacyToLatest';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['can', ['journey.create']]] })
 export class CreateJourneyLegacyAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['can', ['journey.create']]];
-
   constructor(private kernel: KernelInterfaceResolver, private validator: ValidatorInterfaceResolver) {
     super();
   }

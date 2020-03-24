@@ -8,16 +8,13 @@ import {
 } from '../shared/operator/find.contract';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/cost.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { PaymentInterface } from '../shared/common/interfaces/PaymentInterface';
 
 import { IncentiveInterface } from '../shared/common/interfaces/IncentiveInterface';
 
 // Enrich position data
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['channel.service.only', ['acquisition', handlerConfig.service]]] })
 export class NormalizationCostAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
-
   constructor(private kernel: KernelInterfaceResolver) {
     super();
   }

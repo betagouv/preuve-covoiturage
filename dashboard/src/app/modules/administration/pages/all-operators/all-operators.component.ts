@@ -8,5 +8,5 @@ import { Component, OnInit } from '@angular/core';
 export class AllOperatorsComponent implements OnInit {
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

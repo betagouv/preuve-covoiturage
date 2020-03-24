@@ -21,7 +21,7 @@ export class StatGraphViewComponent extends DestroyObservable implements OnInit 
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadStat();
   }
 

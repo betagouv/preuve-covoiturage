@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
@@ -28,15 +28,15 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
     this.initProfilForm();
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.changePasswordForm.controls;
   }
 
-  get password() {
+  get password(): AbstractControl {
     return this.changePasswordForm.get('new_password');
   }
 
-  get passwordVerification() {
+  get passwordVerification(): AbstractControl {
     return this.changePasswordForm.get('password_verification');
   }
 
@@ -82,7 +82,7 @@ export class ChangePasswordComponent extends DestroyObservable implements OnInit
     }
   }
 
-  public onPasswordTypeToggle(index: 0 | 1 | 2) {
+  public onPasswordTypeToggle(index: 0 | 1 | 2): void {
     if (index === 0) {
       this.oldPasswordType = this.oldPasswordType === 'password' ? 'text' : 'password';
     } else if (index === 1) {

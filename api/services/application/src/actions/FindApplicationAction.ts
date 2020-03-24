@@ -11,13 +11,14 @@ import { alias } from '../shared/application/find.schema';
 import { ApplicationRepositoryProviderInterfaceResolver } from '../interfaces/ApplicationRepositoryProviderInterface';
 import { setOwner } from '../helpers/setOwner';
 
-@handler(handlerConfig)
-export class FindApplicationAction extends AbstractAction {
-  public readonly middlewares: (string | [string, any])[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     ['can', ['application.find']],
-  ];
-
+  ],
+})
+export class FindApplicationAction extends AbstractAction {
   constructor(private applicationRepository: ApplicationRepositoryProviderInterfaceResolver) {
     super();
   }

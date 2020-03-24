@@ -23,7 +23,7 @@ export class TripImportComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initTripImportForm();
   }
 

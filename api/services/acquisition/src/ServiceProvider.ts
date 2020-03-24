@@ -1,11 +1,12 @@
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
-import { PermissionMiddleware } from '@ilos/package-acl';
+import { PermissionMiddleware } from '@pdc/provider-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
+import { config } from './config';
 import { create } from './shared/acquisition/create.schema';
 import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { logerror } from './shared/acquisition/logerror.schema';
@@ -14,9 +15,10 @@ import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
+import { LogRequestAction } from './actions/LogRequestAction';
 
 @serviceProvider({
-  config: __dirname,
+  config,
   queues: ['normalization', 'acquisition'],
   providers: [JourneyPgRepositoryProvider, ErrorPgRepositoryProvider],
   validator: [
@@ -33,7 +35,7 @@ import { LogErrorAction } from './actions/LogErrorAction';
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],
   ],
-  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction],
+  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction, LogRequestAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

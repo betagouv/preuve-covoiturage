@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { ToastrService } from 'ngx-toastr';
 
@@ -16,9 +16,9 @@ export class ApplicationModalComponent implements OnInit {
     private _toastr: ToastrService,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  copierToken(token: string) {
+  copierToken(token: string): void {
     this._utils.copyToClipboard(token);
     this._toastr.success('Le token a été copié !');
   }

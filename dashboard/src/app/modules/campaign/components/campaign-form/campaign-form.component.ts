@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { MatStepper } from '@angular/material';
@@ -48,6 +48,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
 
   private _defaultRange: RulesRangeUxType = [0, CAMPAIGN_RULES_MAX_DISTANCE_KM];
   @ViewChild('stepper', { static: false }) _matStepper: MatStepper;
+  public userIsDemo: boolean;
 
   constructor(
     private _authService: AuthenticationService,
@@ -61,7 +62,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initForms();
     if (this.campaignId) {
       this.loadCampaign(this.campaignId);
@@ -74,14 +75,19 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       this.creationFromScratch = true;
       this.loading = false;
     }
+
+    this._authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => (this.userIsDemo = user && user.role.indexOf('demo') !== -1));
+
     this.initCampaigns();
   }
 
-  public get controls() {
+  public get controls(): { [key: string]: AbstractControl } {
     return this.campaignFormGroup.controls;
   }
 
-  get showFirstPageNextStep() {
+  get showFirstPageNextStep(): void {
     return this.campaignFormGroup.controls.parent_id.value || this.campaignId;
   }
 
@@ -99,7 +105,6 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       filtersFormGroup.get('distance_range').valid &&
       filtersFormGroup.get('rank').valid &&
       filtersFormGroup.get('insee').valid &&
-      filtersFormGroup.get('operator_ids').valid &&
       this.campaignFormGroup.get('only_adult').valid
     );
   }
@@ -117,7 +122,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     );
   }
 
-  saveCampaign() {
+  saveCampaign(): void {
     const formValues = this.campaignFormGroup.getRawValue();
 
     // get territory of user
@@ -133,7 +138,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private patchCampaign(params: CampaignInterface) {
+  private patchCampaign(params: CampaignInterface): void {
     this._campaignStoreService
       .patchSelected(params)
       .pipe(takeUntil(this.destroy$))
@@ -153,7 +158,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private createCampaign(formValues: CampaignUx) {
+  private createCampaign(formValues: CampaignUx): void {
     this._campaignStoreService
       .create(formValues)
       .pipe(takeUntil(this.destroy$))
@@ -171,7 +176,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private initForms() {
+  private initForms(): void {
     this.campaignFormGroup = this._formBuilder.group({
       name: [null, Validators.required],
       description: [null],
@@ -196,6 +201,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
         staggered: [false],
         insee_mode: [false],
       }),
+      passenger_seat: [true],
       start: [null, Validators.required],
       end: [null, Validators.required],
       max_amount: [null, [Validators.required, Validators.min(1)]],
@@ -207,11 +213,11 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     });
   }
 
-  public initCampaign() {
+  public initCampaign(): void {
     this.campaignFormGroup.setValue(new CampaignUx());
   }
 
-  public setTemplate(templateId: number | null = null) {
+  public setTemplate(templateId: number | null = null): void {
     let campaign;
 
     if (templateId) {
@@ -243,7 +249,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private setCampaignToForm(campaign: CampaignUx, isTemplate = false) {
+  private setCampaignToForm(campaign: CampaignUx, isTemplate = false): void {
     // patch main
     this.campaignFormGroup.patchValue({
       parent_id: campaign.parent_id,
@@ -255,6 +261,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       max_trips: campaign.max_trips,
       max_amount: campaign.max_amount,
       unit: campaign.unit,
+      only_adult: campaign.only_adult,
     });
 
     // patch rules
@@ -279,14 +286,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     });
 
     // patch form arrays
-    const timeFormArray = <FormArray>filtersForm.get('time');
+    const timeFormArray = filtersForm.get('time') as FormArray;
     timeFormArray.clear();
     campaign.filters.time.forEach((time) => {
       timeFormArray.push(this._formBuilder.control(time));
     });
 
     // patch insee filter
-    const blackListFormArray = <FormArray>filtersForm.get('insee').get('blackList');
+    const blackListFormArray = filtersForm.get('insee').get('blackList') as FormArray;
     blackListFormArray.clear();
     campaign.filters.insee.blackList.forEach((insee) => {
       blackListFormArray.push(
@@ -297,7 +304,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
     });
 
-    const whiteListFormArray = <FormArray>filtersForm.get('insee').get('whiteList');
+    const whiteListFormArray = filtersForm.get('insee').get('whiteList') as FormArray;
     whiteListFormArray.clear();
     campaign.filters.insee.whiteList.forEach((insee) => {
       whiteListFormArray.push(
@@ -309,14 +316,14 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     });
 
     // patch restriction
-    const restrictionFormArray = <FormArray>this.campaignFormGroup.get('restrictions');
+    const restrictionFormArray = this.campaignFormGroup.get('restrictions') as FormArray;
     restrictionFormArray.clear();
     campaign.restrictions.forEach((restriction) => {
       restrictionFormArray.push(this._formBuilder.group(restriction));
     });
 
     // patch retribution
-    const retributionFormArray = <FormArray>this.campaignFormGroup.get('retributions');
+    const retributionFormArray = this.campaignFormGroup.get('retributions') as FormArray;
     retributionFormArray.clear();
     if (campaign.retributions.length === 0) {
       // initialize retribution
@@ -374,7 +381,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
     }
   }
 
-  private loadCampaign(campaignId: number, isDuplicate = false) {
+  private loadCampaign(campaignId: number, isDuplicate = false): void {
     this._campaignStoreService
       .getById(campaignId)
       .pipe(takeUntil(this.destroy$))
@@ -393,7 +400,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       );
   }
 
-  private initCampaigns() {
+  private initCampaigns(): void {
     this._campaignStoreService.loadCampaigns();
 
     // if (!this._campaignStoreService.loaded) {

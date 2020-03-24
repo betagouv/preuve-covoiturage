@@ -57,7 +57,14 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   }
 
   async create(params: CertificateBaseInterface): Promise<CertificateInterface> {
-    const { identity_id, operator_id, territory_id, start_at, end_at, meta } = params;
+    const {
+      identity_uuid: identity_id,
+      operator_uuid: operator_id,
+      territory_uuid: territory_id,
+      start_at,
+      end_at,
+      meta,
+    } = params;
     const result = await this.connection.getClient().query({
       text: `
         INSERT INTO ${this.table}

@@ -31,6 +31,8 @@ async function checkApplication(
     },
   });
 
+  console.log({ checkApplication: app });
+
   const app_uuid = get(app, 'result.uuid', '');
   // disabled until owner_id is migrated as integer
   // const owner_id = get(app, 'result.owner_id', null);
@@ -40,6 +42,34 @@ async function checkApplication(
   }
 
   return (app as any).result as ApplicationInterface;
+}
+
+async function logRequest(kernel: KernelInterface, request: Request, payload: TokenPayloadInterface): Promise<void> {
+  if (get(process.env, 'NODE_ENV', '') === 'production') return;
+  if (
+    get(process.env, 'APP_DEBUG_REQUEST', 'false')
+      .trim()
+      .toLowerCase() !== 'true'
+  ) {
+    return;
+  }
+
+  await kernel.call(
+    'acquisition:logrequest',
+    {
+      operator_id: parseInt(payload.o as any, 0) || 0,
+      source: 'serverTokenMiddleware',
+      error_message: null,
+      error_code: null,
+      error_line: null,
+      auth: {},
+      headers: request.headers || {},
+      body: request.body,
+    },
+    { channel: { service: 'proxy' }, call: { user: { permissions: ['acquisition.logrequest'] } } },
+  );
+
+  console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id')}`);
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
@@ -53,6 +83,12 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       const payload = await (tokenProvider.verify<TokenPayloadInterface>(token.toString().replace('Bearer ', ''), {
         ignoreExpiration: true,
       }) as Promise<any>);
+
+      try {
+        await logRequest(kernel, req, payload);
+      } catch (e) {
+        console.log('logRequest ERROR', { e });
+      }
 
       /**
        * Handle V1 token format conversion

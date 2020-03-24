@@ -11,6 +11,8 @@ import { StatFormatService } from '~/modules/stat/services/stat-format.service';
 import { StatInterface } from '~/core/interfaces/stat/StatInterface';
 import { StatApiService } from '~/modules/stat/services/stat-api.service';
 import { GetListStore } from '~/core/services/store/getlist-store';
+import { TripSearchInterface } from '~/core/entities/api/shared/trip/common/interfaces/TripSearchInterface';
+import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     private _authService: AuthenticationService,
     private _statFormatService: StatFormatService,
   ) {
-    super(statApi);
+    super(statApi as JsonRpcGetList<StatInterface, StatInterface, any, TripSearchInterface>);
     this.entitiesSubject.subscribe((data) => {
       this._formatedStat$.next(this._statFormatService.formatData(data));
     });
@@ -42,10 +44,10 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     }
 
     if ('date' in filter && filter.date.start) {
-      params.date.start = filter.date.start.toISOString();
+      params['date'].start = filter.date.start.toISOString();
     }
     if ('date' in filter && filter.date.end) {
-      params.date.end = filter.date.end.toISOString();
+      params['date'].end = filter.date.end.toISOString();
     }
     this._filterSubject.next(params);
     super.loadList();
@@ -59,7 +61,7 @@ export class StatFilteredStoreService extends GetListStore<StatInterface> {
     return this._formatedStat$;
   }
 
-  init() {
+  init(): void {
     this._formatedStat$.next(null);
   }
 }

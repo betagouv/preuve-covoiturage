@@ -3,7 +3,6 @@ import { handler } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/user/list.contract';
 import { alias } from '../shared/user/list.schema';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { UserContextInterface } from '../shared/user/common/interfaces/UserContextInterfaces';
 import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
 import { UserListFiltersInterface } from '../shared/user/common/interfaces/UserListFiltersInterface';
@@ -24,9 +23,9 @@ const whiteList = [
 /*
  * list users filtered by territory or operator and paginate with limit & skip
  */
-@handler(handlerConfig)
-export class ListUserAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -47,8 +46,9 @@ export class ListUserAction extends AbstractAction {
       ],
     ],
     ['content.whitelist', [...whiteList.map((key: string) => `data.*.${key}`), 'meta.*']],
-  ];
-
+  ],
+})
+export class ListUserAction extends AbstractAction {
   constructor(private userRepository: UserRepositoryProviderInterfaceResolver) {
     super();
   }

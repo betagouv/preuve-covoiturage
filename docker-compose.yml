@@ -18,34 +18,6 @@ services:
     volumes:
       - ./db/postgres:/var/lib/postgresql/data/pgdata
 
-  pgadmin:
-    build: ./docker/pgadmin
-    networks:
-      - front
-      - back
-    ports:
-      - 5050:80
-    depends_on:
-      - postgres
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin1234
-    volumes:
-      - ./db/pgadmin:/pgadmin4/volume
-  mongo:
-    image: 'mongo:4.0'
-    ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: 'mongo'
-      MONGO_INITDB_ROOT_PASSWORD: 'mongo'
-      MONGO_INITDB_DATABASE: 'pdc-local'
-    volumes:
-      - ./db/mongo:/data/db
-    networks:
-      - front
-      - back
-
   redis:
     build: './docker/redis'
     ports:
@@ -70,7 +42,6 @@ services:
       - front
       - back
     depends_on:
-      - mongo
       - redis
       - postgres
 
@@ -87,7 +58,6 @@ services:
       - front
       - back
     depends_on:
-      - mongo
       - redis
       - postgres
 

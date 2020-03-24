@@ -6,10 +6,12 @@ import {
   FormGroup,
   NG_VALUE_ACCESSOR,
   Validators,
+  AbstractControl,
 } from '@angular/forms';
 
 import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format/incentive-filters';
 
+/*eslint-disable */
 @Component({
   providers: [
     {
@@ -23,6 +25,8 @@ import { IncentiveTimeRuleUxInterface } from '~/core/entities/campaign/ux-format
   styleUrls: ['./range-time-picker.component.scss'],
 })
 export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
+  /*eslint-enable */
+
   timeRangeForm: FormGroup;
 
   @Input() timeRange: IncentiveTimeRuleUxInterface = { start: null, end: null };
@@ -30,7 +34,7 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
 
   constructor(private _formBuilder: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.timeRangeForm = this._formBuilder.group({
       start: [this.timeRange ? this.timeRange.start : null, Validators.required],
       end: [this.timeRange ? this.timeRange.end : null, Validators.required],
@@ -41,25 +45,25 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
     });
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.timeRangeForm.controls;
   }
 
-  onChange = (value: any) => {};
+  onChange = (value: any): void => {};
 
-  writeValue(value: IncentiveTimeRuleUxInterface) {
+  writeValue(value: IncentiveTimeRuleUxInterface): void {
     if (value) {
       this.timeRange = value;
     }
   }
 
-  registerOnChange(fn: (value: any) => void) {
+  registerOnChange(fn: (value: any) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched() {}
+  registerOnTouched(): void {}
 
-  onValueChange(value: IncentiveTimeRuleUxInterface) {
+  onValueChange(value: IncentiveTimeRuleUxInterface): void {
     if (value.start && value.end) {
       const beginDate = new Date();
       beginDate.setHours(Number(value.start.split(':')[0]), Number(value.start.split(':')[1]), 0, 0);
@@ -82,7 +86,7 @@ export class RangeTimePickerComponent implements OnInit, ControlValueAccessor {
     }
   }
 
-  onTouched() {
+  onTouched(): void {
     if (this.formControl) {
       this.formControl.markAsTouched();
     }

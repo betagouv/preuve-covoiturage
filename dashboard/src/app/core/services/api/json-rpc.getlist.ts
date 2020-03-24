@@ -18,16 +18,16 @@ export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetLis
 
   protected defaultListParam: any = {};
 
-  paramGetList(params?: IGetListT) {
+  paramGetList(params?: IGetListT): JsonRPCParam<any> {
     return new JsonRPCParam(`${this.method}:${GetListActions.LIST}`, { ...this.defaultListParam, ...params });
   }
 
-  paramGet(params: IGetT) {
+  paramGet(params: IGetT): JsonRPCParam<any> {
     return new JsonRPCParam(`${this.method}:${GetListActions.FIND}`, params);
   }
 
-  paramGetById(id: number) {
-    return this.paramGet(<any>{ _id: id });
+  paramGetById(id: number): JsonRPCParam<any> {
+    return this.paramGet({ _id: id } as any);
   }
 
   get(params: IGetT): Observable<EntityT> {
@@ -39,6 +39,6 @@ export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetLis
   }
 
   getById(id: number): Observable<EntityT> {
-    return this.get(<any>{ _id: id });
+    return this.get({ _id: id } as any);
   }
 }

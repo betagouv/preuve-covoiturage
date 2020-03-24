@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 
@@ -14,15 +14,15 @@ export class LoginComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private authService: AuthenticationService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initLoginForm();
   }
 
-  public get controls() {
+  public get controls(): { [key: string]: AbstractControl } {
     return this.loginForm.controls;
   }
 
-  public onLogin() {
+  public onLogin(): void {
     this.authService.login(this.controls.email.value, this.controls.password.value).subscribe((user) => {
       if (user === null) {
         console.log('login failed');
@@ -32,14 +32,14 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public onPasswordTypeToggle() {
+  public onPasswordTypeToggle(): void {
     this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
   }
 
   /**
    * PRIVATE FUNCTIONS
    */
-  private initLoginForm() {
+  private initLoginForm(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],

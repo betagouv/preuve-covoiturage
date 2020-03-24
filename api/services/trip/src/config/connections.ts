@@ -1,4 +1,4 @@
-declare function env(key: string, fallback?: string): any;
+import { env } from '@ilos/core';
 
 export const redis = {
   connectionString: env('APP_REDIS_URL'),

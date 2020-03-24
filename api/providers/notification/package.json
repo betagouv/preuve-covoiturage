@@ -1,6 +1,7 @@
 {
   "name": "@pdc/provider-notification",
-  "version": "0.3.0",
+  "version": "0.0.1",
+  "private": true,
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -10,62 +11,16 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint 'src/**/*.ts'",
-    "coverage": "nyc --all --reporter=text mocha tests/**/*.spec.ts src/**/*.spec.ts",
     "test": "echo '[provider-notification] No tests'; exit 0",
-    "test:integration": "echo '[provider-notification] No tests'; exit 0"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "test:integration": "echo '[provider-notification] No tests'; exit 0",
+    "coverage": "echo '[provider-notification] No tests'; exit 0",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
+    "@pdc/provider-template": "~0",
     "node-mailjet": "^3.3.1"
   },
-  "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/config": "~0",
-    "@ilos/core": "~0",
-    "@ilos/template": "~0"
-  },
   "devDependencies": {
-    "@types/chai": "^4.2.0",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/mocha": "^5.2.6",
-    "@types/nock": "^10.0.3",
-    "@types/node": "^12.12.11",
-    "@types/node-mailjet": "^3.3.0",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "chai-nock": "^1.1.0",
-    "mocha": "^6.1.4",
-    "nock": "^10.0.6",
-    "nyc": "^14.1.1",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.4.5"
+    "@types/node-mailjet": "^3.3.3"
   }
 }

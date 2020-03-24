@@ -1,5 +1,4 @@
 import { ChartOptions, TimeScale } from 'chart.js';
-import * as moment from 'moment';
 
 import { chartNamesType } from '~/core/types/stat/chartNameType';
 
@@ -73,7 +72,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} trajets`;
         },
       },
@@ -98,7 +97,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} trajets`;
         },
       },
@@ -127,7 +126,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} trajets`;
         },
       },
@@ -152,7 +151,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} trajets`;
         },
       },
@@ -177,7 +176,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} trajets`;
         },
       },
@@ -202,7 +201,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} trajets`;
         },
       },
@@ -227,7 +226,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} km`;
         },
       },
@@ -252,7 +251,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} km`;
         },
       },
@@ -277,7 +276,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} km`;
         },
       },
@@ -302,7 +301,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} covoitureurs`;
         },
       },
@@ -327,7 +326,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} covoitureurs`;
         },
       },
@@ -352,7 +351,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} litres`;
         },
       },
@@ -377,7 +376,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} litres`;
         },
       },
@@ -402,7 +401,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} kg`;
         },
       },
@@ -427,7 +426,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} kg`;
         },
       },
@@ -452,7 +451,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} personnes`;
         },
       },
@@ -477,7 +476,7 @@ export const statChartOptions: chartNamesType & { [key: string]: ChartOptions } 
     },
     tooltips: {
       callbacks: {
-        label(tooltipItem, data) {
+        label(tooltipItem, data): string {
           return ` ${tooltipItem.yLabel} personnes`;
         },
       },

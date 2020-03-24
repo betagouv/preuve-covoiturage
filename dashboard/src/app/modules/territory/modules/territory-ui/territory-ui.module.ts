@@ -9,7 +9,7 @@ import { SharedModule } from '~/shared/shared.module';
 import { DetailsModule } from '~/shared/modules/details/details.module';
 
 import { TerritoryFormComponent } from './components/territory-form/territory-form.component';
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line
 import { TerritoriesAutocompleteComponent } from './components/territories-autocomplete/territories-autocomplete.component';
 import { TerritoryAutocompleteComponent } from './components/territory-autocomplete/territory-autocomplete.component';
 import { TerritoryListComponent } from './components/territory-list/territory-list.component';

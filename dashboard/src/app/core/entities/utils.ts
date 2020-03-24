@@ -1,6 +1,6 @@
 import { FormArray, FormGroup } from '@angular/forms';
 
-export function hasOneNotEmptyProperty(object: any, maxRec = 3) {
+export function hasOneNotEmptyProperty(object: any, maxRec = 3): boolean {
   if (!object) return false;
 
   let hasNonEmpty = false;
@@ -22,14 +22,14 @@ export function hasOneNotEmptyProperty(object: any, maxRec = 3) {
   return hasNonEmpty;
 }
 
-const defaultCopy = (source: any, propertyName: string) => source[propertyName];
+const defaultCopy = (source: any, propertyName: string): any => source[propertyName];
 
 export function assignOrDeleteProperty<PropT>(
   source: any,
   dest: any,
   propertyName: string,
   copyFunc: (source: any, propertyName: string) => PropT = defaultCopy,
-) {
+): void {
   if (source && hasOneNotEmptyProperty(source[propertyName])) {
     dest[propertyName] = copyFunc(source, propertyName);
   } else {
@@ -42,7 +42,7 @@ export function assignOrDeleteProperties<PropT>(
   dest: any,
   propertyNames: string[],
   copyFunc: (source: any, propertyName: string) => PropT = defaultCopy,
-) {
+): void {
   for (const propName of propertyNames) assignOrDeleteProperty(source, dest, propName);
 }
 
@@ -57,7 +57,7 @@ export function copyOnlyDefineSourceProperties<DestT>(source: any, destination: 
 // return invalid controls names
 export function findInvalidControlsRecursive(formToInvestigate: FormGroup | FormArray): string[] {
   const invalidControls: string[] = [];
-  const recursiveFunc = (form: FormGroup | FormArray) => {
+  const recursiveFunc = (form: FormGroup | FormArray): void => {
     Object.keys(form.controls).forEach((field) => {
       const control = form.get(field);
       if (control.invalid) invalidControls.push(field);

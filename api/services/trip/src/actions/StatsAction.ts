@@ -5,13 +5,12 @@ import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/trip/stats.contract';
 import { TripRepositoryProvider } from '../providers/TripRepositoryProvider';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/trip/stats.schema';
 import { StatCacheRepositoryProviderInterfaceResolver } from '../interfaces/StatCacheRepositoryProviderInterface';
 
-@handler(handlerConfig)
-export class StatsAction extends Action {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['validate', alias],
     [
       'scopeIt',
@@ -39,8 +38,9 @@ export class StatsAction extends Action {
         ],
       ],
     ],
-  ];
-
+  ],
+})
+export class StatsAction extends Action {
   constructor(private pg: TripRepositoryProvider, private cache: StatCacheRepositoryProviderInterfaceResolver) {
     super();
   }

@@ -1,4 +1,4 @@
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
@@ -23,27 +23,27 @@ export abstract class GetListStore<
   // filter subject
   protected _filterSubject = new BehaviorSubject<any>(null);
 
-  get filterSubject() {
+  get filterSubject(): BehaviorSubject<any> {
     return this._filterSubject;
   }
 
-  get loadCount() {
+  get loadCount(): number {
     return this._loadCount;
   }
 
-  get isLoading() {
+  get isLoading(): boolean {
     return this._loadCount > 0;
   }
 
-  get entity$() {
+  get entity$(): Observable<EntityT> {
     return this._entity$;
   }
 
-  get entity() {
+  get entity(): EntityT {
     return this.entitySubject.value;
   }
 
-  get entities$() {
+  get entities$(): Observable<EntityListT[]> {
     return this._entities$;
   }
 
@@ -59,14 +59,14 @@ export abstract class GetListStore<
     });
   }
 
-  reset() {
+  reset(): void {
     this._loadCount = 0;
     this.entitiesSubject.next([]);
     this._filterSubject.next({});
     this.entitySubject.next(null);
   }
 
-  loadList() {
+  loadList(): void {
     if (!this.dismissGetSubject) return;
     this.dismissGetSubject.next();
     this.dismissGetListSubject.next();
@@ -84,7 +84,7 @@ export abstract class GetListStore<
       });
   }
 
-  dismissAllRpcActions() {
+  dismissAllRpcActions(): void {
     this.dismissGetListSubject.next();
     this.dismissGetSubject.next();
   }

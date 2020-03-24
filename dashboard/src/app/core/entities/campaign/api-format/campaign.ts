@@ -6,15 +6,15 @@ import { UiStatusInterface } from '~/core/interfaces/campaign/ui-status.interfac
 import { RetributionRuleType } from '~/core/interfaces/campaign/api-format/campaign-rules.interface';
 import { GlobalRetributionRuleType } from '~/core/interfaces/campaign/api-format/campaign-global-rules.interface';
 import { BaseModel } from '~/core/entities/BaseModel';
-import { IFormModel } from '~/core/entities/IFormModel';
-import { IModel } from '~/core/entities/IModel';
-import { IMapModel } from '~/core/entities/IMapModel';
-import { IClone } from '~/core/entities/IClone';
+import { FormModel } from '~/core/entities/IFormModel';
+import { Model } from '~/core/entities/IModel';
+import { MapModel } from '~/core/entities/IMapModel';
+import { Clone } from '~/core/entities/IClone';
 import { CampaignFormater } from '~/core/entities/campaign/api-format/campaign.formater';
 import { CampaignUx } from '~/core/entities/campaign/ux-format/campaign-ux';
 import { CampaignInterface } from '~/core/entities/api/shared/common/interfaces/CampaignInterface';
 
-export class Campaign extends BaseModel implements IFormModel, IModel, IMapModel<Campaign>, IClone<Campaign> {
+export class Campaign extends BaseModel implements FormModel, Model, MapModel<Campaign>, Clone<Campaign> {
   public _id: number;
   public territory_id: number;
   public name: string;

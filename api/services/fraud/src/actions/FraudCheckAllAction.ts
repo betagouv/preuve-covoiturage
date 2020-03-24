@@ -9,10 +9,9 @@ import { CheckEngine } from '../engine/CheckEngine';
 @handler({
   service: 'fraud',
   method: 'checkAll',
+  middlewares: [['channel.service.except', ['proxy']]],
 })
 export class FraudCheckAllAction extends Action {
-  public readonly middlewares: (string | [string, any])[] = [['channel.service.except', ['proxy']]];
-
   constructor(private engine: CheckEngine, private kernel: KernelInterfaceResolver) {
     super();
   }

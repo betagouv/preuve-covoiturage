@@ -3,16 +3,16 @@ import { Action as AbstractAction } from '@ilos/core';
 
 import { OperatorRepositoryProviderInterfaceResolver } from '../interfaces/OperatorRepositoryProviderInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/operator/delete.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/operator/delete.schema';
 
-@handler(handlerConfig)
-export class DeleteOperatorAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [
+@handler({
+  ...handlerConfig,
+  middlewares: [
     ['can', ['operator.delete']],
     ['validate', alias],
-  ];
-
+  ],
+})
+export class DeleteOperatorAction extends AbstractAction {
   constructor(private operatorRepository: OperatorRepositoryProviderInterfaceResolver) {
     super();
   }

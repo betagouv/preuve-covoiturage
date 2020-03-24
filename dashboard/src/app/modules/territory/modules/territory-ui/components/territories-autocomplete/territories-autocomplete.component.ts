@@ -29,7 +29,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initTerritories();
     this.territoryCtrl.valueChanges
       .pipe(
@@ -41,14 +41,14 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
   }
 
   get territoryIdsControl(): FormControl {
-    return <FormControl>this.parentForm.get('territoryIds');
+    return this.parentForm.get('territoryIds') as FormControl;
   }
 
   getTerritoryLabel(territoryId): string {
     return this.territories.find((territory) => territory._id === territoryId).shortname;
   }
 
-  private initTerritories() {
+  private initTerritories(): void {
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories: Territory[]) => {
       this.territories = territories
         ? territories.map((territory: Territory) => ({
@@ -77,7 +77,7 @@ export class TerritoriesAutocompleteComponent extends DestroyObservable implemen
     this.territoryCtrl.setValue('');
   }
 
-  private filterTerritories(literal: string = ''): void {
+  private filterTerritories(literal = ''): void {
     const selectedTerritoryIds = this.territoryIdsControl.value || [];
     this.filteredTerritories = this.territories.filter(
       (territory) =>

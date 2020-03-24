@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, AbstractControl } from '@angular/forms';
 import * as moment from 'moment';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material';
@@ -7,7 +7,6 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
 import { IncentiveUnitEnum, INCENTIVE_UNITS_FR } from '~/core/enums/campaign/incentive-unit.enum';
 import { DestroyObservable } from '~/core/components/destroy-observable';
-import { uniqueRetributionValidator } from '~/modules/campaign/validators/retribution-unique.validator';
 import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.service';
 
 @Component({
@@ -22,6 +21,7 @@ import { CampaignUiService } from '~/modules/campaign/services/campaign-ui.servi
 export class ParametersFormComponent extends DestroyObservable implements OnInit {
   @Input() campaignForm: FormGroup;
   @Input() isCreating = false;
+  // @Input() displayOperatorFilters = false;
 
   minDate = moment().add(1, 'days');
   incentiveUnitKeys = Object.values(IncentiveUnitEnum);
@@ -37,7 +37,7 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initRetributionFormArray();
     this.initRestrictionFormArray();
     // check that the start date is correct
@@ -52,28 +52,28 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     }
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.campaignForm.controls;
   }
 
   get forDriverControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_driver');
+    return this.campaignForm.get('ui_status').get('for_driver') as FormControl;
   }
 
   get forPassengerControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_passenger');
+    return this.campaignForm.get('ui_status').get('for_passenger') as FormControl;
   }
 
   get forTripControl(): FormControl {
-    return <FormControl>this.campaignForm.get('ui_status').get('for_trip');
+    return this.campaignForm.get('ui_status').get('for_trip') as FormControl;
   }
 
   get restrictionFormArray(): FormArray {
-    return <FormArray>this.campaignForm.get('restrictions');
+    return this.campaignForm.get('restrictions') as FormArray;
   }
 
   get retributionsFormArray(): FormArray {
-    return <FormArray>this.campaignForm.get('retributions');
+    return this.campaignForm.get('retributions') as FormArray;
   }
 
   showDateLabel(): string {
@@ -105,24 +105,24 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     return 'Pas de restrictions';
   }
 
-  startEditRestriction() {
+  startEditRestriction(): void {
     this.editRestrictionForm = this.generateRestrictionFormGroup();
   }
 
-  cancelEditRestriction() {
+  cancelEditRestriction(): void {
     delete this.editRestrictionForm;
   }
 
-  addRestriction() {
+  addRestriction(): void {
     this.restrictionFormArray.push(this.editRestrictionForm);
     delete this.editRestrictionForm;
   }
 
-  removeRestriction(idx) {
+  removeRestriction(idx): void {
     this.restrictionFormArray.removeAt(idx);
   }
 
-  isRestrictionFormArrayTouched() {
+  isRestrictionFormArrayTouched(): boolean {
     for (const control of this.restrictionFormArray.controls) {
       if (!control.valid && control.touched) {
         return true;
@@ -131,7 +131,7 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     return false;
   }
 
-  onStaggeredChange($event) {
+  onStaggeredChange($event): void {
     if (!$event.source._checked) {
       // if staggered mode is unchecked
       this.retributionsFormArray.clear();
@@ -140,11 +140,11 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     }
   }
 
-  addStaggered() {
+  addStaggered(): void {
     this.retributionsFormArray.push(this.generateRetributionFormGroup());
   }
 
-  removeStaggered(idx) {
+  removeStaggered(idx): void {
     this.retributionsFormArray.removeAt(idx);
   }
 
@@ -177,13 +177,13 @@ export class ParametersFormComponent extends DestroyObservable implements OnInit
     });
   }
 
-  private initRetributionFormArray() {
+  private initRetributionFormArray(): void {
     if (this.retributionsFormArray.controls.length === 0) {
       this.retributionsFormArray.push(this.generateRetributionFormGroup());
     }
   }
 
-  private initRestrictionFormArray() {
+  private initRestrictionFormArray(): void {
     if (this.restrictionFormArray.controls.length === 0 && this.isCreating) {
       this.restrictionFormArray.push(this.generateRestrictionFormGroup());
     }

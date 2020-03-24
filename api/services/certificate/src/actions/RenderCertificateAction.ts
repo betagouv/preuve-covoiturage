@@ -1,20 +1,17 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, TemplateInterfaceResolver, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
+import { handler, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
+import { TemplateInterfaceResolver } from '@pdc/provider-template';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { RenderTokenPayloadInterface } from '../shared/certificate/common/interfaces/RenderTokenPayloadInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { alias } from '../shared/certificate/render.schema';
 
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class RenderCertificateAction extends AbstractAction {
-  // public readonly middlewares: ActionMiddleware[] = [['can', ['certificate.render']], ['validate', alias]];
-  public readonly middlewares: ActionMiddleware[] = [['validate', alias]];
-
   constructor(
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private templateProvider: TemplateInterfaceResolver,
@@ -58,9 +55,9 @@ export class RenderCertificateAction extends AbstractAction {
       params,
       data: this.templateProvider.get('certificate', {
         data: certificate.meta,
-        identity: certificate.identity_id,
-        operator: certificate.operator_id,
-        territory: certificate.territory_id,
+        identity: certificate.identity_uuid,
+        operator: certificate.operator_uuid,
+        territory: certificate.territory_uuid,
         certificate: {
           created_at: this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à k:m'),
           start_at: this.dateProvider.format(certificate.start_at, 'd MMMM yyyy'),

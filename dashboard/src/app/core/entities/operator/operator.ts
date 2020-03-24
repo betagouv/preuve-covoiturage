@@ -1,11 +1,11 @@
 /* tslint:disable:variable-name*/
 import { assignOrDeleteProperties, assignOrDeleteProperty } from '~/core/entities/utils';
 
-import { IFormModel } from '~/core/entities/IFormModel';
-import { IModel } from '~/core/entities/IModel';
-import { IMapModel } from '~/core/entities/IMapModel';
+import { FormModel } from '~/core/entities/IFormModel';
+import { Model } from '~/core/entities/IModel';
+import { MapModel } from '~/core/entities/IMapModel';
 import { BaseModel } from '~/core/entities/BaseModel';
-import { IClone } from '~/core/entities/IClone';
+import { Clone } from '~/core/entities/IClone';
 
 import { Address } from '../shared/address';
 import { Bank } from '../shared/bank';
@@ -13,7 +13,7 @@ import { CGU } from '../shared/cgu';
 import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
 
-class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operator>, IClone<Operator> {
+class Operator extends BaseModel implements FormModel, Model, MapModel<Operator>, Clone<Operator> {
   public _id: number;
   public name: string;
   public legal_name: string;
@@ -59,7 +59,7 @@ class Operator extends BaseModel implements IFormModel, IModel, IMapModel<Operat
     return this;
   }
 
-  toFormValues(fullFormMode = true) {
+  toFormValues(fullFormMode = true): any {
     const val: any = fullFormMode
       ? {
           ...this,

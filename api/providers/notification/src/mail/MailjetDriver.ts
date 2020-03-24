@@ -1,6 +1,6 @@
 import nodeMailjet from 'node-mailjet';
 
-import { MailDriverInterface, MailInterface } from '@ilos/common';
+import { MailDriverInterface, MailInterface } from '../interfaces';
 
 interface MailjetConnectOptionsInterface {
   version: string;

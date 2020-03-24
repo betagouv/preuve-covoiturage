@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
@@ -35,7 +35,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     document.getElementsByClassName('AuthenticatedLayout-body')[0].scrollTop = 0;
     this._route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
       const notFound = !params.has('campaignId');
@@ -59,7 +59,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
     this.showSummary = true;
   }
 
-  private loadCampaign(campaignId: number) {
+  private loadCampaign(campaignId: number): void {
     this._campaignStoreService
       .selectEntityByIdFromList(campaignId)
       .pipe(
@@ -85,7 +85,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
     }
   }
 
-  private loadTerritory(id: number) {
+  private loadTerritory(id: number): void {
     const foundTerritory = this._commonDataService.territories.filter((territory) => territory._id === id)[0];
     if (foundTerritory) {
       this.territory = foundTerritory;

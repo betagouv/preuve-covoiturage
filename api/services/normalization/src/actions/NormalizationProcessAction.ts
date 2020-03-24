@@ -32,7 +32,6 @@ import {
   ResultInterface as CrossCheckResultInterface,
 } from '../shared/carpool/crosscheck.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/process.contract';
-import { ActionMiddleware } from '../shared/common/ActionMiddlewareInterface';
 import { PersonInterface, FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
 
 const context: ContextType = {
@@ -46,10 +45,8 @@ const context: ContextType = {
 };
 
 // Enrich position data
-@handler(handlerConfig)
+@handler({ ...handlerConfig, middlewares: [['channel.service.only', ['acquisition', handlerConfig.service]]] })
 export class NormalizationProcessAction extends AbstractAction {
-  public readonly middlewares: ActionMiddleware[] = [['channel.service.only', ['acquisition', handlerConfig.service]]];
-
   constructor(private kernel: KernelInterfaceResolver) {
     super();
   }

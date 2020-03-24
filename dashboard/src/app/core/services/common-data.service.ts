@@ -118,8 +118,7 @@ export class CommonDataService {
     );
   }
 
-  public loadAll() {
-    console.log('common > loadAll');
+  public loadAll(): Observable<boolean> {
     return this.authenticationService.check().pipe(
       mergeMap((user) => {
         if (user) {
@@ -188,7 +187,7 @@ export class CommonDataService {
     );
   }
 
-  public resetAll() {
+  public resetAll(): void {
     this._territories$.next(null);
     this._campaigns$.next(null);
     this._operators$.next(null);

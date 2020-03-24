@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import {
   RESTRICTION_PERIODS,
@@ -20,15 +20,15 @@ export class RestrictionFormComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initValidators();
   }
 
-  get unitLabel() {
+  get unitLabel(): string {
     return `${this.unit.charAt(0).toUpperCase() + this.unit.slice(1)}s`;
   }
 
-  get controls() {
+  get controls(): { [key: string]: AbstractControl } {
     return this.restrictionformGroup.controls;
   }
 
@@ -36,7 +36,7 @@ export class RestrictionFormComponent implements OnInit {
     return RESTRICTION_PERIODS_FR[val];
   }
 
-  private initValidators() {
+  private initValidators(): void {
     this.restrictionformGroup.get('quantity').setValidators([Validators.required, Validators.min(0)]);
     this.restrictionformGroup.get('is_driver').setValidators(Validators.required);
     this.restrictionformGroup.get('period').setValidators(Validators.required);
