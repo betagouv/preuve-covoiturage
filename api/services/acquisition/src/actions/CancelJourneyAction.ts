@@ -7,6 +7,7 @@ import {
 } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/cancel.contract';
+import { signature as updateStatusSignature, ParamsInterface as UpdateStatusParams } from '../shared/carpool/updateStatus.contract';
 import { alias } from '../shared/acquisition/cancel.schema';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 
@@ -37,13 +38,15 @@ export class CreateJourneyAction extends AbstractAction {
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // Store in database
     const { application_id, operator_id } = context.call.user;
-    const exists = await this.journeyRepository.exists(params.journey_id, operator_id, application_id);
-
-    if (!exists) {
-      throw new NotFoundException(`Journey ${params.journey_id} doest not exist`);
+    try {
+      const acquisition_id = await this.journeyRepository.exists(params.journey_id, operator_id, application_id);
+      // Perform cancelling action :)
+      await this.kernel.notify<UpdateStatusParams>(updateStatusSignature, { acquisition_id, status: 'canceled' }, callContext);
+    } catch(e) {
+      if (e instanceof NotFoundException) {
+        throw new NotFoundException(`Journey ${params.journey_id} doest not exist`);        
+      }
+      throw e;
     }
-
-    // Perform cancelling action :)
-    // use kernel.notify to carpool
   }
 }

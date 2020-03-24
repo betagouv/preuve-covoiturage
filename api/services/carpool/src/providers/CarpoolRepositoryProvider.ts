@@ -19,6 +19,18 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryProviderInter
 
   constructor(protected connection: PostgresConnection) {}
 
+  public async updateStatus(acquisition_id: number, status: string): Promise<void> {
+    const query = {
+      text: `
+        UPDATE ${this.table}
+        SET status = $1::carpool.carpool_status_enum
+        WHERE acquisition_id = $2::int
+      `,
+      values: [status, acquisition_id],
+    };
+    await this.connection.getClient().query(query);
+  }
+
   public async importFromAcquisition(
     shared: {
       acquisition_id: number; // _id
