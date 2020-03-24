@@ -25,7 +25,7 @@ const callContext: ContextType = {
     service: 'acquisition',
     metadata: {
       attempts: 5,
-      backoff: 300000, // 5 min delay betweend attempts
+      backoff: 300000, // 5 min delay between attempts
     },
   },
   call: {
