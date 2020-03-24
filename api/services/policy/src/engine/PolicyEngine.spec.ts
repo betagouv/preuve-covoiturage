@@ -50,13 +50,12 @@ function setup() {
   }
   const engine: PolicyEngine = new PolicyEngine(new CampaignMetadataRepositoryProvider());
 
-  return { engine, territory, start, fakeCampaign };
+  return { engine, start, fakeCampaign };
 }
 
 test('should boot', async (t) => {
-  const { engine, territory, start, fakeCampaign } = setup();
+  const { engine, start, fakeCampaign } = setup();
   const trip = faker.trip([{}], {
-    territories: [territory],
     datetime: start,
   });
 

@@ -94,6 +94,8 @@ export const trips: TripInterface[] = [
           datetime: new Date(def.datetime),
           is_driver: true,
           identity_uuid: def.driver_identity_uuid,
+          start_territory_id: def.inside ? [1] : [2],
+          end_territory_id: def.inside ? [1] : [2],
         },
         {
           carpool_id: def.passenger_carpool_id,
@@ -102,10 +104,11 @@ export const trips: TripInterface[] = [
           is_driver: false,
           identity_uuid: def.passenger_identity_uuid,
           seats: def.passenger_seats,
+          start_territory_id: def.inside ? [1] : [2],
+          end_territory_id: def.inside ? [1] : [2],
         },
       ],
       {
-        territories: def.inside ? [1] : [2],
         datetime: new Date(def.datetime),
       },
     ),

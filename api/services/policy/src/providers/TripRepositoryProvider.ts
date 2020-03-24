@@ -1,5 +1,6 @@
+import { promisify } from 'util';
 import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
+import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 import { TripRepositoryProviderInterface, TripRepositoryProviderInterfaceResolver, TripInterface } from '../interfaces';
 
@@ -11,78 +12,75 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
 
   constructor(protected connection: PostgresConnection) {}
 
-  async findTripsById(trip_ids: string[]): Promise<TripInterface[]> {
-    const results = await this.connection.getClient().query(`
+  async refresh(): Promise<void> {
+    await this.connection.getClient().query(`REFRESH MATERIALIZED VIEW ${this.table}`);
+    return;
+  }
+
+  async listApplicablePoliciesId(): Promise<number[]> {
+    const query = {
+      text: `
+        SELECT
+          distinct pp 
+        FROM ${this.table} as pt,
+        UNNEST(pt.applicable_policies) as pp
+      `,
+      values: [],
+    };
+    const results = await this.connection.getClient().query(query);
+    return results.rows;
+  }
+
+  async *findTripByPolicy(policy_id: number, batchSize: number = 100): AsyncGenerator<TripInterface[], void, void> {
+    const query = {
+      text: `
       SELECT
         trip_id,
-        identity_uuid,
-        carpool_id,
-        operator_id,
-        operator_class,
-        is_over_18,
-        is_driver,
-        has_travel_pass,
-        datetime,
-        start_insee,
-        end_insee,
-        seats,
-        duration,
-        distance,
-        cost,
-        start_territory_id,
-        end_territory_id
-      FROM ${this.table}
-      WHERE trip_id IN ('${trip_ids.join("','")}')
-      ORDER BY trip_id
-    `);
+        MIN(datetime) as datetime,
+        json_agg(
+          json_build_object(
+            'identity_uuid', identity_uuid,
+            'carpool_id', carpool_id,
+            'operator_id', operator_id,
+            'operator_class', operator_class,
+            'is_over_18', is_over_18,
+            'is_driver', is_driver,
+            'has_travel_pass', has_travel_pass,
+            'datetime', datetime,
+            'start_insee', start_insee,
+            'end_insee', end_insee,
+            'seats', seats,
+            'duration', duration,
+            'distance', distance,
+            'cost', cost,
+            'start_territory_id', start_territory_id,
+            'end_territory_id', end_territory_id
+          )
+        ) as people
+      FROM ${this.table} as pt
+      WHERE $1::int = ANY(pt.applicable_policies)
+      GROUP BY trip_id;
+      `,
+      values: [policy_id],
+    };
 
-    if (results.rowCount < 1) {
-      return;
-    }
+    const client = await this.connection.getClient().connect();
+    const cursor = client.query(new Cursor(query.text, query.values));
+    const promisifiedCursorRead = promisify(cursor.read.bind(cursor));
 
-    // TODO group by trip_id
-    const iterator = results.rows
-      .reduce((acc, trip, idx) => {
-        const value = acc.get(trip.trip_id) || [];
-        value.push(trip);
-        acc.set(trip.trip_id, value);
-
-        return acc;
-      }, new Map())
-      .values();
-
-    return [...iterator].map((tuple) => {
-      let hasDriver = false;
-
-      const trip = tuple.reduce(
-        (acc, row) => {
-          if (row.is_driver && hasDriver) {
-            return acc;
-          }
-
-          if (row.is_driver && !hasDriver) {
-            hasDriver = true;
-          }
-
-          acc.people.push(row);
-          acc.territories.add(row.start_territory_id);
-          acc.territories.add(row.end_territory_id);
-          acc.datetime =
-            acc.datetime === null ? row.datetime : acc.datetime > row.datetime ? row.datetime : acc.datetime;
-
-          return acc;
-        },
-        {
-          territories: new Set(),
-          datetime: null,
-          people: [],
-        },
-      );
-
-      return {
-        ...trip,
-        territories: [...trip.territories],
-      };
-    });
+    let count = 0;
+    do {
+      try {
+        const rows = await promisifiedCursorRead(batchSize);
+        count = rows.length;
+        if (count > 0) {
+          yield rows;
+        }
+      } catch (e) {
+        cursor.close(() => client.release());
+        throw e;
+      }
+    } while (count > 0);
+    cursor.close(() => client.release());
   }
 }

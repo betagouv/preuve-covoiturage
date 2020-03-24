@@ -33,8 +33,8 @@ function setup() {
   });
 
   const defaultTripParams = {
-    start_territory_id: 1,
-    end_territory_id: 1,
+    start_territory_id: [1],
+    end_territory_id: [1],
   };
   return { policy, defaultTripParams };
 }

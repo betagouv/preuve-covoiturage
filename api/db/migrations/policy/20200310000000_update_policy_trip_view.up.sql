@@ -19,6 +19,8 @@ CREATE MATERIALIZED VIEW policy.trips AS (
     id.identity_uuid as identity_uuid,
     id.has_travel_pass as has_travel_pass,
     id.is_over_18 as is_over_18,
+    tis.territory_id as start_territory_id,
+    tie.territory_id as end_territory_id,
     ap.applicable_policies as applicable_policies,
     pp.processed_policies as processed_policies,
     (ap.applicable_policies - pp.processed_policies) as processable_policies
@@ -29,15 +31,20 @@ CREATE MATERIALIZED VIEW policy.trips AS (
        COALESCE(array_agg(ti.territory_id)::int[], ARRAY[]::int[]) as territory_id
     FROM territory.insee as ti
     WHERE ti._id = cp.start_insee
-    OR ti._id = cp.end_insee
-  ) as ct,
+  ) as tis,
+  LATERAL (
+    SELECT
+       COALESCE(array_agg(ti.territory_id)::int[], ARRAY[]::int[]) as territory_id
+    FROM territory.insee as ti
+    WHERE ti._id = cp.end_insee
+  ) as tie,
   -- Find all policies that appliable to carpool
   LATERAL (
     SELECT
       COALESCE(array_agg(pp._id), ARRAY[]::int[]) as applicable_policies
     FROM policy.policies as pp
     WHERE
-      pp.territory_id = any(ct.territory_id)
+      (pp.territory_id = any(tis.territory_id) OR pp.territory_id = any(tie.territory_id))
       AND pp.start_date <= cp.datetime
       AND pp.end_date >= cp.datetime
       AND pp.status = 'active'
@@ -65,4 +72,6 @@ CREATE MATERIALIZED VIEW policy.trips AS (
 
 CREATE UNIQUE INDEX IF NOT EXISTS trips_carpool_id_idx ON policy.trips (carpool_id);
 CREATE INDEX IF NOT EXISTS trips_datetime_idx ON policy.trips (datetime);
+CREATE INDEX IF NOT EXISTS trips_trip_id_idx ON policy.trips (trip_id);
 CREATE INDEX IF NOT EXISTS trips_applicable_policies_idx ON policy.trips (applicable_policies);
+CREATE INDEX IF NOT EXISTS trips_processable_policies_idx ON policy.trips (processable_policies);

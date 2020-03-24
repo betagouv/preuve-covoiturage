@@ -22,7 +22,10 @@ export function macro(
   policy: CampaignInterface,
 ): {
   test: TestInterface<TestContext>;
-  results: Macro<[{ carpool_id: number; amount: number, meta?: {[k:string]: string} }[], TripInterface[]?], TestContext>;
+  results: Macro<
+    [{ carpool_id: number; amount: number; meta?: { [k: string]: string } }[], TripInterface[]?],
+    TestContext
+  >;
 } {
   const test = anyTest as TestInterface<TestContext>;
 
@@ -62,9 +65,12 @@ export function macro(
     await t.context.kernel.shutdown();
   });
 
-  const results: Macro<[{ carpool_id: number; amount: number, meta?: {[k:string]: string} }[], TripInterface[]?], TestContext> = async (
+  const results: Macro<
+    [{ carpool_id: number; amount: number; meta?: { [k: string]: string } }[], TripInterface[]?],
+    TestContext
+  > = async (
     t: ExecutionContext<TestContext>,
-    expected: { carpool_id: number; amount: number, meta?: {[k:string]: string} }[],
+    expected: { carpool_id: number; amount: number; meta?: { [k: string]: string } }[],
     trips: TripInterface[] = defaultTrips,
   ) => {
     const incentives = [];
@@ -79,7 +85,13 @@ export function macro(
       trips
         .filter(
           (tr) =>
-            tr.territories.indexOf(policy.territory_id) >= 0 &&
+            tr.people
+              .map((p) => [...p.start_territory_id, ...p.end_territory_id])
+              .reduce((s, t) => {
+                t.map((v) => s.add(v));
+                return s;
+              }, new Set())
+              .has(policy.territory_id) &&
             tr.datetime >= policy.start_date &&
             tr.datetime <= policy.end_date,
         )

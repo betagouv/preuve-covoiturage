@@ -50,8 +50,8 @@ export class IdfmStrikeJan2020 extends AbstractRule<IdfmParametersInterface> {
         (p) =>
           !p.is_driver &&
           p.is_over_18 !== false && // accept TRUE and NULL @issue #848
-          p.start_territory_id === this.parameters.territory_id && // au départ
-          p.end_territory_id === this.parameters.territory_id && // et à l'arrivée de l'ile de france
+          p.start_territory_id.indexOf(this.parameters.territory_id) >= 0 && // au départ
+          p.end_territory_id.indexOf(this.parameters.territory_id) >= 0 && // et à l'arrivée de l'ile de france
           p.distance >= 2000 && // trajet supérieur à 2km seulement
           !(
             this.parameters.paris_insee_code.indexOf(p.start_insee) >= 0 &&
