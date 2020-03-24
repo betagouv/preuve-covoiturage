@@ -5,7 +5,7 @@ import { IncentiveInterface } from './IncentiveInterface';
 export type IncentiveCreateOptionsType = { connection?: PoolClient | null; release?: boolean };
 
 export interface IncentiveRepositoryProviderInterface {
-  updateManyAmount(data: { carpool_id: number, policy_id: number, amount: number }[]): Promise<void>;
+  updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void>;
   createOrUpdateMany(data: IncentiveInterface[]): Promise<void>;
   disableOnCanceledTrip(): Promise<void>;
   lockAll(before: Date): Promise<void>;
@@ -13,7 +13,7 @@ export interface IncentiveRepositoryProviderInterface {
 }
 
 export abstract class IncentiveRepositoryProviderInterfaceResolver implements IncentiveRepositoryProviderInterface {
-  abstract async updateManyAmount(data: { carpool_id: number, policy_id: number, amount: number }[]): Promise<void>;
+  abstract async updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void>;
   abstract async createOrUpdateMany(data: IncentiveInterface[]): Promise<void>;
   abstract async disableOnCanceledTrip(): Promise<void>;
   abstract async lockAll(before: Date): Promise<void>;

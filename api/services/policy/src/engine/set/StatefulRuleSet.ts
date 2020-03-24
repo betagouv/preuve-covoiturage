@@ -1,6 +1,4 @@
-import {
-  IncentiveInterface
-} from '../../interfaces';
+import { IncentiveInterface } from '../../interfaces';
 import {
   RuleHandlerContextInterface,
   StatefulRuleInterface,
@@ -40,10 +38,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
   }
 
   listStateKeys(incentive: IncentiveInterface): string[] {
-    const keys = new Set<string>(this.ruleSet
-      .map(s => s.uuid)
-      .map(k => incentive.meta[k])
-    );
+    const keys = new Set<string>(this.ruleSet.map((s) => s.uuid).map((k) => incentive.meta[k]));
     return [...keys];
   }
 
@@ -56,7 +51,7 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
         try {
           result = statefulRule.apply(incentive.result, state);
           meta.set(metaKey, statefulRule.setState(result, state));
-        } catch(e) {
+        } catch (e) {
           if (!(e instanceof NotApplicableTargetException)) {
             throw e;
           }

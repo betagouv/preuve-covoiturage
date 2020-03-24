@@ -11,7 +11,7 @@ export class MetadataWrapper implements MetaInterface {
     return this.data.has(key);
   }
 
-  get(key: string, fallback: number = 0): number {
+  get(key: string, fallback = 0): number {
     if (this.data.has(key)) {
       return this.data.get(key);
     }
@@ -25,7 +25,7 @@ export class MetadataWrapper implements MetaInterface {
   keys(): string[] {
     return [...this.data.keys()];
   }
-  
+
   values(): number[] {
     return [...this.data.values()];
   }
@@ -34,7 +34,7 @@ export class MetadataWrapper implements MetaInterface {
 export class FakeMetadataWrapper implements MetaInterface {
   protected data: Map<string, number> = new Map();
 
-  get(key: string, fallback: number = 0): number {
+  get(key: string, fallback = 0): number {
     if (!this.data.has(key)) {
       this.data.set(key, fallback);
     }
@@ -48,7 +48,7 @@ export class FakeMetadataWrapper implements MetaInterface {
   keys(): string[] {
     return [...this.data.keys()];
   }
-  
+
   values(): number[] {
     return [...this.data.values()];
   }

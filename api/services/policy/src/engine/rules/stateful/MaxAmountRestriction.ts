@@ -3,12 +3,12 @@ import { AbstractStatefulRestriction } from './AbstractStatefulRestriction';
 export class MaxAmountRestriction extends AbstractStatefulRestriction {
   static readonly slug: string = 'max_amount_restriction';
   static readonly description: string = 'Montant maximum';
-  
-  getPrefix() {
+
+  getPrefix(): string {
     return MaxAmountRestriction.slug;
   }
 
-  getErrorMessage() {
+  getErrorMessage(): string {
     return MaxAmountRestriction.description;
   }
 

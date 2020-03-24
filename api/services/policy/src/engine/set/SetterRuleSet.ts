@@ -1,5 +1,10 @@
 import { AbstractRuleSet } from './AbstractRuleSet';
-import { SetterRuleInterface, RuleHandlerContextInterface, StaticRuleInterface, RuleHandlerParamsInterface } from '../interfaces';
+import {
+  SetterRuleInterface,
+  RuleHandlerContextInterface,
+  StaticRuleInterface,
+  RuleHandlerParamsInterface,
+} from '../interfaces';
 import { type, SETTER } from '../helpers/type';
 
 export class SetterRuleSet extends AbstractRuleSet<SetterRuleInterface> implements SetterRuleInterface {

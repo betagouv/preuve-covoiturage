@@ -1,5 +1,10 @@
 import { AbstractRuleSet } from './AbstractRuleSet';
-import { FilterRuleInterface, RuleHandlerContextInterface, RuleHandlerParamsInterface, StaticRuleInterface } from '../interfaces';
+import {
+  FilterRuleInterface,
+  RuleHandlerContextInterface,
+  RuleHandlerParamsInterface,
+  StaticRuleInterface,
+} from '../interfaces';
 import { type, FILTER } from '../helpers/type';
 import { NotApplicableTargetException } from '../exceptions/NotApplicableTargetException';
 

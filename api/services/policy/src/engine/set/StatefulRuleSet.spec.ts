@@ -138,7 +138,6 @@ test('should apply stateful rules and update meta', async (t) => {
   t.true(meta.has(amountRestrictionKey));
   t.is(meta.get(amountRestrictionKey), 150);
 
-
   t.true(meta.has(tripRestrictionKey));
   t.is(meta.get(tripRestrictionKey), 3);
 });

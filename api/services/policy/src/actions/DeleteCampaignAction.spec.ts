@@ -77,17 +77,18 @@ test.before(async (t) => {
   const policy = await t.context.kernel
     .get(ServiceProvider)
     .get(CampaignRepositoryProviderInterfaceResolver)
-    .create(fakeCampaign)
+    .create(fakeCampaign);
 
   t.context.policy_id = policy._id;
 });
 
 test(
   success,
-  (t: ExecutionContext<TestContext>) => ({
-    _id: t.context.policy_id,
-    territory_id: territory,
-  }) as unknown as ParamsInterface,
+  (t: ExecutionContext<TestContext>) =>
+    (({
+      _id: t.context.policy_id,
+      territory_id: territory,
+    } as unknown) as ParamsInterface),
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.true(response);
   },

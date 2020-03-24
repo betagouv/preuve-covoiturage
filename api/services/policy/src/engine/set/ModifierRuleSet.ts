@@ -1,5 +1,10 @@
 import { AbstractRuleSet } from './AbstractRuleSet';
-import { ModifierRuleInterface, RuleHandlerContextInterface, StaticRuleInterface, RuleHandlerParamsInterface } from '../interfaces';
+import {
+  ModifierRuleInterface,
+  RuleHandlerContextInterface,
+  StaticRuleInterface,
+  RuleHandlerParamsInterface,
+} from '../interfaces';
 import { type, MODIFIER } from '../helpers/type';
 
 export class ModifierRuleSet extends AbstractRuleSet<ModifierRuleInterface> implements ModifierRuleInterface {

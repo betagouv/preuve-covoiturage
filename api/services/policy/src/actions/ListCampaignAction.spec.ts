@@ -77,7 +77,7 @@ test.before(async (t) => {
   const policy = await t.context.kernel
     .get(ServiceProvider)
     .get(CampaignRepositoryProviderInterfaceResolver)
-    .create(fakeCampaign)
+    .create(fakeCampaign);
 
   t.context.policy_id = policy._id;
 });
@@ -87,7 +87,7 @@ test(
   { territory_id: territory },
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.true(Array.isArray(response));
-    const policy = response.find(c => c._id === t.context.policy_id);
+    const policy = response.find((c) => c._id === t.context.policy_id);
     t.is(policy.name, fakeCampaign.name);
   },
   mockContext(['incentive-campaign.list']),

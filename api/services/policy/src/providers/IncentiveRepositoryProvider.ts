@@ -1,12 +1,11 @@
 import { provider } from '@ilos/common';
 import { promisify } from 'util';
-import { PostgresConnection, PoolClient, Cursor } from '@ilos/connection-postgres';
+import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 import {
   IncentiveInterface,
   IncentiveRepositoryProviderInterface,
   IncentiveRepositoryProviderInterfaceResolver,
-  IncentiveCreateOptionsType,
   IncentiveStateEnum,
 } from '../interfaces';
 
@@ -30,10 +29,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           pt.carpool_id = pi.carpool_id AND
           pt.carpool_status = $2::carpool.carpool_status_enum
       `,
-      values: [
-        'disabled',
-        'canceled',
-      ],
+      values: ['disabled', 'canceled'],
     };
 
     await this.connection.getClient().query(query);
@@ -47,32 +43,23 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         WHERE
           datetime <= $2::timestamp
       `,
-      values: [
-        'validated',
-        before,
-      ],
+      values: ['validated', before],
     };
 
     await this.connection.getClient().query(query);
   }
-  async updateManyAmount(data: { carpool_id: number, policy_id: number, amount: number }[]): Promise<void> {
+  async updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void> {
     const idSet: Set<string> = new Set();
-    const filteredData = data
-      .reverse()
-      .filter(d => {
-        const key = `${d.policy_id}/${d.carpool_id}`;
-        if (idSet.has(key)) {
-          return false;
-        }
-        idSet.add(key);
-        return true;
-      });
+    const filteredData = data.reverse().filter((d) => {
+      const key = `${d.policy_id}/${d.carpool_id}`;
+      if (idSet.has(key)) {
+        return false;
+      }
+      idSet.add(key);
+      return true;
+    });
 
-    const keys = [
-      'policy_id',
-      'carpool_id',
-      'amount',
-    ].map(k => filteredData.map(d => d[k]));
+    const keys = ['policy_id', 'carpool_id', 'amount'].map((k) => filteredData.map((d) => d[k]));
 
     const query = {
       text: `
@@ -98,16 +85,14 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
       FROM data
       WHERE data.carpool_id = pt.carpool_id AND data.policy_id = pt.policy_id
       `,
-      values: [
-        ...keys,
-      ],
+      values: [...keys],
     };
 
     await this.connection.getClient().query(query);
     return;
   }
 
-  async *findDraftIncentive(before: Date, batchSize: number = 100): AsyncGenerator<IncentiveInterface[], void, void> {
+  async *findDraftIncentive(before: Date, batchSize = 100): AsyncGenerator<IncentiveInterface[], void, void> {
     const query = {
       text: `
       SELECT
@@ -125,10 +110,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         datetime <= $2::timestamp
       ORDER BY datetime ASC;
       `,
-      values: [
-        'draft',
-        before,
-      ],
+      values: ['draft', before],
     };
 
     const client = await this.connection.getClient().connect();
@@ -155,7 +137,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
     const idSet: Set<string> = new Set();
     const filteredData = data
       .reverse()
-      .filter(d => {
+      .filter((d) => {
         const key = `${d.policy_id}/${d.carpool_id}`;
         if (idSet.has(key)) {
           return false;
@@ -163,23 +145,16 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         idSet.add(key);
         return true;
       })
-      .map(i => ({
+      .map((i) => ({
         ...i,
         status: i.status || 'validated',
         state: i.amount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
         meta: i.meta || {},
       }));
 
-    const keys = [
-      'policy_id',
-      'carpool_id',
-      'datetime',
-      'result',
-      'amount',
-      'status',
-      'state',
-      'meta',
-    ].map(k => filteredData.map(d => d[k]));
+    const keys = ['policy_id', 'carpool_id', 'datetime', 'result', 'amount', 'status', 'state', 'meta'].map((k) =>
+      filteredData.map((d) => d[k]),
+    );
 
     const query = {
       text: `
@@ -217,9 +192,7 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
           excluded.meta
         )
       `,
-      values: [
-        ...keys,
-      ],
+      values: [...keys],
     };
 
     await this.connection.getClient().query(query);

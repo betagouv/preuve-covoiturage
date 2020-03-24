@@ -1,4 +1,4 @@
-import { handler, KernelInterfaceResolver, ContextType, InitHookInterface } from '@ilos/common';
+import { handler, KernelInterfaceResolver, InitHookInterface } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 
 import {
@@ -13,21 +13,11 @@ import { ProcessableCampaign } from '../engine/ProcessableCampaign';
 import {
   IncentiveRepositoryProviderInterfaceResolver,
   CampaignRepositoryProviderInterfaceResolver,
-  IncentiveInterface,
   TripRepositoryProviderInterfaceResolver,
 } from '../interfaces';
 
 @handler({ ...handlerConfig, middlewares: [['channel.service.only', [handlerConfig.service]]] })
 export class FinalizeAction extends AbstractAction implements InitHookInterface {
-  private readonly context: ContextType = {
-    call: {
-      user: {},
-    },
-    channel: {
-      service: handlerConfig.service,
-    },
-  };
-
   constructor(
     private campaignRepository: CampaignRepositoryProviderInterfaceResolver,
     private incentiveRepository: IncentiveRepositoryProviderInterfaceResolver,
@@ -39,24 +29,20 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
   }
 
   async init(): Promise<void> {
-    await this.kernel.notify<ParamsInterface>(
-      handlerSignature,
-      null,
-      {
-        call: {
-          user: {},
-        },
-        channel: {
-          service: handlerConfig.service,
-          metadata: {
-            repeat: {
-              cron: '* 4 6 * *',
-            },
-            jobId: 'policy.finalize.cron',
+    await this.kernel.notify<ParamsInterface>(handlerSignature, null, {
+      call: {
+        user: {},
+      },
+      channel: {
+        service: handlerConfig.service,
+        metadata: {
+          repeat: {
+            cron: '* 4 6 * *',
           },
+          jobId: 'policy.finalize.cron',
         },
       },
-    );
+    });
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
@@ -87,24 +73,20 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
     const cursor = await this.incentiveRepository.findDraftIncentive(before);
     let done = false;
     do {
-      const updatedIncentives: {carpool_id: number, policy_id: number, amount: number }[] = [];
+      const updatedIncentives: { carpool_id: number; policy_id: number; amount: number }[] = [];
       const results = await cursor.next();
       done = results.done;
       if (results.value) {
         for (const incentive of results.value) {
           // 2. Get policy
           const policyId = incentive.policy_id;
-          if(!policyMap.has(policyId)) {
-            policyMap.set(policyId, this.engine.buildCampaign(
-              await this.campaignRepository.find(policyId),
-            ));
+          if (!policyMap.has(policyId)) {
+            policyMap.set(policyId, this.engine.buildCampaign(await this.campaignRepository.find(policyId)));
           }
           const policy = policyMap.get(policyId);
-  
+
           // 3. Process stateful rule
-          updatedIncentives.push(
-            await this.engine.processStateful(policy, incentive),
-          );
+          updatedIncentives.push(await this.engine.processStateful(policy, incentive));
         }
       }
       // 4. Update incentives

@@ -10,7 +10,6 @@ import {
   RuleHandlerParamsInterface,
   AppliableRuleInterface,
   StatefulRuleSetInterface,
-  RuleHandlerContextInterface,
   MetaInterface,
   StaticRuleInterface,
   MetaRuleInterface,

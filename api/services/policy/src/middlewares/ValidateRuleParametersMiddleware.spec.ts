@@ -120,26 +120,15 @@ test.serial('should throw error if uuid is not unique', async (t) => {
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(
-    err.rpcError.data,
-    `${slug} should have an unique id`,
-  );
+  t.is(err.rpcError.data, `${slug} should have an unique id`);
 });
 
 test.serial('should throw error if global set contains unauthorized rules', async (t) => {
   const slug = 'fixed_amount_setter';
   const err = await t.throwsAsync<InvalidParamsException>(async () =>
-    t.context.middleware.process(
-      ...setup(
-        [{ slug, parameters: 10 }],
-        [],
-      ),
-    ),
+    t.context.middleware.process(...setup([{ slug, parameters: 10 }], [])),
   );
   t.log(err);
   t.is(err.message, 'Invalid params');
-  t.is(
-    err.rpcError.data,
-    'Global rules accept only filter and statefule rules',
-  );
+  t.is(err.rpcError.data, 'Global rules accept only filter and statefule rules');
 });

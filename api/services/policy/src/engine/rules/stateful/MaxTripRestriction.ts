@@ -3,12 +3,12 @@ import { AbstractStatefulRestriction } from './AbstractStatefulRestriction';
 export class MaxTripRestriction extends AbstractStatefulRestriction {
   static readonly slug: string = 'max_trip_restriction';
   static readonly description: string = 'Nombre de trajet maximumm';
-  
-  getPrefix() {
+
+  getPrefix(): string {
     return MaxTripRestriction.slug;
   }
 
-  getErrorMessage() {
+  getErrorMessage(): string {
     return MaxTripRestriction.description;
   }
 

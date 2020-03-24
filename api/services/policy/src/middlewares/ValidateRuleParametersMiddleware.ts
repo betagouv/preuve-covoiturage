@@ -31,10 +31,10 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
   }
 
   async process(params: CampaignInterface, context: ContextType, next?: Function, options?: any): Promise<ResultType> {
-    // TODO : 
+    // TODO :
     // - uuid on stateful + no duplicate
     // - filter/stateful only on global
-    // - 
+    // -
     const globalRules = params.global_rules && params.global_rules.length ? params.global_rules : [];
     const ruleSets = params.rules && params.rules.length ? params.rules : [];
 
@@ -51,26 +51,26 @@ export class ValidateRuleParametersMiddleware implements MiddlewareInterface, In
         this.ruleExists(rule);
         await this.properlyParametred(rule);
         await this.statefulHaveUniqueUuid(rule, uuidSet);
-      }      
+      }
     }
   }
 
   protected validateGlobalRules(ruleSet: RuleInterface[]): void {
-    if (ruleSet.filter(r => filterRuleSlugs.indexOf(r.slug) < 0 && statefuleRuleSlugs.indexOf(r.slug) < 0).length > 0) {
+    if (
+      ruleSet.filter((r) => filterRuleSlugs.indexOf(r.slug) < 0 && statefuleRuleSlugs.indexOf(r.slug) < 0).length > 0
+    ) {
       throw new InvalidParamsException(`Global rules accept only filter and statefule rules`);
     }
   }
 
   protected ruleExists(rule: RuleInterface): void {
     if (availablePolicieSlugs.indexOf(rule.slug) < 0) {
-      throw new InvalidParamsException(
-        `Unknown retribution rule: ${rule.slug}`,
-      );
+      throw new InvalidParamsException(`Unknown retribution rule: ${rule.slug}`);
     }
   }
 
   protected async properlyParametred(rule: RuleInterface): Promise<void> {
-    if ((!('parameters' in rule) && !this.shouldBeParametred(rule))) {
+    if (!('parameters' in rule) && !this.shouldBeParametred(rule)) {
       return;
     }
     try {

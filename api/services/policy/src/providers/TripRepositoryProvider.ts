@@ -31,7 +31,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
     return results.rows;
   }
 
-  async *findTripByPolicy(policy_id: number, batchSize: number = 100): AsyncGenerator<TripInterface[], void, void> {
+  async *findTripByPolicy(policy_id: number, batchSize = 100): AsyncGenerator<TripInterface[], void, void> {
     const query = {
       text: `
       SELECT

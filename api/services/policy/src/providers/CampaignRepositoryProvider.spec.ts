@@ -2,7 +2,7 @@ import anyTest, { TestInterface } from 'ava';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { CampaignPgRepositoryProvider } from './CampaignPgRepositoryProvider';
-import { IncentiveStateEnum, IncentiveStatusEnum, CampaignInterface } from '../interfaces';
+import { CampaignInterface } from '../interfaces';
 
 interface TestContext {
   connection: PostgresConnection;

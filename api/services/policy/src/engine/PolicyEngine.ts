@@ -52,7 +52,7 @@ export class PolicyEngine {
     return incentives;
   }
 
-  protected guard(trip: TripInterface, campaign: CampaignInterface) {
+  protected guard(trip: TripInterface, campaign: CampaignInterface): boolean {
     if (
       trip.people
         .map((p) => [...p.start_territory_id, ...p.end_territory_id])

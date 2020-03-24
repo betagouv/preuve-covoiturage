@@ -1,4 +1,3 @@
-
 export interface ParamsInterface {
   acquisition_id: number;
   status: string;

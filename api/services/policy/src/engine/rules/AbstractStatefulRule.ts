@@ -18,7 +18,7 @@ export abstract class AbstractStatefulRule<P extends StatefulParametersDefaultIn
 
   constructor(protected parameters: P) {}
 
-  get uuid() {
+  get uuid(): string {
     return this.parameters.uuid;
   }
 

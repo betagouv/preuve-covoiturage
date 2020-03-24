@@ -291,7 +291,7 @@ export class CampaignPgRepositoryProvider implements CampaignRepositoryProviderI
   //         global_rules,
   //         rules
   //       FROM ${this.table}
-  //       WHERE 
+  //       WHERE
   //         territory_id = ANY($1::integer[])
   //         AND start_date <= $2
   //         AND end_date >= $2

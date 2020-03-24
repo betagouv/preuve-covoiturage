@@ -77,22 +77,23 @@ test.before(async (t) => {
   const policy = await t.context.kernel
     .get(ServiceProvider)
     .get(CampaignRepositoryProviderInterfaceResolver)
-    .create(fakeCampaign)
+    .create(fakeCampaign);
 
   t.context.policy_id = policy._id;
 });
 
 test(
   success,
-  (t: ExecutionContext<TestContext>) => ({
-    _id: t.context.policy_id,
-    patch: {
-      ...fakeCampaign,
-      start_date: fakeCampaign.start_date.toISOString(),
-      end_date: fakeCampaign.end_date.toISOString(),
-      name: 'Ma nouvelle campagne',
-    },
-  }) as unknown as ParamsInterface,
+  (t: ExecutionContext<TestContext>) =>
+    (({
+      _id: t.context.policy_id,
+      patch: {
+        ...fakeCampaign,
+        start_date: fakeCampaign.start_date.toISOString(),
+        end_date: fakeCampaign.end_date.toISOString(),
+        name: 'Ma nouvelle campagne',
+      },
+    } as unknown) as ParamsInterface),
   (response: ResultInterface, t: ExecutionContext<TestContext>) => {
     t.is(response.name, 'Ma nouvelle campagne');
   },

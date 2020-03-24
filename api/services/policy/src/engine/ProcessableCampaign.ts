@@ -30,10 +30,13 @@ export class ProcessableCampaign {
   applyStateful(incentive: IncentiveInterface, meta: MetaInterface): IncentiveInterface {
     let amount = this.globalSet.applyStateful(incentive, meta);
     for (const ruleSet of this.ruleSets) {
-      amount = ruleSet.applyStateful({
-        ...incentive,
-        result: amount,
-      }, meta);
+      amount = ruleSet.applyStateful(
+        {
+          ...incentive,
+          result: amount,
+        },
+        meta,
+      );
     }
     return {
       ...incentive,
@@ -47,7 +50,7 @@ export class ProcessableCampaign {
     let incentiveState: Map<string, string> = new Map();
 
     try {
-      let ctx = { ...context, result };
+      const ctx = { ...context, result };
       incentiveState = this.globalSet.apply(ctx);
 
       for (const ruleSet of this.ruleSets) {

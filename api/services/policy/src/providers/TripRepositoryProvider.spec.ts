@@ -21,12 +21,12 @@ test.before(async (t) => {
   t.context.repository = new TripRepositoryProvider(t.context.connection);
 });
 
-test.after.always(async(t) => {
+test.after.always(async (t) => {
   await t.context.connection.down();
 });
 
 test('Should work', async (t) => {
-  const i = await t.context.repository.findTripByPolicy(3);
+  // const i = await t.context.repository.findTripByPolicy(3);
   // need fixture to test this behavior
   // t.log(await i.next());
   // t.log(await i.next());

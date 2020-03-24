@@ -6,7 +6,6 @@ export const MODIFIER = 3;
 export const DEFAULT = 4;
 export const STATEFUL = 5;
 
-
 export enum type {
   META,
   FILTER,

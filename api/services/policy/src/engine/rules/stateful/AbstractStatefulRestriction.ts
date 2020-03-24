@@ -33,14 +33,14 @@ export abstract class AbstractStatefulRestriction extends AbstractStatefulRule<S
     },
   };
 
-  abstract getPrefix():string;
-  abstract getErrorMessage():string;
+  abstract getPrefix(): string;
+  abstract getErrorMessage(): string;
 
   getState(ctx: RuleHandlerContextInterface, meta: MetaInterface): number {
     if (
       this.parameters.target &&
-        ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||
-          (this.parameters.target === 'passenger' && ctx.person.is_driver))
+      ((this.parameters.target === 'driver' && !ctx.person.is_driver) ||
+        (this.parameters.target === 'passenger' && ctx.person.is_driver))
     ) {
       return 0;
     }

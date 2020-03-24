@@ -1,5 +1,10 @@
 import { AbstractRuleSet } from './AbstractRuleSet';
-import { TransformerRuleInterface, RuleHandlerContextInterface, StaticRuleInterface, RuleHandlerParamsInterface } from '../interfaces';
+import {
+  TransformerRuleInterface,
+  RuleHandlerContextInterface,
+  StaticRuleInterface,
+  RuleHandlerParamsInterface,
+} from '../interfaces';
 import { type, TRANSFORMER } from '../helpers/type';
 
 export class TransformerRuleSet extends AbstractRuleSet<TransformerRuleInterface> implements TransformerRuleInterface {
