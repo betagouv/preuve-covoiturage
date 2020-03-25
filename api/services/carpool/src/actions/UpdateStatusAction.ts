@@ -9,14 +9,10 @@ import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/Carpoo
  */
 @handler({
   ...handlerConfig,
-  middlewares: [
-    ['channel.service.only', ['acquisition']],
-  ],
+  middlewares: [['channel.service.only', ['acquisition']]],
 })
 export class CrosscheckAction extends Action {
-  constructor(
-    private carpool: CarpoolRepositoryProviderInterfaceResolver,
-  ) {
+  constructor(private carpool: CarpoolRepositoryProviderInterfaceResolver) {
     super();
   }
 
