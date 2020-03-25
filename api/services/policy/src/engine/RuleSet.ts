@@ -71,8 +71,8 @@ export class RuleSet {
     ctx = this.transformerSet.transform(ctx);
     result = this.setterSet.set(ctx);
     result = this.modifierSet.modify(ctx, result);
-    this.nativeSet.apply(context);
     context.result = result;
+    this.nativeSet.apply(context);
     context.stack.push(`pathresult: ${context.result}`);
     return initialState;
   }

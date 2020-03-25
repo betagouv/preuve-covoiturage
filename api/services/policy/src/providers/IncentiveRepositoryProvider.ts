@@ -83,7 +83,9 @@ export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderI
         CASE WHEN data.amount = 0 THEN 'null'::policy.incentive_state_enum ELSE state END
       )
       FROM data
-      WHERE data.carpool_id = pt.carpool_id AND data.policy_id = pt.policy_id
+      WHERE
+        data.carpool_id = pt.carpool_id
+        AND data.policy_id = pt.policy_id
       `,
       values: [...keys],
     };

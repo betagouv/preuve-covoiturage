@@ -35,6 +35,7 @@ function setup() {
   const defaultTripParams = {
     start_territory_id: [1],
     end_territory_id: [1],
+    operator_id: 3,
   };
   return { policy, defaultTripParams };
 }

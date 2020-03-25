@@ -23,12 +23,12 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
         SELECT
           distinct pp 
         FROM ${this.table} as pt,
-        UNNEST(pt.applicable_policies) as pp
+        UNNEST(pt.processable_policies) as pp
       `,
       values: [],
     };
     const results = await this.connection.getClient().query(query);
-    return results.rows;
+    return results.rows.map(r => r.pp);
   }
 
   async *findTripByPolicy(policy_id: number, batchSize = 100): AsyncGenerator<TripInterface[], void, void> {
@@ -58,7 +58,8 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
           )
         ) as people
       FROM ${this.table} as pt
-      WHERE $1::int = ANY(pt.applicable_policies)
+      WHERE $1::int = ANY(pt.processable_policies)
+      AND pt.carpool_status = 'ok'::carpool.carpool_status_enum
       GROUP BY trip_id;
       `,
       values: [policy_id],

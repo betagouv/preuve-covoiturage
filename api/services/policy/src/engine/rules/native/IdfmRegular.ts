@@ -26,7 +26,14 @@ export class IdfmRegular extends AbstractRule<IdfmParametersInterface> {
     },
   };
   apply(ctx: RuleHandlerParamsInterface): void {
-    if (!ctx.person.is_driver) {
+    if (
+      !ctx.person.is_driver ||
+      [
+        3, // Klaxit
+        4, // Karos
+        9, // Blablalines
+      ].indexOf(ctx.person.operator_id) < 0
+    ) {
       throw new NotApplicableTargetException(IdfmRegular.slug);
     }
 

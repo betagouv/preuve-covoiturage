@@ -3,7 +3,6 @@ import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { PermissionMiddleware } from '@pdc/provider-acl';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
-
 import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { ScopeToSelfMiddleware, ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 
@@ -23,14 +22,16 @@ import { ListCampaignAction } from './actions/ListCampaignAction';
 import { DeleteCampaignAction } from './actions/DeleteCampaignAction';
 import { TemplatesCampaignAction } from './actions/TemplatesCampaignAction';
 import { FindCampaignAction } from './actions/FindCampaignAction';
+import { ApplyAction } from './actions/ApplyAction';
+import { FinalizeAction } from './actions/FinalizeAction';
 
 import { CampaignPgRepositoryProvider } from './providers/CampaignPgRepositoryProvider';
-import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyEngine } from './engine/PolicyEngine';
 import { MetadataProvider } from './engine/meta/MetadataProvider';
 import { IncentiveRepositoryProvider } from './providers/IncentiveRepositoryProvider';
-import { ApplyAction } from './actions/ApplyAction';
 import { TripRepositoryProvider } from './providers/TripRepositoryProvider';
+
+import { ValidateRuleParametersMiddleware } from './middlewares/ValidateRuleParametersMiddleware';
 import { PolicyProcessCommand } from './commands/PolicyProcessCommand';
 import { SeedCommand } from './commands/SeedCommand';
 
@@ -63,6 +64,7 @@ import { SeedCommand } from './commands/SeedCommand';
     ListCampaignAction,
     FindCampaignAction,
     ApplyAction,
+    FinalizeAction,
   ],
   connections: [
     [PostgresConnection, 'connections.postgres'],
