@@ -1,6 +1,12 @@
 import { provider } from '@ilos/common';
 
-import { CampaignInterface, IncentiveInterface, TripInterface, IncentiveStateEnum, IncentiveStatusEnum } from '../interfaces';
+import {
+  CampaignInterface,
+  IncentiveInterface,
+  TripInterface,
+  IncentiveStateEnum,
+  IncentiveStatusEnum,
+} from '../interfaces';
 import { MetadataProviderInterfaceResolver } from './interfaces';
 
 import { ProcessableCampaign } from './ProcessableCampaign';
@@ -18,10 +24,10 @@ export class PolicyEngine {
       .filter((p) => p.is_driver)
       .sort((p1, p2) => (p1.carpool_id < p2.carpool_id ? -1 : p1.carpool_id > p2.carpool_id ? 1 : 0));
     const passengers = trip.people.filter((p) => !p.is_driver);
-    const people = [...passengers, drivers.shift()].filter(p => p !== undefined);
-    
+    const people = [...passengers, drivers.shift()].filter((p) => p !== undefined);
+
     // Empty incitation for duplicate drivers
-    const results: IncentiveInterface[] = drivers.map(p => ({
+    const results: IncentiveInterface[] = drivers.map((p) => ({
       carpool_id: p.carpool_id,
       policy_id: pc.policy_id,
       datetime: p.datetime,

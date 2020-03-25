@@ -28,7 +28,7 @@ export class TripRepositoryProvider implements TripRepositoryProviderInterface {
       values: [],
     };
     const results = await this.connection.getClient().query(query);
-    return results.rows.map(r => r.pp);
+    return results.rows.map((r) => r.pp);
   }
 
   async *findTripByPolicy(policy_id: number, batchSize = 100): AsyncGenerator<TripInterface[], void, void> {

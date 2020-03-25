@@ -28,7 +28,7 @@ export class ProcessableCampaign {
   }
 
   needStatefulApply(): boolean {
-    return [this.globalSet, ...this.ruleSets].map(s => s.hasStatefulRule).reduce((r, s) => r || s, false);
+    return [this.globalSet, ...this.ruleSets].map((s) => s.hasStatefulRule).reduce((r, s) => r || s, false);
   }
 
   applyStateful(incentive: IncentiveInterface, meta: MetaInterface): IncentiveInterface {
