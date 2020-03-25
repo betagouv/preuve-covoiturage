@@ -38,6 +38,10 @@ export class RuleSet {
     this.statefulSet = new RS.StatefulRuleSet(rules);
   }
 
+  get hasStatefulRule(): boolean {
+    return this.statefulSet.length > 0;
+  }
+
   protected resolve(ruleDefinitions: RuleInterface[]): { ctor: StaticRuleInterface; def: RuleInterface }[] {
     return ruleDefinitions
       .map((def) => ({

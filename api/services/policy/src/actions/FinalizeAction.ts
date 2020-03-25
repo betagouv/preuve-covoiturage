@@ -85,8 +85,10 @@ export class FinalizeAction extends AbstractAction implements InitHookInterface 
           }
           const policy = policyMap.get(policyId);
 
-          // 3. Process stateful rule
-          updatedIncentives.push(await this.engine.processStateful(policy, incentive));
+          // 3. Process stateful rule if needed
+          if (policy.needStatefulApply()) {
+            updatedIncentives.push(await this.engine.processStateful(policy, incentive));
+          }
         }
       }
       // 4. Update incentives

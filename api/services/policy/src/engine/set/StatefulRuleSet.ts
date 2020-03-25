@@ -19,6 +19,10 @@ export class StatefulRuleSet extends AbstractRuleSet<StatefulRuleInterface> impl
     this.getRules(this.type, rules);
   }
 
+  get length(): number {
+    return this.ruleSet.length;
+  }
+
   buildInitialState(context: RuleHandlerContextInterface): Map<string, string> {
     const incentiveState: Map<string, string> = new Map();
 

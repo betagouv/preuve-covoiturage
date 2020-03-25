@@ -43,6 +43,7 @@ export interface StatefulRuleInterface {
 }
 
 export interface StatefulRuleSetInterface {
+  length: number;
   buildInitialState(context: RuleHandlerContextInterface): Map<string, string>;
   listStateKeys(incentive: IncentiveInterface): string[];
   apply(incentive: IncentiveInterface, meta: MetaInterface): number;
