@@ -1,15 +1,9 @@
 import { campaignThirdStepClickNextStep, campaignThirdStepClickPreviousStep } from './steps/campaign-create-third-step';
-import {
-  campaignSecondStepAddSecondTimeRange,
-  campaignSecondStepClickNextStep,
-  campaignSecondStepSelectTargets,
-  campaignSecondStepSelectTimeRange,
-} from './steps/campaign-create-second-step';
+import { campaignSecondStepClickNextStep, campaignSecondStepSelectTargets } from './steps/campaign-create-second-step';
 import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
-import { campaignFourthStepClickPreviousStep } from './steps/campaign-create-fourth-step';
 
-export function cypress_campaignEdit(e2e = false) {
+export function cypress_campaignEdit(e2e = false): void {
   it('clicks on campaign section', () => {
     cy.get('.Header-menu .Header-menu-item:first-child').click();
   });
@@ -34,9 +28,10 @@ export function cypress_campaignEdit(e2e = false) {
   // passenger amount
   it('sets incitation for passenger', () => {
     // open retribution extension
+    cy.wait(3000);
     cy.get('.ParametersForm .mat-expansion-panel:nth-child(5)').click();
 
-    cy.get('.ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input')
+    cy.get('.RetributionForm-inputs > .shortFormField > .mat-form-field-wrapper > .mat-form-field-flex input')
       .clear()
       .type((CypressExpectedCampaign.afterEditionForPassengerAmount / 100).toString());
   });
@@ -59,6 +54,7 @@ export function cypress_campaignEdit(e2e = false) {
   // driver amount after 5 km
   it('sets incitation for driver', () => {
     cy.get(
+      // eslint-disable-next-line
       '.ParametersForm-incentiveMode-value:nth-child(3) .ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(1) mat-form-field input',
     )
       .clear()
@@ -68,6 +64,7 @@ export function cypress_campaignEdit(e2e = false) {
   // passenger amount after 5 km
   it('sets incitation for passenger', () => {
     cy.get(
+      // eslint-disable-next-line
       '.ParametersForm-incentiveMode-value:nth-child(3) .ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input',
     )
       .clear()

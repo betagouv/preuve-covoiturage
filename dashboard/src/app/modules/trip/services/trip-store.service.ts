@@ -9,7 +9,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { FilterInterface } from '~/core/interfaces/filter/filterInterface';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { LightTrip } from '~/core/entities/trip/trip';
-import { ExportFilterUxInterface } from '~/core/interfaces/filter/exportFilterInterface';
+import { ExportFilterUxInterface, ExportFilterInterface } from '~/core/interfaces/filter/exportFilterInterface';
 import { GetListStore } from '~/core/services/store/getlist-store';
 import { TripApiService } from '~/modules/trip/services/trip-api.service';
 
@@ -38,7 +38,7 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
 
   public exportTrips(filter: ExportFilterUxInterface): Observable<any> {
     // map moment to date
-    const params = {
+    const params: ExportFilterInterface = {
       date: {
         start: moment(filter.date.start)
           .startOf('day')
@@ -50,10 +50,10 @@ export class TripStoreService extends GetListStore<LightTrip, LightTrip, TripApi
     };
     const loggedUser = this._authService.user;
     if (loggedUser && loggedUser.group === UserGroupEnum.TERRITORY) {
-      params['territory_id'] = [loggedUser.territory_id];
+      params.territory_id = [loggedUser.territory_id];
     }
     if (loggedUser && loggedUser.group === UserGroupEnum.OPERATOR) {
-      params['operator_id'] = [loggedUser.operator_id];
+      params.operator_id = [loggedUser.operator_id];
     }
     return this.rpcGetList.exportTrips(params);
   }

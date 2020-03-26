@@ -1,11 +1,7 @@
-import {
-  expectedExportFilter,
-  filterEndMoment,
-  filterStartMoment,
-} from '../../expectedApiPayload/expectedExportFilter';
+import { filterEndMoment, filterStartMoment } from '../../expectedApiPayload/expectedExportFilter';
 import { closeNotification } from '../notification.cypress';
 
-export function cypress_export(e2e = false) {
+export function cypress_export(e2e = false): void {
   it('clicks on trip section', () => {
     cy.get('.Header-menu .Header-menu-item.trip-menu-item').click();
   });
@@ -26,14 +22,12 @@ export function cypress_export(e2e = false) {
 
   it('clicks export button', () => {
     cy.get('.exportFilter-footer button').click();
+    cy.wait(500);
+    cy.get('.confirm').click();
     if (!e2e) {
       cy.wait('@tripExport').then((xhr) => {
-        const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
-
         expect(method).equal('trip:export');
-
-        expect(params).eql(expectedExportFilter);
       });
     }
   });

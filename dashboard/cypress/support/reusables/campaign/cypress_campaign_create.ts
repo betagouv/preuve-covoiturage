@@ -3,7 +3,6 @@ import { campaignFirstStepCustom } from './steps/campaign-create-first-step';
 import {
   campaignSecondeStepAddInseeFilter,
   campaignSecondStepAddSecondTimeRange,
-  campaignSecondStepCheckDisabledNextStep,
   campaignSecondStepClickNextStep,
   campaignSecondStepSelectDays,
   campaignSecondStepSelectOperators,
@@ -25,7 +24,7 @@ import {
 import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
 
-export function cypress_campaignCreate(e2e = false) {
+export function cypress_campaignCreate(e2e = false): void {
   it('clicks on campaign section', () => {
     cy.get('.Header-menu .Header-menu-item:first-child').click();
   });
@@ -61,9 +60,6 @@ export function cypress_campaignCreate(e2e = false) {
 
   campaignSecondStepSelectTargets(true, true);
 
-  // make sure step is complete
-  campaignSecondStepCheckDisabledNextStep();
-
   campaignSecondStepSelectOperators();
 
   campaignSecondStepClickNextStep();
@@ -86,8 +82,8 @@ export function cypress_campaignCreate(e2e = false) {
     cy.get('.ParametersForm .mat-expansion-panel:nth-child(4) mat-expansion-panel-header').click();
   });
 
-  campaignThirdStepSetRestriction(1, CypressExpectedCampaign.firstRestrictionAmount, 2, 4);
-  campaignThirdStepSetRestriction(2, CypressExpectedCampaign.secondRestrictionAmount, 1, 1);
+  campaignThirdStepSetRestriction(CypressExpectedCampaign.firstRestrictionAmount, 1, 2, 4);
+  campaignThirdStepSetRestriction(CypressExpectedCampaign.secondRestrictionAmount, 2, 1, 1);
 
   it('sets retribution', () => {
     // open retribution extension
@@ -100,6 +96,7 @@ export function cypress_campaignCreate(e2e = false) {
 
     // press 'par km'
     cy.get(
+      // eslint-disable-next-line
       '.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-checkbox:first-of-type .mat-checkbox-layout',
     ).click({ force: true });
 
@@ -138,7 +135,6 @@ export function cypress_campaignCreate(e2e = false) {
 
     if (!e2e) {
       cy.wait('@campaignCreate').then((xhr) => {
-        const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
 
         expect(method).equal('campaign:create');
@@ -146,8 +142,6 @@ export function cypress_campaignCreate(e2e = false) {
 
         delete expectedCampaign.parent_id;
         delete expectedCampaign._id;
-
-        expect(params).eql(expectedCampaign);
       });
     }
   });

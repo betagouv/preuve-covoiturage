@@ -393,6 +393,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
           this.setCampaignToForm(campaign.toFormValues(), isDuplicate);
         },
         (err) => {
+          console.log('err : ', err);
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });
