@@ -105,6 +105,7 @@ export class CampaignFormComponent extends DestroyObservable implements OnInit {
       filtersFormGroup.get('distance_range').valid &&
       filtersFormGroup.get('rank').valid &&
       filtersFormGroup.get('insee').valid &&
+      filtersFormGroup.get('operator_ids').valid &&
       this.campaignFormGroup.get('only_adult').valid
     );
   }
