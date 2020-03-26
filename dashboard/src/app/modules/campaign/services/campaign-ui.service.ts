@@ -320,12 +320,7 @@ export class CampaignUiService {
 
     // WEEK DAYS
 
-    if (
-      campaign.filters.weekday &&
-      campaign.filters.time &&
-      campaign.filters.weekday.length &&
-      campaign.filters.time.length
-    ) {
+    if (campaign.filters.weekday && campaign.filters.weekday.length) {
       summaryText += ` ${campaign.filters.weekday.length ? `${this.formatWeekDays(campaign.filters.weekday)}` : ''}${
         campaign.filters.time.length ? `${this.formatWeekTime(campaign.filters.time)}` : ''
       }`.toLowerCase();
