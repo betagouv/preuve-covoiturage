@@ -1,5 +1,6 @@
 import { kernel } from '@ilos/common';
 import { Kernel as BaseKernel } from '@ilos/framework';
+import { Commands } from '@ilos/cli';
 import { SentryProvider } from '@pdc/provider-sentry';
 import { TokenProvider } from '@pdc/provider-token';
 import { bootstrap as acquisitionBootstrap } from '@pdc/service-acquisition';
@@ -39,6 +40,6 @@ import { GeoFetchCommand } from './commands/GeoFetchCommand';
     ...monitoringBootstrap.serviceProviders,
   ],
   providers: [SentryProvider, TokenProvider],
-  commands: [ProcessJourneyCommand, MigrateInseeCommand, GeoFetchCommand],
+  commands: [ProcessJourneyCommand, MigrateInseeCommand, GeoFetchCommand, Commands.CallCommand],
 })
 export class Kernel extends BaseKernel {}
