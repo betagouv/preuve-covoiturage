@@ -67,7 +67,7 @@ CREATE MATERIALIZED VIEW policy.trips AS (
     WHERE
       cp.identity_id = ci._id
   ) as id
-  WHERE cp.datetime >= (NOW() - interval '45 days')
+  WHERE cp.datetime >= (NOW() - interval '45 days') AND cp.datetime < (NOW() - interval '5 days')
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS trips_carpool_id_idx ON policy.trips (carpool_id);
