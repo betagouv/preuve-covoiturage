@@ -10,12 +10,15 @@ import { config } from './config';
 import { create } from './shared/acquisition/create.schema';
 import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { logerror } from './shared/acquisition/logerror.schema';
+import { alias as aliasCancel, cancel } from './shared/acquisition/cancel.schema';
+
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
 import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider';
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
 import { LogRequestAction } from './actions/LogRequestAction';
+import { CancelJourneyAction } from './actions/CancelJourneyAction';
 
 @serviceProvider({
   config,
@@ -25,6 +28,7 @@ import { LogRequestAction } from './actions/LogRequestAction';
     ['journey.createLegacy', createLegacy],
     ['journey.create', create],
     ['acquisition.logerror', logerror],
+    [aliasCancel, cancel],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -35,7 +39,7 @@ import { LogRequestAction } from './actions/LogRequestAction';
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],
   ],
-  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction, LogRequestAction],
+  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction, LogRequestAction, CancelJourneyAction],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

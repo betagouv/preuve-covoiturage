@@ -1,5 +1,5 @@
 export const alias = 'journey.cancel';
-export const create = {
+export const cancel = {
   $id: alias,
   type: 'object',
   required: ['journey_id'],

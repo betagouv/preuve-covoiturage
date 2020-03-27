@@ -11,7 +11,7 @@ import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/Carpoo
   ...handlerConfig,
   middlewares: [['channel.service.only', ['acquisition']]],
 })
-export class CrosscheckAction extends Action {
+export class UpdateStatusAction extends Action {
   constructor(private carpool: CarpoolRepositoryProviderInterfaceResolver) {
     super();
   }

@@ -25,7 +25,7 @@ const callContext = {
     ['validate', alias],
   ],
 })
-export class CreateJourneyAction extends AbstractAction {
+export class CancelJourneyAction extends AbstractAction {
   constructor(
     private kernel: KernelInterfaceResolver,
     private journeyRepository: JourneyRepositoryProviderInterfaceResolver,
