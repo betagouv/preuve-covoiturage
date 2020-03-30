@@ -8,7 +8,7 @@ import { MaxAmountRestriction } from '../rules/stateful/MaxAmountRestriction';
 import { MaxTripRestriction } from '../rules/stateful/MaxTripRestriction';
 import { FixedAmountSetter } from '../rules/setters/FixedAmountSetter';
 
-function setup() {
+function setup(): { statefulSet: StatefulRuleSet } {
   const statefulSet = new StatefulRuleSet([
     {
       ctor: MaxAmountRestriction,

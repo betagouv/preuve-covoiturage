@@ -1,8 +1,10 @@
 import test from 'ava';
-import { PerSeatModifier } from './PerSeatModifier';
-import { faker } from '../../helpers/faker';
 
-function setup() {
+import { faker } from '../../helpers/faker';
+import { PerSeatModifier } from './PerSeatModifier';
+import { TripInterface } from '../../../interfaces';
+
+function setup(): { rule: PerSeatModifier; trip: TripInterface } {
   const rule = new PerSeatModifier();
 
   const trip = faker.trip([

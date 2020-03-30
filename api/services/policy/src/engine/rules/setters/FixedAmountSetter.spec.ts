@@ -1,9 +1,10 @@
 import test from 'ava';
 
-import { FixedAmountSetter } from './FixedAmountSetter';
 import { faker } from '../../helpers/faker';
+import { FixedAmountSetter } from './FixedAmountSetter';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { amount: number; rule: FixedAmountSetter; trip: TripInterface } {
   const amount = 1000;
   const rule = new FixedAmountSetter(amount);
   const trip = faker.trip([{}]);

@@ -1,9 +1,11 @@
 import test from 'ava';
+
 import { PassengerOnlyFilter } from './PassengerOnlyFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: PassengerOnlyFilter; trip: TripInterface } {
   const rule = new PassengerOnlyFilter();
   const trip = faker.trip([{ is_driver: true }, { is_driver: false }]);
 

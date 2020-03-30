@@ -1,9 +1,10 @@
 import test from 'ava';
 
-import { BoundedModifier } from './BoundedModifier';
 import { faker } from '../../helpers/faker';
+import { BoundedModifier } from './BoundedModifier';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { trip: TripInterface; rule: BoundedModifier } {
   const rule = new BoundedModifier({
     minimum: 10,
     maximum: 100,

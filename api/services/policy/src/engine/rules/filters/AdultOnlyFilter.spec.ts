@@ -1,9 +1,11 @@
 import test from 'ava';
+
 import { AdultOnlyFilter } from './AdultOnlyFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: AdultOnlyFilter; trip: TripInterface } {
   const rule = new AdultOnlyFilter();
   const trip = faker.trip([{ is_over_18: false }, { is_over_18: true }]);
 

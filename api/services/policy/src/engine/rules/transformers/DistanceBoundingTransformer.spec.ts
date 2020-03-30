@@ -1,9 +1,10 @@
 import test from 'ava';
 
-import { DistanceBoundingTransformer } from './DistanceBoundingTransformer';
 import { faker } from '../../helpers/faker';
+import { DistanceBoundingTransformer } from './DistanceBoundingTransformer';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: DistanceBoundingTransformer; trip: TripInterface } {
   const rule = new DistanceBoundingTransformer({
     minimum: 1000,
     maximum: 10000,
@@ -21,7 +22,7 @@ test('should update distance to minimum if result < min', async (t) => {
     result: 1,
     person: trip.people[0],
   };
-  await rule.apply(context);
+  rule.apply(context);
   t.is(context.person.distance, 1000);
 });
 
@@ -33,6 +34,6 @@ test('should updte distance to maximum if result > max', async (t) => {
     result: 1,
     person: trip.people[1],
   };
-  await rule.apply(context);
+  rule.apply(context);
   t.is(context.person.distance, 10000);
 });

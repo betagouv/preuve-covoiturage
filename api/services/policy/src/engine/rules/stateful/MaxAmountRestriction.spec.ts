@@ -5,8 +5,9 @@ import { faker } from '../../helpers/faker';
 import { StatefulRestrictionParameters } from './AbstractStatefulRestriction';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { MetadataWrapper, FakeMetadataWrapper } from '../../meta/MetadataWrapper';
+import { TripInterface } from '../../../interfaces';
 
-function setup(cfg: Partial<StatefulRestrictionParameters> = {}) {
+function setup(cfg: Partial<StatefulRestrictionParameters> = {}): { rule: MaxAmountRestriction; trip: TripInterface } {
   const basecfg: StatefulRestrictionParameters = {
     uuid: 'test',
     amount: 10,

@@ -1,9 +1,11 @@
 import test from 'ava';
+
 import { WeekdayFilter } from './WeekdayFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { trip: TripInterface; rule: WeekdayFilter } {
   const startInRange = new Date();
   const rule = new WeekdayFilter([startInRange.getDay()]);
 
