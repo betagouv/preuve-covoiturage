@@ -1,39 +1,34 @@
-import chai from 'chai';
-import chaiAsync from 'chai-as-promised';
+import test from 'ava';
 import { RankWhitelistFilter } from './RankWhitelistFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
 
-const meta = new MetadataWrapper(1, 'default', {});
+function setup() {
+  const rule = new RankWhitelistFilter(['A']);
+  const trip = faker.trip([{ operator_class: 'A' }, { operator_class: 'B' }]);
 
-chai.use(chaiAsync);
-const { expect } = chai;
+  return { rule, trip };
+}
 
-const test = new RankWhitelistFilter(['A']);
+test('should throw error if rank out of whitelist', async (t) => {
+  const { rule, trip } = setup();
+  const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[1],
+    }),
+  );
+  t.is(err.message, RankWhitelistFilter.description);
+});
 
-const trip = faker.trip([{ operator_class: 'A' }, { operator_class: 'B' }]);
-
-describe('Policy rule: rank filter', () => {
-  it('should throw error if rank out of whitelist', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[1],
-      }),
-    ).to.eventually.rejectedWith(NotApplicableTargetException, RankWhitelistFilter.description);
-  });
-
-  it('should do nothing if rank in whitelist', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[0],
-      }),
-    ).to.eventually.fulfilled;
-  });
+test('should do nothing if rank in whitelist', async (t) => {
+  const { rule, trip } = setup();
+  await t.notThrowsAsync(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[0],
+    }),
+  );
 });

@@ -12,6 +12,7 @@ import { CrosscheckAction } from './actions/CrosscheckAction';
 import { DispatchAction } from './actions/DispatchAction';
 import { CrosscheckRepositoryProvider } from './providers/CrosscheckRepositoryProvider';
 import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvider';
+import { UpdateStatusAction } from './actions/UpdateStatusAction';
 
 @serviceProvider({
   config,
@@ -25,7 +26,7 @@ import { IdentityRepositoryProvider } from './providers/IdentityRepositoryProvid
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [CrosscheckAction, DispatchAction],
+  handlers: [CrosscheckAction, DispatchAction, UpdateStatusAction],
   queues: ['carpool'],
 })
 export class ServiceProvider extends AbstractServiceProvider {}

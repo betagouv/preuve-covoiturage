@@ -13,7 +13,7 @@ export class WeekdayFilter extends FilterRule<number[]> {
       maximum: 6,
     },
   };
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     if (this.parameters.indexOf(ctx.person.datetime.getDay()) < 0) {
       throw new NotApplicableTargetException(WeekdayFilter.description);
     }

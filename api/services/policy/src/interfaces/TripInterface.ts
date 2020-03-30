@@ -1,7 +1,7 @@
 import { PersonInterface } from './PersonInterface';
 
 export interface TripInterface {
-  territories: number[];
+  trip_id: number;
   datetime: Date;
   people: PersonInterface[];
 }

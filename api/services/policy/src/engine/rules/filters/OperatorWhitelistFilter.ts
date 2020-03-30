@@ -10,7 +10,7 @@ export class OperatorWhitelistFilter extends FilterRule<number[]> {
     items: { macro: 'serial' },
   };
 
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     if (this.parameters.indexOf(ctx.person.operator_id) < 0) {
       throw new NotApplicableTargetException(OperatorWhitelistFilter.description);
     }

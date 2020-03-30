@@ -1,4 +1,4 @@
-import { provider } from '@ilos/common';
+import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
 import {
@@ -39,5 +39,26 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     }
 
     return result.rows[0];
+  }
+  async exists(journey_id: string, operator_id: number, application_id: number): Promise<number> {
+    const query = {
+      text: `
+        SELECT
+          _id
+        FROM ${this.table}
+        WHERE operator_id = $1::int
+        AND journey_id = $2::varchar
+        AND application_id = $3::int
+        LIMIT 1`,
+      values: [operator_id, journey_id, application_id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+
+    if (result.rowCount !== 1) {
+      throw new NotFoundException();
+    }
+
+    return result.rows[0]._id;
   }
 }

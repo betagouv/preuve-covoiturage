@@ -1,7 +1,7 @@
 import { command, CommandInterface, CommandOptionType } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import * as templates from '../engine/template';
+import * as templates from '../engine/templates';
 
 @command()
 export class SeedCommand implements CommandInterface {

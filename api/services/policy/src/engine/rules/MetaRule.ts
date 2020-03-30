@@ -7,7 +7,7 @@ export abstract class MetaRule<P = any> extends AbstractRule<P> implements MetaR
   static readonly type = META;
   static readonly priority = HIGHEST;
 
-  async apply(context: RuleHandlerParamsInterface): Promise<void> {
+  apply(context: RuleHandlerParamsInterface): void {
     throw new Error();
   }
 

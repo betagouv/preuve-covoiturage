@@ -10,6 +10,8 @@ import { config } from './config';
 import { create } from './shared/acquisition/create.schema';
 import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { logerror } from './shared/acquisition/logerror.schema';
+import { alias as aliasCancel, cancel } from './shared/acquisition/cancel.schema';
+
 import { resolveerror } from './shared/acquisition/resolveerror.schema';
 import { searcherrors } from './shared/acquisition/searcherrors.schema';
 import { summaryerrors } from './shared/acquisition/summaryerrors.schema';
@@ -19,6 +21,7 @@ import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
 import { LogRequestAction } from './actions/LogRequestAction';
+import { CancelJourneyAction } from './actions/CancelJourneyAction';
 import { ResolveErrorAction } from './actions/ResolveErrorAction';
 import { SearchErrorAction } from './actions/SearchErrorAction';
 import { SummaryErrorAction } from './actions/SummaryErrorAction';
@@ -31,6 +34,7 @@ import { SummaryErrorAction } from './actions/SummaryErrorAction';
     ['journey.createLegacy', createLegacy],
     ['journey.create', create],
     ['acquisition.logerror', logerror],
+    [aliasCancel, cancel],
     ['acquisition.resolveerror', resolveerror],
     ['acquisition.searcherrors', searcherrors],
     ['acquisition.summaryerrors', summaryerrors],
@@ -52,6 +56,7 @@ import { SummaryErrorAction } from './actions/SummaryErrorAction';
     ResolveErrorAction,
     SearchErrorAction,
     SummaryErrorAction,
+    CancelJourneyAction,
   ],
 })
 export class ServiceProvider extends AbstractServiceProvider {

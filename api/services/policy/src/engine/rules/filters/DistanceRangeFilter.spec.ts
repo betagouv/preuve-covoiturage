@@ -1,42 +1,37 @@
-import chai from 'chai';
-import chaiAsync from 'chai-as-promised';
+import test from 'ava';
 import { DistanceRangeFilter } from './DistanceRangeFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
 
-const meta = new MetadataWrapper(1, 'default', {});
+function setup() {
+  const rule = new DistanceRangeFilter({
+    min: 10,
+    max: 100,
+  });
 
-chai.use(chaiAsync);
-const { expect } = chai;
+  const trip = faker.trip([{ distance: 50 }, { distance: 5000 }]);
+  return { trip, rule };
+}
 
-const test = new DistanceRangeFilter({
-  min: 10,
-  max: 100,
+test('should throw error if out of range', async (t) => {
+  const { rule, trip } = setup();
+  const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[1],
+    }),
+  );
+  t.is(err.message, DistanceRangeFilter.description);
 });
 
-const trip = faker.trip([{ distance: 50 }, { distance: 5000 }]);
-
-describe('Policy rule: distance range filter', () => {
-  it('should throw error if out of range', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[1],
-      }),
-    ).to.eventually.rejectedWith(NotApplicableTargetException, DistanceRangeFilter.description);
-  });
-
-  it('should do nothing if in range', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[0],
-      }),
-    ).to.eventually.fulfilled;
-  });
+test('should do nothing if in range', async (t) => {
+  const { rule, trip } = setup();
+  await t.notThrowsAsync(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[0],
+    }),
+  );
 });

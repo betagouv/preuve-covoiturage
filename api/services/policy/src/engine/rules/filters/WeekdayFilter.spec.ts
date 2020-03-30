@@ -1,43 +1,39 @@
-import chai from 'chai';
-import chaiAsync from 'chai-as-promised';
+import test from 'ava';
 import { WeekdayFilter } from './WeekdayFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { MetadataWrapper } from '../../MetadataWrapper';
 import { faker } from '../../helpers/faker';
 
-const meta = new MetadataWrapper(1, 'default', {});
+function setup() {
+  const startInRange = new Date();
+  const rule = new WeekdayFilter([startInRange.getDay()]);
 
-chai.use(chaiAsync);
-const { expect } = chai;
+  const startOutRange = new Date();
+  startOutRange.setDate(startOutRange.getDate() + 1);
 
-const startInRange = new Date();
-const test = new WeekdayFilter([startInRange.getDay()]);
+  const trip = faker.trip([{ datetime: startInRange }, { datetime: startOutRange }]);
 
-const startOutRange = new Date();
-startOutRange.setDate(startOutRange.getDate() + 1);
+  return { trip, rule };
+}
 
-const trip = faker.trip([{ datetime: startInRange }, { datetime: startOutRange }]);
+test('should throw error if out of range', async (t) => {
+  const { rule, trip } = setup();
+  const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[1],
+    }),
+  );
+  t.is(err.message, WeekdayFilter.description);
+});
 
-describe('Policy rule: weekday filter', () => {
-  it('should throw error if out of range', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[1],
-      }),
-    ).to.eventually.rejectedWith(NotApplicableTargetException, WeekdayFilter.description);
-  });
-
-  it('should do nothing if in range', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[0],
-      }),
-    ).to.eventually.fulfilled;
-  });
+test('should do nothing if in range', async (t) => {
+  const { rule, trip } = setup();
+  await t.notThrowsAsync(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[0],
+    }),
+  );
 });
