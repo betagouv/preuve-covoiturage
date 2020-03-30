@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { ConfigInterfaceResolver } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { UserPgRepositoryProvider } from '../src/providers/UserPgRepositoryProvider';
-import { UserCreateInterface } from '../src/shared/user/common/interfaces/UserCreateInterface';
+import { UserPgRepositoryProvider } from '../providers/UserPgRepositoryProvider';
+import { UserCreateInterface } from '../shared/user/common/interfaces/UserCreateInterface';
 
 class Config extends ConfigInterfaceResolver {
   get(_k: string, fb: string): string {

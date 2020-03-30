@@ -2,8 +2,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { CampaignMetadataRepositoryProvider } from '../engine/CampaignMetadataRepositoryProvider';
-import { MetadataWrapper } from '../engine/MetadataWrapper';
+import { CampaignMetadataRepositoryProvider } from '../src/engine/CampaignMetadataRepositoryProvider';
+import { MetadataWrapper } from '../src/engine/MetadataWrapper';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;

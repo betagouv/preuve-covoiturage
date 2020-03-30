@@ -8,7 +8,7 @@ import chaiAsPromised from 'chai-as-promised';
 
 import { NormalizationProcessAction } from './NormalizationProcessAction';
 
-import { irtSystemXTestCoupleMatching as testCouple } from '../../tests/IRTSystemXTestData';
+import { irtSystemXTestCoupleMatching as testCouple } from '../tests/IRTSystemXTestData';
 
 import {
   ParamsInterface as CostParamsInterface,
@@ -146,6 +146,7 @@ describe('Normalization process action', () => {
     // console.log('differentDriver', differentDriver);
     const result = action.handle(testCouple);
 
-    return expect(result).to.not.rejected;
+    // @ts-ignore
+    return expect(result).to.not.be.rejected;
   });
 });

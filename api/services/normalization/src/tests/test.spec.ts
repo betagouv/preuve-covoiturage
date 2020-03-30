@@ -3,7 +3,7 @@ import path from 'path';
 import { describe } from 'mocha';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { bootstrap } from '../src/bootstrap';
+import { bootstrap } from '../bootstrap';
 
 describe('toto', () => {
   let transport;

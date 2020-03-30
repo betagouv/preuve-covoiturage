@@ -1,7 +1,7 @@
 import { describe } from 'mocha';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { CarpoolRepositoryProvider } from '../src/providers/CarpoolRepositoryProvider';
-import { PeopleWithIdInterface } from '../src/interfaces/Carpool';
+import { CarpoolRepositoryProvider } from '../providers/CarpoolRepositoryProvider';
+import { PeopleWithIdInterface } from '../interfaces/Carpool';
 
 describe('CarpoolRepositoryProvider', () => {
   let connection: PostgresConnection;

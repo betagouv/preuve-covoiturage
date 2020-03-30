@@ -6,8 +6,8 @@
 // import { TransportInterface } from '@ilos/common';
 // import { MongoConnection } from '@ilos/connection-mongo';
 
-// import { ServiceProvider } from '../src/ServiceProvider';
-// import { bootstrap } from '../src/bootstrap';
+// import { ServiceProvider } from '../ServiceProvider';
+// import { bootstrap } from '../bootstrap';
 // import { callFactory } from './callFactory';
 
 // chai.use(chaiNock);

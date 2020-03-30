@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { TransportInterface } from '@ilos/common';
 
-import { bootstrap } from '../src/bootstrap';
+import { bootstrap } from '../bootstrap';
 
 let transport: TransportInterface;
 let request;

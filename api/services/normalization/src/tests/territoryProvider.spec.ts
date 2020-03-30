@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { TerritoryProvider } from '../src/providers/TerritoryProvider';
+import { TerritoryProvider } from '../providers/TerritoryProvider';
 
 /**
  * Requires the 'common.insee' and 'territory.insee' tables

@@ -2,7 +2,7 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { CrosscheckRepositoryProvider } from '../src/providers/CrosscheckRepositoryProvider';
+import { CrosscheckRepositoryProvider } from '../providers/CrosscheckRepositoryProvider';
 
 describe('CrosscheckRepositoryProvider', () => {
   let connection: PostgresConnection;

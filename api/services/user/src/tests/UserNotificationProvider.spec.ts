@@ -4,9 +4,9 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { ConfigInterfaceResolver, KernelInterfaceResolver } from '@ilos/common';
 
-import { UserRepositoryProviderInterfaceResolver } from '../src/interfaces/UserRepositoryProviderInterface';
-import { UserNotificationProvider } from '../src/providers/UserNotificationProvider';
-import { UserFindInterface } from '../src/shared/user/common/interfaces/UserFindInterface';
+import { UserRepositoryProviderInterfaceResolver } from '../interfaces/UserRepositoryProviderInterface';
+import { UserNotificationProvider } from '../providers/UserNotificationProvider';
+import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
 
 chai.use(sinonChai);
 const { expect } = chai;

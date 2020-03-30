@@ -4,7 +4,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 
-import { bootstrap } from '../src/bootstrap';
+import { bootstrap } from '../bootstrap';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
