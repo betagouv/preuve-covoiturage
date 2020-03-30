@@ -21,6 +21,6 @@ export class LogErrorAction extends AbstractAction {
     // clean up sensitive data
     delete params.headers.authorization;
     delete params.headers.cookie;
-    return this.repo.create({ error_resolved: false, ...params });
+    return this.repo.log({ error_resolved: false, ...params });
   }
 }

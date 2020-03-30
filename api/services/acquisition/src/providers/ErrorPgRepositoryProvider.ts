@@ -5,11 +5,22 @@ import {
   ErrorRepositoryProviderInterface,
   ErrorRepositoryProviderInterfaceResolver,
 } from '../interfaces/ErrorRepositoryProviderInterface';
-import { ParamsInterface as CreateInterface } from '../shared/acquisition/logerror.contract';
-import { ParamsInterface as ResolveInterface } from '../shared/acquisition/resolveerror.contract';
-import { ParamsInterface as SearchErrorsInterface } from '../shared/acquisition/searcherrors.contract';
-import { ParamsInterface as SummaryErrorsInterface } from '../shared/acquisition/summaryerrors.contract';
-import { ResultInterface as SummaryResultInterface } from '../shared/acquisition/summaryerrors.contract';
+import {
+  ParamsInterface as LogParamsInterface,
+  ResultInterface as LogResultInterface,
+} from '../shared/acquisition/logerror.contract';
+import {
+  ParamsInterface as ResolveParamsInterface,
+  ResultInterface as ResolveResultInterface,
+} from '../shared/acquisition/resolveerror.contract';
+import {
+  ParamsInterface as SearchParamsInterface,
+  ResultInterface as SearchResultInterface,
+} from '../shared/acquisition/searcherrors.contract';
+import {
+  ParamsInterface as SummaryParamsInterface,
+  ResultInterface as SummaryResultInterface,
+} from '../shared/acquisition/summaryerrors.contract';
 import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 @provider({
@@ -20,7 +31,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
 
   constructor(protected connection: PostgresConnection) {}
 
-  protected searchWhere(data: SearchErrorsInterface): { wheres: string[]; values: any[] } {
+  protected searchWhere(data: SearchParamsInterface): { wheres: string[]; values: any[] } {
     const wheres = [];
     const values = [];
 
@@ -60,7 +71,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     };
   }
 
-  async summary(filter: SummaryErrorsInterface): Promise<SummaryResultInterface> {
+  async summary(filter: SummaryParamsInterface): Promise<SummaryResultInterface> {
     const { wheres, values } = this.searchWhere(filter);
 
     const query = {
@@ -81,7 +92,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     return res;
   }
 
-  async search(filter: SearchErrorsInterface): Promise<AcquisitionErrorInterface[]> {
+  async search(filter: SearchParamsInterface): Promise<SearchResultInterface> {
     const { wheres, values } = this.searchWhere(filter);
 
     const query = {
@@ -92,7 +103,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     return (await this.connection.getClient().query<AcquisitionErrorInterface>(query)).rows;
   }
 
-  async resolve(data: ResolveInterface): Promise<number> {
+  async resolve(data: ResolveParamsInterface): Promise<ResolveResultInterface> {
     const query = {
       text: `
         UPDATE ${this.table} SET error_resolved = TRUE
@@ -104,7 +115,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     return await (await this.connection.getClient().query(query)).rows.length;
   }
 
-  async create(data: CreateInterface): Promise<{ _id: number; created_at: Date }> {
+  async log(data: LogParamsInterface): Promise<LogResultInterface> {
     let attempt: number;
     if (data.error_attempt == undefined) {
       const query = {
