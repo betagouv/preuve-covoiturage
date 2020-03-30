@@ -1,9 +1,11 @@
 import test from 'ava';
+
 import { RankWhitelistFilter } from './RankWhitelistFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: RankWhitelistFilter; trip: TripInterface } {
   const rule = new RankWhitelistFilter(['A']);
   const trip = faker.trip([{ operator_class: 'A' }, { operator_class: 'B' }]);
 

@@ -1,9 +1,11 @@
 import test from 'ava';
+
 import { OperatorWhitelistFilter } from './OperatorWhitelistFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: OperatorWhitelistFilter; trip: TripInterface } {
   const rule = new OperatorWhitelistFilter([1]);
   const trip = faker.trip([{ operator_id: 1 }, { operator_id: 2 }]);
   return { rule, trip };

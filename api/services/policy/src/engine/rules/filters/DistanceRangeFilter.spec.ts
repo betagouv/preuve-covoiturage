@@ -1,9 +1,11 @@
 import test from 'ava';
+
 import { DistanceRangeFilter } from './DistanceRangeFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { trip: TripInterface; rule: DistanceRangeFilter } {
   const rule = new DistanceRangeFilter({
     min: 10,
     max: 100,

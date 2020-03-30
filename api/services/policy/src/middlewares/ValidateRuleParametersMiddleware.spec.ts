@@ -1,7 +1,8 @@
 import anyTest, { TestInterface } from 'ava';
-import { ValidateRuleParametersMiddleware } from './ValidateRuleParametersMiddleware';
 import { AjvValidator } from '@pdc/provider-validator';
 import { ConfigInterfaceResolver, InvalidParamsException, ContextType } from '@ilos/common';
+
+import { ValidateRuleParametersMiddleware } from './ValidateRuleParametersMiddleware';
 import { CampaignInterface } from '../shared/policy/common/interfaces/CampaignInterface';
 import { RuleInterface } from '../engine/interfaces';
 
@@ -38,7 +39,7 @@ function setup(
         service: 'test',
       },
     },
-    () => {},
+    (): void => {},
   ];
 }
 
@@ -78,6 +79,7 @@ test.serial('should throw error if rule is not properly parametred (missing para
   t.is(err.message, 'Invalid params');
   t.is(
     err.rpcError.data,
+    // eslint-disable-next-line
     '[{"keyword":"type","dataPath":"","schemaPath":"#/type","params":{"type":"integer"},"message":"should be integer"}]',
   );
 });
@@ -91,6 +93,7 @@ test.serial('should throw error if rule is not properly parametred (wrong params
   t.is(err.message, 'Invalid params');
   t.is(
     err.rpcError.data,
+    // eslint-disable-next-line
     '[{"keyword":"type","dataPath":"","schemaPath":"#/type","params":{"type":"integer"},"message":"should be integer"}]',
   );
 });
@@ -104,6 +107,7 @@ test.serial('should throw error if missing uuid in stateful rule', async (t) => 
   t.is(err.message, 'Invalid params');
   t.is(
     err.rpcError.data,
+    // eslint-disable-next-line
     '[{"keyword":"required","dataPath":"","schemaPath":"#/required","params":{"missingProperty":"uuid"},"message":"should have required property \'uuid\'"}]',
   );
 });

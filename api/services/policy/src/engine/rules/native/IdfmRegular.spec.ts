@@ -1,10 +1,13 @@
 import test from 'ava';
 
 import { IdfmRegular } from './IdfmRegular';
-
 import { faker } from '../../helpers/faker';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-function setup() {
+
+function setup(): {
+  policy: IdfmRegular;
+  defaultTripParams: { start_territory_id: number[]; end_territory_id: number[]; operator_id: number };
+} {
   const policy = new IdfmRegular({
     territory_id: 1,
     paris_insee_code: [

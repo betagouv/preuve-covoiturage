@@ -1,11 +1,12 @@
 import test from 'ava';
+
+import { faker } from './helpers/faker';
 import { CampaignInterface } from '../interfaces';
 import { MetadataProviderInterfaceResolver, MetaInterface } from './interfaces';
 import { PolicyEngine } from './PolicyEngine';
-import { faker } from './helpers/faker';
 import { MetadataWrapper } from './meta/MetadataWrapper';
 
-function setup() {
+function setup(): { engine: PolicyEngine; start: Date; fakeCampaign: CampaignInterface } {
   const start = new Date('2019-01-01');
   const end = new Date('2019-03-01');
 

@@ -1,8 +1,10 @@
 import test from 'ava';
-import { ProcessableCampaign } from '../../ProcessableCampaign';
-import { faker } from '../../helpers/faker';
 
-function setup() {
+import { faker } from '../../helpers/faker';
+import { ProcessableCampaign } from '../../ProcessableCampaign';
+import { TripInterface } from '../../../interfaces';
+
+function setup(): { campaign: ProcessableCampaign; trip: TripInterface } {
   const campaign = new ProcessableCampaign({
     territory_id: 1,
     name: 'test',

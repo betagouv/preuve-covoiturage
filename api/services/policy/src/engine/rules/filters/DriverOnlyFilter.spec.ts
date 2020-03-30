@@ -1,10 +1,11 @@
 import test from 'ava';
+
 import { DriverOnlyFilter } from './DriverOnlyFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: DriverOnlyFilter; trip: TripInterface } {
   const rule = new DriverOnlyFilter();
   const trip = faker.trip([{ is_driver: true }, { is_driver: false }]);
   return { rule, trip };

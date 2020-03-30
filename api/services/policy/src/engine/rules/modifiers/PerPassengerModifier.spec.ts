@@ -1,8 +1,10 @@
 import test from 'ava';
+
 import { PerPassengerModifier } from './PerPassengerModifier';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: PerPassengerModifier; trip: TripInterface } {
   const rule = new PerPassengerModifier();
 
   const trip = faker.trip([

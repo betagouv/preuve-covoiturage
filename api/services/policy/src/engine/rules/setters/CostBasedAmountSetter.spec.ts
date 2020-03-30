@@ -2,8 +2,9 @@ import test from 'ava';
 
 import { CostBasedAmountSetter } from './CostBasedAmountSetter';
 import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: CostBasedAmountSetter; trip: TripInterface } {
   const rule = new CostBasedAmountSetter();
   const trip = faker.trip([{ cost: 10 }, { cost: -10 }]);
 

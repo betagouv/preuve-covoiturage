@@ -1,9 +1,10 @@
 import test from 'ava';
 
-import { PerKmModifier } from './PerKmModifier';
 import { faker } from '../../helpers/faker';
+import { PerKmModifier } from './PerKmModifier';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: PerKmModifier; trip: TripInterface } {
   const rule = new PerKmModifier();
   const trip = faker.trip([{ distance: 10000 }, { distance: 20000 }]);
 

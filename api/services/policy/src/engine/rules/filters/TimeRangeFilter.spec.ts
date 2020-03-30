@@ -1,9 +1,11 @@
 import test from 'ava';
+
+import { faker } from '../../helpers/faker';
 import { TimeRangeFilter } from './TimeRangeFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-function setup() {
+function setup(): { rule: TimeRangeFilter; trip: TripInterface } {
   const rule = new TimeRangeFilter([
     {
       start: 8,
