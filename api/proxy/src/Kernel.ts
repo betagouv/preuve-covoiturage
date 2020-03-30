@@ -16,6 +16,7 @@ import { bootstrap as territoryBootstrap } from '@pdc/service-territory';
 import { bootstrap as tripcheckBootstrap } from '@pdc/service-trip';
 import { bootstrap as userBootstrap } from '@pdc/service-user';
 import { bootstrap as monitoringBootstrap } from '@pdc/service-monitoring';
+import { Commands } from '@ilos/cli';
 
 import { config } from './config';
 import { MigrateInseeCommand } from './commands/MigrateInseeCommand';

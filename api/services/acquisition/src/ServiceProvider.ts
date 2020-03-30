@@ -12,6 +12,9 @@ import { createLegacy } from './shared/acquisition/createLegacy.schema';
 import { logerror } from './shared/acquisition/logerror.schema';
 import { alias as aliasCancel, cancel } from './shared/acquisition/cancel.schema';
 
+import { resolveerror } from './shared/acquisition/resolveerror.schema';
+import { searcherrors } from './shared/acquisition/searcherrors.schema';
+import { summaryerrors } from './shared/acquisition/summaryerrors.schema';
 import { JourneyPgRepositoryProvider } from './providers/JourneyPgRepositoryProvider';
 import { ErrorPgRepositoryProvider } from './providers/ErrorPgRepositoryProvider';
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
@@ -19,6 +22,9 @@ import { CreateJourneyAction } from './actions/CreateJourneyAction';
 import { LogErrorAction } from './actions/LogErrorAction';
 import { LogRequestAction } from './actions/LogRequestAction';
 import { CancelJourneyAction } from './actions/CancelJourneyAction';
+import { ResolveErrorAction } from './actions/ResolveErrorAction';
+import { SearchErrorAction } from './actions/SearchErrorAction';
+import { SummaryErrorAction } from './actions/SummaryErrorAction';
 
 @serviceProvider({
   config,
@@ -29,6 +35,9 @@ import { CancelJourneyAction } from './actions/CancelJourneyAction';
     ['journey.create', create],
     ['acquisition.logerror', logerror],
     [aliasCancel, cancel],
+    ['acquisition.resolveerror', resolveerror],
+    ['acquisition.searcherrors', searcherrors],
+    ['acquisition.summaryerrors', summaryerrors],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -39,7 +48,16 @@ import { CancelJourneyAction } from './actions/CancelJourneyAction';
     [PostgresConnection, 'connections.postgres'],
     [RedisConnection, 'connections.redis'],
   ],
-  handlers: [CreateJourneyLegacyAction, CreateJourneyAction, LogErrorAction, LogRequestAction, CancelJourneyAction],
+  handlers: [
+    CreateJourneyLegacyAction,
+    CreateJourneyAction,
+    LogErrorAction,
+    LogRequestAction,
+    ResolveErrorAction,
+    SearchErrorAction,
+    SummaryErrorAction,
+    CancelJourneyAction,
+  ],
 })
 export class ServiceProvider extends AbstractServiceProvider {
   readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension];

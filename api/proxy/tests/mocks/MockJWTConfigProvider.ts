@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { ConfigInterface } from '@ilos/common';
 
 export class MockJWTConfigProvider implements ConfigInterface {
-  get(key: string, fallback?: any) {
+  get(key: string, fallback?: any): any {
     return get(
       {
         jwt: {
