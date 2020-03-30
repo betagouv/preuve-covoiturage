@@ -5,12 +5,16 @@ export function campaignThirdStepSetMaxRetribution(maxRetribution: string): void
   });
 }
 
-export function campaignThirdStepSetUnit(): void {
-  it('sets retribution unit: €', () => {
-    cy.get('.ParametersForm .ParametersForm-maxRetribution mat-form-field:nth-child(2)').click();
+/**
+ *
+ * @param unitIndex 0: € 1: Pts
+ */
+export function campaignThirdStepSetUnit(unitIndex = 0): void {
+  it(`sets retribution unit: ${unitIndex === 0 ? '€' : 'Pts'}`, () => {
+    cy.get(`.ParametersForm .ParametersForm-maxRetribution mat-form-field:nth-child(2)`).click();
 
     // select euros
-    cy.get('.mat-select-panel mat-option:first-child').click();
+    cy.get(`.mat-select-panel mat-option:nth-child(${(unitIndex + 1).toString()})`).click();
 
     // focus out of material select
     cy.get('.cdk-overlay-backdrop').click({ force: true });

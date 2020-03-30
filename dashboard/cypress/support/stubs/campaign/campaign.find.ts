@@ -18,8 +18,8 @@ export function stubCampaignFind(): void {
               deleted_at: null,
               parent_id: 3,
               territory_id: 58,
-              start_date: '2020-03-03T23:00:00.000Z',
-              end_date: '2020-03-31T21:59:59.999Z',
+              start_date: '2022-03-03T23:00:00.000Z',
+              end_date: '2022-03-31T21:59:59.999Z',
               name: 'Encourager financièrement le covoiturage',
               description:
                 "Campagne d'incitation financière au covoiturage à destination des conducteurs et des passagers.",

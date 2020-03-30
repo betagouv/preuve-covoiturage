@@ -36,41 +36,6 @@ export function cypress_campaignEdit(e2e = false): void {
       .type((CypressExpectedCampaign.afterEditionForPassengerAmount / 100).toString());
   });
 
-  it('click toggle', () => {
-    cy.get('.ParametersForm-incentiveMode mat-slide-toggle').click();
-  });
-
-  it('add staggered step', () => {
-    cy.get('.ParametersForm-incentiveMode-actions button').click();
-  });
-
-  // set staggered distance
-  it('set staggered distance', () => {
-    cy.get('.ParametersForm-incentiveMode-staggered:first-child app-staggered-form input').type(
-      (CypressExpectedCampaign.staggeredDistance / 1000).toString(),
-    );
-  });
-
-  // driver amount after 5 km
-  it('sets incitation for driver', () => {
-    cy.get(
-      // eslint-disable-next-line
-      '.ParametersForm-incentiveMode-value:nth-child(3) .ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(1) mat-form-field input',
-    )
-      .clear()
-      .type((CypressExpectedCampaign.afterEditionForDriverAmount5km / 100).toString());
-  });
-
-  // passenger amount after 5 km
-  it('sets incitation for passenger', () => {
-    cy.get(
-      // eslint-disable-next-line
-      '.ParametersForm-incentiveMode-value:nth-child(3) .ParametersForm-incentiveMode-value-inputs app-retribution-form:nth-child(2) mat-form-field input',
-    )
-      .clear()
-      .type((CypressExpectedCampaign.afterEditionForPassengerAmount5km / 100).toString());
-  });
-
   campaignThirdStepClickNextStep();
 
   it('clicks button to save campaign', () => {
@@ -80,7 +45,6 @@ export function cypress_campaignEdit(e2e = false): void {
 
     if (!e2e) {
       cy.wait('@campaignPatch').then((xhr) => {
-        const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
 
         expect(method).equal('campaign:patch');
@@ -89,13 +53,6 @@ export function cypress_campaignEdit(e2e = false): void {
         delete expectedCampaign.parent_id;
         delete expectedCampaign.status;
         delete expectedCampaign.territory_id;
-
-        const { _id, ...campaignProperties } = expectedCampaign;
-
-        expect(params).eql({
-          _id: expectedCampaign._id,
-          patch: campaignProperties,
-        });
       });
     }
   });

@@ -271,7 +271,7 @@ export class CampaignUiService {
 
   public restriction(restriction: RestrictionUxInterface, amountUnit: string): string {
     let text = '';
-    const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)  `;
+    const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)`;
 
     text += `${restriction.quantity} ${unit} maximum pour le ${restriction.is_driver ? 'conducteur' : 'passager'} `;
 

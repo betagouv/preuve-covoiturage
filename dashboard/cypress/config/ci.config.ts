@@ -21,7 +21,7 @@ export const CI_CONFIG = {
       territory: true,
       filters: true,
       newcampaign: true,
-      editcampaign: false,
+      editcampaign: true,
       launchcampaign: true,
       newFromTemplate: true,
       exportTrips: true,
