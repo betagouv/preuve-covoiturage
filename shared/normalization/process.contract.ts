@@ -7,3 +7,5 @@ export const handlerConfig = {
   method: 'process',
 };
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;
+
+export const defaultQueueMeta = {};
