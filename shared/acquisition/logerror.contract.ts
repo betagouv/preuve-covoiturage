@@ -9,6 +9,7 @@ export interface ParamsInterface {
   error_message: string | null;
   error_code: string | null;
   error_line: number | null;
+  error_resolved?: boolean;
   auth: any;
   headers: any;
   body: any;
