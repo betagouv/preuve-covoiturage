@@ -170,11 +170,13 @@ workflows:
             branches:
               only:
                 - dev
+                - front/cypress_is_back
       - front-cypress:
           filters:
             branches:
               only:
                 - dev
+                - front/cypress_is_back
       - front-deploy-dev:
           requires:
             - front-qa
@@ -183,6 +185,7 @@ workflows:
             branches:
               only:
                 - dev
+                - front/cypress_is_back
 
   frontend-staging:
     jobs:
