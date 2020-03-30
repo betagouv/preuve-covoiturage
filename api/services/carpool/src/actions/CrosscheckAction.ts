@@ -45,7 +45,7 @@ export class CrosscheckAction extends Action {
     let driverIdentity: { _id: number; uuid: string } = null;
 
     if (driver) {
-      driverIdentity = await this.identity.create(driver.identity);
+      driverIdentity = await this.identity.create(driver.identity, sharedData);
       toProcess.push({ ...driver, identity_id: driverIdentity._id });
     }
 
@@ -60,7 +60,7 @@ export class CrosscheckAction extends Action {
 
     // Build identity for every participant
     for (const passenger of passengers) {
-      const { _id: identity_id } = await this.identity.create(passenger.identity);
+      const { _id: identity_id } = await this.identity.create(passenger.identity, sharedData);
       toProcess.push({ ...passenger, identity_id });
     }
 
