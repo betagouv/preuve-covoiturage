@@ -71,6 +71,7 @@ export function campaignThirdStepSetRestriction(
 ): void {
   it('set new restriction', () => {
     // click add new
+    cy.wait(500);
     cy.get('.ParametersForm .mat-expansion-panel:nth-child(4) .CampaignSubForm-inputs > button').click();
     cy.wait(500);
 
