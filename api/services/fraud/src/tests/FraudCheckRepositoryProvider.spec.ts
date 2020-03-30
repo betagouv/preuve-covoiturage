@@ -3,7 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { FraudCheckRepositoryProvider } from '../src/providers/FraudCheckRepositoryProvider';
+import { FraudCheckRepositoryProvider } from '../providers/FraudCheckRepositoryProvider';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -84,6 +84,7 @@ describe('Fraudcheck repository', async () => {
         meta: {},
         status: 'done',
       }),
+      // @ts-ignore
     ).to.eventually.rejectedWith();
   });
 

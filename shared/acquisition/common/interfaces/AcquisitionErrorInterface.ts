@@ -7,7 +7,6 @@ export enum ErrorStage {
 export interface AcquisitionErrorInterface {
   _id?: number;
   created_at?: Date;
-  journey_id: string;
   operator_id: number;
   journey_id?: string;
   request_id?: string;

@@ -64,6 +64,7 @@ describe('Check engine', async () => {
     sp.bind(SimpleCheckEngine);
     const engine = sp.get(SimpleCheckEngine);
 
+    // @ts-ignore
     await expect(engine.apply(0, 'mymethod')).to.eventually.rejectedWith('Unknown check mymethod');
   });
 
@@ -129,6 +130,7 @@ describe('Check engine', async () => {
     sinon.spy(repository, 'updateFraudCheck');
 
     meta.status = 'pending';
+    // @ts-ignore
     await expect(engine.apply(0, 'test')).to.eventually.rejectedWith(errorMessage);
     expect(repository.updateFraudCheck).to.have.calledWith({
       ...meta,

@@ -1,6 +1,6 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
-import { TheoricalDistanceAndDurationCheck as Check } from '../../src/engine/checks/TheoricalDistanceAndDurationCheck';
+import { TheoricalDistanceAndDurationCheck as Check } from '../../engine/checks/TheoricalDistanceAndDurationCheck';
 
 import { faker } from './faker';
 

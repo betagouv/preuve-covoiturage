@@ -1,6 +1,6 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
-import { StartLatitudeCollisionCheck as Check } from '../../src/engine/checks/StartLatitudeCollisionCheck';
+import { StartLatitudeCollisionCheck as Check } from '../../engine/checks/StartLatitudeCollisionCheck';
 
 import { faker } from './faker';
 

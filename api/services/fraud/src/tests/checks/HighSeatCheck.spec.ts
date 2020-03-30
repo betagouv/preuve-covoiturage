@@ -1,6 +1,6 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
-import { HighSeatCheck as Check } from '../../src/engine/checks/HighSeatCheck';
+import { HighSeatCheck as Check } from '../../engine/checks/HighSeatCheck';
 
 import { faker } from './faker';
 

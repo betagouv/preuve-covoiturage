@@ -32,10 +32,11 @@ describe('CarpoolRepositoryProvider', () => {
       acquisition_id: number;
       operator_id: number;
       operator_journey_id: string;
-      operator_trip_id: string;
       created_at: Date;
       operator_class: string;
+      operator_trip_id: string;
       trip_id: string;
+      status: string;
     } = {
       acquisition_id,
       operator_id: 0,
@@ -44,7 +45,9 @@ describe('CarpoolRepositoryProvider', () => {
       created_at: new Date(),
       operator_class: 'A',
       trip_id: '973b462f-6521-4b57-85c8-970c2d34fb10',
+      status: 'ok',
     };
+
     const people: PeopleWithIdInterface[] = [
       {
         identity_id: 0,
@@ -97,6 +100,7 @@ describe('CarpoolRepositoryProvider', () => {
         },
       },
     ];
+
     await repository.importFromAcquisition(data, people);
   });
 });

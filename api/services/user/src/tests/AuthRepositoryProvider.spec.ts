@@ -6,7 +6,6 @@ import { CryptoProvider, CryptoProviderInterfaceResolver } from '@pdc/provider-c
 
 import { AuthRepositoryProvider } from '../providers/AuthRepositoryProvider';
 import { AuthRepositoryProviderInterface } from '../interfaces/AuthRepositoryProviderInterface';
-import { UserFindInterface } from '../shared/user/common/interfaces/UserFindInterface';
 
 class Config extends ConfigInterfaceResolver {
   config = {
@@ -28,7 +27,7 @@ describe('Auth pg repository', async () => {
   let connection;
   let id;
   const email = 'toto@toto.com';
-  const getUser = async function(customEmail = email): Promise<UserFindInterface> {
+  const getUser = async function(customEmail = email): Promise<any> {
     const result = await connection.getClient().query({
       text: 'SELECT * from auth.users where email = $1',
       values: [customEmail],
