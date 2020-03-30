@@ -128,6 +128,7 @@ export function cypress_campaignCreateCase1(e2e = false): void {
       '.ParametersForm-incentiveMode-value-inputs app-retribution-form:first-child mat-checkbox:nth-child(5) .mat-checkbox-layout',
     ).click({ force: true });
 
+    // eslint-disable-next-line
     // check for ' Prendre en compte l'ensemble des places réservées par le conducteur et ses passagers ' Option to be selected by default
     // eslint-disable-next-line
     cy.get('.CampaignSubForm-inputs > :nth-child(3) mat-checkbox.mat-checkbox-checked').should('be.visible');
@@ -360,10 +361,12 @@ export function cypress_campaignCreateCaseSplit(e2e = false): void {
 
     // select first checkbox of first block 'par passager'
     cy.get(
+      // eslint-disable-next-line
       '.ParametersForm-incentiveMode-value:nth-child(2) app-retribution-form:nth-child(1) .mat-checkbox:nth-child(5) .mat-checkbox-layout',
     ).click({ force: true });
     // select first checkbox of sec block 'par km'
     cy.get(
+      // eslint-disable-next-line
       '.ParametersForm-incentiveMode-value:nth-child(2) app-retribution-form:nth-child(2) .mat-checkbox:nth-child(4) .mat-checkbox-layout',
     ).click({ force: true });
 
@@ -386,6 +389,7 @@ export function cypress_campaignCreateCaseSplit(e2e = false): void {
     ).type('11');
 
     cy.get(
+      // eslint-disable-next-line
       '.ParametersForm-incentiveMode-value:nth-child(4) app-retribution-form:nth-child(2) .mat-checkbox:nth-child(2) .mat-checkbox-layout',
     ).click({ force: true });
   });

@@ -9,6 +9,7 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
   const userData = expectedNewUsers[group];
 
   cy.get('.Users-add > button').click();
+  cy.wait(500);
 
   // firstname
   cy.get('.CreateEditUserForm > mat-form-field:first-child input').type(userData.firstname);

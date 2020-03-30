@@ -27,7 +27,7 @@ export const CI_CONFIG = {
       exportTrips: true,
     },
   },
-  e2e: {
-    // no tests
-  },
+  // e2e: {
+  //   // no tests
+  // },
 };

@@ -7,9 +7,10 @@ import { closeNotification } from '../notification.cypress';
 export function cypress_users(e2e = false) {
   it('navigate to users', () => {
     cy.get('.Header-user').click();
+    cy.wait(2000);
     cy.get('.mat-menu-item:nth-child(1)').click();
     cy.get('.mat-tab-link:nth-child(2)').click();
-    cy.wait(1000);
+    cy.wait(5000);
   });
 
   it('add a registry admin user', () => {
