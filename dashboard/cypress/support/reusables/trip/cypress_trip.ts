@@ -1,5 +1,6 @@
 import { filterEndMoment, filterStartMoment } from '../../expectedApiPayload/expectedExportFilter';
 import { closeNotification } from '../notification.cypress';
+import { CI_WAIT } from '../../../config/ci.config';
 
 export function cypress_export(e2e = false): void {
   it('clicks on trip section', () => {
@@ -22,7 +23,7 @@ export function cypress_export(e2e = false): void {
 
   it('clicks export button', () => {
     cy.get('.exportFilter-footer button').click();
-    cy.wait(500);
+    cy.wait(CI_WAIT.waitShort); // searches is mat-select-panel from ranks
     cy.get('.confirm').click();
     if (!e2e) {
       cy.wait('@tripExport').then((xhr) => {

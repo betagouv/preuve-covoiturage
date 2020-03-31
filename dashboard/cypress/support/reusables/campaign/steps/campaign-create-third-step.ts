@@ -1,3 +1,5 @@
+import { CI_WAIT } from '../../../../config/ci.config';
+
 export function campaignThirdStepSetMaxRetribution(maxRetribution: string): void {
   it('sets max retribution', () => {
     // open MAX RETRIBUTION extension
@@ -71,31 +73,31 @@ export function campaignThirdStepSetRestriction(
 ): void {
   it('set new restriction', () => {
     // click add new
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
     cy.get('.ParametersForm .mat-expansion-panel:nth-child(4) .CampaignSubForm-inputs > button').click();
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
 
     // set amount
     cy.get(`.RestrictionForm-howMuch input`).type(amount.toString());
 
     // set what
     cy.get(`.RestrictionForm-what`).click();
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
     cy.get(`.mat-select-panel .mat-option:nth-child(${whatIndex})`).click();
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
 
     // select passenger
     cy.get(`.RestrictionForm-who`).click();
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
     cy.get(`.mat-select-panel .mat-option:nth-child(${targetIndex})`).click();
-    cy.wait(300); // to avoid select multiple bug
+    cy.wait(CI_WAIT.waitShort); // to avoid select multiple bug
 
     // select period
     cy.get(`.RestrictionForm-period`).click();
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
     cy.get(`.mat-select-panel .mat-option:nth-child(${periodIndex})`).click();
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
     cy.get(`.ParametersForm .ConfirmBtn`).click();
-    cy.wait(300);
+    cy.wait(CI_WAIT.waitShort);
   });
 }

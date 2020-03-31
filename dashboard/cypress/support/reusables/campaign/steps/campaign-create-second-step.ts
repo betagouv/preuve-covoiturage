@@ -1,3 +1,5 @@
+import { CI_WAIT } from '../../../../config/ci.config';
+
 export function campaignSecondStepSelectDays(checkAllSelectedDays = false, days: number[] = []): void {
   it('selects days', () => {
     // click DATE select
@@ -15,7 +17,7 @@ export function campaignSecondStepSelectDays(checkAllSelectedDays = false, days:
     //cy.get('.mat-select-panel mat-option:first-child').click();
 
     // focus out of material select
-    cy.wait(200);
+    cy.wait(CI_WAIT.waitShort);
     cy.get('.cdk-overlay-backdrop').click({ force: true });
   });
 }
@@ -68,7 +70,7 @@ export function campaignSecondStepSelectRange(): void {
 
 export function campaignSecondStepSelectRanks(checkDefaultSelected = false, select: number[] = []): void {
   it('selects ranks', () => {
-    cy.wait(200);
+    cy.wait(CI_WAIT.waitShort);
     cy.get('.RulesForm .mat-expansion-panel:nth-child(4)').click();
     cy.get('.RulesForm-ranks mat-form-field').click();
 
@@ -95,13 +97,13 @@ export function campaignSecondStepSelectTargets(passenger, driver): void {
 
     if (driver) {
       // click for driver checkbox
-      cy.wait(200);
+      cy.wait(CI_WAIT.waitShort);
       cy.get('.RulesForm .RulesForm-target-forDriver .mat-checkbox-layout').click({ force: true });
     }
 
     if (passenger) {
       // click for passenger checkbox
-      cy.wait(200);
+      cy.wait(CI_WAIT.waitShort);
       cy.get('.RulesForm .RulesForm-target-forPassenger .mat-checkbox-layout').click({ force: true });
     }
   });
@@ -109,7 +111,7 @@ export function campaignSecondStepSelectTargets(passenger, driver): void {
 
 export function checkAllOperatorSelected(): void {
   it('check all operator selected', () => {
-    cy.wait(200);
+    cy.wait(CI_WAIT.waitShort);
     cy.get('.RulesForm .mat-expansion-panel:nth-child(6)').click();
     cy.get('.RulesForm-operators input[type=checkbox][aria-checked=true]').should('exist');
   });
@@ -120,7 +122,7 @@ export function campaignSecondStepSelectOperators(operators: string[] = null): v
     // open OPERATORS extension
     cy.get('.RulesForm .mat-expansion-panel:nth-child(6)').click();
     cy.get('.RulesForm-operators  .mat-checkbox-layout').click({ force: true });
-    cy.wait(200);
+    cy.wait(CI_WAIT.waitShort);
 
     // select first operator if no operators provided
     if (!operators) {
@@ -130,7 +132,7 @@ export function campaignSecondStepSelectOperators(operators: string[] = null): v
       operators.forEach((operator) => {
         cy.get('.RulesForm-operators mat-form-field').click();
         cy.get('.RulesForm-operators .mat-form-field input').type(operator);
-        cy.wait(200);
+        cy.wait(CI_WAIT.waitShort);
         cy.get('.mat-autocomplete-panel mat-option:first-child').click();
       });
     }
@@ -165,7 +167,7 @@ export function campaignSecondeStepAddInseeFilter(
     const child = filterType === 'blackList' ? 1 : 2;
     cy.get(`.RulesForm-insee .mat-tab-label:nth-child(${child})`).click({ force: true });
 
-    cy.wait(200);
+    cy.wait(CI_WAIT.waitShort);
 
     if (checkEmptyWhiteListError === true && filterType === 'whiteList') {
       cy.get('.RulesForm-insee .mat-error[role=alert]').contains('Au moins une règle de trajets doit être définie.');

@@ -34,7 +34,6 @@ context('TERRITORY', () => {
   if (!('territory' in config)) {
     return;
   }
-
   const trips = TripGenerator.generateTrips();
 
   describe('login', () => {
@@ -48,11 +47,13 @@ context('TERRITORY', () => {
   describe('territory dashboard', () => {
     beforeEach(() => {
       cy.server();
+
       stubCampaignList();
       stubOperatorList();
       stubTerritoryList();
       stubStatList();
       stubCampaignTemplates();
+
       stubLogin(UserGroupEnum.TERRITORY);
       stubUserMe(UserGroupEnum.TERRITORY);
       stubUserPatch(UserGroupEnum.TERRITORY);

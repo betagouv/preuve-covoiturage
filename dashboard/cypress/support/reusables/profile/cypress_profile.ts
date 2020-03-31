@@ -3,14 +3,15 @@ import { User } from '~/core/entities/authentication/user';
 
 import { expectedPatchedProfiles } from '../../expectedApiPayload/expectedProfile';
 import { closeNotification } from '../notification.cypress';
+import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_profile(currentProfile: User, e2e = false) {
+export function cypress_profile(currentProfile: User, e2e = false): void {
   const patchedProfile = expectedPatchedProfiles[currentProfile.group];
 
   it('navigate to admin', () => {
     cy.get('.Header-user').click();
     cy.get('.mat-menu-item:nth-child(1)').click();
-    cy.wait(1000);
+    cy.wait(CI_WAIT.waitLong); // searches is mat-select-panel from ranks
   });
 
   it('click on profile', () => {
