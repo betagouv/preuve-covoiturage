@@ -1,6 +1,11 @@
 /**
  * continuous integration tests
  */
+
+export const CI_WAIT = {
+  waitShort: Cypress.env('WAIT_SHORT') || 300,
+  waitLong: Cypress.env('WAIT_LONG') || 3000,
+};
 export const CI_CONFIG = {
   integration: {
     operator: {

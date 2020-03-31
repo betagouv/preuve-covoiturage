@@ -23,6 +23,7 @@ import {
 } from './steps/campaign-create-third-step';
 import { CypressExpectedCampaign } from '../../expectedApiPayload/expectedCampaign';
 import { closeNotification } from '../notification.cypress';
+import { CI_WAIT } from '../../../config/ci.config';
 
 function prepareFirstStep(): void {
   it('clicks on campaign section', () => {
@@ -31,7 +32,7 @@ function prepareFirstStep(): void {
 
   it('clicks button to create new campaign', () => {
     cy.get('.CampaignDashboard-trips-header button').click();
-    cy.wait(2000);
+    cy.wait(CI_WAIT.waitLong);
   });
 
   // FIRST STEP
@@ -114,7 +115,7 @@ export function cypress_campaignCreateCase1(e2e = false): void {
     // par passager
     // cy.get('.RetributionForm-inputs mat-checkbox:nth-child(5)').click({ force: true });
 
-    cy.wait(200);
+    cy.wait(CI_WAIT.waitShort);
 
     // press 'par km'
     cy.get(
@@ -448,7 +449,7 @@ export function cypress_campaignCreate(e2e = false): void {
 
   it('clicks button to create new campaign', () => {
     cy.get('.CampaignDashboard-trips-header button').click();
-    cy.wait(2000);
+    cy.wait(CI_WAIT.waitLong);
   });
 
   // FIRST STEP

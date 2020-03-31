@@ -5,8 +5,9 @@ import { stubUserMe, stubUserMePermissionError } from '../../stubs/user/user.me'
 import { stubMainLists } from '../../stubs/loadMainLists';
 import { stubStatList } from '../../stubs/stat/stat.list';
 import { stubCampaignList } from '../../stubs/campaign/campaign.list';
+import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_login(loginData: { email: string; password: string; group: UserGroupEnum }, e2e = false) {
+export function cypress_login(loginData: { email: string; password: string; group: UserGroupEnum }, e2e = false): void {
   if (!e2e) {
     beforeEach(() => {
       cy.server();
@@ -35,6 +36,6 @@ export function cypress_login(loginData: { email: string; password: string; grou
 
     cy.get('.Login form > button').click();
 
-    cy.wait(1000);
+    cy.wait(CI_WAIT.waitLong);
   });
 }
