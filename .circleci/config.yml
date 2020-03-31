@@ -95,7 +95,7 @@ jobs:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.cache
-      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --record --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev'
+      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev'
 
   front-deploy-dev:
     docker:
