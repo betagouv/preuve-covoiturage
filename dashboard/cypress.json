@@ -1,9 +1,9 @@
 {
   "baseUrl": "http://localhost:4200",
   "modifyObstructiveCode": false,
-  "pageLoadTimeout": 1,
-  "defaultCommandTimeout": 1,
-  "requestTimeout": 1,
+  "pageLoadTimeout": 320000,
+  "defaultCommandTimeout": 320000,
+  "requestTimeout": 320000,
   "viewportWidth": 1200,
   "viewportHeight": 800,
   "projectId": "j8ihas",
