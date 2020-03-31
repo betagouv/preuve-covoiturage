@@ -9,7 +9,7 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
   const userData = expectedNewUsers[group];
 
   cy.get('.Users-add > button').click();
-  cy.wait(500);
+  cy.wait(2000);
 
   // firstname
   cy.get('.CreateEditUserForm > mat-form-field:first-child input').type(userData.firstname);
@@ -25,7 +25,7 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
 
   // click role
   cy.get('mat-form-field:nth-child(5)').click();
-  cy.wait(500);
+  cy.wait(2000);
 
   const groupIndex =
     userData.role === UserRoleEnum.TERRITORY_ADMIN
@@ -53,7 +53,7 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
 
   cy.get(`.mat-select-panel mat-option:nth-child(${roleIndex})`).click();
 
-  cy.wait(500);
+  cy.wait(2000);
 
   // select operator
   if (userData.role.split('.')[0] === 'operator') {
@@ -62,16 +62,16 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
     } else {
       cy.get('app-operator-autocomplete mat-form-field input').type('opé');
     }
-    cy.wait(500);
+    cy.wait(2000);
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
-    cy.wait(500);
+    cy.wait(2000);
   }
 
   if (userData.role.split('.')[0] === 'territory') {
     // select territory
     cy.get('app-territory-autocomplete mat-form-field input').type(e2e ? 'a' : territoryStub.name);
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
-    cy.wait(500);
+    cy.wait(2000);
   }
 
   if (!e2e) {
@@ -79,7 +79,7 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
   }
 
   cy.get('.CreateEditUserForm-actions > button:first-child').click();
-  cy.wait(500);
+  cy.wait(2000);
 
   if (!e2e) {
     cy.wait('@userCreate').then((xhr) => {
