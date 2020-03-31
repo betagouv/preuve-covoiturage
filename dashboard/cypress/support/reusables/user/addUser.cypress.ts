@@ -25,6 +25,7 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
 
   // click role
   cy.get('mat-form-field:nth-child(5)').click();
+  cy.wait(500);
 
   const groupIndex =
     userData.role === UserRoleEnum.TERRITORY_ADMIN
@@ -61,13 +62,16 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
     } else {
       cy.get('app-operator-autocomplete mat-form-field input').type('opé');
     }
+    cy.wait(500);
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    cy.wait(500);
   }
 
   if (userData.role.split('.')[0] === 'territory') {
     // select territory
     cy.get('app-territory-autocomplete mat-form-field input').type(e2e ? 'a' : territoryStub.name);
     cy.get('.mat-autocomplete-panel mat-option:first-child').click();
+    cy.wait(500);
   }
 
   if (!e2e) {
@@ -75,6 +79,7 @@ export function cypress_addUser(group: UserGroupEnum, e2e = false): void {
   }
 
   cy.get('.CreateEditUserForm-actions > button:first-child').click();
+  cy.wait(500);
 
   if (!e2e) {
     cy.wait('@userCreate').then((xhr) => {
