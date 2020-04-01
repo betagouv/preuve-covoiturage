@@ -65,7 +65,7 @@ jobs:
 
   front-cypress:
     docker:
-      - image: cypress/base:10
+      - image: cypress/browsers:chrome67
         environment:
           TERM: xterm
     working_directory: ~/repo/dashboard
@@ -87,7 +87,7 @@ jobs:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.cache
-      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev --browser chrome'
+      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev --record false --browser chrome'
 
   front-deploy-dev:
     docker:
