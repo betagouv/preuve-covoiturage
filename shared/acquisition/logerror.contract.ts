@@ -1,6 +1,7 @@
 import { ErrorStage } from './common/interfaces/AcquisitionErrorInterface';
 
 export interface ParamsInterface {
+  request_id?: string;
   journey_id: string;
   operator_id: number;
   source: string;

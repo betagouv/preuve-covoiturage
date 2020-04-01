@@ -1,6 +1,7 @@
-import { provider } from '@ilos/common';
+import { provider, NotFoundException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
+import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 import {
   ErrorRepositoryProviderInterface,
   ErrorRepositoryProviderInterfaceResolver,
@@ -21,7 +22,10 @@ import {
   ParamsInterface as SummaryParamsInterface,
   ResultInterface as SummaryResultInterface,
 } from '../shared/acquisition/summaryerrors.contract';
-import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
+import {
+  ParamsInterface as FindParamsInterface,
+  ResultInterface as FindResultInterface,
+} from '../shared/acquisition/finderror.contract';
 
 @provider({
   identifier: ErrorRepositoryProviderInterfaceResolver,
@@ -167,6 +171,32 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     };
 
     const result = await this.connection.getClient().query(query);
+
+    return result.rows[0];
+  }
+
+  async find(data: FindParamsInterface): Promise<FindResultInterface> {
+    const values = [data.journey_id];
+
+    let where = '';
+    if (data.operator_id) {
+      values.push(data.operator_id.toString());
+      where = 'AND operator_id = $2';
+    }
+
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE journey_id = $1
+        ${where}
+        LIMIT 1
+      `,
+      values,
+    });
+
+    if (!result.rowCount) {
+      throw new NotFoundException();
+    }
 
     return result.rows[0];
   }

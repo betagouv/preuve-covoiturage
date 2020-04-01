@@ -40,6 +40,7 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
 
     return result.rows[0];
   }
+
   async exists(journey_id: string, operator_id: number, application_id: number): Promise<number> {
     const query = {
       text: `
@@ -60,5 +61,23 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
     }
 
     return result.rows[0]._id;
+  }
+
+  async findForOperator(journey_id: string, operator_id: number): Promise<AcquisitionInterface> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT * FROM ${this.table}
+        WHERE journey_id = $1
+        AND operator_id = $2
+        LIMIT 1    
+      `,
+      values: [journey_id, operator_id],
+    });
+
+    if (!result.rowCount) {
+      throw new NotFoundException();
+    }
+
+    return result.rows[0];
   }
 }
