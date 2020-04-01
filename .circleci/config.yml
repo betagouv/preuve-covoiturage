@@ -63,31 +63,31 @@ jobs:
       # - run: yarn build --no-progress
       # - run: yarn test
 
-  # front-cypress:
-  #   docker:
-  #     - image: cypress/base:10
-  #       environment:
-  #         TERM: xterm
-  #   working_directory: ~/repo/dashboard
-  #   steps:
-  #     - checkout:
-  #         path: ~/repo
-  #     - restore_cache:
-  #         keys:
-  #           - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-  #           - v1-deps-{{ .Branch }}
-  #           - v1-deps
-  #     - run: yarn global add http-server
-  #     - run: yarn global add start-server-and-test
-  #     - run:
-  #         name: Install Dependencies
-  #         command: yarn install --frozen-lockfile --production=false
-  #     - run: yarn build -c dev --no-progress
-  #     - save_cache:
-  #         key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-  #         paths:
-  #           - ~/.cache
-  #     - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev'
+  front-cypress:
+    docker:
+      - image: cypress/base:10
+        environment:
+          TERM: xterm
+    working_directory: ~/repo/dashboard
+    steps:
+      - checkout:
+          path: ~/repo
+      - restore_cache:
+          keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run: yarn global add http-server
+      - run: yarn global add start-server-and-test
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile --production=false
+      - run: yarn build -c dev --no-progress
+      - save_cache:
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - ~/.cache
+      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev --browser chrome'
 
   front-deploy-dev:
     docker:
@@ -163,11 +163,12 @@ workflows:
               only:
                 - dev
 
-      # - front-cypress:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - dev
+      - front-cypress:
+          filters:
+            branches:
+              only:
+                - dev
+                - front/cypress_is_back
 
       - front-deploy-dev:
           requires:
