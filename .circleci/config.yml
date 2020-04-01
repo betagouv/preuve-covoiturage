@@ -65,7 +65,7 @@ jobs:
 
   front-cypress:
     docker:
-      - image: cypress/browsers:chrome67
+      - image: cypress/browsers:node10.11.0-chrome75
         environment:
           TERM: xterm
     working_directory: ~/repo/dashboard
