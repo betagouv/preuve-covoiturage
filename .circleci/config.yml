@@ -168,7 +168,6 @@ workflows:
             branches:
               only:
                 - dev
-                - front/cypress_is_back
 
       - front-deploy-dev:
           requires:
