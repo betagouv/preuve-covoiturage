@@ -65,6 +65,9 @@ export class StatusJourneyAction extends AbstractAction {
         status: `${error.error_stage}_error`,
         journey_id,
         created_at: error.created_at,
+        metadata: {
+          message: error.error_message,
+        },
       };
     } else {
       if (carpool) {
@@ -79,6 +82,9 @@ export class StatusJourneyAction extends AbstractAction {
             status: `${error.error_stage}_error`,
             journey_id,
             created_at: error.created_at,
+            metadata: {
+              message: error.error_message,
+            },
           };
         }
         return {

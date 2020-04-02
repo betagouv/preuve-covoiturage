@@ -265,6 +265,9 @@ test('status: acquisition_error', async (t) => {
     status: 'acquisition_error',
     journey_id,
     created_at: err.created_at,
+    metadata: {
+      message: null,
+    },
   });
 });
 
@@ -293,5 +296,8 @@ test('status: normalization_error', async (t) => {
     status: 'normalization_error',
     journey_id,
     created_at: err.created_at,
+    metadata: {
+      message: null,
+    },
   });
 });
