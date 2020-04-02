@@ -24,8 +24,8 @@ import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
 
-import { HttpTransport } from '../src/HttpTransport';
-import { Kernel } from '../src/Kernel';
+import { HttpTransport } from '../HttpTransport';
+import { Kernel } from '../Kernel';
 import { payloadV2 } from './mocks/payloadV2';
 import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
 import { createOperatorFactory } from './helpers/createOperatorFactory';
