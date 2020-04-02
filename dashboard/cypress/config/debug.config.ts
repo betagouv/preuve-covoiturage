@@ -7,7 +7,7 @@ import { TestsInterface } from './tests.interface';
  * Don't not commit changes to this file, to avoid conflicts
  */
 export const DEBUG_CONFIG = {
-  integration: <TestsInterface>{
+  integration: {
     operator: {
       profile: false,
       operator: false,
@@ -31,8 +31,8 @@ export const DEBUG_CONFIG = {
       newFromTemplate: false,
       exportTrips: false,
     },
-  },
-  e2e: <TestsInterface>{
+  } as TestsInterface,
+  e2e: {
     operator: {
       profile: true,
       operator: true,
@@ -56,5 +56,5 @@ export const DEBUG_CONFIG = {
       newFromTemplate: false,
       exportTrips: false,
     },
-  },
+  } as TestsInterface,
 };

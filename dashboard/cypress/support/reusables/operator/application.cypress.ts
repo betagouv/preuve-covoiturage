@@ -1,9 +1,9 @@
 import { closeNotification } from '../notification.cypress';
-import { operatorStubs } from '../../stubs/operator/operator.list';
 import { operatorStub } from '../../stubs/operator/operator.find';
 import { CypressExpectedApplication } from '../../expectedApiPayload/expectedApplication';
+import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_applications(e2e = false) {
+export function cypress_applications(e2e = false): void {
   it('navigates to application', () => {
     cy.get('.Header-user').click();
     cy.get('.mat-menu-item:nth-child(1)').click();
@@ -36,7 +36,7 @@ export function cypress_applications(e2e = false) {
   it('copy token', () => {
     cy.get('.token button').click();
     // click on notif fix bug
-    cy.wait(500);
+    cy.wait(CI_WAIT.waitShort); // searches is mat-select-panel from ranks
   });
 
   // close copy success notif

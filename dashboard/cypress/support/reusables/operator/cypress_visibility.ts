@@ -1,8 +1,8 @@
 import { territoryStubs } from '../../stubs/territory/territory.list';
-import { ExpectedVisibility } from '../../expectedApiPayload/expectedVisibility';
 import { closeNotification } from '../notification.cypress';
+import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_visibility(e2e = false) {
+export function cypress_visibility(e2e = false): void {
   it('navigates to visibility', () => {
     cy.get('.Header-user').click();
     cy.get('.mat-menu-item:nth-child(1)').click();
@@ -23,18 +23,17 @@ export function cypress_visibility(e2e = false) {
     cy.get('.OperatorVisibilityTree-header > form input')
       .type(territoryStubs[1].name)
       .type('{enter}');
-    cy.wait(1000);
+    cy.wait(CI_WAIT.waitLong); // searches is mat-select-panel from ranks
   });
 
   // save one with a change
   it('add territory', () => {
     cy.get('.OperatorVisibilityTree mat-checkbox:first-child .mat-checkbox-layout').click();
     cy.get('.OperatorVisibilityTree-actions button').click();
-    cy.wait(2000);
+    cy.wait(CI_WAIT.waitLong); // searches is mat-select-panel from ranks
 
     if (!e2e) {
       cy.wait('@updateVisibleInTerritories').then((xhr) => {
-        const params = xhr.request.body[0].params;
         const method = xhr.request.body[0].method;
 
         expect(method).equal('territory:updateOperator');
@@ -47,7 +46,7 @@ export function cypress_visibility(e2e = false) {
   // select all select none
   it('check & uncheck', () => {
     cy.get('.OperatorVisibilityTree-header > mat-checkbox .mat-checkbox-layout').click();
-    cy.wait(100);
+    cy.wait(CI_WAIT.waitShort);
     cy.get('.OperatorVisibilityTree-header > mat-checkbox .mat-checkbox-layout').click();
     cy.get('.OperatorVisibilityTree-actions button').click();
 

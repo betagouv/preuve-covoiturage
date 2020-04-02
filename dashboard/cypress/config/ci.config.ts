@@ -1,10 +1,13 @@
-import { TestsInterface } from './tests.interface';
-
 /**
  * continuous integration tests
  */
+
+export const CI_WAIT = {
+  waitShort: Cypress.env('WAIT_SHORT') || 300,
+  waitLong: Cypress.env('WAIT_LONG') || 3000,
+};
 export const CI_CONFIG = {
-  integration: <TestsInterface>{
+  integration: {
     operator: {
       profile: true,
       operator: true,
@@ -24,12 +27,12 @@ export const CI_CONFIG = {
       filters: true,
       newcampaign: true,
       editcampaign: true,
-      launchcampaign: false,
-      newFromTemplate: false,
-      exportTrips: false,
+      launchcampaign: true,
+      newFromTemplate: true,
+      exportTrips: true,
     },
   },
-  e2e: <TestsInterface>{
-    // no tests
-  },
+  // e2e: {
+  //   // no tests
+  // },
 };

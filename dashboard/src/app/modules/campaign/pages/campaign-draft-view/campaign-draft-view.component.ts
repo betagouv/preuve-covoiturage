@@ -67,6 +67,7 @@ export class CampaignDraftViewComponent extends DestroyObservable implements OnI
           this.campaignUx = campaign.toFormValues();
         },
         (err) => {
+          console.log('err : ', err);
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });

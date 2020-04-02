@@ -72,6 +72,7 @@ export class CampaignActiveViewComponent extends DestroyObservable implements On
           this.loadTerritory(campaign.territory_id);
         },
         (err) => {
+          console.log('err : ', err);
           this._router.navigate(['/campaign']).then(() => {
             this._toastr.error("Les données de la campagne n'ont pas pu être chargées");
           });

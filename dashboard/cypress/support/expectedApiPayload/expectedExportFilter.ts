@@ -8,8 +8,9 @@ export const filterEndMoment = Cypress.moment()
   .startOf('day');
 
 export const expectedExportFilter: ExportFilterInterface = {
-  date: <any>{
+  date: {
     start: filterStartMoment.toDate().toISOString(),
     end: filterEndMoment.toDate().toISOString(),
-  },
+  } as any,
+  territory_id: [1],
 };

@@ -20,14 +20,44 @@ export const operatorStubs: Operator[] = [
       country: 'France',
     },
   },
+  {
+    _id: 3,
+    name: 'BlablaLines',
+    legal_name: 'BlaBlaLine',
+    siret: '123456789',
+    company: {
+      naf_entreprise: '1234A',
+    },
+    address: {
+      street: '2 rue de brest',
+      postcode: '69002',
+      city: 'Lyon',
+      country: 'France',
+    },
+  },
+  {
+    _id: 4,
+    name: 'Klaxit',
+    legal_name: 'Klaxit',
+    siret: '123456789',
+    company: {
+      naf_entreprise: '1234A',
+    },
+    address: {
+      street: '2 rue de brest',
+      postcode: '69002',
+      city: 'Lyon',
+      country: 'France',
+    },
+  },
 ];
 
-export function stubOperatorList() {
+export function stubOperatorList(): void {
   cy.route({
     method: 'POST',
     url: '/rpc?methods=operator:list',
     response: (data) =>
-      <JsonRPCResponse[]>[
+      [
         {
           id: 1568215196898,
           jsonrpc: '2.0',
@@ -35,6 +65,6 @@ export function stubOperatorList() {
             data: operatorStubs,
           },
         },
-      ],
+      ] as JsonRPCResponse[],
   });
 }
