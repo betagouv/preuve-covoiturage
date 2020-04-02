@@ -1,12 +1,14 @@
 import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ContextType } from '@ilos/common';
+import { handler, ContextType, NotFoundException } from '@ilos/common';
 
 import { alias } from '../shared/acquisition/status.schema';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/status.contract';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
 import { ErrorRepositoryProviderInterfaceResolver } from '../interfaces/ErrorRepositoryProviderInterface';
 import { CarpoolRepositoryInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
+import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 @handler({
   ...handlerConfig,
@@ -34,38 +36,57 @@ export class StatusJourneyAction extends AbstractAction {
      * 3. check errors on failure
      */
 
+    let acquisition: AcquisitionInterface;
+    let error: AcquisitionErrorInterface;
+    let carpool: string;
+
+    // fetch all states
     try {
-      const acq = await this.acquisitionRepository.findForOperator(journey_id, operator_id);
+      acquisition = await this.acquisitionRepository.findForOperator(journey_id, operator_id);
+    } catch (e) {}
+    try {
+      error = await this.errorRepository.find({
+        journey_id,
+        operator_id,
+      });
+    } catch (e) {}
+    try {
+      carpool = await this.carpoolRepository.status({
+        operator_id,
+        journey_id,
+        acquisition_id: acquisition._id,
+      });
+    } catch (e) {}
 
-      try {
-        const carpoolStatus = await this.carpoolRepository.status({
-          operator_id,
-          journey_id,
-          acquisition_id: acq._id,
-        });
-
-        // handles statuses : ok | expired | canceled
+    // make tree :/
+    if (!acquisition) {
+      if (!error) throw new NotFoundException();
+      return {
+        status: `${error.error_stage}_error`,
+        journey_id,
+        created_at: error.created_at,
+      };
+    } else {
+      if (carpool) {
         return {
-          status: carpoolStatus,
+          status: carpool,
           journey_id,
-          created_at: acq.created_at,
+          created_at: acquisition.created_at,
         };
-      } catch (eCarpool) {
+      } else {
+        if (error) {
+          return {
+            status: `${error.error_stage}_error`,
+            journey_id,
+            created_at: error.created_at,
+          };
+        }
         return {
           status: 'pending',
           journey_id,
-          created_at: acq.created_at,
+          created_at: acquisition.created_at,
         };
       }
-    } catch (eAcquisition) {
-      // look for the submission in the error table
-      const err = await this.errorRepository.find(params);
-
-      return {
-        status: err.error_message || 'error', // TODO improve
-        journey_id,
-        created_at: err.created_at,
-      };
     }
   }
 }

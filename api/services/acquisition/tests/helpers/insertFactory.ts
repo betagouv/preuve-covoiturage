@@ -25,15 +25,19 @@ export function insertFactory(
       return result.rows[0];
     },
 
-    async insertError(journey_id: string, operator_id = 999999): Promise<AcquisitionErrorInterface> {
+    async insertError(
+      journey_id: string,
+      operator_id = 999999,
+      stage = 'acquisition',
+    ): Promise<AcquisitionErrorInterface> {
       const result = await pool.query({
         text: `
         INSERT INTO acquisition.errors
-        (operator_id, source, journey_id)
-        VALUES ($1, $2, $3)
+        (operator_id, source, journey_id, error_stage)
+        VALUES ($1, $2, $3, $4)
         RETURNING *
       `,
-        values: [operator_id, 'test', journey_id],
+        values: [operator_id, 'test', journey_id, stage],
       });
 
       return result.rows[0];

@@ -243,7 +243,7 @@ test('status: not_found wrong operator_id (acquisition)', async (t) => {
 /**
  * status: error
  */
-test('status: error', async (t) => {
+test('status: acquisition_error', async (t) => {
   const { insertError } = insertFactory(t.context.pool);
 
   const journey_id = `test-${Math.random()}`;
@@ -262,7 +262,35 @@ test('status: error', async (t) => {
   );
 
   t.deepEqual(response, {
-    status: 'error',
+    status: 'acquisition_error',
+    journey_id,
+    created_at: err.created_at,
+  });
+});
+
+/**
+ * status: error
+ */
+test('status: normalization_error', async (t) => {
+  const { insertError } = insertFactory(t.context.pool);
+
+  const journey_id = `test-${Math.random()}`;
+  const operator_id = 999999;
+
+  const err = await insertError(journey_id, operator_id, 'normalization');
+  del.errors.push(err._id);
+
+  const response = await t.context.kernel.call(
+    'acquisition:status',
+    { journey_id },
+    {
+      call: { user: { operator_id, permissions: ['journey.create'] } },
+      channel: { service: 'test' },
+    },
+  );
+
+  t.deepEqual(response, {
+    status: 'normalization_error',
     journey_id,
     created_at: err.created_at,
   });
