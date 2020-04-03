@@ -195,7 +195,7 @@ test("Status: check 'pending' journey", async (t) => {
     )
     .expect((response: supertest.Response) => {
       t.is(response.status, 200);
-      t.deepEqual(response.body, {
+      t.deepEqual(get(response, 'body.result.data'), {
         status: 'pending',
         journey_id,
         created_at: t.context.journey.created_at.toISOString(),
@@ -223,6 +223,8 @@ test('Status: check wrong permissions', async (t) => {
     )
     .expect((response: supertest.Response) => {
       t.is(response.status, 403);
+
+      // FIX ME with RPC error code
       t.deepEqual(get(response, 'body.error', {}), {
         code: 403,
         data: 'Error',
@@ -265,7 +267,7 @@ test('Status: check wrong journey_id', async (t) => {
     )
     .expect((response: supertest.Response) => {
       t.is(response.status, 404);
-      t.deepEqual(response.body, {
+      t.deepEqual(get(response, 'body.error', {}), {
         code: -32504,
         message: 'Not found',
       });
@@ -306,7 +308,7 @@ test('Status: check wrong operator_id', async (t) => {
     )
     .expect((response: supertest.Response) => {
       t.is(response.status, 404);
-      t.deepEqual(response.body, {
+      t.deepEqual(get(response, 'body.error', {}), {
         code: -32504,
         message: 'Not found',
       });

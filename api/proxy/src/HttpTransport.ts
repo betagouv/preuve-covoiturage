@@ -150,29 +150,18 @@ export class HttpTransport implements TransportInterface {
     this.app.use(dataWrapMiddleware);
   }
 
+  /**
+   * Operators can query the status of their journey_id
+   */
   private registerJourneyStatusRoutes(): void {
     this.app.get(
       '/journeys/:journey_id',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
-        const { journey_id } = req.params;
+        const { params } = req;
         const user = get(req, 'session.user', null);
-        const response = await this.kernel.handle(
-          nestParams({ id: 1, jsonrpc: '2.0', method: 'acquisition:status', params: { journey_id } }, user),
-        );
-
-        const anyResponse = (response as unknown) as any;
-
-        if ('result' in anyResponse) res.status(mapStatusCode(anyResponse)).json(anyResponse.result);
-        else if ('error' in anyResponse) res.status(mapStatusCode(anyResponse)).json(anyResponse.error);
-        else
-          res.status(500).json({
-            journey_id,
-            error: {
-              code: 500,
-              message: 'Server error',
-            },
-          });
+        const response = await this.kernel.handle(makeCall('acquisition:status', params, { user, metadata: { req } }));
+        this.send(res, response);
       }),
     );
   }
