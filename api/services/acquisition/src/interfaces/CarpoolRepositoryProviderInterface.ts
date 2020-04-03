@@ -1,7 +1,10 @@
-import {
-  ParamsInterface as StatusParamsInterface,
-  ResultInterface as StatusResultInterface,
-} from '../shared/acquisition/carpoolstatus.contract';
+export interface StatusParamsInterface {
+  acquisition_id: number;
+  operator_id: number;
+  journey_id: string;
+}
+
+export type StatusResultInterface = 'ok' | 'expired' | 'canceled';
 
 export interface CarpoolRepositoryInterface {
   status(data: StatusParamsInterface): Promise<StatusResultInterface>;

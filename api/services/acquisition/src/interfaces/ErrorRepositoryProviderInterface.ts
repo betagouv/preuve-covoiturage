@@ -1,4 +1,7 @@
-import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
+import {
+  ErrorStage,
+  AcquisitionErrorInterface,
+} from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 import {
   ParamsInterface as LogParamsInterface,
   ResultInterface as LogResultInterface,
@@ -7,29 +10,36 @@ import {
   ParamsInterface as ResolveParamsInterface,
   ResultInterface as ResolveResultInterface,
 } from '../shared/acquisition/resolveerror.contract';
-import {
-  ParamsInterface as SearchParamsInterface,
-  ResultInterface as SearchResultInterface,
-} from '../shared/acquisition/searcherrors.contract';
-import {
-  ParamsInterface as SummaryParamsInterface,
-  ResultInterface as SummaryResultInterface,
-} from '../shared/acquisition/summaryerrors.contract';
-import {
-  ParamsInterface as FindParamsInterface,
-  ResultInterface as FindResultInterface,
-} from '../shared/acquisition/finderror.contract';
+
+export interface SearchParamsInterface {
+  journey_id?: string;
+  operator_id?: number;
+  error_stage?: ErrorStage;
+  start_date?: Date;
+  end_date?: Date;
+  error_code?: string;
+}
+
+enum GroupByOptions {
+  operator_id = 'operator_id',
+  journey_id = 'journey_id',
+  error_stage = 'error_stage',
+}
+
+export interface SummaryParamsInterface extends SearchParamsInterface {
+  group_by: GroupByOptions;
+}
 
 export interface ErrorRepositoryProviderInterface {
   search(data: SearchParamsInterface): Promise<AcquisitionErrorInterface[]>;
   log(data: LogParamsInterface): Promise<LogResultInterface>;
   resolve(data: ResolveParamsInterface): Promise<number>;
-  summary(filter: SummaryParamsInterface): Promise<SummaryResultInterface>;
-  find(data: FindParamsInterface): Promise<FindResultInterface>;
+  summary(filter: SummaryParamsInterface): Promise<{ [key: string]: number }>;
+  find(data: { journey_id: string; operator_id?: number }): Promise<AcquisitionErrorInterface>;
 }
 
 export abstract class ErrorRepositoryProviderInterfaceResolver implements ErrorRepositoryProviderInterface {
-  async search(data: SearchParamsInterface): Promise<SearchResultInterface> {
+  async search(data: SearchParamsInterface): Promise<AcquisitionErrorInterface[]> {
     throw new Error('Not implemented');
   }
 
@@ -41,11 +51,11 @@ export abstract class ErrorRepositoryProviderInterfaceResolver implements ErrorR
     throw new Error('Not implemented');
   }
 
-  async summary(filter: SummaryParamsInterface): Promise<SummaryResultInterface> {
+  async summary(filter: SummaryParamsInterface): Promise<{ [key: string]: number }> {
     throw new Error('Not implemented');
   }
 
-  async find(data: FindParamsInterface): Promise<FindResultInterface> {
+  async find(data: { journey_id: string; operator_id?: number }): Promise<AcquisitionErrorInterface> {
     throw new Error('Not implemented');
   }
 }

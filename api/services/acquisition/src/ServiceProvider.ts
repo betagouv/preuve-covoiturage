@@ -17,8 +17,6 @@ import { cancel } from './shared/acquisition/cancel.schema';
 import { status } from './shared/acquisition/status.schema';
 import { logerror } from './shared/acquisition/logerror.schema';
 import { resolveerror } from './shared/acquisition/resolveerror.schema';
-import { searcherrors } from './shared/acquisition/searcherrors.schema';
-import { summaryerrors } from './shared/acquisition/summaryerrors.schema';
 
 import { CreateJourneyLegacyAction } from './actions/CreateJourneyLegacyAction';
 import { CreateJourneyAction } from './actions/CreateJourneyAction';
@@ -26,8 +24,6 @@ import { LogErrorAction } from './actions/LogErrorAction';
 import { LogRequestAction } from './actions/LogRequestAction';
 import { CancelJourneyAction } from './actions/CancelJourneyAction';
 import { ResolveErrorAction } from './actions/ResolveErrorAction';
-import { SearchErrorAction } from './actions/SearchErrorAction';
-import { SummaryErrorAction } from './actions/SummaryErrorAction';
 import { StatusJourneyAction } from './actions/StatusJourneyAction';
 
 @serviceProvider({
@@ -41,8 +37,6 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
     ['journey.status', status],
     ['acquisition.logerror', logerror],
     ['acquisition.resolveerror', resolveerror],
-    ['acquisition.searcherrors', searcherrors],
-    ['acquisition.summaryerrors', summaryerrors],
   ],
   middlewares: [
     ['can', PermissionMiddleware],
@@ -59,8 +53,6 @@ import { StatusJourneyAction } from './actions/StatusJourneyAction';
     LogErrorAction,
     LogRequestAction,
     ResolveErrorAction,
-    SearchErrorAction,
-    SummaryErrorAction,
     CancelJourneyAction,
     StatusJourneyAction,
   ],

@@ -4,11 +4,9 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   CarpoolRepositoryInterface,
   CarpoolRepositoryInterfaceResolver,
+  StatusParamsInterface,
+  StatusResultInterface,
 } from '../interfaces/CarpoolRepositoryProviderInterface';
-import {
-  ParamsInterface as ExistsParamsInterface,
-  ResultInterface as ExistsResultInterface,
-} from '../shared/acquisition/carpoolstatus.contract';
 
 @provider({
   identifier: CarpoolRepositoryInterfaceResolver,
@@ -18,7 +16,7 @@ export class CarpoolRepositoryProvider implements CarpoolRepositoryInterface {
 
   constructor(protected connection: PostgresConnection) {}
 
-  async status(data: ExistsParamsInterface): Promise<ExistsResultInterface> {
+  async status(data: StatusParamsInterface): Promise<StatusResultInterface> {
     const { acquisition_id, operator_id, journey_id } = data;
 
     const result = await this.connection.getClient().query({

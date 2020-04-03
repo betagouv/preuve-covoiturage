@@ -5,6 +5,8 @@ import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfac
 import {
   ErrorRepositoryProviderInterface,
   ErrorRepositoryProviderInterfaceResolver,
+  SearchParamsInterface,
+  SummaryParamsInterface,
 } from '../interfaces/ErrorRepositoryProviderInterface';
 import {
   ParamsInterface as LogParamsInterface,
@@ -14,18 +16,6 @@ import {
   ParamsInterface as ResolveParamsInterface,
   ResultInterface as ResolveResultInterface,
 } from '../shared/acquisition/resolveerror.contract';
-import {
-  ParamsInterface as SearchParamsInterface,
-  ResultInterface as SearchResultInterface,
-} from '../shared/acquisition/searcherrors.contract';
-import {
-  ParamsInterface as SummaryParamsInterface,
-  ResultInterface as SummaryResultInterface,
-} from '../shared/acquisition/summaryerrors.contract';
-import {
-  ParamsInterface as FindParamsInterface,
-  ResultInterface as FindResultInterface,
-} from '../shared/acquisition/finderror.contract';
 
 @provider({
   identifier: ErrorRepositoryProviderInterfaceResolver,
@@ -75,7 +65,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     };
   }
 
-  async summary(filter: SummaryParamsInterface): Promise<SummaryResultInterface> {
+  async summary(filter: SummaryParamsInterface): Promise<{ [key: string]: number }> {
     const { wheres, values } = this.searchWhere(filter);
 
     const query = {
@@ -96,7 +86,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     return res;
   }
 
-  async search(filter: SearchParamsInterface): Promise<SearchResultInterface> {
+  async search(filter: SearchParamsInterface): Promise<AcquisitionErrorInterface[]> {
     const { wheres, values } = this.searchWhere(filter);
 
     const query = {
@@ -175,7 +165,7 @@ export class ErrorPgRepositoryProvider implements ErrorRepositoryProviderInterfa
     return result.rows[0];
   }
 
-  async find(data: FindParamsInterface): Promise<FindResultInterface> {
+  async find(data: { journey_id: string; operator_id?: number }): Promise<AcquisitionErrorInterface> {
     const values = [data.journey_id];
 
     let where = '';

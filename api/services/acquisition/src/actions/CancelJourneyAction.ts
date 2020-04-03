@@ -35,9 +35,9 @@ export class CancelJourneyAction extends AbstractAction {
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     // Store in database
-    const { application_id, operator_id } = context.call.user;
+    const { operator_id } = context.call.user;
     try {
-      const acquisition_id = await this.journeyRepository.exists(params.journey_id, operator_id, application_id);
+      const { _id: acquisition_id } = await this.journeyRepository.exists(params.journey_id, operator_id);
       // Perform cancelling action :)
       await this.kernel.notify<UpdateStatusParams>(
         updateStatusSignature,

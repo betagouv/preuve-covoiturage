@@ -4,10 +4,12 @@ import { handler, ContextType, NotFoundException } from '@ilos/common';
 
 import { alias } from '../shared/acquisition/status.schema';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/status.contract';
-import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
+import {
+  JourneyRepositoryProviderInterfaceResolver,
+  ExistsResultInterface,
+} from '../interfaces/JourneyRepositoryProviderInterface';
 import { ErrorRepositoryProviderInterfaceResolver } from '../interfaces/ErrorRepositoryProviderInterface';
 import { CarpoolRepositoryInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
-import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 import { AcquisitionErrorInterface } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 @handler({
@@ -28,7 +30,9 @@ export class StatusJourneyAction extends AbstractAction {
 
   protected async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
     const { journey_id } = params;
-    const operator_id = get(context, 'call.user.operator_id', 0);
+    const operator_id: number = get(context, 'call.user.operator_id', null);
+
+    if (!operator_id) throw new NotFoundException();
 
     /**
      * 1. check acquisition
@@ -36,27 +40,35 @@ export class StatusJourneyAction extends AbstractAction {
      * 3. check errors on failure
      */
 
-    let acquisition: AcquisitionInterface;
+    let acquisition: ExistsResultInterface;
     let error: AcquisitionErrorInterface;
     let carpool: string;
 
     // fetch all states
     try {
-      acquisition = await this.acquisitionRepository.findForOperator(journey_id, operator_id);
-    } catch (e) {}
+      acquisition = await this.acquisitionRepository.exists(journey_id, operator_id);
+    } catch (e) {
+      if (!(e instanceof NotFoundException)) throw e;
+    }
+
     try {
       error = await this.errorRepository.find({
         journey_id,
         operator_id,
       });
-    } catch (e) {}
+    } catch (e) {
+      if (!(e instanceof NotFoundException)) throw e;
+    }
+
     try {
       carpool = await this.carpoolRepository.status({
         operator_id,
         journey_id,
-        acquisition_id: acquisition._id,
+        acquisition_id: acquisition?._id,
       });
-    } catch (e) {}
+    } catch (e) {
+      if (!(e instanceof NotFoundException)) throw e;
+    }
 
     // make tree :/
     if (!acquisition) {
