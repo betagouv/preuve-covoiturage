@@ -5,7 +5,7 @@ export class PerSeatModifier extends ModifierRule {
   static readonly slug: string = 'per_seat_modifier';
   static readonly description: string = 'Le montant est multiplié par le nombre de sièges';
 
-  async modify(ctx: RuleHandlerContextInterface, result: number): Promise<number> {
+  modify(ctx: RuleHandlerContextInterface, result: number): number {
     return result * (ctx.person.seats || 1);
   }
 }

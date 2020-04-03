@@ -1,11 +1,13 @@
 import { TripInterface } from './TripInterface';
 
 export interface TripRepositoryProviderInterface {
-  findTripsById(ids: string[]): Promise<TripInterface[]>;
+  findTripByPolicy(policy_id: number, batchSize?: number): AsyncGenerator<TripInterface[], void, void>;
+  refresh(): Promise<void>;
+  listApplicablePoliciesId(): Promise<number[]>;
 }
 
 export abstract class TripRepositoryProviderInterfaceResolver implements TripRepositoryProviderInterface {
-  async findTripsById(ids: string[]): Promise<TripInterface[]> {
-    throw new Error();
-  }
+  abstract async refresh(): Promise<void>;
+  abstract async listApplicablePoliciesId(): Promise<number[]>;
+  abstract findTripByPolicy(policy_id: number, batchSize?: number): AsyncGenerator<TripInterface[], void, void>;
 }

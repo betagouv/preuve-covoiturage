@@ -30,7 +30,7 @@ export class TimeRangeFilter extends FilterRule<Range[]> {
       },
     },
   };
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     const hours = ctx.person.datetime.getHours();
     for (const range of this.parameters) {
       if (hours >= range.start && hours <= range.end) {

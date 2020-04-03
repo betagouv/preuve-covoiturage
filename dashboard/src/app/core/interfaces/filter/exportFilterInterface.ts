@@ -5,6 +5,8 @@ export interface ExportFilterInterface {
     start: string;
     end: string;
   };
+  territory_id?: number[];
+  operator_id?: number[];
 }
 
 export interface ExportFilterUxInterface {
@@ -12,4 +14,6 @@ export interface ExportFilterUxInterface {
     start: Moment;
     end: Moment;
   };
+  territory_id?: number[];
+  operator_id?: number[];
 }

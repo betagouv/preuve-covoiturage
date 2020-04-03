@@ -7,10 +7,10 @@ export abstract class SetterRule<P = any> extends AbstractRule<P> implements Set
   static readonly type = SETTER;
   static readonly priority = LOW;
 
-  async apply(context: RuleHandlerParamsInterface): Promise<void> {
+  apply(context: RuleHandlerParamsInterface): void {
     const { result, ...ctx } = context;
-    context.result = await this.set(ctx);
+    context.result = this.set(ctx);
   }
 
-  abstract async set(context: RuleHandlerContextInterface): Promise<number>;
+  abstract set(context: RuleHandlerContextInterface): number;
 }

@@ -17,13 +17,13 @@ const basePerson: PersonInterface = {
   duration: 600,
   distance: 5000,
   cost: 2,
-  start_territory_id: 1,
-  end_territory_id: 1,
+  start_territory_id: [1],
+  end_territory_id: [1],
 };
 
 const baseTrip: TripInterface = {
+  trip_id: 1,
   datetime,
-  territories: [1],
   people: [],
 };
 

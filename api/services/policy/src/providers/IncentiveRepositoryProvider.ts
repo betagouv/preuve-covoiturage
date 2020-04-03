@@ -1,11 +1,12 @@
 import { provider } from '@ilos/common';
-import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
+import { promisify } from 'util';
+import { PostgresConnection, Cursor } from '@ilos/connection-postgres';
 
 import {
   IncentiveInterface,
   IncentiveRepositoryProviderInterface,
   IncentiveRepositoryProviderInterfaceResolver,
-  IncentiveCreateOptionsType,
+  IncentiveStateEnum,
 } from '../interfaces';
 
 @provider({
@@ -13,62 +14,190 @@ import {
 })
 export class IncentiveRepositoryProvider implements IncentiveRepositoryProviderInterface {
   public readonly table = 'policy.incentives';
+  public readonly tripTable = 'policy.trips';
+
   constructor(protected connection: PostgresConnection) {}
 
-  async create(data: IncentiveInterface, options: IncentiveCreateOptionsType = {}): Promise<void> {
-    const opts = { connection: null, release: true, ...options };
+  async disableOnCanceledTrip(): Promise<void> {
+    const query = {
+      text: `
+        UPDATE ${this.table} AS pi
+        SET
+          state = $1::policy.incentive_state_enum
+        FROM ${this.tripTable} AS pt
+        WHERE
+          pt.carpool_id = pi.carpool_id AND
+          pt.carpool_status = $2::carpool.carpool_status_enum
+      `,
+      values: ['disabled', 'canceled'],
+    };
 
-    if (opts.connection === null) {
-      opts.connection = await this.connection.getClient().connect();
-    }
+    await this.connection.getClient().query(query);
+  }
+
+  async lockAll(before: Date): Promise<void> {
+    const query = {
+      text: `
+        UPDATE ${this.table}
+          SET status = $1::policy.incentive_status_enum
+        WHERE
+          datetime <= $2::timestamp
+      `,
+      values: ['validated', before],
+    };
+
+    await this.connection.getClient().query(query);
+  }
+  async updateManyAmount(data: { carpool_id: number; policy_id: number; amount: number }[]): Promise<void> {
+    const idSet: Set<string> = new Set();
+    const filteredData = data.reverse().filter((d) => {
+      const key = `${d.policy_id}/${d.carpool_id}`;
+      if (idSet.has(key)) {
+        return false;
+      }
+      idSet.add(key);
+      return true;
+    });
+
+    const keys = ['policy_id', 'carpool_id', 'amount'].map((k) => filteredData.map((d) => d[k]));
+
+    const query = {
+      text: `
+      WITH data AS (
+        SELECT * FROM UNNEST (
+          $1::int[],
+          $2::int[],
+          $3::int[]
+        ) as t(
+          policy_id,
+          carpool_id,
+          amount
+        )
+      )
+      UPDATE ${this.table} as pt
+      SET (
+        amount,
+        state
+      ) = (
+        data.amount,
+        CASE WHEN data.amount = 0 THEN 'null'::policy.incentive_state_enum ELSE state END
+      )
+      FROM data
+      WHERE
+        data.carpool_id = pt.carpool_id
+        AND data.policy_id = pt.policy_id
+      `,
+      values: [...keys],
+    };
+
+    await this.connection.getClient().query(query);
+    return;
+  }
+
+  async *findDraftIncentive(before: Date, batchSize = 100): AsyncGenerator<IncentiveInterface[], void, void> {
+    const query = {
+      text: `
+      SELECT
+        carpool_id,
+        policy_id,
+        datetime,
+        result,
+        amount,
+        state,
+        status,
+        meta
+      FROM ${this.table}
+      WHERE
+        status = $1::policy.incentive_status_enum AND
+        datetime <= $2::timestamp
+      ORDER BY datetime ASC;
+      `,
+      values: ['draft', before],
+    };
+
+    const client = await this.connection.getClient().connect();
+    const cursor = client.query(new Cursor(query.text, query.values));
+    const promisifiedCursorRead = promisify(cursor.read.bind(cursor));
+
+    let count = 0;
+    do {
+      try {
+        const rows = await promisifiedCursorRead(batchSize);
+        count = rows.length;
+        if (count > 0) {
+          yield rows;
+        }
+      } catch (e) {
+        cursor.close(() => client.release());
+        throw e;
+      }
+    } while (count > 0);
+    cursor.close(() => client.release());
+  }
+
+  async createOrUpdateMany(data: IncentiveInterface[]): Promise<void> {
+    const idSet: Set<string> = new Set();
+    const filteredData = data
+      .reverse()
+      .filter((d) => {
+        const key = `${d.policy_id}/${d.carpool_id}`;
+        if (idSet.has(key)) {
+          return false;
+        }
+        idSet.add(key);
+        return true;
+      })
+      .map((i) => ({
+        ...i,
+        status: i.status || 'validated',
+        state: i.amount === 0 ? IncentiveStateEnum.Null : IncentiveStateEnum.Regular,
+        meta: i.meta || {},
+      }));
+
+    const keys = ['policy_id', 'carpool_id', 'datetime', 'result', 'amount', 'status', 'state', 'meta'].map((k) =>
+      filteredData.map((d) => d[k]),
+    );
 
     const query = {
       text: `
         INSERT INTO ${this.table} (
-          carpool_id,
           policy_id,
+          carpool_id,
+          datetime,
+          result,
           amount,
           status,
+          state,
           meta
-        ) VALUES (
-          $1,
-          $2,
-          $3::integer,
-          $4,
-          $5::json
+        ) SELECT * FROM UNNEST(
+          $1::int[],
+          $2::int[],
+          $3::timestamp[],
+          $4::int[],
+          $5::int[],
+          $6::policy.incentive_status_enum[],
+          $7::policy.incentive_state_enum[],
+          $8::json[]
+        )
+        ON CONFLICT (policy_id, carpool_id)
+        DO UPDATE SET (
+          result,
+          amount,
+          status,
+          state,
+          meta
+        ) = (
+          excluded.result,
+          excluded.amount,
+          excluded.status,
+          excluded.state,
+          excluded.meta
         )
       `,
-      values: [data.carpool_id, data.policy_id, data.amount, data.status || 'validated', data.detail || '{}'],
+      values: [...keys],
     };
 
-    const result = await opts.connection.query(query);
-    if (result.rowCount !== 1) {
-      throw new Error(`Unable to create incentive (${JSON.stringify(data)})`);
-    }
-
-    if (opts.release) {
-      opts.connection.release();
-    }
-
+    await this.connection.getClient().query(query);
     return;
-  }
-
-  async createMany(data: IncentiveInterface[]): Promise<void> {
-    const conn: PoolClient = await this.connection.getClient().connect();
-
-    try {
-      await conn.query('BEGIN');
-
-      for (const item of data) {
-        await this.create(item, { connection: conn, release: false });
-      }
-
-      await conn.query('COMMIT');
-    } catch (e) {
-      console.log('Failed Incentive CreateMany: ', e.message);
-      await conn.query('ROLLBACK');
-    }
-
-    conn.release();
   }
 }

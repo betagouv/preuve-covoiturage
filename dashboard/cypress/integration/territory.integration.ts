@@ -23,6 +23,8 @@ import { stubTripExport } from '../support/stubs/trip/trip.export';
 import { DEBUG_CONFIG } from '../config/debug.config';
 import { CI_CONFIG } from '../config/ci.config';
 import { cypress_logout } from '../support/reusables/auth/cypress_logout';
+import { stubCampaignFind } from '../support/stubs/campaign/campaign.find';
+import { stubCampaignTemplates } from '../support/stubs/campaign/campaign.templates';
 
 const isLocal = Cypress.env('ENV_NAME') && Cypress.env('ENV_NAME') === 'local';
 
@@ -32,7 +34,6 @@ context('TERRITORY', () => {
   if (!('territory' in config)) {
     return;
   }
-
   const trips = TripGenerator.generateTrips();
 
   describe('login', () => {
@@ -46,14 +47,18 @@ context('TERRITORY', () => {
   describe('territory dashboard', () => {
     beforeEach(() => {
       cy.server();
+
       stubCampaignList();
       stubOperatorList();
       stubTerritoryList();
       stubStatList();
+      stubCampaignTemplates();
+
       stubLogin(UserGroupEnum.TERRITORY);
       stubUserMe(UserGroupEnum.TERRITORY);
       stubUserPatch(UserGroupEnum.TERRITORY);
       stubCampaignCreate(CampaignStatusEnum.DRAFT);
+      stubCampaignFind();
       stubCampaignPatch();
       stubCampaignLaunch();
       stubTripList(trips);

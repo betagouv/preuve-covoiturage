@@ -109,7 +109,10 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
         this.groupEditable && this.territoryEditable && this.isCreating ? Validators.required : null,
       );
 
-      this.createEditUserForm.updateValueAndValidity();
+      this.createEditUserForm.controls['role'].updateValueAndValidity();
+      this.createEditUserForm.controls['group'].updateValueAndValidity();
+      this.createEditUserForm.controls['territory_id'].updateValueAndValidity();
+      this.createEditUserForm.controls['operator_id'].updateValueAndValidity();
     }
   }
 
@@ -148,7 +151,6 @@ export class CreateEditUserFormComponent extends DestroyObservable implements On
       let updateValidators = false;
       if (territoryEditable !== this.territoryEditable) {
         this.territoryEditable = territoryEditable;
-        // if (!territoryEditable) this.createEditUserForm.patchValue({ territory: '' });
         updateValidators = true;
       }
       if (formVal.group !== this.userGroup) {

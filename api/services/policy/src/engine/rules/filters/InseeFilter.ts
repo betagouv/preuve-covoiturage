@@ -41,7 +41,7 @@ export class InseeWhitelistFilter extends InseeFilter {
   static readonly slug: string = 'insee_whitelist_filter';
   static readonly description: string = 'Liste blanche de codes INSEE';
 
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     let whitelisted = false;
     for (const rule of this.parameters) {
       if (
@@ -62,7 +62,7 @@ export class InseeBlacklistFilter extends InseeFilter {
   static readonly slug: string = 'insee_blacklist_filter';
   static readonly description: string = 'Liste noire de codes INSEE';
 
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     let blacklisted = false;
     for (const rule of this.parameters) {
       if (

@@ -34,11 +34,21 @@ async function checkApplication(
   console.log({ checkApplication: app });
 
   const app_uuid = get(app, 'result.uuid', '');
-  // disabled until owner_id is migrated as integer
-  // const owner_id = get(app, 'result.owner_id', null);
-  // return app_uuid === payload.a && owner_id === payload.o;
-  if (app_uuid !== payload.a) {
+  const owner_id = get(app, 'result.owner_id', null);
+  const matchUuid = app_uuid === payload.a;
+
+  // V1 tokens have a string owner_id. Check is done on UUID only
+  const matchOwn = typeof payload.o === 'string' ? true : owner_id === payload.o;
+  if (!matchUuid || !matchOwn) {
     throw new UnauthorizedException('Unauthorized application');
+  }
+
+  // check permissions
+  const app_perms = get(app, 'result.permissions', [])
+    .sort()
+    .join(',');
+  if (app_perms !== payload.p.sort().join(',')) {
+    throw new ForbiddenException('Missing application permissions');
   }
 
   return (app as any).result as ApplicationInterface;
@@ -107,14 +117,14 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         throw new ForbiddenException();
       }
 
-      // Check and get the app
-      const app = await checkApplication(kernel, payload);
-
       // The only permissions now. Store in the token or retrieve
       // from the application service later if it gets more complex.
       if (!payload.p) {
         payload.p = ['journey.create'];
       }
+
+      // Check and get the app
+      const app = await checkApplication(kernel, payload);
 
       // inject the operator ID and permissions in the request
       // @ts-ignore
@@ -127,7 +137,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       next();
     } catch (e) {
       console.log('[acquisition:create]', e.message);
-      next(new UnauthorizedException(`TokenMiddleware: ${e.message}`));
+      next(e);
     }
   };
 }

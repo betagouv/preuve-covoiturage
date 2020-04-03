@@ -271,7 +271,7 @@ export class CampaignUiService {
 
   public restriction(restriction: RestrictionUxInterface, amountUnit: string): string {
     let text = '';
-    const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)  `;
+    const unit = restriction.unit === RestrictionUnitEnum.TRIP ? 'trajet(s)' : `${amountUnit}(s)`;
 
     text += `${restriction.quantity} ${unit} maximum pour le ${restriction.is_driver ? 'conducteur' : 'passager'} `;
 
@@ -320,12 +320,7 @@ export class CampaignUiService {
 
     // WEEK DAYS
 
-    if (
-      campaign.filters.weekday &&
-      campaign.filters.time &&
-      campaign.filters.weekday.length &&
-      campaign.filters.time.length
-    ) {
+    if (campaign.filters.weekday && campaign.filters.weekday.length) {
       summaryText += ` ${campaign.filters.weekday.length ? `${this.formatWeekDays(campaign.filters.weekday)}` : ''}${
         campaign.filters.time.length ? `${this.formatWeekTime(campaign.filters.time)}` : ''
       }`.toLowerCase();

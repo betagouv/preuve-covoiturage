@@ -1,54 +1,52 @@
-import chai from 'chai';
-import chaiAsync from 'chai-as-promised';
+import test from 'ava';
+
+import { faker } from '../../helpers/faker';
 import { TimeRangeFilter } from './TimeRangeFilter';
 import { NotApplicableTargetException } from '../../exceptions/NotApplicableTargetException';
-import { MetadataWrapper } from '../../MetadataWrapper';
-import { faker } from '../../helpers/faker';
+import { TripInterface } from '../../../interfaces';
 
-const meta = new MetadataWrapper(1, 'default', {});
+function setup(): { rule: TimeRangeFilter; trip: TripInterface } {
+  const rule = new TimeRangeFilter([
+    {
+      start: 8,
+      end: 10,
+    },
+    {
+      start: 17,
+      end: 20,
+    },
+  ]);
 
-chai.use(chaiAsync);
-const { expect } = chai;
+  const startInRange = new Date();
+  startInRange.setHours(9);
 
-const test = new TimeRangeFilter([
-  {
-    start: 8,
-    end: 10,
-  },
-  {
-    start: 17,
-    end: 20,
-  },
-]);
+  const startOutRange = new Date();
+  startOutRange.setHours(12);
 
-const startInRange = new Date();
-startInRange.setHours(9);
+  const trip = faker.trip([{ datetime: startInRange }, { datetime: startOutRange }]);
 
-const startOutRange = new Date();
-startOutRange.setHours(12);
+  return { rule, trip };
+}
 
-const trip = faker.trip([{ datetime: startInRange }, { datetime: startOutRange }]);
+test('should throw error if out of range', async (t) => {
+  const { rule, trip } = setup();
+  const err = await t.throwsAsync<NotApplicableTargetException>(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[1],
+    }),
+  );
+  t.is(err.message, TimeRangeFilter.description);
+});
 
-describe('Policy rule: time filter', () => {
-  it('should throw error if out of range', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[1],
-      }),
-    ).to.eventually.rejectedWith(NotApplicableTargetException, TimeRangeFilter.description);
-  });
-
-  it('should do nothing if in range', () => {
-    return expect(
-      test.filter({
-        trip,
-        meta,
-        stack: [],
-        person: trip.people[0],
-      }),
-    ).to.eventually.fulfilled;
-  });
+test('should do nothing if in range', async (t) => {
+  const { rule, trip } = setup();
+  await t.notThrowsAsync(async () =>
+    rule.filter({
+      trip,
+      stack: [],
+      person: trip.people[0],
+    }),
+  );
 });

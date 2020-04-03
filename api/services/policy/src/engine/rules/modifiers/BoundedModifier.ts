@@ -24,7 +24,7 @@ export class BoundedModifier extends ModifierRule<BoundedModifierParams> {
     },
   };
 
-  async modify(_ctx: RuleHandlerContextInterface, result: number): Promise<number> {
+  modify(_ctx: RuleHandlerContextInterface, result: number): number {
     let boundedResult = result;
     if (this.parameters.minimum) {
       boundedResult = Math.max(this.parameters.minimum, boundedResult);

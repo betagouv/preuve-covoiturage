@@ -27,7 +27,7 @@ export class DistanceRangeFilter extends FilterRule<Parameters> {
     },
   };
 
-  async filter(ctx: RuleHandlerContextInterface): Promise<void> {
+  filter(ctx: RuleHandlerContextInterface): void {
     if (
       (this.parameters.min && ctx.person.distance < this.parameters.min) ||
       (this.parameters.max && ctx.person.distance > this.parameters.max)

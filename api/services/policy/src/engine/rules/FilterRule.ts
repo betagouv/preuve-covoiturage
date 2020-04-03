@@ -7,10 +7,10 @@ export abstract class FilterRule<P = any> extends AbstractRule<P> implements Fil
   static readonly type = FILTER;
   static readonly priority = HIGH;
 
-  async apply(context: RuleHandlerParamsInterface): Promise<void> {
+  apply(context: RuleHandlerParamsInterface): void {
     const { result, ...ctx } = context;
-    await this.filter(ctx);
+    this.filter(ctx);
   }
 
-  abstract async filter(context: RuleHandlerContextInterface): Promise<void>;
+  abstract filter(context: RuleHandlerContextInterface): void;
 }

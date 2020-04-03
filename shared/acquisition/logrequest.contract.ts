@@ -1,13 +1,6 @@
-export interface ParamsInterface {
-  operator_id: number;
-  source: string;
-  error_message: string | null;
-  error_code: string | null;
-  error_line: number | null;
-  auth: any;
-  headers: any;
-  body: any;
-}
+import { ParamsInterface as LogErrorParamsInterface } from './logerror.contract';
+
+export interface ParamsInterface extends LogErrorParamsInterface {}
 
 export type ResultInterface = void;
 
