@@ -74,7 +74,6 @@ export class HttpTransport implements TransportInterface {
     this.registerAuthRoutes();
     this.registerApplicationRoutes();
     this.registerCertificateRoutes();
-    this.registerJourneyStatusRoutes();
     this.registerAcquisitionRoutes();
     this.registerCallHandler();
     this.registerAfterAllHandlers();
@@ -151,22 +150,6 @@ export class HttpTransport implements TransportInterface {
   }
 
   /**
-   * Operators can query the status of their journey_id
-   */
-  private registerJourneyStatusRoutes(): void {
-    this.app.get(
-      '/journeys/:journey_id',
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const { params } = req;
-        const user = get(req, 'session.user', null);
-        const response = await this.kernel.handle(makeCall('acquisition:status', params, { user, metadata: { req } }));
-        this.send(res, response);
-      }),
-    );
-  }
-
-  /**
    * Operators POST to /journeys/push
    * being authenticated by a JWT long-lived token with the payload:
    * {
@@ -225,20 +208,19 @@ export class HttpTransport implements TransportInterface {
       }),
     );
 
-    // V2 payload
-    this.app.post(
-      '/v2/journeys',
+    // check journey status
+    this.app.get(
+      '/v2/journeys/:journey_id',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
-        const user = get(req, 'session.user', {});
-        const response = await this.kernel.handle(
-          makeCall('acquisition:create', req.body, { user, metadata: { req } }),
-        );
-
+        const { params } = req;
+        const user = get(req, 'session.user', null);
+        const response = await this.kernel.handle(makeCall('acquisition:status', params, { user, metadata: { req } }));
         this.send(res, response);
       }),
     );
 
+    // cancel existing journey
     this.app.delete(
       '/v2/journeys/:id',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
@@ -253,6 +235,20 @@ export class HttpTransport implements TransportInterface {
             },
             { user, metadata: { req } },
           ),
+        );
+
+        this.send(res, response);
+      }),
+    );
+
+    // send a journey
+    this.app.post(
+      '/v2/journeys',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        const response = await this.kernel.handle(
+          makeCall('acquisition:create', req.body, { user, metadata: { req } }),
         );
 
         this.send(res, response);

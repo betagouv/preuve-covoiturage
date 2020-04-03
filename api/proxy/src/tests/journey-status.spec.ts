@@ -180,7 +180,7 @@ test("Status: check 'pending' journey", async (t) => {
 
   // check the status
   return t.context.request
-    .get(`/journeys/${journey_id}`)
+    .get(`/v2/journeys/${journey_id}`)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set(
@@ -208,7 +208,7 @@ test('Status: check wrong permissions', async (t) => {
 
   // check the status
   return t.context.request
-    .get(`/journeys/${journey_id}`)
+    .get(`/v2/journeys/${journey_id}`)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set(
@@ -252,7 +252,7 @@ test('Status: check wrong journey_id', async (t) => {
 
   // check the status
   return t.context.request
-    .get(`/journeys/${journey_id}-wrong`)
+    .get(`/v2/journeys/${journey_id}-wrong`)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set(
@@ -293,7 +293,7 @@ test('Status: check wrong operator_id', async (t) => {
 
   // check the status
   return t.context.request
-    .get(`/journeys/${journey_id}`)
+    .get(`/v2/journeys/${journey_id}`)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set(
