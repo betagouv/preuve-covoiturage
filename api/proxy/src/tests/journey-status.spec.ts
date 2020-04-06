@@ -1,18 +1,11 @@
 /**
- * Test application creation for the operators.
+ * Test journey status
  *
- * 3 types of token exist: V1, V2 varchar and V2 integer.
- * We need to make sure legacy versions (V1, V2 varchar) are still compatible.
- *
- * Tested:
- * - operator creation
- * - operator admin login with cookie (/login)
- * - application creation
- * - authorization header use
- * - fake uuid
- * - not matching operator_id and uuid
- * - soft-deleted application
- * - wrong permissions
+ * Create an application to mock an operator.
+ * 1. Check a 'pending' journey written manually in
+ * 2. Check wrong permissions
+ * 3. Check wrong journey_id
+ * 4. Check wrong operator_id
  */
 
 import anyTest, { TestInterface } from 'ava';
@@ -24,9 +17,8 @@ import { KernelInterface, TransportInterface } from '@ilos/common';
 import { CryptoProvider } from '@pdc/provider-crypto';
 import { TokenProvider } from '@pdc/provider-token';
 
-import { HttpTransport } from '../src/HttpTransport';
-import { Kernel } from '../src/Kernel';
-import { payloadV2 } from './mocks/payloadV2';
+import { HttpTransport } from '../HttpTransport';
+import { Kernel } from '../Kernel';
 import { MockJWTConfigProvider } from './mocks/MockJWTConfigProvider';
 import { createOperatorFactory } from './helpers/createOperatorFactory';
 import { createOperatorAdminSqlFactory } from './helpers/createUserFactory';
@@ -43,8 +35,10 @@ interface ContextType {
   applications: number[];
   operators: number[];
   users: number[];
-  operatorA: any;
-  operatorAUser: any;
+  journeys: number[];
+  journey: any;
+  operator: any;
+  operatorUser: any;
   application: any;
   cookies: string;
 }
@@ -60,6 +54,7 @@ test.before(async (t) => {
   t.context.applications = [];
   t.context.operators = [];
   t.context.users = [];
+  t.context.journeys = [];
 
   t.context.pg = new PostgresConnection({ connectionString: process.env.APP_POSTGRES_URL });
   t.context.pgClient = await t.context.pg.getClient().connect();
@@ -78,13 +73,13 @@ test.before(async (t) => {
   /**
    * Create the operator
    */
-  t.context.operatorA = await createOperatorFactory(t.context.kernel, {
+  t.context.operator = await createOperatorFactory(t.context.kernel, {
     name: 'Operator A',
     legal_name: 'Operator A inc.',
     siret: '78017154200027',
   });
 
-  t.context.operators.push(t.context.operatorA._id);
+  t.context.operators.push(t.context.operator._id);
 
   /**
    * Create users for these operators
@@ -94,7 +89,6 @@ test.before(async (t) => {
     const user = await createOperatorAdminSqlFactory(t.context.pgClient, t.context.crypto, id);
     t.context.users.push(user._id);
   }
-
   await t.context.pgClient.query('COMMIT');
 });
 
@@ -148,6 +142,14 @@ test.after.always(async (t) => {
       await t.context.pgClient.query(`DELETE FROM auth.users WHERE _id IN (${t.context.users.join(',')})`);
     }
 
+    // clean created users
+    if (t.context.journeys.length) {
+      t.log(`Cleaning up journeys (${t.context.journeys.join(',')})`);
+      await t.context.pgClient.query(
+        `DELETE FROM acquisition.acquisitions WHERE _id IN (${t.context.journeys.join(',')})`,
+      );
+    }
+
     await t.context.pgClient.query('COMMIT');
   } catch (e) {
     t.log(e.message);
@@ -159,139 +161,26 @@ test.after.always(async (t) => {
   await t.context.app.down();
 });
 
-/**
- * Applications created MongoDB style with an ObjectID as _id
- *
- */
-test('Application V1', async (t) => {
-  const pl = payloadV2();
+test("Status: check 'pending' journey", async (t) => {
+  const journey_id = `test-${Math.random()}`;
 
-  return t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
-    .set('Accept', 'application/json')
-    .set('Content-type', 'application/json')
-    .set(
-      'Authorization',
-      `Bearer ${await t.context.token.sign({
-        id: 'some-string-that-doesnt-get-checked',
-        app: t.context.application.uuid,
-      })}`,
-    )
-    .expect((response: supertest.Response) => {
-      t.is(response.status, 200);
-      t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
-    });
-});
-
-test('Application V2 integer', async (t) => {
-  const pl = payloadV2();
-
-  return t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
-    .set('Accept', 'application/json')
-    .set('Content-type', 'application/json')
-    .set(
-      'Authorization',
-      `Bearer ${await t.context.token.sign({
-        a: t.context.application.uuid,
-        o: t.context.operators[0],
-        s: 'operator',
-        p: ['journey.create'],
-        v: 2,
-      })}`,
-    )
-    .expect((response: supertest.Response) => {
-      t.is(response.status, 200);
-      t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
-    });
-});
-
-test('Application V2 varchar (old)', async (t) => {
-  const pl = payloadV2();
-
-  return t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
-    .set('Accept', 'application/json')
-    .set('Content-type', 'application/json')
-    .set(
-      'Authorization',
-      `Bearer ${await t.context.token.sign({
-        a: t.context.application.uuid,
-        o: `${t.context.operators[0]}`,
-        s: 'operator',
-        p: ['journey.create'],
-        v: 2,
-      })}`,
-    )
-    .expect((response: supertest.Response) => {
-      t.is(response.status, 200);
-      t.is(get(response, 'body.result.data.journey_id', ''), pl.journey_id);
-    });
-});
-
-test('Application Not Found', async (t) => {
-  const pl = payloadV2();
-
-  return t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
-    .set('Accept', 'application/json')
-    .set('Content-type', 'application/json')
-    .set(
-      'Authorization',
-      `Bearer ${await t.context.token.sign({
-        a: 'not-a-uuid',
-        o: t.context.operators[0],
-        s: 'operator',
-        p: ['journey.create'],
-        v: 2,
-      })}`,
-    )
-    .expect((response: supertest.Response) => {
-      t.is(response.status, 401);
-      t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
-    });
-});
-
-test('Wrong operator', async (t) => {
-  const pl = payloadV2();
-
-  return t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
-    .set('Accept', 'application/json')
-    .set('Content-type', 'application/json')
-    .set(
-      'Authorization',
-      `Bearer ${await t.context.token.sign({
-        a: t.context.application.uuid,
-        o: 0,
-        s: 'operator',
-        p: ['journey.create'],
-        v: 2,
-      })}`,
-    )
-    .expect((response: supertest.Response) => {
-      t.is(response.status, 403);
-      t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
-    });
-});
-
-test('Deleted application', async (t) => {
-  // soft-delete the application
-  await t.context.pgClient.query({
-    text: `UPDATE application.applications SET deleted_at = NOW() WHERE uuid = $1`,
-    values: [t.context.application.uuid],
+  // manually create a journey in database
+  const result = await t.context.pgClient.query({
+    text: `
+    INSERT INTO acquisition.acquisitions
+    (application_id, operator_id, journey_id, payload)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *
+  `,
+    values: [t.context.application._id, t.context.operator._id, journey_id, '{}'],
   });
 
-  const pl = payloadV2();
+  t.context.journey = result.rows[0];
+  t.context.journeys.push(result.rows[0]._id);
 
-  await t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
+  // check the status
+  return t.context.request
+    .get(`/v2/journeys/${journey_id}`)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set(
@@ -305,23 +194,21 @@ test('Deleted application', async (t) => {
       })}`,
     )
     .expect((response: supertest.Response) => {
-      t.is(response.status, 401);
-      t.is(get(response, 'body.error.message', ''), 'Unauthorized Error');
+      t.is(response.status, 200);
+      t.deepEqual(get(response, 'body.result.data'), {
+        status: 'pending',
+        journey_id,
+        created_at: t.context.journey.created_at.toISOString(),
+      });
     });
-
-  // un-soft-delete the application
-  await t.context.pgClient.query({
-    text: `UPDATE application.applications SET deleted_at = NULL WHERE uuid = $1`,
-    values: [t.context.application.uuid],
-  });
 });
 
-test('Wrong permissions', async (t) => {
-  const pl = payloadV2();
+test('Status: check wrong permissions', async (t) => {
+  const journey_id = `test-${Math.random()}`;
 
+  // check the status
   return t.context.request
-    .post(`/v2/journeys`)
-    .send(pl)
+    .get(`/v2/journeys/${journey_id}`)
     .set('Accept', 'application/json')
     .set('Content-type', 'application/json')
     .set(
@@ -336,6 +223,94 @@ test('Wrong permissions', async (t) => {
     )
     .expect((response: supertest.Response) => {
       t.is(response.status, 403);
-      t.is(get(response, 'body.error.message', ''), 'Forbidden Error');
+
+      // FIX ME with RPC error code
+      t.deepEqual(get(response, 'body.error', {}), {
+        code: 403,
+        data: 'Error',
+        message: 'Forbidden Error',
+      });
+    });
+});
+
+test('Status: check wrong journey_id', async (t) => {
+  const journey_id = `test-${Math.random()}`;
+
+  // manually create a journey in database
+  const result = await t.context.pgClient.query({
+    text: `
+    INSERT INTO acquisition.acquisitions
+    (application_id, operator_id, journey_id, payload)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *
+  `,
+    values: [t.context.application._id, t.context.operator._id, journey_id, '{}'],
+  });
+
+  t.context.journey = result.rows[0];
+  t.context.journeys.push(result.rows[0]._id);
+
+  // check the status
+  return t.context.request
+    .get(`/v2/journeys/${journey_id}-wrong`)
+    .set('Accept', 'application/json')
+    .set('Content-type', 'application/json')
+    .set(
+      'Authorization',
+      `Bearer ${await t.context.token.sign({
+        a: t.context.application.uuid,
+        o: t.context.operators[0],
+        s: 'operator',
+        p: ['journey.create'],
+        v: 2,
+      })}`,
+    )
+    .expect((response: supertest.Response) => {
+      t.is(response.status, 404);
+      t.deepEqual(get(response, 'body.error', {}), {
+        code: -32504,
+        message: 'Not found',
+      });
+    });
+});
+
+test('Status: check wrong operator_id', async (t) => {
+  const journey_id = `test-${Math.random()}`;
+
+  // manually create a journey in database
+  const result = await t.context.pgClient.query({
+    text: `
+    INSERT INTO acquisition.acquisitions
+    (application_id, operator_id, journey_id, payload)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *
+  `,
+    values: [t.context.application._id, t.context.operator._id + 1, journey_id, '{}'],
+  });
+
+  t.context.journey = result.rows[0];
+  t.context.journeys.push(result.rows[0]._id);
+
+  // check the status
+  return t.context.request
+    .get(`/v2/journeys/${journey_id}`)
+    .set('Accept', 'application/json')
+    .set('Content-type', 'application/json')
+    .set(
+      'Authorization',
+      `Bearer ${await t.context.token.sign({
+        a: t.context.application.uuid,
+        o: t.context.operators[0],
+        s: 'operator',
+        p: ['journey.create'],
+        v: 2,
+      })}`,
+    )
+    .expect((response: supertest.Response) => {
+      t.is(response.status, 404);
+      t.deepEqual(get(response, 'body.error', {}), {
+        code: -32504,
+        message: 'Not found',
+      });
     });
 });

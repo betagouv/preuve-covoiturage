@@ -26,6 +26,7 @@ export class CreateJourneyLegacyAction extends AbstractAction {
       await this.kernel.notify(
         'acquisition:logerror',
         {
+          journey_id: params.journey_id,
           operator_id: get(context, 'call.user.operator_id', 0),
           source: 'api.v1',
           error_message: e.message,
@@ -33,6 +34,7 @@ export class CreateJourneyLegacyAction extends AbstractAction {
           auth: get(context, 'call.user'),
           headers: get(context, 'call.metadata.req.headers', {}),
           body: params,
+          request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
         },
         { channel: { service: 'acquisition' } },
       );
