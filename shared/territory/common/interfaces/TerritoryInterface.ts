@@ -1,20 +1,24 @@
-import { CompanyInterface } from '../../../common/interfaces/CompanyInterface2';
-import { AddressInterface } from '../../../common/interfaces/AddressInterface';
 import { ContactsInterface } from '../../../common/interfaces/ContactsInterface';
 
-export interface TerritoryInterface {
-  parent_id?: number;
+export enum TerritoryLevelEnum {
+  Town = 'town',
+  Towngroup = 'towngroup',
+  District = 'district',
+  Megalopolis = 'megalopolis',
+  Region = 'region',
+  State = 'state',
+  Country = 'country',
+  Countrygroup = 'countrygroup',
+  Other = 'other',
+}
 
-  siret: string;
+export interface TerritoryBaseInterface {
+  level: TerritoryLevelEnum;
   name: string;
-  shortname?: string;
-
-  insee?: string[];
-
-  company?: CompanyInterface;
-  address?: AddressInterface;
-  contacts?: ContactsInterface;
-
-  cgu_accepted_by?: number;
-  cgu_accepted_at?: Date;
+  company_id?: number;
+  active?: boolean;
+  active_since?: Date;
+  contacts?: ContactsInterface,
+  density?: number;
+  geo?: any; // TODO : geography type
 }

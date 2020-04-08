@@ -1,27 +1,61 @@
-import { company } from '../common/schemas/company';
-import { address } from '../common/schemas/address';
-import { bank } from '../common/schemas/bank';
 import { contacts } from '../common/schemas/contacts';
-import { cgu } from '../common/schemas/cgu';
 
 export const alias = 'territory.create';
 export const create = {
   $id: alias,
   type: 'object',
-  required: ['name', 'siret'],
+  required: ['level', 'name'],
   additionalProperties: false,
   properties: {
-    company,
-    address,
-    bank,
     contacts,
-    cgu,
     name: { macro: 'varchar' },
-    shortname: { macro: 'varchar' },
-    siret: { macro: 'siret' },
+    level: {
+      type: 'string',
+      enum: [
+        'town',
+        'towngroup',
+        'district',
+        'megalopolis',
+        'region',
+        'state',
+        'country',
+        'countrygroup',
+        'other',
+      ],
+    },
+    company_id: {
+      macro: 'serial',
+    },
+    active: {
+      type: 'boolean',
+      default: false,
+    },
+    active_since: {
+      macro: 'timestamp',
+    },
+    density: {
+      type: 'integer',
+      minimum: 0,
+    },
+    // geo: {
+    //  TODO geography type
+    // },
+
+    // Meta code
     insee: {
       type: 'array',
       items: { macro: 'insee' },
     },
+    postcode: {
+      type: 'array',
+      items: { macro: 'postcode' },
+    },
+
+    // Relation
+    children: {
+      type: 'array',
+      items: { macro: 'serial' },
+    },
   },
 };
+
