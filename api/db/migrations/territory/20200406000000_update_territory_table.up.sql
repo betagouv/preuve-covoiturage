@@ -12,6 +12,11 @@ CREATE TYPE territory.territory_level_enum AS ENUM(
   'other'
 );
 
+CREATE TYPE territory.territory_level_name AS (
+    level territory.territory_level_enum,
+    name varchar(128)
+);
+
 CREATE TABLE IF NOT EXISTS territory.territories
 (
     _id serial primary key,
@@ -27,6 +32,7 @@ CREATE TABLE IF NOT EXISTS territory.territories
     name varchar(128),
 
     --- registry
+    -- TODO add activable boolean ?
     active boolean NOT NULL DEFAULT false,
     active_since timestamp with time zone,
     contacts json,
@@ -45,6 +51,7 @@ CREATE INDEX ON territory.territories (_id);
 CREATE INDEX ON territory.territories USING GIST (geo);
 
 --- insee, postcode
+--- TODO:  create custom type for "type" ?
 CREATE TABLE IF NOT EXISTS territory.territory_codes (
     _id serial primary key,
     territory_id integer NOT NULL REFERENCES territory.territories (_id) ON DELETE CASCADE,
