@@ -12,7 +12,7 @@ cd ilos
 
 # 2020/03/02 use tagged master@0.4.1 until ilos is published or completely cleaned
 if [ $NODE_ENV = 'production' ]; then
-  git checkout 0.4.1
+  git checkout master
 else
   git checkout dev
 fi

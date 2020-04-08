@@ -11,10 +11,10 @@
     "test:integration": "echo '[proxy] no integration tests'; exit 0",
     "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
   },
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "config": {
-    "workingDir": "./dist/src",
+    "workingDir": "./dist",
     "bootstrap": "./bootstrap.js"
   },
   "ava": {
@@ -23,8 +23,7 @@
     ],
     "typescript": {
       "rewritePaths": {
-        "src/": "dist/src/",
-        "tests/": "dist/tests/"
+        "src/": "dist/"
       }
     }
   },
