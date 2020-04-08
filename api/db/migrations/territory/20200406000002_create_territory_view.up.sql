@@ -74,24 +74,27 @@ WITH RECURSIVE
         array_remove(array_remove(array_agg(distinct p), null), c._id) AS parents,
         array_remove(array_remove(array_agg(distinct b), null), c._id) AS children,
         array_remove(array_agg(distinct ins), null) AS insee,
-        array_remove(array_agg(distinct pos), null) AS postcode
+        array_remove(array_agg(distinct pos), null) AS postcode,
+        array_agg(ROW(tt.level, tt.name)::territory.territory_level_name) AS parent_level_name
     FROM complete AS c
     left JOIN unnest(c.parents) AS p ON true
     left JOIN unnest(c.children) AS b ON true 
     left JOIN unnest(c.insee) AS ins ON true 
-    left JOIN unnest(c.postcode) AS pos ON true 
+    left JOIN unnest(c.postcode) AS pos ON true
+    left JOIN territory.territories as tt ON tt._id = ANY(c.parents)
     GROUP BY c._id
   )
   SELECT
     a._id,
-    t.company_id,
-    t.level,
-    t.name,
     t.active,
-    t.active_since,
-    t.contacts,
-    t.density,
-    t.geo,
+    t.level,
+    a.parent_level_name,
+    -- ADD
+    -- - all level above (town, intertown, etc.)
+    -- - direct_children, direct_parent (or rename parents to ancestors, children to descendants)
+    -- - latest_children/ending_children,
+    -- - active_children,
+    -- - merge geo ?
     a.parents,
     a.children,
     a.insee,

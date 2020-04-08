@@ -100,4 +100,18 @@ territory_insee AS (
 INSERT INTO territory.territory_relation (parent_territory_id, child_territory_id)
 SELECT parent_territory_id, child_territory_id FROM territory_insee;
 
--- TODO migrate territory_operator to new territory_id
+DROP INDEX territory.territory_operators_territory_id_operator_id_idx;
+
+UPDATE territory.territory_operators
+SET territory_id=sub.territory_id
+FROM (
+  SELECT
+    _id as territory_id,
+    old_territory_id
+  FROM territory.territories
+  WHERE
+    old_territory_id IN (SELECT territory_id FROM territory.territory_operators)
+) as sub
+WHERE territory_operators.territory_id = sub.old_territory_id;
+
+CREATE UNIQUE INDEX ON territory.territory_operators (territory_id, operator_id);
