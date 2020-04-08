@@ -1,4 +1,4 @@
-export const alias = 'territory.find';
+export const alias = 'territory.list';
 export const find = {
   $id: alias,
   type: 'object',
@@ -8,13 +8,18 @@ export const find = {
     query: { 
       type: 'object',
       minProperties: 1,
-      maxProperties: 2,
       additionalProperties: false,
       properties: {
-        _id: { macro: 'serial' },
+        search:  { macro: 'varchar' },
+        has_child_id: { macro: 'serial' },
+        has_parent_id: { macro: 'serial' },
+        has_ancestor_id: { macro: 'serial' },
+        has_descendant_id: { macro: 'serial' },
+        name: { macro: 'varchar' },
+        company_name: { macro: 'varchar' },
+        active: { type: 'boolean' },
         insee: { macro: 'insee' },
         postcode: { macro: 'postcode' },
-        active: { type: 'boolean' },
         position: {
           type: 'object',
           required: ['lat', 'lon'],
@@ -34,26 +39,8 @@ export const find = {
       type: 'array',
       items: {
         type: 'string',
-        enum: [
-          '_id',
-          'level',
-          'name',
-          'active',
-          'company_id',
-          'density',
-          'geo',
-          'children',
-          'parents',
-          'descendants',
-          'ancestors',
-          'insee',
-          'postcode',
-          'active_since',
-          'contacts',
-          'created_at',
-          'updated_at',
-        ],
-      }
+        enum: ['_id', 'level', 'name', 'active', 'company_id'],
+      },
     },
   },
 };
