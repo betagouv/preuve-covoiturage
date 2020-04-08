@@ -221,6 +221,26 @@ export class HttpTransport implements TransportInterface {
         this.send(res, response);
       }),
     );
+
+    this.app.delete(
+      '/v2/journeys/:id',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      asyncHandler(async (req, res, next) => {
+        const user = get(req, 'session.user', {});
+        const response = await this.kernel.handle(
+          makeCall(
+            'acquisition:cancel',
+            {
+              ...req.body,
+              acquisition_id: parseInt(req.params.id, 10),
+            },
+            { user, metadata: { req } },
+          ),
+        );
+
+        this.send(res, response);
+      }),
+    );
   }
 
   private registerStatsRoutes(): void {

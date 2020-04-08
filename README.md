@@ -12,15 +12,14 @@ Le registre de preuve de covoiturage est un projet [beta.gouv.fr](https://beta.g
 An easy way to boot the application on your local machine is by using Docker.
 You will need `docker` and `docker-compose`.
 
-| Service         | slug       | ENV              | URL                               | Folder     |
-| --------------- | ---------- | ---------------- | --------------------------------- | ---------- |
-| Frontend \*     | `-`        | APP_APP_URL      | http://localhost:4200             | /dashboard |
-| API             | `api`      | APP_API_URL      | http://localhost:8080             | /api       |
-| Printer         | `printer`  | APP_PRINTER_URL  | http://localhost:3000             | /printer   |
-| Redis           | `redis`    | APP_REDIS_URL    | redis://redis:6379                | -          |
-| Redis Client    | `arena`    | -                | http://localhost:4567             | -          |
-| Postgres        | `postgres` | APP_POSTGRES_URL | postgresql://postgres:post        | -          |
-| Postgres Client | `pgadmin`  | -                | http://localhost:5050             | -          |
+| Service         | slug       | ENV              | URL                        | Folder     |
+| --------------- | ---------- | ---------------- | -------------------------- | ---------- |
+| Frontend \*     | `-`        | APP_APP_URL      | http://localhost:4200      | /dashboard |
+| API             | `api`      | APP_API_URL      | http://localhost:8080      | /api       |
+| Printer         | `printer`  | APP_PRINTER_URL  | http://localhost:3000      | /printer   |
+| Redis           | `redis`    | APP_REDIS_URL    | redis://redis:6379         | -          |
+| Postgres        | `postgres` | APP_POSTGRES_URL | postgresql://postgres:post | -          |
+| Postgres Client | `pgadmin`  | -                | http://localhost:5050      | -          |
 
 > \* The Frontend doesn't run in Docker. Install NodeJS locally and run it with `yarn start` from the `dashboard` folder.  
 > ⚠️ `docker-compose.yml` is used in `local` environment only
@@ -75,7 +74,6 @@ For _static_ application configuration (timeout, etc.) edit/add the `.ts` files 
 
 - `yarn set-permissions` reset all users' permissions based on their group and role
 - `yarn workspace @pdc/... run test`
-- `yarn workspace @pdc/... run test:integration`
 
 ###### outside the `dashboard` container
 
@@ -85,6 +83,72 @@ For _static_ application configuration (timeout, etc.) edit/add the `.ts` files 
 ### Versions
 
 The project follows the [semver](https://semver.org/) specification.
+
+### Use a GUI to access the Redis queues
+
+An easy to use and configure GUI is `bull-arena`. You can install it locally and run it to connect to the Redis
+running in docker (the port is exposed to localhost).
+
+#### Install `bull-arena`
+
+```shell
+cd {somewhere}
+git clone https://github.com/bee-queue/arena.git
+cd arena
+npm install
+```
+
+#### Configure the queues
+
+```shell
+vi src/server/config/index.json
+```
+
+```json
+{
+  "queues": [
+    {
+      "name": "acquisition",
+      "hostId": "pdc-local",
+      "url": "redis://:<password>@127.0.0.1:6379"
+    },
+    {
+      "name": "normalization",
+      "hostId": "pdc-local",
+      "url": "redis://:<password>@127.0.0.1:6379"
+    },
+    {
+      "name": "trip",
+      "hostId": "pdc-local",
+      "url": "redis://:<password>@127.0.0.1:6379"
+    },
+    {
+      "name": "carpool",
+      "hostId": "pdc-local",
+      "url": "redis://:<password>@127.0.0.1:6379"
+    },
+    {
+      "name": "fraud",
+      "hostId": "pdc-local",
+      "url": "redis://:<password>@127.0.0.1:6379"
+    },
+    {
+      "name": "campaign",
+      "hostId": "pdc-local",
+      "url": "redis://:<password>@127.0.0.1:6379"
+    }
+  ]
+}
+```
+
+#### start the GUI
+
+```shell
+cd arena
+npm start
+```
+
+Access the GUI at [http://localhost:4567](http://localhost:4567)
 
 # License
 

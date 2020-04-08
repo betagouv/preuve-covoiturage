@@ -14,11 +14,19 @@ import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acqui
 import { alias } from '../shared/acquisition/create.schema';
 import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
 import { PersonInterface } from '../shared/common/interfaces/PersonInterface';
+import { ParamsInterface as LogErrorParamsInterface } from '../shared/acquisition/logerror.contract';
 import { JourneyRepositoryProviderInterfaceResolver } from '../interfaces/JourneyRepositoryProviderInterface';
+import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
+import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
+import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 
-const callContext = {
+const callContext: ContextType = {
   channel: {
     service: 'acquisition',
+    metadata: {
+      attempts: 5,
+      backoff: 300000, // 5 min delay between attempts
+    },
   },
   call: {
     user: {},
@@ -42,10 +50,13 @@ export class CreateJourneyAction extends AbstractAction {
     try {
       await this.validator.validate(params, alias);
     } catch (e) {
-      await this.kernel.notify(
+      await this.kernel.notify<LogErrorParamsInterface>(
         'acquisition:logerror',
         {
+          error_stage: ErrorStage.Acquisition,
+          error_line: null,
           operator_id: get(context, 'call.user.operator_id', 0),
+          journey_id: params.journey_id,
           source: 'api.v2',
           error_message: e.message,
           error_code: '400',
@@ -67,23 +78,32 @@ export class CreateJourneyAction extends AbstractAction {
     if (person.start.datetime > now || person.end.datetime > now) {
       throw new ParseErrorException('Journeys cannot happen in the future');
     }
+    let acquisition: AcquisitionInterface;
 
     // Store in database
     try {
-      const acquisition = await this.journeyRepository.create(payload, {
+      acquisition = await this.journeyRepository.create(payload, {
         operator_id: context.call.user.operator_id,
         application_id: context.call.user.application_id,
       });
-
-      // Dispatch to the normalization pipeline
-      // await this.kernel.notify('normalization:geo', acquisition, callContext);
-      await this.kernel.notify('normalization:process', acquisition, callContext);
-
-      return {
-        journey_id: acquisition.journey_id,
-        created_at: acquisition.created_at,
-      };
     } catch (e) {
+      await this.kernel.notify<LogErrorParamsInterface>(
+        'acquisition:logerror',
+        {
+          error_stage: ErrorStage.Acquisition,
+          error_line: null,
+          operator_id: get(context, 'call.user.operator_id', 0),
+          journey_id: params.journey_id,
+          source: 'api.v2',
+          error_message: e.message,
+          error_code: '500',
+          auth: get(context, 'call.user'),
+          headers: get(context, 'call.metadata.req.headers', {}),
+          body: params,
+        },
+        { channel: { service: 'acquisition' } },
+      );
+
       switch (e.code) {
         case '23505':
           throw new ConflictException('Journey already registered');
@@ -91,6 +111,23 @@ export class CreateJourneyAction extends AbstractAction {
           throw e;
       }
     }
+
+    this.kernel.notify<ResolveErrorParamsInterface>(
+      'acquisition:resolveerror',
+      {
+        operator_id: get(context, 'call.user.operator_id', 0),
+        journey_id: params.journey_id,
+        error_stage: ErrorStage.Normalisation,
+      },
+      { channel: { service: 'acquisition' } },
+    );
+
+    await this.kernel.notify('normalization:process', acquisition, callContext);
+
+    return {
+      journey_id: acquisition.journey_id,
+      created_at: acquisition.created_at,
+    };
   }
 
   protected cast(jrn: ParamsInterface, operator_id: number): JourneyInterface {

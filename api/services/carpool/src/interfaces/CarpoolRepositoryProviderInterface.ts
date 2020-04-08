@@ -10,12 +10,14 @@ export interface CarpoolRepositoryProviderInterface {
       created_at: Date;
       operator_class: string;
       trip_id: string;
+      status: string;
     },
     people: PeopleWithIdInterface[],
   ): Promise<void>;
+  updateStatus(acquisition_id: number, status: string): Promise<void>;
 }
 export abstract class CarpoolRepositoryProviderInterfaceResolver implements CarpoolRepositoryProviderInterface {
-  public async importFromAcquisition(
+  abstract async importFromAcquisition(
     shared: {
       acquisition_id: number;
       operator_id: number;
@@ -24,9 +26,9 @@ export abstract class CarpoolRepositoryProviderInterfaceResolver implements Carp
       created_at: Date;
       operator_class: string;
       trip_id: string;
+      status: string;
     },
     people: PeopleWithIdInterface[],
-  ): Promise<void> {
-    throw new Error();
-  }
+  ): Promise<void>;
+  abstract async updateStatus(acquisition_id: number, status: string): Promise<void>;
 }

@@ -43,14 +43,6 @@ jobs:
       - run: yarn run build
       - run: yarn run lint
       - run: yarn run test
-      # - run:
-      #     name: Run tests with coverage
-      #     command: |
-      #       ./cc-test-reporter before-build
-      #       yarn run coverage-ci
-      #       cat coverage/**/lcov.info > coverage/lcov.info
-      #       ./cc-test-reporter format-coverage -t lcov
-      #       ./cc-test-reporter upload-coverage
 
   front-qa:
     docker:
@@ -73,7 +65,7 @@ jobs:
 
   front-cypress:
     docker:
-      - image: cypress/base:10
+      - image: cypress/browsers:node11.13.0-chrome73
         environment:
           TERM: xterm
     working_directory: ~/repo/dashboard
@@ -95,7 +87,7 @@ jobs:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.cache
-      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --record --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev'
+      - run: npx start-server-and-test 'http-server -s -p 4200 -P "http://localhost:4200?" dist/dashboard' 4200 '$(yarn bin)/cypress run --key $CYPRESS_RECORD_KEY --env ENV_NAME=dev --record false --browser chrome'
 
   front-deploy-dev:
     docker:
@@ -171,6 +163,12 @@ workflows:
               only:
                 - dev
 
+      - front-cypress:
+          filters:
+            branches:
+              only:
+                - dev
+
       - front-deploy-dev:
           requires:
             - front-qa
@@ -186,6 +184,12 @@ workflows:
             branches:
               only:
                 - staging
+      # - front-cypress:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - staging
+
       - front-deploy-staging:
           requires:
             - front-qa

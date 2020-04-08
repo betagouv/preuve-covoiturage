@@ -2,45 +2,93 @@ import { provider } from '@ilos/common';
 
 import {
   CampaignInterface,
-  CampaignMetadataRepositoryProviderInterfaceResolver,
   IncentiveInterface,
   TripInterface,
+  IncentiveStateEnum,
+  IncentiveStatusEnum,
 } from '../interfaces';
+import { MetadataProviderInterfaceResolver } from './interfaces';
+
 import { ProcessableCampaign } from './ProcessableCampaign';
 
 @provider()
 export class PolicyEngine {
-  constructor(protected metaRepository: CampaignMetadataRepositoryProviderInterfaceResolver) {}
+  constructor(protected metaRepository: MetadataProviderInterfaceResolver) {}
+
+  public buildCampaign(campaign: CampaignInterface): ProcessableCampaign {
+    return new ProcessableCampaign(campaign);
+  }
+
+  public async processStateless(pc: ProcessableCampaign, trip: TripInterface): Promise<IncentiveInterface[]> {
+    const drivers = trip.people
+      .filter((p) => p.is_driver)
+      .sort((p1, p2) => (p1.carpool_id < p2.carpool_id ? -1 : p1.carpool_id > p2.carpool_id ? 1 : 0));
+    const passengers = trip.people.filter((p) => !p.is_driver);
+    const people = [...passengers, drivers.shift()].filter((p) => p !== undefined);
+
+    // Empty incitation for duplicate drivers
+    const results: IncentiveInterface[] = drivers.map((p) => ({
+      carpool_id: p.carpool_id,
+      policy_id: pc.policy_id,
+      datetime: p.datetime,
+      result: 0,
+      amount: 0,
+      state: IncentiveStateEnum.Null,
+      status: IncentiveStatusEnum.Draft,
+      meta: {},
+    }));
+
+    for (const person of people) {
+      const ctx = { trip, person, result: undefined, stack: [] };
+      results.push(await pc.apply(ctx));
+    }
+
+    return results;
+  }
+
+  public async processStateful(
+    pc: ProcessableCampaign,
+    incentive: IncentiveInterface,
+  ): Promise<{ carpool_id: number; policy_id: number; amount: number }> {
+    const keys = pc.getMetaKeys(incentive);
+    const meta = await this.metaRepository.get(pc.policy_id, keys);
+    const result = pc.applyStateful(incentive, meta);
+    await this.metaRepository.set(pc.policy_id, meta);
+    return result;
+  }
 
   public async process(trip: TripInterface, campaign: CampaignInterface): Promise<IncentiveInterface[]> {
-    const results: IncentiveInterface[] = [];
+    if (!this.guard(trip, campaign)) {
+      return [];
+    }
+
+    const pc = new ProcessableCampaign(campaign);
+    const incentives = await this.processStateless(pc, trip);
+    for (const [i, incentive] of incentives.entries()) {
+      const { amount } = await this.processStateful(pc, incentive);
+      incentives[i] = {
+        ...incentive,
+        amount,
+      };
+    }
+
+    return incentives;
+  }
+
+  protected guard(trip: TripInterface, campaign: CampaignInterface): boolean {
     if (
-      trip.territories.indexOf(campaign.territory_id) < 0 ||
-      trip.datetime > campaign.end_date ||
-      trip.datetime < campaign.start_date
+      trip.people
+        .map((p) => [...p.start_territory_id, ...p.end_territory_id])
+        .reduce((s, t) => {
+          t.map((v) => s.add(v));
+          return s;
+        }, new Set())
+        .has(campaign.territory_id) &&
+      trip.datetime >= campaign.start_date &&
+      trip.datetime <= campaign.end_date
     ) {
-      return results;
+      return true;
     }
-
-    const pc = new ProcessableCampaign(campaign.global_rules, campaign.rules);
-
-    // get metadata wrapper
-    const meta = await this.metaRepository.get(campaign._id);
-
-    for (const person of trip.people) {
-      const ctx = { trip, person, meta, result: undefined, stack: [] };
-      await pc.apply(ctx);
-      results.push({
-        policy_id: campaign._id,
-        carpool_id: person.carpool_id,
-        identity_uuid: person.identity_uuid,
-        amount: Math.round(ctx.result),
-        // status
-        // detail:
-      });
-    }
-
-    await this.metaRepository.set(meta);
-    return results;
+    return false;
   }
 }

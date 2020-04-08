@@ -313,7 +313,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     pagination.total = result.rows[0].total_count;
 
-    const final_data = result.rows.map(({ total_count, ...data }) => data).map(this.castTypes);
+    const final_data = result.rows.map(({ total_count, ...data }) => data);
 
     return {
       data: final_data,
@@ -331,15 +331,5 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         (acc, current, idx, origin) => (idx === origin.length - 1 ? `${acc}${current}` : `${acc}${current}$${idx + 1}`),
         '',
       );
-  }
-
-  private castTypes(row: any): any {
-    return {
-      ...row,
-      operator_id: typeof row.operator_id === 'string' ? parseInt(row.operator_id, 10) : row.operator_id,
-      start_territory:
-        typeof row.start_territory === 'string' ? parseInt(row.start_territory, 10) : row.start_territory,
-      end_territory: typeof row.end_territory === 'string' ? parseInt(row.end_territory, 10) : row.end_territory,
-    };
   }
 }

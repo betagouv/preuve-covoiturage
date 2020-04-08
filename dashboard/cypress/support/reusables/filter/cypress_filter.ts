@@ -6,8 +6,9 @@ import { DEFAULT_TRIP_LIMIT } from '~/core/const/filter.const';
 import { expectedFilter, filterEndMoment, filterStartMoment } from '../../expectedApiPayload/expectedFilter';
 import { territoryStub } from '../../stubs/territory/territory.find';
 import { operatorStub } from '../../stubs/operator/operator.find';
+import { CI_WAIT } from '../../../config/ci.config';
 
-export function cypress_filter(e2e = false, group: UserGroupEnum) {
+export function cypress_filter(e2e = false, group: UserGroupEnum): void {
   it('clicks on trip section', () => {
     cy.get('.Header-menu .Header-menu-item.trip-menu-item').click();
   });
@@ -76,7 +77,7 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   });
 
   it('chooses status: en cours', () => {
-    cy.wait(700); // searches is mat-select-panel from ranks
+    cy.wait(CI_WAIT.waitShort); // searches is mat-select-panel from ranks
     cy.get('.filter-trip-types mat-form-field:nth-child(2)').click();
     cy.get('.mat-select-panel mat-option:first-child').click();
   });
@@ -94,7 +95,7 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   // to avoid infinite scroll messing things up
   it('scroll-bugfix', () => {
     cy.get('.filter-footer button:first-child').scrollIntoView();
-    cy.wait(3000);
+    cy.wait(CI_WAIT.waitLong); // searches is mat-select-panel from ranks
   });
 
   it('click filter button', () => {
@@ -132,13 +133,14 @@ export function cypress_filter(e2e = false, group: UserGroupEnum) {
   it('clicks stats tab', () => {
     // need a delaye between 2 calls
     cy.get('.TripLayout .mat-tab-link-container .mat-tab-links a:nth-child(1)').click();
-    cy.wait(1000);
+    cy.wait(CI_WAIT.waitLong); // searches is mat-select-panel from ranks
   });
 
   if (e2e) {
     // check that their is no trips
     it('checks the data is null', () => {
-      cy.wait(1000);
+      cy.wait(CI_WAIT.waitLong); // searches is mat-select-panel from ranks
+
       cy.get('.stats-numbers app-stat-number:nth-child(1) .stat-number-title p').contains('0');
     });
   }

@@ -169,6 +169,7 @@
             *ngIf="!editRestrictionForm"
             mat-stroked-button
             color="primary"
+            class="AddRestrictionBtn"
             (click)="startEditRestriction()"
             [disabled]="!restrictionFormArray.valid"
           >
@@ -186,6 +187,7 @@
             <button
               mat-stroked-button
               color="primary"
+              class="ConfirmBtn"
               (click)="addRestriction()"
               [disabled]="!editRestrictionForm.valid"
             >

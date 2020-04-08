@@ -34,7 +34,6 @@ export const schema = {
         },
         global_rules: {
           type: 'array',
-          minItems: 1,
           items: rule,
         },
         rules: {

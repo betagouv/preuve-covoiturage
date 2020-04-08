@@ -1,5 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, KernelInterfaceResolver, ContextType } from '@ilos/common';
+import { ParamsInterface as LogErrorParamsInterface } from '../shared/acquisition/logerror.contract';
+import { ParamsInterface as ResolveErrorParamsInterface } from '../shared/acquisition/resolveerror.contract';
 
 import {
   signature as costSignature,
@@ -33,6 +35,7 @@ import {
 } from '../shared/carpool/crosscheck.contract';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/normalization/process.contract';
 import { PersonInterface, FinalizedPersonInterface } from '../shared/common/interfaces/PersonInterface';
+import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 const context: ContextType = {
   call: {
@@ -43,6 +46,14 @@ const context: ContextType = {
     transport: 'queue',
   },
 };
+
+enum NormalisationErrorStage {
+  Cost = 'cost',
+  Identity = 'identity',
+  Geo = 'geo',
+  GeoRoute = 'geo.route',
+  Territory = 'territory',
+}
 
 // Enrich position data
 @handler({ ...handlerConfig, middlewares: [['channel.service.only', ['acquisition', handlerConfig.service]]] })
@@ -73,6 +84,17 @@ export class NormalizationProcessAction extends AbstractAction {
       acquisition_id: journey._id,
       operator_journey_id: journey.journey_id,
     };
+
+    // mark all previously attempted normalisation failed request as resolved
+    this.kernel.notify<ResolveErrorParamsInterface>(
+      'acquisition:resolveerror',
+      {
+        operator_id: journey.operator_id,
+        journey_id: journey.journey_id,
+        error_stage: ErrorStage.Normalisation,
+      },
+      { channel: { service: 'acquisition' } },
+    );
 
     await this.kernel.call<CrossCheckParamsInterface, CrossCheckResultInterface>(
       crossCheckSignature,
@@ -118,13 +140,36 @@ export class NormalizationProcessAction extends AbstractAction {
     };
   }
 
+  public async logError(
+    normalisationCode: NormalisationErrorStage,
+    journey: ParamsInterface,
+    e: Error,
+    errorCode = '500',
+  ): Promise<void> {
+    await this.kernel.notify<LogErrorParamsInterface>(
+      'acquisition:logerror',
+      {
+        error_stage: ErrorStage.Normalisation,
+        error_line: null,
+        operator_id: journey.operator_id,
+        journey_id: journey.journey_id,
+        source: 'api.v2',
+        error_message: e.message,
+        error_code: errorCode,
+        auth: {},
+        headers: {},
+        body: { journey, normalisationCode },
+      },
+      { channel: { service: 'acquisition' } },
+    );
+  }
+
   public async handlePerson(person: PersonInterface, journey: ParamsInterface): Promise<PersonInterface> {
     const finalPerson: PersonInterface = { ...person };
 
     // Cost ------------------------------------------------------------------------------------
 
     try {
-      // console.log('>> Cost');
       const { cost, payments } = await this.kernel.call<CostParamsInterface, CostResultInterface>(
         costSignature,
         {
@@ -141,14 +186,12 @@ export class NormalizationProcessAction extends AbstractAction {
       finalPerson['cost'] = cost;
       finalPerson.payments = payments;
     } catch (e) {
-      console.error('!! normalisation ', costSignature, ' failed on ', finalPerson, e.message);
-      // console.log(e.stack);
+      await this.logError(NormalisationErrorStage.Cost, journey, e);
 
-      throw e;
+      // throw e;
     }
 
     // Identity ------------------------------------------------------------------------------------
-    // console.log('>> Identity');
 
     try {
       finalPerson.identity = await this.kernel.call<IdentityParamsInterface, IdentityResultInterface>(
@@ -157,17 +200,13 @@ export class NormalizationProcessAction extends AbstractAction {
         context,
       );
     } catch (e) {
-      console.error('!! normalisation ', identitySignature, ' failed on ', finalPerson, e.message);
-      // console.log(e.stack);
-
+      await this.logError(NormalisationErrorStage.Identity, journey, e);
       throw e;
     }
 
     // Geo ------------------------------------------------------------------------------------
-
+    let isSubGeoError = false;
     try {
-      // console.log('>> Geo');
-
       const { start, end } = await this.kernel.call<GeoParamsInterface, GeoResultInterface>(
         geoSignature,
         {
@@ -182,8 +221,6 @@ export class NormalizationProcessAction extends AbstractAction {
 
       // Route ------------------------------------------------------------------------------------
       try {
-        // console.log('>> Route');
-
         const { calc_distance, calc_duration } = await this.kernel.call<RouteParamsInterface, RouteResultInterface>(
           routeSignature,
           {
@@ -196,21 +233,19 @@ export class NormalizationProcessAction extends AbstractAction {
         finalPerson.calc_distance = calc_distance;
         finalPerson.calc_duration = calc_duration;
       } catch (e) {
-        // console.error('!! normalisation ', routeSignature, ' failed on ', finalPerson, e.message);
-        // console.log(e.stack);
+        await this.logError(NormalisationErrorStage.GeoRoute, journey, e);
+        isSubGeoError = true;
+
         throw e;
       }
     } catch (e) {
-      // console.error('!! normalisation ', geoSignature, ' failed on ', finalPerson, e.message);
-      // console.log(e.stack);
+      if (!isSubGeoError) await this.logError(NormalisationErrorStage.Geo, journey, e);
 
       throw e;
     }
 
     // Territory ------------------------------------------------------------------------------------
     try {
-      // console.log('>> Territory');
-
       const territories = await this.kernel.call<TerritoryParamsInterface, TerritoryResultInterface>(
         territorySignature,
         {
@@ -223,8 +258,7 @@ export class NormalizationProcessAction extends AbstractAction {
       finalPerson.start.territory_id = territories.start;
       finalPerson.end.territory_id = territories.end;
     } catch (e) {
-      // console.error('!! normalisation ', territorySignature, ' failed on ', finalPerson, e.message);
-      // console.log(e.stack);
+      await this.logError(NormalisationErrorStage.Territory, journey, e);
 
       throw e;
     }

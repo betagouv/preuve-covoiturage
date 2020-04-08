@@ -3,7 +3,8 @@ export const FILTER = 0;
 export const TRANSFORMER = 1;
 export const SETTER = 2;
 export const MODIFIER = 3;
-export const POST = 4;
+export const DEFAULT = 4;
+export const STATEFUL = 5;
 
 export enum type {
   META,
@@ -11,5 +12,6 @@ export enum type {
   TRANSFORMER,
   SETTER,
   MODIFIER,
-  POST,
+  DEFAULT,
+  STATEFUL,
 }

@@ -13,6 +13,6 @@ export interface PersonInterface {
   duration: number;
   distance: number;
   cost: number;
-  start_territory_id: number;
-  end_territory_id: number;
+  start_territory_id: number[];
+  end_territory_id: number[];
 }

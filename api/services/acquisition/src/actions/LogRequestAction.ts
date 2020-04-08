@@ -1,16 +1,16 @@
+import { get } from 'lodash';
 import { Action as AbstractAction } from '@ilos/core';
 import { handler, ContextType } from '@ilos/common';
 
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/acquisition/logrequest.contract';
-// import { alias } from '../shared/acquisition/logerror.schema';
 import { ErrorRepositoryProviderInterfaceResolver } from '../interfaces/ErrorRepositoryProviderInterface';
+import { ErrorStage } from '../shared/acquisition/common/interfaces/AcquisitionErrorInterface';
 
 @handler({
   ...handlerConfig,
   middlewares: [
-    // ['channel.service.only', ['proxy']],
+    ['channel.service.only', ['proxy']],
     // ['can', ['acquisition.logrequest']],
-    // ['validate', alias],
   ],
 })
 export class LogRequestAction extends AbstractAction {
@@ -22,6 +22,17 @@ export class LogRequestAction extends AbstractAction {
     // clean up sensitive data
     delete params.headers.cookie;
 
-    await this.repo.create(params);
+    await this.repo.log({
+      error_stage: ErrorStage.Acquisition,
+      error_line: null,
+      operator_id: get(context, 'call.user.operator_id', 0),
+      journey_id: params.journey_id,
+      source: 'logrequest',
+      error_message: null,
+      error_code: null,
+      auth: get(context, 'call.user'),
+      headers: get(context, 'call.metadata.req.headers', {}),
+      body: params,
+    });
   }
 }
