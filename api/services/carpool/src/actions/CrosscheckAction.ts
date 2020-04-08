@@ -83,7 +83,11 @@ export class CrosscheckAction extends Action {
   protected getStatus(created: Date, dates: Date[]): string {
     const maxDiff = this.config.get('rules.maxAge');
     return dates
-      .map((d) => d.getTime() - created.getTime())
+      .map(
+        (d) =>
+          (d.getTime ? d.getTime() : new Date(d).getTime()) -
+          (created.getTime ? created.getTime() : new Date(created).getTime()),
+      )
       .map((diff) => diff >= maxDiff)
       .reduce((status, isExpired) => (isExpired ? 'expired' : status), 'ok');
   }
