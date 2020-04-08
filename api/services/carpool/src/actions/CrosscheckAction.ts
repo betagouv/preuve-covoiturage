@@ -85,6 +85,7 @@ export class CrosscheckAction extends Action {
     return dates
       .map(
         (d) =>
+          // safe date casting for date array
           (d.getTime ? d.getTime() : new Date(d).getTime()) -
           (created.getTime ? created.getTime() : new Date(created).getTime()),
       )
