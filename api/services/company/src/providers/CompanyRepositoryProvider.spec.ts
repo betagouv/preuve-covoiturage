@@ -44,7 +44,7 @@ test.after.always(async (t) => {
 });
 
 test.serial('should return undefined on unknow siret', async (t) => {
-  const res = await t.context.repository.find('12000101100010');
+  const res = await t.context.repository.findBySiret('12000101100010');
   t.is(res, undefined);
 });
 
@@ -76,11 +76,12 @@ test.serial('should update data if siret alread exists', async (t) => {
 });
 
 test.serial('should return a company on known siret', async (t) => {
-  const res = await t.context.repository.find('12000101100010');
+  const res = await t.context.repository.findBySiret('12000101100010');
   t.true(typeof res === 'object');
   t.deepEqual(
     Reflect.ownKeys(res).sort(),
     [
+      '_id',
       'siret',
       'siren',
       'nic',

@@ -16,10 +16,11 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
 
   constructor(protected connection: PostgresConnection) {}
 
-  async find(siret: string): Promise<CompanyInterface> {
+  async findById(id: number): Promise<CompanyInterface> {
     const query = {
       text: `
       SELECT
+        _id,
         siret,
         siren,
         nic,
@@ -36,7 +37,40 @@ export class CompanyRepositoryProvider implements CompanyRepositoryProviderInter
         ST_X(geo::geometry) as lon,
         ST_Y(geo::geometry) as lat
       FROM ${this.table}
-      WHERE siret = $1
+      WHERE _id = $1::int
+      LIMIT 1`,
+      values: [id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    if (result.rowCount !== 1) {
+      return undefined;
+    }
+    return result.rows[0];
+  }
+
+  async findBySiret(siret: string): Promise<CompanyInterface> {
+    const query = {
+      text: `
+      SELECT
+        _id,
+        siret,
+        siren,
+        nic,
+        legal_name,
+        company_naf_code,
+        establishment_naf_code,
+        legal_nature_code,
+        legal_nature_label,
+        intra_vat,
+        headquarter,
+        updated_at,
+        nonprofit_code,
+        address,
+        ST_X(geo::geometry) as lon,
+        ST_Y(geo::geometry) as lat
+      FROM ${this.table}
+      WHERE siret = $1::varchar
       LIMIT 1`,
       values: [siret],
     };
