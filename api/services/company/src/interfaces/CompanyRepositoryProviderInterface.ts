@@ -2,14 +2,12 @@ import { CompanyInterface } from '../shared/common/interfaces/CompanyInterface2'
 
 export interface CompanyRepositoryProviderInterface {
   updateOrCreate(company: CompanyInterface): Promise<void>;
-  find(siret: string): Promise<CompanyInterface>;
+  findBySiret(siret: string): Promise<CompanyInterface>;
+  findById(id: number): Promise<CompanyInterface>;
 }
 
 export abstract class CompanyRepositoryProviderInterfaceResolver implements CompanyRepositoryProviderInterface {
-  async updateOrCreate(company: CompanyInterface): Promise<void> {
-    throw new Error();
-  }
-  async find(siret: string): Promise<CompanyInterface> {
-    throw new Error();
-  }
+  abstract updateOrCreate(company: CompanyInterface): Promise<void>;
+  abstract findBySiret(siret: string): Promise<CompanyInterface>;
+  abstract findById(id: number): Promise<CompanyInterface>;
 }

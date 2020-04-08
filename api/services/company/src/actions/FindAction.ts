@@ -1,5 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { handler, KernelInterfaceResolver, NotFoundException } from '@ilos/common';
 
 import { CompanyDataSourceProviderInterfaceResolver } from '../interfaces/CompanyDataSourceProviderInterface';
 import { CompanyRepositoryProviderInterfaceResolver } from '../interfaces/CompanyRepositoryProviderInterface';
@@ -25,26 +25,23 @@ export class FindAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const { siret, source } = params;
-    if (source && source === 'remote') {
-      return this.ds.find(siret);
+    const { query: { siret, _id }, forceRemoteUpdate } = params;
+
+    if (forceRemoteUpdate && siret) {
+      await this.fetch(siret);
     }
 
     try {
-      const res = await this.repository.find(siret);
+      let res: ResultInterface;
 
-      if (res === undefined) {
-        await this.kernel.call(fetchSignature, siret, {
-          call: {
-            user: {
-              permissions: ['company.fetch'],
-            },
-          },
-          channel: {
-            service: handlerConfig.service,
-          },
-        });
-        return this.handle(params);
+      if (siret) {
+        res = await this.repository.findBySiret(siret);
+      } else {
+        res = await this.repository.findById(_id);
+      }
+
+      if (res === null) {
+        throw new NotFoundException(`Cant find this company, try force update`);
       }
 
       return res;
@@ -52,5 +49,18 @@ export class FindAction extends AbstractAction {
       console.log(e);
       return null;
     }
+  }
+
+  protected async fetch(siret: string): Promise<void> {
+    await this.kernel.call(fetchSignature, siret, {
+      call: {
+        user: {
+          permissions: ['company.fetch'],
+        },
+      },
+      channel: {
+        service: handlerConfig.service,
+      },
+    });
   }
 }
