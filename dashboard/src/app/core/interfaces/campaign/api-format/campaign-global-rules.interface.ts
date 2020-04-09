@@ -22,8 +22,8 @@ export type GlobalRetributionRuleType =
 export enum GlobalRetributionRulesSlugEnum {
   PER_SEAT_MODIFIER = 'per_seat_modifier',
   MAX_AMOUNT = 'max_amount_restriction',
-  RESTRICTION_TRIP = 'max_trip_per_target_restriction',
-  RESTRICTION_AMOUNT = 'max_amount_per_target_restriction',
+  RESTRICTION_TRIP = 'max_trip_restriction',
+  RESTRICTION_AMOUNT = 'max_amount_restriction',
   MAX_TRIPS = 'max_trip_restriction',
   ONLY_ADULT = 'adult_only_filter',
   WEEKDAY = 'weekday_filter',
@@ -174,6 +174,7 @@ export class TripRestrictionRetributionRule implements GlobalRetributionRuleInte
     target: RestrictionTargetsEnum;
     amount: number;
     period: RestrictionPeriodsEnum;
+    uuid?: string;
   };
 
   constructor(target: RestrictionTargetsEnum, amount: number, period: RestrictionPeriodsEnum) {
@@ -182,6 +183,7 @@ export class TripRestrictionRetributionRule implements GlobalRetributionRuleInte
       target,
       amount,
       period,
+      uuid: generateGuid(),
     };
   }
 }
@@ -193,6 +195,7 @@ export class AmountRestrictionRetributionRule implements GlobalRetributionRuleIn
     target: RestrictionTargetsEnum;
     amount: number;
     period: RestrictionPeriodsEnum;
+    uuid?: string;
   };
 
   constructor(target: RestrictionTargetsEnum, amount: number, period: RestrictionPeriodsEnum) {
@@ -201,6 +204,7 @@ export class AmountRestrictionRetributionRule implements GlobalRetributionRuleIn
       target,
       amount,
       period,
+      uuid: generateGuid(),
     };
   }
 }
