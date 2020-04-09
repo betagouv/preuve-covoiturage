@@ -328,6 +328,8 @@ export class CampaignFormater {
 
     // GLOBAL RULES
     const campaignGlobalRetributionRules: GlobalRetributionRuleType[] = [];
+    const campaignRetributionRules: RetributionRuleType[][] = [];
+
     campaignGlobalRetributionRules.push(new RankGlobalRetributionRule(campaignUx.filters.rank));
     if (campaignUx.filters.time.length > 0) {
       campaignGlobalRetributionRules.push(
@@ -355,9 +357,6 @@ export class CampaignFormater {
       ...ui_status,
       insee_filter: filters.insee,
     };
-
-    // PASSENGER SEAT
-    if (passenger_seat) campaignGlobalRetributionRules.push(new PassengerSeatRule());
 
     // WHITELIST
     if (filters.insee.whiteList.length > 0) {
@@ -411,7 +410,6 @@ export class CampaignFormater {
     });
 
     // RETRIBUTION RULES
-    const campaignRetributionRules: RetributionRuleType[][] = [];
 
     retributions.forEach((retribution) => {
       // set defaults, reset values according to uiStatus
@@ -482,6 +480,10 @@ export class CampaignFormater {
         if (retribution.for_driver.per_km) {
           retributionRules.push(new PerKmRetributionRule());
         }
+
+        // PASSENGER SEAT
+        if (passenger_seat) retributionRules.push(new PassengerSeatRule());
+
         campaignRetributionRules.push(retributionRules);
       }
     });
