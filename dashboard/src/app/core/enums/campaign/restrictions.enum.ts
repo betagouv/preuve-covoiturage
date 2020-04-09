@@ -1,7 +1,7 @@
 export enum RestrictionPeriodsEnum {
   DAY = 'day',
   MONTH = 'month',
-  YEAR = 'year',
+  // YEAR = 'year',
   ALL = 'campaign',
 }
 
@@ -20,6 +20,6 @@ export const RESTRICTION_PERIODS: RestrictionPeriodsEnum[] = Object.values(Restr
 export const RESTRICTION_PERIODS_FR = {
   [RestrictionPeriodsEnum.DAY]: 'jour',
   [RestrictionPeriodsEnum.MONTH]: 'mois',
-  [RestrictionPeriodsEnum.YEAR]: 'année',
+  // [RestrictionPeriodsEnum.YEAR]: 'année',
   [RestrictionPeriodsEnum.ALL]: 'durée de la campagne',
 };
