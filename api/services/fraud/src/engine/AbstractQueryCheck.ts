@@ -8,7 +8,7 @@ export abstract class AbstractQueryCheck<
   R extends DefaultMetaInterface = DefaultMetaInterface
 > extends AbstractCheck<R> {
   public static readonly key: string;
-  public carpoolView = 'common.carpools';
+  public carpoolView = 'carpool.carpools'; // TODO : change target to view
 
   abstract readonly query: string;
 

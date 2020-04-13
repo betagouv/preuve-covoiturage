@@ -62,6 +62,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
    *  Update a fraud check entry
    */
   public async updateFraudCheck(fraud: FraudCheck): Promise<void> {
+    // TODO updateOrCreate()
     const query = {
       text: `
       UPDATE ${this.table} SET

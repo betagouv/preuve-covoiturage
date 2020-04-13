@@ -3,6 +3,7 @@ import { provider, ServiceContainerInterfaceResolver } from '@ilos/common';
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
 import { checkList } from './checks';
 import { StaticCheckInterface, CheckInterface } from '../interfaces/CheckInterface';
+import { FraudCheckResult } from '../interfaces';
 
 @provider()
 export class CheckEngine {
@@ -39,25 +40,17 @@ export class CheckEngine {
   }
 
   /**
-   *  List all unprocessed methods for an acquisition id
-   */
-  async listUnprocessedMethods(acquisitionId: number): Promise<string[]> {
-    const processedMethods = (await this.repository.getAllCheckByAcquisition(acquisitionId)).map((m) => m.method);
-    return this.listAvailableMethods().filter((method) => processedMethods.indexOf(method) < 0);
-  }
-
-  /**
    *  Apply a method on an acquisition_id
    *  - get the check processor
    *  - get the check meta
    *  - if status != done, proccess it
    *  - save result metadata
    */
-  async apply(acquisitionId: number, method: string, force = false): Promise<void> {
+  async applyOne(acquisitionId: number, method: string): Promise<FraudCheckResult> {
     const processor = await this.getCheckProcessor(method);
     const checkMeta = await this.repository.findOrCreateFraudCheck(acquisitionId, method);
 
-    if (checkMeta.status === 'done' && !force) {
+    if (checkMeta.status === 'done') {
       return;
     }
 
@@ -78,6 +71,12 @@ export class CheckEngine {
         },
       });
       throw e;
+    }
+  }
+
+  async apply(acquisitionId: number, methods: string[]): Promise<void> {
+    for (const method of methods) {
+      await this.applyOne(acquisitionId, method);
     }
   }
 }

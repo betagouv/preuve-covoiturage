@@ -9,15 +9,16 @@ import { GeoProvider } from '@pdc/provider-geo';
 import { config } from './config';
 import { FraudCheckProcessCommand } from './commands/FraudCheckProcessCommand';
 import { FraudCheckRepositoryProvider } from './providers/FraudCheckRepositoryProvider';
+import { ProcessableCarpoolRepositoryProvider } from './providers/ProcessableCarpoolRepositoryProvider';
 
-import { FraudCheckAction } from './actions/FraudCheckAction';
+import { CheckAction } from './actions/CheckAction';
 import { CheckEngine } from './engine/CheckEngine';
-import { FraudCheckAllAction } from './actions/FraudCheckAllAction';
+import { ApplyAction } from './actions/ApplyAction';
 
 @serviceProvider({
   config,
   commands: [FraudCheckProcessCommand],
-  providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine],
+  providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine, ProcessableCarpoolRepositoryProvider],
   validator: [],
   middlewares: [
     ['validate', ValidatorMiddleware],
@@ -27,7 +28,7 @@ import { FraudCheckAllAction } from './actions/FraudCheckAllAction';
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [FraudCheckAction, FraudCheckAllAction],
-  queues: ['fraud'],
+  handlers: [CheckAction, ApplyAction],
+  queues: ['fraudcheck'],
 })
 export class ServiceProvider extends AbstractServiceProvider {}
