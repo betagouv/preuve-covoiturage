@@ -7,7 +7,6 @@ import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 import { GeoProvider } from '@pdc/provider-geo';
 
 import { config } from './config';
-import { FraudCheckProcessCommand } from './commands/FraudCheckProcessCommand';
 import { FraudCheckRepositoryProvider } from './providers/FraudCheckRepositoryProvider';
 import { ProcessableCarpoolRepositoryProvider } from './providers/ProcessableCarpoolRepositoryProvider';
 
@@ -17,7 +16,7 @@ import { ApplyAction } from './actions/ApplyAction';
 
 @serviceProvider({
   config,
-  commands: [FraudCheckProcessCommand],
+  commands: [],
   providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine, ProcessableCarpoolRepositoryProvider],
   validator: [],
   middlewares: [
