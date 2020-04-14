@@ -66,7 +66,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
           acquisition_id,
           method,
           meta
-        ) VALUES ($1::varchar, $2, '{}'::json)
+        ) VALUES ($1::int, $2, '{}'::json)
         ON CONFLICT DO NOTHING
         RETURNING _id, status, meta::text, karma
       )
@@ -79,7 +79,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
         meta::text,
         karma
       FROM ${this.table}
-      WHERE acquisition_id = $1::varchar
+      WHERE acquisition_id = $1::int
       AND method = $2)) AS foo`,
       values: [acquisitionId, method],
     };
@@ -145,7 +145,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
         ${fields}
       FROM ${this.table}
       WHERE
-        acquisition_id = $1::varchar
+        acquisition_id = $1::int
         AND status::varchar = ANY($2::varchar[])
       `,
       values: [acquisitionId, status],

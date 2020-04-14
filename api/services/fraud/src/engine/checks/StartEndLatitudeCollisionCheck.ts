@@ -5,7 +5,7 @@ import { AbstractQueryCheck } from '../AbstractQueryCheck';
 import { FraudCheckResult } from '../../interfaces';
 
 interface Params {
-  acquisition_id: string;
+  acquisition_id: number;
   start_lat: number;
   end_lat: number;
 }

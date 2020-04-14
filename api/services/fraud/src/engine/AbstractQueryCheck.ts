@@ -18,7 +18,7 @@ export abstract class AbstractQueryCheck<
 
   async handle(acquisitionId: number, initialMeta?: R | R[]): Promise<FraudCheckResult<R | R[]>> {
     const query = {
-      text: `WITH data as (${this.query}) SELECT * from data WHERE acquisition_id = $1`,
+      text: `WITH data as (${this.query}) SELECT * from data WHERE acquisition_id = $1::int`,
       values: [acquisitionId],
     };
 
