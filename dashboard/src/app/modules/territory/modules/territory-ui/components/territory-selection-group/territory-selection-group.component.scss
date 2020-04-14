@@ -3,8 +3,11 @@
   overflow: hidden;
 
   > .mat-icon {
+    cursor: pointer;
+    line-height: 28px;
+
+    margin-right: 5px;
     float: left;
-    line-height: 19px;
   }
 
   .mat-checkbox {
