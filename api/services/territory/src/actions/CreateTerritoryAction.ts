@@ -18,6 +18,8 @@ export class CreateTerritoryAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.territoryRepository.create(params);
+    // TODO : ResultInterface as repository return interface
+    throw new Error('to migrate with new Result Interface');
+    // return this.territoryRepository.create(params);
   }
 }
