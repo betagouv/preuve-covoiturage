@@ -1,3 +1,5 @@
+// Old API : TODO: remove after complete service migration
+/*
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
@@ -22,3 +24,4 @@ export class FindTerritoryByPositionAction extends AbstractAction {
     return this.territoryRepository.findByPosition(params.lon, params.lat);
   }
 }
+*/

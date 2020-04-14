@@ -16,7 +16,8 @@ export class ListTerritoryAction extends AbstractAction {
 
     return {
       data,
-      meta: { total: data.length },
+      // TODO: check constitancy
+      meta: { pagination: { total: data.length, offset: 0, limit: data.length } },
     };
   }
 }
