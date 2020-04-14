@@ -1,0 +1,12 @@
+.add-territory {
+  display: flex;
+  margin: 4px 0 15px;
+  // > *,
+  button {
+    margin-top: 4px;
+    margin-left: 5px;
+  }
+  > app-territory-autocomplete {
+    width: 558px;
+  }
+}

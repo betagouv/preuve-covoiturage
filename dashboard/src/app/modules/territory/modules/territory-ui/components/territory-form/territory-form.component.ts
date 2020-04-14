@@ -118,6 +118,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             }),
           ),
         ),
+        // children: [],
 
         company: this.fb.group(new FormCompany({ siret: '', company: new Company() })),
         contacts: this.fb.group({
