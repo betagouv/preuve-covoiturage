@@ -22,9 +22,3 @@ CREATE MATERIALIZED VIEW fraudcheck.processable_carpool AS (
 );
 
 CREATE UNIQUE INDEX ON fraudcheck.processable_carpool(acquisition_id);
-
---- MATERIALIZED TABLE
---- updated_at (last)
---- score global
---- acquisition_id
-

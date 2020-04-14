@@ -7,6 +7,7 @@
 var { createMigration } = require('../helpers/createMigration');
 var { setup, up, down } = createMigration(
   [
+    'fraudcheck/20200410000000_update_fraudcheck_fkeys',
     'fraudcheck/20200410000000_create_method_repository_table',
     'fraudcheck/20200410000000_create_processable_carpool_view',
     'carpool/20200410000000_update_carpool_status',
