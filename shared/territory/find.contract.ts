@@ -29,7 +29,6 @@ export interface ResultInterface
     Partial<TerritoryCodesInterface>,
     Partial<TerritoryRelationInterface> {}
 
-
 export const handlerConfig = {
   service: 'territory',
   method: 'find',

@@ -5,12 +5,12 @@ export const find = {
   required: ['query'],
   additionalProperties: false,
   properties: {
-    query: { 
+    query: {
       type: 'object',
       minProperties: 1,
       additionalProperties: false,
       properties: {
-        search:  { macro: 'varchar' },
+        search: { macro: 'varchar' },
         has_child_id: { macro: 'serial' },
         has_parent_id: { macro: 'serial' },
         has_ancestor_id: { macro: 'serial' },
