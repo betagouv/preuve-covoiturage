@@ -1,3 +1,5 @@
+import { BehaviorSubject, Observable } from 'rxjs';
+
 export interface IdName {
   id: number;
   name: string;
@@ -38,6 +40,8 @@ export class TerritorySelectionBlock {
   protected _selectedState: TerritorySelectionState;
   // protected _parent?: TerritorySelectionBlock;
 
+  protected _selectedStateBehaviour: BehaviorSubject<TerritorySelectionState>;
+
   public get parent(): TerritorySelectionBlock {
     return this._parent;
   }
@@ -47,15 +51,42 @@ export class TerritorySelectionBlock {
   public get indent(): number {
     return this._indent;
   }
-  public get selectedState(): TerritorySelectionState {
-    return this._selectedState;
-  }
+  // public get selectedState(): TerritorySelectionState {
+  //   return this._selectedState;
+  // }
 
   constructor(base: IdName, protected _parent?: TerritorySelectionBlock, protected _indent = 0, selected = true) {
     this.id = base.id;
     this.name = base.name;
     this._selectedState = TerritorySelectionState.ALL;
+    this._selectedStateBehaviour = new BehaviorSubject(this._selectedState);
     // this.updateSelectionState();
+  }
+
+  toIdName(): IdName {
+    return { id: this.id, name: this.name };
+  }
+
+  getFlatSelectedList(list: IdName[] = []): IdName[] {
+    switch (this._selectedState) {
+      case TerritorySelectionState.ALL:
+        list.push(this.toIdName());
+        break;
+      case TerritorySelectionState.SOME:
+        if (this.children === undefined)
+          throw new Error(
+            'TerritorySelectionBlock : try to get some selected children from an undefined children array',
+          );
+        this.children.forEach((child) => child.getFlatSelectedList(list));
+
+        break;
+    }
+
+    return list;
+  }
+
+  getSelectedStateObservable(): Observable<TerritorySelectionState> {
+    return this._selectedStateBehaviour.asObservable();
   }
 
   setSelected(selected: boolean, propagateToParent = true, propagateToChildren = true): void {
@@ -67,6 +98,8 @@ export class TerritorySelectionBlock {
     if (propagateToChildren === true && this._children !== undefined) {
       for (const child of this._children) child.setSelectedStateFromParent(true);
     }
+
+    this._selectedStateBehaviour.next(this._selectedState);
   }
 
   setSelectedStateFromChildren(propagateToParent = false): void {
@@ -88,6 +121,8 @@ export class TerritorySelectionBlock {
       this._selectedState = TerritorySelectionState.ALL;
     }
 
+    this._selectedStateBehaviour.next(this._selectedState);
+
     if (propagateToParent === true && this._parent !== undefined) {
       this._parent.setSelectedStateFromChildren(true);
     }
@@ -96,7 +131,9 @@ export class TerritorySelectionBlock {
   setSelectedStateFromParent(propagateToChildren = false): void {
     if (this._parent !== undefined && this._parent._selectedState !== TerritorySelectionState.SOME) {
       this._selectedState = this._parent._selectedState;
-      if (this._children === undefined) {
+      this._selectedStateBehaviour.next(this._selectedState);
+
+      if (this._children !== undefined) {
         for (const child of this._children) child.setSelectedStateFromParent(true);
       }
     }
