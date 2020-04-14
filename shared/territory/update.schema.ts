@@ -13,17 +13,7 @@ export const update = {
     name: { macro: 'varchar' },
     level: {
       type: 'string',
-      enum: [
-        'town',
-        'towngroup',
-        'district',
-        'megalopolis',
-        'region',
-        'state',
-        'country',
-        'countrygroup',
-        'other',
-      ],
+      enum: ['town', 'towngroup', 'district', 'megalopolis', 'region', 'state', 'country', 'countrygroup', 'other'],
     },
     company_id: {
       macro: 'serial',
@@ -44,5 +34,3 @@ export const update = {
     // },
   },
 };
-
-

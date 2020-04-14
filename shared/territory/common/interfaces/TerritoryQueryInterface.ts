@@ -9,7 +9,7 @@ export interface TerritoryQueryInterface extends Partial<TerritoryCodesInterface
   has_descendant_id?: number;
   name?: string;
   company_name?: string;
-  position?: GeoPositionInterface,
+  position?: GeoPositionInterface;
   active?: boolean;
 }
 
@@ -18,7 +18,7 @@ export enum SortEnum {
   AreaDesc = '-area',
   NameAsc = '+name',
   NameDesc = '-name',
-};
+}
 
 export enum BasicFieldEnum {
   Id = '_id',
@@ -26,7 +26,7 @@ export enum BasicFieldEnum {
   Level = 'level',
   Name = 'name',
   Active = 'active',
-};
+}
 
 export enum ActiveFieldEnum {
   ActiveSince = 'active_since',
@@ -47,7 +47,7 @@ export enum RelationFiedEnum {
   Ancestors = 'ancestors',
   // ActiveDescendants = 'activeDescendants',
   // EndingDescendants = 'endingDescendants',
-};
+}
 
 export interface PaginationInterface {
   skip: number;

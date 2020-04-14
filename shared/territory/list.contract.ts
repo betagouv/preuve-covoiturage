@@ -1,4 +1,9 @@
-import { TerritoryQueryInterface, SortEnum, BasicFieldEnum, PaginationInterface } from './common/interfaces/TerritoryQueryInterface';
+import {
+  TerritoryQueryInterface,
+  SortEnum,
+  BasicFieldEnum,
+  PaginationInterface,
+} from './common/interfaces/TerritoryQueryInterface';
 import { TerritoryLevelEnum } from './common/interfaces/TerritoryInterface';
 
 import { ResultWithPagination } from '../common/interfaces/ResultWithPagination';
