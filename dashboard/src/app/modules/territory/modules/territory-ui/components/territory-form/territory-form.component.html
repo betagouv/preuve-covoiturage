@@ -12,6 +12,10 @@
       <input matInput formControlName="shortname" />
     </mat-form-field>
 
+    <h3>Territoire</h3>
+
+    <app-territory-children></app-territory-children>
+
     <h3>Structure</h3>
 
     <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
