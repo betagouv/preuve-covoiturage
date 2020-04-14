@@ -22,3 +22,8 @@ test(members, 'company.companies', 4);
 test(members, 'operator.operators', 2);
 test(members, 'application.applications', 2);
 test(members, 'territory.territories', 2);
+test(members, 'common.insee', 58);
+test(members, 'territory.insee', 58);
+test(members, 'carpool.identities', 10);
+test(members, 'acquisition.acquisitions', 2);
+test(members, 'carpool.carpools', 2);

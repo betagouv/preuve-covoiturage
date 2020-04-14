@@ -34,7 +34,19 @@ export function fixturesMacro<TestContext = unknown>(
      * - the test can override this array by passing { sources: [] } to the config.
      *   watch out for broken relationships if you do that!
      */
-    sources: ['roles', 'users', 'companies', 'operators', 'territories'],
+    sources: [
+      'roles',
+      'users',
+      'companies',
+      'operators',
+      'territories',
+      'insee_atlantis',
+      'insee_olympus',
+      'insee_atlantis_pivot',
+      'insee_olympus_pivot',
+      'identities',
+      'trips',
+    ],
     ...cfg,
   };
 

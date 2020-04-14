@@ -107,7 +107,13 @@ Refresh materialized views
 |    1 |           | Atlantis | 40012127300025 | Atl       | ?       | ?       | ?        |
 |    2 |           | Olympus  | 34470365700017 | Olp       | ?       | ?       | ?        |
 
-`common.insee` limited set
+`common.insee`
+
+Nantes : Atlantis
+'44047','44150','44101','44094','44162','44215','44020','44143','44009','44198','44204','44024','44114','44190','44026','44194','44120','44166','44018','44109','44074','44171','44035','44172'
+
+Annecy : Olympus
+'74062','74148','74267','74061','74142','74275','74002','74108','74186','74233','74004','74111','74194','74242','74097','74176','74310','74019','74282','74213','74299','74010','74112','74198','74303','74067','74060','74254','74054','74138','74232','74036','74137','74219'
 
 `territories.insee` pivot
 
@@ -125,6 +131,21 @@ Carpool
 
 - plusieurs milliers de trajets répartis sur plusieurs mois pour avoir des stats cohérentes. (mode démo)
 - quelques trajets pour avoir une base très légère à flasher très vite
+
+Identities
+
+| \_id | uuid                                 | phone        | phone_trunc | operator_user_id | firstname | lastname | email               | travel_pass_name | travel_pass_user_id | over_18 |
+| ---: | ------------------------------------ | ------------ | ----------- | ---------------- | --------- | -------- | ------------------- | ---------------- | ------------------- | ------- |
+|    1 | 5bb842c0-1f88-475e-b7e2-202f837ddbd7 | +33612345670 |             |                  | Joana     |          | joana@example.com   |                  |                     | true    |
+|    2 | ae6f1792-bb51-4673-b50f-f5ab00dde54a | +33612345671 |             |                  | Bob       |          | bob@example.com     |                  |                     | true    |
+|    3 | 5afe864a-9b3f-4db1-8bb5-0d797f188173 | +33612345672 |             |                  | Marie     |          | marie@example.com   |                  |                     | true    |
+|    4 | a7da590d-6274-4c54-8ff3-5782afbbd265 | +33612345673 |             |                  | Dylan     |          | dylan@example.com   |                  |                     | true    |
+|    5 | acf1bffd-a8b3-4e38-a9fd-0389fcd0f2cd | +33612345674 |             |                  | Julie     |          | julie@example.com   |                  |                     | true    |
+|    6 | 00a96371-4776-4ec7-abff-b5db044db48d | +33612345675 |             |                  | Richard   |          | richard@example.com |                  |                     |         |
+|    7 | 1d645432-7c52-4583-84f3-4a8c6a9da88d |              | +336123456  | 1                |           |          |                     |                  |                     | true    |
+|    8 | 05364dc2-e514-4671-b0d5-3051eefadca6 |              | +336123456  | 2                |           |          |                     |                  |                     | true    |
+|    9 | 7d72bd7a-c236-4615-80b5-bf546622f860 |              | +336123456  | 3                |           |          |                     |                  |                     | true    |
+|   10 | 7a305591-c555-4c67-91d4-dbc0a99522c5 |              | +336123456  | 4                |           |          |                     |                  |                     | true    |
 
 ### Policy
 
