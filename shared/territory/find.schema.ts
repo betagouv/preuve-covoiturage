@@ -5,7 +5,7 @@ export const find = {
   required: ['query'],
   additionalProperties: false,
   properties: {
-    query: { 
+    query: {
       type: 'object',
       minProperties: 1,
       maxProperties: 2,
@@ -53,7 +53,7 @@ export const find = {
           'created_at',
           'updated_at',
         ],
-      }
+      },
     },
   },
 };
