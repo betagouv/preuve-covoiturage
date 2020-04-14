@@ -1,0 +1,37 @@
+<div
+  [class]="'mat-checkbox mat-accent ' + (selectedState !== TerritorySelectionState.NONE ? 'mat-checkbox-checked' : '')"
+>
+  <label (click)="onCheckboxClick()" class="mat-checkbox-layout"
+    ><div class="mat-checkbox-inner-container">
+      <div class="mat-checkbox-ripple mat-ripple" matripple="">
+        <div class="mat-ripple-element mat-checkbox-persistent-ripple"></div>
+      </div>
+      <div class="mat-checkbox-frame"></div>
+      <div class="mat-checkbox-background">
+        <svg
+          *ngIf="selectedState !== TerritorySelectionState.NONE"
+          xml:space="preserve"
+          class="mat-checkbox-checkmark"
+          focusable="false"
+          version="1.1"
+          viewBox="0 0 24 24"
+        >
+          <path
+            *ngIf="selectedState === TerritorySelectionState.ALL"
+            class="mat-checkbox-checkmark-path"
+            d="M4.1,12.7 9,17.6 20.3,6.3"
+            fill="none"
+            stroke="white"
+          ></path>
+          <path
+            *ngIf="selectedState === TerritorySelectionState.SOME"
+            d="M4,12L20,12"
+            style="fill:none;stroke:white     ;stroke-width:2px;"
+          ></path>
+        </svg>
+        <div class="mat-checkbox-mixedmark"></div>
+      </div>
+    </div>
+    <span class="mat-checkbox-label"><span style="display:none">&nbsp;</span>{{ territory.name }}</span></label
+  >
+</div>

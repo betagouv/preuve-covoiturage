@@ -25,6 +25,9 @@ import { TerritorySelectionBlockComponent } from './components/territory-selecti
 // eslint-disable-next-line
 import { TerritorySelectionGroupComponent } from './components/territory-selection-group/territory-selection-group.component';
 
+// eslint-disable-next-line
+import { TerritorySelectionCheckboxComponent } from './components/territory-selection-checkbox/territory-selection-checkbox.component';
+
 @NgModule({
   declarations: [
     TerritoryFormComponent,
@@ -38,6 +41,7 @@ import { TerritorySelectionGroupComponent } from './components/territory-selecti
     TerritoryChildrenComponent,
     TerritorySelectionBlockComponent,
     TerritorySelectionGroupComponent,
+    TerritorySelectionCheckboxComponent,
   ],
   imports: [
     CommonModule,
