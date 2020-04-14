@@ -33,7 +33,7 @@ export class HighDurationCheck extends AbstractQueryCheck<Params, Meta> {
       SELECT
         acquisition_id,
         duration
-      FROM ${this.carpoolView}
+      FROM ${this.datasource}
     `;
   }
 

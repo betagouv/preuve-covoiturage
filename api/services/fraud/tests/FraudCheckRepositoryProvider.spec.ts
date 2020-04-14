@@ -35,7 +35,7 @@ describe('Fraudcheck repository', async () => {
   after(async () => {
     if (acquisitionId) {
       await connection.getClient().query({
-        text: `DELETE FROM ${repository.table} WHERE acquisition_id = $1::varchar`,
+        text: `DELETE FROM ${repository.table} WHERE acquisition_id = $1::int`,
         values: [acquisitionId],
       });
     }
@@ -77,14 +77,14 @@ describe('Fraudcheck repository', async () => {
   });
 
   it('should throw an error if trying to update a non existing fraud entry', async () => {
-    await expect(
+    await (expect(
       repository.updateFraudCheck({
         _id: 12345689,
         karma: 0,
         meta: {},
         status: 'done',
       }),
-    ).to.eventually.rejectedWith();
+    ) as any).to.eventually.rejectedWith();
   });
 
   it('should list by acquisition with a complete object', async () => {

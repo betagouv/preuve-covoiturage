@@ -42,7 +42,7 @@ export class TheoricalDistanceAndDurationCheck extends AbstractQueryCheck<Params
         ST_X(end_position::geometry) as end_position_lon,
         ST_Y(end_position::geometry) as end_position_lat,
         distance
-      FROM ${this.carpoolView}
+      FROM ${this.datasource}
     `;
   }
 

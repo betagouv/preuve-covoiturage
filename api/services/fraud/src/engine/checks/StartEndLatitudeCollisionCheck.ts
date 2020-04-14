@@ -35,7 +35,7 @@ export class StartEndLatitudeCollisionCheck extends AbstractQueryCheck<Params, M
       acquisition_id,
       ST_Y(start_position::geometry) as start_lat,
       ST_Y(end_position::geometry) as end_lat
-    FROM ${this.carpoolView}
+    FROM ${this.datasource}
     `;
   }
 

@@ -87,7 +87,7 @@ export const faker = {
       CREATE TABLE IF NOT EXISTS fraud_test_table (
         _id serial primary key,
         created_at timestamp DEFAULT NOW(),
-        acquisition_id varchar,
+        acquisition_id int,
         operator_id varchar,
         trip_id varchar,
         operator_trip_id varchar,
@@ -157,7 +157,7 @@ export const faker = {
           seats
         ) VALUES (
           $1::timestamp,
-          $2::varchar,
+          $2::int,
           $3::varchar,
           $4::varchar,
           $5::varchar,

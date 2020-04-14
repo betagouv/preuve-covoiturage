@@ -35,8 +35,8 @@ export class StartLongitudeCollisionCheck extends AbstractQueryCheck<Params, Met
       driver.acquisition_id as acquisition_id,
       ST_X(driver.start_position::geometry) as driver_start_lon,
       ST_X(passenger.start_position::geometry) as passenger_start_lon
-    FROM ${this.carpoolView} as driver
-    LEFT JOIN ${this.carpoolView} as passenger
+    FROM ${this.datasource} as driver
+    LEFT JOIN ${this.datasource} as passenger
       ON driver.acquisition_id = passenger.acquisition_id
       AND passenger.is_driver = false
     WHERE

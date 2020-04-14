@@ -9,6 +9,7 @@ export abstract class AbstractQueryCheck<
 > extends AbstractCheck<R> {
   public static readonly key: string;
   public carpoolView = 'carpool.carpools'; // TODO : change target to view
+  protected datasource = 'data';
 
   abstract readonly query: string;
 
@@ -18,7 +19,9 @@ export abstract class AbstractQueryCheck<
 
   async handle(acquisitionId: number, initialMeta?: R | R[]): Promise<FraudCheckResult<R | R[]>> {
     const query = {
-      text: `WITH data as (${this.query}) SELECT * from data WHERE acquisition_id = $1::int`,
+      text: `WITH data as (
+        SELECT * from ${this.carpoolView} WHERE acquisition_id = $1::int
+      ) ${this.query}`,
       values: [acquisitionId],
     };
 

@@ -33,7 +33,7 @@ export class HighSeatCheck extends AbstractQueryCheck<Params, Meta> {
       SELECT
         acquisition_id,
         seats
-      FROM ${this.carpoolView}
+      FROM ${this.datasource}
       WHERE
         is_driver = false
     `;

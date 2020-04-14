@@ -35,7 +35,7 @@ export class StartEndLongitudeCollisionCheck extends AbstractQueryCheck<Params, 
       acquisition_id,
       ST_X(start_position::geometry) as start_lon,
       ST_X(end_position::geometry) as end_lon
-    FROM ${this.carpoolView}
+    FROM ${this.datasource}
     `;
   }
 

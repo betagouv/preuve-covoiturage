@@ -33,7 +33,11 @@ describe('Check engine', async () => {
   })
   class FakeFraudCheckRepository extends FraudCheckRepositoryProviderInterfaceResolver
     implements FraudCheckRepositoryProviderInterface {
-    public async findOrCreateFraudCheck(acquisitionId: number, method: string): Promise<FraudCheck> {
+    public async getScore(acquisitionId: number): Promise<number> {
+      return 0;
+    }
+
+    public async findOrCreateFraudCheck(acquisitionId: number, method: string): Promise<FraudCheck<any>> {
       return meta;
     }
 
@@ -64,7 +68,7 @@ describe('Check engine', async () => {
     sp.bind(SimpleCheckEngine);
     const engine = sp.get(SimpleCheckEngine);
 
-    await expect(engine.apply(0, 'mymethod')).to.eventually.rejectedWith('Unknown check mymethod');
+    await (expect(engine.apply(0, ['mymethod'])) as any).to.eventually.rejectedWith('Unknown check mymethod');
   });
 
   it('should not process if status is done', async () => {
@@ -98,7 +102,7 @@ describe('Check engine', async () => {
     sinon.spy(repository, 'updateFraudCheck');
 
     meta.status = 'done';
-    await engine.apply(0, 'test');
+    await engine.apply(0, ['test']);
     expect(repository.updateFraudCheck).to.have.callCount(0);
   });
 
@@ -129,7 +133,7 @@ describe('Check engine', async () => {
     sinon.spy(repository, 'updateFraudCheck');
 
     meta.status = 'pending';
-    await expect(engine.apply(0, 'test')).to.eventually.rejectedWith(errorMessage);
+    await (expect(engine.apply(0, ['test'])) as any).to.eventually.rejectedWith(errorMessage);
     expect(repository.updateFraudCheck).to.have.calledWith({
       ...meta,
       status: 'error',
@@ -172,7 +176,7 @@ describe('Check engine', async () => {
     sinon.spy(repository, 'updateFraudCheck');
 
     meta.status = 'pending';
-    await engine.apply(0, 'test');
+    await engine.apply(0, ['test']);
     expect(repository.updateFraudCheck).to.have.calledWith({
       ...meta,
       ...metaResult,
