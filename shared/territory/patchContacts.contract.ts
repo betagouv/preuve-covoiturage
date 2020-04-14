@@ -1,7 +1,7 @@
-import { TerritoryInterface } from './common/interfaces/TerritoryInterface';
+import { TerritoryBaseInterface } from './common/interfaces/TerritoryInterface';
 import { ContactsInterface } from '../common/interfaces/ContactsInterface';
 
-interface Territory extends TerritoryInterface {
+interface Territory extends TerritoryBaseInterface {
   _id: number;
 }
 
