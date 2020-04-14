@@ -18,7 +18,7 @@ export interface TerritoryBaseInterface {
   company_id?: number;
   active?: boolean;
   active_since?: Date;
-  contacts?: ContactsInterface,
+  contacts?: ContactsInterface;
   density?: number;
   geo?: any; // TODO : geography type
 }

@@ -1,7 +1,7 @@
 export enum TerritoryCodeEnum {
   Insee = 'insee',
   Postcode = 'postcode',
-};
+}
 
 export interface TerritoryCodeInterface {
   type: TerritoryCodeEnum;
