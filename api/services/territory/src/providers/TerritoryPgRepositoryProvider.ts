@@ -1,15 +1,15 @@
 import { provider, NotFoundException, KernelInterfaceResolver, ConflictException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
 
-import { TerritoryInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
-import { TerritoryDbInterface } from '../shared/territory/common/interfaces/TerritoryDbInterface';
+import { TerritoryBaseInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
+import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
   TerritoryRepositoryProviderInterfaceResolver,
   TerritoryRepositoryProviderInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 
 import { signature as companyFindSignature } from '../shared/company/find.contract';
-import { signature as companyFetchSignature } from '../shared/company/fetch.contract';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -19,7 +19,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async find(id: number): Promise<TerritoryDbInterface> {
+  async find(id: number): Promise<TerritoryDbMetaInterface> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -58,7 +58,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     if (rowCount !== 0) throw new ConflictException('Double siret is not allowed for territory ' + id);
   }
 
-  async all(): Promise<TerritoryDbInterface[]> {
+  async all(): Promise<TerritoryDbMetaInterface[]> {
     const query = {
       text: `
         SELECT * FROM ${this.table}
@@ -71,9 +71,13 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows;
   }
 
-  async create(data: TerritoryInterface): Promise<TerritoryDbInterface> {
-    await this.hasDoubleSiretThenFail(data.siret);
+  async create(data: TerritoryBaseInterface): Promise<TerritoryDbMetaInterface> {
+    // TODO: check siret collision method (or not)
+    // awaeit this.hasDoubleSiretThenFail(data.siret);
 
+    // TODO: to implement
+    throw new Error('Not implemented : query to adapt');
+    /*
     const query = {
       text: `
         INSERT INTO ${this.table}
@@ -93,6 +97,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
         VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
         RETURNING *
       `,
+      
       values: [
         data.siret,
         data.name,
@@ -105,20 +110,22 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
         data.cgu_accepted_by,
       ],
     };
+    */
 
-    const result = await this.connection.getClient().query(query);
-    if (result.rowCount !== 1) {
-      throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
-    }
+    // const result = await this.connection.getClient().query(query);
+    // if (result.rowCount !== 1) {
+    //   throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
+    // }
 
-    if (data.siret) {
-      await this.kernel.notify(companyFetchSignature, data.siret, {
-        channel: { service: 'operator' },
-        call: { user: { permissions: ['company.fetch'] } },
-      });
-    }
+    // if (data.siret) {
+    //   await this.kernel.notify(companyFetchSignature, data.siret, {
+    //     channel: { service: 'operator' },
+    //     call: { user: { permissions: ['company.fetch'] } },
+    //   });
+    // }
 
-    return result.rows[0];
+    // return result.rows[0];
+    return null;
   }
 
   async delete(id: number): Promise<void> {
@@ -141,8 +148,12 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   }
 
   // TODO
-  async update(data: TerritoryDbInterface): Promise<TerritoryDbInterface> {
-    const { _id, ...patch } = data;
+  async update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface> {
+    // const { _id, ...patch } = data;
+    // TODO: to implement
+    throw new Error('Not implemented : query to adapt');
+
+    /*  
     await this.hasDoubleSiretThenFail(data.siret, _id);
 
     if (data.siret) {
@@ -162,9 +173,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       cgu_accepted_by: null,
       ...patch,
     });
+    */
+    return null;
   }
 
-  async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbInterface> {
+  async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface> {
     const updatablefields = [
       'siret',
       'name',
@@ -214,11 +227,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows[0];
   }
 
-  async findByInsee(insee: string): Promise<TerritoryDbInterface> {
+  async findByInsee(insee: string): Promise<TerritoryDbMetaInterface> {
     throw new Error('This is not implemented here'); // move to normalization service
   }
 
-  async findByPosition(lon: number, lat: number): Promise<TerritoryDbInterface> {
+  async findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface> {
     throw new Error('This is not implemented here'); // move to normalization servie
   }
 }
