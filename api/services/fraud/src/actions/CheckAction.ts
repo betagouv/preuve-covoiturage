@@ -14,7 +14,7 @@ import { UncompletedTestException } from '../exceptions/UncompletedTestException
  */
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.except', ['proxy']]],
+  middlewares: [['channel.service.only', [handlerConfig.service]]],
 })
 export class CheckAction extends Action {
   constructor(private engine: CheckEngine, private kernel: KernelInterfaceResolver) {

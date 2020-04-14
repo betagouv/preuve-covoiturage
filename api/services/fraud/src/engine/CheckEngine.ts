@@ -81,7 +81,7 @@ export class CheckEngine {
     return;
   }
 
-  async getGlobalScore(acquisitionId: number) {
+  async getGlobalScore(acquisitionId: number): Promise<number> {
     return this.repository.getScore(acquisitionId);
   }
 }

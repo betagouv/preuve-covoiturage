@@ -14,7 +14,7 @@ import { CheckEngine } from '../engine/CheckEngine';
  */
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.except', ['proxy']]],
+  middlewares: [['channel.service.only', [handlerConfig.service]]],
 })
 export class ApplyAction extends Action implements InitHookInterface {
   constructor(
