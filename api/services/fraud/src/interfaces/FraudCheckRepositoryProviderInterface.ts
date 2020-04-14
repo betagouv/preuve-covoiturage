@@ -3,6 +3,7 @@ import { FraudCheck, FraudCheckComplete, DefaultMetaInterface } from './FraudChe
 export interface FraudCheckRepositoryProviderInterface {
   findOrCreateFraudCheck<T = DefaultMetaInterface>(acquisitionId: number, method: string): Promise<FraudCheck<T>>;
   updateFraudCheck(fraud: FraudCheck): Promise<void>;
+  getScore(acquisitionId: number): Promise<number>;
   getAllCheckByAcquisition(
     acquisitionId: number,
     status?: string[],
@@ -16,27 +17,18 @@ export interface FraudCheckRepositoryProviderInterface {
 }
 
 export abstract class FraudCheckRepositoryProviderInterfaceResolver implements FraudCheckRepositoryProviderInterface {
-  public async findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck<T>> {
-    throw new Error();
-  }
-
-  public async updateFraudCheck(fraud: FraudCheck): Promise<void> {
-    throw new Error();
-  }
-
-  public async getAllCheckByAcquisition(
+  abstract getScore(acquisitionId: number): Promise<number>;
+  abstract findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck<T>>;
+  abstract updateFraudCheck(fraud: FraudCheck): Promise<void>;
+  abstract getAllCheckByAcquisition(
     acquisitionId: number,
-    status: string[] = ['pending', 'error'],
-    onlyMethod = true,
-  ): Promise<(FraudCheckComplete | { method: string })[]> {
-    throw new Error();
-  }
+    status?: string[],
+    onlyMethod?: boolean,
+  ): Promise<(FraudCheckComplete | { method: string })[]>;
 
-  public async getAllCheckByMethod(
+  abstract getAllCheckByMethod(
     method: string,
-    status: string[] = ['pending', 'error'],
-    onlyAcquisition = true,
-  ): Promise<(FraudCheckComplete | { acquisition_id: number })[]> {
-    throw new Error();
-  }
+    status?: string[],
+    onlyAcquisition?: boolean,
+  ): Promise<(FraudCheckComplete | { acquisition_id: number })[]>;
 }

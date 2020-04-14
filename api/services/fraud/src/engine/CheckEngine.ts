@@ -78,5 +78,10 @@ export class CheckEngine {
     for (const method of methods) {
       await this.applyOne(acquisitionId, method);
     }
+    return;
+  }
+
+  async getGlobalScore(acquisitionId: number) {
+    return this.repository.getScore(acquisitionId);
   }
 }

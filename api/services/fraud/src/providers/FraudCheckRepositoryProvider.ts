@@ -7,6 +7,7 @@ import {
   FraudCheck,
   FraudCheckComplete,
 } from '../interfaces';
+import { UncompletedTestException } from '../exceptions/UncompletedTestException';
 
 /*
  * Trip specific repository
@@ -16,8 +17,42 @@ import {
 })
 export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProviderInterface {
   public readonly table = 'fraudcheck.fraudchecks';
+  public readonly methodTable = 'fraudcheck.method_repository';
 
   constructor(public connection: PostgresConnection) {}
+
+  public async getScore(acquisitionId: number): Promise<number> {
+    const query = {
+      text: `
+        WITH data AS (
+          SELECT
+            ff.karma,
+            (fm.ponderation * ff.karma) AS result
+          FROM ${this.methodTable} AS fm
+          LEFT JOIN ${this.table} AS ff
+            ON ff.method = fm._id 
+            AND ff.acquisition_id = $1::int
+          WHERE fm.active = true
+        )
+        SELECT
+          avg(result) as score,
+          CASE WHEN
+            (count(*) FILTER (WHERE karma IS NULL) = 0)
+            THEN true
+            ELSE false
+          END AS completed
+        FROM data
+      `,
+      values: [acquisitionId],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    if (result.rowCount !== 1 || !result.rows[0].completed) {
+      throw new UncompletedTestException('Some test are missing');
+    }
+
+    return result.rows[0].score;
+  }
 
   /**
    * Find or insert a fraud check entry from acquisition_id and method name

@@ -75,7 +75,7 @@ export class ApplyAction extends Action implements InitHookInterface {
           user: {},
         },
         channel: {
-          service: 'fraud',
+          service: handlerConfig.service,
         },
       },
     );
