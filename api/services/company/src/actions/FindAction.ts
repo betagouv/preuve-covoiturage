@@ -25,7 +25,10 @@ export class FindAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    const { query: { siret, _id }, forceRemoteUpdate } = params;
+    const {
+      query: { siret, _id },
+      forceRemoteUpdate,
+    } = params;
 
     if (forceRemoteUpdate && siret) {
       await this.fetch(siret);
