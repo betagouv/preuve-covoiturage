@@ -15,7 +15,6 @@ import { bankValidator } from '~/shared/modules/form/validators/bank.validator';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CompanyService } from '~/modules/company/services/company.service';
-import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
 
@@ -188,27 +187,30 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
           takeUntil(this.destroy$),
         )
         .subscribe((value) => {
-          this.companyService
-            .findCompany({ siret: value, source: 'remote' })
-            .pipe(
-              catchHttpStatus(404, (err) => {
-                this.toastr.error('Entreprise non trouvée');
-                throw err;
-              }),
-              takeUntil(stopFindCompany),
-            )
+          // TODO : apply company migration
+          return null;
 
-            .subscribe((company) => {
-              if (company) {
-                this.companyDetails = {
-                  naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-                  nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-                  rna: company.nonprofit_code ? company.nonprofit_code : '',
-                  vat_intra: company.intra_vat ? company.intra_vat : '',
-                };
-                companyFormGroup.patchValue(this.companyDetails);
-              }
-            });
+          // this.companyService
+          //   .findCompany({ siret: value, source: 'remote' })
+          //   .pipe(
+          //     catchHttpStatus(404, (err) => {
+          //       this.toastr.error('Entreprise non trouvée');
+          //       throw err;
+          //     }),
+          //     takeUntil(stopFindCompany),
+          //   )
+
+          //   .subscribe((company) => {
+          //     if (company) {
+          //       this.companyDetails = {
+          //         naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
+          //         nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
+          //         rna: company.nonprofit_code ? company.nonprofit_code : '',
+          //         vat_intra: company.intra_vat ? company.intra_vat : '',
+          //       };
+          //       companyFormGroup.patchValue(this.companyDetails);
+          //     }
+          //   });
         });
     }
 

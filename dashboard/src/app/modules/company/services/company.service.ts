@@ -20,6 +20,9 @@ export class CompanyService extends JsonRpcGetList<CompanyV2> {
   findCompany(params: FindCompanyParamsInterface): Observable<CompanyV2> {
     return this.get(params).pipe(
       map((company) => {
+        // TODO : apply company migration
+        return null;
+        /*
         const siren = parseInt(params.siret.substr(0, 9), 10);
         let tvaPrefix = ((12 + 3 * (siren % 97)) % 97).toString();
         for (let i = 0; i < 2 - tvaPrefix.length; i += 1) {
@@ -31,6 +34,7 @@ export class CompanyService extends JsonRpcGetList<CompanyV2> {
           ...company,
           intra_vat,
         });
+        */
       }),
     );
   }
