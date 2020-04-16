@@ -1,11 +1,10 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { AbstractQueryCheck } from '../AbstractQueryCheck';
-import { FraudCheckResult } from '../../interfaces';
+import { AbstractQueryCheck } from '../../AbstractQueryCheck';
+import { FraudCheckResult } from '../../../interfaces';
 
 interface Params {
-  acquisition_id: number;
   driver_start_lon: number;
   passenger_start_lon: number;
 }
@@ -19,30 +18,11 @@ interface Meta {
  * Check start longitude collision
  */
 @provider()
-export class StartLongitudeCollisionCheck extends AbstractQueryCheck<Params, Meta> {
+export class StartLongitudeCollisionCheck {
   public static readonly key: string = 'startLongitudeCollisionCheck';
 
   protected readonly maxLon: number = 1; // above = 100
   protected readonly minLon: number = 0.001; // below = 0
-
-  constructor(connection: PostgresConnection) {
-    super(connection);
-  }
-
-  public get query(): string {
-    return `
-    SELECT
-      driver.acquisition_id as acquisition_id,
-      ST_X(driver.start_position::geometry) as driver_start_lon,
-      ST_X(passenger.start_position::geometry) as passenger_start_lon
-    FROM ${this.datasource} as driver
-    LEFT JOIN ${this.datasource} as passenger
-      ON driver.acquisition_id = passenger.acquisition_id
-      AND passenger.is_driver = false
-    WHERE
-      driver.is_driver = true
-    `;
-  }
 
   async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
     const { driver_start_lon, passenger_start_lon } = params;

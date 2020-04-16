@@ -1,16 +1,15 @@
 import { provider } from '@ilos/common';
-import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { AbstractQueryCheck } from '../AbstractQueryCheck';
-import { FraudCheckResult } from '../../interfaces';
+import { FraudCheckResult } from '../../../interfaces';
 
 interface Params {
-  acquisition_id: number;
-  duration: number;
+  driver_duration: number;
+  passenger_duration: number;
 }
 
 interface Meta {
-  duration?: number;
+  driver_duration?: number;
+  passenger_duration?: number;
   error?: string;
 }
 
@@ -18,32 +17,20 @@ interface Meta {
  * Check duration
  */
 @provider()
-export class HighDurationCheck extends AbstractQueryCheck<Params, Meta> {
+export class HighDurationCheck {
   public static readonly key: string = 'highDurationCheck';
 
   protected readonly maxDuration: number = 43200; // above = 100
   protected readonly minDuration: number = 7200; // below = 0
 
-  constructor(connection: PostgresConnection) {
-    super(connection);
-  }
-
-  public get query(): string {
-    return `
-      SELECT
-        acquisition_id,
-        duration
-      FROM ${this.datasource}
-    `;
-  }
-
   async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
-    const { duration } = params;
+    const { driver_duration, passenger_duration } = params;
     return {
       meta: {
-        duration,
+        driver_duration,
+        passenger_duration,
       },
-      karma: this.calc(duration),
+      karma: Math.max(this.calc(driver_duration), this.calc(passenger_duration)),
     };
   }
 

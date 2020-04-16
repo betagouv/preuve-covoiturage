@@ -1,7 +1,7 @@
 import { provider, ServiceContainerInterfaceResolver } from '@ilos/common';
 
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
-import { checkList } from './checks';
+import { checkList } from './checks/self';
 import { StaticCheckInterface, CheckInterface } from '../interfaces/CheckInterface';
 import { FraudCheckResult } from '../interfaces';
 
