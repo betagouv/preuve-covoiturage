@@ -22,7 +22,7 @@ export class CheckAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    await this.engine.apply(params.acquisition_id, params.methods);
+    await this.engine.run(params.acquisition_id, params.methods);
     await this.notifyScore(params.acquisition_id);
     return;
   }

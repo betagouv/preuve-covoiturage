@@ -5,7 +5,6 @@ import {
   FraudCheckRepositoryProviderInterface,
   FraudCheckRepositoryProviderInterfaceResolver,
   FraudCheck,
-  FraudCheckComplete,
 } from '../interfaces';
 import { UncompletedTestException } from '../exceptions/UncompletedTestException';
 
@@ -53,12 +52,14 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
 
     return result.rows[0].score;
   }
+  public async createOrUpdateMany(completedFraudCheck: FraudCheck[]): Promise<void> {
 
+  }
   /**
    * Find or insert a fraud check entry from acquisition_id and method name
    * It return the fraud check entry or undefined
    */
-  public async findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck<T>> {
+  public async findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck> {
     const query = {
       text: `
       WITH ins AS (
@@ -93,101 +94,4 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
     return result.rows[0];
   }
 
-  /**
-   *  Update a fraud check entry
-   */
-  public async updateFraudCheck(fraud: FraudCheck): Promise<void> {
-    // TODO updateOrCreate()
-    const query = {
-      text: `
-      UPDATE ${this.table} SET
-        status = $2,
-        karma = $3,
-        meta = $4::json
-      WHERE
-        _id = $1
-      `,
-      values: [fraud._id, fraud.status, fraud.karma, JSON.stringify(fraud.meta)],
-    };
-
-    const result = await this.connection.getClient().query(query);
-
-    if (result.rowCount !== 1) {
-      throw new Error('fraudentry is not existing');
-    }
-
-    return;
-  }
-
-  /**
-   *  Return all fraud check entry for an acquistion
-   *  By default, filtering by status with 'done'
-   *  and return only the method
-   */
-  public async getAllCheckByAcquisition(
-    acquisitionId: number,
-    status: string[] = ['done'],
-    onlyMethod = true,
-  ): Promise<(FraudCheckComplete | { method: string })[]> {
-    const fields = onlyMethod
-      ? 'method'
-      : `
-      _id,
-      method,
-      acquisition_id::integer,
-      status,
-      meta,
-      karma`;
-
-    const query = {
-      text: `
-      SELECT
-        ${fields}
-      FROM ${this.table}
-      WHERE
-        acquisition_id = $1::int
-        AND status::varchar = ANY($2::varchar[])
-      `,
-      values: [acquisitionId, status],
-    };
-
-    const result = await this.connection.getClient().query(query);
-    return result.rows;
-  }
-
-  /**
-   *  Return all fraud check entry for a method name
-   *  By default, filtering by status with 'done'
-   *  and return only the acquition id
-   */
-  public async getAllCheckByMethod(
-    method: string,
-    status: string[] = ['done'],
-    onlyAcquisition = true,
-  ): Promise<(FraudCheckComplete | { acquisition_id: number })[]> {
-    const fields = onlyAcquisition
-      ? 'acquisition_id::integer'
-      : `
-      _id,
-      method,
-      acquisition_id::integer,
-      status,
-      meta,
-      karma`;
-
-    const query = {
-      text: `
-      SELECT
-        ${fields}
-      FROM ${this.table}
-      WHERE
-        method = $1
-        AND status::varchar = ANY($2::varchar[])
-      `,
-      values: [method, status],
-    };
-
-    const result = await this.connection.getClient().query(query);
-    return result.rows;
-  }
 }

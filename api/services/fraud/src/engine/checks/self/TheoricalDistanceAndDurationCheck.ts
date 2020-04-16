@@ -1,44 +1,21 @@
 import { provider } from '@ilos/common';
 import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 
-import { FraudCheckResult } from '../../../interfaces';
-
-interface Params {
-  driver_distance: number;
-  driver_duration: number;
-  passenger_distance: number;
-  passenger_duration: number;
-  driver_start_lon: number;
-  driver_start_lat: number;
-  driver_end_lon: number;
-  driver_end_lat: number;
-  passenger_start_lon: number;
-  passenger_start_lat: number;
-  passenger_end_lon: number;
-  passenger_end_lat: number;
-  driver_calc_distance?: number;
-  driver_calc_duration?: number;
-  passenger_calc_distance?: number;
-  passenger_calc_duration?: number;
-}
-
-interface Meta {
-  driver_distance_karma?: number;
-  driver_duration_karma?: number;
-  passenger_distance_karma?: number;
-  passenger_duration_karma?: number;
-}
+import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
+import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
+import { SelfCheckPreparator } from '../SelfCheckPreparator';
 
 /*
  * Check theorical distance and duration
  */
 @provider()
-export class TheoricalDistanceAndDurationCheck {
+export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<SelfCheckParamsInterface> {
   public static readonly key: string = 'theoricalDistanceAndDurationCheck';
+  public readonly preparer = SelfCheckPreparator;
 
   constructor(private geoProvider: GeoProviderInterfaceResolver) {}
 
-  async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
+  async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
     const {
       driver_distance,
       driver_duration,
@@ -78,15 +55,8 @@ export class TheoricalDistanceAndDurationCheck {
       passenger_calc_distance,
       passenger_calc_duration,
     );
-    return {
-      meta: {
-        driver_distance_karma,
-        driver_duration_karma,
-        passenger_distance_karma,
-        passenger_duration_karma,
-      },
-      karma: Math.max(driver_distance_karma, driver_duration_karma, passenger_distance_karma, passenger_duration_karma),
-    };
+    
+    return Math.max(driver_distance_karma, driver_duration_karma, passenger_distance_karma, passenger_duration_karma);
   }
   protected async karma(
     distance: number,

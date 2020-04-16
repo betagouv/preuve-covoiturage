@@ -1,43 +1,27 @@
 import { provider } from '@ilos/common';
 
-import { FraudCheckResult } from '../../../interfaces';
-
-interface Params {
-  driver_start_lat: number;
-  driver_end_lat: number;
-  passenger_start_lat: number;
-  passenger_end_lat: number;
-}
-
-interface Meta {
-  error?: string;
-  passenger_delta?: number;
-  driver_delta?: number;
-}
+import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
+import { SelfCheckPreparator } from '../SelfCheckPreparator';
+import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 
 /*
  * Check start and end latitude collision
  */
 @provider()
-export class StartEndLatitudeCollisionCheck {
+export class StartEndLatitudeCollisionCheck implements HandleCheckInterface<SelfCheckParamsInterface> {
   public static readonly key: string = 'startEndLatitudeCollisionCheck';
+  public readonly preparer = SelfCheckPreparator;
 
   protected readonly maxLat: number = 0.001; // above = 0
   protected readonly minLat: number = 0; // below = 100
 
-  async cursor(params: Params): Promise<FraudCheckResult<Meta>> {
+  async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
     const { passenger_start_lat, passenger_end_lat, driver_start_lat, driver_end_lat } = params;
 
     const passengerResult = this.calc(passenger_start_lat, passenger_end_lat);
     const driverResult = this.calc(driver_start_lat, driver_end_lat);
 
-    return {
-      meta: {
-        passenger_delta: passengerResult.delta,
-        driver_delta: driverResult.delta,
-      },
-      karma: Math.max(passengerResult.karma, driverResult.karma),
-    };
+    return Math.max(passengerResult.karma, driverResult.karma);
   }
 
   protected calc(start_lat: number, end_lat: number): { delta: number; karma: number } {
