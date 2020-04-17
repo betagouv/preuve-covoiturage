@@ -17,10 +17,6 @@
     },
     "declaration": true
   },
-<<<<<<< HEAD
   "include": ["src"],
-=======
-  "include": ["src/"],
->>>>>>> 277d3edf... fix test dependencies in proxy
   "exclude": ["node_modules"]
 }

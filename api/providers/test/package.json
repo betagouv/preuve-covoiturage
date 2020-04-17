@@ -27,10 +27,13 @@
   },
   "dependencies": {
     "@ilos/common": "~0",
+    "@ilos/connection-postgres": "~0",
     "@ilos/framework": "~0",
-    "@ilos/connection-postgres": "~0"
+    "faker": "^4.1.0",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@ilos/core": "~0"
+    "@ilos/core": "~0",
+    "@types/faker": "^4.1.11"
   }
 }

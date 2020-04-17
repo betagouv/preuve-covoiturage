@@ -5,14 +5,14 @@ import { ExecutionContext } from 'ava';
 const { test } = fixturesMacro();
 
 // create a macro
-const members = async (t: ExecutionContext<MacroTestContext>, table: string, expected: number) => {
+const members = async (t: ExecutionContext<MacroTestContext>, table: string, expected: number): Promise<void> => {
   const res = await t.context.pool.query(`select count(*) from ${table}`);
   t.is(res.rowCount, 1);
   t.is(Number(get(res.rows[0], 'count', -1)), expected);
 };
 
 // set the macro title dynamically
-members.title = (providedTitle: string | undefined, table: string, expected: number) =>
+members.title = (providedTitle: string | undefined, table: string, expected: number): string =>
   providedTitle || `Check ${table} has ${expected} members`;
 
 // run tests
@@ -25,5 +25,5 @@ test(members, 'territory.territories', 2);
 test(members, 'common.insee', 58);
 test(members, 'territory.insee', 58);
 test(members, 'carpool.identities', 10);
-test(members, 'acquisition.acquisitions', 2);
-test(members, 'carpool.carpools', 2);
+test(members, 'acquisition.acquisitions', 100);
+test(members, 'carpool.carpools', 100 * 2);

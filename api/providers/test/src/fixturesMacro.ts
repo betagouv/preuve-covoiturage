@@ -2,7 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import anyTest, { TestInterface } from 'ava';
 
+import { NewableType } from '@ilos/common';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
+
+import { Generator } from './fixtures/generators/Generator';
+import { IdentityGenerator } from './fixtures/generators/IdentityGenerator';
+import { TripGenerator } from './fixtures/generators/TripGenerator';
+import { identities } from './fixtures/identities';
 
 export interface MacroTestContext {
   pgAdmin: PostgresConnection;
@@ -16,7 +22,7 @@ interface TestConfig {
   pgConnectionString: string | null;
   database: string | null;
   fullMode: boolean;
-  sources: string[];
+  sources: (string | { cls: NewableType<Generator<unknown>>; args?: any[] })[];
 }
 
 export function fixturesMacro<TestContext = unknown>(
@@ -44,8 +50,8 @@ export function fixturesMacro<TestContext = unknown>(
       'insee_olympus',
       'insee_atlantis_pivot',
       'insee_olympus_pivot',
-      'identities',
-      'trips',
+      { cls: IdentityGenerator },
+      { cls: TripGenerator, args: [{ identities, inserts: 100 }] },
     ],
     ...cfg,
   };
@@ -78,13 +84,19 @@ export function fixturesMacro<TestContext = unknown>(
 
       // flash data
       for (const source of config.sources) {
-        const path = `${fixturesFolder}/${source}.sql`;
-        t.log(`Flash ${source}.sql`);
-        if (fs.existsSync(path)) {
-          const sql = fs.readFileSync(path, { encoding: 'utf8' });
-          await t.context.pool.query(sql);
+        if (typeof source === 'string') {
+          const path = `${fixturesFolder}/${source}.sql`;
+          t.log(`Flash ${source}.sql`);
+          if (fs.existsSync(path)) {
+            const sql = fs.readFileSync(path, { encoding: 'utf8' });
+            await t.context.pool.query(sql);
+          } else {
+            console.warn(`Failed to execute ${path}`);
+          }
         } else {
-          console.warn(`Failed to execute ${path}`);
+          const { cls, args } = source;
+          const generator = new cls(t.context.pool, ...(args || []));
+          await generator.run();
         }
       }
 
