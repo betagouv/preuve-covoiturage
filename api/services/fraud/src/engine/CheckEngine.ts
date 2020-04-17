@@ -15,8 +15,7 @@ export class CheckEngine {
   ) {}
 
   /**
-   *  Get a processor from a method string
-   *  cast from IOC and initialize if needed
+   *  Get a processor ctor from a method string
    */
   protected getCheckProcessor(method: string): NewableType<CheckInterface | HandleCheckInterface> {
     const processorCtor = this.checks.find((c) => c.key === method);
@@ -44,7 +43,7 @@ export class CheckEngine {
           acquisition_id: acquisitionId,
           method: name,
           karma: await instance.handle(data),
-        });  
+        });
       } catch(e) {
         result.push({
           status: FraudCheckStatusEnum.Error,

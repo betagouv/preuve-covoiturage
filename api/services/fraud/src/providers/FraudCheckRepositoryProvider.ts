@@ -31,6 +31,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
           LEFT JOIN ${this.table} AS ff
             ON ff.method = fm._id 
             AND ff.acquisition_id = $1::int
+            AND ff.status = 'done'::fraudcheck.status_enum
           WHERE fm.active = true
         )
         SELECT
@@ -52,46 +53,50 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
 
     return result.rows[0].score;
   }
-  public async createOrUpdateMany(completedFraudCheck: FraudCheck[]): Promise<void> {
 
-  }
-  /**
-   * Find or insert a fraud check entry from acquisition_id and method name
-   * It return the fraud check entry or undefined
-   */
-  public async findOrCreateFraudCheck<T = any>(acquisitionId: number, method: string): Promise<FraudCheck> {
+  public async createOrUpdateMany(data: FraudCheck[]): Promise<void> {
+    const normalizedData = data.map(d => {
+      const { error, ...other } = d;
+      return {
+        ...other,
+        meta: {
+          error,
+        },
+      };
+    });
+
+    const keys = ['acquisition_id', 'method', 'status', 'karma', 'meta'].map((k) => normalizedData.map((d) => d[k]));
+
     const query = {
       text: `
-      WITH ins AS (
         INSERT INTO ${this.table} (
           acquisition_id,
           method,
+          status,
+          karma,
           meta
-        ) VALUES ($1::int, $2, '{}'::json)
-        ON CONFLICT DO NOTHING
-        RETURNING _id, status, meta::text, karma
-      )
-      SELECT _id, status, meta::json, karma FROM (
-      (SELECT * FROM ins)
-      UNION
-      (SELECT
-        _id,
-        status,
-        meta::text,
-        karma
-      FROM ${this.table}
-      WHERE acquisition_id = $1::int
-      AND method = $2)) AS foo`,
-      values: [acquisitionId, method],
+        ) SELECT * FROM UNNEST(
+          $1::int[],
+          $2::varchar[],
+          $3::fraudcheck.status_enum[],
+          $4::int[],
+          $5::json[]
+        )
+        ON CONFLICT (acquisition_id, method)
+        DO UPDATE SET (
+          status,
+          karma,
+          meta
+        ) = (
+          excluded.status,
+          excluded.karma,
+          excluded.meta
+        )
+      `,
+      values: [...keys],
     };
 
-    const result = await this.connection.getClient().query(query);
-
-    if (result.rowCount !== 1) {
-      return undefined;
-    }
-
-    return result.rows[0];
+    await this.connection.getClient().query(query);
+    return;
   }
-
 }

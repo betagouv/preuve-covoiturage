@@ -55,7 +55,7 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
       passenger_calc_distance,
       passenger_calc_duration,
     );
-    
+
     return Math.max(driver_distance_karma, driver_duration_karma, passenger_distance_karma, passenger_duration_karma);
   }
   protected async karma(
@@ -108,7 +108,7 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
     if (announced === 0) {
       return 100;
     }
-
-    return Math.abs(1 - theorical / announced) * 100;
+    const delta = Math.abs(theorical - announced) / theorical;
+    return Math.min(100, delta * 100);
   }
 }
