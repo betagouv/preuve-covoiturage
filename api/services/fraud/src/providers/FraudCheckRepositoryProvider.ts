@@ -26,7 +26,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
         WITH data AS (
           SELECT
             ff.karma,
-            (fm.ponderation * ff.karma) AS result
+            (fm.weight * ff.karma) AS result
           FROM ${this.methodTable} AS fm
           LEFT JOIN ${this.table} AS ff
             ON ff.method = fm._id 

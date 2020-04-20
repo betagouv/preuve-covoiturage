@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS fraudcheck.method_repository
 (
   _id varchar(128) primary key,
-  ponderation float NOT NULL DEFAULT 1::float,
+  weight float NOT NULL DEFAULT 1::float,
   active boolean NOT NULL DEFAULT true
 );
 
