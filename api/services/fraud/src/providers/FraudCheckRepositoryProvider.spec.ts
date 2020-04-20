@@ -25,7 +25,7 @@ test.before(async t => {
       acquisition_id: 1,
       method: checkList[0].key,
       status: FraudCheckStatusEnum.Done,
-      karma: 100,
+      karma: 50,
       error: null,
     },
     {
@@ -62,7 +62,7 @@ test.serial('Should create fraudcheck entries', async t => {
     values: [t.context.acquisition_id],
   });
   t.is(result.rowCount, t.context.data.length);
-  t.deepEqual(result.rows, t.context.data);
+  t.deepEqual(result.rows.map(r => ({...r, error: JSON.parse(r.error)})), t.context.data);
   t.log(result.rows, t.context.data);
 });
 
@@ -75,14 +75,28 @@ test.serial('Should update fraudcheck entries', async t => {
   const data = [
     ...t.context.data,
   ];
-  data[2].status = FraudCheckStatusEnum.Done;
+  const karma = 50;
+  checkList.map(method => {
+    const methodIndex = data.findIndex(d => d.method === method.key)
+    if(methodIndex === -1) {
+      data.push({
+        karma,
+        acquisition_id: t.context.acquisition_id,
+        method: method.key,
+        status: FraudCheckStatusEnum.Done,
+        error: null,
+      });
+    } else if(data[methodIndex].status !== FraudCheckStatusEnum.Done) {
+      data[methodIndex].status = FraudCheckStatusEnum.Done;
+    }
+  });
   await t.context.repository.createOrUpdateMany(data);
   const result = await t.context.connection.getClient().query({
     text: `SELECT acquisition_id, method, status, karma, meta->>'error' as error FROM ${t.context.repository.table} WHERE acquisition_id = $1::int ORDER BY method`,
     values: [t.context.acquisition_id],
   });
   t.is(result.rowCount, data.length);
-  t.deepEqual(result.rows, data);
+  t.deepEqual(result.rows.map(r => ({...r, error: JSON.parse(r.error)})), data);
 });
 
 test.serial('Should get score', async t => {

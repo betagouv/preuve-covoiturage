@@ -31,7 +31,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface {
           driver.distance AS driver_distance,
           passenger.distance AS passenger_distance,
           driver.meta AS driver_meta,
-          passenger.meta AS passenger_meta,
+          passenger.meta AS passenger_meta
         FROM ${this.carpoolView} AS driver 
         LEFT JOIN ${this.carpoolView} AS passenger
           ON 
@@ -39,7 +39,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface {
             AND passenger.is_driver = false
         WHERE 
           driver.is_driver = true
-          AND acquisition_id = $1::int
+          AND driver.acquisition_id = $1::int
       `,
       values: [acquisitionId],
     };

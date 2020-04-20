@@ -34,25 +34,27 @@ export class CheckEngine {
 
   async apply(acquisitionId: number, methods: Map<string, HandleCheckInterface>, preparerCtor: NewableType<PrepareCheckInterface>): Promise<FraudCheck[]> {
     const result: FraudCheck[] = [];
-    const preparer = this.service.get(preparerCtor);
+    const preparer = this.service.get<PrepareCheckInterface>(preparerCtor);
     const data = await preparer.prepare(acquisitionId);
-    for(const [name, instance] of methods) {
-      try {
-        result.push({
-          status: FraudCheckStatusEnum.Done,
-          acquisition_id: acquisitionId,
-          method: name,
-          karma: await instance.handle(data),
-        });
-      } catch(e) {
-        result.push({
-          status: FraudCheckStatusEnum.Error,
-          acquisition_id: acquisitionId,
-          method: name,
-          karma: null,
-          error: e.message,
-        });
-        throw e;
+    for(const line of data) {
+      for(const [name, instance] of methods) {
+        try {
+          result.push({
+            status: FraudCheckStatusEnum.Done,
+            acquisition_id: acquisitionId,
+            method: name,
+            karma: Math.round(await instance.handle(line)),
+          });
+        } catch(e) {
+          result.push({
+            status: FraudCheckStatusEnum.Error,
+            acquisition_id: acquisitionId,
+            method: name,
+            karma: null,
+            error: e.message,
+          });
+          throw e;
+        }
       }
     }
     return result;
