@@ -9,8 +9,6 @@ import { StartLatitudeCollisionCheck } from './StartLatitudeCollisionCheck';
 import { StartLongitudeCollisionCheck } from './StartLongitudeCollisionCheck';
 import { TheoricalDistanceAndDurationCheck } from './TheoricalDistanceAndDurationCheck';
 
-
-
 export const checkList = [
   EndLatitudeCollisionCheck,
   EndLongitudeCollisionCheck,

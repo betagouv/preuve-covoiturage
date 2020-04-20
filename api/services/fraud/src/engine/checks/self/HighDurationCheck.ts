@@ -8,7 +8,7 @@ import { SelfCheckPreparator } from '../SelfCheckPreparator';
  * Check duration
  */
 @provider()
-export class HighDurationCheck implements HandleCheckInterface<SelfCheckParamsInterface>{
+export class HighDurationCheck implements HandleCheckInterface<SelfCheckParamsInterface> {
   public static readonly key: string = 'highDurationCheck';
   public readonly preparer = SelfCheckPreparator;
 

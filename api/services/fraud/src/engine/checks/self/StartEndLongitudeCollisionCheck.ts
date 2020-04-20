@@ -29,6 +29,6 @@ export class StartEndLongitudeCollisionCheck implements HandleCheckInterface<Sel
     return {
       delta,
       karma: Math.min(100, Math.max(0, Math.round(100 - (100 / this.maxLon) * delta))),
-    }
+    };
   }
 }

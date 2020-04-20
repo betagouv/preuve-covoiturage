@@ -25,7 +25,7 @@ export function faker(data: Partial<SelfCheckParamsInterface> = {}, deltaMode = 
     passenger_duration: 300,
     passenger_calc_duration: 300,
     passenger_seats: 1,
-  }
+  };
   if (!deltaMode) {
     return {
       ...defaultData,
@@ -33,7 +33,7 @@ export function faker(data: Partial<SelfCheckParamsInterface> = {}, deltaMode = 
     };
   }
   for (const key of Reflect.ownKeys(data)) {
-    defaultData[key] += data[key]; 
+    defaultData[key] += data[key];
   }
 
   return defaultData;
@@ -58,14 +58,19 @@ export function selfCheckMacro<TestContext = unknown>(
     await t.context.kernel.shutdown();
   });
 
-  const range: Macro<[Partial<SelfCheckParamsInterface>, number, number, boolean?], TestContext & KernelTestInterface> = async (
+  const range: Macro<
+    [Partial<SelfCheckParamsInterface>, number, number, boolean?],
+    TestContext & KernelTestInterface
+  > = async (
     t: ExecutionContext<TestContext & KernelTestInterface>,
     input: Partial<SelfCheckParamsInterface>,
     min: number,
     max: number,
     deltaMode?: boolean,
   ) => {
-    const check = t.context.kernel.get<ServiceContainerInterface>(serviceProviderCtor).get<HandleCheckInterface<SelfCheckParamsInterface>>(checkCtor);
+    const check = t.context.kernel
+      .get<ServiceContainerInterface>(serviceProviderCtor)
+      .get<HandleCheckInterface<SelfCheckParamsInterface>>(checkCtor);
     const data = faker(input, deltaMode);
     const result = await check.handle(data);
     t.log(data);

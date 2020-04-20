@@ -55,7 +55,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
   }
 
   public async createOrUpdateMany(data: FraudCheck[]): Promise<void> {
-    const normalizedData = data.map(d => {
+    const normalizedData = data.map((d) => {
       const { error, ...other } = d;
       return {
         ...other,

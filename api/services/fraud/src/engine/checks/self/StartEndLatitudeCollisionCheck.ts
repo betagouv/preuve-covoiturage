@@ -29,6 +29,6 @@ export class StartEndLatitudeCollisionCheck implements HandleCheckInterface<Self
     return {
       delta,
       karma: Math.min(100, Math.max(0, Math.round(100 - (100 / this.maxLat) * delta))),
-    }
+    };
   }
 }

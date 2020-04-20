@@ -1,6 +1,6 @@
 import { provider } from '@ilos/common';
 
-import { FraudCheckResult, HandleCheckInterface, PrepareCheckInterface } from '../../../interfaces';
+import { HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 
@@ -11,7 +11,7 @@ import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 export class EndLatitudeCollisionCheck implements HandleCheckInterface<SelfCheckParamsInterface> {
   public static readonly key: string = 'endLatitudeCollisionCheck';
   public readonly preparer = SelfCheckPreparator;
-  
+
   protected readonly maxLat: number = 1; // above = 100
   protected readonly minLat: number = 0.001; // below = 0
 

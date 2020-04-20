@@ -1,7 +1,7 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
-import { PrepareCheckInterface, FraudCheckResult } from '../../interfaces';
+import { PrepareCheckInterface } from '../../interfaces';
 import { SelfCheckParamsInterface } from './self/SelfCheckParamsInterface';
 
 @provider()
@@ -9,8 +9,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface {
   public carpoolView = 'carpool.carpools'; // TODO : change target to view
   protected datasource = 'data';
 
-  constructor(private connection: PostgresConnection) {
-  }
+  constructor(private connection: PostgresConnection) {}
 
   async prepare(acquisitionId: number): Promise<SelfCheckParamsInterface[]> {
     const query = {
@@ -43,7 +42,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface {
       `,
       values: [acquisitionId],
     };
-    
+
     const dbResult = await this.connection.getClient().query(query);
     return dbResult.rows.map((r) => {
       const { driver_meta, passenger_meta, ...data } = r;
@@ -53,7 +52,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface {
         driver_calc_duration: driver_meta.calc_duration,
         passenger_calc_distance: passenger_meta.calc_distance || 0,
         passenger_calc_duration: passenger_meta.calc_duration || 0,
-      }
+      };
     });
   }
 }

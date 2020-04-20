@@ -16,4 +16,4 @@ export interface SelfCheckParamsInterface {
   passenger_duration: number;
   passenger_calc_duration?: number;
   passenger_seats: number;
-};
+}

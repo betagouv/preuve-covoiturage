@@ -8,7 +8,7 @@ import { SelfCheckPreparator } from '../SelfCheckPreparator';
  * Check end longitude collision
  */
 @provider()
-export class EndLongitudeCollisionCheck implements HandleCheckInterface<SelfCheckParamsInterface>{
+export class EndLongitudeCollisionCheck implements HandleCheckInterface<SelfCheckParamsInterface> {
   public static readonly key: string = 'endLongitudeCollisionCheck';
   public readonly preparer = SelfCheckPreparator;
 

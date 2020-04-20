@@ -2,7 +2,12 @@ import { provider, ServiceContainerInterfaceResolver, NewableType } from '@ilos/
 
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
 import { checkList } from './checks/self';
-import { StaticCheckInterface, CheckInterface, HandleCheckInterface, PrepareCheckInterface } from '../interfaces/CheckInterface';
+import {
+  StaticCheckInterface,
+  CheckInterface,
+  HandleCheckInterface,
+  PrepareCheckInterface,
+} from '../interfaces/CheckInterface';
 import { FraudCheck, FraudCheckStatusEnum } from '../interfaces';
 
 @provider()
@@ -32,12 +37,16 @@ export class CheckEngine {
     return this.checks.map((c) => c.key);
   }
 
-  async apply(acquisitionId: number, methods: Map<string, HandleCheckInterface>, preparerCtor: NewableType<PrepareCheckInterface>): Promise<FraudCheck[]> {
+  async apply(
+    acquisitionId: number,
+    methods: Map<string, HandleCheckInterface>,
+    preparerCtor: NewableType<PrepareCheckInterface>,
+  ): Promise<FraudCheck[]> {
     const result: FraudCheck[] = [];
     const preparer = this.service.get<PrepareCheckInterface>(preparerCtor);
     const data = await preparer.prepare(acquisitionId);
-    for(const line of data) {
-      for(const [name, instance] of methods) {
+    for (const line of data) {
+      for (const [name, instance] of methods) {
         try {
           result.push({
             status: FraudCheckStatusEnum.Done,
@@ -45,7 +54,7 @@ export class CheckEngine {
             method: name,
             karma: Math.round(await instance.handle(line)),
           });
-        } catch(e) {
+        } catch (e) {
           result.push({
             status: FraudCheckStatusEnum.Error,
             acquisition_id: acquisitionId,
@@ -64,28 +73,32 @@ export class CheckEngine {
   }
 
   async run(acquisitionId: number, methods: string[]): Promise<void> {
-    const methodInstancesMap = methods.map(s => {
-      return [s, this.getCheckProcessor(s)];
-    }).reduce((methodMap, item: [string, NewableType<CheckInterface | HandleCheckInterface>]) => {
-      const [name, instanceCtor] = item;
-      const instance = this.service.get<HandleCheckInterface>(instanceCtor);
-      const preparer = this.hasExternalPreparer(instance) ? instance.preparer : instanceCtor as NewableType<PrepareCheckInterface>;
+    const methodInstancesMap = methods
+      .map((s) => {
+        return [s, this.getCheckProcessor(s)];
+      })
+      .reduce((methodMap, item: [string, NewableType<CheckInterface | HandleCheckInterface>]) => {
+        const [name, instanceCtor] = item;
+        const instance = this.service.get<HandleCheckInterface>(instanceCtor);
+        const preparer = this.hasExternalPreparer(instance)
+          ? instance.preparer
+          : (instanceCtor as NewableType<PrepareCheckInterface>);
 
-      if(!methodMap.has(preparer)) {
-        methodMap.set(preparer, new Map());
-      }
+        if (!methodMap.has(preparer)) {
+          methodMap.set(preparer, new Map());
+        }
 
-      const checks = methodMap.get(preparer);
-      checks.set(name, instance);
-      methodMap.set(preparer, checks);
+        const checks = methodMap.get(preparer);
+        checks.set(name, instance);
+        methodMap.set(preparer, checks);
 
-      return methodMap;
-    }, new Map<NewableType<PrepareCheckInterface>, Map<string, HandleCheckInterface>>());
-    
+        return methodMap;
+      }, new Map<NewableType<PrepareCheckInterface>, Map<string, HandleCheckInterface>>());
+
     const results: FraudCheck[] = [];
 
-    for(const [preparer, checks] of methodInstancesMap) {
-      results.push(...await this.apply(acquisitionId, checks, preparer))
+    for (const [preparer, checks] of methodInstancesMap) {
+      results.push(...(await this.apply(acquisitionId, checks, preparer)));
     }
 
     await this.repository.createOrUpdateMany(results);
