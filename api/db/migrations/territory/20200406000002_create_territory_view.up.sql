@@ -1,3 +1,7 @@
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+DROP MATERIALIZED VIEW IF EXISTS territory.territories_view;
+
 CREATE MATERIALIZED VIEW territory.territories_view AS (
 WITH RECURSIVE
   root AS (
@@ -5,27 +9,15 @@ WITH RECURSIVE
       t._id,
       array_remove(
         array_agg(
-          distinct (
-            CASE 
-              WHEN tr.parent_territory_id = t._id
-              THEN null
-              ELSE tr.parent_territory_id
-            END
-          )
+          distinct tr.parent_territory_id
         ),
-        null
+        t._id
       ) AS parents,
       array_remove(
         array_agg(
-          distinct (
-            CASE 
-              WHEN tr.child_territory_id = t._id 
-              THEN null 
-              ELSE tr.child_territory_id
-            END
-          )
+            distinct tr.child_territory_id
         ),
-        null
+        t._id
       ) AS children 
     FROM territory.territories AS t 
     LEFT JOIN territory.territory_relation AS tr 
@@ -56,51 +48,62 @@ WITH RECURSIVE
       ON r._id = d.territory_id 
     ORDER BY coalesce(array_length(children,1),0) ASC
   ),
-  complete AS (
-    SELECT * FROM input AS t 
+  complete_parent AS (
+    SELECT t._id, t.parents FROM input AS t 
     UNION ALL 
     SELECT 
       c._id,
-      t.parents AS parents,
+      t.parents AS parents
+    FROM input AS t 
+    JOIN complete_parent AS c ON t._id = any(c.parents)
+  ),
+  complete_children AS (
+    SELECT t._id, t.children,t.insee,t.postcode FROM input AS t 
+    UNION ALL 
+    SELECT 
+      c._id,
       t.children AS children,
       t.insee,
       t.postcode
     FROM input AS t 
-    JOIN complete AS c ON t._id = any(c.children)
+    JOIN complete_children AS c ON t._id = any(c.children)
+  ),
+  complete as (
+       SELECT cc._id, cc.children,cc.insee,cc.postcode,cp.parents FROM complete_children AS cc
+       LEFT JOIN complete_parent cp ON cp._id = cc._id
   ),
   agg AS (
     SELECT
         c._id,
-        array_remove(array_remove(array_agg(distinct p), null), c._id) AS parents,
-        array_remove(array_remove(array_agg(distinct b), null), c._id) AS children,
+        array_remove(array_remove(array_agg(distinct p), null), c._id) AS ancestors,
+        array_remove(array_remove(array_agg(distinct b), null), c._id) AS descendants,
         array_remove(array_agg(distinct ins), null) AS insee,
-        array_remove(array_agg(distinct pos), null) AS postcode,
-        array_agg(ROW(tt.level, tt.name)::territory.territory_level_name) AS parent_level_name
+        array_remove(array_agg(distinct pos), null) AS postcode
+        
     FROM complete AS c
     left JOIN unnest(c.parents) AS p ON true
     left JOIN unnest(c.children) AS b ON true 
     left JOIN unnest(c.insee) AS ins ON true 
     left JOIN unnest(c.postcode) AS pos ON true
-    left JOIN territory.territories as tt ON tt._id = ANY(c.parents)
     GROUP BY c._id
   )
   SELECT
     a._id,
     t.active,
     t.level,
-    a.parent_level_name,
     -- ADD
     -- - all level above (town, intertown, etc.)
     -- - direct_children, direct_parent (or rename parents to ancestors, children to descendants)
     -- - latest_children/ending_children,
     -- - active_children,
     -- - merge geo ?
-    a.parents,
-    a.children,
+    a.ancestors,
+    a.descendants,
     a.insee,
     a.postcode
   FROM agg AS a
   left JOIN territory.territories AS t ON t._id = a._id
+  
 );
 
 CREATE INDEX IF NOT EXISTS territory_territories_view_id_idx ON territory.territories_view(_id);

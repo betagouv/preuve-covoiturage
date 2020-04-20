@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS territory.territories
 
     --- registry
     -- TODO add activable boolean ?
+    activable boolean NOT NULL DEFAULT false,
     active boolean NOT NULL DEFAULT false,
     active_since timestamp with time zone,
     contacts json,
@@ -40,6 +41,10 @@ CREATE TABLE IF NOT EXISTS territory.territories
     --- geo data
     density integer,
     geo geography,
+
+    -- ui_status
+    ui_status json,
+
 
     --- for migration
     old_territory_id int,
