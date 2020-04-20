@@ -1,19 +1,21 @@
-export type DefaultMetaInterface = { [k: string]: any };
+export type FraudCheckResult = number;
 
-export interface FraudCheckMeta<T extends DefaultMetaInterface = DefaultMetaInterface> {
-  meta: T;
+export enum FraudCheckStatusEnum {
+  Done = 'done',
+  Error = 'error',
+  Pending = 'pending',
 }
 
-export interface FraudCheckResult<T extends DefaultMetaInterface = DefaultMetaInterface> extends FraudCheckMeta<T> {
-  karma: number;
-}
-
-export interface FraudCheck<T extends DefaultMetaInterface = DefaultMetaInterface> extends FraudCheckResult<T> {
-  _id: number;
-  status: string;
-}
-
-export interface FraudCheckComplete extends FraudCheck {
+export interface FraudCheckIdentifier {
   method: string;
   acquisition_id: number;
+}
+
+export interface FraudCheckData {
+  karma: FraudCheckResult;
+  error: any;
+}
+
+export interface FraudCheck extends FraudCheckIdentifier, Partial<FraudCheckData> {
+  status: FraudCheckStatusEnum;
 }

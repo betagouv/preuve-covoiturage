@@ -1,8 +1,14 @@
-import { provider, ServiceContainerInterfaceResolver } from '@ilos/common';
+import { provider, ServiceContainerInterfaceResolver, NewableType } from '@ilos/common';
 
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
-import { checkList } from './checks';
-import { StaticCheckInterface, CheckInterface } from '../interfaces/CheckInterface';
+import { checkList } from './checks/self';
+import {
+  StaticCheckInterface,
+  CheckInterface,
+  HandleCheckInterface,
+  PrepareCheckInterface,
+} from '../interfaces/CheckInterface';
+import { FraudCheck, FraudCheckStatusEnum } from '../interfaces';
 
 @provider()
 export class CheckEngine {
@@ -14,21 +20,14 @@ export class CheckEngine {
   ) {}
 
   /**
-   *  Get a processor from a method string
-   *  cast from IOC and initialize if needed
+   *  Get a processor ctor from a method string
    */
-  protected async getCheckProcessor(method: string): Promise<CheckInterface> {
+  protected getCheckProcessor(method: string): NewableType<CheckInterface | HandleCheckInterface> {
     const processorCtor = this.checks.find((c) => c.key === method);
     if (!processorCtor) {
       throw new Error(`Unknown check ${method}`);
     }
-
-    const processor = this.service.get(processorCtor);
-    if ('init' in processor) {
-      await processor.init();
-    }
-
-    return processor;
+    return processorCtor;
   }
 
   /**
@@ -38,46 +37,75 @@ export class CheckEngine {
     return this.checks.map((c) => c.key);
   }
 
-  /**
-   *  List all unprocessed methods for an acquisition id
-   */
-  async listUnprocessedMethods(acquisitionId: number): Promise<string[]> {
-    const processedMethods = (await this.repository.getAllCheckByAcquisition(acquisitionId)).map((m) => m.method);
-    return this.listAvailableMethods().filter((method) => processedMethods.indexOf(method) < 0);
+  async apply(
+    acquisitionId: number,
+    methods: Map<string, HandleCheckInterface>,
+    preparerCtor: NewableType<PrepareCheckInterface>,
+  ): Promise<FraudCheck[]> {
+    const result: FraudCheck[] = [];
+    const preparer = this.service.get<PrepareCheckInterface>(preparerCtor);
+    const data = await preparer.prepare(acquisitionId);
+    for (const line of data) {
+      for (const [name, instance] of methods) {
+        try {
+          result.push({
+            status: FraudCheckStatusEnum.Done,
+            acquisition_id: acquisitionId,
+            method: name,
+            karma: Math.round(await instance.handle(line)),
+          });
+        } catch (e) {
+          result.push({
+            status: FraudCheckStatusEnum.Error,
+            acquisition_id: acquisitionId,
+            method: name,
+            karma: null,
+            error: e.message,
+          });
+          throw e;
+        }
+      }
+    }
+    return result;
+  }
+  protected hasExternalPreparer(check: HandleCheckInterface | CheckInterface): check is HandleCheckInterface {
+    return (check as HandleCheckInterface).preparer !== undefined;
   }
 
-  /**
-   *  Apply a method on an acquisition_id
-   *  - get the check processor
-   *  - get the check meta
-   *  - if status != done, proccess it
-   *  - save result metadata
-   */
-  async apply(acquisitionId: number, method: string, force = false): Promise<void> {
-    const processor = await this.getCheckProcessor(method);
-    const checkMeta = await this.repository.findOrCreateFraudCheck(acquisitionId, method);
+  async run(acquisitionId: number, methods: string[]): Promise<void> {
+    const methodInstancesMap = methods
+      .map((s) => {
+        return [s, this.getCheckProcessor(s)];
+      })
+      .reduce((methodMap, item: [string, NewableType<CheckInterface | HandleCheckInterface>]) => {
+        const [name, instanceCtor] = item;
+        const instance = this.service.get<HandleCheckInterface>(instanceCtor);
+        const preparer = this.hasExternalPreparer(instance)
+          ? instance.preparer
+          : (instanceCtor as NewableType<PrepareCheckInterface>);
 
-    if (checkMeta.status === 'done' && !force) {
-      return;
+        if (!methodMap.has(preparer)) {
+          methodMap.set(preparer, new Map());
+        }
+
+        const checks = methodMap.get(preparer);
+        checks.set(name, instance);
+        methodMap.set(preparer, checks);
+
+        return methodMap;
+      }, new Map<NewableType<PrepareCheckInterface>, Map<string, HandleCheckInterface>>());
+
+    const results: FraudCheck[] = [];
+
+    for (const [preparer, checks] of methodInstancesMap) {
+      results.push(...(await this.apply(acquisitionId, checks, preparer)));
     }
 
-    try {
-      const { meta, karma } = await processor.handle(acquisitionId, checkMeta.meta);
-      await this.repository.updateFraudCheck({
-        ...checkMeta,
-        meta,
-        karma,
-        status: 'done',
-      });
-    } catch (e) {
-      await this.repository.updateFraudCheck({
-        ...checkMeta,
-        status: 'error',
-        meta: {
-          error: e.message,
-        },
-      });
-      throw e;
-    }
+    await this.repository.createOrUpdateMany(results);
+    return;
+  }
+
+  async getGlobalScore(acquisitionId: number): Promise<number> {
+    return this.repository.getScore(acquisitionId);
   }
 }
