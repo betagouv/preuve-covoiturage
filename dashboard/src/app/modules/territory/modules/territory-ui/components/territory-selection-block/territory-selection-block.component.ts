@@ -21,7 +21,7 @@ export class TerritorySelectionBlockComponent extends DestroyObservable implemen
   @Output() removeTerritory = new EventEmitter();
 
   protected childrenLoaded = false;
-  protected children: TerritorySelectionBlock[];
+  public children: TerritorySelectionBlock[];
 
   // removeTerritory(){}
   ngOnInit(): void {

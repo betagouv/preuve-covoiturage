@@ -1,7 +1,7 @@
 <div class="territory-selection-group">
   <mat-icon (click)="swap()">{{ open ? 'expand_less' : 'expand_more' }}</mat-icon>
 
-  <app-territory-selection-checkbox (swap)="onSwap()" [territory]="territory"></app-territory-selection-checkbox>
+  <app-territory-selection-checkbox (swap)="swap()" [territory]="territory"></app-territory-selection-checkbox>
 
   <div class="territory-selection-group-children" *ngIf="open && territory.children">
     <app-territory-selection-group
