@@ -6,24 +6,34 @@
   "typings": "./dist/index.d.js",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc",
+    "build": "yarn copy-static && tsc",
     "watch": "tsc -w",
     "test": "ava",
     "test:integration": "echo '[provider-sentry] No tests'; exit 0",
     "coverage-ci": "echo '[provider-sentry] No tests'; exit 0",
     "coverage": "nyc --all --reporter=text ava",
-    "lint": "eslint 'src/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'",
+    "copy-static": "rm -rf ./dist/fixtures && cp -R ./src/fixtures ./dist/"
   },
   "ava": {
     "files": [
-      "dist/**/*.spec.js"
-    ]
+      "src/**/*.spec.ts"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
   },
   "dependencies": {
+    "@ilos/common": "~0",
+    "@ilos/connection-postgres": "~0",
     "@ilos/framework": "~0",
-    "@ilos/common": "~0"
+    "faker": "^4.1.0",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "@ilos/core": "~0"
+    "@ilos/core": "~0",
+    "@types/faker": "^4.1.11"
   }
 }
