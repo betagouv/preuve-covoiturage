@@ -6,6 +6,6 @@ import { HighSeatCheck } from './HighSeatCheck';
 
 const { test, range } = selfCheckMacro(anyTest, ServiceProvider, HighSeatCheck);
 
-test('max', range, { passenger_seats: 8 }, 100, 100);
+test('max', range, { passenger_seats: 18 }, 1, 1);
 test('min', range, { passenger_seats: 3 }, 0, 0);
-test('between', range, { passenger_seats: 6 }, 0, 100);
+test('between', range, { passenger_seats: 6 }, 0, 1);

@@ -3,6 +3,7 @@ import { provider } from '@ilos/common';
 import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
+import { step } from '../../helpers/math';
 
 /*
  * Check number of reserved seats
@@ -12,13 +13,11 @@ export class HighSeatCheck implements HandleCheckInterface<SelfCheckParamsInterf
   public static readonly key: string = 'highSeatCheck';
   public readonly preparer = SelfCheckPreparator;
 
-  protected readonly maxSeats: number = 8; // above = 100
-  protected readonly minSeats: number = 5; // below = 0
+  protected readonly max: number = 8; // above = 100
+  protected readonly min: number = 5; // below = 0
 
   async handle(params: SelfCheckParamsInterface): Promise<FraudCheckResult> {
     const { passenger_seats } = params;
-    const result = (passenger_seats - this.minSeats) * (100 / (this.maxSeats - this.minSeats));
-
-    return Math.min(100, Math.max(0, result));
+    return step(passenger_seats, this.min, this.max);
   }
 }

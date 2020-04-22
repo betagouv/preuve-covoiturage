@@ -4,6 +4,7 @@ import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 import { FraudCheckResult, HandleCheckInterface } from '../../../interfaces';
 import { SelfCheckParamsInterface } from './SelfCheckParamsInterface';
 import { SelfCheckPreparator } from '../SelfCheckPreparator';
+import { limit } from '../../helpers/math';
 
 /*
  * Check theorical distance and duration
@@ -105,10 +106,10 @@ export class TheoricalDistanceAndDurationCheck implements HandleCheckInterface<S
   }
 
   protected calc(theorical: number, announced: number): number {
-    if (announced === 0) {
-      return 100;
+    if (announced === 0 || theorical === 0) {
+      return 1;
     }
-    const delta = Math.abs(theorical - announced) / theorical;
-    return Math.min(100, delta * 100);
+
+    return limit(Math.abs(theorical - announced) / theorical, 0, 1);
   }
 }
