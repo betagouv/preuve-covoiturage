@@ -9,7 +9,19 @@ import {
   TerritoryRepositoryProviderInterface,
 } from '../interfaces/TerritoryRepositoryProviderInterface';
 
-import { signature as companyFindSignature } from '../shared/company/find.contract';
+import {
+  TerritoryQueryInterface,
+  SortEnum,
+  ProjectionFieldsEnum,
+  directFields,
+  allAncestorRelationFieldEnum,
+  allCompanyFieldEnum,
+  allTerritoryQueryCompanyFields,
+  allTerritoryQueryRelationFields,
+  TerritoryQueryEnum,
+  allTerritoryQueryDirectFields,
+  allTerritoryQueryFields,
+} from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -19,30 +31,124 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async find(id: number): Promise<TerritoryDbMetaInterface> {
-    const query = {
-      text: `
-        SELECT * FROM ${this.table}
-        WHERE _id = $1
-        AND deleted_at IS NULL
-        LIMIT 1
-      `,
-      values: [id],
-    };
+  async find(
+    query: TerritoryQueryInterface,
+    sort: SortEnum[],
+    projection: ProjectionFieldsEnum,
+  ): Promise<TerritoryDbMetaInterface> {
+    const selectsFields = [];
+    const joins = [];
+    const whereConditions = [];
+    const values = [];
+    let includeRelation = false;
+    let includeCompany = false;
+    // let includeGeo = false;
+    function autoBuildAncestorJoin(): void {
+      if (!includeRelation) {
+        includeRelation = true;
+        joins.push('LEFT JOIN territory.territories_view tv ON(tv._id = t._id)');
+      }
+    }
 
-    const result = await this.connection.getClient().query(query);
+    function autoBuildCompanyJoin(): void {
+      if (!includeCompany) {
+        includeCompany = true;
+        joins.push('LEFT JOIN company.companies c ON(t.company_id = c._id)');
+      }
+    }
+
+    // build select
+    projection.forEach((field) => {
+      switch (true) {
+        case directFields.indexOf(field) !== -1:
+          selectsFields.push(`t.${field}`);
+          break;
+        case allAncestorRelationFieldEnum.indexOf(field) !== -1:
+          selectsFields.push(`tv.${field}`);
+          autoBuildAncestorJoin();
+          break;
+
+        case allCompanyFieldEnum.indexOf(field) !== -1:
+          selectsFields.push(`c.${field}`);
+          autoBuildCompanyJoin();
+          break;
+        default:
+          throw new Error(`${field} not supported for territory find select builder`);
+          break;
+      }
+    });
+
+    // build filter
+    const queryFields: { field: TerritoryQueryEnum; value: any }[] = allTerritoryQueryFields
+      .filter((field) => (query as Record<string, any>).hasOwnProperty(field))
+      .map((field) => ({ field, value: (query as any)[field] }));
+    queryFields.forEach((hash) => {
+      switch (true) {
+        case allTerritoryQueryDirectFields.indexOf(hash.field) !== -1:
+          whereConditions.push(`t.${hash.field} = $${values.length + 1}`);
+          values.push(hash.value.toString());
+          break;
+        case allTerritoryQueryRelationFields.indexOf(hash.field) !== -1:
+          // whereConditions.push(`tv.${hash.field} = $${values.length + 1}`);
+          switch (hash.field) {
+            case TerritoryQueryEnum.HasAncestorId:
+              whereConditions.push(`$${values.length + 1} = ANY (tv.ancestors)`);
+              break;
+            case TerritoryQueryEnum.HasDescendantId:
+              whereConditions.push(`$${values.length + 1} = ANY (tv.descendants)`);
+              break;
+            case TerritoryQueryEnum.HasChildId:
+              whereConditions.push(`$${values.length + 1} = ANY (tv.children)`);
+              break;
+
+            case TerritoryQueryEnum.HasParentId:
+              whereConditions.push(`$${values.length + 1} = tv.parent`);
+              break;
+          }
+          values.push(hash.value.toString());
+          autoBuildAncestorJoin();
+          break;
+        case allTerritoryQueryCompanyFields.indexOf(hash.field) !== -1:
+          whereConditions.push(`c.${hash.field.replace('company_', '')} = $${values.length + 1}`);
+          values.push(hash.value.toString());
+          autoBuildCompanyJoin();
+          break;
+        case hash.field === TerritoryQueryEnum.Search:
+          const whereOr = [];
+          hash.value
+            .toString()
+            .split(' ')
+            .forEach((word) => {
+              whereOr.push(`LOWER(t.name) LIKE $${values.length + 1}`);
+              values.push(`%${word.toLowerCase()}%`);
+            });
+
+          whereConditions.push(`(${whereOr.join(' OR ')})`);
+          break;
+        default:
+          throw new Error(`${hash.field} not supported for territory find query filter`);
+          break;
+      }
+    });
+
+    // TODO: implement switch for edge cases
+    const finalSort = sort.map((sortField) => `t.${sort}`);
+
+    const finalQuery = {
+      text: `SELECT ${selectsFields.join(',')} \n FROM ${this.table} t \n ${joins.join(`\n`)} ${
+        whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''
+      } 
+      ${finalSort.length ? ` ORDER BY ${finalSort.join(',')}` : ''}`,
+      values,
+    };
+    console.log(finalQuery.text, finalQuery.values);
+
+    const result = await this.connection.getClient().query(finalQuery);
 
     if (result.rowCount === 0) {
       return undefined;
     }
     const territory = result.rows[0];
-    if (territory.siret) {
-      territory.company = await this.kernel.call(
-        companyFindSignature,
-        { siret: territory.siret },
-        { channel: { service: 'operator' }, call: { user: { permissions: ['company.find'] } } },
-      );
-    }
 
     return territory;
   }

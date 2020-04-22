@@ -1,9 +1,18 @@
 import { TerritoryBaseInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
+import {
+  TerritoryQueryInterface,
+  SortEnum,
+  ProjectionFieldsEnum,
+} from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 
 export interface TerritoryRepositoryProviderInterface {
-  find(id: number): Promise<TerritoryDbMetaInterface>;
+  find(
+    query: TerritoryQueryInterface,
+    sort: SortEnum[],
+    projection: ProjectionFieldsEnum,
+  ): Promise<TerritoryDbMetaInterface>;
   all(): Promise<TerritoryDbMetaInterface[]>;
   create(data: TerritoryBaseInterface): Promise<TerritoryDbMetaInterface>;
   delete(_id: number): Promise<void>;
@@ -14,7 +23,11 @@ export interface TerritoryRepositoryProviderInterface {
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
-  async find(id: number): Promise<TerritoryDbMetaInterface> {
+  async find(
+    query: TerritoryQueryInterface,
+    sort: SortEnum[],
+    projection: ProjectionFieldsEnum,
+  ): Promise<TerritoryDbMetaInterface> {
     throw new Error();
   }
 

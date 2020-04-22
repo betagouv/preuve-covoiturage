@@ -79,35 +79,43 @@ WITH RECURSIVE
         array_remove(array_remove(array_agg(distinct p), null), c._id) AS ancestors,
         array_remove(array_remove(array_agg(distinct b), null), c._id) AS descendants,
         array_remove(array_agg(distinct ins), null) AS insee,
-        array_remove(array_agg(distinct pos), null) AS postcode
+        array_remove(array_agg(distinct pos), null) AS postcode,
+        array_remove(array_agg(distinct tr.child_territory_id), null)  AS children
         
     FROM complete AS c
     left JOIN unnest(c.parents) AS p ON true
     left JOIN unnest(c.children) AS b ON true 
     left JOIN unnest(c.insee) AS ins ON true 
     left JOIN unnest(c.postcode) AS pos ON true
+    left JOIN territory.territory_relation AS tr ON (tr.parent_territory_id = c._id)
+
     GROUP BY c._id
   )
   SELECT
     a._id,
     t.active,
     t.level,
-    cc.children,
+
+    -- (SELECT tr.parent_territory_id FROM territory.territory_relation as tr WHERE tr.child_territory_id = a._id) as children,
+    -- unnest(cp.parents),
     -- ADD
     -- - all level above (town, intertown, etc.)
     -- - direct_children, direct_parent (or rename parents to ancestors, children to descendants)
     -- - latest_children/ending_children,
     -- - active_children,
     -- - merge geo ?
+
+    a.ancestors[array_length(a.ancestors, 1)] as parent,
+    a.children,
     a.ancestors,
     a.descendants,
     a.insee,
     a.postcode
   FROM agg AS a
-  left JOIN territory.territories AS t ON t._id = a._id
-  left JOIN complete_children AS cc ON cc._id = a._id
+  LEFT JOIN territory.territories AS t ON t._id = a._id
   
+  
+
 );
 
 CREATE INDEX IF NOT EXISTS territory_territories_view_id_idx ON territory.territories_view(_id);
-
