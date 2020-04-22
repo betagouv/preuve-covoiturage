@@ -1,30 +1,51 @@
-import { expect } from 'chai';
+import anyTest, { TestInterface } from 'ava';
 import supertest from 'supertest';
 import { Kernel as AbstractKernel } from '@ilos/core';
 import express from 'express';
 import bodyParser from 'body-parser';
 import expressSession from 'express-session';
-import { RPCResponseType } from '@ilos/common';
+import { RPCResponseType, KernelInterface } from '@ilos/common';
 
 import { routeMapping, ObjectRouteMapType, ArrayRouteMapType } from './routeMapping';
 
-describe('Route mapping', () => {
-  const app = express();
+class Kernel extends AbstractKernel {
+  async handle(call): Promise<RPCResponseType> {
+    return {
+      jsonrpc: '2.0',
+      id: call.id,
+      result: {
+        method: call.method,
+        ...call.params,
+      },
+    };
+  }
+}
 
-  let request;
-  const fakeUser = {
+const test = anyTest as TestInterface<{
+  kernel: KernelInterface;
+  routeMap: (ObjectRouteMapType | ArrayRouteMapType)[];
+  app: any;
+  request: any;
+  fakeUser: { id: string; firstName: string; lastname: string };
+  responseFactory: Function;
+}>;
+
+test.before(async (t) => {
+  t.context.app = express();
+
+  t.context.fakeUser = {
     id: '1',
     firstName: 'Nicolas',
     lastname: 'Test',
   };
 
-  function responseFactory(method: string, params: any): any {
+  t.context.responseFactory = (method: string, params: any): any => {
     return {
       method,
       params,
       _context: {
         call: {
-          user: fakeUser,
+          user: t.context.fakeUser,
         },
         channel: {
           service: 'proxy',
@@ -32,11 +53,11 @@ describe('Route mapping', () => {
         },
       },
     };
-  }
+  };
 
-  app.use(bodyParser.json({ limit: '2mb' }));
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(
+  t.context.app.use(bodyParser.json({ limit: '2mb' }));
+  t.context.app.use(bodyParser.urlencoded({ extended: false }));
+  t.context.app.use(
     expressSession({
       secret: 'SECRET',
       resave: false,
@@ -44,26 +65,13 @@ describe('Route mapping', () => {
     }),
   );
 
-  app.use((req, res, next) => {
-    req.session.user = fakeUser;
+  t.context.app.use((req, res, next) => {
+    req.session.user = t.context.fakeUser;
     next();
   });
 
-  class Kernel extends AbstractKernel {
-    async handle(call): Promise<RPCResponseType> {
-      return {
-        jsonrpc: '2.0',
-        id: call.id,
-        result: {
-          method: call.method,
-          ...call.params,
-        },
-      };
-    }
-  }
-
-  const kernel = new Kernel();
-  const routeMap: (ObjectRouteMapType | ArrayRouteMapType)[] = [
+  t.context.kernel = new Kernel();
+  t.context.routeMap = [
     {
       verb: 'post',
       route: '/user/:id',
@@ -82,16 +90,11 @@ describe('Route mapping', () => {
       mapResponse(response): any {
         return {
           ...response,
-          params: fakeUser,
+          params: t.context.fakeUser,
         };
       },
     },
     ['post', '/user', 'user:create'],
-    // {
-    //   verb:'post',
-    //   route:'/user',
-    //   signature:'user:create'
-    // },
     {
       verb: 'get',
       route: '/user',
@@ -105,75 +108,77 @@ describe('Route mapping', () => {
     },
   ];
 
-  routeMapping(routeMap, app, kernel);
-  before(async () => {
-    request = supertest(app);
-  });
+  routeMapping(t.context.routeMap, t.context.app, t.context.kernel);
+  t.context.request = supertest(t.context.app);
+});
 
-  it('works', async () => {
-    const response = await request
-      .post('/user')
-      .send({
-        firstName: 'John',
-        lastname: 'Doe',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
+test('[Route mapping] works', async (t) => {
+  const response = await t.context.request
+    .post('/user')
+    .send({
+      firstName: 'John',
+      lastname: 'Doe',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
 
-    expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(
-      responseFactory('user:create', {
-        firstName: 'John',
-        lastname: 'Doe',
-      }),
-    );
-  });
+  t.is(response.status, 200);
+  t.deepEqual(
+    response.body,
+    t.context.responseFactory('user:create', {
+      firstName: 'John',
+      lastname: 'Doe',
+    }),
+  );
+});
 
-  it('works with url params', async () => {
-    const response = await request
-      .post('/user/1')
-      .send({
-        firstName: 'John',
-        lastname: 'Doe',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
+test('[Route mapping] works with url params', async (t) => {
+  const response = await t.context.request
+    .post('/user/1')
+    .send({
+      firstName: 'John',
+      lastname: 'Doe',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
 
-    expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(
-      responseFactory('user:update', {
-        id: '1',
-        firstName: 'John',
-        lastname: 'Doe',
-      }),
-    );
-  });
+  t.is(response.status, 200);
+  t.deepEqual(
+    response.body,
+    t.context.responseFactory('user:update', {
+      id: '1',
+      firstName: 'John',
+      lastname: 'Doe',
+    }),
+  );
+});
 
-  it('works with query params', async () => {
-    const response = await request
-      .get('/user/?orderBy=date')
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
+test('[Route mapping] works with query params', async (t) => {
+  const response = await t.context.request
+    .get('/user/?orderBy=date')
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
 
-    expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(
-      responseFactory('user:list', {
-        orderBy: 'date',
-      }),
-    );
-  });
+  t.is(response.status, 200);
+  t.deepEqual(
+    response.body,
+    t.context.responseFactory('user:list', {
+      orderBy: 'date',
+    }),
+  );
+});
 
-  it('works with response mapping', async () => {
-    const response = await request
-      .get('/user/1')
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
+test('[Route mapping] works with response mapping', async (t) => {
+  const response = await t.context.request
+    .get('/user/1')
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
 
-    expect(response.status).equal(200);
-    expect(response.body).to.deep.equal(
-      responseFactory('user:read', {
-        ...fakeUser,
-      }),
-    );
-  });
+  t.is(response.status, 200);
+  t.deepEqual(
+    response.body,
+    t.context.responseFactory('user:read', {
+      ...t.context.fakeUser,
+    }),
+  );
 });

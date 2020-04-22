@@ -296,7 +296,6 @@ export class HttpTransport implements TransportInterface {
               ),
             );
             req.session.user.authorizedOperators = get(list, 'result', []);
-            console.log('req.session.user.authorizedOperators : ', req.session.user.authorizedOperators);
           }
 
           this.send(res, response);
@@ -340,8 +339,6 @@ export class HttpTransport implements TransportInterface {
           method: 'user:forgottenPassword',
           params: { email: req.body.email },
         });
-
-        console.log(response);
 
         this.send(res, response);
       }),

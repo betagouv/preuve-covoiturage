@@ -1,122 +1,120 @@
-import { expect } from 'chai';
+import test from 'ava';
 
 import { mapResults } from './dataWrapMiddleware';
 
-describe('dataWrapMiddleware: mapResults', () => {
-  it('skips on missing results', () => {
-    const payload = {
-      id: 1,
-      jsonrpc: '2.0',
-      error: {
-        data: null,
-        message: 'Server error',
-        code: -32000,
+test('[mapResults] skips on missing results', (t) => {
+  const payload = {
+    id: 1,
+    jsonrpc: '2.0',
+    error: {
+      data: null,
+      message: 'Server error',
+      code: -32000,
+    },
+  };
+
+  t.deepEqual(mapResults(payload), payload);
+});
+
+test('[mapResults] returns doc on existing data/meta', (t) => {
+  const payload = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: {
+      data: {
+        data: 'meta',
       },
-    };
-
-    expect(mapResults(payload)).to.deep.eq(payload);
-  });
-
-  it('returns doc on existing data/meta', () => {
-    const payload = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: {
-        data: {
-          data: 'meta',
-        },
-        meta: {
-          meta: 'data',
-        },
+      meta: {
+        meta: 'data',
       },
-    };
+    },
+  };
 
-    expect(mapResults(payload)).to.deep.eq(payload);
-  });
+  t.deepEqual(mapResults(payload), payload);
+});
 
-  it('returns doc with added meta: null if missing', () => {
-    const payload = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: {
-        data: {
-          data: 'meta',
-        },
+test('[mapResults] returns doc with added meta: null if missing', (t) => {
+  const payload = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: {
+      data: {
+        data: 'meta',
       },
-    };
+    },
+  };
 
-    const expectation = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: {
-        meta: null,
-        data: {
-          data: 'meta',
-        },
+  const expectation = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: {
+      meta: null,
+      data: {
+        data: 'meta',
       },
-    };
+    },
+  };
 
-    expect(mapResults(payload)).to.deep.eq(expectation);
-  });
+  t.deepEqual(mapResults(payload), expectation);
+});
 
-  it('wraps result with data/meta if missing', () => {
-    const payload = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: {
+test('[mapResults] wraps result with data/meta if missing', (t) => {
+  const payload = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: {
+      _id: 1234,
+    },
+  };
+
+  const expectation = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: {
+      meta: null,
+      data: {
         _id: 1234,
       },
-    };
+    },
+  };
 
-    const expectation = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: {
-        meta: null,
-        data: {
-          _id: 1234,
-        },
-      },
-    };
+  t.deepEqual(mapResults(payload), expectation);
+});
 
-    expect(mapResults(payload)).to.deep.eq(expectation);
-  });
+test('[mapResults] succeeds on non-object results (boolean)', (t) => {
+  const payload = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: true,
+  };
 
-  it('succeeds on non-object results (boolean)', () => {
-    const payload = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: true,
-    };
+  const expectation = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: {
+      meta: null,
+      data: true,
+    },
+  };
 
-    const expectation = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: {
-        meta: null,
-        data: true,
-      },
-    };
+  t.deepEqual(mapResults(payload), expectation);
+});
 
-    expect(mapResults(payload)).to.deep.eq(expectation);
-  });
+test('[mapResults] succeeds on non-object results (string)', (t) => {
+  const payload = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: 'Hello World!',
+  };
 
-  it('succeeds on non-object results (string)', () => {
-    const payload = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: 'Hello World!',
-    };
+  const expectation = {
+    id: 1,
+    jsonrpc: '2.0',
+    result: {
+      meta: null,
+      data: 'Hello World!',
+    },
+  };
 
-    const expectation = {
-      id: 1,
-      jsonrpc: '2.0',
-      result: {
-        meta: null,
-        data: 'Hello World!',
-      },
-    };
-
-    expect(mapResults(payload)).to.deep.eq(expectation);
-  });
+  t.deepEqual(mapResults(payload), expectation);
 });
