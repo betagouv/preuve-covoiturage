@@ -51,12 +51,13 @@ WITH RECURSIVE
   complete_parent AS (
     SELECT t._id, t.parents FROM input AS t 
     UNION ALL 
-    SELECT 
+    SELECT
       c._id,
       t.parents AS parents
     FROM input AS t 
     JOIN complete_parent AS c ON t._id = any(c.parents)
   ),
+  
   complete_children AS (
     SELECT t._id, t.children,t.insee,t.postcode FROM input AS t 
     UNION ALL 
@@ -91,6 +92,7 @@ WITH RECURSIVE
     a._id,
     t.active,
     t.level,
+    cc.children,
     -- ADD
     -- - all level above (town, intertown, etc.)
     -- - direct_children, direct_parent (or rename parents to ancestors, children to descendants)
@@ -103,7 +105,9 @@ WITH RECURSIVE
     a.postcode
   FROM agg AS a
   left JOIN territory.territories AS t ON t._id = a._id
+  left JOIN complete_children AS cc ON cc._id = a._id
   
 );
 
 CREATE INDEX IF NOT EXISTS territory_territories_view_id_idx ON territory.territories_view(_id);
+
