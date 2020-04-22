@@ -79,7 +79,7 @@ export class FraudCheckRepositoryProvider implements FraudCheckRepositoryProvide
           $1::int[],
           $2::varchar[],
           $3::fraudcheck.status_enum[],
-          $4::int[],
+          $4::float[],
           $5::json[]
         )
         ON CONFLICT (acquisition_id, method)

@@ -52,7 +52,7 @@ export class CheckEngine {
             status: FraudCheckStatusEnum.Done,
             acquisition_id: acquisitionId,
             method: name,
-            karma: Math.round(await instance.handle(line)),
+            karma: await instance.handle(line),
           });
         } catch (e) {
           result.push({
