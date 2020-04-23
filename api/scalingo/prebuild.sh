@@ -9,12 +9,19 @@ yarn global add npm-run-all lerna typescript
 cd ..
 git clone https://github.com/betagouv/ilos
 cd ilos
+
 # 2020/03/02 use tagged master@0.4.1 until ilos is published or completely cleaned
-git checkout 0.4.1
+if [ $NODE_ENV = 'production' ]; then
+  git checkout master
+else
+  git checkout dev
+fi
+
 yarn
 yarn build
-rm -rf ./node_modules
-rm -rf ./**/node_modules
+
+find . -name "node_modules" -exec rm -rf {} \;
+
 echo -n "[ilos] size: "; du -ch | tail -n 1
 cd ..
 mv ilos api/ilos
