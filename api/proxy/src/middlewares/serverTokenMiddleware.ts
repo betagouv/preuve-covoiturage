@@ -97,7 +97,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       try {
         await logRequest(kernel, req, payload);
       } catch (e) {
-        console.log('logRequest ERROR', { e });
+        console.log('logRequest ERROR', e.message);
       }
 
       /**

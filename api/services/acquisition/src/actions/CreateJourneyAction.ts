@@ -63,6 +63,7 @@ export class CreateJourneyAction extends AbstractAction {
           auth: get(context, 'call.user'),
           headers: get(context, 'call.metadata.req.headers', {}),
           body: params,
+          request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
         },
         { channel: { service: 'acquisition' } },
       );
@@ -100,6 +101,7 @@ export class CreateJourneyAction extends AbstractAction {
           auth: get(context, 'call.user'),
           headers: get(context, 'call.metadata.req.headers', {}),
           body: params,
+          request_id: get(context, 'call.metadata.req.headers.x-request-id', null),
         },
         { channel: { service: 'acquisition' } },
       );

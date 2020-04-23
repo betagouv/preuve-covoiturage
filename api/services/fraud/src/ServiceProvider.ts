@@ -3,31 +3,31 @@ import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ValidatorMiddleware } from '@pdc/provider-validator';
-import { ChannelServiceBlacklistMiddleware } from '@pdc/provider-middleware';
+import { ChannelServiceWhitelistMiddleware } from '@pdc/provider-middleware';
 import { GeoProvider } from '@pdc/provider-geo';
 
 import { config } from './config';
-import { FraudCheckProcessCommand } from './commands/FraudCheckProcessCommand';
 import { FraudCheckRepositoryProvider } from './providers/FraudCheckRepositoryProvider';
+import { ProcessableCarpoolRepositoryProvider } from './providers/ProcessableCarpoolRepositoryProvider';
 
-import { FraudCheckAction } from './actions/FraudCheckAction';
+import { CheckAction } from './actions/CheckAction';
 import { CheckEngine } from './engine/CheckEngine';
-import { FraudCheckAllAction } from './actions/FraudCheckAllAction';
+import { ApplyAction } from './actions/ApplyAction';
 
 @serviceProvider({
   config,
-  commands: [FraudCheckProcessCommand],
-  providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine],
+  commands: [],
+  providers: [FraudCheckRepositoryProvider, GeoProvider, CheckEngine, ProcessableCarpoolRepositoryProvider],
   validator: [],
   middlewares: [
     ['validate', ValidatorMiddleware],
-    ['channel.service.except', ChannelServiceBlacklistMiddleware],
+    ['channel.service.only', ChannelServiceWhitelistMiddleware],
   ],
   connections: [
     [RedisConnection, 'connections.redis'],
     [PostgresConnection, 'connections.postgres'],
   ],
-  handlers: [FraudCheckAction, FraudCheckAllAction],
-  queues: ['fraud'],
+  handlers: [CheckAction, ApplyAction],
+  queues: ['fraudcheck'],
 })
 export class ServiceProvider extends AbstractServiceProvider {}
