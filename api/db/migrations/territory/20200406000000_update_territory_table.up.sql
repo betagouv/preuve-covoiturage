@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS territory.territories
     --- general
     level territory.territory_level_enum NOT NULL,
     name varchar(128),
+    shortname varchar(128),
 
     --- registry
-    -- TODO add activable boolean ?
     activable boolean NOT NULL DEFAULT false,
     active boolean NOT NULL DEFAULT false,
     active_since timestamp with time zone,
