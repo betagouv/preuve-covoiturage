@@ -64,6 +64,7 @@ export enum BasicFieldEnum {
   CompanyId = 'company_id',
   Level = 'level',
   Name = 'name',
+  ShortName = 'shortname',
   Active = 'active',
 }
 
@@ -122,6 +123,7 @@ export const allBasicFieldEnum: ProjectionFieldsEnum = [
   BasicFieldEnum.CompanyId,
   BasicFieldEnum.Level,
   BasicFieldEnum.Name,
+  BasicFieldEnum.ShortName,
   BasicFieldEnum.Active,
 ];
 
@@ -147,6 +149,7 @@ export const directFields: ProjectionFieldsEnum = [
   BasicFieldEnum.CompanyId,
   BasicFieldEnum.Level,
   BasicFieldEnum.Name,
+  BasicFieldEnum.ShortName,
   BasicFieldEnum.Active,
   GeoFieldEnum.Density,
   GeoFieldEnum.Geo,
