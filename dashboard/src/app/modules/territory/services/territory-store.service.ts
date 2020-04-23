@@ -1,6 +1,8 @@
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, finalize, takeUntil, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
+
+import { SortEnum, allBasicFieldEnum, RelationFieldEnum, CompanyEnum } from '../TerritoryQueryInterface';
 
 import { CrudStore } from '~/core/services/store/crud-store';
 import { Contacts, Territory } from '~/core/entities/territory/territory';
@@ -21,5 +23,28 @@ export class TerritoryStoreService extends CrudStore<Territory, Territory, any, 
         this.loadList();
       }),
     );
+  }
+
+  public getById(id: number): Observable<Territory> {
+    this.dismissGetSubject.next();
+    this._loadCount += 1;
+    return (this.rpcCrud as TerritoryApiService)
+      .find(
+        {
+          _id: id,
+        },
+        [SortEnum.NameAsc],
+        [...allBasicFieldEnum, RelationFieldEnum.Children, RelationFieldEnum.Parent, CompanyEnum.Siret],
+      )
+      .pipe(
+        finalize(() => {
+          if (this._loadCount > 0) this._loadCount -= 1;
+        }),
+        takeUntil(this.dismissGetSubject),
+        map((entity) => new this.modelType().map(entity)),
+        tap((entity) => {
+          this.entitySubject.next(entity);
+        }),
+      );
   }
 }

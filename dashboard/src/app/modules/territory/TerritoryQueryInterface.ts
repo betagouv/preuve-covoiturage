@@ -1,5 +1,5 @@
-import { GeoPositionInterface } from '../../../common/interfaces/GeoPositionInterface';
-import { TerritoryCodesInterface } from './TerritoryCodeInterface';
+import { GeoPositionInterface } from '../../../../../shared/common/interfaces/GeoPositionInterface';
+import { TerritoryCodesInterface } from '../../../../../shared/territory/common/interfaces/TerritoryCodeInterface';
 
 export interface TerritoryQueryInterface extends Partial<TerritoryCodesInterface> {
   _id?: number;
@@ -22,6 +22,7 @@ export enum TerritoryQueryEnum {
   HasAncestorId = 'has_ancestor_id',
   HasDescendantId = 'has_descendant_id',
   Name = 'name',
+  ShortName = 'shortname',
   CompanyName = 'company_legal_name',
   Position = 'position',
   Active = 'active',
@@ -39,6 +40,7 @@ export const allTerritoryQueryCompanyFields: TerritoryQueryEnum[] = [TerritoryQu
 export const allTerritoryQueryDirectFields: TerritoryQueryEnum[] = [
   TerritoryQueryEnum.Id,
   TerritoryQueryEnum.Name,
+  TerritoryQueryEnum.ShortName,
   TerritoryQueryEnum.Position,
   TerritoryQueryEnum.Active,
 ];
@@ -51,8 +53,6 @@ export const allTerritoryQueryFields: TerritoryQueryEnum[] = [
 ];
 
 export enum SortEnum {
-  // AreaAsc = '+area',
-  // AreaDesc = '-area',
   NameAsc = 'name ASC',
   NameDesc = 'name DESC',
 }
@@ -81,13 +81,10 @@ export enum GeoFieldEnum {
 }
 
 export enum RelationFieldEnum {
-  // Company = 'company',
   Children = 'children',
   Parent = 'parent',
   Descendants = 'descendants',
   Ancestors = 'ancestors',
-  // ActiveDescendants = 'activeDescendants',
-  // EndingDescendants = 'endingDescendants',
 }
 
 export enum TerritoryCodeEnum {

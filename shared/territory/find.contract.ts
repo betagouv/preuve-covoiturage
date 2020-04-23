@@ -1,4 +1,4 @@
-import { TerritoryCodesInterface, TerritoryCodeEnum } from './common/interfaces/TerritoryCodeInterface';
+import { TerritoryCodesInterface } from './common/interfaces/TerritoryCodeInterface';
 import { GeoPositionInterface } from '../common/interfaces/GeoPositionInterface';
 import { SortEnum, ProjectionFieldsEnum } from './common/interfaces/TerritoryQueryInterface';
 import { TerritoryBaseInterface } from './common/interfaces/TerritoryInterface';

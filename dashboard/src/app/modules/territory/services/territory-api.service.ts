@@ -14,7 +14,15 @@ import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import {
   ParamsInterface as OTVisibityParams,
   ResultInterface as OTVisibityResults,
-} from '../../../core/entities/api/shared/territory/listOperator.contract';
+} from '../../../../../../shared/territory/listOperator.contract';
+import {
+  ParamsInterface as FindParamsInterface,
+  QueryParamsInterface,
+} from '../../../../../../shared/territory/find.contract';
+import {
+  SortEnum,
+  allBasicFieldEnum,
+} from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +45,20 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
         throw err;
       }),
     );
+  }
+
+  find(
+    query: QueryParamsInterface,
+    sort: SortEnum[] = [SortEnum.NameAsc],
+    projection: any = allBasicFieldEnum,
+  ): Observable<Territory> {
+    const params: FindParamsInterface = {
+      query,
+      sort,
+      projection,
+    };
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:find`, params);
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
   create(item: Territory): Observable<Territory> {
