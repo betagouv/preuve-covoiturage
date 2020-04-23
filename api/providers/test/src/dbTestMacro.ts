@@ -1,21 +1,15 @@
 import fs from 'fs';
 import path from 'path';
-import anyTest, { TestInterface } from 'ava';
+import { TestInterface } from 'ava';
 
 import { NewableType } from '@ilos/common';
 import { PostgresConnection, PoolClient } from '@ilos/connection-postgres';
 
+import { uuid } from './helpers';
 import { Generator } from './fixtures/generators/Generator';
 import { IdentityGenerator } from './fixtures/generators/IdentityGenerator';
 import { TripGenerator } from './fixtures/generators/TripGenerator';
 import { identities } from './fixtures/identities';
-
-export interface MacroTestContext {
-  pgAdmin: PostgresConnection;
-  pg: PostgresConnection;
-  pool: PoolClient;
-  // TODO add redis ?
-}
 
 interface TestConfig {
   basePath: string;
@@ -25,7 +19,39 @@ interface TestConfig {
   sources: (string | { cls: NewableType<Generator<unknown>>; args?: any[] })[];
 }
 
-export function fixturesMacro<TestContext = unknown>(
+interface DbConfigInterface {
+  pgConnectionString: string;
+  database: string;
+  tmpConnectionString: string;
+}
+
+export interface MacroTestContext {
+  pgAdmin: PostgresConnection;
+  pg: PostgresConnection;
+  pool: PoolClient;
+  config: TestConfig;
+  // TODO add redis ?
+}
+
+export function getDbConfig({
+  pgConnectionString,
+  database,
+}: Partial<{
+  pgConnectionString: string;
+  database: string;
+}> = {}): DbConfigInterface {
+  pgConnectionString = pgConnectionString || process.env.APP_POSTGRES_URL;
+  database = database || `fixtures_${uuid().replace(/-/g, '_')}`;
+
+  return {
+    pgConnectionString,
+    database,
+    tmpConnectionString: pgConnectionString.replace(/\/[a-z_\-0-9]+$/i, `/${database}`),
+  };
+}
+
+export function dbTestMacro<TestContext = unknown>(
+  anyTest: TestInterface,
   cfg: Partial<TestConfig> = {},
 ): { test: TestInterface<TestContext & MacroTestContext> } {
   const config = {
@@ -58,7 +84,9 @@ export function fixturesMacro<TestContext = unknown>(
 
   const test = anyTest as TestInterface<TestContext & MacroTestContext>;
 
-  test.before(async (t) => {
+  test.serial.before(async (t) => {
+    t.context.config = config;
+
     // create database with admin connection
     t.context.pgAdmin = new PostgresConnection({ connectionString: config.pgConnectionString });
     await t.context.pgAdmin.getClient().query(`CREATE DATABASE ${config.database}`);
@@ -66,6 +94,7 @@ export function fixturesMacro<TestContext = unknown>(
 
     // create a connection and a pool for the client with this database
     const clientConnectionString = config.pgConnectionString.replace(/\/[a-z_\-0-9]+$/i, `/${config.database}`);
+    process.env.APP_POSTGRES_URL = clientConnectionString;
     t.context.pg = new PostgresConnection({ connectionString: clientConnectionString });
     t.context.pool = await t.context.pg.getClient().connect();
 
@@ -100,6 +129,13 @@ export function fixturesMacro<TestContext = unknown>(
         }
       }
 
+      // update serial indexes in all tables
+      const wrapSql = fs.readFileSync(`${fixturesFolder}/wrap.sql`, { encoding: 'utf8' });
+      const wrapRes = await t.context.pool.query(wrapSql);
+      for (const { query } of wrapRes.rows) {
+        await t.context.pool.query(query);
+      }
+
       await t.context.pool.query('COMMIT');
     } catch (e) {
       await t.context.pool.query('ROLLBACK');
@@ -107,12 +143,14 @@ export function fixturesMacro<TestContext = unknown>(
     }
   });
 
-  test.after.always(async (t) => {
+  test.serial.after.always(async (t) => {
     t.context.pool.release();
     await t.context.pg.down();
+    t.log(`DROP DATABASE ${config.database}`);
     await t.context.pgAdmin.getClient().query(`DROP DATABASE ${config.database}`);
     await t.context.pgAdmin.down();
-    t.log('cleaned up');
+    process.env.APP_POSTGRES_URL = t.context.config.pgConnectionString;
+    t.log('Cleaned up');
   });
 
   return { test };

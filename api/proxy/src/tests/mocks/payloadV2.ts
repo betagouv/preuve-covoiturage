@@ -1,10 +1,10 @@
-import { getRandomInt } from '../helpers/getRandomInt';
+import { uuid } from '@pdc/helper-test';
 
 export function payloadV2(): any {
   return {
     operator_class: 'B',
-    journey_id: `test-${getRandomInt(100000000)}`,
-    operator_journey_id: 'a65f2757-f960-4abc-a1a1-fd7eca4a04be',
+    journey_id: uuid(),
+    operator_journey_id: uuid(),
     passenger: {
       distance: 34039,
       duration: 1485,
@@ -14,7 +14,7 @@ export function payloadV2(): any {
       identity: {
         over_18: true,
         phone_trunc: '+337672012',
-        operator_user_id: `test-${getRandomInt(100000000)}`,
+        operator_user_id: uuid(),
       },
       start: {
         datetime: '2019-07-10T11:51:07Z',
