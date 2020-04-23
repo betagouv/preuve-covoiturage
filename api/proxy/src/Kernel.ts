@@ -1,3 +1,4 @@
+import { Commands } from '@ilos/cli';
 import { kernel } from '@ilos/common';
 import { Kernel as BaseKernel } from '@ilos/framework';
 import { SentryProvider } from '@pdc/provider-sentry';
