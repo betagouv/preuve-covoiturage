@@ -90,9 +90,15 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         return next();
       }
 
-      const payload = await (tokenProvider.verify<TokenPayloadInterface>(token.toString().replace('Bearer ', ''), {
+      const payload = await tokenProvider.verify<
+        TokenPayloadInterface & {
+          app: string;
+          id: number;
+          permissions: string[];
+        }
+      >(token.toString().replace('Bearer ', ''), {
         ignoreExpiration: true,
-      }) as Promise<any>);
+      });
 
       try {
         await logRequest(kernel, req, payload);
