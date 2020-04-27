@@ -1,7 +1,8 @@
+import { IdentityIdentifiersInterface } from './common/interfaces/IdentityIdentifiersInterface';
 import { CertificateInterface } from './common/interfaces/CertificateInterface';
 
 export interface ParamsInterface {
-  identity: string;
+  identity: IdentityIdentifiersInterface;
   start_at?: Date;
   end_at?: Date;
 }

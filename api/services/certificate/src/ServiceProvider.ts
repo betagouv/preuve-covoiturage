@@ -11,6 +11,7 @@ import { TemplateExtension } from '@pdc/provider-template';
 
 import { config } from './config';
 import { CertificatePgRepositoryProvider } from './providers/CertificatePgRepositoryProvider';
+import { IdentityPgRepositoryProvider } from './providers/IdentityPgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
 import { HtmlPrinterProvider } from './providers/HtmlPrinterProvider';
 import { RenderCertificateAction } from './actions/RenderCertificateAction';
@@ -30,6 +31,7 @@ import { binding as downloadBinding } from './shared/certificate/download.schema
     QrcodeProvider,
     CryptoProvider,
     CertificatePgRepositoryProvider,
+    IdentityPgRepositoryProvider,
     CarpoolPgRepositoryProvider,
     HtmlPrinterProvider,
   ],

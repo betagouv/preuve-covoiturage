@@ -7,10 +7,12 @@ import { handlerConfig, ParamsInterface } from '../shared/certificate/create.con
 import { alias } from '../shared/certificate/create.schema';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
 
 @handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class CreateCertificateAction extends AbstractAction {
   constructor(
+    private identityRepository: IdentityRepositoryProviderInterfaceResolver,
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
@@ -23,8 +25,8 @@ export class CreateCertificateAction extends AbstractAction {
     const { identity, start_at, end_at } = this.castParams(params);
 
     // TODO get the Identity object
-    const person = { uuid: 'b409aa51-dee8-4276-9dde-b55d3fd0c7e9' };
-    // const person = await this.identityRepository.find({ phone: identity });
+    // { uuid: 'b409aa51-dee8-4276-9dde-b55d3fd0c7e9' }
+    const person = await this.identityRepository.find(identity);
 
     // TODO get this from the connected operator
     const operator = { uuid: 'c5b07e35-651e-4688-b0b7-2811073bfcf3', name: 'Mobicoop' };
@@ -34,7 +36,7 @@ export class CreateCertificateAction extends AbstractAction {
 
     // fetch the data for this identity, operator and territory and map to template object
     // TODO agg the last line
-    const rows = (await this.carpoolRepository.find({ identity, start_at, end_at })).slice(0, 11);
+    const rows = (await this.carpoolRepository.find({ identity: person._id, start_at, end_at })).slice(0, 11);
     const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0));
     const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0));
     const remaining = (total_km * 0.558 - total_cost) | 0;
@@ -60,7 +62,10 @@ export class CreateCertificateAction extends AbstractAction {
       territory_uuid: territory.uuid,
     });
 
-    return certificate;
+    return {
+      meta: { httpStatus: 201 },
+      data: certificate,
+    };
   }
 
   /**
@@ -72,7 +77,7 @@ export class CreateCertificateAction extends AbstractAction {
    */
   private castParams(params: ParamsInterface): Required<ParamsInterface> {
     const origin = new Date('2018-01-01T00:00:00+0100'); // Europe/Paris
-    let { identity, start_at, end_at } = params;
+    let { start_at, end_at } = params;
 
     start_at = 'start_at' in params ? new Date(start_at) : origin;
     end_at = 'end_at' in params ? new Date(end_at) : new Date();
@@ -86,12 +91,6 @@ export class CreateCertificateAction extends AbstractAction {
       start_at = origin;
     }
 
-    // normalize identity (phone number for now)
-    identity = identity
-      .replace(/^\s([1-9]{2,3})/, '+$1')
-      .replace(/[^+0-9]/g, '')
-      .replace(/^0/, '+33');
-
-    return { identity, start_at, end_at };
+    return { identity: params.identity, start_at, end_at };
   }
 }

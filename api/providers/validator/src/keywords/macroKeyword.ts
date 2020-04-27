@@ -25,6 +25,7 @@ import { groupMacro } from '../macros/groupMacro';
 import { longcharMacro } from '../macros/longcharMacro';
 import { permissionsMacro } from '../macros/permissionsMacro';
 import { integerMacro } from '../macros/integerMacro';
+import { jwtMacro } from '../macros/jwtMacro';
 
 const macroStore = {
   bic: bicMacro,
@@ -56,6 +57,7 @@ const macroStore = {
   uuid: uuidMacro,
   group: groupMacro,
   token: tokenMacro,
+  jwt: jwtMacro,
   permissions: permissionsMacro,
 };
 

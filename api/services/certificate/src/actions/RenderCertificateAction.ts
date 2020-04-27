@@ -24,6 +24,7 @@ export class RenderCertificateAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    //// TODO : MOVE THIS TO MIDDLEWARE
     // validate token
     try {
       const payload = await this.tokenProvider.verify<RenderTokenPayloadInterface>(params.token, {
@@ -39,6 +40,7 @@ export class RenderCertificateAction extends AbstractAction {
     } catch (e) {
       throw new UnauthorizedException(e.message);
     }
+    //// END TODO
 
     const certificate = await this.certRepository.findByUuid(params.uuid);
 

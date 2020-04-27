@@ -12,6 +12,6 @@ export const certificate = {
     email: 'contact@covoiturage.beta.gouv.fr',
   },
   validation: {
-    url: `${appUrl}/certificates/check`,
+    url: `${appUrl}/v2/certificates/check`,
   },
 };

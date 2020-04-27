@@ -5,9 +5,16 @@ export const schema = {
   required: ['identity'],
   additionalProperties: false,
   properties: {
-    identity: { type: 'string', maxLength: 64 },
     start_at: { macro: 'timestamp' },
     end_at: { macro: 'timestamp' },
+    identity: {
+      anyOf: [
+        { _id: { macro: 'serial' } },
+        { uuid: { macro: 'uuid' } },
+        { phone: { macro: 'phone' } },
+        { phone_trunc: { macro: 'phonetrunc' }, operator_user_id: { macro: 'varchar' } },
+      ],
+    },
   },
 };
 export const binding = [alias, schema];

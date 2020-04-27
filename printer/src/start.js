@@ -35,7 +35,7 @@ init().then(() => {
       }
 
       const uuid = req.body.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
-      const url = `${req.body.api}/certificates/render/${uuid}`;
+      const url = `${req.body.api}/v2/certificates/render/${uuid}`;
 
       // snap and log!
       await page.setExtraHTTPHeaders({ authorization: `Bearer ${req.body.token}` });
@@ -43,7 +43,7 @@ init().then(() => {
       console.log(`Printed ${req.headers.accept}: ${url}`);
 
       switch (req.headers.accept) {
-        case 'png':
+        case 'image/png':
           res
             .set('Content-type', 'image/png')
             .set('Content-disposition', `attachment; filename=${uuid}.png`)
