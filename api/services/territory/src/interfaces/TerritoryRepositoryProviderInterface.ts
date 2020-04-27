@@ -6,6 +6,7 @@ import {
   SortEnum,
   ProjectionFieldsEnum,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
+import { TerritoryChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 
 export interface TerritoryRepositoryProviderInterface {
   find(
@@ -13,6 +14,8 @@ export interface TerritoryRepositoryProviderInterface {
     sort: SortEnum[],
     projection: ProjectionFieldsEnum,
   ): Promise<TerritoryDbMetaInterface>;
+
+  getIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]>;
   all(): Promise<TerritoryDbMetaInterface[]>;
   create(data: TerritoryBaseInterface): Promise<TerritoryDbMetaInterface>;
   delete(_id: number): Promise<void>;
@@ -32,6 +35,9 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
   }
 
   async all(): Promise<TerritoryDbMetaInterface[]> {
+    throw new Error();
+  }
+  async getIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]> {
     throw new Error();
   }
 

@@ -12,6 +12,7 @@ import {
 import { find } from './shared/territory/find.schema';
 import { create } from './shared/territory/create.schema';
 import { update } from './shared/territory/update.schema';
+import { schema as intermediaryRelationSchema } from './shared/territory/intermediaryRelation.schema';
 import { binding as updateOperatorBinding } from './shared/territory/updateOperator.schema';
 import { binding as listOperatorBinding } from './shared/territory/listOperator.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
@@ -30,6 +31,7 @@ import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorAction';
 import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
+import { GetIntermediaryRelationAction } from './actions/GetIntermediaryRelationAction';
 
 @serviceProvider({
   config,
@@ -39,6 +41,7 @@ import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperat
     ['territory.create', create],
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
+    ['territory.getIntermadiaryRelation', intermediaryRelationSchema],
     // TODO :  clean after territory migration
     // ['territory.findByInsee', findByInsee],
     // ['territory.findByPosition', findByPosition],
@@ -64,6 +67,7 @@ import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperat
     // FindTerritoryByPositionAction,
     UpdateTerritoryOperatorAction,
     ListTerritoryOperatorAction,
+    GetIntermediaryRelationAction,
   ],
   commands: [],
 })
