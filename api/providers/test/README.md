@@ -86,10 +86,10 @@ Refresh materialized views
 
 `operator.operators`
 
-| \_id | name       | legal_name | siret          | company | address | bank | contacts |
-| ---: | ---------- | ---------- | -------------- | ------- | ------- | ---- | -------- |
-|    1 | MaxiCovoit | MaxiCovoit | 78017154200027 | ?       | ?       | ?    | ?        |
-|    2 | MegaCovoit | MegaCovoit | 42169979400010 | ?       | ?       | ?    | ?        |
+| \_id | uuid                                 | name       | legal_name | siret          | company | address | bank | contacts |
+| ---: | ------------------------------------ | ---------- | ---------- | -------------- | ------- | ------- | ---- | -------- |
+|    1 | dccac265-db95-4db3-96c5-40ed3755fd83 | MaxiCovoit | MaxiCovoit | 78017154200027 | ?       | ?       | ?    | ?        |
+|    2 | 7bf928a2-e5f7-4a53-8174-71d26d387152 | MegaCovoit | MegaCovoit | 42169979400010 | ?       | ?       | ?    | ?        |
 
 `application.applications`
 

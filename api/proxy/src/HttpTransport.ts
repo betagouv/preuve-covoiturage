@@ -504,7 +504,9 @@ export class HttpTransport implements TransportInterface {
       '/v2/certificates',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(makeCall('certificate:create', { ...req.body }))) as RPCResponseType;
+        const response = (await this.kernel.handle(
+          makeCall('certificate:create', { ...req.body, operator_id: get(req, 'session.user.operator_id', 0) }),
+        )) as RPCResponseType;
         this.send(res, response);
       }),
     );

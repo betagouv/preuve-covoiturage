@@ -49,11 +49,28 @@ export class OperatorPgRepositoryProvider implements OperatorRepositoryProviderI
     return result.rows[0];
   }
 
+  async quickFind(_id: number): Promise<{ uuid: string; name: string }> {
+    const result = await this.connection.getClient().query({
+      text: `
+        SELECT uuid, name FROM ${this.table}
+        WHERE _id = $1
+        AND deleted_at IS NULL
+        LIMIT 1
+      `,
+      values: [_id],
+    });
+
+    if (!result.rowCount) throw new NotFoundException(`Operator with _id (${_id}) not found`);
+
+    return result.rows[0];
+  }
+
   async all(): Promise<OperatorListInterface[]> {
     const query = {
       text: `
         SELECT
           _id,
+          uuid,
           name,
           legal_name,
           siret,

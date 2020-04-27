@@ -113,8 +113,3 @@ test('Download the certificate', async (t) => {
       t.is(response.status, 200);
     });
 });
-
-// TODO
-// - migration pour avoir des UUID sur les opérateurs
-// - migration pour avoir des UUID sur les territoires (voir avec Gilles)
-// - check des méthodes du CertificateRepository

@@ -1,5 +1,5 @@
 import { upperFirst } from 'lodash';
-import { handler } from '@ilos/common';
+import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 
@@ -12,6 +12,7 @@ import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/Ident
 @handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class CreateCertificateAction extends AbstractAction {
   constructor(
+    private kernel: KernelInterfaceResolver,
     private identityRepository: IdentityRepositoryProviderInterfaceResolver,
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
@@ -22,14 +23,17 @@ export class CreateCertificateAction extends AbstractAction {
 
   // FIXME return type in ResultInterface declaration
   public async handle(params: ParamsInterface): Promise<any> {
-    const { identity, start_at, end_at } = this.castParams(params);
+    const { identity, operator_id, start_at, end_at } = this.castParams(params);
 
-    // TODO get the Identity object
-    // { uuid: 'b409aa51-dee8-4276-9dde-b55d3fd0c7e9' }
     const person = await this.identityRepository.find(identity);
-
-    // TODO get this from the connected operator
-    const operator = { uuid: 'c5b07e35-651e-4688-b0b7-2811073bfcf3', name: 'Mobicoop' };
+    const operator = await this.kernel.call(
+      'operator:quickfind',
+      { _id: operator_id },
+      {
+        channel: { service: 'certificate' },
+        call: { user: { permissions: ['operator.read'] } },
+      },
+    );
 
     // TODO pass this to the query as a parameter
     const territory = { uuid: '4b5b1de9-6a06-4ed7-b405-c9141a7437d6', name: 'Paris Ile-de-France' };
@@ -91,6 +95,6 @@ export class CreateCertificateAction extends AbstractAction {
       start_at = origin;
     }
 
-    return { identity: params.identity, start_at, end_at };
+    return { ...params, start_at, end_at };
   }
 }
