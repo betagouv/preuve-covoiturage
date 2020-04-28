@@ -2911,15 +2911,25 @@ data-uri-to-buffer@1:
   resolved "https://registry.yarnpkg.com/data-uri-to-buffer/-/data-uri-to-buffer-1.2.0.tgz#77163ea9c20d8641b4707e8f18abdf9a78f34835"
   integrity sha512-vKQ9DTQPN1FLYiiEEOQ6IBGFqvjCa5rSK3cWMy/Nespm5d/x3dGFT9UBZnkLxCwua/IXBi2TYnwTEpsOvhC4UQ==
 
+date-fns-tz@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/date-fns-tz/-/date-fns-tz-1.0.10.tgz#30fef0038f80534fddd8e133a6b8ca55ba313748"
+  integrity sha512-cHQAz0/9uDABaUNDM80Mj1FL4ODlxs1xEY4b0DQuAooO2UdNKvDkNbV8ogLnxLbv02Ru1HXFcot0pVvDRBgptg==
+
 date-fns@^1.27.2:
   version "1.30.1"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
   integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
 
-date-fns@^2.0.1, date-fns@^2.10.0:
+date-fns@^2.0.1:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.10.0.tgz#abd10604d8bafb0bcbd2ba2e9b0563b922ae4b6b"
   integrity sha512-EhfEKevYGWhWlZbNeplfhIU/+N+x0iCIx7VzKlXma2EdQyznVlZhCptXUY+BegNpPW2kjdx15Rvq503YcXXrcA==
+
+date-fns@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.12.0.tgz#01754c8a2f3368fc1119cf4625c3dad8c1845ee6"
+  integrity sha512-qJgn99xxKnFgB1qL4jpxU7Q2t0LOn1p8KMIveef3UZD7kqjT3tpFNNdXJelEHhE+rUgffriXriw/sOSU+cS1Hw==
 
 date-time@^2.1.0:
   version "2.1.0"

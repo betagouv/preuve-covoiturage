@@ -1,6 +1,6 @@
 export interface IdentityInterface {
-  _id: number;
-  uuid: string;
+  _id?: number;
+  uuid?: string;
 
   phone?: string;
   phone_trunc?: string;

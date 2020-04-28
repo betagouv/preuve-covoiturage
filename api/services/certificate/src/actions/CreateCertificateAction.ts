@@ -3,7 +3,7 @@ import { handler, KernelInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 
-import { handlerConfig, ParamsInterface } from '../shared/certificate/create.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
 import { alias } from '../shared/certificate/create.schema';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
@@ -23,9 +23,15 @@ export class CreateCertificateAction extends AbstractAction {
     super();
   }
 
-  // FIXME return type in ResultInterface declaration
-  public async handle(params: ParamsInterface): Promise<any> {
-    const { identity, operator_id, territory_id, start_at, end_at } = this.castParams(params);
+  public async handle(
+    params: ParamsInterface,
+  ): Promise<{
+    meta: {
+      httpStatus: number;
+    };
+    data: ResultInterface;
+  }> {
+    const { identity, tz, operator_id, territory_id, start_at, end_at } = this.castParams(params);
 
     const person = await this.identityRepository.find(identity);
     const territory = await this.territoryRepository.quickFind({ _id: territory_id });
@@ -45,6 +51,7 @@ export class CreateCertificateAction extends AbstractAction {
     const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0));
     const remaining = (total_km * 0.558 - total_cost) | 0;
     const meta = {
+      tz,
       operator,
       territory,
       total_km,

@@ -5,6 +5,7 @@ export interface ParamsInterface {
   identity: IdentityIdentifiersInterface;
   operator_id: number;
   territory_id: number;
+  tz: string;
   start_at?: Date;
   end_at?: Date;
 }
