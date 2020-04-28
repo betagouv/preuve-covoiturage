@@ -38,11 +38,18 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   async getParentChildren(id: number): Promise<TerritoryParentChildrenInterface> {
     const query = {
       text: `WITH 
+      base_relation AS(
+          SELECT tv.descendants,
+          tv.ancestors
+          FROM territory.territories_view AS tv
+          WHERE tv._id = $1
+      ),
       children AS(
           SELECT t._id, t.name 
           FROM territory.territory_relation AS tr
           INNER JOIN territory.territories AS t ON (t._id = tr.child_territory_id AND tr.parent_territory_id = $1)
       ),
+      
       parent AS(
           SELECT t._id, t.name, tr.child_territory_id AS base_id
           FROM territory.territory_relation AS tr
@@ -51,9 +58,11 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       SELECT 
           parent.base_id AS _id,
           row_to_json(parent) AS parent,
-          array_agg(row_to_json(children)) AS children
-          FROM parent,children
-          GROUP BY parent.*,parent.base_id
+          array_agg(row_to_json(children)) AS children,
+          base_relation.descendants AS descendant_ids,
+          base_relation.ancestors AS ancestor_ids
+          FROM parent,children,base_relation
+          GROUP BY parent.*,parent.base_id,base_relation.descendants,base_relation.ancestors
       
       `,
       values: [id],
