@@ -16,6 +16,7 @@ import { FormCompany } from '~/shared/modules/form/forms/form-company';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { TerritoryStoreService } from '~/modules/territory/services/territory-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territory-form',
@@ -35,6 +36,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public editedId: number;
   private companyDetails: CompanyInterface;
+  intermediateRelation: any;
 
   constructor(
     public authService: AuthenticationService,
@@ -42,6 +44,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     private toastr: ToastrService,
     private companyService: CompanyService,
     private territoryStore: TerritoryStoreService,
+    private territoryApi: TerritoryApiService,
   ) {
     super();
   }
@@ -205,12 +208,18 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
     this.editedId = territory ? territory._id : null;
-    console.log('this.editedId : ', this.editedId);
-
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
-    this.territoryForm.setValue(formValues);
+    if (this.editedId) {
+      this.territoryApi.getIntermediaryRelation(this.editedId).subscribe((intermediateRelation) => {
+        this.intermediateRelation = intermediateRelation;
+        this.territoryForm.setValue(formValues);
+      });
+    } else {
+      this.intermediateRelation = [];
+      this.territoryForm.setValue(formValues);
+    }
   }
 
   private checkPermissions(): void {

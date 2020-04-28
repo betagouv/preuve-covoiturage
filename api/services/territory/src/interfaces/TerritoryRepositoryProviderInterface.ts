@@ -6,7 +6,10 @@ import {
   SortEnum,
   ProjectionFieldsEnum,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { TerritoryChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import {
+  TerritoryChildrenInterface,
+  TerritoryParentChildrenInterface,
+} from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 
 export interface TerritoryRepositoryProviderInterface {
   find(
@@ -15,7 +18,7 @@ export interface TerritoryRepositoryProviderInterface {
     projection: ProjectionFieldsEnum,
   ): Promise<TerritoryDbMetaInterface>;
 
-  getIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]>;
+  getTerritoryIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]>;
   all(): Promise<TerritoryDbMetaInterface[]>;
   create(data: TerritoryBaseInterface): Promise<TerritoryDbMetaInterface>;
   delete(_id: number): Promise<void>;
@@ -23,6 +26,7 @@ export interface TerritoryRepositoryProviderInterface {
   patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
   findByInsee(insee: string): Promise<TerritoryDbMetaInterface>;
   findByPosition(lon: number, lat: number): Promise<TerritoryDbMetaInterface>;
+  getParentChildren(id: number): Promise<TerritoryParentChildrenInterface>;
 }
 
 export abstract class TerritoryRepositoryProviderInterfaceResolver implements TerritoryRepositoryProviderInterface {
@@ -34,10 +38,14 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
+  async getParentChildren(id: number): Promise<TerritoryParentChildrenInterface> {
+    throw new Error();
+  }
+
   async all(): Promise<TerritoryDbMetaInterface[]> {
     throw new Error();
   }
-  async getIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]> {
+  async getTerritoryIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]> {
     throw new Error();
   }
 

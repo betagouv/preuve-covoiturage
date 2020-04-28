@@ -23,6 +23,7 @@ import {
   SortEnum,
   allBasicFieldEnum,
 } from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
+import { TerritoryChildrenInterface } from '~/core/entities/api/shared/territory/common/interfaces/TerritoryChildrenInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +46,11 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
         throw err;
       }),
     );
+  }
+
+  getIntermediaryRelation(id: number): Observable<TerritoryChildrenInterface[]> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:getIntermediaryRelation`, { _id: id });
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryChildrenInterface[]>;
   }
 
   find(
