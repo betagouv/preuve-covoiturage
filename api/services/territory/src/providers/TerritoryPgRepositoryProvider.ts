@@ -22,7 +22,10 @@ import {
   allTerritoryQueryDirectFields,
   allTerritoryQueryFields,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
-import { TerritoryChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import {
+  TerritoryChildrenInterface,
+  TerritoryParentChildrenInterface,
+} from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -32,6 +35,34 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
+  async getParentChildren(id: number): Promise<TerritoryParentChildrenInterface> {
+    const query = {
+      text: `WITH 
+      children AS(
+          SELECT t._id, t.name 
+          FROM territory.territory_relation AS tr
+          INNER JOIN territory.territories AS t ON (t._id = tr.child_territory_id AND tr.parent_territory_id = $1)
+      ),
+      parent AS(
+          SELECT t._id, t.name, tr.child_territory_id AS base_id
+          FROM territory.territory_relation AS tr
+          INNER JOIN territory.territories AS t ON (t._id = tr.parent_territory_id AND tr.child_territory_id = $1)
+      )
+      SELECT 
+          parent.base_id AS _id,
+          row_to_json(parent) AS parent,
+          array_agg(row_to_json(children)) AS children
+          FROM parent,children
+          GROUP BY parent.*,parent.base_id
+      
+      `,
+      values: [id],
+    };
+
+    const result = await this.connection.getClient().query(query);
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
+
   /**
    * Get childrens if all of intermediate territory
    * Intermediate territory are elements which :
@@ -40,8 +71,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
    *   is not ancestor of actual requested territory
    * @param id Id of requested territory
    */
-  async getIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]> {
-    console.log('id : ', id);
+  async getTerritoryIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]> {
     const query = {
       text: `WITH 
     base_relation AS (
@@ -84,7 +114,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     };
 
     const result = await this.connection.getClient().query(query);
-    console.log('result.rows : ', result.rows);
     return result.rows;
   }
 

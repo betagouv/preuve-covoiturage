@@ -2,8 +2,8 @@ import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
 
 import { TerritoryRepositoryProviderInterfaceResolver } from '../interfaces/TerritoryRepositoryProviderInterface';
-import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/intermediaryRelation.contract';
-import { alias } from '../shared/territory/intermediaryRelation.schema';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/territory/parentChildren.contract';
+import { alias } from '../shared/territory/parentChildren.schema';
 
 @handler({
   ...handlerConfig,
@@ -12,12 +12,12 @@ import { alias } from '../shared/territory/intermediaryRelation.schema';
     ['validate', alias],
   ],
 })
-export class GetTerritoryIntermediaryRelationAction extends AbstractAction {
+export class GetTerritoryParentChildrenAction extends AbstractAction {
   constructor(private territoryRepository: TerritoryRepositoryProviderInterfaceResolver) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return this.territoryRepository.getTerritoryIntermediateRelationData(params._id);
+    return await this.territoryRepository.getParentChildren(params._id);
   }
 }

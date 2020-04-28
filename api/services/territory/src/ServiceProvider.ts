@@ -13,6 +13,7 @@ import { find } from './shared/territory/find.schema';
 import { create } from './shared/territory/create.schema';
 import { update } from './shared/territory/update.schema';
 import { schema as intermediaryRelationSchema } from './shared/territory/intermediaryRelation.schema';
+import { schema as parentChildrenSchema } from './shared/territory/parentChildren.schema';
 import { binding as updateOperatorBinding } from './shared/territory/updateOperator.schema';
 import { binding as listOperatorBinding } from './shared/territory/listOperator.schema';
 import { deleteTerritory } from './shared/territory/delete.schema';
@@ -31,7 +32,8 @@ import { FindTerritoryAction } from './actions/FindTerritoryAction';
 import { PatchContactsTerritoryAction } from './actions/PatchContactsTerritoryAction';
 import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorAction';
 import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
-import { GetIntermediaryRelationAction } from './actions/GetIntermediaryRelationAction';
+import { GetTerritoryIntermediaryRelationAction } from './actions/GetIntermediaryRelationAction';
+import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentChildrenAction';
 
 @serviceProvider({
   config,
@@ -42,6 +44,7 @@ import { GetIntermediaryRelationAction } from './actions/GetIntermediaryRelation
     ['territory.update', update],
     ['territory.delete', deleteTerritory],
     ['territory.getIntermadiaryRelation', intermediaryRelationSchema],
+    ['territory.getParentChildren', parentChildrenSchema],
     // TODO :  clean after territory migration
     // ['territory.findByInsee', findByInsee],
     // ['territory.findByPosition', findByPosition],
@@ -67,7 +70,8 @@ import { GetIntermediaryRelationAction } from './actions/GetIntermediaryRelation
     // FindTerritoryByPositionAction,
     UpdateTerritoryOperatorAction,
     ListTerritoryOperatorAction,
-    GetIntermediaryRelationAction,
+    GetTerritoryIntermediaryRelationAction,
+    GetTerritoryParentChildrenAction,
   ],
   commands: [],
 })
