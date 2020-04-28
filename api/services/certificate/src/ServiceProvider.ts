@@ -14,6 +14,7 @@ import { CertificatePgRepositoryProvider } from './providers/CertificatePgReposi
 import { IdentityPgRepositoryProvider } from './providers/IdentityPgRepositoryProvider';
 import { CarpoolPgRepositoryProvider } from './providers/CarpoolPgRepositoryProvider';
 import { HtmlPrinterProvider } from './providers/HtmlPrinterProvider';
+import { TerritoryPgRepository } from './providers/TerritoryPgRepositoryProvider';
 import { RenderCertificateAction } from './actions/RenderCertificateAction';
 import { CreateCertificateAction } from './actions/CreateCertificateAction';
 import { FindCertificateAction } from './actions/FindCertificateAction';
@@ -33,6 +34,7 @@ import { binding as downloadBinding } from './shared/certificate/download.schema
     CertificatePgRepositoryProvider,
     IdentityPgRepositoryProvider,
     CarpoolPgRepositoryProvider,
+    TerritoryPgRepository,
     HtmlPrinterProvider,
   ],
   validator: [renderBinding, createBinding, findBinding, downloadBinding],

@@ -8,6 +8,7 @@ import { alias } from '../shared/certificate/create.schema';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
+import { TerritoryPgRepositoryInterfaceResolver } from '../interfaces/TerritoryPgRepositoryInterface';
 
 @handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class CreateCertificateAction extends AbstractAction {
@@ -16,6 +17,7 @@ export class CreateCertificateAction extends AbstractAction {
     private identityRepository: IdentityRepositoryProviderInterfaceResolver,
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
+    private territoryRepository: TerritoryPgRepositoryInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
   ) {
     super();
@@ -23,9 +25,10 @@ export class CreateCertificateAction extends AbstractAction {
 
   // FIXME return type in ResultInterface declaration
   public async handle(params: ParamsInterface): Promise<any> {
-    const { identity, operator_id, start_at, end_at } = this.castParams(params);
+    const { identity, operator_id, territory_id, start_at, end_at } = this.castParams(params);
 
     const person = await this.identityRepository.find(identity);
+    const territory = await this.territoryRepository.quickFind({ _id: territory_id });
     const operator = await this.kernel.call(
       'operator:quickfind',
       { _id: operator_id },
@@ -35,9 +38,6 @@ export class CreateCertificateAction extends AbstractAction {
       },
     );
 
-    // TODO pass this to the query as a parameter
-    const territory = { uuid: '4b5b1de9-6a06-4ed7-b405-c9141a7437d6', name: 'Paris Ile-de-France' };
-
     // fetch the data for this identity, operator and territory and map to template object
     // TODO agg the last line
     const rows = (await this.carpoolRepository.find({ identity: person._id, start_at, end_at })).slice(0, 11);
@@ -45,6 +45,8 @@ export class CreateCertificateAction extends AbstractAction {
     const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0));
     const remaining = (total_km * 0.558 - total_cost) | 0;
     const meta = {
+      operator,
+      territory,
       total_km,
       total_cost,
       remaining,
