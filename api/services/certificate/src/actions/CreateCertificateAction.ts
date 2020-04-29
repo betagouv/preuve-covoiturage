@@ -89,7 +89,7 @@ export class CreateCertificateAction extends AbstractAction {
    * Will be refactored when the ID engine is up and running
    */
   private castParams(params: ParamsInterface): Required<ParamsInterface> {
-    const origin = new Date('2018-01-01T00:00:00+0100'); // Europe/Paris
+    const origin = new Date('2020-01-01T00:00:00+0100'); // Europe/Paris
     let { start_at, end_at } = params;
 
     start_at = 'start_at' in params ? new Date(start_at) : origin;
