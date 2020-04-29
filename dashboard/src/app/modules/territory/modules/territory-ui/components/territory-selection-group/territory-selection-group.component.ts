@@ -1,9 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {
-  TerritorySelectionBlock,
-  generateRandomTerritoryChildren,
-  TerritorySelectionState,
-} from '../../data/TerritorySelectionBlock';
+import { TerritorySelectionBlock, TerritorySelectionState } from '../../data/TerritorySelectionBlock';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territory-selection-group',
@@ -11,18 +8,28 @@ import {
   styleUrls: ['./territory-selection-group.component.scss'],
 })
 export class TerritorySelectionGroupComponent implements OnInit {
-  constructor() {}
+  constructor(private territoryApi: TerritoryApiService) {}
 
   @Input() territory: TerritorySelectionBlock;
   open = false;
   childrenLoadStarted = false;
   TerritorySelectionState = TerritorySelectionState;
 
-  async swap(): Promise<void> {
+  swap(): void {
     this.open = !this.open;
     if (this.open && !this.childrenLoadStarted) {
       this.childrenLoadStarted = true;
-      await generateRandomTerritoryChildren(this.territory);
+
+      this.territoryApi.getDirectRelation(this.territory.id).subscribe((relation) => {
+        const children = new Array(relation.children.length);
+        for (let i = 0; i < children.length; i++) {
+          const child = { id: relation.children[i]._id, name: relation.children[i].name };
+          children[i] = child;
+        }
+        this.territory.setChildren(children);
+      });
+
+      // await generateRandomTerritoryChildren(this.territory);
     }
   }
 

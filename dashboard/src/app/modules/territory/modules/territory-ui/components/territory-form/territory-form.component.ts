@@ -37,6 +37,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   public editedId: number;
   private companyDetails: CompanyInterface;
   intermediateRelation: any;
+  // protected subIgnoredIds: number[];
 
   constructor(
     public authService: AuthenticationService,

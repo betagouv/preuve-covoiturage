@@ -18,6 +18,6 @@ export class GetTerritoryParentChildrenAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    return await this.territoryRepository.getParentChildren(params._id);
+    return await this.territoryRepository.getDirectRelation(params._id);
   }
 }

@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { TerritorySelectionBlock, generateRandomTerritoryChildren } from '../../data/TerritorySelectionBlock';
+import { TerritorySelectionBlock } from '../../data/TerritorySelectionBlock';
 import { FormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { takeUntil } from 'rxjs/operators';
+import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
 
 @Component({
   selector: 'app-territory-selection-block',
@@ -11,7 +12,7 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./territory-selection-block.component.scss'],
 })
 export class TerritorySelectionBlockComponent extends DestroyObservable implements OnInit {
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private territoryApi: TerritoryApiService) {
     super();
   }
 
@@ -29,12 +30,18 @@ export class TerritorySelectionBlockComponent extends DestroyObservable implemen
       if (state === true) this.prepareChildData();
     });
   }
-  async prepareChildData(): Promise<void> {
+  prepareChildData(): void {
     if (this.childrenLoaded === false) {
       this.childrenLoaded = true;
-      // TODO : implement real method
-      await generateRandomTerritoryChildren(this.territory);
-      this.children = this.territory.children;
+      this.territoryApi.getDirectRelation(this.territory.id).subscribe((relation) => {
+        const children = new Array(relation.children.length);
+        for (let i = 0; i < children.length; i++) {
+          const child = { id: relation.children[i]._id, name: relation.children[i].name };
+          children[i] = child;
+        }
+        this.territory.setChildren(children);
+        this.children = this.territory.children;
+      });
     }
   }
 }
