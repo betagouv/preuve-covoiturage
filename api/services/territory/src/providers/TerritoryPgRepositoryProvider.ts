@@ -35,34 +35,44 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async getParentChildren(id: number): Promise<TerritoryParentChildrenInterface> {
+  async getDirectRelation(id: number): Promise<TerritoryParentChildrenInterface> {
     const query = {
       text: `WITH 
       base_relation AS(
-          SELECT tv.descendants,
-          tv.ancestors
+          SELECT 
+              tv._id AS base_id,
+              tv.descendants,
+              tv.ancestors
           FROM territory.territories_view AS tv
           WHERE tv._id = $1
       ),
       children AS(
-          SELECT t._id, t.name 
+          SELECT 
+              tr.parent_territory_id AS base_id,
+              t._id,
+              t.name 
           FROM territory.territory_relation AS tr
           INNER JOIN territory.territories AS t ON (t._id = tr.child_territory_id AND tr.parent_territory_id = $1)
       ),
       
       parent AS(
-          SELECT t._id, t.name, tr.child_territory_id AS base_id
+          SELECT
+              tr.child_territory_id AS base_id,
+              t._id,
+              t.name
           FROM territory.territory_relation AS tr
           INNER JOIN territory.territories AS t ON (t._id = tr.parent_territory_id AND tr.child_territory_id = $1)
       )
       SELECT 
-          parent.base_id AS _id,
+          base_relation.base_id AS _id,
           row_to_json(parent) AS parent,
-          array_agg(row_to_json(children)) AS children,
+          to_json(array_remove(array_agg(CASE WHEN children IS NOT NULL THEN children ELSE NULL END), NULL)) AS children,
           base_relation.descendants AS descendant_ids,
           base_relation.ancestors AS ancestor_ids
-          FROM parent,children,base_relation
-          GROUP BY parent.*,parent.base_id,base_relation.descendants,base_relation.ancestors
+          FROM base_relation
+          LEFT JOIN children ON children.base_id = base_relation.base_id
+          LEFT JOIN parent ON children.base_id = base_relation.base_id
+          GROUP BY parent.*,base_relation.base_id,base_relation.descendants,base_relation.ancestors;
       
       `,
       values: [id],
