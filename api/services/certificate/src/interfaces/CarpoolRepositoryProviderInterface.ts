@@ -1,7 +1,8 @@
 // TODO replace any output by proper interface
 export interface CarpoolInterface {
   m: string;
-  y: number;
+  y: string;
+  trips: number;
   km: number;
   eur: number;
 }

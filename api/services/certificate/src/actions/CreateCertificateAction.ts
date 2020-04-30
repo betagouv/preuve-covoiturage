@@ -47,8 +47,8 @@ export class CreateCertificateAction extends AbstractAction {
     // fetch the data for this identity, operator and territory and map to template object
     // TODO agg the last line
     const rows = (await this.carpoolRepository.find({ identity: person._id, start_at, end_at })).slice(0, 11);
-    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0));
-    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0));
+    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
+    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0)) || 0;
     const remaining = (total_km * 0.558 - total_cost) | 0;
     const meta = {
       tz,
@@ -61,7 +61,9 @@ export class CreateCertificateAction extends AbstractAction {
       rows: rows.map((line, index) => ({
         index,
         month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
+        trips: line.trips == 1 ? '1 trajet' : `${line.trips} trajets`,
         distance: line.km | 0,
+        cost: line.eur || 0,
       })),
     };
 

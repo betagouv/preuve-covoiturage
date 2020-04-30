@@ -37,13 +37,16 @@
             {{#each data.rows}}
             <tr>
               <td>{{this.month}}</td>
+              <td>{{this.trips}}</td>
               <td>{{this.distance}}&nbsp;km</td>
+              <td>{{currency this.cost}}&nbsp;&euro;</td>
             </tr>
             {{/each}}
 
             <tr>
-              <td><strong>Total</strong></td>
+              <td colspan="2"><strong>Total</strong></td>
               <td><strong>{{data.total_km}}&nbsp;km</strong></td>
+              <td><strong>{{currency data.total_cost}}&nbsp;&euro;</strong></td>
             </tr>
           </tbody>
         </table>

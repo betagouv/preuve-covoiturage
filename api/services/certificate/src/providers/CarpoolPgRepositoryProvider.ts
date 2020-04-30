@@ -32,7 +32,8 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
       text: `
         SELECT
           to_char(cc.datetime,'MM') AS m,
-          extract(year from cc.datetime) AS y,
+          extract(year from cc.datetime)::text AS y,
+          count(*) as trips,
           sum(cc.distance::float)/1000 as km,
           sum(pi.amount::float)/100 as eur
         FROM ${this.table} AS cc
