@@ -25,6 +25,7 @@ export class ListCertificateAction extends AbstractAction {
     return results.map(
       (cert: CertificateInterface): ResultInterface => {
         return {
+          uuid: cert.uuid,
           tz: cert.meta.tz,
           operator: cert.meta.operator,
           territory: cert.meta.territory,

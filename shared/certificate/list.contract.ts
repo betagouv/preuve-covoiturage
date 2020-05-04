@@ -4,7 +4,7 @@ export interface ParamsInterface {
   operator_id?: number;
 }
 
-export type ResultInterface = Omit<CertificateMetaInterface, 'rows'>;
+export type ResultInterface = { uuid: string } & Omit<CertificateMetaInterface, 'rows'>;
 
 export type RepositoryInterface = Required<ParamsInterface>;
 

@@ -21,7 +21,11 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   constructor(protected connection: PostgresConnection) {}
 
   async find(withLog = false): Promise<CertificateInterface[]> {
-    const result = await this.connection.getClient().query(`SELECT * FROM ${this.table} LIMIT 1`);
+    const result = await this.connection.getClient().query(`
+      SELECT * FROM ${this.table}
+      ORDER BY created_at DESC
+      LIMIT 1000
+    `);
 
     if (!result.rowCount) return [];
 
@@ -53,8 +57,12 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   async findByOperatorId(operator_id: number, withLog = false): Promise<CertificateInterface[]> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT * FROM ${this.table}
-        WHERE operator_id = $1
+        SELECT * FROM ${this.table} AS cc
+        INNER JOIN operator.operators AS oo
+        ON oo.uuid = cc.operator_uuid::uuid
+        WHERE oo._id = $1
+        ORDER BY cc.created_at DESC
+        LIMIT 1000
       `,
       values: [operator_id],
     });
