@@ -20,6 +20,14 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
 
   constructor(protected connection: PostgresConnection) {}
 
+  async find(withLog = false): Promise<CertificateInterface[]> {
+    const result = await this.connection.getClient().query(`SELECT * FROM ${this.table} LIMIT 1`);
+
+    if (!result.rowCount) return [];
+
+    return (withLog ? this.withLog(result.rows) : result.rows) as CertificateInterface[];
+  }
+
   async findByUuid(uuid: string, withLog = false): Promise<CertificateInterface> {
     const result = await this.connection.getClient().query({
       text: `SELECT * FROM ${this.table} WHERE uuid = $1 LIMIT 1`,
@@ -42,7 +50,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     return withLog ? this.withLog(result.rows[0]) : result.rows[0];
   }
 
-  async findByOperatorId(operator_id: string, withLog = false): Promise<CertificateInterface[]> {
+  async findByOperatorId(operator_id: number, withLog = false): Promise<CertificateInterface[]> {
     const result = await this.connection.getClient().query({
       text: `
         SELECT * FROM ${this.table}
@@ -123,7 +131,7 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
     `);
 
     // merge access_log as a table in each certificate
-    const merge = certs.map((cert) => ({
+    const merge = certs.map((cert: CertificateInterface) => ({
       ...cert,
       access_log: result.rows
         .filter((log) => log.certificate_id === cert._id)

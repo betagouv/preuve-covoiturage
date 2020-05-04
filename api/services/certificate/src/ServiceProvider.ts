@@ -18,12 +18,14 @@ import { TerritoryPgRepository } from './providers/TerritoryPgRepositoryProvider
 import { RenderCertificateAction } from './actions/RenderCertificateAction';
 import { CreateCertificateAction } from './actions/CreateCertificateAction';
 import { FindCertificateAction } from './actions/FindCertificateAction';
+import { ListCertificateAction } from './actions/ListCertificateAction';
 import { DownloadCertificateAction } from './actions/DownloadCertificateAction';
 import { SeedCommand } from './commands/SeedCommand';
 import { binding as renderBinding } from './shared/certificate/render.schema';
 import { binding as createBinding } from './shared/certificate/create.schema';
 import { binding as findBinding } from './shared/certificate/find.schema';
 import { binding as downloadBinding } from './shared/certificate/download.schema';
+import { binding as listBinding } from './shared/certificate/list.schema';
 
 @serviceProvider({
   config,
@@ -37,13 +39,19 @@ import { binding as downloadBinding } from './shared/certificate/download.schema
     TerritoryPgRepository,
     HtmlPrinterProvider,
   ],
-  validator: [renderBinding, createBinding, findBinding, downloadBinding],
+  validator: [renderBinding, createBinding, findBinding, downloadBinding, listBinding],
   middlewares: [
     ['validate', ValidatorMiddleware],
     ['can', PermissionMiddleware],
   ],
   connections: [[PostgresConnection, 'connections.postgres']],
-  handlers: [RenderCertificateAction, DownloadCertificateAction, CreateCertificateAction, FindCertificateAction],
+  handlers: [
+    RenderCertificateAction,
+    DownloadCertificateAction,
+    CreateCertificateAction,
+    FindCertificateAction,
+    ListCertificateAction,
+  ],
   commands: [SeedCommand],
   template: {
     path: path.resolve(__dirname, 'templates').replace('/dist/', '/src/'),

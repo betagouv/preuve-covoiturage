@@ -178,6 +178,9 @@ export const operator = {
       'operator.trip.stats',
       'incentive-campaign.list',
       'incentive-campaign.templates',
+      'certificate.list',
+      'certificate.create',
+      'certificate.download',
     ],
   },
   user: {
