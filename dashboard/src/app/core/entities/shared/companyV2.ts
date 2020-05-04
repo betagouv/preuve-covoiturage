@@ -2,6 +2,7 @@
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface2';
 
 export class CompanyV2 {
+  _id?: number;
   siret: string;
   siren: string;
   nic: string;

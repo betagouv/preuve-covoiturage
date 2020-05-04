@@ -5,6 +5,7 @@ import { TerritoryDbMetaInterface } from './common/interfaces/TerritoryDbMetaInt
 
 export interface ParamsInterface extends TerritoryBaseInterface, Partial<TerritoryCodesInterface> {
   children: TerritoryBaseRelationInterface;
+  siret?: string;
 }
 
 export interface ResultInterface extends TerritoryBaseInterface, TerritoryDbMetaInterface {}

@@ -1,8 +1,11 @@
 import { provider, NotFoundException, KernelInterfaceResolver, ConflictException } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
+import {
+  ParamsInterface as CreateParams,
+  ResultInterface as CreateResultInterface,
+} from '../shared/territory/create.contract';
 
-import { TerritoryBaseInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
 import {
   TerritoryRepositoryProviderInterfaceResolver,
@@ -66,7 +69,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       SELECT 
           base_relation.base_id AS _id,
           row_to_json(parent) AS parent,
-          to_json(array_remove(array_agg(CASE WHEN children IS NOT NULL THEN children ELSE NULL END), NULL)) AS children,
+          to_json(array_remove(
+            array_agg(CASE WHEN children IS NOT NULL THEN children ELSE NULL END), 
+            NULL)
+          ) AS children,
           base_relation.descendants AS descendant_ids,
           base_relation.ancestors AS ancestor_ids
           FROM base_relation
@@ -282,12 +288,28 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return result.rows;
   }
 
-  async create(data: TerritoryBaseInterface): Promise<TerritoryDbMetaInterface> {
+  async create(data: CreateParams): Promise<CreateResultInterface> {
     // TODO: check siret collision method (or not)
     // awaeit this.hasDoubleSiretThenFail(data.siret);
 
     // TODO: to implement
-    throw new Error('Not implemented : query to adapt');
+    // throw new Error('Not implemented : query to adapt');
+
+    /*
+    const query = {
+      text: `INSERT INTO (level,name,company_id,active,contacts)`,
+    };
+    */
+
+    // level: TerritoryLevelEnum;
+    // name: string;
+    // company_id?: number;
+    // active?: boolean;
+    // active_since?: Date;
+    // contacts?: ContactsInterface;
+    // density?: number;
+    // geo?: any; // TODO : geography type
+
     /*
     const query = {
       text: `

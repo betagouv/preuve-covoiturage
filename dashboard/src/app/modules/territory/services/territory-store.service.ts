@@ -5,13 +5,20 @@ import { Injectable } from '@angular/core';
 import { SortEnum, allBasicFieldEnum, RelationFieldEnum, CompanyEnum } from '../TerritoryQueryInterface';
 
 import { CrudStore } from '~/core/services/store/crud-store';
-import { Contacts, Territory } from '~/core/entities/territory/territory';
+import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { Contacts } from '~/core/entities/shared/contacts';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TerritoryStoreService extends CrudStore<Territory, Territory, any, TerritoryApiService> {
+export class TerritoryStoreService extends CrudStore<
+  Territory,
+  Territory,
+  any,
+  TerritoryApiService,
+  TerritoryFormModel
+> {
   constructor(protected territoryApi: TerritoryApiService) {
     super(territoryApi, Territory);
   }

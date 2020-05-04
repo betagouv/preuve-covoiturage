@@ -28,7 +28,8 @@ export class TerritoryChildrenComponent implements OnInit {
 
   addTerritory(): void {
     this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relation) => {
-      // we add current ,all descendant and all ancestors of currently added territory to ignore list in order to avoid cross / double linking
+      // we add current ,all descendant and all ancestors of currently added territory
+      // to ignore list in order to avoid cross / double linking
       const ignoreIds = [...relation.ancestor_ids, ...relation.descendant_ids, relation._id];
       this.subIgnoredIds.push(...ignoreIds);
       // console.log('subIgnoredIds ', this.subIgnoredIds);
@@ -62,5 +63,12 @@ export class TerritoryChildrenComponent implements OnInit {
 
     this.territoryAddForm.valueChanges.subscribe((val) => console.log('change', val));
     this.subIgnoredIds = [];
+  }
+
+  getFlatSelectedList(list: IdName[] = []): IdName[] {
+    for (const territory of this.territories) {
+      territory.getFlatSelectedList(list);
+    }
+    return list;
   }
 }
