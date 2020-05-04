@@ -14,6 +14,10 @@
 </div>
 <div class="Territories-edition">
   <div id="territoryForm-anchor"></div>
+  <button mat-flat-button class="large" *ngIf="!showForm" (click)="showAddForm()" color="primary">
+    Ajouter un territoire
+  </button>
+
   <h3 *ngIf="showForm">
     Edition du territoire
   </h3>

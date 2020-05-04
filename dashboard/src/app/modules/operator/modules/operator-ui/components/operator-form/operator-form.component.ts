@@ -17,6 +17,7 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CompanyService } from '~/modules/company/services/company.service';
 import { OperatorStoreService } from '~/modules/operator/services/operator-store.service';
 import { CompanyInterface } from '~/core/entities/api/shared/common/interfaces/CompanyInterface';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-operator-form',
@@ -180,6 +181,7 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
               nature_juridique: '',
               rna: '',
               vat_intra: '',
+              _id: null,
             };
             companyFormGroup.patchValue(this.companyDetails);
           }),
@@ -188,29 +190,30 @@ export class OperatorFormComponent extends DestroyObservable implements OnInit, 
         )
         .subscribe((value) => {
           // TODO : apply company migration
-          return null;
+          // return null;
 
-          // this.companyService
-          //   .findCompany({ siret: value, source: 'remote' })
-          //   .pipe(
-          //     catchHttpStatus(404, (err) => {
-          //       this.toastr.error('Entreprise non trouvée');
-          //       throw err;
-          //     }),
-          //     takeUntil(stopFindCompany),
-          //   )
+          this.companyService
+            .fetchCompany(value)
+            .pipe(
+              catchHttpStatus(404, (err) => {
+                this.toastr.error('Entreprise non trouvée');
+                throw err;
+              }),
+              takeUntil(stopFindCompany),
+            )
 
-          //   .subscribe((company) => {
-          //     if (company) {
-          //       this.companyDetails = {
-          //         naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-          //         nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-          //         rna: company.nonprofit_code ? company.nonprofit_code : '',
-          //         vat_intra: company.intra_vat ? company.intra_vat : '',
-          //       };
-          //       companyFormGroup.patchValue(this.companyDetails);
-          //     }
-          //   });
+            .subscribe((company) => {
+              if (company) {
+                this.companyDetails = {
+                  naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
+                  nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
+                  rna: company.nonprofit_code ? company.nonprofit_code : '',
+                  vat_intra: company.intra_vat ? company.intra_vat : '',
+                  _id: company._id,
+                };
+                companyFormGroup.patchValue(this.companyDetails);
+              }
+            });
         });
     }
 

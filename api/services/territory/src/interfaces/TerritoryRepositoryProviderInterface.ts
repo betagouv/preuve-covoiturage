@@ -1,5 +1,8 @@
-import { TerritoryBaseInterface } from '../shared/territory/common/interfaces/TerritoryInterface';
 import { TerritoryDbMetaInterface } from '../shared/territory/common/interfaces/TerritoryDbMetaInterface';
+import {
+  ParamsInterface as CreateParams,
+  ResultInterface as CreateResultInterface,
+} from '../shared/territory/create.contract';
 import { ParamsInterface as PatchParamsInterface } from '../shared/territory/update.contract';
 import {
   TerritoryQueryInterface,
@@ -20,7 +23,7 @@ export interface TerritoryRepositoryProviderInterface {
 
   getTerritoryIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]>;
   all(): Promise<TerritoryDbMetaInterface[]>;
-  create(data: TerritoryBaseInterface): Promise<TerritoryDbMetaInterface>;
+  create(data: CreateParams): Promise<CreateResultInterface>;
   delete(_id: number): Promise<void>;
   update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface>;
   patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface>;
@@ -49,7 +52,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async create(data: TerritoryBaseInterface): Promise<TerritoryDbMetaInterface> {
+  async create(data: CreateParams): Promise<CreateResultInterface> {
     throw new Error();
   }
 

@@ -1,7 +1,7 @@
 import { TerritoryBaseInterface } from './common/interfaces/TerritoryInterface';
 import { TerritoryDbMetaInterface } from './common/interfaces/TerritoryDbMetaInterface';
 
-interface Territory extends TerritoryBaseInterface {
+export interface Territory extends TerritoryBaseInterface {
   _id: number;
 }
 

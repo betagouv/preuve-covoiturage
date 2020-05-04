@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS territory.territories
     active boolean NOT NULL DEFAULT false,
     active_since timestamp with time zone,
     contacts json,
+    address json,
 
     --- geo data
     density integer,
