@@ -1,6 +1,7 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
 
+import { PointInterface } from '../shared/common/interfaces/PointInterface';
 import {
   CarpoolInterface,
   CarpoolRepositoryProviderInterface,
@@ -24,8 +25,29 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
    * TODO filter by operator and territory too
    * TODO replace any output by proper interface
    */
-  async find(params: { identity: number; start_at: Date; end_at: Date }): Promise<CarpoolInterface[]> {
-    const { identity, start_at, end_at } = params;
+  async find(params: {
+    identity: number;
+    start_at: Date;
+    end_at: Date;
+    start_pos: PointInterface;
+    end_pos: PointInterface;
+    radius?: number;
+  }): Promise<CarpoolInterface[]> {
+    const { identity, start_at, end_at, start_pos, end_pos, radius = 1000 } = params;
+
+    let where_start = '';
+    if (start_pos) {
+      where_start = `AND ST_Distance(ST_MakePoint(${start_pos.lon}, ${start_pos.lat}), cc.start_position) < ${Math.abs(
+        radius | 0,
+      )}}`;
+    }
+
+    let where_end = '';
+    if (end_pos) {
+      where_end = `AND ST_Distance(ST_MakePoint(${end_pos.lon}, ${end_pos.lat}), cc.end_position) < ${Math.abs(
+        radius | 0,
+      )}}`;
+    }
 
     // fetch the number of kilometers per month
     const result = await this.connection.getClient().query({
@@ -41,6 +63,8 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         ON cc._id = pi.carpool_id
         WHERE cc.identity_id = $1
         AND cc.datetime >= $2 AND cc.datetime <= $3
+        ${where_start}
+        ${where_end}
         GROUP BY (m, y)
         ORDER BY y DESC, m DESC
       `,

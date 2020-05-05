@@ -8,7 +8,6 @@ import { alias } from '../shared/certificate/create.schema';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
-import { TerritoryPgRepositoryInterfaceResolver } from '../interfaces/TerritoryPgRepositoryInterface';
 
 @handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class CreateCertificateAction extends AbstractAction {
@@ -17,7 +16,6 @@ export class CreateCertificateAction extends AbstractAction {
     private identityRepository: IdentityRepositoryProviderInterfaceResolver,
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
-    private territoryRepository: TerritoryPgRepositoryInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
   ) {
     super();
@@ -31,11 +29,11 @@ export class CreateCertificateAction extends AbstractAction {
     };
     data: ResultInterface;
   }> {
-    const { identity, tz, operator_id, territory_id, start_at, end_at } = this.castParams(params);
+    const { identity, tz, operator_id, start_at, end_at, start_pos, end_pos } = this.castParams(params);
 
     // fetch the data for this identity, operator and territory and map to template object
     const person = await this.identityRepository.find(identity);
-    const territory = await this.territoryRepository.quickFind({ _id: territory_id });
+    // const territory = await this.territoryRepository.quickFind({ _id: territory_id });
     const operator = await this.kernel.call(
       'operator:quickfind',
       { _id: operator_id },
@@ -46,14 +44,16 @@ export class CreateCertificateAction extends AbstractAction {
     );
 
     // TODO agg the last line
-    const rows = (await this.carpoolRepository.find({ identity: person._id, start_at, end_at })).slice(0, 11);
+    const rows = (
+      await this.carpoolRepository.find({ identity: person._id, start_at, end_at, start_pos, end_pos })
+    ).slice(0, 11);
     const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
     const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0)) || 0;
     const remaining = (total_km * 0.558 - total_cost) | 0;
     const meta = {
       tz,
-      operator,
-      territory,
+      identity: { uuid: person.uuid },
+      operator: { uuid: operator.uuid, name: operator.name },
       total_km,
       total_cost,
       remaining,
@@ -72,9 +72,8 @@ export class CreateCertificateAction extends AbstractAction {
       meta,
       end_at,
       start_at,
-      identity_uuid: person.uuid,
-      operator_uuid: operator.uuid,
-      territory_uuid: territory.uuid,
+      operator_id,
+      identity_id: person._id,
     });
 
     return {
@@ -90,7 +89,7 @@ export class CreateCertificateAction extends AbstractAction {
    * Cast the identity as a phone number for now.
    * Will be refactored when the ID engine is up and running
    */
-  private castParams(params: ParamsInterface): Required<ParamsInterface> {
+  private castParams(params: ParamsInterface): ParamsInterface & { start_at: Date; end_at: Date } {
     const origin = new Date('2020-01-01T00:00:00+0100'); // Europe/Paris
     let { start_at, end_at } = params;
 

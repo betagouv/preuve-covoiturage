@@ -28,7 +28,7 @@ export class ListCertificateAction extends AbstractAction {
           uuid: cert.uuid,
           tz: cert.meta.tz,
           operator: cert.meta.operator,
-          territory: cert.meta.territory,
+          territory: cert.meta.territory || null,
           total_km: cert.meta.total_km,
           total_point: cert.meta.total_point,
           total_cost: cert.meta.total_cost,

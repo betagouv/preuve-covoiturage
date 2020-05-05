@@ -1,14 +1,25 @@
+export const position = {
+  type: 'object',
+  additionalProperties: false,
+  minProperties: 2,
+  properties: {
+    lat: { macro: 'lat' },
+    lon: { macro: 'lon' },
+  },
+};
+
 export const alias = 'certificate.create';
 export const schema = {
   $id: alias,
   type: 'object',
-  required: ['identity', 'tz', 'operator_id', 'territory_id'],
+  required: ['identity', 'tz', 'operator_id'],
   additionalProperties: false,
   properties: {
+    operator_id: { macro: 'number' },
     start_at: { macro: 'timestamp' },
     end_at: { macro: 'timestamp' },
-    operator_id: { macro: 'number' },
-    territory_id: { macro: 'number' },
+    start_pos: position,
+    end_pos: position,
     tz: { macro: 'varchar' },
     identity: {
       anyOf: [
@@ -20,4 +31,5 @@ export const schema = {
     },
   },
 };
+
 export const binding = [alias, schema];

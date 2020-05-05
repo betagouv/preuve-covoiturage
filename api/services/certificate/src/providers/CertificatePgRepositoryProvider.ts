@@ -57,11 +57,9 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   async findByOperatorId(operator_id: number, withLog = false): Promise<CertificateInterface[]> {
     const result = await this.connection.getClient().query({
       text: `
-        SELECT * FROM ${this.table} AS cc
-        INNER JOIN operator.operators AS oo
-        ON oo.uuid = cc.operator_uuid::uuid
-        WHERE oo._id = $1
-        ORDER BY cc.created_at DESC
+        SELECT * FROM ${this.table}
+        WHERE operator_id = $1
+        ORDER BY created_at DESC
         LIMIT 1000
       `,
       values: [operator_id],
@@ -73,15 +71,15 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
   }
 
   async create(params: CertificateBaseInterface): Promise<CertificateInterface> {
-    const { identity_uuid, operator_uuid, territory_uuid, start_at, end_at, meta } = params;
+    const { identity_id, operator_id, start_at, end_at, meta } = params;
     const result = await this.connection.getClient().query({
       text: `
         INSERT INTO ${this.table}
-        ( identity_uuid, operator_uuid, territory_uuid, start_at, end_at, meta )
-        VALUES ( $1, $2, $3, $4, $5, $6 )
+        ( identity_id, operator_id, start_at, end_at, meta )
+        VALUES ( $1, $2, $3, $4, $5 )
         RETURNING *
       `,
-      values: [identity_uuid, operator_uuid, territory_uuid, start_at, end_at, meta],
+      values: [identity_id, operator_id, start_at, end_at, meta],
     });
 
     if (!result.rowCount) throw new Error('Failed to create certificate');

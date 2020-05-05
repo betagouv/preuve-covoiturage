@@ -22,9 +22,7 @@ export class FindCertificateAction extends AbstractAction {
 
     return {
       uuid: certificate.uuid,
-      signature: await this.crypto.sha256(
-        certificate.identity_uuid + certificate.operator_uuid + certificate.territory_uuid,
-      ),
+      signature: await this.crypto.sha256(certificate.uuid + certificate.operator_id),
       start_at: certificate.start_at,
       end_at: certificate.end_at,
       created_at: certificate.created_at,

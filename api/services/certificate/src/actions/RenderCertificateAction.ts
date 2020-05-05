@@ -57,9 +57,9 @@ export class RenderCertificateAction extends AbstractAction {
       params,
       data: this.templateProvider.get('certificate', {
         data: certificate.meta,
-        identity: certificate.identity_uuid,
-        operator: certificate.operator_uuid,
-        territory: certificate.territory_uuid,
+        identity: certificate.meta.identity.uuid,
+        operator: certificate.meta.operator.uuid,
+        territory: certificate.meta.territory?.uuid,
         certificate: {
           created_at: `le ${this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à k:m', {
             timeZone: certificate.meta.tz,

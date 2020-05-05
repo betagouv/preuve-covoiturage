@@ -15,8 +15,6 @@ export class DownloadCertificateAction extends AbstractAction {
     switch (params.type) {
       case 'png':
         return this.printer.png(params.uuid);
-      // case 'json':
-      // return this.kernel.call('certificate:render', params, context);
       default:
         return this.printer.pdf(params.uuid);
     }

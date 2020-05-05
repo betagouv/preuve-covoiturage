@@ -1,11 +1,13 @@
 import { IdentityIdentifiersInterface } from './common/interfaces/IdentityIdentifiersInterface';
 import { CertificateInterface } from './common/interfaces/CertificateInterface';
+import { PointInterface } from '../common/interfaces/PointInterface';
 
 export interface ParamsInterface {
+  tz: string;
   identity: IdentityIdentifiersInterface;
   operator_id: number;
-  territory_id: number;
-  tz: string;
+  start_pos?: PointInterface;
+  end_pos?: PointInterface;
   start_at?: Date;
   end_at?: Date;
 }
