@@ -463,7 +463,7 @@ export class HttpTransport implements TransportInterface {
           }),
         )) as RPCResponseType;
 
-        this.raw(res, get(response, 'result.data', 'RENDER ERROR'), { 'Content-type': 'text/html' });
+        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'text/html' });
       }),
     );
 
@@ -487,7 +487,7 @@ export class HttpTransport implements TransportInterface {
           makeCall('certificate:download', { uuid, type }),
         )) as RPCResponseType;
 
-        this.raw(res, get(response, 'result', 'DOWNLOAD ERROR'), {
+        this.raw(res, get(response, 'result', response), {
           'Content-type': type === 'png' ? 'image/png' : 'application/pdf',
           'Content-disposition': `attachment; filename=${uuid}.${type}`,
         });
@@ -601,6 +601,12 @@ export class HttpTransport implements TransportInterface {
    * Send raw response data with configured headers
    */
   private raw(res: Response, data: any, headers: { [key: string]: string } = {}): void {
+    if (typeof data === 'object' && 'error' in data) {
+      res.status(mapStatusCode(data));
+      res.send(data.error);
+      return;
+    }
+
     this.setHeaders(res, headers);
     res.send(data);
   }
