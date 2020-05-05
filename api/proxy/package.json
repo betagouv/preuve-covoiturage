@@ -7,9 +7,8 @@
     "ilos": "ilos",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "ava",
-    "test:integration": "echo '[proxy] no integration tests'; exit 0",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "test": "ava --serial",
+    "lint": "eslint 'src/**/*.ts'"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,7 +18,7 @@
   },
   "ava": {
     "files": [
-      "tests/**/*.spec.ts"
+      "src/**/*.spec.ts"
     ],
     "typescript": {
       "rewritePaths": {

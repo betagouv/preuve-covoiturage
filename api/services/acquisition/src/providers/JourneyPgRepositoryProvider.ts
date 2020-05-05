@@ -4,6 +4,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 import {
   JourneyRepositoryProviderInterface,
   JourneyRepositoryProviderInterfaceResolver,
+  ExistsResultInterface,
 } from '../interfaces/JourneyRepositoryProviderInterface';
 import { AcquisitionInterface } from '../shared/acquisition/common/interfaces/AcquisitionInterface';
 import { JourneyInterface } from '../shared/common/interfaces/JourneyInterface';
@@ -40,17 +41,18 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
 
     return result.rows[0];
   }
-  async exists(journey_id: string, operator_id: number, application_id: number): Promise<number> {
+
+  async exists(journey_id: string, operator_id: number): Promise<ExistsResultInterface> {
     const query = {
       text: `
         SELECT
-          _id
+          _id,
+          created_at
         FROM ${this.table}
         WHERE operator_id = $1::int
         AND journey_id = $2::varchar
-        AND application_id = $3::int
         LIMIT 1`,
-      values: [operator_id, journey_id, application_id],
+      values: [operator_id, journey_id],
     };
 
     const result = await this.connection.getClient().query(query);
@@ -59,6 +61,6 @@ export class JourneyPgRepositoryProvider implements JourneyRepositoryProviderInt
       throw new NotFoundException();
     }
 
-    return result.rows[0]._id;
+    return result.rows[0];
   }
 }

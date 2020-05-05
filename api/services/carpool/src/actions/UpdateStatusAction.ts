@@ -9,7 +9,7 @@ import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/Carpoo
  */
 @handler({
   ...handlerConfig,
-  middlewares: [['channel.service.only', ['acquisition']]],
+  middlewares: [['channel.service.only', ['acquisition', 'fraudcheck']]],
 })
 export class UpdateStatusAction extends Action {
   constructor(private carpool: CarpoolRepositoryProviderInterfaceResolver) {
