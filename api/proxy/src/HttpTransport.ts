@@ -478,10 +478,9 @@ export class HttpTransport implements TransportInterface {
      * - print a PDF/PNG returned back to the caller
      */
     this.app.get(
-      '/v2/certificates/download/:uuid',
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
+      '/v2/certificates/download/:uuid/:type',
       asyncHandler(async (req, res, next) => {
-        const type = this.getTypeFromHeaders(req.headers);
+        const type = req.params.type.toLowerCase();
         const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
 
         const call = makeCall('certificate:download', { uuid, type }, { user: get(req, 'session.user', null) });

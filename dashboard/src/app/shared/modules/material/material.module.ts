@@ -22,11 +22,13 @@ import {
   MatExpansionModule,
   MatSlideToggleModule,
   MatDialogModule,
+  MatRadioModule,
 } from '@angular/material';
 
 @NgModule({
   declarations: [],
   imports: [
+    MatRadioModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
@@ -53,6 +55,7 @@ import {
     MatDialogModule,
   ],
   exports: [
+    MatRadioModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,

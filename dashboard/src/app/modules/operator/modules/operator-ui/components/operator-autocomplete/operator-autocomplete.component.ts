@@ -41,7 +41,7 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
       : null;
 
     this.operatorCtrl.setValue(this.selectedOperator ? this.selectedOperator.name : '');
-
+    this.operatorCtrl.markAsUntouched();
     const val = this.parentForm.getRawValue();
     const newVal = this.selectedOperator ? this.selectedOperator._id : null;
     if (!val || val.operator_id !== newVal) {
@@ -50,7 +50,6 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   }
 
   onOperatorSelect(operator: MatAutocompleteSelectedEvent): void {
-    console.log('onOperatorSelect : ', operator);
     clearTimeout(this.focusDebounceTimer);
     this.selectedOperatorUpdated(operator.option.value);
   }
@@ -59,7 +58,6 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
     this.commonDataService.operators$.pipe(takeUntil(this.destroy$)).subscribe((operators) => {
       this.operators = operators;
       this.selectedOperatorUpdated();
-      console.log('this.operators : ', this.operators);
     });
 
     this.filteredOperators = this.operatorCtrl.valueChanges.pipe(

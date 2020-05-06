@@ -1,9 +1,13 @@
 import { handler } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
-
 import { CertificateInterface } from '../shared/certificate/common/interfaces/CertificateInterface';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/certificate/list.contract';
+import {
+  handlerConfig,
+  ResultInterface,
+  ParamsInterface,
+  ResultRowInterface,
+} from '../shared/certificate/list.contract';
 import { alias } from '../shared/certificate/list.schema';
 
 @handler({
@@ -18,29 +22,31 @@ export class ListCertificateAction extends AbstractAction {
     super();
   }
 
-  public async handle(params: ParamsInterface): Promise<ResultInterface[]> {
+  public async handle(params: ParamsInterface): Promise<ResultInterface> {
     const { operator_id } = params;
 
-    // TODO operator_id
-    console.log({ operator_id });
+    const length = await this.certRepository.count(operator_id);
 
     const results = operator_id
-      ? await this.certRepository.findByOperatorId(operator_id)
-      : await this.certRepository.find();
+      ? await this.certRepository.findByOperatorId(operator_id, false, params.pagination)
+      : await this.certRepository.find(false, params.pagination);
 
-    return results.map(
-      (cert: CertificateInterface): ResultInterface => {
-        return {
-          uuid: cert.uuid,
-          tz: cert.meta.tz,
-          operator: cert.meta.operator,
-          territory: cert.meta.territory || null,
-          total_km: cert.meta.total_km,
-          total_point: cert.meta.total_point,
-          total_cost: cert.meta.total_cost,
-          remaining: cert.meta.remaining,
-        };
-      },
-    );
+    return {
+      length,
+      rows: results.map(
+        (cert: CertificateInterface): ResultRowInterface => {
+          return {
+            uuid: cert.uuid,
+            tz: cert.meta.tz,
+            operator: cert.meta.operator,
+            territory: cert.meta.territory || null,
+            total_km: cert.meta.total_km,
+            total_point: cert.meta.total_point,
+            total_cost: cert.meta.total_cost,
+            remaining: cert.meta.remaining,
+          };
+        },
+      ),
+    };
   }
 }

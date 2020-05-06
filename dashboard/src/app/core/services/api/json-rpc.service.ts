@@ -23,6 +23,13 @@ export abstract class JsonRPC {
     return this.call([method], options, throwErrors).pipe(map((datas) => datas[0]));
   }
 
+  public fetchGet(url: string, options?: JsonRPCOptions): Observable<Record<string, any>> {
+    const finalOptions = options ? options : { withCredentials: true };
+    finalOptions.withCredentials = finalOptions.withCredentials !== undefined ? finalOptions.withCredentials : true;
+
+    return this.http.get(url, finalOptions);
+  }
+
   public call(methods: JsonRPCParam[], options?: JsonRPCOptions, throwErrors = true): Observable<JsonRPCResult[]> {
     // handle default withCredentials = true for empty object and undefined property
     const finalOptions = options ? options : { withCredentials: true };

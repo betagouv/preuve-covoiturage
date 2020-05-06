@@ -1,12 +1,11 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ConfigInterfaceResolver, UnauthorizedException } from '@ilos/common';
+import { handler, ConfigInterfaceResolver } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
 import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 import { TemplateInterfaceResolver } from '@pdc/provider-template';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
-import { RenderTokenPayloadInterface } from '../shared/certificate/common/interfaces/RenderTokenPayloadInterface';
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
 import { alias } from '../shared/certificate/render.schema';
 
@@ -26,20 +25,20 @@ export class RenderCertificateAction extends AbstractAction {
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
     //// TODO : MOVE THIS TO MIDDLEWARE
     // validate token
-    try {
-      const payload = await this.tokenProvider.verify<RenderTokenPayloadInterface>(params.token, {
-        issuer: this.config.get('token.render.issuer'),
-        audience: this.config.get('token.render.audience'),
-        ignoreExpiration: true,
-      });
+    // try {
+    //   const payload = await this.tokenProvider.verify<RenderTokenPayloadInterface>(params.token, {
+    //     issuer: this.config.get('token.render.issuer'),
+    //     audience: this.config.get('token.render.audience'),
+    //     ignoreExpiration: true,
+    //   });
 
-      // make sure the token has been issued for this certificate
-      if (payload.uuid !== params.uuid) {
-        throw new Error('Token not matching the certificate');
-      }
-    } catch (e) {
-      throw new UnauthorizedException(e.message);
-    }
+    //   // make sure the token has been issued for this certificate
+    //   if (payload.uuid !== params.uuid) {
+    //     throw new Error('Token not matching the certificate');
+    //   }
+    // } catch (e) {
+    //   throw new UnauthorizedException(e.message);
+    // }
     //// END TODO
 
     const certificate = await this.certRepository.findByUuid(params.uuid);

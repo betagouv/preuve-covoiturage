@@ -1,10 +1,16 @@
 import { PointInterface } from '../common/interfaces/PointInterface';
 
-export interface ParamsInterface {
-  operator_id?: number;
+export interface Pagination {
+  start_index: number;
+  length: number;
 }
 
-export type ResultInterface = {
+export interface ParamsInterface {
+  operator_id?: number;
+  pagination?: Pagination;
+}
+
+export interface ResultRowInterface {
   uuid: string;
   tz: string;
   operator: { uuid: string; name: string };
@@ -15,9 +21,14 @@ export type ResultInterface = {
   total_point: number;
   total_cost: number;
   remaining: number;
+}
+export type ResultInterface = {
+  rows: ResultRowInterface[];
+  length: number;
 };
 
-export type RepositoryInterface = Required<ParamsInterface>;
+// export type RepositoryInterface = Required<ParamsInterface>;
+export type RepositoryInterface = ParamsInterface;
 
 export const handlerConfig = {
   service: 'certificate',
