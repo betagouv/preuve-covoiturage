@@ -5,10 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { JsonRPCParam } from '~/core/entities/api/jsonRPCParam';
-import {
-  ParamsInterface as FindParamsInterface,
-  ResultInterface as FindResultInterface,
-} from '~/core/entities/api/shared/certificate/find.contract';
+import { ResultInterface as FindResultInterface } from '~/core/entities/api/shared/certificate/find.contract';
 import {
   ParamsInterface as ListParamsInterface,
   ResultInterface as ListResultInterface,
@@ -71,8 +68,12 @@ export class CertificateApiService extends JsonRPC {
   }
 
   find(uuid: string): Observable<FindResultInterface> {
-    return super
-      .callOne(new JsonRPCParam<FindParamsInterface>('certificate:find', { uuid }))
-      .pipe(map((response) => response.data));
+    return this.http
+      .get(`v2/certificates/find/${uuid}`)
+      .pipe(map((data: any) => data.result.data as FindResultInterface));
+
+    // return super
+    //   .callOne(new JsonRPCParam<FindParamsInterface>('certificate:find', { uuid }))
+    //   .pipe(map((response) => response.data));
   }
 }

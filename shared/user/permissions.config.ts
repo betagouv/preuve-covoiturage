@@ -61,6 +61,8 @@ export const territory = {
     slug: 'demo',
     name: 'Demo',
     permissions: [
+      'operator.list',
+      'operator.read',
       'company.fetch',
       'company.find',
       'user.list',
@@ -105,6 +107,8 @@ export const territory = {
     slug: 'user',
     name: 'User',
     permissions: [
+      'operator.list',
+      'operator.read',
       'company.fetch',
       'company.find',
       'user.list',
