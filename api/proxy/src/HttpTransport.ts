@@ -479,13 +479,13 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.get(
       '/v2/certificates/download/:uuid',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const type = this.getTypeFromHeaders(req.headers);
         const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
 
-        const response = (await this.kernel.handle(
-          makeCall('certificate:download', { uuid, type }),
-        )) as RPCResponseType;
+        const call = makeCall('certificate:download', { uuid, type }, { user: get(req, 'session.user', null) });
+        const response = (await this.kernel.handle(call)) as RPCResponseType;
 
         this.raw(res, get(response, 'result', response), {
           'Content-type': type === 'png' ? 'image/png' : 'application/pdf',
@@ -505,7 +505,11 @@ export class HttpTransport implements TransportInterface {
       serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const response = (await this.kernel.handle(
-          makeCall('certificate:create', { ...req.body, operator_id: get(req, 'session.user.operator_id', 0) }),
+          makeCall(
+            'certificate:create',
+            { ...req.body, operator_id: get(req, 'session.user.operator_id', 0) },
+            { user: get(req, 'session.user', null) },
+          ),
         )) as RPCResponseType;
         this.send(res, response);
       }),

@@ -9,7 +9,13 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
 import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
 
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    ['validate', alias],
+    ['can', ['certificate.create']],
+  ],
+})
 export class CreateCertificateAction extends AbstractAction {
   constructor(
     private kernel: KernelInterfaceResolver,

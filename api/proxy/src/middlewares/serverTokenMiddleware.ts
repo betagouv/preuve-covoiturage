@@ -41,14 +41,6 @@ async function checkApplication(
     throw new UnauthorizedException('Unauthorized application');
   }
 
-  // check permissions
-  const app_perms = get(app, 'result.permissions', [])
-    .sort()
-    .join(',');
-  if (app_perms !== payload.p.sort().join(',')) {
-    throw new ForbiddenException('Missing application permissions');
-  }
-
   return (app as any).result as ApplicationInterface;
 }
 
@@ -77,7 +69,7 @@ async function logRequest(kernel: KernelInterface, request: Request, payload: To
     { channel: { service: 'proxy' }, call: { user: { permissions: ['acquisition.logrequest'] } } },
   );
 
-  console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id')}`);
+  console.log(`logRequest [${get(request, 'headers.x-request-id', '')}] ${get(request, 'body.journey_id', '')}`);
 }
 
 export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: TokenProviderInterfaceResolver) {
@@ -124,7 +116,7 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
       // The only permissions now. Store in the token or retrieve
       // from the application service later if it gets more complex.
       if (!payload.p) {
-        payload.p = ['journey.create'];
+        payload.p = ['journey.create', 'certificate.create', 'certificate.download'];
       }
 
       // Check and get the app

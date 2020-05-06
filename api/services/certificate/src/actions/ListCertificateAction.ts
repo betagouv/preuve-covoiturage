@@ -6,7 +6,13 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/certificate/list.contract';
 import { alias } from '../shared/certificate/list.schema';
 
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    ['validate', alias],
+    ['can', ['certificate.list']],
+  ],
+})
 export class ListCertificateAction extends AbstractAction {
   constructor(private certRepository: CertificateRepositoryProviderInterfaceResolver) {
     super();
