@@ -113,12 +113,6 @@ export function serverTokenMiddleware(kernel: KernelInterface, tokenProvider: To
         throw new ForbiddenException();
       }
 
-      // The only permissions now. Store in the token or retrieve
-      // from the application service later if it gets more complex.
-      if (!payload.p) {
-        payload.p = ['journey.create', 'certificate.create', 'certificate.download'];
-      }
-
       // Check and get the app
       const app = await checkApplication(kernel, payload);
 
