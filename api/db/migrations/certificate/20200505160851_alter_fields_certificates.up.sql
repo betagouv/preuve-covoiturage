@@ -31,6 +31,11 @@ ALTER TABLE certificate.certificates
   ALTER COLUMN uuid SET NOT NULL;
 
 ALTER TABLE certificate.certificates
+  ALTER COLUMN identity_id SET NOT NULL;
+ALTER TABLE certificate.certificates
+  ALTER COLUMN operator_id SET NOT NULL;
+
+ALTER TABLE certificate.certificates
   ALTER COLUMN created_at SET DEFAULT NOW();
 ALTER TABLE certificate.certificates
   ALTER COLUMN created_at SET NOT NULL;

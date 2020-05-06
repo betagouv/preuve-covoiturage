@@ -15,7 +15,7 @@ export const schema = {
   required: ['identity', 'tz', 'operator_id'],
   additionalProperties: false,
   properties: {
-    operator_id: { macro: 'number' },
+    operator_id: { macro: 'serial' },
     start_at: { macro: 'timestamp' },
     end_at: { macro: 'timestamp' },
     start_pos: position,

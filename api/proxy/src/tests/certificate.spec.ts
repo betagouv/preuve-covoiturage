@@ -59,7 +59,7 @@ test.before(async (t) => {
     a: '1efacd36-a85b-47b2-99df-cabbf74202b3',
     o: 1,
     s: 'operator',
-    p: ['journey.create'],
+    p: ['journey.create', 'certificate.create', 'certificate.download'],
     v: 2,
   });
 

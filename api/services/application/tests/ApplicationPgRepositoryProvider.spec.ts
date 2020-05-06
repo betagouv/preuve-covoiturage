@@ -40,7 +40,7 @@ describe('Application pg repository', () => {
       name: 'Dummy Application',
       owner_id: '12345',
       owner_service: 'operator',
-      permissions: ['journey.create'],
+      permissions: ['journey.create', 'certificate.create', 'certificate.download'],
     });
 
     uuid = result.uuid;

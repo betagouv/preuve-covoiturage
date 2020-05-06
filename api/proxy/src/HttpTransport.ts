@@ -520,7 +520,7 @@ export class HttpTransport implements TransportInterface {
         const response = (await this.kernel.handle(
           makeCall(
             'certificate:create',
-            { ...req.body, operator_id: get(req, 'session.user.operator_id', 0) },
+            { ...req.body, operator_id: get(req, 'session.user.operator_id') },
             { user: get(req, 'session.user', null) },
           ),
         )) as RPCResponseType;

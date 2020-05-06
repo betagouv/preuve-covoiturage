@@ -2,7 +2,7 @@ import path from 'path';
 import { serviceProvider, NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
 import { PostgresConnection } from '@ilos/connection-postgres';
-import { ValidatorMiddleware } from '@pdc/provider-validator';
+import { ValidatorExtension, ValidatorMiddleware } from '@pdc/provider-validator';
 import { PermissionMiddleware } from '@pdc/provider-acl';
 import { DateProvider } from '@pdc/provider-date';
 import { QrcodeProvider } from '@pdc/provider-qrcode';
@@ -59,5 +59,5 @@ import { binding as listBinding } from './shared/certificate/list.schema';
   },
 })
 export class ServiceProvider extends AbstractServiceProvider {
-  readonly extensions: NewableType<ExtensionInterface>[] = [TemplateExtension];
+  readonly extensions: NewableType<ExtensionInterface>[] = [ValidatorExtension, TemplateExtension];
 }
