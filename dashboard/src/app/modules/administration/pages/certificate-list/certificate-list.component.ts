@@ -31,16 +31,17 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   }
   @ViewChild('paginator', { static: true }) paginator: MatPaginator;
 
+  pageLength = 20;
   length = 0;
-  start_index = 0;
+  startIndex = 0;
   certificates: ResultRowInterface[] = [];
-  searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: 1, start_index: 0 } });
+  searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.pageLength, start_index: 0 } });
   isLoading = false;
   showForm = false;
   displayedColumns = ['uuid', 'total_km', 'total_point', 'operator', 'actions'];
   // pageChange: Subject<any> = new Subject();
   ngOnInit(): void {
-    this.start_index = 0;
+    this.startIndex = 0;
     this.length = 0;
     this.auth.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       if (user.operator_id) {
@@ -91,7 +92,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
         },
       });
 
-      this.start_index = page.pageIndex;
+      this.startIndex = page.pageIndex;
       this.updateList();
     });
 
@@ -213,7 +214,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     this.certificateApi
       .create(certificate)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.updateList());
+      .subscribe(() => {
+        this.updateList();
+        this.showForm = false;
+      });
   }
   onCancelCreateCertificate(): void {
     this.showForm = false;
