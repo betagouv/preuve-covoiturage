@@ -30,7 +30,7 @@ const routes: Routes = [
         canLoad: [AuthGuard],
       },
       {
-        path: 'certificate',
+        path: 'attestation',
         loadChildren: (): Promise<CertificateModule> =>
           import('./modules/certificate/certificate.module').then((mod) => mod.CertificateModule),
       },

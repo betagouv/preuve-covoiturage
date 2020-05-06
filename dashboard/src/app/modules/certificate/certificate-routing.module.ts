@@ -8,7 +8,6 @@ import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
 import { CertificateLayoutComponent } from './certificate-layout/certificate-layout.component';
 import { GenerateComponent } from './pages/generate/generate.component';
 import { CheckComponent } from './pages/check/check.component';
-import { CertificateListComponent } from './pages/certificate-list/certificate-list.component';
 
 const routes: Routes = [
   {
@@ -24,10 +23,6 @@ const routes: Routes = [
       {
         path: 'check/:uuid',
         component: CheckComponent,
-      },
-      {
-        path: '',
-        component: CertificateListComponent,
       },
     ],
   },

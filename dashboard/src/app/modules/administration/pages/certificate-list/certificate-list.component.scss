@@ -12,9 +12,17 @@
   }
 }
 
+.item-actions {
+  text-align: right;
+}
+
 .FilterTop {
-  max-width: 240px;
-  margin-left: auto;
+  display: flex;
+  h3 {
+    flex-grow: 1;
+  }
+  // max-width: 240px;
+  // margin-left: auto;
 }
 
 .CertificateEdit {

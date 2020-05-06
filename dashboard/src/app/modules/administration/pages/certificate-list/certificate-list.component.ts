@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CertificateApiService, CreateParamsInterface } from '../../services/certificate-api.service';
+import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { BehaviorSubject } from 'rxjs';
 import { CommonDataService } from '~/core/services/common-data.service';
