@@ -43,7 +43,7 @@ const routes: Routes = [
       },
       {
         path: 'attestation',
-        data: { groups: [UserGroupEnum.TERRITORY, UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
+        data: { groups: [UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
         component: CertificateListComponent,
       },
       {

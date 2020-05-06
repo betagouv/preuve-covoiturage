@@ -45,7 +45,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     this.length = 0;
     this.auth.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       if (user.operator_id) {
-        this.searchState.next({ ...this.searchState, operator_id: user.operator_id });
+        this.searchState.next({ ...this.searchState.value, operator_id: user.operator_id });
       }
     });
 
