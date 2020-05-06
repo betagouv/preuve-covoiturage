@@ -36,6 +36,10 @@ ALTER TABLE certificate.certificates
 ALTER TABLE certificate.certificates
   ALTER COLUMN created_at SET NOT NULL;
 
+ALTER TABLE certificate.certificates
+  ALTER COLUMN updated_at SET DEFAULT NOW();
+ALTER TABLE certificate.certificates
+  ALTER COLUMN updated_at SET NOT NULL;
 CREATE TRIGGER touch_certificates_updated_at BEFORE UPDATE
   ON certificate.certificates FOR EACH ROW EXECUTE PROCEDURE common.touch_updated_at();
 

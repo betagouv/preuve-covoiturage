@@ -35,19 +35,12 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
   }): Promise<CarpoolInterface[]> {
     const { identity, start_at, end_at, start_pos, end_pos, radius = 1000 } = params;
 
-    let where_start = '';
-    if (start_pos) {
-      where_start = `AND ST_Distance(ST_MakePoint(${start_pos.lon}, ${start_pos.lat}), cc.start_position) < ${Math.abs(
-        radius | 0,
-      )}}`;
-    }
-
-    let where_end = '';
-    if (end_pos) {
-      where_end = `AND ST_Distance(ST_MakePoint(${end_pos.lon}, ${end_pos.lat}), cc.end_position) < ${Math.abs(
-        radius | 0,
-      )}}`;
-    }
+    const where_start = start_pos
+      ? `AND ST_Distance(ST_MakePoint(${start_pos.lon}, ${start_pos.lat}), cc.start_position) < ${Math.abs(radius | 0)}`
+      : '';
+    const where_end = end_pos
+      ? `AND ST_Distance(ST_MakePoint(${end_pos.lon}, ${end_pos.lat}), cc.end_position) < ${Math.abs(radius | 0)}`
+      : '';
 
     // fetch the number of kilometers per month
     const result = await this.connection.getClient().query({
