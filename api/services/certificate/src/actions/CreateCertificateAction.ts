@@ -1,5 +1,5 @@
 import { upperFirst } from 'lodash';
-import { handler, KernelInterfaceResolver } from '@ilos/common';
+import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 
@@ -23,6 +23,7 @@ export class CreateCertificateAction extends AbstractAction {
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
@@ -99,18 +100,27 @@ export class CreateCertificateAction extends AbstractAction {
    */
   private castParams(params: ParamsInterface): ParamsInterface & { start_at: Date; end_at: Date } {
     const origin = new Date('2020-01-01T00:00:00+0100'); // Europe/Paris
+    const end_at_max = new Date().getTime() - this.config.get('delays.create.end_at_buffer', 6) * 86400000;
+
     let { start_at, end_at } = params;
 
     start_at = 'start_at' in params ? new Date(start_at) : origin;
-    end_at = 'end_at' in params ? new Date(end_at) : new Date();
+    end_at = 'end_at' in params ? new Date(end_at) : new Date(end_at_max);
 
-    // normalize dates
-    if (end_at.getTime() > new Date().getTime()) {
-      end_at = new Date();
+    // start_at must be older than n days + 1
+    if (start_at.getTime() > end_at_max) {
+      start_at = new Date(end_at_max - 86400000);
     }
 
+    // end_at must be older than n days
+    if (end_at.getTime() > end_at_max) {
+      end_at = new Date(end_at_max);
+    }
+
+    // start_at must be older than end_at, otherwise we
+    // set a 24 hours slot
     if (start_at.getTime() >= end_at.getTime()) {
-      start_at = origin;
+      start_at = new Date(end_at.getTime() - 86400000);
     }
 
     return { ...params, start_at, end_at };
