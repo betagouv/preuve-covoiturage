@@ -82,7 +82,11 @@ export class CreateCertificateAction extends AbstractAction {
 
     return {
       meta: { httpStatus: 201 },
-      data: certificate,
+      data: {
+        _id: certificate._id,
+        uuid: certificate.uuid,
+        created_at: certificate.created_at,
+      },
     };
   }
 

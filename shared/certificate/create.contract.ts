@@ -12,7 +12,11 @@ export interface ParamsInterface {
   end_at?: Date;
 }
 
-export interface ResultInterface extends CertificateInterface {}
+export interface ResultInterface {
+  _id: number;
+  uuid: string;
+  created_at: Date;
+}
 
 export type RepositoryInterface = Required<ParamsInterface>;
 
