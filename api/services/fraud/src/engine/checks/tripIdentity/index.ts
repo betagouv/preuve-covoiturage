@@ -7,7 +7,6 @@ import { TripIdentityPhoneTruncCollisionCheck } from './TripIdentityPhoneTruncCo
 import { TripIdentityTravelpassCollisionCheck } from './TripIdentityTravelpassCollisionCheck';
 import { TripIdentityUserIdCollisionCheck } from './TripIdentityUserIdCollisionCheck';
 
-
 export const tripIdentity = [
   TripIdentityEmailCollisionCheck,
   TripIdentityFirstnameCollisionCheck,

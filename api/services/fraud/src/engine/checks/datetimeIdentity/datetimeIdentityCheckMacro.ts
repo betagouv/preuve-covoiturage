@@ -4,35 +4,30 @@ import { Macro, TestInterface, ExecutionContext } from 'ava';
 import { makeKernel, KernelTestInterface } from '@pdc/helper-test';
 
 import {
-  SingleTripIdentityCheckParamsInterface,
-  TripIdentityCheckParamsInterface,
-} from './TripIdentityCheckParamsInterface';
+  SingleDatetimeIdentityCheckParamsInterface,
+  DatetimeIdentityCheckParamsInterface,
+} from './DatetimeIdentityCheckParamsInterface';
 import { HandleCheckInterface } from '../../../interfaces';
 
-export function faker(data: Partial<SingleTripIdentityCheckParamsInterface>): SingleTripIdentityCheckParamsInterface {
-  const defaultData = {
-    phone: '',
-    phone_trunc: '',
-    operator_id: '',
-    operator_user_id: '',
-    firstname: '',
-    lastname: '',
-    email: '',
-    travel_pass_name: '',
-    travel_pass_user_id: '',
+export function faker(
+  data: Partial<SingleDatetimeIdentityCheckParamsInterface>,
+): SingleDatetimeIdentityCheckParamsInterface {
+  const defaultData: SingleDatetimeIdentityCheckParamsInterface = {
+    inside: false,
+    interval: 0,
   };
 
   return { ...defaultData, ...data };
 }
 
-export function tripIdentityCheckMacro<TestContext = unknown>(
+export function datetimeIdentityCheckMacro<TestContext = unknown>(
   anyTest: TestInterface,
   serviceProviderCtor: NewableType<ServiceContainerInterface>,
-  checkCtor: NewableType<HandleCheckInterface<TripIdentityCheckParamsInterface>>,
+  checkCtor: NewableType<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>,
 ): {
   test: TestInterface<TestContext & KernelTestInterface>;
   range: Macro<
-    [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
+    [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
     TestContext & KernelTestInterface
   >;
 } {
@@ -48,17 +43,17 @@ export function tripIdentityCheckMacro<TestContext = unknown>(
   });
 
   const range: Macro<
-    [Partial<SingleTripIdentityCheckParamsInterface>[], number, number, boolean?],
+    [Partial<SingleDatetimeIdentityCheckParamsInterface>[], number, number, boolean?],
     TestContext & KernelTestInterface
   > = async (
     t: ExecutionContext<TestContext & KernelTestInterface>,
-    input: Partial<SingleTripIdentityCheckParamsInterface>[],
+    input: Partial<SingleDatetimeIdentityCheckParamsInterface>[],
     min: number,
     max: number,
   ) => {
     const check = t.context.kernel
       .get<ServiceContainerInterface>(serviceProviderCtor)
-      .get<HandleCheckInterface<TripIdentityCheckParamsInterface>>(checkCtor);
+      .get<HandleCheckInterface<DatetimeIdentityCheckParamsInterface>>(checkCtor);
     const data = input.map((i) => faker(i));
     const result = await check.handle(data);
     t.log(data);

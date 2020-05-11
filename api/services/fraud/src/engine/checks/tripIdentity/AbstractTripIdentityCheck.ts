@@ -14,7 +14,6 @@ export abstract class AbstractTripIdentityCheck implements HandleCheckInterface<
       }
       return arr;
     });
-    console.log({ scopedData }, JSON.stringify(scopedData));
     return this.count(scopedData) / data.length;
   }
 
