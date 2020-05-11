@@ -1,7 +1,7 @@
 import { provider, ServiceContainerInterfaceResolver, NewableType } from '@ilos/common';
 
 import { FraudCheckRepositoryProviderInterfaceResolver } from '../interfaces/FraudCheckRepositoryProviderInterface';
-import { checkList } from './checks/self';
+import { checks as checkList } from './checks';
 import {
   StaticCheckInterface,
   CheckInterface,

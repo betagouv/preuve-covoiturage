@@ -3,7 +3,7 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { FraudCheckRepositoryProvider } from './FraudCheckRepositoryProvider';
 import { FraudCheck, FraudCheckStatusEnum } from '../interfaces';
-import { checkList } from '../engine/checks/self';
+import { checks as checkList } from '../engine/checks';
 
 interface TestContext {
   repository: FraudCheckRepositoryProvider;
