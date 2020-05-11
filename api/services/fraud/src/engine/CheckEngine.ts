@@ -34,7 +34,7 @@ export class CheckEngine {
    *  List all available fraud check methods
    */
   listAvailableMethods(): string[] {
-    return this.checks.map((c) => c.key);
+    return this.checks.map((c) => c.key).sort();
   }
 
   async apply(
@@ -68,6 +68,7 @@ export class CheckEngine {
     }
     return result;
   }
+
   protected hasExternalPreparer(check: HandleCheckInterface | CheckInterface): check is HandleCheckInterface {
     return (check as HandleCheckInterface).preparer !== undefined;
   }
