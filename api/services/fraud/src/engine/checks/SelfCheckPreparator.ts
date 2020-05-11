@@ -5,7 +5,7 @@ import { PrepareCheckInterface } from '../../interfaces';
 import { SelfCheckParamsInterface } from './self/SelfCheckParamsInterface';
 
 @provider()
-export class SelfCheckPreparator implements PrepareCheckInterface {
+export class SelfCheckPreparator implements PrepareCheckInterface<SelfCheckParamsInterface> {
   public carpoolView = 'carpool.carpools'; // TODO : change target to view
   protected datasource = 'data';
 

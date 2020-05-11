@@ -30,7 +30,7 @@ export class CheckAction extends Action {
   protected async notifyScore(acquisition_id: number): Promise<void> {
     try {
       const score = await this.engine.getGlobalScore(acquisition_id);
-      if (score > 80) {
+      if (score > 0.8) {
         this.kernel.notify<UpdateStatusParamsInterface>(
           updateStatusSignature,
           {
