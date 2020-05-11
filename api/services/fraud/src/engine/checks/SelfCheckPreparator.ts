@@ -1,5 +1,6 @@
 import { provider } from '@ilos/common';
 import { PostgresConnection } from '@ilos/connection-postgres';
+import { GeoProviderInterfaceResolver } from '@pdc/provider-geo';
 
 import { PrepareCheckInterface } from '../../interfaces';
 import { SelfCheckParamsInterface } from './self/SelfCheckParamsInterface';
@@ -9,7 +10,7 @@ export class SelfCheckPreparator implements PrepareCheckInterface<SelfCheckParam
   public carpoolView = 'carpool.carpools'; // TODO : change target to view
   protected datasource = 'data';
 
-  constructor(private connection: PostgresConnection) {}
+  constructor(private connection: PostgresConnection, private geoProvider: GeoProviderInterfaceResolver) {}
 
   async prepare(acquisitionId: number): Promise<SelfCheckParamsInterface[]> {
     const query = {
@@ -44,15 +45,62 @@ export class SelfCheckPreparator implements PrepareCheckInterface<SelfCheckParam
     };
 
     const dbResult = await this.connection.getClient().query(query);
-    return dbResult.rows.map((r) => {
-      const { driver_meta, passenger_meta, ...data } = r;
-      return {
+    const results = [];
+    for (const line of dbResult.rows) {
+      const { driver_meta, passenger_meta, ...data } = line;
+
+      let { calc_distance: driver_calc_distance, calc_duration: driver_calc_duration } = driver_meta;
+      if (!driver_calc_distance || !driver_calc_duration) {
+        ({ distance: driver_calc_distance, duration: driver_calc_duration } = await this.calcDistanceAndDuration(
+          line.driver_start_lat,
+          line.driver_start_lon,
+          line.driver_end_lat,
+          line.driver_end_lon,
+        ));
+      }
+
+      let { calc_distance: passenger_calc_distance, calc_duration: passenger_calc_duration } = passenger_meta;
+      if (!passenger_calc_distance || !passenger_calc_duration) {
+        ({ distance: passenger_calc_distance, duration: passenger_calc_duration } = await this.calcDistanceAndDuration(
+          line.passenger_start_lat,
+          line.passenger_start_lon,
+          line.passenger_end_lat,
+          line.passenger_end_lon,
+        ));
+      }
+
+      results.push({
         ...data,
-        driver_calc_distance: driver_meta.calc_distance,
-        driver_calc_duration: driver_meta.calc_duration,
-        passenger_calc_distance: passenger_meta.calc_distance || 0,
-        passenger_calc_duration: passenger_meta.calc_duration || 0,
-      };
-    });
+        driver_calc_distance,
+        driver_calc_duration,
+        passenger_calc_distance,
+        passenger_calc_duration,
+      });
+    }
+
+    return results;
+  }
+
+  protected async calcDistanceAndDuration(
+    start_lat: number,
+    start_lon: number,
+    end_lat: number,
+    end_lon: number,
+  ): Promise<{ distance: number; duration: number }> {
+    try {
+      return await this.geoProvider.getRouteMeta(
+        {
+          lon: start_lon,
+          lat: start_lat,
+        },
+        {
+          lon: end_lon,
+          lat: end_lat,
+        },
+      );
+    } catch(e) {
+      console.log(e);
+      return { distance: 0, duration: 0};
+    }
   }
 }

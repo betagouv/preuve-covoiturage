@@ -3,7 +3,9 @@ import { PostgresConnection } from '@ilos/connection-postgres';
 
 import { FraudCheckRepositoryProvider } from './FraudCheckRepositoryProvider';
 import { FraudCheck, FraudCheckStatusEnum } from '../interfaces';
-import { checks as checkList } from '../engine/checks';
+import { checks } from '../engine/checks';
+
+const checkList = checks.sort((a, b) => (a.key > b.key ? 1 : a.key < b.key ? -1 : 0));
 
 interface TestContext {
   repository: FraudCheckRepositoryProvider;
