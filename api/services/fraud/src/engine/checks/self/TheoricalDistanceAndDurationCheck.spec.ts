@@ -16,4 +16,3 @@ test('between by duration', range, { driver_duration: 500, driver_calc_duration:
 
 test('max by null duration', range, { driver_duration: 10, driver_calc_duration: 0 }, 0.99, 1);
 test('max by null distance', range, { driver_distance: 0, driver_calc_distance: 10 }, 0.99, 1);
-

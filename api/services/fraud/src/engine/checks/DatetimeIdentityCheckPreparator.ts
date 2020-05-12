@@ -30,7 +30,9 @@ export class DatetimeIdentityCheckPreparator implements PrepareCheckInterface<Da
           SELECT
             i.duration,
             EXTRACT(EPOCH FROM (cc.datetime - i.start_datetime)::interval) as start_interval,
-            EXTRACT(EPOCH FROM ((cc.datetime + (cc.duration || ' seconds')::interval) - i.end_datetime)::interval) as end_interval
+            EXTRACT(EPOCH FROM (
+              (cc.datetime + (cc.duration || ' seconds')::interval
+            ) - i.end_datetime)::interval) as end_interval
           FROM carpool.carpools as cc
           JOIN carpool.identities as id
             ON cc.identity_id = id._id

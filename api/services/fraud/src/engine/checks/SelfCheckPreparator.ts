@@ -98,9 +98,9 @@ export class SelfCheckPreparator implements PrepareCheckInterface<SelfCheckParam
           lat: end_lat,
         },
       );
-    } catch(e) {
+    } catch (e) {
       console.log(e);
-      return { distance: 0, duration: 0};
+      return { distance: 0, duration: 0 };
     }
   }
 }
