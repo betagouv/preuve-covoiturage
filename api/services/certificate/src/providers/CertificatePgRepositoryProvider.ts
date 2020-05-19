@@ -20,9 +20,11 @@ export class CertificatePgRepositoryProvider implements CertificateRepositoryPro
 
   constructor(protected connection: PostgresConnection) {}
 
-  paginationQuery(pagination?: Pagination) {
-    let paginationQuery = ` LIMIT ${pagination && pagination.length ? pagination.length : 1000}`; // define limit with 1000 by default
+  paginationQuery(pagination?: Pagination): string {
+    // define limit with 1000 by default
+    let paginationQuery = ` LIMIT ${pagination && pagination.length ? pagination.length : 1000}`;
     if (pagination && pagination.start_index) paginationQuery += ` OFFSET ${pagination.start_index}`;
+
     return paginationQuery;
   }
 
