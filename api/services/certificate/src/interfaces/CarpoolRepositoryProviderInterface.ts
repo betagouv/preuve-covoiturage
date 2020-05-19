@@ -14,8 +14,7 @@ export interface CarpoolRepositoryProviderInterface {
     identity: number;
     start_at: Date;
     end_at: Date;
-    start_pos: PointInterface;
-    end_pos: PointInterface;
+    positions?: PointInterface[];
     radius?: number;
   }): Promise<CarpoolInterface[]>;
 }
@@ -25,8 +24,7 @@ export abstract class CarpoolRepositoryProviderInterfaceResolver implements Carp
     identity: number;
     start_at: Date;
     end_at: Date;
-    start_pos: PointInterface;
-    end_pos: PointInterface;
+    positions?: PointInterface[];
     radius?: number;
   }): Promise<CarpoolInterface[]> {
     throw new Error('Method not implemented.');

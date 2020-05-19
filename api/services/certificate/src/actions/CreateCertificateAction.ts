@@ -36,7 +36,7 @@ export class CreateCertificateAction extends AbstractAction {
     };
     data: ResultInterface;
   }> {
-    const { identity, tz, operator_id, start_at, end_at, start_pos, end_pos } = this.castParams(params);
+    const { identity, tz, operator_id, start_at, end_at, positions } = this.castParams(params);
 
     // fetch the data for this identity, operator and territory and map to template object
     const person = await this.identityRepository.find(identity);
@@ -50,7 +50,7 @@ export class CreateCertificateAction extends AbstractAction {
     );
 
     // fetch the data for this identity, operator and territory and map to template object
-    const certs = await this.carpoolRepository.find({ identity: person._id, start_at, end_at, start_pos, end_pos });
+    const certs = await this.carpoolRepository.find({ identity: person._id, start_at, end_at, positions });
     const rows = certs.slice(0, 11); // TODO agg the last line
     const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
     const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0)) || 0;

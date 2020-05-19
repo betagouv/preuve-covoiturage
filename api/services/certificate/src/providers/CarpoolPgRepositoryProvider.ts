@@ -29,18 +29,19 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     identity: number;
     start_at: Date;
     end_at: Date;
-    start_pos: PointInterface;
-    end_pos: PointInterface;
+    positions?: PointInterface[];
     radius?: number;
   }): Promise<CarpoolInterface[]> {
-    const { identity, start_at, end_at, start_pos, end_pos, radius = 1000 } = params;
+    const { identity, start_at, end_at, positions = [], radius = 1000 } = params;
 
-    const where_start = start_pos
-      ? `AND ST_Distance(ST_MakePoint(${start_pos.lon}, ${start_pos.lat}), cc.start_position) < ${Math.abs(radius | 0)}`
-      : '';
-    const where_end = end_pos
-      ? `AND ST_Distance(ST_MakePoint(${end_pos.lon}, ${end_pos.lat}), cc.end_position) < ${Math.abs(radius | 0)}`
-      : '';
+    const where_positions = positions
+      .map((pos: PointInterface): string => {
+        return `
+          OR ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.start_position) < ${Math.abs(radius | 0)}
+          OR ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.end_position) < ${Math.abs(radius | 0)}
+        `;
+      })
+      .join(' ');
 
     // fetch the number of kilometers per month
     const result = await this.connection.getClient().query({
@@ -56,8 +57,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         ON cc._id = pi.carpool_id
         WHERE cc.identity_id = $1
         AND cc.datetime >= $2 AND cc.datetime <= $3
-        ${where_start}
-        ${where_end}
+        ${where_positions}
         GROUP BY (m, y)
         ORDER BY y DESC, m DESC
       `,

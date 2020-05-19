@@ -1,13 +1,3 @@
-export const position = {
-  type: 'object',
-  additionalProperties: false,
-  minProperties: 2,
-  properties: {
-    lat: { macro: 'lat' },
-    lon: { macro: 'lon' },
-  },
-};
-
 export const alias = 'certificate.create';
 export const schema = {
   $id: alias,
@@ -18,8 +8,20 @@ export const schema = {
     operator_id: { macro: 'serial' },
     start_at: { macro: 'timestamp' },
     end_at: { macro: 'timestamp' },
-    start_pos: position,
-    end_pos: position,
+    positions: {
+      type: 'array',
+      minItems: 0,
+      maxItems: 2,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        minProperties: 2,
+        properties: {
+          lat: { macro: 'lat' },
+          lon: { macro: 'lon' },
+        },
+      },
+    },
     tz: { macro: 'varchar' },
     identity: {
       anyOf: [
