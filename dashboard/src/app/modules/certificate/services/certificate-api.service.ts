@@ -50,7 +50,7 @@ export class CertificateApiService extends JsonRPC {
   }
 
   downloadPrint(data: DownloadParamsInterface): void {
-    window.open(`${environment.apiUrl}v2/certificates/download/${data.uuid}/${data.type}`);
+    window.open(`${environment.apiUrl}v2/certificates/${data.type}/${data.uuid}`);
   }
 
   getList(certificateListFilter: ListParamsInterface): Observable<ListResultInterface> {

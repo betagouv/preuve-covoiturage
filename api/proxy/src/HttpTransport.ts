@@ -471,6 +471,20 @@ export class HttpTransport implements TransportInterface {
     this.app.use('/v2/certificates/assets', express.static('../../services/certificate/dist/assets'));
 
     /**
+     * Public route to check a certificate
+     */
+    this.app.get(
+      '/v2/certificates/find/:uuid',
+      asyncHandler(async (req, res, next) => {
+        const response = (await this.kernel.handle(
+          makeCall('certificate:find', { uuid: req.params.uuid }),
+        )) as RPCResponseType;
+
+        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
+      }),
+    );
+
+    /**
      * Download a PNG or PDF of the certificate
      * - accessible with an application token
      * - uses /v2/certificates/render to capture the rendered certificate
@@ -478,7 +492,7 @@ export class HttpTransport implements TransportInterface {
      * - print a PDF/PNG returned back to the caller
      */
     this.app.get(
-      '/v2/certificates/download/:uuid/:type',
+      '/v2/certificates/:type/:uuid/',
       asyncHandler(async (req, res, next) => {
         const type = req.params.type.toLowerCase();
         const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
@@ -490,20 +504,6 @@ export class HttpTransport implements TransportInterface {
           'Content-type': type === 'png' ? 'image/png' : 'application/pdf',
           'Content-disposition': `attachment; filename=${uuid}.${type}`,
         });
-      }),
-    );
-
-    /**
-     * Public route to check a certificate
-     */
-    this.app.get(
-      '/v2/certificates/find/:uuid',
-      asyncHandler(async (req, res, next) => {
-        const response = (await this.kernel.handle(
-          makeCall('certificate:find', { uuid: req.params.uuid }),
-        )) as RPCResponseType;
-
-        this.raw(res, get(response, 'result.data', response), { 'Content-type': 'application/json' });
       }),
     );
 
@@ -524,7 +524,10 @@ export class HttpTransport implements TransportInterface {
             { user: get(req, 'session.user', null) },
           ),
         )) as RPCResponseType;
-        this.send(res, response);
+
+        res
+          .status(get(response, 'result.meta.httpStatus', mapStatusCode(response)))
+          .send(get(response, 'result.data', this.parseErrorData(response)));
       }),
     );
   }
@@ -658,16 +661,5 @@ export class HttpTransport implements TransportInterface {
     } catch (e) {}
 
     return response;
-  }
-
-  private getTypeFromHeaders(headers: { [key: string]: string }): 'png' | 'json' | 'pdf' {
-    switch (headers['accept']) {
-      case 'image/png':
-        return 'png';
-      case 'application/json':
-        return 'json';
-      default:
-        return 'pdf';
-    }
   }
 }
