@@ -1,9 +1,8 @@
 import { CertificateMetaInterface } from './CertificateMetaInterface';
 
 export interface CertificateBaseInterface {
-  identity_uuid: string;
-  operator_uuid: string;
-  territory_uuid: string;
+  identity_id: number;
+  operator_id: number;
   start_at: Date;
   end_at: Date;
   meta: CertificateMetaInterface;

@@ -6,6 +6,7 @@ import Handlebars from 'handlebars';
 import { provider } from '@ilos/common';
 
 import { TemplateInterface } from './interfaces';
+import { currency } from './helpers/currency';
 
 @provider()
 export class HandlebarsTemplate implements TemplateInterface {
@@ -15,6 +16,9 @@ export class HandlebarsTemplate implements TemplateInterface {
 
   constructor() {
     this.hbs = Handlebars.create();
+
+    // register helpers
+    this.hbs.registerHelper('currency', currency);
   }
 
   loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any }): void {

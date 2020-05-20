@@ -16,6 +16,7 @@ import { AdministrationLayoutComponent } from './administration-layout/administr
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TerritoryComponent } from './pages/territory/territory.component';
 import { UsersComponent } from './pages/users/users.component';
+import { CertificateListComponent } from './pages/certificate-list/certificate-list.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,11 @@ const routes: Routes = [
         path: 'territory',
         data: { groups: [UserGroupEnum.TERRITORY] },
         component: TerritoryComponent,
+      },
+      {
+        path: 'certificates',
+        data: { groups: [UserGroupEnum.OPERATOR, UserGroupEnum.REGISTRY], role: UserManyRoleEnum.ADMIN },
+        component: CertificateListComponent,
       },
       {
         path: 'users',

@@ -5,7 +5,13 @@ import { HtmlPrinterProviderInterfaceResolver } from '../interfaces/HtmlPrinterP
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/download.contract';
 import { alias } from '../shared/certificate/download.schema';
 
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    ['validate', alias],
+    ['can', ['certificate.download']],
+  ],
+})
 export class DownloadCertificateAction extends AbstractAction {
   constructor(private printer: HtmlPrinterProviderInterfaceResolver) {
     super();
@@ -15,8 +21,6 @@ export class DownloadCertificateAction extends AbstractAction {
     switch (params.type) {
       case 'png':
         return this.printer.png(params.uuid);
-      // case 'json':
-      // return this.kernel.call('certificate:render', params, context);
       default:
         return this.printer.pdf(params.uuid);
     }

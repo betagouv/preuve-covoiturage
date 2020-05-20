@@ -43,11 +43,11 @@
     "instrument": true
   },
   "dependencies": {
-    "@ilos/core": "~0",
     "@ilos/common": "~0",
+    "@ilos/core": "~0",
     "@ilos/validator": "~0",
     "ajv": "^6.10.2",
-    "google-libphonenumber": "^3.2.2",
+    "google-libphonenumber": "^3.2.9",
     "ibantools": "^2.1.0",
     "lodash": "^4.17.11"
   }

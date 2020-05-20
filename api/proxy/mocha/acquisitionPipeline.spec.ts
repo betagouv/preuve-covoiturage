@@ -56,7 +56,7 @@ describe('Acquisition pipeline', () => {
       {
         name: 'Application',
         operator_id: operator._id.toString(),
-        permissions: ['journey.create'],
+        permissions: ['journey.create', 'certificate.create', 'certificate.download'],
       },
       {
         call: {

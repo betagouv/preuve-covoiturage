@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { provider, ConfigInterfaceResolver } from '@ilos/common';
+import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 
 import {
   HtmlPrinterProviderInterface,
   HtmlPrinterProviderInterfaceResolver,
 } from '../interfaces/HtmlPrinterProviderInterface';
-import { TokenProviderInterfaceResolver } from '@pdc/provider-token/dist';
 
 @provider({
   identifier: HtmlPrinterProviderInterfaceResolver,

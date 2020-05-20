@@ -1,44 +1,64 @@
 import { upperFirst } from 'lodash';
-import { handler } from '@ilos/common';
+import { handler, KernelInterfaceResolver, ConfigInterfaceResolver } from '@ilos/common';
 import { Action as AbstractAction } from '@ilos/core';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 
-import { handlerConfig, ParamsInterface } from '../shared/certificate/create.contract';
+import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/create.contract';
 import { alias } from '../shared/certificate/create.schema';
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { CarpoolRepositoryProviderInterfaceResolver } from '../interfaces/CarpoolRepositoryProviderInterface';
+import { IdentityRepositoryProviderInterfaceResolver } from '../interfaces/IdentityRepositoryProviderInterface';
 
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    ['validate', alias],
+    ['can', ['certificate.create']],
+  ],
+})
 export class CreateCertificateAction extends AbstractAction {
   constructor(
+    private kernel: KernelInterfaceResolver,
+    private identityRepository: IdentityRepositoryProviderInterfaceResolver,
     private certRepository: CertificateRepositoryProviderInterfaceResolver,
     private carpoolRepository: CarpoolRepositoryProviderInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
-  // FIXME return type in ResultInterface declaration
-  public async handle(params: ParamsInterface): Promise<any> {
-    const { identity, start_at, end_at } = this.castParams(params);
-
-    // TODO get the Identity object
-    const person = { uuid: 'b409aa51-dee8-4276-9dde-b55d3fd0c7e9' };
-    // const person = await this.identityRepository.find({ phone: identity });
-
-    // TODO get this from the connected operator
-    const operator = { uuid: 'c5b07e35-651e-4688-b0b7-2811073bfcf3', name: 'Mobicoop' };
-
-    // TODO pass this to the query as a parameter
-    const territory = { uuid: '4b5b1de9-6a06-4ed7-b405-c9141a7437d6', name: 'Paris Ile-de-France' };
+  public async handle(
+    params: ParamsInterface,
+  ): Promise<{
+    meta: {
+      httpStatus: number;
+    };
+    data: ResultInterface;
+  }> {
+    const { identity, tz, operator_id, start_at, end_at, positions } = this.castParams(params);
 
     // fetch the data for this identity, operator and territory and map to template object
-    // TODO agg the last line
-    const rows = (await this.carpoolRepository.find({ identity, start_at, end_at })).slice(0, 11);
-    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0));
-    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0));
+    const person = await this.identityRepository.find(identity);
+    const operator = await this.kernel.call(
+      'operator:quickfind',
+      { _id: operator_id },
+      {
+        channel: { service: 'certificate' },
+        call: { user: { permissions: ['operator.read'] } },
+      },
+    );
+
+    // fetch the data for this identity, operator and territory and map to template object
+    const certs = await this.carpoolRepository.find({ identity: person._id, start_at, end_at, positions });
+    const rows = certs.slice(0, 11); // TODO agg the last line
+    const total_km = Math.round(rows.reduce((sum: number, line): number => line.km + sum, 0)) || 0;
+    const total_cost = Math.round(rows.reduce((sum: number, line): number => line.eur + sum, 0)) || 0;
     const remaining = (total_km * 0.558 - total_cost) | 0;
     const meta = {
+      tz,
+      identity: { uuid: person.uuid },
+      operator: { uuid: operator.uuid, name: operator.name },
       total_km,
       total_cost,
       remaining,
@@ -46,7 +66,9 @@ export class CreateCertificateAction extends AbstractAction {
       rows: rows.map((line, index) => ({
         index,
         month: upperFirst(this.dateProvider.format(new Date(`${line.y}-${line.m}-01`), 'MMMM yyyy')),
+        trips: line.trips == 1 ? '1 trajet' : `${line.trips} trajets`,
         distance: line.km | 0,
+        cost: line.eur || 0,
       })),
     };
 
@@ -55,12 +77,19 @@ export class CreateCertificateAction extends AbstractAction {
       meta,
       end_at,
       start_at,
-      identity_uuid: person.uuid,
-      operator_uuid: operator.uuid,
-      territory_uuid: territory.uuid,
+      operator_id,
+      identity_id: person._id,
     });
 
-    return certificate;
+    return {
+      meta: { httpStatus: 201 },
+      data: {
+        uuid: certificate.uuid,
+        created_at: certificate.created_at,
+        pdf_url: `${this.config.get('url.certificateBaseUrl')}/pdf/${certificate.uuid}`,
+        png_url: `${this.config.get('url.certificateBaseUrl')}/png/${certificate.uuid}`,
+      },
+    };
   }
 
   /**
@@ -70,28 +99,31 @@ export class CreateCertificateAction extends AbstractAction {
    * Cast the identity as a phone number for now.
    * Will be refactored when the ID engine is up and running
    */
-  private castParams(params: ParamsInterface): Required<ParamsInterface> {
-    const origin = new Date('2018-01-01T00:00:00+0100'); // Europe/Paris
-    let { identity, start_at, end_at } = params;
+  private castParams(params: ParamsInterface): ParamsInterface & { start_at: Date; end_at: Date } {
+    const origin = new Date('2020-01-01T00:00:00+0100'); // Europe/Paris
+    const end_at_max = new Date().getTime() - this.config.get('delays.create.end_at_buffer', 6) * 86400000;
+
+    let { start_at, end_at } = params;
 
     start_at = 'start_at' in params ? new Date(start_at) : origin;
-    end_at = 'end_at' in params ? new Date(end_at) : new Date();
+    end_at = 'end_at' in params ? new Date(end_at) : new Date(end_at_max);
 
-    // normalize dates
-    if (end_at.getTime() > new Date().getTime()) {
-      end_at = new Date();
+    // start_at must be older than n days + 1
+    if (start_at.getTime() > end_at_max) {
+      start_at = new Date(end_at_max - 86400000);
     }
 
+    // end_at must be older than n days
+    if (end_at.getTime() > end_at_max) {
+      end_at = new Date(end_at_max);
+    }
+
+    // start_at must be older than end_at, otherwise we
+    // set a 24 hours slot
     if (start_at.getTime() >= end_at.getTime()) {
-      start_at = origin;
+      start_at = new Date(end_at.getTime() - 86400000);
     }
 
-    // normalize identity (phone number for now)
-    identity = identity
-      .replace(/^\s([1-9]{2,3})/, '+$1')
-      .replace(/[^+0-9]/g, '')
-      .replace(/^0/, '+33');
-
-    return { identity, start_at, end_at };
+    return { ...params, start_at, end_at };
   }
 }

@@ -10,7 +10,7 @@ export const schema = {
     user_id: { macro: 'varchar' },
     content_type: {
       type: 'string',
-      enum: ['application/json', 'application/pdf', 'image/png'],
+      enum: ['application/pdf', 'image/png'],
     },
   },
 };

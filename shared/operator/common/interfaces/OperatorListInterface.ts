@@ -3,6 +3,7 @@ import { AddressInterface } from '../../../common/interfaces/AddressInterface';
 
 export interface OperatorListInterface {
   _id: number;
+  uuid: string;
   name: string;
   legal_name: string;
   siret: string;
