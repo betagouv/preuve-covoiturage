@@ -243,9 +243,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     // base values for form
     this.editedId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
-    console.log('territoryEd : ', territoryEd);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
-    console.log('formValues : ', formValues);
 
     if (this.editedId) {
       this.territoryApi.getIntermediaryRelation(this.editedId).subscribe((intermediateRelation) => {
