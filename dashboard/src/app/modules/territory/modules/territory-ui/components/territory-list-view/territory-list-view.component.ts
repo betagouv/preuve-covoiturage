@@ -17,7 +17,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   showForm = false;
   territoryToEdit: Territory = null;
 
-  public territories: Territory[];
+  public territories: Territory[] = [];
   public territoriesToShow: Territory[];
   public territoriesFiltered: Territory[];
 

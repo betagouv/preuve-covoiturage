@@ -1,70 +1,84 @@
-<form class="territoryForm" [formGroup]="territoryForm" *ngIf="showForm">
-  <div *ngIf="fullFormMode">
-    <h2>Informations générales</h2>
-    <mat-form-field class="name" appearance="outline">
-      <mat-label>Nom</mat-label>
-      <input matInput formControlName="name" required />
-      <mat-error *ngIf="territoryForm.controls.name.hasError('required')">Le nom est obligatoire.</mat-error>
-    </mat-form-field>
+<div [hidden]="!showForm">
+  <form class="territoryForm" [formGroup]="territoryForm">
+    <div *ngIf="fullFormMode">
+      <h2>Informations générales</h2>
+      <mat-form-field class="name" appearance="outline">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="name" required />
+        <mat-error *ngIf="territoryForm.controls.name.hasError('required')">Le nom est obligatoire.</mat-error>
+      </mat-form-field>
 
-    <mat-form-field class="shortname" appearance="outline">
-      <mat-label>Nom d'usage</mat-label>
-      <input matInput formControlName="shortname" />
-    </mat-form-field>
+      <mat-form-field class="shortname" appearance="outline">
+        <mat-label>Nom d'usage</mat-label>
+        <input matInput formControlName="shortname" />
+      </mat-form-field>
 
-    <h3>Territoire</h3>
+      <h3>Territoire</h3>
 
-    <app-territory-children #territoryChildren></app-territory-children>
+      <app-territory-children></app-territory-children>
 
-    <h3>Structure</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Niveau</mat-label>
+        <mat-select formControlName="level" required>
+          <mat-option *ngFor="let valueLabel of levelLabel" [value]="valueLabel[0]">{{ valueLabel[1] }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="controls.level.hasError('required')">
+          Le niveau du territoire est obligatoire.
+        </mat-error>
+      </mat-form-field>
 
-    <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
+      <mat-checkbox formControlName="active">AOM</mat-checkbox>
 
-    <h3>Adresse</h3>
+      <h3>Structure</h3>
 
-    <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
-  </div>
-  <h2>Contacts et responsables</h2>
+      <app-form-company [parentForm]="territoryForm.get('company')"></app-form-company>
 
-  <div class="contacts">
-    <div>
-      <h3>Délégué à la protection des données</h3>
+      <h3>Adresse</h3>
 
-      <app-form-contact
-        [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
-        [showPhoneNumber]="false"
-      ></app-form-contact>
+      <app-form-address [parentForm]="territoryForm.get('address')"></app-form-address>
     </div>
+    <h2>Contacts et responsables</h2>
 
-    <div>
-      <h3>Responsable du traitement</h3>
+    <div class="contacts">
+      <div>
+        <h3>Délégué à la protection des données</h3>
 
-      <app-form-contact
-        [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
-        [showPhoneNumber]="false"
-      ></app-form-contact>
+        <app-form-contact
+          [parentForm]="territoryForm.get('contacts').get('gdpr_dpo')"
+          [showPhoneNumber]="false"
+        ></app-form-contact>
+      </div>
+
+      <div>
+        <h3>Responsable du traitement</h3>
+
+        <app-form-contact
+          [parentForm]="territoryForm.get('contacts').get('gdpr_controller')"
+          [showPhoneNumber]="false"
+        ></app-form-contact>
+      </div>
+
+      <div>
+        <h3>Responsable technique</h3>
+
+        <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+      </div>
     </div>
-
     <div>
-      <h3>Responsable technique</h3>
-
-      <app-form-contact [parentForm]="territoryForm.get('contacts').get('technical')"></app-form-contact>
+      <button
+        *ngIf="authService.hasAnyPermission(['territory.update'])"
+        type="submit"
+        class="large"
+        mat-flat-button
+        (click)="onSubmit()"
+        [disabled]="!territoryForm.valid"
+        color="primary"
+      >
+        {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
+      </button>
+      <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
+        Fermer
+      </button>
     </div>
-  </div>
-  <div>
-    <button
-      *ngIf="authService.hasAnyPermission(['territory.update'])"
-      type="submit"
-      class="large"
-      mat-flat-button
-      (click)="onSubmit()"
-      [disabled]="!territoryForm.valid"
-      color="primary"
-    >
-      {{ !!editedId ? 'Mettre à jour les informations' : 'Créer' }}
-    </button>
-    <button type="button" class="large" (click)="onClose()" mat-flat-button *ngIf="closable">
-      Fermer
-    </button>
-  </div>
-</form>
+  </form>
+</div>

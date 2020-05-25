@@ -21,7 +21,7 @@ export interface TerritoryAddress {
 }
 
 export interface TerritoryBaseInterface {
-  level: TerritoryLevelEnum;
+  level: TerritoryLevelEnum | string;
   name: string;
   shortname?: string;
   company_id?: number;

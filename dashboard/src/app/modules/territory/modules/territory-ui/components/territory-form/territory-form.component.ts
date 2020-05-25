@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -8,7 +18,7 @@ import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
 import { Contact } from '~/core/entities/shared/contact';
-import { Territory } from '~/core/entities/territory/territory';
+import { Territory, territoryLevelLabels } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
@@ -26,18 +36,20 @@ import { Company } from '~/core/entities/shared/company';
   templateUrl: './territory-form.component.html',
   styleUrls: ['./territory-form.component.scss'],
 })
-export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
+export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges, AfterViewInit {
   public territoryForm: FormGroup;
 
-  @Input() showForm = true;
+  @Input() showForm = false;
   @Input() closable = false;
   @Input() territory: Territory = null;
 
   @Output() close = new EventEmitter();
-
-  @ViewChild('territoryChildren', { static: true }) territoryChildren: TerritoryChildrenComponent;
+  @ViewChild(TerritoryChildrenComponent, { static: false })
+  territoryChildren: TerritoryChildrenComponent;
 
   fullFormMode = false;
+
+  levelLabel = territoryLevelLabels;
 
   public editedId: number;
   private companyDetails: CompanyInterface;
@@ -63,6 +75,16 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       this.checkPermissions();
       this.updateValidation();
     });
+  }
+
+  ngAfterViewInit() {
+    // console.log('territoryChildren', this.territoryChildren);
+    // console.log('ngAfterViewInit > territoryChildren ', this.territoryChildren);
+    // console.log('ngAfterViewInit > test ', this.test);
+    // this.territoryChildrenQ.changes.subscribe((comps) => {
+    //   this.territoryChildren = comps[0];
+    //   console.log('this.territoryChildren', this.territoryChildren);
+    // });
   }
 
   get controls(): { [key: string]: AbstractControl } {
@@ -115,6 +137,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       formOptions = {
         ...formOptions,
         name: [''],
+        active: [false],
+        level: [null, Validators.required],
         shortname: [''],
         address: this.fb.group(
           new FormAddress(

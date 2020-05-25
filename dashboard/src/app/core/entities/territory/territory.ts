@@ -17,6 +17,7 @@ import { Contact } from '../shared/contact';
 import { FormCompany } from '~/shared/modules/form/forms/form-company';
 
 export enum TerritoryLevelEnum {
+  Null = '',
   Town = 'town',
   Towngroup = 'towngroup',
   District = 'district',
@@ -28,8 +29,21 @@ export enum TerritoryLevelEnum {
   Other = 'other',
 }
 
+export const territoryLevelLabels = [
+  [null, ''],
+  [TerritoryLevelEnum.Town, 'Ville'],
+  [TerritoryLevelEnum.Towngroup, 'Metropole'],
+  [TerritoryLevelEnum.District, 'District'],
+  [TerritoryLevelEnum.Megalopolis, 'Département'],
+  [TerritoryLevelEnum.Region, 'Region'],
+  [TerritoryLevelEnum.State, 'Etat'],
+  [TerritoryLevelEnum.Country, 'Pays'],
+  [TerritoryLevelEnum.Countrygroup, 'Group de pays'],
+  [TerritoryLevelEnum.Other, 'Autre'],
+];
+
 export interface TerritoryBase extends TerritoryBaseEdit {
-  level: TerritoryLevelEnum;
+  // level: TerritoryLevelEnum;
   name: string;
   shortname?: string;
   company_id?: number;
@@ -48,6 +62,7 @@ export class Territory extends BaseModel
   company_id?: number;
   company?: Company;
   active?: boolean;
+  active_since?: Date;
   address: Address;
   // active_since?: Date;
   contacts?: Contacts;
@@ -63,7 +78,7 @@ export class Territory extends BaseModel
   }
 
   map(base: TerritoryBase): Territory {
-    this.level = base.level;
+    this.level = base.level as TerritoryLevelEnum;
     this.name = base.name;
 
     if (this.name !== undefined) this.name = base.name;
@@ -84,10 +99,12 @@ export class Territory extends BaseModel
     // this.level = formValues.level;
     this.level = TerritoryLevelEnum.Country;
     this.name = formValues.name;
+    this.level = formValues.level as TerritoryLevelEnum;
 
     if (this.name !== undefined) this.name = formValues.name;
     if (this.density !== undefined) this.density = formValues.density;
     if (this.shortname !== undefined) this.shortname = formValues.shortname;
+    if (this.active !== undefined) this.active = formValues.active;
 
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
   }
@@ -100,6 +117,8 @@ export class Territory extends BaseModel
           // active: this.active ? this.active : false,
 
           shortname: this.shortname ? this.shortname : '',
+          active: !!this.active,
+          level: this.level ? this.level : null,
 
           company: new Company(this.company).toFormValues(),
           contacts: new Contacts(this.contacts).toFormValues(),
@@ -115,12 +134,12 @@ export interface TerritoryFormModel {
   name: string;
   // level: TerritoryLevelEnum;
   // active?: boolean;
-
+  level: string;
   // siret: string;
   density?: number;
   shortname?: string;
   // insee?: string[];
-
+  active?: boolean;
   company?: FormCompany;
   contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
   address?: Address;
