@@ -20,6 +20,7 @@ export const territory = {
       'territory.trip.list',
       'territory.trip.stats',
       'territory.update',
+
       'territory.stats',
       'territory.list',
       'territory.read',
@@ -238,6 +239,7 @@ export const registry = {
         'journey.import',
         'journey.process',
         'monitoring.journeys.stats',
+        'territory.create',
         ...territory.admin.permissions,
         ...operator.admin.permissions,
       ]),

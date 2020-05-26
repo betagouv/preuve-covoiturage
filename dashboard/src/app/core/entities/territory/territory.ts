@@ -2,19 +2,15 @@
 import { assignOrDeleteProperty } from '~/core/entities/utils';
 
 import { BaseModel } from '~/core/entities/BaseModel';
-// import { Model } from '~/core/entities/IModel';
 import { FormModel } from '~/core/entities/IFormModel';
 import { MapModel } from '~/core/entities/IMapModel';
 import { Clone } from '~/core/entities/IClone';
 
 import { Address } from '../shared/address';
-// import { Bank } from '../shared/bank';
-// import { CGU } from '../shared/cgu';
 import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
 import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
 import { Contact } from '../shared/contact';
-import { FormCompany } from '~/shared/modules/form/forms/form-company';
 
 export enum TerritoryLevelEnum {
   Null = '',
@@ -81,32 +77,41 @@ export class Territory extends BaseModel
     this.level = base.level as TerritoryLevelEnum;
     this.name = base.name;
 
-    if (this.name !== undefined) this.name = base.name;
-    // if (this.active_since !== undefined) this.active_since = base.active_since;
-    if (this.density !== undefined) this.density = base.density;
-    if (this.shortname !== undefined) this.shortname = base.shortname;
-    if (this.active !== undefined) this.active = base.active;
+    this.active = base.active === true;
 
     assignOrDeleteProperty(base, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
     assignOrDeleteProperty(base, this, 'geo', (data) => ({ ...data.geo }));
 
+    assignOrDeleteProperty(base, this, 'shortname');
+    assignOrDeleteProperty(base, this, 'density');
+    assignOrDeleteProperty(base, this, 'company_id');
+
     return this;
   }
 
   updateFromFormValues(formValues: TerritoryFormModel): void {
     // this.level = formValues.level;
-    this.level = TerritoryLevelEnum.Country;
+    // this.level = TerritoryLevelEnum.Country;
     this.name = formValues.name;
-    this.level = formValues.level as TerritoryLevelEnum;
-
-    if (this.name !== undefined) this.name = formValues.name;
-    if (this.density !== undefined) this.density = formValues.density;
-    if (this.shortname !== undefined) this.shortname = formValues.shortname;
-    if (this.active !== undefined) this.active = formValues.active;
-
+    this.level = formValues.level !== undefined ? (formValues.level as TerritoryLevelEnum) : TerritoryLevelEnum.Country;
+    this.active = formValues.active === true;
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
+    assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
+
+    if (formValues.shortname) this.shortname = formValues.shortname;
+    else delete this.shortname;
+    if (formValues.density !== undefined) this.density = formValues.density;
+    else delete this.density;
+    if (formValues.company_id !== undefined) this.company_id = formValues.company_id;
+    else delete this.company_id;
+
+    // assignOrDeleteProperty(formValues, this, 'shortname');
+    // assignOrDeleteProperty(formValues, this, 'density');
+    // assignOrDeleteProperty(formValues, this, 'company_id');
+
+    console.log('updateFromFormValues', { ...formValues }, { ...this });
   }
 
   toFormValues(fullformMode = true): any {
@@ -140,7 +145,14 @@ export interface TerritoryFormModel {
   shortname?: string;
   // insee?: string[];
   active?: boolean;
-  company?: FormCompany;
+  company?: {
+    siret: string;
+    naf_entreprise: string; // tslint:disable-line variable-name
+    nature_juridique: string; // tslint:disable-line variable-name
+    rna: string;
+    vat_intra: string; // tslint:disable-line variable-name};
+  };
+  company_id?: number;
   contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
   address?: Address;
   // public address?: Address;

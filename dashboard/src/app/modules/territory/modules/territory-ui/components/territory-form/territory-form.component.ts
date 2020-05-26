@@ -77,16 +77,6 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     });
   }
 
-  ngAfterViewInit() {
-    // console.log('territoryChildren', this.territoryChildren);
-    // console.log('ngAfterViewInit > territoryChildren ', this.territoryChildren);
-    // console.log('ngAfterViewInit > test ', this.test);
-    // this.territoryChildrenQ.changes.subscribe((comps) => {
-    //   this.territoryChildren = comps[0];
-    //   console.log('this.territoryChildren', this.territoryChildren);
-    // });
-  }
-
   get controls(): { [key: string]: AbstractControl } {
     return this.territoryForm.controls;
   }
@@ -114,6 +104,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         // },
       );
     } else {
+      this.territoryStore.create(formValues).subscribe((createdTerritory) => {
+        this.toastr.success(`${createdTerritory.name} a été mis à jour !`);
+        this.close.emit();
+      });
     }
   }
 
