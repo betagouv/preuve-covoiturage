@@ -139,6 +139,8 @@ export abstract class CrudStore<
   create(formValues: FormModelT): Observable<EntityT> {
     const newEntity = this.entitySubject.value.clone();
     newEntity.updateFromFormValues(formValues);
+
+    console.log('create', formValues, newEntity);
     this._loadCount += 1;
     return this.rpcCrud.create(newEntity).pipe(
       takeUntil(this.dismissUpdateCreateSubject),

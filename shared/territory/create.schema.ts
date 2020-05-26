@@ -9,6 +9,7 @@ export const create = {
   properties: {
     contacts,
     name: { macro: 'varchar' },
+    shortname: { macro: 'varchar' },
     level: {
       type: 'string',
       enum: ['town', 'towngroup', 'district', 'megalopolis', 'region', 'state', 'country', 'countrygroup', 'other'],
@@ -40,7 +41,12 @@ export const create = {
       type: 'array',
       items: { macro: 'postcode' },
     },
-
+    address: {
+      city: { type: 'string' },
+      country: { type: 'string' },
+      postcode: { type: 'string' },
+      street: { type: 'string' },
+    },
     // Relation
     children: {
       type: 'array',

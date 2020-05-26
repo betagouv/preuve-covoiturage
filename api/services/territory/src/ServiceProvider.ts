@@ -34,6 +34,7 @@ import { ListTerritoryOperatorAction } from './actions/ListTerritoryOperatorActi
 import { TerritoryOperatorRepositoryProvider } from './providers/TerritoryOperatorRepositoryProvider';
 import { GetTerritoryIntermediaryRelationAction } from './actions/GetIntermediaryRelationAction';
 import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentChildrenAction';
+import { CreateTerritoryAction } from './actions/CreateTerritoryAction';
 
 @serviceProvider({
   config,
@@ -68,6 +69,7 @@ import { GetTerritoryParentChildrenAction } from './actions/GetTerritoryParentCh
     // TODO :  clean after territory migration
     // FindTerritoryByInseeAction,
     // FindTerritoryByPositionAction,
+    CreateTerritoryAction,
     UpdateTerritoryOperatorAction,
     ListTerritoryOperatorAction,
     GetTerritoryIntermediaryRelationAction,

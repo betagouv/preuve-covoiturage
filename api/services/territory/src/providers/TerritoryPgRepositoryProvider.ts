@@ -289,66 +289,37 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
   }
 
   async create(data: CreateParams): Promise<CreateResultInterface> {
-    // TODO: check siret collision method (or not)
-    // awaeit this.hasDoubleSiretThenFail(data.siret);
+    const fields = ['name', 'shortname', 'level', 'contacts', 'address'];
 
-    // TODO: to implement
-    // throw new Error('Not implemented : query to adapt');
+    const values: any[] = [data.name, data.shortname || '', data.level, data.contacts || '{}', data.address || '{}'];
 
-    /*
-    const query = {
-      text: `INSERT INTO (level,name,company_id,active,contacts)`,
-    };
-    */
+    if (data.density !== undefined) {
+      fields.push('density');
+      values.push(data.density);
+    }
 
-    // level: TerritoryLevelEnum;
-    // name: string;
-    // company_id?: number;
-    // active?: boolean;
-    // active_since?: Date;
-    // contacts?: ContactsInterface;
-    // density?: number;
-    // geo?: any; // TODO : geography type
+    if (data.company_id !== undefined) {
+      fields.push('company_id');
+      values.push(data.company_id);
+    }
 
-    /*
     const query = {
       text: `
         INSERT INTO ${this.table}
         (
-          siret,
-          name,
-          shortname,
-
-          company,
-          address,
-          contacts,
-
-          parent_id,
-          cgu_accepted_at,
-          cgu_accepted_by
+          ${fields.join(',')}
         )
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
+        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')} )
         RETURNING *
       `,
-      
-      values: [
-        data.siret,
-        data.name,
-        data.shortname || '',
-        data.company || '{}',
-        data.address || '{}',
-        data.contacts || '{}',
-        data.parent_id,
-        data.cgu_accepted_at,
-        data.cgu_accepted_by,
-      ],
-    };
-    */
 
-    // const result = await this.connection.getClient().query(query);
-    // if (result.rowCount !== 1) {
-    //   throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
-    // }
+      values,
+    };
+
+    const result = await this.connection.getClient().query(query);
+    if (result.rowCount !== 1) {
+      throw new Error(`Unable to create territory (${JSON.stringify(data)})`);
+    }
 
     // if (data.siret) {
     //   await this.kernel.notify(companyFetchSignature, data.siret, {
