@@ -233,7 +233,7 @@ export class HttpTransport implements TransportInterface {
             'acquisition:cancel',
             {
               ...req.body,
-              acquisition_id: parseInt(req.params.id, 10),
+              journey_id: parseInt(req.params.id, 10),
             },
             { user, metadata: { req } },
           ),
