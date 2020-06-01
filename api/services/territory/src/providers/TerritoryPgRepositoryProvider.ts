@@ -176,60 +176,6 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // return null;
   }
 
-  /**
-   * Get childrens if all of intermediate territory
-   * Intermediate territory are elements which :
-   *   is ancestors of request territories
-   *   with at least to relation (ancestor of at least to direct children )
-   *   is not ancestor of actual requested territory
-   * @param id Id of requested territory
-   */
-  // async getTerritoryIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]> {
-  //   const query = {
-  //     text: `WITH
-  //   base_relation AS (
-  //       SELECT
-  //           tv.*
-  //       FROM territory.territories_view AS tv
-  //       WHERE tv._id = $1
-  //   ),
-  //   ancestors_flat AS (
-  //       SELECT
-  //           unnest(tv.ancestors) AS ancestors
-  //       FROM territory.territories_view AS tv
-  //       INNER JOIN base_relation AS br ON tv._id = ANY (br.children)
-  //   ),
-  //   ancestors_ignore AS (
-  //       SELECT
-  //       unnest(base_relation.ancestors) AS ancestors_ignore
-
-  //       FROM base_relation
-  //   ),
-  //   ancestors_count AS (
-  //       SELECT
-  //           ancestors_flat.ancestors,
-  //           COUNT(*) AS ancestors_count
-  //       FROM ancestors_flat
-
-  //       LEFT JOIN ancestors_ignore AS ai ON ai.ancestors_ignore = ancestors_flat.ancestors
-  //       WHERE ai.ancestors_ignore is NULL AND ancestors_flat.ancestors != $1
-
-  //       GROUP BY ancestors_flat.ancestors
-  //   )
-  //   SELECT
-  //       tv._id as parent_id,
-  //       array_to_json(array_agg(row_to_json(t))) as children
-  //       FROM ancestors_count ac
-  //   INNER JOIN territory.territories_view AS tv ON ancestors_count > 1 AND tv._id = ac.ancestors
-  //   INNER JOIN territory.territories AS t ON t._id = ANY(tv.children)
-  //   GROUP BY tv._id`,
-  //     values: [id],
-  //   };
-
-  //   const result = await this.connection.getClient().query(query);
-  //   return result.rows;
-  // }
-
   async find(
     query: TerritoryQueryInterface,
     sort: SortEnum[],

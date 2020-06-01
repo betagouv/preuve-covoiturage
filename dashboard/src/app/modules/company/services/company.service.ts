@@ -22,6 +22,10 @@ export class CompanyService extends JsonRpcGetList<CompanyV2> {
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 
+  getById(id: number): Observable<CompanyV2> {
+    return this.get({ query: { _id: id } } as any);
+  }
+
   // findCompany(siret:string): Observable<CompanyV2> {
   //   return this.get(params).pipe(
   //     map((company) => {

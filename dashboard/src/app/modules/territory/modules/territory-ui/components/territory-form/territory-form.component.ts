@@ -20,6 +20,7 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
 import { TerritoryChildrenComponent } from '../territory-children/territory-children.component';
 import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 import { Company } from '~/core/entities/shared/company';
+import { CompanyV2 } from '~/core/entities/shared/companyV2';
 
 @Component({
   selector: 'app-territory-form',
@@ -90,14 +91,14 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
           this.toastr.success(`${formValues.name} a été mis à jour !`);
           this.close.emit();
         },
-        // (err) => {
-        //   this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
-        // },
+        (err) => {
+          this.toastr.error(`Une erreur est survenue lors de la mise à jour du territoire`);
+        },
       );
     } else {
       this.territoryStore.create(formValues).subscribe((createdTerritory) => {
-        // this.toastr.success(`${formValues.name} a été mis à jour !`);
-        // this.close.emit();
+        this.toastr.success(`${formValues.name} a été mis à jour !`);
+        this.close.emit();
       });
     }
   }
@@ -206,22 +207,46 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
             )
 
             .subscribe((company) => {
-              if (company) {
-                this.companyDetails = {
-                  naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
-                  nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
-                  rna: company.nonprofit_code ? company.nonprofit_code : '',
-                  vat_intra: company.intra_vat ? company.intra_vat : '',
-                  _id: company._id,
-                };
+              // if (company) {
+              //   this.companyDetails = {
+              //     naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
+              //     nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
+              //     rna: company.nonprofit_code ? company.nonprofit_code : '',
+              //     vat_intra: company.intra_vat ? company.intra_vat : '',
+              //     _id: company._id,
+              //   };
 
-                companyFormGroup.patchValue(this.companyDetails);
-              }
+              //   companyFormGroup.patchValue(this.companyDetails);
+              // }
+              this.updateCompanyForm(company, false);
             });
         });
     }
 
     this.updateValidation();
+  }
+
+  private updateCompanyForm(company: CompanyV2, resetIfNull = true) {
+    const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
+    if (company) {
+      this.companyDetails = {
+        naf_entreprise: company.company_naf_code ? company.company_naf_code : '',
+        nature_juridique: company.legal_nature_label ? company.legal_nature_label : '',
+        rna: company.nonprofit_code ? company.nonprofit_code : '',
+        vat_intra: company.intra_vat ? company.intra_vat : '',
+        _id: company._id,
+      };
+
+      companyFormGroup.patchValue({ siret: company.siret, ...this.companyDetails });
+    } else if (resetIfNull) {
+      this.companyDetails = null;
+      companyFormGroup.patchValue({
+        naf_entreprise: '',
+        nature_juridique: '',
+        rna: '',
+        vat_intra: '',
+      });
+    }
   }
 
   private updateValidation(): void {
@@ -234,18 +259,24 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   // todo: ugly ...
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
-    console.log('territory ', territory);
     this.editedId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
     delete formValues.uiSelectionState;
 
-    if (this.editedId) {
+    if (this.editedId && this.fullFormMode) {
       this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
-        // console.log('completeRelation', completeRelation);
-        this.territoryChildren.setRelations(completeRelation);
-        this.territoryForm.setValue(formValues);
+        if (territory.company_id) {
+          this.companyService.getById(territory.company_id).subscribe((company) => {
+            this.territoryForm.setValue(formValues);
+            this.territoryChildren.setRelations(completeRelation);
+            this.updateCompanyForm(company);
+          });
+        } else {
+          this.territoryForm.setValue(formValues);
+          this.territoryChildren.setRelations(completeRelation);
+        }
       });
     } else {
       // this.intermediateRelation = [];
