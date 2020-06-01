@@ -13,6 +13,8 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
 import { OperatorApiService } from '~/modules/operator/services/operator-api.service';
 import { CampaignApiService } from '~/modules/campaign/services/campaign-api.service';
 import { CampaignStatusEnum } from '~/core/enums/campaign/campaign-status.enum';
+import { SortEnum, allBasicFieldEnum } from '../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
+import { allCompanyFieldEnum } from '~/modules/territory/TerritoryQueryInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -129,7 +131,13 @@ export class CommonDataService {
           }
 
           if (user.territory_id) {
-            params.push(this.territoryApiService.paramGetById(user.territory_id));
+            params.push(
+              this.territoryApiService.paramGetById(
+                user.territory_id,
+                [SortEnum.NameAsc],
+                [...allBasicFieldEnum, ...allCompanyFieldEnum],
+              ),
+            );
           } else if (user.operator_id) {
             params.push(this.operatorApiService.paramGetById(user.operator_id));
           }

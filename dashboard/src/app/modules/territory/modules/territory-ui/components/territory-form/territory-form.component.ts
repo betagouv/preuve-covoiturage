@@ -75,10 +75,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   public onSubmit(): void {
     const formValues: TerritoryFormModel = {
       ...this.territoryForm.value,
-      children: this.territoryChildren.getFlatSelectedList(),
-      uiSelectionState: this.territoryChildren.getUISelectionState(),
-      company_id: this.companyDetails._id,
     };
+
+    if (this.territoryChildren && this.fullFormMode) {
+      formValues.children = this.territoryChildren.getFlatSelectedList();
+      formValues.uiSelectionState = this.territoryChildren.getUISelectionState();
+      formValues.company_id = this.companyDetails ? this.companyDetails._id : null;
+    }
 
     if (this.editedId) {
       // if (this.territoryForm.value.company) formValues.company.siret = this.territoryForm.value.company.siret;
@@ -88,7 +91,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
       patch$.subscribe(
         (modifiedTerritory) => {
-          this.toastr.success(`${formValues.name} a été mis à jour !`);
+          this.toastr.success(`${formValues.name || modifiedTerritory.name} a été mis à jour !`);
           this.close.emit();
         },
         (err) => {
@@ -226,7 +229,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     this.updateValidation();
   }
 
-  private updateCompanyForm(company: CompanyV2, resetIfNull = true) {
+  private updateCompanyForm(company: CompanyV2, resetIfNull = true): void {
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
     if (company) {
       this.companyDetails = {
@@ -264,24 +267,20 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
     delete formValues.uiSelectionState;
+    this.territoryForm.setValue(formValues);
 
     if (this.editedId && this.fullFormMode) {
       this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
+        this.territoryChildren.setRelations(completeRelation);
+
         if (territory.company_id) {
           this.companyService.getById(territory.company_id).subscribe((company) => {
-            this.territoryForm.setValue(formValues);
-            this.territoryChildren.setRelations(completeRelation);
             this.updateCompanyForm(company);
           });
-        } else {
-          this.territoryForm.setValue(formValues);
-          this.territoryChildren.setRelations(completeRelation);
         }
       });
-    } else {
-      // this.intermediateRelation = [];
+    } else if (this.territoryChildren) {
       this.territoryChildren.setRelations([]);
-      this.territoryForm.setValue(formValues);
     }
 
     this.displayAOMActive = territory.activable === true;

@@ -27,6 +27,7 @@ import {
   allTerritoryQueryFields,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
 
 @provider({
   identifier: TerritoryRepositoryProviderInterfaceResolver,
@@ -37,7 +38,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
   constructor(protected connection: PostgresConnection, protected kernel: KernelInterfaceResolver) {}
 
-  async updateViews() {
+  async updateViews(): Promise<any> {
     await this.connection
       .getClient()
       .query({ text: 'REFRESH MATERIALIZED VIEW territory.territories_view;', values: [] });
@@ -112,7 +113,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const selectionState = status.ui_selection_state;
     const flatIds = [];
 
-    function getId(selState) {
+    function getId(selState): void {
       if (selState && selState.length) {
         selState.forEach((child) => {
           flatIds.push(child.id);
@@ -135,7 +136,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const childrenRes = await this.connection.getClient().query(getChildrenQuery);
 
     const territories = childrenRes.rows;
-    function consolidateState(selectionState, list = [], baseChildren = null) {
+    function consolidateState(selectionState, list = [], baseChildren = null): any[] {
       selectionState.forEach((selState) => {
         const terr = territories.find((element) => element._id === selState.id);
         if (terr) {
@@ -295,6 +296,16 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
     const territory = result.rows[0];
 
+    // map company to sub object
+    if (territory.company_id) {
+      territory.company = {};
+
+      allCompanyFieldEnum.forEach((fieldName) => {
+        territory.company[fieldName] = territory[fieldName];
+        delete territory[fieldName];
+      });
+    }
+
     return territory;
   }
 
@@ -377,7 +388,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     return resultData;
   }
 
-  async updateRelations(parentId: number, children: number[], deleteOld = false) {
+  async updateRelations(parentId: number, children: number[], deleteOld = false): Promise<void> {
     if (deleteOld) {
       const deleteQuery = {
         text: `DELETE FROM ${this.relationTable} WHERE parent_territory_id = $1`,
@@ -534,6 +545,28 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     return result.rows[0];
+  }
+
+  async patchContacts(id: number, contacts: ContactsInterface): Promise<TerritoryDbMetaInterface> {
+    const query = {
+      text: `UPDATE ${this.table} set contacts = $2 WHERE _id = $1`,
+      values: [id, JSON.stringify(contacts)],
+    };
+
+    const client = this.connection.getClient();
+    await client.query(query);
+
+    const modifiedTerritoryRes = await client.query({
+      text: `SELECT * FROM ${this.table} WHERE _id = $1`,
+      values: [id],
+    });
+    // if (result.rowCount !== 1) {
+    //   throw new NotFoundException(`territory not found (${id})`);
+    // }
+
+    console.log('modifiedTerritoryRes ', id, modifiedTerritoryRes.rows[0]);
+
+    return modifiedTerritoryRes.rowCount > 0 ? modifiedTerritoryRes.rows[0] : 0;
   }
 
   async findByInsee(insee: string): Promise<TerritoryDbMetaInterface> {
