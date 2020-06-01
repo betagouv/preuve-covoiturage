@@ -9,10 +9,8 @@ import {
   SortEnum,
   ProjectionFieldsEnum,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
-import {
-  TerritoryChildrenInterface,
-  TerritoryParentChildrenInterface,
-} from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
 
 export interface TerritoryRepositoryProviderInterface {
   find(
@@ -21,7 +19,7 @@ export interface TerritoryRepositoryProviderInterface {
     projection: ProjectionFieldsEnum,
   ): Promise<TerritoryDbMetaInterface>;
 
-  getTerritoryIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]>;
+  getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]>;
   all(): Promise<TerritoryDbMetaInterface[]>;
   create(data: CreateParams): Promise<CreateResultInterface>;
   delete(_id: number): Promise<void>;
@@ -48,7 +46,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
   async all(): Promise<TerritoryDbMetaInterface[]> {
     throw new Error();
   }
-  async getTerritoryIntermediateRelationData(id: number): Promise<TerritoryChildrenInterface[]> {
+  async getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]> {
     throw new Error();
   }
 

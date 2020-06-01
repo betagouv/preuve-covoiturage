@@ -52,6 +52,7 @@ export abstract class CrudStore<
   selectNew(entity: EntityT = new this.modelType()): EntityT {
     const newEntity = entity.clone();
     delete newEntity._id;
+
     this.entitySubject.next(newEntity);
     return newEntity;
   }
@@ -140,7 +141,6 @@ export abstract class CrudStore<
     const newEntity = this.entitySubject.value.clone();
     newEntity.updateFromFormValues(formValues);
 
-    console.log('create', formValues, newEntity);
     this._loadCount += 1;
     return this.rpcCrud.create(newEntity).pipe(
       takeUntil(this.dismissUpdateCreateSubject),
@@ -148,7 +148,9 @@ export abstract class CrudStore<
         if (this._loadCount > 0) this._loadCount -= 1;
       }),
       tap((entity) => {
-        this.entitySubject.next(new this.modelType().map(entity));
+        if (entity) {
+          this.entitySubject.next(new this.modelType().map(entity));
+        }
         this.loadList();
       }),
     );

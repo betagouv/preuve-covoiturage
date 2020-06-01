@@ -1,4 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
+import { UiStatusRelationDetails } from '../../../../../../../../shared/territory/relationUiStatus.contract';
 
 export interface IdName {
   id: number;
@@ -11,23 +12,10 @@ export enum TerritorySelectionState {
   ALL = 2,
 }
 
-function uuidv4(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
-export async function generateRandomTerritoryChildren(territoryB: TerritorySelectionBlock): Promise<void> {
-  const len = Math.floor(Math.random() * 5 + 4);
-  const children = new Array(len);
-  for (let i = 0; i < len; i++) {
-    const child = { id: Math.floor(Math.random() * 10000), name: territoryB.indent + ':' + uuidv4() };
-    children[i] = child;
-  }
-
-  territoryB.setChildren(children);
+export interface TerritorySelectionUIState {
+  id: number;
+  state: TerritorySelectionState;
+  children: TerritorySelectionUIState[];
 }
 
 export class TerritorySelectionBlock {
@@ -55,12 +43,33 @@ export class TerritorySelectionBlock {
   //   return this._selectedState;
   // }
 
-  constructor(base: IdName, protected _parent?: TerritorySelectionBlock, protected _indent = 0, selected = true) {
+  constructor(
+    base: IdName,
+    protected _parent?: TerritorySelectionBlock,
+    protected _indent = 0,
+    selectedState = TerritorySelectionState.ALL,
+  ) {
     this.id = base.id;
     this.name = base.name;
-    this._selectedState = TerritorySelectionState.ALL;
+    this._selectedState = selectedState;
     this._selectedStateBehaviour = new BehaviorSubject(this._selectedState);
     // this.updateSelectionState();
+  }
+
+  static fromUiRelation(
+    element: UiStatusRelationDetails,
+    parent?: TerritorySelectionBlock,
+    indent = 0,
+  ): TerritorySelectionBlock {
+    const block = new this(element, parent, indent, element.state);
+    // block._selectedState = element.state;
+    if (element.children) {
+      block._children = [];
+      for (const child of element.children) {
+        block._children.push(this.fromUiRelation(child, block, indent + 1));
+      }
+    }
+    return block;
   }
 
   toIdName(): IdName {
@@ -89,6 +98,25 @@ export class TerritorySelectionBlock {
     return this._selectedStateBehaviour.asObservable();
   }
 
+  getSelectionUIState(recursive = true): TerritorySelectionUIState {
+    const selectionState: TerritorySelectionUIState = {
+      id: this.id,
+      state: this._selectedState,
+      children: [],
+    };
+    // console.log('getSelectionUIState ', this.id, this._children.map((child) => child.id), this._selectedState);
+    if (recursive && this._children) {
+      for (const child of this._children) {
+        if (child._selectedState !== TerritorySelectionState.NONE)
+          selectionState.children.push(
+            child.getSelectionUIState(child._selectedState === TerritorySelectionState.SOME),
+          );
+      }
+    }
+
+    return selectionState;
+  }
+
   setSelected(selected: boolean, propagateToParent = true, propagateToChildren = true): void {
     this._selectedState = selected ? TerritorySelectionState.ALL : TerritorySelectionState.NONE;
     if (propagateToParent === true && this._parent !== undefined) {
@@ -105,14 +133,18 @@ export class TerritorySelectionBlock {
   setSelectedStateFromChildren(propagateToParent = false): void {
     // let selectedElements = 0;
     // let childrenLength = this.children !== undefined ? this.children.length : 0;
-
     if (this._children !== undefined) {
       const selectedElementCount = this._children.filter(
         (child) => child._selectedState === TerritorySelectionState.ALL,
       ).length;
+
+      const someSelectedElementCount = this._children.filter(
+        (child) => child._selectedState !== TerritorySelectionState.NONE,
+      ).length;
+
       if (selectedElementCount === this._children.length) {
         this._selectedState = TerritorySelectionState.ALL;
-      } else if (selectedElementCount === 0) {
+      } else if (someSelectedElementCount === 0) {
         this._selectedState = TerritorySelectionState.NONE;
       } else {
         this._selectedState = TerritorySelectionState.SOME;
@@ -120,6 +152,8 @@ export class TerritorySelectionBlock {
     } else {
       this._selectedState = TerritorySelectionState.ALL;
     }
+
+    console.log('setSelectedStateFromChildren ', this.name, this._selectedState);
 
     this._selectedStateBehaviour.next(this._selectedState);
 

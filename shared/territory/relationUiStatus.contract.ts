@@ -4,10 +4,17 @@ export interface ParamsInterface {
   _id: number;
 }
 
-export type ResultInterface = TerritoryChildrenInterface[];
+export interface UiStatusRelationDetails {
+  id: number;
+  name: string;
+  state: number;
+  children: ResultInterface;
+}
+
+export type ResultInterface = UiStatusRelationDetails[];
 
 export const handlerConfig = {
   service: 'territory',
-  method: 'getIntermediaryRelation',
+  method: 'getTerritoryRelationUIStatus',
 };
 export const signature = `${handlerConfig.service}:${handlerConfig.method}`;

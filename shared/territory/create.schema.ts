@@ -21,22 +21,21 @@ export const create = {
       type: 'boolean',
       default: false,
     },
-    active_since: {
-      macro: 'timestamp',
+    activable: {
+      type: 'boolean',
+      default: false,
     },
     density: {
       type: 'integer',
       minimum: 0,
     },
-    // geo: {
-    //  TODO geography type
-    // },
 
     // Meta code
     insee: {
       type: 'array',
       items: { macro: 'insee' },
     },
+
     postcode: {
       type: 'array',
       items: { macro: 'postcode' },
@@ -46,6 +45,9 @@ export const create = {
       country: { type: 'string' },
       postcode: { type: 'string' },
       street: { type: 'string' },
+    },
+    ui_status: {
+      type: 'object',
     },
     // Relation
     children: {
