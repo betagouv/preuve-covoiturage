@@ -24,6 +24,6 @@ export class TerritoryDetailsComponent implements OnInit, OnChanges {
   }
 
   private setTerritoryDetails(territory: Territory): void {
-    this.territory = territory.toFormValues() as Territory;
+    this.territory = territory.clone() as Territory;
   }
 }

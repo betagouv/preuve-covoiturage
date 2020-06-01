@@ -12,6 +12,7 @@ import { Contacts } from '../shared/contacts';
 import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
 import { Contact } from '../shared/contact';
 import { TerritorySelectionUIState } from '~/modules/territory/modules/territory-ui/data/TerritorySelectionBlock';
+import { CompanyV2 } from '../shared/companyV2';
 
 export enum TerritoryLevelEnum {
   Null = '',
@@ -63,7 +64,7 @@ export class Territory extends BaseModel
   name: string;
   shortname?: string;
   company_id?: number;
-  company?: Company;
+  company?: CompanyV2;
   active?: boolean;
   activable?: boolean;
   children?: number[];
