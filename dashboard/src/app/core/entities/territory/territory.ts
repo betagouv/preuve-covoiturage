@@ -164,6 +164,9 @@ export class Territory extends BaseModel
   }
 }
 
+export interface TerritoryFormContactModel {
+  contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
+}
 export interface TerritoryFormModel {
   name: string;
   // level: TerritoryLevelEnum;

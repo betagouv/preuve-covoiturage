@@ -67,11 +67,11 @@ export enum BasicFieldEnum {
   ShortName = 'shortname',
   Active = 'active',
   Address = 'address',
+  Contacts = 'contacts',
 }
 
 export enum ActiveFieldEnum {
   Active = 'active',
-  Contacts = 'contacts',
   CreatedAt = 'created_at',
   UpdatedAt = 'updated_at',
 }
@@ -127,6 +127,7 @@ export const allBasicFieldEnum: ProjectionFieldsEnum = [
   BasicFieldEnum.ShortName,
   BasicFieldEnum.Active,
   BasicFieldEnum.Address,
+  BasicFieldEnum.Contacts,
 ];
 
 export const allTerritoryCodeEnum: ProjectionFieldsEnum = [TerritoryCodeEnum.Insee, TerritoryCodeEnum.Postcode];
@@ -154,9 +155,9 @@ export const directFields: ProjectionFieldsEnum = [
   BasicFieldEnum.ShortName,
   BasicFieldEnum.Active,
   BasicFieldEnum.Address,
+  BasicFieldEnum.Contacts,
   GeoFieldEnum.Density,
   GeoFieldEnum.Geo,
-  ActiveFieldEnum.Contacts,
   ActiveFieldEnum.CreatedAt,
   ActiveFieldEnum.UpdatedAt,
 ];
