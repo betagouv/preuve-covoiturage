@@ -27,7 +27,8 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-checkbox formControlName="active">AOM</mat-checkbox>
+      <mat-checkbox formControlName="activable">AOM</mat-checkbox>
+      <mat-checkbox formControlName="active" [hidden]="!displayAOMActive">AOM active</mat-checkbox>
 
       <h3>Structure</h3>
 

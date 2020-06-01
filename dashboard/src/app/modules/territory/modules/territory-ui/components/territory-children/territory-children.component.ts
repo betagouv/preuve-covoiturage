@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Territory } from '~/core/entities/territory/territory';
-import { TerritorySelectionBlock, IdName } from '../../data/TerritorySelectionBlock';
+import { TerritorySelectionBlock, IdName, TerritorySelectionUIState } from '../../data/TerritorySelectionBlock';
 import { TerritoryAutocompleteComponent } from '../territory-autocomplete/territory-autocomplete.component';
 import { TerritoryApiService } from '~/modules/territory/services/territory-api.service';
+import { UiStatusRelationDetails } from '../../../../../../../../../shared/territory/relationUiStatus.contract';
 
 @Component({
   selector: 'app-territory-children',
@@ -18,13 +19,19 @@ export class TerritoryChildrenComponent implements OnInit {
   public territories: TerritorySelectionBlock[] = [];
   selectedTerritory: IdName;
   territorySelectionFilter = (territory: Territory): boolean => {
-    // console.log('territory._id : ', territory._id);
     return this.subIgnoredIds.indexOf(territory._id) === -1;
   };
   protected subIgnoredIds: number[] = [];
   protected subIgnoredIdsGroups: number[][] = [];
 
   constructor(private fb: FormBuilder, private api: TerritoryApiService) {}
+
+  setRelations(ui: UiStatusRelationDetails[] = []): void {
+    this.territories = [];
+    for (const uiRelation of ui) {
+      this.territories.push(TerritorySelectionBlock.fromUiRelation(uiRelation));
+    }
+  }
 
   addTerritory(): void {
     this.api.getDirectRelation(this.selectedTerritory.id).subscribe((relation) => {
@@ -65,10 +72,20 @@ export class TerritoryChildrenComponent implements OnInit {
     this.subIgnoredIds = [];
   }
 
-  getFlatSelectedList(list: IdName[] = []): IdName[] {
+  getFlatSelectedList(list: IdName[] = []): number[] {
     for (const territory of this.territories) {
+      console.log('territory ', territory);
       territory.getFlatSelectedList(list);
+      console.log('list', [...list]);
     }
-    return list;
+    return list.map((idname: IdName) => idname.id);
+  }
+
+  getUISelectionState(): TerritorySelectionUIState[] {
+    const res = [];
+    for (const territory of this.territories) {
+      res.push(territory.getSelectionUIState());
+    }
+    return res;
   }
 }

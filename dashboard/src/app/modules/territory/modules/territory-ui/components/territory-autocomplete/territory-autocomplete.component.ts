@@ -68,7 +68,7 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
 
   ngOnInit(): void {
     this.commonDataService.territories$.pipe(takeUntil(this.destroy$)).subscribe((territories) => {
-      this.territories = territories ? territories : null;
+      this.territories = territories ? territories : [];
     });
 
     this.filteredTerritories = this.territoryCtrl.valueChanges.pipe(

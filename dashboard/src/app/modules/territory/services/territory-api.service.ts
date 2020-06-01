@@ -23,10 +23,8 @@ import {
   SortEnum,
   allBasicFieldEnum,
 } from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
-import {
-  TerritoryChildrenInterface,
-  TerritoryParentChildrenInterface,
-} from '../../../../../../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import { TerritoryParentChildrenInterface } from '../../../../../../shared/territory/common/interfaces/TerritoryChildrenInterface';
+import { ResultInterface as UiStatusRelationDetailsList } from '../../../../../../shared/territory/relationUiStatus.contract';
 
 @Injectable({
   providedIn: 'root',
@@ -56,9 +54,9 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryParentChildrenInterface>;
   }
 
-  getIntermediaryRelation(id: number): Observable<TerritoryChildrenInterface[]> {
-    const jsonRPCParam = new JsonRPCParam(`${this.method}:getIntermediaryRelation`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<TerritoryChildrenInterface[]>;
+  getRelationUIStatus(id: number): Observable<UiStatusRelationDetailsList> {
+    const jsonRPCParam = new JsonRPCParam(`${this.method}:getTerritoryRelationUIStatus`, { _id: id });
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<UiStatusRelationDetailsList>;
   }
 
   find(

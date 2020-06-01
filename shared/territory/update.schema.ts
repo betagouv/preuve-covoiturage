@@ -11,6 +11,7 @@ export const update = {
     _id: { macro: 'serial' },
     contacts,
     name: { macro: 'varchar' },
+    shortname: { macro: 'varchar' },
     level: {
       type: 'string',
       enum: ['town', 'towngroup', 'district', 'megalopolis', 'region', 'state', 'country', 'countrygroup', 'other'],
@@ -22,15 +23,38 @@ export const update = {
       type: 'boolean',
       default: false,
     },
-    active_since: {
-      macro: 'timestamp',
+    activable: {
+      type: 'boolean',
+      default: false,
     },
     density: {
       type: 'integer',
       minimum: 0,
     },
-    // geo: {
-    //  TODO geography type
-    // },
+
+    // Meta code
+    insee: {
+      type: 'array',
+      items: { macro: 'insee' },
+    },
+
+    postcode: {
+      type: 'array',
+      items: { macro: 'postcode' },
+    },
+    address: {
+      city: { type: 'string' },
+      country: { type: 'string' },
+      postcode: { type: 'string' },
+      street: { type: 'string' },
+    },
+    ui_status: {
+      type: 'object',
+    },
+    // Relation
+    children: {
+      type: 'array',
+      items: { macro: 'serial' },
+    },
   },
 };

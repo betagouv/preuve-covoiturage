@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { TerritorySelectionBlock } from '../../data/TerritorySelectionBlock';
 import { FormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material';
@@ -11,7 +11,7 @@ import { TerritoryApiService } from '~/modules/territory/services/territory-api.
   templateUrl: './territory-selection-block.component.html',
   styleUrls: ['./territory-selection-block.component.scss'],
 })
-export class TerritorySelectionBlockComponent extends DestroyObservable implements OnInit {
+export class TerritorySelectionBlockComponent extends DestroyObservable implements OnInit, OnChanges {
   constructor(private fb: FormBuilder, private territoryApi: TerritoryApiService) {
     super();
   }
@@ -30,6 +30,23 @@ export class TerritorySelectionBlockComponent extends DestroyObservable implemen
       if (state === true) this.prepareChildData();
     });
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // console.log('ngOnChanges ', changes);
+    if (changes.territory) {
+      const territory = changes.territory.currentValue as TerritorySelectionBlock;
+      if (territory && territory.children) {
+        this.childrenLoaded = true;
+        this.children = territory.children;
+      } else {
+        this.childrenLoaded = false;
+        delete this.children;
+      }
+
+      console.log('this.childrenLoaded', this.childrenLoaded);
+    }
+  }
+
   prepareChildData(): void {
     if (this.childrenLoaded === false) {
       this.childrenLoaded = true;

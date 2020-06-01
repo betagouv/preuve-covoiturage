@@ -1,14 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { filter, takeUntil, tap, throttleTime } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -18,7 +8,7 @@ import { FormContact } from '~/shared/modules/form/forms/form-contact';
 import { FormAddress } from '~/shared/modules/form/forms/form-address';
 import { Address } from '~/core/entities/shared/address';
 import { Contact } from '~/core/entities/shared/contact';
-import { Territory, territoryLevelLabels } from '~/core/entities/territory/territory';
+import { Territory, territoryLevelLabels, TerritoryFormModel } from '~/core/entities/territory/territory';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
 import { DestroyObservable } from '~/core/components/destroy-observable';
 import { UserGroupEnum } from '~/core/enums/user/user-group.enum';
@@ -36,7 +26,7 @@ import { Company } from '~/core/entities/shared/company';
   templateUrl: './territory-form.component.html',
   styleUrls: ['./territory-form.component.scss'],
 })
-export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges, AfterViewInit {
+export class TerritoryFormComponent extends DestroyObservable implements OnInit, OnChanges {
   public territoryForm: FormGroup;
 
   @Input() showForm = false;
@@ -48,12 +38,12 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   territoryChildren: TerritoryChildrenComponent;
 
   fullFormMode = false;
-
+  displayAOMActive = false;
   levelLabel = territoryLevelLabels;
 
   public editedId: number;
   private companyDetails: CompanyInterface;
-  intermediateRelation: any;
+  // intermediateRelation: any;
   // protected subIgnoredIds: number[];
 
   constructor(
@@ -82,9 +72,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   }
 
   public onSubmit(): void {
-    const formValues = {
+    const formValues: TerritoryFormModel = {
       ...this.territoryForm.value,
       children: this.territoryChildren.getFlatSelectedList(),
+      uiSelectionState: this.territoryChildren.getUISelectionState(),
       company_id: this.companyDetails._id,
     };
 
@@ -96,7 +87,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
       patch$.subscribe(
         (modifiedTerritory) => {
-          this.toastr.success(`${modifiedTerritory.name} a été mis à jour !`);
+          this.toastr.success(`${formValues.name} a été mis à jour !`);
           this.close.emit();
         },
         // (err) => {
@@ -105,8 +96,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
       );
     } else {
       this.territoryStore.create(formValues).subscribe((createdTerritory) => {
-        this.toastr.success(`${createdTerritory.name} a été mis à jour !`);
-        this.close.emit();
+        // this.toastr.success(`${formValues.name} a été mis à jour !`);
+        // this.close.emit();
       });
     }
   }
@@ -132,6 +123,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         ...formOptions,
         name: [''],
         active: [false],
+        activable: [false],
         level: [null, Validators.required],
         shortname: [''],
         address: this.fb.group(
@@ -170,6 +162,13 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
 
     if (companyFormGroup) {
+      this.territoryForm.controls.activable.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
+        this.displayAOMActive = val;
+        // reset is val to false if activable is off
+        this.territoryForm.patchValue({ active: this.territoryForm.value.active && val });
+        // console.log('>> activable val', val);
+      });
+
       companyFormGroup.controls.siret.valueChanges
         .pipe(
           throttleTime(300),
@@ -235,19 +234,26 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
   // todo: ugly ...
   private setTerritoryFormValue(territory: Territory): void {
     // base values for form
+    console.log('territory ', territory);
     this.editedId = territory ? territory._id : null;
     const territoryEd = new Territory(territory);
     const formValues = territoryEd.toFormValues(this.fullFormMode);
 
+    delete formValues.uiSelectionState;
+
     if (this.editedId) {
-      this.territoryApi.getIntermediaryRelation(this.editedId).subscribe((intermediateRelation) => {
-        this.intermediateRelation = intermediateRelation;
+      this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
+        // console.log('completeRelation', completeRelation);
+        this.territoryChildren.setRelations(completeRelation);
         this.territoryForm.setValue(formValues);
       });
     } else {
-      this.intermediateRelation = [];
+      // this.intermediateRelation = [];
+      this.territoryChildren.setRelations([]);
       this.territoryForm.setValue(formValues);
     }
+
+    this.displayAOMActive = territory.activable === true;
   }
 
   private checkPermissions(): void {

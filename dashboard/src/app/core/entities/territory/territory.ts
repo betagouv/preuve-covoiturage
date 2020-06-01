@@ -11,6 +11,7 @@ import { Company } from '../shared/company';
 import { Contacts } from '../shared/contacts';
 import { Territory as TerritoryBaseEdit } from '../api/shared/territory/update.contract';
 import { Contact } from '../shared/contact';
+import { TerritorySelectionUIState } from '~/modules/territory/modules/territory-ui/data/TerritorySelectionBlock';
 
 export enum TerritoryLevelEnum {
   Null = '',
@@ -44,10 +45,16 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   shortname?: string;
   company_id?: number;
   active?: boolean;
+  activable?: boolean;
+
   // active_since?: Date;
   contacts?: Contacts;
   density?: number;
   geo?: any; // TODO : geography type
+}
+
+export interface TerritoryUIStatus {
+  ui_selection_state?: TerritorySelectionUIState[];
 }
 
 export class Territory extends BaseModel
@@ -58,12 +65,16 @@ export class Territory extends BaseModel
   company_id?: number;
   company?: Company;
   active?: boolean;
+  activable?: boolean;
+  children?: number[];
+
   active_since?: Date;
   address: Address;
   // active_since?: Date;
   contacts?: Contacts;
   density?: number;
   geo?: any; // TODO : geography type
+  ui_status: TerritoryUIStatus;
 
   constructor(base: Territory) {
     super(base);
@@ -77,16 +88,22 @@ export class Territory extends BaseModel
     this.level = base.level as TerritoryLevelEnum;
     this.name = base.name;
 
-    this.active = base.active === true;
-
     assignOrDeleteProperty(base, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(base, this, 'address', (data) => new Address(data.address));
     assignOrDeleteProperty(base, this, 'company', (data) => ({ ...data.company }));
     assignOrDeleteProperty(base, this, 'geo', (data) => ({ ...data.geo }));
 
-    assignOrDeleteProperty(base, this, 'shortname');
-    assignOrDeleteProperty(base, this, 'density');
-    assignOrDeleteProperty(base, this, 'company_id');
+    if (base.shortname) this.shortname = base.shortname;
+    else delete this.shortname;
+    if (base.density !== undefined) this.density = base.density;
+    else delete this.density;
+    if (base.company_id !== undefined) this.company_id = base.company_id;
+    else delete this.company_id;
+    if (base._id) this._id = base._id;
+    else delete this._id;
+
+    this.active = base.active === true;
+    this.activable = base.activable === true;
 
     return this;
   }
@@ -97,15 +114,25 @@ export class Territory extends BaseModel
     this.name = formValues.name;
     this.level = formValues.level !== undefined ? (formValues.level as TerritoryLevelEnum) : TerritoryLevelEnum.Country;
     this.active = formValues.active === true;
+    this.activable = formValues.activable === true;
+
     assignOrDeleteProperty(formValues, this, 'contacts', (data) => new Contacts(data.contacts));
     assignOrDeleteProperty(formValues, this, 'address', (data) => new Address(data.address));
 
     if (formValues.shortname) this.shortname = formValues.shortname;
     else delete this.shortname;
+
     if (formValues.density !== undefined) this.density = formValues.density;
     else delete this.density;
-    if (formValues.company_id !== undefined) this.company_id = formValues.company_id;
+
+    if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
+
+    if (formValues.children) this.children = formValues.children;
+    else delete this.children;
+
+    this.ui_status = {};
+    if (formValues.uiSelectionState) this.ui_status.ui_selection_state = formValues.uiSelectionState;
 
     // assignOrDeleteProperty(formValues, this, 'shortname');
     // assignOrDeleteProperty(formValues, this, 'density');
@@ -120,11 +147,13 @@ export class Territory extends BaseModel
           name: this.name ? this.name : '',
           // level: this.level ? this.level : null,
           // active: this.active ? this.active : false,
-
+          uiSelectionState:
+            this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
           shortname: this.shortname ? this.shortname : '',
           active: !!this.active,
+          activable: !!this.activable,
           level: this.level ? this.level : null,
-
+          // children: this.children ? this.children : [],
           company: new Company(this.company).toFormValues(),
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
@@ -145,6 +174,8 @@ export interface TerritoryFormModel {
   shortname?: string;
   // insee?: string[];
   active?: boolean;
+  children?: number[];
+  activable?: boolean;
   company?: {
     siret: string;
     naf_entreprise: string; // tslint:disable-line variable-name
@@ -155,6 +186,8 @@ export interface TerritoryFormModel {
   company_id?: number;
   contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
   address?: Address;
+  uiSelectionState: TerritorySelectionUIState[];
+
   // public address?: Address;
 
   // public cgu?: CGU;

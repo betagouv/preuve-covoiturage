@@ -1,4 +1,4 @@
-export const alias = 'territory.getIntermadiaryRelation';
+export const alias = 'territory.getTerritoryRelationUIStatus';
 
 export const schema = {
   $id: alias,

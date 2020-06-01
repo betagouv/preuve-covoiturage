@@ -17,7 +17,7 @@ export class TerritorySelectionGroupComponent implements OnInit {
 
   swap(): void {
     this.open = !this.open;
-    if (this.open && !this.childrenLoadStarted) {
+    if (this.open && !this.childrenLoadStarted && !this.territory.children) {
       this.childrenLoadStarted = true;
 
       this.territoryApi.getDirectRelation(this.territory.id).subscribe((relation) => {

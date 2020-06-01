@@ -1,11 +1,15 @@
 import { TerritoryBaseInterface } from './common/interfaces/TerritoryInterface';
 import { TerritoryDbMetaInterface } from './common/interfaces/TerritoryDbMetaInterface';
+import { TerritoryBaseRelationInterface } from './common/interfaces/TerritoryRelationInterface';
 
 export interface Territory extends TerritoryBaseInterface {
   _id: number;
 }
 
-export interface ParamsInterface extends Territory {}
+export interface ParamsInterface extends Territory {
+  children: TerritoryBaseRelationInterface;
+  ui_status: any;
+}
 export interface ResultInterface extends TerritoryBaseInterface, TerritoryDbMetaInterface {}
 
 export const handlerConfig = {

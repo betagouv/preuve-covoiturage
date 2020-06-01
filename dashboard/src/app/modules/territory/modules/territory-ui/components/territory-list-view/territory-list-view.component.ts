@@ -21,7 +21,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
   public territoriesToShow: Territory[];
   public territoriesFiltered: Territory[];
 
-  PAGE_SIZE = 10;
+  ELEMENT_PER_PAGE = 10;
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -66,8 +66,8 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
       .pipe(
         switchMap(() => {
           const page = this.paginator.pageIndex;
-          const start = Number(page) * this.PAGE_SIZE;
-          const end = Number(page) * this.PAGE_SIZE + this.PAGE_SIZE;
+          const start = Number(page) * this.ELEMENT_PER_PAGE;
+          const end = Number(page) * this.ELEMENT_PER_PAGE + this.ELEMENT_PER_PAGE;
           this.territoriesFiltered = this.territories
             .filter((t) => t.name.toLowerCase().includes(this._filterLiteral.value))
             .sort((a, b) => a.name.localeCompare(b.name));
@@ -88,7 +88,7 @@ export class TerritoryListViewComponent extends DestroyObservable implements OnI
     this._filterLiteral.next(literal);
   }
 
-  pipeEdit(territory: any): void {
+  onEdit(territory: any): void {
     this._territoryStoreService.select(territory);
   }
 

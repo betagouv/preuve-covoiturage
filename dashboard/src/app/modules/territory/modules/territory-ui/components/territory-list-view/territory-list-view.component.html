@@ -5,11 +5,11 @@
     </h2>
     <app-territory-filter (filterLiteralChange)="pipeFilter($event)"></app-territory-filter>
   </div>
-  <app-territory-list (edit)="pipeEdit($event)" [territories]="territoriesToShow"></app-territory-list>
+  <app-territory-list (edit)="onEdit($event)" [territories]="territoriesToShow"></app-territory-list>
   <mat-paginator
     [hidden]="!territoriesToShow && !territoriesFiltered"
     [length]="countTerritories"
-    [pageSize]="PAGE_SIZE"
+    [pageSize]="ELEMENT_PER_PAGE"
   ></mat-paginator>
 </div>
 <div class="Territories-edition">
