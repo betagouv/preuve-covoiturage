@@ -114,7 +114,7 @@ export class CreateJourneyAction extends AbstractAction {
       }
     }
 
-    this.kernel.notify<ResolveErrorParamsInterface>(
+    await this.kernel.notify<ResolveErrorParamsInterface>(
       'acquisition:resolveerror',
       {
         operator_id: get(context, 'call.user.operator_id', 0),
