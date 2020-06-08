@@ -493,6 +493,7 @@ export class HttpTransport implements TransportInterface {
      */
     this.app.get(
       '/v2/certificates/:type/:uuid/',
+      serverTokenMiddleware(this.kernel, this.tokenProvider),
       asyncHandler(async (req, res, next) => {
         const type = req.params.type.toLowerCase();
         const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
