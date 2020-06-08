@@ -1,1 +1,2 @@
 -- DROP TABLE common.insee;
+  
