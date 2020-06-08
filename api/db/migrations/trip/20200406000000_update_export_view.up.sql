@@ -9,21 +9,21 @@ CREATE MATERIALIZED VIEW trip.export AS (
     cpp.acquisition_id::varchar as journey_id,
     cpp.trip_id as trip_id,
     cpp.datetime as journey_start_datetime,
-    trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(5-cis.density::int)+2)::int) as journey_start_lon,
-    trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(5-cis.density::int)+2)::int) as journey_start_lat,
+    trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lon,
+    trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lat,
     cpp.start_insee as journey_start_insee,
     tcpcs.value as journey_start_postcode,
-    ts.name as journey_start_town, -- TODO
-    tstg.name as journey_start_epci, -- TODO
-    tsc.name as journey_start_country, -- TODO
+    ts.name as journey_start_town, 
+    tstg.name as journey_start_epci, 
+    tsc.name as journey_start_country, 
     (cpp.datetime + (cpp.duration || ' seconds')::interval) as journey_end_datetime,
-    trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(5-cie.density::int)+2)::int) as journey_end_lon,
-    trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(5-cie.density::int)+2)::int) as journey_end_lat,
+    trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lon,
+    trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lat,
     cpp.end_insee as journey_end_insee,
-    tcpce.value as journey_end_postcode, -- TODO
-    te.name as journey_end_town,-- TODO
-    tetg.name as journey_end_epci,  -- TODO
-    tec.name as journey_end_country, -- TODO
+    tcpce.value as journey_end_postcode, 
+    te.name as journey_end_town,
+    tetg.name as journey_end_epci,  
+    tec.name as journey_end_country, 
     (CASE WHEN cpp.distance IS NOT NULL THEN cpp.distance ELSE (cpp.meta::json->>'calc_distance')::int END) as journey_distance,
     (CASE WHEN cpp.duration IS NOT NULL THEN cpp.duration ELSE (cpp.meta::json->>'calc_duration')::int END) as journey_duration,
     (CASE WHEN cid.travel_pass_name IS NOT NULL THEN '1' ELSE '0' END)::boolean as driver_card,
