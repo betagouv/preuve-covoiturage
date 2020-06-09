@@ -1,3 +1,2 @@
 web: yarn start:http
 worker: yarn start:queue
-postdeploy: yarn global add db-migrate db-migrate-pg && yarn migrate && yarn set-permissions
