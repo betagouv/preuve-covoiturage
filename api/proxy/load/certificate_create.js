@@ -8,7 +8,7 @@ import { check } from 'k6';
 // global options
 const o = {
   sleep_duration: 1,
-  base_url: 'http://localhost:8080',
+  base_url: __ENV.LOAD_BASE_URL || 'http://localhost:8080',
   user: {
     email: 'maxicovoit.admin@example.com',
     password: 'admin1234',
@@ -87,7 +87,7 @@ export default function(store) {
     JSON.stringify({
       tz: 'Europe/Paris',
       identity: {
-        phone: '+33612345670',
+        phone: __ENV.LOAD_PHONE || '+33612345670',
       },
       positions: [
         {
