@@ -86,7 +86,7 @@ export function setup() {
     JSON.stringify({
       tz: 'Europe/Paris',
       identity: {
-        phone: '+33612345670',
+        phone: __ENV.LOAD_PHONE || '+33612345670',
       },
       positions: [
         {
