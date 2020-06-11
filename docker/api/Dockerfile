@@ -16,6 +16,7 @@ libgcc1 \
 libgconf-2-4 \
 libgdk-pixbuf2.0-0 \
 libglib2.0-0 \
+libgbm-dev \
 libgtk-3-0 \
 libnspr4 \
 libpango-1.0-0 \
