@@ -463,6 +463,7 @@ export class HttpTransport implements TransportInterface {
           }),
         )) as RPCResponseType;
 
+        console.log(`Rendered ${req.params.uuid}`);
         this.raw(res, get(response, 'result.data', response), { 'Content-type': 'text/html' });
       }),
     );
@@ -498,13 +499,13 @@ export class HttpTransport implements TransportInterface {
         const type = req.params.type.toLowerCase();
         const uuid = req.params.uuid.replace(/[^a-z0-9-]/gi, '').toLowerCase();
 
+        const now = new Date();
+        console.log(`Download START ${type}/${uuid}`);
         const call = makeCall('certificate:download', { uuid, type }, { user: get(req, 'session.user', null) });
         const response = (await this.kernel.handle(call)) as RPCResponseType;
+        console.log(`Download   END ${type}/${uuid}`, new Date().getTime() - now.getTime(), 'ms');
 
-        this.raw(res, get(response, 'result', response), {
-          'Content-type': type === 'png' ? 'image/png' : 'application/pdf',
-          'Content-disposition': `attachment; filename=${uuid}.${type}`,
-        });
+        this.raw(res, get(response, 'result.body', response), get(response, 'result.headers', {}));
       }),
     );
 

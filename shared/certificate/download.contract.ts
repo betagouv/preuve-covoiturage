@@ -1,6 +1,8 @@
+import { PrintTypes } from '@pdc/provider-printer';
+
 export interface ParamsInterface {
   uuid: string;
-  type: string;
+  type: PrintTypes;
 }
 
 // should be Buffer but fails with the frontend

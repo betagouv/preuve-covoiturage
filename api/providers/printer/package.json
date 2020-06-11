@@ -1,0 +1,23 @@
+{
+  "name": "@pdc/provider-printer",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "typings": "dist/index.d.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo '[provider-printer] No tests'; exit 0",
+    "test:integration": "echo '[provider-printer] No tests'; exit 0",
+    "coverage-ci": "echo '[provider-printer] No tests'; exit 0",
+    "coverage": "echo '[provider-printer] No tests'; exit 0",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "puppeteer": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^3.0.0"
+  }
+}

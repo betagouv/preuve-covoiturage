@@ -7,6 +7,7 @@ import { PermissionMiddleware } from '@pdc/provider-acl';
 import { DateProvider } from '@pdc/provider-date';
 import { QrcodeProvider } from '@pdc/provider-qrcode';
 import { CryptoProvider } from '@pdc/provider-crypto';
+import { PrinterProvider } from '@pdc/provider-printer';
 import { TemplateExtension } from '@pdc/provider-template';
 
 import { config } from './config';
@@ -38,6 +39,7 @@ import { binding as listBinding } from './shared/certificate/list.schema';
     CarpoolPgRepositoryProvider,
     TerritoryPgRepository,
     HtmlPrinterProvider,
+    PrinterProvider,
   ],
   validator: [renderBinding, createBinding, findBinding, downloadBinding, listBinding],
   middlewares: [

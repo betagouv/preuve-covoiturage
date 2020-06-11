@@ -23,6 +23,7 @@ export class RenderCertificateAction extends AbstractAction {
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
+    console.log('HANDLE RENDER START');
     //// TODO : MOVE THIS TO MIDDLEWARE
     // validate token
     // try {
@@ -50,6 +51,7 @@ export class RenderCertificateAction extends AbstractAction {
     const validationUrl = `${templateMeta.validation.url}/${certificate.uuid}`;
 
     // ...or render the HTML document
+    console.log('HANDLE RENDER RESPONSE');
     return {
       type: 'text/html',
       code: 200,
