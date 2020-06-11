@@ -1,8 +1,7 @@
 import { Action as AbstractAction } from '@ilos/core';
-import { handler, ConfigInterfaceResolver } from '@ilos/common';
+import { handler } from '@ilos/common';
 import { DateProviderInterfaceResolver } from '@pdc/provider-date';
 import { QrcodeProviderInterfaceResolver } from '@pdc/provider-qrcode';
-import { TokenProviderInterfaceResolver } from '@pdc/provider-token';
 import { TemplateInterfaceResolver } from '@pdc/provider-template';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
@@ -16,32 +15,11 @@ export class RenderCertificateAction extends AbstractAction {
     private templateProvider: TemplateInterfaceResolver,
     private dateProvider: DateProviderInterfaceResolver,
     private qrcodeProvider: QrcodeProviderInterfaceResolver,
-    private tokenProvider: TokenProviderInterfaceResolver,
-    private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
   public async handle(params: ParamsInterface): Promise<ResultInterface> {
-    console.log('HANDLE RENDER START');
-    //// TODO : MOVE THIS TO MIDDLEWARE
-    // validate token
-    // try {
-    //   const payload = await this.tokenProvider.verify<RenderTokenPayloadInterface>(params.token, {
-    //     issuer: this.config.get('token.render.issuer'),
-    //     audience: this.config.get('token.render.audience'),
-    //     ignoreExpiration: true,
-    //   });
-
-    //   // make sure the token has been issued for this certificate
-    //   if (payload.uuid !== params.uuid) {
-    //     throw new Error('Token not matching the certificate');
-    //   }
-    // } catch (e) {
-    //   throw new UnauthorizedException(e.message);
-    // }
-    //// END TODO
-
     const certificate = await this.certRepository.findByUuid(params.uuid);
 
     // fetch template metadata
@@ -51,7 +29,6 @@ export class RenderCertificateAction extends AbstractAction {
     const validationUrl = `${templateMeta.validation.url}/${certificate.uuid}`;
 
     // ...or render the HTML document
-    console.log('HANDLE RENDER RESPONSE');
     return {
       type: 'text/html',
       code: 200,
