@@ -35,13 +35,13 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
     const { identity, start_at, end_at, positions = [], radius = 1000 } = params;
 
     const where_positions = positions
-      .map((pos: PointInterface): string => {
-        return `
-          OR ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.start_position) < ${Math.abs(radius | 0)}
-          OR ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.end_position) < ${Math.abs(radius | 0)}
-        `;
-      })
-      .join(' ');
+      .reduce((prev: string[], pos: PointInterface): string[] => {
+        prev.push(`ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.start_position) < ${Math.abs(radius | 0)}`);
+        prev.push(`ST_Distance(ST_MakePoint(${pos.lon}, ${pos.lat}), cc.end_position) < ${Math.abs(radius | 0)}`);
+
+        return prev;
+      }, [])
+      .join(' OR ');
 
     // fetch the number of kilometers per month
     const result = await this.connection.getClient().query({
@@ -57,7 +57,7 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         ON cc._id = pi.carpool_id
         WHERE cc.identity_id = $1
         AND cc.datetime >= $2 AND cc.datetime <= $3
-        ${where_positions}
+        ${where_positions.length ? `AND (${where_positions})` : ''}
         GROUP BY (m, y)
         ORDER BY y DESC, m DESC
       `,

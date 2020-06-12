@@ -38,6 +38,7 @@
     "@pdc/provider-template": "~0",
     "@pdc/provider-date": "~0",
     "@pdc/provider-middleware": "~0",
+    "@pdc/provider-printer": "~0",
     "@pdc/provider-qrcode": "~0",
     "@pdc/provider-validator": "~0"
   }
