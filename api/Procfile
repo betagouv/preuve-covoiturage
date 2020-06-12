@@ -1,3 +1,3 @@
 web: yarn start:http
 worker: yarn start:queue
-postdeploy: yarn migrate && yarn fix-permissions
+postdeploy: yarn migrate && yarn set-permissions
