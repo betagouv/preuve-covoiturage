@@ -44,7 +44,6 @@ services:
     depends_on:
       - redis
       - postgres
-      - printer
 
   worker:
     build: './docker/api'
@@ -61,22 +60,6 @@ services:
     depends_on:
       - redis
       - postgres
-
-  printer:
-    build: './docker/printer'
-    volumes:
-      - .:/code
-    working_dir: '/code/printer'
-    command: 'yarn start'
-    ports:
-      - 3000:3000
-    env_file: ./printer/.env
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-    networks:
-      - front
-      - back
 
 networks:
   front:
