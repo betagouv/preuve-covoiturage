@@ -36,10 +36,10 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let row" class="item-actions">
-        <button mat-icon-button (click)="download(row, 'application/pdf')">
+        <button mat-icon-button (click)="download(row, 'pdf')">
           <mat-icon color="primary" matTooltip="Télécharger la version PDF">picture_as_pdf</mat-icon>
         </button>
-        <button mat-icon-button (click)="download(row, 'image/png')">
+        <button mat-icon-button (click)="download(row, 'png')">
           <mat-icon color="primary" matTooltip="Télécharger la version image">photo_gallery</mat-icon>
         </button>
       </td>

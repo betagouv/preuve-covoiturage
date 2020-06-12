@@ -174,10 +174,10 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       }
   }
 
-  download(row: ResultRowInterface, type: string): void {
+  download(row: ResultRowInterface, type: 'pdf' | 'png'): void {
     this.certificateApi.downloadPrint({
+      type,
       uuid: row.uuid,
-      type: 'pdf',
     });
   }
 
