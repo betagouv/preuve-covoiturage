@@ -8,7 +8,14 @@ import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/Ce
 import { handlerConfig, ParamsInterface, ResultInterface } from '../shared/certificate/render.contract';
 import { alias } from '../shared/certificate/render.schema';
 
-@handler({ ...handlerConfig, middlewares: [['validate', alias]] })
+@handler({
+  ...handlerConfig,
+  middlewares: [
+    ['validate', alias],
+    ['can', ['certificate.render']],
+    ['channel.service.only', ['proxy']],
+  ],
+})
 export class RenderCertificateAction extends AbstractAction {
   constructor(
     private certRepository: CertificateRepositoryProviderInterfaceResolver,

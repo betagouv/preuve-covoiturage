@@ -9,7 +9,11 @@ import { alias } from '../shared/certificate/download.schema';
 
 @handler({
   ...handlerConfig,
-  middlewares: [['validate', alias]],
+  middlewares: [
+    ['validate', alias],
+    ['can', ['certificate.download']],
+    ['channel.service.only', ['proxy']],
+  ],
 })
 export class DownloadCertificateAction extends AbstractAction {
   constructor(
