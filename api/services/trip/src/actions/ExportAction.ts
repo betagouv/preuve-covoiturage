@@ -48,41 +48,41 @@ export class ExportAction extends Action {
   }
 
   public async handle(params: ParamsInterface, context: ContextType): Promise<ResultInterface> {
-    const start =
-      (params && params.date && params.date.start) || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-    const end = (params && params.date && params.date.end) || new Date();
-
     const email = get(context, 'call.user.email');
     const fullname = `${get(context, 'call.user.firstname', '')} ${get(context, 'call.user.lastname', '')}`;
-    params.operator_territory_id = get(context, 'call.user.territory_id');
 
     if (!email) {
       throw new InvalidParamsException();
     }
 
-    await this.kernel.notify<BuildParamsInterface>(
-      buildSignature,
-      {
-        from: {
-          fullname,
-          email,
-        },
-        query: {
-          ...params,
-          date: {
-            start,
-            end,
-          },
+    const start =
+      (params && params.date && params.date.start) || new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+    const end = (params && params.date && params.date.end) || new Date();
+
+    const buildParams: BuildParamsInterface = {
+      from: {
+        type: context.call.user.territory_id ? 'territory' : context.call.user.operator_id ? 'operator' : 'registry',
+        fullname,
+        email,
+      },
+      query: {
+        operator_id: params.operator_id,
+        territory_id: params.territory_id,
+        territory_authorized_operator_id: get(context, 'call.user.authorizedOperators', []),
+        date: {
+          start,
+          end,
         },
       },
-      {
-        channel: {
-          service: 'trip',
-        },
-        call: {
-          user: {},
-        },
+    };
+
+    await this.kernel.notify<BuildParamsInterface>(buildSignature, buildParams, {
+      channel: {
+        service: 'trip',
       },
-    );
+      call: {
+        user: {},
+      },
+    });
   }
 }

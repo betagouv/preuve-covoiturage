@@ -6,7 +6,12 @@ import {
   TripSearchInterfaceWithPagination,
   TripSearchInterface,
 } from '../shared/trip/common/interfaces/TripSearchInterface';
-import { LightTripInterface, TripRepositoryInterface, TripRepositoryProviderInterfaceResolver } from '../interfaces';
+import {
+  LightTripInterface,
+  ExportTripInterface,
+  TripRepositoryInterface,
+  TripRepositoryProviderInterfaceResolver,
+} from '../interfaces';
 
 import { ResultWithPagination } from '../shared/common/interfaces/ResultWithPagination';
 import { StatInterface } from '../interfaces/StatInterface';
@@ -186,83 +191,119 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     return result.rows;
   }
 
-  public async searchWithCursor(params: {
-    date: { start: Date; end: Date };
-    operator_territory_id?: number; // territory id for operator visibility filtering
-    operator_id?: number[];
-    territory_id?: number[];
-  }): Promise<(count: number) => Promise<LightTripInterface[]>> {
-    let where = '';
-    const values: any[] = [params.date.start, params.date.end];
+  public async searchWithCursor(
+    params: {
+      date: { start: Date; end: Date };
+      territory_authorized_operator_id?: number[]; // territory id for operator visibility filtering
+      operator_id?: number[];
+      territory_id?: number[];
+    },
+    type = 'opendata',
+  ): Promise<(count: number) => Promise<ExportTripInterface[]>> {
+    const values = [];
 
-    const territoryWhere = '(start_territory_id = ANY ($3::int[]) OR end_territory_id = ANY ($4::int[]))';
-    const operatorWhere = (i: number): string => `operator_id = ANY ($${i}::text[])`;
+    // all
+    const baseFields = [
+      'journey_id',
+      'trip_id',
+      'journey_start_datetime',
+      'journey_start_date',
+      'journey_start_time',
+      'journey_start_lon',
+      'journey_start_lat',
+      'journey_start_insee',
+      'journey_start_postalcode',
+      'journey_start_department',
+      'journey_start_town',
+      'journey_start_towngroup',
+      'journey_start_country',
+      'journey_end_datetime',
+      'journey_end_date',
+      'journey_end_time',
+      'journey_end_lon',
+      'journey_end_lat',
+      'journey_end_insee',
+      'journey_end_postalcode',
+      'journey_end_department',
+      'journey_end_town',
+      'journey_end_towngroup',
+      'journey_end_country',
+      'driver_card',
+      'passenger_card',
+      'passenger_over_18',
+      'passenger_seats',
+      'operator_class',
+      'journey_distance',
+      'journey_duration',
+      'journey_distance_anounced',
+      'journey_distance_calculated',
+      'journey_duration_anounced',
+      'journey_duration_calculated',
+    ];
 
-    if (params.operator_id && params.territory_id) {
-      where = `AND ${operatorWhere(5)} AND ${territoryWhere}`;
-      values.push(params.territory_id, params.territory_id, params.operator_id);
-    } else if (params.operator_id) {
-      where = `AND ${operatorWhere(3)}`;
-      values.push(params.operator_id);
-    } else if (params.territory_id) {
-      where = `AND ${territoryWhere}`;
+    // all except opendata
+    const financialFields = [
+      'passenger_id',
+      'passenger_contribution',
+      'passenger_incentive_raw',
+      'passenger_incentive_rpc_raw',
+      'driver_id',
+      'driver_revenue',
+      'driver_incentive_raw',
+      'driver_incentive_rpc_raw',
+    ];
+
+    let selectedFields = [...baseFields];
+    switch (type) {
+      case 'territory':
+        if (params.territory_authorized_operator_id && params.territory_authorized_operator_id.length) {
+          selectedFields = [
+            ...selectedFields,
+            "(case when operator_id = ANY($#::int[]) then operator else 'NC' end) as operator",
+            ...financialFields,
+          ];
+          values.push(params.territory_authorized_operator_id);
+        } else {
+          selectedFields = [...selectedFields, "'NC' as operator", ...financialFields];
+        }
+        break;
+      case 'registry':
+        selectedFields = [...selectedFields, 'operator', ...financialFields];
+        break;
+      case 'operator':
+        selectedFields = [...selectedFields, ...financialFields];
+        break;
+    }
+
+    const whereClausesText = ['$#::timestamp <= journey_start_datetime AND journey_start_datetime <= $#::timestamp'];
+    values.push(params.date.start, params.date.end);
+
+    if (params.territory_id) {
+      whereClausesText.push('(start_territory_id = ANY ($#::int[]) OR end_territory_id = ANY ($#::int[]))');
       values.push(params.territory_id, params.territory_id);
     }
 
-    // operator visibility extra filtering
-    let territoryOpVJoin = '';
-    let territoryOpVNameSelect = 'operator_name,';
-
-    if (params.operator_territory_id) {
-      territoryOpVJoin = `
-        LEFT JOIN territory.territory_operators teop
-        ON teop.operator_id = export.operator_id::int
-        AND teop.territory_id = '${params.operator_territory_id}'`;
-      territoryOpVNameSelect = `
-        (CASE WHEN teop.operator_id <> 0 THEN export.operator_name ELSE '' END)
-        AS operator_name,`;
+    if (params.operator_id) {
+      whereClausesText.push('operator_id = ANY ($#::text[])');
+      values.push(params.operator_id);
     }
 
-    const query = {
-      values,
-      text: `
-        SELECT
-          journey_id,
-          trip_id,
-          journey_start_datetime,
-          journey_start_lat,
-          journey_start_lon,
-          journey_start_insee,
-          journey_start_postcode,
-          journey_start_town,
-          journey_start_epci,
-          journey_start_country,
-          journey_end_datetime,
-          journey_end_lat,
-          journey_end_lon,
-          journey_end_insee,
-          journey_end_postcode,
-          journey_end_town,
-          journey_end_epci,
-          journey_end_country,
-          journey_distance,
-          journey_duration,
-          driver_card,
-          passenger_card,
-          ${territoryOpVNameSelect}
-          operator_class,
-          passenger_over_18,
-          passenger_seats
-        FROM trip.export
-        ${territoryOpVJoin}
-        WHERE $1::timestamp <= journey_start_datetime AND journey_start_datetime <= $2::timestamp
-        ${where}
-      `,
-    };
-    const db = await this.connection.getClient().connect();
-    const cursorCb = db.query(new Cursor(query.text, query.values));
+    const text = `
+      SELECT
+        ${selectedFields.join(', ')}
+      FROM trip.export
+      WHERE 
+      ${whereClausesText.join(' AND ')}
+      ORDER BY journey_start_datetime ASC
+    `
+      .split('$#')
+      .reduce((prev, curr, i) => prev + '$' + i + curr);
 
-    return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<LightTripInterface[]>;
+    console.log(text, values);
+    const db = await this.connection.getClient().connect();
+    const cursorCb = db.query(new Cursor(text, values));
+
+    return promisify(cursorCb.read.bind(cursorCb)) as (count: number) => Promise<ExportTripInterface[]>;
   }
 
   public async search(
