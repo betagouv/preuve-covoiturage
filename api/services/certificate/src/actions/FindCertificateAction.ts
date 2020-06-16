@@ -1,6 +1,5 @@
 import { Action as AbstractAction } from '@ilos/core';
 import { handler } from '@ilos/common';
-import { CryptoProviderInterfaceResolver } from '@pdc/provider-crypto';
 
 import { CertificateRepositoryProviderInterfaceResolver } from '../interfaces/CertificateRepositoryProviderInterface';
 import { handlerConfig, ResultInterface, ParamsInterface } from '../shared/certificate/find.contract';
@@ -8,10 +7,7 @@ import { alias } from '../shared/certificate/find.schema';
 
 @handler({ ...handlerConfig, middlewares: [['validate', alias]] })
 export class FindCertificateAction extends AbstractAction {
-  constructor(
-    private certRepository: CertificateRepositoryProviderInterfaceResolver,
-    private crypto: CryptoProviderInterfaceResolver,
-  ) {
+  constructor(private certRepository: CertificateRepositoryProviderInterfaceResolver) {
     super();
   }
 
@@ -22,7 +18,8 @@ export class FindCertificateAction extends AbstractAction {
 
     return {
       uuid: certificate.uuid,
-      signature: await this.crypto.sha256(certificate.uuid + certificate.operator_id),
+      identity_uuid: certificate.meta.identity.uuid,
+      operator_uuid: certificate.meta.operator.uuid,
       start_at: certificate.start_at,
       end_at: certificate.end_at,
       created_at: certificate.created_at,
