@@ -17,10 +17,11 @@ CREATE MATERIALIZED VIEW trip.export AS (
     -- DATA --
     cpp.acquisition_id::varchar as journey_id,
     cpp.trip_id as trip_id,
-    extract(isodow from cpp.datetime) as journey_weekday,
+    
     ts_ceil(cpp.datetime, 600) as journey_start_datetime,
-    cpp.datetime::date as journey_start_date, -- TODO : clean date fields, cast in export
-    ts_ceil(cpp.datetime, 600)::time as journey_start_time, -- TODO round 15 min
+    extract(isodow from cpp.datetime) as journey_start_weekday,
+    extract(hour from cpp.datetime) as journey_start_dayhour,
+
     -- trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lon, -- TODO
     -- trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lat, -- TODO
     ST_X(cpp.start_position::geometry)::numeric as journey_start_lon, -- TODO
@@ -34,8 +35,7 @@ CREATE MATERIALIZED VIEW trip.export AS (
     tbs.country as journey_start_country,
 
     ts_ceil((cpp.datetime + (cpp.duration || ' seconds')::interval), 600) as journey_end_datetime,
-    (cpp.datetime + (cpp.duration || ' seconds')::interval)::date as journey_end_date,
-    ts_ceil((cpp.datetime + (cpp.duration || ' seconds')::interval), 600)::time as journey_end_time, -- TODO round 15 min
+
     -- trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lon, -- TODO
     -- trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lat, -- TODO
     ST_X(cpp.end_position::geometry)::numeric as journey_end_lon, -- TODO
@@ -143,4 +143,8 @@ CREATE INDEX ON trip.export(journey_start_datetime);
 CREATE INDEX ON trip.export(start_territory_id);
 CREATE INDEX ON trip.export(end_territory_id);
 CREATE INDEX ON trip.export(operator_id);
-
+CREATE INDEX ON trip.export(journey_start_weekday);
+CREATE INDEX ON trip.export(journey_start_dayhour);
+CREATE INDEX ON trip.export(journey_distance);
+CREATE INDEX ON trip.export(journey_distance);
+CREATE INDEX ON trip.list (operator_class);

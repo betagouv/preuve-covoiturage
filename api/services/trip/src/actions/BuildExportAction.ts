@@ -15,6 +15,10 @@ import { signature as notifySignature, ParamsInterface as NotifyParamsInterface 
 import { ExportTripInterface } from '../interfaces';
 
 interface FlattenTripInterface extends ExportTripInterface {
+  journey_start_date: string;
+  journey_start_time: string;
+  journey_end_date: string;
+  journey_end_time: string;
   passenger_incentive_1_siret?: string;
   passenger_incentive_1_amount?: number;
   passenger_incentive_2_siret?: string;
@@ -245,8 +249,16 @@ export class BuildExportAction extends Action {
   protected normalize(initialData: ExportTripInterface): FlattenTripInterface {
     const data = {
       ...initialData,
-      // journey_start_date: initialData.journey_start_date.toISOString().split('T')[0],
-      // journey_end_date: initialData.journey_end_date.toISOString().split('T')[0],
+      journey_start_date: initialData.journey_start_datetime.toISOString().split('T')[0],
+      journey_start_time: initialData.journey_start_datetime
+        .toISOString()
+        .split('T')[1]
+        .split('.')[0],
+      journey_end_date: initialData.journey_end_datetime.toISOString().split('T')[0],
+      journey_end_time: initialData.journey_end_datetime
+        .toISOString()
+        .split('T')[1]
+        .split('.')[0],
       journey_distance: Math.round(initialData.journey_distance / 1000),
       journey_distance_calculated: Math.round(initialData.journey_distance_calculated / 1000),
       journey_distance_anounced: Math.round(initialData.journey_distance_anounced / 1000),
