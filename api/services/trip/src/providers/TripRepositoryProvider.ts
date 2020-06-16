@@ -23,7 +23,7 @@ import { StatInterface } from '../interfaces/StatInterface';
   identifier: TripRepositoryProviderInterfaceResolver,
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
-  public readonly table = 'trip.list';
+  public readonly table = 'trip.export';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -36,7 +36,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const filtersToProcess = [
       'territory_id',
       'operator_id',
-      // 'status',
+      'status',
       'date',
       'ranks',
       'distance',
@@ -69,23 +69,26 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
               };
 
             case 'status':
-              throw new Error('Unimplemented');
+              return {
+                text: 'status = $#',
+                values: [filter.value],
+              };
 
             case 'date':
               if (filter.value.start && filter.value.end) {
                 return {
-                  text: '($#::timestamp <= datetime AND datetime <= $#::timestamp)',
+                  text: '(journey_start_datetime >= $#::timestamp AND journey_start_datetime < $#::timestamp)',
                   values: [filter.value.start, filter.value.end],
                 };
               }
               if (filter.value.start) {
                 return {
-                  text: '$#::timestamp <= datetime',
+                  text: 'journey_start_datetime >= $#::timestamp',
                   values: [filter.value.start],
                 };
               }
               return {
-                text: 'datetime <= $#::timestamp',
+                text: 'journey_start_datetime < $#::timestamp',
                 values: [filter.value.end],
               };
 
@@ -98,18 +101,18 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
             case 'distance':
               if (filter.value.min && filter.value.max) {
                 return {
-                  text: '($#::int <= distance AND distance <= $#::int)',
+                  text: '(journey_distance >= $#::int AND journey_distance < $#::int)',
                   values: [filter.value.min, filter.value.max],
                 };
               }
               if (filter.value.min) {
                 return {
-                  text: '$#::int <= distance',
+                  text: 'journey_distance >= $#::int',
                   values: [filter.value.min],
                 };
               }
               return {
-                text: 'distance <= $#::int',
+                text: 'journey_distance < $#::int',
                 values: [filter.value.max],
               };
 
@@ -118,20 +121,20 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
             case 'insee':
               return {
-                text: '(start_insee = ANY($#::text[]) OR end_insee = ANY ($#::text[]))',
+                text: '(journey_start_insee = ANY($#::text[]) OR journey_end_insee = ANY ($#::text[]))',
                 values: [filter.value, filter.value],
               };
 
             case 'days':
               return {
-                text: 'weekday = ANY ($#::int[])',
+                text: 'journey_start_weekday = ANY ($#::int[])',
                 values: [filter.value === 0 ? 7 : filter.value],
                 // 0 = sunday ... 6 = saturday >> 1 = monday ... 7 = sunday
               };
 
             case 'hour': {
               return {
-                text: '($#::int <= dayhour AND dayhour <= $#::int)',
+                text: '($#::int <= journey_start_dayhour AND journey_start_dayhour <= $#::int)',
                 values: [filter.value.start, filter.value.end],
               };
             }
@@ -150,9 +153,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         );
     }
 
-    // remove duplicates
-    orderedFilters.text.push('is_driver = false');
-
     const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
     const whereClausesValues = orderedFilters.values;
 
@@ -168,11 +168,11 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const query = {
       text: `
       SELECT
-        datetime::date as day,
-        sum(distance/1000*seats)::int as distance,
-        sum(seats+1)::int as carpoolers,
+        journey_start_datetime::date as day,
+        sum(journey_distance/1000*passenger_seats)::int as distance,
+        sum(passenger_seats+1)::int as carpoolers,
         count(*)::int as trip,
-        '0'::int as trip_subsidized,
+        count(*) FILTER (WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0) as trip_subsidized,
         count(distinct operator_id)::int as operators
       FROM ${this.table}
       ${where ? where.text : ''}
@@ -287,7 +287,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const text = `
       SELECT
         ${selectedFields.join(', ')}
-      FROM trip.export
+      FROM ${this.table}
       WHERE 
       ${whereClausesText.join(' AND ')}
       ORDER BY journey_start_datetime ASC
@@ -311,17 +311,18 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const query = {
       text: `
         SELECT
-          count(*) over() as total_count,
+          (count(*) over())::int as total_count,
           trip_id,
-          start_town,
-          end_town,
-          datetime as start_datetime,
-          '0'::int as incentives,
+          journey_start_town as start_town,
+          journey_end_town as end_town,
+          journey_start_datetime as start_datetime,
+          (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int as incentives,
           operator_id::int,
-          operator_class
+          operator_class,
+          status
         FROM ${this.table}
         ${where ? where.text : ''}
-        ORDER BY start_datetime DESC
+        ORDER BY journey_start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer
       `,

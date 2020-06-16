@@ -62,7 +62,6 @@ export class ListAction extends Action {
             ? null
             : r.operator_id,
         campaigns_id: [],
-        status: 'locked',
       })),
     };
   }
