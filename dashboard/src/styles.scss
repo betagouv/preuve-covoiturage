@@ -71,3 +71,7 @@ a.link:visited {
   color: $color-primary-dark;
   text-decoration: underline;
 }
+
+:focus {
+  outline: none;
+}
