@@ -150,65 +150,12 @@ export class HttpTransport implements TransportInterface {
   }
 
   /**
-   * Operators POST to /journeys/push
-   * being authenticated by a JWT long-lived token with the payload:
-   * {
-   *    a: string,
-   *    o: string,
-   *    p: [string],
-   *    v: number
-   * }
+   * Journeys routes
+   * - check status
+   * - invalidate
+   * - save
    */
   private registerAcquisitionRoutes(): void {
-    // V1 payload
-    this.app.post(
-      '/journeys/push',
-      serverTokenMiddleware(this.kernel, this.tokenProvider),
-      asyncHandler(async (req, res, next) => {
-        const user = get(req, 'session.user', {});
-        const isLatest =
-          Array.isArray(get(req, 'body.passenger.incentives', null)) ||
-          Array.isArray(get(req, 'body.driver.incentives', null));
-
-        /**
-         * Throw a Bad Request error and give information to the user
-         * about the version mismatch
-         */
-        if (isLatest) {
-          res.status(400).json({
-            id: req.body.id,
-            jsonrpc: '2.0',
-            error: {
-              code: -32600,
-              message: 'Invalid Request',
-              data: 'Please use /v2/journeys endpoint for Schema V2',
-            },
-          });
-
-          return;
-        }
-
-        const response = await this.kernel.handle(
-          makeCall('acquisition:createLegacy', req.body, { user, metadata: { req } }),
-        );
-
-        // warn the user about this endpoint deprecation agenda
-        // https://github.com/betagouv/preuve-covoiturage/issues/383
-        // prettier-ignore
-        // eslint-disable-next-line
-        const warning = 'The POST /journeys/push route will be deprecated at the end of 2019. Please use POST /v2/journeys instead.  Please migrate to the new journey schema. Documentation: https://hackmd.io/@jonathanfallon/HyXkGqxOH';
-
-        res.status(mapStatusCode(response)).json({
-          meta: {
-            warning,
-            supported_until: '2020-01-01T00:00:00Z',
-          },
-          data: this.parseErrorData(response),
-        });
-      }),
-    );
-
-    // check journey status
     this.app.get(
       '/v2/journeys/:journey_id',
       serverTokenMiddleware(this.kernel, this.tokenProvider),
