@@ -259,9 +259,11 @@ export class BuildExportAction extends Action {
         .toISOString()
         .split('T')[1]
         .split('.')[0],
+      // distance in kilometers
       journey_distance: Math.round(initialData.journey_distance / 1000),
       journey_distance_calculated: Math.round(initialData.journey_distance_calculated / 1000),
       journey_distance_anounced: Math.round(initialData.journey_distance_anounced / 1000),
+      // duration in minutes
       journey_duration: Math.round(initialData.journey_duration / 60),
       journey_duration_calculated: Math.round(initialData.journey_duration_calculated / 60),
       journey_duration_anounced: Math.round(initialData.journey_duration_anounced / 60),
@@ -273,14 +275,15 @@ export class BuildExportAction extends Action {
     );
 
     for (let i = 0; i < 4; i++) {
+      // normalize incentive in euro
       data[`passenger_incentive_${i + 1}_siret`] = get(passenger_incentive_raw, `${i}.siret`);
-      data[`passenger_incentive_${i + 1}_amount`] = get(passenger_incentive_raw, `${i}.amount`);
+      data[`passenger_incentive_${i + 1}_amount`] = get(passenger_incentive_raw, `${i}.amount`, 0) / 100;
       data[`passenger_incentive_rpc_${i + 1}_siret`] = get(data, `passenger_incentive_rpc_raw.${i}.siret`);
-      data[`passenger_incentive_rpc_${i + 1}_amount`] = get(data, `passenger_incentive_rpc_raw.${i}.amount`);
+      data[`passenger_incentive_rpc_${i + 1}_amount`] = get(data, `passenger_incentive_rpc_raw.${i}.amount`, 0) / 100;
       data[`driver_incentive_${i + 1}_siret`] = get(driver_incentive_raw, `${i}.siret`);
-      data[`driver_incentive_${i + 1}_amount`] = get(driver_incentive_raw, `${i}.amount`);
+      data[`driver_incentive_${i + 1}_amount`] = get(driver_incentive_raw, `${i}.amount`, 0) / 100;
       data[`driver_incentive_rpc_${i + 1}_siret`] = get(data, `driver_incentive_rpc_raw.${i}.siret`);
-      data[`driver_incentive_rpc_${i + 1}_amount`] = get(data, `driver_incentive_rpc_raw.${i}.amount`);
+      data[`driver_incentive_rpc_${i + 1}_amount`] = get(data, `driver_incentive_rpc_raw.${i}.amount`, 0) / 100;
     }
 
     return data;
