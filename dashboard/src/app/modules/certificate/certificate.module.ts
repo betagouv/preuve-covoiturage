@@ -20,7 +20,6 @@ import { OperatorUiModule } from '../operator/modules/operator-ui/operator-ui.mo
   imports: [
     CommonModule,
     MaterialModule,
-
     ToastrModule,
     FormsModule,
     TerritoryUiModule,

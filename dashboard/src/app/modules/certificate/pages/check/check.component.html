@@ -4,15 +4,71 @@
   </div>
 
   <div class="generate" *ngIf="data">
-    <div>
-      <h3>Attestation {{ data.uuid }}</h3>
-      <p>
-        <strong>Commence du {{ data.start_at | date: 'dd/MM/yyyy' }} au {{ data.end_at | date: 'dd/MM/yyyy' }} </strong>
+    <div class="wrapper">
+      <div class="description">
+        <p>
+          Veuillez vérifier les informations ci-dessous pour vous assurer que l'attestation qui vous est présentée a été
+          générée par le Registre de preuve de covoiturage.
+        </p>
+      </div>
+
+      <mat-card>
+        <table class="table" [ngClass]="{ 'is-small': isSmall }">
+          <tr>
+            <td>Période</td>
+            <td>du&nbsp;{{ data.start_at | date: 'dd/MM/yyyy' }} au&nbsp;{{ data.end_at | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+          <tr>
+            <td>Distance totale</td>
+            <td>{{ data.total_km }}km</td>
+          </tr>
+          <tr *ngIf="data.total_point !== undefined">
+            <td>Points</td>
+            <td>{{ data.total_point }}</td>
+          </tr>
+          <tr *ngIf="data.total_cost !== undefined">
+            <td>Coût total</td>
+            <td>{{ data.total_cost }}&euro;</td>
+          </tr>
+          <tr *ngIf="data.remaining !== undefined">
+            <td>Reste à charge</td>
+            <td>{{ data.remaining }}&euro;</td>
+          </tr>
+
+          <tr>
+            <td colspan="2" class="divider">
+              <mat-divider></mat-divider>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Attestation générée le</td>
+            <td>{{ data.created_at | date: 'dd/MM/yyyy' }}&nbsp;à&nbsp;{{ data.created_at | date: 'HH:mm' }}</td>
+          </tr>
+          <tr>
+            <td>Identifiant attestation</td>
+            <td>{{ data.uuid }}</td>
+          </tr>
+          <tr>
+            <td>Identifiant personne</td>
+            <td>{{ data.identity_uuid }}</td>
+          </tr>
+          <tr>
+            <td>Identifiant opérateur</td>
+            <td>{{ data.operator_uuid }}</td>
+          </tr>
+        </table>
+      </mat-card>
+
+      <p class="center-align">
+        <a
+          mat-stroked-button
+          href="https://registre-preuve-de-covoiturage.gitbook.io/produit/attestations-de-covoiturage"
+          target="_blank"
+          color="primary"
+          >Accéder à la documentation</a
+        >
       </p>
-      <p><strong>Nombre de KM</strong> {{ data.total_km }}</p>
-      <p><strong *ngIf="data.total_point !== undefined">Points</strong> {{ data.total_point }}</p>
-      <p><strong *ngIf="data.total_cost !== undefined">Coût</strong> {{ data.total_cost }}</p>
-      <p><strong *ngIf="data.remaining !== undefined">Restants</strong> {{ data.remaining }}</p>
     </div>
   </div>
 </div>
