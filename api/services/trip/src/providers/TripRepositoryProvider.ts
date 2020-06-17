@@ -169,11 +169,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       text: `
       SELECT
         journey_start_datetime::date as day,
+        sum(passenger_seats)::int as trip,
         sum(journey_distance/1000*passenger_seats)::int as distance,
-        sum(passenger_seats+1)::int as carpoolers,
-        count(*)::int as trip,
-        count(*) FILTER (WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0) as trip_subsidized,
-        count(distinct operator_id)::int as operators
+        (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
+        count(distinct operator_id)::int as operators,
+        ((sum(passenger_seats + 1)::float) / count(distinct trip_id)) as average_carpoolers_by_car,
+        count(*) FILTER (WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0) as trip_subsidized
       FROM ${this.table}
       ${where ? where.text : ''}
       GROUP BY day
@@ -241,12 +242,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     const financialFields = [
       'passenger_id',
       'passenger_contribution',
-      'passenger_incentive_raw',
-      'passenger_incentive_rpc_raw',
+      'passenger_incentive_raw::json[]',
+      'passenger_incentive_rpc_raw::json[]',
       'driver_id',
       'driver_revenue',
-      'driver_incentive_raw',
-      'driver_incentive_rpc_raw',
+      'driver_incentive_raw::json[]',
+      'driver_incentive_rpc_raw::json[]',
     ];
 
     let selectedFields = [...baseFields];

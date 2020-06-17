@@ -6,6 +6,32 @@ $func$
 SELECT to_timestamp(ceil(extract(epoch FROM $1) / $2) * $2)
 $func$  LANGUAGE sql STABLE;
 
+CREATE TYPE trip.incentive AS (
+  siret varchar,
+  amount int,
+  unit varchar,
+  policy_id int,
+  type varchar
+);
+
+create or replace function incentive_to_json(_ti trip.incentive) returns json as $$
+  select json_build_object(
+    'siret', $1.siret
+  , 'amount', $1.amount
+  , 'unit', $1.unit
+  , 'policy_id', $1.policy_id
+  , 'type', $1.type
+  );
+$$ language sql;
+
+create cast (trip.incentive as json) with function incentive_to_json(_ti trip.incentive) as assignment;
+
+create or replace function json_to_incentive(_ti json) returns trip.incentive as $$
+  select ROW($1->>'siret', ($1->>'amount')::int, $1->>'unit', ($1->>'policy_id')::int, $1->>'type')::trip.incentive;
+$$ language sql;
+
+create cast (json as trip.incentive) with function json_to_incentive(_ti json) as assignment;
+
 CREATE MATERIALIZED VIEW trip.export AS (
   SELECT
 
@@ -65,16 +91,16 @@ CREATE MATERIALIZED VIEW trip.export AS (
     cpp.seats as passenger_seats,
 
     abs(cpp.cost) as passenger_contribution,
-    cpp.meta->'payments' as passenger_incentive_raw,
-    pip.incentive_raw as passenger_incentive_rpc_raw,
+    cpip.incentive::trip.incentive[] as passenger_incentive_raw,
+    pip.incentive_raw::trip.incentive[] as passenger_incentive_rpc_raw,
     pip.incentive_sum as passenger_incentive_rpc_sum,
 
     cid.uuid as driver_id,
     (CASE WHEN cid.travel_pass_name IS NOT NULL THEN '1' ELSE '0' END)::boolean as driver_card,
 
     abs(cpd.cost) as driver_revenue,
-    cpd.meta->'payments' as driver_incentive_raw,
-    pid.incentive_raw as driver_incentive_rpc_raw,
+    cpid.incentive::trip.incentive[] as driver_incentive_raw,
+    pid.incentive_raw::trip.incentive[] as driver_incentive_rpc_raw,
     pid.incentive_sum as driver_incentive_rpc_sum,
 
     cpp.status as status
@@ -94,48 +120,81 @@ CREATE MATERIALIZED VIEW trip.export AS (
   LATERAL (
     WITH data AS (
       SELECT
-        pi.carpool_id,
-        cc.siret,
+        pi.policy_id,
         sum(pi.amount) as amount
       FROM policy.incentives as pi
-      JOIN policy.policies as pp on pp._id = pi.policy_id
-      JOIN territory.territories as tt on pp.territory_id = tt._id
-      JOIN company.companies as cc on cc._id = tt.company_id
       WHERE pi.carpool_id = cpp._id
       AND pi.status = 'validated'::policy.incentive_status_enum
-      GROUP BY pi.carpool_id, cc.siret
+      GROUP BY pi.policy_id
+    ),
+    incentive AS (
+      SELECT
+        ROW(
+          cc.siret,
+          data.amount,
+          pp.unit::varchar,
+          data.policy_id,
+          'incentive'
+        )::trip.incentive as value,
+        data.amount as amount
+      FROM data
+      JOIN policy.policies as pp on pp._id = data.policy_id
+      JOIN territory.territories as tt on pp.territory_id = tt._id
+      JOIN company.companies as cc on cc._id = tt.company_id
     )
     SELECT
-      json_agg(
-        json_build_object('siret', data.siret, 'amount', data.amount)
+      array_agg(
+        incentive.value
       ) as incentive_raw,
-      sum(data.amount) as incentive_sum
-    FROM data
-    GROUP BY data.carpool_id
+      sum(incentive.amount) as incentive_sum
+    FROM incentive
   ) as pip,
   LATERAL (
     WITH data AS (
       SELECT
-        pi.carpool_id,
-        cc.siret,
+        pi.policy_id,
         sum(pi.amount) as amount
       FROM policy.incentives as pi
-      JOIN policy.policies as pp on pp._id = pi.policy_id
-      JOIN territory.territories as tt on pp.territory_id = tt._id
-      JOIN company.companies as cc on cc._id = tt.company_id
       WHERE pi.carpool_id = cpd._id
       AND pi.status = 'validated'::policy.incentive_status_enum
-      -- add status contraint
-      GROUP BY pi.carpool_id, cc.siret
+      GROUP BY pi.policy_id
+    ),
+    incentive AS (
+      SELECT
+        ROW(
+          cc.siret,
+          data.amount,
+          pp.unit::varchar,
+          data.policy_id,
+          'incentive'
+        )::trip.incentive as value,
+        data.amount as amount
+      FROM data
+      JOIN policy.policies as pp on pp._id = data.policy_id
+      JOIN territory.territories as tt on pp.territory_id = tt._id
+      JOIN company.companies as cc on cc._id = tt.company_id
     )
     SELECT
-      json_agg(
-        json_build_object('siret', data.siret, 'amount', data.amount)
+      array_agg(
+        incentive.value
       ) as incentive_raw,
-      sum(data.amount) as incentive_sum
-    FROM data
-    GROUP BY data.carpool_id
-  ) as pid
+      sum(incentive.amount) as incentive_sum
+    FROM incentive
+  ) as pid,
+  LATERAL (
+    SELECT
+      array_agg(
+        value::trip.incentive
+      ) as incentive
+    FROM json_array_elements(cpp.meta->'payments')
+  ) as cpip,
+  LATERAL (
+      SELECT
+      array_agg(
+        value::trip.incentive
+      ) as incentive
+    FROM json_array_elements(cpd.meta->'payments')
+  ) as cpid
   WHERE cpp.is_driver = false AND cpp.status = 'ok'::carpool.carpool_status_enum AND cpp.datetime >= (NOW() - '2 month'::interval)
 );
 
