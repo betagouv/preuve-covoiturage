@@ -1,6 +1,7 @@
 ALTER TABLE carpool.carpools
   ADD COLUMN start_territory_id int,
   ADD COLUMN end_territory_id int;
+  
 
 UPDATE carpool.carpools
 SET 
@@ -18,7 +19,3 @@ SET
     LEFT JOIN territory.territories as en ON en._id = tce.territory_id
   ) as sub
 WHERE carpools._id = sub._id;
-
--- ALTER TABLE carpool.carpools
---   DROP COLUMN start_insee,
---   DROP COLUMN end_insee;

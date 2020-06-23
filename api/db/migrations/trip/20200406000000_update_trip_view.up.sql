@@ -16,19 +16,19 @@ SELECT
     cp.seats as seats,
     cp.is_driver as is_driver,
     ts.name as start_town,
-    tcis.territory_id as start_territory_id,
+    cp.start_territory_id,
     te.name as end_town,
-    tcie.territory_id as end_territory_id,
+    cp.end_territory_id,
     (CASE WHEN cp.distance IS NOT NULL THEN cp.distance ELSE (cp.meta::json->>'calc_distance')::int END) as distance
   FROM carpool.carpools as cp
   -- JOIN common.insee as cis ON cp.start_insee = cis._id
   -- JOIN common.insee as cie ON cp.end_insee = cie._id
   
-  JOIN territory.territory_codes as tcis ON tcis.type = 'insee' AND cp.start_insee = tcis.value
-  JOIN territory.territory_codes as tcie ON tcie.type = 'insee' AND cp.end_insee = tcie.value
+  -- JOIN territory.territory_codes as tcis ON tcis.type = 'insee' AND cp.start_insee = tcis.value
+  -- JOIN territory.territory_codes as tcie ON tcie.type = 'insee' AND cp.end_insee = tcie.value
 
-  LEFT JOIN territory.territories as ts ON ts._id = tcis.territory_id AND ts.level = 'town'
-  LEFT JOIN territory.territories as te ON te._id = tcie.territory_id AND te.level = 'town'
+  LEFT JOIN territory.territories as ts ON ts._id = cp.start_territory_id AND ts.level = 'town'
+  LEFT JOIN territory.territories as te ON te._id = cp.start_territory_id AND te.level = 'town'
 
 );
 

@@ -40,7 +40,8 @@ CREATE TABLE IF NOT EXISTS territory.territories
     address json,
 
     --- geo data
-    density integer,
+    population integer,
+    surface integer,
     geo geography,
 
     -- ui_status

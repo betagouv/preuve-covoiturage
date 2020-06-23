@@ -31,7 +31,7 @@ WITH oldterritory(company_id, created_at, updated_at, deleted_at, level, name, a
   RETURNING _id, old_territory_id
 ),
 -- COPY FROM INSEE
-oldinsee (name, level, density, postcodes, geo, old_insee_id) AS (
+oldinsee (name, level,  postcodes, geo, old_insee_id) AS (
   SELECT
     (CASE
         WHEN ci.town is null THEN ci.country 
@@ -39,27 +39,27 @@ oldinsee (name, level, density, postcodes, geo, old_insee_id) AS (
       END) AS name,
     (CASE
       WHEN ci._id like '99%' THEN 'country'::territory.territory_level_enum
-      WHEN length(ci._id) = 2 THEN 'region'::territory.territory_level_enum
+      -- WHEN length(ci._id) = 2 THEN 'region'::territory.territory_level_enum
       ELSE 'town'::territory.territory_level_enum
     END) AS level,
-    ci.density,
+    -- ci.density,
     ci.postcodes,
     ci.geo,
     ci._id AS old_insee_id
-  FROM common.insee AS ci
+  FROM common.insee AS ci WHERE length(ci._id) > 2 OR ci._id like '99%' -- ignore regions
 ),
 -- INSERT INSEE CODE AS TERRITORY
 insee (_id, old_insee_id) AS (
   INSERT INTO territory.territories (
     name,
     level,
-    density,
+    -- density,
     geo,
     old_insee_id
   ) SELECT 
   name,
     level,
-    density,
+    -- density,
     geo,
     old_insee_id
    FROM oldinsee
@@ -113,5 +113,18 @@ FROM (
     old_territory_id IN (SELECT territory_id FROM territory.territory_operators)
 ) as sub
 WHERE territory_operators.territory_id = sub.old_territory_id;
+
+
+-- update region level based on its insee string length
+WITH ti AS (
+    SELECT t._id as ti_id, t.level FROM territory.territories AS t
+    INNER JOIN territory.insee AS ti ON ti.territory_id = t.old_territory_id AND length(ti._id)::int = 2
+) UPDATE territory.territories t SET level = 'region' FROM ti WHERE  ti.ti_id = t._id;
+
+-- set region insee (not as child but as direct territory_code)
+WITH insee AS (
+    SELECT t._id,t.level,t.name,ti._id as insee FROM territory.territories AS t INNER JOIN territory.insee AS ti ON ti.territory_id = t.old_territory_id AND length(ti._id)::int = 2
+) INSERT INTO territory.territory_codes (territory_id, type, value)  SELECT  insee._id,'insee',insee.insee FROM insee;
+
 
 CREATE UNIQUE INDEX ON territory.territory_operators (territory_id, operator_id);
