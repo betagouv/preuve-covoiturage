@@ -9,16 +9,20 @@ CREATE MATERIALIZED VIEW trip.export AS (
     cpp.acquisition_id::varchar as journey_id,
     cpp.trip_id as trip_id,
     cpp.datetime as journey_start_datetime,
-    trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lon,
-    trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lat,
+    -- TODO apply new density model
+    
+    -- trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lon,
+    -- trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lat,
     cpp.start_insee as journey_start_insee,
     tcpcs.value as journey_start_postcode,
     ts.name as journey_start_town, 
     tstg.name as journey_start_epci, 
     tsc.name as journey_start_country, 
     (cpp.datetime + (cpp.duration || ' seconds')::interval) as journey_end_datetime,
-    trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lon,
-    trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lat,
+    -- TODO apply new density model
+    
+    -- trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lon,
+    -- trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lat,
     cpp.end_insee as journey_end_insee,
     tcpce.value as journey_end_postcode, 
     te.name as journey_end_town,
@@ -38,8 +42,8 @@ CREATE MATERIALIZED VIEW trip.export AS (
   LEFT JOIN territory.territory_codes as tcis ON tcis.type = 'insee' AND cpp.start_insee = tcis.value
   LEFT JOIN territory.territory_codes as tcie ON tcie.type = 'insee' AND cpp.end_insee = tcie.value
 
-  LEFT JOIN territory.territory_codes as tcpcs ON tcpcs.type = 'postcode' AND tcis.territory_id = tcpcs.territory_id
-  LEFT JOIN territory.territory_codes as tcpce ON tcpce.type = 'postcode' AND tcie.territory_id = tcpce.territory_id
+  LEFT JOIN territory.territory_codes as tcpcs ON tcpcs.type = 'postcode' AND cpp.start_territory_id = tcpcs.territory_id
+  LEFT JOIN territory.territory_codes as tcpce ON tcpce.type = 'postcode' AND cpp.end_territory_id = tcpce.territory_id
   
   LEFT JOIN territory.territories as ts ON ts._id = tcis.territory_id AND ts.level = 'town'
   LEFT JOIN territory.territories as te ON te._id = tcie.territory_id AND te.level = 'town'
@@ -53,9 +57,6 @@ CREATE MATERIALIZED VIEW trip.export AS (
   LEFT JOIN territory.territories as tsc ON tsc._id = ANY (tis.ancestors) AND tsc.level = 'country'
   LEFT JOIN territory.territories as tec ON tec._id = ANY (tie.ancestors) AND tec.level = 'country'
   
-
-  LEFT JOIN common.insee AS cis ON cis._id = cpp.start_insee
-  LEFT JOIN common.insee AS cie ON cie._id = cpp.end_insee
 
   LEFT JOIN carpool.carpools AS cpd ON cpd.acquisition_id = cpp.acquisition_id AND cpd.is_driver = true AND cpd.status = 'ok'::carpool.carpool_status_enum
   LEFT JOIN carpool.identities AS cip ON cip._id = cpp.identity_id
