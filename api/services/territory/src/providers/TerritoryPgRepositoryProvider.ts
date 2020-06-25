@@ -25,6 +25,7 @@ import {
   TerritoryQueryEnum,
   allTerritoryQueryDirectFields,
   allTerritoryQueryFields,
+  TerritoryListFilter,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
@@ -181,6 +182,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     query: TerritoryQueryInterface,
     sort: SortEnum[],
     projection: ProjectionFieldsEnum,
+    pagination?: TerritoryListFilter,
   ): Promise<TerritoryDbMetaInterface> {
     const selectsFields = [];
     const joins = [];
@@ -284,7 +286,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       text: `SELECT ${selectsFields.join(',')} \n FROM ${this.table} t \n ${joins.join(`\n`)} ${
         whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''
       } 
-      ${finalSort.length ? ` ORDER BY ${finalSort.join(',')}` : ''}`,
+      ${finalSort.length ? ` ORDER BY ${finalSort.join(',')}` : ''}
+      ${pagination && pagination.skip ? ` OFFSET ${pagination.skip}` : ''}
+      ${pagination && pagination.limit ? ` LIMIT ${pagination.skip}` : ''}
+      `,
       values,
     };
     console.log(finalQuery.text, finalQuery.values);
@@ -316,21 +321,45 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     };
 
     const rowCount = (await this.connection.getClient().query(query)).rowCount;
-    console.log('rowCount : ', rowCount);
+    // console.log('rowCount : ', rowCount);
     if (rowCount !== 0) throw new ConflictException('Double siret is not allowed for territory ' + id);
   }
 
-  async all(): Promise<TerritoryDbMetaInterface[]> {
+  async all(
+    search?: string,
+    limit?: number,
+    skip?: number,
+  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
+    const searchCondition = search
+      ? search
+          .split(/\_|\-|\,|\ /)
+          .map((word) => ` name LIKE '%${word}%'`)
+          .join(' AND ')
+      : null;
+
+    const client = this.connection.getClient();
+
+    const countQuery = `SELECT count(*) as territory_count from ${this.table} ${
+      searchCondition ? ` WHERE ${searchCondition}` : ''
+    }`;
+
+    const count = parseFloat((await client.query(countQuery)).rows[0].territory_count);
+
     const query = {
       text: `
-        SELECT * FROM ${this.table}
-        WHERE deleted_at IS NULL
+        SELECT name,_id FROM ${this.table} t
+        WHERE deleted_at IS NULL 
+        ${searchCondition ? ` AND ${searchCondition}` : ''}
+
+        
+        ${limit !== undefined ? ` LIMIT ${limit}` : ''}
+        ${skip !== undefined ? ` OFFSET ${skip}` : ''}
       `,
       values: [],
     };
 
-    const result = await this.connection.getClient().query(query);
-    return result.rows;
+    const result = await client.query(query);
+    return { rows: result.rows, count };
   }
 
   async create(data: CreateParams): Promise<CreateResultInterface> {

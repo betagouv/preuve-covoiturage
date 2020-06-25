@@ -34,8 +34,8 @@ export class JsonRpcGetList<EntityT, ListEntityT = EntityT, IGetT = any, IGetLis
     return this.callOne(this.paramGet(params)).pipe(map((data) => data.data));
   }
 
-  getList(params?: IGetListT): Observable<ListEntityT[]> {
-    return this.callOne(this.paramGetList(params)).pipe(map((data) => data.data));
+  getList(params?: IGetListT): Observable<{ data: ListEntityT[]; meta: any }> {
+    return this.callOne(this.paramGetList(params));
   }
 
   getById(id: number): Observable<EntityT> {

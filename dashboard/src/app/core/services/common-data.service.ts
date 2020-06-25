@@ -99,7 +99,7 @@ export class CommonDataService {
 
   loadOperators(): Observable<Operator[]> {
     return this.operatorApiService.getList().pipe(
-      map((operators) => operators.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name))),
+      map((operators) => operators.data.sort((operatorA, operatorB) => operatorA.name.localeCompare(operatorB.name))),
       tap((operators) => this._operators$.next(operators)),
     );
   }
@@ -107,7 +107,7 @@ export class CommonDataService {
   loadTerritories(): Observable<Territory[]> {
     return this.territoryApiService.getList().pipe(
       map((territories) =>
-        territories.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
+        territories.data.sort((territoryA, territoryB) => territoryA.name.localeCompare(territoryB.name)),
       ),
       tap((territories) => this._territories$.next(territories)),
     );
@@ -115,7 +115,7 @@ export class CommonDataService {
 
   loadCampaigns(): Observable<Campaign[]> {
     return this.campaignApiService.getList().pipe(
-      map((campaigns) => campaigns.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
+      map((campaigns) => campaigns.data.sort((campaignA, campaignB) => campaignA.name.localeCompare(campaignB.name))),
       tap((campaigns) => this._campaigns$.next(campaigns)),
     );
   }
