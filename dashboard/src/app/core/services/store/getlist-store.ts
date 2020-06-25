@@ -3,12 +3,32 @@ import { finalize, takeUntil } from 'rxjs/operators';
 
 import { JsonRpcGetList } from '~/core/services/api/json-rpc.getlist';
 
+export interface PaginationState {
+  limit: number;
+  offset: number;
+  total: number;
+}
+
+function defaultPagination(): PaginationState {
+  return {
+    total: 0,
+    limit: 0,
+    offset: 0,
+  };
+}
+
 export abstract class GetListStore<
   EntityT,
   EntityListT = EntityT,
   JsonRpcGetListT extends JsonRpcGetList<EntityT, EntityListT> = JsonRpcGetList<EntityT, EntityListT>
 > {
   protected entitiesSubject = new BehaviorSubject<EntityListT[]>([]);
+  protected paginationSubject = new BehaviorSubject<PaginationState>({
+    total: 0,
+    limit: 0,
+    offset: 0,
+  });
+
   protected entitySubject = new BehaviorSubject<EntityT>(null);
 
   // dismiss subject triggered in order to cancel current rpc calls
@@ -17,6 +37,7 @@ export abstract class GetListStore<
 
   // content
   protected _entities$ = this.entitiesSubject.asObservable();
+  protected _pagination$ = this.paginationSubject.asObservable();
   protected _entity$ = this.entitySubject.asObservable();
   protected _loadCount = 0;
 
@@ -46,15 +67,19 @@ export abstract class GetListStore<
   get entities$(): Observable<EntityListT[]> {
     return this._entities$;
   }
+  get pagination$(): Observable<PaginationState> {
+    return this._pagination$;
+  }
 
   constructor(protected rpcGetList: JsonRpcGetListT) {
     this.rpcGetList = rpcGetList;
     let firstLoad = true;
 
     this._filterSubject.subscribe((filt) => {
-      if (firstLoad && (filt !== null || !firstLoad)) {
+      console.log('filt : ', filt);
+      if (firstLoad || filt !== null) {
         this.loadList();
-        firstLoad = false;
+        firstLoad = !firstLoad || !!filt;
       }
     });
   }
@@ -80,7 +105,9 @@ export abstract class GetListStore<
         }),
       )
       .subscribe((list) => {
-        this.entitiesSubject.next(list);
+        this.entitiesSubject.next(list.data);
+
+        this.paginationSubject.next(list.meta && list.meta.pagination ? list.meta.pagination : defaultPagination());
       });
   }
 

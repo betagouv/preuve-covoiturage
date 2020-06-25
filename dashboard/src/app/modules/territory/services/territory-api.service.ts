@@ -22,6 +22,7 @@ import {
 import {
   SortEnum,
   allBasicFieldEnum,
+  TerritoryListFilter,
 } from '../../../../../../shared/territory/common/interfaces/TerritoryQueryInterface';
 
 // eslint-disable-next-line
@@ -33,7 +34,7 @@ import { GetListActions } from '~/core/services/api/json-rpc.getlist';
 @Injectable({
   providedIn: 'root',
 })
-export class TerritoryApiService extends JsonRpcCrud<Territory> {
+export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, any, any, TerritoryListFilter> {
   constructor(http: HttpClient, router: Router, activatedRoute: ActivatedRoute, protected _toastr: ToastrService) {
     super(http, router, activatedRoute, 'territory');
   }
@@ -51,6 +52,10 @@ export class TerritoryApiService extends JsonRpcCrud<Territory> {
         throw err;
       }),
     );
+  }
+
+  paramGetList(params?: TerritoryListFilter): JsonRPCParam<any> {
+    return new JsonRPCParam(`${this.method}:${GetListActions.LIST}`, { ...this.defaultListParam, ...params });
   }
 
   getDirectRelation(id: number): Observable<TerritoryParentChildrenInterface> {

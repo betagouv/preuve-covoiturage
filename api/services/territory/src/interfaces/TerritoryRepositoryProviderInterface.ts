@@ -8,6 +8,7 @@ import {
   TerritoryQueryInterface,
   SortEnum,
   ProjectionFieldsEnum,
+  TerritoryListFilter,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { UiStatusRelationDetails } from '../shared/territory/relationUiStatus.contract';
@@ -18,10 +19,11 @@ export interface TerritoryRepositoryProviderInterface {
     query: TerritoryQueryInterface,
     sort: SortEnum[],
     projection: ProjectionFieldsEnum,
+    pagination?: TerritoryListFilter,
   ): Promise<TerritoryDbMetaInterface>;
 
   getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]>;
-  all(): Promise<TerritoryDbMetaInterface[]>;
+  all(search?: string, limit?: number, skip?: number): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }>;
   create(data: CreateParams): Promise<CreateResultInterface>;
   delete(_id: number): Promise<void>;
   update(data: PatchParamsInterface): Promise<TerritoryDbMetaInterface>;
@@ -37,6 +39,7 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     query: TerritoryQueryInterface,
     sort: SortEnum[],
     projection: ProjectionFieldsEnum,
+    pagination?: TerritoryListFilter,
   ): Promise<TerritoryDbMetaInterface> {
     throw new Error();
   }
@@ -45,7 +48,11 @@ export abstract class TerritoryRepositoryProviderInterfaceResolver implements Te
     throw new Error();
   }
 
-  async all(): Promise<TerritoryDbMetaInterface[]> {
+  async all(
+    search?: string,
+    limit?: number,
+    skip?: number,
+  ): Promise<{ rows: TerritoryDbMetaInterface[]; count: number }> {
     throw new Error();
   }
   async getRelationUiStatusDetails(id: number): Promise<UiStatusRelationDetails[]> {

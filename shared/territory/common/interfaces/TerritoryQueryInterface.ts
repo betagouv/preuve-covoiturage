@@ -108,6 +108,12 @@ export interface PaginationInterface {
   limit: number;
 }
 
+export type TerritoryListFilter = {
+  search?: string;
+  skip?: number;
+  limit?: number;
+};
+
 export type ProjectionFieldsEnum = (
   | RelationFieldEnum
   | BasicFieldEnum
