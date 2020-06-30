@@ -74,6 +74,25 @@
       </div> -->
 
       <div>
+        <h3>Plage de temps</h3>
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Début</mat-label>
+            <input matInput [matDatepicker]="start_date" [formControl]="controls.start_date" />
+            <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
+            <mat-datepicker #start_date></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fin</mat-label>
+            <input matInput [matDatepicker]="end_date" [formControl]="controls.end_date" />
+            <mat-datepicker-toggle matSuffix [for]="end_date"></mat-datepicker-toggle>
+            <mat-datepicker #end_date></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div>
         <h3>Position de départ</h3>
         <div class="form-group">
           <mat-form-field appearance="outline">
@@ -83,13 +102,6 @@
           <mat-form-field appearance="outline">
             <mat-label>Longitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="start_lng" autocomplete="off" />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Date départ</mat-label>
-            <input matInput [matDatepicker]="start_date" [formControl]="controls.start_date" />
-            <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
-            <mat-datepicker #start_date></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
@@ -103,13 +115,6 @@
           <mat-form-field appearance="outline">
             <mat-label>Longitude</mat-label>
             <input matInput type="string" placeholder="00.0000000000" formControlName="end_lng" autocomplete="off" />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Date d'arrivée</mat-label>
-            <input matInput [matDatepicker]="end_date" [formControl]="controls.end_date" />
-            <mat-datepicker-toggle matSuffix [for]="end_date"></mat-datepicker-toggle>
-            <mat-datepicker #end_date></mat-datepicker>
           </mat-form-field>
         </div>
       </div>

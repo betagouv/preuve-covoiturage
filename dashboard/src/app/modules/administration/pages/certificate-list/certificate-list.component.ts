@@ -194,7 +194,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       operator_id: formVal.operator_id,
       // territory_id: formVal.territory_id,
       tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-
+      positions: [],
       identity:
         formVal.identity_type === 'phone_number'
           ? {
@@ -210,13 +210,23 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
             },
     };
 
+    // cast and format dates
     if (formVal.start_date) certificate.start_at = (formVal.start_date as Date).toISOString();
     if (formVal.end_date) certificate.end_at = (formVal.end_date as Date).toISOString();
 
-    if (formVal.start_lat || formVal.start_lng)
-      certificate.start_pos = { lat: parseFloat(formVal.start_lat), lon: parseFloat(formVal.start_lng) };
-    if (formVal.end_lat || formVal.end_lng)
-      certificate.end_pos = { lat: parseFloat(formVal.end_lat), lon: parseFloat(formVal.end_lng) };
+    // add start and end positions
+    if (formVal.start_lat || formVal.start_lng) {
+      certificate.positions.push({ lat: parseFloat(formVal.start_lat), lon: parseFloat(formVal.start_lng) });
+    }
+
+    if (formVal.end_lat || formVal.end_lng) {
+      certificate.positions.push({ lat: parseFloat(formVal.end_lat), lon: parseFloat(formVal.end_lng) });
+    }
+
+    // clean up if empty
+    if (certificate.positions.length === 0) {
+      delete certificate.positions;
+    }
 
     // hide any existing snackbar
     this.snackbar.dismiss();

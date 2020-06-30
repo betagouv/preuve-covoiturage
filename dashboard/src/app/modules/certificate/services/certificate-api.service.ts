@@ -27,8 +27,7 @@ export interface CreateParamsInterface {
   tz: string;
   identity: IdentityIdentifiersInterface;
   operator_id: number;
-  start_pos?: PointInterface;
-  end_pos?: PointInterface;
+  positions?: PointInterface[];
   start_at?: string;
   end_at?: string;
 }
