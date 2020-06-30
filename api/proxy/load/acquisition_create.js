@@ -10,7 +10,8 @@ const o = {
   sleep_duration: 1,
   base_url: __ENV.LOAD_BASE_URL || 'http://localhost:8080',
   user: {
-    email: 'maxicovoit.admin@example.com',
+    email: 'maxicovoit@yopmail.com',
+    // email: 'maxicovoit.admin@example.com',
     password: 'admin1234',
   },
 };
@@ -81,6 +82,9 @@ export function setup() {
 }
 
 export default function(store) {
+  const start = new Date().getTime() - Math.random() * 10000000000;
+  const end = start + Math.random() * 1000000;
+
   // create a journey
   const response_acq = http.post(
     `${o.base_url}/v2/journeys`,
@@ -104,15 +108,15 @@ export default function(store) {
         seats: 1,
         identity: {
           over_18: true,
-          phone: `+3376755${parseInt(Math.random() * 9000, 10) + 1000}`,
+          phone: __ENV.LOAD_PASSENGER_ID || `+3376755${parseInt(Math.random() * 9000, 10) + 1000}`,
         },
         start: {
-          datetime: '2019-07-10T11:51:07Z',
+          datetime: new Date(start).toISOString(),
           lat: 48.77826,
           lon: 2.21223,
         },
         end: {
-          datetime: '2019-07-10T12:34:14Z',
+          datetime: new Date(end).toISOString(),
           lat: 48.82338,
           lon: 1.78668,
         },
@@ -124,15 +128,15 @@ export default function(store) {
         revenue: 376,
         identity: {
           over_18: true,
-          phone: `+3378388${parseInt(Math.random() * 9000, 10) + 1000}`,
+          phone: __ENV.LOAD_DRIVER_ID || `+3378388${parseInt(Math.random() * 9000, 10) + 1000}`,
         },
         start: {
-          datetime: '2019-07-10T11:51:07Z',
+          datetime: new Date(start).toISOString(),
           lat: 48.77826,
           lon: 2.21223,
         },
         end: {
-          datetime: '2019-07-10T12:34:14Z',
+          datetime: new Date(end).toISOString(),
           lat: 48.82338,
           lon: 1.78668,
         },

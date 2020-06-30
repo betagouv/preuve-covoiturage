@@ -26,13 +26,13 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
    * TODO replace any output by proper interface
    */
   async find(params: {
-    identity: number;
+    identity_ids: number[];
     start_at: Date;
     end_at: Date;
     positions?: PointInterface[];
     radius?: number;
   }): Promise<CarpoolInterface[]> {
-    const { identity, start_at, end_at, positions = [], radius = 1000 } = params;
+    const { identity_ids, start_at, end_at, positions = [], radius = 1000 } = params;
 
     const where_positions = positions
       .reduce((prev: string[], pos: PointInterface): string[] => {
@@ -55,15 +55,16 @@ export class CarpoolPgRepositoryProvider implements CarpoolRepositoryProviderInt
         FROM ${this.table} AS cc
         LEFT JOIN ${this.incentive_table} AS pi
         ON cc._id = pi.carpool_id
-        WHERE cc.identity_id = $1
-        AND cc.datetime >= $2 AND cc.datetime <= $3
+        WHERE cc.identity_id IN (${identity_ids.join(',')})
+        AND cc.datetime >= $1 AND cc.datetime <= $2
         ${where_positions.length ? `AND (${where_positions})` : ''}
         GROUP BY (m, y)
         ORDER BY y DESC, m DESC
       `,
-      values: [identity, start_at, end_at],
+      values: [start_at, end_at],
     });
 
+    console.log('carpool find', result.rows);
     return result.rows;
   }
 }
