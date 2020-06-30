@@ -1,17 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
-import { DestroyObservable } from '~/core/components/destroy-observable';
 import { BehaviorSubject } from 'rxjs';
-import { CommonDataService } from '~/core/services/common-data.service';
 import { takeUntil, finalize } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
+
+import { DestroyObservable } from '~/core/components/destroy-observable';
+import { CommonDataService } from '~/core/services/common-data.service';
 import { AuthenticationService } from '~/core/services/authentication/authentication.service';
+
+import { CertificateApiService, CreateParamsInterface } from '../../../certificate/services/certificate-api.service';
 
 import {
   ParamsInterface as ListParamsInterface,
   ResultRowInterface,
 } from '~/core/entities/api/shared/certificate/list.contract';
 import { FormBuilder, Validators, FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { MatPaginator } from '@angular/material';
+import { catchHttpStatus } from '~/core/operators/catchHttpStatus';
 
 @Component({
   selector: 'app-certificate-list',
@@ -26,6 +31,8 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     protected certificateApi: CertificateApiService,
     protected commonData: CommonDataService,
     protected fb: FormBuilder,
+    protected snackbar: MatSnackBar,
+    protected toastr: ToastrService,
   ) {
     super();
   }
@@ -211,12 +218,32 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     if (formVal.end_lat || formVal.end_lng)
       certificate.end_pos = { lat: parseFloat(formVal.end_lat), lon: parseFloat(formVal.end_lng) };
 
+    // hide any existing snackbar
+    this.snackbar.dismiss();
+
     this.certificateApi
       .create(certificate)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
+      .pipe(
+        catchHttpStatus(404, (err) => {
+          this.toastr.error('Identité non trouvée');
+          throw err;
+        }),
+        catchHttpStatus(500, (err) => {
+          this.toastr.error("Une erreur s'est produite");
+          throw err;
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((certResponse: { created_at: Date; pdf_url: string; png_url: string; uuid: string }) => {
         this.updateList();
         this.showForm = false;
+        const sb = this.snackbar.open('Attestation créé.', 'Télécharger le PDF', {
+          duration: 30000,
+        });
+
+        sb.onAction().subscribe(() => {
+          this.certificateApi.downloadPrint({ uuid: certResponse.uuid, type: 'pdf' });
+        });
       });
   }
   onCancelCreateCertificate(): void {

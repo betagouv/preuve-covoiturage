@@ -25,6 +25,7 @@ import {
   MatExpansionModule,
   MatSlideToggleModule,
   MatRadioModule,
+  MatSnackBarModule,
 } from '@angular/material';
 
 @NgModule({
@@ -57,6 +58,7 @@ import {
     MatDatepickerModule,
     MatSlideToggleModule,
     MatDialogModule,
+    MatSnackBarModule,
   ],
   exports: [
     MatRadioModule,
@@ -86,6 +88,7 @@ import {
     MatDatepickerModule,
     MatSlideToggleModule,
     MatDialogModule,
+    MatSnackBarModule,
   ],
   providers: [MatDatepickerModule],
 })
