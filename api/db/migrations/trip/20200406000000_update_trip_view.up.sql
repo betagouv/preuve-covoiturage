@@ -1,43 +1,377 @@
-DELETE FROM trip.stat_cache;
--- TODO : update view after carpool
--- UPDATE de trip view
-
+DROP MATERIALIZED VIEW IF EXISTS trip.export;
 DROP MATERIALIZED VIEW IF EXISTS trip.list;
-CREATE MATERIALIZED VIEW trip.list AS (
-SELECT
-    cp.trip_id as trip_id,
-    cp.start_insee as start_insee,
-    cp.end_insee as end_insee,
-    cp.operator_id as operator_id,
-    cp.operator_class as operator_class,
-    cp.datetime as datetime,
-    extract(isodow from cp.datetime) as weekday,
-    extract(hour from cp.datetime) as dayhour,
-    cp.seats as seats,
-    cp.is_driver as is_driver,
-    ts.name as start_town,
-    cp.start_territory_id,
-    te.name as end_town,
-    cp.end_territory_id,
-    (CASE WHEN cp.distance IS NOT NULL THEN cp.distance ELSE (cp.meta::json->>'calc_distance')::int END) as distance
-  FROM carpool.carpools as cp
-  -- JOIN common.insee as cis ON cp.start_insee = cis._id
-  -- JOIN common.insee as cie ON cp.end_insee = cie._id
-  
-  -- JOIN territory.territory_codes as tcis ON tcis.type = 'insee' AND cp.start_insee = tcis.value
-  -- JOIN territory.territory_codes as tcie ON tcie.type = 'insee' AND cp.end_insee = tcie.value
 
-  LEFT JOIN territory.territories as ts ON ts._id = cp.start_territory_id AND ts.level = 'town'
-  LEFT JOIN territory.territories as te ON te._id = cp.start_territory_id AND te.level = 'town'
-
+CREATE TYPE trip.incentive AS (
+  siret varchar,
+  amount int,
+  unit varchar,
+  policy_id int,
+  type varchar
 );
 
-CREATE INDEX ON trip.list (start_territory_id);
-CREATE INDEX ON trip.list (end_territory_id);
-CREATE INDEX ON trip.list (operator_id);
-CREATE INDEX ON trip.list (datetime);
-CREATE INDEX ON trip.list (weekday);
-CREATE INDEX ON trip.list (dayhour);
-CREATE INDEX ON trip.list (distance);
+CREATE OR REPLACE FUNCTION ts_ceil(_tstz timestamptz, _int_seconds int)
+  RETURNS timestamptz AS
+$func$   
+SELECT to_timestamp(ceil(extract(epoch FROM $1) / $2) * $2)
+$func$  LANGUAGE sql STABLE;
+
+create or replace function incentive_to_json(_ti trip.incentive) returns json as $$
+  select json_build_object(
+    'siret', $1.siret
+  , 'amount', $1.amount
+  , 'unit', $1.unit
+  , 'policy_id', $1.policy_id
+  , 'type', $1.type
+  );
+$$ language sql;
+
+create cast (trip.incentive as json) with function incentive_to_json(_ti trip.incentive) as assignment;
+
+create or replace function json_to_incentive(_ti json) returns trip.incentive as $$
+  select ROW(
+    $1->>'siret',
+    ($1->>'amount')::int,
+    $1->>'unit',
+    ($1->>'policy_id')::int,
+    $1->>'type')::trip.incentive;
+$$ language sql;
+
+create cast (json as trip.incentive) with function json_to_incentive(_ti json) as assignment;
+
+CREATE VIEW trip.list_view AS (
+  SELECT
+
+  -- THIS IS FOR AUTH ONLY --
+    cpp.operator_id as operator_id,
+    tis._id as start_territory_id,
+    tie._id as end_territory_id,
+
+    -- DATA --
+    cpp.acquisition_id as journey_id,
+    cpp.trip_id as trip_id,
+    
+    ts_ceil(cpp.datetime, 600) as journey_start_datetime,
+    extract(isodow from cpp.datetime) as journey_start_weekday,
+    extract(hour from cpp.datetime) as journey_start_dayhour,
+
+    -- trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lon, -- TODO
+    -- trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lat, -- TODO
+    ST_X(cpp.start_position::geometry)::numeric as journey_start_lon, -- TODO
+    ST_Y(cpp.start_position::geometry)::numeric as journey_start_lat, -- TODO
+
+    tis.insee[1] as journey_start_insee,
+    tis.postcode[1] as journey_start_postalcode,
+    substring(tis.postcode[1] from 1 for 2) as journey_start_department,
+    tbs.town as journey_start_town,
+    tbs.towngroup as journey_start_towngroup,
+    tbs.country as journey_start_country,
+
+    ts_ceil((cpp.datetime + (cpp.duration || ' seconds')::interval), 600) as journey_end_datetime,
+
+    -- trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lon, -- TODO
+    -- trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lat, -- TODO
+    ST_X(cpp.end_position::geometry)::numeric as journey_end_lon, -- TODO
+    ST_Y(cpp.end_position::geometry)::numeric as journey_end_lat, -- TODO
+
+    tie.insee[1] as journey_end_insee,
+    tie.postcode[1] as journey_end_postalcode,
+    substring(tie.postcode[1] from 1 for 2) as journey_end_department,
+    tbe.town as journey_end_town,
+    tbe.towngroup as journey_end_towngroup,
+    tbe.country as journey_end_country,
+
+    (CASE WHEN cpp.distance IS NOT NULL THEN cpp.distance ELSE (cpp.meta::json->>'calc_distance')::int END) as journey_distance,
+    cpp.distance as journey_distance_anounced,
+    (cpp.meta::json->>'calc_distance')::int as journey_distance_calculated,
+
+    (CASE WHEN cpp.duration IS NOT NULL THEN cpp.duration ELSE (cpp.meta::json->>'calc_duration')::int END) as journey_duration,
+    cpp.duration as journey_duration_anounced,
+    (cpp.meta::json->>'calc_duration')::int as journey_duration_calculated,
+
+    ope.name as operator,
+    cpp.operator_class as operator_class,
+
+    cip.uuid as passenger_id,
+    (CASE WHEN cip.travel_pass_name IS NOT NULL THEN '1' ELSE '0' END)::boolean as passenger_card,
+    cip.over_18 as passenger_over_18,
+    cpp.seats as passenger_seats,
+
+    abs(cpp.cost) as passenger_contribution,
+    cpip.incentive::trip.incentive[] as passenger_incentive_raw,
+    pip.incentive_raw::trip.incentive[] as passenger_incentive_rpc_raw,
+    pip.incentive_sum as passenger_incentive_rpc_sum,
+
+    cid.uuid as driver_id,
+    (CASE WHEN cid.travel_pass_name IS NOT NULL THEN '1' ELSE '0' END)::boolean as driver_card,
+
+    abs(cpd.cost) as driver_revenue,
+    cpid.incentive::trip.incentive[] as driver_incentive_raw,
+    pid.incentive_raw::trip.incentive[] as driver_incentive_rpc_raw,
+    pid.incentive_sum as driver_incentive_rpc_sum,
+
+    cpp.status as status
+    -- status_message
+
+  FROM carpool.carpools as cpp
+  JOIN operator.operators as ope ON ope._id = cpp.operator_id::int
+
+  LEFT JOIN territory.territories_view AS tis ON tis._id = cpp.start_territory_id
+  LEFT JOIN territory.territories_view AS tie ON tie._id = cpp.end_territory_id
+  LEFT JOIN territory.territories_breadcrumb as tbs ON tbs.territory_id = cpp.start_territory_id
+  LEFT JOIN territory.territories_breadcrumb as tbe ON tbe.territory_id = cpp.end_territory_id
+
+  LEFT JOIN carpool.carpools AS cpd ON cpd.acquisition_id = cpp.acquisition_id AND cpd.is_driver = true AND cpd.status = 'ok'::carpool.carpool_status_enum
+  LEFT JOIN carpool.identities AS cip ON cip._id = cpp.identity_id
+  LEFT JOIN carpool.identities AS cid ON cid._id = cpd.identity_id,
+  LATERAL (
+    WITH data AS (
+      SELECT
+        pi.policy_id,
+        sum(pi.amount) as amount
+      FROM policy.incentives as pi
+      WHERE pi.carpool_id = cpp._id
+      AND pi.status = 'validated'::policy.incentive_status_enum
+      GROUP BY pi.policy_id
+    ),
+    incentive AS (
+      SELECT
+        ROW(
+          cc.siret,
+          data.amount,
+          pp.unit::varchar,
+          data.policy_id,
+          'incentive'
+        )::trip.incentive as value,
+        data.amount as amount
+      FROM data
+      JOIN policy.policies as pp on pp._id = data.policy_id
+      JOIN territory.territories as tt on pp.territory_id = tt._id
+      JOIN company.companies as cc on cc._id = tt.company_id
+    )
+    SELECT
+      array_agg(
+        incentive.value
+      ) as incentive_raw,
+      sum(incentive.amount) as incentive_sum
+    FROM incentive
+  ) as pip,
+  LATERAL (
+    WITH data AS (
+      SELECT
+        pi.policy_id,
+        sum(pi.amount) as amount
+      FROM policy.incentives as pi
+      WHERE pi.carpool_id = cpd._id
+      AND pi.status = 'validated'::policy.incentive_status_enum
+      GROUP BY pi.policy_id
+    ),
+    incentive AS (
+      SELECT
+        ROW(
+          cc.siret,
+          data.amount,
+          pp.unit::varchar,
+          data.policy_id,
+          'incentive'
+        )::trip.incentive as value,
+        data.amount as amount
+      FROM data
+      JOIN policy.policies as pp on pp._id = data.policy_id
+      JOIN territory.territories as tt on pp.territory_id = tt._id
+      JOIN company.companies as cc on cc._id = tt.company_id
+    )
+    SELECT
+      array_agg(
+        incentive.value
+      ) as incentive_raw,
+      sum(incentive.amount) as incentive_sum
+    FROM incentive
+  ) as pid,
+  LATERAL (
+    SELECT
+      array_agg(
+        value::trip.incentive
+      ) as incentive
+    FROM json_array_elements(cpp.meta->'payments')
+  ) as cpip,
+  LATERAL (
+      SELECT
+      array_agg(
+        value::trip.incentive
+      ) as incentive
+    FROM json_array_elements(cpd.meta->'payments')
+  ) as cpid
+  WHERE cpp.is_driver = false AND cpp.status = 'ok'::carpool.carpool_status_enum
+);
+
+CREATE TABLE trip.list (
+ operator_id integer,
+ start_territory_id integer,
+ end_territory_id integer,
+ journey_id integer,
+ trip_id varchar(256),
+ journey_start_datetime timestamp with time zone,
+ journey_start_weekday integer,
+ journey_start_dayhour integer,
+ journey_start_lon decimal,
+ journey_start_lat decimal,
+ journey_start_insee varchar(10),
+ journey_start_postalcode varchar(10),
+ journey_start_department varchar(2),
+ journey_start_town varchar(128),
+ journey_start_towngroup varchar(128),
+ journey_start_country varchar(128),
+ journey_end_datetime timestamp with time zone,
+ journey_end_lon decimal,
+ journey_end_lat decimal,
+ journey_end_insee varchar(10),
+ journey_end_postalcode varchar(10),
+ journey_end_department varchar(2),
+ journey_end_town varchar(128),
+ journey_end_towngroup varchar(128),
+ journey_end_country varchar(128),
+ journey_distance integer,
+ journey_distance_anounced integer,
+ journey_distance_calculated integer,
+ journey_duration integer,
+ journey_duration_anounced integer,
+ journey_duration_calculated integer,
+ operator varchar(128),
+ operator_class character(1),
+ passenger_id uuid,
+ passenger_card boolean,
+ passenger_over_18 boolean,
+ passenger_seats integer,
+ passenger_contribution integer,
+ passenger_incentive_raw trip.incentive[],
+ passenger_incentive_rpc_raw trip.incentive[],
+ passenger_incentive_rpc_sum integer,
+ driver_id uuid,
+ driver_card boolean,
+ driver_revenue integer,
+ driver_incentive_raw trip.incentive[],
+ driver_incentive_rpc_raw trip.incentive[],
+ driver_incentive_rpc_sum integer,
+ status carpool.carpool_status_enum
+);
+
+CREATE INDEX ON trip.list(journey_start_datetime);
+CREATE INDEX ON trip.list(start_territory_id);
+CREATE INDEX ON trip.list(end_territory_id);
+CREATE INDEX ON trip.list(operator_id);
+CREATE INDEX ON trip.list(journey_start_weekday);
+CREATE INDEX ON trip.list(journey_start_dayhour);
+CREATE INDEX ON trip.list(journey_distance);
+CREATE INDEX ON trip.list(journey_distance);
 CREATE INDEX ON trip.list (operator_class);
-CREATE INDEX ON trip.list (is_driver);
+CREATE UNIQUE INDEX IF NOT EXISTS trip_list_journey_id_idx ON trip.list (journey_id);
+
+CREATE OR REPLACE FUNCTION hydrate_export() RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO trip.list
+    SELECT * FROM trip.list_view WHERE journey_id = NEW.acquisition_id
+    ON CONFLICT (journey_id)
+    DO UPDATE SET (
+      operator_id,
+      start_territory_id,
+      end_territory_id,
+      trip_id,
+      journey_start_datetime,
+      journey_start_weekday,
+      journey_start_dayhour,
+      journey_start_lon,
+      journey_start_lat,
+      journey_start_insee,
+      journey_start_postalcode,
+      journey_start_department,
+      journey_start_town,
+      journey_start_towngroup,
+      journey_start_country,
+      journey_end_datetime,
+      journey_end_lon,
+      journey_end_lat,
+      journey_end_insee,
+      journey_end_postalcode,
+      journey_end_department,
+      journey_end_town,
+      journey_end_towngroup,
+      journey_end_country,
+      journey_distance,
+      journey_distance_anounced,
+      journey_distance_calculated,
+      journey_duration,
+      journey_duration_anounced,
+      journey_duration_calculated,
+      operator,
+      operator_class,
+      passenger_id,
+      passenger_card,
+      passenger_over_18,
+      passenger_seats,
+      passenger_contribution,
+      passenger_incentive_raw,
+      passenger_incentive_rpc_raw,
+      passenger_incentive_rpc_sum,
+      driver_id,
+      driver_card,
+      driver_revenue,
+      driver_incentive_raw,
+      driver_incentive_rpc_raw,
+      driver_incentive_rpc_sum,
+      status
+    ) = (
+      excluded.operator_id,
+      excluded.start_territory_id,
+      excluded.end_territory_id,
+      excluded.trip_id,
+      excluded.journey_start_datetime,
+      excluded.journey_start_weekday,
+      excluded.journey_start_dayhour,
+      excluded.journey_start_lon,
+      excluded.journey_start_lat,
+      excluded.journey_start_insee,
+      excluded.journey_start_postalcode,
+      excluded.journey_start_department,
+      excluded.journey_start_town,
+      excluded.journey_start_towngroup,
+      excluded.journey_start_country,
+      excluded.journey_end_datetime,
+      excluded.journey_end_lon,
+      excluded.journey_end_lat,
+      excluded.journey_end_insee,
+      excluded.journey_end_postalcode,
+      excluded.journey_end_department,
+      excluded.journey_end_town,
+      excluded.journey_end_towngroup,
+      excluded.journey_end_country,
+      excluded.journey_distance,
+      excluded.journey_distance_anounced,
+      excluded.journey_distance_calculated,
+      excluded.journey_duration,
+      excluded.journey_duration_anounced,
+      excluded.journey_duration_calculated,
+      excluded.operator,
+      excluded.operator_class,
+      excluded.passenger_id,
+      excluded.passenger_card,
+      excluded.passenger_over_18,
+      excluded.passenger_seats,
+      excluded.passenger_contribution,
+      excluded.passenger_incentive_raw,
+      excluded.passenger_incentive_rpc_raw,
+      excluded.passenger_incentive_rpc_sum,
+      excluded.driver_id,
+      excluded.driver_card,
+      excluded.driver_revenue,
+      excluded.driver_incentive_raw,
+      excluded.driver_incentive_rpc_raw,
+      excluded.driver_incentive_rpc_sum,
+      excluded.status
+    );
+    RETURN NULL;
+END;
+$$ language plpgsql;
+        
+CREATE TRIGGER hydrate_export
+    AFTER INSERT OR UPDATE ON carpool.carpools
+    FOR EACH ROW EXECUTE PROCEDURE hydrate_export();
