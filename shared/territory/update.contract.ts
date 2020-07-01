@@ -9,6 +9,7 @@ export interface Territory extends TerritoryBaseInterface {
 export interface ParamsInterface extends Territory {
   children: TerritoryBaseRelationInterface;
   ui_status: any;
+  insee?: string[];
 }
 export interface ResultInterface extends TerritoryBaseInterface, TerritoryDbMetaInterface {}
 

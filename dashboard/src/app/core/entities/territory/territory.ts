@@ -47,7 +47,8 @@ export interface TerritoryBase extends TerritoryBaseEdit {
   company_id?: number;
   active?: boolean;
   activable?: boolean;
-
+  ui_status?: any;
+  insee?: any;
   // active_since?: Date;
   contacts?: Contacts;
   density?: number;
@@ -105,6 +106,10 @@ export class Territory extends BaseModel
     else delete this.company_id;
     if (base._id) this._id = base._id;
     else delete this._id;
+    if (base.ui_status) this.ui_status = base.ui_status;
+    else delete this.ui_status;
+    if (base.insee) this.insee = base.insee;
+    else delete this.insee;
 
     this.active = base.active === true;
     this.activable = base.activable === true;
