@@ -194,7 +194,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     function autoBuildAncestorJoin(): void {
       if (!includeRelation) {
         includeRelation = true;
-        joins.push('LEFT JOIN territory.territories_view tv ON(tv._id = t._id)');
+        // joins.push('LEFT JOIN territory.territories_view tv ON(tv._id = t._id)');
       }
     }
 
@@ -212,8 +212,8 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           selectsFields.push(`t.${field}`);
           break;
         case allAncestorRelationFieldEnum.indexOf(field) !== -1:
-          selectsFields.push(`tv.${field}`);
-          autoBuildAncestorJoin();
+          // selectsFields.push(`tv.${field}`);
+          // autoBuildAncestorJoin();
           break;
 
         case allCompanyFieldEnum.indexOf(field) !== -1:
@@ -240,17 +240,17 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           // whereConditions.push(`tv.${hash.field} = $${values.length + 1}`);
           switch (hash.field) {
             case TerritoryQueryEnum.HasAncestorId:
-              whereConditions.push(`$${values.length + 1} = ANY (tv.ancestors)`);
+              // whereConditions.push(`$${values.length + 1} = ANY (tv.ancestors)`);
               break;
             case TerritoryQueryEnum.HasDescendantId:
-              whereConditions.push(`$${values.length + 1} = ANY (tv.descendants)`);
+              // whereConditions.push(`$${values.length + 1} = ANY (tv.descendants)`);
               break;
             case TerritoryQueryEnum.HasChildId:
-              whereConditions.push(`$${values.length + 1} = ANY (tv.children)`);
+              // whereConditions.push(`$${values.length + 1} = ANY (tv.children)`);
               break;
 
             case TerritoryQueryEnum.HasParentId:
-              whereConditions.push(`$${values.length + 1} = tv.parent`);
+              // whereConditions.push(`$${values.length + 1} = tv.parent`);
               break;
           }
           values.push(hash.value.toString());
@@ -390,18 +390,28 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values.push(JSON.stringify(data.ui_status));
     }
 
+    if (data.geo) {
+      //   fields.push('geo');
+      values.push(`${data.geo}`);
+    }
+
     const query = {
       text: `
         INSERT INTO ${this.table}
         (
           ${fields.join(',')}
+          ${data.geo ? ',geo' : ''}
         )
-        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')} )
+        VALUES (${fields.map((data, ind) => `$${ind + 1}`).join(',')}${
+        data.geo ? `,ST_GeomFromGeoJSON($${fields.length + 1})` : ''
+      })
         RETURNING *
       `,
 
       values,
     };
+
+    console.log('query : ', query);
 
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
@@ -409,11 +419,27 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     const resultData = result.rows[0];
-
+    console.log('updateRelations');
     await this.updateRelations(resultData._id, data.children);
+    console.log('updateViews');
 
-    await this.updateViews();
+    // await this.updateViews();
 
+    console.log('data.insee : ', data.insee);
+
+    if (data.insee !== undefined && data.insee.length > 0) {
+      const query = {
+        text:
+          `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ` +
+          data.insee.map((insee) => `($1,'insee',${insee})`).join(','),
+        values: [resultData._id],
+      };
+      console.log('query : ', query);
+
+      await this.connection.getClient().query(query);
+    }
+
+    console.log('new territory', resultData._id);
     return resultData;
   }
 

@@ -15,10 +15,7 @@ import {
   ParamsInterface as OTVisibityParams,
   ResultInterface as OTVisibityResults,
 } from '../../../../../../shared/territory/listOperator.contract';
-import {
-  ParamsInterface as FindParamsInterface,
-  QueryParamsInterface,
-} from '../../../../../../shared/territory/find.contract';
+import { QueryParamsInterface } from '../../../../../../shared/territory/find.contract';
 import {
   SortEnum,
   allBasicFieldEnum,
@@ -65,7 +62,7 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
 
   getRelationUIStatus(id: number): Observable<UiStatusRelationDetailsList> {
     const jsonRPCParam = new JsonRPCParam(`${this.method}:getTerritoryRelationUIStatus`, { _id: id });
-    return this.callOne(jsonRPCParam).pipe(map((data) => data.data)) as Observable<UiStatusRelationDetailsList>;
+    return this.callOne(jsonRPCParam).pipe(map((data) => data.data || [])) as Observable<UiStatusRelationDetailsList>;
   }
 
   paramGetById(
@@ -85,12 +82,12 @@ export class TerritoryApiService extends JsonRpcCrud<Territory, Territory, any, 
     sort: SortEnum[] = [SortEnum.NameAsc],
     projection: any = allBasicFieldEnum,
   ): Observable<Territory> {
-    const params: FindParamsInterface = {
-      query,
-      sort,
-      projection,
-    };
-    const jsonRPCParam = this.paramGet(params, sort, projection);
+    // const params: FindParamsInterface = {
+    //   query,
+    //   sort,
+    //   projection,
+    // };
+    const jsonRPCParam = this.paramGet(query, sort, projection);
     return this.callOne(jsonRPCParam).pipe(map((data) => data.data));
   }
 

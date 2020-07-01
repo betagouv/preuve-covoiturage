@@ -6,6 +6,11 @@ export const create = {
   type: 'object',
   required: ['level', 'name'],
   additionalProperties: false,
+  definitions: {
+    GeoPolys: {
+      $ref: 'http://json-schema.org/draft-07/schema#',
+    },
+  },
   properties: {
     contacts,
     name: { macro: 'varchar' },
@@ -34,6 +39,42 @@ export const create = {
     insee: {
       type: 'array',
       items: { macro: 'insee' },
+    },
+
+    geo: {
+      type: 'string',
+      /*
+      properties: {
+        type: {
+          type: 'string',
+          enum: ['MultiPolygon'],
+        },
+        coordinates: {
+          type: 'array',
+          items: {
+            type: 'array',
+            items: {
+              type: 'array',
+              minItems: 4,
+              items: {
+                type: 'array',
+                minItems: 2,
+                items: {
+                  type: 'number',
+                },
+              },
+            },
+          },
+        },
+        bbox: {
+          type: 'array',
+          minItems: 4,
+          items: {
+            type: 'number',
+          },
+        },
+      },
+      */
     },
 
     postcode: {

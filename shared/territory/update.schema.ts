@@ -7,6 +7,13 @@ export const update = {
   type: 'object',
   required: ['_id', 'level', 'name'],
   additionalProperties: false,
+
+  definitions: {
+    GeoPolys: {
+      $ref: 'http://json-schema.org/draft-07/schema#',
+    },
+  },
+
   properties: {
     _id: { macro: 'serial' },
     contacts,
@@ -36,6 +43,10 @@ export const update = {
     insee: {
       type: 'array',
       items: { macro: 'insee' },
+    },
+
+    geo: {
+      $ref: '#/definitions/GeoPolys',
     },
 
     postcode: {
