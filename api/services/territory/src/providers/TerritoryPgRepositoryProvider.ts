@@ -18,6 +18,7 @@ import {
   SortEnum,
   ProjectionFieldsEnum,
   directFields,
+  allTerritoryCodeEnum,
   allAncestorRelationFieldEnum,
   allCompanyFieldEnum,
   allTerritoryQueryCompanyFields,
@@ -26,6 +27,7 @@ import {
   allTerritoryQueryDirectFields,
   allTerritoryQueryFields,
   TerritoryListFilter,
+  GeoFieldEnum,
 } from '../shared/territory/common/interfaces/TerritoryQueryInterface';
 import { TerritoryParentChildrenInterface } from '../shared/territory/common/interfaces/TerritoryChildrenInterface';
 import { ContactsInterface } from '../shared/common/interfaces/ContactsInterface';
@@ -208,9 +210,20 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     // build select
     projection.forEach((field) => {
       switch (true) {
+        case field === GeoFieldEnum.Geo:
+          selectsFields.push(`ST_AsGeoJSON(t.${field}) as ${field}`);
+          break;
+
         case directFields.indexOf(field) !== -1:
           selectsFields.push(`t.${field}`);
           break;
+        case allTerritoryCodeEnum.indexOf(field) !== -1:
+          // case TerritoryCodeEnum.Postcode,
+          const tableAliasName = `tc_${field}`;
+
+          selectsFields.push(
+            `array(SELECT value from territory.territory_codes as ${tableAliasName} WHERE territory_id = t._id and type = '${field}') as ${field}`,
+          );
         case allAncestorRelationFieldEnum.indexOf(field) !== -1:
           // selectsFields.push(`tv.${field}`);
           // autoBuildAncestorJoin();
@@ -292,7 +305,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       `,
       values,
     };
-    console.log(finalQuery.text, finalQuery.values);
+    // console.log(finalQuery.text, finalQuery.values);
 
     const result = await this.connection.getClient().query(finalQuery);
 
@@ -321,7 +334,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     };
 
     const rowCount = (await this.connection.getClient().query(query)).rowCount;
-    // console.log('rowCount : ', rowCount);
+    console.log('rowCount : ', rowCount);
     if (rowCount !== 0) throw new ConflictException('Double siret is not allowed for territory ' + id);
   }
 
@@ -333,7 +346,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const searchCondition = search
       ? search
           .split(/\_|\-|\,|\ /)
-          .map((word) => ` name LIKE '%${word}%'`)
+          .map((word) => ` LOWER(name) LIKE '%${word.toLowerCase()}%'`)
           .join(' AND ')
       : null;
 
@@ -342,6 +355,8 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     const countQuery = `SELECT count(*) as territory_count from ${this.table} ${
       searchCondition ? ` WHERE ${searchCondition}` : ''
     }`;
+
+    console.log(countQuery);
 
     const count = parseFloat((await client.query(countQuery)).rows[0].territory_count);
 
@@ -375,10 +390,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       data.activable,
     ];
 
-    if (data.density !== undefined) {
-      fields.push('density');
-      values.push(data.density);
-    }
+    // if (data.density !== undefined) {
+    //   fields.push('density');
+    //   values.push(data.density);
+    // }
 
     if (data.company_id) {
       fields.push('company_id');
@@ -411,7 +426,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       values,
     };
 
-    console.log('query : ', query);
+    // console.log('query : ', query);
 
     const result = await this.connection.getClient().query(query);
     if (result.rowCount !== 1) {
@@ -419,13 +434,13 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     const resultData = result.rows[0];
-    console.log('updateRelations');
+    // console.log('updateRelations');
     await this.updateRelations(resultData._id, data.children);
-    console.log('updateViews');
+    // console.log('updateViews');
 
     // await this.updateViews();
 
-    console.log('data.insee : ', data.insee);
+    // console.log('data.insee : ', data.insee);
 
     if (data.insee !== undefined && data.insee.length > 0) {
       const query = {
@@ -434,12 +449,12 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
           data.insee.map((insee) => `($1,'insee',${insee})`).join(','),
         values: [resultData._id],
       };
-      console.log('query : ', query);
+      // console.log('query : ', query);
 
       await this.connection.getClient().query(query);
     }
 
-    console.log('new territory', resultData._id);
+    // console.log('new territory', resultData._id);
     return resultData;
   }
 
@@ -454,7 +469,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     }
 
     if (children) {
-      console.log(children);
+      // console.log(children);
       for (const childId of children) {
         const insertQuery = {
           text: `INSERT INTO ${this.relationTable}(parent_territory_id,child_territory_id) VALUES($1,$2)`,
@@ -494,7 +509,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       'address',
       'active',
       'activable',
-      'density',
+      // 'density',
       'company_id',
       'ui_status',
     ];
@@ -507,9 +522,10 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
       data.address || '{}',
       data.active,
       data.activable,
-      data.density ? data.density : null,
+      // data.density ? data.density : null,
       data.company_id ? data.company_id : null,
       data.ui_status ? data.ui_status : '{}',
+      // data.geo ? data.geo : null,
     ];
 
     // if (data.density !== undefined) {
@@ -527,17 +543,42 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     //   values.push(JSON.stringify(data.ui_status));
     // }
 
+    if (data.geo) {
+      //   fields.push('geo');
+      values.push(`${data.geo}`);
+    }
+
+    const client = this.connection.getClient();
+
     const query = {
       text: `
         UPDATE ${this.table}
         SET ${fields.map((val, ind) => `${val} = $${ind + 1}`).join(',')}
+        ${data.geo ? `,geo = ST_GeomFromGeoJSON($${fields.length + 1})` : `,geo = NULL`}
         WHERE _id=${data._id}
       `,
 
       values,
     };
 
-    const result = await this.connection.getClient().query(query);
+    const result = await client.query(query);
+    const cleanInseeQuery = {
+      text: `DELETE FROM territory.territory_codes WHERE territory_id = $1 AND type=$2`,
+      values: [data._id, 'insee'],
+    };
+
+    await client.query(cleanInseeQuery);
+
+    if (data.insee !== undefined && data.insee.length > 0) {
+      const query = {
+        text:
+          `INSERT INTO territory.territory_codes(territory_id,type,value) VALUES ` +
+          data.insee.map((insee) => `($1,'insee',${insee})`).join(','),
+        values: [data._id],
+      };
+
+      await client.query(query);
+    }
 
     if (result.rowCount !== 1) {
       throw new Error(`Unable to update territory (${JSON.stringify(data)})`);
@@ -547,9 +588,14 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
 
     await this.updateRelations(data._id, data.children, true);
 
-    await this.updateViews();
+    // await this.updateViews();
 
-    return null;
+    return (
+      await client.query({
+        text: `SELECT * from ${this.table} WHERE _id = $1`,
+        values: [data._id],
+      })
+    ).rows[0];
   }
 
   async patch(id: number, patch: { [k: string]: any }): Promise<TerritoryDbMetaInterface> {
@@ -619,7 +665,7 @@ export class TerritoryPgRepositoryProvider implements TerritoryRepositoryProvide
     //   throw new NotFoundException(`territory not found (${id})`);
     // }
 
-    console.log('modifiedTerritoryRes ', id, modifiedTerritoryRes.rows[0]);
+    // console.log('modifiedTerritoryRes ', id, modifiedTerritoryRes.rows[0]);
 
     return modifiedTerritoryRes.rowCount > 0 ? modifiedTerritoryRes.rows[0] : 0;
   }

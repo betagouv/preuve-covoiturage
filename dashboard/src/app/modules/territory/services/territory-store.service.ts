@@ -2,7 +2,14 @@ import { Observable } from 'rxjs';
 import { tap, finalize, takeUntil, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
-import { SortEnum, allBasicFieldEnum, RelationFieldEnum, CompanyEnum } from '../TerritoryQueryInterface';
+import {
+  SortEnum,
+  allBasicFieldEnum,
+  RelationFieldEnum,
+  CompanyEnum,
+  GeoFieldEnum,
+  TerritoryCodeEnum,
+} from '../TerritoryQueryInterface';
 
 import { CrudStore } from '~/core/services/store/crud-store';
 import { Territory, TerritoryFormModel } from '~/core/entities/territory/territory';
@@ -41,7 +48,14 @@ export class TerritoryStoreService extends CrudStore<
           _id: id,
         },
         [SortEnum.NameAsc],
-        [...allBasicFieldEnum, RelationFieldEnum.Children, RelationFieldEnum.Parent, CompanyEnum.Siret],
+        [
+          ...allBasicFieldEnum,
+          RelationFieldEnum.Children,
+          RelationFieldEnum.Parent,
+          CompanyEnum.Siret,
+          GeoFieldEnum.Geo,
+          TerritoryCodeEnum.Insee,
+        ],
       )
       .pipe(
         finalize(() => {
