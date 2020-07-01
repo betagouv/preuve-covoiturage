@@ -44,6 +44,7 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
   public editedId: number;
   private companyDetails: CompanyInterface;
+  protected _relationDisplayMode = 'geo';
   // intermediateRelation: any;
   // protected subIgnoredIds: number[];
 
@@ -130,6 +131,9 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
         activable: [false],
         level: [null, Validators.required],
         shortname: [''],
+        format: ['parent'],
+        insee: [''],
+        geo: [''],
         address: this.fb.group(
           new FormAddress(
             new Address({
@@ -164,6 +168,10 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
 
     this.territoryForm = this.fb.group(formOptions);
     const companyFormGroup: FormGroup = this.territoryForm.controls.company as FormGroup;
+
+    this.territoryForm.controls.format.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
+      this._relationDisplayMode = val;
+    });
 
     if (companyFormGroup) {
       this.territoryForm.controls.activable.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((val) => {
@@ -269,6 +277,8 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     delete formValues.uiSelectionState;
     this.territoryForm.setValue(formValues);
 
+    this._relationDisplayMode = formValues.format;
+
     if (this.editedId && this.fullFormMode) {
       this.territoryApi.getRelationUIStatus(this.editedId).subscribe((completeRelation) => {
         this.territoryChildren.setRelations(completeRelation);
@@ -284,6 +294,11 @@ export class TerritoryFormComponent extends DestroyObservable implements OnInit,
     }
 
     this.displayAOMActive = territory.activable === true;
+  }
+
+  get relationDisplayMode(): string {
+    return this._relationDisplayMode;
+    // return this.territoryForm.value.format;
   }
 
   private checkPermissions(): void {

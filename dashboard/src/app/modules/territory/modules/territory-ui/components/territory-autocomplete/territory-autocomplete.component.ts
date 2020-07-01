@@ -88,10 +88,10 @@ export class TerritoryAutocompleteComponent extends DestroyObservable implements
     // apply optionnal input filter
     const territories = this.territoryFilter ? this.territories.filter(this.territoryFilter) : this.territories;
 
-    if (!value || typeof value !== 'string') return territories;
+    if (!value || typeof value !== 'string') return territories.slice(0, 20);
 
     return this.territories
-      ? territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase()))
+      ? territories.filter((territory) => territory.name.toLowerCase().includes(value.toLowerCase())).slice(0, 20)
       : null;
   }
 

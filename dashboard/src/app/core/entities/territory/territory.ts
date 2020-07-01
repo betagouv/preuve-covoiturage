@@ -56,6 +56,7 @@ export interface TerritoryBase extends TerritoryBaseEdit {
 
 export interface TerritoryUIStatus {
   ui_selection_state?: TerritorySelectionUIState[];
+  format?: string;
 }
 
 export class Territory extends BaseModel
@@ -75,6 +76,8 @@ export class Territory extends BaseModel
   contacts?: Contacts;
   density?: number;
   geo?: any; // TODO : geography type
+  insee?: string[];
+
   ui_status: TerritoryUIStatus;
 
   constructor(base: Territory) {
@@ -123,17 +126,24 @@ export class Territory extends BaseModel
     if (formValues.shortname) this.shortname = formValues.shortname;
     else delete this.shortname;
 
+    if (formValues.insee && formValues.format === 'insee') this.insee = formValues.insee.split(',');
+    else delete this.insee;
+
+    if (formValues.geo && formValues.format === 'geo') this.geo = formValues.geo;
+    else delete this.geo;
+
     if (formValues.density !== undefined) this.density = formValues.density;
     else delete this.density;
 
     if (formValues.company_id) this.company_id = formValues.company_id;
     else delete this.company_id;
 
-    if (formValues.children) this.children = formValues.children;
+    if (formValues.children && formValues.format === 'parent') this.children = formValues.children;
     else delete this.children;
 
     this.ui_status = {};
     if (formValues.uiSelectionState) this.ui_status.ui_selection_state = formValues.uiSelectionState;
+    if (formValues.format) this.ui_status.format = formValues.format;
 
     // assignOrDeleteProperty(formValues, this, 'shortname');
     // assignOrDeleteProperty(formValues, this, 'density');
@@ -150,6 +160,7 @@ export class Territory extends BaseModel
           // active: this.active ? this.active : false,
           uiSelectionState:
             this.ui_status && this.ui_status.ui_selection_state ? this.ui_status.ui_selection_state : [],
+          format: this.ui_status && this.ui_status.format ? this.ui_status.format : 'parent',
           shortname: this.shortname ? this.shortname : '',
           active: !!this.active,
           activable: !!this.activable,
@@ -158,6 +169,14 @@ export class Territory extends BaseModel
           company: new Company(this.company).toFormValues(),
           contacts: new Contacts(this.contacts).toFormValues(),
           address: new Address(this.address).toFormValues(),
+          geo: this.geo
+            ? this.geo
+            : `{ "type": "MultiPolygon", 
+          "coordinates": [
+              [], 
+          ]
+        }`,
+          insee: this.insee ? this.insee.join(',') : '',
         }
       : {
           contacts: new Contacts(this.contacts).toFormValues(),
@@ -191,6 +210,9 @@ export interface TerritoryFormModel {
   contacts?: { gdpr_dpo: Contact; gdpr_controller: Contact; technical: Contact };
   address?: Address;
   uiSelectionState: TerritorySelectionUIState[];
+  format: string;
+  geo?: string;
+  insee?: string;
 
   // public address?: Address;
 

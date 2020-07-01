@@ -33,7 +33,7 @@ WITH RECURSIVE
     FROM crosstab(
       'SELECT territory_id, type, value FROM territory.territory_codes order by type asc',
       'SELECT distinct type FROM territory.territory_codes order by type asc'
-    ) AS (territory_id int, "insee" varchar, "postcode" varchar)
+    ) AS (territory_id int, "insee" varchar, "postcode" varchar, "codedep" varchar)
     GROUP BY territory_id
   ),
   input AS (
@@ -119,3 +119,4 @@ WITH RECURSIVE
 );
 
 CREATE INDEX IF NOT EXISTS territory_territories_view_id_idx ON territory.territories_view(_id);
+

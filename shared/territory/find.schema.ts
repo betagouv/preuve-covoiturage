@@ -9,8 +9,8 @@ export const find = {
   properties: {
     query: {
       type: 'object',
-      minProperties: 1,
-      maxProperties: 2,
+      // minProperties: 1,
+      // maxProperties: 2,
       additionalProperties: false,
       properties: {
         _id: { macro: 'serial' },
