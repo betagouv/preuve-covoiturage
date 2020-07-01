@@ -45,7 +45,7 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
   searchState = new BehaviorSubject<ListParamsInterface>({ pagination: { length: this.pageLength, start_index: 0 } });
   isLoading = false;
   showForm = false;
-  displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'actions'];
+  displayedColumns = ['uuid', 'operator', 'total_km', 'total_point', 'total_cost', 'actions'];
   // pageChange: Subject<any> = new Subject();
   ngOnInit(): void {
     this.startIndex = 0;
@@ -198,15 +198,15 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
       identity:
         formVal.identity_type === 'phone_number'
           ? {
-              phone: formVal.phone_number,
+              phone: formVal.phone_number.trim(),
             }
           : formVal.identity_type === 'phone_number_truc'
           ? {
-              phone_trunc: formVal.phone_number_truc,
-              operator_user_id: formVal.operator_user_id,
+              phone_trunc: formVal.phone_number_truc.trim(),
+              operator_user_id: formVal.operator_user_id.trim(),
             }
           : {
-              uuid: formVal.identity_uuid,
+              uuid: formVal.identity_uuid.trim(),
             },
     };
 
@@ -234,6 +234,11 @@ export class CertificateListComponent extends DestroyObservable implements OnIni
     this.certificateApi
       .create(certificate)
       .pipe(
+        catchHttpStatus(400, (err) => {
+          this.toastr.error('Erreur de formulaire');
+          console.error(err);
+          throw err;
+        }),
         catchHttpStatus(404, (err) => {
           this.toastr.error('Identité non trouvée');
           throw err;

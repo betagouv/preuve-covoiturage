@@ -46,7 +46,7 @@ export class RenderCertificateAction extends AbstractAction {
         operator: certificate.meta.operator.uuid,
         territory: certificate.meta.territory?.uuid,
         certificate: {
-          created_at: `le ${this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à k:m', {
+          created_at: `le ${this.dateProvider.format(certificate.created_at, 'd MMMM yyyy à kk:mm', {
             timeZone: certificate.meta.tz,
           })}`.replace(':', 'h'),
           start_at: this.dateProvider.format(certificate.start_at, 'd MMMM yyyy', {

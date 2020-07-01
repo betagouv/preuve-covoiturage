@@ -1,7 +1,7 @@
 <div>
   <div class="FilterTop">
     <h3>Attestations</h3>
-    <app-operator-autocomplete [parentForm]="filterForm"></app-operator-autocomplete>
+    <app-operator-autocomplete [parentForm]="filterForm" cancellable="true"></app-operator-autocomplete>
   </div>
 
   <div class="loading" *ngIf="isLoading">
@@ -25,12 +25,16 @@
       </td>
     </ng-container>
     <ng-container matColumnDef="total_km">
-      <th mat-header-cell *matHeaderCellDef>Distance total</th>
-      <td mat-cell *matCellDef="let row">{{ row.total_km }} km</td>
+      <th mat-header-cell *matHeaderCellDef>Distance totale</th>
+      <td mat-cell *matCellDef="let row">{{ row.total_km }}&nbsp;km</td>
     </ng-container>
     <ng-container matColumnDef="total_point">
       <th mat-header-cell *matHeaderCellDef>Points</th>
-      <td mat-cell *matCellDef="let row">{{ row.total_km }} pts</td>
+      <td mat-cell *matCellDef="let row">{{ row.total_point }}&nbsp;pts</td>
+    </ng-container>
+    <ng-container matColumnDef="total_cost">
+      <th mat-header-cell *matHeaderCellDef>Coût</th>
+      <td mat-cell *matCellDef="let row">{{ row.total_cost }}&nbsp;&euro;</td>
     </ng-container>
 
     <ng-container matColumnDef="actions">

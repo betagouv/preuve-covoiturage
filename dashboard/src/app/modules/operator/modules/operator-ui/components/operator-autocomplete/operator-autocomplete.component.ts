@@ -15,6 +15,7 @@ import { CommonDataService } from '~/core/services/common-data.service';
 })
 export class OperatorAutocompleteComponent extends DestroyObservable implements OnInit {
   @Input() parentForm: FormGroup;
+  @Input() cancellable = false;
 
   operatorCtrl = new FormControl();
   selectedOperator: Operator;
@@ -52,6 +53,10 @@ export class OperatorAutocompleteComponent extends DestroyObservable implements 
   onOperatorSelect(operator: MatAutocompleteSelectedEvent): void {
     clearTimeout(this.focusDebounceTimer);
     this.selectedOperatorUpdated(operator.option.value);
+  }
+
+  onClearSelection(): void {
+    this.selectedOperatorUpdated(null);
   }
 
   ngOnInit(): void {
