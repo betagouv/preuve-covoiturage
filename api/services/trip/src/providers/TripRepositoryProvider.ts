@@ -23,7 +23,7 @@ import { StatInterface } from '../interfaces/StatInterface';
   identifier: TripRepositoryProviderInterfaceResolver,
 })
 export class TripRepositoryProvider implements TripRepositoryInterface {
-  public readonly table = 'trip.export';
+  public readonly table = 'trip.list';
 
   constructor(public connection: PostgresConnection) {}
 
@@ -153,7 +153,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         );
     }
 
-    const whereClauses = `WHERE ${orderedFilters.text.join(' AND ')}`;
+    const whereClauses = `${orderedFilters.text.join(' AND ')}`;
     const whereClausesValues = orderedFilters.values;
 
     return {
@@ -173,10 +173,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
         count(distinct operator_id)::int as operators,
-        ((sum(passenger_seats + 1)::float) / count(distinct trip_id)) as average_carpoolers_by_car,
-        count(*) FILTER (WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0) as trip_subsidized
+        trunc(((sum(passenger_seats + 1)::float) / count(distinct trip_id))::numeric, 2)::float as average_carpoolers_by_car,
+        (count(*) FILTER (WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0))::int as trip_subsidized
       FROM ${this.table}
-      ${where ? where.text : ''}
+      ${where.text ? `WHERE ${where.text}` : ''}
       GROUP BY day
       ORDER BY day ASC`,
       values: [
@@ -187,7 +187,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     };
 
     query.text = this.numberPlaceholders(query.text);
-
     const result = await this.connection.getClient().query(query);
     return result.rows;
   }
@@ -320,9 +319,10 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
           (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int as incentives,
           operator_id::int,
           operator_class,
+          (driver_incentive_rpc_raw || passenger_incentive_rpc_raw)::json[] as campaigns_id,
           status
         FROM ${this.table}
-        ${where ? where.text : ''}
+        ${where.text ? `WHERE ${where.text}` : ''}
         ORDER BY journey_start_datetime DESC
         LIMIT $#::integer
         OFFSET $#::integer
@@ -333,6 +333,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
     // incentives
     query.text = this.numberPlaceholders(query.text);
 
+    console.log(query.text, query.values);
     const result = await this.connection.getClient().query(query);
 
     const pagination = {
@@ -352,7 +353,21 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
 
     pagination.total = result.rows[0].total_count;
 
-    const final_data = result.rows.map(({ total_count, ...data }) => data);
+    const final_data = result.rows.map(({ total_count, ...data }) => ({
+      ...data,
+      campaigns_id:
+        !data.campaigns_id || !data.campaigns_id.length
+          ? []
+          : [
+              ...data.campaigns_id.reduce((s: Set<number>, item: any) => {
+                if (item.policy_id && !s.has(item.policy_id)) {
+                  s.add(item.policy_id);
+                }
+                // console.log(data.trip_id, s);
+                return s;
+              }, new Set<number>()),
+            ],
+    }));
 
     return {
       data: final_data,

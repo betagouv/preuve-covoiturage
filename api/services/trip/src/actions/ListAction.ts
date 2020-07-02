@@ -61,7 +61,6 @@ export class ListAction extends Action {
             : authorizedOperators.indexOf(r.operator_id) === -1
             ? null
             : r.operator_id,
-        campaigns_id: [],
       })),
     };
   }
