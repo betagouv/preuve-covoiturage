@@ -172,36 +172,33 @@ export class BuildExportAction extends Action {
       count = results.length;
       for (const line of results) {
         stringifier.write(this.normalize(line));
-        console.log(this.normalize(line));
       }
     } while (count !== 0);
 
     stringifier.end();
     await fd.close();
-    console.log(`filename = ${filename}`);
-    // const { url, password } = await this.file.copy(filename);
-    // const email = params.from.email;
-    // const fullname = params.from.fullname;
 
-    // const emailParams = {
-    //   password,
-    //   email,
-    //   fullname,
-    //   template: this.config.get('email.templates.export_csv'),
-    //   templateId: this.config.get('notification.templateIds.export_csv'),
-    //   link: url,
-    // };
+    const { url, password } = await this.file.copy(filename);
+    const email = params.from.email;
+    const fullname = params.from.fullname;
 
-    // console.log('emailParams : ', emailParams);
+    const emailParams = {
+      password,
+      email,
+      fullname,
+      template: this.config.get('email.templates.export_csv'),
+      templateId: this.config.get('notification.templateIds.export_csv'),
+      link: url,
+    };
 
-    // await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
-    //   channel: {
-    //     service: 'trip',
-    //   },
-    //   call: {
-    //     user: {},
-    //   },
-    // });
+    await this.kernel.notify<NotifyParamsInterface>(notifySignature, emailParams, {
+      channel: {
+        service: 'trip',
+      },
+      call: {
+        user: {},
+      },
+    });
 
     return;
   }

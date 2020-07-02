@@ -173,8 +173,12 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
         sum(journey_distance/1000*passenger_seats)::int as distance,
         (count(distinct driver_id) + count(distinct passenger_id))::int as carpoolers,
         count(distinct operator_id)::int as operators,
-        trunc(((sum(passenger_seats + 1)::float) / count(distinct trip_id))::numeric, 2)::float as average_carpoolers_by_car,
-        (count(*) FILTER (WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0))::int as trip_subsidized
+        trunc(
+          ((sum(passenger_seats + 1)::float) / count(distinct trip_id))::numeric, 2
+        )::float as average_carpoolers_by_car,
+        (count(*) FILTER (
+          WHERE (passenger_incentive_rpc_sum + driver_incentive_rpc_sum)::int > 0
+        ))::int as trip_subsidized
       FROM ${this.table}
       ${where.text ? `WHERE ${where.text}` : ''}
       GROUP BY day
@@ -295,7 +299,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       .split('$#')
       .reduce((prev, curr, i) => prev + '$' + i + curr);
 
-    console.log(text, values);
     const db = await this.connection.getClient().connect();
     const cursorCb = db.query(new Cursor(text, values));
 
@@ -330,10 +333,7 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
       values: [...(where ? where.values : []), limit, skip],
     };
 
-    // incentives
     query.text = this.numberPlaceholders(query.text);
-
-    console.log(query.text, query.values);
     const result = await this.connection.getClient().query(query);
 
     const pagination = {
@@ -363,7 +363,6 @@ export class TripRepositoryProvider implements TripRepositoryInterface {
                 if (item.policy_id && !s.has(item.policy_id)) {
                   s.add(item.policy_id);
                 }
-                // console.log(data.trip_id, s);
                 return s;
               }, new Set<number>()),
             ],
