@@ -54,10 +54,26 @@ CREATE VIEW trip.list_view AS (
     extract(isodow from cpp.datetime) as journey_start_weekday,
     extract(hour from cpp.datetime) as journey_start_dayhour,
 
-    -- trunc(ST_X(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lon, -- TODO
-    -- trunc(ST_Y(cpp.start_position::geometry)::numeric, round(log(5-ts.density::int)+2)::int) as journey_start_lat, -- TODO
-    ST_X(cpp.start_position::geometry)::numeric as journey_start_lon, -- TODO
-    ST_Y(cpp.start_position::geometry)::numeric as journey_start_lat, -- TODO
+    trunc(
+      ST_X(cpp.start_position::geometry)::numeric,
+      CASE WHEN (
+        tts.surface > 0 AND 
+        (tts.population::float / (tts.surface::float / 100)) > 40
+      )
+      THEN 3 
+      ELSE 2
+      END
+    ) as journey_start_lon,
+    trunc(
+      ST_Y(cpp.start_position::geometry)::numeric,
+      CASE WHEN (
+        tts.surface > 0 AND 
+        (tts.population::float / (tts.surface::float / 100)) > 40
+      )
+      THEN 3 
+      ELSE 2
+      END
+    ) as journey_start_lat,
 
     tis.insee[1] as journey_start_insee,
     tis.postcode[1] as journey_start_postalcode,
@@ -68,10 +84,26 @@ CREATE VIEW trip.list_view AS (
 
     ts_ceil((cpp.datetime + (cpp.duration || ' seconds')::interval), 600) as journey_end_datetime,
 
-    -- trunc(ST_X(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lon, -- TODO
-    -- trunc(ST_Y(cpp.end_position::geometry)::numeric, round(log(5-te.density::int)+2)::int) as journey_end_lat, -- TODO
-    ST_X(cpp.end_position::geometry)::numeric as journey_end_lon, -- TODO
-    ST_Y(cpp.end_position::geometry)::numeric as journey_end_lat, -- TODO
+    trunc(
+      ST_X(cpp.end_position::geometry)::numeric,
+      CASE WHEN (
+        tte.surface > 0 AND 
+        (tte.population::float / (tte.surface::float / 100)) > 40
+      )
+      THEN 3 
+      ELSE 2
+      END
+    ) as journey_end_lon,
+    trunc(
+      ST_Y(cpp.end_position::geometry)::numeric,
+      CASE WHEN (
+        tte.surface > 0 AND 
+        (tte.population::float / (tte.surface::float / 100)) > 40
+      )
+      THEN 3 
+      ELSE 2
+      END
+    ) as journey_end_lat,
 
     tie.insee[1] as journey_end_insee,
     tie.postcode[1] as journey_end_postalcode,
@@ -115,6 +147,8 @@ CREATE VIEW trip.list_view AS (
   FROM carpool.carpools as cpp
   JOIN operator.operators as ope ON ope._id = cpp.operator_id::int
 
+  LEFT JOIN territory.territories AS tts ON tts._id = cpp.start_territory_id
+  LEFT JOIN territory.territories AS tte ON tte._id = cpp.end_territory_id
   LEFT JOIN territory.territories_view AS tis ON tis._id = cpp.start_territory_id
   LEFT JOIN territory.territories_view AS tie ON tie._id = cpp.end_territory_id
   LEFT JOIN territory.territories_breadcrumb as tbs ON tbs.territory_id = cpp.start_territory_id
@@ -144,9 +178,9 @@ CREATE VIEW trip.list_view AS (
         )::trip.incentive as value,
         data.amount as amount
       FROM data
-      JOIN policy.policies as pp on pp._id = data.policy_id
-      JOIN territory.territories as tt on pp.territory_id = tt._id
-      JOIN company.companies as cc on cc._id = tt.company_id
+      LEFT JOIN policy.policies as pp on pp._id = data.policy_id
+      LEFT JOIN territory.territories as tt on pp.territory_id = tt._id
+      LEFT JOIN company.companies as cc on cc._id = tt.company_id
     )
     SELECT
       array_agg(
@@ -176,9 +210,9 @@ CREATE VIEW trip.list_view AS (
         )::trip.incentive as value,
         data.amount as amount
       FROM data
-      JOIN policy.policies as pp on pp._id = data.policy_id
-      JOIN territory.territories as tt on pp.territory_id = tt._id
-      JOIN company.companies as cc on cc._id = tt.company_id
+      LEFT JOIN policy.policies as pp on pp._id = data.policy_id
+      LEFT JOIN territory.territories as tt on pp.territory_id = tt._id
+      LEFT JOIN company.companies as cc on cc._id = tt.company_id
     )
     SELECT
       array_agg(
@@ -266,7 +300,7 @@ CREATE INDEX ON trip.list(journey_distance);
 CREATE INDEX ON trip.list (operator_class);
 CREATE UNIQUE INDEX IF NOT EXISTS trip_list_journey_id_idx ON trip.list (journey_id);
 
-CREATE OR REPLACE FUNCTION hydrate_export() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION hydrate_trip_from_carpool() RETURNS TRIGGER AS $$
 BEGIN
     INSERT INTO trip.list
     SELECT * FROM trip.list_view WHERE journey_id = NEW.acquisition_id
@@ -372,6 +406,119 @@ BEGIN
 END;
 $$ language plpgsql;
         
-CREATE TRIGGER hydrate_export
+CREATE TRIGGER hydrate_trip_from_carpool
     AFTER INSERT OR UPDATE ON carpool.carpools
-    FOR EACH ROW EXECUTE PROCEDURE hydrate_export();
+    FOR EACH ROW EXECUTE PROCEDURE hydrate_trip_from_carpool();
+
+-- ADD TRIGGER WHEN INSERT/UPDATE ON policy.incentives
+CREATE OR REPLACE FUNCTION hydrate_trip_from_policy() RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO trip.list
+    SELECT tv.* FROM carpool.carpools AS cc
+    LEFT JOIN trip.list_view AS tv ON tv.journey_id = cc.acquisition_id
+    WHERE cc._id = NEW.carpool_id
+    ON CONFLICT (journey_id)
+    DO UPDATE SET (
+      operator_id,
+      start_territory_id,
+      end_territory_id,
+      trip_id,
+      journey_start_datetime,
+      journey_start_weekday,
+      journey_start_dayhour,
+      journey_start_lon,
+      journey_start_lat,
+      journey_start_insee,
+      journey_start_postalcode,
+      journey_start_department,
+      journey_start_town,
+      journey_start_towngroup,
+      journey_start_country,
+      journey_end_datetime,
+      journey_end_lon,
+      journey_end_lat,
+      journey_end_insee,
+      journey_end_postalcode,
+      journey_end_department,
+      journey_end_town,
+      journey_end_towngroup,
+      journey_end_country,
+      journey_distance,
+      journey_distance_anounced,
+      journey_distance_calculated,
+      journey_duration,
+      journey_duration_anounced,
+      journey_duration_calculated,
+      operator,
+      operator_class,
+      passenger_id,
+      passenger_card,
+      passenger_over_18,
+      passenger_seats,
+      passenger_contribution,
+      passenger_incentive_raw,
+      passenger_incentive_rpc_raw,
+      passenger_incentive_rpc_sum,
+      driver_id,
+      driver_card,
+      driver_revenue,
+      driver_incentive_raw,
+      driver_incentive_rpc_raw,
+      driver_incentive_rpc_sum,
+      status
+    ) = (
+      excluded.operator_id,
+      excluded.start_territory_id,
+      excluded.end_territory_id,
+      excluded.trip_id,
+      excluded.journey_start_datetime,
+      excluded.journey_start_weekday,
+      excluded.journey_start_dayhour,
+      excluded.journey_start_lon,
+      excluded.journey_start_lat,
+      excluded.journey_start_insee,
+      excluded.journey_start_postalcode,
+      excluded.journey_start_department,
+      excluded.journey_start_town,
+      excluded.journey_start_towngroup,
+      excluded.journey_start_country,
+      excluded.journey_end_datetime,
+      excluded.journey_end_lon,
+      excluded.journey_end_lat,
+      excluded.journey_end_insee,
+      excluded.journey_end_postalcode,
+      excluded.journey_end_department,
+      excluded.journey_end_town,
+      excluded.journey_end_towngroup,
+      excluded.journey_end_country,
+      excluded.journey_distance,
+      excluded.journey_distance_anounced,
+      excluded.journey_distance_calculated,
+      excluded.journey_duration,
+      excluded.journey_duration_anounced,
+      excluded.journey_duration_calculated,
+      excluded.operator,
+      excluded.operator_class,
+      excluded.passenger_id,
+      excluded.passenger_card,
+      excluded.passenger_over_18,
+      excluded.passenger_seats,
+      excluded.passenger_contribution,
+      excluded.passenger_incentive_raw,
+      excluded.passenger_incentive_rpc_raw,
+      excluded.passenger_incentive_rpc_sum,
+      excluded.driver_id,
+      excluded.driver_card,
+      excluded.driver_revenue,
+      excluded.driver_incentive_raw,
+      excluded.driver_incentive_rpc_raw,
+      excluded.driver_incentive_rpc_sum,
+      excluded.status
+    );
+    RETURN NULL;
+END;
+$$ language plpgsql;
+
+CREATE TRIGGER hydrate_trip_from_policy
+    AFTER INSERT OR UPDATE ON policy.incentives
+    FOR EACH ROW EXECUTE PROCEDURE hydrate_trip_from_policy();
